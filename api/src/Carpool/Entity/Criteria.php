@@ -516,12 +516,36 @@ class Criteria
     private $priceKm;
 
     /**
-    * @var float|null The price for the whole journey (usually, the rounded (priceKm * distance)).
+    * @var float|null The total price selected by the user.
     *
-    * @ORM\Column(type="decimal", precision=4, scale=2, nullable=true)
+    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
     * @Groups({"read","results","write","thread"})
     */
     private $price;
+
+    /**
+    * @var float|null The total price selected by the user, rounded using the rounding rules.
+    *
+    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @Groups({"read","results","write","thread"})
+    */
+    private $roundedPrice;
+
+    /**
+    * @var float|null The total price computed by the system, using the user price per km, not rounded.
+    *
+    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @Groups({"read","results","write","thread"})
+    */
+    private $computedPrice;
+
+    /**
+    * @var float|null The total price computed by the system, using the user price per km, rounded usong the rounding rules.
+    *
+    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @Groups({"read","results","write","thread"})
+    */
+    private $computedRoundedPrice;
 
     /**
      * @var boolean Big luggage accepted / asked.
@@ -1361,6 +1385,36 @@ class Criteria
     public function setPrice(?string $price)
     {
         $this->price = $price;
+    }
+
+    public function getRoundedPrice(): ?string
+    {
+        return $this->roundedPrice;
+    }
+    
+    public function setRoundedPrice(?string $roundedPrice)
+    {
+        $this->roundedPrice = $roundedPrice;
+    }
+
+    public function getComputedPrice(): ?string
+    {
+        return $this->computedPrice;
+    }
+    
+    public function setComputedPrice(?string $computedPrice)
+    {
+        $this->computedPrice = $computedPrice;
+    }
+
+    public function getComputedRoundedPrice(): ?string
+    {
+        return $this->computedRoundedPrice;
+    }
+    
+    public function setComputedRoundedPrice(?string $computedRoundedPrice)
+    {
+        $this->computedRoundedPrice = $computedRoundedPrice;
     }
 
     public function hasLuggage(): ?bool

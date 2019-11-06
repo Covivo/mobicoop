@@ -223,9 +223,6 @@ export default {
       this.chips = [...this.chips]
     },
     contact(params) {
-      if (this.proposalId) {
-        params.proposalSearch = this.proposalId;
-      }
       axios.post(this.$t("contactUrl"), params,
         {
           headers:{
@@ -234,25 +231,21 @@ export default {
         })
         .then((response) => {
           if(response.data=="ok"){
-            //this.emitSnackbar('snackBar.success','success')
-            window.location = "/utilisateur/messages";
+            window.location = this.$t("mailboxUrl");
           }
           else{
-            //this.emitSnackbar('snackBar.error','error')
+            console.log(response);
           }
         })
         .catch((error) => {
           console.log(error);
-          //this.emitSnackbar('snackBar.error','error')
         })
         .finally(() => {
           this.carpoolDialog = false;
         })
     },
     launchCarpool(params) {
-      if (this.proposalId) {
-        params.proposalSearch = this.proposalId;
-      }
+      console.log(params);
       axios.post(this.$t("carpoolUrl"), params,
         {
           headers:{
@@ -261,7 +254,7 @@ export default {
         })
         .then((response) => {
           if(response.data=="ok"){
-            window.location = "/utilisateur/messages";
+            window.location = this.$t("mailboxUrl");
           }
           else{
             console.log(response);

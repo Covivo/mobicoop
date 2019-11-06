@@ -557,7 +557,11 @@ export default {
       let params = {
         "driver": role==1,
         "passenger": role==2,
-        "regular" : this.lResult.frequency == 2
+        "regular": this.lResult.frequency == 2,
+        "outwardSchedule": this.getDays(this.outwardTrip),
+        "returnSchedule": this.getDays(this.returnTrip),
+        "fromDate": this.fromDate,
+        "toDate": this.maxDate
       };
       if (role == 1) {
         // the requester is driver
@@ -591,6 +595,27 @@ export default {
     changeReturn(params) {
       this.returnTrip = params;
     },
+    getDays(trip) {
+      let days = {
+        "monTime": null,
+        "tueTime": null,
+        "wedTime": null,
+        "thuTime": null,
+        "friTime": null,
+        "satTime": null,
+        "sunTime": null
+      };
+      for (var i = 0; i < trip.length; i++) {
+        if (trip[i].day == "mon") days.monTime = trip[i].time.replace("h",":");
+        if (trip[i].day == "tue") days.tueTime = trip[i].time.replace("h",":");
+        if (trip[i].day == "wed") days.wedTime = trip[i].time.replace("h",":");
+        if (trip[i].day == "thu") days.thuTime = trip[i].time.replace("h",":");
+        if (trip[i].day == "fri") days.friTime = trip[i].time.replace("h",":");
+        if (trip[i].day == "sat") days.satTime = trip[i].time.replace("h",":");
+        if (trip[i].day == "sun") days.sunTime = trip[i].time.replace("h",":");
+      }
+      return days;
+    }
   }
 };
 </script>

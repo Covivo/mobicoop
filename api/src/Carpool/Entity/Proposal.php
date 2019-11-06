@@ -226,7 +226,7 @@ class Proposal
     private $private;
 
     /**
-     * @var boolean Pause proposal.
+     * @var boolean Paused proposal.
      * A paused proposal can't be the found in the result of a search, and can be unpaused at any moment.
      *
      * @ORM\Column(type="boolean", nullable=true)
@@ -310,18 +310,18 @@ class Proposal
     private $communities;
 
     /**
-     * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
+     * @var ArrayCollection|null The matchings of the proposal (if proposal is a request).
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $matchingOffers;
 
     /**
-     * @var ArrayCollection|null The matching of the proposal (if proposal is a request).
+     * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read"})
      * @MaxDepth(1)
      */
@@ -361,10 +361,10 @@ class Proposal
     private $notifieds;
 
     /**
-     * @var Proposal|null The proposal we know that already matched by this new proposal
+     * @var Proposal|null The proposal we want to force matching with (we assume the corresponding matching doesn't exist yet).
      * @Groups({"read","write"})
      */
-    private $matchedProposal;
+    private $matchingProposal;
 
     /**
      * @var boolean Create a formal ask after posting the proposal.
@@ -609,7 +609,7 @@ class Proposal
     {
         if (!$this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests[] = $matchingRequest;
-            $matchingRequest->setProposalRequest($this);
+            $matchingRequest->setProposalOffer($this);
         }
 
         return $this;
@@ -620,8 +620,8 @@ class Proposal
         if ($this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests->removeElement($matchingRequest);
             // set the owning side to null (unless already changed)
-            if ($matchingRequest->getProposalRequest() === $this) {
-                $matchingRequest->setProposalRequest(null);
+            if ($matchingRequest->getProposalOffer() === $this) {
+                $matchingRequest->setProposalOffer(null);
             }
         }
 
@@ -637,7 +637,7 @@ class Proposal
     {
         if (!$this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers[] = $matchingOffer;
-            $matchingOffer->setProposalOffer($this);
+            $matchingOffer->setProposalRequest($this);
         }
         
         return $this;
@@ -648,8 +648,8 @@ class Proposal
         if ($this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers->removeElement($matchingOffer);
             // set the owning side to null (unless already changed)
-            if ($matchingOffer->getProposalOffer() === $this) {
-                $matchingOffer->setProposalOffer(null);
+            if ($matchingOffer->getProposalRequest() === $this) {
+                $matchingOffer->setProposalRequest(null);
             }
         }
         
@@ -727,18 +727,6 @@ class Proposal
         return $this;
     }
     
-    public function getMatchedProposal(): ?Proposal
-    {
-        return $this->matchedProposal;
-    }
-
-    public function setMatchedProposal(?Proposal $matchedProposal): self
-    {
-        $this->matchedProposal = $matchedProposal;
-
-        return $this;
-    }
-
     public function hasFormalAsk(): bool
     {
         return $this->formalAsk ? true : false;
@@ -747,6 +735,18 @@ class Proposal
     public function setFormalAsk(?bool $formalAsk): self
     {
         $this->formalAsk = $formalAsk;
+
+        return $this;
+    }
+
+    public function getMatchingProposal(): ?Proposal
+    {
+        return $this->matchingProposal;
+    }
+
+    public function setMatchingProposal(?Proposal $matchingProposal): self
+    {
+        $this->matchingProposal = $matchingProposal;
 
         return $this;
     }

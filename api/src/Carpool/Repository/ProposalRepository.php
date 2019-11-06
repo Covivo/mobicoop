@@ -788,4 +788,9 @@ class ProposalRepository
         }
         return array_pop($thinnesses);
     }
+
+    public function find(int $id): ?Proposal
+    {
+        return $this->repository->find($id);
+    }
 }

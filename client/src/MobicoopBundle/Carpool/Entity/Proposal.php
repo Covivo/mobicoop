@@ -127,12 +127,12 @@ class Proposal implements ResourceInterface, \JsonSerializable
     private $communities;
 
     /**
-     * @var Matching[]|null The matching of the proposal (if proposal is an offer).
+     * @var Matching[]|null The matchings of the proposal (if proposal is a request).
      */
     private $matchingOffers;
 
     /**
-     * @var Matching[]|null The matching of the proposal (if proposal is a request).
+     * @var Matching[]|null The matchings of the proposal (if proposal is an offer).
      */
     private $matchingRequests;
 
@@ -153,7 +153,7 @@ class Proposal implements ResourceInterface, \JsonSerializable
      * @var Proposal|null The proposal we know that already matched by this new proposal
      * @Groups({"post","put"})
      */
-    private $matchedProposal;
+    private $matchingProposal;
 
     /**
      * @var boolean Create a formal ask after posting the proposal.
@@ -486,14 +486,14 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
-    public function getMatchedProposal(): ?Proposal
+    public function getMatchingProposal(): ?Proposal
     {
-        return $this->matchedProposal;
+        return $this->matchingProposal;
     }
 
-    public function setMatchedProposal(?Proposal $matchedProposal): self
+    public function setMatchingProposal(?Proposal $matchingProposal): self
     {
-        $this->matchedProposal = $matchedProposal;
+        $this->matchingProposal = $matchingProposal;
 
         return $this;
     }

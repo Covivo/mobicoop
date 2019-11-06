@@ -303,6 +303,8 @@ class ProposalManager
             $direction = $this->zoneManager->createZonesForDirection($direction);
             if ($proposal->getCriteria()->isDriver()) {
                 $proposal->getCriteria()->setDirectionDriver($direction);
+                $proposal->getCriteria()->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
+                $proposal->getCriteria()->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
             }
             if ($proposal->getCriteria()->isPassenger()) {
                 // if the user is passenger we keep only the first and last points
@@ -328,20 +330,19 @@ class ProposalManager
         $end = new \DateTime("UTC");
         $this->logger->info('Proposal creation | Total duration ' . ($end->diff($date))->format("%s.%f seconds"));
         
-        $matchingsOffers = $proposal->getMatchingOffers();
-        $matchingsRequests = $proposal->getMatchingRequests();
+        $matchingOffers = $proposal->getMatchingOffers();
+        $matchingRequests = $proposal->getMatchingRequests();
         $matchings=[];
-        while (($item = array_shift($matchingsOffers)) !== null && array_push($matchings, $item));
-        while (($item = array_shift($matchingsRequests)) !== null && array_push($matchings, $item));
+        while (($item = array_shift($matchingOffers)) !== null && array_push($matchings, $item));
+        while (($item = array_shift($matchingRequests)) !== null && array_push($matchings, $item));
         if ($persist) {
             foreach ($matchings as $matching) {
-
-                // If there is a already matched proposal we need to find the right matching and create the Ask
-                if ($proposal->getMatchedProposal()!==null) {
-                    if ($proposal->getMatchedProposal()->getId() === $matching->getProposalOffer()->getId() ||
-                        $proposal->getMatchedProposal()->getId() === $matching->getProposalRequest()->getId()
+                // if there is a matched proposal we need to find the right matching and create the Ask
+                if (!is_null($proposal->getMatchingProposal())) {
+                    if ($proposal->getMatchingProposal()->getId() === $matching->getProposalOffer()->getId() ||
+                        $proposal->getMatchingProposal()->getId() === $matching->getProposalRequest()->getId()
                     ) {
-                        $this->askManager->createAskFromMatchedProposal($proposal, $matching);
+                        $this->askManager->createAskFromMatchedProposal($proposal, $matching, $proposal->hasFormalAsk());
                     }
                 }
 
@@ -427,12 +428,12 @@ class ProposalManager
         // we group the matchings by matching proposalId to merge potential driver and/or passenger candidates
         $matchings = [];
         // we search the matchings as an offer
-        foreach ($proposal->getMatchingOffers() as $offer) {
-            $matchings[$offer->getProposalRequest()->getId()]['request'] = $offer;
+        foreach ($proposal->getMatchingRequests() as $request) {
+            $matchings[$request->getProposalRequest()->getId()]['request'] = $request;
         }
         // we search the matchings as a request
-        foreach ($proposal->getMatchingRequests() as $request) {
-            $matchings[$request->getProposalOffer()->getId()]['offer'] = $request;
+        foreach ($proposal->getMatchingOffers() as $offer) {
+            $matchings[$offer->getProposalOffer()->getId()]['offer'] = $offer;
         }
         // we iterate through the matchings to create the results
         foreach ($matchings as $proposalId => $matching) {
@@ -751,7 +752,7 @@ class ProposalManager
                 // return trip, only for regular trip for now
                 if ($matching['request']->getProposalRequest()->getProposalLinked() && $proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching['request']->getProposalRequest()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                     $proposalLinked = $matching['request']->getProposalRequest()->getProposalLinked();
-                    $matchingLinked = $matching['request']->getMatchingLinked();
+                    $matchingRelated = $matching['request']->getMatchingRelated();
                     
                     // /!\ we only treat the return days /!\
                     $return = new ResultItem();
@@ -763,21 +764,13 @@ class ProposalManager
                     $return->setFriCheck($proposalLinked->getCriteria()->isFriCheck());
                     $return->setSatCheck($proposalLinked->getCriteria()->isSatCheck());
                     $return->setSunCheck($proposalLinked->getCriteria()->isSunCheck());
-                    // $return->setMonTime($proposalLinked->getCriteria()->getMonTime());
-                    // $return->setTueTime($proposalLinked->getCriteria()->getTueTime());
-                    // $return->setWedTime($proposalLinked->getCriteria()->getWedTime());
-                    // $return->setThuTime($proposalLinked->getCriteria()->getThuTime());
-                    // $return->setFriTime($proposalLinked->getCriteria()->getFriTime());
-                    // $return->setSatTime($proposalLinked->getCriteria()->getSatTime());
-                    // $return->setSunTime($proposalLinked->getCriteria()->getSunTime());
-                    // $return->setMultipleTimes();
                     $return->setFromDate($proposalLinked->getCriteria()->getFromDate());
                     $return->setToDate($proposalLinked->getCriteria()->getToDate());
 
-                    if ($matchingLinked) {
+                    if ($matchingRelated) {
                         // we calculate the starting time so that the driver will get the carpooler on the carpooler time
                         // even if we don't use them, maybe we'll need them in the future
-                        $filters = $matchingLinked->getFilters();
+                        $filters = $matchingRelated->getFilters();
                         $pickupDuration = null;
                         foreach ($filters['route'] as $value) {
                             if ($value['candidate'] == 2 && $value['position'] == 0) {
@@ -844,10 +837,10 @@ class ProposalManager
                         }
                         // fromDate is the max between the search date and the fromDate of the matching proposal
                         $return->setFromDate(max(
-                            $matchingLinked->getProposalRequest()->getCriteria()->getFromDate(),
+                            $matchingRelated->getProposalRequest()->getCriteria()->getFromDate(),
                             $proposal->getCriteria()->getFromDate()
                         ));
-                        $return->setToDate($matchingLinked->getProposalRequest()->getCriteria()->getToDate());
+                        $return->setToDate($matchingRelated->getProposalRequest()->getCriteria()->getToDate());
                     
                         // waypoints of the return
                         $waypoints = [];
@@ -858,7 +851,7 @@ class ProposalManager
                             'carpooler' => 0
                         ];
                         // first pass to get the maximum position for each candidate
-                        foreach ($matchingLinked->getFilters()['route'] as $key=>$waypoint) {
+                        foreach ($matchingRelated->getFilters()['route'] as $key=>$waypoint) {
                             if ($waypoint['candidate'] == 1 && (int)$waypoint['position']>$steps['requester']) {
                                 $steps['requester'] = (int)$waypoint['position'];
                             } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position']>$steps['carpooler']) {
@@ -866,7 +859,7 @@ class ProposalManager
                             }
                         }
                         // second pass to fill the waypoints array
-                        foreach ($matchingLinked->getFilters()['route'] as $key=>$waypoint) {
+                        foreach ($matchingRelated->getFilters()['route'] as $key=>$waypoint) {
                             $curTime = null;
                             if ($time) {
                                 $curTime = clone $time;
@@ -902,38 +895,38 @@ class ProposalManager
                         $return->setWaypoints($waypoints);
                         
                         // statistics
-                        if ($matchingLinked->getFilters()['originalDistance']) {
-                            $return->setOriginalDistance($matchingLinked->getFilters()['originalDistance']);
+                        if ($matchingRelated->getFilters()['originalDistance']) {
+                            $return->setOriginalDistance($matchingRelated->getFilters()['originalDistance']);
                         }
-                        if ($matchingLinked->getFilters()['acceptedDetourDistance']) {
-                            $return->setAcceptedDetourDistance($matchingLinked->getFilters()['acceptedDetourDistance']);
+                        if ($matchingRelated->getFilters()['acceptedDetourDistance']) {
+                            $return->setAcceptedDetourDistance($matchingRelated->getFilters()['acceptedDetourDistance']);
                         }
-                        if ($matchingLinked->getFilters()['newDistance']) {
-                            $return->setNewDistance($matchingLinked->getFilters()['newDistance']);
+                        if ($matchingRelated->getFilters()['newDistance']) {
+                            $return->setNewDistance($matchingRelated->getFilters()['newDistance']);
                         }
-                        if ($matchingLinked->getFilters()['detourDistance']) {
-                            $return->setDetourDistance($matchingLinked->getFilters()['detourDistance']);
+                        if ($matchingRelated->getFilters()['detourDistance']) {
+                            $return->setDetourDistance($matchingRelated->getFilters()['detourDistance']);
                         }
-                        if ($matchingLinked->getFilters()['detourDistancePercent']) {
-                            $return->setDetourDistancePercent($matchingLinked->getFilters()['detourDistancePercent']);
+                        if ($matchingRelated->getFilters()['detourDistancePercent']) {
+                            $return->setDetourDistancePercent($matchingRelated->getFilters()['detourDistancePercent']);
                         }
-                        if ($matchingLinked->getFilters()['originalDuration']) {
-                            $return->setOriginalDuration($matchingLinked->getFilters()['originalDuration']);
+                        if ($matchingRelated->getFilters()['originalDuration']) {
+                            $return->setOriginalDuration($matchingRelated->getFilters()['originalDuration']);
                         }
-                        if ($matchingLinked->getFilters()['acceptedDetourDuration']) {
-                            $return->setAcceptedDetourDuration($matchingLinked->getFilters()['acceptedDetourDuration']);
+                        if ($matchingRelated->getFilters()['acceptedDetourDuration']) {
+                            $return->setAcceptedDetourDuration($matchingRelated->getFilters()['acceptedDetourDuration']);
                         }
-                        if ($matchingLinked->getFilters()['newDuration']) {
-                            $return->setNewDuration($matchingLinked->getFilters()['newDuration']);
+                        if ($matchingRelated->getFilters()['newDuration']) {
+                            $return->setNewDuration($matchingRelated->getFilters()['newDuration']);
                         }
-                        if ($matchingLinked->getFilters()['detourDuration']) {
-                            $return->setDetourDuration($matchingLinked->getFilters()['detourDuration']);
+                        if ($matchingRelated->getFilters()['detourDuration']) {
+                            $return->setDetourDuration($matchingRelated->getFilters()['detourDuration']);
                         }
-                        if ($matchingLinked->getFilters()['detourDurationPercent']) {
-                            $return->setDetourDurationPercent($matchingLinked->getFilters()['detourDurationPercent']);
+                        if ($matchingRelated->getFilters()['detourDurationPercent']) {
+                            $return->setDetourDurationPercent($matchingRelated->getFilters()['detourDurationPercent']);
                         }
-                        if ($matchingLinked->getFilters()['commonDistance']) {
-                            $return->setCommonDistance($matchingLinked->getFilters()['commonDistance']);
+                        if ($matchingRelated->getFilters()['commonDistance']) {
+                            $return->setCommonDistance($matchingRelated->getFilters()['commonDistance']);
                         }
 
                         // price
@@ -949,9 +942,9 @@ class ProposalManager
                             $return->setOriginalPrice($proposal->getCriteria()->getPrice());
                         } else {
                             // otherwise we use the common price
-                            $return->setOriginalPrice((string)(self::roundNearest((float)$matchingLinked->getFilters()['originalDistance'] * (float)$this->params['defaultPriceKm'] / 1000)));
+                            $return->setOriginalPrice((string)(self::roundNearest((float)$matchingRelated->getFilters()['originalDistance'] * (float)$this->params['defaultPriceKm'] / 1000)));
                         }
-                        $return->setComputedPrice((string)(self::roundNearest((float)$matchingLinked->getFilters()['commonDistance'] * (float)$outward->getPriceKm() / 1000)));
+                        $return->setComputedPrice((string)(self::roundNearest((float)$matchingRelated->getFilters()['commonDistance'] * (float)$outward->getPriceKm() / 1000)));
                     }
                     $return->setMultipleTimes();
                     if ($return->hasMultipleTimes()) {
@@ -1285,7 +1278,7 @@ class ProposalManager
                 // return trip, only for regular trip for now
                 if ($matching['offer']->getProposalOffer()->getProposalLinked() && $proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching['offer']->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                     $proposalLinked = $matching['offer']->getProposalOffer()->getProposalLinked();
-                    $matchingLinked = $matching['offer']->getMatchingLinked();
+                    $matchingRelated = $matching['offer']->getMatchingRelated();
 
                     // /!\ we only treat the return days /!\
                     $return = new ResultItem();
@@ -1297,21 +1290,13 @@ class ProposalManager
                     $return->setFriCheck($proposalLinked->getCriteria()->isFriCheck());
                     $return->setSatCheck($proposalLinked->getCriteria()->isSatCheck());
                     $return->setSunCheck($proposalLinked->getCriteria()->isSunCheck());
-                    // $return->setMonTime($proposalLinked->getCriteria()->getMonTime());
-                    // $return->setTueTime($proposalLinked->getCriteria()->getTueTime());
-                    // $return->setWedTime($proposalLinked->getCriteria()->getWedTime());
-                    // $return->setThuTime($proposalLinked->getCriteria()->getThuTime());
-                    // $return->setFriTime($proposalLinked->getCriteria()->getFriTime());
-                    // $return->setSatTime($proposalLinked->getCriteria()->getSatTime());
-                    // $return->setSunTime($proposalLinked->getCriteria()->getSunTime());
-                    // $return->setMultipleTimes();
                     $return->setFromDate($proposalLinked->getCriteria()->getFromDate());
                     $return->setToDate($proposalLinked->getCriteria()->getToDate());
                     
-                    if ($matchingLinked) {
+                    if ($matchingRelated) {
                         // we calculate the starting time so that the driver will get the carpooler on the carpooler time
                         // even if we don't use them, maybe we'll need them in the future
-                        $filters = $matchingLinked->getFilters();
+                        $filters = $matchingRelated->getFilters();
                         $pickupDuration = null;
                         foreach ($filters['route'] as $value) {
                             if ($value['candidate'] == 2 && $value['position'] == 0) {
@@ -1385,10 +1370,10 @@ class ProposalManager
                         }
                         // fromDate is the max between the search date and the fromDate of the matching proposal
                         $return->setFromDate(max(
-                            $matchingLinked->getProposalOffer()->getCriteria()->getFromDate(),
+                            $matchingRelated->getProposalOffer()->getCriteria()->getFromDate(),
                             $proposal->getCriteria()->getFromDate()
                         ));
-                        $return->setToDate($matchingLinked->getProposalOffer()->getCriteria()->getToDate());
+                        $return->setToDate($matchingRelated->getProposalOffer()->getCriteria()->getToDate());
                         
                         // waypoints of the return
                         $waypoints = [];
@@ -1399,7 +1384,7 @@ class ProposalManager
                             'carpooler' => 0
                         ];
                         // first pass to get the maximum position for each candidate
-                        foreach ($matchingLinked->getFilters()['route'] as $key=>$waypoint) {
+                        foreach ($matchingRelated->getFilters()['route'] as $key=>$waypoint) {
                             if ($waypoint['candidate'] == 2 && (int)$waypoint['position']>$steps['requester']) {
                                 $steps['requester'] = (int)$waypoint['position'];
                             } elseif ($waypoint['candidate'] == 1 && (int)$waypoint['position']>$steps['carpooler']) {
@@ -1407,7 +1392,7 @@ class ProposalManager
                             }
                         }
                         // second pass to fill the waypoints array
-                        foreach ($matchingLinked->getFilters()['route'] as $key=>$waypoint) {
+                        foreach ($matchingRelated->getFilters()['route'] as $key=>$waypoint) {
                             $curTime = null;
                             if ($time) {
                                 $curTime = clone $time;
@@ -1443,56 +1428,56 @@ class ProposalManager
                         $return->setWaypoints($waypoints);
                         
                         // statistics
-                        if ($matchingLinked->getFilters()['originalDistance']) {
-                            $return->setOriginalDistance($matchingLinked->getFilters()['originalDistance']);
+                        if ($matchingRelated->getFilters()['originalDistance']) {
+                            $return->setOriginalDistance($matchingRelated->getFilters()['originalDistance']);
                         }
-                        if ($matchingLinked->getFilters()['acceptedDetourDistance']) {
-                            $return->setAcceptedDetourDistance($matchingLinked->getFilters()['acceptedDetourDistance']);
+                        if ($matchingRelated->getFilters()['acceptedDetourDistance']) {
+                            $return->setAcceptedDetourDistance($matchingRelated->getFilters()['acceptedDetourDistance']);
                         }
-                        if ($matchingLinked->getFilters()['newDistance']) {
-                            $return->setNewDistance($matchingLinked->getFilters()['newDistance']);
+                        if ($matchingRelated->getFilters()['newDistance']) {
+                            $return->setNewDistance($matchingRelated->getFilters()['newDistance']);
                         }
-                        if ($matchingLinked->getFilters()['detourDistance']) {
-                            $return->setDetourDistance($matchingLinked->getFilters()['detourDistance']);
+                        if ($matchingRelated->getFilters()['detourDistance']) {
+                            $return->setDetourDistance($matchingRelated->getFilters()['detourDistance']);
                         }
-                        if ($matchingLinked->getFilters()['detourDistancePercent']) {
-                            $return->setDetourDistancePercent($matchingLinked->getFilters()['detourDistancePercent']);
+                        if ($matchingRelated->getFilters()['detourDistancePercent']) {
+                            $return->setDetourDistancePercent($matchingRelated->getFilters()['detourDistancePercent']);
                         }
-                        if ($matchingLinked->getFilters()['originalDuration']) {
-                            $return->setOriginalDuration($matchingLinked->getFilters()['originalDuration']);
+                        if ($matchingRelated->getFilters()['originalDuration']) {
+                            $return->setOriginalDuration($matchingRelated->getFilters()['originalDuration']);
                         }
-                        if ($matchingLinked->getFilters()['acceptedDetourDuration']) {
-                            $return->setAcceptedDetourDuration($matchingLinked->getFilters()['acceptedDetourDuration']);
+                        if ($matchingRelated->getFilters()['acceptedDetourDuration']) {
+                            $return->setAcceptedDetourDuration($matchingRelated->getFilters()['acceptedDetourDuration']);
                         }
-                        if ($matchingLinked->getFilters()['newDuration']) {
-                            $return->setNewDuration($matchingLinked->getFilters()['newDuration']);
+                        if ($matchingRelated->getFilters()['newDuration']) {
+                            $return->setNewDuration($matchingRelated->getFilters()['newDuration']);
                         }
-                        if ($matchingLinked->getFilters()['detourDuration']) {
-                            $return->setDetourDuration($matchingLinked->getFilters()['detourDuration']);
+                        if ($matchingRelated->getFilters()['detourDuration']) {
+                            $return->setDetourDuration($matchingRelated->getFilters()['detourDuration']);
                         }
-                        if ($matchingLinked->getFilters()['detourDurationPercent']) {
-                            $return->setDetourDurationPercent($matchingLinked->getFilters()['detourDurationPercent']);
+                        if ($matchingRelated->getFilters()['detourDurationPercent']) {
+                            $return->setDetourDurationPercent($matchingRelated->getFilters()['detourDurationPercent']);
                         }
-                        if ($matchingLinked->getFilters()['commonDistance']) {
-                            $return->setCommonDistance($matchingLinked->getFilters()['commonDistance']);
+                        if ($matchingRelated->getFilters()['commonDistance']) {
+                            $return->setCommonDistance($matchingRelated->getFilters()['commonDistance']);
                         }
 
                         // price
                         // if the carpooler price per km is set we use it
-                        if ($matchingLinked->getProposalOffer()->getCriteria()->getPriceKm()) {
-                            $return->setPriceKm($matchingLinked->getProposalOffer()->getCriteria()->getPriceKm());
+                        if ($matchingRelated->getProposalOffer()->getCriteria()->getPriceKm()) {
+                            $return->setPriceKm($matchingRelated->getProposalOffer()->getCriteria()->getPriceKm());
                         } else {
                             // otherwise we use the common price
                             $return->setPriceKm($this->params['defaultPriceKm']);
                         }
                         // if the carpooler price is set we use it
-                        if ($matchingLinked->getProposalOffer()->getCriteria()->getPrice()) {
-                            $return->setOriginalPrice($matchingLinked->getProposalOffer()->getCriteria()->getPrice());
+                        if ($matchingRelated->getProposalOffer()->getCriteria()->getPrice()) {
+                            $return->setOriginalPrice($matchingRelated->getProposalOffer()->getCriteria()->getPrice());
                         } else {
                             // otherwise we use the common price
-                            $return->setOriginalPrice((string)(self::roundNearest((float)$matchingLinked->getFilters()['originalDistance'] * (float)$this->params['defaultPriceKm'] / 1000)));
+                            $return->setOriginalPrice((string)(self::roundNearest((float)$matchingRelated->getFilters()['originalDistance'] * (float)$this->params['defaultPriceKm'] / 1000)));
                         }
-                        $return->setComputedPrice((string)(self::roundNearest((float)$matchingLinked->getFilters()['commonDistance'] * (float)$outward->getPriceKm() / 1000)));
+                        $return->setComputedPrice((string)(self::roundNearest((float)$matchingRelated->getFilters()['commonDistance'] * (float)$outward->getPriceKm() / 1000)));
                     }
                     $return->setMultipleTimes();
                     if ($return->hasMultipleTimes()) {

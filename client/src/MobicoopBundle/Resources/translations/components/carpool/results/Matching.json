@@ -4,6 +4,7 @@
     "matchingUrl": "/covoiturage/recherche/matching",
     "carpoolUrl": "/covoiturage/demande",
     "contactUrl": "/covoiturage/contact",
+    "mailboxUrl": "/utilisateur/messages",
     "search": "Recherche en cours...",
     "matchingNumber": "Aucune annonce en covoiturage trouvée... | {number} annonce en covoiturage trouvée | {number} annonces en covoiturage trouvées",
     "snackBar": {
@@ -16,6 +17,7 @@
     "matchingUrl": "/carpool/search/matching",
     "carpoolUrl": "/carpool/ask",
     "contactUrl": "/carpool/contact",
+    "mailboxUrl": "/user/messages",
     "search": "Searching...",
     "matchingNumber": "No carpooling ad found... | {number} carpooling ad found | {number} carpooling ads found",
     "snackBar": {

@@ -82,7 +82,7 @@ class Matching
      * @var Proposal The offer proposal.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","results","threads","thread"})
      * @MaxDepth(1)
@@ -111,10 +111,30 @@ class Matching
     private $criteria;
 
     /**
-     * @var Matching|null Linked matching for a round trip (return or outward journey).
+     * @var Matching|null Related matching for a round trip (return or outward journey).
      * Not persisted : used only to get the return trip information.
      */
+    private $matchingRelated;
+
+    /**
+     * @var Matching|null Linked matching for return trip.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"read","results","write"})
+     * @MaxDepth(1)
+     */
     private $matchingLinked;
+
+    /**
+     * @var Matching|null Linked matching used when creating an ask without defined role at initialization..
+     *
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"read","results","write"})
+     * @MaxDepth(1)
+     */
+    private $matchingRoleUndecided;
 
     /**
      * @var ArrayCollection The asks made for this matching.
@@ -222,6 +242,24 @@ class Matching
         return $this;
     }
 
+    public function getMatchingRelated(): ?self
+    {
+        return $this->matchingRelated;
+    }
+    
+    public function setMatchingRelated(?self $matchingRelated): self
+    {
+        $this->matchingRelated = $matchingRelated;
+        
+        // set (or unset) the owning side of the relation if necessary
+        $newMatchingRelated = $matchingRelated === null ? null : $this;
+        if ($newMatchingRelated !== $matchingRelated->getMatchingRelated()) {
+            $matchingRelated->setMatchingRelated($newMatchingRelated);
+        }
+        
+        return $this;
+    }
+
     public function getMatchingLinked(): ?self
     {
         return $this->matchingLinked;
@@ -235,6 +273,24 @@ class Matching
         $newMatchingLinked = $matchingLinked === null ? null : $this;
         if ($newMatchingLinked !== $matchingLinked->getMatchingLinked()) {
             $matchingLinked->setMatchingLinked($newMatchingLinked);
+        }
+        
+        return $this;
+    }
+
+    public function getMatchingRoleUndecided(): ?self
+    {
+        return $this->matchingRoleUndecided;
+    }
+    
+    public function setMatchingRoleUndecided(?self $matchingRoleUndecided): self
+    {
+        $this->matchingRoleUndecided = $matchingRoleUndecided;
+        
+        // set (or unset) the owning side of the relation if necessary
+        $newMatchingRoleUndecided = $matchingRoleUndecided === null ? null : $this;
+        if ($newMatchingRoleUndecided !== $matchingRoleUndecided->getMatchingRoleUndecided()) {
+            $matchingRoleUndecided->setMatchingRoleUndecided($newMatchingRoleUndecided);
         }
         
         return $this;
