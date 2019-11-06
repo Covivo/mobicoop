@@ -1,6 +1,6 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-        <p>{{ "summaryCarpools"|trans }}.</p>
+        {# <p>{{ "summaryCarpools"|trans }}.</p>
         <p>{{ "phoneNumber"|trans }} @PrenomOuPseudoPassager  {{ "isThe"|trans}} @PortablePassager
         @PrenomOuPseudoPassager  @SexePassager  @AgePassager   @PortablePassager.</p>
 {% if passager regulier %}
@@ -30,5 +30,6 @@
        <p>{{ "driverComment"|trans}}  @CommentairesDemande.</p>
 {% endif %}
     <p>{{ "reservedPlaces"|trans}} @NbPassagers.</p>
-    <p>{{ "indicativePrice"|trans}}  @GainConducteur @Monnaie.</p>
+    <p>{{ "indicativePrice"|trans}}  @GainConducteur @Monnaie.</p> #}
+<p> Un utilisateur vient d'accepter votre proposition de covoiturage, retrouvez tous les détails dans votre messagerie. <a href="{{ api_env('EMAILS_PLATFORM_URL') }}">"{{ "myAds"|trans }}"</a></p>
 {% endblock %}

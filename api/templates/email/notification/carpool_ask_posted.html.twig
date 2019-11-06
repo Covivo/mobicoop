@@ -1,6 +1,6 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    <p>@PrenomOuPseudoExpediteur {{ "yourAsk"|trans }}.</p>
+    {# <p>{{ askHistory.ask.user.givenName }} {{ "yourAsk"|trans }}.</p>
     <p>{{ "replyViaEMail"|trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere"|trans}} @URLdelapagedemessageriecorrespondante.</p>
     {% if Driver regular ||  Passenger regular %}
     <p>{{ "carpoolDistance"|trans}} @DistancePassager km.</p>
@@ -23,5 +23,8 @@
     <p>{{ "driverComment"|trans}} : @CommentairesDemande.</p>
     {% endif %}
     <p>{{ "reservedPlaces" |trans}} @NbPassagers.</p>
-    <p>{{ "indicativePrice" |trans}}  @GainConducteur @Monnaie.</p>
+    <p>{{ "indicativePrice" |trans}}  @GainConducteur @Monnaie.</p> #}
+
+    <p> Un utilisateur {{ "yourAsk"|trans }}.</p>
+    <p> {{ "replyViaEMail"|trans }} {{ api_env('EMAILS_PLATFORM_NAME') }}.</p>
 {% endblock %}
