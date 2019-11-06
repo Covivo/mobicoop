@@ -3,6 +3,7 @@
     <thread-carpool
       v-for="(message, index) in messages"
       :key="index"
+      :avatar="message.avatarsRecipient"
       :given-name="message.givenName"
       :family-name="message.familyName"
       :date="message.date"
