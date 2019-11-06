@@ -39,6 +39,7 @@
         </v-icon>
       </v-btn>
       <v-btn
+        v-if="isPausable"
         class="secondary my-1 mr-1"
         icon
       >
@@ -60,6 +61,10 @@ export default {
     isPassenger: {
       type: Boolean,
       default: false
+    },
+    isPausable: {
+      type: Boolean,
+      default: true
     }
   }
 }

@@ -3,6 +3,7 @@
     <proposal-header
       :is-driver="isDriver"
       :is-passenger="isPassenger"
+      :is-pausable="isRegular"
     />
     
     <v-card-text v-if="isRegular">
