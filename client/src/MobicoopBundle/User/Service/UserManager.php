@@ -481,7 +481,8 @@ class UserManager
             
             // check if proposal is already in array
             foreach ($proposalsSanitized as $sanitized) {
-                if ($sanitized["outward"]["id"] === $proposal["id"] || $sanitized["return"]["id"] === $proposal["id"]) {
+                if ((isset($sanitized["outward"]) && $sanitized["outward"]["id"] === $proposal["id"]) ||
+                    (isset($sanitized["return"]) && $sanitized["return"]["id"] === $proposal["id"])) {
                     $isAlreadyInArray = true;
                     break;
                 }
