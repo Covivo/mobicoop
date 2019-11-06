@@ -1,6 +1,6 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    <p>{{ "yourInscription" |trans }}  {{api_env('EMAILS_PLATFORM_NAME')}}  {{ "wellTakenIntoAccount" |trans }}.</p>
+    <p>{{ "yourInscriptionAt" |trans }}  {{api_env('EMAILS_PLATFORM_NAME')}}  {{ "wellTakenIntoAccount" |trans }}.</p>
     <p>{{ "clickHereToConfirm" |trans}} : <a href="{{ api_env('EMAILS_PLATFORM_URL') }}{{  "urlEmailValidation" |trans }}{{ context.user.validatedDateToken }}" title="">{{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlEmailValidation" |trans }}{{ context.user.validatedDateToken }}</a>.</p>
     <p>{{"orUseTheValidationCode" |trans }} : {{ context.user.validatedDateToken }}.</p>
 {% endblock %}

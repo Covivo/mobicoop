@@ -5,21 +5,27 @@
     >
       <v-col cols="11">
         <v-tabs
+          v-model="modelTabs"
           slider-color="secondary"
           color="secondary"
           vertical
-          :value="tabItemIndex"
         >
-          <v-tab class="text-left justify-start ml-2 mr-5 title">
+          <v-tab
+            class="text-left justify-start ml-2 mr-5 title"
+            href="#myProposals"
+          >
             {{ $t("tabs.myProposals") }}
           </v-tab>
-          <v-tab-item>
+          <v-tab-item value="myProposals">
             <MyProposals :proposals="proposals" />
           </v-tab-item>
-          <v-tab class="text-left justify-start ml-2 mr-5 title">
+          <v-tab
+            class="text-left justify-start ml-2 mr-5 title"
+            href="#carpoolsAccepted"
+          >
             {{ $t("tabs.carpoolsAccepted") }}
           </v-tab>
-          <v-tab-item>
+          <v-tab-item value="carpoolsAccepted">
             <v-alert
               type="info"
               class="text-center"
@@ -27,10 +33,13 @@
               En cours de développement
             </v-alert>
           </v-tab-item>
-          <v-tab class="text-left justify-start ml-2 mr-5 title">
+          <v-tab
+            class="text-left justify-start ml-2 mr-5 title"
+            href="#myProfile"
+          >
             {{ $t("tabs.myProfile") }}
           </v-tab>
-          <v-tab-item>
+          <v-tab-item value="myProfile">
             <v-tabs grow>
               <v-tab class="subtitle-1">
                 {{ $t("tabs.myAccount") }}
@@ -72,7 +81,7 @@ import MyProposals from "@components/user/profile/proposal/MyProposals";
 import Alerts from "@components/user/profile/Alerts";
 import CarpoolSettings from "@components/user/profile/CarpoolSettings";
 
-import {merge} from "lodash";
+import { merge } from "lodash";
 import Translations from "@translations/components/user/profile/Profile.json";
 import TranslationsClient from "@clientTranslations/components/user/profile/Profile.json";
 
@@ -128,17 +137,16 @@ export default {
     proposals: {
       type: Object,
       default: () => {}
+    },
+    tabDefault: {
+      type: String,
+      default: null
     }
   },
-  data () {
-    return {
-      tabItemIndex: null
+  data(){
+    return{
+      modelTabs:(this.tabDefault!="") ? this.tabDefault : "myProposals"
     }
-  },
-  mounted () {
-    let urlString = window.location.href;
-    let url = new URL(urlString);
-    this.tabItemIndex = url.searchParams.get("t") ? parseInt(url.searchParams.get("t")) : 0;
   }
 }
 </script>

@@ -47,37 +47,36 @@
           lazy-validation
         >
           <!--Upload Avatar-->
-          <v-row justify="center" v-if="user.images[0]">
+          <v-row justify="center">
             <v-col cols="3">
               <v-avatar
                 color="grey lighten-3"
                 size="225px"
               >
                 <img
-                  :src="user['images'][0]['versions'][avatarVersion]"
+                  :src="urlAvatar"
                   alt="avatar"
                 >
               </v-avatar>
-            </v-col>
-            <v-col cols="1" justify-self="center" align-self="center">
-              <v-icon @click="avatarDelete">
-                mdi-delete
-              </v-icon>
             </v-col>
           </v-row>
-          <v-row v-else class="justify-center">
-            <v-col cols="12" class="text-center">
-              <v-avatar
-                color="grey lighten-3"
-                size="225px"
-              >
-                <img
-                  :src="this.urlAltAvatar"
-                  alt="avatar"
-                >
-              </v-avatar>
+          <v-row justify="center">
+            <v-col cols="3" justify-self="center" align-self="center" v-if="!displayFileUpload">
+
+            <v-btn
+              :loading="loadingDelete"
+              color="warning"
+              class="ma-2 white--text pa-2 pr-3"
+              rounded
+              @click="avatarDelete"
+            >
+              {{ $t('avatar.delete.label') }}
+              <v-icon right dark>mdi-delete</v-icon>
+            </v-btn>
+
+
             </v-col>
-            <v-col cols="5" class="text-center">
+            <v-col cols="5" class="text-center" v-else>
               <v-file-input
                 v-model="avatar"
                 :rules="avatarRules"
@@ -87,6 +86,9 @@
               />
             </v-col>
           </v-row>
+         
+            
+          
 
           <v-row class="text-left title font-weight-bold">
             <v-col>{{ $t('titles.personnalInfos') }}</v-col>
@@ -156,7 +158,7 @@
                 v-model="newsSubscription" 
                 :label="switchLabel" 
                 inset 
-                color="primary"
+                color="secondary"
               />
             </v-col>
             <v-col>
@@ -178,7 +180,7 @@
           <!--Save Button-->
           <v-btn
             class="button saveButton"
-            color="primary"
+            color="secondary"
             rounded
             :disabled="!valid"
             :loading="loading"
@@ -223,14 +225,6 @@ export default {
       type: String,
       default: null
     },
-    avatarVersion: {
-      type: String,
-      default: null
-    },
-    urlAltAvatar: {
-      type: String,
-      default: null
-    },
     geoSearchUrl: {
       type: String,
       default: null
@@ -261,6 +255,7 @@ export default {
       valid: true,
       errors: [],
       loading: false,
+      loadingDelete: false,
       gender: {
         value: this.user.gender
       },
@@ -274,7 +269,9 @@ export default {
       avatarRules: [
         v => !v || v.size < this.avatarSize || this.$t("avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
       ],
-      newsSubscription: this.user && this.user.newsSubscription !== null ? this.user.newsSubscription : null
+      newsSubscription: this.user && this.user.newsSubscription !== null ? this.user.newsSubscription : null,
+      urlAvatar:this.user.avatars[this.user.avatars.length-1],
+      displayFileUpload:(this.user.images[0]) ? false : true
     };
   },
   computed : {
@@ -321,16 +318,21 @@ export default {
         .then(res => {
           this.errorUpdate = res.data.state;
           this.snackbar = true;
-          document.location.reload(true);
+          this.urlAvatar = res.data.versions.square_800;
+          this.displayFileUpload = false;
+          this.loading = false;
         });
     },
 
     avatarDelete () {
+      this.loadingDelete = true;
       axios
         .get(this.$t('avatar.delete.route'))
         .then(res => {
           this.errorUpdate = res.data.state;
-          document.location.reload(true);
+          this.urlAvatar = res.data[res.data.length-1];
+          this.displayFileUpload = true;
+          this.loadingDelete = false;
         });
     }
   }

@@ -145,7 +145,7 @@ export default {
       let lParams = {
         origin: JSON.stringify(this.origin),
         destination: JSON.stringify(this.destination),
-        regular:this.dataRegular?'1':'0',
+        regular:this.dataRegular,
         date:this.date?this.date:null,
         time:this.time?this.time:null,
         ...this.params
@@ -157,7 +157,7 @@ export default {
       let lParams = {
         origin: JSON.stringify(this.origin),
         destination: JSON.stringify(this.destination),
-        regular:this.dataRegular?'1':'0',
+        regular:this.dataRegular,
         date:this.date?this.date:null,
         time:this.time?this.time:null,
         ...this.params

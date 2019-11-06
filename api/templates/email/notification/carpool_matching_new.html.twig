@@ -1,6 +1,6 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    <p>{{ "newCarpoolAdMatchingYourCommute"|trans }} {{ startAddress }} – {{ destinationAddress }} {{ "justPublished"|trans }}.</p>
+    <p>{{ "newCarpoolAdMatchingYourCommute"|trans }}, elle{#{{ startAddress }} – {{ destinationAddress }} #} {{ "justPublished"|trans }}.</p>
 
 <p>{{ "seeYouIn"|trans }} <a href="{{ api_env('EMAILS_PLATFORM_URL') }}">"{{ "myAds"|trans }}"</a> {{ "toConsultCorrespondingAdsAndMakeContact"|trans }}.</p>
 {% endblock %}

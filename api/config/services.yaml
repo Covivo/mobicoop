@@ -66,12 +66,23 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
-    # Community User Load Listener
+    # Community Load Listener
     mobicoop.community.community_load_listener:
         class: App\Community\EventListener\CommunityLoadListener
         arguments: ['@request_stack']
         tags:
             - { name: doctrine.event_listener, event: postLoad }
+    
+    # User Load Listener
+    mobicoop.user.user_load_listener:
+        class: App\User\EventListener\UserLoadListener
+        arguments:
+            $params:
+                avatarSizes: '%env(string:AVATAR_SIZES)%'
+                avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+        
 
     # CONTROLLERS AND SERVICES
 

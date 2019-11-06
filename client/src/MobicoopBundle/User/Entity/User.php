@@ -266,9 +266,9 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $images;
     
     /**
-     * @var String|null The images of the user.
+     * @var Array|null The images of the user.
      */
-    private $avatar;
+    private $avatars;
 
     /**
     * @var array|null User notification alert preferences.
@@ -427,6 +427,13 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this->shortFamilyName;
     }
         
+    public function setShortFamilyName(?string $shortFamilyName): self
+    {
+        $this->shortFamilyName = $shortFamilyName;
+        
+        return $this;
+    }
+
     public function getEmail(): ?string
     {
         return $this->email;
@@ -787,14 +794,14 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     }
         
         
-    public function getAvatar(): ?string
+    public function getAvatars(): ?array
     {
-        return $this->avatar;
+        return $this->avatars;
     }
     
-    public function setAvatar(?string $avatar): self
+    public function setAvatars(?array $avatars): self
     {
-        $this->avatar = $avatar;
+        $this->avatars = $avatars;
         
         return $this;
     }
@@ -1035,6 +1042,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'id'             => $this->getId(),
             'givenName'      => $this->getGivenName(),
             'familyName'     => $this->getFamilyName(),
+            'shortFamilyName' => $this->getShortFamilyName(),
             'gender'         => $this->getGender(),
             'status'         => $this->getStatus(),
             'email'          => $this->getEmail(),
@@ -1043,7 +1051,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'birthYear'      => $this->getBirthYear(),
             'homeAddress'    => $this->getHomeAddress(),
             'images'        => $this->getImages(),
-            'avatar'        => $this->getAvatar(),
+            'avatars'        => $this->getAvatars(),
             'smoke'          => $this->getSmoke(),
             'chat'           => $this->hasChat(),
             'chatFavorites'  => $this->getChatFavorites(),

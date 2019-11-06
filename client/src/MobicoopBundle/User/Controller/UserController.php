@@ -141,7 +141,6 @@ class UserController extends AbstractController
             }
             $user->addAddress($address);
 
-
             // pass front info into user form
             $user->setEmail($data['email']);
             $user->setTelephone($data['telephone']);
@@ -149,7 +148,10 @@ class UserController extends AbstractController
             $user->setGivenName($data['givenName']);
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
-            $user->setBirthYear($data['birthYear']);
+            //$user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
+            $user->setBirthDate(new DateTime($data['birthDay']));
+
+
 
             if (!is_null($data['idFacebook'])) {
                 $user->setFacebookId($data['idFacebook']);
@@ -212,7 +214,7 @@ class UserController extends AbstractController
     /**
      * User profile update.
      */
-    public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator)
+    public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
@@ -280,7 +282,7 @@ class UserController extends AbstractController
                     $image->setUserId($user->getId());
                 
                     if ($image = $imageManager->createImage($image)) {
-                        return new Response();
+                        return new JsonResponse($image);
                     }
                     // return error if image post didnt't work
                     return new Response(json_encode('error.image'));
@@ -293,8 +295,9 @@ class UserController extends AbstractController
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
                 'alerts' => $userManager->getAlerts($user)['alerts'],
-                'proposals' => $userManager->getProposals($user)
-            ]);
+                'tabDefault' => $tabDefault,
+            'proposals' => $userManager->getProposals($user)
+        ]);
     }
 
     /**
@@ -307,7 +310,7 @@ class UserController extends AbstractController
         $imageId = $user->getImages()[0]->getId();
         $imageManager->deleteImage($imageId);
 
-        return new Response();
+        return new JsonResponse($userManager->getUser($user->getId())->getAvatars());
     }
 
     /**

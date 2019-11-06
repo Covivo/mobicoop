@@ -12,7 +12,8 @@
             "label": "Avatar",
             "size": "Vous avez dépassé la taille maximale de l'avatar",
             "delete": {
-                "route": "/utilisateur/profil/avatar/supprimer"
+                "route": "/utilisateur/profil/avatar/supprimer",
+                "label": "Supprimer l'image"
                 } 
         },
         "route": {

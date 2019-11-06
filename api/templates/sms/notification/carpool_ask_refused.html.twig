@@ -1,1 +1,10 @@
-sms
+{# {% if Driver regular %}
+@PrenomOuPseudoPassager {{ "refusedAskRegular"|trans }} @villePEC {{ "at"|trans }} @VilleDepose.
+{% elseif Driver occasionnal %}
+@PrenomOuPseudoPassager {{ "refusedAsk"|trans }} @villePEC {{ "at"|trans }} @VilleDepose {{ "the" |trans }} @DateVoyage {{ "at"|trans }} @HeurePEC.
+{% elseif Passenger regular %}
+@PrenomOuPseudoConducteur {{ "refusedAskRegular"|trans }} @villePEC {{ "at"|trans }} @VilleDepose.
+{% elseif Passenger occasionnal %}
+@PrenomOuPseudoConducteur {{ "refusedAsk"|trans }} @villePEC {{ "at"|trans }} @VilleDepose {{ "the"|trans }} @DateVoyage {{ "at"|trans }} @HeurePEC.
+{% endif %} #}
+Votre demande de covoiturage vient d'être décliné.

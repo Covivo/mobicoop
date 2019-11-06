@@ -57,7 +57,7 @@
                       :key="index"
                       :label="radio.label"
                       :value="radio.value"
-                      color="primary"
+                      color="secondary"
                     />
                   </v-radio-group>
                   <v-text-field
@@ -144,7 +144,6 @@ export default {
         chatFavorites: this.form.chat.favorite
       })
         .then(function (response) {
-          console.log(response.data);
           if (response.data && response.data.message) {
             self.alert = {
               type: "success",
@@ -153,7 +152,6 @@ export default {
           }
         })
         .catch(function (error) {
-          console.error(error.response);
           let messages = "";
           if (error.response.data && error.response.data.message) {
             messages = self.$t(error.response.data.message);

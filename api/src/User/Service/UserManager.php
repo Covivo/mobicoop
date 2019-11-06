@@ -184,6 +184,7 @@ class UserManager
                 $currentMessage = [
                     'idMessage' => $thread->getId(),
                     'idRecipient' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getId() : $thread->getUser('user')->getId(),
+                    'avatarsRecipient' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getAvatars()[0] : $thread->getUser('user')->getAvatars()[0],
                     'givenName' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getGivenName() : $thread->getUser('user')->getGivenName(),
                     'familyName' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getFamilyName() : $thread->getUser('user')->getFamilyName(),
                     'date' => ($thread->getLastMessage()===null) ? $thread->getCreatedDate() : $thread->getLastMessage()->getCreatedDate(),

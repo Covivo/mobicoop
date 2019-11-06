@@ -162,7 +162,7 @@ class NotificationManager
                     break;
                 case AskHistory::class:
                     $titleContext = [];
-                    $bodyContext = ['user'=>$recipient];
+                    $bodyContext = ['user'=>$recipient, 'askHistory'=>$object];
                     break;
                 case Recipient::class:
                     $titleContext = [];

@@ -114,7 +114,7 @@
                   <!-- Avatar -->
                   <v-img
                     aspect-ratio="2"
-                    src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortRound&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
+                    :src="result.carpooler.avatars[result.carpooler.avatars.length-1]"
                   />
                   <v-card-title>
                     <v-row

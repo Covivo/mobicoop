@@ -1,0 +1,30 @@
+{% extends '/email/notification/base.html.twig' %}
+{% block body %}
+    {# <p>{{ askHistory.ask.user.givenName }} {{ "yourAsk"|trans }}.</p>
+    <p>{{ "replyViaEMail"|trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere"|trans}} @URLdelapagedemessageriecorrespondante.</p>
+    {% if Driver regular ||  Passenger regular %}
+    <p>{{ "carpoolDistance"|trans}} @DistancePassager km.</p>
+    {% elseif Driver occasionnal || Passenger occasionnal %}
+    <p>{{ "occassionalCarpoolDistancee"|trans}} @DistancePassager km.</p>
+    {% endif %}
+    <p>{{ "driverDetour" |trans}}  @TempsDetourMinutes  /  @DistanceDetour  km.</p>
+    <p>{{ "supported"|trans }} @AdressePEC.</p>
+    {% if Driver occasionnal || Passenger occasionnal %}
+    <p>{{ "the"|trans}} @DateDebut {{ "hour"|trans}} @DateDebut.</p>
+    {% endif %}
+    <p>{{ "depositedAt" |trans }} @AdresseDepose.</p>
+    {% if Driver regular || Passenger regular %}
+    <p>{{ "appointmentHour" |trans}} {{ "monday" |trans}} {{ "tuesday" |trans}} {{ "wednesday" |trans}} {{ "thusday" |trans}} {{ "friday" |trans}} {{ "saturday" |trans}} {{ "sunday" |trans}}.</p>
+    <p>{{ "the" |trans}}  @DateDebut  {{ "from" |trans}}  @DateDebut  {{ "to" |trans}} @DateFin.</p>
+    {% endif %}
+    {% if Driver %}
+    <p>{{ "passengerComment" |trans}} :  @CommentairesDemande.</p>
+    {% elseif Passenger %}
+    <p>{{ "driverComment"|trans}} : @CommentairesDemande.</p>
+    {% endif %}
+    <p>{{ "reservedPlaces" |trans}} @NbPassagers.</p>
+    <p>{{ "indicativePrice" |trans}}  @GainConducteur @Monnaie.</p> #}
+
+    <p> Un utilisateur {{ "yourAsk"|trans }}.</p>
+    <p> {{ "replyViaEMail"|trans }} {{ api_env('EMAILS_PLATFORM_NAME') }}.</p>
+{% endblock %}
