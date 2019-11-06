@@ -51,16 +51,13 @@ class UserLoadListener
                     $user->addAvatar($images[0]->getVersions()[$size]);
                 }
             }
-            if(is_null($user->getAvatars())){
+            if (is_null($user->getAvatars())) {
                 foreach ($sizes as $size) {
-                   if(in_array($size, User::AUTHORIZED_SIZES_DEFAULT_AVATAR)) {
-                       $user->addAvatar($this->avatarDefaultFolder.$size.".svg");
-                   } 
-                } 
+                    if (in_array($size, User::AUTHORIZED_SIZES_DEFAULT_AVATAR)) {
+                        $user->addAvatar($this->avatarDefaultFolder.$size.".svg");
+                    }
+                }
             }
         }
-
-       
     }
 }
-

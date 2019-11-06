@@ -1713,8 +1713,10 @@ class User implements UserInterface, EquatableInterface
 
     public function addAvatar(string $avatar): ?array
     {
-        if(is_null($this->avatars)) $this->avatars = [];
-        if(!in_array($avatar, $this->avatars)) {
+        if (is_null($this->avatars)) {
+            $this->avatars = [];
+        }
+        if (!in_array($avatar, $this->avatars)) {
             $this->avatars[]=$avatar;
         }
         return $this->avatars;
@@ -1722,7 +1724,7 @@ class User implements UserInterface, EquatableInterface
 
     public function removeAvatar(string $avatar): ?array
     {
-        if($key = array_search($avatar, $this->avatars)) {
+        if ($key = array_search($avatar, $this->avatars)) {
             unset($this->avatars[$key]);
         }
         return $this->avatars;
