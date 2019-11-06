@@ -21,8 +21,9 @@
         <v-btn
           color="success"
           rounded
+          :disabled="computedRequestsCount <= 0"
         >
-          {{ carpoolRequests }}&nbsp;{{ carpoolRequests > 1 ? $t('potentialCarpooler.plural') : $t('potentialCarpooler.singular') }}
+          {{ computedRequestsCount }}&nbsp;{{ computedRequestsCount > 1 ? $t('potentialCarpooler.plural') : $t('potentialCarpooler.singular') }}
         </v-btn>
       </v-col>
     </v-row>
@@ -30,7 +31,7 @@
 </template>
 
 <script>
-import { merge } from "lodash";
+import { merge, find } from "lodash";
 import Translations from "@translations/components/user/profile/proposal/ProposalFooter.js";
 import TranslationsClient from "@clientTranslations/components/user/profile/proposal/ProposalFooter.js";
 
@@ -48,9 +49,46 @@ export default {
       type: String,
       default: null
     },
+    isDriver: {
+      type: Boolean,
+      default: false
+    },
+    isPassenger: {
+      type: Boolean,
+      default: false
+    },
+    // passengers
     carpoolRequests: {
-      type: Number,
-      default: 0
+      type: Array,
+      default: () => []
+    },
+    // drivers
+    carpoolOffers: {
+      type: Array,
+      default: () => []
+    }
+  },
+  computed: {
+    computedRequestsCount () {
+      if (this.isDriver && !this.isPassenger) {
+        return this.carpoolRequests.length;
+      } else if (!this.isDriver && this.isPassenger) {
+        return this.carpoolOffers.length;
+      } else if (this.isDriver && this.isPassenger) {
+        let data = [];
+        this.carpoolRequests.forEach(request => {
+          data.push(request.proposalOffer)
+        });
+        this.carpoolOffers.forEach(offer => {
+          if (!find(data, {id: offer.proposalRequest.id})) {
+            data.push(offer.proposalRequest)
+          }
+        });
+        console.log(data);
+        return data.length;
+      } else {
+        return 0;
+      }
     }
   }
 }

@@ -20,7 +20,10 @@
       <proposal-footer
         :seats="proposal.outward.criteria.seats"
         :price="proposal.outward.criteria.price"
-        :carpool-requests="proposal.outward.matchingRequests.length"
+        :is-driver="isDriver"
+        :is-passenger="isPassenger"
+        :carpool-requests="proposal.outward.matchingRequests"
+        :carpool-offers="proposal.outward.matchingOffers"
       />
     </v-card-actions>
   </v-card>
