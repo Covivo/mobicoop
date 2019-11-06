@@ -158,7 +158,7 @@
                 v-model="newsSubscription" 
                 :label="switchLabel" 
                 inset 
-                color="primary"
+                color="secondary"
               />
             </v-col>
             <v-col>
@@ -180,7 +180,7 @@
           <!--Save Button-->
           <v-btn
             class="button saveButton"
-            color="primary"
+            color="secondary"
             rounded
             :disabled="!valid"
             :loading="loading"

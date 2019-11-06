@@ -47,7 +47,7 @@
           <v-btn
             :disabled="!valid"
             :loading="loading"
-            color="primary"
+            color="secondary"
             type="button"
             rounded
             @click="validate"

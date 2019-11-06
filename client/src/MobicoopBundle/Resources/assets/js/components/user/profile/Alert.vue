@@ -27,7 +27,7 @@
               inset
               hide-details
               class="mt-0"
-              color="primary"
+              color="secondary"
               @change="emit(media.id,media.active)"
             />
           </v-col>
