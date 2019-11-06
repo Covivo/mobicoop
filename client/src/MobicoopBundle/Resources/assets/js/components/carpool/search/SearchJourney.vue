@@ -30,17 +30,17 @@
               <v-radio
                 :value="1"
                 :label="$t('radio.driver.label')"
-                color="success"
+                color="secondary"
               />
               <v-radio
                 :value="2"
                 :label="$t('radio.passenger.label')"
-                color="success"
+                color="secondary"
               />
               <v-radio
                 :value="3"
                 :label="$t('radio.both.label')"
-                color="success"
+                color="secondary"
               />
             </v-radio-group>
           </v-row>
@@ -121,7 +121,7 @@
             inset
             hide-details
             class="mt-0"
-            color="primary"
+            color="secondary"
             @change="switched"
           />
         </v-col>
