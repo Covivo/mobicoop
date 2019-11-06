@@ -657,6 +657,7 @@ export default {
       }
       this.$emit("change", {
         outwardDate: this.outwardDate,
+        fullschedule : this.schedules,
         outwardTime: this.outwardTime,
         returnDate: this.returnDate,
         returnTime: this.returnTime,

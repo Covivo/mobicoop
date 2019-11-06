@@ -753,10 +753,26 @@ export default {
       // Specifics by steps
       // Step 2 regular : you have to setup at least one schedule
       if(this.step==2 && this.regular && (this.schedules==null || this.schedules.length==0)) return false;
+
+      //We get here if we give at least the departure time on the 1st day
+      //So now we can check on all others days, if visible and date AND at least 1 hour is not defined -> return false
+      if(this.step ==2 ){
+        for (var s in this.fullschedule) {
+          if (this.fullschedule[s].visible) {
+            var i = this.fullschedule[s];
+            if ( !i.mon && !i.tue && !i.wed && !i.thu && !i.fri && !i.sat && !i.sun )  return false;
+            if( i.outwardTime == null && i.returnTime == null) return false;
+          }
+        }
+      }
+
+
+
       // Step 2 punctual : you have to set the outward time
       if(this.step==2 && !this.regular && !(this.outwardDate && this.outwardTime)) return false;
       // Step 2 punctual, round-trip chosen : you have to set the outward date & time
       if(this.step==2 && !this.regular && this.returnTrip && !(this.returnDate && this.returnTime)) return false;
+
 
       return true;
     },
@@ -855,6 +871,7 @@ export default {
       this.returnTime = planification.returnTime;
       this.schedules = planification.schedules;
       this.returnTrip = planification.returnTrip;
+      this.fullschedule = planification.fullschedule;
     },
     routeChanged(route) {
       this.route = route;
