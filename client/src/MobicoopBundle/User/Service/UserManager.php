@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
@@ -473,40 +474,54 @@ class UserManager
         $response = $this->dataProvider->getSubCollection($user->getId(), 'proposal', 'proposals');
         $proposals = $response->getValue();
         
-        $proposalsSanitized = [];
+        $proposalsSanitized = [
+            "ongoing" => [],
+            "archived" => []
+        ];
         
         /** @var \App\Carpool\Entity\Proposal $proposal */
         foreach ($proposals as $proposal) {
             $isAlreadyInArray = false;
             
-            // check if proposal is already in array
-            foreach ($proposalsSanitized as $sanitized) {
-                if ((isset($sanitized["outward"]) && $sanitized["outward"]["id"] === $proposal["id"]) ||
-                    (isset($sanitized["return"]) && $sanitized["return"]["id"] === $proposal["id"])) {
-                    $isAlreadyInArray = true;
-                    break;
-                }
+            if (isset($proposalsSanitized["ongoing"][$proposal["id"]]) || isset($proposalsSanitized["ongoing"][$proposal["proposalLinked"]["id"]]) ||
+                isset($proposalsSanitized["archived"][$proposal["id"]]) || isset($proposalsSanitized["archived"][$proposal["proposalLinked"]["id"]])) {
+                $isAlreadyInArray = true;
             }
             
             if ($isAlreadyInArray) {
                 continue;
             }
+
+            $now = new DateTime();
             
+            // Carpool regular
+            if ($proposal["criteria"]["frequency"] === Criteria::FREQUENCY_REGULAR) {
+                $date = new DateTime($proposal["criteria"]["toDate"]);
+            }
+            // Carpool punctual
+            else {
+                $fromDate = new DateTime($proposal["criteria"]["fromDate"]);
+                $linkedDate = isset($proposal["proposalLinked"]) ? new DateTime($proposal["proposalLinked"]["criteria"]["fromDate"]) : null;
+                $date = isset($linkedDate) && $linkedDate > $fromDate ? $linkedDate : $fromDate;
+            }
+
+            $key = $date < $now ? 'archived' : 'ongoing';
+
             // proposal is an outward
             if ($proposal["type"] === Proposal::TYPE_OUTWARD && !is_null($proposal["proposalLinked"])) {
-                $proposalsSanitized[] = [
+                $proposalsSanitized[$key][$proposal["id"]] = [
                     'outward' => $proposal,
                     'return' => $proposal["proposalLinked"]
                 ];
             // proposal is a return
             } elseif ($proposal["type"] === Proposal::TYPE_RETURN && !is_null($proposal["proposalLinked"])) {
-                $proposalsSanitized[] = [
+                $proposalsSanitized[$key][$proposal["id"]] = [
                     'outward' => $proposal["proposalLinked"],
                     'return' => $proposal
                 ];
             // proposal is one way
             } else {
-                $proposalsSanitized[] = [
+                $proposalsSanitized[$key][$proposal["id"]] = [
                     'outward' => $proposal
                 ];
             }

@@ -10,9 +10,9 @@
         >
           <v-tab>{{ $t('proposals.ongoing') }}</v-tab>
           <v-tab-item>
-            <v-container>
+            <v-container v-if="proposals.ongoing">
               <v-row
-                v-for="proposal in proposals"
+                v-for="proposal in proposals.ongoing"
                 :key="proposal.outward.id"
               >
                 <v-col cols="12">
@@ -23,10 +23,15 @@
           </v-tab-item>
           <v-tab>{{ $t('proposals.archived') }}</v-tab>
           <v-tab-item>
-            <v-container
-              fluid
-            >
-              <p>annonces archivées</p>
+            <v-container v-if="proposals.archived">
+              <v-row
+                v-for="proposal in proposals.archived"
+                :key="proposal.outward.id"
+              >
+                <v-col cols="12">
+                  <Proposal :proposal="proposal" />
+                </v-col>
+              </v-row>
             </v-container>
           </v-tab-item>
         </v-tabs>
@@ -51,8 +56,8 @@ export default {
   },
   props: {
     proposals: {
-      type: Array,
-      default: () => []
+      type: Object,
+      default: () => {}
     }
   },
   data(){

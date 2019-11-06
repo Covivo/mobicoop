@@ -126,8 +126,8 @@ export default {
       default: ""
     },
     proposals: {
-      type: Array,
-      default: () => []
+      type: Object,
+      default: () => {}
     }
   },
   data () {
