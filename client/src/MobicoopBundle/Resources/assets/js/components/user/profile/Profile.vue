@@ -8,6 +8,7 @@
           slider-color="secondary"
           color="secondary"
           vertical
+          :value="tabItemIndex"
         >
           <v-tab class="text-left justify-start ml-2 mr-5 title">
             {{ $t("tabs.myProposals") }}
@@ -18,7 +19,14 @@
           <v-tab class="text-left justify-start ml-2 mr-5 title">
             {{ $t("tabs.carpoolsAccepted") }}
           </v-tab>
-          <v-tab-item />
+          <v-tab-item>
+            <v-alert
+              type="info"
+              class="text-center"
+            >
+              En cours de développement
+            </v-alert>
+          </v-tab-item>
           <v-tab class="text-left justify-start ml-2 mr-5 title">
             {{ $t("tabs.myProfile") }}
           </v-tab>
@@ -64,7 +72,7 @@ import MyProposals from "@components/user/profile/proposal/MyProposals";
 import Alerts from "@components/user/profile/Alerts";
 import CarpoolSettings from "@components/user/profile/CarpoolSettings";
 
-import { merge } from "lodash";
+import {merge} from "lodash";
 import Translations from "@translations/components/user/profile/Profile.json";
 import TranslationsClient from "@clientTranslations/components/user/profile/Profile.json";
 
@@ -121,6 +129,16 @@ export default {
       type: Array,
       default: () => []
     }
+  },
+  data () {
+    return {
+      tabItemIndex: null
+    }
+  },
+  mounted () {
+    let urlString = window.location.href;
+    let url = new URL(urlString);
+    this.tabItemIndex = url.searchParams.get("t") ? parseInt(url.searchParams.get("t")) : 0;
   }
 }
 </script>

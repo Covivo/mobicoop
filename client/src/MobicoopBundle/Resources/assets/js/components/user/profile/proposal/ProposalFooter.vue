@@ -84,7 +84,6 @@ export default {
             data.push(offer.proposalRequest)
           }
         });
-        console.log(data);
         return data.length;
       } else {
         return 0;
