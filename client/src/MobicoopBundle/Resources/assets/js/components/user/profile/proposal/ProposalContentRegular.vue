@@ -16,50 +16,12 @@
         />
       </v-col>
       
-      <!--Outward-->
       <v-col>
-        <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('outward') }}</span>
-
-        <v-icon class="accent--text text--darken-2 font-weight-bold">
-          mdi-arrow-right
-        </v-icon>
-
-        <span
-          v-if="hasSameOutwardTimes"
-          class="primary--text text--darken-3 body-1"
-        >
-          {{ formatTime(proposal.outward.criteria.monTime) }}
-        </span>
-        <span
-          v-else
-          class="primary--text text--darken-3 body-1"
-        >
-          {{ $t('multiple') }}
-        </span>
-      </v-col>
-
-      <!-- Return -->
-      <v-col
-        v-if="hasReturn"
-      >
-        <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('return') }}</span>
-
-        <v-icon class="accent--text text--darken-2 font-weight-bold">
-          mdi-arrow-left
-        </v-icon>
-
-        <span
-          v-if="hasSameReturnTimes"
-          class="primary--text text--darken-3 body-1"
-        >
-          {{ formatTime(proposal.return.criteria.monTime) }}
-        </span>
-        <span
-          v-else
-          class="primary--text text--darken-3 body-1"
-        >
-          {{ $t('multiple') }}
-        </span>
+        <schedules
+          :outward-times="outwardTimes"
+          :return-times="returnTimes"
+          :show-return="hasReturn"
+        />
       </v-col>
     </v-row>
     <v-row justify="center">
@@ -90,23 +52,17 @@
 </template>
 
 <script>
-import moment from "moment";
-import { merge } from "lodash";
-import Translations from "@translations/components/user/profile/proposal/ProposalContentRegular.js";
-import TranslationsClient from "@clientTranslations/components/user/profile/proposal/ProposalContentRegular.js";
+import { isEmpty } from "lodash";
 
 import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary.vue';
 import RouteSummary from '@components/carpool/utilities/RouteSummary.vue';
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import Schedules from '@components/user/profile/proposal/Schedules.vue';
 
 export default {
-  i18n: {
-    messages: TranslationsMerged
-  },
   components: {
     RegularDaysSummary,
     RouteSummary,
+    Schedules
   },
   props: {
     proposal: {
@@ -138,7 +94,7 @@ export default {
   },
   computed: {
     hasReturn () {
-      return this.proposal.return;
+      return !isEmpty(this.proposal.return);
     },
     isRegular () {
       return this.proposal.outward.criteria.frequency === 2;
@@ -170,41 +126,6 @@ export default {
     hasSunday () {
       return (this.proposal.outward && this.proposal.outward.criteria.sunCheck) || 
         (this.proposal.return && this.proposal.return.criteria.sunCheck);
-    },
-    hasSameOutwardTimes () {
-      moment.locale(this.locale);
-      let isSame = true;
-      // start to 1 because we don't compare index 0 with index 0
-      for (let i = 1; i < this.outwardTimes.length; i++) {
-        if (!this.outwardTimes[i]) {
-          continue;
-        }
-        isSame = moment(this.outwardTimes[0]).isSame(this.outwardTimes[i]);
-        if (!isSame) {
-          break;
-        }
-      }
-      return isSame;
-    },
-    hasSameReturnTimes () {
-      moment.locale(this.locale);
-      let isSame = true;
-      // start to 1 because we don't compare index 0 with index 0
-      for (let i = 1; i < this.returnTimes.length; i++) {
-        if (!this.returnTimes[i]) {
-          continue;
-        }
-        isSame = moment(this.returnTimes[0]).isSame(this.returnTimes[i]);
-        if (!isSame) {
-          break;
-        }
-      }
-      return isSame;
-    }
-  },
-  methods: {
-    formatTime(time) {
-      return moment(time).format(this.$t("ui.i18n.time.format.hourMinute"));
     }
   }
 }

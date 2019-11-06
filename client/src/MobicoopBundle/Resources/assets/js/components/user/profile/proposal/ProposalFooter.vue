@@ -7,7 +7,10 @@
       <v-col cols="3">
         <span v-if="price && price > '0'">{{ price }} €</span>
       </v-col>
-      <v-col cols="6">
+      <v-col
+        cols="6"
+        align="right"
+      >
         <v-btn
           icon
         >
