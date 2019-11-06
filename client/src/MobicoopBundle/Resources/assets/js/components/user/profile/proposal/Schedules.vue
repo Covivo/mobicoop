@@ -85,56 +85,6 @@
         </v-container>
       </v-col>
     </v-row>
-      
-    <!--<v-col v-else>-->
-    <!--<v-row>-->
-    <!--&lt;!&ndash;Outward&ndash;&gt;-->
-    <!--&lt;!&ndash;<v-col>&ndash;&gt;-->
-    <!--&lt;!&ndash;<span class="accent&#45;&#45;text text&#45;&#45;darken-2 font-weight-bold body-1">{{ $t('outward') }}</span>&ndash;&gt;-->
-
-    <!--&lt;!&ndash;<v-icon class="accent&#45;&#45;text text&#45;&#45;darken-2 font-weight-bold">&ndash;&gt;-->
-    <!--&lt;!&ndash;mdi-arrow-right&ndash;&gt;-->
-    <!--&lt;!&ndash;</v-icon>&ndash;&gt;-->
-
-    <!--&lt;!&ndash;<span&ndash;&gt;-->
-    <!--&lt;!&ndash;v-if="hasSameOutwardTimes"&ndash;&gt;-->
-    <!--&lt;!&ndash;class="primary&#45;&#45;text text&#45;&#45;darken-3 body-1"&ndash;&gt;-->
-    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;{{ formatTime(outwardTimes[0]) }}&ndash;&gt;-->
-    <!--&lt;!&ndash;</span>&ndash;&gt;-->
-    <!--&lt;!&ndash;<span&ndash;&gt;-->
-    <!--&lt;!&ndash;v-else&ndash;&gt;-->
-    <!--&lt;!&ndash;class="primary&#45;&#45;text text&#45;&#45;darken-3 body-1"&ndash;&gt;-->
-    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;{{ $t('multipleTimesSlots') }}&ndash;&gt;-->
-    <!--&lt;!&ndash;</span>&ndash;&gt;-->
-    <!--&lt;!&ndash;</v-col>&ndash;&gt;-->
-
-    <!--&lt;!&ndash;&lt;!&ndash; Return &ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;<v-col&ndash;&gt;-->
-    <!--&lt;!&ndash;v-if="isReturn"&ndash;&gt;-->
-    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;<span class="accent&#45;&#45;text text&#45;&#45;darken-2 font-weight-bold body-1">{{ $t('return') }}</span>&ndash;&gt;-->
-
-    <!--&lt;!&ndash;<v-icon class="accent&#45;&#45;text text&#45;&#45;darken-2 font-weight-bold">&ndash;&gt;-->
-    <!--&lt;!&ndash;mdi-arrow-left&ndash;&gt;-->
-    <!--&lt;!&ndash;</v-icon>&ndash;&gt;-->
-
-    <!--&lt;!&ndash;<span&ndash;&gt;-->
-    <!--&lt;!&ndash;v-if="hasSameReturnTimes"&ndash;&gt;-->
-    <!--&lt;!&ndash;class="primary&#45;&#45;text text&#45;&#45;darken-3 body-1"&ndash;&gt;-->
-    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;{{ formatTime(returnTimes[0]) }}&ndash;&gt;-->
-    <!--&lt;!&ndash;</span>&ndash;&gt;-->
-    <!--&lt;!&ndash;<span&ndash;&gt;-->
-    <!--&lt;!&ndash;v-else&ndash;&gt;-->
-    <!--&lt;!&ndash;class="primary&#45;&#45;text text&#45;&#45;darken-3 body-1"&ndash;&gt;-->
-    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;{{ $t('multipleTimesSlots') }}&ndash;&gt;-->
-    <!--&lt;!&ndash;</span>&ndash;&gt;-->
-    <!--&lt;!&ndash;</v-col>&ndash;&gt;-->
-    <!--</v-row>-->
-    <!--</v-col>-->
   </v-container>
 </template>
 

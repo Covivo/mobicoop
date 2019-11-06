@@ -5,9 +5,20 @@
       :align="type==1 ? 'center' : 'start'"
       dense
     >
+      <v-col
+        v-if="time"
+        col="2"
+      >
+        <span
+          class="body-1 font-weight-bold"
+          :class="textColorClass"
+        >
+          {{ formatTime(time) }}
+        </span>
+      </v-col>
       <!-- Origin -->
       <v-col
-        cols="5"
+        :cols="time ? 4 : 5"
         align="left"
       >
         <v-list-item
@@ -50,7 +61,7 @@
 
       <!-- Destination -->
       <v-col
-        cols="5"
+        :cols="time ? 4 : 5"
         class="title font-weight-bold mt-0"
         align="left"
       >
@@ -85,6 +96,8 @@
 
 <script>
 import { merge } from "lodash";
+import moment from "moment";
+
 import Translations from "@translations/components/carpool/utilities/RouteSummary.json";
 import TranslationsClient from "@clientTranslations/components/carpool/utilities/RouteSummary.json";
 
@@ -125,6 +138,10 @@ export default {
     iconColor: {
       type: String,
       default: "yellow darken-2"
+    },
+    time: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -174,9 +191,12 @@ export default {
         return this.destination.addressLocality
       }
       return null;
-    },
+    }
   },
   methods: {
+    formatTime(time) {
+      return moment(time).format(this.$t("ui.i18n.time.format.hourMinute"));
+    }
   }
 };
 </script>
