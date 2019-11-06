@@ -282,7 +282,7 @@ class UserController extends AbstractController
                     $image->setUserId($user->getId());
                 
                     if ($image = $imageManager->createImage($image)) {
-                        return new Response();
+                        return new JsonResponse($image);
                     }
                     // return error if image post didnt't work
                     return new Response(json_encode('error.image'));
@@ -306,7 +306,7 @@ class UserController extends AbstractController
         $imageId = $user->getImages()[0]->getId();
         $imageManager->deleteImage($imageId);
 
-        return new Response();
+        return new JsonResponse($userManager->getUser($user->getId())->getAvatars());
     }
 
     /**

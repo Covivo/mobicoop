@@ -206,6 +206,12 @@ class User implements UserInterface, EquatableInterface
         self::GENDER_OTHER
     ];
 
+    const AUTHORIZED_SIZES_DEFAULT_AVATAR = [
+        "square_100",
+        "square_250",
+        "square_800"
+    ];
+
     /**
      * @var int The id of this user.
      *
@@ -645,6 +651,12 @@ class User implements UserInterface, EquatableInterface
     * @ORM\OneToMany(targetEntity="\App\User\Entity\UserNotification", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
     */
     private $userNotifications;
+
+    /**
+     * @var array|null The avatars of the user
+     * @Groups({"read","results"})
+     */
+    private $avatars;
 
     /**
      * @var array|null The threads of the user
@@ -1685,6 +1697,37 @@ class User implements UserInterface, EquatableInterface
         $this->threads = $threads;
 
         return $this;
+    }
+
+    public function getAvatars(): ?array
+    {
+        return $this->avatars;
+    }
+
+    public function setAvatars(array $avatars): self
+    {
+        $this->avatars = $avatars;
+
+        return $this;
+    }
+
+    public function addAvatar(string $avatar): ?array
+    {
+        if (is_null($this->avatars)) {
+            $this->avatars = [];
+        }
+        if (!in_array($avatar, $this->avatars)) {
+            $this->avatars[]=$avatar;
+        }
+        return $this->avatars;
+    }
+
+    public function removeAvatar(string $avatar): ?array
+    {
+        if ($key = array_search($avatar, $this->avatars)) {
+            unset($this->avatars[$key]);
+        }
+        return $this->avatars;
     }
 
     public function getFacebookId(): ?string

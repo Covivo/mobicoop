@@ -86,15 +86,6 @@ class Deserializer
     const DATETIME_FORMAT = \DateTime::ISO8601;
     const SETTER_PREFIX = "set";
 
-    private $avatarVersion;
-    private $avatarDefault;
-
-    public function __construct(string $avatarVersion=null, string $avatarDefault=null)
-    {
-        $this->avatarVersion = $avatarVersion;
-        $this->avatarDefault = $avatarDefault;
-    }
-
     /**
      * Deserialize an object.
      *
@@ -176,10 +167,13 @@ class Deserializer
                 break;
             case Contact::class:
                 return self::deserializeContact($data);
+                break;
             case Subject::class:
                 return self::deserializeSubject($data);
+                break;
             case Structure::class:
                 return self::deserializeStructure($data);
+                break;
             default:
                 break;
         }
@@ -208,15 +202,6 @@ class Deserializer
                 $user->addImage(self::deserializeImage($image));
             }
         }
-
-        // We determine the avatar
-        $images = $user->getImages();
-        if (count($images)>0 && count($images[0]->getVersions())>0 && isset($images[0]->getVersions()[$this->avatarVersion])) {
-            $user->setAvatar($images[0]->getVersions()[$this->avatarVersion]);
-        } else {
-            $user->setAvatar($this->avatarDefault);
-        }
-
         return $user;
     }
 
