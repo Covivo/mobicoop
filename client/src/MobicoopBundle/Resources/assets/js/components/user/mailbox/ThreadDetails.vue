@@ -20,7 +20,7 @@
             v-slot:icon
           >
             <v-avatar color="secondary">
-              <v-icon>mdi-account-circle</v-icon>
+              <img :src="item.user.avatars[0]">
             </v-avatar>
           </template>
           <template
@@ -76,14 +76,6 @@ export default {
     },
     idUser:{
       type: Number,
-      default:null
-    },
-    iconUser:{ // Not used for now
-      type: String,
-      default:null
-    },
-    iconRecipient:{ // Not used for now
-      type: String,
       default:null
     },
     refresh:{
