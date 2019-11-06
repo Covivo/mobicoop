@@ -447,6 +447,7 @@
           <v-btn
             text
             icon
+            :disabled="!checkIfCurrentScheduleOk"
             @click="addSchedule"
           >
             <v-icon>
@@ -505,114 +506,11 @@ export default {
       returnTrip: false,
       marginTime: this.defaultMarginTime,
       locale: this.$i18n.locale,
-      // todo : refactor the following horror with default types :)
-      schedules: [
-        {
-          id:1,
-          visible: true,
-          mon: false,
-          tue: false,
-          wed: false,
-          thu: false,
-          fri: false,
-          sat: false,
-          sun: false,
-          outwardTime: null,
-          returnTime: null,
-          menuOutwardTime: false,
-          menuReturnTime: false
-        },
-        {
-          id:2,
-          visible: false,
-          mon: false,
-          tue: false,
-          wed: false,
-          thu: false,
-          fri: false,
-          sat: false,
-          sun: false,
-          outwardTime: null,
-          returnTime: null,
-          menuOutwardTime: false,
-          menuReturnTime: false
-        },
-        {
-          id:3,
-          visible: false,
-          mon: false,
-          tue: false,
-          wed: false,
-          thu: false,
-          fri: false,
-          sat: false,
-          sun: false,
-          outwardTime: null,
-          returnTime: null,
-          menuOutwardTime: false,
-          menuReturnTime: false
-        },
-        {
-          id:4,
-          visible: false,
-          mon: false,
-          tue: false,
-          wed: false,
-          thu: false,
-          fri: false,
-          sat: false,
-          sun: false,
-          outwardTime: null,
-          returnTime: null,
-          menuOutwardTime: false,
-          menuReturnTime: false
-        },
-        {
-          id:5,
-          visible: false,
-          mon: false,
-          tue: false,
-          wed: false,
-          thu: false,
-          fri: false,
-          sat: false,
-          sun: false,
-          outwardTime: null,
-          returnTime: null,
-          menuOutwardTime: false,
-          menuReturnTime: false
-        },
-        {
-          id:6,
-          visible: false,
-          mon: false,
-          tue: false,
-          wed: false,
-          thu: false,
-          fri: false,
-          sat: false,
-          sun: false,
-          outwardTime: null,
-          returnTime: null,
-          menuOutwardTime: false,
-          menuReturnTime: false
-        },
-        {
-          id:7,
-          visible: false,
-          mon: false,
-          tue: false,
-          wed: false,
-          thu: false,
-          fri: false,
-          sat: false,
-          sun: false,
-          outwardTime: null,
-          returnTime: null,
-          menuOutwardTime: false,
-          menuReturnTime: false
-        }
-      ]
+      arrayDay : ['mon','tue','wed','thu','fri','sat','sun'],
+      checkDayTimeUse : [],
+      schedules: [],
+
+
     };
   },
   computed: {
@@ -635,13 +533,27 @@ export default {
     },
     infoMarginTime() {
       return this.$t("marginTooltip",{margin: this.marginTime/60})
-    }
+    },
+    checkIfCurrentScheduleOk(){
+      for (var s in this.schedules){
+        var i = this.schedules[s];
+        if (i.visible) {
+          if ( !i.mon && !i.tue && !i.wed && !i.thu && !i.fri && !i.sat && !i.sun )  return false;
+          if ( i.outwardTime == null && i.returnTime == null) return false;
+        }
+      }
+      return true;
+    },
   },
   watch: {
     initOutwardDate() {
       this.outwardDate = this.initOutwardDate;
     }
   },
+  created:function(){
+    this.setData();
+  },
+
   methods: {
     change() {
       let validSchedules = JSON.parse(JSON.stringify(this.activeSchedules)); // little tweak to deep copy :)
@@ -653,7 +565,7 @@ export default {
           delete validSchedules[i].visible;
           delete validSchedules[i].menuOutwardTime;
           delete validSchedules[i].menuReturnTime;
-        }        
+        }
       }
       this.$emit("change", {
         outwardDate: this.outwardDate,
@@ -664,7 +576,91 @@ export default {
         returnTrip: this.returnTrip,
         schedules: validSchedules
       });
+      this.checkIfTimeAlreadySet()
     },
+    setData(){
+      //Crée le tableau de verif des horaires prises
+      for (var i in this.arrayDay){
+        this.checkDayTimeUse[this.arrayDay[i]] = {
+          outwardTime: null,
+          returnTime: null
+        };
+      }
+      //Crée le tableau schedule
+      for (var j in [0,1,2,3,4,5,6]){
+        if (j == 0){
+          this.schedules.push({
+            id:j,
+            visible: true,
+            mon: false,
+            tue: false,
+            wed: false,
+            thu: false,
+            fri: false,
+            sat: false,
+            sun: false,
+            outwardTime: null,
+            returnTime: null,
+            menuOutwardTime: false,
+            menuReturnTime: false
+          })
+        }else{
+          this.schedules.push({
+            id:j,
+            visible: false,
+            mon: false,
+            tue: false,
+            wed: false,
+            thu: false,
+            fri: false,
+            sat: false,
+            sun: false,
+            outwardTime: null,
+            returnTime: null,
+            menuOutwardTime: false,
+            menuReturnTime: false
+          })
+        }
+      }
+    },
+    checkIfTimeAlreadySet(){
+      for (var s in this.schedules){
+        var i = this.schedules[s];
+        if (i.visible) {
+          var outwardTime = i.outwardTime;
+          var returnTime = i.returnTime;
+          if (i.mon) {
+            this.checkDayTimeUse['mon'].outwardTime = outwardTime;
+            this.checkDayTimeUse['mon'].returnTime = returnTime;
+          }
+          if (i.tue) {
+            this.checkDayTimeUse['tue'].outwardTime = outwardTime;
+            this.checkDayTimeUse['tue'].returnTime = returnTime;
+          }
+          if (i.wed){
+            this.checkDayTimeUse['wed'].outwardTime = outwardTime;
+            this.checkDayTimeUse['wed'].returnTime = returnTime;
+          }
+          if (i.thu) {
+            this.checkDayTimeUse['thu'].outwardTime = outwardTime;
+            this.checkDayTimeUse['thu'].returnTime = returnTime;
+          }
+          if (i.fri) {
+            this.checkDayTimeUse['fri'].outwardTime = outwardTime;
+            this.checkDayTimeUse['fri'].returnTime = returnTime;
+          }
+          if (i.sat){
+            this.checkDayTimeUse['sat'].outwardTime = outwardTime;
+            this.checkDayTimeUse['sat'].returnTime = returnTime;
+          }
+          if (i.sun) {
+            this.checkDayTimeUse['sun'].outwardTime = outwardTime;
+            this.checkDayTimeUse['sun'].returnTime = returnTime;
+          }
+        }
+      }
+    },
+
     clearOutwardDate() {
       this.outwardDate = null;
       this.change();
@@ -701,8 +697,9 @@ export default {
           break;
         }
       }
+      console.info(this.checkDayTimeUse)
       this.change();
-    }
+    },
   }
 };
 </script>

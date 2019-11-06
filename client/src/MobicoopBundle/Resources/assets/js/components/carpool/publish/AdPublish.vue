@@ -163,6 +163,13 @@
           <v-stepper-items>
             <!-- Step 1 : search journey -->
             <v-stepper-content step="1">
+              <ad-planification
+                :init-outward-date="outwardDate"
+                :init-outward-time="outwardTime"
+                :regular="regular"
+                :default-margin-time="defaultMarginTime"
+                @change="planificationChanged"
+              />
               <search-journey
                 :solidary-ad="solidary"
                 display-roles
@@ -177,15 +184,7 @@
             </v-stepper-content>
 
             <!-- Step 2 : planification -->
-            <v-stepper-content step="2">
-              <ad-planification
-                :init-outward-date="outwardDate"
-                :init-outward-time="outwardTime"
-                :regular="regular"
-                :default-margin-time="defaultMarginTime"
-                @change="planificationChanged"
-              />
-            </v-stepper-content>
+            <v-stepper-content step="2" />
 
             <!-- Step 3 : route -->
             <v-stepper-content step="3">
@@ -244,7 +243,7 @@
                     item-value="value"
                   />
                 </v-col>
-                  
+
                 <v-col
                   cols="2"
                   align="left"
@@ -332,7 +331,7 @@
                   </v-tooltip>
                 </v-col>
               </v-row>
-  
+
               <v-row
                 align="center"
                 dense
@@ -394,7 +393,7 @@
                 <v-col
                   cols="2"
                 >
-                  <v-text-field 
+                  <v-text-field
                     v-model="price"
                     :disabled="distance<=0"
                     type="number"
@@ -405,7 +404,7 @@
                     :class="colorPricePerKm + '--text'"
                   />
                 </v-col>
-                  
+
                 <v-col
                   cols="2"
                   align="left"
@@ -474,7 +473,7 @@
               <v-container>
                 <v-row>
                   <v-col cols="12">
-                    <ad-summary 
+                    <ad-summary
                       :driver="driver"
                       :passenger="passenger"
                       :regular="regular"
@@ -758,15 +757,13 @@ export default {
       //So now we can check on all others days, if visible and date AND at least 1 hour is not defined -> return false
       if(this.step ==2 ){
         for (var s in this.fullschedule) {
-          if (this.fullschedule[s].visible) {
-            var i = this.fullschedule[s];
+          var i = this.fullschedule[s];
+          if (i.visible) {
             if ( !i.mon && !i.tue && !i.wed && !i.thu && !i.fri && !i.sat && !i.sun )  return false;
-            if( i.outwardTime == null && i.returnTime == null) return false;
+            if ( i.outwardTime == null && i.returnTime == null) return false;
           }
         }
       }
-
-
 
       // Step 2 punctual : you have to set the outward time
       if(this.step==2 && !this.regular && !(this.outwardDate && this.outwardTime)) return false;
