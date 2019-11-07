@@ -116,7 +116,7 @@
             :label="$t('returnTrip.label')"
             color="primary"
             hide-details
-            @change="change"
+            @change="change,checkReturnDesactivate($event)"
           />
         </v-col>
 
@@ -138,7 +138,6 @@
                 :label="$t('returnDate.label')"
                 prepend-icon=""
                 readonly
-                :disabled="!returnTrip"
                 v-on="on"
               >
                 <v-icon
@@ -153,7 +152,7 @@
               :locale="locale"
               no-title
               @input="menuReturnDate = false"
-              @change="change"
+              @change="change,checkDateReturn($event)"
             />
           </v-menu>
         </v-col>
@@ -179,7 +178,6 @@
                 :label="$t('returnTime.label')"
                 prepend-icon=""
                 readonly
-                :disabled="!returnTrip"
                 v-on="on"
               />
             </template>
@@ -582,6 +580,16 @@ export default {
         returnTrip: this.returnTrip,
         schedules: validSchedules
       });
+    },
+    checkDateReturn($event){
+      if ($event) this.returnTrip = true
+    },
+    checkReturnDesactivate(event){
+
+      if (!event) {
+        this.returnDate = null
+        this.returnTime = null
+      }
     },
     getValueCheckbox(event,item,day){
 
