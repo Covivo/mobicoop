@@ -362,9 +362,15 @@ class Proposal
 
     /**
      * @var Proposal|null The proposal we want to force matching with (we assume the corresponding matching doesn't exist yet).
-     * @Groups({"read","write"})
+     * @Groups("write")
      */
     private $matchingProposal;
+
+    /**
+     * @var Matching|null The matching of the linked proposal (used for regular return trips).
+     * @Groups("write")
+     */
+    private $matchingLinked;
 
     /**
      * @var boolean Create a formal ask after posting the proposal.
@@ -747,6 +753,18 @@ class Proposal
     public function setMatchingProposal(?Proposal $matchingProposal): self
     {
         $this->matchingProposal = $matchingProposal;
+
+        return $this;
+    }
+
+    public function getMatchingLinked(): ?Matching
+    {
+        return $this->matchingLinked;
+    }
+
+    public function setMatchingLinked(?Matching $matchingLinked): self
+    {
+        $this->matchingLinked = $matchingLinked;
 
         return $this;
     }

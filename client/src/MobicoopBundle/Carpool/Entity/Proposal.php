@@ -156,6 +156,12 @@ class Proposal implements ResourceInterface, \JsonSerializable
     private $matchingProposal;
 
     /**
+     * @var Matching|null The matching of the linked proposal (used for regular return trips).
+     * @Groups({"post","put"})
+     */
+    private $matchingLinked;
+
+    /**
      * @var boolean Create a formal ask after posting the proposal.
      * @Groups({"post","put"})
      */
@@ -498,6 +504,18 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getMatchingLinked(): ?Matching
+    {
+        return $this->matchingLinked;
+    }
+
+    public function setMatchingLinked(?Matching $matchingLinked): self
+    {
+        $this->matchingLinked = $matchingLinked;
+
+        return $this;
+    }
+
     public function hasFormalAsk(): bool
     {
         return $this->formalAsk ? true : false;
@@ -528,7 +546,8 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return
         [
             'id'                => $this->getId(),
-            'matchedProposal'   => $this->getMatchedProposal(),
+            'matchingProposal'  => $this->getMatchingProposal(),
+            'matchingLinked'    => $this->getMatchingLinked(),
             'proposalLinked'    => $this->getProposalLinked(),
             'comment'           => $this->getComment(),
             'user'              => $this->getUser(),

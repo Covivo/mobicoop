@@ -303,6 +303,9 @@ class Deserializer
         if (isset($data["proposalLinked"]) && is_array($data["proposalLinked"])) {
             $proposal->setProposalLinked(self::deserializeProposal($data['proposalLinked']));
         }
+        if (isset($data["matchingLinked"]) && is_array($data["matchingLinked"])) {
+            $proposal->setMatchingLinked(self::deserializeMatching($data['matchingLinked']));
+        }
         //echo "<pre>" . print_r($proposal,true) . "</pre>";exit;
         return $proposal;
     }

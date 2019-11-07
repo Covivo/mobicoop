@@ -69,7 +69,7 @@
                 cols="4"
                 class="title text-center"
               >
-                {{ lResult.price ? lResult.price +'€' : '' }}
+                {{ lResult.roundedPrice ? lResult.roundedPrice +'€' : '' }}
               </v-col>
             </v-row>
 
@@ -548,6 +548,19 @@ export default {
         params.date = this.lResult.resultPassenger.outward.date;
         params.time = this.lResult.resultPassenger.outward.time;
         params.priceKm = this.lResult.resultPassenger.outward.priceKm;
+        params.price = this.lResult.resultPassenger.outward.originalPrice;
+        params.computedPrice = this.lResult.resultPassenger.outward.computedPrice;
+        params.computedRoundedPrice = this.lResult.resultPassenger.outward.computedRoundedPrice;
+      } else {
+        params.proposalId = this.lResult.resultDriver.outward.proposalId;
+        params.origin = this.lResult.resultDriver.outward.origin;
+        params.destination = this.lResult.resultDriver.outward.destination;
+        params.date = this.lResult.resultDriver.outward.date;
+        params.time = this.lResult.resultDriver.outward.time;
+        params.priceKm = this.lResult.resultDriver.outward.priceKm;
+        params.price = this.lResult.resultDriver.outward.originalPrice;
+        params.computedPrice = this.lResult.resultDriver.outward.computedPrice;
+        params.computedRoundedPrice = this.lResult.resultDriver.outward.computedRoundedPrice;
       }
       this.$emit('contact', params);
     },
@@ -571,8 +584,9 @@ export default {
         params.date = this.lResult.resultDriver.outward.date;
         params.time = this.lResult.resultDriver.outward.time;
         params.priceKm = this.lResult.resultDriver.outward.priceKm;
-        params.originalPrice = this.lResult.resultDriver.outward.originalPrice;
+        params.price = this.lResult.resultDriver.outward.originalPrice;
         params.computedPrice = this.lResult.resultDriver.outward.computedPrice;
+        params.computedRoundedPrice = this.lResult.resultDriver.outward.computedRoundedPrice;
       } else {
         // the requester is passenger
         params.proposalId = this.lResult.resultPassenger.outward.proposalId;
@@ -581,8 +595,9 @@ export default {
         params.date = this.lResult.resultPassenger.outward.date;
         params.time = this.lResult.resultPassenger.outward.time;
         params.priceKm = this.lResult.resultPassenger.outward.priceKm;
-        params.originalPrice = this.lResult.resultPassenger.outward.originalPrice;
+        params.price = this.lResult.resultPassenger.outward.originalPrice;
         params.computedPrice = this.lResult.resultPassenger.outward.computedPrice;
+        params.computedRoundedPrice = this.lResult.resultPassenger.outward.computedRoundedPrice;
       }
       this.$emit('carpool', params);
     },

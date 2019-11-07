@@ -237,6 +237,12 @@ class ResultItem
     private $computedPrice;
 
     /**
+     * @var string The computed rounded price for the common distance carpooled.
+     * @Groups("results")
+     */
+    private $computedRoundedPrice;
+
+    /**
      * @var int The original distance in metres.
      * @Groups("results")
      */
@@ -720,6 +726,16 @@ class ResultItem
     public function setComputedPrice(?string $computedPrice)
     {
         $this->computedPrice = $computedPrice;
+    }
+
+    public function getComputedRoundedPrice(): ?string
+    {
+        return $this->computedRoundedPrice;
+    }
+    
+    public function setComputedRoundedPrice(?string $computedRoundedPrice)
+    {
+        $this->computedRoundedPrice = $computedRoundedPrice;
     }
 
     public function getOriginalDistance(): ?int

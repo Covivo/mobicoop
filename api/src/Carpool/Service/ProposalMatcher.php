@@ -167,7 +167,12 @@ class ProposalMatcher
             }
         } else {
             // we have to force the matching with the given proposal
-            $proposalsFound[] = $proposal->getMatchingProposal();
+            // we first check if it's a return trip : if there's a matchinkLinked in the proposal, we need to use the proposalLinked of the matchingProposal
+            if ($proposal->getMatchingLinked()) {
+                $proposalsFound[] = $proposal->getMatchingProposal()->getProposalLinked();
+            } else {
+                $proposalsFound[] = $proposal->getMatchingProposal();
+            }
         }
         
         $matchings = [];

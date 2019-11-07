@@ -42,6 +42,7 @@ use App\Geography\Repository\DirectionRepository;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\TerritoryManager;
 use App\Geography\Service\ZoneManager;
+use App\Service\FormatDataManager;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -70,6 +71,7 @@ class ProposalManager
     private $eventDispatcher;
     private $communityManager;
     private $askManager;
+    private $formatDataManager;
     private $params;
 
     /**
@@ -82,7 +84,7 @@ class ProposalManager
      * @param GeoRouter $geoRouter
      * @param ZoneManager $zoneManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, CommunityManager $communityManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher, AskManager $askManager, array $params)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, CommunityManager $communityManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher, AskManager $askManager, FormatDataManager $formatDataManager, array $params)
     {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -96,6 +98,7 @@ class ProposalManager
         $this->eventDispatcher = $dispatcher;
         $this->communityManager = $communityManager;
         $this->askManager = $askManager;
+        $this->formatDataManager = $formatDataManager;
         $this->params = $params;
     }
 
@@ -338,11 +341,15 @@ class ProposalManager
         if ($persist) {
             foreach ($matchings as $matching) {
                 // if there is a matched proposal we need to find the right matching and create the Ask
-                if (!is_null($proposal->getMatchingProposal())) {
+                // but only for the outward if it's a return trip, to avoid creating 2 asks for the same trip
+                if (!is_null($proposal->getMatchingProposal()) && is_null($proposal->getMatchingLinked())) {
                     if ($proposal->getMatchingProposal()->getId() === $matching->getProposalOffer()->getId() ||
                         $proposal->getMatchingProposal()->getId() === $matching->getProposalRequest()->getId()
                     ) {
+                        // we create the ask
                         $this->askManager->createAskFromMatchedProposal($proposal, $matching, $proposal->hasFormalAsk());
+                        // we set the matching linked if we need to create a forced reverse matching (can be the case for regular return trips)
+                        $proposal->setMatchingLinked($matching);
                     }
                 }
 
@@ -744,9 +751,12 @@ class ProposalManager
                     $outward->setOriginalPrice($proposal->getCriteria()->getPrice());
                 } else {
                     // otherwise we use the common price
-                    $outward->setOriginalPrice((string)(self::roundNearest((float)$matching['request']->getFilters()['originalDistance'] * (float)$this->params['defaultPriceKm'] / 1000)));
+                    $outward->setOriginalPrice((string)((int)$matching['request']->getFilters()['originalDistance']*(float)$outward->getPriceKm()/1000));
                 }
-                $outward->setComputedPrice((string)(self::roundNearest((float)$matching['request']->getFilters()['commonDistance'] * (float)$outward->getPriceKm() / 1000)));
+                // the computed price is the price to be paid by the passenger
+                // it's ((common distance + detour distance) * price by km)
+                $outward->setComputedPrice((string)(((int)$matching['request']->getFilters()['commonDistance']+(int)$matching['request']->getFilters()['detourDistance'])*(float)$outward->getPriceKm()/1000));
+                $outward->setComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$outward->getComputedPrice(), $proposal->getCriteria()->getFrequency()));
                 $resultDriver->setOutward($outward);
                 
                 // return trip, only for regular trip for now
@@ -942,9 +952,12 @@ class ProposalManager
                             $return->setOriginalPrice($proposal->getCriteria()->getPrice());
                         } else {
                             // otherwise we use the common price
-                            $return->setOriginalPrice((string)(self::roundNearest((float)$matchingRelated->getFilters()['originalDistance'] * (float)$this->params['defaultPriceKm'] / 1000)));
+                            $return->setOriginalPrice((string)((int)$matchingRelated->getFilters()['originalDistance']*(float)$return->getPriceKm()/1000));
                         }
-                        $return->setComputedPrice((string)(self::roundNearest((float)$matchingRelated->getFilters()['commonDistance'] * (float)$outward->getPriceKm() / 1000)));
+                        // the computed price is the price to be paid by the passenger
+                        // it's ((common distance + detour distance) * price by km)
+                        $return->setComputedPrice((string)(((int)$matchingRelated->getFilters()['commonDistance']+(int)$matchingRelated->getFilters()['detourDistance'])*(float)$return->getPriceKm()/1000));
+                        $return->setComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$return->getComputedPrice(), $proposal->getCriteria()->getFrequency()));
                     }
                     $return->setMultipleTimes();
                     if ($return->hasMultipleTimes()) {
@@ -1270,9 +1283,12 @@ class ProposalManager
                     $outward->setOriginalPrice($matching['offer']->getProposalOffer()->getCriteria()->getPrice());
                 } else {
                     // otherwise we use the common price
-                    $outward->setOriginalPrice((string)(self::roundNearest((float)$matching['offer']->getFilters()['originalDistance'] * (float)$this->params['defaultPriceKm'] / 1000)));
+                    $outward->setOriginalPrice((string)((int)$matching['offer']->getFilters()['originalDistance']*(float)$outward->getPriceKm()/1000));
                 }
-                $outward->setComputedPrice((string)(self::roundNearest((float)$matching['offer']->getFilters()['commonDistance'] * (float)$outward->getPriceKm() / 1000)));
+                // the computed price is the price to be paid by the passenger
+                // it's ((common distance + detour distance) * price by km)
+                $outward->setComputedPrice((string)(((int)$matching['offer']->getFilters()['commonDistance']+(int)$matching['offer']->getFilters()['detourDistance'])*(float)$outward->getPriceKm()/1000));
+                $outward->setComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$outward->getComputedPrice(), $proposal->getCriteria()->getFrequency()));
                 $resultPassenger->setOutward($outward);
 
                 // return trip, only for regular trip for now
@@ -1475,9 +1491,12 @@ class ProposalManager
                             $return->setOriginalPrice($matchingRelated->getProposalOffer()->getCriteria()->getPrice());
                         } else {
                             // otherwise we use the common price
-                            $return->setOriginalPrice((string)(self::roundNearest((float)$matchingRelated->getFilters()['originalDistance'] * (float)$this->params['defaultPriceKm'] / 1000)));
+                            $return->setOriginalPrice((string)((int)$matchingRelated->getFilters()['originalDistance']*(float)$return->getPriceKm()/1000));
                         }
-                        $return->setComputedPrice((string)(self::roundNearest((float)$matchingRelated->getFilters()['commonDistance'] * (float)$outward->getPriceKm() / 1000)));
+                        // the computed price is the price to be paid by the passenger
+                        // it's ((common distance + detour distance) * price by km)
+                        $return->setComputedPrice((string)(((int)$matchingRelated->getFilters()['commonDistance']+(int)$matchingRelated->getFilters()['detourDistance'])*(float)$return->getPriceKm()/1000));
+                        $return->setComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$return->getComputedPrice(), $proposal->getCriteria()->getFrequency()));
                     }
                     $return->setMultipleTimes();
                     if ($return->hasMultipleTimes()) {
@@ -1567,6 +1586,7 @@ class ProposalManager
                     $result->setToDate($result->getResultDriver()->getOutward()->getToDate());
                 }
                 $result->setPrice($result->getResultDriver()->getOutward()->getComputedPrice());
+                $result->setRoundedPrice($result->getResultDriver()->getOutward()->getComputedRoundedPrice());
                 $result->setSeats($result->getResultDriver()->getSeats());
             } else {
                 // the carpooler is driver or passenger
@@ -1578,6 +1598,7 @@ class ProposalManager
                     $result->setToDate($result->getResultPassenger()->getOutward()->getToDate());
                 }
                 $result->setPrice($result->getResultPassenger()->getOutward()->getComputedPrice());
+                $result->setRoundedPrice($result->getResultPassenger()->getOutward()->getComputedRoundedPrice());
                 $result->setSeats($result->getResultPassenger()->getSeats());
             }
             // regular days and times
@@ -1727,12 +1748,6 @@ class ProposalManager
             }
             $this->entityManager->flush();
         }
-    }
-    
-    // rounds to the nearest subdivision
-    private static function roundNearest($num, $nearest = .5)
-    {
-        return round($num / $nearest) * $nearest;
     }
 
     /**

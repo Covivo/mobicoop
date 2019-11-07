@@ -474,6 +474,24 @@ class ProposalManager
                     $proposalReturn->addCommunity($community);
                 }
             }
+            // if there's a matching linked, it means the proposal we create may be the return trip of a "forced" matching proposal
+            if ($proposalOutward->getMatchingLinked()) {
+                $proposalReturn->setMatchingLinked($proposalOutward->getMatchingLinked());
+            }
+            // we check if the proposal is private (usually if the proposal is created after a search)
+            if (isset($ad['private']) && $ad['private']) {
+                $proposalReturn->setPrivate(true);
+            }
+            // we check if there's a proposalID
+            if (isset($ad['proposalId'])) {
+                // there's a proposalId : we know that it's a match to force
+                // as it's a return trip, this proposalId will be replaced by the linked proposalId
+                $proposalReturn->setMatchingProposal(new Proposal($ad['proposalId']));
+            }
+            // we check if an formal ask has to be made after the creation of the proposal (usually if the proposal is created after a search)
+            if (isset($ad['formalAsk'])) {
+                $proposalReturn->setFormalAsk($ad['formalAsk']);
+            }
             $criteriaReturn = new Criteria();
             $criteriaReturn->setDriver($ad['driver']);
             $criteriaReturn->setPassenger($ad['passenger']);
