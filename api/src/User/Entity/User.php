@@ -516,6 +516,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      * @MaxDepth(1)
+     * @Groups({"proposals", "get"})
      * @Apisubresource
      */
     private $proposals;

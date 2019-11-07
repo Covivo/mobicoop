@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row
       justify="center"
     >
@@ -16,14 +16,23 @@
           >
             {{ $t("tabs.myProposals") }}
           </v-tab>
-          <v-tab-item value="myProposals" />
+          <v-tab-item value="myProposals">
+            <MyProposals :proposals="proposals" />
+          </v-tab-item>
           <v-tab
             class="text-left justify-start ml-2 mr-5 title"
             href="#carpoolsAccepted"
           >
             {{ $t("tabs.carpoolsAccepted") }}
           </v-tab>
-          <v-tab-item value="carpoolsAccepted" />
+          <v-tab-item value="carpoolsAccepted">
+            <v-alert
+              type="info"
+              class="text-center"
+            >
+              En cours de développement
+            </v-alert>
+          </v-tab-item>
           <v-tab
             class="text-left justify-start ml-2 mr-5 title"
             href="#myProfile"
@@ -48,12 +57,6 @@
                 />
               </v-tab-item>
               <v-tab class="subtitle-1">
-                {{ $t("tabs.myProposals") }}
-              </v-tab>
-              <v-tab-item>
-                <MyProposals />
-              </v-tab-item>
-              <v-tab class="subtitle-1">
                 {{ $t("tabs.alerts") }}
               </v-tab>
               <v-tab-item>
@@ -74,7 +77,7 @@
 </template>
 <script>
 import UpdateProfile from "@components/user/profile/UpdateProfile";
-import MyProposals from "@components/user/profile/MyProposals";
+import MyProposals from "@components/user/profile/proposal/MyProposals";
 import Alerts from "@components/user/profile/Alerts";
 import CarpoolSettings from "@components/user/profile/CarpoolSettings";
 
@@ -130,6 +133,10 @@ export default {
     platform: {
       type: String,
       default: ""
+    },
+    proposals: {
+      type: Object,
+      default: () => {}
     },
     tabDefault: {
       type: String,
