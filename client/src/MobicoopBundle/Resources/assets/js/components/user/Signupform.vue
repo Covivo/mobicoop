@@ -210,12 +210,11 @@
               :close-on-content-click="false"
               transition="scale-transition"
               offset-y
-              full-width
               min-width="290px"
             >
               <template v-slot:activator="{ on }">
                 <v-text-field
-                  v-model="date"
+                  v-model="form.date"
                   :label="$t('models.user.birthDay.placeholder')+` *`"
                   readonly
                   :rules="[ form.birthdayRules.checkIfAdult ]"
@@ -226,8 +225,9 @@
               </template>
               <v-date-picker
                 ref="picker"
-                v-model="date"
+                v-model="form.date"
                 :max="new Date().toISOString().substr(0, 10)"
+                :locale="locale"
                 @change="save"
               />
             </v-menu>
@@ -316,6 +316,7 @@
 </template>
 
 <script>
+import moment from "moment";
 import axios from "axios";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 
@@ -376,7 +377,6 @@ export default {
       step4: true,
       step5: true,
       menu : false,
-      date : null,
 
       // disable validation if homeAddress is empty and required
       isDisable: this.requiredHomeAddress ? true : false,
@@ -413,10 +413,7 @@ export default {
           {genderItem: this.$t('models.user.gender.values.male'), genderValue: '2'},
           {genderItem: this.$t('models.user.gender.values.other'), genderValue: '3'},
         ],
-        birthYear: null,
-        birthYearRules: [
-          v => !!v || this.$t("models.user.birthYear.errors.required")
-        ],
+        date : null,
         telephone: null,
         telephoneRules: [
           v => !!v || this.$t("models.user.phone.errors.required"),
@@ -460,7 +457,9 @@ export default {
           v => !!v || this.$t("ui.pages.signup.chart.errors.required")
         ],
         idFacebook:null
-      }
+      },
+      locale: this.$i18n.locale
+
     };
   },
   computed : {
@@ -500,8 +499,8 @@ export default {
       this.$refs.menu.save(date)
     },
     validate: function (e) {
-      this.loading = true,
-      axios.post('/utilisateur/inscription',
+      this.loading = true;
+      axios.post(this.$t('urlSignUp'),
         {
           email:this.form.email,
           telephone:this.form.telephone,
@@ -509,7 +508,7 @@ export default {
           givenName:this.form.givenName,
           familyName:this.form.familyName,
           gender:this.form.gender,
-          birthYear:this.form.birthYear,
+          birthDay:this.form.date,
           address:this.form.homeAddress,
           idFacebook:this.form.idFacebook
         },{
