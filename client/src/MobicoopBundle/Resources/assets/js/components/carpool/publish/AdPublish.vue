@@ -703,8 +703,8 @@ export default {
       useTime: null,            // not used yet
       anyRouteAsPassenger: null, // not used yet
       solidary: this.solidaryAd,
-      numberSeats : [ "1","2","3","4"],
-      seats: "3",
+      numberSeats : [ 1,2,3,4],
+      seats : 3
     }
 
 
