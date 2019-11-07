@@ -596,10 +596,7 @@ export default {
         if (event) {
 
           this.verifCurrentdDayInAllSchedules(day,id)
-          for (var oneDay in this.arrayDay ){
 
-            this.verifAllDaysSchedules(this.arrayDay[oneDay])
-          }
 
           // We uncheck a day
         }else{
@@ -643,21 +640,12 @@ export default {
         }
       }
       if (c.returnTime) {
-        for (var k in this.activeSchedules) {
-          var v = this.activeSchedules[k];
-          if (v.id != c.id) {
-            this.activeSchedules[k].returnDisabled = true;
-            this.activeSchedules[k].returnTime = null;
+        for (var l in this.activeSchedules) {
+          var b = this.activeSchedules[l];
+          if (b.id != c.id) {
+            this.activeSchedules[l].returnDisabled = true;
+            this.activeSchedules[l].returnTime = null;
           }
-        }
-      }
-    },
-    verifAllDaysSchedules(day){
-      for (var k in this.activeSchedules) {
-        var v = this.activeSchedules[k];
-        if (v.id != c.id) {
-          this.activeSchedules[k].outwardDisabled = true;
-          //this.activeSchedules[k].outwardTime = null;
         }
       }
     },
