@@ -1,10 +1,12 @@
 {
     "fr":{
         "title":"Inscription",
+        "urlSignUp":"/utilisateur/inscription",
         "urlRedirectAfterSignUp":"/utilisateur/inscription/validation"
     },
     "en":{
         "title":"Sign Up",
+        "urlSignUp":"/user/signup",
         "urlRedirectAfterSignUp":"/user/signup/validation"
     }
 }

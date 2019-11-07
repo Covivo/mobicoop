@@ -140,7 +140,7 @@ class UserController extends AbstractController
                 $address->setHome(true);
             }
             $user->addAddress($address);
-
+            var_dump($data);
             // pass front info into user form
             $user->setEmail($data['email']);
             $user->setTelephone($data['telephone']);
