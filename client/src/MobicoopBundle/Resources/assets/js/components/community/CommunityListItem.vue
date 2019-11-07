@@ -46,7 +46,7 @@
           class="my-2"
         >
           <v-btn
-            color="primary"
+            color="secondary"
             rounded
             :href="linkToCommunityShow(item)"
           >
