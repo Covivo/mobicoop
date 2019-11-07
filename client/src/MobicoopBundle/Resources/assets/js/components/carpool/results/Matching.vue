@@ -63,7 +63,7 @@
             <v-col
               cols="12"
               align="left"
-            >    
+            >
               <!-- Matching result -->
               <matching-result
                 :result="result"
