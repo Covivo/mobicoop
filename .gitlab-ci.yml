@@ -213,7 +213,7 @@ prod_deploy:
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
     - npm run update-db   
   script:                                          
-    - npm run start-ci & wait-on client/public/build/entrypoints.json
+    - cd client && npm run compile && cd ../   
     - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa                       #
     - chmod 700 id_rsa                                              #
     - mv id_rsa ${HOME}/.ssh                                        # ssh identification on docker side
