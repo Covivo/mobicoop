@@ -64,7 +64,7 @@
             <a :href="paths.community_create">
               <v-btn
                 type="button"
-                color="primary"
+                color="secondary"
                 rounded
               >
                 {{ $t('createCommunity') }}
@@ -170,6 +170,8 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+a{
+    text-decoration: none;
+}
 </style>
