@@ -116,7 +116,7 @@
             :label="$t('returnTrip.label')"
             color="primary"
             hide-details
-            @change="change,checkReturnDesactivate($event)"
+            @change="change(),checkReturnDesactivate($event)"
           />
         </v-col>
 
@@ -152,7 +152,7 @@
               :locale="locale"
               no-title
               @input="menuReturnDate = false"
-              @change="change,checkDateReturn($event)"
+              @change="checkDateReturn($event),change()"
             />
           </v-menu>
         </v-col>
@@ -187,7 +187,7 @@
               format="24hr"
               header-color="secondary"
               @click:minute="$refs.menuReturnTime.save(returnTime)"
-              @change="change"
+              @change="checkDateReturn($event),change()"
             />
           </v-menu>
         </v-col>
@@ -557,6 +557,10 @@ export default {
   },
 
   methods: {
+
+    checkDateReturn($event){
+      if ($event) this.returnTrip = true
+    },
     change() {
       let validSchedules = JSON.parse(JSON.stringify(this.activeSchedules)); // little tweak to deep copy :)
       for (var i=0;i<validSchedules.length;i++) {
@@ -581,11 +585,7 @@ export default {
         schedules: validSchedules
       });
     },
-    checkDateReturn($event){
-      if ($event) this.returnTrip = true
-    },
     checkReturnDesactivate(event){
-
       if (!event) {
         this.returnDate = null
         this.returnTime = null
