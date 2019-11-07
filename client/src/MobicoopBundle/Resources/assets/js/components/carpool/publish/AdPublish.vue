@@ -244,7 +244,7 @@
                     item-value="value"
                   />
                 </v-col>
-                  
+
                 <v-col
                   cols="2"
                   align="left"
@@ -332,7 +332,7 @@
                   </v-tooltip>
                 </v-col>
               </v-row>
-  
+
               <v-row
                 align="center"
                 dense
@@ -394,7 +394,7 @@
                 <v-col
                   cols="2"
                 >
-                  <v-text-field 
+                  <v-text-field
                     v-model="price"
                     :disabled="distance<=0"
                     type="number"
@@ -405,7 +405,7 @@
                     :class="colorPricePerKm + '--text'"
                   />
                 </v-col>
-                  
+
                 <v-col
                   cols="2"
                   align="left"
@@ -474,7 +474,7 @@
               <v-container>
                 <v-row>
                   <v-col cols="12">
-                    <ad-summary 
+                    <ad-summary
                       :driver="driver"
                       :passenger="passenger"
                       :regular="regular"
@@ -703,8 +703,8 @@ export default {
       useTime: null,            // not used yet
       anyRouteAsPassenger: null, // not used yet
       solidary: this.solidaryAd,
-      numberSeats : [ "1","2","3","4"],
-      seats: "3",
+      numberSeats : [ 1,2,3,4],
+      seats : 3
     }
 
 
@@ -753,10 +753,24 @@ export default {
       // Specifics by steps
       // Step 2 regular : you have to setup at least one schedule
       if(this.step==2 && this.regular && (this.schedules==null || this.schedules.length==0)) return false;
+
+      //We get here if we give at least the departure time on the 1st day
+      //So now we can check on all others days, if visible and date AND at least 1 hour is not defined -> return false
+      if(this.step ==2 ){
+        for (var s in this.fullschedule) {
+          var i = this.fullschedule[s];
+          if (i.visible) {
+            if ( !i.mon && !i.tue && !i.wed && !i.thu && !i.fri && !i.sat && !i.sun )  return false;
+            if ( i.outwardTime == null && i.returnTime == null) return false;
+          }
+        }
+      }
+
       // Step 2 punctual : you have to set the outward time
       if(this.step==2 && !this.regular && !(this.outwardDate && this.outwardTime)) return false;
       // Step 2 punctual, round-trip chosen : you have to set the outward date & time
       if(this.step==2 && !this.regular && this.returnTrip && !(this.returnDate && this.returnTime)) return false;
+
 
       return true;
     },
@@ -855,6 +869,7 @@ export default {
       this.returnTime = planification.returnTime;
       this.schedules = planification.schedules;
       this.returnTrip = planification.returnTrip;
+      this.fullschedule = planification.fullschedule;
     },
     routeChanged(route) {
       this.route = route;
