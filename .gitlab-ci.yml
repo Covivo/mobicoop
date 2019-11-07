@@ -200,8 +200,18 @@ prod_deploy:
     name: prod
     url: https://mobicoop.io
   before_script: # This is required to send the prod type no dev, since it creates errors
-  dependencies:
-   - test_deploy
+  #dependencies:
+   #- test_deploy
+    - echo API_URI=http://localhost:8080/ >> client/.env # Override default docker value for gitlab-ci
+    - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
+    - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
+    - chmod 777 config/jwt/*
+    - cp config/rdex/clients.json.dist config/rdex/clients.json 
+    - cp config/rdex/operator.json.dist config/rdex/operator.json
+    - cp config/rdex/providers.json.dist config/rdex/providers.json && cd ../
+    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
+    - npm run install-all-ci # Install the dependencies in the local node_modules folder
+    - npm run update-db   
   script:                                          
     - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa                       #
     - chmod 700 id_rsa                                              #
