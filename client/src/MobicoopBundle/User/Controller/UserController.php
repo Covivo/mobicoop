@@ -42,6 +42,8 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
+use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
+use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
@@ -49,6 +51,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -63,14 +66,20 @@ class UserController extends AbstractController
     use HydraControllerTrait;
 
     private $encoder;
+    private $facebook_show;
+    private $facebook_appid;
+    private $required_home_address;
 
     /**
      * Constructor
      * @param UserPasswordEncoderInterface $encoder
      */
-    public function __construct(UserPasswordEncoderInterface $encoder)
+    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address)
     {
         $this->encoder = $encoder;
+        $this->facebook_show = $facebook_show;
+        $this->facebook_appid = $facebook_appid;
+        $this->required_home_address = $required_home_address;
     }
 
     /***********
@@ -90,10 +99,12 @@ class UserController extends AbstractController
         if (!is_null($error)) {
             $errorMessage = $error->getMessage();
         }
-
+        
         return $this->render('@Mobicoop/user/login.html.twig', [
-            "errorMessage"=>$errorMessage
-            ]);
+            "errorMessage"=>$errorMessage,
+            "facebook_show"=>($this->facebook_show==="true") ? true : false,
+            "facebook_appid"=>$this->facebook_appid,
+        ]);
     }
 
     /**
@@ -139,6 +150,10 @@ class UserController extends AbstractController
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
 
+            if (!is_null($data['idFacebook'])) {
+                $user->setFacebookId($data['idFacebook']);
+            }
+
             // Create token to valid inscription
             $datetime = new DateTime();
             $time = $datetime->getTimestamp();
@@ -154,8 +169,11 @@ class UserController extends AbstractController
         }
  
         return $this->render('@Mobicoop/user/signup.html.twig', [
-                'error' => $error
-            ]);
+                'error' => $error,
+                "facebook_show"=>($this->facebook_show==="true") ? true : false,
+                "facebook_appid"=>$this->facebook_appid,
+                "required_home_address"=>($this->required_home_address==="true") ? true : false,
+        ]);
     }
 
     /**
@@ -180,7 +198,7 @@ class UserController extends AbstractController
                         $token = new UsernamePasswordToken($userFound, null, 'main', $userFound->getRoles());
                         $this->get('security.token_storage')->setToken($token);
                         $this->get('session')->set('_security_main', serialize($token));
-                        return $this->redirectToRoute('home');
+                        return $this->redirectToRoute('carpool_first_ad_post');
                     }
                 }
             } else {
@@ -193,7 +211,7 @@ class UserController extends AbstractController
     /**
      * User profile update.
      */
-    public function userProfileUpdate(UserManager $userManager, Request $request, AddressManager $addressManager, TranslatorInterface $translator)
+    public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
@@ -209,25 +227,28 @@ class UserController extends AbstractController
         $error = false;
            
         if ($request->isMethod('POST')) {
-            $data = json_decode($request->getContent(), true);
-          
+            $data = $request->request;
+            $file = $request->files->get('avatar');
+            
             if (!$homeAddress) {
                 $homeAddress = new Address();
             }
-            $homeAddress->setAddressCountry($data['homeAddress']['addressCountry']);
-            $homeAddress->setAddressLocality($data['homeAddress']['addressLocality']);
-            $homeAddress->setCountryCode($data['homeAddress']['countryCode']);
-            $homeAddress->setCounty($data['homeAddress']['county']);
-            $homeAddress->setLatitude($data['homeAddress']['latitude']);
-            $homeAddress->setLocalAdmin($data['homeAddress']['localAdmin']);
-            $homeAddress->setLongitude($data['homeAddress']['longitude']);
-            $homeAddress->setMacroCounty($data['homeAddress']['macroCounty']);
-            $homeAddress->setMacroRegion($data['homeAddress']['macroRegion']);
-            $homeAddress->setPostalCode($data['homeAddress']['postalCode']);
-            $homeAddress->setRegion($data['homeAddress']['region']);
-            $homeAddress->setStreet($data['homeAddress']['street']);
-            $homeAddress->setStreetAddress($data['homeAddress']['streetAddress']);
-            $homeAddress->setSubLocality($data['homeAddress']['subLocality']);
+            
+            $address=json_decode($data->get('homeAddress'), true);
+            $homeAddress->setAddressCountry($address['addressCountry']);
+            $homeAddress->setAddressLocality($address['addressLocality']);
+            $homeAddress->setCountryCode($address['countryCode']);
+            $homeAddress->setCounty($address['county']);
+            $homeAddress->setLatitude($address['latitude']);
+            $homeAddress->setLocalAdmin($address['localAdmin']);
+            $homeAddress->setLongitude($address['longitude']);
+            $homeAddress->setMacroCounty($address['macroCounty']);
+            $homeAddress->setMacroRegion($address['macroRegion']);
+            $homeAddress->setPostalCode($address['postalCode']);
+            $homeAddress->setRegion($address['region']);
+            $homeAddress->setStreet($address['street']);
+            $homeAddress->setStreetAddress($address['streetAddress']);
+            $homeAddress->setSubLocality($address['subLocality']);
             $homeAddress->setName($translator->trans('homeAddress', [], 'signup'));
             $homeAddress->setHome(true);
             
@@ -241,23 +262,45 @@ class UserController extends AbstractController
                 }
             }
 
-            $user->setEmail($data['email']);
-            $user->setTelephone($data['telephone']);
-            $user->setGivenName($data['givenName']);
-            $user->setFamilyName($data['familyName']);
-            $user->setGender($data['gender']);
-            $user->setBirthYear($data['birthYear']);
-            $data = $userManager->updateUser($user);
-            $reponseofmanager= $this->handleManagerReturnValue($data);
-            if (!empty($reponseofmanager)) {
-                return $reponseofmanager;
+            $user->setEmail($data->get('email'));
+            $user->setTelephone($data->get('telephone'));
+            $user->setGivenName($data->get('givenName'));
+            $user->setFamilyName($data->get('familyName'));
+            $user->setGender($data->get('gender'));
+            $user->setBirthYear($data->get('birthYear'));
+            
+            if ($user = $userManager->updateUser($user)) {
+                if ($file) {
+                    // Post avatar of the user
+                    $image = new Image();
+                    $image->setUserFile($file);
+                    $image->setUserId($user->getId());
+                
+                    if ($image = $imageManager->createImage($image)) {
+                        return new Response();
+                    }
+                    // return error if image post didnt't work
+                    return new Response(json_encode('error.image'));
+                }
             }
         }
-        
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
-                'user' => $user,
+                'alerts' => $userManager->getAlerts($user)['alerts']
             ]);
+    }
+
+    /**
+     * User avatar delete.
+     * Ajax
+     */
+    public function userProfileAvatarDelete(ImageManager $imageManager, UserManager $userManager)
+    {
+        $user = clone $userManager->getLoggedUser();
+        $imageId = $user->getImages()[0]->getId();
+        $imageManager->deleteImage($imageId);
+
+        return new Response();
     }
 
     /**
@@ -333,6 +376,7 @@ class UserController extends AbstractController
             if (isset($data["email"]) && $data["email"]!==null) {
                 return new Response(json_encode($userManager->findByEmail($data["email"], true)));
             } elseif (isset($data["phone"]) && $data["phone"]!==null) {
+                // For now, the recovery by phone has been removed from front but it functionnal in the backend
                 return new Response(json_encode($userManager->findByPhone($data["phone"], true)));
             }
             return new Response();
@@ -385,6 +429,8 @@ class UserController extends AbstractController
                 return new Response(json_encode("error"));
             }
         }
+
+        return new Response();
     }
 
 
@@ -422,12 +468,29 @@ class UserController extends AbstractController
     /**
      * User mailbox
      */
-    public function mailBox(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    public function mailBox(UserManager $userManager, Request $request)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
 
-        return $this->render('@Mobicoop/user/messages.html.twig', ["idUser"=>$user->getId()]);
+        $newThread = null;
+        $idThreadDefault = null;
+
+        if ($request->isMethod('POST')) {
+            $newThread = [
+                "carpool" => (int)$request->request->get('carpool'),
+                "idRecipient" => (int)$request->request->get('idRecipient'),
+                "familyName" => $request->request->get('familyName'),
+                "givenName" => $request->request->get('givenName')
+            ];
+            $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
+        }
+
+        return $this->render('@Mobicoop/user/messages.html.twig', [
+            "idUser"=>$user->getId(),
+            "idThreadDefault"=>$idThreadDefault,
+            "newThread" => $newThread
+        ]);
     }
 
     /*************** NEW VERSION */
@@ -654,7 +717,7 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            $idThreadMessage = $data['idThreadMessage'];
+            $idThreadMessage = ($data['idThreadMessage']==-1) ? null : $data['idThreadMessage'];
             $text = $data['text'];
             $idRecipient = $data['idRecipient'];
             $idAskHistory = $data['idAskHistory'];
@@ -738,5 +801,99 @@ class UserController extends AbstractController
         }
 
         return new Response(json_encode("Not a post"));
+    }
+
+    /**
+     * Connect a user by his facebook credentials
+     * AJAX
+     */
+    public function userFacebookConnect(UserManager $userManager, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            
+            // We get the user by his email
+            if (!empty($data["email"])) {
+                $user = $userManager->findByEmail($data["email"]);
+                if ($user && $user->getFacebookId()===$data["personalID"]) {
+                    // Same Facebook ID in BDD that the one from the front component. We log the user.
+                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                    $this->get('security.token_storage')->setToken($token);
+                    $this->get('session')->set('_security_main', serialize($token));
+
+                    return new JsonResponse($user->getFacebookId());
+                } else {
+                    return new JsonResponse(['error'=>'userFBNotFound']);
+                }
+            } else {
+                return new JsonResponse(['error'=>'userFBNotFound']);
+            }
+        }
+
+        return new JsonResponse(['error'=>'errorCredentialsFacebook']);
+    }
+
+    /**
+     * Update a user alert
+     * AJAX
+     */
+    public function updateAlert(UserManager $userManager, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $user = $userManager->getLoggedUser();
+            $data = json_decode($request->getContent(), true);
+
+            $responseUpdate = $userManager->updateAlert($user, $data["id"], $data["active"]);
+            return new JsonResponse($responseUpdate);
+        }
+        return new JsonResponse(['error'=>'errorUpdateAlert']);
+    }
+
+    /**
+     * User carpool settings update.
+     * Ajax
+     *
+     * @param UserManager $userManager
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function userCarpoolSettingsUpdate(UserManager $userManager, Request $request)
+    {
+        // we clone the logged user to avoid getting logged out in case of error in the form
+        $user = clone $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+        $this->denyAccessUnlessGranted('update', $user);
+        
+        if ($request->isMethod('PUT')) {
+            $data = json_decode($request->getContent(), true);
+
+            $user->setSmoke($data["smoke"]);
+            $user->setMusic($data["music"]);
+            $user->setMusicFavorites($data["musicFavorites"]);
+            $user->setChat($data["chat"]);
+            $user->setChatFavorites($data["chatFavorites"]);
+            
+            if ($response = $userManager->updateUser($user)) {
+                $reponseofmanager= $this->handleManagerReturnValue($response);
+                if (!empty($reponseofmanager)) {
+                    return $reponseofmanager;
+                }
+                return new JsonResponse(
+                    ['message'=>'success'],
+                    Response::HTTP_ACCEPTED
+                );
+            }
+            return new JsonResponse(
+                ["message" => "error"],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+        return new JsonResponse(
+            ['message'=>'error'],
+            Response::HTTP_METHOD_NOT_ALLOWED
+        );
     }
 }

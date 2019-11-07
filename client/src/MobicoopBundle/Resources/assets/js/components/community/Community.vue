@@ -67,17 +67,13 @@
               </div>
               <!-- button if member is accepted -->
               <div v-else-if="isAccepted">
-                <a
-                  style="text-decoration:none;"
-                  :href="$t('buttons.publish.route', {communityId: community.id})"
+                <v-btn
+                  color="primary"
+                  rounded
+                  @click="publish"
                 >
-                  <v-btn
-                    color="success"
-                    rounded
-                  >
-                    {{ $t('buttons.publish.label') }}
-                  </v-btn>
-                </a>
+                  {{ $t('buttons.publish.label') }}
+                </v-btn>
               </div>
               <!-- button if user ask to join community but is not accepted yet -->
               <div v-else-if="askToJoin == true">
@@ -92,7 +88,7 @@
                       v-on="on"
                     >
                       <v-btn
-                        color="success"
+                        color="primary"
                         rounded
                         disabled
                       >
@@ -119,7 +115,7 @@
                       v-on="on"
                     >
                       <v-btn
-                        color="success"
+                        color="primary"
                         rounded
                         :loading="loading || (checkValidation && isLogged) "
                         :disabled="!isLogged || checkValidation"
@@ -155,6 +151,9 @@
                 ref="mmap"
                 type-map="community"
                 :points="pointsToMap"
+                :provider="mapProvider"
+                :url-tiles="urlTiles"
+                :attribution-copyright="attributionCopyright"
               />
             </v-col>
           </v-row>
@@ -167,8 +166,11 @@
               cols="8"
             >
               <community-member-list
-                ref="memberList"
                 :community="community"
+                :refresh="refreshMemberList"
+                :hidden="(!isAccepted && community.membersHidden)"
+                @contact="contact"
+                @refreshed="membersListRefreshed"
               />
             </v-col>
             <!-- last 3 users -->
@@ -176,8 +178,10 @@
               cols="4"
             >
               <community-last-users
-                ref="lastUsers"
+                :refresh="refreshLastUsers"
                 :community="community"
+                :hidden="(!isAccepted && community.membersHidden)"
+                @refreshed="lastUsersRefreshed"
               />
             </v-col>
           </v-row>
@@ -201,15 +205,12 @@
         align="center"
         justify="center"
       >
-        <home-search
+        <search
           :geo-search-url="geodata.geocompleteuri"
-          :route="geodata.searchroute"
           :user="user"
-          :justsearch="false"
-          :notitle="true"
-          :is-member="askToJoin"
-          :community="community"
-          :temporary-tooltips="true"
+          :params="params"
+          :punctual-date-optional="punctualDateOptional"
+          :regular="regular"
         />
       </v-row>
     </v-container>
@@ -219,12 +220,11 @@
 
 import axios from "axios";
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/community/Community.json";
 import TranslationsClient from "@clientTranslations/components/community/Community.json";
 import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
-import HomeSearch from "@components/home/HomeSearch";
+import Search from "@components/carpool/search/Search";
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
@@ -233,11 +233,10 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    CommunityMemberList, CommunityInfos, HomeSearch, MMap, CommunityLastUsers
+    CommunityMemberList, CommunityInfos, Search, MMap, CommunityLastUsers
   },
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   props:{
     user: {
@@ -267,17 +266,30 @@ export default {
     urlAltAvatar: {
       type: String,
       default: null
-    }
+    },
+    regular: {
+      type: Boolean,
+      default: false
+    }, 
+    punctualDateOptional: {
+      type: Boolean,
+      default: false
+    },
+    mapProvider:{
+      type: String,
+      default: ""
+    },
+    urlTiles:{
+      type: String,
+      default: ""
+    },
+    attributionCopyright:{
+      type: String,
+      default: ""
+    },
   },
   data () {
     return {
-      statistics: [
-        { text: 'Inscrits', number: 0 },
-        { text: 'Offres de covoiturage', number: 0 },
-        { text: 'Mise en relation', number: 0 },
-        { text: 'Km covoiturés', number: 0 },
-        { text: 'kg de CO2 consommés', number: 0 },
-      ],
       search: '',
       headers: [
         {
@@ -303,6 +315,9 @@ export default {
       isLogged: false,
       loadingMap: false,
       domain: true,
+      refreshMemberList: false,
+      refreshLastUsers: false,
+      params: { 'communityId' : this.community.id },
 
     }
   },
@@ -313,22 +328,37 @@ export default {
     this.checkDomain();
   },
   methods:{
+    post: function (path, params, method='post') {
+      const form = document.createElement('form');
+      form.method = method;
+      form.action = window.location.origin+'/'+path;
+
+      for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+          const hiddenField = document.createElement('input');
+          hiddenField.type = 'hidden';
+          hiddenField.name = key;
+          hiddenField.value = params[key];
+          form.appendChild(hiddenField);
+        }
+      }
+      document.body.appendChild(form);
+      form.submit();
+    },
     getCommunityUser() {
-      this.checkValidation = true;
-      axios 
-        .get('/community-user/'+this.community.id, {
-          headers:{
-            'content-type': 'application/json'
-          }
-        })
-        .then(res => {
-          if (res.data.length > 0) {
-            this.isAccepted = res.data[0].status == 1;
-            this.askToJoin = true
-          }
-          this.checkValidation = false;
-          
-        });
+      if(this.user){
+        this.checkValidation = true;
+        axios 
+          .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
+          .then(res => {
+            if (res.data.length > 0) {
+              this.isAccepted = res.data[0].status == 1;
+              this.askToJoin = true
+            }
+            this.checkValidation = false;
+            
+          });
+      }
     },
     joinCommunity() {
       this.loading = true;
@@ -343,8 +373,8 @@ export default {
           this.errorUpdate = res.data.state;
           this.askToJoin = true;
           this.snackbar = true;
-          this.$refs.memberList.getCommunityMemberList();
-          this.$refs.lastUsers.getCommunityLastUsers();
+          this.refreshMemberList = true;
+          this.refreshLastUsers = true;
           this.getCommunityUser();
           this.loading = false;
         });
@@ -361,6 +391,17 @@ export default {
           return this.domain = false;
         }   
       }
+    },
+    publish() {
+      let lParams = {
+        origin: null,
+        destination: null,
+        regular: null,
+        date: null,
+        time: null,
+        ...this.params
+      };
+      this.post(`${this.$t("buttons.publish.route")}`, lParams);
     },
     getCommunityProposals () {
       this.loadingMap = true;
@@ -379,10 +420,14 @@ export default {
           if (this.community.address) {
             this.pointsToMap.push(this.buildPoint(this.community.address.latitude,this.community.address.longitude,this.community.name));
           }
-          // add all the waypoints of the community to display on the map
-          res.data.forEach((waypoint, index) => {
-            this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
-          });
+          
+          // add all the waypoints of the community to display on the map :
+          // if the user is already accepted or if the doesn't hide members or proposals to non members.
+          if(this.isAccepted || (!this.community.membersHidden && !this.community.proposalsHidden) ){
+            res.data.forEach((waypoint, index) => {
+              this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+            });
+          }
           this.loadingMap = false;
           setTimeout(this.$refs.mmap.redrawMap(),600);
           
@@ -405,7 +450,37 @@ export default {
       }
         
       return point;      
-    }     
+    },
+    contact: function(data){
+      const form = document.createElement('form');
+      form.method = 'post';
+      form.action = this.$t("buttons.contact.route");
+      
+      const params = {
+        carpool:0,
+        idRecipient:data.id,
+        familyName:data.familyName,
+        givenName:data.givenName
+      }
+      
+      for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+          const hiddenField = document.createElement('input');
+          hiddenField.type = 'hidden';
+          hiddenField.name = key;
+          hiddenField.value = params[key];
+          form.appendChild(hiddenField);
+        }
+      }
+      document.body.appendChild(form);
+      form.submit();      
+    },
+    membersListRefreshed(){
+      this.refreshMemberList = false;
+    },
+    lastUsersRefreshed(){
+      this.refreshLastUsers = false;
+    }
 
   }
 }

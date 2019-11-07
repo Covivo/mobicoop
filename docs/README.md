@@ -50,7 +50,7 @@ If you want to work on mobicoop we can provide you a some ip for those elements 
 
 ### 🐳 Post Install
 
-After starting the app you can use `make fixtures` this will import de database, create private/public keys .. *DO IT 1 MN AFTER THE START, not before*
+After starting the app you can use `make fixtures` this will import the database, create private/public keys .. *DO IT 1 MN AFTER THE START, not before*
 
 
 ### 🐳 Access apps
@@ -64,6 +64,8 @@ After docker install, start & fixtures you will have access to the app @ :
 - Client just go to [http://localhost:8081](http://localhost:8081) for Main interface
 
 - Admin just go to [http://localhost:8082](http://localhost:8082) for Main interface
+
+- Database just go to [http://localhost:8083](http://localhost:8083) to open Phpmyadmin
 
 
 ### 🐳 Commands

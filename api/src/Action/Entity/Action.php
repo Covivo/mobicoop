@@ -96,6 +96,14 @@ class Action
     private $progression;
 
     /**
+     * @var int Position number in user preferences.
+     *
+     * @ORM\Column(type="smallint")
+     * @Groups({"read","write"})
+     */
+    private $position;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -167,6 +175,18 @@ class Action
     public function setProgression(?int $progression): self
     {
         $this->progression = $progression;
+
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): self
+    {
+        $this->position = $position;
 
         return $this;
     }

@@ -23,6 +23,9 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Contact;
+use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Structure;
+use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Subject;
 use TypeError;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
@@ -68,6 +71,7 @@ use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStop;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\UserNotification;
 
 /**
  * Custom deserializer service.
@@ -161,12 +165,18 @@ class Deserializer
             case Direction::class:
                 return self::deserializeDirection($data);
                 break;
+            case Contact::class:
+                return self::deserializeContact($data);
+            case Subject::class:
+                return self::deserializeSubject($data);
+            case Structure::class:
+                return self::deserializeStructure($data);
             default:
                 break;
         }
         return null;
     }
-    
+
     private function deserializeUser(array $data): ?User
     {
         $user = new User();
@@ -184,9 +194,14 @@ class Deserializer
                 $user->addMass(self::deserializeMass($mass));
             }
         }
+        if (isset($data["images"])) {
+            foreach ($data["images"] as $image) {
+                $user->addImage(self::deserializeImage($image));
+            }
+        }
         return $user;
     }
-    
+
     private function deserializeAddress(array $data): ?Address
     {
         $address = new Address();
@@ -196,7 +211,7 @@ class Deserializer
         }
         return $address;
     }
-    
+
     private function deserializeEvent(array $data): ?Event
     {
         $event = new Event();
@@ -214,7 +229,7 @@ class Deserializer
         }
         return $event;
     }
-    
+
     private function deserializeImage(array $data): ?Image
     {
         $image = new Image();
@@ -224,7 +239,7 @@ class Deserializer
         }
         return $image;
     }
-    
+
     private function deserializeProposal(array $data): ?Proposal
     {
         $proposal = new Proposal();
@@ -273,7 +288,7 @@ class Deserializer
         //echo "<pre>" . print_r($proposal,true) . "</pre>";exit;
         return $proposal;
     }
-    
+
     private function deserializeWaypoint(array $data): ?Waypoint
     {
         $waypoint = new Waypoint();
@@ -286,7 +301,7 @@ class Deserializer
         }
         return $waypoint;
     }
-    
+
     private function deserializeTravelMode(array $data): ?TravelMode
     {
         $travelMode = new TravelMode();
@@ -296,7 +311,7 @@ class Deserializer
         }
         return $travelMode;
     }
-    
+
     private function deserializeCriteria(array $data): ?Criteria
     {
         $criteria = new Criteria();
@@ -332,7 +347,7 @@ class Deserializer
         }
         return $direction;
     }
-    
+
     private function deserializeIndividualStop(array $data): ?IndividualStop
     {
         $individualStop = new IndividualStop();
@@ -348,7 +363,7 @@ class Deserializer
         }
         return $individualStop;
     }
-    
+
     private function deserializeMatching(array $data): ?Matching
     {
         $matching = new Matching();
@@ -375,7 +390,7 @@ class Deserializer
         }
         return $matching;
     }
-    
+
     private function deserializePTJourney(array $data): ?PTJourney
     {
         $PTJourney = new PTJourney();
@@ -435,7 +450,7 @@ class Deserializer
         }
         return $PTDeparture;
     }
-    
+
     private function deserializePTArrival(array $data): ?PTArrival
     {
         $PTArrival = new PTArrival();
@@ -445,7 +460,7 @@ class Deserializer
         }
         return $PTArrival;
     }
-    
+
     private function deserializePTLeg(array $data, int $id): ?PTLeg
     {
         $PTLeg = new PTLeg($id);
@@ -471,7 +486,7 @@ class Deserializer
         }
         return $PTLeg;
     }
-        
+
     private function deserializePTLine(array $data): ?PTLine
     {
         $PTLine = new PTLine();
@@ -505,7 +520,7 @@ class Deserializer
         $PTCompany = self::autoSet($PTCompany, $data);
         return $PTCompany;
     }
-    
+
     private function deserializePTStep(array $data, int $id): ?PTStep
     {
         $PTStep = new PTStep($id);
@@ -748,7 +763,7 @@ class Deserializer
 
         return $message;
     }
-    
+
     private function deserializeAsk(array $data): ?Ask
     {
         $ask = new Ask();
@@ -805,6 +820,30 @@ class Deserializer
         return $recipient;
     }
 
+    private function deserializeContact(array $data) : ?Contact
+    {
+        $contact = new Contact();
+        $contact = self::autoSet($contact, $data);
+
+        return $contact;
+    }
+
+    private function deserializeSubject(array $data) : ?Subject
+    {
+        $contact = new Subject();
+        $contact = self::autoSet($contact, $data);
+
+        return $contact;
+    }
+
+    private function deserializeStructure(array $data) : ?Structure
+    {
+        $contact = new Structure();
+        $contact = self::autoSet($contact, $data);
+
+        return $contact;
+    }
+    
     private function autoSet($object, $data)
     {
         $phpDocExtractor = new PhpDocExtractor();
@@ -813,14 +852,14 @@ class Deserializer
         $typeExtractors = array($phpDocExtractor);
         $descriptionExtractors = array($phpDocExtractor);
         $accessExtractors = array($reflectionExtractor);
-        
+
         $propertyInfo = new PropertyInfoExtractor(
             $listExtractors,
             $typeExtractors,
             $descriptionExtractors,
             $accessExtractors
         );
-        
+
         $properties = $propertyInfo->getProperties(get_class($object));
         foreach ($properties as $property) {
             if (isset($data[$property])) {

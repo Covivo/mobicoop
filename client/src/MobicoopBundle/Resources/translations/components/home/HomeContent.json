@@ -1,0 +1,32 @@
+{    
+    "fr": {
+        "community":{
+            "title": "COMMUNAUTÉS",
+            "text":"Reconnaître les membres de mon club ou de mon entreprise.",
+            "button": {
+                "label": "Voir les communautés",
+                "route": "/communautes"
+            }
+        },
+        "event":{
+            "title": "ÉVÉNEMENTS",
+            "text":"Trouver des covoitureurs allant au même événement.",
+            "button": {
+                "label": "Voir les événements",
+                "route": "#"
+            }
+        },
+        "solidary":{
+            "title": "COVOITURAGE SOLIDAIRE",
+            "text":"S'entraider pour l'accès à l'emploi",
+            "button": {
+                "label": "Besoin d'un coup de pouce ?",
+                "route": "/solidarite"
+            },
+            "button2": {
+                "label": "Donner un coup de pouce",
+                "route": "/covoiturage/annonce/poster/solidaire"
+            }
+        }
+    }
+}

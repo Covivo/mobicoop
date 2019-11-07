@@ -1,0 +1,77 @@
+{
+    "fr": {
+        "title": "Publier une annonce",
+        "subtitle": "Commencer votre annonce",
+        "stepper": {
+            "header": {
+                "search_journey": "Commencer votre annonce",
+                "planification": "Planification",
+                "map": "Trajet",
+                "passengers": "Passagers",
+                "participation": "Participation",
+                "message": "Message",
+                "summary": "Récapitulatif"
+            },
+            "content": {
+                "passengers": {
+                    "seats": {
+                        "question": "J'ai de la place pour ",
+                        "passengers": " passager(s)"
+                    },
+                    "luggage": {
+                        "label": "J'ai de la place pour des gros bagages",
+                        "help": "Cochez cette case si votre véhicule peut transporter des gros bagages"
+                    },
+                    "bike": {
+                        "label": "Je peux transporter un vélo",
+                        "help": "Cochez cette case si votre véhicule peut transporter un vélo"
+                    },
+                    "backSeats": {
+                        "label": "Maximum 2 personnes à l'arrière",
+                        "help": "Cochez cette case si vous garantissez que les passagers ne seront pas plus de 2 à l'arrière"
+                    }
+                },
+                "participation": {
+                    "price" : "Participation de ",
+                    "passengers" : " par passager"
+                },
+                "message": {
+                    "title": {
+                        "both" : "Mon message",
+                        "driver": "Mon message aux passagers",
+                        "passenger": "Mon message aux conducteurs"
+                    },
+                    "label": "Laissez un petit message"
+                },
+                "summary": "Récapitulatif",
+                "map":{
+                    "myproposal":"Votre proposition de trajet"
+                }
+            },
+            "buttons": {
+                "next": "Suivant",
+                "previous": "Précédent",
+                "publish_ad": "Publier mon annonce",
+                "notValid" : "Vous devez être loggué pour publier une annonce et avoir fournis toutes les informations du trajet"
+            }
+        },
+        "messageFirstAd":{
+            "signUpDone":"Bravo {givenName} ! Votre inscription est terminée",
+            "alert":"Maintenant, pour être alerté de nouvelles annonces correspondant à votre trajet le plus fréquent, publier sans attendre votre première annonce de trajet régulier afin de pouvoir covoiturer rapidement."
+        },
+        "messageSolidaryAd": {
+            "message": " Cette annonce sera une annonce de covoiturage solidaire exclusif, si vous maintenez l'option ci-dessous. Elle ne sera visible alors que par les opérateurs solidaires pour vous mettre en relation avec un demandeur solidaire. Si vous décochez cette option, votre annonce deviendra une annonce ordinaire visible à la fois par les autres covoitureurs et les opérateurs solidaires.",
+            "switch": {
+                "label": "Annonce de covoiturage solidaire exclusif"
+            }
+        },
+        "participation": {
+            "mid": "Le prix de votre trajet est supérieur à la moyenne, et vos chances d'être contacté seront donc réduites.",
+            "high": "Le prix de votre trajet, très haut, est au-delà du barème fiscale moyen (0,30€/km) : vos chances d'être contacté seront donc très réduites, il est par ailleurs interdit de proposer des prestations rémunérées de transport qui sortent du cadre du partage de frais en covoiturage."
+        },
+        "route": {
+            "publish": "covoiturage/annonce/poster",
+            "search": "covoiturage/annonce/{id}/resultats"
+        }
+    }
+}

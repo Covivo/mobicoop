@@ -4,28 +4,25 @@
   {% trans from 'ui' %}carpool.ad_create.title{% endtrans %}
 {% endblock %}
 {% block stylesheets %}
-  {{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/publish") }}
+  {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/publish") }}#}
 {% endblock %}
 {% block main %}
-
   <ad-publish 
     geo-search-url="{{ geoCompleteUri }}" 
     :user="{{app.user|json_encode}}" 
     :default-price-km="{{ priceKm }}"
-    :communities="{{ communities|json_encode }}"
     :default-margin-time="{{ marginTime }}"
+    :map-provider="{{ mapProvider|json_encode }}"
     :url-tiles="{{ urlTiles|json_encode }}"
     :attribution-copyright="{{ attributionCopyright|json_encode }}"
-    :community="{{ community|json_encode }}"
-    :init-origin="{{ initOrigin|json_encode }}"
-    :init-destination="{{ initDestination|json_encode }}"
-    :init-regular="{{ initRegular|json_encode }}"
-    :init-date="{{ initDate|json_encode }}"
-    :init-time="{{ initTime|json_encode }}"
+    :community-ids="{{ communityIds is defined ? communityIds|json_encode : 'null' }}"
+    :init-origin = "{{ origin is defined ? origin : 'null' }}"
+    :init-destination = "{{ destination is defined ? destination : 'null' }}"
+    init-date = "{{ date is defined ? date : '' }}"
+    init-time = "{{ time is defined ? time : '' }}"
+    :init-regular = "{{ regular is defined ? (regular ? 'true' : 'false') : 'false' }}"
+    :first-ad = "{{ firstAd is defined ? (firstAd ? 'true' : 'false') : 'false' }}"
+    :solidary-ad = "{{ solidaryAd is defined ? (solidaryAd ? 'true' : 'false') : 'false' }}"    
   />
-
-{% endblock %}
-{% block javascripts %}
-  {{ encore_entry_script_tags("#{assets_prefix ?? ''}carpool/publish") }}
 
 {% endblock %}

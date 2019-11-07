@@ -179,13 +179,14 @@ class Address implements ResourceInterface, \JsonSerializable
     private $home;
 
     /**
-     * @var string|null Label for display
+     * @var array|null Label for display
      */
     private $displayLabel;
 
     public function __construct()
     {
         $this->userAddresses = new ArrayCollection();
+        $this->displayLabel = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -401,12 +402,12 @@ class Address implements ResourceInterface, \JsonSerializable
         $this->home = $isHome ? $isHome : false;
     }
 
-    public function getDisplayLabel(): ?string
+    public function getDisplayLabel()
     {
         return $this->displayLabel;
     }
 
-    public function setDisplayLabel(?string $displayLabel)
+    public function setDisplayLabel(?array $displayLabel)
     {
         $this->displayLabel = $displayLabel;
     }

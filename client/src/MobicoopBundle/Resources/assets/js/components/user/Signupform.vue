@@ -39,6 +39,19 @@
         </v-col>
       </v-row>
       <v-row
+        v-if="showFacebookSignUp"
+        justify="center"
+        class="text-center"
+      >
+        <v-col class="col-4">
+          <m-facebook-auth
+            :app-id="facebookLoginAppId"
+            :sign-up="true"
+            @fillForm="fillForm"
+          />
+        </v-col>
+      </v-row>
+      <v-row
         justify="center"
         align="center"
       >
@@ -70,7 +83,7 @@
             <v-text-field
               v-model="form.password"
               :append-icon="form.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-              :rules="form.passwordRules"
+              :rules="[form.passWordRules.required,form.passWordRules.min, form.passWordRules.checkUpper,form.passWordRules.checkLower,form.passWordRules.checkNumber]"
               :type="form.showPassword ? 'text' : 'password'"
               name="password"
               :label="$t('models.user.password.placeholder')+` *`"
@@ -81,7 +94,7 @@
               ref="button"
               rounded
               class="my-13"
-              color="success"
+              color="primary"
               :disabled="!step1"
               @click="$vuetify.goTo('#step2', options)"
             >
@@ -120,7 +133,7 @@
                 ref="button"
                 rounded
                 class="my-13 mr-12"
-                color="success"
+                color="primary"
                 :disabled="!step1"
                 @click="$vuetify.goTo('#step2', options)"
               >
@@ -130,7 +143,7 @@
                 ref="button"
                 rounded
                 class="my-13"
-                color="success"
+                color="primary"
                 :disabled="!step2"
                 @click="$vuetify.goTo('#step3', options)"
               >
@@ -165,7 +178,7 @@
                 ref="button"
                 rounded
                 class="my-13 mr-12"
-                color="success"
+                color="primary"
                 :disabled="!step2"
                 @click="$vuetify.goTo('#step3', options)"
               >
@@ -175,7 +188,7 @@
                 ref="button"
                 rounded
                 class="my-13"
-                color="success"
+                color="primary"
                 :disabled="!step3"
                 @click="$vuetify.goTo('#step4', options)"
               >
@@ -208,7 +221,7 @@
                 ref="button"
                 rounded
                 class="my-13 mr-12"
-                color="success"
+                color="primary"
                 :disabled="!step3"
                 @click="$vuetify.goTo('#step4', options)"
               >
@@ -218,7 +231,7 @@
                 ref="button"
                 rounded
                 class="my-13"
-                color="success"
+                color="primary"
                 :disabled="!step4"
                 @click="$vuetify.goTo('#step5', options)"
               >
@@ -238,15 +251,16 @@
               name="homeAddress"
               :label="$t('models.user.homeTown.placeholder')"
               :url="geoSearchUrl"
-              :hint="$t('models.user.homeTown.hint')"
+              :hint="requiredHomeAddress ? $t('models.user.homeTown.required.hint') : $t('models.user.homeTown.hint')"
               persistent-hint
               :disabled="!step4"
+              :required="requiredHomeAddress"
               @address-selected="selectedGeo"
             />
             <v-checkbox
               v-model="form.validation"
               class="check"
-              color="success"
+              color="primary"
               :rules="form.checkboxRules"
               required
               :disabled="!step4"
@@ -265,10 +279,10 @@
               </template>
             </v-checkbox>
             <v-btn
-              color="success"
+              color="primary"
               rounded
               class="mr-4 mb-100 mt-12"
-              :disabled="!step5 || loading"
+              :disabled="!step5 || loading || isDisable"
               :loading="loading"
               @click="validate"
             >
@@ -286,18 +300,18 @@ import axios from "axios";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/SignUp.json";
 import TranslationsClient from "@clientTranslations/components/user/SignUp.json";
+import MFacebookAuth from '@components/user/MFacebookAuth';
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   components: {
     GeoComplete,
+    MFacebookAuth
   },
   props: {
     geoSearchUrl: {
@@ -315,7 +329,19 @@ export default {
     ageMax: {
       type: String,
       default: null
-    }
+    },
+    showFacebookSignUp: {
+      type: Boolean,
+      default: false
+    },
+    facebookLoginAppId: {
+      type: String,
+      default: null
+    },
+    requiredHomeAddress:  {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -330,6 +356,8 @@ export default {
       step4: true,
       step5: true,
 
+      // disable validation if homeAddress is empty and required
+      isDisable: this.requiredHomeAddress ? true : false,
 
       //scrolling data
       type: 'selector',
@@ -339,7 +367,7 @@ export default {
       easing: "easeOutQuad",
       container: "scroll-target",
 
-      form:{
+      form: {
         createToken: this.sentToken,
         email: null,
         emailRules: [
@@ -359,28 +387,45 @@ export default {
           v => !!v || this.$t("models.user.gender.errors.required"),
         ],
         genderItems: [
-          { genderItem: this.$t('models.user.gender.values.female'), genderValue: '1' },
-          { genderItem: this.$t('models.user.gender.values.male'), genderValue: '2' },
-          { genderItem: this.$t('models.user.gender.values.other'),genderValue: '3' },
+          {genderItem: this.$t('models.user.gender.values.female'), genderValue: '1'},
+          {genderItem: this.$t('models.user.gender.values.male'), genderValue: '2'},
+          {genderItem: this.$t('models.user.gender.values.other'), genderValue: '3'},
         ],
         birthYear: null,
         birthYearRules: [
           v => !!v || this.$t("models.user.birthYear.errors.required")
         ],
         telephone: null,
-        telephoneRules:  [
+        telephoneRules: [
           v => !!v || this.$t("models.user.phone.errors.required"),
           v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("models.user.phone.errors.valid")
         ],
         password: null,
         showPassword: false,
-        passwordRules: [
-          v => !!v || this.$t("models.user.password.errors.required")
-        ],
+        passWordRules: {
+          required:  v => !!v || this.$t("models.user.password.errors.required"),
+          min: v => v.length >= 8 || this.$t("models.user.password.errors.min"),
+          checkUpper : value => {
+            const pattern = /^(?=.*[A-Z]).*$/
+            return pattern.test(value) || this.$t("models.user.password.errors.upper")
+
+          },
+          checkLower : value => {
+            const pattern = /^(?=.*[a-z]).*$/
+            return pattern.test(value) || this.$t("models.user.password.errors.lower")
+
+          },
+          checkNumber : value => {
+            const pattern = /^(?=.*[0-9]).*$/
+            return pattern.test(value) || this.$t("models.user.password.errors.number")
+
+          },
+        },
         homeAddress:null,
         checkboxRules: [
           v => !!v || this.$t("ui.pages.signup.chart.errors.required")
-        ]
+        ],
+        idFacebook:null
       }
     };
   },
@@ -408,6 +453,9 @@ export default {
   methods: {
     selectedGeo(address) {
       this.form.homeAddress = address;
+      if (this.requiredHomeAddress) {
+        this.isDisable = address ? false : true;
+      }
     },
     validate: function (e) {
       this.loading = true,
@@ -420,15 +468,16 @@ export default {
           familyName:this.form.familyName,
           gender:this.form.gender,
           birthYear:this.form.birthYear,
-          address:this.form.homeAddress
+          address:this.form.homeAddress,
+          idFacebook:this.form.idFacebook
         },{
           headers:{
             'content-type': 'application/json'
           }
         })
-        .then(function (response) {
-          window.location.href = '/';
-          console.log(response);
+        .then(response=>{
+          window.location.href = this.$t('urlRedirectAfterSignUp');
+          //console.log(response);
         })
         .catch(function (error) {
           console.log(error);
@@ -444,6 +493,13 @@ export default {
         return true;
       }
     },
+    fillForm(data){
+      this.form.email = data.email;
+      this.form.givenName = data.first_name;
+      this.form.familyName = data.last_name;
+      this.form.idFacebook = data.id;
+    },
+    
   }
 
 };

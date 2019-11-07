@@ -25,8 +25,8 @@
               fab
               rounded
               color="primary"
-              :disabled="this.textToSend===''"
-              :loading="this.loading"
+              :disabled="textToSend===''"
+              :loading="loading"
               @click="emit()"
             >
               <v-icon>mdi-send</v-icon>
@@ -38,13 +38,11 @@
   </v-content>
 </template>
 <script>
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/mailbox/TypeText.json";
 
 export default {
   i18n: {
     messages: Translations,
-    sharedMessages: CommonTranslations
   },
   props: {
     idThreadMessage: {
@@ -55,14 +53,15 @@ export default {
       type: Number,
       default: null
     },
+    loading: {
+      type: Boolean,
+      default: null
+    }
   },
   data(){
     return{
       textToSend:"",
-      loading: false
     }
-  },
-  mounted(){
   },
   methods:{
     emit(message){
@@ -73,9 +72,6 @@ export default {
           textToSend:this.textToSend
         });
       this.textToSend = "";
-    },
-    updateLoading(val){
-      this.loading = val;
     }
   }
 }

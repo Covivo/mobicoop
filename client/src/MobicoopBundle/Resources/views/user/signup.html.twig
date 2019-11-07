@@ -4,7 +4,7 @@
   {% trans from 'ui' %}user.signup.title{% endtrans %}
 {% endblock %}
 {% block stylesheets %}
-  {{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}
+  {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}#}
 {% endblock %}
 {% block main %}
         {% if error %}
@@ -16,9 +16,9 @@
                     age-max="{{ ageMax }}"
                     geo-search-url="{{ geoCompleteUri }}"
                     sent-token="{{ csrf_token('user-signup') }}"
-            ></Signupform>
+                    :show-facebook-sign-up = "{{ facebook_show ? "true" : "false" }}"
+                    facebook-login-app-id = "{{ facebook_appid }}"
+                    :required-home-address = "{{ required_home_address ? "true" : "false" }}"
+            />
 
-{% endblock %}
-{% block javascripts %}
-  {{ encore_entry_script_tags("#{assets_prefix ?? ''}user/signup") }}
 {% endblock %}

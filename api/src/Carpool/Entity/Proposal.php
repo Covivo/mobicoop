@@ -51,7 +51,7 @@ use App\Communication\Entity\Notified;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","results"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
@@ -212,9 +212,18 @@ class Proposal
     /**
      * @var string A comment about the proposal.
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"read","write","threads","thread"})
+     * @Groups({"read","write","results","threads","thread"})
      */
     private $comment;
+
+    /**
+     * @var boolean Private proposal.
+     * A private proposal can't be the found in the result of a search.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $private;
 
     /**
      * @var \DateTimeInterface Creation date of the proposal.
@@ -238,6 +247,7 @@ class Proposal
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","results","write"})
+     * @MaxDepth(1)
      */
     private $proposalLinked;
     
@@ -248,6 +258,7 @@ class Proposal
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","results","write"})
+     * @MaxDepth(1)
      */
     private $user;
 
@@ -256,6 +267,7 @@ class Proposal
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposalsDelegate")
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $userDelegate;
 
@@ -265,7 +277,8 @@ class Proposal
      * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","results","write"})
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $waypoints;
     
@@ -274,6 +287,7 @@ class Proposal
      *
      * @ORM\ManyToMany(targetEntity="\App\Travel\Entity\TravelMode")
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $travelModes;
 
@@ -281,7 +295,8 @@ class Proposal
      * @var ArrayCollection|null The communities related to the proposal.
      *
      * @ORM\ManyToMany(targetEntity="\App\Community\Entity\Community", inversedBy="proposals")
-     * @Groups({"read","write"})
+     * @Groups({"read","results","write"})
+     * @MaxDepth(1)
      */
     private $communities;
 
@@ -289,7 +304,7 @@ class Proposal
      * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","results"})
+     * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $matchingOffers;
@@ -298,7 +313,8 @@ class Proposal
      * @var ArrayCollection|null The matching of the proposal (if proposal is a request).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","results"})
+     * @Groups({"read"})
+     * @MaxDepth(1)
      */
     private $matchingRequests;
 
@@ -340,6 +356,13 @@ class Proposal
      * @Groups({"read","write"})
      */
     private $matchedProposal;
+
+    /**
+     * @var ArrayCollection|null The carpool results for the proposal.
+     * Results are taken from the matchings, but returned in a more user-friendly way.
+     * @Groups("results")
+     */
+    private $results;
         
     public function __construct($id=null)
     {
@@ -354,6 +377,7 @@ class Proposal
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
+        $this->results = new ArrayCollection();
     }
     
     public function __clone()
@@ -394,6 +418,18 @@ class Proposal
     {
         $this->comment = $comment;
         
+        return $this;
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->private ? true : false;
+    }
+
+    public function setPrivate(?bool $private): self
+    {
+        $this->private = $private;
+
         return $this;
     }
 
@@ -672,6 +708,18 @@ class Proposal
     public function setMatchedProposal(?Proposal $matchedProposal): self
     {
         $this->matchedProposal = $matchedProposal;
+
+        return $this;
+    }
+
+    public function getResults()
+    {
+        return $this->results;
+    }
+
+    public function setResults($results)
+    {
+        $this->results = $results;
 
         return $this;
     }

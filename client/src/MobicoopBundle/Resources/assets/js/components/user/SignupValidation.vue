@@ -26,7 +26,7 @@
       class="overflow-y-auto"
       fluid
     >
-      <v-row 
+      <v-row
         justify="center"
       >
         <v-col
@@ -40,21 +40,32 @@
       </v-row>
       <v-row
         justify="center"
-        align="center"
       >
         <v-col class="col-4">
+          <v-alert type="info">
+            <p>{{ $t("almostDone") }}</p>
+            <p>{{ $t("validationMailSend") }}</p>
+            <p v-html="$t('canValid')" />
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-row
+        justify="center"
+        align="center"
+      >
+        <v-col class="col-4 text-center">
           <v-alert
-            v-if="this.error!==''"
+            v-if="error!==''"
             type="error"
           >
-            {{ $t(this.error) }}
+            {{ $t(error) }}
           </v-alert>
           <v-form
             id="formLoginValidation"
             ref="form"
             v-model="valid"
             lazy-validation
-            :action="$t('urlPost')+(this.token)"
+            :action="$t('urlPost')+(token)"
             method="POST"
           >
             <v-text-field
@@ -66,7 +77,7 @@
             />
             <v-btn
               :disabled="!valid"
-              color="success"
+              color="primary"
               type="submit"
               rounded
               @click="validate"
@@ -81,15 +92,11 @@
 </template>
 
 <script>
-//import axios from "axios";
-
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/SignUpValidation.json";
 
 export default {
   i18n: {
     messages: Translations,
-    sharedMessages: CommonTranslations
   },
   props: {
     urlToken: {
@@ -121,8 +128,8 @@ export default {
       if (this.$refs.form.validate()) {
         document.getElementById("formLoginValidation").submit();
       }
-    }  
-    
+    }
+
   }
 
 };

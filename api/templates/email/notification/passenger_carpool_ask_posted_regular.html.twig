@@ -1,16 +1,16 @@
-{% extends 'base.html.twig' %}
+{% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    @PrenomOuPseudoExpediteur {{ "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous."|trans }}
+    <p>@PrenomOuPseudoExpediteur {{ "yourAsk"|trans }}.</p>
 
-    {{ "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"|trans }} {{ api_env('CLIENT_NAME') }} {{ "en cliquant ici"|trans}} @URLdelapagedemessageriecorrespondante.
+    <p>{{ "replyViaEMail"|trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere"|trans}} @URLdelapagedemessageriecorrespondante.</p>
 
-    {{ "Trajet régulier Distance covoiturée"|trans}} @DistancePassager km
-    {{ "Détour conducteur"| trans}} @TempsDetourMinutes / @DistanceDetour km
-    {{ "Prise en charge à"|trans}} @AdressePEC
-    {{ "Dépose à "|trans }} @AdresseDepose
-    {{ "Heures de RDV"|trans}} {{ "Lundi"|trans}}  {{ "Mardi"|trans}}  {{ "Mercredi"|trans}}  {{ "Jeudi"|trans}}  {{ "Vendredi"|trans}}  {{ "Samedi"|trans}}  {{ "Dimanche"|trans}} .
-    {{ "Le" |trans}}  @DateDebut  {{ "Du" |trans}}  @DateDebut  {{ "au" |trans}}  @DateFin
-    {{ "Commentaire du passager" |trans}} :  @CommentairesDemande
-    {{ "ContacterPlaces réservées" |trans}} @NbPassagers
-    {{ "Prix indicatif" |trans}}  @GainConducteur @Monnaie
+    <p>{{ "carpoolDistance"|trans}} @DistancePassager km.</p>
+    <p>{{ "driverDetour"|trans}}  @TempsDetourMinutes / @DistanceDetour km.</p>
+    <p>{{ "supported"|trans }} @AdressePEC.</p>
+    <p>{{ "depositedAt"|trans }} @AdresseDepose.</p>
+    <p>{{ "appointmentHour"|trans}} {{ "monday"|trans}} {{ "tuesday"|trans}} {{ "wednesday"|trans}} {{ "thusday"|trans}} {{ "friday"|trans}} {{ "saturday"|trans}} {{ "sunday"|trans}}.</p>
+    <p>{{ "the"|trans}} @DateDebut {{ "from"|trans}} @DateDebut {{ "to"|trans}} @DateFin.</p>
+    <p>{{ "driverComment"|trans}} : @CommentairesDemande.</p>
+    <p>{{ "reservedPlaces"|trans}} @NbPassagers.</p>
+    <p>{{ "indicativePrice"|trans}} @GainConducteur @Monnaie.</p>
 {% endblock %}

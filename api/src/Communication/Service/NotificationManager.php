@@ -26,6 +26,7 @@ namespace App\Communication\Service;
 use App\Communication\Entity\MessagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Communication\Repository\NotificationRepository;
+use App\User\Repository\UserNotificationRepository;
 use App\Communication\Entity\Medium;
 use App\User\Entity\User;
 use App\Communication\Entity\Notified;
@@ -55,9 +56,10 @@ class NotificationManager
     private $smsTemplatePath;
     private $logger;
     private $notificationRepository;
+    private $userNotificationRepository;
     private $enabled;
 
-    public function __construct(EntityManagerInterface $entityManager, \Twig_Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, SmsManager $smsManager, LoggerInterface $logger, NotificationRepository $notificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled)
+    public function __construct(EntityManagerInterface $entityManager, \Twig_Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, SmsManager $smsManager, LoggerInterface $logger, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled)
     {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -65,6 +67,7 @@ class NotificationManager
         $this->smsManager = $smsManager;
         $this->logger = $logger;
         $this->notificationRepository = $notificationRepository;
+        $this->userNotificationRepository = $userNotificationRepository;
         $this->emailTemplatePath = $emailTemplatePath;
         $this->emailTitleTemplatePath = $emailTitleTemplatePath;
         $this->smsTemplatePath = $smsTemplatePath;
@@ -86,7 +89,20 @@ class NotificationManager
             return;
         }
         
-        $notifications = $this->notificationRepository->findActiveByAction($action);
+        $notifications = null;
+        // we check the user notifications
+        $userNotifications = $this->userNotificationRepository->findActiveByAction($action);
+        if (count($userNotifications)>0) {
+            // the user should have notifications...
+            $notifications = [];
+            foreach ($userNotifications as $userNotification) {
+                $notifications[] = $userNotification->getNotification();
+            }
+        } else {
+            // if the user have no notifications, we use the default notifications
+            $notifications = $this->notificationRepository->findActiveByAction($action);
+        }
+        
         if ($notifications && is_array($notifications)) {
             foreach ($notifications as $notification) {
                 switch ($notification->getMedium()->getId()) {

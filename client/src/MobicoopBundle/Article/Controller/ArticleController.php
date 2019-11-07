@@ -38,6 +38,7 @@ class ArticleController extends AbstractController
     const CGU = 1;
     const NEWS = 2;
     const PROJECT = 3;
+    const DATA_POLICY = 4;
 
     /**
      * Display of the project page
@@ -80,6 +81,23 @@ class ArticleController extends AbstractController
     public function showNews(ArticleManager $articleManager)
     {
         $article = $articleManager->getArticle(self::NEWS);
+        $reponseofmanager= $this->handleManagerReturnValue($article);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+        $this->denyAccessUnlessGranted('show', $article);
+        return $this->render('@Mobicoop/article/article.html.twig', [
+            'article' => $article,
+        ]);
+    }
+
+    /**
+     * Display of the data policy page
+     *
+     */
+    public function showDataPolicy(ArticleManager $articleManager)
+    {
+        $article = $articleManager->getArticle(self::DATA_POLICY);
         $reponseofmanager= $this->handleManagerReturnValue($article);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;

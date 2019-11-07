@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-row 
+    <v-row
       justify="center"
     >
       <v-col
@@ -30,7 +30,7 @@
           ref="form"
           v-model="valid"
           lazy-validation
-          :action="$t('urlSignIn')+this.communityId"
+          :action="$t('urlSignIn')+communityId"
           method="POST"
         >
           <v-text-field
@@ -57,7 +57,7 @@
               >
                 <v-btn
                   :disabled="!valid || userId === null"
-                  color="success"
+                  color="primary"
                   type="submit"
                   rounded
                   @click="validate"
@@ -67,7 +67,7 @@
               </div>
             </template>
             <span>{{ $t("errors.notLogged") }}</span>
-          </v-tooltip>          
+          </v-tooltip>
         </v-form>
       </v-col>
     </v-row>
@@ -76,14 +76,11 @@
 
 <script>
 
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/community/CommunitySecuredSignIn.json";
-
 
 export default {
   i18n: {
     messages: Translations,
-    sharedMessages: CommonTranslations
   },
   props:{
     communityId: {

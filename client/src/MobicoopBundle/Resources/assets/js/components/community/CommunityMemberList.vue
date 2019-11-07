@@ -27,6 +27,7 @@
       </v-row>
     </v-card-title>
     <v-data-table
+      v-if="!hidden"
       :headers="headers"
       :items="users"
       :search="search"
@@ -39,7 +40,7 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-icon
-              color="success"
+              color="primary"
               @click="contactItem(item)"
             >
               mdi-email
@@ -48,6 +49,9 @@
         </v-tooltip>
       </template>
     </v-data-table>
+    <v-card-text v-else>
+      {{ $t('hidden') }}
+    </v-card-text>
   </v-card>
 </template>
 
@@ -55,7 +59,6 @@
 
 import axios from "axios";
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/community/CommunityMemberList.json";
 import TranslationsClient from "@clientTranslations/components/community/CommunityMemberList.json";
 
@@ -64,13 +67,20 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   props:{
     community: {
       type: Object,
       default: null
     },
+    refresh: {
+      type: Boolean,
+      default: false
+    },
+    hidden: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -79,11 +89,16 @@ export default {
       headers: [
         { text: this.$t('table.colTitle.familyName'), value: 'familyName' },
         { text: this.$t('table.colTitle.givenName'), value: 'givenName' },
+        { text: this.$t('table.colTitle.actions'), value: 'action', sortable: false },
       ],
       users: [],
     }
   },
-  
+  watch: {
+    refresh(){
+      (this.refresh) ? this.getCommunityMemberList() : ''
+    }
+  },
   mounted() {
     this.getCommunityMemberList();
   },
@@ -98,7 +113,11 @@ export default {
         })
         .then(res => {
           this.users = res.data;
+          this.$emit("refreshed");
         });
+    },
+    contactItem(item){
+      this.$emit("contact",item);
     }
   }
 }

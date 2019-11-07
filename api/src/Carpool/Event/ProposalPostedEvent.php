@@ -27,7 +27,7 @@ use App\Carpool\Entity\Proposal;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Event sent when a new ask is posted.
+ * Event sent when a new proposal is posted.
  */
 class ProposalPostedEvent extends Event
 {

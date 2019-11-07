@@ -1,0 +1,16 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}
+    {% trans from 'ui' %}solidary.title{% endtrans %}
+{% endblock %}
+
+{% block main %}
+    <solidary 
+            geo-search-url="{{ geoCompleteUri }}"
+            :user="{{app.user|json_encode}}"
+            {{ searchRegular ? 'regular' : '' }}
+            {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
+            :structures="{{ structures|json_encode }}"
+            :subjects="{{ subjects|json_encode }}"
+    ></solidary>
+{% endblock %}

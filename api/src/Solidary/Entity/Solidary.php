@@ -30,6 +30,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Entity\Proposal;
 use App\User\Entity\User;
+use App\Solidary\Controller\SolidaryProposalPost;
 
 /**
  * A solidary record.
@@ -42,7 +43,14 @@ use App\User\Entity\User;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
+ *      collectionOperations={
+ *     "get",
+ *     "post"={
+ *              "method"="POST",
+ *              "path"="/solidaries",
+ *              "controller"=SolidaryProposalPost::class,
+ *          },
+ *     },
  *      itemOperations={"get","put","delete"}
  * )
  */
@@ -102,14 +110,14 @@ class Solidary
      * @MaxDepth(1)
      */
     private $proposal;
-        
+
     /**
      * @var User The user related with the solidary record.
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solidaries")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      * @MaxDepth(1)
      */
     private $user;

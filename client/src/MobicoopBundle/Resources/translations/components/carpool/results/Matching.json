@@ -1,0 +1,24 @@
+{
+  "fr":{
+    "proposalUrl": "/covoiturage/annonce/{id}/detail",
+    "matchingUrl": "/covoiturage/recherche/matching",
+    "contactUrl": "/covoiturage/contact",
+    "search": "Recherche en cours...",
+    "matchingNumber": "Aucune annonce en covoiturage trouvée... | {number} annonce en covoiturage trouvée | {number} annonces en covoiturage trouvées",
+    "snackBar": {
+      "success": "La prise de contact a bien été envoyée",
+      "error": "Suite à un problème technique la prise de contact n'a pas pu être envoyée"
+    }
+  },
+  "en":{
+    "proposalUrl": "/carpool/ad/{id}/detail",
+    "matchingUrl": "/carpool/search/matching",
+    "contactUrl": "/carpool/contact",
+    "search": "Searching...",
+    "matchingNumber": "No carpooling ad found... | {number} carpooling ad found | {number} carpooling ads found",
+    "snackBar": {
+      "success": "Contact has been successfuly established",
+      "error": "Due to a technical difficuly, the contact hasn't been established"
+    }
+  }
+}

@@ -1,0 +1,217 @@
+<template>
+  <div>
+    <v-row
+      align="center"
+    >
+      <!-- Times -->
+
+      <!-- Single outward -->
+      <v-col
+        v-if="outwardTime"
+        :cols="returnTime ? '3' : '7'"
+      >
+        <v-row
+          dense
+        >
+          <v-col
+            cols="auto"
+          >
+            {{ $t('outward') }}
+          </v-col>
+          <v-col
+            cols="auto"
+          >
+            <v-icon
+              slot="prepend"
+            >
+              mdi-arrow-right-circle
+            </v-icon>
+          </v-col>
+          <v-col
+            cols="auto"
+          >
+            {{ formatTime(outwardTime) }}
+          </v-col>
+        </v-row>
+      </v-col>
+
+      <!-- Single return -->
+      <v-col
+        v-if="outwardTime && returnTime"
+        cols="3"
+        offset="1"
+      >
+        <v-row
+          dense
+        >
+          <v-col
+            cols="auto"
+          >
+            {{ $t('return') }}
+          </v-col>
+          <v-col
+            cols="auto"
+          >
+            <v-icon
+              slot="prepend"
+            >
+              mdi-arrow-left-circle
+            </v-icon>
+          </v-col>
+          <v-col
+            cols="auto"
+          >
+            {{ formatTime(returnTime) }}
+          </v-col>
+        </v-row>
+      </v-col>
+
+      <!-- Multi outward only -->
+      <v-col
+        v-if="!outwardTime && !returnTrip"
+        cols="7"
+      >
+        <v-row
+          dense
+        >
+          <v-col
+            cols="auto"
+          >
+            {{ $t('outward') }}
+          </v-col>
+          <v-col
+            cols="auto"
+          >
+            <v-icon
+              slot="prepend"
+            >
+              mdi-arrow-left-circle
+            </v-icon>
+          </v-col>
+          <v-col
+            cols="auto"
+          >
+            <span class="font-italic">{{ $t('multi') }}</span>
+          </v-col>
+        </v-row>
+      </v-col>
+
+      <!-- Multi outward/return -->
+      <v-col
+        v-if="!outwardTime && returnTrip"
+        cols="7"
+      >
+        <v-row
+          dense
+        >
+          <v-col
+            cols="auto"
+          >
+            {{ $t('outward') }}
+          </v-col>
+          <v-col
+            cols="auto"
+          >
+            <v-icon
+              slot="prepend"
+            >
+              mdi-arrow-left-right
+            </v-icon>
+          </v-col>
+          <v-col
+            cols="auto"
+          >
+            {{ $t('return') }} <span class="font-italic">{{ $t('multi') }}</span>
+          </v-col>
+        </v-row>
+      </v-col>
+
+      <!-- Days -->
+      <v-col
+        cols="5"
+        class="text-right"
+      >
+        <regular-days-summary 
+          :mon-active="monActive"
+          :tue-active="tueActive"
+          :wed-active="wedActive"
+          :thu-active="thuActive"
+          :fri-active="friActive"
+          :sat-active="satActive"
+          :sun-active="sunActive"
+        />
+      </v-col>
+    </v-row>
+  </div>
+</template>
+
+<script>
+import { merge } from "lodash";
+import moment from "moment";
+import Translations from "@translations/components/carpool/utilities/RegularPlanningSummary.json";
+import TranslationsClient from "@clientTranslations/components/carpool/utilities/RegularPlanningSummary.json";
+import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
+
+let TranslationsMerged = merge(Translations, TranslationsClient);
+export default {
+  components: {
+    RegularDaysSummary
+  },
+  i18n: {
+    messages: TranslationsMerged,
+  },
+  props: {
+    outwardTime: {
+      type: String,
+      default: null
+    },
+    returnTime: {
+      type: String,
+      default: null
+    },
+    returnTrip: {
+      type: Boolean,
+      default: false
+    },
+    monActive: {
+      type: Boolean,
+      default: false
+    },
+    tueActive: {
+      type: Boolean,
+      default: false
+    },
+    wedActive: {
+      type: Boolean,
+      default: false
+    },
+    thuActive: {
+      type: Boolean,
+      default: false
+    },
+    friActive: {
+      type: Boolean,
+      default: false
+    },
+    satActive: {
+      type: Boolean,
+      default: false
+    },
+    sunActive: {
+      type: Boolean,
+      default: false
+    },
+  },
+  data() {
+    return {
+      locale: this.$i18n.locale,
+    };
+  },
+  methods: {
+    formatTime(time) {
+      moment.locale(this.locale);
+      return moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute"));
+    }
+  }
+};
+</script>

@@ -75,6 +75,29 @@ class ProposalMatcher
         $this->proposalRepository = $proposalRepository;
         $this->geoMatcher = $geoMatcher;
     }
+
+    /**
+     * Create Matching proposal entities for a proposal.
+     *
+     * @param Proposal $proposal    The proposal for which we want the matchings
+     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
+     * @return Proposal The proposal with the matchings
+     */
+    public function createMatchingsForProposal(Proposal $proposal, bool $excludeProposalUser=true)
+    {
+        // we search the matchings
+        $matchings = $this->findMatchingProposals($proposal, $excludeProposalUser);
+        
+        // we assign the matchings to the proposal
+        foreach ($matchings as $matching) {
+            if ($matching->getProposalOffer() === $proposal) {
+                $proposal->addMatchingOffer($matching);
+            } else {
+                $proposal->addMatchingRequest($matching);
+            }
+        }
+        return $proposal;
+    }
     
     /**
      * Find matching proposals for a proposal.
@@ -214,7 +237,7 @@ class ProposalMatcher
                 }
             }
         }
-        //exit;
+        
         // if we use times, we check if the pickup times match
         if (
             ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $proposal->getCriteria()->getFromTime()) ||
@@ -412,9 +435,9 @@ class ProposalMatcher
                     break;
                 }
             }
-            $pickupTimes = $this->getPickupTimes($matching->getProposalOffer(), $matching->getProposalRequest(), $pickupDuration);
-            if (count($pickupTimes)>0) {
-                $filters['pickup'] = $pickupTimes;
+            $validPickupTimes = $this->getValidPickupTimes($matching->getProposalOffer(), $matching->getProposalRequest(), $pickupDuration);
+            if (count($validPickupTimes)>0) {
+                $filters['pickup'] = $validPickupTimes;
                 $matching->setFilters($filters);
                 $validMatchings[] = $matching;
             }
@@ -423,28 +446,31 @@ class ProposalMatcher
     }
 
     /**
-     * Get the pickup times for the given proposals
+     * Get the valid pickup times for the given proposals
+     * Valid = we check the times of both proposals to be sure that they match
      *
      * @param Proposal $proposal1   The driver proposal
      * @param Proposal $proposal2   The passenger proposal
      * @param integer $pickupDuration   The duration from the origin to the pickup point
      * @return void
      */
-    private function getPickupTimes(Proposal $proposal1, Proposal $proposal2, int $pickupDuration)
+    private function getValidPickupTimes(Proposal $proposal1, Proposal $proposal2, int $pickupDuration)
     {
-        $minPickupTime = $maxPickupTime = null;
-        $monMinPickupTime = $monMaxPickupTime = null;
-        $tueMinPickupTime = $tueMaxPickupTime = null;
-        $wedMinPickupTime = $wedMaxPickupTime = null;
-        $thuMinPickupTime = $thuMaxPickupTime = null;
-        $friMinPickupTime = $friMaxPickupTime = null;
-        $satMinPickupTime = $satMaxPickupTime = null;
-        $sunMinPickupTime = $sunMaxPickupTime = null;
+        $pickupTime = $minPickupTime = $maxPickupTime = null;
+        $monPickupTime = $monMinPickupTime = $monMaxPickupTime = null;
+        $tuePickupTime = $tueMinPickupTime = $tueMaxPickupTime = null;
+        $wedPickupTime = $wedMinPickupTime = $wedMaxPickupTime = null;
+        $thuPickupTime = $thuMinPickupTime = $thuMaxPickupTime = null;
+        $friPickupTime = $friMinPickupTime = $friMaxPickupTime = null;
+        $satPickupTime = $satMinPickupTime = $satMaxPickupTime = null;
+        $sunPickupTime = $sunMinPickupTime = $sunMaxPickupTime = null;
         
         switch ($proposal1->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL: {
+                $pickupTime = clone $proposal1->getCriteria()->getFromTime();
                 $minPickupTime = clone $proposal1->getCriteria()->getMinTime();
                 $maxPickupTime = clone $proposal1->getCriteria()->getMaxTime();
+                $pickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                 $minPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                 $maxPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                 switch ($proposal2->getCriteria()->getFrequency()) {
@@ -454,6 +480,7 @@ class ProposalMatcher
                             ($maxPickupTime>=$proposal2->getCriteria()->getMinTime() && $maxPickupTime<=$proposal2->getCriteria()->getMaxTime())
                         )) {
                             // not in range
+                            $pickupTime = null;
                             $minPickupTime = null;
                             $maxPickupTime = null;
                         }
@@ -467,6 +494,7 @@ class ProposalMatcher
                                     ($maxPickupTime>=$proposal2->getCriteria()->getSunMinTime() && $maxPickupTime<=$proposal2->getCriteria()->getSunMaxTime())
                                 )) {
                                     // not in range
+                                    $pickupTime = null;
                                     $minPickupTime = null;
                                     $maxPickupTime = null;
                                 }
@@ -478,6 +506,7 @@ class ProposalMatcher
                                     ($maxPickupTime>=$proposal2->getCriteria()->getMonMinTime() && $maxPickupTime<=$proposal2->getCriteria()->getMonMaxTime())
                                 )) {
                                     // not in range
+                                    $pickupTime = null;
                                     $minPickupTime = null;
                                     $maxPickupTime = null;
                                 }
@@ -489,6 +518,7 @@ class ProposalMatcher
                                     ($maxPickupTime>=$proposal2->getCriteria()->getTueMinTime() && $maxPickupTime<=$proposal2->getCriteria()->getTueMaxTime())
                                 )) {
                                     // not in range
+                                    $pickupTime = null;
                                     $minPickupTime = null;
                                     $maxPickupTime = null;
                                 }
@@ -500,6 +530,7 @@ class ProposalMatcher
                                     ($maxPickupTime>=$proposal2->getCriteria()->getWedMinTime() && $maxPickupTime<=$proposal2->getCriteria()->getWedMaxTime())
                                 )) {
                                     // not in range
+                                    $pickupTime = null;
                                     $minPickupTime = null;
                                     $maxPickupTime = null;
                                 }
@@ -511,6 +542,7 @@ class ProposalMatcher
                                     ($maxPickupTime>=$proposal2->getCriteria()->getThuMinTime() && $maxPickupTime<=$proposal2->getCriteria()->getThuMaxTime())
                                 )) {
                                     // not in range
+                                    $pickupTime = null;
                                     $minPickupTime = null;
                                     $maxPickupTime = null;
                                 }
@@ -522,6 +554,7 @@ class ProposalMatcher
                                     ($maxPickupTime>=$proposal2->getCriteria()->getFriMinTime() && $maxPickupTime<=$proposal2->getCriteria()->getFriMaxTime())
                                 )) {
                                     // not in range
+                                    $pickupTime = null;
                                     $minPickupTime = null;
                                     $maxPickupTime = null;
                                 }
@@ -533,6 +566,7 @@ class ProposalMatcher
                                     ($maxPickupTime>=$proposal2->getCriteria()->getSatMinTime() && $maxPickupTime<=$proposal2->getCriteria()->getSatMaxTime())
                                 )) {
                                     // not in range
+                                    $pickupTime = null;
                                     $minPickupTime = null;
                                     $maxPickupTime = null;
                                 }
@@ -548,8 +582,10 @@ class ProposalMatcher
                 switch ($proposal2->getCriteria()->getFrequency()) {
                     case Criteria::FREQUENCY_PUNCTUAL: {
                         if ($proposal1->getCriteria()->isMonCheck() && $proposal2->getCriteria()->getFromDate()->format('w') == 1) {
+                            $pickupTime = clone $proposal1->getCriteria()->getMonTime();
                             $minPickupTime = clone $proposal1->getCriteria()->getMonMinTime();
                             $maxPickupTime = clone $proposal1->getCriteria()->getMonMaxTime();
+                            $pickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $minPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $maxPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             if (!(
@@ -557,13 +593,16 @@ class ProposalMatcher
                                 ($maxPickupTime>=$proposal2->getCriteria()->getMinTime() && $maxPickupTime<=$proposal2->getCriteria()->getMaxTime())
                             )) {
                                 // not in range
+                                $pickupTime = null;
                                 $minPickupTime = null;
                                 $maxPickupTime = null;
                             }
                         }
                         if ($proposal1->getCriteria()->isTueCheck() && $proposal2->getCriteria()->getFromDate()->format('w') == 2) {
+                            $pickupTime = clone $proposal1->getCriteria()->getTueTime();
                             $minPickupTime = clone $proposal1->getCriteria()->getTueMinTime();
                             $maxPickupTime = clone $proposal1->getCriteria()->getTueMaxTime();
+                            $pickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $minPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $maxPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             if (!(
@@ -571,13 +610,16 @@ class ProposalMatcher
                                 ($maxPickupTime>=$proposal2->getCriteria()->getMinTime() && $maxPickupTime<=$proposal2->getCriteria()->getMaxTime())
                             )) {
                                 // not in range
+                                $pickupTime = null;
                                 $minPickupTime = null;
                                 $maxPickupTime = null;
                             }
                         }
                         if ($proposal1->getCriteria()->isWedCheck() && $proposal2->getCriteria()->getFromDate()->format('w') == 3) {
+                            $pickupTime = clone $proposal1->getCriteria()->getWedTime();
                             $minPickupTime = clone $proposal1->getCriteria()->getWedMinTime();
                             $maxPickupTime = clone $proposal1->getCriteria()->getWedMaxTime();
+                            $pickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $minPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $maxPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             if (!(
@@ -585,13 +627,16 @@ class ProposalMatcher
                                 ($maxPickupTime>=$proposal2->getCriteria()->getMinTime() && $maxPickupTime<=$proposal2->getCriteria()->getMaxTime())
                             )) {
                                 // not in range
+                                $pickupTime = null;
                                 $minPickupTime = null;
                                 $maxPickupTime = null;
                             }
                         }
                         if ($proposal1->getCriteria()->isThuCheck() && $proposal2->getCriteria()->getFromDate()->format('w') == 4) {
+                            $pickupTime = clone $proposal1->getCriteria()->getThuTime();
                             $minPickupTime = clone $proposal1->getCriteria()->getThuMinTime();
                             $maxPickupTime = clone $proposal1->getCriteria()->getThuMaxTime();
+                            $pickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $minPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $maxPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             if (!(
@@ -599,27 +644,33 @@ class ProposalMatcher
                                 ($maxPickupTime>=$proposal2->getCriteria()->getMinTime() && $maxPickupTime<=$proposal2->getCriteria()->getMaxTime())
                             )) {
                                 // not in range
+                                $pickupTime = null;
                                 $minPickupTime = null;
                                 $maxPickupTime = null;
                             }
                         }
                         if ($proposal1->getCriteria()->isFriCheck() && $proposal2->getCriteria()->getFromDate()->format('w') == 5) {
+                            $pickupTime = clone $proposal1->getCriteria()->getFriTime();
                             $minPickupTime = clone $proposal1->getCriteria()->getFriMinTime();
                             $maxPickupTime = clone $proposal1->getCriteria()->getFriMaxTime();
                             $minPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                            $pickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $maxPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             if (!(
                                 ($minPickupTime>=$proposal2->getCriteria()->getMinTime() && $minPickupTime<=$proposal2->getCriteria()->getMaxTime()) ||
                                 ($maxPickupTime>=$proposal2->getCriteria()->getMinTime() && $maxPickupTime<=$proposal2->getCriteria()->getMaxTime())
                             )) {
                                 // not in range
+                                $pickupTime = null;
                                 $minPickupTime = null;
                                 $maxPickupTime = null;
                             }
                         }
                         if ($proposal1->getCriteria()->isSatCheck() && $proposal2->getCriteria()->getFromDate()->format('w') == 6) {
+                            $pickupTime = clone $proposal1->getCriteria()->getSatTime();
                             $minPickupTime = clone $proposal1->getCriteria()->getSatMinTime();
                             $maxPickupTime = clone $proposal1->getCriteria()->getSatMaxTime();
+                            $pickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $minPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $maxPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             if (!(
@@ -627,13 +678,16 @@ class ProposalMatcher
                                 ($maxPickupTime>=$proposal2->getCriteria()->getMinTime() && $maxPickupTime<=$proposal2->getCriteria()->getMaxTime())
                             )) {
                                 // not in range
+                                $pickupTime = null;
                                 $minPickupTime = null;
                                 $maxPickupTime = null;
                             }
                         }
                         if ($proposal1->getCriteria()->isSunCheck() && $proposal2->getCriteria()->getFromDate()->format('w') == 0) {
+                            $pickupTime = clone $proposal1->getCriteria()->getSunTime();
                             $minPickupTime = clone $proposal1->getCriteria()->getSunMinTime();
                             $maxPickupTime = clone $proposal1->getCriteria()->getSunMaxTime();
+                            $pickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $minPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $maxPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             if (!(
@@ -641,6 +695,7 @@ class ProposalMatcher
                                 ($maxPickupTime>=$proposal2->getCriteria()->getMinTime() && $maxPickupTime<=$proposal2->getCriteria()->getMaxTime())
                             )) {
                                 // not in range
+                                $pickupTime = null;
                                 $minPickupTime = null;
                                 $maxPickupTime = null;
                             }
@@ -649,8 +704,10 @@ class ProposalMatcher
                     }
                     case Criteria::FREQUENCY_REGULAR: {
                         if ($proposal1->getCriteria()->isMonCheck() && $proposal2->getCriteria()->isMonCheck()) {
+                            $monPickupTime = clone $proposal1->getCriteria()->getMonTime();
                             $monMinPickupTime = clone $proposal1->getCriteria()->getMonMinTime();
                             $monMaxPickupTime = clone $proposal1->getCriteria()->getMonMaxTime();
+                            $monPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $monMinPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $monMaxPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             if (!(
@@ -658,13 +715,16 @@ class ProposalMatcher
                                 ($monMaxPickupTime>=$proposal2->getCriteria()->getMonMinTime() && $monMaxPickupTime<=$proposal2->getCriteria()->getMonMaxTime())
                             )) {
                                 // not in range
+                                $monPickupTime = null;
                                 $monMinPickupTime = null;
                                 $monMaxPickupTime = null;
                             }
                         }
                         if ($proposal1->getCriteria()->isTueCheck() && $proposal2->getCriteria()->isTueCheck()) {
+                            $tuePickupTime = clone $proposal1->getCriteria()->getTueTime();
                             $tueMinPickupTime = clone $proposal1->getCriteria()->getTueMinTime();
                             $tueMaxPickupTime = clone $proposal1->getCriteria()->getTueMaxTime();
+                            $tuePickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $tueMinPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $tueMaxPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             if (!(
@@ -672,13 +732,16 @@ class ProposalMatcher
                                 ($tueMaxPickupTime>=$proposal2->getCriteria()->getTueMinTime() && $tueMaxPickupTime<=$proposal2->getCriteria()->getTueMaxTime())
                             )) {
                                 // not in range
+                                $tuePickupTime = null;
                                 $tueMinPickupTime = null;
                                 $tueMaxPickupTime = null;
                             }
                         }
                         if ($proposal1->getCriteria()->isWedCheck() && $proposal2->getCriteria()->isWedCheck()) {
+                            $wedPickupTime = clone $proposal1->getCriteria()->getWedTime();
                             $wedMinPickupTime = clone $proposal1->getCriteria()->getWedMinTime();
                             $wedMaxPickupTime = clone $proposal1->getCriteria()->getWedMaxTime();
+                            $wedPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $wedMinPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $wedMaxPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             if (!(
@@ -686,13 +749,16 @@ class ProposalMatcher
                                 ($wedMaxPickupTime>=$proposal2->getCriteria()->getWedMinTime() && $wedMaxPickupTime<=$proposal2->getCriteria()->getWedMaxTime())
                             )) {
                                 // not in range
+                                $wedPickupTime = null;
                                 $wedMinPickupTime = null;
                                 $wedMaxPickupTime = null;
                             }
                         }
                         if ($proposal1->getCriteria()->isThuCheck() && $proposal2->getCriteria()->isThuCheck()) {
+                            $thuPickupTime = clone $proposal1->getCriteria()->getThuTime();
                             $thuMinPickupTime = clone $proposal1->getCriteria()->getThuMinTime();
                             $thuMaxPickupTime = clone $proposal1->getCriteria()->getThuMaxTime();
+                            $thuPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $thuMinPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $thuMaxPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             if (!(
@@ -700,13 +766,16 @@ class ProposalMatcher
                                 ($thuMaxPickupTime>=$proposal2->getCriteria()->getThuMinTime() && $thuMaxPickupTime<=$proposal2->getCriteria()->getThuMaxTime())
                             )) {
                                 // not in range
+                                $thuPickupTime = null;
                                 $thuMinPickupTime = null;
                                 $thuMaxPickupTime = null;
                             }
                         }
                         if ($proposal1->getCriteria()->isFriCheck() && $proposal2->getCriteria()->isFriCheck()) {
+                            $friPickupTime = clone $proposal1->getCriteria()->getFriTime();
                             $friMinPickupTime = clone $proposal1->getCriteria()->getFriMinTime();
                             $friMaxPickupTime = clone $proposal1->getCriteria()->getFriMaxTime();
+                            $friPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $friMinPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $friMaxPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             if (!(
@@ -714,13 +783,16 @@ class ProposalMatcher
                                 ($friMaxPickupTime>=$proposal2->getCriteria()->getFriMinTime() && $friMaxPickupTime<=$proposal2->getCriteria()->getFriMaxTime())
                             )) {
                                 // not in range
+                                $friPickupTime = null;
                                 $friMinPickupTime = null;
                                 $friMaxPickupTime = null;
                             }
                         }
                         if ($proposal1->getCriteria()->isSatCheck() && $proposal2->getCriteria()->isSatCheck()) {
+                            $satPickupTime = clone $proposal1->getCriteria()->getSatTime();
                             $satMinPickupTime = clone $proposal1->getCriteria()->getSatMinTime();
                             $satMaxPickupTime = clone $proposal1->getCriteria()->getSatMaxTime();
+                            $satPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $satMinPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $satMaxPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             if (!(
@@ -728,13 +800,16 @@ class ProposalMatcher
                                 ($satMaxPickupTime>=$proposal2->getCriteria()->getSatMinTime() && $satMaxPickupTime<=$proposal2->getCriteria()->getSatMaxTime())
                             )) {
                                 // not in range
-                                $monMinPickupTime = null;
+                                $satPickupTime = null;
+                                $satMinPickupTime = null;
                                 $satMaxPickupTime = null;
                             }
                         }
                         if ($proposal1->getCriteria()->isSunCheck() && $proposal2->getCriteria()->isSunCheck()) {
+                            $sunPickupTime = clone $proposal1->getCriteria()->getSunTime();
                             $sunMinPickupTime = clone $proposal1->getCriteria()->getSunMinTime();
                             $sunMaxPickupTime = clone $proposal1->getCriteria()->getSunMaxTime();
+                            $sunPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $sunMinPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             $sunMaxPickupTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             if (!(
@@ -742,6 +817,7 @@ class ProposalMatcher
                                 ($sunMaxPickupTime>=$proposal2->getCriteria()->getSunMinTime() && $sunMaxPickupTime<=$proposal2->getCriteria()->getSunMaxTime())
                             )) {
                                 // not in range
+                                $sunPickupTime = null;
                                 $sunMinPickupTime = null;
                                 $sunMaxPickupTime = null;
                             }
@@ -753,11 +829,17 @@ class ProposalMatcher
             }
         }
         $return = [];
+        if ($pickupTime) {
+            $return['pickupTime'] = $pickupTime;
+        }
         if ($minPickupTime) {
             $return['minPickupTime'] = $minPickupTime;
         }
         if ($maxPickupTime) {
             $return['maxPickupTime'] = $maxPickupTime;
+        }
+        if ($monPickupTime) {
+            $return['monPickupTime'] = $monPickupTime;
         }
         if ($monMinPickupTime) {
             $return['monMinPickupTime'] = $monMinPickupTime;
@@ -765,11 +847,17 @@ class ProposalMatcher
         if ($monMaxPickupTime) {
             $return['monMaxPickupTime'] = $monMaxPickupTime;
         }
+        if ($tuePickupTime) {
+            $return['tuePickupTime'] = $tuePickupTime;
+        }
         if ($tueMinPickupTime) {
             $return['tueMinPickupTime'] = $tueMinPickupTime;
         }
         if ($tueMaxPickupTime) {
             $return['tueMaxPickupTime'] = $tueMaxPickupTime;
+        }
+        if ($wedPickupTime) {
+            $return['wedPickupTime'] = $wedPickupTime;
         }
         if ($wedMinPickupTime) {
             $return['wedMinPickupTime'] = $wedMinPickupTime;
@@ -777,11 +865,17 @@ class ProposalMatcher
         if ($wedMaxPickupTime) {
             $return['wedMaxPickupTime'] = $wedMaxPickupTime;
         }
+        if ($thuPickupTime) {
+            $return['thuPickupTime'] = $thuPickupTime;
+        }
         if ($thuMinPickupTime) {
             $return['thuMinPickupTime'] = $thuMinPickupTime;
         }
         if ($thuMaxPickupTime) {
             $return['thuMaxPickupTime'] = $thuMaxPickupTime;
+        }
+        if ($friPickupTime) {
+            $return['friPickupTime'] = $friPickupTime;
         }
         if ($friMinPickupTime) {
             $return['friMinPickupTime'] = $friMinPickupTime;
@@ -789,11 +883,17 @@ class ProposalMatcher
         if ($friMaxPickupTime) {
             $return['friMaxPickupTime'] = $friMaxPickupTime;
         }
+        if ($satPickupTime) {
+            $return['satPickupTime'] = $satPickupTime;
+        }
         if ($satMinPickupTime) {
             $return['satMinPickupTime'] = $satMinPickupTime;
         }
         if ($satMaxPickupTime) {
             $return['satMaxPickupTime'] = $satMaxPickupTime;
+        }
+        if ($sunPickupTime) {
+            $return['sunPickupTime'] = $sunPickupTime;
         }
         if ($sunMinPickupTime) {
             $return['sunMinPickupTime'] = $sunMinPickupTime;
@@ -802,28 +902,5 @@ class ProposalMatcher
             $return['sunMaxPickupTime'] = $sunMaxPickupTime;
         }
         return $return;
-    }
-    
-    /**
-     * Create Matching proposal entities for a proposal.
-     *
-     * @param Proposal $proposal    The proposal for which we want the matchings
-     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
-     * @return Proposal The proposal with the matchings
-     */
-    public function createMatchingsForProposal(Proposal $proposal, bool $excludeProposalUser=true)
-    {
-        // we search the matchings
-        $matchings = $this->findMatchingProposals($proposal, $excludeProposalUser);
-        
-        // we assign the matchings to the proposal
-        foreach ($matchings as $matching) {
-            if ($matching->getProposalOffer() === $proposal) {
-                $proposal->addMatchingOffer($matching);
-            } else {
-                $proposal->addMatchingRequest($matching);
-            }
-        }
-        return $proposal;
     }
 }

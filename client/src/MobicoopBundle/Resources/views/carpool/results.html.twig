@@ -2,21 +2,22 @@
 
 {% block title %}Résultats{% endblock %}
 {% block stylesheets %}
-    {{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/results") }}
+    {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/results") }}#}
 {% endblock %}
 {% block main %}
 
     <matching
-        :origin = "{{ origin }}"
-        :destination = "{{ destination }}"
-        date = "{{ date }}"
-        time = "{{ time }}"
+        :proposal-id = "{{ proposalId is defined ? (proposalId ? proposalId : 'null') : 'null' }}"
+        :origin = "{{ origin is defined ? origin : 'null' }}"
+        :destination = "{{ destination is defined ? destination : 'null' }}"
+        date = "{{ date is defined ? date : '' }}"
+        time = "{{ time is defined ? time : '' }}"
+        :community-id = "{{ communityId is defined ? (communityId ? communityID : 'null') : 'null' }}"
         :user="{{ app.user|json_encode }}"
         {{ regular ? 'regular' : '' }}
+        {{ distinguishRegular ? 'distinguish-regular' : '' }}
+        :carpooler-rate = "{{ carpoolerRate }}"
     />
 
 
-{% endblock %}
-{% block javascripts %}
-    {{ encore_entry_script_tags("#{assets_prefix ?? ''}carpool/results") }}
 {% endblock %}

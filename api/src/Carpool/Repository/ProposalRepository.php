@@ -62,7 +62,12 @@ class ProposalRepository
      * - similar times (~ passenger time is after driver time)
      * - similar basic geographical zones
      *
+     * We can also filter with communities.
      * TODO : We also limit to the drivers that have enough seats left in their car for the passenger's needs.
+     *
+     * We also filter solidary proposals :
+     * - a solidary exclusive proposal can only match with a solidary proposal
+     * - a solidary proposal can match with any proposal
      *
      * It is a pre-filter, the idea is to limit the next step : the route calculations (that cannot be done directly in the model).
      * The fine time matching will be done during the route calculation process.
@@ -98,8 +103,21 @@ class ProposalRepository
             ->setParameter('userProposal', $proposal->getUser());
         }
 
+        // exclude private proposals
+        $query->andWhere('(p.private IS NULL or p.private = 0)');
+
+        // SOLIDARY
+        if ($proposal->getCriteria()->isSolidaryExclusive()) {
+            // solidary exclusive proposal => can match only with solidary proposals
+            $query->andWhere('c.solidary = 1');
+        } elseif (!$proposal->getCriteria()->isSolidary()) {
+            // not a solidary proposal => solidary exclusive are excluded
+            $query->andWhere('(c.solidaryExclusive IS NULL or c.solidaryExclusive = 0)');
+        }
+
         // COMMUNITIES
-        $filterCommunities = "((co.proposalsHidden = 0 OR co.proposalsHidden is null)";
+        // here we exclude the proposals that are posted in communities for which the user is not member
+        $filterUserCommunities = "((co.proposalsHidden = 0 OR co.proposalsHidden is null)";
         // this function returns the id of a Community object
         $fCommunities = function (Community $community) {
             return $community->getId();
@@ -108,10 +126,19 @@ class ProposalRepository
         $privateCommunities = array_map($fCommunities, $this->userManager->getPrivateCommunities($proposal->getUser()));
         if (is_array($privateCommunities) && count($privateCommunities)>0) {
             // we finally implode this array for filtering
-            $filterCommunities .= " OR (co.id IN (" . implode(',', $privateCommunities) . "))";
+            $filterUserCommunities .= " OR (co.id IN (" . implode(',', $privateCommunities) . "))";
         }
-        $filterCommunities .= ")";
-        $query->andWhere($filterCommunities);
+        $filterUserCommunities .= ")";
+        $query->andWhere($filterUserCommunities);
+
+        // here we filter to the given proposal communities
+        if ($proposal->getCommunities()) {
+            $communities = array_map($fCommunities, $proposal->getCommunities());
+            if (is_array($communities) && count($communities)>0) {
+                // we finally implode this array for filtering
+                $query->andWhere("co.id IN (" . implode(',', $communities) . ")");
+            }
+        }
 
         // GEOGRAPHICAL ZONES
         // we search the zones where the user is passenger and/or driver

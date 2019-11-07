@@ -50,7 +50,11 @@ use App\Image\Entity\Image;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial","status":"exact"})

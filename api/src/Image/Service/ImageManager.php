@@ -25,6 +25,7 @@ namespace App\Image\Service;
 
 use App\Image\Entity\Image;
 use App\Event\Entity\Event;
+use App\User\Entity\User;
 use App\Community\Entity\Community;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\FileManager;
@@ -33,6 +34,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use App\Event\Repository\EventRepository;
 use App\Community\Repository\CommunityRepository;
+use App\User\Repository\UserRepository;
 use App\Image\Repository\ImageRepository;
 use App\Image\Exception\OwnerNotFoundException;
 use App\Image\Exception\ImageException;
@@ -50,6 +52,7 @@ class ImageManager
 {
     private $eventRepository;
     private $communityRepository;
+    private $userRepository;
     private $imageRepository;
     private $fileManager;
     private $types;
@@ -63,16 +66,18 @@ class ImageManager
      *
      * @param EventRepository $eventRepository
      * @param CommunityRepository $communityRepository
+     * @param UserRepository $userRepository
      * @param ImageRepository $imageRepository
      * @param FileManager $fileManager
      * @param ContainerInterface $container
      * @param LoggerInterface $logger
      * @param array $types
      */
-    public function __construct(EventRepository $eventRepository, CommunityRepository $communityRepository, ImageRepository $imageRepository, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types)
+    public function __construct(EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository, ImageRepository $imageRepository, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types)
     {
         $this->eventRepository = $eventRepository;
         $this->communityRepository = $communityRepository;
+        $this->userRepository = $userRepository;
         $this->imageRepository = $imageRepository;
         $this->fileManager = $fileManager;
         $this->types = $types;
@@ -100,6 +105,12 @@ class ImageManager
         } elseif (!is_null($image->getCommunity())) {
             // the image is an image for a community
             return $this->communityRepository->find($image->getCommunity()->getId());
+        } elseif (!is_null($image->getUserId())) {
+            // the image is an image for a user
+            return $this->userRepository->find($image->getUserId());
+        } elseif (!is_null($image->getUser())) {
+            // the image is an image for a user
+            return $this->userRepository->find($image->getUser()->getId());
         }
         throw new OwnerNotFoundException('The owner of this image cannot be found');
     }
@@ -132,13 +143,23 @@ class ImageManager
                     return $fileName;
                 }
                 break;
+            
             case Community::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
-                // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
+                // for now, for a community, the filename will be the sanitized name of the community and the position of the image in the set
                 if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
                     return $fileName;
                 }
                 break;
+
+            case User::class:
+                // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
+                // for now, for an user, the filename will be the sanitized name of the user and the position of the image in the set
+                if ($fileName = $this->fileManager->sanitize($this->generateRandomName() . " " . $image->getPosition())) {
+                    return $fileName;
+                }
+                break;
+                
             default:
                 break;
         }
@@ -276,6 +297,19 @@ class ImageManager
             throw new FileNotWritableException('Cannot write to ' . $directory . $fileName);
         }
         fclose($file);
+    }
+
+    /**
+     * Generate random file name
+     *
+     * @param integer $int
+     * @return void
+     */
+    public function generateRandomName(int $int=15)
+    {
+        $randomName =  bin2hex(random_bytes($int));
+    
+        return $randomName;
     }
     
     /** TODO : create methods to :

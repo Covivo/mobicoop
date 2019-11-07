@@ -2,7 +2,7 @@
 button:
     submit: 'Submit'
     delete: 'Delete'
-    
+
 # menus
 menu:
     signup: 'Sign up'
@@ -50,3 +50,5 @@ carpool:
     ad_create:
         title: 'Post an ad'
         h1: 'Post an ad'
+contact:
+    title: "Contact us"

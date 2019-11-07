@@ -51,6 +51,8 @@ use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
 use App\User\Controller\UserRegistration;
 use App\User\Controller\UserPermissions;
+use App\User\Controller\UserAlerts;
+use App\User\Controller\UserAlertsUpdate;
 use App\User\Controller\UserLogin;
 use App\User\Controller\UserThreads;
 use App\User\Controller\UserThreadsDirectMessages;
@@ -101,13 +103,13 @@ use App\Solidary\Entity\Solidary;
  *          "get"={
  *              "normalization_context"={"groups"={"read"}},
  *          },
- *         "password_update"={
+ *          "password_update"={
  *              "method"="PUT",
  *              "path"="/users/{id}/password_update",
  *              "controller"=UserUpdatePassword::class,
  *              "defaults"={"name"="reply"}
  *          },
- *        "password_update_request"={
+ *          "password_update_request"={
  *              "method"="PUT",
  *              "path"="/users/{id}/password_update_request",
  *              "controller"=UserUpdatePassword::class,
@@ -127,8 +129,21 @@ use App\Solidary\Entity\Solidary;
  *                          "format" = "integer",
  *                          "description" = "The territory id"
  *                      },
- *                   }
+ *                  }
  *              }
+ *          },
+ *          "alerts"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"alerts"}},
+ *              "controller"=UserAlerts::class,
+ *              "path"="/users/{id}/alerts",
+ *          },
+ *          "putAlerts"={
+ *              "method"="PUT",
+ *              "normalization_context"={"groups"={"alerts"}},
+ *              "denormalization_context"={"groups"={"alerts"}},
+ *              "path"="/users/{id}/alerts",
+ *              "controller"=UserAlertsUpdate::class,
  *          },
  *          "threads"={
  *              "method"="GET",
@@ -315,6 +330,61 @@ class User implements UserInterface, EquatableInterface
     private $multiTransportMode;
 
     /**
+     * @var int|null Smoking preferences.
+     * 0 = i don't smoke
+     * 1 = i don't smoke in car
+     * 2 = i smoke
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $smoke;
+
+    /**
+     * @var boolean|null Music preferences.
+     * 0 = no music
+     * 1 = i listen to music or radio
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $music;
+
+    /**
+     * @var string|null Music favorites.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $musicFavorites;
+
+    /**
+     * @var boolean|null Chat preferences.
+     * 0 = no chat
+     * 1 = chat
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $chat;
+
+    /**
+     * @var string|null Chat favorite subjects.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $chatFavorites;
+
+    /**
+     * @var boolean|null The user accepts to receive news about the platform.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $newsSubscription;
+
+    /**
      * @var \DateTimeInterface Creation date of the user.
      *
      * @ORM\Column(type="datetime")
@@ -369,6 +439,38 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","write"})
      */
     private $geoToken;
+
+    /**
+     * @var string|null Token for phone validation.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $phoneToken;
+
+    /**
+     * @var \DateTimeInterface Validation date of the phone number.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $phoneValidatedDate;
+
+    /**
+     * @var string|null iOS app ID.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $iosAppId;
+
+    /**
+     * @var string|null Android app ID.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $androidAppId;
 
     /**
      * @var string User language
@@ -530,6 +632,13 @@ class User implements UserInterface, EquatableInterface
     private $solidaries;
 
     /**
+    * @var ArrayCollection|null A user may have many user notification preferences.
+    *
+    * @ORM\OneToMany(targetEntity="\App\User\Entity\UserNotification", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+    */
+    private $userNotifications;
+
+    /**
      * @var array|null The threads of the user
      * @Groups("threads")
      */
@@ -540,6 +649,20 @@ class User implements UserInterface, EquatableInterface
      * @Groups("permissions")
      */
     private $permissions;
+
+    /**
+     * @var array|null The user alerts preferences
+     * @Groups("alerts")
+     */
+    private $alerts;
+
+    /**
+     * @var string|null Facebook ID of the user
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $facebookId;
 
     public function __construct($status = null)
     {
@@ -561,6 +684,7 @@ class User implements UserInterface, EquatableInterface
         $this->diaries = new ArrayCollection();
         $this->diariesAdmin = new ArrayCollection();
         $this->solidaries = new ArrayCollection();
+        $this->userNotifications = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -728,6 +852,78 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getSmoke(): ?int
+    {
+        return $this->smoke;
+    }
+
+    public function setSmoke(?int $smoke): self
+    {
+        $this->smoke = $smoke;
+
+        return $this;
+    }
+
+    public function hasMusic(): ?bool
+    {
+        return $this->music;
+    }
+
+    public function setMusic(?bool $music): self
+    {
+        $this->music = $music;
+
+        return $this;
+    }
+
+    public function getMusicFavorites(): ?string
+    {
+        return $this->musicFavorites;
+    }
+
+    public function setMusicFavorites(?string $musicFavorites): self
+    {
+        $this->musicFavorites = $musicFavorites;
+
+        return $this;
+    }
+
+    public function hasChat(): ?bool
+    {
+        return $this->chat;
+    }
+
+    public function setChat(?bool $chat): self
+    {
+        $this->chat = $chat;
+
+        return $this;
+    }
+
+    public function getChatFavorites(): ?string
+    {
+        return $this->chatFavorites;
+    }
+
+    public function setChatFavorites(?string $chatFavorites): self
+    {
+        $this->chatFavorites = $chatFavorites;
+
+        return $this;
+    }
+
+    public function hasNewsSubscription(): ?bool
+    {
+        return $this->newsSubscription;
+    }
+
+    public function setNewsSubscription(?bool $newsSubscription): self
+    {
+        $this->newsSubscription = $newsSubscription;
+
+        return $this;
+    }
+
     public function getPwdToken(): ?string
     {
         return $this->pwdToken;
@@ -759,6 +955,51 @@ class User implements UserInterface, EquatableInterface
     public function setGeoToken(?string $geoToken): self
     {
         $this->geoToken = $geoToken;
+        return $this;
+    }
+
+    public function getPhoneToken(): ?string
+    {
+        return $this->phoneToken;
+    }
+
+    public function setPhoneToken(?string $phoneToken): self
+    {
+        $this->phoneToken = $phoneToken;
+        return $this;
+    }
+
+    public function getPhoneValidatedDate(): ?\DateTimeInterface
+    {
+        return $this->phoneValidatedDate;
+    }
+
+    public function setPhoneValidatedDate(\DateTimeInterface $phoneValidatedDate): self
+    {
+        $this->phoneValidatedDate = $phoneValidatedDate;
+
+        return $this;
+    }
+
+    public function getIosAppId(): ?string
+    {
+        return $this->iosAppId;
+    }
+
+    public function setIosAppId(?string $iosAppId): self
+    {
+        $this->iosAppId = $iosAppId;
+        return $this;
+    }
+
+    public function getAndroidAppId(): ?string
+    {
+        return $this->androidAppId;
+    }
+
+    public function setAndroidAppId(?string $androidAppId): self
+    {
+        $this->androidAppId = $androidAppId;
         return $this;
     }
 
@@ -1277,6 +1518,34 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getUserNotifications()
+    {
+        return $this->userNotifications->getValues();
+    }
+
+    public function addUserNotification(UserNotification $userNotification): self
+    {
+        if (!$this->userNotifications->contains($userNotification)) {
+            $this->userNotifications->add($userNotification);
+            $userNotification->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserNotification(UserNotification $userNotification): self
+    {
+        if ($this->userNotifications->contains($userNotification)) {
+            $this->userNotifications->removeElement($userNotification);
+            // set the owning side to null (unless already changed)
+            if ($userNotification->getUser() === $this) {
+                $userNotification->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -1381,6 +1650,18 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getAlerts(): ?array
+    {
+        return $this->alerts;
+    }
+
+    public function setAlerts(?array $alerts): self
+    {
+        $this->alerts = $alerts;
+
+        return $this;
+    }
+
     public function getThreads(): ?array
     {
         return $this->threads;
@@ -1390,6 +1671,17 @@ class User implements UserInterface, EquatableInterface
     {
         $this->threads = $threads;
 
+        return $this;
+    }
+
+    public function getFacebookId(): ?string
+    {
+        return $this->facebookId;
+    }
+
+    public function setFacebookId(?string $facebookId): self
+    {
+        $this->facebookId = $facebookId;
         return $this;
     }
 

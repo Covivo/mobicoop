@@ -13,11 +13,11 @@
         <h1>{{ $t('title') }}</h1>
       </v-col>
     </v-row>
-    <v-layout
-      justify-center
-      text-center
+    <v-row
+      justify="center"
+      class="text-center"
     >
-      <v-flex xs4>
+      <v-col class="col-4">
         <v-alert
           v-if="errorDisplay!==''"
           type="error"
@@ -54,7 +54,7 @@
           <v-btn
             :disabled="!valid"
             :loading="loading"
-            color="success"
+            color="primary"
             type="submit"
             rounded
             @click="validate"
@@ -69,27 +69,50 @@
             {{ $t('textRecovery') }}
           </a>
         </v-card-text>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
+    <v-row
+      v-if="showFacebookLogin"
+      justify="center"
+      class="text-center"
+    >
+      <v-col class="col-4">
+        <m-facebook-auth
+          :app-id="facebookLoginAppId"
+          @errorFacebookConnect="errorFB"
+        />
+      </v-col>
+    </v-row>
   </v-content>
 </template>
 <script>
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/Login.json";
 import TranslationsClient from "@clientTranslations/components/user/Login.json";
-
+import MFacebookAuth from '@components/user/MFacebookAuth';
 let TranslationsMerged = merge(Translations, TranslationsClient);
+
 export default {
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
+  },
+  name: "Login",
+  components : {
+    MFacebookAuth
   },
   props: {
     errormessage: {
       type: Object,
       default: null
     },
+    showFacebookLogin: {
+      type: Boolean,
+      default: false
+    },
+    facebookLoginAppId: {
+      type: String,
+      default: null
+    }
   },
   data() {
     return {
@@ -109,7 +132,7 @@ export default {
     };
   },
   mounted() {
-    this.treatErrorMessage(this.errormessage);
+    if(this.errormessage.value !== "") this.treatErrorMessage(this.errormessage);
   },
   methods: {
     validate() {
@@ -117,12 +140,19 @@ export default {
         this.loading = true;
       }
     },
+    errorFB(data){
+      this.treatErrorMessage({'value':data})
+    },
     treatErrorMessage(errorMessage) {
       if (errorMessage.value === "Bad credentials.") {
         this.errorDisplay = this.$t("errorCredentials");
         this.loading = false;
       }
-    }
+      else{
+        this.errorDisplay = this.$t(errorMessage.value);
+        this.loading = false;
+      }
+    },
   }
 };
 </script>

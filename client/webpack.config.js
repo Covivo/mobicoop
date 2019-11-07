@@ -1,13 +1,13 @@
 const Encore = require('@symfony/webpack-encore');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const path = require('path');
-const read = require('fs-readdir-recursive');
+// const read = require('fs-readdir-recursive');
 const _ = require('lodash');
 // ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
 // const fs = require('fs');
 
-let files = read('./assets/js/page');
-let filesBundle = read('./src/MobicoopBundle/Resources/assets/js/page');
+// let files = read('./assets/js/page');
+// let filesBundle = read('./src/MobicoopBundle/Resources/assets/js/page');
 // ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
 // let bundleRealPath = fs.realpathSync(__dirname + '/src/MobicoopBundle');
 // let bundleNodeModules = path.resolve(bundleRealPath + '../../../node_modules');
@@ -17,25 +17,32 @@ let filesBundle = read('./src/MobicoopBundle/Resources/assets/js/page');
 Encore
   .setOutputPath('public/build/')
   .setPublicPath('/build')
+  /*
+   * ENTRY CONFIG
+   *
+   * Add 1 entry for each "page" of your app
+   * (including one that's included on every page - e.g. "app")
+   *
+   * Each entry will result in one JavaScript file (e.g. app.js)
+   * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
+   */
+  // ⚙️ COMMENT below if you are using a client platform  ⚙️ //
   .addEntry('bundle_app', './src/MobicoopBundle/Resources/assets/js/app.js')
+  // scss only entries
+  // add as much entry as you want css different file
+  .addStyleEntry('bundle_main', './src/MobicoopBundle/Resources/assets/css/main.scss')
   // ⚙️ UNCOMMENT below if you are client platform ⚙️ //
-  // .addEntry('app', './assets/js/app.js')  
+  // .addEntry('app', './assets/js/app.js')
+  // .addStyleEntry('main', './assets/css/main.scss')
   .splitEntryChunks()
   .enableVersioning(Encore.isProduction())
   .enableVueLoader()
+  .enableSingleRuntimeChunk()
   .addLoader({
     test: /\.s(c|a)ss$/,
     use: [
       'vue-style-loader',
-      // ⚙️ COMMENT below if you are using a client platform  ⚙️ //
       'css-loader',
-      // ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
-      // {
-      //   loader: 'css-loader',
-      //   options: {
-      //     url: false
-      //   }
-      // },
       {
         loader: 'sass-loader',
         options: {
@@ -45,8 +52,8 @@ Encore
       }
     ]
   })
-  .setManifestKeyPrefix('/build')
-  .enablePostCssLoader()
+  .setManifestKeyPrefix('build')
+  .enablePostCssLoader();
 
 // for Dev we do not add some plugin & loader
 if (!Encore.isProduction()) {
@@ -80,15 +87,15 @@ if (!Encore.isProduction()) {
     })
 }
 
-// Add base assets
-for (let file of files) {
-  Encore.addEntry(file.split('.js')[0], `./assets/js/page/${file}`)
-}
-
-// Add bundle assets
-for (let file of filesBundle) {
-  Encore.addEntry(`bundle_${file.split('.js')[0]}`, `./src/MobicoopBundle/Resources/assets/js/page/${file}`)
-}
+// // Add base assets
+// for (let file of files) {
+//   Encore.addEntry(file.split('.js')[0], `./assets/js/page/${file}`)
+// }
+//
+// // Add bundle assets
+// for (let file of filesBundle) {
+//   Encore.addEntry(`bundle_${file.split('.js')[0]}`, `./src/MobicoopBundle/Resources/assets/js/page/${file}`)
+// }
 
 let encoreConfig = Encore.getWebpackConfig();
 encoreConfig.watchOptions = {

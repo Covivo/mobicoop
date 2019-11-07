@@ -4,13 +4,13 @@
       v-model="address"
       :loading="isLoading"
       :items="items"
-      :label="label"
+      :label="label + (required ? ' *' : '')"
       :hint="hint"
       :search-input.sync="search"
       hide-no-data
       clearable
       item-text="selectedDisplayedLabel"
-      color="success"
+      color="primary"
       return-object
       no-filter
       persistent-hint
@@ -35,7 +35,7 @@
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title v-html="data.item.displayedLabel" />
-                <v-list-item-subtitle v-html="data.item.addressCountry" />
+                <v-list-item-subtitle v-html="data.item.displayedSecondLabel" />
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -79,9 +79,15 @@ export default {
       type: Boolean,
       default: true
     },
+    displayRegion: {
+      type: Boolean,
+      default: true
+    },
     hint: defaultString,
-    required: Boolean,
-    requiredError: defaultString,
+    required:  {
+      type: Boolean,
+      default: false
+    },
     name: defaultString,
     initAddress: {
       type: Object,
@@ -106,7 +112,7 @@ export default {
     geoRules() {
       if (this.required) {
         return [
-          v => !!v || this.requiredError
+          v => !!v || this.$t('required')
         ];
       }
       return [];
@@ -127,17 +133,18 @@ export default {
         this.entries = [];
         if (this.address) {
           this.address.icon = "mdi-map-marker";
-          this.address.displayedLabel = `${this.address.displayLabel}`;
-          this.address.selectedDisplayedLabel = `${this.address.displayLabel}`;
+          this.address.displayedLabel = `${this.address.displayLabel[0]}`;
+          this.address.displayedSecondLabel = `${this.address.displayLabel[1]}`;
+          this.address.selectedDisplayedLabel = `${this.address.displayLabel[0]}`;
           if (this.address.home) {
-            this.address.displayedLabel = `${this.address.name} - ${this.address.displayLabel}`;
-            if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.name} - ${this.address.displayLabel}`;
+            this.address.displayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
+            if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
             if (this.displayIcon) this.address.icon = "mdi-home-map-marker";
           } else if (this.address.relayPoint) {
             if (this.displayIcon) this.address.icon = "mdi-parking";
           } else if (this.address.name) {
-            this.address.displayedLabel = `${this.address.name} - ${this.address.displayLabel}`;
-            if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.name} - ${this.address.displayLabel}`;
+            this.address.displayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
+            if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
             if (this.displayIcon) this.address.icon = "mdi-map";
           } else if (this.address.venue) {
             if (this.displayIcon) this.address.icon = "mdi-map-marker-radius";
@@ -166,17 +173,18 @@ export default {
           }
           addresses.forEach((address, addressKey) => {
             addresses[addressKey].icon = "mdi-map-marker";
-            addresses[addressKey].displayedLabel = `${address.displayLabel}`;
-            addresses[addressKey].selectedDisplayedLabel = `${address.displayLabel}`;
+            addresses[addressKey].displayedLabel = `${address.displayLabel[0]}`;
+            addresses[addressKey].displayedSecondLabel = `${address.displayLabel[1]}`;
+            addresses[addressKey].selectedDisplayedLabel = `${address.displayLabel[0]}`;
             if (address.home) {
-              addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel}`;
-              if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel}`;
+              addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel[0]}`;
+              if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel[0]}`;
               if (this.displayIcon) addresses[addressKey].icon = "mdi-home-map-marker";
             } else if (address.relayPoint) {
               if (this.displayIcon) addresses[addressKey].icon = "mdi-parking";
             } else if (address.name) {
-              addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel}`;
-              if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel}`;
+              addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel[0]}`;
+              if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel[0]}`;
               if (this.displayIcon) addresses[addressKey].icon = "mdi-map";
             } else if (address.venue) {
               if (this.displayIcon) addresses[addressKey].icon = "mdi-map-marker-radius";

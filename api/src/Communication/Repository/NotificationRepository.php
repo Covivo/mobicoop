@@ -58,4 +58,15 @@ class NotificationRepository
         ;
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Find user editable notifications
+     */
+    public function findUserEditable()
+    {
+        $query = $this->repository->createQueryBuilder('n')
+        ->where('n.userEditable=1')
+        ;
+        return $query->getQuery()->getResult();
+    }
 }

@@ -43,7 +43,7 @@ user_sign_up_validation:
         fr: /utilisateur/inscription/validation/{token}
         en: /user/signup/validation/{token}
     defaults:
-        token: ""   
+        token: ""
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
 
 # profile update
@@ -53,6 +53,13 @@ user_profile_update:
         en: /user/profile/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
 
+# delete avatar
+user_profile_image_delete:
+    path:
+        fr: /utilisateur/profil/avatar/supprimer
+        en: /user/profile/avatar/delete
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileAvatarDelete
+
 # password update
 user_password_update:
     path:
@@ -60,6 +67,12 @@ user_password_update:
         en: /user/password/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordUpdate
 
+user_carpool_settings_update:
+    path:
+        fr: /utilisateur/preferences-covoiturage/modifier
+        en: /user/carpool-settings/update
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCarpoolSettingsUpdate
+        
 # password forgotten : ask for a new password
 user_password_forgot:
     path:
@@ -90,7 +103,14 @@ user_password_reset:
         token: .*
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordReset
 
-# proposal list
+user_update_alert:
+    methods: [POST]
+    path:
+        fr: /utilisateur/alerte/changement
+        en: /user/alert/update
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::updateAlert
+
+    # proposal list
 user_proposal_list:
     path:
         fr: /utilisateur/annonces
@@ -102,6 +122,13 @@ user_message_list:
     path:
         fr: /utilisateur/messages
         en: /user/messages
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::mailBox
+
+user_message_list_new_thread_direct:
+    methods: [POST]
+    path:
+        fr: /utilisateur/messages/nouveau
+        en: /user/messages/new
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::mailBox
 
 user_message_direct_threads_list:
@@ -145,6 +172,13 @@ user_message_update_ask:
         en: /user/messages/updateAsk
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageUpdateAsk
 
+# Connection by facebook (POST)
+user_facebook_connect:
+    methods: [POST]
+    path:
+        fr: /utilisateur/facebook/connexion
+        en: /user/facebook/connect
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userFacebookConnect
 
 ##################
 # carpool routes #
@@ -154,19 +188,31 @@ user_message_update_ask:
 carpool_ad_post:
     path:
         fr: /covoiturage/annonce/poster
-        en: /carpool/ad/share
+        en: /carpool/ad/post/
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
 
-# post an ad in a community
-carpool_ad_post_community:
+# post a first ad
+carpool_first_ad_post:
     path:
-        fr: /communaute/{communityId}/annonce/poster
-        en: /community/{communityId}/ad/share
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
-    requirements:
-        communityId: '\d+'
+        fr: /covoiturage/annonce/poster/premiere
+        en: /carpool/ad/post/first
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolFirstAdPost       
 
-# ad results 
+# post a solidary ad
+carpool_solidary_ad_post:
+    path:
+        fr: /covoiturage/annonce/poster/solidaire
+        en: /carpool/ad/post/solidary
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryAdPost    
+
+# post an ad from a search
+carpool_ad_post_search:
+    path:
+        fr: /covoiturage/recherche/poster
+        en: /carpool/search/post
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
+
+# ad results
 carpool_ad_result:
     path:
         fr: /covoiturage/annonce/{id}/resultats
@@ -174,6 +220,15 @@ carpool_ad_result:
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdResult
     requirements:
         id: '\d+'
+
+carpool_ad_detail:
+    path:
+        fr: /covoiturage/annonce/{id}/detail
+        en: /carpool/ad/{id}/detail
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdResult
+    requirements:
+        id: '\d+'
+
 
 # search results (POST)
 carpool_search_result:
@@ -183,8 +238,9 @@ carpool_search_result:
         en: /carpool/search
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResult
 
-# search matching (AJAX)
+# search matching (AJAX POST)
 carpool_search_matching:
+    methods: [POST]
     path:
         fr: /covoiturage/recherche/matching
         en: /carpool/search/matching
@@ -201,16 +257,16 @@ carpool_contact:
 # rdex provider (AJAX)
 rdex_provider:
     path:
-        fr: /provider/rdex/ 
+        fr: /provider/rdex/
         en: /provider/rdex/
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexProvider  
-    
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexProvider
+
 # rdex journey (AJAX)
 rdex_journey:
     path:
         fr: /journey/rdex
         en: /journey/rdex
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney    
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney
 
 
 ####################
@@ -223,20 +279,20 @@ community_create:
         fr: /communaute/creer
         en: /community/create
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityCreate
-         
+
 # display communities
 community_list:
     path:
         fr: /communautes
         en: /community
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityList  
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityList
 
 # display one community
 community_show:
     path:
         fr: /communaute/{id}
         en: /community/{id}
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow  
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow
     requirements:
         id: '\d+'
 
@@ -251,14 +307,25 @@ community_join:
 
 # get a community user (AJAX)
 community_user:
+    methods: [POST]
     path:
-        fr: /community-user/{id}
-        en: /community-user/{id}
+        fr: /community-user
+        en: /community-user
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUser
     requirements:
         id: '\d+'
 
-# get the last community users (AJAX)
+# check if a user is an accepted member of a community (AJAX)
+community_user_is_member:
+    methods: [POST]
+    path:
+        fr: /community/isMember
+        en: /community/isMember
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::isMember
+    requirements:
+        id: '\d+'
+
+        # get the last community users (AJAX)
 community_last_users:
     path:
         fr: /community-last-users/{id}
@@ -274,7 +341,7 @@ community_member_list:
         en: /community-member-list/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityMemberList
     requirements:
-        id: '\d+'        
+        id: '\d+'
 
 # get all community proposals (AJAX)
 community_proposals:
@@ -283,8 +350,16 @@ community_proposals:
         en: /community-proposals/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityProposals
     requirements:
-        id: '\d+'       
+        id: '\d+'
         
+# get all available communities for the logged user (AJAX)
+community_user_available:
+    path:
+        fr: /communautes/utilisateur/{userId}
+        en: /communities/user/{userId}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUserAvailable
+    requirements:
+        userId: '\d+'
 ##########################
 # editorial pages routes #
 ##########################
@@ -302,13 +377,20 @@ cgu:
         fr: /cgu
         en: /cgu
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCgu
-        
+
 # display news page
 news:
     path:
         fr: /nouveautes
         en: /news
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showNews
+
+# display data policy page
+data_policy:
+    path:
+        fr: /protection-donnees
+        en: /data-policy
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDataPolicy
 
 ####################
 # geography routes #
@@ -320,3 +402,37 @@ georouter:
         fr: /georoute
         en: /georoute
     controller: Mobicoop\Bundle\MobicoopBundle\Geography\Controller\GeoRouterController::geoRoute
+
+####################
+# contact routes #
+####################
+
+# display contact page
+contact:
+    path:
+        fr: /contact
+        en: /contact
+    controller: Mobicoop\Bundle\MobicoopBundle\Communication\Controller\ContactController:showContact
+
+contact_send:
+    path:
+        fr: /contact/send
+        en: /contact/send
+    controller: Mobicoop\Bundle\MobicoopBundle\Communication\Controller\ContactController:sendContact
+
+####################
+# solidarity routes #
+####################
+
+# display solidarity ask page
+solidary:
+    path:
+        fr: /solidarite
+        en: /solidary
+    controller: Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\SolidaryController:index
+
+solidary_ask:
+    path:
+        fr: /solidarite/demande
+        en: /solidary/ask
+    controller: Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\SolidaryController:solidaryCreate

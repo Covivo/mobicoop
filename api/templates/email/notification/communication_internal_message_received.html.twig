@@ -1,5 +1,6 @@
-{% extends 'base.html.twig' %}
+{% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    <p>{{ "Vous pouvez répondre à ce message via la messagerie de "|trans }}{{ api_env('CLIENT_NAME') }} {{ "en cliquant ici"|trans }} {{ api_env('CLIENT_URL') ~ api_env('CLIENT_MSG_URI')}}</p>.
-    {{ "Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter."| trans }}
+<p> Vous avez reçu un message :</p>
+    <p>{{  "canAnswerViaEmailFrom" |trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere" |trans }} {{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlMailBox"|trans }}.</p>
+    <p>{{ "getProblem" |trans }}.</p>
 {% endblock %}

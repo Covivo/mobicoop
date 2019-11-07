@@ -43,14 +43,14 @@
               :label="$t('inputs.email')"
               name="email"
             />
-            <v-text-field
+            <!-- <v-text-field
               v-model="phone"
               :label="$t('inputs.phone')"
               name="phone"
-            />
+            /> -->
             <v-btn
               :loading="loading"
-              color="success"
+              color="primary"
               type="submit"
               rounded
               @click="validate"
@@ -65,13 +65,11 @@
 </template>
 <script>
 import axios from "axios";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/PasswordRecovery.json";
 
 export default {
   i18n: {
     messages: Translations,
-    sharedMessages: CommonTranslations
   },
   props: {
   },
@@ -103,17 +101,16 @@ export default {
             }
           })
           .then(response=>{
-            //console.log(response);
-            if(response.data.id !== undefined){
+            if(response.data !== null && response.data.id !== undefined){
               this.snackbarText = this.$t("snackBar.ok");
             }
             else{
-              this.snackbarText = this.$t("snackBar.error");
+              this.snackbarText = this.$t("snackBar.notfound");
             }
             this.snackbar = true;
             this.loading = false;
           })
-          .catch(function (error) {
+          .catch(error=> {
             console.log(error);
             this.snackbarText = this.$t("snackBar.error");
           });

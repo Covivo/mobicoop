@@ -3,10 +3,10 @@
     <v-container class="window-scroll">
       <v-timeline
         v-if="items.length>0"
-        :hidden="this.loading"
+        :hidden="loading"
       >
         <v-timeline-item
-          v-for="(item, i) in this.items"
+          v-for="(item, i) in items"
           :key="i"
           :fil-dot="item.divider===false"
           :hide-dot="item.divider===true"
@@ -14,7 +14,7 @@
           :left="item.origin!=='own'"
           :idmessage="item.idMessage"
           :class="(item.divider ? 'divider' : '')+' '+(item.origin ? item.origin : '')"
-        >     
+        >
           <template
             v-if="item.divider===false"
             v-slot:icon
@@ -42,7 +42,7 @@
           >{{ item.createdDate }}</span>
         </v-timeline-item>
       </v-timeline>
-      <v-card v-else-if="!this.loading">
+      <v-card v-else-if="!loading">
         <v-card-text
           class="font-italic subtitle-1"
         >
@@ -55,21 +55,19 @@
         :type="type"
         :tile="tile"
         class="mx-auto"
-        :hidden="!this.loading"
-      />       
+        :hidden="!loading"
+      />
     </v-container>
   </v-content>
 </template>
 <script>
 import axios from "axios";
 import moment from "moment";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/mailbox/ThreadDetails.json";
 
 export default {
   i18n: {
     messages: Translations,
-    sharedMessages: CommonTranslations
   },
   props: {
     idMessage: {
@@ -87,6 +85,10 @@ export default {
     iconRecipient:{ // Not used for now
       type: String,
       default:null
+    },
+    refresh:{
+      type: Boolean,
+      default:false
     }
   },
   data(){
@@ -99,65 +101,73 @@ export default {
       tile: false,
       type: 'article',
       types: [],
-      loading: false   
+      loading: false
     }
   },
   watch:{
     idMessage(){
       this.getCompleteThread();
+    },
+    refresh(){
+      (this.refresh) ? this.getCompleteThread() : '';
     }
   },
   methods: {
     getCompleteThread(){
-      this.loading = true;
-      axios.get(this.$t("urlCompleteThread",{idMessage:this.idMessage}))
-        .then(response => {
-          this.loading = false;
-          this.items.length = 0;  
+      this.items = [];
+      // if idMessage = -1 it means that is a "virtuel" thread. When you initiate a contact without previous message
+      if(this.idMessage!==-1){
+        this.loading = true;
+        axios.get(this.$t("urlCompleteThread",{idMessage:this.idMessage}))
+          .then(response => {
+            this.loading = false;
+            this.items.length = 0;
 
-          moment.locale(this.locale);
-          let firstItem = {
-            divider: true,
-            createdDate: moment(response.data[0].createdDate).format("ddd DD MMM YYYY")
-          }
-          this.items.push(firstItem);
-
-          let currentDate = moment(response.data[0].createdDate).format("DDMMYYYY");
-          response.data.forEach((item, index) => {
-            item.divider = false;
-
-            // If the date is different, push a divider
-            if (moment(item.createdDate).format("DDMMYYYY") !== currentDate) {
-              let divider = {
-                divider: true,
-                createdDate: moment(item.createdDate).format("ddd DD MMM YYYY")
-              };
-              currentDate = moment(item.createdDate).format("DDMMYYYY");
-              this.items.push(divider);
+            moment.locale(this.locale);
+            let firstItem = {
+              divider: true,
+              createdDate: moment(response.data[0].createdDate).format("ddd DD MMM YYYY")
             }
+            this.items.push(firstItem);
 
-            // Set the origin (for display purpose)
-            item.origin = ""
-            if(this.idUser==item.user.id){
-              item.origin = "own";
-            }
-            this.items.push(item);
+            let currentDate = moment(response.data[0].createdDate).format("DDMMYYYY");
+            response.data.forEach((item, index) => {
+              item.divider = false;
 
-            // Update the current AskHistory
-            if(item.askHistory){this.currentAskHistory = item.askHistory.id}else{this.currentAskHistory=null};
-            this.emit();
+              // If the date is different, push a divider
+              if (moment(item.createdDate).format("DDMMYYYY") !== currentDate) {
+                let divider = {
+                  divider: true,
+                  createdDate: moment(item.createdDate).format("ddd DD MMM YYYY")
+                };
+                currentDate = moment(item.createdDate).format("DDMMYYYY");
+                this.items.push(divider);
+              }
+
+              // Set the origin (for display purpose)
+              item.origin = ""
+              if(this.idUser==item.user.id){
+                item.origin = "own";
+              }
+              this.items.push(item);
+
+              // Update the current AskHistory
+              if(item.askHistory){this.currentAskHistory = item.askHistory.id}else{this.currentAskHistory=null};
+              this.emit();
+            });
+
+          })
+          .catch(function (error) {
+            console.log(error);
           });
-
-        })
-        .catch(function (error) {
-          console.log(error);
-        }); 
+      }
     },
     createdTime(date){
       return moment(date).format("HH:mm");
     },
     emit(){
       this.$emit("updateAskHistory",{currentAskHistory:this.currentAskHistory});
+      this.$emit("refreshCompleted");
     }
   }
 }

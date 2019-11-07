@@ -60,7 +60,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class DataProvider
 {
     const SERIALIZER_ENCODER = 'json';
-    
+
     // possible file properties and associated getter, used for multipart/form-data
     const FILE_PROPERTIES = [
         'eventFile' => 'getEventFile',
@@ -70,22 +70,22 @@ class DataProvider
         'relayPointTypeFile' => 'getRelayPointTypeFile',
         'file' => 'getFile'
     ];
-    
+
     // original name property for file-based entities
     const FILE_ORIGINAL_NAME_PROPERTY = 'originalName';
-    
+
     // accepted return format
     const RETURN_OBJECT = 1;
     const RETURN_ARRAY = 2;
     const RETURN_JSON = 3;
-        
+
     private $client;
     private $resource;
     private $class;
     private $serializer;
     private $deserializer;
     private $format;
-   
+
     /**
      * Constructor.
      *
@@ -123,14 +123,14 @@ class DataProvider
 
         // Create a HandlerStack
         $stack = HandlerStack::create();
-                
+
         // Add middleware
         $stack->push(new JwtMiddleware($jwtManager));
 
         $this->client = new Client(['handler' => $stack, 'base_uri' => $uri]);
-        
+
         $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
-        
+
         $encoders = array(new JsonEncoder());
         // we use our custom Object Normalizer to remove unwanted null values from the json
         $normalizers = array(new DateTimeNormalizer(), new RemoveNullObjectNormalizer($classMetadataFactory));
@@ -165,7 +165,7 @@ class DataProvider
     {
         $this->format = $format;
     }
-    
+
     /**
      * Get item operation
      *
@@ -183,7 +183,7 @@ class DataProvider
         /*
          return $this->serializer->deserialize((string) $response->getBody(), $this->class, self::SERIALIZER_ENCODER);
          */
-        
+
         try {
             if ($this->format == self::RETURN_ARRAY) {
                 $clientResponse = $this->client->get($this->resource."/".$id);
@@ -238,7 +238,7 @@ class DataProvider
         }
         return new Response();
     }
-    
+
     /**
      * Get collection operation
      *
@@ -325,7 +325,7 @@ class DataProvider
         }
         return new Response();
     }
-    
+
     /**
      * Post collection operation
      *
@@ -363,7 +363,7 @@ class DataProvider
         }
         return new Response();
     }
-    
+
     /**
      * Post collection operation with multipart/form-data
      *
@@ -413,7 +413,7 @@ class DataProvider
         }
         return new Response();
     }
-    
+
     /**
      * Put item operation
      *
@@ -440,7 +440,7 @@ class DataProvider
         }
         return new Response();
     }
-    
+
     /**
      * Specially Put item operation with special operation
      *
@@ -467,10 +467,10 @@ class DataProvider
         }
         return new Response();
     }
-    
-    
 
-    
+
+
+
     /**
      * Delete item operation
      *
@@ -492,7 +492,7 @@ class DataProvider
         }
         return new Response();
     }
-    
+
     private function treatHydraCollection($data, $class=null)
     {
         // if $class is defined, it's because our request concerns a subresource
@@ -502,10 +502,10 @@ class DataProvider
         if ($this->format != self::RETURN_OBJECT) {
             return json_decode((string) $data, true);
         }
-        
+
         // $data comes from a GuzzleHttp request; it's a json hydra collection so when need to parse the json to an array
         $data = json_decode($data, true);
-        
+
         $hydra = new Hydra();
         if (isset($data['@context'])) {
             $hydra->setContext($data['@context']);
@@ -534,7 +534,7 @@ class DataProvider
              * only the root object deserialization works...
              * see https://medium.com/@rebolon/the-symfony-serializer-a-great-but-complex-component-fbc09baa65a0
              */
-            
+
             /*$members = [];
             foreach ($data["hydra:member"] as $key=>$value) {
                 $object = $this->serializer->deserialize(json_encode($value), $this->class, self::SERIALIZER_ENCODER);
@@ -571,7 +571,7 @@ class DataProvider
         }
         return $hydra;
     }
-    
+
     private function pluralize(string $name): string
     {
         return Inflector::pluralize(Inflector::tableize($name));
@@ -599,7 +599,7 @@ class RemoveNullObjectNormalizer extends ObjectNormalizer
         }
         return $data;
     }
-    
+
     /**
      * This function replaces each value in an array by its IRI value if IRI key exists.
      * (recursive function)
