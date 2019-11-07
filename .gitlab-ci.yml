@@ -220,7 +220,16 @@ prod_deploy:
     - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/mobicoop/prod    # rsync the files on the server
     - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/api; php bin/console doctrine:migrations:migrate --env=prod -n;cd /var/www/mobicoop/prod/admin;npm run build"    # database migration and admin build
   when: manual      # /!\ important : job executed manually /!\
-
+  artifacts:
+    paths:
+    - client/cypress/screenshots
+    - client/public/build
+    - client/node_modules/
+    - client/vendor/
+    - api/vendor/
+    - node_modules/
+    - admin/node_modules/
+    expire_in: 1 week
 
 
 ###############################################################################################
