@@ -163,13 +163,6 @@
           <v-stepper-items>
             <!-- Step 1 : search journey -->
             <v-stepper-content step="1">
-              <ad-planification
-                :init-outward-date="outwardDate"
-                :init-outward-time="outwardTime"
-                :regular="regular"
-                :default-margin-time="defaultMarginTime"
-                @change="planificationChanged"
-              />
               <search-journey
                 :solidary-ad="solidary"
                 display-roles
@@ -184,7 +177,15 @@
             </v-stepper-content>
 
             <!-- Step 2 : planification -->
-            <v-stepper-content step="2" />
+            <v-stepper-content step="2">
+              <ad-planification
+                :init-outward-date="outwardDate"
+                :init-outward-time="outwardTime"
+                :regular="regular"
+                :default-margin-time="defaultMarginTime"
+                @change="planificationChanged"
+              />
+            </v-stepper-content>
 
             <!-- Step 3 : route -->
             <v-stepper-content step="3">

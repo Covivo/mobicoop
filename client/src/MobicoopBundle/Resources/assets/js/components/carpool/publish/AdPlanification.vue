@@ -238,43 +238,44 @@
                 v-model="item.mon"
                 label="L"
                 color="primary"
-                @change="change"
+                :disabled="false"
+                @change="change, getValueCheckbox($event,item,'mon')"
               />
               <v-checkbox
                 v-model="item.tue"
                 label="Ma"
                 color="primary"
-                @change="change"
+                @change="change, getValueCheckbox($event,item,'tue')"
               />
               <v-checkbox
                 v-model="item.wed"
                 label="Me"
                 color="primary"
-                @change="change"
+                @change="change, getValueCheckbox($event,item,'wed')"
               />
               <v-checkbox
                 v-model="item.thu"
                 label="J"
                 color="primary"
-                @change="change"
+                @change="change, getValueCheckbox($event,item,'thu')"
               />
               <v-checkbox
                 v-model="item.fri"
                 label="V"
                 color="primary"
-                @change="change"
+                @change="change, getValueCheckbox($event,item,'fri')"
               />
               <v-checkbox
                 v-model="item.sat"
                 label="S"
                 color="primary"
-                @change="change"
+                @change="change, getValueCheckbox($event,item,'sat')"
               />
               <v-checkbox
                 v-model="item.sun"
                 label="D"
                 color="primary"
-                @change="change"
+                @change="change, getValueCheckbox($event,item,'sun')"
               />
             </v-row>
 
@@ -321,6 +322,7 @@
                     v-model="item.outwardTime"
                     format="24hr"
                     header-color="secondary"
+                    :disabled="item.outwardDisabled"
                     @click:minute="closeOutwardTime(item.id)"
                     @change="change"
                   />
@@ -384,6 +386,7 @@
                     v-model="item.returnTime"
                     format="24hr"
                     header-color="secondary"
+                    :disabled="item.returnDisabled"
                     @click:minute="closeReturnTime(item.id)"
                     @change="change"
                   />
@@ -419,7 +422,7 @@
                 cols="2"
               >
                 <v-btn
-                  v-if="item.id>1"
+                  v-if="item.id>0"
                   text
                   icon
                   @click="removeSchedule(item.id)"
@@ -507,7 +510,6 @@ export default {
       marginTime: this.defaultMarginTime,
       locale: this.$i18n.locale,
       arrayDay : ['mon','tue','wed','thu','fri','sat','sun'],
-      checkDayTimeUse : [],
       schedules: [],
 
 
@@ -535,12 +537,14 @@ export default {
       return this.$t("marginTooltip",{margin: this.marginTime/60})
     },
     checkIfCurrentScheduleOk(){
-      for (var s in this.schedules){
-        var i = this.schedules[s];
-        if (i.visible) {
-          if ( !i.mon && !i.tue && !i.wed && !i.thu && !i.fri && !i.sat && !i.sun )  return false;
-          if ( i.outwardTime == null && i.returnTime == null) return false;
+      for (var s in this.activeSchedules){
+        var i = this.activeSchedules[s];
+
+        if ( !i.mon && !i.tue && !i.wed && !i.thu && !i.fri && !i.sat && !i.sun ) {
+          return false;
         }
+        if ( i.outwardTime == null && i.returnTime == null) return false;
+
       }
       return true;
     },
@@ -558,6 +562,7 @@ export default {
     change() {
       let validSchedules = JSON.parse(JSON.stringify(this.activeSchedules)); // little tweak to deep copy :)
       for (var i=0;i<validSchedules.length;i++) {
+
         if (!((validSchedules[i].mon || validSchedules[i].tue || validSchedules[i].wed || validSchedules[i].thu || validSchedules[i].fri || validSchedules[i].sat || validSchedules[i].sun) && validSchedules[i].outwardTime)) {
           validSchedules.splice(i);
         } else {
@@ -566,6 +571,7 @@ export default {
           delete validSchedules[i].menuOutwardTime;
           delete validSchedules[i].menuReturnTime;
         }
+
       }
       this.$emit("change", {
         outwardDate: this.outwardDate,
@@ -576,17 +582,89 @@ export default {
         returnTrip: this.returnTrip,
         schedules: validSchedules
       });
-      this.checkIfTimeAlreadySet()
     },
-    setData(){
-      //Crée le tableau de verif des horaires prises
-      for (var i in this.arrayDay){
-        this.checkDayTimeUse[this.arrayDay[i]] = {
-          outwardTime: null,
-          returnTime: null
-        };
+    getValueCheckbox(event,item,day){
+
+      //If we have more than 1 day and checkbox is set to true
+      if (this.activeSchedules.length > 1){
+        var id = item.id;
+        //We check a day
+        //Patch : we un disabled the currents time for block selected, see TODO
+        this.schedules[id].outwardDisabled = false;
+        this.schedules[id].returnDisabled = false;
+
+        if (event) {
+
+          this.verifCurrentdDayInAllSchedules(day,id)
+          for (var oneDay in this.arrayDay ){
+
+            this.verifAllDaysSchedules(this.arrayDay[oneDay])
+          }
+
+          // We uncheck a day
+        }else{
+
+          // TODO verif if all schedule have current day open, not just the currrent one
+        }
+
+
+
       }
-      //Crée le tableau schedule
+    },
+
+    verifCurrentdDayInAllSchedules(day,currentSchedule){
+
+      //Loop in active shcedules to find others day check
+      for (var j in this.activeSchedules) {
+        var c = this.activeSchedules[j];
+
+        // Check if not active shcedule , then loop for check if other schedule have same day check
+        if (c.id != currentSchedule) {
+
+          if (c.mon && day == 'mon') this.checkOutwardReturnAndDisabled(c);
+          if (c.tue && day == 'tue') this.checkOutwardReturnAndDisabled(c);
+          if (c.wed && day == 'wed') this.checkOutwardReturnAndDisabled(c);
+          if (c.thu && day == 'thu') this.checkOutwardReturnAndDisabled(c);
+          if (c.fri && day == 'fri') this.checkOutwardReturnAndDisabled(c);
+          if (c.sat && day == 'sat') this.checkOutwardReturnAndDisabled(c);
+          if (c.sun && day == 'sun') this.checkOutwardReturnAndDisabled(c);
+
+        }
+      }
+    },
+    checkOutwardReturnAndDisabled(c){
+      if (c.outwardTime) {
+        for (var k in this.activeSchedules) {
+          var v = this.activeSchedules[k];
+          if (v.id != c.id) {
+            this.activeSchedules[k].outwardDisabled = true;
+            this.activeSchedules[k].outwardTime = null;
+          }
+        }
+      }
+      if (c.returnTime) {
+        for (var k in this.activeSchedules) {
+          var v = this.activeSchedules[k];
+          if (v.id != c.id) {
+            this.activeSchedules[k].returnDisabled = true;
+            this.activeSchedules[k].returnTime = null;
+          }
+        }
+      }
+    },
+    verifAllDaysSchedules(day){
+      for (var k in this.activeSchedules) {
+        var v = this.activeSchedules[k];
+        if (v.id != c.id) {
+          this.activeSchedules[k].outwardDisabled = true;
+          //this.activeSchedules[k].outwardTime = null;
+        }
+      }
+    },
+    //Fill array for verification time + date
+    setData(){
+
+      //Fill array schedules
       for (var j in [0,1,2,3,4,5,6]){
         if (j == 0){
           this.schedules.push({
@@ -602,7 +680,9 @@ export default {
             outwardTime: null,
             returnTime: null,
             menuOutwardTime: false,
-            menuReturnTime: false
+            menuReturnTime: false,
+            outwardDisabled : false,
+            returnDisabled : false,
           })
         }else{
           this.schedules.push({
@@ -618,45 +698,10 @@ export default {
             outwardTime: null,
             returnTime: null,
             menuOutwardTime: false,
-            menuReturnTime: false
+            menuReturnTime: false,
+            outwardDisabled : false,
+            returnDisabled : false,
           })
-        }
-      }
-    },
-    checkIfTimeAlreadySet(){
-      for (var s in this.schedules){
-        var i = this.schedules[s];
-        if (i.visible) {
-          var outwardTime = i.outwardTime;
-          var returnTime = i.returnTime;
-          if (i.mon) {
-            this.checkDayTimeUse['mon'].outwardTime = outwardTime;
-            this.checkDayTimeUse['mon'].returnTime = returnTime;
-          }
-          if (i.tue) {
-            this.checkDayTimeUse['tue'].outwardTime = outwardTime;
-            this.checkDayTimeUse['tue'].returnTime = returnTime;
-          }
-          if (i.wed){
-            this.checkDayTimeUse['wed'].outwardTime = outwardTime;
-            this.checkDayTimeUse['wed'].returnTime = returnTime;
-          }
-          if (i.thu) {
-            this.checkDayTimeUse['thu'].outwardTime = outwardTime;
-            this.checkDayTimeUse['thu'].returnTime = returnTime;
-          }
-          if (i.fri) {
-            this.checkDayTimeUse['fri'].outwardTime = outwardTime;
-            this.checkDayTimeUse['fri'].returnTime = returnTime;
-          }
-          if (i.sat){
-            this.checkDayTimeUse['sat'].outwardTime = outwardTime;
-            this.checkDayTimeUse['sat'].returnTime = returnTime;
-          }
-          if (i.sun) {
-            this.checkDayTimeUse['sun'].outwardTime = outwardTime;
-            this.checkDayTimeUse['sun'].returnTime = returnTime;
-          }
         }
       }
     },
@@ -697,7 +742,6 @@ export default {
           break;
         }
       }
-      console.info(this.checkDayTimeUse)
       this.change();
     },
   }
