@@ -89,6 +89,7 @@
           >
             <!-- Step 1 : search journey -->
             <v-stepper-step
+              complete
               editable
               :step="1"
               color="primary"
@@ -670,6 +671,7 @@ export default {
     return {
       distance: 0, 
       duration: 0,
+      validPlanification :false,
       outwardDate: this.initDate,
       outwardTime: this.initTime,
       returnDate: null,

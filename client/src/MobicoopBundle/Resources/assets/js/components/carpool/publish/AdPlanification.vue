@@ -454,8 +454,8 @@
             <v-icon>
               mdi-plus-circle-outline
             </v-icon>
+            {{ $t('addSchedule') }}
           </v-btn>
-          {{ $t('addSchedule') }}
         </v-col>
       </v-row>
     </v-form>
