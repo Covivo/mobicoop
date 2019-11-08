@@ -516,7 +516,9 @@ class Criteria
     private $priceKm;
 
     /**
-    * @var float|null The total price selected by the user.
+    * @var float|null The total price selected by the user :
+    * - as a driver if driver and passenger
+    * - as a passenger only if passenger
     *
     * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
     * @Groups({"read","results","write","thread"})
@@ -524,7 +526,7 @@ class Criteria
     private $price;
 
     /**
-    * @var float|null The total price selected by the user, rounded using the rounding rules.
+    * @var float|null The total price rounded using the rounding rules.
     *
     * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
     * @Groups({"read","results","write","thread"})
@@ -532,7 +534,9 @@ class Criteria
     private $roundedPrice;
 
     /**
-    * @var float|null The total price computed by the system, using the user price per km, not rounded.
+    * @var float|null The total price computed by the system, using the user price per km, not rounded :
+    * - as a driver if driver and passenger
+    * - as a passenger only if passenger
     *
     * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
     * @Groups({"read","results","write","thread"})
@@ -540,7 +544,7 @@ class Criteria
     private $computedPrice;
 
     /**
-    * @var float|null The total price computed by the system, using the user price per km, rounded usong the rounding rules.
+    * @var float|null The computed price rounded using the rounding rules.
     *
     * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
     * @Groups({"read","results","write","thread"})

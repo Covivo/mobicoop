@@ -339,9 +339,13 @@ class ProposalMatcher
             $matchingCriteria->setStrictDate($matching->getProposalOffer()->getCriteria()->isStrictDate());
             $matchingCriteria->setAnyRouteAsPassenger(true);
             
-            // We're using the driver price
-            $matchingCriteria->setPriceKm($matching->getProposalOffer()->getCriteria()->getPriceKm());
-
+            // we're using the driver price if there's no "forced" matching
+            if (is_null($proposal->getMatchingProposal())) {
+                $matchingCriteria->setPriceKm($matching->getProposalOffer()->getCriteria()->getPriceKm());
+            } else {
+                $matchingCriteria->setPriceKm($matching->getProposalOffer()->getCriteria()->getPriceKm());
+            }
+            
             if ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching->getProposalRequest()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                 $matchingCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
                 $matchingCriteria->setFromDate(max($matching->getProposalOffer()->getCriteria()->getFromDate(), $matching->getProposalRequest()->getCriteria()->getFromDate()));

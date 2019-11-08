@@ -753,6 +753,8 @@ class ProposalManager
                     // otherwise we use the common price
                     $outward->setOriginalPrice((string)((int)$matching['request']->getFilters()['originalDistance']*(float)$outward->getPriceKm()/1000));
                 }
+                $outward->setOriginalRoundedPrice((string)$this->formatDataManager->roundPrice((float)$outward->getOriginalPrice(), $proposal->getCriteria()->getFrequency()));
+                
                 // the computed price is the price to be paid by the passenger
                 // it's ((common distance + detour distance) * price by km)
                 $outward->setComputedPrice((string)(((int)$matching['request']->getFilters()['commonDistance']+(int)$matching['request']->getFilters()['detourDistance'])*(float)$outward->getPriceKm()/1000));
@@ -954,6 +956,7 @@ class ProposalManager
                             // otherwise we use the common price
                             $return->setOriginalPrice((string)((int)$matchingRelated->getFilters()['originalDistance']*(float)$return->getPriceKm()/1000));
                         }
+                        $return->setOriginalRoundedPrice((string)$this->formatDataManager->roundPrice((float)$return->getOriginalPrice(), $proposal->getCriteria()->getFrequency()));
                         // the computed price is the price to be paid by the passenger
                         // it's ((common distance + detour distance) * price by km)
                         $return->setComputedPrice((string)(((int)$matchingRelated->getFilters()['commonDistance']+(int)$matchingRelated->getFilters()['detourDistance'])*(float)$return->getPriceKm()/1000));
@@ -1285,6 +1288,8 @@ class ProposalManager
                     // otherwise we use the common price
                     $outward->setOriginalPrice((string)((int)$matching['offer']->getFilters()['originalDistance']*(float)$outward->getPriceKm()/1000));
                 }
+                $outward->setOriginalRoundedPrice((string)$this->formatDataManager->roundPrice((float)$outward->getOriginalPrice(), $proposal->getCriteria()->getFrequency()));
+                        
                 // the computed price is the price to be paid by the passenger
                 // it's ((common distance + detour distance) * price by km)
                 $outward->setComputedPrice((string)(((int)$matching['offer']->getFilters()['commonDistance']+(int)$matching['offer']->getFilters()['detourDistance'])*(float)$outward->getPriceKm()/1000));
@@ -1493,6 +1498,7 @@ class ProposalManager
                             // otherwise we use the common price
                             $return->setOriginalPrice((string)((int)$matchingRelated->getFilters()['originalDistance']*(float)$return->getPriceKm()/1000));
                         }
+                        $return->setOriginalRoundedPrice((string)$this->formatDataManager->roundPrice((float)$return->getOriginalPrice(), $proposal->getCriteria()->getFrequency()));
                         // the computed price is the price to be paid by the passenger
                         // it's ((common distance + detour distance) * price by km)
                         $return->setComputedPrice((string)(((int)$matchingRelated->getFilters()['commonDistance']+(int)$matchingRelated->getFilters()['detourDistance'])*(float)$return->getPriceKm()/1000));

@@ -549,6 +549,7 @@ export default {
         params.time = this.lResult.resultPassenger.outward.time;
         params.priceKm = this.lResult.resultPassenger.outward.priceKm;
         params.price = this.lResult.resultPassenger.outward.originalPrice;
+        params.roundedPrice = this.lResult.resultPassenger.outward.originalRoundedPrice;
         params.computedPrice = this.lResult.resultPassenger.outward.computedPrice;
         params.computedRoundedPrice = this.lResult.resultPassenger.outward.computedRoundedPrice;
       } else {
@@ -559,6 +560,7 @@ export default {
         params.time = this.lResult.resultDriver.outward.time;
         params.priceKm = this.lResult.resultDriver.outward.priceKm;
         params.price = this.lResult.resultDriver.outward.originalPrice;
+        params.roundedPrice = this.lResult.resultDriver.outward.originalRoundedPrice;
         params.computedPrice = this.lResult.resultDriver.outward.computedPrice;
         params.computedRoundedPrice = this.lResult.resultDriver.outward.computedRoundedPrice;
       }
@@ -585,6 +587,7 @@ export default {
         params.time = this.lResult.resultDriver.outward.time;
         params.priceKm = this.lResult.resultDriver.outward.priceKm;
         params.price = this.lResult.resultDriver.outward.originalPrice;
+        params.roundedPrice = this.lResult.resultDriver.outward.originalRoundedPrice;
         params.computedPrice = this.lResult.resultDriver.outward.computedPrice;
         params.computedRoundedPrice = this.lResult.resultDriver.outward.computedRoundedPrice;
       } else {
@@ -596,6 +599,7 @@ export default {
         params.time = this.lResult.resultPassenger.outward.time;
         params.priceKm = this.lResult.resultPassenger.outward.priceKm;
         params.price = this.lResult.resultPassenger.outward.originalPrice;
+        params.roundedPrice = this.lResult.resultPassenger.outward.originalRoundedPrice;
         params.computedPrice = this.lResult.resultPassenger.outward.computedPrice;
         params.computedRoundedPrice = this.lResult.resultPassenger.outward.computedRoundedPrice;
       }

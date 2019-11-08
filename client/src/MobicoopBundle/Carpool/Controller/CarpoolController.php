@@ -264,7 +264,9 @@ class CarpoolController extends AbstractController
             "passenger" => $params['passenger'],
             "priceKm" => $params['priceKm'],
             "price" => isset($params['price']) ? $params['price'] : null,
+            "roundedPrice" => isset($params['roundedPrice']) ? $params['roundedPrice'] : null,
             "computedPrice" => isset($params['computedPrice']) ? $params['computedPrice'] : null,
+            "computedRoundedPrice" => isset($params['computedRoundedPrice']) ? $params['computedRoundedPrice'] : null,
             "regular" => $params['regular'],
             "waypoints" => []
         ];
