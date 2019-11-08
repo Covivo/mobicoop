@@ -299,6 +299,8 @@
                   <template v-slot:activator="{ on }">
                     <v-text-field
                       v-model="item.outwardTime"
+                      :hint="item.id > 0 ? $t('ui.form.optional') : ''"
+                      persistent-hint
                       :label="$t('regularOutwardTime.label')"
                       prepend-icon=""
                       readonly
@@ -509,7 +511,7 @@ export default {
       locale: this.$i18n.locale,
       arrayDay : ['mon','tue','wed','thu','fri','sat','sun'],
       schedules: [],
-
+      showErrorTolltipSchedule : false,
 
     };
   },
