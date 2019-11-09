@@ -36,6 +36,7 @@ class RegisteredUserVoter extends Voter
     const DELETE = 'delete';
     const PROPOSALS_SELF = 'proposals_self';
     const MESSAGES = 'messages';
+    const ADDRESS_UPDATE_SELF = 'address_update_self';
 
     private $permissionManager;
 
@@ -53,7 +54,8 @@ class RegisteredUserVoter extends Voter
             self::PASSWORD,
             self::DELETE,
             self::PROPOSALS_SELF,
-            self::MESSAGES
+            self::MESSAGES,
+            self::ADDRESS_UPDATE_SELF
             ])) {
             return false;
         }
@@ -88,6 +90,8 @@ class RegisteredUserVoter extends Voter
                 return true;
             case self::MESSAGES:
                 return true;
+            case self::ADDRESS_UPDATE_SELF:
+                return $this->canAddressUpdateSelf($user);
             
         }
 
@@ -107,5 +111,10 @@ class RegisteredUserVoter extends Voter
     private function canDeleteSelf(User $user)
     {
         return $this->permissionManager->checkPermission('user_delete_self', $user);
+    }
+    
+    private function canAddressUpdateSelf(User $user)
+    {
+        return $this->permissionManager->checkPermission('user_address_update_self', $user);
     }
 }

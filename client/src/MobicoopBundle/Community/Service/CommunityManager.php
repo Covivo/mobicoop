@@ -164,7 +164,7 @@ class CommunityManager
     }
 
     /**
-     * Undocumented function
+     * Get all proposals of a community
      *
      * @param integer $id
      * @return void

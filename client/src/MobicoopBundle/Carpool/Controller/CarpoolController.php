@@ -120,8 +120,11 @@ class CarpoolController extends AbstractController
      * Ad results.
      * (POST)
      */
-    public function carpoolAdResult(Request $request)
+    public function carpoolAdResult(Request $request, ProposalManager $proposalManager)
     {
+        $proposal = $proposalManager->getProposal($request->request->get('proposalId'));
+        $this->denyAccessUnlessGranted('results', $proposal);
+
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             'proposalId' => $request->request->get('proposalId')
         ]);
