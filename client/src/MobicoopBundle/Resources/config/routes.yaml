@@ -324,16 +324,6 @@ community_user:
     requirements:
         id: '\d+'
 
-# check if a user is an accepted member of a community (AJAX)
-community_user_is_member:
-    methods: [POST]
-    path:
-        fr: /community/isMember
-        en: /community/isMember
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::isMember
-    requirements:
-        id: '\d+'
-
         # get the last community users (AJAX)
 community_last_users:
     path:
@@ -360,15 +350,7 @@ community_proposals:
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityProposals
     requirements:
         id: '\d+'
-        
-# get all available communities for the logged user (AJAX)
-community_user_available:
-    path:
-        fr: /communautes/utilisateur/{userId}
-        en: /communities/user/{userId}
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUserAvailable
-    requirements:
-        userId: '\d+'
+
 ##########################
 # editorial pages routes #
 ##########################
