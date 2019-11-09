@@ -20,7 +20,7 @@
             "update": "/utilisateur/profil/modifier"
         },
         "news": {
-            "label": "Actualités du service",
+            "label": "Actualités du service {platform}  (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)",
             "tooltip": "Les actualités du service sont des emails répondant uniquement à la finalité de vous maintenir informé des évolutions du service et favoriser votre pratique du covoiturage, comme des mises à jour de la plateforme ou des emails provenant du référent d'une communauté à laquelle vous appartenez. Aucune sollicitation commerciale n'est réalisée via ces emails."
         }
         
