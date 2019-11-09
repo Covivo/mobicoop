@@ -211,7 +211,7 @@ class CarpoolController extends AbstractController
             return $this->json("ok");
         }
         
-        if (!is_null($this->createProposalFromParams($proposalManager, $userManager->getLoggedUser(), $params))) {
+        if (!is_null($proposalManager->createProposalFromSearch($userManager->getLoggedUser(), $params))) {
             return $this->json("ok");
         } else {
             return $this->json("error");
@@ -232,128 +232,12 @@ class CarpoolController extends AbstractController
             return $this->json("ok");
         }
                 
-        if (!is_null($this->createProposalFromParams($proposalManager, $userManager->getLoggedUser(), $params, true))) {
+        if (!is_null($proposalManager->createProposalFromSearch($userManager->getLoggedUser(), $params, true))) {
             return $this->json("ok");
         } else {
             return $this->json("error");
         }
     }
-
-    /**
-     * Create a proposal from params
-     *
-     * @param ProposalManager $proposalManager
-     * @param User $user
-     * @param array $params     The params
-     * @param bool $formalAsk   True if we have to create a formal ask
-     * @return void
-     */
-    private function createProposalFromParams(ProposalManager $proposalManager, User $user, array $params, bool $formalAsk=false)
-    {
-        $data = [
-            "formalAsk" => $formalAsk,
-            "private" => true,
-            "proposalId" => $params['proposalId'],
-            "origin"=>$params['origin'],
-            "destination"=>$params['destination'],
-            "outwardDate" => isset($params['date']) ? DateTime::createFromFormat(DateTime::ISO8601, $params['date'])->format('Y-m-d') : (new \Datetime())->format('Y-m-d'),
-            "outwardTime" => isset($params['time']) ? DateTime::createFromFormat(DateTime::ISO8601, $params['time'])->format('H:i') : null,
-            "fromDate" => isset($params['fromDate']) ? DateTime::createFromFormat(DateTime::ISO8601, $params['fromDate'])->format('Y-m-d') : (new \Datetime())->format('Y-m-d'),
-            "seats" => isset($params['seats']) ? $params['seats'] : 1,
-            "driver" => $params['driver'],
-            "passenger" => $params['passenger'],
-            "priceKm" => $params['priceKm'],
-            "price" => isset($params['price']) ? $params['price'] : null,
-            "roundedPrice" => isset($params['roundedPrice']) ? $params['roundedPrice'] : null,
-            "computedPrice" => isset($params['computedPrice']) ? $params['computedPrice'] : null,
-            "computedRoundedPrice" => isset($params['computedRoundedPrice']) ? $params['computedRoundedPrice'] : null,
-            "regular" => $params['regular'],
-            "waypoints" => []
-        ];
-        if (isset($params["outwardSchedule"])) {
-            $schedules = [];
-            if (isset($params["outwardSchedule"]['monTime']) && !is_null($params["outwardSchedule"]['monTime'])) {
-                $schedules['outwardMon']['outwardTime'] = $params["outwardSchedule"]['monTime'];
-                $schedules['outwardMon']['returnTime'] = '';
-                $schedules['outwardMon']['mon'] = true;
-            }
-            if (isset($params["outwardSchedule"]['tueTime']) && !is_null($params["outwardSchedule"]['tueTime'])) {
-                $schedules['outwardTue']['outwardTime'] = $params["outwardSchedule"]['tueTime'];
-                $schedules['outwardTue']['returnTime'] = '';
-                $schedules['outwardTue']['tue'] = true;
-            }
-            if (isset($params["outwardSchedule"]['wedTime']) && !is_null($params["outwardSchedule"]['wedTime'])) {
-                $schedules['outwardWed']['outwardTime'] = $params["outwardSchedule"]['wedTime'];
-                $schedules['outwardWed']['returnTime'] = '';
-                $schedules['outwardWed']['wed'] = true;
-            }
-            if (isset($params["outwardSchedule"]['thuTime']) && !is_null($params["outwardSchedule"]['thuTime'])) {
-                $schedules['outwardThu']['outwardTime'] = $params["outwardSchedule"]['thuTime'];
-                $schedules['outwardThu']['returnTime'] = '';
-                $schedules['outwardThu']['thu'] = true;
-            }
-            if (isset($params["outwardSchedule"]['friTime']) && !is_null($params["outwardSchedule"]['friTime'])) {
-                $schedules['outwardFri']['outwardTime'] = $params["outwardSchedule"]['friTime'];
-                $schedules['outwardFri']['returnTime'] = '';
-                $schedules['outwardFri']['fri'] = true;
-            }
-            if (isset($params["outwardSchedule"]['satTime']) && !is_null($params["outwardSchedule"]['satTime'])) {
-                $schedules['outwardSat']['outwardTime'] = $params["outwardSchedule"]['satTime'];
-                $schedules['outwardSat']['returnTime'] = '';
-                $schedules['outwardSat']['sat'] = true;
-            }
-            if (isset($params["outwardSchedule"]['sunTime']) && !is_null($params["outwardSchedule"]['sunTime'])) {
-                $schedules['outwardSun']['outwardTime'] = $params["outwardSchedule"]['sunTime'];
-                $schedules['outwardSun']['returnTime'] = '';
-                $schedules['outwardSun']['sun'] = true;
-            }
-        }
-        if (isset($params["returnSchedule"])) {
-            if (!isset($schedules)) {
-                $schedules = [];
-            }
-            if (isset($params["returnSchedule"]['monTime']) && !is_null($params["returnSchedule"]['monTime'])) {
-                $schedules['returnMon']['outwardTime'] = '';
-                $schedules['returnMon']['returnTime'] = $params["returnSchedule"]['monTime'];
-                $schedules['returnMon']['mon'] = true;
-            }
-            if (isset($params["returnSchedule"]['tueTime']) && !is_null($params["returnSchedule"]['tueTime'])) {
-                $schedules['returnTue']['outwardTime'] = '';
-                $schedules['returnTue']['returnTime'] = $params["returnSchedule"]['tueTime'];
-                $schedules['returnTue']['tue'] = true;
-            }
-            if (isset($params["returnSchedule"]['wedTime']) && !is_null($params["returnSchedule"]['wedTime'])) {
-                $schedules['returnWed']['outwardTime'] = '';
-                $schedules['returnWed']['returnTime'] = $params["returnSchedule"]['wedTime'];
-                $schedules['returnWed']['wed'] = true;
-            }
-            if (isset($params["returnSchedule"]['thuTime']) && !is_null($params["returnSchedule"]['thuTime'])) {
-                $schedules['returnThu']['outwardTime'] = '';
-                $schedules['returnThu']['returnTime'] = $params["returnSchedule"]['thuTime'];
-                $schedules['returnThu']['thu'] = true;
-            }
-            if (isset($params["returnSchedule"]['friTime']) && !is_null($params["returnSchedule"]['friTime'])) {
-                $schedules['returnFri']['outwardTime'] = '';
-                $schedules['returnFri']['returnTime'] = $params["returnSchedule"]['friTime'];
-                $schedules['returnFri']['fri'] = true;
-            }
-            if (isset($params["returnSchedule"]['satTime']) && !is_null($params["returnSchedule"]['satTime'])) {
-                $schedules['returnSat']['outwardTime'] = '';
-                $schedules['returnSat']['returnTime'] = $params["returnSchedule"]['satTime'];
-                $schedules['returnSat']['sat'] = true;
-            }
-            if (isset($params["returnSchedule"]['sunTime']) && !is_null($params["returnSchedule"]['sunTime'])) {
-                $schedules['returnSun']['outwardTime'] = '';
-                $schedules['returnSun']['returnTime'] = $params["returnSchedule"]['sunTime'];
-                $schedules['returnSun']['sun'] = true;
-            }
-        }
-        if (isset($schedules)) {
-            $data['schedules'] = $schedules;
-        }
-        return $proposalManager->createProposalFromAd($data, $user);
-    }
-
 
     /**
      * Provider rdex

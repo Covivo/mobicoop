@@ -120,6 +120,14 @@ class ProposalMatcher
             $addresses[] = $waypoint->getAddress();
         }
         $candidateDriver->setAddresses($addresses);
+        // we compute the driver's direction
+        if ($routes = $this->geoRouter->getRoutes($addresses)) {
+            $direction = $routes[0];
+            $candidateDriver->setDirection($direction);
+            $candidateDriver->setMaxDetourDistance($direction->getDistance()*self::MAX_DETOUR_DISTANCE_PERCENT/100);
+            $candidateDriver->setMaxDetourDuration($direction->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100);
+        }
+
         $candidatePassenger = new Candidate();
         $candidatePassenger->setId(!is_null($matching->getProposalRequest()->getUser()) ? $matching->getProposalRequest()->getUser()->getId() : User::DEFAULT_ID);
         $addressesCandidate = [];
@@ -127,6 +135,9 @@ class ProposalMatcher
             $addressesCandidate[] = $waypoint->getAddress();
         }
         $candidatePassenger->setAddresses($addressesCandidate);
+        if ($routes = $this->geoRouter->getRoutes([$addressesCandidate[0],$addressesCandidate[count($addressesCandidate)-1]])) {
+            $candidatePassenger->setDirection($routes[0]);
+        }
         if ($matches = $this->geoMatcher->forceMatch($candidateDriver, $candidatePassenger)) {
             // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
             if (is_array($matches) && count($matches)>0) {
@@ -167,7 +178,7 @@ class ProposalMatcher
             }
         } else {
             // we have to force the matching with the given proposal
-            // we first check if it's a return trip : if there's a matchinkLinked in the proposal, we need to use the proposalLinked of the matchingProposal
+            // we first check if it's a return trip : if there's a matchingLinked in the proposal, we need to use the proposalLinked of the matchingProposal
             if ($proposal->getMatchingLinked()) {
                 $proposalsFound[] = $proposal->getMatchingProposal()->getProposalLinked();
             } else {
@@ -316,8 +327,11 @@ class ProposalMatcher
             $matchings = $this->checkPickUp($matchings);
         }
         
-        // we complete the matchings with the waypoints and criteria (it's a match criteria so we consider it's for a driver)
+        // we complete the matchings with the waypoints and criteria
         foreach ($matchings as $matching) {
+
+            // if there's a linked matching (for return trip) we set it here
+            $matching->setMatchingLinked($proposal->getMatchingLinked());
             
             // waypoints
             foreach ($matching->getFilters()['route'] as $key=>$point) {
@@ -339,12 +353,19 @@ class ProposalMatcher
             $matchingCriteria->setStrictDate($matching->getProposalOffer()->getCriteria()->isStrictDate());
             $matchingCriteria->setAnyRouteAsPassenger(true);
             
+            // prices
+            // we use the driver's priceKm
+            $matchingCriteria->setPriceKm($matching->getProposalOffer()->getCriteria()->getPriceKm());
+            // we use the passenger's computed prices
+            $matchingCriteria->setComputedPrice($matching->getProposalRequest()->getCriteria()->getComputedPrice());
+            $matchingCriteria->setComputedRoundedPrice($matching->getProposalRequest()->getCriteria()->getComputedRoundedPrice());
+
             // we're using the driver price if there's no "forced" matching
-            if (is_null($proposal->getMatchingProposal())) {
-                $matchingCriteria->setPriceKm($matching->getProposalOffer()->getCriteria()->getPriceKm());
-            } else {
-                $matchingCriteria->setPriceKm($matching->getProposalOffer()->getCriteria()->getPriceKm());
-            }
+            // if (is_null($proposal->getMatchingProposal())) {
+            //     $matchingCriteria->setPriceKm($matching->getProposalOffer()->getCriteria()->getPriceKm());
+            // } else {
+            //   $matchingCriteria->setPriceKm($matching->getProposalOffer()->getCriteria()->getPriceKm());
+            // }
             
             if ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching->getProposalRequest()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                 $matchingCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);

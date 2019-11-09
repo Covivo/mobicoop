@@ -250,6 +250,10 @@ class Matching
     public function setMatchingRelated(?self $matchingRelated): self
     {
         $this->matchingRelated = $matchingRelated;
+
+        if (!$this->getMatchingRelated()) {
+            return $this;
+        }
         
         // set (or unset) the owning side of the relation if necessary
         $newMatchingRelated = $matchingRelated === null ? null : $this;
@@ -269,6 +273,10 @@ class Matching
     {
         $this->matchingLinked = $matchingLinked;
         
+        if (!$this->getMatchingLinked()) {
+            return $this;
+        }
+
         // set (or unset) the owning side of the relation if necessary
         $newMatchingLinked = $matchingLinked === null ? null : $this;
         if ($newMatchingLinked !== $matchingLinked->getMatchingLinked()) {
@@ -286,6 +294,10 @@ class Matching
     public function setMatchingRoleUndecided(?self $matchingRoleUndecided): self
     {
         $this->matchingRoleUndecided = $matchingRoleUndecided;
+
+        if (!$this->getMatchingRoleUndecided()) {
+            return $this;
+        }
         
         // set (or unset) the owning side of the relation if necessary
         $newMatchingRoleUndecided = $matchingRoleUndecided === null ? null : $this;

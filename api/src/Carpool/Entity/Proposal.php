@@ -362,13 +362,13 @@ class Proposal
 
     /**
      * @var Proposal|null The proposal we want to force matching with (we assume the corresponding matching doesn't exist yet).
-     * @Groups("write")
+     * @Groups({"read","write"})
      */
     private $matchingProposal;
 
     /**
      * @var Matching|null The matching of the linked proposal (used for regular return trips).
-     * @Groups("write")
+     * @Groups({"read","write"})
      */
     private $matchingLinked;
 
