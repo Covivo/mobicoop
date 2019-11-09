@@ -315,9 +315,9 @@ export default {
         .then(res => {
           this.errorUpdate = res.data.state;
           this.snackbar = true;
+          this.loading = false;
           this.urlAvatar = res.data.versions.square_800;
           this.displayFileUpload = false;
-          this.loading = false;
         });
     },
 
