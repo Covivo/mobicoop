@@ -156,7 +156,7 @@
             <v-col>
               <v-switch 
                 v-model="newsSubscription" 
-                :label="switchLabel" 
+                :label="$t('news.label', {platform:platform})" 
                 inset 
                 color="secondary"
               />
@@ -281,9 +281,6 @@ export default {
       const ageMax = Number(this.ageMax);
       return Array.from({length: ageMax - ageMin}, (value, index) => (currentYear - ageMin) - index)
     },
-    switchLabel () {
-      return this.$t('news.label') + ' ' + this.platform;
-    }
   },
   methods: {
     homeAddressSelected(address){
