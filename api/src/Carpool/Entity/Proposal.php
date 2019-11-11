@@ -313,7 +313,6 @@ class Proposal
      * @var ArrayCollection|null The matchings of the proposal (if proposal is a request).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $matchingOffers;
@@ -322,7 +321,6 @@ class Proposal
      * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $matchingRequests;
@@ -339,6 +337,7 @@ class Proposal
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups({"read","results","write","thread"})
+     * @MaxDepth(1)
      */
     private $criteria;
     
@@ -363,14 +362,23 @@ class Proposal
     /**
      * @var Proposal|null The proposal we want to force matching with (we assume the corresponding matching doesn't exist yet).
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $matchingProposal;
 
     /**
      * @var Matching|null The matching of the linked proposal (used for regular return trips).
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $matchingLinked;
+
+    /**
+     * @var Ask|null The ask of the linked proposal (used for regular return trips).
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $askLinked;
 
     /**
      * @var boolean Create a formal ask after posting the proposal.
@@ -765,6 +773,18 @@ class Proposal
     public function setMatchingLinked(?Matching $matchingLinked): self
     {
         $this->matchingLinked = $matchingLinked;
+
+        return $this;
+    }
+
+    public function getAskLinked(): ?Ask
+    {
+        return $this->askLinked;
+    }
+
+    public function setAskLinked(?Ask $askLinked): self
+    {
+        $this->askLinked = $askLinked;
 
         return $this;
     }

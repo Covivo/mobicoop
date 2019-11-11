@@ -611,7 +611,11 @@ class ProposalManager
             }
             // if there's a matching linked, it means the proposal we create may be the return trip of a "forced" matching proposal
             if ($proposalOutward->getMatchingLinked()) {
-                $proposalReturn->setMatchingLinked($proposalOutward->getMatchingLinked());
+                $proposalReturn->setMatchingLinked($proposalOutward->getMatchingLinked()->getIri());
+            }
+            // if there's an ask linked, it means the proposal we create may be the return trip of a "forced" matching proposal, for which an ask has been created
+            if ($proposalOutward->getAskLinked()) {
+                $proposalReturn->setAskLinked($proposalOutward->getAskLinked()->getIri());
             }
             // we check if the proposal is private (usually if the proposal is created after a search)
             if (isset($ad['private']) && $ad['private']) {

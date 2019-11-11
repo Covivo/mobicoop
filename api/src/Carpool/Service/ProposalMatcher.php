@@ -33,6 +33,7 @@ use App\Match\Entity\Candidate;
 use App\Carpool\Entity\Waypoint;
 use App\Geography\Service\GeoRouter;
 use App\User\Entity\User;
+use Psr\Log\LoggerInterface;
 
 /**
  * Matching analyzer service.
@@ -64,6 +65,7 @@ class ProposalMatcher
     private $proposalRepository;
     private $geoMatcher;
     private $geoRouter;
+    private $logger;
     
     /**
      * Constructor.
@@ -72,12 +74,13 @@ class ProposalMatcher
      * @param ProposalRepository $proposalRepository
      * @param GeoMatcher $geoMatcher
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, GeoMatcher $geoMatcher, GeoRouter $geoRouter)
+    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, GeoMatcher $geoMatcher, GeoRouter $geoRouter, LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
         $this->proposalRepository = $proposalRepository;
         $this->geoRouter = $geoRouter;
         $this->geoMatcher = $geoMatcher;
+        $this->logger = $logger;
     }
 
     /**
@@ -89,6 +92,9 @@ class ProposalMatcher
      */
     public function createMatchingsForProposal(Proposal $proposal, bool $excludeProposalUser=true)
     {
+        $date = new \DateTime("UTC");
+        $this->logger->info('Proposal matcher | Start create matchings for proposal ' . $proposal->getId() . ' | ' . $date->format("Ymd H:i:s.u"));
+
         // we search the matchings
         $matchings = $this->findMatchingProposals($proposal, $excludeProposalUser);
         
@@ -170,18 +176,23 @@ class ProposalMatcher
      */
     public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true)
     {
+        $date = new \DateTime("UTC");
         if (is_null($proposal->getMatchingProposal())) {
+            $this->logger->info('Proposal matcher | Start find matchings for proposal ' . $proposal->getId() . ' without forced matching | ' . $date->format("Ymd H:i:s.u"));
             // we search matching proposals in the database
             // if no proposals are found we return an empty array
             if (!$proposalsFound = $this->proposalRepository->findMatchingProposals($proposal, $excludeProposalUser)) {
                 return [];
             }
         } else {
+            $this->logger->info('Proposal matcher | Start find matchings for proposal ' . $proposal->getId() . ' with forced matching ' . $proposal->getMatchingProposal()->getId() . ' | ' . $date->format("Ymd H:i:s.u"));
             // we have to force the matching with the given proposal
             // we first check if it's a return trip : if there's a matchingLinked in the proposal, we need to use the proposalLinked of the matchingProposal
-            if ($proposal->getMatchingLinked()) {
+            if (!is_null($proposal->getMatchingLinked())) {
+                $this->logger->info('Proposal matcher | Matching linked ' . $proposal->getMatchingLinked()->getId() . ' | ' . $date->format("Ymd H:i:s.u"));
                 $proposalsFound[] = $proposal->getMatchingProposal()->getProposalLinked();
             } else {
+                $this->logger->info('Proposal matcher | No matching linked | ' . $date->format("Ymd H:i:s.u"));
                 $proposalsFound[] = $proposal->getMatchingProposal();
             }
         }
@@ -482,9 +493,11 @@ class ProposalMatcher
             $matching->setCriteria($matchingCriteria);
 
             // if the search is regular, we compute the potential return trip to get the pickup times
+            // (if it hasn't been already computed)
             if (
-                ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching->getProposalOffer() === $proposal && $matching->getProposalRequest()->getType() != Proposal::TYPE_ONE_WAY) ||
-                ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching->getProposalRequest() === $proposal && $matching->getProposalOffer()->getType() != Proposal::TYPE_ONE_WAY)
+                is_null($proposal->getMatchingLinked()) &&
+                (($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching->getProposalOffer() === $proposal && $matching->getProposalRequest()->getType() != Proposal::TYPE_ONE_WAY) ||
+                ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching->getProposalRequest() === $proposal && $matching->getProposalOffer()->getType() != Proposal::TYPE_ONE_WAY))
                 ) {
                 $matching->setMatchingRelated($this->createRelatedMatching($matching));
             }

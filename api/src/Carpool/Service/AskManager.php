@@ -138,11 +138,16 @@ class AskManager
             $ask->addWaypoint($waypoint);
         }
 
-        // Ask History
-        $askHistory = new AskHistory();
-        $askHistory->setStatus($ask->getStatus());
-        $askHistory->setType($ask->getType());
-        $ask->addAskHistory($askHistory);
+        if ($proposal->getAskLinked()) {
+            // there's already an ask linked to the proposal, it's the return trip
+            $ask->setAskLinked($proposal->getAskLinked());
+        } else {
+            // Ask History
+            $askHistory = new AskHistory();
+            $askHistory->setStatus($ask->getStatus());
+            $askHistory->setType($ask->getType());
+            $ask->addAskHistory($askHistory);
+        }
         
         return $this->createAsk($ask);
     }

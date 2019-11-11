@@ -695,25 +695,25 @@ class ResultItem
     public function setMultipleTimes(): self
     {
         $time = [];
-        if ($this->isMonCheck()) {
+        if ($this->isMonCheck() && $this->getMonTime()) {
             $time[$this->getMonTime()->format('His')] = 1;
         }
-        if ($this->isTueCheck()) {
+        if ($this->isTueCheck() && $this->getTueTime()) {
             $time[$this->getTueTime()->format('His')] = 1;
         }
-        if ($this->isWedCheck()) {
+        if ($this->isWedCheck() && $this->getWedTime()) {
             $time[$this->getWedTime()->format('His')] = 1;
         }
-        if ($this->isThuCheck()) {
+        if ($this->isThuCheck() && $this->getThuTime()) {
             $time[$this->getThuTime()->format('His')] = 1;
         }
-        if ($this->isFriCheck()) {
+        if ($this->isFriCheck() && $this->getFriTime()) {
             $time[$this->getFriTime()->format('His')] = 1;
         }
-        if ($this->isSatCheck()) {
+        if ($this->isSatCheck() && $this->getSatTime()) {
             $time[$this->getSatTime()->format('His')] = 1;
         }
-        if ($this->isSunCheck()) {
+        if ($this->isSunCheck() && $this->getSunTime()) {
             $time[$this->getSunTime()->format('His')] = 1;
         }
         $this->multipleTimes = (count($time) > 1);

@@ -548,10 +548,16 @@ export default {
         params.date = this.lResult.resultPassenger.outward.date;
         params.time = this.lResult.resultPassenger.outward.time;
         params.priceKm = this.lResult.resultPassenger.outward.priceKm;
-        params.price = this.lResult.resultPassenger.outward.originalPrice;
-        params.roundedPrice = this.lResult.resultPassenger.outward.originalRoundedPrice;
-        params.computedPrice = this.lResult.resultPassenger.outward.computedPrice;
-        params.computedRoundedPrice = this.lResult.resultPassenger.outward.computedRoundedPrice;
+        params.outwardPrice = this.lResult.resultPassenger.outward.originalPrice;
+        params.outwardRoundedPrice = this.lResult.resultPassenger.outward.originalRoundedPrice;
+        params.outwardComputedPrice = this.lResult.resultPassenger.outward.computedPrice;
+        params.outwardComputedRoundedPrice = this.lResult.resultPassenger.outward.computedRoundedPrice;
+        if (this.lResult.resultPassenger.return) {
+          params.returnPrice = this.lResult.resultPassenger.return.originalPrice;
+          params.returnRoundedPrice = this.lResult.resultPassenger.return.originalRoundedPrice;
+          params.returnComputedPrice = this.lResult.resultPassenger.return.computedPrice;
+          params.returnComputedRoundedPrice = this.lResult.resultPassenger.return.computedRoundedPrice;
+        }
       } else {
         params.proposalId = this.lResult.resultDriver.outward.proposalId;
         params.origin = this.lResult.resultDriver.outward.origin;
@@ -559,10 +565,16 @@ export default {
         params.date = this.lResult.resultDriver.outward.date;
         params.time = this.lResult.resultDriver.outward.time;
         params.priceKm = this.lResult.resultDriver.outward.priceKm;
-        params.price = this.lResult.resultDriver.outward.originalPrice;
-        params.roundedPrice = this.lResult.resultDriver.outward.originalRoundedPrice;
-        params.computedPrice = this.lResult.resultDriver.outward.computedPrice;
-        params.computedRoundedPrice = this.lResult.resultDriver.outward.computedRoundedPrice;
+        params.outwardPrice = this.lResult.resultDriver.outward.originalPrice;
+        params.outwardRoundedPrice = this.lResult.resultDriver.outward.originalRoundedPrice;
+        params.outwardComputedPrice = this.lResult.resultDriver.outward.computedPrice;
+        params.outwardComputedRoundedPrice = this.lResult.resultDriver.outward.computedRoundedPrice;
+        if (this.lResult.resultDriver.return) {
+          params.returnPrice = this.lResult.resultDriver.return.originalPrice;
+          params.returnRoundedPrice = this.lResult.resultDriver.return.originalRoundedPrice;
+          params.returnComputedPrice = this.lResult.resultDriver.return.computedPrice;
+          params.returnComputedRoundedPrice = this.lResult.resultDriver.return.computedRoundedPrice;
+        }
       }
       this.$emit('contact', params);
     },
@@ -590,10 +602,12 @@ export default {
         params.outwardRoundedPrice = this.lResult.resultDriver.outward.originalRoundedPrice;
         params.outwardComputedPrice = this.lResult.resultDriver.outward.computedPrice;
         params.outwardComputedRoundedPrice = this.lResult.resultDriver.outward.computedRoundedPrice;
-        params.returnPrice = this.lResult.resultDriver.return.originalPrice;
-        params.returnRoundedPrice = this.lResult.resultDriver.return.originalRoundedPrice;
-        params.returnComputedPrice = this.lResult.resultDriver.return.computedPrice;
-        params.returnComputedRoundedPrice = this.lResult.resultDriver.return.computedRoundedPrice;
+        if (this.lResult.resultDriver.return) {
+          params.returnPrice = this.lResult.resultDriver.return.originalPrice;
+          params.returnRoundedPrice = this.lResult.resultDriver.return.originalRoundedPrice;
+          params.returnComputedPrice = this.lResult.resultDriver.return.computedPrice;
+          params.returnComputedRoundedPrice = this.lResult.resultDriver.return.computedRoundedPrice;
+        }
       } else {
         // the requester is passenger
         params.proposalId = this.lResult.resultPassenger.outward.proposalId;
@@ -606,10 +620,12 @@ export default {
         params.outwardRoundedPrice = this.lResult.resultPassenger.outward.originalRoundedPrice;
         params.outwardComputedPrice = this.lResult.resultPassenger.outward.computedPrice;
         params.outwardComputedRoundedPrice = this.lResult.resultPassenger.outward.computedRoundedPrice;
-        params.returnPrice = this.lResult.resultPassenger.return.originalPrice;
-        params.returnRoundedPrice = this.lResult.resultPassenger.return.originalRoundedPrice;
-        params.returnComputedPrice = this.lResult.resultPassenger.return.computedPrice;
-        params.returnComputedRoundedPrice = this.lResult.resultPassenger.return.computedRoundedPrice;
+        if (this.lResult.resultPassenger.return) {
+          params.returnPrice = this.lResult.resultPassenger.return.originalPrice;
+          params.returnRoundedPrice = this.lResult.resultPassenger.return.originalRoundedPrice;
+          params.returnComputedPrice = this.lResult.resultPassenger.return.computedPrice;
+          params.returnComputedRoundedPrice = this.lResult.resultPassenger.return.computedRoundedPrice;
+        }
       }
       this.$emit('carpool', params);
     },

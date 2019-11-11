@@ -335,16 +335,32 @@ class ProposalManager
         while (($item = array_shift($matchingRequests)) !== null && array_push($matchings, $item));
         if ($persist) {
             foreach ($matchings as $matching) {
-                // if there is a matched proposal we need to find the right matching and create the Ask
-                // but only for the outward if it's a return trip, to avoid creating 2 asks for the same trip
-                if (!is_null($proposal->getMatchingProposal()) && is_null($proposal->getMatchingLinked())) {
-                    if ($proposal->getMatchingProposal()->getId() === $matching->getProposalOffer()->getId() ||
-                        $proposal->getMatchingProposal()->getId() === $matching->getProposalRequest()->getId()
-                    ) {
-                        // we create the ask
-                        $this->askManager->createAskFromMatchedProposal($proposal, $matching, $proposal->hasFormalAsk());
-                        // we set the matching linked if we need to create a forced reverse matching (can be the case for regular return trips)
-                        $proposal->setMatchingLinked($matching);
+                if (!is_null($proposal->getMatchingProposal())) {
+                    // if there is a matched proposal we need to find the right matching and create the Ask
+                    if (is_null($proposal->getMatchingLinked())) {
+                        // it's a one way trip or an outward
+                        if ($proposal->getMatchingProposal()->getId() === $matching->getProposalOffer()->getId() ||
+                            $proposal->getMatchingProposal()->getId() === $matching->getProposalRequest()->getId()
+                        ) {
+                            // we create the ask
+                            $newAsk = $this->askManager->createAskFromMatchedProposal($proposal, $matching, $proposal->hasFormalAsk());
+                            // we set the matching linked if we need to create a forced reverse matching (can be the case for regular return trips)
+                            $proposal->setMatchingLinked($matching);
+                            // we set the ask linked of the matching if we need to create a forced reverse matching (can be the case for regular return trips)
+                            $proposal->setAskLinked($newAsk);
+                        }
+                    } else {
+                        // it's a return trip
+                        if ($proposal->getMatchingProposal()->getProposalLinked()->getId() === $matching->getProposalOffer()->getId() ||
+                            $proposal->getMatchingProposal()->getProposalLinked()->getId() === $matching->getProposalRequest()->getId()
+                        ) {
+                            // we create the ask
+                            $newAsk = $this->askManager->createAskFromMatchedProposal($proposal, $matching, $proposal->hasFormalAsk());
+                            // we set the matching linked if we need to create a forced reverse matching (can be the case for regular return trips)
+                            $proposal->setMatchingLinked($matching);
+                            // we set the ask linked of the matching if we need to create a forced reverse matching (can be the case for regular return trips)
+                            $proposal->setAskLinked($newAsk);
+                        }
                     }
                 }
 
@@ -378,6 +394,9 @@ class ProposalManager
         }
         if (is_null($proposal->getCriteria()->isStrictDate())) {
             $proposal->getCriteria()->setStrictDate($this->params['defaultStrictDate']);
+        }
+        if (is_null($proposal->getCriteria()->getPriceKm())) {
+            $proposal->getCriteria()->setPriceKm($this->params['defaultPriceKm']);
         }
         if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
             if (is_null($proposal->getCriteria()->isStrictPunctual())) {
