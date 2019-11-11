@@ -1,8 +1,10 @@
 {
     "fr": {
-        "notLinkedToACarpool":"Ce fil de discussion n'est pas lié à un covoiturage"
+        "notLinkedToACarpool":"Ce fil de discussion n'est pas lié à un covoiturage",
+        "urlGetAskHistory":"/utilisateur/messages/actions/infos"
      },
     "en": {
-        "notLinkedToACarpool":"There is no carpool linked to this thread"
+        "notLinkedToACarpool":"There is no carpool linked to this thread",
+        "urlGetAskHistory":"/user/messages/actions/infos"
     }
 }

@@ -113,7 +113,10 @@
         >
           <thread-actions
             :id-ask-history="currentIdAskHistory"
-            :recipient-name="recipientName"
+            :id-recipient="idRecipient"
+            :loading-init="loadingDetails"
+            :refresh="refreshActions"
+            @refreshActionsCompleted="refreshActionsCompleted"
           />
         </v-col>
       </v-row>
@@ -168,10 +171,10 @@ export default {
       loadingTypeText:false,
       refreshDetails:false,
       refreshThreadsDirect:false,
-      refreshThreadsCarpool:false
+      refreshThreadsCarpool:false,
+      refreshActions:false,
+      loadingDetails:false
     };
-  },
-  watch: {
   },
   mounted() {
     // If there is a new thread we give it to te right component
@@ -217,9 +220,11 @@ export default {
       this.currentIdAskHistory = data.currentAskHistory;
     },
     refreshSelected(data){
+      this.loadingDetails = true;
       this.idMessage = data.idMessage;
     },
     refreshDetailsCompleted(){
+      this.refreshActions = true;
       this.refreshDetails = false;
     },
     refreshThreadsDirectCompleted(){
@@ -227,6 +232,10 @@ export default {
     },
     refreshThreadsCarpoolCompleted(){
       this.refreshThreadsCarpool = false;
+    },
+    refreshActionsCompleted(){
+      this.loadingDetails = false;
+      this.refreshActions = false;
     }
   }
 };

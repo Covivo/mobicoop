@@ -49,6 +49,7 @@ use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
@@ -59,8 +60,8 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 /**
  * Controller class for user related actions.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class UserController extends AbstractController
 {
@@ -545,6 +546,45 @@ class UserController extends AbstractController
         $this->denyAccessUnlessGranted('messages', $user);
         $completeThread = $internalMessageManager->getThread($idMessage, DataProvider::RETURN_JSON);
         return new Response(json_encode($completeThread));
+    }
+
+
+    /**
+     * Get informations for Action Panel of the mailbox
+     * AJAX
+     */
+    public function userMessagesActionsInfos(Request $request, AskHistoryManager $askHistoryManager, UserManager $userManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $user = $userManager->getLoggedUser();
+
+            if ($data['idAskHistory']) {
+                // Carpool
+                $askHistory = $askHistoryManager->getAskHistory($data['idAskHistory']);
+                $ask = $askHistory->getAsk();
+                $askUser = $ask->getUser('user');
+                //$askUserRelated = $ask->getUserRelated();
+
+                $response = [];
+
+                $response = [
+                    'avatar'=>($user->getId() === $askUser->getId()) ? $ask->getUserRelated()->getAvatars()[0] : $askUser->getAvatars()[0],
+                    'recipientName'=>($user->getId() === $askUser->getId()) ? $ask->getUserRelated()->getGivenName()." ".$ask->getUserRelated()->getShortFamilyName() : $askUser->getGivenName()." ".$askUser->getShortFamilyName(),
+                    'status' => $ask->getStatus(),
+                    'frequency' => $ask->getCriteria()->getFrequency()
+                ];
+            } else {
+                // Direct
+                $recipient = $userManager->getUser($data['idRecipient']);
+                $response = [
+                    'avatar'=>$recipient->getAvatars()[0],
+                    'recipientName'=>$recipient->getGivenName()." ".$recipient->getShortFamilyName(),
+                ];
+            }
+            return new JsonResponse($response);
+        }
+        return new JsonResponse();
     }
 
     /*************** END NEW VERSION */

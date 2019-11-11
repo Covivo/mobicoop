@@ -149,7 +149,14 @@ user_message_complete_thread:
         en: /user/messages/{idMessage}/thread
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageThread
 
-# send an internal message
+user_message_actions_infos:
+    methods: [POST]
+    path:
+        fr: /utilisateur/messages/actions/infos
+        en: /user/messages/actions/infos
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessagesActionsInfos
+
+    # send an internal message
 user_message_send:
     path:
         fr: /utilisateur/messages/envoyer
