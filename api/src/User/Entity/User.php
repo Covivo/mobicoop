@@ -531,11 +531,18 @@ class User implements UserInterface, EquatableInterface
     private $proposalsDelegate;
 
     /**
-     * @var ArrayCollection|null The asks made for this user.
+     * @var ArrayCollection|null The asks made by this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      */
     private $asks;
+
+    /**
+     * @var ArrayCollection|null The asks made for this user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="userRelated", cascade={"remove"}, orphanRemoval=true)
+     */
+    private $asksRelated;
 
     /**
      * @var ArrayCollection|null The asks made by this user (in general by the user itself, except when it is a "posting for").
@@ -692,6 +699,7 @@ class User implements UserInterface, EquatableInterface
         $this->proposals = new ArrayCollection();
         $this->proposalsDelegate = new ArrayCollection();
         $this->asks = new ArrayCollection();
+        $this->asksRelated = new ArrayCollection();
         $this->asksDelegate = new ArrayCollection();
         $this->userRoles = new ArrayCollection();
         $this->userRights = new ArrayCollection();
@@ -1202,6 +1210,34 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($ask->getUser() === $this) {
                 $ask->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getAsksRelated()
+    {
+        return $this->asksRelated->getValues();
+    }
+
+    public function addAsksRelated(Ask $asksRelated): self
+    {
+        if (!$this->asksRelated->contains($asksRelated)) {
+            $this->asksRelated->add($asksRelated);
+            $asksRelated->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAsksRelated(Ask $asksRelated): self
+    {
+        if ($this->asksRelated->contains($asksRelated)) {
+            $this->asksRelated->removeElement($asksRelated);
+            // set the owning side to null (unless already changed)
+            if ($asksRelated->getUser() === $this) {
+                $asksRelated->setUser(null);
             }
         }
 
