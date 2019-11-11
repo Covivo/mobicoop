@@ -331,40 +331,4 @@ class CommunityController extends AbstractController
         }
         return new Response(json_encode($points));
     }
-
-    /**
-     * Get available communities for the logged user
-     * Ajax
-     *
-     * @param UserManager $userManager
-     * @param CommunityManager $communityManager
-     * @return void
-     */
-    public function communityUserAvailable(int $userId, UserManager $userManager, CommunityManager $communityManager)
-    {
-        if ($user = $userManager->getUser($userId)) {
-            $communities = $communityManager->getAvailableUserCommunities($user)->getMember();
-            return new Response(json_encode($communities));
-        };
-
-        return new Response();
-    }
-    
-    /**
-     * Check if a user is an accepted member of a community
-     * Ajax
-     *
-     * @param CommunityManager $communityManager
-     * @param Request $request
-     * @return boolean
-     */
-    public function isMember(CommunityManager $communityManager, Request $request)
-    {
-        if ($request->isMethod('POST')) {
-            $data = json_decode($request->getContent(), true);
-            return new Response(json_encode($communityManager->checkStatus($data['communityId'], $data['userId'], 1)));
-        }
-
-        return new Response();
-    }
 }
