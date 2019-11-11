@@ -113,6 +113,7 @@
         >
           <thread-actions
             :id-ask-history="currentIdAskHistory"
+            :id-user="idUser"
             :id-recipient="idRecipient"
             :loading-init="loadingDetails"
             :refresh="refreshActions"

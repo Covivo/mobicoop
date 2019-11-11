@@ -1,0 +1,14 @@
+{
+    "fr": {
+        "askCarpool":"Demander un covoiturage",
+        "accept":"Accepter",
+        "refuse":"Refuser",
+        "onlyAskUser":"Seul l'initiateur du contact peut proposer un covoiturage"
+    },
+    "en": {
+        "askCarpool":"Ask for a carpool",
+        "accept":"Accept",
+        "refuse":"Refuse",
+        "onlyAskUser":"Only the one who made the first contact can ask for a carpool"
+    }
+}

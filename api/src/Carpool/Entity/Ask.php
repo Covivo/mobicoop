@@ -127,7 +127,7 @@ class Ask
     private $user;
 
     /**
-     * @var User The user that creates the ask.
+     * @var User The user the ask is for
      * This field is nullable for migration purpose but it can't be null
      *
      * @Assert\NotBlank

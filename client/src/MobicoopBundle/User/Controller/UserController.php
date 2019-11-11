@@ -564,13 +564,14 @@ class UserController extends AbstractController
                 $askHistory = $askHistoryManager->getAskHistory($data['idAskHistory']);
                 $ask = $askHistory->getAsk();
                 $askUser = $ask->getUser('user');
-                //$askUserRelated = $ask->getUserRelated();
+                $askUserRelated = $ask->getUserRelated();
 
                 $response = [];
 
                 $response = [
-                    'avatar'=>($user->getId() === $askUser->getId()) ? $ask->getUserRelated()->getAvatars()[0] : $askUser->getAvatars()[0],
-                    'recipientName'=>($user->getId() === $askUser->getId()) ? $ask->getUserRelated()->getGivenName()." ".$ask->getUserRelated()->getShortFamilyName() : $askUser->getGivenName()." ".$askUser->getShortFamilyName(),
+                    'avatar'=>($user->getId() === $askUser->getId()) ? $askUserRelated->getAvatars()[0] : $askUser->getAvatars()[0],
+                    'recipientName'=>($user->getId() === $askUser->getId()) ? $askUserRelated->getGivenName()." ".$askUserRelated->getShortFamilyName() : $askUser->getGivenName()." ".$askUser->getShortFamilyName(),
+                    'askUserId'=>$askUser->getId(),
                     'status' => $ask->getStatus(),
                     'frequency' => $ask->getCriteria()->getFrequency()
                 ];

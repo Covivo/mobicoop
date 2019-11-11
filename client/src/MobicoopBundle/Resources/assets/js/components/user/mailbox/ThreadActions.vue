@@ -16,10 +16,15 @@
 
       <!-- Only visible for carpool -->
       <v-card
-        v-if="idAskHistory"
+        v-if="idAskHistory && !loading"
         class="mb-3"
+        flat
       >
-        <threads-actions-buttons />
+        <threads-actions-buttons
+          :user-id="idUser"
+          :ask-user-id="infos.askUserId"
+          @updateStatus="updateStatus"
+        />
       </v-card>
       <v-card v-else-if="!loading">
         <v-card-text>
@@ -55,6 +60,10 @@ export default {
   },
   props: {
     idAskHistory: {
+      type: Number,
+      default: null
+    },
+    idUser: {
       type: Number,
       default: null
     },
@@ -109,6 +118,9 @@ export default {
         .finally(()=>{
           this.$emit("refreshActionsCompleted");
         });
+    },
+    updateStatus(data){
+      console.error(data);
     }
   }
 }
