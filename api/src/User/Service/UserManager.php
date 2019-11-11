@@ -23,6 +23,7 @@
 
 namespace App\User\Service;
 
+use App\Carpool\Repository\AskHistoryRepository;
 use App\Communication\Entity\Medium;
 use App\User\Entity\User;
 use App\User\Event\UserPasswordChangeAskedEvent;
@@ -43,6 +44,7 @@ use App\User\Repository\UserNotificationRepository;
 use App\User\Entity\UserNotification;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\User\Event\UserUpdatedSelfEvent;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * User manager service.
@@ -55,6 +57,7 @@ class UserManager
     private $roleRepository;
     private $communityRepository;
     private $messageRepository;
+    private $askHistoryRepository;
     private $notificationRepository;
     private $userNotificationRepository;
     private $logger;
@@ -67,13 +70,14 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->roleRepository = $roleRepository;
         $this->communityRepository = $communityRepository;
         $this->messageRepository = $messageRepository;
+        $this->askHistoryRepository = $askHistoryRepository;
         $this->eventDispatcher = $dispatcher;
         $this->encoder = $encoder;
         $this->notificationRepository = $notificationRepository;
@@ -170,7 +174,7 @@ class UserManager
         if ($type=="Direct") {
             $threads = $this->messageRepository->findThreadsDirectMessages($user);
         } elseif ($type=="Carpool") {
-            $threads = $this->messageRepository->findThreadsCarpoolMessages($user);
+            $threads = $this->askHistoryRepository->findThreadsCarpoolForMailBox($user);
         } else {
             return [];
         }
@@ -178,47 +182,85 @@ class UserManager
         if (!$threads) {
             return [];
         } else {
-            $messages = [];
-            foreach ($threads as $thread) {
-                // To Do : We support only one recipient at this time...
-                $currentMessage = [
-                    'idMessage' => $thread->getId(),
-                    'idRecipient' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getId() : $thread->getUser('user')->getId(),
-                    'avatarsRecipient' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getAvatars()[0] : $thread->getUser('user')->getAvatars()[0],
-                    'givenName' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getGivenName() : $thread->getUser('user')->getGivenName(),
-                    'familyName' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getFamilyName() : $thread->getUser('user')->getFamilyName(),
-                    'date' => ($thread->getLastMessage()===null) ? $thread->getCreatedDate() : $thread->getLastMessage()->getCreatedDate(),
-                    'selected' => false
-                ];
-
-                if ($type=="Carpool") {
-                    $waypoints = $thread->getAskHistory()->getAsk()->getMatching()->getWaypoints();
-                    $criteria = $thread->getAskHistory()->getAsk()->getMatching()->getCriteria();
-                    $currentMessage["carpoolInfos"] = [
-                        "askHistoryId" => $thread->getAskHistory()->getId(),
-                        "origin" => $waypoints[0]->getAddress()->getAddressLocality(),
-                        "destination" => $waypoints[count($waypoints)-1]->getAddress()->getAddressLocality(),
-                        "criteria" => [
-                            "frequency" => $criteria->getFrequency(),
-                            "fromDate" => $criteria->getFromDate(),
-                            "fromTime" => $criteria->getFromTime(),
-                            "monCheck" => $criteria->isMonCheck(),
-                            "tueCheck" => $criteria->isTueCheck(),
-                            "wedCheck" => $criteria->isWedCheck(),
-                            "thuCheck" => $criteria->isThuCheck(),
-                            "friCheck" => $criteria->isFriCheck(),
-                            "satCheck" => $criteria->isSatCheck(),
-                            "sunCheck" => $criteria->isSunCheck()
-                        ]
-                    ];
-                }
-
-                $messages[] = $currentMessage;
+            switch ($type) {
+                case "Direct":
+                    $messages = $this->parseThreadsDirectMessages($user, $threads);
+                break;
+                case "Carpool":
+                    $messages = $this->parseThreadsCarpoolMessages($user, $threads);
+                break;
             }
             return $messages;
         }
     }
     
+    public function parseThreadsDirectMessages(User $user, array $threads)
+    {
+        $messages = [];
+        foreach ($threads as $message) {
+            // To Do : We support only one recipient at this time...
+            $currentMessage = [
+                'idMessage' => $message->getId(),
+                'idRecipient' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getId() : $message->getUser('user')->getId(),
+                'avatarsRecipient' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getAvatars()[0] : $message->getUser('user')->getAvatars()[0],
+                'givenName' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getGivenName() : $message->getUser('user')->getGivenName(),
+                'familyName' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getFamilyName() : $message->getUser('user')->getFamilyName(),
+                'date' => ($message->getLastMessage()===null) ? $message->getCreatedDate() : $message->getLastMessage()->getCreatedDate(),
+                'selected' => false
+            ];
+
+            $messages[] = $currentMessage;
+        }
+        return $messages;
+    }
+
+    public function parseThreadsCarpoolMessages(User $user, array $threads)
+    {
+        $messages = [];
+        $currentAsk = -1;
+        foreach ($threads as $askHistory) {
+            $ask = $askHistory->getAsk();
+            $message = $askHistory->getMessage();
+            if ($currentAsk!==$ask->getId()) {
+                $currentAsk = $ask->getId();
+                $currentMessage = [
+                    'idAskHistory'=>$askHistory->getId(),
+                    'idAsk'=>$ask->getId(),
+                    'idMessage' => ($message !== null) ? $message->getMessage()->getId() : null,
+                    'idRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getId() : $ask->getUser('user')->getId(),
+                    'avatarsRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getAvatars()[0] : $ask->getUser('user')->getAvatars()[0],
+                    'givenName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getGivenName() : $ask->getUser('user')->getGivenName(),
+                    'familyName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getFamilyName() : $ask->getUser('user')->getFamilyName(),
+                    'date' => ($message===null) ? $askHistory->getCreatedDate() : $message->getCreatedDate(),
+                    'selected' => false
+                ];
+
+                $waypoints = $ask->getMatching()->getWaypoints();
+                $criteria = $ask->getMatching()->getCriteria();
+                $currentMessage["carpoolInfos"] = [
+                    "askHistoryId" => $askHistory->getId(),
+                    "origin" => $waypoints[0]->getAddress()->getAddressLocality(),
+                    "destination" => $waypoints[count($waypoints)-1]->getAddress()->getAddressLocality(),
+                    "criteria" => [
+                        "frequency" => $criteria->getFrequency(),
+                        "fromDate" => $criteria->getFromDate(),
+                        "fromTime" => $criteria->getFromTime(),
+                        "monCheck" => $criteria->isMonCheck(),
+                        "tueCheck" => $criteria->isTueCheck(),
+                        "wedCheck" => $criteria->isWedCheck(),
+                        "thuCheck" => $criteria->isThuCheck(),
+                        "friCheck" => $criteria->isFriCheck(),
+                        "satCheck" => $criteria->isSatCheck(),
+                        "sunCheck" => $criteria->isSunCheck()
+                    ]
+                ];
+
+                $messages[] = $currentMessage;
+            }
+        }
+        return $messages;
+    }
+
     public function getThreadsDirectMessages(User $user): array
     {
         return $this->getThreadsMessages($user, "Direct");

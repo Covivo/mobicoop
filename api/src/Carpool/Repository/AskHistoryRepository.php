@@ -26,6 +26,7 @@ namespace App\Carpool\Repository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Ask;
+use App\User\Entity\User;
 
 /**
  * @method Proposal|null find($id, $lockMode = null, $lockVersion = null)
@@ -58,5 +59,16 @@ class AskHistoryRepository
         ->setMaxResults(1);
         ;
         return $query->getQuery()->getOneOrNullResult();
+    }
+
+    public function findThreadsCarpoolForMailBox(User $user)
+    {
+        $query = $this->repository->createQueryBuilder('ah')
+        ->join('ah.ask', 'a')
+        ->where('(a.user = :user or a.userRelated = :user)')
+        ->setParameter('user', $user)
+        ->orderBy('ah.createdDate', 'DESC');
+        
+        return $query->getQuery()->getResult();
     }
 }
