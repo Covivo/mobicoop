@@ -107,8 +107,10 @@ export default {
   methods: {
     getCompleteThread(){
       this.items = [];
+      //this.currentAskHistory = null;
+
       // if idMessage = -1 it means that is a "virtuel" thread. When you initiate a contact without previous message
-      if(this.idMessage!==-1){
+      if(this.idMessage>-1){
         this.loading = true;
         axios.get(this.$t("urlCompleteThread",{idMessage:this.idMessage}))
           .then(response => {
@@ -152,6 +154,12 @@ export default {
           .catch(function (error) {
             console.log(error);
           });
+      }
+      else{
+        // how to get the askHistory...
+
+
+        this.emit();
       }
     },
     createdTime(date){

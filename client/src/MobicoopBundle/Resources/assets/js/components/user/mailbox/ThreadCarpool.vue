@@ -121,6 +121,10 @@ export default {
     selectedDefault: {
       type: Boolean,
       default: false
+    },
+    idAskHistory: {
+      type: Number,
+      default: null
     }
   },
   data() {

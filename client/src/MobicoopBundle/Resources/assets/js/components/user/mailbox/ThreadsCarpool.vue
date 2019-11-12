@@ -13,6 +13,7 @@
       :origin="message.carpoolInfos.origin"
       :destination="message.carpoolInfos.destination"
       :criteria="message.carpoolInfos.criteria"
+      :id-ask-history="message.idAskHistory"
       @idMessageForTimeLine="emit"
       @toggleSelected="emitToggle"
     />

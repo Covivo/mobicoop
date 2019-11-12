@@ -71,9 +71,9 @@ class MessageRepository
     public function findThreadsCarpoolMessages(User $user)
     {
         $query = $this->repository->createQueryBuilder('m')
-        ->join('m.recipients', 'r')
         ->leftJoin('m.askHistory', 'ah')
         ->leftJoin('m.messages', 'ms')
+        ->leftJoin('m.recipients', 'r')
         ->where('m.message is null and ah.id is not null and (m.user = :user or r.user = :user)')
         ->setParameter('user', $user);
 

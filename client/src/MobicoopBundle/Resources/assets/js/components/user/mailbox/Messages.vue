@@ -178,6 +178,13 @@ export default {
       loadingDetails:false
     };
   },
+  watch:{
+    currentIdAskHistory: function (newId, oldId) {
+      console.error("currentIdAskHistory");
+      console.error("oldId : "+oldId);
+      console.error("newId : "+newId);
+    }    
+  },
   mounted() {
     // If there is a new thread we give it to te right component
     if(this.newThread){
@@ -226,14 +233,13 @@ export default {
         idAskHistory:this.currentIdAskHistory,
         status:data.status
       }
-      console.error(params);
       axios.post(this.$t("urlUpdateAsk"),params)
         .then(response => {
           console.error(response.data);
           this.refreshActions = true;
         })
         .catch(function (error) {
-          console.log(error);
+          console.error(error);
         });
     },
     refreshSelected(data){
