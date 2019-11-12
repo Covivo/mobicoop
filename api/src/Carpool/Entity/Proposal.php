@@ -33,6 +33,7 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -180,6 +181,7 @@ use App\Communication\Entity\Notified;
  *      itemOperations={"get","put","delete"}
  * )
  * @ApiFilter(NumericFilter::class, properties={"proposalType"})
+ * @ApiFilter(BooleanFilter::class, properties={"private"})
  * @ApiFilter(DateFilter::class, properties={"criteria.fromDate"})
  */
 class Proposal

@@ -244,9 +244,17 @@ class ProposalManager
                 $schedules['returnSun']['sun'] = true;
             }
         }
-        if (isset($schedules)) {
-            $data['schedules'] = $schedules;
+        if (!isset($schedules)) {
+            // no schedule => must be an undecided role ask, we set only a blank return time to create a return proposal
+            $schedules = [];
+            $schedules['outwardMon']['outwardTime'] = '';
+            $schedules['outwardMon']['returnTime'] = '';
+            $schedules['outwardMon']['mon'] = false;
+            $schedules['returnMon']['outwardTime'] = '';
+            $schedules['returnMon']['returnTime'] = 'blank';
+            $schedules['returnMon']['mon'] = false;
         }
+        $data['schedules'] = $schedules;
         return $this->createProposalFromAd($data, $user);
     }
 
@@ -807,7 +815,7 @@ class ProposalManager
     {
         // we will make the request on the User instead of the Proposal
         $this->dataProvider->setClass(User::class);
-        $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class);
+        $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class, null, ['private'=>false]);
         return $response->getValue();
     }
     
