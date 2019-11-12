@@ -355,6 +355,7 @@ class ProposalManager
                         }
                     } else {
                         // it's a return trip, or the link as already been treated in a previous loop
+                        // CONTINUE HERE : array to know if a matchingroleundecided has already been treated
                         if (
                             !$proposal->getMatchingLinked()->getMatchingRoleUndecided() &&
                             ($proposal->getMatchingProposal()->getProposalLinked()->getId() === $matching->getProposalOffer()->getId() ||
