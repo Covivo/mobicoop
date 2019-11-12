@@ -30,6 +30,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
@@ -161,7 +162,7 @@ class ProposalManager
         // communities
         if (isset($ad['communities'])) {
             foreach ($ad['communities'] as $community) {
-                $proposal->addCommunity($community);
+                $proposal->addCommunity(new Community($community));
             }
         }
         $criteria->setDriver($ad['driver']);
@@ -452,7 +453,7 @@ class ProposalManager
             $proposalReturn = clone $proposal;
             if (isset($ad['communities'])) {
                 foreach ($ad['communities'] as $community) {
-                    $proposalReturn->addCommunity($community);
+                    $proposalReturn->addCommunity(new Community($community));
                 }
             }
             $criteriaReturn = new Criteria();
@@ -679,7 +680,7 @@ class ProposalManager
         // communities
         if (isset($ad['communities'])) {
             foreach ($ad['communities'] as $community) {
-                $proposal->addCommunity($community);
+                $proposal->addCommunity(new Community($community));
             }
         }
 //        $criteria->setDriver($ad['driver']);
