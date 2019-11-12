@@ -242,7 +242,7 @@ class Ask implements ResourceInterface
 
         // set (or unset) the owning side of the relation if necessary
         $newAskLinked = $askLinked === null ? null : $this;
-        if ($newAskLinked !== $askLinked->getAsklLinked()) {
+        if ($newAskLinked !== $askLinked->getAskLinked()) {
             $askLinked->setAskLinked($newAskLinked);
         }
 

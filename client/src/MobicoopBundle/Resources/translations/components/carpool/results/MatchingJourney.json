@@ -23,7 +23,8 @@
       "date": {
         "format": {
           "fullDate": "ddd Do MMMM YYYY",
-          "shortDate": "DD/MM/YYYY"
+          "shortDate": "DD/MM/YYYY",
+          "computeDate": "YYYY-MM-DD"
         }
       },
       "time": {
@@ -51,7 +52,8 @@
       "date": {
         "format": {
           "fullDate": "ddd Do MMMM YYYY",
-          "shortDate": "DD/MM/YYYY"
+          "shortDate": "DD/MM/YYYY",
+          "computeDate": "YYYY-MM-DD"
         }
       },
       "time": {

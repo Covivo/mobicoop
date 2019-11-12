@@ -119,6 +119,10 @@ services:
                 defaultPriceKm: '%env(float:CARPOOL_PRICE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
+    
+    App\Carpool\Service\ProposalMatcher:
+        tags:
+            - { name: monolog.logger, channel: carpool }
 
     # Communication
     App\Communication\Controller\:
