@@ -1076,7 +1076,8 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'chatFavorites'  => $this->getChatFavorites(),
             'music'          => $this->hasMusic(),
             'musicFavorites' => $this->getMusicFavorites(),
-            'newsSubscription' => $this->hasNewsSubscription()
+            'newsSubscription' => $this->hasNewsSubscription(),
+            'phoneValidatedDate' => $this->getPhoneValidatedDate()
         ];
     }
 }

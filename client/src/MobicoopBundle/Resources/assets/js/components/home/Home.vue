@@ -4,6 +4,28 @@
       grid-list-md
       text-xs-center
     >
+      <v-row v-if="!verified">
+        <v-col>
+          <v-snackbar
+            v-model="snackbar"
+            top
+            multi-line
+            color="info"
+            vertical
+          >
+            {{ $t('snackbar') }}
+            <v-btn
+              @click="snackbar = false"
+            >
+              <v-icon
+                color="primary"
+              >
+                mdi-close
+              </v-icon>
+            </v-btn>
+          </v-snackbar>
+        </v-col>
+      </v-row>
       <!-- Title and subtitle -->
       <v-row
         align="center"
@@ -90,6 +112,22 @@ export default {
     params: {
       type: Object,
       default: null
+    }
+  },
+  data () {
+    return {
+      snackbar: true,
+      verified: false,
+    }
+  },
+  mounted() {
+    this.checkVerifiedPhone();
+  },
+  method: {
+    checkVerifiedPhone() {
+      if (user.telephone) {
+        this.verified = user.phoneValidetedDate ? true : false;
+      }
     }
   }
 };
