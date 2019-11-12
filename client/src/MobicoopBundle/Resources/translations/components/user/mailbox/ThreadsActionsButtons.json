@@ -3,12 +3,18 @@
         "askCarpool":"Demander un covoiturage",
         "accept":"Accepter",
         "refuse":"Refuser",
-        "onlyAskUser":"Seul l'initiateur du contact peut proposer un covoiturage"
+        "onlyAskUser":"Seul l'initiateur du contact peut proposer un covoiturage",
+        "askPending":"Une demande formelle a été envoyée",
+        "askAccepted":"Le covoiturage a été accepté",
+        "askRefused":"Le covoiturage a été refusé"
     },
     "en": {
         "askCarpool":"Ask for a carpool",
         "accept":"Accept",
         "refuse":"Refuse",
-        "onlyAskUser":"Only the one who made the first contact can ask for a carpool"
+        "onlyAskUser":"Only the one who made the first contact can ask for a carpool",
+        "askPending":"A formal request has been sent",
+        "askAccepted":"This carpool has been accepted",
+        "askRefused":"This carpool has been refused"
     }
 }

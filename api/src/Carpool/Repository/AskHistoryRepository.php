@@ -65,8 +65,21 @@ class AskHistoryRepository
     {
         $query = $this->repository->createQueryBuilder('ah')
         ->join('ah.ask', 'a')
+        ->leftJoin('ah.message', 'm')
         ->where('(a.user = :user or a.userRelated = :user)')
         ->setParameter('user', $user)
+        ->orderBy('ah.createdDate', 'DESC');
+        
+        return $query->getQuery()->getResult();
+    }
+
+    public function findLastAskHistoryWithMessage(Ask $ask)
+    {
+        $query = $this->repository->createQueryBuilder('ah')
+        ->join('ah.ask', 'a')
+        ->join('ah.message', 'm')
+        ->where('a = :ask')
+        ->setParameter('ask', $ask)
         ->orderBy('ah.createdDate', 'DESC');
         
         return $query->getQuery()->getResult();

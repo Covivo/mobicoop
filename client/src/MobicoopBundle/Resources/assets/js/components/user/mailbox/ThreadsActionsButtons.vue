@@ -1,7 +1,7 @@
 <template>
   <v-content>
     <!-- The Ask is just Initiated -->
-    <!-- Only the Askj User can make a formal request of carpool -->
+    <!-- Only the Ask User can make a formal request of carpool -->
     <div v-if="status==1 && userId==askUserId">
       <v-tooltip
         bottom
@@ -28,8 +28,12 @@
     <div v-if="status==1 && userId!=askUserId">
       <v-card-text>{{ $t('onlyAskUser') }}</v-card-text>
     </div>
-    <div v-if="status==2">
-      <!-- The Ask is pending -->
+    <!-- end ask just Initiated -->
+
+
+    <!-- The Ask is pending -->
+    <!-- If you are the ask user you cannot accept or delined -->
+    <div v-if="status==2 && userId != askUserId">
       <v-tooltip
         bottom
         color="success"
@@ -72,6 +76,38 @@
         </template>
         <span>{{ $t('refuse') }}</span>
       </v-tooltip>     
+    </div>
+    <div v-else-if="status==2">
+      <v-card
+        color="warning"
+        class="white--text"
+        flat
+      >
+        {{ $t('askPending') }}
+      </v-card>
+    </div>
+    <!-- End the Ask is pending -->
+
+
+    <!-- The Ask is accepted -->
+    <div v-if="status==3">
+      <v-card
+        color="success"
+        class="white--text"
+        flat
+      >
+        {{ $t('askAccepted') }}
+      </v-card>
+    </div>
+    <!-- The Ask is refused -->
+    <div v-if="status==4">
+      <v-card
+        color="error"
+        class="white--text"
+        flat
+      >
+        {{ $t('askRefused') }}
+      </v-card>
     </div>
   </v-content>
 </template>

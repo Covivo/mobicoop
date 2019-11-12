@@ -230,7 +230,7 @@ export default {
       axios.post(this.$t("urlUpdateAsk"),params)
         .then(response => {
           console.error(response.data);
-          
+          this.refreshActions = true;
         })
         .catch(function (error) {
           console.log(error);

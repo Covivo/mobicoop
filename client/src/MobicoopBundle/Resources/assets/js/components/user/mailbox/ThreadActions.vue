@@ -23,6 +23,7 @@
         <threads-actions-buttons
           :user-id="idUser"
           :ask-user-id="infos.askUserId"
+          :status="infos.status"
           @updateStatus="updateStatus"
         />
       </v-card>
@@ -95,9 +96,7 @@ export default {
       this.loading = this.loadingInit;
     },
     refresh(){
-      if(this.refresh){
-        this.refreshInfos();
-      }
+      (this.refresh) ? this.refreshInfos() : this.loading = false;
     }
   },
   methods:{

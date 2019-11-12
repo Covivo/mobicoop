@@ -23,6 +23,7 @@
 
 namespace App\Communication\Repository;
 
+use App\Carpool\Entity\AskHistory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use App\Communication\Entity\Message;

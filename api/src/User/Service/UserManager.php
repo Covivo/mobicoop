@@ -24,6 +24,8 @@
 namespace App\User\Service;
 
 use App\Carpool\Repository\AskHistoryRepository;
+use App\Carpool\Repository\AskRepository;
+use App\Carpool\Service\AskManager;
 use App\Communication\Entity\Medium;
 use App\User\Entity\User;
 use App\User\Event\UserPasswordChangeAskedEvent;
@@ -226,7 +228,6 @@ class UserManager
                 $currentMessage = [
                     'idAskHistory'=>$askHistory->getId(),
                     'idAsk'=>$ask->getId(),
-                    'idMessage' => ($message !== null) ? $message->getMessage()->getId() : null,
                     'idRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getId() : $ask->getUser('user')->getId(),
                     'avatarsRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getAvatars()[0] : $ask->getUser('user')->getAvatars()[0],
                     'givenName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getGivenName() : $ask->getUser('user')->getGivenName(),
@@ -234,6 +235,22 @@ class UserManager
                     'date' => ($message===null) ? $askHistory->getCreatedDate() : $message->getCreatedDate(),
                     'selected' => false
                 ];
+
+                // The message id : the one linked to the current askHistory or we try to find the last existing one
+                $idMessage = null;
+                if ($message !== null) {
+                    ($idMessage = $message->getMessage()!==null) ? $idMessage = $message->getMessage()->getId() : $message->getId();
+                } else {
+                    $formerAskHistory = $this->askHistoryRepository->findLastAskHistoryWithMessage($ask);
+                    if ($formerAskHistory[0]->getMessage()) {
+                        if ($formerAskHistory[0]->getMessage()->getMessage()) {
+                            $idMessage = $formerAskHistory[0]->getMessage()->getMessage()->getId();
+                        } else {
+                            $idMessage = $formerAskHistory[0]->getMessage()->getId();
+                        }
+                    }
+                }
+                $currentMessage['idMessage'] = $idMessage;
 
                 $waypoints = $ask->getMatching()->getWaypoints();
                 $criteria = $ask->getMatching()->getCriteria();
