@@ -152,7 +152,7 @@
               :locale="locale"
               no-title
               @input="menuReturnDate = false"
-              @change="checkDateReturn(),change()"
+              @change="checkDateReturn($event),change()"
             />
           </v-menu>
         </v-col>
@@ -187,7 +187,7 @@
               format="24hr"
               header-color="secondary"
               @click:minute="$refs.menuReturnTime.save(returnTime)"
-              @change="checkDateReturn(),change()"
+              @change="checkDateReturn($event),change()"
             />
           </v-menu>
         </v-col>
@@ -586,8 +586,8 @@ export default {
         schedules: validSchedules
       });
     },
-    checkReturnDesactivate(event){
-      if (!event) {
+    checkReturnDesactivate(e){
+      if (!e) {
         this.returnDate = null
         this.returnTime = null
       }
