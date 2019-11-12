@@ -322,6 +322,13 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $phoneToken;
 
     /**
+     * @var \DateTimeInterface Validation date of the phone number.
+     * @Groups({"post","put"})
+     */
+    private $phoneValidatedDate;
+
+
+    /**
      * @var string|null iOS app ID.
      * @Groups({"post","put"})
      */
@@ -978,6 +985,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     public function setPhoneToken(?string $phoneToken): self
     {
         $this->phoneToken = $phoneToken;
+        return $this;
+    }
+
+    public function getPhoneValidatedDate(): ?\DateTimeInterface
+    {
+        return $this->phoneValidatedDate;
+    }
+
+    public function setPhoneValidatedDate(\DateTimeInterface $phoneValidatedDate): self
+    {
+        $this->phoneValidatedDate = $phoneValidatedDate;
+
         return $this;
     }
 
