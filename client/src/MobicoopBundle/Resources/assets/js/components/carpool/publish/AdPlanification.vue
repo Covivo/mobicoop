@@ -152,7 +152,7 @@
               :locale="locale"
               no-title
               @input="menuReturnDate = false"
-              @change="checkDateReturn($event),change()"
+              @change="checkDateReturn(),change()"
             />
           </v-menu>
         </v-col>
@@ -187,7 +187,7 @@
               format="24hr"
               header-color="secondary"
               @click:minute="$refs.menuReturnTime.save(returnTime)"
-              @change="checkDateReturn($event),change()"
+              @change="checkDateReturn(),change()"
             />
           </v-menu>
         </v-col>
@@ -511,7 +511,6 @@ export default {
       locale: this.$i18n.locale,
       arrayDay : ['mon','tue','wed','thu','fri','sat','sun'],
       schedules: [],
-      showErrorTolltipSchedule : false,
 
     };
   },
@@ -560,8 +559,8 @@ export default {
 
   methods: {
 
-    checkDateReturn($event){
-      if ($event) this.returnTrip = true
+    checkDateReturn(e){
+      if (e) this.returnTrip = true
     },
     change() {
       let validSchedules = JSON.parse(JSON.stringify(this.activeSchedules)); // little tweak to deep copy :)
@@ -604,17 +603,12 @@ export default {
         this.schedules[id].returnDisabled = false;
 
         if (event) {
-
           this.verifCurrentdDayInAllSchedules(day,id)
-
-
           // We uncheck a day
         }else{
 
           // TODO verif if all schedule have current day open, not just the currrent one
         }
-
-
 
       }
     },

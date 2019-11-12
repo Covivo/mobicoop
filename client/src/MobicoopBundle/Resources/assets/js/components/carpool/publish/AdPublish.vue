@@ -671,7 +671,6 @@ export default {
     return {
       distance: 0, 
       duration: 0,
-      validPlanification :false,
       outwardDate: this.initDate,
       outwardTime: this.initTime,
       returnDate: null,
