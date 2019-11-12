@@ -19,8 +19,8 @@ const getSassyRule = type => {
   if (type === 'scss') prependData += ';';
   return {
     test: type === 'scss'
-        ? /\.scss$/
-        : /\.sass$/,
+      ? /\.scss$/
+      : /\.sass$/,
     use: [
       'vue-style-loader',
       'css-loader',
@@ -28,7 +28,7 @@ const getSassyRule = type => {
         loader: 'sass-loader',
         options: {
           implementation: require('sass'),
-          data: prependData,
+          prependData: prependData,
           sassOptions: {
             fiber: require('fibers'),
           },
