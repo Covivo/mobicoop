@@ -120,7 +120,7 @@ export default {
         });
     },
     updateStatus(data){
-      console.error(data);
+      this.$emit("updateStatusAskHistory",data);
     }
   }
 }

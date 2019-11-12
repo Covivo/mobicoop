@@ -514,11 +514,10 @@ class UserController extends AbstractController
         ]);
     }
 
-    /*************** NEW VERSION */
     /**
      * Get direct messages threads
      */
-    public function userMessageDirectThreadsList(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    public function userMessageDirectThreadsList(UserManager $userManager)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
@@ -529,7 +528,7 @@ class UserController extends AbstractController
     /**
      * Get carpool messages threads
      */
-    public function userMessageCarpoolThreadsList(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    public function userMessageCarpoolThreadsList(UserManager $userManager)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
@@ -586,185 +585,6 @@ class UserController extends AbstractController
             return new JsonResponse($response);
         }
         return new JsonResponse();
-    }
-
-    /*************** END NEW VERSION */
-
-    /**
-     * User messages.
-     * OLD Controller
-     */
-    public function userMessageList(UserManager $userManager, InternalMessageManager $internalMessageManager)
-    {
-        $user = $userManager->getLoggedUser();
-        $this->denyAccessUnlessGranted('messages', $user);
-
-        $threadsDirectMessagesForView = [];
-        $threadsCarpoolingMessagesForView = [];
-        $idMessageDefault = null;
-        $idRecipientDefault = null;
-        $firstNameRecipientDefault = "";
-        $lastNameRecipientDefault = "";
-
-        // Building threads array
-        $threads = $userManager->getThreads($user);
-        $reponseofmanager= $this->handleManagerReturnValue($threads);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $idMessageDefaultSelected = false;
-
-        foreach ($threads["threads"] as $thread) {
-            $arrayThread = [];
-
-            $arrayThread["idThreadMessage"] = $thread["id"];
-            if (!isset($thread["user"]["id"])) {
-                // the user is the sender
-                $arrayThread["contactId"] =  $thread["recipients"][0]["user"]["id"];
-                $arrayThread["contactFirstName"] = $thread["recipients"][0]["user"]["givenName"];
-                $arrayThread["contactLastName"] = $thread["recipients"][0]["user"]["familyName"];
-            } else {
-                // the user is the recipient
-                $arrayThread["contactId"] =  $thread["user"]["id"];
-                $arrayThread["contactFirstName"] = $thread["user"]["givenName"];
-                $arrayThread["contactLastName"] = $thread["user"]["familyName"];
-            }
-            $arrayThread["text"] = $thread["text"];
-            $arrayThread["askHistory"] = $thread["askHistory"];
-
-            // The default message is the first direct message or the last carpooling message
-            if (!$idMessageDefaultSelected || !is_null($thread["askHistory"])) {
-                $idMessageDefault = $thread["id"];
-                $idRecipientDefault = $arrayThread["contactId"];
-                $firstNameRecipientDefault = $arrayThread["contactFirstName"];
-                $lastNameRecipientDefault = $arrayThread["contactLastName"];
-                $arrayThread["selected"] = true;
-                $idMessageDefaultSelected = true;
-
-                // For the summary of the journey
-                if (!is_null($thread["askHistory"])) {
-                    $arrayThread["firstWayPoint"] = $thread["askHistory"]["ask"]["matching"]["waypoints"][0]["address"]["addressLocality"];
-                    $arrayThread["lastWayPoint"] = $thread["askHistory"]["ask"]["matching"]["waypoints"][count($thread["askHistory"]["ask"]["matching"]["waypoints"])-1]["address"]["addressLocality"];
-
-                    if ($thread["askHistory"]["ask"]["matching"]['criteria']["frequency"]==1) {
-                        // Punctual, we show the from date
-                        $fromDate = new DateTime($thread["askHistory"]["ask"]["matching"]['criteria']["fromDate"]);
-                        $fromTime = new DateTime($thread["askHistory"]["ask"]["matching"]['criteria']["fromTime"]);
-                        $arrayThread["fromDateReadable"] = $fromDate->format("D d F Y");
-                        $arrayThread["fromTimeReadable"] = $fromTime->format("H\hi");
-                    } else {
-                        // Regular
-                        $dayChecked = [];
-                        if ($thread["askHistory"]["ask"]["matching"]['criteria']["monCheck"]!==null) {
-                            $dayChecked[] = "monday";
-                        }
-                        if ($thread["askHistory"]["ask"]["matching"]['criteria']["tueCheck"]!==null) {
-                            $dayChecked[] = "tuesday";
-                        }
-                        if ($thread["askHistory"]["ask"]["matching"]['criteria']["wedCheck"]!==null) {
-                            $dayChecked[] = "wednesday";
-                        }
-                        if ($thread["askHistory"]["ask"]["matching"]['criteria']["thuCheck"]!==null) {
-                            $dayChecked[] = "thursday";
-                        }
-                        if ($thread["askHistory"]["ask"]["matching"]['criteria']["friCheck"]!==null) {
-                            $dayChecked[] = "friday";
-                        }
-                        if ($thread["askHistory"]["ask"]["matching"]['criteria']["satCheck"]!==null) {
-                            $dayChecked[] = "saturday";
-                        }
-                        if ($thread["askHistory"]["ask"]["matching"]['criteria']["sunCheck"]!==null) {
-                            $dayChecked[] = "sunday";
-                        }
-                        $arrayThread["dayChecked"] = $dayChecked;
-                    }
-                }
-
-                // I need the send date of the last message of this thread
-                $completeThread = $internalMessageManager->getThread($thread["id"], DataProvider::RETURN_JSON);
-                if ($completeThread["messages"]!==null && count($completeThread["messages"])>0) {
-                    //$lastMessageCreatedDate = new DateTime($completeThread["messages"][count($completeThread["messages"])-1]["createdDate"]);
-                    //$arrayThread["lastMessageCreatedDate"] = $lastMessageCreatedDate->format("d M Y");
-                    $arrayThread["lastMessageCreatedDate"] = $completeThread["messages"][count($completeThread["messages"])-1]["createdDate"];
-                } else {
-                    //$lastMessageCreatedDate = new DateTime($completeThread["createdDate"]);
-                    //$arrayThread["lastMessageCreatedDate"] = $lastMessageCreatedDate->format("d M Y");
-                    $arrayThread["lastMessageCreatedDate"] = $completeThread["createdDate"];
-                }
-                // If it's today i just show... today
-                $today = new DateTime(date("Y-m-d"));
-                if ($today->format("d F Y")===$arrayThread["lastMessageCreatedDate"]) {
-                    $arrayThread["lastMessageCreatedDate"] = "today";
-                }
-            }
-
-            // Push on the right array
-            (is_null($thread["askHistory"])) ? $threadsDirectMessagesForView[] = $arrayThread : $threadsCarpoolingMessagesForView[] = $arrayThread;
-        }
-        
-        return $this->render('@Mobicoop/user/messages.html.twig', [
-            'threadsDirectMessagesForView' => $threadsDirectMessagesForView,
-            'threadsCarpoolingMessagesForView' => $threadsCarpoolingMessagesForView,
-            'userId' => $user->getId(),
-            'idMessageDefault' => $idMessageDefault,
-            'idRecipientDefault'=>$idRecipientDefault,
-            'firstNameRecipientDefault'=>$firstNameRecipientDefault,
-            'lastNameRecipientDefault'=>$lastNameRecipientDefault,
-        ]);
-    }
-
-    /**
-     * Get a complete thread from a first message
-     * Ajax Request
-     * OLD Controller
-     */
-    public function userMessageThreadOld(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, AskManager $askManager)
-    {
-        $user = $userManager->getLoggedUser();
-        $reponseofmanager= $this->handleManagerReturnValue($user);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $this->denyAccessUnlessGranted('messages', $user);
-
-        $thread = $internalMessageManager->getThread($idFirstMessage, DataProvider::RETURN_JSON);
-        $reponseofmanager= $this->handleManagerReturnValue($thread);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-
-        // Format the date with a human readable version
-        // First message
-        $createdDateFirstMessage = new DateTime($thread["createdDate"]);
-        $thread["createdDateReadable"] = $createdDateFirstMessage->format("D d F Y");
-        $thread["createdTimeReadable"] = $createdDateFirstMessage->format("H:i:s");
-
-        // Children messages
-        foreach ($thread["messages"] as $key => $message) {
-            $createdDate = new DateTime($message["createdDate"]);
-            $thread["messages"][$key]["createdDateReadable"] = $createdDate->format("D d F Y");
-            $thread["messages"][$key]["createdTimeReadable"] = $createdDate->format("H:i:s");
-        }
-        
-        if (!is_null($thread["askHistory"])) {
-            // Get the last AskHistory
-            // You do that because you can have a AskHistory without a message
-            $askHistories = $askManager->getAskHistories($thread["askHistory"]["ask"]["id"]);
-            $reponseofmanager= $this->handleManagerReturnValue($askHistories);
-            if (!empty($reponseofmanager)) {
-                return $reponseofmanager;
-            }
-            $thread["lastAskHistory"] = end($askHistories);
-
-            $fromDate = new DateTime($thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromDate"]);
-            $thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromDateReadable"] = $fromDate->format("D d F Y");
-            $fromTime = new DateTime($thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromTime"]);
-            $thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromTimeReadable"] = $fromTime->format("G\hi");
-        } else {
-            $thread["lastAskHistory"] = null;
-        }
-
-        return new Response(json_encode($thread));
     }
 
     /**
@@ -830,24 +650,29 @@ class UserController extends AbstractController
      * Update and ask
      * Ajax Request
      */
-    public function userMessageUpdateAsk(Request $request, AskManager $askManager)
+    public function userMessageUpdateAsk(Request $request, AskManager $askManager, AskHistoryManager $askHistoryManager)
     {
         if ($request->isMethod('POST')) {
-            $idAsk = $request->request->get('idAsk');
+            $data = json_decode($request->getContent(), true);
+
+            $idAskHistory = $data['idAskHistory'];
+            $status = $data['status'];
 
             // Get the Ask
-            $ask = $askManager->getAsk($idAsk);
+            $askHistory = $askHistoryManager->getAskHistory($idAskHistory);
+            $ask = $askHistory->getAsk();
+            
             $reponseofmanager= $this->handleManagerReturnValue($ask);
             if (!empty($reponseofmanager)) {
                 return $reponseofmanager;
             }
-
+            
             // Change the status
-            if ($request->request->get('status')!==null &&
-                is_numeric($request->request->get('status'))
+            if ($status!==null &&
+                is_numeric($status)
             ) {
                 // Modify the Ask status
-                $ask->setStatus($request->request->get('status'));
+                $ask->setStatus($status);
             }
             
             // Update the Ask via API
@@ -862,10 +687,10 @@ class UserController extends AbstractController
                 "status"=>$ask->getStatus()
             ];
 
-            return new Response(json_encode($return));
+            return new JsonResponse($return);
         }
 
-        return new Response(json_encode("Not a post"));
+        return new JsonResponse("Not a post");
     }
 
     /**

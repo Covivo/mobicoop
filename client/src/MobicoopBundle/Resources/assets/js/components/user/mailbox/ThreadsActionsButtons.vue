@@ -97,7 +97,7 @@ export default {
   },
   methods:{
     updateStatus(status){
-      this.$emit("updateStatus",status);
+      this.$emit("updateStatus",{status:status});
     }
   }
 }

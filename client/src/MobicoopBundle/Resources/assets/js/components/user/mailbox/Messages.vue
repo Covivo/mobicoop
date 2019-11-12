@@ -118,6 +118,7 @@
             :loading-init="loadingDetails"
             :refresh="refreshActions"
             @refreshActionsCompleted="refreshActionsCompleted"
+            @updateStatusAskHistory="updateStatusAskHistory"
           />
         </v-col>
       </v-row>
@@ -219,6 +220,21 @@ export default {
     },
     updateAskHistory(data){
       this.currentIdAskHistory = data.currentAskHistory;
+    },
+    updateStatusAskHistory(data){
+      let params = {
+        idAskHistory:this.currentIdAskHistory,
+        status:data.status
+      }
+      console.error(params);
+      axios.post(this.$t("urlUpdateAsk"),params)
+        .then(response => {
+          console.error(response.data);
+          
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
     refreshSelected(data){
       this.loadingDetails = true;
