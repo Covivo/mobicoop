@@ -502,7 +502,8 @@ class UserController extends AbstractController
                 "carpool" => (int)$request->request->get('carpool'),
                 "idRecipient" => (int)$request->request->get('idRecipient'),
                 "familyName" => $request->request->get('familyName'),
-                "givenName" => $request->request->get('givenName')
+                "givenName" => $request->request->get('givenName'),
+                "avatar" => $request->request->get('avatar')
             ];
             $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
         }

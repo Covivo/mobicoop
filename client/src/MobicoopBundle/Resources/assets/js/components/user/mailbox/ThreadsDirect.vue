@@ -104,10 +104,10 @@ export default {
       axios.get(this.$t("urlGet"))
         .then(response => {
           this.SkeletonHidden = true;
-          this.messages = response.data.threads;
           // I'm pushing the new "virtual" thread
           if(this.newThread){
             response.data.threads.push({
+              avatarsRecipient:this.newThread.avatar,
               date:moment().format(),
               familyName:this.newThread.familyName,
               givenName:this.newThread.givenName,
@@ -115,6 +115,7 @@ export default {
               idRecipient:this.newThread.idRecipient
             });
           }
+          this.messages = response.data.threads;
           (idMessageSelected) ? this.refreshSelected(idMessageSelected) : '';
           this.$emit("refreshThreadsDirectCompleted");
         })
