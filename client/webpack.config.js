@@ -14,6 +14,30 @@ const _ = require('lodash');
 // let bundleVendor = path.resolve(bundleRealPath + '../../../vendor');
 // let bundlePublic = path.resolve(bundleRealPath + '../../../public');
 
+const getSassyRule = type => {
+  let prependData = `@import "./src/MobicoopBundle/Resources/assets/css/_variables.scss"`;
+  if (type === 'scss') prependData += ';';
+  return {
+    test: type === 'scss'
+        ? /\.scss$/
+        : /\.sass$/,
+    use: [
+      'vue-style-loader',
+      'css-loader',
+      {
+        loader: 'sass-loader',
+        options: {
+          implementation: require('sass'),
+          data: prependData,
+          sassOptions: {
+            fiber: require('fibers'),
+          },
+        },
+      },
+    ]
+  };
+};
+
 Encore
   .setOutputPath('public/build/')
   .setPublicPath('/build')
@@ -38,20 +62,8 @@ Encore
   .enableVersioning(Encore.isProduction())
   .enableVueLoader()
   .enableSingleRuntimeChunk()
-  .addLoader({
-    test: /\.s(c|a)ss$/,
-    use: [
-      'vue-style-loader',
-      'css-loader',
-      {
-        loader: 'sass-loader',
-        options: {
-          implementation: require('sass'),
-          fiber: require('fibers')
-        }
-      }
-    ]
-  })
+  .addLoader(getSassyRule('scss'))
+  .addLoader(getSassyRule('sass'))
   .setManifestKeyPrefix('build')
   .enablePostCssLoader();
 
@@ -87,21 +99,11 @@ if (!Encore.isProduction()) {
     })
 }
 
-// // Add base assets
-// for (let file of files) {
-//   Encore.addEntry(file.split('.js')[0], `./assets/js/page/${file}`)
-// }
-//
-// // Add bundle assets
-// for (let file of filesBundle) {
-//   Encore.addEntry(`bundle_${file.split('.js')[0]}`, `./src/MobicoopBundle/Resources/assets/js/page/${file}`)
-// }
-
 let encoreConfig = Encore.getWebpackConfig();
 encoreConfig.watchOptions = {
   aggregateTimeout: 500,
   poll: 1000
-}
+};
 
 // Add aliases for files !
 encoreConfig.resolve.alias = _.merge(encoreConfig.resolve.alias, { // merge is very important because if not present vue is not found because cnore add aliasl !! https://github.com/vuejs-templates/webpack/issues/215#issuecomment-514220431
