@@ -465,7 +465,7 @@ class User implements UserInterface, EquatableInterface
     private $phoneToken;
 
     /**
-     * @var \DateTimeInterface Validation date of the phone number.
+     * @var \DateTimeInterface|null Validation date of the phone number.
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -1002,7 +1002,7 @@ class User implements UserInterface, EquatableInterface
         return $this->phoneValidatedDate;
     }
 
-    public function setPhoneValidatedDate(\DateTimeInterface $phoneValidatedDate): self
+    public function setPhoneValidatedDate(?\DateTimeInterface $phoneValidatedDate): self
     {
         $this->phoneValidatedDate = $phoneValidatedDate;
 

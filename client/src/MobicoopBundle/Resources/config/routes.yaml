@@ -52,6 +52,13 @@ user_profile_update:
         fr: /utilisateur/profil/modifier/{tabDefault?}
         en: /user/profile/update/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
+    
+# phone validation
+user_phone_validation:
+    path:
+        fr: /utilisateur/telephone/validation
+        en: /user/phone/validation
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPhoneValidation
 
 # delete avatar
 user_profile_image_delete:

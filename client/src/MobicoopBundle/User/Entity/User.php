@@ -322,7 +322,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $phoneToken;
 
     /**
-     * @var \DateTimeInterface Validation date of the phone number.
+     * @var \DateTimeInterface|null Validation date of the phone number.
      * @Groups({"post","put"})
      */
     private $phoneValidatedDate;
@@ -993,7 +993,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this->phoneValidatedDate;
     }
 
-    public function setPhoneValidatedDate(\DateTimeInterface $phoneValidatedDate): self
+    public function setPhoneValidatedDate(?\DateTimeInterface $phoneValidatedDate): self
     {
         $this->phoneValidatedDate = $phoneValidatedDate;
 

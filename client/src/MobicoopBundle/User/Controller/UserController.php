@@ -153,8 +153,6 @@ class UserController extends AbstractController
             //$user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
             $user->setBirthDate(new DateTime($data['birthDay']));
 
-
-
             if (!is_null($data['idFacebook'])) {
                 $user->setFacebookId($data['idFacebook']);
             }
@@ -165,6 +163,11 @@ class UserController extends AbstractController
             // For safety, we strip the slashes because this token can be passed in url
             $pwdToken = str_replace("/", "", $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
             $user->setValidatedDateToken($pwdToken);
+            // set a phone token
+            if ($data['telephone']) {
+                $phoneToken = mt_rand(100000, 999999);
+                $user->setPhoneToken(strval($phoneToken));
+            }
             // create user in database
             $data = $userManager->createUser($user);
             $reponseofmanager= $this->handleManagerReturnValue($data);
@@ -211,6 +214,37 @@ class UserController extends AbstractController
             }
         }
         return $this->render('@Mobicoop/user/signupValidation.html.twig', ['urlToken'=>$token, 'error'=>$error]);
+    }
+
+    /**
+     * Phone validation
+     *
+     * @param $token
+     * @param UserManager $userManager
+     * @param Request $request
+     * @return void
+     */
+    public function userPhoneValidation($token, UserManager $userManager, Request $request)
+    {
+        $error = "";
+        if ($request->isMethod('POST') && $token !== "") {
+            // We need to check if the token exists
+            $userFound = $userManager->findByphoneToken($token);
+            if (!empty($userFound)) {
+                if ($userFound->getValidatedDate()!==null) {
+                    $error = "alreadyValidated";
+                } else {
+                    $userFound->setPhoneValidatedDate(new \Datetime()); // TO DO : Correct timezone
+                    $userFound = $userManager->updateUser($userFound);
+                    if (!$userFound) {
+                        $error = "updateError";
+                    }
+                }
+            } else {
+                $error = "unknown";
+            }
+        }
+        return new Response(json_encode($error));
     }
 
     /**
@@ -269,9 +303,14 @@ class UserController extends AbstractController
                     return $reponseofmanager;
                 }
             }
-
+            // check if the phone number is new and if so change token and validationdate
+            if ($user->getTelephone() != $data->get('telephone')) {
+                $user->setTelephone($data->get('telephone'));
+                $user->setPhoneValidatedDate(null);
+                $phoneToken = mt_rand(100000, 999999);
+                $user->setPhoneToken(strval($phoneToken));
+            }
             $user->setEmail($data->get('email'));
-            $user->setTelephone($data->get('telephone'));
             $user->setGivenName($data->get('givenName'));
             $user->setFamilyName($data->get('familyName'));
             $user->setGender($data->get('gender'));
