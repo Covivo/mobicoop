@@ -226,6 +226,15 @@ class Proposal
     private $private;
 
     /**
+     * @var boolean Paused proposal.
+     * A paused proposal can't be the found in the result of a search, and can be unpaused at any moment.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $paused;
+
+    /**
      * @var \DateTimeInterface Creation date of the proposal.
      *
      * @ORM\Column(type="datetime")
@@ -301,19 +310,17 @@ class Proposal
     private $communities;
 
     /**
-     * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
+     * @var ArrayCollection|null The matchings of the proposal (if proposal is a request).
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read"})
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
      * @MaxDepth(1)
      */
     private $matchingOffers;
 
     /**
-     * @var ArrayCollection|null The matching of the proposal (if proposal is a request).
+     * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read"})
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
      * @MaxDepth(1)
      */
     private $matchingRequests;
@@ -330,6 +337,7 @@ class Proposal
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups({"read","results","write","thread"})
+     * @MaxDepth(1)
      */
     private $criteria;
     
@@ -352,10 +360,31 @@ class Proposal
     private $notifieds;
 
     /**
-     * @var Proposal|null The proposal we know that already matched by this new proposal
+     * @var Proposal|null The proposal we want to force matching with (we assume the corresponding matching doesn't exist yet).
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $matchingProposal;
+
+    /**
+     * @var Matching|null The matching of the linked proposal (used for regular return trips).
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $matchingLinked;
+
+    /**
+     * @var Ask|null The ask of the linked proposal (used for regular return trips).
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $askLinked;
+
+    /**
+     * @var boolean Create a formal ask after posting the proposal.
      * @Groups({"read","write"})
      */
-    private $matchedProposal;
+    private $formalAsk;
 
     /**
      * @var ArrayCollection|null The carpool results for the proposal.
@@ -429,6 +458,18 @@ class Proposal
     public function setPrivate(?bool $private): self
     {
         $this->private = $private;
+
+        return $this;
+    }
+
+    public function isPaused(): bool
+    {
+        return $this->paused ? true : false;
+    }
+
+    public function setPaused(?bool $paused): self
+    {
+        $this->paused = $paused;
 
         return $this;
     }
@@ -582,7 +623,7 @@ class Proposal
     {
         if (!$this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests[] = $matchingRequest;
-            $matchingRequest->setProposalRequest($this);
+            $matchingRequest->setProposalOffer($this);
         }
 
         return $this;
@@ -593,8 +634,8 @@ class Proposal
         if ($this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests->removeElement($matchingRequest);
             // set the owning side to null (unless already changed)
-            if ($matchingRequest->getProposalRequest() === $this) {
-                $matchingRequest->setProposalRequest(null);
+            if ($matchingRequest->getProposalOffer() === $this) {
+                $matchingRequest->setProposalOffer(null);
             }
         }
 
@@ -610,7 +651,7 @@ class Proposal
     {
         if (!$this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers[] = $matchingOffer;
-            $matchingOffer->setProposalOffer($this);
+            $matchingOffer->setProposalRequest($this);
         }
         
         return $this;
@@ -621,8 +662,8 @@ class Proposal
         if ($this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers->removeElement($matchingOffer);
             // set the owning side to null (unless already changed)
-            if ($matchingOffer->getProposalOffer() === $this) {
-                $matchingOffer->setProposalOffer(null);
+            if ($matchingOffer->getProposalRequest() === $this) {
+                $matchingOffer->setProposalRequest(null);
             }
         }
         
@@ -700,14 +741,50 @@ class Proposal
         return $this;
     }
     
-    public function getMatchedProposal(): ?Proposal
+    public function hasFormalAsk(): bool
     {
-        return $this->matchedProposal;
+        return $this->formalAsk ? true : false;
     }
 
-    public function setMatchedProposal(?Proposal $matchedProposal): self
+    public function setFormalAsk(?bool $formalAsk): self
     {
-        $this->matchedProposal = $matchedProposal;
+        $this->formalAsk = $formalAsk;
+
+        return $this;
+    }
+
+    public function getMatchingProposal(): ?Proposal
+    {
+        return $this->matchingProposal;
+    }
+
+    public function setMatchingProposal(?Proposal $matchingProposal): self
+    {
+        $this->matchingProposal = $matchingProposal;
+
+        return $this;
+    }
+
+    public function getMatchingLinked(): ?Matching
+    {
+        return $this->matchingLinked;
+    }
+
+    public function setMatchingLinked(?Matching $matchingLinked): self
+    {
+        $this->matchingLinked = $matchingLinked;
+
+        return $this;
+    }
+
+    public function getAskLinked(): ?Ask
+    {
+        return $this->askLinked;
+    }
+
+    public function setAskLinked(?Ask $askLinked): self
+    {
+        $this->askLinked = $askLinked;
 
         return $this;
     }

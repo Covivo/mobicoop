@@ -929,10 +929,11 @@ class UserController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            $communityUsers = $communityManager->getAllCommunityUser($data['userId']);
             $communities = [];
-            foreach ($communityUsers as $communityUser) {
-                $communities[] = $communityUser->getCommunity();
+            if ($communityUsers = $communityManager->getAllCommunityUser($data['userId'])) {
+                foreach ($communityUsers as $communityUser) {
+                    $communities[] = $communityUser->getCommunity();
+                }
             }
             return new JsonResponse($communities);
         }

@@ -263,6 +263,14 @@ carpool_contact:
         en: /carpool/contact
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolContact
 
+# carpool ask from results (POST)
+carpool_result_ask:
+    methods: [POST]
+    path:
+        fr: /covoiturage/demande
+        en: /carpool/ask
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAsk
+
 # rdex provider (AJAX)
 rdex_provider:
     path:
