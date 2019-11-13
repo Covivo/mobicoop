@@ -562,6 +562,9 @@ export default {
         params.returnComputedPrice = resultChoice.return.computedPrice;
         params.returnComputedRoundedPrice = resultChoice.return.computedRoundedPrice;
       }
+      if (resultChoice.outward.matchingId) {
+        params.matchingId = resultChoice.outward.matchingId;
+      }
       this.$emit('contact', params);
     },
     carpool(role) {
@@ -593,6 +596,9 @@ export default {
         params.returnRoundedPrice = resultChoice.return.originalRoundedPrice;
         params.returnComputedPrice = resultChoice.return.computedPrice;
         params.returnComputedRoundedPrice = resultChoice.return.computedRoundedPrice;
+      }
+      if (resultChoice.outward.matchingId) {
+        params.matchingId = resultChoice.outward.matchingId;
       }
       this.$emit('carpool', params);
     },

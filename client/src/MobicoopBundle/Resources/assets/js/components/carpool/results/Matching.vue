@@ -22,6 +22,7 @@
         >
           <!-- Matching header -->
           <matching-header
+            v-if="!proposalId"
             :origin="origin"
             :destination="destination"
             :date="date"
@@ -164,7 +165,9 @@ export default {
       proposal: null,
       result: null,
       loading : true,
-      results: null
+      results: null,
+      lOrigin: null,
+      lDestination: null
     };
   },
   computed: {

@@ -121,7 +121,7 @@ class CarpoolController extends AbstractController
      * Ad results page.
      * (POST)
      */
-    public function carpoolAdResult($id, ProposalManager $proposalManager)
+    public function carpoolAdResults($id, ProposalManager $proposalManager)
     {
         $proposal = $proposalManager->getProposal($id);
         $this->denyAccessUnlessGranted('results', $proposal);
@@ -132,10 +132,10 @@ class CarpoolController extends AbstractController
     }
 
     /**
-     * Ad results data.
+     * Ad result detail data.
      * (AJAX)
      */
-    public function carpoolAdResults($id, ProposalManager $proposalManager)
+    public function carpoolAdDetail($id, ProposalManager $proposalManager)
     {
         $proposal = $proposalManager->getProposal($id);
         $this->denyAccessUnlessGranted('results', $proposal);
@@ -224,7 +224,7 @@ class CarpoolController extends AbstractController
         $params = json_decode($request->getContent(), true);
 
         // if the matching set, it means the contact is made after an ad matching
-        if (isset($params['matching'])) {
+        if (isset($params['matchingId'])) {
             // create the ask and return the result
             return $this->json("ok");
         }
@@ -245,7 +245,7 @@ class CarpoolController extends AbstractController
         $params = json_decode($request->getContent(), true);
 
         // if the matching is set, it means the ask is made after an ad matching
-        if (isset($params['matching'])) {
+        if (isset($params['matchingId'])) {
             // create the ask and return the result
             return $this->json("ok");
         }
