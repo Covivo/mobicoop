@@ -1,0 +1,51 @@
+{
+  "fr": {
+    "title": "Créez votre événement",
+    "buttons": { 
+      "create": {
+        "label": "Créer l'événement",
+        "route": "/evenement/creer"
+      }
+    },
+    "form": {
+      "name": {
+        "label": "Nom de l'événement*",
+        "required": "Le nom de l'événement est requis"
+      },
+      "fullDescription": {
+        "label": "Description détaillée de l'événement*",
+        "required": "La description détaillée de l'événement est requise"
+      },
+      "avatar": {
+        "label": "Avatar de l'événement*",
+        "required": "L'avatar de l'événement est requis",
+        "size": "Vous avez dépassé a taille maximale de l'avatar"
+      },
+      "address": {
+        "label": "Adresse de l'événement*",
+        "required": "L'adesse de l'événement est requise"
+      },
+      "urlEvent": {
+        "label": "URL de l'événement",
+        "tooltips": "L'adresse du site web de l'événement",
+        "error": "Veuillez renseigner un site web au format valide"
+      }
+    },
+    "redirect": {
+      "route": "/evenements"
+    },
+    "error": {
+      "event" : {
+        "name": "Cet événement existe déjà veuillez utiliser un autre nom",
+        "create": "La création de l'événement a échoué",
+        "required": "Tous les champs marqués d'une étoile sont requis"
+      },
+      "image": "L'image n'a pas été enregistrée"
+    }
+  },
+  "en": {
+    "redirect": {
+      "route": "/events"
+    }
+  }
+}

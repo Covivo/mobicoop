@@ -36,6 +36,7 @@ import Solidary from '@components/solidary/Solidary'
 
 // EVENT
 import EventList from "@components/event/EventList";
+import EventCreate from "@components/event/EventCreate";
 
 export default {
   MHeader,
@@ -58,5 +59,6 @@ export default {
   SignupValidation,
   UpdateProfile,
   Solidary,
-  EventList
+  EventList,
+  EventCreate
 }

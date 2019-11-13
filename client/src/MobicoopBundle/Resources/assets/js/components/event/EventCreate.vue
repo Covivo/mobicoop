@@ -1,0 +1,217 @@
+<template>
+  <v-content>
+    <!--SnackBar-->
+    <v-snackbar
+      v-model="snackbar"
+      color="error"
+      top
+    >
+      {{ snackError }}
+      <v-btn
+        color="white"
+        text
+        @click="snackbar = false"
+      >
+        <v-icon>mdi-close-circle-outline</v-icon>
+      </v-btn>
+    </v-snackbar>
+    <v-container>
+      <v-row 
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
+          align="center"
+        >
+          <h1>{{ $t('title') }}</h1>
+        </v-col>
+      </v-row>
+      <v-row
+        justify="center"
+        align="center"
+      >
+        <v-col
+          cols="12"
+          align="center"
+        >
+          <v-row justify="center">
+            <v-col cols="3">
+              <v-text-field
+                v-model="name"
+                :rules="nameRules"
+                :label="$t('form.name.label')"
+              />
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="3">
+              <v-textarea
+                v-model="fullDescription"
+                :rules="fullDescriptionRules"
+                :label="$t('form.fullDescription.label')"
+                rows="5"
+                auto-grow
+                clearable
+                outlined
+                row-height="24"
+              />
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="3">
+              <GeoComplete 
+                :url="geoSearchUrl"
+                :label="$t('form.address.label')"
+                @address-selected="addressSelected"
+              />
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="3">
+              <v-tooltip
+                left
+                color="info"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="urlEvent"
+                    :rules="urlEventRules"
+                    :label="$t('form.urlEvent.label')"
+                    v-on="on"
+                  />
+                </template>
+                <span>{{ $t('form.urlEvent.tooltips') }}</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="3">
+              <v-file-input
+                v-model="avatar"
+                :rules="avatarRules"
+                accept="image/png, image/jpeg, image/bmp"
+                :label="$t('form.avatar.label')"
+                prepend-icon="mdi-image"
+              />
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="6">
+              <v-btn
+                rounded
+                color="primary"
+                :loading="loading"
+                @click="createCommunity"
+              >
+                {{ $t('buttons.create.label') }}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-content>
+</template>
+<script>
+
+import { merge } from "lodash";
+import Translations from "@translations/components/event/EventCreate.json";
+import TranslationsClient from "@clientTranslations/components/event/EventCreate.json";
+import GeoComplete from "@components/utilities/GeoComplete";
+import axios from "axios";
+
+let TranslationsMerged = merge(Translations, TranslationsClient);
+
+export default {
+  i18n: {
+    messages: TranslationsMerged,
+  },
+  components: {
+    GeoComplete
+  },
+  props:{
+    user: {
+      type: Object,
+      default: null
+    },
+    community: {
+      type: Array,
+      default: null
+    },
+    geoSearchUrl: {
+      type: String,
+      default: null
+    },
+    avatarSize: {
+      type: String,
+      default: null
+    }
+  },
+  data () {
+    return {
+      avatarRules: [
+        v => !!v || this.$t("form.avatar.required"),
+        v => !v || v.size < this.avatarSize || this.$t("form.avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
+      ],
+      communityAddress: null,
+      name: null,
+      nameRules: [
+        v => !!v || this.$t("form.name.required"),
+      ],
+      fullDescription: null,
+      fullDescriptionRules: [
+        v => !!v || this.$t("form.fullDescription.required"),
+      ],
+      avatar: null,
+      loading: false,
+      snackError: null,
+      snackbar: false,
+      domain: null,
+      domainRules: [
+        v => !v || /([\w+-]*\.[\w+]*$)/.test(v) || this.$t("form.domain.error")
+      ]
+    }
+  },
+  methods: {
+    addressSelected: function(address) {
+      this.communityAddress = address;
+    },
+    createCommunity() {
+      this.loading = true;
+      if (this.name  && this.fullDescription && this.avatar && this.communityAddress) {
+        let newCommunity = new FormData();
+        newCommunity.append("name", this.name);
+        newCommunity.append("fullDescription", this.fullDescription);
+        newCommunity.append("avatar", this.avatar);
+        newCommunity.append("address", JSON.stringify(this.communityAddress));
+        if (this.domain) newCommunity.append("domain", this.domain);
+
+        axios 
+          .post(this.$t('buttons.create.route'), newCommunity, {
+            headers:{
+              'content-type': 'multipart/form-data'
+            }
+          })
+          .then(res => {
+            if (res.data.includes('error')) {
+              this.snackError = this.$t(res.data)
+              this.snackbar = true;
+              this.loading = false;
+            }
+            else window.location.href = this.$t('redirect.route');
+          });
+      } else {
+        this.snackError = this.$t('error.community.required')
+        this.snackbar = true;
+        this.loading = false;
+      }    
+    },
+  }
+}
+</script>
+
+<style>
+
+</style>

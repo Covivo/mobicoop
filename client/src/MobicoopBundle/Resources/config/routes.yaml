@@ -457,3 +457,10 @@ event_list:
         fr: /evenements
         en: /events
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventList
+
+# create event
+event_create:
+    path:
+        fr: /evenement/creer
+        en: /event/create
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventCreate

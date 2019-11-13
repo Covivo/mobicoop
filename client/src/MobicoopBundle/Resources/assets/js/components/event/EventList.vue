@@ -70,7 +70,7 @@
                 color="secondary"
                 rounded
               >
-                {{ $t('createCommunity') }}
+                {{ $t('createEvent') }}
               </v-btn>
             </a>
           </v-col>

@@ -1,8 +1,18 @@
 {
   "fr": {
     "eventsAvailable":"Événements disponibles",
+    "createEvent" : "Créer un événement",
+    "search":"Rechercher",
+    "all":"Tous",
+    "linePerPage":"Nombre de lignes par page",
+    "seeAds":"Voir les annonces"
   },
   "en": {
     "eventsAvailable":"Events available",
+    "createEvent" : "Create an event",
+    "search":"Search",
+    "all":"All",
+    "linePerPage":"Nomber of line per page",
+    "seeAds":"See the ads"
   }
 }
