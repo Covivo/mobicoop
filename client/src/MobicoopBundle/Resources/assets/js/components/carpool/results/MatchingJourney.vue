@@ -540,41 +540,27 @@ export default {
         "passenger": this.lResult.resultPassenger ? true : false,
         "regular" : this.lResult.frequency == 2
       };
-      // if the requester can be passenger, we take the informations from the resultPassenger outward item
-      if (this.lResult.resultPassenger) {
-        params.proposalId = this.lResult.resultPassenger.outward.proposalId;
-        params.origin = this.lResult.resultPassenger.outward.origin;
-        params.destination = this.lResult.resultPassenger.outward.destination;
-        params.date = this.lResult.resultPassenger.outward.date;
-        params.time = this.lResult.resultPassenger.outward.time;
-        params.priceKm = this.lResult.resultPassenger.outward.priceKm;
-        params.outwardPrice = this.lResult.resultPassenger.outward.originalPrice;
-        params.outwardRoundedPrice = this.lResult.resultPassenger.outward.originalRoundedPrice;
-        params.outwardComputedPrice = this.lResult.resultPassenger.outward.computedPrice;
-        params.outwardComputedRoundedPrice = this.lResult.resultPassenger.outward.computedRoundedPrice;
-        if (this.lResult.resultPassenger.return) {
-          params.returnPrice = this.lResult.resultPassenger.return.originalPrice;
-          params.returnRoundedPrice = this.lResult.resultPassenger.return.originalRoundedPrice;
-          params.returnComputedPrice = this.lResult.resultPassenger.return.computedPrice;
-          params.returnComputedRoundedPrice = this.lResult.resultPassenger.return.computedRoundedPrice;
-        }
+      let resultChoice = null;
+      if (this.lResult.resultDriver) {
+        resultChoice = this.lResult.resultDriver;
       } else {
-        params.proposalId = this.lResult.resultDriver.outward.proposalId;
-        params.origin = this.lResult.resultDriver.outward.origin;
-        params.destination = this.lResult.resultDriver.outward.destination;
-        params.date = this.lResult.resultDriver.outward.date;
-        params.time = this.lResult.resultDriver.outward.time;
-        params.priceKm = this.lResult.resultDriver.outward.priceKm;
-        params.outwardPrice = this.lResult.resultDriver.outward.originalPrice;
-        params.outwardRoundedPrice = this.lResult.resultDriver.outward.originalRoundedPrice;
-        params.outwardComputedPrice = this.lResult.resultDriver.outward.computedPrice;
-        params.outwardComputedRoundedPrice = this.lResult.resultDriver.outward.computedRoundedPrice;
-        if (this.lResult.resultDriver.return) {
-          params.returnPrice = this.lResult.resultDriver.return.originalPrice;
-          params.returnRoundedPrice = this.lResult.resultDriver.return.originalRoundedPrice;
-          params.returnComputedPrice = this.lResult.resultDriver.return.computedPrice;
-          params.returnComputedRoundedPrice = this.lResult.resultDriver.return.computedRoundedPrice;
-        }
+        resultChoice = this.lResult.resultPassenger;
+      }      
+      params.proposalId = resultChoice.outward.proposalId;
+      params.origin = resultChoice.outward.origin;
+      params.destination = resultChoice.outward.destination;
+      params.date = resultChoice.outward.date;
+      params.time = resultChoice.outward.time;
+      params.priceKm = resultChoice.outward.priceKm;
+      params.outwardPrice = resultChoice.outward.originalPrice;
+      params.outwardRoundedPrice = resultChoice.outward.originalRoundedPrice;
+      params.outwardComputedPrice = resultChoice.outward.computedPrice;
+      params.outwardComputedRoundedPrice = resultChoice.outward.computedRoundedPrice;
+      if (resultChoice.return) {
+        params.returnPrice = resultChoice.return.originalPrice;
+        params.returnRoundedPrice = resultChoice.return.originalRoundedPrice;
+        params.returnComputedPrice = resultChoice.return.computedPrice;
+        params.returnComputedRoundedPrice = resultChoice.return.computedRoundedPrice;
       }
       this.$emit('contact', params);
     },
@@ -590,42 +576,23 @@ export default {
         "fromDate": moment(this.fromDate).format(this.$t('i18n.date.format.computeDate')),
         "toDate": moment(this.maxDate).format(this.$t('i18n.date.format.computeDate'))
       };
-      if (role == 1) {
-        // the requester is driver
-        params.proposalId = this.lResult.resultDriver.outward.proposalId;
-        params.origin = this.lResult.resultDriver.outward.origin;
-        params.destination = this.lResult.resultDriver.outward.destination;
-        params.date = this.lResult.resultDriver.outward.date;
-        params.time = this.lResult.resultDriver.outward.time;
-        params.priceKm = this.lResult.resultDriver.outward.priceKm;
-        params.outwardPrice = this.lResult.resultDriver.outward.originalPrice;
-        params.outwardRoundedPrice = this.lResult.resultDriver.outward.originalRoundedPrice;
-        params.outwardComputedPrice = this.lResult.resultDriver.outward.computedPrice;
-        params.outwardComputedRoundedPrice = this.lResult.resultDriver.outward.computedRoundedPrice;
-        if (this.lResult.resultDriver.return) {
-          params.returnPrice = this.lResult.resultDriver.return.originalPrice;
-          params.returnRoundedPrice = this.lResult.resultDriver.return.originalRoundedPrice;
-          params.returnComputedPrice = this.lResult.resultDriver.return.computedPrice;
-          params.returnComputedRoundedPrice = this.lResult.resultDriver.return.computedRoundedPrice;
-        }
-      } else {
-        // the requester is passenger
-        params.proposalId = this.lResult.resultPassenger.outward.proposalId;
-        params.origin = this.lResult.resultPassenger.outward.origin;
-        params.destination = this.lResult.resultPassenger.outward.destination;
-        params.date = this.lResult.resultPassenger.outward.date;
-        params.time = this.lResult.resultPassenger.outward.time;
-        params.priceKm = this.lResult.resultPassenger.outward.priceKm;
-        params.outwardPrice = this.lResult.resultPassenger.outward.originalPrice;
-        params.outwardRoundedPrice = this.lResult.resultPassenger.outward.originalRoundedPrice;
-        params.outwardComputedPrice = this.lResult.resultPassenger.outward.computedPrice;
-        params.outwardComputedRoundedPrice = this.lResult.resultPassenger.outward.computedRoundedPrice;
-        if (this.lResult.resultPassenger.return) {
-          params.returnPrice = this.lResult.resultPassenger.return.originalPrice;
-          params.returnRoundedPrice = this.lResult.resultPassenger.return.originalRoundedPrice;
-          params.returnComputedPrice = this.lResult.resultPassenger.return.computedPrice;
-          params.returnComputedRoundedPrice = this.lResult.resultPassenger.return.computedRoundedPrice;
-        }
+      let resultChoice = this.lResult.resultDriver;
+      if (role == 2) resultChoice = this.lResult.resultPassenger;
+      params.proposalId = resultChoice.outward.proposalId;
+      params.origin = resultChoice.outward.origin;
+      params.destination = resultChoice.outward.destination;
+      params.date = resultChoice.outward.date;
+      params.time = resultChoice.outward.time;
+      params.priceKm = resultChoice.outward.priceKm;
+      params.outwardPrice = resultChoice.outward.originalPrice;
+      params.outwardRoundedPrice = resultChoice.outward.originalRoundedPrice;
+      params.outwardComputedPrice = resultChoice.outward.computedPrice;
+      params.outwardComputedRoundedPrice = resultChoice.outward.computedRoundedPrice;
+      if (resultChoice.return) {
+        params.returnPrice = resultChoice.return.originalPrice;
+        params.returnRoundedPrice = resultChoice.return.originalRoundedPrice;
+        params.returnComputedPrice = resultChoice.return.computedPrice;
+        params.returnComputedRoundedPrice = resultChoice.return.computedRoundedPrice;
       }
       this.$emit('carpool', params);
     },

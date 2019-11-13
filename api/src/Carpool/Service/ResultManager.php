@@ -590,14 +590,14 @@ class ResultManager
 
                         // we set the prices of the driver (the requester)
                         // if the requester price per km is set we use it
-                        if ($offerProposalLinked->getCriteria()->getPriceKm()) {
+                        if ($offerProposalLinked && $offerProposalLinked->getCriteria()->getPriceKm()) {
                             $return->setDriverPriceKm($offerProposalLinked->getCriteria()->getPriceKm());
                         } else {
                             // otherwise we use the common price
                             $return->setDriverPriceKm($this->params['defaultPriceKm']);
                         }
                         // if the requester price is set we use it
-                        if ($offerProposalLinked->getCriteria()->getPrice()) {
+                        if ($offerProposalLinked && $offerProposalLinked->getCriteria()->getPrice()) {
                             $return->setDriverOriginalPrice($offerProposalLinked->getCriteria()->getPrice());
                         } else {
                             // otherwise we use the common price
