@@ -68,10 +68,6 @@ class SendAction
             $askHistory->setType($ask->getType());
 
             $this->entityManager->persist($askHistory);
-
-            // Update the updated date of the Ask
-            $ask->setUpdatedDate(new \DateTime("now"));
-            $this->entityManager->persist($ask);
         }
 
         return $data;
