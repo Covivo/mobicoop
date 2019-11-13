@@ -348,14 +348,17 @@ class ProposalManager
                         ) {
                             // we create the ask
                             $newAsk = $this->askManager->createAskFromMatchedProposal($proposal, $matching, $proposal->hasFormalAsk());
-                            // we set the matching linked if we need to create a forced reverse matching (can be the case for regular return trips)
-                            $proposal->setMatchingLinked($matching);
                             // we set the ask linked of the matching if we need to create a forced reverse matching (can be the case for regular return trips)
                             $proposal->setAskLinked($newAsk);
+                            // if there's un matching role undecided we create the related ask
+                            if ($matching->getMatchingRoleUndecided()) {
+                                $this->askManager->createAskFromMatchedProposal($proposal, $matching->getMatchingRoleUndecided(), $proposal->hasFormalAsk());
+                            }
+                            // we set the matching linked if we need to create a forced reverse matching (can be the case for regular return trips)
+                            $proposal->setMatchingLinked($matching);
                         }
                     } else {
                         // it's a return trip, or the link as already been treated in a previous loop
-                        // CONTINUE HERE : array to know if a matchingroleundecided has already been treated
                         if (
                             !$proposal->getMatchingLinked()->getMatchingRoleUndecided() &&
                             ($proposal->getMatchingProposal()->getProposalLinked()->getId() === $matching->getProposalOffer()->getId() ||
