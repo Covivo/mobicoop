@@ -32,7 +32,6 @@ use Mobicoop\Bundle\MobicoopBundle\Permission\Service\PermissionManager;
 class EventVoter extends Voter
 {
     const CREATE = 'create';
-    const SHOW = 'show';
     
     private $permissionManager;
 
@@ -45,7 +44,7 @@ class EventVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::SHOW
+            self::CREATE
             ])) {
             return false;
         }

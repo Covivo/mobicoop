@@ -25,6 +25,8 @@ namespace Mobicoop\Bundle\MobicoopBundle\Event\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**
  * Event management service.
@@ -51,8 +53,42 @@ class EventManager
      *
      * @return Event|null The event created or null if error.
      */
-    public function createEvent(Event $event)
+    public function createEvent($data, Event $event, User $user)
     {
+
+        $address = new Address();
+        // set the user as a user of the community
+        $event->setUser($user);
+
+        // set event address
+        $communityAddress=json_decode($data->get('address'), true);
+        $address->setAddressCountry($communityAddress['addressCountry']);
+        $address->setAddressLocality($communityAddress['addressLocality']);
+        $address->setCountryCode($communityAddress['countryCode']);
+        $address->setCounty($communityAddress['county']);
+        $address->setLatitude($communityAddress['latitude']);
+        $address->setLocalAdmin($communityAddress['localAdmin']);
+        $address->setLongitude($communityAddress['longitude']);
+        $address->setMacroCounty($communityAddress['macroCounty']);
+        $address->setMacroRegion($communityAddress['macroRegion']);
+        $address->setPostalCode($communityAddress['postalCode']);
+        $address->setRegion($communityAddress['region']);
+        $address->setStreet($communityAddress['street']);
+        $address->setHouseNumber($communityAddress['houseNumber']);
+        $address->setStreetAddress($communityAddress['streetAddress']);
+        $address->setSubLocality($communityAddress['subLocality']);
+        $address->setDisplayLabel($communityAddress['displayLabel']);
+
+        // set community infos
+        $event->setName($data->get('name'));
+        $event->setDescription($data->get('fullDescription'));
+        $event->setFullDescription($data->get('fullDescription'));
+        $event->setAddress($address);
+        $event->setUrl($data->get('urlEvent'));
+
+
+        $from = $data->get('outwardTime') == null ? new \DateTime($data->get('outwardDate').'.'.$data->get('outwardTime'))  : new \DateTime($data->get('outwardDate'));
+        $to = $data->get('returnTime') == null ? new \DateTime($data->get('returnDate').'.'.$data->get('returnTime'))  : new \DateTime($data->get('returnDate'));
         $response = $this->dataProvider->post($event);
         if ($response->getCode() == 201) {
             return $response->getValue();

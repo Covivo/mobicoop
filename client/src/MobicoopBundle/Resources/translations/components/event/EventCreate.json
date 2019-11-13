@@ -41,6 +41,19 @@
         "required": "Tous les champs marqués d'une étoile sont requis"
       },
       "image": "L'image n'a pas été enregistrée"
+    },
+    "startDate": {
+      "label": "Date de début",
+      "error": "Obligatoire"
+    },
+    "endDate" : {
+      "label": "Date de fin"
+    },
+    "outwardTime": {
+      "label": "Heure de début"
+    },
+    "returnTime" : {
+      "label": "Heure de fin"
     }
   },
   "en": {

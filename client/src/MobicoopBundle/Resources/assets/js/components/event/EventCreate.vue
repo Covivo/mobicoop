@@ -37,7 +37,7 @@
           align="center"
         >
           <v-row justify="center">
-            <v-col cols="3">
+            <v-col cols="6">
               <v-text-field
                 v-model="name"
                 :rules="nameRules"
@@ -46,7 +46,7 @@
             </v-col>
           </v-row>
           <v-row justify="center">
-            <v-col cols="3">
+            <v-col cols="6">
               <v-textarea
                 v-model="fullDescription"
                 :rules="fullDescriptionRules"
@@ -60,7 +60,7 @@
             </v-col>
           </v-row>
           <v-row justify="center">
-            <v-col cols="3">
+            <v-col cols="6">
               <GeoComplete 
                 :url="geoSearchUrl"
                 :label="$t('form.address.label')"
@@ -68,8 +68,167 @@
               />
             </v-col>
           </v-row>
+
+          <!-- START picker -->
+          <v-row
+            align="center"
+            justify="center"
+            dense
+          >
+            <!-- Outward date -->
+            <v-col
+              cols="3"
+            >
+              <v-menu
+                v-model="menuOutwardDate"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                full-width
+                min-width="290px"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    :value="computedOutwardDateFormat"
+                    :label="$t('startDate.label')"
+                    readonly
+                    clearable
+                    v-on="on"
+                  >
+                    <v-icon
+                      slot="prepend"
+                    >
+                      mdi-arrow-right-circle-outline
+                    </v-icon>
+                  </v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="outwardDate"
+                  :locale="locale"
+                  no-title
+                  @input="menuOutwardDate = false"
+                />
+              </v-menu>
+            </v-col>
+
+            <v-col
+              cols="3"
+            >
+              <v-menu
+                v-model="menuReturnDate"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                full-width
+                min-width="290px"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    :value="computedReturnDateFormat"
+                    :label="$t('endDate.label')"
+                    prepend-icon=""
+                    readonly
+                    v-on="on"
+                  >
+                    <v-icon
+                      slot="prepend"
+                    >
+                      mdi-arrow-left-circle-outline
+                    </v-icon>
+                  </v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="returnDate"
+                  :locale="locale"
+                  no-title
+                  @input="menuReturnDate = false"
+                  @change="checkDateReturn($event),change()"
+                />
+              </v-menu>
+            </v-col>
+          </v-row>
+
+          <!-- END date picker -->
+
+          <!-- START times -->
+          <v-row
+            align="center"
+            justify="center"
+            dense
+          >
+            <v-col
+              cols="3"
+            >
+              <v-menu
+                ref="menuOutwardTime"
+                v-model="menuOutwardTime"
+                :close-on-content-click="false"
+                :return-value.sync="outwardTime"
+                transition="scale-transition"
+                offset-y
+                full-width
+                max-width="290px"
+                min-width="290px"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="outwardTime"
+                    :label="$t('outwardTime.label')"
+                    prepend-icon=""
+                    readonly
+                    v-on="on"
+                  />
+                </template>
+                <v-time-picker
+                  v-if="menuOutwardTime"
+                  v-model="outwardTime"
+                  format="24hr"
+                  header-color="secondary"
+                  @click:minute="$refs.menuOutwardTime.save(outwardTime)"
+                />
+              </v-menu>
+            </v-col>
+
+            <v-col
+              cols="3"
+            >
+              <v-menu
+                ref="menuReturnTime"
+                v-model="menuReturnTime"
+                :close-on-content-click="false"
+                :return-value.sync="returnTime"
+                transition="scale-transition"
+                offset-y
+                full-width
+                max-width="290px"
+                min-width="290px"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="returnTime"
+                    :label="$t('returnTime.label')"
+                    prepend-icon=""
+                    readonly
+                    v-on="on"
+                  />
+                </template>
+                <v-time-picker
+                  v-if="menuReturnTime"
+                  v-model="returnTime"
+                  format="24hr"
+                  header-color="secondary"
+                  @click:minute="$refs.menuReturnTime.save(returnTime)"
+                />
+              </v-menu>
+            </v-col>
+          </v-row>
+          <!-- END times -->
+
+
+
+
           <v-row justify="center">
-            <v-col cols="3">
+            <v-col cols="6">
               <v-tooltip
                 left
                 color="info"
@@ -87,7 +246,7 @@
             </v-col>
           </v-row>
           <v-row justify="center">
-            <v-col cols="3">
+            <v-col cols="6">
               <v-file-input
                 v-model="avatar"
                 :rules="avatarRules"
@@ -120,6 +279,7 @@ import { merge } from "lodash";
 import Translations from "@translations/components/event/EventCreate.json";
 import TranslationsClient from "@clientTranslations/components/event/EventCreate.json";
 import GeoComplete from "@components/utilities/GeoComplete";
+import moment from "moment";
 import axios from "axios";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
@@ -151,6 +311,15 @@ export default {
   },
   data () {
     return {
+      outwardDate: null,
+      returnDate : null,
+      outwardTime: null,
+      returnTime: null,
+      menuOutwardDate: false,
+      menuReturnDate: false,
+      menuOutwardTime: false,
+      menuReturnTime: false,
+      locale: this.$i18n.locale,
       avatarRules: [
         v => !!v || this.$t("form.avatar.required"),
         v => !v || v.size < this.avatarSize || this.$t("form.avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
@@ -174,6 +343,20 @@ export default {
       ]
     }
   },
+  computed :{
+    computedOutwardDateFormat() {
+      moment.locale(this.locale);
+      return this.outwardDate
+        ? moment(this.outwardDate).format(this.$t("ui.i18n.date.format.fullDate"))
+        : "";
+    },
+    computedReturnDateFormat() {
+      moment.locale(this.locale);
+      return this.returnDate
+        ? moment(this.returnDate).format(this.$t("ui.i18n.date.format.fullDate"))
+        : "";
+    },
+  },
   methods: {
     addressSelected: function(address) {
       this.communityAddress = address;
@@ -186,6 +369,10 @@ export default {
         newEvent.append("fullDescription", this.fullDescription);
         newEvent.append("avatar", this.avatar);
         newEvent.append("address", JSON.stringify(this.communityAddress));
+        newEvent.append("outwardDate", this.outwardDate);
+        newEvent.append("returnDate", this.returnDate);
+        if (this.outwardTime) newEvent.append("outwardTime", this.outwardTime);
+        if (this.returnTime) newEvent.append("returnTime", this.returnTime);
         if (this.urlEvent) newEvent.append("urlEvent", this.urlEvent);
 
         axios 

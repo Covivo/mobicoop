@@ -69,47 +69,15 @@ class EventController extends AbstractController
         ImageManager $imageManager
     ) {
         $event = new Event();
-        $this->denyAccessUnlessGranted('create', $event);
+        //$this->denyAccessUnlessGranted('create', $event);
         $user = new User($userManager->getLoggedUser()->getId());
-        $address = new Address();
+
 
         if ($request->isMethod('POST')) {
             $data = $request->request;
-            // Check if the community name is available (if yes continue)
-            if ($eventManager->checkNameAvailability($data->get('name'))) {
+            $eventManager->createEvent($data,$event, $user);
 
-                // set the user as a user of the community
-                $communityUser->setUser($user);
-
-                // set community address
-                $communityAddress=json_decode($data->get('address'), true);
-                $address->setAddressCountry($communityAddress['addressCountry']);
-                $address->setAddressLocality($communityAddress['addressLocality']);
-                $address->setCountryCode($communityAddress['countryCode']);
-                $address->setCounty($communityAddress['county']);
-                $address->setLatitude($communityAddress['latitude']);
-                $address->setLocalAdmin($communityAddress['localAdmin']);
-                $address->setLongitude($communityAddress['longitude']);
-                $address->setMacroCounty($communityAddress['macroCounty']);
-                $address->setMacroRegion($communityAddress['macroRegion']);
-                $address->setPostalCode($communityAddress['postalCode']);
-                $address->setRegion($communityAddress['region']);
-                $address->setStreet($communityAddress['street']);
-                $address->setHouseNumber($communityAddress['houseNumber']);
-                $address->setStreetAddress($communityAddress['streetAddress']);
-                $address->setSubLocality($communityAddress['subLocality']);
-                $address->setDisplayLabel($communityAddress['displayLabel']);
-
-                // set community infos
-                $community->setUser($user);
-                $community->setName($data->get('name'));
-                $community->setDescription($data->get('description'));
-                $community->setFullDescription($data->get('fullDescription'));
-                $community->setAddress($address);
-                $community->addCommunityUser($communityUser);
-                $community->setDomain($data->get('domain'));
-
-
+            dump($data);
                 // create community
                 if ($community = $eventManager->createCommunity($community)) {
 
@@ -126,9 +94,7 @@ class EventController extends AbstractController
                 }
                 // return error if community post didn't work
                 return new Response(json_encode('error.community.create'));
-            }
-            // return error because name already exists
-            return new Response(json_encode('error.community.name'));
+
         }
         return $this->render('@Mobicoop/event/createEvent.html.twig', [
         ]);
