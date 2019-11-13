@@ -165,7 +165,6 @@ export default {
       modelTabs:"tab-cm",
       idMessage:null,
       idRecipient:null,
-      //currentIdAskHistory:null,
       currentIdAsk:null,
       recipientName:"",
       newThreadDirect:null,
@@ -205,7 +204,7 @@ export default {
         idThreadMessage: data.idThreadMessage,
         text: data.textToSend,
         idRecipient: data.idRecipient,
-        idAskHistory: this.currentIdAskHistory
+        idAsk: this.currentIdAsk
       };
       axios.post(this.$t("urlSend"), messageToSend).then(res => {
         this.idMessage = (data.idThreadMessage!==-1) ? data.idThreadMessage : res.data.id ;

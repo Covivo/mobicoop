@@ -586,11 +586,8 @@ class UserController extends AbstractController
         return new JsonResponse();
     }
 
-    /**
-     * Send an internal message to another user
-     * Ajax Request
-     */
-    public function userMessageSend(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request, AskHistoryManager $askHistoryManager)
+    
+    public function userMessageSend(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request)
     {
         $user = $userManager->getLoggedUser();
         $reponseofmanager= $this->handleManagerReturnValue($user);
@@ -602,9 +599,9 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             $idThreadMessage = ($data['idThreadMessage']==-1) ? null : $data['idThreadMessage'];
+            $idAsk = (isset($data['idAsk']) && !is_null($data['idAsk'])) ? $data['idAsk'] : null;
             $text = $data['text'];
             $idRecipient = $data['idRecipient'];
-            $idAskHistory = $data['idAskHistory'];
 
             $messageToSend = $internalMessageManager->createInternalMessage(
                 $user,
@@ -613,38 +610,17 @@ class UserController extends AbstractController
                 $text,
                 $idThreadMessage
             );
-            $reponseofmanager= $this->handleManagerReturnValue($messageToSend);
-            if (!empty($reponseofmanager)) {
-                return $reponseofmanager;
+
+            if ($idAsk!==null) {
+                $messageToSend->setIdAsk($idAsk);
             }
-
-            // If there is an AskHistory i will post an AskHistory with the message within. If not, i only send a Message.
-            if ($idAskHistory!==null) {
-                
-                // Get the current AskHistory
-                $currentAskHistory = $askHistoryManager->getAskHistory($idAskHistory);
-                $reponseofmanager= $this->handleManagerReturnValue($currentAskHistory);
-                if (!empty($reponseofmanager)) {
-                    return $reponseofmanager;
-                }
-
-                // Create the new Ask History to post
-                $askHistory = new AskHistory();
-                $askHistory->setMessage($messageToSend);
-                $askHistory->setAsk($currentAskHistory->getAsk());
-                $askHistory->setStatus($currentAskHistory->getStatus());
-                $askHistory->setType($currentAskHistory->getType());
-
-                // print_r($askHistoryManager->createAskHistory($askHistory));
-                // die;
-                return new Response($askHistoryManager->createAskHistory($askHistory, DataProvider::RETURN_JSON));
-            } else {
-                return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
-            }
+            
+            return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
         }
         return new Response(json_encode("Not a post"));
     }
-
+    
+    
     /**
      * Update and ask
      * Ajax Request
