@@ -220,21 +220,20 @@ class UserController extends AbstractController
      */
     public function userPhoneValidation(UserManager $userManager, Request $request)
     {
-        $this->denyAccessUnlessGranted('register');
+        $user = clone $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('update', $user);
         
         $phoneError = "";
         if ($request->isMethod('POST')) {
-            $data = $request->request;
-
-            // We need to check if the token exists
-            $userFound = $userManager->findByphoneToken($data->get('token'));
-            if (!empty($userFound)) {
-                if ($userFound->getPhoneValidatedDate()!==null) {
+            $data = json_decode($request->getContent(), true);
+            // We need to check if the token is right
+            if ($user->getPhoneToken() == $data['token']) {
+                if ($user->getPhoneValidatedDate()!==null) {
                     $phoneError = "phoneAlreadyValidated";
                 } else {
-                    $userFound->setPhoneValidatedDate(new \Datetime()); // TO DO : Correct timezone
-                    $userFound = $userManager->updateUser($userFound);
-                    if (!$userFound) {
+                    $user->setPhoneValidatedDate(new \Datetime()); // TO DO : Correct timezone
+                    $user = $userManager->updateUser($user);
+                    if (!$user) {
                         $phoneError = "phoneUpdateError";
                     }
                 }
@@ -245,12 +244,21 @@ class UserController extends AbstractController
         return new Response(json_encode($phoneError));
     }
 
-    
+    /**
+     * Generate a phone token
+     *
+     * @param UserManager $userManager
+     * @return void
+     */
     public function generatePhoneToken(UserManager $userManager)
     {
+        $message=null;
+        $error=null;
         $user = clone $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('update', $user);
-        $userManager->generatePhoneToken($user);
+        $user = $userManager->generatePhoneToken($user) ?  $message = 'tokenMessage' : $error = 'tokenError';
+            
+        return new Response(json_encode(['error' => $error, 'message' => $message]));
     }
   
 

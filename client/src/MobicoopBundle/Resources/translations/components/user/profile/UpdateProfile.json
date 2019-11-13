@@ -30,8 +30,8 @@
             },
             "buttons": {
                 "label": {
-                    "sendToken": "Envoyer un code de vérification",
-                    "sendNewToken": "Envoyer un nouveau code",
+                    "generateToken": "Envoyer un code de vérification",
+                    "generateNewToken": "Envoyer un nouveau code",
                     "validate": "Valider"
                 }
             },

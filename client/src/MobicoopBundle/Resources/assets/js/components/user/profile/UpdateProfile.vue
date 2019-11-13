@@ -130,13 +130,13 @@
               </v-tooltip>
             </v-col>
             <v-col >
-              <v-btn rounded color="secondary" @click="sendToken">
-                {{$t('phone.buttons.label.sendToken')}}
+              <v-btn rounded color="secondary" @click="generateToken">
+                {{$t('phone.buttons.label.generateToken')}}
               </v-btn>
             </v-col>
             <v-col >
-              <v-btn rounded color="secondary">
-                {{$t('phone.buttons.label.sendNewToken')}}
+              <v-btn rounded color="secondary" @click="generateToken">
+                {{$t('phone.buttons.label.generateNewToken')}}
               </v-btn>
             </v-col>
             <v-col >
@@ -146,7 +146,7 @@
                   />
             </v-col>
             <v-col >
-              <v-btn rounded color="secondary">
+              <v-btn rounded color="secondary" @click="validateToken">
                 {{$t('phone.buttons.label.validate')}}
               </v-btn>
             </v-col>
@@ -333,7 +333,6 @@ export default {
   },
   mounted() {
     this.checkVerifiedPhone();
-    this.checkTokenPhone();
   },
   methods: {
     homeAddressSelected(address){
@@ -388,23 +387,26 @@ export default {
         this.phoneVerified = this.user.phoneValidatedDate ? true : false;
       }
     },
-    sendToken() {
+    generateToken() {
     axios 
       .get(this.$t('phone.token.route'))
-      this.displayTokenInput = true;
+      .then(res => {
+          console.error(res.data);
+        })
     },
     validateToken() {
+      console.error(this.token);
       axios
         .post(this.$t('phone.validation.route'),
         {
-          token:this.token
+          token: this.token
         },{
           headers:{
             'content-type': 'application/json'
           }
         })
         .then(res => {
-          this.displayTokenInput = false;
+          console.error(res.data);
         })
     }
   }
