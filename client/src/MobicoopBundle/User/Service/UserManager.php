@@ -552,4 +552,25 @@ class UserManager
 
         return $proposalsSanitized;
     }
+
+    /**
+    * Update a user password
+    *
+    * @param User $user The user to update the password
+    *
+    * @return User|null The user updated or null if error.
+    */
+    public function updateUserPhoneToken(User $user)
+    {
+        // encoding of the password
+        $phoneToken = mt_rand(100000, 999999);
+        $user->setPhoneToken(strval($phoneToken));
+        $response = $this->dataProvider->put($user, ['phoneToken']);
+        if ($response->getCode() == 200) {
+            $this->logger->info('User PhoneToken Update | Start');
+            return $response->getValue();
+        }
+        $this->logger->info('User PhoneToken Update | Fail');
+        return null;
+    }
 }

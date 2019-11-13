@@ -30,14 +30,17 @@
             },
             "buttons": {
                 "label": {
-                    "sendCode": "Envoyer un code vérification",
-                    "sendNewCode": "Envoyer un nouveau code",
+                    "sendToken": "Envoyer un code de vérification",
+                    "sendNewToken": "Envoyer un nouveau code",
                     "validate": "Valider"
                 }
             },
             "validation": {
                 "label": "Votre code de vérification",
                 "route": "/utilisateur/telephone/validation"
+            },
+            "token": {
+                "route": "/utilisateur/telephone/token"
             }
         }
         

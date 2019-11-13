@@ -162,11 +162,6 @@ class UserController extends AbstractController
             // For safety, we strip the slashes because this token can be passed in url
             $pwdToken = str_replace("/", "", $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
             $user->setValidatedDateToken($pwdToken);
-            // set a phone token
-            if ($data['telephone']) {
-                $phoneToken = mt_rand(100000, 999999);
-                $user->setPhoneToken(strval($phoneToken));
-            }
             // create user in database
             $data = $userManager->createUser($user);
             $reponseofmanager= $this->handleManagerReturnValue($data);
@@ -251,9 +246,11 @@ class UserController extends AbstractController
     }
 
     
-    public function userPhoneToken()
+    public function userPhoneToken(UserManager $userManager)
     {
-        dump('voilà');
+        $user = clone $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('update', $user);
+        $userManager->updateUserPhoneToken($user);
     }
   
 
@@ -317,8 +314,6 @@ class UserController extends AbstractController
             if ($user->getTelephone() != $data->get('telephone')) {
                 $user->setTelephone($data->get('telephone'));
                 $user->setPhoneValidatedDate(null);
-                $phoneToken = mt_rand(100000, 999999);
-                $user->setPhoneToken(strval($phoneToken));
             }
             $user->setEmail($data->get('email'));
             $user->setGivenName($data->get('givenName'));

@@ -101,54 +101,55 @@
           <!--Telephone-->
           <v-row justify="center">
             <v-col>
-          <v-text-field
-            v-model="user.telephone"
-            :label="$t('models.user.phone.label')"
-            class="telephone"
-          />
+              <v-text-field
+                v-model="user.telephone"
+                :label="$t('models.user.phone.label')"
+                class="telephone"
+              />
             </v-col>
-            <!-- phone number verification -->
+          <!-- phone number verification -->
+          
+            <v-col cols="1" v-if="user.telephone && phoneVerified == true">
+              <v-tooltip color="info" top>
+                <template v-slot:activator="{ on }">
+                  <v-icon color="success" v-on="on">
+                    mdi-check-circle-outline
+                  </v-icon>
+                </template>
+                  <span> {{$t('phone.tooltips.verified')}}</span>
+              </v-tooltip>
+            </v-col>
             <v-col cols="1" v-if="user.telephone && phoneVerified == false">
               <v-tooltip color="info" top>
                 <template v-slot:activator="{ on }">
                   <v-icon color="warning" v-on="on">
-                    mdi-phone-minus
+                    mdi-alert-circle-outline
                   </v-icon>
-                    </template>
-                      <span>{{$t('phone.tooltips.notVerified')}}</span>
+                </template>
+                  <span>{{$t('phone.tooltips.notVerified')}}</span>
               </v-tooltip>
-                </v-col>
-                <v-col cols="1" v-if="user.telephone && phoneVerified == true">
-                  <v-tooltip color="info" top>
-                    <template v-slot:activator="{ on }">
-                      <v-icon color="success" v-on="on">
-                        mdi-phone-plus
-                      </v-icon>
-                    </template>
-                      <span> {{$t('phone.tooltips.verified')}}</span>
-                  </v-tooltip>
-                </v-col>
-                <v-col>
-                  <v-btn rounded color="secondary" @click="sendCode">
-                    {{$t('phone.buttons.label.sendCode')}}
-                  </v-btn>
-                </v-col>
-                <v-col>
-                  <v-btn rounded color="secondary">
-                    {{$t('phone.buttons.label.sendNewCode')}}
-                  </v-btn>
-                </v-col>
-                <v-col v-if="displayCodeInput">
-                  <v-text-field
-                  v-model="code"
-                  :label="$t('phone.validation.label')"
+            </v-col>
+            <v-col >
+              <v-btn rounded color="secondary" @click="sendToken">
+                {{$t('phone.buttons.label.sendToken')}}
+              </v-btn>
+            </v-col>
+            <v-col >
+              <v-btn rounded color="secondary">
+                {{$t('phone.buttons.label.sendNewToken')}}
+              </v-btn>
+            </v-col>
+            <v-col >
+              <v-text-field
+                v-model="token"
+                :label="$t('phone.validation.label')"
                   />
-                </v-col>
-                <v-col>
-                  <v-btn rounded color="secondary">
-                    {{$t('phone.buttons.label.validate')}}
-                  </v-btn>
-                </v-col>
+            </v-col>
+            <v-col >
+              <v-btn rounded color="secondary">
+                {{$t('phone.buttons.label.validate')}}
+              </v-btn>
+            </v-col>
           </v-row>
 
           <!--GivenName-->
@@ -315,8 +316,8 @@ export default {
       urlAvatar:this.user.avatars[this.user.avatars.length-1],
       displayFileUpload:(this.user.images[0]) ? false : true,
       phoneVerified: null,
-      displayCodeInput: false,
-      code: null,
+      displayTokenInput: false,
+      token: null,
     };
   },
   computed : {
@@ -332,6 +333,7 @@ export default {
   },
   mounted() {
     this.checkVerifiedPhone();
+    this.checkTokenPhone();
   },
   methods: {
     homeAddressSelected(address){
@@ -386,23 +388,23 @@ export default {
         this.phoneVerified = this.user.phoneValidatedDate ? true : false;
       }
     },
-    sendCode() {
+    sendToken() {
     axios 
-      .get(this.$t('tattata'))
-      this.displayCodeInput = true;
+      .get(this.$t('phone.token.route'))
+      this.displayTokenInput = true;
     },
-    validateCode() {
+    validateToken() {
       axios
         .post(this.$t('phone.validation.route'),
         {
-          token:this.code
+          token:this.token
         },{
           headers:{
             'content-type': 'application/json'
           }
         })
         .then(res => {
-          this.displayCodeInput = false;
+          this.displayTokenInput = false;
         })
     }
   }

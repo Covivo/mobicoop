@@ -327,7 +327,6 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      */
     private $phoneValidatedDate;
 
-
     /**
      * @var string|null iOS app ID.
      * @Groups({"post","put"})
@@ -1077,7 +1076,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'music'          => $this->hasMusic(),
             'musicFavorites' => $this->getMusicFavorites(),
             'newsSubscription' => $this->hasNewsSubscription(),
-            'phoneValidatedDate' => $this->getPhoneValidatedDate()
+            'phoneValidatedDate' => $this->getPhoneValidatedDate(),
         ];
     }
 }
