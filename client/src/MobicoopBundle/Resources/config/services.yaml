@@ -78,6 +78,8 @@ services:
         shared: false
 
     # Event
+    Mobicoop\Bundle\MobicoopBundle\Event\Controller\:
+        resource: '@MobicoopBundle/Event/Controller/*'
     Mobicoop\Bundle\MobicoopBundle\Event\Service\:
         resource: '@MobicoopBundle/Event/Service/*'
 

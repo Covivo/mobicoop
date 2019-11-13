@@ -86,6 +86,9 @@ class EventManager
             $params['perPage'] = $limit;
         }
         $response = $this->dataProvider->getCollection($params);
+        if ($response->getCode() >=200 && $response->getCode() <= 300) {
+            dump($response->getValue());
+        }
         return $response->getValue();
     }
     
