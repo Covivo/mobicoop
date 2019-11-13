@@ -88,7 +88,6 @@
                 :id-message="idMessage"
                 :id-user="idUser"
                 :refresh="refreshDetails"
-                @updateAskHistory="updateAskHistory"
                 @refreshCompleted="refreshDetailsCompleted"
               />
             </v-col>
@@ -112,7 +111,7 @@
           class="col-4"
         >
           <thread-actions
-            :id-ask-history="currentIdAskHistory"
+            :id-ask="currentIdAsk"
             :id-user="idUser"
             :id-recipient="idRecipient"
             :loading-init="loadingDetails"
@@ -166,7 +165,8 @@ export default {
       modelTabs:"tab-cm",
       idMessage:null,
       idRecipient:null,
-      currentIdAskHistory:null,
+      //currentIdAskHistory:null,
+      currentIdAsk:null,
       recipientName:"",
       newThreadDirect:null,
       newThreadCarpool:null,
@@ -177,13 +177,6 @@ export default {
       refreshActions:false,
       loadingDetails:false
     };
-  },
-  watch:{
-    currentIdAskHistory: function (newId, oldId) {
-      console.error("currentIdAskHistory");
-      console.error("oldId : "+oldId);
-      console.error("newId : "+newId);
-    }    
   },
   mounted() {
     // If there is a new thread we give it to te right component
@@ -201,6 +194,7 @@ export default {
   },
   methods: {
     updateDetails(data){
+      (data.type=="Carpool") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
       this.idMessage = data.idMessage;
       this.idRecipient = data.idRecipient;
       this.recipientName = data.name;
@@ -224,9 +218,6 @@ export default {
         this.newThreadCarpool = null;
         this.refreshSelected({'idMessage':this.idMessage});
       });
-    },
-    updateAskHistory(data){
-      this.currentIdAskHistory = data.currentAskHistory;
     },
     updateStatusAskHistory(data){
       let params = {

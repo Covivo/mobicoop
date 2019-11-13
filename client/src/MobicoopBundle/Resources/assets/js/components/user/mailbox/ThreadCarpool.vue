@@ -122,7 +122,7 @@ export default {
       type: Boolean,
       default: false
     },
-    idAskHistory: {
+    idAsk:{
       type: Number,
       default: null
     }
@@ -177,9 +177,11 @@ export default {
       this.$emit("toggleSelected",{idMessage:this.idMessage});
       this.$emit("idMessageForTimeLine",
         {
+          type:"Carpool",
           idMessage:this.idMessage,
           idRecipient:this.idRecipient,
-          name:this.name
+          name:this.name,
+          idAsk:this.idAsk
         }
       );
     }

@@ -553,16 +553,14 @@ class UserController extends AbstractController
      * Get informations for Action Panel of the mailbox
      * AJAX
      */
-    public function userMessagesActionsInfos(Request $request, AskHistoryManager $askHistoryManager, UserManager $userManager)
+    public function userMessagesActionsInfos(Request $request, AskManager $askManager, AskHistoryManager $askHistoryManager, UserManager $userManager)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             $user = $userManager->getLoggedUser();
-
-            if ($data['idAskHistory']) {
+            if ($data['idAsk']) {
                 // Carpool
-                $askHistory = $askHistoryManager->getAskHistory($data['idAskHistory']);
-                $ask = $askHistory->getAsk();
+                $ask = $askManager->getAsk($data['idAsk']);
                 $askUser = $ask->getUser('user');
                 $askUserRelated = $ask->getUserRelated();
 
@@ -656,12 +654,11 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
-            $idAskHistory = $data['idAskHistory'];
+            $idAsk = $data['idAsk'];
             $status = $data['status'];
 
             // Get the Ask
-            $askHistory = $askHistoryManager->getAskHistory($idAskHistory);
-            $ask = $askHistory->getAsk();
+            $ask = $askManager->getAsk($idAsk);
             
             $reponseofmanager= $this->handleManagerReturnValue($ask);
             if (!empty($reponseofmanager)) {

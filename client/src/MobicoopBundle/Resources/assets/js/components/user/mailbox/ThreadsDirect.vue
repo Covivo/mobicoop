@@ -85,14 +85,6 @@ export default {
       this.messages.forEach((item, index) => {
         if(item.idMessage == idMessage){
           this.$set(item, 'selected', true);
-          // After the select we need to refresh the details
-          this.emit(
-            {
-              idMessage:item.idMessage,
-              idRecipient:item.idRecipient,
-              name:this.name(item.givenName,item.familyName)
-            }
-          )
         }
         else{
           this.$set(item, 'selected', false);

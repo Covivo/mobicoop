@@ -13,7 +13,7 @@
       :origin="message.carpoolInfos.origin"
       :destination="message.carpoolInfos.destination"
       :criteria="message.carpoolInfos.criteria"
-      :id-ask-history="message.idAskHistory"
+      :id-ask="message.idAsk"
       @idMessageForTimeLine="emit"
       @toggleSelected="emitToggle"
     />
@@ -89,14 +89,6 @@ export default {
       this.messages.forEach((item, index) => {
         if(item.idMessage == idMessage){
           this.$set(item, 'selected', true);
-          // After the select we need to refresh the details
-          this.emit(
-            {
-              idMessage:item.idMessage,
-              idRecipient:item.idRecipient,
-              name:this.name(item.givenName,item.familyName)
-            }
-          )
         }
         else{
           this.$set(item, 'selected', false);

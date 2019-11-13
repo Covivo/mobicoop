@@ -16,7 +16,7 @@
 
       <!-- Only visible for carpool -->
       <v-card
-        v-if="idAskHistory && !loading"
+        v-if="idAsk && !loading"
         class="mb-3"
         flat
       >
@@ -60,7 +60,7 @@ export default {
     ThreadsActionsButtons
   },
   props: {
-    idAskHistory: {
+    idAsk: {
       type: Number,
       default: null
     },
@@ -89,9 +89,6 @@ export default {
     }
   },
   watch:{
-    idAskHistory(){
-      this.refreshInfos();
-    },
     loadingInit(){
       this.loading = this.loadingInit;
     },
@@ -103,7 +100,7 @@ export default {
     refreshInfos(){
       this.loading = true;
       let params = {
-        idAskHistory:this.idAskHistory,
+        idAsk:this.idAsk,
         idRecipient:this.idRecipient
       }
       axios.post(this.$t("urlGetAskHistory"),params)
