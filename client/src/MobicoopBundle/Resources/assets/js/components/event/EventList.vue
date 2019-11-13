@@ -54,7 +54,7 @@
           color="primary"
           dark
         >
-          <v-toolbar-title> {{ $t('communitiesAvailable') }}</v-toolbar-title>
+          <v-toolbar-title> {{ $t('eventsAvailable') }}</v-toolbar-title>
         </v-toolbar>
       </v-col>
     </v-row>
@@ -64,7 +64,7 @@
           <v-col
             cols="6"
           >
-            <a :href="paths.community_create">
+            <a :href="test">
               <v-btn
                 type="button"
                 color="secondary"
@@ -125,8 +125,8 @@
 <script>
 
 import { merge } from "lodash";
-import Translations from "@translations/components/community/CommunityList.json";
-import TranslationsClient from "@clientTranslations/components/community/CommunityList.json";
+import Translations from "@translations/components/event/EventList.json";
+import TranslationsClient from "@clientTranslations/components/event/EventList.json";
 import EventListItem from "@components/event/EventListItem";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
