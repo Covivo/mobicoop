@@ -168,9 +168,9 @@ export default {
       loading: false,
       snackError: null,
       snackbar: false,
-      domain: null,
-      domainRules: [
-        v => !v || /([\w+-]*\.[\w+]*$)/.test(v) || this.$t("form.domain.error")
+      urlEvent: null,
+      urlEventRules: [
+        v => !v || /([\w+-]*\.[\w+]*$)/.test(v) || this.$t("form.urlEvent.error")
       ]
     }
   },
@@ -181,15 +181,15 @@ export default {
     createCommunity() {
       this.loading = true;
       if (this.name  && this.fullDescription && this.avatar && this.communityAddress) {
-        let newCommunity = new FormData();
-        newCommunity.append("name", this.name);
-        newCommunity.append("fullDescription", this.fullDescription);
-        newCommunity.append("avatar", this.avatar);
-        newCommunity.append("address", JSON.stringify(this.communityAddress));
-        if (this.domain) newCommunity.append("domain", this.domain);
+        let newEvent = new FormData();
+        newEvent.append("name", this.name);
+        newEvent.append("fullDescription", this.fullDescription);
+        newEvent.append("avatar", this.avatar);
+        newEvent.append("address", JSON.stringify(this.communityAddress));
+        if (this.urlEvent) newEvent.append("urlEvent", this.urlEvent);
 
         axios 
-          .post(this.$t('buttons.create.route'), newCommunity, {
+          .post(this.$t('buttons.create.route'), newEvent, {
             headers:{
               'content-type': 'multipart/form-data'
             }

@@ -22,7 +22,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Event\Controller;
 
-use App\Event\Entity\Event;
+use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
@@ -47,8 +47,6 @@ class EventController extends AbstractController
      */
     public function eventList(EventManager $eventManager, UserManager $userManager)
     {
-        //$this->denyAccessUnlessGranted('list', new Community());
-
         $user = $userManager->getLoggedUser();
 
         if ($user) {
@@ -70,15 +68,15 @@ class EventController extends AbstractController
         Request $request,
         ImageManager $imageManager
     ) {
-        $event = new \Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event();
-        //$this->denyAccessUnlessGranted('create', $community);
+        $event = new Event();
+        $this->denyAccessUnlessGranted('create', $event);
         $user = new User($userManager->getLoggedUser()->getId());
         $address = new Address();
 
         if ($request->isMethod('POST')) {
             $data = $request->request;
             // Check if the community name is available (if yes continue)
-            if ($communityManager->checkNameAvailability($data->get('name'))) {
+            if ($eventManager->checkNameAvailability($data->get('name'))) {
 
                 // set the user as a user of the community
                 $communityUser->setUser($user);
@@ -113,7 +111,7 @@ class EventController extends AbstractController
 
 
                 // create community
-                if ($community = $communityManager->createCommunity($community)) {
+                if ($community = $eventManager->createCommunity($community)) {
 
                     // Post avatar of the community
                     $image = new Image();
