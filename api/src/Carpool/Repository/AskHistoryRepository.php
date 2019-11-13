@@ -28,12 +28,6 @@ use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Ask;
 use App\User\Entity\User;
 
-/**
- * @method Proposal|null find($id, $lockMode = null, $lockVersion = null)
- * @method Proposal|null findOneBy(array $criteria, array $orderBy = null)
- * @method Proposal[]    findAll()
- * @method Proposal[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
 class AskHistoryRepository
 {
     private $repository;
@@ -61,13 +55,12 @@ class AskHistoryRepository
         return $query->getQuery()->getOneOrNullResult();
     }
 
-    public function findThreadsCarpoolForMailBox(User $user)
+    public function findLastAskHistory(Ask $ask)
     {
         $query = $this->repository->createQueryBuilder('ah')
         ->join('ah.ask', 'a')
-        ->leftJoin('ah.message', 'm')
-        ->where('(a.user = :user or a.userRelated = :user)')
-        ->setParameter('user', $user)
+        ->where('a = :ask')
+        ->setParameter('ask', $ask)
         ->orderBy('ah.createdDate', 'DESC');
         
         return $query->getQuery()->getResult();
