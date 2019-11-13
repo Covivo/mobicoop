@@ -29,9 +29,9 @@ use Symfony\Component\EventDispatcher\Event;
 /**
  * Event sent when a user updates its account.
  */
-class UserNewPhoneNumberEvent extends Event
+class UserGeneratePhoneTokenAskedEvent extends Event
 {
-    public const NAME = 'user_new_phone_number';
+    public const NAME = 'user_generate_phone_token_asked';
 
     protected $user;
 

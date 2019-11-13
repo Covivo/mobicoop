@@ -58,6 +58,7 @@ use App\User\Controller\UserThreads;
 use App\User\Controller\UserThreadsDirectMessages;
 use App\User\Controller\UserThreadsCarpoolMessages;
 use App\User\Controller\UserUpdatePassword;
+use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserUpdate;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
@@ -116,6 +117,11 @@ use App\User\EntityListener\UserListener;
  *              "path"="/users/{id}/password_update_request",
  *              "controller"=UserUpdatePassword::class,
  *              "defaults"={"name"="request"}
+ *          },
+ *          "generate_phone_token"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/generate_phone_token",
+ *              "controller"=UserGeneratePhoneToken::class,
  *          },
  *          "permissions"={
  *              "method"="GET",

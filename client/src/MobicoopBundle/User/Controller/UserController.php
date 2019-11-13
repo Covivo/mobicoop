@@ -246,11 +246,11 @@ class UserController extends AbstractController
     }
 
     
-    public function userPhoneToken(UserManager $userManager)
+    public function generatePhoneToken(UserManager $userManager)
     {
         $user = clone $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('update', $user);
-        $userManager->updateUserPhoneToken($user);
+        $userManager->generatePhoneToken($user);
     }
   
 

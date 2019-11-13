@@ -27,7 +27,7 @@ use App\User\Event\UserRegisteredEvent;
 use App\User\Event\UserUpdatedSelfEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
-use App\User\Event\UserNewPhoneNumberEvent;
+use App\User\Event\UserGeneratePhoneTokenAskedEvent;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
 
@@ -47,7 +47,7 @@ class UserSubscriber implements EventSubscriberInterface
             UserUpdatedSelfEvent::NAME => 'onUserUpdatedSelf',
             UserPasswordChangeAskedEvent::NAME => 'onUserPasswordChangeAsked',
             UserPasswordChangedEvent::NAME => 'onUserPasswordChanged',
-            UserNewPhoneNumberEvent::NAME => 'onUserNewPhoneNumberEvent'
+            UserGeneratePhoneTokenAskedEvent::NAME => 'onUserGeneratePhoneTokenAskedEvent'
         ];
     }
 
@@ -71,8 +71,8 @@ class UserSubscriber implements EventSubscriberInterface
         $this->notificationManager->notifies(UserPasswordChangedEvent::NAME, $event->getUser());
     }
 
-    public function onUserNewPhoneNumberEvent(UserPasswordChangedEvent $event)
+    public function onUserGeneratePhoneTokenAskedEvent(UserGeneratePhoneTokenAskedEvent $event)
     {
-        $this->notificationManager->notifies(UserNewPhoneNumberEvent::NAME, $event->getUser());
+        $this->notificationManager->notifies(UserGeneratePhoneTokenAskedEvent::NAME, $event->getUser());
     }
 }

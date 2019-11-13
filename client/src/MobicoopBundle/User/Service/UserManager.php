@@ -554,18 +554,15 @@ class UserManager
     }
 
     /**
-    * Update a user password
+    * Generate phone token
     *
-    * @param User $user The user to update the password
+    * @param User $user The user to generate phone token
     *
-    * @return User|null The user updated or null if error.
+    * @return User|null The user or null if error.
     */
-    public function updateUserPhoneToken(User $user)
+    public function generatePhoneToken(User $user)
     {
-        // encoding of the password
-        $phoneToken = mt_rand(100000, 999999);
-        $user->setPhoneToken(strval($phoneToken));
-        $response = $this->dataProvider->put($user, ['phoneToken']);
+        $response = $this->dataProvider->getSpecialItem($user->getId(), "generate_phone_token");
         if ($response->getCode() == 200) {
             $this->logger->info('User PhoneToken Update | Start');
             return $response->getValue();

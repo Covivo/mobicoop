@@ -65,7 +65,7 @@ user_phone_token:
     path:
         fr: /utilisateur/telephone/token
         en: /user/phone/token
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPhoneToken    
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::generatePhoneToken    
 
 # delete avatar
 user_profile_image_delete:

@@ -180,6 +180,6 @@ yourInscription: "Votre inscription"
 
 updatedSefl: "Modification de votre profil"
 
-# USER_NEW_PHONE_NUMBER 
+# USER_GENERATE_PHONE_TOKEN_ASKED 
 
 yourValidationToken: "Votre code de validation"

@@ -41,7 +41,7 @@ use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Entity\UserNotification;
-use App\User\Event\UserNewPhoneNumber;
+use App\User\Event\UserGeneratePhoneTokenAskedEvent;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\User\Event\UserUpdatedSelfEvent;
 
@@ -124,11 +124,6 @@ class UserManager
         $time = $datetime->getTimestamp();
         $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         $user->setGeoToken($geoToken);
-        // check if the phone token is updated if yes dispatch an event
-        if ($user->getPhoneToken()) {
-            $event = new UserNewPhoneNumberEvent($user);
-            $this->eventDispatcher->dispatch(UserNewPhoneNumberEvent::NAME, $event);
-        }
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -388,5 +383,19 @@ class UserManager
             $this->entityManager->flush();
         }
         return $this->getAlerts($user);
+    }
+
+    public function generatePhoneToken(User $user)
+    {
+        // Generate the token
+        $phoneToken= strval(mt_rand(1000, 9999));
+        $user->setPhoneToken($phoneToken);
+        // dispatch the event
+        $event = new UserGeneratePhoneTokenAskedEvent($user);
+        $this->eventDispatcher->dispatch(UserGeneratePhoneTokenAskedEvent::NAME, $event);
+        // Persist user
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        return $user;
     }
 }
