@@ -80,5 +80,4 @@ class EventVoter extends Voter
     {
         return $this->permissionManager->checkPermission('event_create', $user);
     }
-
 }
