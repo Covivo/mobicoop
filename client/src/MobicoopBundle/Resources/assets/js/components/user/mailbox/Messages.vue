@@ -220,12 +220,12 @@ export default {
     },
     updateStatusAskHistory(data){
       let params = {
-        idAskHistory:this.currentIdAskHistory,
+        idAsk:this.currentIdAsk,
         status:data.status
       }
       axios.post(this.$t("urlUpdateAsk"),params)
         .then(response => {
-          console.error(response.data);
+          //console.error(response.data);
           this.refreshActions = true;
         })
         .catch(function (error) {
