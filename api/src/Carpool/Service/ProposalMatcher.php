@@ -111,12 +111,12 @@ class ProposalMatcher
     
     /**
      * Get the return matching filters for a proposal.
-     * Used to compute the reverse direction of a matching.
+     * Used for example to compute the reverse direction of a matching.
      *
      * @param Matching  $matching   The matching
      * @return array The matching return filters
      */
-    public function getMatchingReturnFilters(Matching $matching)
+    public function getMatchingFilters(Matching $matching)
     {
         $filters = [];
         $candidateDriver = new Candidate();
@@ -627,7 +627,7 @@ class ProposalMatcher
             $direction = $routes[0];
             $matchingRelated->getCriteria()->setDirectionPassenger($direction);
         }
-        $matchingRelated->setFilters($this->getMatchingReturnFilters($matchingRelated));
+        $matchingRelated->setFilters($this->getMatchingFilters($matchingRelated));
         return $matchingRelated;
     }
 

@@ -234,7 +234,7 @@ carpool_ad_detail:
     path:
         fr: /covoiturage/annonce/{id}/detail
         en: /carpool/ad/{id}/detail
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdResult
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdResults
     requirements:
         id: '\d+'
 

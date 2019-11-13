@@ -101,6 +101,19 @@ class ProposalManager
     }
 
     /**
+     * Return the proposal with its formatted results.
+     *
+     * @param Proposal $proposal
+     * @return void
+     */
+    public function getResults(Proposal $proposal)
+    {
+        // we treat the matchings to return the results
+        $proposal->setResults($this->resultManager->createResults($proposal));
+        return $proposal;
+    }
+
+    /**
      * Create a proposal for a simple search.
      *
      * @param Address $origin                   The origin

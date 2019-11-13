@@ -183,7 +183,7 @@ class GeoMatcher
 
     /**
      * Force the match between 2 candidates.
-     * Used to compute the reverse route after a successful outward matching.
+     * Used for example to compute the reverse route after a successful outward matching.
      */
     public function forceMatch(Candidate $candidate1, Candidate $candidate2): ?array
     {

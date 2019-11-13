@@ -38,6 +38,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\ProposalPost;
+use App\Carpool\Controller\ProposalResults;
 use App\Travel\Entity\TravelMode;
 use App\Community\Entity\Community;
 use App\User\Entity\User;
@@ -178,7 +179,17 @@ use App\Communication\Entity\Notified;
  *              }
  *          }
  *      },
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={
+ *          "results"={
+ *              "method"="GET",
+ *              "path"="/proposals/{id}/results",
+ *              "normalization_context"={"groups"={"results"}},
+ *              "controller"=ProposalResults::class,
+ *          },
+ *          "get",
+ *          "put",
+ *          "delete"
+ *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"proposalType"})
  * @ApiFilter(BooleanFilter::class, properties={"private"})

@@ -40,6 +40,7 @@ use App\Service\FormatDataManager;
 class ResultManager
 {
     private $formatDataManager;
+    private $proposalMatcher;
     private $params;
 
     /**
@@ -48,9 +49,10 @@ class ResultManager
      * @param FormatDataManager $proposalMatcher
      * @param array $params
      */
-    public function __construct(FormatDataManager $formatDataManager)
+    public function __construct(FormatDataManager $formatDataManager, ProposalMatcher $proposalMatcher)
     {
         $this->formatDataManager = $formatDataManager;
+        $this->proposalMatcher = $proposalMatcher;
     }
 
     // set the params
@@ -72,10 +74,16 @@ class ResultManager
         $matchings = [];
         // we search the matchings as an offer
         foreach ($proposal->getMatchingRequests() as $request) {
+            if (is_null($request->getFilters())) {
+                $request->setFilters($this->proposalMatcher->getMatchingFilters($request));
+            }
             $matchings[$request->getProposalRequest()->getId()]['request'] = $request;
         }
         // we search the matchings as a request
         foreach ($proposal->getMatchingOffers() as $offer) {
+            if (is_null($offer->getFilters())) {
+                $offer->setFilters($this->proposalMatcher->getMatchingFilters($offer));
+            }
             $matchings[$offer->getProposalOffer()->getId()]['offer'] = $offer;
         }
         // we iterate through the matchings to create the results

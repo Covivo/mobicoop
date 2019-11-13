@@ -55,6 +55,20 @@ class ProposalManager
     }
 
     /**
+     * Get the results for a proposal
+     *
+     * @param int $id The proposal id
+     * @return void
+     */
+    public function getResults(int $id)
+    {
+        if ($data = $this->dataProvider->getSpecialItem($id, "results")) {
+            return $data->getValue();
+        }
+        return null;
+    }
+
+    /**
      * Get all matchings for a search.
      *
      * @param array $origin               The origin address
