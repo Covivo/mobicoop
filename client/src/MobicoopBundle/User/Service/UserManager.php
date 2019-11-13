@@ -135,6 +135,29 @@ class UserManager
     }
 
     /**
+     * Search user by phone validation token
+     *
+     * @param string $token
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function findByphoneToken(string $token)
+    {
+        $response = $this->dataProvider->getCollection(['phoneToken' => $token]);
+        if ($response->getCode() == 200) {
+            /** @var Hydra $user */
+            $user = $response->getValue();
+
+            if ($user->getTotalItems() == 0) {
+                return null;
+            } else {
+                return current($user->getMember());
+            }
+        }
+        return null;
+    }
+
+    /**
      * Search user by email
      *
      * @param string $email

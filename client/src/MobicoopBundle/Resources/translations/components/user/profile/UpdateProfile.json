@@ -22,6 +22,23 @@
         "news": {
             "label": "Actualités du service",
             "tooltip": "Les actualités du service sont des emails répondant uniquement à la finalité de vous maintenir informé des évolutions du service et favoriser votre pratique du covoiturage, comme des mises à jour de la plateforme ou des emails provenant du référent d'une communauté à laquelle vous appartenez. Aucune sollicitation commerciale n'est réalisée via ces emails."
+        },
+        "phone": {
+            "tooltips": {
+                "verified": "Votre numéro de portable est vérifié",
+                "notVerified": "Votre numéro de portable n'est pas vérifié"
+            },
+            "buttons": {
+                "label": {
+                    "sendCode": "Envoyer un code vérification",
+                    "sendNewCode": "Envoyer un nouveau code",
+                    "validate": "Valider"
+                }
+            },
+            "validation": {
+                "label": "Votre code de vérification",
+                "route": "/utilisateur/telephone/validation"
+            }
         }
         
     },

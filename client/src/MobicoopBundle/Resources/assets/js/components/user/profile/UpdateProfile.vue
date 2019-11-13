@@ -86,10 +86,6 @@
               />
             </v-col>
           </v-row>
-         
-            
-          
-
           <v-row class="text-left title font-weight-bold">
             <v-col>{{ $t('titles.personnalInfos') }}</v-col>
           </v-row>
@@ -103,11 +99,57 @@
           />
 
           <!--Telephone-->
+          <v-row justify="center">
+            <v-col>
           <v-text-field
             v-model="user.telephone"
             :label="$t('models.user.phone.label')"
             class="telephone"
           />
+            </v-col>
+            <!-- phone number verification -->
+            <v-col cols="1" v-if="user.telephone && phoneVerified == false">
+              <v-tooltip color="info" top>
+                <template v-slot:activator="{ on }">
+                  <v-icon color="warning" v-on="on">
+                    mdi-phone-minus
+                  </v-icon>
+                    </template>
+                      <span>{{$t('phone.tooltips.notVerified')}}</span>
+              </v-tooltip>
+                </v-col>
+                <v-col cols="1" v-if="user.telephone && phoneVerified == true">
+                  <v-tooltip color="info" top>
+                    <template v-slot:activator="{ on }">
+                      <v-icon color="success" v-on="on">
+                        mdi-phone-plus
+                      </v-icon>
+                    </template>
+                      <span> {{$t('phone.tooltips.verified')}}</span>
+                  </v-tooltip>
+                </v-col>
+                <v-col>
+                  <v-btn rounded color="secondary" @click="sendCode">
+                    {{$t('phone.buttons.label.sendCode')}}
+                  </v-btn>
+                </v-col>
+                <v-col>
+                  <v-btn rounded color="secondary">
+                    {{$t('phone.buttons.label.sendNewCode')}}
+                  </v-btn>
+                </v-col>
+                <v-col v-if="displayCodeInput">
+                  <v-text-field
+                  v-model="code"
+                  :label="$t('phone.validation.label')"
+                  />
+                </v-col>
+                <v-col>
+                  <v-btn rounded color="secondary">
+                    {{$t('phone.buttons.label.validate')}}
+                  </v-btn>
+                </v-col>
+          </v-row>
 
           <!--GivenName-->
           <v-text-field
@@ -271,7 +313,10 @@ export default {
       ],
       newsSubscription: this.user && this.user.newsSubscription !== null ? this.user.newsSubscription : null,
       urlAvatar:this.user.avatars[this.user.avatars.length-1],
-      displayFileUpload:(this.user.images[0]) ? false : true
+      displayFileUpload:(this.user.images[0]) ? false : true,
+      phoneVerified: null,
+      displayCodeInput: false,
+      code: null,
     };
   },
   computed : {
@@ -285,6 +330,9 @@ export default {
       return this.$t('news.label') + ' ' + this.platform;
     }
   },
+  mounted() {
+    this.checkVerifiedPhone();
+  },
   methods: {
     homeAddressSelected(address){
       this.homeAddress = address;
@@ -294,7 +342,6 @@ export default {
         this.checkForm();
       }
     },
-    
     checkForm () {
       this.loading = true;
       let updateUser = new FormData();
@@ -323,7 +370,6 @@ export default {
           this.loading = false;
         });
     },
-
     avatarDelete () {
       this.loadingDelete = true;
       axios
@@ -334,6 +380,30 @@ export default {
           this.displayFileUpload = true;
           this.loadingDelete = false;
         });
+    },
+    checkVerifiedPhone() {
+      if (this.user.telephone !== null) {
+        this.phoneVerified = this.user.phoneValidatedDate ? true : false;
+      }
+    },
+    sendCode() {
+    axios 
+      .get(this.$t('tattata'))
+      this.displayCodeInput = true;
+    },
+    validateCode() {
+      axios
+        .post(this.$t('phone.validation.route'),
+        {
+          token:this.code
+        },{
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then(res => {
+          this.displayCodeInput = false;
+        })
     }
   }
 }

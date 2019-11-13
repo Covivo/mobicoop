@@ -142,7 +142,6 @@ class UserController extends AbstractController
                 $address->setHome(true);
             }
             $user->addAddress($address);
-            var_dump($data);
             // pass front info into user form
             $user->setEmail($data['email']);
             $user->setTelephone($data['telephone']);
@@ -224,28 +223,39 @@ class UserController extends AbstractController
      * @param Request $request
      * @return void
      */
-    public function userPhoneValidation($token, UserManager $userManager, Request $request)
+    public function userPhoneValidation(UserManager $userManager, Request $request)
     {
-        $error = "";
-        if ($request->isMethod('POST') && $token !== "") {
+        $this->denyAccessUnlessGranted('register');
+        
+        $phoneError = "";
+        if ($request->isMethod('POST')) {
+            $data = $request->request;
+
             // We need to check if the token exists
-            $userFound = $userManager->findByphoneToken($token);
+            $userFound = $userManager->findByphoneToken($data->get('token'));
             if (!empty($userFound)) {
-                if ($userFound->getValidatedDate()!==null) {
-                    $error = "alreadyValidated";
+                if ($userFound->getPhoneValidatedDate()!==null) {
+                    $phoneError = "phoneAlreadyValidated";
                 } else {
                     $userFound->setPhoneValidatedDate(new \Datetime()); // TO DO : Correct timezone
                     $userFound = $userManager->updateUser($userFound);
                     if (!$userFound) {
-                        $error = "updateError";
+                        $phoneError = "phoneUpdateError";
                     }
                 }
             } else {
-                $error = "unknown";
+                $phoneError = "unknown";
             }
         }
-        return new Response(json_encode($error));
+        return new Response(json_encode($phoneError));
     }
+
+    
+    public function userPhoneToken()
+    {
+        dump('voilà');
+    }
+  
 
     /**
      * User profile update.
