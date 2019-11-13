@@ -49,7 +49,7 @@ class EventController extends AbstractController
 
         if ($user) {
             // We get all the communities
-            $events = $eventManager->getEvents( new \DateTime());
+            $events = $eventManager->getEvents(new \DateTime());
             dump($events);
         }
 
@@ -57,6 +57,4 @@ class EventController extends AbstractController
             'events' => $events,
         ]);
     }
-
-
 }
