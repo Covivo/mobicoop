@@ -4,7 +4,7 @@
       grid-list-md
       text-xs-center
     >
-      <v-row v-if="!verified">
+      <v-row v-if="displayVerifiedMessage">
         <v-col>
           <v-snackbar
             v-model="snackbar"
@@ -12,9 +12,11 @@
             multi-line
             color="info"
             vertical
+            :timeout="0"
           >
             {{ $t('snackbar') }}
             <v-btn
+              color="info"
               @click="snackbar = false"
             >
               <v-icon
@@ -117,16 +119,16 @@ export default {
   data () {
     return {
       snackbar: true,
-      verified: false,
+      displayVerifiedMessage: false,
     }
   },
   mounted() {
     this.checkVerifiedPhone();
   },
-  method: {
+  methods:{
     checkVerifiedPhone() {
-      if (user.telephone) {
-        this.verified = user.phoneValidetedDate ? true : false;
+      if (this.user !==null && this.user.telephone !== null) {
+        this.displayVerifiedMessage = this.user.phoneValidatedDate ? false : true;
       }
     }
   }
