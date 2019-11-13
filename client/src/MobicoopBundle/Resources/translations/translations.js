@@ -1,6 +1,9 @@
 export default {
   fr: {
     ui: {
+      common: {
+        ok: "OK",
+      },
       button: {
         previous: "Précédent",
         next: "Suivant",
@@ -157,6 +160,9 @@ export default {
   },
   en: {
     ui: {
+      common: {
+        ok: "OK",
+      },
       button: {
         previous: "",
         next: "",
