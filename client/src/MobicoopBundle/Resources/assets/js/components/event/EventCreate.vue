@@ -258,14 +258,55 @@
           </v-row>
           <v-row justify="center">
             <v-col cols="6">
-              <v-btn
-                rounded
-                color="primary"
-                :loading="loading"
-                @click="createCommunity"
-              >
-                {{ $t('buttons.create.label') }}
-              </v-btn>
+              <div class="text-center">
+                <v-dialog
+                  v-model="dialog"
+                  width="500"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      rounded
+                      color="primary"
+                      :loading="loading"
+                      v-on="on"
+                    >
+                      {{ $t('buttons.create.label') }}
+                    </v-btn>
+                  </template>
+                  <v-card>
+                    <v-card-title
+                      class="headline grey lighten-2"
+                      primary-title
+                    >
+                      {{ $t('popUp.title') }}
+                    </v-card-title>
+
+                    <v-card-text>
+                      {{ $t('popUp.label') }}
+                    </v-card-text>
+
+                    <v-divider />
+
+                    <v-card-actions>
+                      <v-spacer />
+                      <v-btn
+                        color="primary"
+                        text
+                        @click="createCommunity, dialog = false"
+                      >
+                        {{ $t('popUp.validation') }}
+                      </v-btn>
+                      <v-btn
+                        color="primary"
+                        text
+                        @click="dialog = false"
+                      >
+                        {{ $t('popUp.cancel') }}
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </div>
             </v-col>
           </v-row>
         </v-col>
@@ -340,7 +381,8 @@ export default {
       urlEvent: null,
       urlEventRules: [
         v => !v || /([\w+-]*\.[\w+]*$)/.test(v) || this.$t("form.urlEvent.error")
-      ]
+      ],
+      dialog: false
     }
   },
   computed :{

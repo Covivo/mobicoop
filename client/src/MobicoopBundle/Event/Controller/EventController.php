@@ -50,7 +50,7 @@ class EventController extends AbstractController
     {
 
             // We get all the events
-            $events = $eventManager->getEvents(new \DateTime());
+        $events = $eventManager->getEvents(new \DateTime());
 
         return $this->render('@Mobicoop/event/events.html.twig', [
             'events' => $events,

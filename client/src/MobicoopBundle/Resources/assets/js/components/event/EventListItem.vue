@@ -75,7 +75,6 @@ export default {
   },
   methods:{
     linkToCommunityShow: function (item) {
-      console.info(item)
       return this.$t('routes.community', {id:item.id});
     }
   }
