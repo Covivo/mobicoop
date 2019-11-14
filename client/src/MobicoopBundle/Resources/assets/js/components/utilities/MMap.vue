@@ -23,9 +23,10 @@
             :icon-anchor="point.icon.anchor"
             :icon-url="point.icon.url"
           />
-          <l-tooltip v-if="point.title!==''">
-            {{ point.title }}
-          </l-tooltip>
+          <l-tooltip
+            v-if="point.title!==''"
+            v-html="point.title"
+          />
         </l-marker>
         <l-polyline
           v-for="(way, i) in ways"
@@ -33,9 +34,14 @@
           :lat-lngs="way.latLngs"
           :color="(way.color!=='' && way.color !==undefined)?way.color:'blue'"
         >        
-          <l-tooltip v-if="way.title!=='' && way.title !==undefined">
-            {{ way.title }}
+          <l-tooltip v-if="way.title !==undefined && way.title!==''">
+            <p v-html="way.title" />
           </l-tooltip>
+          <l-popup
+            v-if="way.desc !==undefined && way.desc!==''"
+          >
+            <p v-html="way.desc" />
+          </l-popup>
         </l-polyline>
       </l-map>
     </v-col>

@@ -428,10 +428,20 @@ export default {
             console.error(res.data);
             res.data.forEach((proposal, index) => {
               let currentProposal = {latLngs:[]};
-              proposal.forEach((waypoint, index) => {
+              let infosForPopUp = {origin:'',destination:''};
+              proposal.waypoints.forEach((waypoint, index) => {
                 this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
                 currentProposal.latLngs.push(waypoint.latLng);
+                if(index==0){
+                  infosForPopUp.origin = waypoint.title[0];
+                }
+                else if(waypoint.destination){
+                  infosForPopUp.destination = waypoint.title[0];
+                }
               });
+              console.error(infosForPopUp);
+              currentProposal.desc = "<p><strong>Départ</strong> : "+infosForPopUp.origin+"<br />";
+              currentProposal.desc += "<strong>Destination</strong> : "+infosForPopUp.destination+"</p>";
               this.directionWay.push(currentProposal);
             });
             console.error(this.directionWay);
