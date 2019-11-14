@@ -10,9 +10,9 @@
         >
           <v-tab>{{ $t('proposals.ongoing') }}</v-tab>
           <v-tab-item>
-            <v-container v-if="proposals.ongoing">
+            <v-container v-if="localProposals.ongoing">
               <v-row
-                v-for="proposal in proposals.ongoing"
+                v-for="proposal in localProposals.ongoing"
                 :key="proposal.outward.id"
               >
                 <v-col cols="12">
@@ -23,15 +23,16 @@
           </v-tab-item>
           <v-tab>{{ $t('proposals.archived') }}</v-tab>
           <v-tab-item>
-            <v-container v-if="proposals.archived">
+            <v-container v-if="localProposals.archived">
               <v-row
-                v-for="proposal in proposals.archived"
+                v-for="proposal in localProposals.archived"
                 :key="proposal.outward.id"
               >
                 <v-col cols="12">
                   <Proposal
                     :proposal="proposal"
                     :is-archived="true"
+                    @proposal-deleted="deleteProposal()"
                   />
                 </v-col>
               </v-row>
@@ -65,7 +66,12 @@ export default {
   },
   data(){
     return {
-      
+      localProposals: this.proposals
+    }
+  },
+  methods: {
+    deleteProposal(id) {
+      // todo: remove deleted proposal from proposals if we want smooth delete without reloading the page
     }
   }
 }

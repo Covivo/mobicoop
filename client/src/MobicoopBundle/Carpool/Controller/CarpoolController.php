@@ -135,15 +135,24 @@ class CarpoolController extends AbstractController
 
             $proposal = $proposalManager->getProposal($data['proposalId']);
 
-            $this->denyAccessUnlessGranted('delete_ad', $proposal);
+//            $this->denyAccessUnlessGranted('delete_ad', $proposal);
 
-            $response = $proposalManager->deleteProposal($data['proposalId']);
-
-            dump($response);
-            die;
-            // todo : renvoyer la réponse à la requête DELETE au front
-            return new JsonResponse();
+            if ($response = $proposalManager->deleteProposal($data['proposalId'])) {
+                return new JsonResponse(
+                    ["message" => "delete.success"],
+                    \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
+                );
+            }
+            return new JsonResponse(
+                ["message" => "delete.error"],
+                \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
+            );
         }
+
+        return new JsonResponse(
+            ["message" => "delete.error"],
+            \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN
+        );
     }
 
     /**

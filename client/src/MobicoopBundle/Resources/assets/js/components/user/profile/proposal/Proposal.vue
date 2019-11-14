@@ -5,6 +5,8 @@
       :is-passenger="isPassenger"
       :is-pausable="isRegular"
       :is-archived="isArchived"
+      :proposal-id="proposal.outward ? proposal.outward.id : proposal.return ? proposal.return.id : null"
+      @proposal-deleted="proposalDeleted()"
     />
     
     <v-card-text v-if="isRegular">
@@ -70,6 +72,11 @@ export default {
     },
     hasReturn () {
       return this.proposal.return;
+    }
+  },
+  methods: {
+    proposalDeleted(id) {
+      this.$emit('proposal-deleted', id)
     }
   }
 }
