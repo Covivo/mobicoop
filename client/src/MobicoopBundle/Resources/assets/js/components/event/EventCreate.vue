@@ -292,7 +292,7 @@
                       <v-btn
                         color="primary"
                         text
-                        @click="createCommunity"
+                        @click="createEvent"
                       >
                         {{ $t('popUp.validation') }}
                       </v-btn>
@@ -365,7 +365,7 @@ export default {
         v => !!v || this.$t("form.avatar.required"),
         v => !v || v.size < this.avatarSize || this.$t("form.avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
       ],
-      communityAddress: null,
+      eventAddress: null,
       name: null,
       nameRules: [
         v => !!v || this.$t("form.name.required"),
@@ -401,17 +401,17 @@ export default {
   },
   methods: {
     addressSelected: function(address) {
-      this.communityAddress = address;
+      this.eventAddress = address;
     },
-    createCommunity() {
+    createEvent() {
       this.loading = true;
       this.dialog = false;
-      if (this.name  && this.fullDescription && this.avatar && this.communityAddress) {
+      if (this.name  && this.fullDescription && this.avatar && this.eventAddress) {
         let newEvent = new FormData();
         newEvent.append("name", this.name);
         newEvent.append("fullDescription", this.fullDescription);
         newEvent.append("avatar", this.avatar);
-        newEvent.append("address", JSON.stringify(this.communityAddress));
+        newEvent.append("address", JSON.stringify(this.eventAddress));
         newEvent.append("outwardDate", this.outwardDate);
         newEvent.append("returnDate", this.returnDate);
         if (this.outwardTime) newEvent.append("outwardTime", this.outwardTime);
@@ -433,7 +433,7 @@ export default {
             else window.location.href = this.$t('redirect.route');
           });
       } else {
-        this.snackError = this.$t('error.community.required')
+        this.snackError = this.$t('error.event.required')
         this.snackbar = true;
         this.loading = false;
       }    
