@@ -33,7 +33,7 @@
         <v-list dense>
           <v-list-item>
             <v-list-item-content>
-              {{ item.description }}
+              {{ item.fullDescription }}
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -75,6 +75,7 @@ export default {
   },
   methods:{
     linkToCommunityShow: function (item) {
+      console.info(item)
       return this.$t('routes.community', {id:item.id});
     }
   }

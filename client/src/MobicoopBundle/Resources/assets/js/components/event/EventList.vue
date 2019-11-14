@@ -64,7 +64,7 @@
           <v-col
             cols="6"
           >
-            <a :href="test">
+            <a :href="paths.event_create">
               <v-btn
                 type="button"
                 color="secondary"
@@ -139,11 +139,7 @@ export default {
     messages: TranslationsMerged,
   },
   props:{
-    communities: {
-      type: Array,
-      default: null
-    },
-    communitiesUser:{
+    events: {
       type: Array,
       default: null
     },

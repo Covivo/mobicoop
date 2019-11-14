@@ -23,8 +23,7 @@
             {# <community-help></community-help> #}
             <br/><br/>
             <event-list
-                    {#:paths="{{ {'community_create':path('community_create'), 'community_ad_post':path('carpool_ad_post')}|json_encode }}"
-                    :communities-user="{{ communitiesUser|json_encode }}" #}
+                    :paths="{{ {'event_create':path('event_create')}|json_encode }}"
                     :events="{{ events|json_encode }}"
             ></event-list>
             <br/><br/>
