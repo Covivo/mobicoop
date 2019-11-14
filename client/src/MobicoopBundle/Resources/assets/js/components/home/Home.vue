@@ -12,7 +12,6 @@
             multi-line
             color="info"
             vertical
-            :timeout="0"
           >
             {{ $t('snackbar') }}
             <v-btn

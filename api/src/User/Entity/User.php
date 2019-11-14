@@ -1008,7 +1008,7 @@ class User implements UserInterface, EquatableInterface
         return $this->phoneValidatedDate;
     }
 
-    public function setPhoneValidatedDate(?\DateTimeInterface $phoneValidatedDate): self
+    public function setPhoneValidatedDate(?\DateTimeInterface $phoneValidatedDate): ?self
     {
         $this->phoneValidatedDate = $phoneValidatedDate;
 

@@ -211,40 +211,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * Phone validation
-     *
-     * @param $token
-     * @param UserManager $userManager
-     * @param Request $request
-     * @return void
-     */
-    public function userPhoneValidation(UserManager $userManager, Request $request)
-    {
-        $user = clone $userManager->getLoggedUser();
-        $this->denyAccessUnlessGranted('update', $user);
-        
-        $phoneError = "";
-        if ($request->isMethod('POST')) {
-            $data = json_decode($request->getContent(), true);
-            // We need to check if the token is right
-            if ($user->getPhoneToken() == $data['token']) {
-                if ($user->getPhoneValidatedDate()!==null) {
-                    $phoneError = "phoneAlreadyValidated";
-                } else {
-                    $user->setPhoneValidatedDate(new \Datetime()); // TO DO : Correct timezone
-                    $user = $userManager->updateUser($user);
-                    if (!$user) {
-                        $phoneError = "phoneUpdateError";
-                    }
-                }
-            } else {
-                $phoneError = "unknown";
-            }
-        }
-        return new Response(json_encode($phoneError));
-    }
-
-    /**
      * Generate a phone token
      *
      * @param UserManager $userManager
@@ -260,6 +226,48 @@ class UserController extends AbstractController
             
         return new Response(json_encode(['error' => $error, 'message' => $message]));
     }
+
+    /**
+     * Phone validation
+     *
+     * @param $token
+     * @param UserManager $userManager
+     * @param Request $request
+     * @return void
+     */
+    public function userPhoneValidation(UserManager $userManager, Request $request)
+    {
+        $user = clone $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('update', $user);
+        
+        $phoneError = [
+            'state' => false,
+            'message' => "",
+        ];
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            // We need to check if the token is right
+            if ($user->getPhoneToken() == $data['token']) {
+                if ($user->getPhoneValidatedDate()!==null) {
+                    $phoneError["state"] = "true";
+                    $phoneError["message"] = "snackBar.phoneAlreadyVerified";
+                } else {
+                    $user->setPhoneValidatedDate(new \Datetime()); // TO DO : Correct timezone
+                    $user = $userManager->updateUser($user);
+                    if (!$user) {
+                        $phoneError["state"] = "true";
+                        $phoneError["message"] = "snackBar.phoneUpdate";
+                    }
+                }
+            } else {
+                $phoneError["state"] = "true";
+                $phoneError["message"] = "snackBar.unknown";
+            }
+        }
+        return new Response(json_encode($phoneError));
+    }
+
+ 
   
 
     /**

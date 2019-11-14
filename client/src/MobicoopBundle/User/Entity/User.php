@@ -992,7 +992,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this->phoneValidatedDate;
     }
 
-    public function setPhoneValidatedDate(?\DateTimeInterface $phoneValidatedDate): self
+    public function setPhoneValidatedDate(?\DateTimeInterface $phoneValidatedDate): ?self
     {
         $this->phoneValidatedDate = $phoneValidatedDate;
 
@@ -1077,6 +1077,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'musicFavorites' => $this->getMusicFavorites(),
             'newsSubscription' => $this->hasNewsSubscription(),
             'phoneValidatedDate' => $this->getPhoneValidatedDate(),
+            'phoneToken'        => $this->getPhoneToken()
         ];
     }
 }

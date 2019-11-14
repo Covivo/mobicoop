@@ -98,8 +98,11 @@
             class="email"
           />
 
-          <!--Telephone-->
-          <v-row justify="center">
+          <!--Telephone if verified-->
+          <v-row 
+            justify="center" 
+            v-if="user.telephone && phoneVerified == true"
+          >
             <v-col>
               <v-text-field
                 v-model="user.telephone"
@@ -109,44 +112,86 @@
             </v-col>
           <!-- phone number verification -->
           
-            <v-col cols="1" v-if="user.telephone && phoneVerified == true">
-              <v-tooltip color="info" top>
+            <v-col cols="1" >
+              <v-tooltip 
+                color="info" 
+                top
+              >
                 <template v-slot:activator="{ on }">
-                  <v-icon color="success" v-on="on">
+                  <v-icon 
+                    color="success" 
+                    v-on="on"  
+                    class="mt-7 ml-n12"
+                  >
                     mdi-check-circle-outline
                   </v-icon>
                 </template>
                   <span> {{$t('phone.tooltips.verified')}}</span>
               </v-tooltip>
             </v-col>
-            <v-col cols="1" v-if="user.telephone && phoneVerified == false">
-              <v-tooltip color="info" top>
-                <template v-slot:activator="{ on }">
-                  <v-icon color="warning" v-on="on">
+          </v-row>
+
+          <!--Telephone if not verified-->
+          <v-row 
+            justify="center" 
+            v-if="user.telephone && phoneVerified == false"
+          >
+            <v-col>
+              <v-text-field
+                v-model="user.telephone"
+                :label="$t('models.user.phone.label')"
+                class="telephone"
+              />
+            </v-col>
+          <!-- phone number verification -->
+            <v-col cols="1" >
+              <v-tooltip 
+                color="info" 
+                top
+              >
+                <template 
+                  v-slot:activator="{ on }"
+                >
+                  <v-icon 
+                    color="warning" 
+                    v-on="on" 
+                    class="mt-7 ml-n12" 
+                  >
                     mdi-alert-circle-outline
                   </v-icon>
                 </template>
                   <span>{{$t('phone.tooltips.notVerified')}}</span>
               </v-tooltip>
             </v-col>
-            <v-col >
-              <v-btn rounded color="secondary" @click="generateToken">
-                {{$t('phone.buttons.label.generateToken')}}
+            <v-col cols="3">
+              <v-btn 
+                rounded color="secondary" 
+                @click="generateToken" class="mt-3" 
+                :loading="loadingToken"
+              >
+                {{user.phoneToken == null ? $t('phone.buttons.label.generateToken') : $t('phone.buttons.label.generateNewToken')}}
               </v-btn>
             </v-col>
-            <v-col >
-              <v-btn rounded color="secondary" @click="generateToken">
-                {{$t('phone.buttons.label.generateNewToken')}}
-              </v-btn>
-            </v-col>
-            <v-col >
+            <v-col 
+              cols="3" 
+              v-if="displayTokenInput"
+            >
               <v-text-field
                 v-model="token"
                 :label="$t('phone.validation.label')"
                   />
             </v-col>
-            <v-col >
-              <v-btn rounded color="secondary" @click="validateToken">
+            <v-col 
+              cols="2" 
+              v-if="displayTokenInput"
+            >
+              <v-btn 
+                rounded 
+                color="secondary" 
+                @click="validateToken" 
+                class="mt-3"
+                :loading="loadingValidatePhone"
+              >
                 {{$t('phone.buttons.label.validate')}}
               </v-btn>
             </v-col>
@@ -316,8 +361,10 @@ export default {
       urlAvatar:this.user.avatars[this.user.avatars.length-1],
       displayFileUpload:(this.user.images[0]) ? false : true,
       phoneVerified: null,
-      displayTokenInput: false,
+      displayTokenInput: this.user.phoneToken ? true : false,
       token: null,
+      loadingToken: false,
+      loadingValidatePhone: false
     };
   },
   computed : {
@@ -366,9 +413,10 @@ export default {
         .then(res => {
           this.errorUpdate = res.data.state;
           this.snackbar = true;
+          this.loading = false;
+          this.checkVerifiedPhone();
           this.urlAvatar = res.data.versions.square_800;
           this.displayFileUpload = false;
-          this.loading = false;
         });
     },
     avatarDelete () {
@@ -388,14 +436,18 @@ export default {
       }
     },
     generateToken() {
+    this.loadingToken = true;   
     axios 
       .get(this.$t('phone.token.route'))
       .then(res => {
-          console.error(res.data);
+          console.error(res.data.state);
+          this.errorUpdate = res.data.state;
+          this.displayTokenInput = true;
+          this.loadingToken = false;
         })
     },
     validateToken() {
-      console.error(this.token);
+      this.loadingValidatePhone = true; 
       axios
         .post(this.$t('phone.validation.route'),
         {
@@ -406,7 +458,13 @@ export default {
           }
         })
         .then(res => {
-          console.error(res.data);
+          if (res.data.state) {
+            this.errorUpdate = true;
+            this.textSnackError = this.$t(res.data.message);
+            this.snackbar = true;
+          }
+          this.phoneVerified = !res.data.state ? true : false;
+          this.loadingValidatePhone = false; 
         })
     }
   }
