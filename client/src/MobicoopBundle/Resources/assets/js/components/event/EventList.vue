@@ -95,7 +95,7 @@
       </v-card-title>
       <v-data-iterator
         :search="search"
-        :items="events"
+        :items="allevents"
         :items-per-page.sync="itemsPerPage"
         :footer-props="{
           'items-per-page-options': itemsPerPageOptions,
@@ -106,7 +106,7 @@
         <template>
           <v-row>
             <v-col
-              v-for="item in events"
+              v-for="item in allevents"
               :key="item.index"
               cols="12"
               class="ma-3 pa-6"
@@ -141,7 +141,7 @@ export default {
     messages: TranslationsMerged,
   },
   props:{
-    events: {
+    allevents: {
       type: Array,
       default: null
     },
@@ -163,7 +163,7 @@ export default {
           value: 'id',
         },
         { text: 'Nom', value: 'name' },
-        { text: 'Description', value: 'description' },
+        { text: 'Description', value: 'fulldescription' },
         { text: 'Image', value: 'logos' }
       ]
     }

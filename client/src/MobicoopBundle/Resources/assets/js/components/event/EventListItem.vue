@@ -1,11 +1,31 @@
 <template>
   <v-card v-if="item">
     <v-row>
+      <v-col cols="3">
+        <v-img
+          v-if="item['images'][0]"
+          :src="item['images'][0]['versions']['square_250']"
+          lazy-src="https://picsum.photos/id/11/10/6"
+          aspect-ratio="1"
+          class="grey lighten-2"
+          max-width="200"
+          max-height="150"
+        />
+        <v-img
+          v-else
+          src="https://picsum.photos/id/11/500/300"
+          lazy-src="https://picsum.photos/id/11/10/6"
+          aspect-ratio="1"
+          class="grey lighten-2"
+          max-width="200"
+          max-height="150"
+        />
+      </v-col>
       <v-col cols="6">
         <v-card-title>
           <div>
             <h4>
-              <a :href="linkToCommunityShow(item)">{{ item.name }}</a>
+              <a :href="linkToEventShow(item)">{{ item.name }}</a>
             </h4>
           </div>
         </v-card-title>
@@ -28,9 +48,9 @@
           <v-btn
             color="secondary"
             rounded
-            :href="linkToCommunityShow(item)"
+            :href="linkToEventShow(item)"
           >
-            {{ $t('communityDetails') }}
+            {{ $t('eventDetails') }}
           </v-btn>
         </div>
       </v-col>
@@ -54,11 +74,8 @@ export default {
     }
   },
   methods:{
-    linkToCommunityShow: function (item) {
-      console.info(item.id)
-      console.info(item.name)
-      console.info(item.images)
-      return this.$t('routes.community', {id:item.id});
+    linkToEventShow: function (item) {
+      return this.$t('routes.event', {id:item.id});
     }
   }
 }

@@ -34,6 +34,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Controller class for events related actions.
@@ -46,17 +47,15 @@ class EventController extends AbstractController
     /**
      * Get all events.
      */
-    public function eventList(EventManager $eventManager)
+    public function eventList(EventManager $eventManager, SerializerInterface $serializer)
     {
-
-            // We get all the events
-        $events = $eventManager->getEvents(new \DateTime());
+        // We get all the events
+        $allevents = $serializer->serialize($eventManager->getEvents(new \DateTime()),'json');
 
         return $this->render('@Mobicoop/event/events.html.twig', [
-            'events' => $events,
+            'allevents' => $allevents,
         ]);
     }
-
     /**
      * Create an event
      */

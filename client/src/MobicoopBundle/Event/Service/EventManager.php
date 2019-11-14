@@ -79,8 +79,8 @@ class EventManager
         $address->setDisplayLabel($communityAddress['displayLabel']);
 
         // Set Datetime from data
-        $from = $data->get('outwardTime') == null ? new \DateTime($data->get('outwardDate').'.'.$data->get('outwardTime'))  : new \DateTime($data->get('outwardDate'));
-        $to = $data->get('returnTime') == null ? new \DateTime($data->get('returnDate').'.'.$data->get('returnTime'))  : new \DateTime($data->get('returnDate'));
+        $from = $data->get('outwardTime') != null ? new \DateTime($data->get('outwardDate').'.'.$data->get('outwardTime'))  : new \DateTime($data->get('outwardDate'));
+        $to = $data->get('returnTime') != null ? new \DateTime($data->get('returnDate').'.'.$data->get('returnTime'))  : new \DateTime($data->get('returnDate'));
         //Set use time = 1, if user set time
         $flagTime = ($data->get('returnTime') == null && $data->get('outwardTime') == null) ?  0 : 1;
         $event->setUseTime($flagTime);
