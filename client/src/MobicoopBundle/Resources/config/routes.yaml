@@ -285,6 +285,12 @@ rdex_journey:
         en: /journey/rdex
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney
 
+# delete an ad (AJAX)
+carpool_ad_delete:
+    path:
+        fr: /covoiturage/annonce/supprimer
+        en: /carpool/ad/delete/
+        controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDelete
 
 ####################
 # community routes #
