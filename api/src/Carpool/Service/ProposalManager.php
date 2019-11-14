@@ -363,9 +363,9 @@ class ProposalManager
                             $newAsk = $this->askManager->createAskFromMatchedProposal($proposal, $matching, $proposal->hasFormalAsk());
                             // we set the ask linked of the matching if we need to create a forced reverse matching (can be the case for regular return trips)
                             $proposal->setAskLinked($newAsk);
-                            // if there's un matching role undecided we create the related ask
-                            if ($matching->getMatchingRoleUndecided()) {
-                                $this->askManager->createAskFromMatchedProposal($proposal, $matching->getMatchingRoleUndecided(), $proposal->hasFormalAsk());
+                            // if there's an opposite matching we create the related ask
+                            if ($matching->getMatchingOpposite()) {
+                                $this->askManager->createAskFromMatchedProposal($proposal, $matching->getMatchingOpposite(), $proposal->hasFormalAsk(), $newAsk);
                             }
                             // we set the matching linked if we need to create a forced reverse matching (can be the case for regular return trips)
                             $proposal->setMatchingLinked($matching);
@@ -373,7 +373,7 @@ class ProposalManager
                     } else {
                         // it's a return trip, or the link as already been treated in a previous loop
                         if (
-                            !$proposal->getMatchingLinked()->getMatchingRoleUndecided() &&
+                            !$proposal->getMatchingLinked()->getMatchingOpposite() &&
                             ($proposal->getMatchingProposal()->getProposalLinked()->getId() === $matching->getProposalOffer()->getId() ||
                             $proposal->getMatchingProposal()->getProposalLinked()->getId() === $matching->getProposalRequest()->getId())
                         ) {

@@ -113,8 +113,9 @@ class AskManager
      * @param Proposal $proposal The new Proposal
      * @param Matching $matching between those two proposals
      * @param bool $formal Create a formal ask
+     * @param Ask $askOpposite Opposite ask if relevant
      */
-    public function createAskFromMatchedProposal(Proposal $proposal, Matching $matching, bool $formal=false)
+    public function createAskFromMatchedProposal(Proposal $proposal, Matching $matching, bool $formal=false, ?Ask $askOpposite = null)
     {
         $ask = new Ask();
         if ($formal) {
@@ -147,6 +148,10 @@ class AskManager
             $askHistory->setStatus($ask->getStatus());
             $askHistory->setType($ask->getType());
             $ask->addAskHistory($askHistory);
+        }
+
+        if ($askOpposite) {
+            $ask->setAskOpposite($askOpposite);
         }
         
         return $this->createAsk($ask);

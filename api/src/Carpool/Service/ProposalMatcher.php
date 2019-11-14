@@ -176,23 +176,20 @@ class ProposalMatcher
      */
     public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true)
     {
-        $date = new \DateTime("UTC");
+        // we first check if we have already a matching proposal
+        // can be the case after a search
         if (is_null($proposal->getMatchingProposal())) {
-            $this->logger->info('Proposal matcher | Start find matchings for proposal ' . $proposal->getId() . ' without forced matching | ' . $date->format("Ymd H:i:s.u"));
             // we search matching proposals in the database
             // if no proposals are found we return an empty array
             if (!$proposalsFound = $this->proposalRepository->findMatchingProposals($proposal, $excludeProposalUser)) {
                 return [];
             }
         } else {
-            $this->logger->info('Proposal matcher | Start find matchings for proposal ' . $proposal->getId() . ' with forced matching ' . $proposal->getMatchingProposal()->getId() . ' | ' . $date->format("Ymd H:i:s.u"));
             // we have to force the matching with the given proposal
             // we first check if it's a return trip : if there's a matchingLinked in the proposal, we need to use the proposalLinked of the matchingProposal
             if (!is_null($proposal->getMatchingLinked())) {
-                $this->logger->info('Proposal matcher | Matching linked ' . $proposal->getMatchingLinked()->getId() . ' | ' . $date->format("Ymd H:i:s.u"));
                 $proposalsFound[] = $proposal->getMatchingProposal()->getProposalLinked();
             } else {
-                $this->logger->info('Proposal matcher | No matching linked | ' . $date->format("Ymd H:i:s.u"));
                 $proposalsFound[] = $proposal->getMatchingProposal();
             }
         }
@@ -340,8 +337,8 @@ class ProposalMatcher
             $matchings = $this->checkPickUp($matchings);
         }
         
-        // array used to keep a link between 2 undecided role matchings
-        $undecidedArray = [];
+        // array used to keep a link between 2 opposite role matchings
+        $oppositeArray = [];
 
         // array used to keep already linked matching for return trips (must be one to one)
         $matchedLinked = [];
@@ -351,11 +348,11 @@ class ProposalMatcher
 
             // if there's a linked matching (for return trip) we set it here
             if ($proposal->getMatchingLinked()) {
-                // if the role is undecided we have to switch to keep the matching links consistent
-                if ($proposal->getMatchingLinked()->getMatchingRoleUndecided()) {
-                    if (!in_array($proposal->getMatchingLinked()->getMatchingRoleUndecided(), $matchedLinked)) {
-                        $matching->setMatchingLinked($proposal->getMatchingLinked()->getMatchingRoleUndecided());
-                        $matchedLinked[] = $proposal->getMatchingLinked()->getMatchingRoleUndecided();
+                // if we have possible opposite matchings, we have to switch to keep the matching links consistent
+                if ($proposal->getMatchingLinked()->getMatchingOpposite()) {
+                    if (!in_array($proposal->getMatchingLinked()->getMatchingOpposite(), $matchedLinked)) {
+                        $matching->setMatchingLinked($proposal->getMatchingLinked()->getMatchingOpposite());
+                        $matchedLinked[] = $proposal->getMatchingLinked()->getMatchingOpposite();
                     } elseif (!in_array($proposal->getMatchingLinked(), $matchedLinked)) {
                         $matching->setMatchingLinked($proposal->getMatchingLinked());
                         $matchedLinked[] = $proposal->getMatchingLinked();
@@ -364,9 +361,9 @@ class ProposalMatcher
                     if (!in_array($proposal->getMatchingLinked(), $matchedLinked)) {
                         $matching->setMatchingLinked($proposal->getMatchingLinked());
                         $matchedLinked[] = $proposal->getMatchingLinked();
-                    } elseif ($proposal->getMatchingLinked()->getMatchingRoleUndecided() && !in_array($proposal->getMatchingLinked()->getMatchingRoleUndecided(), $matchedLinked)) {
-                        $matching->setMatchingLinked($proposal->getMatchingLinked()->getMatchingRoleUndecided());
-                        $matchedLinked[] = $proposal->getMatchingLinked()->getMatchingRoleUndecided();
+                    } elseif ($proposal->getMatchingLinked()->getMatchingOpposite() && !in_array($proposal->getMatchingLinked()->getMatchingOpposite(), $matchedLinked)) {
+                        $matching->setMatchingLinked($proposal->getMatchingLinked()->getMatchingOpposite());
+                        $matchedLinked[] = $proposal->getMatchingLinked()->getMatchingOpposite();
                     }
                 }
             }
@@ -534,25 +531,25 @@ class ProposalMatcher
             unset($filters['direction']);
             $matching->setFilters($filters);
 
-            // last operation, we check if the matching can be related with another one if the matching is the result of an undecided role proposal :
+            // last operation, we check if the matching can be related with another one if the matching is the result of an opposite proposal :
             // if the user can be both driver and passenger we need to keep a link between the matchings
             // only possible if a matchingProposal is set
             if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger() && $proposal->getMatchingProposal()) {
                 if ($proposal->getMatchingProposal()->getId() === $matching->getProposalOffer()->getId()) {
                     // the proposal is the offer of the current matching, we keep the request
-                    $undecidedArray['requests'][$matching->getProposalRequest()->getId()] = $matching;
-                    if (isset($undecidedArray['offers']) && isset($undecidedArray['offers'][$matching->getProposalRequest()->getId()])) {
-                        $matching->setMatchingRoleUndecided($undecidedArray['offers'][$matching->getProposalRequest()->getId()]);
-                        unset($undecidedArray['requests'][$matching->getProposalRequest()->getId()]);
-                        unset($undecidedArray['offers'][$matching->getProposalRequest()->getId()]);
+                    $oppositeArray['requests'][$matching->getProposalRequest()->getId()] = $matching;
+                    if (isset($oppositeArray['offers']) && isset($oppositeArray['offers'][$matching->getProposalRequest()->getId()])) {
+                        $matching->setMatchingOpposite($oppositeArray['offers'][$matching->getProposalRequest()->getId()]);
+                        unset($oppositeArray['requests'][$matching->getProposalRequest()->getId()]);
+                        unset($oppositeArray['offers'][$matching->getProposalRequest()->getId()]);
                     }
                 } else {
                     // the proposal is the request of the current matching, we keep the offer
-                    $undecidedArray['offers'][$matching->getProposalOffer()->getId()] = $matching;
-                    if (isset($undecidedArray['requests']) && isset($undecidedArray['requests'][$matching->getProposalOffer()->getId()])) {
-                        $matching->setMatchingRoleUndecided($undecidedArray['requests'][$matching->getProposalOffer()->getId()]);
-                        unset($undecidedArray['offers'][$matching->getProposalOffer()->getId()]);
-                        unset($undecidedArray['requests'][$matching->getProposalOffer()->getId()]);
+                    $oppositeArray['offers'][$matching->getProposalOffer()->getId()] = $matching;
+                    if (isset($oppositeArray['requests']) && isset($oppositeArray['requests'][$matching->getProposalOffer()->getId()])) {
+                        $matching->setMatchingOpposite($oppositeArray['requests'][$matching->getProposalOffer()->getId()]);
+                        unset($oppositeArray['offers'][$matching->getProposalOffer()->getId()]);
+                        unset($oppositeArray['requests'][$matching->getProposalOffer()->getId()]);
                     }
                 }
             }
