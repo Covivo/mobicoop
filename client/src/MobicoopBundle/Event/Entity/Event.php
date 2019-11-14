@@ -331,6 +331,4 @@ class Event implements ResourceInterface, \JsonSerializable
                 'images'            => $this->getImages()
             ];
     }
-
-
 }
