@@ -16,6 +16,8 @@
           v-for="(point, index) in points"
           :key="index"
           :lat-lng="point.latLng"
+          :draggable="markersDraggable"
+          @update:latLng="updateLatLng"
         >
           <l-icon
             v-if="point.icon.url!==undefined"
@@ -92,7 +94,10 @@ export default {
       type: Array,
       default: function(){return [];}
     },
-    
+    markersDraggable: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -129,6 +134,10 @@ export default {
         }
       }, 100);
     },
+    updateLatLng(data){
+      // data containts a LatLng object.
+      this.$emit("updateLatLng",data);
+    }
   }
 };
 </script>

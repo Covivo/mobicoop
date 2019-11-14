@@ -155,6 +155,7 @@
                 :provider="mapProvider"
                 :url-tiles="urlTiles"
                 :attribution-copyright="attributionCopyright"
+                :markers-draggable="false"
               />
             </v-col>
           </v-row>
