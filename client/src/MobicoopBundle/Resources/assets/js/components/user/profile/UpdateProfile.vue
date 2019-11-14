@@ -166,7 +166,7 @@
             <v-col cols="3">
               <v-btn 
                 rounded color="secondary" 
-                @click="generateToken" class="mt-3" 
+                @click="generateToken" class="mt-4" 
                 :loading="loadingToken"
               >
                 {{user.phoneToken == null ? $t('phone.buttons.label.generateToken') : $t('phone.buttons.label.generateNewToken')}}
@@ -178,6 +178,8 @@
             >
               <v-text-field
                 v-model="token"
+                :rules="tokenRules"
+                class="mt-2"
                 :label="$t('phone.validation.label')"
                   />
             </v-col>
@@ -189,7 +191,7 @@
                 rounded 
                 color="secondary" 
                 @click="validateToken" 
-                class="mt-3"
+                class="mt-4"
                 :loading="loadingValidatePhone"
               >
                 {{$t('phone.buttons.label.validate')}}
@@ -357,6 +359,9 @@ export default {
       avatarRules: [
         v => !v || v.size < this.avatarSize || this.$t("avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
       ],
+      tokenRules: [
+         v => (/^\d{4}$/).test(v) || this.$t("phone.token.inputError")
+      ],
       newsSubscription: this.user && this.user.newsSubscription !== null ? this.user.newsSubscription : null,
       urlAvatar:this.user.avatars[this.user.avatars.length-1],
       displayFileUpload:(this.user.images[0]) ? false : true,
@@ -441,7 +446,13 @@ export default {
       .get(this.$t('phone.token.route'))
       .then(res => {
           console.error(res.data.state);
-          this.errorUpdate = res.data.state;
+          if (res.data.state) {
+            this.errorUpdate = true;
+            this.textSnackError = this.$t('snackBar.tokenError');
+            this.snackbar = true;
+          }
+          this.textSnackOk = this.$t('snackBar.tokenOk');
+          this.snackbar = true;
           this.displayTokenInput = true;
           this.loadingToken = false;
         })

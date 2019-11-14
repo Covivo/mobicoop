@@ -9,7 +9,9 @@
             "errorProfileUpdate": "Erreur, votre profil n'a pas été mis à jour.",
             "phoneAlreadyVerified": "Votre téléphone est déjà vérifié.",
             "phoneUpdate": "Erreur votre télephone n'a pas été vérifié.",
-            "unknown": "Erreur vous devez saisir un code valide."
+            "unknown": "Le code de validation est érroné.",
+            "tokenOk": "Le code de validation a bien été envoyé.",
+            "tokenError": "Erreur le code n'a pas été envoyé"
         },
         "avatar": {
             "label": "Avatar",
@@ -43,7 +45,8 @@
                 "route": "/utilisateur/telephone/validation"
             },
             "token": {
-                "route": "/utilisateur/telephone/token"
+                "route": "/utilisateur/telephone/token",
+                "inputError": "Le code de validation est composé de 4 chiffres."
             }
         }
         

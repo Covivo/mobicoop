@@ -218,13 +218,14 @@ class UserController extends AbstractController
      */
     public function generatePhoneToken(UserManager $userManager)
     {
-        $message=null;
-        $error=null;
+        $tokenError = [
+            'state' => false,
+        ];
         $user = clone $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('update', $user);
-        $user = $userManager->generatePhoneToken($user) ?  $message = 'tokenMessage' : $error = 'tokenError';
+        $user = $userManager->generatePhoneToken($user) ?  $tokenError['state'] = false : $tokenError['state'] = true ;
             
-        return new Response(json_encode(['error' => $error, 'message' => $message]));
+        return new Response(json_encode($tokenError));
     }
 
     /**
@@ -330,6 +331,7 @@ class UserController extends AbstractController
             if ($user->getTelephone() != $data->get('telephone')) {
                 $user->setTelephone($data->get('telephone'));
                 $user->setPhoneValidatedDate(null);
+                $user->setPhoneToken(null);
             }
             $user->setEmail($data->get('email'));
             $user->setGivenName($data->get('givenName'));
