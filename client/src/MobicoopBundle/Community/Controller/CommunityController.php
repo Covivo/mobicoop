@@ -22,6 +22,8 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -321,10 +323,14 @@ class CommunityController extends AbstractController
         $ways = [];
         if ($proposals!==null) {
             foreach ($proposals as $proposal) {
-                $currentProposal = ["type"=>$proposal["type"],"frequency"=>$proposal["criteria"]["frequency"],"waypoints"=>[]];
+                $currentProposal = [
+                    "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
+                    "frequency"=>($proposal["criteria"]["frequency"]==Criteria::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
+                    "waypoints"=>[]
+                ];
                 foreach ($proposal["waypoints"] as $waypoint) {
                     $currentProposal["waypoints"][] = [
-                        "title"=>$waypoint["address"]["displayLabel"],
+                        "title"=>(is_array($waypoint["address"]["displayLabel"])) ? implode(", ",$waypoint["address"]["displayLabel"]) : $waypoint["address"]["displayLabel"],
                         "destination"=>$waypoint['destination'],
                         "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
                     ];

@@ -25,8 +25,9 @@
           />
           <l-tooltip
             v-if="point.title!==''"
-            v-html="point.title"
-          />
+          >
+            <p v-html="point.title" />
+          </l-tooltip>
         </l-marker>
         <l-polyline
           v-for="(way, i) in ways"

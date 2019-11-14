@@ -422,29 +422,39 @@ export default {
             this.pointsToMap.push(this.buildPoint(this.community.address.latitude,this.community.address.longitude,this.community.name));
           }
           
-          // add all the waypoints of the community to display on the map :
+          // add all the waypoints of the community to display on the map
+          // We draw straight lines between those points
           // if the user is already accepted or if the doesn't hide members or proposals to non members.
           if(this.isAccepted || (!this.community.membersHidden && !this.community.proposalsHidden) ){
-            console.error(res.data);
             res.data.forEach((proposal, index) => {
               let currentProposal = {latLngs:[]};
               let infosForPopUp = {origin:'',destination:''};
-              proposal.waypoints.forEach((waypoint, index) => {
-                this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
-                currentProposal.latLngs.push(waypoint.latLng);
-                if(index==0){
-                  infosForPopUp.origin = waypoint.title[0];
-                }
-                else if(waypoint.destination){
-                  infosForPopUp.destination = waypoint.title[0];
-                }
-              });
-              console.error(infosForPopUp);
-              currentProposal.desc = "<p><strong>Départ</strong> : "+infosForPopUp.origin+"<br />";
-              currentProposal.desc += "<strong>Destination</strong> : "+infosForPopUp.destination+"</p>";
-              this.directionWay.push(currentProposal);
+
+              if(proposal.type !== 'return'){ // We show only outward or one way proposals
+                proposal.waypoints.forEach((waypoint, index) => {
+                  this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+                  currentProposal.latLngs.push(waypoint.latLng);
+                  if(index==0){
+                    infosForPopUp.origin = waypoint.title;
+                  }
+                  else if(waypoint.destination){
+                    infosForPopUp.destination = waypoint.title;
+                  }
+                });
+
+                // We build the content of the popup
+                currentProposal.desc = "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
+                currentProposal.desc += "<strong>"+this.$t('map.destination')+"</strong> : "+infosForPopUp.destination+"<br />";
+                if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em><br />";
+                currentProposal.desc += "<a href='#' title=''>"+this.$t('map.findMatchings')+"</a>";
+                currentProposal.desc += "</p>";
+                // And now the content of a tooltip
+                currentProposal.title = currentProposal.desc;
+                this.directionWay.push(currentProposal);
+
+              }
+
             });
-            console.error(this.directionWay);
           }
           this.loadingMap = false;
           setTimeout(this.$refs.mmap.redrawMap(),600);
