@@ -151,6 +151,7 @@
                 ref="mmap"
                 type-map="community"
                 :points="pointsToMap"
+                :ways="directionWay"
                 :provider="mapProvider"
                 :url-tiles="urlTiles"
                 :attribution-copyright="attributionCopyright"
@@ -424,9 +425,16 @@ export default {
           // add all the waypoints of the community to display on the map :
           // if the user is already accepted or if the doesn't hide members or proposals to non members.
           if(this.isAccepted || (!this.community.membersHidden && !this.community.proposalsHidden) ){
-            res.data.forEach((waypoint, index) => {
-              this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+            console.error(res.data);
+            res.data.forEach((proposal, index) => {
+              let currentProposal = {latLngs:[]};
+              proposal.forEach((waypoint, index) => {
+                this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+                currentProposal.latLngs.push(waypoint.latLng);
+              });
+              this.directionWay.push(currentProposal);
             });
+            console.error(this.directionWay);
           }
           this.loadingMap = false;
           setTimeout(this.$refs.mmap.redrawMap(),600);

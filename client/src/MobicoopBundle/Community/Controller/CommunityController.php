@@ -318,18 +318,21 @@ class CommunityController extends AbstractController
         $this->denyAccessUnlessGranted('show', $community);
 
         $proposals = $communityManager->getProposals($id);
-        $points = [];
+        dump($proposals);
+        $ways = [];
         if ($proposals!==null) {
             foreach ($proposals as $proposal) {
+                $currentProposal = [];
                 foreach ($proposal["waypoints"] as $waypoint) {
-                    $points[] = [
+                    $currentProposal[] = [
                         "title"=>$waypoint["address"]["displayLabel"],
                         "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
                     ];
                 }
+                $ways[] = $currentProposal;
             }
         }
-        return new Response(json_encode($points));
+        return new Response(json_encode($ways));
     }
 
     /**
