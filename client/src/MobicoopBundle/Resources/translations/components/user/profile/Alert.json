@@ -15,6 +15,10 @@
             "media2":"Email",
             "media3":"SMS",
             "media4":"Push"
+        },
+        "popup": {
+            "title": "Information",
+            "content": "Attention, vous n'avez plus aucune notification extérieure activée en cas de {alert}. Vous ne pourrez être informé à ce sujet qu'en venant par vous-même vous connecter sur la plate-forme."
         }
     },    
     "en": {
@@ -33,6 +37,10 @@
             "media2":"Email",
             "media3":"SMS",
             "media4":"Push"
+        },
+        "popup": {
+            "title": "Information",
+            "content": ""
         }
     }    
 }

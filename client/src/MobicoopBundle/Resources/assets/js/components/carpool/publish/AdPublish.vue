@@ -89,6 +89,7 @@
           >
             <!-- Step 1 : search journey -->
             <v-stepper-step
+              complete
               editable
               :step="1"
               color="primary"
@@ -724,7 +725,7 @@ export default {
     },
     valid() {
       // For the publish button
-      
+
       // step validation
       if ((this.driver && this.step != 7) || (!this.driver && this.step != 5)) return false;
       // role validation
@@ -756,7 +757,7 @@ export default {
 
       //We get here if we give at least the departure time on the 1st day
       //So now we can check on all others days, if visible and date AND at least 1 hour is not defined -> return false
-      if(this.step ==2 ){
+      if(this.step ==2  && this.regular){
         for (var s in this.fullschedule) {
           var i = this.fullschedule[s];
           if (i.visible) {

@@ -70,17 +70,19 @@ class UserController extends AbstractController
     private $facebook_show;
     private $facebook_appid;
     private $required_home_address;
+    private $news_subscription;
 
     /**
      * Constructor
      * @param UserPasswordEncoderInterface $encoder
      */
-    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address)
+    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address, $news_subscription)
     {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
         $this->facebook_appid = $facebook_appid;
         $this->required_home_address = $required_home_address;
+        $this->news_subscription = $news_subscription;
     }
 
     /***********
@@ -142,7 +144,6 @@ class UserController extends AbstractController
                 $address->setHome(true);
             }
             $user->addAddress($address);
-            var_dump($data);
             // pass front info into user form
             $user->setEmail($data['email']);
             $user->setTelephone($data['telephone']);
@@ -152,7 +153,8 @@ class UserController extends AbstractController
             $user->setGender($data['gender']);
             //$user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
             $user->setBirthDate(new DateTime($data['birthDay']));
-
+            //$user->setNewsSubscription by default
+            $user->setNewsSubscription(($this->news_subscription==="true") ? true : false);
 
 
             if (!is_null($data['idFacebook'])) {
