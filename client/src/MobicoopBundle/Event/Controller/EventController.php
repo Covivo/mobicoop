@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Event\Controller;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -72,29 +73,22 @@ class EventController extends AbstractController
         //$this->denyAccessUnlessGranted('create', $event);
         $user = new User($userManager->getLoggedUser()->getId());
 
-
         if ($request->isMethod('POST')) {
-            $data = $request->request;
-            $eventManager->createEvent($data,$event, $user);
-
-            dump($data);
-                // create community
-                if ($community = $eventManager->createCommunity($community)) {
-
-                    // Post avatar of the community
-                    $image = new Image();
-                    $image->setCommunityFile($request->files->get('avatar'));
-                    $image->setCommunityId($community->getId());
-                    $image->setName($community->getName());
-                    if ($image = $imageManager->createImage($image)) {
-                        return new Response();
-                    }
-                    // return error if image post didnt't work
-                    return new Response(json_encode('error.image'));
+            // Create event and return response code
+            if ( $event = $eventManager->createEvent($request->request, $event, $user)) {
+                // Post avatar of the event
+                $image = new Image();
+                $image->setEventFile($request->files->get('avatar'));
+                $image->setEventId($event->getId());
+                $image->setName($event->getName());
+                if ($image = $imageManager->createImage($image)) {
+                    return new Response();
                 }
-                // return error if community post didn't work
-                return new Response(json_encode('error.community.create'));
-
+                // return error if image post didnt't work
+                return new Response(json_encode('error.image'));
+            }
+            // return error if event post didn't work
+            return new Response(json_encode('error.event.create'));
         }
         return $this->render('@Mobicoop/event/createEvent.html.twig', [
         ]);

@@ -55,7 +55,6 @@ class EventManager
      */
     public function createEvent($data, Event $event, User $user)
     {
-
         $address = new Address();
         // set the user as a user of the community
         $event->setUser($user);
@@ -79,16 +78,23 @@ class EventManager
         $address->setSubLocality($communityAddress['subLocality']);
         $address->setDisplayLabel($communityAddress['displayLabel']);
 
-        // set community infos
+        // Set Datetime from data
+        $from = $data->get('outwardTime') == null ? new \DateTime($data->get('outwardDate').'.'.$data->get('outwardTime'))  : new \DateTime($data->get('outwardDate'));
+        $to = $data->get('returnTime') == null ? new \DateTime($data->get('returnDate').'.'.$data->get('returnTime'))  : new \DateTime($data->get('returnDate'));
+        //Set use time = 1, if user set time
+        $flagTime = ($data->get('returnTime') == null && $data->get('outwardTime') == null ) ?  0 : 1;
+        $event->setUseTime($flagTime);
+        $event->setStatus(0);
+
+        // set event infos
         $event->setName($data->get('name'));
         $event->setDescription($data->get('fullDescription'));
         $event->setFullDescription($data->get('fullDescription'));
         $event->setAddress($address);
         $event->setUrl($data->get('urlEvent'));
+        $event->setFromDate($from);
+        $event->setToDate($to);
 
-
-        $from = $data->get('outwardTime') == null ? new \DateTime($data->get('outwardDate').'.'.$data->get('outwardTime'))  : new \DateTime($data->get('outwardDate'));
-        $to = $data->get('returnTime') == null ? new \DateTime($data->get('returnDate').'.'.$data->get('returnTime'))  : new \DateTime($data->get('returnDate'));
         $response = $this->dataProvider->post($event);
         if ($response->getCode() == 201) {
             return $response->getValue();
