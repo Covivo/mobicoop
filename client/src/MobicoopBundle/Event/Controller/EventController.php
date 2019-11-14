@@ -34,7 +34,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-
 /**
  * Controller class for events related actions.
  *
@@ -88,6 +87,28 @@ class EventController extends AbstractController
             return new Response(json_encode('error.event.create'));
         }
         return $this->render('@Mobicoop/event/createEvent.html.twig', [
+        ]);
+    }
+
+    /**
+     * Show a community
+     */
+    public function eventShow($id, EventManager $eventManager, UserManager $userManager, Request $request, SerializerInterface $serializer)
+    {
+
+        // retreive event;
+        $event = $eventManager->getEvent($id);
+//        $eventSerialise = $serializer->serialize($event, 'json');
+        //$this->denyAccessUnlessGranted('show', $community);
+dump(($event));
+        // retreive logged user
+        $user = $userManager->getLoggedUser();
+//var_dump(($event)); die();
+        return $this->render('@Mobicoop/event/event.html.twig', [
+            'event' => $event,
+            'user' => $user,
+            'searchRoute' => "covoiturage/recherche",
+            'error' => (isset($error)) ? $error : false
         ]);
     }
 }

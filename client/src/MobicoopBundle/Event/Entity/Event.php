@@ -35,7 +35,7 @@ use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 /**
  * An event.
  */
-class Event implements ResourceInterface
+class Event implements ResourceInterface, \JsonSerializable
 {
     /**
      * @var int The id of this event.
@@ -312,4 +312,25 @@ class Event implements ResourceInterface
         }
         return $this;
     }
+
+    public function jsonSerialize()
+    {
+        return
+            [
+                'id'                => $this->getId(),
+                'iri'               => $this->getIri(),
+                'name'              => $this->getName(),
+                'status'            => $this->getStatus(),
+                'fullDescription'   => $this->getFullDescription(),
+                'fromDate'          => $this->getFromDate(),
+                'toDate'            => $this->getToDate(),
+                'useTime'           => $this->getUseTime(),
+                'url'               => $this->getUrl(),
+                'address'           => $this->getAddress(),
+                'user'              => $this->getUser(),
+                'images'            => $this->getImages()
+            ];
+    }
+
+
 }

@@ -1,0 +1,50 @@
+{
+  "fr": {
+    "buttons": {
+      "publish": {
+          "label": "Publier une annonce",
+          "route": "covoiturage/recherche/poster"
+      },
+      "search": {
+        "label": "Rechercher",
+        "route": ""
+      },
+      "contact":{
+        "route":"/utilisateur/messages/nouveau"
+      }
+    },
+    "tooltips": {
+      "connected": "Vous devez être connecté",
+      "validation": "En attente de validation",
+      "domain": "Votre adresse email doit faire partie d'un de ces domaines:"
+    },
+    "title": {
+      "searchCarpool" : "Chercher un trajet dans la communauté"
+    },
+    "urlCommunityUser":"/community-user"
+  },
+  "en": {
+    "buttons": {
+      "publish": {
+          "label": "Publish an ad",
+          "route": "carpool/search/post"
+      },
+      "search": {
+        "label": "Search",
+        "route": ""
+      },
+      "contact":{
+        "route":"/user/messages/new"
+      }
+    },
+    "tooltips": {
+      "connected": "You have to be connected",
+      "validation": "Pending validation",
+      "domain": "You email address must be in the domain:"
+    },
+    "title": {
+      "searchCarpool" : "Search a journey in the community"
+    },
+    "urlCommunityUser":"/community-user"
+  }
+}

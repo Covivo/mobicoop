@@ -37,6 +37,7 @@ import Solidary from '@components/solidary/Solidary'
 // EVENT
 import EventList from "@components/event/EventList";
 import EventCreate from "@components/event/EventCreate";
+import Event from "@components/event/Event";
 
 export default {
   MHeader,
@@ -60,5 +61,6 @@ export default {
   UpdateProfile,
   Solidary,
   EventList,
-  EventCreate
+  EventCreate,
+  Event
 }

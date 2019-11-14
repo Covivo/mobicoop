@@ -464,3 +464,12 @@ event_create:
         fr: /evenement/creer
         en: /event/create
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventCreate
+
+# display one community
+event_show:
+    path:
+        fr: /evenement/{id}
+        en: /event/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventShow
+    requirements:
+        id: '\d+'
