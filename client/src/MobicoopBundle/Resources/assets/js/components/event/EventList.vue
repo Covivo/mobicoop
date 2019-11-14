@@ -113,7 +113,9 @@
               outlined
               tile
             >
-              <EventListItem :item="item" />
+              <EventListItem
+                :item="item"
+              />
             </v-col>
           </v-row>
         </template>

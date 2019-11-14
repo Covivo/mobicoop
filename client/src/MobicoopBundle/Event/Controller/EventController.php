@@ -51,10 +51,9 @@ class EventController extends AbstractController
         $user = $userManager->getLoggedUser();
 
         if ($user) {
-            // We get all the communities
+            // We get all the events
             $events = $eventManager->getEvents(new \DateTime());
         }
-
         return $this->render('@Mobicoop/event/events.html.twig', [
             'events' => $events,
         ]);

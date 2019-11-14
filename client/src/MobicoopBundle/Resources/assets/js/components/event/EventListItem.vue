@@ -1,26 +1,6 @@
 <template>
   <v-card v-if="item">
     <v-row>
-      <v-col cols="3">
-        <v-img
-          v-if="item['images'][0]"
-          :src="item['images'][0]['versions']['square_250']"
-          lazy-src="https://picsum.photos/id/11/10/6"
-          aspect-ratio="1"
-          class="grey lighten-2"
-          max-width="200"
-          max-height="150"
-        />
-        <v-img
-          v-else
-          src="https://picsum.photos/id/11/500/300"
-          lazy-src="https://picsum.photos/id/11/10/6"
-          aspect-ratio="1"
-          class="grey lighten-2"
-          max-width="200"
-          max-height="150"
-        />
-      </v-col>
       <v-col cols="6">
         <v-card-title>
           <div>
@@ -59,8 +39,8 @@
 </template>
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/community/CommunityListItem.json";
-import TranslationsClient from "@clientTranslations/components/community/CommunityList.json";
+import Translations from "@translations/components/event/EventListItem.json";
+import TranslationsClient from "@clientTranslations/components/event/EventListItem.json";
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
@@ -75,7 +55,9 @@ export default {
   },
   methods:{
     linkToCommunityShow: function (item) {
-      console.info(item)
+      console.info(item.id)
+      console.info(item.name)
+      console.info(item.images)
       return this.$t('routes.community', {id:item.id});
     }
   }

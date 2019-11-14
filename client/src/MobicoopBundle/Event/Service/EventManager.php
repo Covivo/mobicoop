@@ -84,7 +84,7 @@ class EventManager
         //Set use time = 1, if user set time
         $flagTime = ($data->get('returnTime') == null && $data->get('outwardTime') == null) ?  0 : 1;
         $event->setUseTime($flagTime);
-        $event->setStatus(0);
+        $event->setStatus(1);
 
         // set event infos
         $event->setName($data->get('name'));
