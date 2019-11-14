@@ -23,13 +23,14 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Carpooling : matching between an offer and a request.
  */
-class Matching implements \JsonSerializable
+class Matching implements ResourceInterface, \JsonSerializable
 {
     /**
      * @var int The id of this matching.
@@ -188,6 +189,7 @@ class Matching implements \JsonSerializable
         return
         [
             'id'                => $this->getId(),
+            'iri'               => $this->getIri(),
             'proposalOffer'     => $this->getProposalOffer(),
             'proposalRequest'   => $this->getProposalRequest(),
             'criteria'          => $this->getCriteria(),

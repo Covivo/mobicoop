@@ -112,44 +112,42 @@ class AskManager
      * Create an ask from already matched Proposal
      * @param Proposal $proposal The new Proposal
      * @param Matching $matching between those two proposals
+     * @param bool $formal Create a formal ask
      */
-    public function createAskFromMatchedProposal(Proposal $proposal, Matching $matching)
+    public function createAskFromMatchedProposal(Proposal $proposal, Matching $matching, bool $formal=false)
     {
         $ask = new Ask();
-        $ask->setStatus(Ask::STATUS_INITIATED); // Initial state of an Ask
+        if ($formal) {
+            // if it's a formal ask, the status is pending
+            $ask->setStatus(Ask::STATUS_PENDING);
+        } else {
+            // if it's not a formal ask, the status is initiated
+            $ask->setStatus(Ask::STATUS_INITIATED);
+        }
         $ask->setType($proposal->getType());
         $ask->setUser($proposal->getUser());
         $ask->setMatching($matching);
 
-        $criteria = clone $proposal->getCriteria();
-
+        // we use the matching criteria
+        $criteria = clone $matching->getCriteria();
         $ask->setCriteria($criteria);
         
-        // We are using the new proposal waypoints to create the Ask's waypoints
-        $waypoints = $proposal->getWaypoints();
+        // we use the matching waypoints
+        $waypoints = $matching->getWaypoints();
         foreach ($waypoints as $waypoint) {
             $ask->addWaypoint($waypoint);
         }
 
-        // Ask History
-        $askHistory = new AskHistory();
-        $askHistory->setStatus(1);
-        $askHistory->setType($ask->getType());
-        // We need an empty initial message however it would not appear in the mailbox
-        $message = new Message();
-        $message->setText("");
-        $message->setUser($proposal->getUser());
-
-        // I'm setting the right receipient
-        $recipient = new Recipient();
-        $recipient->setStatus(Recipient::STATUS_READ);
-        $recipient->setUser($proposal->getMatchedProposal()->getUser());
-        $message->addRecipient($recipient);
-
-        $askHistory->setMessage($message);
-
-
-        $ask->addAskHistory($askHistory);
+        if ($proposal->getAskLinked()) {
+            // there's already an ask linked to the proposal, it's the return trip
+            $ask->setAskLinked($proposal->getAskLinked());
+        } else {
+            // Ask History
+            $askHistory = new AskHistory();
+            $askHistory->setStatus($ask->getStatus());
+            $askHistory->setType($ask->getType());
+            $ask->addAskHistory($askHistory);
+        }
         
         return $this->createAsk($ask);
     }

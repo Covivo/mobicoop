@@ -166,6 +166,12 @@ class Result
     private $price;
 
     /**
+     * @var string The computed rounded price to display.
+     * @Groups("results")
+     */
+    private $roundedPrice;
+
+    /**
      * @var string The comment to display.
      * @Groups("results")
      */
@@ -465,6 +471,16 @@ class Result
     public function setPrice(?string $price)
     {
         $this->price = $price;
+    }
+
+    public function getRoundedPrice(): ?string
+    {
+        return $this->roundedPrice;
+    }
+    
+    public function setRoundedPrice(?string $roundedPrice)
+    {
+        $this->roundedPrice = $roundedPrice;
     }
 
     public function getComment(): ?string

@@ -288,6 +288,12 @@ class Deserializer
         if (isset($data["proposalLinked"]) && is_array($data["proposalLinked"])) {
             $proposal->setProposalLinked(self::deserializeProposal($data['proposalLinked']));
         }
+        if (isset($data["matchingLinked"]) && is_array($data["matchingLinked"])) {
+            $proposal->setMatchingLinked(self::deserializeMatching($data['matchingLinked']));
+        }
+        if (isset($data["askLinked"]) && is_array($data["askLinked"])) {
+            $proposal->setAskLinked(self::deserializeAsk($data['askLinked']));
+        }
         //echo "<pre>" . print_r($proposal,true) . "</pre>";exit;
         return $proposal;
     }
@@ -785,6 +791,9 @@ class Deserializer
         }
         if (isset($data["ask"])) {
             $ask->setAsk(self::deserializeAsk($data["ask"]));
+        }
+        if (isset($data["askLinked"])) {
+            $ask->setAskLinked(self::deserializeAsk($data["askLinked"]));
         }
         if (isset($data["waypoints"])) {
             foreach ($data["waypoints"] as $waypoint) {

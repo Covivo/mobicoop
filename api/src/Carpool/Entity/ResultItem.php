@@ -222,22 +222,52 @@ class ResultItem
      * @var string The price by km asked by the driver.
      * @Groups("results")
      */
-    private $priceKm;
+    private $driverPriceKm;
+
+    /**
+     * @var string The price by km proposed by the passenger.
+     * @Groups("results")
+     */
+    private $passengerPriceKm;
 
     /**
      * @var string The original price asked by the driver for his trip.
      * @Groups("results")
      */
-    private $originalPrice;
+    private $driverOriginalPrice;
 
     /**
-     * @var string The computed price for the common distance carpooled.
+     * @var string The original price proposed by the passenger for his trip.
+     * @Groups("results")
+     */
+    private $passengerOriginalPrice;
+
+    /**
+     * @var string The rounded driver original price.
+     * @Groups("results")
+     */
+    private $driverOriginalRoundedPrice;
+
+    /**
+     * @var string The rounded passenger original price.
+     * @Groups("results")
+     */
+    private $passengerOriginalRoundedPrice;
+
+    /**
+     * @var string The computed price for the carpool.
      * @Groups("results")
      */
     private $computedPrice;
 
     /**
-     * @var int The original distance in metres.
+     * @var string The rounded computed price.
+     * @Groups("results")
+     */
+    private $computedRoundedPrice;
+
+    /**
+     * @var int The driver original distance in metres.
      * @Groups("results")
      */
     private $originalDistance;
@@ -288,7 +318,6 @@ class ResultItem
      * @var int The detour duration in seconds.
      * @Groups("results")
      */
-    
     private $detourDuration;
 
     /**
@@ -298,7 +327,7 @@ class ResultItem
     private $detourDurationPercent;
     
     /**
-     * @var int The common distance in metres.
+     * @var int The common distance in metres (=passenger distance).
      * @Groups("results")
      */
     private $commonDistance;
@@ -666,25 +695,25 @@ class ResultItem
     public function setMultipleTimes(): self
     {
         $time = [];
-        if ($this->isMonCheck()) {
+        if ($this->isMonCheck() && $this->getMonTime()) {
             $time[$this->getMonTime()->format('His')] = 1;
         }
-        if ($this->isTueCheck()) {
+        if ($this->isTueCheck() && $this->getTueTime()) {
             $time[$this->getTueTime()->format('His')] = 1;
         }
-        if ($this->isWedCheck()) {
+        if ($this->isWedCheck() && $this->getWedTime()) {
             $time[$this->getWedTime()->format('His')] = 1;
         }
-        if ($this->isThuCheck()) {
+        if ($this->isThuCheck() && $this->getThuTime()) {
             $time[$this->getThuTime()->format('His')] = 1;
         }
-        if ($this->isFriCheck()) {
+        if ($this->isFriCheck() && $this->getFriTime()) {
             $time[$this->getFriTime()->format('His')] = 1;
         }
-        if ($this->isSatCheck()) {
+        if ($this->isSatCheck() && $this->getSatTime()) {
             $time[$this->getSatTime()->format('His')] = 1;
         }
-        if ($this->isSunCheck()) {
+        if ($this->isSunCheck() && $this->getSunTime()) {
             $time[$this->getSunTime()->format('His')] = 1;
         }
         $this->multipleTimes = (count($time) > 1);
@@ -692,24 +721,64 @@ class ResultItem
         return $this;
     }
 
-    public function getPriceKm(): ?string
+    public function getDriverPriceKm(): ?string
     {
-        return $this->priceKm;
+        return $this->driverPriceKm;
     }
     
-    public function setPriceKm(?string $priceKm)
+    public function setDriverPriceKm(?string $driverPriceKm)
     {
-        $this->priceKm = $priceKm;
+        $this->driverPriceKm = $driverPriceKm;
     }
 
-    public function getOriginalPrice(): ?string
+    public function getPassengerPriceKm(): ?string
     {
-        return $this->originalPrice;
+        return $this->passengerPriceKm;
     }
     
-    public function setOriginalPrice(?string $originalPrice)
+    public function setPassengerPriceKm(?string $passengerPriceKm)
     {
-        $this->originalPrice = $originalPrice;
+        $this->passengerPriceKm = $passengerPriceKm;
+    }
+
+    public function getDriverOriginalPrice(): ?string
+    {
+        return $this->driverOriginalPrice;
+    }
+    
+    public function setDriverOriginalPrice(?string $driverOriginalPrice)
+    {
+        $this->driverOriginalPrice = $driverOriginalPrice;
+    }
+
+    public function getPassengerOriginalPrice(): ?string
+    {
+        return $this->passengerOriginalPrice;
+    }
+    
+    public function setPassengerOriginalPrice(?string $passengerOriginalPrice)
+    {
+        $this->passengerOriginalPrice = $passengerOriginalPrice;
+    }
+
+    public function getDriverOriginalRoundedPrice(): ?string
+    {
+        return $this->driverOriginalRoundedPrice;
+    }
+    
+    public function setDriverOriginalRoundedPrice(?string $driverOriginalRoundedPrice)
+    {
+        $this->driverOriginalRoundedPrice = $driverOriginalRoundedPrice;
+    }
+
+    public function getPassengerOriginalRoundedPrice(): ?string
+    {
+        return $this->passengerOriginalRoundedPrice;
+    }
+    
+    public function setPassengerOriginalRoundedPrice(?string $passengerOriginalRoundedPrice)
+    {
+        $this->passengerOriginalRoundedPrice = $passengerOriginalRoundedPrice;
     }
 
     public function getComputedPrice(): ?string
@@ -720,6 +789,16 @@ class ResultItem
     public function setComputedPrice(?string $computedPrice)
     {
         $this->computedPrice = $computedPrice;
+    }
+
+    public function getComputedRoundedPrice(): ?string
+    {
+        return $this->computedRoundedPrice;
+    }
+    
+    public function setComputedRoundedPrice(?string $computedRoundedPrice)
+    {
+        $this->computedRoundedPrice = $computedRoundedPrice;
     }
 
     public function getOriginalDistance(): ?int

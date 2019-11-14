@@ -36,6 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**
  * Controller class for carpooling related actions.
@@ -201,41 +202,45 @@ class CarpoolController extends AbstractController
 
     /**
      * Initiate contact from carpool results
-     * POST
+     * (AJAX POST)
      */
     public function carpoolContact(Request $request, ProposalManager $proposalManager, UserManager $userManager)
     {
         $params = json_decode($request->getContent(), true);
 
-        // if the proposal search is set, it means the contact is made after an ad matching
-        if (isset($params['proposalSearch'])) {
+        // if the matching set, it means the contact is made after an ad matching
+        if (isset($params['matching'])) {
             // create the ask and return the result
+            return $this->json("ok");
         }
         
-        // the contact is made after a search, we have to create the ad from the search
-        $data = [
-            "private" => true,
-            "proposalId" => $params['proposalId'],
-            "origin"=>$params['origin'],
-            "destination"=>$params['destination'],
-            "outwardDate" => $params['date'] ? DateTime::createFromFormat(DateTime::ISO8601, $params['date'])->format('Y-m-d') : (new \Datetime())->format('Y-m-d'),
-            "outwardTime" => $params['time'] ? DateTime::createFromFormat(DateTime::ISO8601, $params['time'])->format('H:i') : null,
-            "seats" => isset($params['seats']) ? $params['seats'] : 1,
-            "driver" => $params['driver'],
-            "passenger" => $params['passenger'],
-            "priceKm" => $params['priceKm'],
-            "regular" => $params['regular'],
-            "waypoints" => []
-        ];
-        $proposal = $proposalManager->createProposalFromAd($data, $userManager->getLoggedUser());
-        if (!is_null($proposal)) {
+        if (!is_null($proposalManager->createProposalFromSearch($userManager->getLoggedUser(), $params))) {
             return $this->json("ok");
         } else {
             return $this->json("error");
         }
     }
 
+    /**
+     * Formal ask from carpool results
+     * (AJAX POST)
+     */
+    public function carpoolAsk(Request $request, ProposalManager $proposalManager, UserManager $userManager)
+    {
+        $params = json_decode($request->getContent(), true);
 
+        // if the matching is set, it means the ask is made after an ad matching
+        if (isset($params['matching'])) {
+            // create the ask and return the result
+            return $this->json("ok");
+        }
+                
+        if (!is_null($proposalManager->createProposalFromSearch($userManager->getLoggedUser(), $params, true))) {
+            return $this->json("ok");
+        } else {
+            return $this->json("error");
+        }
+    }
 
     /**
      * Provider rdex

@@ -263,6 +263,14 @@ carpool_contact:
         en: /carpool/contact
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolContact
 
+# carpool ask from results (POST)
+carpool_result_ask:
+    methods: [POST]
+    path:
+        fr: /covoiturage/demande
+        en: /carpool/ask
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAsk
+
 # rdex provider (AJAX)
 rdex_provider:
     path:
@@ -314,6 +322,16 @@ community_join:
     requirements:
         id: '\d+'
 
+# check if a user is an accepted member of a community (AJAX)
+community_user_is_member:
+    methods: [POST]
+    path:
+        fr: /community/isMember
+        en: /community/isMember
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::isMember
+    requirements:
+        id: '\d+'
+
 # get a community user (AJAX)
 community_user:
     methods: [POST]
@@ -350,6 +368,15 @@ community_proposals:
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityProposals
     requirements:
         id: '\d+'
+
+# get all available communities for the logged user (AJAX)
+community_user_available:
+    path:
+        fr: /communautes/utilisateur/{userId}
+        en: /communities/user/{userId}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUserAvailable
+    requirements:
+        userId: '\d+'
 
 ##########################
 # editorial pages routes #
