@@ -292,7 +292,7 @@
                       <v-btn
                         color="primary"
                         text
-                        @click="createCommunity, dialog = false"
+                        @click="createCommunity"
                       >
                         {{ $t('popUp.validation') }}
                       </v-btn>
@@ -405,6 +405,7 @@ export default {
     },
     createCommunity() {
       this.loading = true;
+      this.dialog = false;
       if (this.name  && this.fullDescription && this.avatar && this.communityAddress) {
         let newEvent = new FormData();
         newEvent.append("name", this.name);
