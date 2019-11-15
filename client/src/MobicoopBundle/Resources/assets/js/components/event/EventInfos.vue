@@ -38,6 +38,14 @@
           <p class="body-2">
             {{ event.fullDescription }}
           </p>
+          <v-row>
+            <p class="body-2">
+              {{ event.fromDate.date }}
+            </p>
+            <p class="body-2">
+              {{ event.toDate.date }}
+            </p>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-col>
