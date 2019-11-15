@@ -135,7 +135,7 @@ class CarpoolController extends AbstractController
 
             $proposal = $proposalManager->getProposal($data['proposalId']);
 
-//            $this->denyAccessUnlessGranted('delete_ad', $proposal);
+            $this->denyAccessUnlessGranted('delete_ad', $proposal);
 
             if ($response = $proposalManager->deleteProposal($data['proposalId'])) {
                 return new JsonResponse(
