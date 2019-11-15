@@ -449,12 +449,10 @@ export default {
       }
     },
     getCommunities() {
-      axios 
-        .get(this.$t('communities.route', {id: this.user.id}), {
-          headers:{
-            'content-type': 'application/json'
-          }
-        })
+      let params = {
+        'userId':this.user.id
+      }
+      axios.post(this.$t("communities.route"), params)
         .then(res => {
           this.communities = res.data;
         });
