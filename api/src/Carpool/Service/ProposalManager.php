@@ -235,7 +235,7 @@ class ProposalManager
         if ($communityId && $userId) {
             // we check if the user is member of the community
             if ($this->communityManager->isRegistered($communityId, $userId)) {
-                if ($community = $this->communityManager->get($communityId)) {
+                if ($community = $this->communityManager->getCommunity($communityId)) {
                     $proposal->addCommunity($community);
                 }
             }
@@ -257,7 +257,7 @@ class ProposalManager
     {
         $date = new \DateTime("UTC");
         $this->logger->info('Proposal creation | Start ' . $date->format("Ymd H:i:s.u"));
-                
+        
         // calculation of the min and max times
         // we calculate the min and max times only if the time is set (it could be not set for a simple search)
         if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $proposal->getCriteria()->getFromTime()) {

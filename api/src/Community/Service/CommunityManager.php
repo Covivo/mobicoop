@@ -187,12 +187,12 @@ class CommunityManager
     }
 
     /**
-     * Return a community
+     * Get a community by its id
      *
      * @param integer $communityId
      * @return Community|null
      */
-    public function get(int $communityId)
+    public function getCommunity(int $communityId)
     {
         return $this->communityRepository->find($communityId);
     }

@@ -23,7 +23,6 @@
 
 namespace App\Carpool\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -53,8 +52,9 @@ class Ad
 {
     const DEFAULT_ID = 999999999999;
     
-    const FREQUENCY_PUNCTUAL = 1;
-    const FREQUENCY_REGULAR = 2;
+    const ROLE_DRIVER = 1;
+    const ROLE_PASSENGER = 2;
+    const ROLE_DRIVER_OR_PASSENGER = 3;
 
     /**
      * @var int The id of this ad.
@@ -79,32 +79,46 @@ class Ad
     private $frequency;
 
     /**
-     * @var ArrayCollection The waypoints for the outward.
+     * @var array The waypoints for the outward.
      *
      * @Groups({"read","write"})
      */
     private $outwardWaypoints;
 
     /**
-     * @var ArrayCollection|null The waypoints for the return.
+     * @var array|null The waypoints for the return.
      *
      * @Groups({"read","write"})
      */
     private $returnWaypoints;
 
     /**
-     * @var \DateTimeInterface|null The date for the outward if the frequency is punctual.
+     * @var \DateTimeInterface|null The date for the outward if the frequency is punctual, the start date of the outward if the frequency is regular.
      *
      * @Groups({"read","write"})
      */
     private $outwardDate;
 
     /**
-     * @var \DateTimeInterface|null The date for the return if the frequency is punctual.
+     * @var \DateTimeInterface|null The limit date for the outward if the frequency is regular.
+     *
+     * @Groups({"read","write"})
+     */
+    private $outwardLimitDate;
+
+    /**
+     * @var \DateTimeInterface|null The date for the return if the frequency is punctual, the start date of the return if the frequency is regular.
      *
      * @Groups({"read","write"})
      */
     private $returnDate;
+
+    /**
+     * @var \DateTimeInterface|null The limit date for the return if the frequency is regular.
+     *
+     * @Groups({"read","write"})
+     */
+    private $returnLimitDate;
 
     /**
      * @var \DateTimeInterface|null The time for the outward if the frequency is punctual.
@@ -121,7 +135,7 @@ class Ad
     private $returnTime;
 
     /**
-     * @var ArrayCollection|null The schedule for if the frequency is regular.
+     * @var array|null The schedule for if the frequency is regular.
      *
      * @Groups({"read","write"})
      */
@@ -135,36 +149,68 @@ class Ad
     private $priceKm;
 
     /**
-    * @var float|null The total price selected by the user :
+    * @var float|null The total price of the outward selected by the user :
     * - as a driver if driver and passenger
     * - as a passenger only if passenger
     *
     * @Groups({"read","write"})
     */
-    private $price;
+    private $outwardPrice;
 
     /**
-    * @var float|null The total price rounded using the rounding rules.
+    * @var float|null The total price of the outward rounded using the rounding rules.
     *
     * @Groups({"read","write"})
     */
-    private $roundedPrice;
+    private $outwardRoundedPrice;
 
     /**
-    * @var float|null The total price computed by the system, using the user price per km, not rounded :
+    * @var float|null The total price of the outward computed by the system, using the user price per km, not rounded :
     * - as a driver if driver and passenger
     * - as a passenger only if passenger
     *
     * @Groups({"read","write"})
     */
-    private $computedPrice;
+    private $outwardComputedPrice;
 
     /**
-    * @var float|null The computed price rounded using the rounding rules.
+    * @var float|null The computed price of the outward rounded using the rounding rules.
     *
     * @Groups({"read","write"})
     */
-    private $computedRoundedPrice;
+    private $outwardComputedRoundedPrice;
+
+    /**
+    * @var float|null The total price of the return selected by the user :
+    * - as a driver if driver and passenger
+    * - as a passenger only if passenger
+    *
+    * @Groups({"read","write"})
+    */
+    private $returnPrice;
+
+    /**
+    * @var float|null The total price of the return rounded using the rounding rules.
+    *
+    * @Groups({"read","write"})
+    */
+    private $returnRoundedPrice;
+
+    /**
+    * @var float|null The total price of the return computed by the system, using the user price per km, not rounded :
+    * - as a driver if driver and passenger
+    * - as a passenger only if passenger
+    *
+    * @Groups({"read","write"})
+    */
+    private $returnComputedPrice;
+
+    /**
+    * @var float|null The computed price of the return rounded using the rounding rules.
+    *
+    * @Groups({"read","write"})
+    */
+    private $returnComputedRoundedPrice;
 
     /**
      * @var int|null The number of seats available / required.
@@ -230,7 +276,35 @@ class Ad
     private $comment;
 
     /**
-     * @var ArrayCollection|null The carpool results for the ad.
+     * @var int The user id of the ad owner.
+     *
+     * @Groups({"read","write"})
+     */
+    private $userId;
+
+    /**
+     * @var int|null The user id of the poster (used for delegation).
+     *
+     *@Groups({"read","write"})
+     */
+    private $posterId;
+
+    /**
+     * @var array|null The communities associated with the ad.
+     *
+     * @Groups({"read","write"})
+     */
+    private $communities;
+
+    /**
+     * @var int|null The event id associated with the ad.
+     *
+     * @Groups({"read","write"})
+     */
+    private $eventId;
+
+    /**
+     * @var array|null The carpool results for the ad.
      *
      * @Groups("read")
      */
@@ -239,10 +313,11 @@ class Ad
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
-        $this->outwardWaypoints = new ArrayCollection();
-        $this->returnWaypoints = new ArrayCollection();
-        $this->schedule = new ArrayCollection();
-        $this->results = new ArrayCollection();
+        $this->outwardWaypoints = [];
+        $this->returnWaypoints = [];
+        $this->schedule = [];
+        $this->communities = [];
+        $this->results = [];
     }
     
     public function getId(): ?int
@@ -274,9 +349,9 @@ class Ad
         return $this;
     }
 
-    public function getOutwardWaypoints()
+    public function getOutwardWaypoints(): array
     {
-        return $this->outwardWaypoints->getValues();
+        return $this->outwardWaypoints;
     }
     
     public function setOutwardWaypoints(array $outwardWaypoints): self
@@ -286,9 +361,9 @@ class Ad
         return $this;
     }
 
-    public function getReturnWaypoints()
+    public function getReturnWaypoints(): ?array
     {
-        return $this->returnWaypoints->getValues();
+        return $this->returnWaypoints;
     }
     
     public function setReturnWaypoints(?array $returnWaypoints): self
@@ -306,6 +381,18 @@ class Ad
     public function setOutwardDate(?\DateTimeInterface $outwardDate): self
     {
         $this->outwardDate = $outwardDate;
+
+        return $this;
+    }
+
+    public function getOutwardLimitDate(): ?\DateTimeInterface
+    {
+        return $this->outwardLimitDate;
+    }
+
+    public function setOutwardLimitDate(?\DateTimeInterface $outwardLimitDate): self
+    {
+        $this->outwardLimitDate = $outwardLimitDate;
 
         return $this;
     }
@@ -334,6 +421,18 @@ class Ad
         return $this;
     }
 
+    public function getReturnLimitDate(): ?\DateTimeInterface
+    {
+        return $this->returnLimitDate;
+    }
+
+    public function setReturnLimitDate(?\DateTimeInterface $returnLimitDate): self
+    {
+        $this->returnLimitDate = $returnLimitDate;
+
+        return $this;
+    }
+
     public function getReturnTime(): ?\DateTimeInterface
     {
         return $this->returnTime;
@@ -346,15 +445,39 @@ class Ad
         return $this;
     }
 
-    public function getSchedule()
+    public function getSchedule(): ?array
     {
-        return $this->schedule->getValues();
+        return $this->schedule;
     }
     
-    public function setSchedule(array $schedule): self
+    public function setSchedule(?array $schedule): self
     {
         $this->schedule = $schedule;
         
+        return $this;
+    }
+
+    public function getCommunities(): ?array
+    {
+        return $this->communities;
+    }
+    
+    public function setCommunities(?array $communities): self
+    {
+        $this->communities = $communities;
+        
+        return $this;
+    }
+
+    public function getEventId(): ?int
+    {
+        return $this->eventId;
+    }
+
+    public function setEventId(?int $eventId): self
+    {
+        $this->eventId = $eventId;
+
         return $this;
     }
 
@@ -368,44 +491,84 @@ class Ad
         $this->priceKm = $priceKm;
     }
 
-    public function getPrice(): ?string
+    public function getOutwardPrice(): ?string
     {
-        return $this->price;
+        return $this->outwardPrice;
     }
     
-    public function setPrice(?string $price)
+    public function setOutwardPrice(?string $outwardPrice)
     {
-        $this->price = $price;
+        $this->outwardPrice = $outwardPrice;
     }
 
-    public function getRoundedPrice(): ?string
+    public function getOutwardRoundedPrice(): ?string
     {
-        return $this->roundedPrice;
+        return $this->outwardRoundedPrice;
     }
     
-    public function setRoundedPrice(?string $roundedPrice)
+    public function setOutwardRoundedPrice(?string $outwardRoundedPrice)
     {
-        $this->roundedPrice = $roundedPrice;
+        $this->outwardRoundedPrice = $outwardRoundedPrice;
     }
 
-    public function getComputedPrice(): ?string
+    public function getOutwardComputedPrice(): ?string
     {
-        return $this->computedPrice;
+        return $this->outwardComputedPrice;
     }
     
-    public function setComputedPrice(?string $computedPrice)
+    public function setOutwardComputedPrice(?string $outwardComputedPrice)
     {
-        $this->computedPrice = $computedPrice;
+        $this->outwardComputedPrice = $outwardComputedPrice;
     }
 
-    public function getComputedRoundedPrice(): ?string
+    public function getOutwardComputedRoundedPrice(): ?string
     {
-        return $this->computedRoundedPrice;
+        return $this->outwardComputedRoundedPrice;
     }
     
-    public function setComputedRoundedPrice(?string $computedRoundedPrice)
+    public function setOutwardComputedRoundedPrice(?string $outwardComputedRoundedPrice)
     {
-        $this->computedRoundedPrice = $computedRoundedPrice;
+        $this->outwardComputedRoundedPrice = $outwardComputedRoundedPrice;
+    }
+
+    public function getReturnPrice(): ?string
+    {
+        return $this->returnPrice;
+    }
+    
+    public function setReturnPrice(?string $returnPrice)
+    {
+        $this->returnPrice = $returnPrice;
+    }
+
+    public function getReturnRoundedPrice(): ?string
+    {
+        return $this->returnRoundedPrice;
+    }
+    
+    public function setReturnRoundedPrice(?string $returnRoundedPrice)
+    {
+        $this->returnRoundedPrice = $returnRoundedPrice;
+    }
+
+    public function getReturnComputedPrice(): ?string
+    {
+        return $this->returnComputedPrice;
+    }
+    
+    public function setReturnComputedPrice(?string $returnComputedPrice)
+    {
+        $this->returnComputedPrice = $returnComputedPrice;
+    }
+
+    public function getReturnComputedRoundedPrice(): ?string
+    {
+        return $this->returnComputedRoundedPrice;
+    }
+    
+    public function setReturnComputedRoundedPrice(?string $returnComputedRoundedPrice)
+    {
+        $this->returnComputedRoundedPrice = $returnComputedRoundedPrice;
     }
 
     public function getSeats(): int
@@ -516,12 +679,36 @@ class Ad
         return $this;
     }
 
-    public function getResults()
+    public function getUserId(): int
+    {
+        return $this->userId;
+    }
+
+    public function setUserId(int $userId): self
+    {
+        $this->userId = $userId;
+
+        return $this;
+    }
+
+    public function getPosterId(): ?int
+    {
+        return $this->posterId;
+    }
+
+    public function setPosterId(?int $posterId): self
+    {
+        $this->posterId = $posterId;
+
+        return $this;
+    }
+
+    public function getResults(): array
     {
         return $this->results;
     }
 
-    public function setResults($results)
+    public function setResults(array $results)
     {
         $this->results = $results;
 

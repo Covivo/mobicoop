@@ -43,6 +43,7 @@ use App\User\Repository\UserNotificationRepository;
 use App\User\Entity\UserNotification;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\User\Event\UserUpdatedSelfEvent;
+use App\User\Repository\UserRepository;
 
 /**
  * User manager service.
@@ -57,6 +58,7 @@ class UserManager
     private $messageRepository;
     private $notificationRepository;
     private $userNotificationRepository;
+    private $userRepository;
     private $logger;
     private $eventDispatcher;
     private $encoder;
@@ -67,7 +69,7 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, UserRepository $userRepository)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -78,6 +80,18 @@ class UserManager
         $this->encoder = $encoder;
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
+        $this->userRepository = $userRepository;
+    }
+
+    /**
+     * Get a user by its id.
+     *
+     * @param integer $id
+     * @return User|null
+     */
+    public function getUser(int $id)
+    {
+        return $this->userRepository->find($id);
     }
     
     /**

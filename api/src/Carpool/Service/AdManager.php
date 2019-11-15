@@ -26,6 +26,14 @@ namespace App\Carpool\Service;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
+use App\Carpool\Entity\Waypoint;
+use App\Community\Exception\CommunityNotFoundException;
+use App\Community\Service\CommunityManager;
+use App\Event\Exception\EventNotFoundException;
+use App\Event\Service\EventManager;
+use App\Geography\Entity\Address;
+use App\User\Exception\UserNotFoundException;
+use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -37,6 +45,10 @@ class AdManager
 {
     private $entityManager;
     private $proposalManager;
+    private $userManager;
+    private $communityManager;
+    private $eventManager;
+    private $params;
 
     /**
      * Constructor.
@@ -44,350 +56,229 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, array $params)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
+        $this->userManager = $userManager;
+        $this->communityManager = $communityManager;
+        $this->eventManager = $eventManager;
+        $this->params = $params;
     }
     
     /**
-     * Create an ad
+     * Create an ad.
+     * This method creates a proposal, and its linked proposal for a return trip.
+     * It returns the ad created, with its outward and return results.
+     *
+     * @param Ad $ad    The ad to create
+     * @return Ad
      */
     public function createAd(Ad $ad)
     {
-        $proposal = new Proposal();
-        $criteria = new Criteria();
+        $outwardProposal = new Proposal();
+        $outwardCriteria = new Criteria();
+        $returnProposal = null;
+        $returnCriteria = null;
+
+        // we check if it's a round trip
+        if ($ad->getReturnWaypoints()) {
+            $outwardProposal->setType(Proposal::TYPE_OUTWARD);
+        } else {
+            $outwardProposal->setType(Proposal::TYPE_ONE_WAY);
+        }
+
+        // we set the user of the proposal
+        if ($user = $this->userManager->getUser($ad->getUserId())) {
+            $outwardProposal->setUser($user);
+        } else {
+            throw new UserNotFoundException('User ' . $ad->getUserId() . ' not found');
+        }
 
         // we check if the ad is posted for another user (delegation)
-        if (isset($ad['user'])) {
-            $user = $this->userManager->getUser($ad['user']);
-            $proposal->setUser($user);
-            $proposal->setUserDelegate($poster);
-        } else {
-            $proposal->setUser($poster);
-        }
-        // we check if the proposal is private (usually if the proposal is created after a search)
-        if (isset($ad['private']) && $ad['private']) {
-            $proposal->setPrivate(true);
-        }
-        // we check if there's a proposalID
-        if (isset($ad['proposalId'])) {
-            // there's a proposalId : we know that it's a match to force
-            $proposal->setMatchingProposal(new Proposal($ad['proposalId']));
-        }
-        // we check if a formal ask has to be made after the creation of the proposal (usually if the proposal is created after a search)
-        if (isset($ad['formalAsk'])) {
-            $proposal->setFormalAsk($ad['formalAsk']);
-        }
-        // we set the type to one way, we'll check later if it's a return trip
-        $proposal->setType(Proposal::TYPE_ONE_WAY);
-        if (isset($ad['message'])) {
-            $proposal->setComment($ad['message']);
-        }
-        // communities
-        if (isset($ad['communities'])) {
-            foreach ($ad['communities'] as $community) {
-                $proposal->addCommunity($community);
-            }
-        }
-        $criteria->setDriver($ad['driver']);
-        $criteria->setPassenger($ad['passenger']);
-        $criteria->setSeats($ad['seats']);
-        if (isset($ad['solidary'])) {
-            $criteria->setSolidaryExclusive($ad['solidary']);
-        }
-        if (isset($ad['priceKm'])) {
-            $criteria->setPriceKm($ad['priceKm']);
-        }
-        if (isset($ad['price'])) {
-            $criteria->setPrice($ad['price']);
-        }
-        if (isset($ad['roundedPrice'])) {
-            $criteria->setRoundedPrice($ad['roundedPrice']);
-        }
-        if (isset($ad['computedPrice'])) {
-            $criteria->setComputedPrice($ad['computedPrice']);
-        }
-        if (isset($ad['computedRoundedPrice'])) {
-            $criteria->setComputedRoundedPrice($ad['computedRoundedPrice']);
-        }
-        if (isset($ad['outwardPrice'])) {
-            $criteria->setPrice($ad['outwardPrice']);
-        }
-        if (isset($ad['outwardRoundedPrice'])) {
-            $criteria->setRoundedPrice($ad['outwardRoundedPrice']);
-        }
-        if (isset($ad['outwardComputedPrice'])) {
-            $criteria->setComputedPrice($ad['outwardComputedPrice']);
-        }
-        if (isset($ad['outwardComputedRoundedPrice'])) {
-            $criteria->setComputedRoundedPrice($ad['outwardComputedRoundedPrice']);
-        }
-        if (isset($ad['luggage'])) {
-            $criteria->setLuggage($ad['luggage']);
-        }
-        if (isset($ad['bike'])) {
-            $criteria->setBike($ad['bike']);
-        }
-        if (isset($ad['backSeats'])) {
-            $criteria->setBackSeats($ad['backSeats']);
-        }
-        if ($ad['regular']) {
-            // regular
-            $criteria->setFrequency(Criteria::FREQUENCY_REGULAR);
-            if (isset($ad['fromDate'])) {
-                $criteria->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad['fromDate']));
+        if ($ad->getPosterId()) {
+            if ($poster = $this->userManager->getUser($ad->getPosterId())) {
+                $outwardProposal->setUserDelegate($poster);
             } else {
-                $criteria->setFromDate(new \Datetime());
+                throw new UserNotFoundException('Poster ' . $ad->getPosterId() . ' not found');
             }
-            if (isset($ad['toDate'])) {
-                $criteria->setToDate(\DateTime::createFromFormat('Y-m-d', $ad['toDate']));
+        }
+
+        // comment
+        $outwardProposal->setComment($ad->getComment());
+
+        // communities
+        if ($ad->getCommunities()) {
+            foreach ($ad->getCommunities() as $communityId) {
+                if ($community = $this->communityManager->getCommunity($communityId)) {
+                    $outwardProposal->addCommunity($community);
+                } else {
+                    throw new CommunityNotFoundException('Community ' . $communityId . ' not found');
+                }
             }
+        }
+
+        // event
+        if ($ad->getEventId()) {
+            if ($event = $this->eventManager->getEvent($ad->getEventId())) {
+                $outwardProposal->setEvent($event);
+            } else {
+                throw new EventNotFoundException('Event ' . $ad->getEventId() . ' not found');
+            }
+        }
+        
+        // criteria
+
+        // driver / passenger / seats
+        $outwardCriteria->setDriver($ad->getRole() == Ad::ROLE_DRIVER || $ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER);
+        $outwardCriteria->setPassenger($ad->getRole() == Ad::ROLE_PASSENGER || $ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER);
+        $outwardCriteria->setSeats($ad->getSeats());
+
+        // solidary
+        $outwardCriteria->setSolidary($ad->isSolidary());
+        $outwardCriteria->setSolidaryExclusive($ad->isSolidaryExclusive());
+
+        // prices
+        $outwardCriteria->setPriceKm($ad->getPriceKm());
+        $outwardCriteria->setPrice($ad->getOutwardPrice());
+        $outwardCriteria->setRoundedPrice($ad->getOutwardRoundedPrice());
+        $outwardCriteria->setComputedPrice($ad->getOutwardComputedPrice());
+        $outwardCriteria->setComputedRoundedPrice($ad->getOutwardComputedRoundedPrice());
+        
+        // misc
+        $outwardCriteria->setLuggage($ad->hasLuggage());
+        $outwardCriteria->setBike($ad->hasBike());
+        $outwardCriteria->setBackSeats($ad->hasBackSeats());
+
+        // dates and times
+        if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+            $outwardCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
+            $outwardCriteria->setFromDate($ad->getOutwardDate() ? $ad->getOutwardDate() : new \DateTime());
+            $outwardCriteria->setToDate($ad->getOutwardLimitDate() ? \DateTime::createFromFormat('Y-m-d', $ad->getOutwardLimitDate()) : null);
             
-            foreach ($ad['schedules'] as $schedule) {
+            foreach ($ad->getSchedule() as $schedule) {
                 if ($schedule['outwardTime'] != '') {
                     if (isset($schedule['mon']) && $schedule['mon']) {
-                        $criteria->setMonCheck(true);
-                        $criteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $criteria->setMonMarginDuration($this->marginTime);
+                        $outwardCriteria->setMonCheck(true);
+                        $outwardCriteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
+                        $outwardCriteria->setMonMarginDuration($this->params['defaultMarginTime']);
                     }
                     if (isset($schedule['tue']) && $schedule['tue']) {
-                        $criteria->setTueCheck(true);
-                        $criteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $criteria->setTueMarginDuration($this->marginTime);
+                        $outwardCriteria->setTueCheck(true);
+                        $outwardCriteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
+                        $outwardCriteria->setTueMarginDuration($this->params['defaultMarginTime']);
                     }
                     if (isset($schedule['wed']) && $schedule['wed']) {
-                        $criteria->setWedCheck(true);
-                        $criteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $criteria->setWedMarginDuration($this->marginTime);
+                        $outwardCriteria->setWedCheck(true);
+                        $outwardCriteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
+                        $outwardCriteria->setWedMarginDuration($this->params['defaultMarginTime']);
                     }
                     if (isset($schedule['thu']) && $schedule['thu']) {
-                        $criteria->setThuCheck(true);
-                        $criteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $criteria->setThuMarginDuration($this->marginTime);
+                        $outwardCriteria->setThuCheck(true);
+                        $outwardCriteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
+                        $outwardCriteria->setThuMarginDuration($this->params['defaultMarginTime']);
                     }
                     if (isset($schedule['fri']) && $schedule['fri']) {
-                        $criteria->setFriCheck(true);
-                        $criteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $criteria->setFriMarginDuration($this->marginTime);
+                        $outwardCriteria->setFriCheck(true);
+                        $outwardCriteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
+                        $outwardCriteria->setFriMarginDuration($this->params['defaultMarginTime']);
                     }
                     if (isset($schedule['sat']) && $schedule['sat']) {
-                        $criteria->setSatCheck(true);
-                        $criteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $criteria->setSatMarginDuration($this->marginTime);
+                        $outwardCriteria->setSatCheck(true);
+                        $outwardCriteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
+                        $outwardCriteria->setSatMarginDuration($this->params['defaultMarginTime']);
                     }
                     if (isset($schedule['sun']) && $schedule['sun']) {
-                        $criteria->setSunCheck(true);
-                        $criteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $criteria->setSunMarginDuration($this->marginTime);
+                        $outwardCriteria->setSunCheck(true);
+                        $outwardCriteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
+                        $outwardCriteria->setSunMarginDuration($this->params['defaultMarginTime']);
                     }
-                }
-                if (isset($schedule['returnTime']) && $schedule['returnTime'] != '') {
-                    $proposal->setType(Proposal::TYPE_OUTWARD);
                 }
             }
         } else {
             // punctual
-            $criteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
-            $criteria->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad['outwardDate']));
-            $criteria->setFromTime($ad['outwardTime'] ? \DateTime::createFromFormat('H:i', $ad['outwardTime']): null);
-            $criteria->setMarginDuration($this->marginTime);
-            if (isset($ad['returnDate']) && $ad['returnDate'] != '' && isset($ad['returnTime']) && $ad['returnTime'] != '') {
-                $proposal->setType(Proposal::TYPE_OUTWARD);
-            }
+            $outwardCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+            $outwardCriteria->setFromDate($ad->getOutwardDate() ? $ad->getOutwardDate() : new \DateTime());
+            $outwardCriteria->setFromTime($ad->getOutwardTime() ? \DateTime::createFromFormat('H:i', $ad->getOutwardTime()) : null);
+            $outwardCriteria->setMarginDuration($this->params['defaultMarginTime']);
         }
 
         // waypoints
-        $waypointOrigin = new Waypoint();
-        $originAddress = new Address();
-        if (isset($ad['origin']['houseNumber'])) {
-            $originAddress->setHouseNumber($ad['origin']['houseNumber']);
-        }
-        if (isset($ad['origin']['street'])) {
-            $originAddress->setStreet($ad['origin']['street']);
-        }
-        if (isset($ad['origin']['streetAddress'])) {
-            $originAddress->setStreetAddress($ad['origin']['streetAddress']);
-        }
-        if (isset($ad['origin']['postalCode'])) {
-            $originAddress->setPostalCode($ad['origin']['postalCode']);
-        }
-        if (isset($ad['origin']['subLocality'])) {
-            $originAddress->setSubLocality($ad['origin']['subLocality']);
-        }
-        if (isset($ad['origin']['addressLocality'])) {
-            $originAddress->setAddressLocality($ad['origin']['addressLocality']);
-        }
-        if (isset($ad['origin']['localAdmin'])) {
-            $originAddress->setLocalAdmin($ad['origin']['localAdmin']);
-        }
-        if (isset($ad['origin']['county'])) {
-            $originAddress->setCounty($ad['origin']['county']);
-        }
-        if (isset($ad['origin']['macroCounty'])) {
-            $originAddress->setMacroCounty($ad['origin']['macroCounty']);
-        }
-        if (isset($ad['origin']['region'])) {
-            $originAddress->setRegion($ad['origin']['region']);
-        }
-        if (isset($ad['origin']['macroRegion'])) {
-            $originAddress->setMacroRegion($ad['origin']['macroRegion']);
-        }
-        if (isset($ad['origin']['addressCountry'])) {
-            $originAddress->setAddressCountry($ad['origin']['addressCountry']);
-        }
-        if (isset($ad['origin']['countryCode'])) {
-            $originAddress->setCountryCode($ad['origin']['countryCode']);
-        }
-        if (isset($ad['origin']['latitude'])) {
-            $originAddress->setLatitude($ad['origin']['latitude']);
-        }
-        if (isset($ad['origin']['longitude'])) {
-            $originAddress->setLongitude($ad['origin']['longitude']);
-        }
-        if (isset($ad['origin']['elevation'])) {
-            $originAddress->setElevation($ad['origin']['elevation']);
-        }
-        if (isset($ad['origin']['name'])) {
-            $originAddress->setName($ad['origin']['name']);
-        }
-        if (isset($ad['origin']['home'])) {
-            $originAddress->setHome($ad['origin']['home']);
-        }
-        $waypointOrigin->setAddress($originAddress);
-        $waypointOrigin->setPosition(0);
-        $waypointOrigin->setDestination(false);
-        $proposal->addWaypoint($waypointOrigin);
-
-        $position = 1;
-        foreach ($ad['waypoints'] as $waypoint) {
-            if ($waypoint['visible']) {
-                $waypointStep = new Waypoint();
-                $stepAddress = new Address();
-                if (isset($waypoint['address']['houseNumber'])) {
-                    $stepAddress->setHouseNumber($waypoint['address']['houseNumber']);
-                }
-                if (isset($waypoint['address']['street'])) {
-                    $stepAddress->setStreet($waypoint['address']['street']);
-                }
-                if (isset($waypoint['address']['streetAddress'])) {
-                    $stepAddress->setStreetAddress($waypoint['address']['streetAddress']);
-                }
-                if (isset($waypoint['address']['postalCode'])) {
-                    $stepAddress->setPostalCode($waypoint['address']['postalCode']);
-                }
-                if (isset($waypoint['address']['subLocality'])) {
-                    $stepAddress->setSubLocality($waypoint['address']['subLocality']);
-                }
-                if (isset($waypoint['address']['addressLocality'])) {
-                    $stepAddress->setAddressLocality($waypoint['address']['addressLocality']);
-                }
-                if (isset($waypoint['address']['localAdmin'])) {
-                    $stepAddress->setLocalAdmin($waypoint['address']['localAdmin']);
-                }
-                if (isset($waypoint['address']['county'])) {
-                    $stepAddress->setCounty($waypoint['address']['county']);
-                }
-                if (isset($waypoint['address']['macroCounty'])) {
-                    $stepAddress->setMacroCounty($waypoint['address']['macroCounty']);
-                }
-                if (isset($waypoint['address']['region'])) {
-                    $stepAddress->setRegion($waypoint['address']['region']);
-                }
-                if (isset($waypoint['address']['macroRegion'])) {
-                    $stepAddress->setMacroRegion($waypoint['address']['macroRegion']);
-                }
-                if (isset($waypoint['address']['addressCountry'])) {
-                    $stepAddress->setAddressCountry($waypoint['address']['addressCountry']);
-                }
-                if (isset($waypoint['address']['countryCode'])) {
-                    $stepAddress->setCountryCode($waypoint['address']['countryCode']);
-                }
-                if (isset($waypoint['address']['latitude'])) {
-                    $stepAddress->setLatitude($waypoint['address']['latitude']);
-                }
-                if (isset($waypoint['address']['longitude'])) {
-                    $stepAddress->setLongitude($waypoint['address']['longitude']);
-                }
-                if (isset($waypoint['address']['elevation'])) {
-                    $stepAddress->setElevation($waypoint['address']['elevation']);
-                }
-                if (isset($waypoint['address']['name'])) {
-                    $stepAddress->setName($waypoint['address']['name']);
-                }
-                if (isset($waypoint['address']['home'])) {
-                    $stepAddress->setHome($waypoint['address']['home']);
-                }
-                $waypointStep->setAddress($stepAddress);
-                $waypointStep->setPosition($position);
-                $waypointStep->setDestination(false);
-                $proposal->addWaypoint($waypointStep);
-                $position++;
+        foreach ($ad->getOutwardWaypoints() as $position => $point) {
+            $waypoint = new Waypoint();
+            $address = new Address();
+            if (isset($point['houseNumber'])) {
+                $address->setHouseNumber($point['houseNumber']);
             }
+            if (isset($point['street'])) {
+                $address->setStreet($point['street']);
+            }
+            if (isset($point['streetAddress'])) {
+                $address->setStreetAddress($point['streetAddress']);
+            }
+            if (isset($point['postalCode'])) {
+                $address->setPostalCode($point['postalCode']);
+            }
+            if (isset($point['subLocality'])) {
+                $address->setSubLocality($point['subLocality']);
+            }
+            if (isset($point['addressLocality'])) {
+                $address->setAddressLocality($point['addressLocality']);
+            }
+            if (isset($point['localAdmin'])) {
+                $address->setLocalAdmin($point['localAdmin']);
+            }
+            if (isset($point['county'])) {
+                $address->setCounty($point['county']);
+            }
+            if (isset($point['macroCounty'])) {
+                $address->setMacroCounty($point['macroCounty']);
+            }
+            if (isset($point['region'])) {
+                $address->setRegion($point['region']);
+            }
+            if (isset($point['macroRegion'])) {
+                $address->setMacroRegion($point['macroRegion']);
+            }
+            if (isset($point['addressCountry'])) {
+                $address->setAddressCountry($point['addressCountry']);
+            }
+            if (isset($point['countryCode'])) {
+                $address->setCountryCode($point['countryCode']);
+            }
+            if (isset($point['latitude'])) {
+                $address->setLatitude($point['latitude']);
+            }
+            if (isset($point['longitude'])) {
+                $address->setLongitude($point['longitude']);
+            }
+            if (isset($point['elevation'])) {
+                $address->setElevation($point['elevation']);
+            }
+            if (isset($point['name'])) {
+                $address->setName($point['name']);
+            }
+            if (isset($point['home'])) {
+                $address->setHome($point['home']);
+            }
+            $waypoint->setAddress($address);
+            $waypoint->setPosition($position);
+            $waypoint->setDestination($position == count($ad->getOutwardWaypoints())-1);
+            $outwardProposal->addWaypoint($waypoint);
         }
 
-        $waypointDestination = new Waypoint();
-        $destinationAddress = new Address();
-        if (isset($ad['destination']['houseNumber'])) {
-            $destinationAddress->setHouseNumber($ad['destination']['houseNumber']);
-        }
-        if (isset($ad['destination']['street'])) {
-            $destinationAddress->setStreet($ad['destination']['street']);
-        }
-        if (isset($ad['destination']['streetAddress'])) {
-            $destinationAddress->setStreetAddress($ad['destination']['streetAddress']);
-        }
-        if (isset($ad['destination']['postalCode'])) {
-            $destinationAddress->setPostalCode($ad['destination']['postalCode']);
-        }
-        if (isset($ad['destination']['subLocality'])) {
-            $destinationAddress->setSubLocality($ad['destination']['subLocality']);
-        }
-        if (isset($ad['destination']['addressLocality'])) {
-            $destinationAddress->setAddressLocality($ad['destination']['addressLocality']);
-        }
-        if (isset($ad['destination']['localAdmin'])) {
-            $destinationAddress->setLocalAdmin($ad['destination']['localAdmin']);
-        }
-        if (isset($ad['destination']['county'])) {
-            $destinationAddress->setCounty($ad['destination']['county']);
-        }
-        if (isset($ad['destination']['macroCounty'])) {
-            $destinationAddress->setMacroCounty($ad['destination']['macroCounty']);
-        }
-        if (isset($ad['destination']['region'])) {
-            $destinationAddress->setRegion($ad['destination']['region']);
-        }
-        if (isset($ad['destination']['macroRegion'])) {
-            $destinationAddress->setMacroRegion($ad['destination']['macroRegion']);
-        }
-        if (isset($ad['destination']['addressCountry'])) {
-            $destinationAddress->setAddressCountry($ad['destination']['addressCountry']);
-        }
-        if (isset($ad['destination']['countryCode'])) {
-            $destinationAddress->setCountryCode($ad['destination']['countryCode']);
-        }
-        if (isset($ad['destination']['latitude'])) {
-            $destinationAddress->setLatitude($ad['destination']['latitude']);
-        }
-        if (isset($ad['destination']['longitude'])) {
-            $destinationAddress->setLongitude($ad['destination']['longitude']);
-        }
-        if (isset($ad['destination']['elevation'])) {
-            $destinationAddress->setElevation($ad['destination']['elevation']);
-        }
-        if (isset($ad['destination']['name'])) {
-            $destinationAddress->setName($ad['destination']['name']);
-        }
-        if (isset($ad['destination']['home'])) {
-            $destinationAddress->setHome($ad['destination']['home']);
-        }
-        $waypointDestination->setAddress($destinationAddress);
-        $waypointDestination->setPosition($position);
-        $waypointDestination->setDestination(true);
-        $proposal->addWaypoint($waypointDestination);
-        $proposal->setCriteria($criteria);
+        $outwardProposal->setCriteria($outwardCriteria);
+        $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal);
 
+        // return trip ?
+        if ($ad->getReturnWaypoints()) {
+            $returnProposal = new Proposal();
+            $returnCriteria = new Criteria();
+        }
+
+        return $ad;
+
+        
         // creation of the outward proposal
         $response = $this->dataProvider->post($proposal);
         if ($response->getCode() != 201) {

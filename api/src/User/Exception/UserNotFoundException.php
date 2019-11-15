@@ -21,42 +21,8 @@
  *    LICENSE
  **************************/
 
-namespace App\Event\Service;
+namespace App\User\Exception;
 
-use App\Event\Repository\EventRepository;
-use Doctrine\ORM\EntityManagerInterface;
-
-/**
- * Event manager.
- *
- * This service contains methods related to event manipulations.
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
- */
-class EventManager
+class UserNotFoundException extends \LogicException
 {
-    private $entityManager;
-    private $eventRepository;
-    
-    /**
-     * Constructor.
-     *
-     * @param EntityManagerInterface $entityManager
-     */
-    public function __construct(EntityManagerInterface $entityManager, EventRepository $eventRepository)
-    {
-        $this->entityManager = $entityManager;
-        $this->eventRepository = $eventRepository;
-    }
-
-    /**
-     * Get an event by its id
-     *
-     * @param integer $eventId
-     * @return Event|null
-     */
-    public function getEvent(int $eventId)
-    {
-        return $this->eventRepository->find($eventId);
-    }
 }
