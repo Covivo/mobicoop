@@ -163,6 +163,15 @@ class Event
      * @MaxDepth(1)
      */
     private $user;
+
+    /**
+     * @var Event Event related for the proposal
+     *
+     * @ORM\OneToMany(targetEntity="App\Event\Entity\Event", mappedBy="proposalevent")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $proposals;
     
     /**
      * @var Address The address of the event.
@@ -190,6 +199,7 @@ class Event
     {
         $this->id = $id;
         $this->images = new ArrayCollection();
+        $this->proposals = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -385,5 +395,36 @@ class Event
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \Datetime());
+    }
+
+    /**
+     * @return Collection|Event[]
+     */
+    public function getProposals(): Collection
+    {
+        return $this->proposals;
+    }
+
+    public function addProposal(Event $proposal): self
+    {
+        if (!$this->proposals->contains($proposal)) {
+            $this->proposals[] = $proposal;
+            $proposal->setProposalevent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProposal(Event $proposal): self
+    {
+        if ($this->proposals->contains($proposal)) {
+            $this->proposals->removeElement($proposal);
+            // set the owning side to null (unless already changed)
+            if ($proposal->getProposalevent() === $this) {
+                $proposal->setProposalevent(null);
+            }
+        }
+
+        return $this;
     }
 }

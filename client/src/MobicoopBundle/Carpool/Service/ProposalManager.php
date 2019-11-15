@@ -439,6 +439,13 @@ class ProposalManager
             $proposal->setMatchedProposal(new Proposal($ad['proposalId']));
         }
 
+        //Gestion events : If an event is set as destination or arrival, we set the event in proposal
+        $event = $ad['origin']['event'] != null ?  $ad['origin']['event'] : null;
+        $event = $ad['destination']['event'] != null ?  $ad['destination']['event'] : null;
+        if ( $event != null) {
+
+        }
+
         // creation of the outward proposal
         $response = $this->dataProvider->post($proposal);
         if ($response->getCode() != 201) {
