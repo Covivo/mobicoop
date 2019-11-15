@@ -31,6 +31,7 @@ use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\ProposalRepository;
 use App\Community\Service\CommunityManager;
 use App\DataProvider\Entity\GeoRouterProvider;
+use App\DataProvider\Entity\Response;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Zone;
 use App\Geography\Repository\DirectionRepository;
@@ -581,6 +582,18 @@ class ProposalManager
         // for now we don't use the time parameters
         // @todo add the time parameters
         return $this->proposalRepository->findMatchingProposals($proposal, false);
+    }
+
+    /**
+     * @param Proposal $proposal
+     * @return Response
+     */
+    public function deleteProposal(Proposal $proposal)
+    {
+        $this->entityManager->remove($proposal);
+        $this->entityManager->flush();
+
+        return new Response(204, "Deleted with success");
     }
     
     // returns the min and max time from a time and a margin

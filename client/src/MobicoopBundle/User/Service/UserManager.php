@@ -474,7 +474,7 @@ class UserManager
         // we set the private param to false to get only published ad, not proposals posted after a search
         $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class, null, ['private'=>false]);
         $proposals = $response->getValue();
-        
+//        dump($proposals);die;
         $proposalsSanitized = [
             "ongoing" => [],
             "archived" => []
