@@ -7,6 +7,7 @@
       <v-btn
         rounded
         text
+        :class="textColorClass"
         v-on="on"
       >
         {{ $t('title') }}
@@ -48,6 +49,10 @@ export default {
     userId:{
       type: Number,
       default:0
+    },
+    textColorClass: {
+      type: String,
+      default: ""
     }
   },
   data(){
