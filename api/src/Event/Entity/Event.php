@@ -59,6 +59,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Event
 {
+
+    const STATUS_PENDING = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 2;
     /**
      * @var int The id of this event.
      *
@@ -165,7 +169,7 @@ class Event
      * @var Address The address of the event.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", mappedBy="event", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -320,16 +324,17 @@ class Event
         
         return $this;
     }
-    
+
     public function getAddress(): Address
     {
         return $this->address;
     }
-    
+
     public function setAddress(Address $address): self
     {
         $this->address = $address;
-        
+        $address->setEvent($this);
+
         return $this;
     }
     
@@ -382,4 +387,6 @@ class Event
     {
         $this->setUpdatedDate(new \Datetime());
     }
+
+
 }

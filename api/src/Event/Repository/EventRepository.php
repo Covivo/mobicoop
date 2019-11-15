@@ -37,10 +37,33 @@ class EventRepository
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Event::class);
+        $this->entityManager = $entityManager;
     }
     
     public function find(int $id): ?Event
     {
         return $this->repository->find($id);
     }
+
+    /**
+     * Return all events with the given name and status.
+     *
+     * @param string $name
+     * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The event found
+     */
+    public function findByNameAndStatus(string $name, int $status)
+    {
+        $words = explode(" ", $name);
+        $searchString = "e.name like '%".implode("%' and e.name like '%", $words)."%'";
+
+        $queryString = "
+            SELECT e from App\Event\Entity\Event e
+            where ".$searchString." and e.status = ".$status;
+
+        $query = $this->entityManager->createQuery($queryString);
+
+        return $query->getResult()
+            ;
+    }
+
 }

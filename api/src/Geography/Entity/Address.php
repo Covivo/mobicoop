@@ -23,6 +23,7 @@
 
 namespace App\Geography\Entity;
 
+use App\Event\Entity\Event;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -274,6 +275,14 @@ class Address
      * @Groups({"read","pt"})
      */
     private $relayPoint;
+
+    /**
+     * @var User|null The event of the adresse.
+     *
+     * @ORM\OneToOne(targetEntity="App\Event\Entity\Event", inversedBy="address")
+     * @Groups({"read","pt"})
+     */
+    private $event;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -601,5 +610,22 @@ class Address
         if (!is_null($this->getLatitude()) && !is_null($this->getLongitude())) {
             $this->setGeoJson(new Point($this->getLongitude(), $this->getLatitude()));
         }
+    }
+
+    public function getHome(): ?bool
+    {
+        return $this->home;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
+
+        return $this;
     }
 }

@@ -182,6 +182,10 @@ export default {
               if (this.displayIcon) addresses[addressKey].icon = "mdi-home-map-marker";
             } else if (address.relayPoint) {
               if (this.displayIcon) addresses[addressKey].icon = "mdi-parking";
+
+            }else if (address.event){
+              addresses[addressKey].displayedLabel = `${address.event.name} - ${address.displayLabel[0]}`;
+              if (this.displayIcon) addresses[addressKey].icon = "mdi-home-map-marker";
             } else if (address.name) {
               addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel[0]}`;
               if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel[0]}`;
