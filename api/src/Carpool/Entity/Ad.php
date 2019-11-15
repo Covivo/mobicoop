@@ -56,6 +56,9 @@ class Ad
     const ROLE_PASSENGER = 2;
     const ROLE_DRIVER_OR_PASSENGER = 3;
 
+    const TYPE_ONE_WAY = 1;
+    const TYPE_ROUND = 2;
+
     /**
      * @var int The id of this ad.
      *
@@ -70,6 +73,13 @@ class Ad
      * @Groups({"read","write"})
      */
     private $role;
+
+    /**
+     * @var int|null The ad type (1 = one way; 2 = round trip).
+     *
+     * @Groups({"read","write"})
+     */
+    private $type;
 
     /**
      * @var int The frequency for this ad.
@@ -121,14 +131,14 @@ class Ad
     private $returnLimitDate;
 
     /**
-     * @var \DateTimeInterface|null The time for the outward if the frequency is punctual.
+     * @var string|null The time for the outward if the frequency is punctual.
      *
      * @Groups({"read","write"})
      */
     private $outwardTime;
 
     /**
-     * @var \DateTimeInterface|null The time for the return if the frequency is punctual.
+     * @var string|null The time for the return if the frequency is punctual.
      *
      * @Groups({"read","write"})
      */
@@ -304,11 +314,18 @@ class Ad
     private $eventId;
 
     /**
-     * @var array|null The carpool results for the ad.
+     * @var array|null The carpool results for the outward.
      *
      * @Groups("read")
      */
-    private $results;
+    private $outwardResults;
+
+    /**
+     * @var array|null The carpool results for the return.
+     *
+     * @Groups("read")
+     */
+    private $returnResults;
 
     public function __construct()
     {
@@ -317,7 +334,8 @@ class Ad
         $this->returnWaypoints = [];
         $this->schedule = [];
         $this->communities = [];
-        $this->results = [];
+        $this->outwardResults = [];
+        $this->returnResults = [];
     }
     
     public function getId(): ?int
@@ -333,6 +351,18 @@ class Ad
     public function setRole(int $role): self
     {
         $this->role = $role;
+
+        return $this;
+    }
+
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
+    public function setType(int $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }
@@ -397,24 +427,24 @@ class Ad
         return $this;
     }
 
-    public function getOutwardTime(): ?\DateTimeInterface
+    public function getOutwardTime(): ?string
     {
         return $this->outwardTime;
     }
 
-    public function setOutwardTime(?\DateTimeInterface $outwardTime): self
+    public function setOutwardTime(?string $outwardTime): self
     {
         $this->outwardTime = $outwardTime;
 
         return $this;
     }
 
-    public function getReturnDate(): ?\DateTimeInterface
+    public function getReturnDate(): ?string
     {
         return $this->returnDate;
     }
 
-    public function setReturnDate(?\DateTimeInterface $returnDate): self
+    public function setReturnDate(?string $returnDate): self
     {
         $this->returnDate = $returnDate;
 
@@ -433,12 +463,12 @@ class Ad
         return $this;
     }
 
-    public function getReturnTime(): ?\DateTimeInterface
+    public function getReturnTime(): ?string
     {
         return $this->returnTime;
     }
 
-    public function setReturnTime(?\DateTimeInterface $returnTime): self
+    public function setReturnTime(?string $returnTime): self
     {
         $this->returnTime = $returnTime;
 
@@ -703,14 +733,26 @@ class Ad
         return $this;
     }
 
-    public function getResults(): array
+    public function getOutwardResults(): array
     {
-        return $this->results;
+        return $this->outwardResults;
     }
 
-    public function setResults(array $results)
+    public function setOutwardResults(array $outwardResults)
     {
-        $this->results = $results;
+        $this->outwardResults = $outwardResults;
+
+        return $this;
+    }
+
+    public function getReturnResults(): array
+    {
+        return $this->returnResults;
+    }
+
+    public function setReturnResults(array $returnResults)
+    {
+        $this->returnResults = $returnResults;
 
         return $this;
     }

@@ -78,13 +78,14 @@ class AdManager
     {
         $outwardProposal = new Proposal();
         $outwardCriteria = new Criteria();
-        $returnProposal = null;
-        $returnCriteria = null;
 
         // we check if it's a round trip
-        if ($ad->getReturnWaypoints()) {
+        // it's a round trip if the return waypoints are set or if the type is set to round trip (the type is nullable)
+        if ($ad->getReturnWaypoints() || $ad->getType() == Ad::TYPE_ROUND) {
+            $ad->setType(Ad::TYPE_ROUND);
             $outwardProposal->setType(Proposal::TYPE_OUTWARD);
         } else {
+            $ad->setType(Ad::TYPE_ONE_WAY);
             $outwardProposal->setType(Proposal::TYPE_ONE_WAY);
         }
 
@@ -151,9 +152,9 @@ class AdManager
         $outwardCriteria->setBackSeats($ad->hasBackSeats());
 
         // dates and times
+        $outwardCriteria->setFromDate($ad->getOutwardDate() ? $ad->getOutwardDate() : new \DateTime());
         if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
-            $outwardCriteria->setFromDate($ad->getOutwardDate() ? $ad->getOutwardDate() : new \DateTime());
             $outwardCriteria->setToDate($ad->getOutwardLimitDate() ? \DateTime::createFromFormat('Y-m-d', $ad->getOutwardLimitDate()) : null);
             
             foreach ($ad->getSchedule() as $schedule) {
@@ -198,7 +199,6 @@ class AdManager
         } else {
             // punctual
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
-            $outwardCriteria->setFromDate($ad->getOutwardDate() ? $ad->getOutwardDate() : new \DateTime());
             $outwardCriteria->setFromTime($ad->getOutwardTime() ? \DateTime::createFromFormat('H:i', $ad->getOutwardTime()) : null);
             $outwardCriteria->setMarginDuration($this->params['defaultMarginTime']);
         }
@@ -269,203 +269,170 @@ class AdManager
 
         $outwardProposal->setCriteria($outwardCriteria);
         $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal);
+        $this->entityManager->persist($outwardProposal);
 
         // return trip ?
-        if ($ad->getReturnWaypoints()) {
-            $returnProposal = new Proposal();
+        if ($ad->getType() == Ad::TYPE_ROUND) {
+            // we clone the outward proposal
+            $returnProposal = clone $outwardProposal;
+            // we link the outward and the return
+            $outwardProposal->setProposalLinked($returnProposal);
+
+            // criteria
             $returnCriteria = new Criteria();
-        }
 
-        return $ad;
+            // driver / passenger / seats
+            $returnCriteria->setDriver($outwardCriteria->isDriver());
+            $returnCriteria->setPassenger($outwardCriteria->isPassenger());
+            $returnCriteria->setSeats($outwardCriteria->getSeats());
 
-        
-        // creation of the outward proposal
-        $response = $this->dataProvider->post($proposal);
-        if ($response->getCode() != 201) {
-            return $response->getValue();
-        }
-        $proposalOutward = $response->getValue();
+            // solidary
+            $returnCriteria->setSolidary($outwardCriteria->isSolidary());
+            $returnCriteria->setSolidaryExclusive($outwardCriteria->isSolidaryExclusive());
 
-        // proposal successfully created, we check if there's a return
-        if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
-            // creation of the return trip
-            $proposalReturn = clone $proposal;
-            if (isset($ad['communities'])) {
-                foreach ($ad['communities'] as $community) {
-                    $proposalReturn->addCommunity($community);
-                }
-            }
-            // if there's a matching linked, it means the proposal we create may be the return trip of a "forced" matching proposal
-            if ($proposalOutward->getMatchingLinked()) {
-                $proposalReturn->setMatchingLinked($proposalOutward->getMatchingLinked()->getIri());
-            }
-            // if there's an ask linked, it means the proposal we create may be the return trip of a "forced" matching proposal, for which an ask has been created
-            if ($proposalOutward->getAskLinked()) {
-                $proposalReturn->setAskLinked($proposalOutward->getAskLinked()->getIri());
-            }
-            // we check if the proposal is private (usually if the proposal is created after a search)
-            if (isset($ad['private']) && $ad['private']) {
-                $proposalReturn->setPrivate(true);
-            }
-            // we check if there's a proposalID
-            if (isset($ad['proposalId'])) {
-                // there's a proposalId : we know that it's a match to force
-                // as it's a return trip, this proposalId will be replaced by the linked proposalId
-                $proposalReturn->setMatchingProposal(new Proposal($ad['proposalId']));
-            }
-            // we check if an formal ask has to be made after the creation of the proposal (usually if the proposal is created after a search)
-            if (isset($ad['formalAsk'])) {
-                $proposalReturn->setFormalAsk($ad['formalAsk']);
-            }
-            $criteriaReturn = new Criteria();
-            $criteriaReturn->setDriver($ad['driver']);
-            $criteriaReturn->setPassenger($ad['passenger']);
-            $criteriaReturn->setSeats($ad['seats']);
-            if (isset($ad['priceKm'])) {
-                $criteriaReturn->setPriceKm($ad['priceKm']);
-            }
-            if (isset($ad['solidary'])) {
-                $criteriaReturn->setSolidaryExclusive($ad['solidary']);
-            }
-            if (isset($ad['price'])) {
-                $criteriaReturn->setPrice($ad['price']);
-            }
-            if (isset($ad['roundedPrice'])) {
-                $criteriaReturn->setRoundedPrice($ad['roundedPrice']);
-            }
-            if (isset($ad['computedPrice'])) {
-                $criteriaReturn->setComputedPrice($ad['computedPrice']);
-            }
-            if (isset($ad['computedRoundedPrice'])) {
-                $criteriaReturn->setComputedRoundedPrice($ad['computedRoundedPrice']);
-            }
-            if (isset($ad['returnPrice'])) {
-                $criteriaReturn->setPrice($ad['returnPrice']);
-            }
-            if (isset($ad['returnRoundedPrice'])) {
-                $criteriaReturn->setRoundedPrice($ad['returnRoundedPrice']);
-            }
-            if (isset($ad['returnComputedPrice'])) {
-                $criteriaReturn->setComputedPrice($ad['returnComputedPrice']);
-            }
-            if (isset($ad['returnComputedRoundedPrice'])) {
-                $criteriaReturn->setComputedRoundedPrice($ad['returnComputedRoundedPrice']);
-            }
-            if (isset($ad['luggage'])) {
-                $criteriaReturn->setLuggage($ad['luggage']);
-            }
-            if (isset($ad['bike'])) {
-                $criteriaReturn->setBike($ad['bike']);
-            }
-            if (isset($ad['backSeats'])) {
-                $criteriaReturn->setBackSeats($ad['backSeats']);
-            }
-            $proposalReturn->setType(Proposal::TYPE_RETURN);
-            $proposalReturn->setCriteria($criteriaReturn);
-            if ($ad['regular']) {
-                // regular
-                $criteriaReturn->setFrequency(Criteria::FREQUENCY_REGULAR);
-                if (isset($ad['fromDate'])) {
-                    $criteriaReturn->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad['fromDate']));
-                } else {
-                    $criteriaReturn->setFromDate(new \Datetime());
-                }
-                if (isset($ad['toDate'])) {
-                    $criteriaReturn->setToDate(\DateTime::createFromFormat('Y-m-d', $ad['toDate']));
-                }
-                foreach ($ad['schedules'] as $schedule) {
-                    if (isset($schedule['returnTime']) && $schedule['returnTime'] != '') {
+            // prices
+            $returnCriteria->setPriceKm($outwardCriteria->getPriceKm());
+            $returnCriteria->setPrice($ad->getReturnPrice());
+            $returnCriteria->setRoundedPrice($ad->getReturnRoundedPrice());
+            $returnCriteria->setComputedPrice($ad->getReturnComputedPrice());
+            $returnCriteria->setComputedRoundedPrice($ad->getReturnComputedRoundedPrice());
+            
+            // misc
+            $returnCriteria->setLuggage($outwardCriteria->hasLuggage());
+            $returnCriteria->setBike($outwardCriteria->hasBike());
+            $returnCriteria->setBackSeats($outwardCriteria->hasBackSeats());
+
+            // dates and times
+            $returnCriteria->setFromDate($ad->getReturnDate() ? $ad->getReturnDate() : new \DateTime());
+            if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                $returnCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
+                $returnCriteria->setToDate($ad->getReturnLimitDate() ? \DateTime::createFromFormat('Y-m-d', $ad->getReturnLimitDate()) : null);
+                
+                foreach ($ad->getSchedule() as $schedule) {
+                    if ($schedule['returnTime'] != '') {
                         if (isset($schedule['mon']) && $schedule['mon']) {
-                            $criteriaReturn->setMonCheck(true);
-                            $criteriaReturn->setMonTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $criteriaReturn->setMonMarginDuration($this->marginTime);
+                            $returnCriteria->setMonCheck(true);
+                            $returnCriteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
+                            $returnCriteria->setMonMarginDuration($this->params['defaultMarginTime']);
                         }
                         if (isset($schedule['tue']) && $schedule['tue']) {
-                            $criteriaReturn->setTueCheck(true);
-                            $criteriaReturn->setTueTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $criteriaReturn->setTueMarginDuration($this->marginTime);
+                            $returnCriteria->setTueCheck(true);
+                            $returnCriteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
+                            $returnCriteria->setTueMarginDuration($this->params['defaultMarginTime']);
                         }
                         if (isset($schedule['wed']) && $schedule['wed']) {
-                            $criteriaReturn->setWedCheck(true);
-                            $criteriaReturn->setWedTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $criteriaReturn->setWedMarginDuration($this->marginTime);
+                            $returnCriteria->setWedCheck(true);
+                            $returnCriteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
+                            $returnCriteria->setWedMarginDuration($this->params['defaultMarginTime']);
                         }
                         if (isset($schedule['thu']) && $schedule['thu']) {
-                            $criteriaReturn->setThuCheck(true);
-                            $criteriaReturn->setThuTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $criteriaReturn->setThuMarginDuration($this->marginTime);
+                            $returnCriteria->setThuCheck(true);
+                            $returnCriteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
+                            $returnCriteria->setThuMarginDuration($this->params['defaultMarginTime']);
                         }
                         if (isset($schedule['fri']) && $schedule['fri']) {
-                            $criteriaReturn->setFriCheck(true);
-                            $criteriaReturn->setFriTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $criteriaReturn->setFriMarginDuration($this->marginTime);
+                            $returnCriteria->setFriCheck(true);
+                            $returnCriteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
+                            $returnCriteria->setFriMarginDuration($this->params['defaultMarginTime']);
                         }
                         if (isset($schedule['sat']) && $schedule['sat']) {
-                            $criteriaReturn->setSatCheck(true);
-                            $criteriaReturn->setsatTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $criteriaReturn->setSatMarginDuration($this->marginTime);
+                            $returnCriteria->setSatCheck(true);
+                            $returnCriteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
+                            $returnCriteria->setSatMarginDuration($this->params['defaultMarginTime']);
                         }
                         if (isset($schedule['sun']) && $schedule['sun']) {
-                            $criteriaReturn->setSunCheck(true);
-                            $criteriaReturn->setSunTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $criteriaReturn->setSunMarginDuration($this->marginTime);
+                            $returnCriteria->setSunCheck(true);
+                            $returnCriteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
+                            $returnCriteria->setSunMarginDuration($this->params['defaultMarginTime']);
                         }
                     }
                 }
             } else {
                 // punctual
-                $criteriaReturn->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
-                $criteriaReturn->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad['returnDate']));
-                $criteriaReturn->setFromTime(\DateTime::createFromFormat('H:i', $ad['returnTime']));
-                $criteriaReturn->setMarginDuration($this->marginTime);
+                $returnCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+                $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : null);
+                $returnCriteria->setMarginDuration($this->params['defaultMarginTime']);
             }
-        
-            // Waypoints
-            // We use the waypoints in reverse order if return trip
-            // /!\ for now we assume that the return trip uses the same waypoints as the outward) /!\
-            $reversedWaypoints = [];
-            $nbWaypoints = count($proposal->getWaypoints());
-            // we need to get the waypoints in reverse order
-            // we will read the waypoints a first time to create an array with the position as index
-            $aWaypoints = [];
-            foreach ($proposal->getWaypoints() as $proposalWaypoint) {
-                $aWaypoints[$proposalWaypoint->getPosition()] = $proposalWaypoint;
+
+            // waypoints
+            if (count($ad->getReturnWaypoints())==0) {
+                // return waypoints are not set : we use the outward waypoints in reverse order
+                $ad->setReturnWaypoints(array_reverse($ad->getOutwardWaypoints()));
             }
-            // we sort the array by key
-            ksort($aWaypoints);
-            // our array is ordered by position, we read it backwards
-            $reversedWaypoints = array_reverse($aWaypoints);
-            
-            $proposalReturn->setCriteria($criteriaReturn);
-            foreach ($reversedWaypoints as $pos=>$proposalWaypoint) {
-                $waypoint = clone $proposalWaypoint;
-                $waypoint->setPosition($pos);
-                $waypoint->setDestination(false);
-                // address
-                $waypoint->setAddress(clone $proposalWaypoint->getAddress());
-                if ($pos == ($nbWaypoints-1)) {
-                    $waypoint->setDestination(true);
+            foreach ($ad->getReturnWaypoints() as $position => $point) {
+                $waypoint = new Waypoint();
+                $address = new Address();
+                if (isset($point['houseNumber'])) {
+                    $address->setHouseNumber($point['houseNumber']);
                 }
-                $proposalReturn->addWaypoint($waypoint);
+                if (isset($point['street'])) {
+                    $address->setStreet($point['street']);
+                }
+                if (isset($point['streetAddress'])) {
+                    $address->setStreetAddress($point['streetAddress']);
+                }
+                if (isset($point['postalCode'])) {
+                    $address->setPostalCode($point['postalCode']);
+                }
+                if (isset($point['subLocality'])) {
+                    $address->setSubLocality($point['subLocality']);
+                }
+                if (isset($point['addressLocality'])) {
+                    $address->setAddressLocality($point['addressLocality']);
+                }
+                if (isset($point['localAdmin'])) {
+                    $address->setLocalAdmin($point['localAdmin']);
+                }
+                if (isset($point['county'])) {
+                    $address->setCounty($point['county']);
+                }
+                if (isset($point['macroCounty'])) {
+                    $address->setMacroCounty($point['macroCounty']);
+                }
+                if (isset($point['region'])) {
+                    $address->setRegion($point['region']);
+                }
+                if (isset($point['macroRegion'])) {
+                    $address->setMacroRegion($point['macroRegion']);
+                }
+                if (isset($point['addressCountry'])) {
+                    $address->setAddressCountry($point['addressCountry']);
+                }
+                if (isset($point['countryCode'])) {
+                    $address->setCountryCode($point['countryCode']);
+                }
+                if (isset($point['latitude'])) {
+                    $address->setLatitude($point['latitude']);
+                }
+                if (isset($point['longitude'])) {
+                    $address->setLongitude($point['longitude']);
+                }
+                if (isset($point['elevation'])) {
+                    $address->setElevation($point['elevation']);
+                }
+                if (isset($point['name'])) {
+                    $address->setName($point['name']);
+                }
+                if (isset($point['home'])) {
+                    $address->setHome($point['home']);
+                }
+                $waypoint->setAddress($address);
+                $waypoint->setPosition($position);
+                $waypoint->setDestination($position == count($ad->getReturnWaypoints())-1);
+                $returnProposal->addWaypoint($waypoint);
             }
 
-            // link
-            $proposalReturn->setProposalLinked($proposalOutward->getIri());
-
-            // creation of the return proposal
-            $response = $this->dataProvider->post($proposalReturn);
-            if ($response->getCode() != 201) {
-                return $response->getValue();
-            }
-            
-            // we set the linked proposal as the outward proposal was returned before the linked proposal was created...
-            $proposalOutward->setProposalLinked($response->getValue()->getId());
+            $returnProposal->setCriteria($returnCriteria);
+            $returnProposal = $this->proposalManager->prepareProposal($returnProposal);
+            $this->entityManager->persist($returnProposal);
         }
- 
-        return $proposalOutward;
 
+        $this->entityManager->flush();
 
-        $ad->setComment("ok");
+        $ad->setOutwardResults($outwardProposal->getResults());
+        if (isset($returnProposal)) {
+            $ad->setReturnResults($returnProposal->getResults());
+        }
         return $ad;
     }
 }

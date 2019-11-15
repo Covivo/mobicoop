@@ -400,7 +400,7 @@ class Proposal
     private $formalAsk;
 
     /**
-     * @var ArrayCollection|null The carpool results for the proposal.
+     * @var array|null The carpool results for the proposal.
      * Results are taken from the matchings, but returned in a more user-friendly way.
      * @Groups("results")
      */
@@ -419,7 +419,7 @@ class Proposal
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
-        $this->results = new ArrayCollection();
+        $this->results = [];
     }
     
     public function __clone()
@@ -427,11 +427,11 @@ class Proposal
         // when we clone a Proposal we keep only the basic properties, we re-initialize all the collections
         $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
-        $this->communities = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
+        $this->results = [];
     }
 
     public function getId(): ?int
