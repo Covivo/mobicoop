@@ -35,11 +35,13 @@
         />
       </v-col>
     </v-row>
+    <Cookies />
   </v-container>
 </template>
 
 <script>
 import {merge} from "lodash";
+import Cookies from "@components/utilities/Cookies";
 import Translations from "@translations/components/home/Home.json";
 import TranslationsClient from "@clientTranslations/components/home/Home.json";
 import Search from "@components/carpool/search/Search";
@@ -53,7 +55,8 @@ export default {
   },
   components: {
     Search,
-    HomeContent
+    HomeContent,
+    Cookies
   },
   props: {
     geoSearchUrl: {
@@ -71,6 +74,18 @@ export default {
     punctualDateOptional: {
       type: Boolean,
       default: false
+    },
+    debug: {
+      type: Boolean,
+      default: false
+    },
+    position: {
+      type: String,
+      default: ""
+    },
+    transitionName: {
+      type: String,
+      default: ""
     },
     solidaryDisplay: {
       type: Boolean,
