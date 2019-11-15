@@ -1,8 +1,7 @@
 <template>
   <v-content color="secondary">
     <v-container
-      grid-list-md
-      text-xs-center
+      text-center
     >
       <!-- Title and subtitle -->
       <v-row
@@ -11,7 +10,11 @@
         justify="center"
       >
         <v-col
-          cols="6"
+          cols="12"
+          xl="6"
+          lg="9"
+          md="12"
+          class="text-center"
         >
           <h1>{{ $t('title') }}</h1>
           <h3 v-html="$t('subtitle')" />
@@ -28,7 +31,12 @@
         class="mt-5"
         justify="center"
       >
-        <v-col cols="6">
+        <v-col
+          cols="12"
+          xl="6"
+          lg="9"
+          md="12"
+        >
           <home-content 
             :community-display="communityDisplay"
             :event-display="eventDisplay"
