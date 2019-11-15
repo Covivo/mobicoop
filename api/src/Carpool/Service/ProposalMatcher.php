@@ -323,8 +323,10 @@ class ProposalMatcher
         }
         
         // if we use times, we check if the pickup times match
+        // (if it's not a force match)
         if (
-            ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $proposal->getCriteria()->getFromTime()) ||
+            is_null($proposal->getMatchingProposal()) &&
+            (($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $proposal->getCriteria()->getFromTime()) ||
             ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && (
                 ($proposal->getCriteria()->isMonCheck() && $proposal->getCriteria()->getMonTime()) ||
                 ($proposal->getCriteria()->isTueCheck() && $proposal->getCriteria()->getTueTime()) ||
@@ -333,16 +335,41 @@ class ProposalMatcher
                 ($proposal->getCriteria()->isFriCheck() && $proposal->getCriteria()->getFriTime()) ||
                 ($proposal->getCriteria()->isSatCheck() && $proposal->getCriteria()->getSatTime()) ||
                 ($proposal->getCriteria()->isSunCheck() && $proposal->getCriteria()->getSunTime())
-            ))
+            )))
         ) {
             $matchings = $this->checkPickUp($matchings);
         }
         
+        // array used to keep a link between 2 undecided role matchings
+        $undecidedArray = [];
+
+        // array used to keep already linked matching for return trips (must be one to one)
+        $matchedLinked = [];
+
         // we complete the matchings with the waypoints and criteria
         foreach ($matchings as $matching) {
 
             // if there's a linked matching (for return trip) we set it here
-            $matching->setMatchingLinked($proposal->getMatchingLinked());
+            if ($proposal->getMatchingLinked()) {
+                // if the role is undecided we have to switch to keep the matching links consistent
+                if ($proposal->getMatchingLinked()->getMatchingRoleUndecided()) {
+                    if (!in_array($proposal->getMatchingLinked()->getMatchingRoleUndecided(), $matchedLinked)) {
+                        $matching->setMatchingLinked($proposal->getMatchingLinked()->getMatchingRoleUndecided());
+                        $matchedLinked[] = $proposal->getMatchingLinked()->getMatchingRoleUndecided();
+                    } elseif (!in_array($proposal->getMatchingLinked(), $matchedLinked)) {
+                        $matching->setMatchingLinked($proposal->getMatchingLinked());
+                        $matchedLinked[] = $proposal->getMatchingLinked();
+                    }
+                } else {
+                    if (!in_array($proposal->getMatchingLinked(), $matchedLinked)) {
+                        $matching->setMatchingLinked($proposal->getMatchingLinked());
+                        $matchedLinked[] = $proposal->getMatchingLinked();
+                    } elseif ($proposal->getMatchingLinked()->getMatchingRoleUndecided() && !in_array($proposal->getMatchingLinked()->getMatchingRoleUndecided(), $matchedLinked)) {
+                        $matching->setMatchingLinked($proposal->getMatchingLinked()->getMatchingRoleUndecided());
+                        $matchedLinked[] = $proposal->getMatchingLinked()->getMatchingRoleUndecided();
+                    }
+                }
+            }
             
             // waypoints
             foreach ($matching->getFilters()['route'] as $key=>$point) {
@@ -367,17 +394,12 @@ class ProposalMatcher
             // prices
             // we use the driver's priceKm
             $matchingCriteria->setPriceKm($matching->getProposalOffer()->getCriteria()->getPriceKm());
+            
             // we use the passenger's computed prices
             $matchingCriteria->setComputedPrice($matching->getProposalRequest()->getCriteria()->getComputedPrice());
             $matchingCriteria->setComputedRoundedPrice($matching->getProposalRequest()->getCriteria()->getComputedRoundedPrice());
-
-            // we're using the driver price if there's no "forced" matching
-            // if (is_null($proposal->getMatchingProposal())) {
-            //     $matchingCriteria->setPriceKm($matching->getProposalOffer()->getCriteria()->getPriceKm());
-            // } else {
-            //   $matchingCriteria->setPriceKm($matching->getProposalOffer()->getCriteria()->getPriceKm());
-            // }
             
+            // frequency, fromDate and toDate
             if ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching->getProposalRequest()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                 $matchingCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
                 $matchingCriteria->setFromDate(max($matching->getProposalOffer()->getCriteria()->getFromDate(), $matching->getProposalRequest()->getCriteria()->getFromDate()));
@@ -387,7 +409,11 @@ class ProposalMatcher
             } else {
                 $matchingCriteria->setFromDate($matching->getProposalRequest()->getCriteria()->getFromDate());
             }
+
+            // seats (set to 1 for now)
             $matchingCriteria->setSeats(1);
+
+            // pickup times
             if (isset($matching->getFilters()['pickup']['minPickupTime']) && isset($matching->getFilters()['pickup']['maxPickupTime'])) {
                 if ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                     $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getMinTime());
@@ -507,6 +533,29 @@ class ProposalMatcher
             $filters = $matching->getFilters();
             unset($filters['direction']);
             $matching->setFilters($filters);
+
+            // last operation, we check if the matching can be related with another one if the matching is the result of an undecided role proposal :
+            // if the user can be both driver and passenger we need to keep a link between the matchings
+            // only possible if a matchingProposal is set
+            if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger() && $proposal->getMatchingProposal()) {
+                if ($proposal->getMatchingProposal()->getId() === $matching->getProposalOffer()->getId()) {
+                    // the proposal is the offer of the current matching, we keep the request
+                    $undecidedArray['requests'][$matching->getProposalRequest()->getId()] = $matching;
+                    if (isset($undecidedArray['offers']) && isset($undecidedArray['offers'][$matching->getProposalRequest()->getId()])) {
+                        $matching->setMatchingRoleUndecided($undecidedArray['offers'][$matching->getProposalRequest()->getId()]);
+                        unset($undecidedArray['requests'][$matching->getProposalRequest()->getId()]);
+                        unset($undecidedArray['offers'][$matching->getProposalRequest()->getId()]);
+                    }
+                } else {
+                    // the proposal is the request of the current matching, we keep the offer
+                    $undecidedArray['offers'][$matching->getProposalOffer()->getId()] = $matching;
+                    if (isset($undecidedArray['requests']) && isset($undecidedArray['requests'][$matching->getProposalOffer()->getId()])) {
+                        $matching->setMatchingRoleUndecided($undecidedArray['requests'][$matching->getProposalOffer()->getId()]);
+                        unset($undecidedArray['offers'][$matching->getProposalOffer()->getId()]);
+                        unset($undecidedArray['requests'][$matching->getProposalOffer()->getId()]);
+                    }
+                }
+            }
         }
         return $matchings;
     }
@@ -623,7 +672,6 @@ class ProposalMatcher
         $validMatchings = [];
         foreach ($matchings as $matching) {
             $pickupDuration = null;
-            $pickupTimes = [];
             $filters = $matching->getFilters();
             foreach ($filters['route'] as $value) {
                 if ($value['candidate'] == 2 && $value['position'] == 0) {

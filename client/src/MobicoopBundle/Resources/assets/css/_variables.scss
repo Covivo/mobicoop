@@ -1,34 +1,233 @@
-$primary: #81F19A;
-$secondary: #023D7F;
-$tertiary: #F13FA8;
-$primary-dark: #005933;
-$white: #FFF;
-$black: #000;
+@import '~vuetify/src/styles/styles.sass';
 
-$primary-invert: findColorInvert($primary);
-$secondary-invert: findColorInvert($secondary);
-$tertiary-invert: findColorInvert($tertiary);
-$primary-dark-invert: findColorInvert($primary-dark);
+$primary: var(--v-primary-base);
+$secondary: var(--v-secondary-base);
+$accent: var(--v-accent-base);
 
-$main-font-color: $primary-dark;
-$main-background-color: $white;
-$nav-background-color: $primary;
-$footer-background-color: $primary;
+// Example : to change font everywhere in the app
+//$body-font-family: Arial;
 
-// breadcrumb config
-$breadcrumb-item-padding-horizontal: 2vw;
-$breadcrumb-item-color: $secondary;
+// Example : to change themes variables
+// path to material light variables '~vuetify/src/styles/settings/_light.scss';
+//$material-light: (
+//  'status-bar': (
+//    'regular': map-get($grey, 'lighten-2'),
+//    'lights-out': rgba(map-get($shades, 'white'), 0.7)
+//  ),
+//  'app-bar': map-get($grey, 'lighten-4'),
+//  'background': map-get($grey, 'lighten-5'),
+//  'calendar': (
+//    'background-color': map-get($shades, 'white'),
+//    'outside-background-color': #F7F7F7,
+//    'line-color': map-get($grey, 'lighten-2'),
+//    'interval-color': map-get($grey, 'darken-3'),
+//    'interval-line-color': map-get($grey, 'lighten-2'),
+//    'text-color': map-get($shades, 'black'),
+//    'past-color': rgba(map-get($shades, 'black'), 0.38)
+//  ),
+//  'cards': map-get($shades, 'white'),
+//  'chips': #E0E0E0,
+//  'dividers': rgba(map-get($shades, 'black'), 0.12),
+//  'text': (
+//    'theme': map-get($shades, 'white'),
+//    'primary': rgba(map-get($shades, 'black'), 0.87),
+//    'secondary': rgba(map-get($shades, 'black'), 0.54),
+//    'disabled': rgba(map-get($shades, 'black'), 0.38),
+//    'link': map-get($blue, 'darken-2'),
+//    'link-hover': map-get($grey, 'darken-3')
+//  ),
+//  'icons': (
+//    'active': rgba(map-get($shades, 'black'), 0.54),
+//    'inactive': rgba(map-get($shades, 'black'), 0.38)
+//  ),
+//  'inputs': (
+//    'box': rgba(map-get($shades, 'black'), 0.04),
+//    'solo-inverted': rgba(map-get($shades, 'black'), 0.16),
+//    'solo-inverted-focused': map-get($grey, 'darken-3'),
+//    'solo-inverted-focused-text': map-get($shades, 'white')
+//  ),
+//  'buttons': (
+//    'disabled': rgba(map-get($shades, 'black'), 0.26),
+//    'focused': rgba(map-get($shades, 'black'), 0.12),
+//    'focused-alt': rgba(map-get($shades, 'white'), 0.6),
+//    'pressed': rgba(#999, 0.4)
+//  ),
+//  'expansion-panels': (
+//    'focus': map-get($grey, 'lighten-3')
+//  ),
+//  'selection-controls': (
+//    'thumb': (
+//      'inactive': map-get($shades, 'white'),
+//      'disabled': map-get($grey, 'lighten-5')
+//    ),
+//    'track': (
+//      'inactive': rgba(map-get($shades, 'black'), 0.38),
+//      'disabled': rgba(map-get($shades, 'black'), 0.12)
+//    )
+//  ),
+//  'slider': (
+//    'active': rgba(map-get($shades, 'black'), 0.38),
+//    'inactive': rgba(map-get($shades, 'black'), 0.26),
+//    'disabled': rgba(map-get($shades, 'black'), 0.26),
+//    'discrete': map-get($shades, 'black')
+//  ),
+//  'skeleton': linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent),
+//  'states': (
+//    'hover': 0.04,
+//    'focus': 0.12,
+//    'selected': 0.08,
+//    'activated': 0.12,
+//    'pressed': 0.16,
+//    'dragged': 0.08
+//  ),
+//  'tabs': rgba(0, 0, 0, 0.54),
+//  'toggle-buttons': (
+//    'color': map-get($shades, 'black')
+//  ),
+//  'text-fields': (
+//    'filled': rgba(map-get($shades, 'black'), 0.06),
+//    'filled-hover': rgba(map-get($shades, 'black'), 0.12),
+//    'outlined': rgba(map-get($shades, 'black'), 0.24),
+//    'outlined-hover': rgba(map-get($shades, 'black'), 0.86)
+//  ),
+//  'input-bottom-line': rgba(map-get($shades, 'black'), 0.42),
+//  'stepper': (
+//    'active': rgba(map-get($shades, 'white'), 1),
+//    'completed': rgba(map-get($shades, 'black'), 0.87),
+//    'hover': rgba(map-get($shades, 'black'), 0.54)
+//  ),
+//  'table': (
+//    'active': map-get($grey, 'lighten-4'),
+//    'hover': map-get($grey, 'lighten-3'),
+//    'group': map-get($grey, 'lighten-3')
+//  ),
+//  'picker': (
+//    'body': map-get($shades, 'white'),
+//    'clock': map-get($grey, 'lighten-2'),
+//    'indeterminateTime': map-get($grey, 'lighten-1'),
+//    'title': map-get($grey, 'lighten-2')
+//  ),
+//  'color-picker': (
+//    'checkerboard': rgba(map-get($shades, 'white'), 0)
+//  ),
+//  'bg-color': map-get($shades, 'white'),
+//  'fg-color': map-get($shades, 'black'),
+//  'text-color': map-get($shades, 'black'),
+//  'primary-text-percent': 0.87,
+//  'secondary-text-percent': 0.54,
+//  'disabledORhints-text-percent': 0.38,
+//  'divider-percent': 0.12,
+//  'active-icon-percent': 0.54,
+//  'inactive-icon-percent': 0.38
+//);
 
-$focusColor:  #F8D613;
-
-@mixin is-mobicoop($color) {
-  background: $color;
-  border-color: transparent;
-  color: $white;
-}
-
-@mixin outlinedFocus($color) {
-  &:focus {
-    outline: 3px solid $color;
-  }
-}
+// path to material dark variables '~vuetify/src/styles/settings/_dark.scss';
+//$material-dark: (
+//  'status-bar': (
+//    'regular': map-get($shades, 'black'),
+//    'lights-out': rgba(map-get($shades, 'black'), 0.2)
+//  ),
+//  'app-bar': map-get($grey, 'darken-4'),
+//  'background': #303030,
+//  'calendar': (
+//    'background-color': #303030,
+//    'outside-background-color': #202020,
+//    'line-color': map-get($grey, 'base'),
+//    'interval-color': map-get($grey, 'lighten-3'),
+//    'interval-line-color': map-get($grey, 'darken-2'),
+//    'text-color': map-get($shades, 'white'),
+//    'past-color': rgba(map-get($shades, 'white'), 0.5)
+//  ),
+//  'cards': map-get($grey, 'darken-3'),
+//  'chips': #555,
+//  'dividers': rgba(map-get($shades, 'white'), 0.12),
+//  'text': (
+//    'theme': map-get($shades, 'white'),
+//    'primary': map-get($shades, 'white'),
+//    'secondary': rgba(map-get($shades, 'white'), 0.7),
+//    'disabled': rgba(map-get($shades, 'white'), 0.5),
+//    'link': map-get($blue, 'accent-1'),
+//    'link-hover': map-get($grey, 'lighten-3')
+//  ),
+//  'icons': (
+//    'active': map-get($shades, 'white'),
+//    'inactive': rgba(map-get($shades, 'white'), 0.5)
+//  ),
+//  'inputs': (
+//    'box': map-get($shades, 'white'),
+//    'solo-inverted': rgba(map-get($shades, 'white'), 0.16),
+//    'solo-inverted-focused': map-get($shades, 'white'),
+//    'solo-inverted-focused-text': map-get(map-get($material-light, 'text'), 'primary')
+//  ),
+//  'buttons': (
+//    'disabled': rgba(map-get($shades, 'white'), 0.3),
+//    'focused': rgba(map-get($shades, 'white'), 0.12),
+//    'focused-alt': rgba(map-get($shades, 'white'), 0.1),
+//    'pressed': rgba(#CCC, 0.25)
+//  ),
+//  'expansion-panels': (
+//    'focus': #494949
+//  ),
+//  'selection-controls': (
+//    'thumb': (
+//      'inactive': map-get($grey, 'lighten-1'),
+//      'disabled': map-get($grey, 'darken-3')
+//    ),
+//    'track': (
+//      'inactive': rgba(map-get($shades, 'white'), 0.3),
+//      'disabled': rgba(map-get($shades, 'white'), 0.1)
+//    )
+//  ),
+//  'slider': (
+//    'active': rgba(map-get($shades, 'white'), 0.3),
+//    'inactive': rgba(map-get($shades, 'white'), 0.2),
+//    'disabled': rgba(map-get($shades, 'white'), 0.2),
+//    'discrete': map-get($shades, 'white')
+//  ),
+//  'skeleton': linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent),
+//  'states': (
+//    'hover': 0.08,
+//    'focus': 0.24,
+//    'selected': 0.16,
+//    'activated': 0.24,
+//    'pressed': 0.32,
+//    'dragged': 0.16
+//  ),
+//  'tabs': rgba(map-get($shades, 'white'), 0.6),
+//  'toggle-buttons': (
+//    'color': map-get($shades, 'white')
+//  ),
+//  'text-fields': (
+//    'filled': rgba(map-get($shades, 'black'), 0.1),
+//    'filled-hover': rgba(map-get($shades, 'black'), 0.2)
+//  ),
+//  'input-bottom-line': rgba(map-get($shades, 'white'), 0.7),
+//  'stepper': (
+//    'active': rgba(map-get($shades, 'white'), 1),
+//    'completed': rgba(map-get($shades, 'white'), 0.87),
+//    'hover': rgba(map-get($shades, 'white'), 0.75)
+//  ),
+//  'table': (
+//    'active': #505050,
+//    'hover': map-get($grey, 'darken-2'),
+//    'group': map-get($grey, 'darken-2')
+//  ),
+//  'picker': (
+//    'body': map-get($grey, 'darken-3'),
+//    'clock': map-get($grey, 'darken-2'),
+//    'indeterminateTime': map-get($grey, 'darken-1'),
+//    'title': map-get($grey, 'darken-2')
+//  ),
+//  'color-picker': (
+//    'checkerboard': rgba(map-get($shades, 'white'), 0.12)
+//  ),
+//  'bg-color': #303030,
+//  'fg-color': map-get($shades, 'white'),
+//  'text-color': map-get($shades, 'white'),
+//  'primary-text-percent': 1,
+//  'secondary-text-percent': 0.7,
+//  'disabledORhints-text-percent': 0.5,
+//  'divider-percent': 0.12,
+//  'active-icon-percent': 1,
+//  'inactive-icon-percent': 0.5
+//);

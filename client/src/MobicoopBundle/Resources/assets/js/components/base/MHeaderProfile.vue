@@ -7,6 +7,7 @@
       <v-btn
         rounded
         text
+        :class="textColorClass"
         v-on="on"
       >
         <v-avatar
@@ -61,6 +62,10 @@ export default {
     shortFamilyName:{
       type: String,
       default:"Profil"
+    },
+    textColorClass: {
+      type: String,
+      default: ""
     }
   },
   data(){

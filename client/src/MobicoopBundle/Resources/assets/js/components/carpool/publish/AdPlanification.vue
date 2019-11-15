@@ -116,7 +116,7 @@
             :label="$t('returnTrip.label')"
             color="primary"
             hide-details
-            @change="change"
+            @change="change(),checkReturnDesactivate($event)"
           />
         </v-col>
 
@@ -138,7 +138,6 @@
                 :label="$t('returnDate.label')"
                 prepend-icon=""
                 readonly
-                :disabled="!returnTrip"
                 v-on="on"
               >
                 <v-icon
@@ -153,7 +152,7 @@
               :locale="locale"
               no-title
               @input="menuReturnDate = false"
-              @change="change"
+              @change="checkDateReturn($event),change()"
             />
           </v-menu>
         </v-col>
@@ -179,7 +178,6 @@
                 :label="$t('returnTime.label')"
                 prepend-icon=""
                 readonly
-                :disabled="!returnTrip"
                 v-on="on"
               />
             </template>
@@ -189,7 +187,7 @@
               format="24hr"
               header-color="secondary"
               @click:minute="$refs.menuReturnTime.save(returnTime)"
-              @change="change"
+              @change="checkDateReturn($event),change()"
             />
           </v-menu>
         </v-col>
@@ -301,6 +299,8 @@
                   <template v-slot:activator="{ on }">
                     <v-text-field
                       v-model="item.outwardTime"
+                      :hint="item.id > 0 ? $t('ui.form.optional') : ''"
+                      persistent-hint
                       :label="$t('regularOutwardTime.label')"
                       prepend-icon=""
                       readonly
@@ -456,8 +456,8 @@
             <v-icon>
               mdi-plus-circle-outline
             </v-icon>
+            {{ $t('addSchedule') }}
           </v-btn>
-          {{ $t('addSchedule') }}
         </v-col>
       </v-row>
     </v-form>
@@ -512,7 +512,6 @@ export default {
       arrayDay : ['mon','tue','wed','thu','fri','sat','sun'],
       schedules: [],
 
-
     };
   },
   computed: {
@@ -559,6 +558,10 @@ export default {
   },
 
   methods: {
+
+    checkDateReturn(e){
+      if (e) this.returnTrip = true
+    },
     change() {
       let validSchedules = JSON.parse(JSON.stringify(this.activeSchedules)); // little tweak to deep copy :)
       for (var i=0;i<validSchedules.length;i++) {
@@ -583,6 +586,12 @@ export default {
         schedules: validSchedules
       });
     },
+    checkReturnDesactivate(e){
+      if (!e) {
+        this.returnDate = null
+        this.returnTime = null
+      }
+    },
     getValueCheckbox(event,item,day){
 
       //If we have more than 1 day and checkbox is set to true
@@ -594,17 +603,12 @@ export default {
         this.schedules[id].returnDisabled = false;
 
         if (event) {
-
           this.verifCurrentdDayInAllSchedules(day,id)
-
-
           // We uncheck a day
         }else{
 
           // TODO verif if all schedule have current day open, not just the currrent one
         }
-
-
 
       }
     },

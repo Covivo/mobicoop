@@ -30,6 +30,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
@@ -244,9 +245,17 @@ class ProposalManager
                 $schedules['returnSun']['sun'] = true;
             }
         }
-        if (isset($schedules)) {
-            $data['schedules'] = $schedules;
+        if (!isset($schedules)) {
+            // no schedule => must be an undecided role ask, we set only a blank return time to create a return proposal
+            $schedules = [];
+            $schedules['outwardMon']['outwardTime'] = '';
+            $schedules['outwardMon']['returnTime'] = '';
+            $schedules['outwardMon']['mon'] = false;
+            $schedules['returnMon']['outwardTime'] = '';
+            $schedules['returnMon']['returnTime'] = 'blank';
+            $schedules['returnMon']['mon'] = false;
         }
+        $data['schedules'] = $schedules;
         return $this->createProposalFromAd($data, $user);
     }
 
@@ -292,7 +301,7 @@ class ProposalManager
         // communities
         if (isset($ad['communities'])) {
             foreach ($ad['communities'] as $community) {
-                $proposal->addCommunity($community);
+                $proposal->addCommunity(new Community($community));
             }
         }
         $criteria->setDriver($ad['driver']);
@@ -606,7 +615,7 @@ class ProposalManager
             $proposalReturn = clone $proposal;
             if (isset($ad['communities'])) {
                 foreach ($ad['communities'] as $community) {
-                    $proposalReturn->addCommunity($community);
+                    $proposalReturn->addCommunity(new Community($community));
                 }
             }
             // if there's a matching linked, it means the proposal we create may be the return trip of a "forced" matching proposal
@@ -807,7 +816,7 @@ class ProposalManager
     {
         // we will make the request on the User instead of the Proposal
         $this->dataProvider->setClass(User::class);
-        $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class);
+        $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class, null, ['private'=>false]);
         return $response->getValue();
     }
     
@@ -885,7 +894,7 @@ class ProposalManager
         // communities
         if (isset($ad['communities'])) {
             foreach ($ad['communities'] as $community) {
-                $proposal->addCommunity($community);
+                $proposal->addCommunity(new Community($community));
             }
         }
 //        $criteria->setDriver($ad['driver']);
