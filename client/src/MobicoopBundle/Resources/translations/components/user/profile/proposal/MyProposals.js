@@ -6,7 +6,7 @@ export default {
     },
     delete: {
       route: "/covoiturage/annonce/supprimer",
-      success: "Votre annonce a été supprimé avec succès.",
+      success: "Votre annonce a été supprimée avec succès.",
       error: "Une erreur est survenue lors de la suppression de votre annonce."
     }
   },
