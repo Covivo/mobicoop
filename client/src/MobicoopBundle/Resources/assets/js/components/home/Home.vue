@@ -1,42 +1,52 @@
 <template>
-  <v-container
-    grid-list-md
-    text-xs-center
-  >
+  <v-content color="secondary">
+    <v-container
+      text-center
+    >
     <!-- Title and subtitle -->
     <v-row
       align="center"
       class="mt-5"
       justify="center"
     >
-      <v-col
-        cols="6"
+        <v-col
+          cols="12"
+          xl="6"
+          lg="9"
+          md="12"
+          class="text-center"
+        >
+          <h1>{{ $t('title') }}</h1>
+          <h3 v-html="$t('subtitle')" />
+        </v-col>
+      </v-row>
+      <search
+        :geo-search-url="geoSearchUrl" 
+        :user="user"
+        :regular="regular"
+        :punctual-date-optional="punctualDateOptional"
+      />
+      <v-row
+        align="center"
+        class="mt-5"
+        justify="center"
       >
-        <h1>{{ $t('title') }}</h1>
-        <h3 v-html="$t('subtitle')" />
-      </v-col>
-    </v-row>
-    <search
-      :geo-search-url="geoSearchUrl" 
-      :user="user"
-      :regular="regular"
-      :punctual-date-optional="punctualDateOptional"
-    />
-    <v-row
-      align="center"
-      class="mt-5"
-      justify="center"
-    >
-      <v-col cols="6">
-        <home-content 
-          :community-display="communityDisplay"
-          :event-display="eventDisplay"
-          :solidary-display="solidaryDisplay"
-        />
-      </v-col>
-    </v-row>
-    <Cookies />
-  </v-container>
+        <v-col
+          cols="12"
+          xl="6"
+          lg="9"
+          md="12"
+        >
+          <home-content 
+            :community-display="communityDisplay"
+            :event-display="eventDisplay"
+            :solidary-display="solidaryDisplay"
+          />
+        </v-col>
+      </v-row>
+      <Cookies />
+    </v-container>
+  </v-content>
 </template>
 
 <script>

@@ -24,7 +24,7 @@
         "avoidMotorway": "Eviter l'autoroute",
         "communities": {
             "label": "Publier l'annonce dans ces communautés",
-            "route": "/communautes/utilisateur/{id}"
+            "route": "/utilisateur/communautes"
         },
         "distance": "Distance"
     }
