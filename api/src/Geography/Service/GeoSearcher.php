@@ -102,15 +102,13 @@ class GeoSearcher
         $events = $this->eventRepository->findByNameAndStatus($input, Event::STATUS_ACTIVE);
         // exclude the private relay points
         foreach ($events as $event) {
-
             $address = $event->getAddress();
             $address->setEvent($event);
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
             $result[] = $address;
-
         }
 
-            // 3 - relay points
+        // 3 - relay points
         $relayPoints = $this->relayPointRepository->findByNameAndStatus($input, RelayPoint::STATUS_ACTIVE);
         // exclude the private relay points
         foreach ($relayPoints as $relayPoint) {

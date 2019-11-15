@@ -59,7 +59,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Event
 {
-
     const STATUS_PENDING = 0;
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 2;
@@ -387,6 +386,4 @@ class Event
     {
         $this->setUpdatedDate(new \Datetime());
     }
-
-
 }

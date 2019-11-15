@@ -65,5 +65,4 @@ class EventRepository
         return $query->getResult()
             ;
     }
-
 }
