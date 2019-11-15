@@ -92,13 +92,10 @@
                   <v-checkbox
                     v-model="form.consent"
                     :rules="form.consentRules"
-                    :label="$t('consent.placeholder') + ` *`"
+                    :label="$t('consent.text') + ` *`"
                     color="success"
                     name="consent"
                   />
-                  <p class="text-left">
-                    {{ $t('consent.text') }}
-                  </p>
                 </v-col>
 
                 <!-- Honey pot -->
@@ -137,7 +134,7 @@
               >
                 <v-col cols="12">
                   <p class="text-left">
-                    {{ $t('dataPolicy.text') }}&nbsp;
+                    {{ $t('dataPolicy.text') }}
                     <a
                       :href="$t('dataPolicy.route')"
                       target="_blank"
