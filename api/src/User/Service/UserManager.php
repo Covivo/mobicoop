@@ -44,6 +44,7 @@ use App\User\Entity\UserNotification;
 use App\User\Event\UserGeneratePhoneTokenAskedEvent;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\User\Event\UserUpdatedSelfEvent;
+use App\User\Repository\UserRepository;
 
 /**
  * User manager service.
@@ -61,6 +62,7 @@ class UserManager
     private $logger;
     private $eventDispatcher;
     private $encoder;
+    private $userRepository;
  
     /**
         * Constructor.
@@ -68,7 +70,7 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, UserRepository $userRepository)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -79,6 +81,7 @@ class UserManager
         $this->encoder = $encoder;
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
+        $this->userRepository = $userRepository;
     }
     
     /**
@@ -119,6 +122,8 @@ class UserManager
      */
     public function updateUser(User $user)
     {
+        var_dump($user->getTelephone());
+        die;
         // update of the geotoken
         $datetime = new DateTime();
         $time = $datetime->getTimestamp();

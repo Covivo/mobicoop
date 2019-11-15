@@ -173,7 +173,7 @@ use App\User\EntityListener\UserListener;
  *          "put"={
  *              "method"="PUT",
  *              "path"="/users/{id}",
- *              "controller"=UserUpdate::class,
+ *              "controller"=UserUpdate::class
  *          },
  *          "delete"
  *      }
@@ -318,6 +318,12 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","results","write"})
      */
     private $telephone;
+    
+    /**
+     * @var string|null The telephone number of the user.
+     * @Groups({"read", "write"})
+     */
+    private $oldTelephone;
 
     /**
      * @var int|null The maximum detour duration (in seconds) as a driver to accept a request proposal.
@@ -834,6 +840,18 @@ class User implements UserInterface, EquatableInterface
     public function setTelephone(?string $telephone): self
     {
         $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function getOldTelephone(): ?string
+    {
+        return $this->oldTelephone;
+    }
+
+    public function setOldTelephone(?string $oldTelephone): self
+    {
+        $this->oldTelephone = $oldTelephone;
 
         return $this;
     }

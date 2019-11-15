@@ -363,7 +363,7 @@ class UserController extends AbstractController
                 'error' => $error,
                 'alerts' => $userManager->getAlerts($user)['alerts'],
                 'tabDefault' => $tabDefault,
-            'proposals' => $userManager->getProposals($user)
+                'proposals' => $userManager->getProposals($user)
         ]);
     }
 
