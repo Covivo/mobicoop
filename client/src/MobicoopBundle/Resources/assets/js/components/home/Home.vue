@@ -3,12 +3,12 @@
     <v-container
       text-center
     >
-    <!-- Title and subtitle -->
-    <v-row
-      align="center"
-      class="mt-5"
-      justify="center"
-    >
+      <!-- Title and subtitle -->
+      <v-row
+        align="center"
+        class="mt-5"
+        justify="center"
+      >
         <v-col
           cols="12"
           xl="6"
