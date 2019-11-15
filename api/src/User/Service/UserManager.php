@@ -225,57 +225,64 @@ class UserManager
 
         foreach ($threads as $ask) {
             $askHistories = $this->askHistoryRepository->findLastAskHistory($ask);
-            $askHistory = $askHistories[0];
-            $message = $askHistory->getMessage();
+            
+            // Only the Ask with at least one AskHistory
+            // Only one-way or outward of a round trip.
+            if (count($askHistories)>0 && ($ask->getType()==1 || $ask->getType()==2)) {
+                $askHistory = $askHistories[0];
 
-            $currentThread = [
-                'idAskHistory'=>$askHistory->getId(),
-                'idAsk'=>$ask->getId(),
-                'idRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getId() : $ask->getUser('user')->getId(),
-                'avatarsRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getAvatars()[0] : $ask->getUser('user')->getAvatars()[0],
-                'givenName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getGivenName() : $ask->getUser('user')->getGivenName(),
-                'familyName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getFamilyName() : $ask->getUser('user')->getFamilyName(),
-                'date' => ($message===null) ? $askHistory->getCreatedDate() : $message->getCreatedDate(),
-                'selected' => false
-            ];
 
-            // The message id : the one linked to the current askHistory or we try to find the last existing one
-            $idMessage = -99;
-            if ($message !== null) {
-                ($idMessage = $message->getMessage()!==null) ? $idMessage = $message->getMessage()->getId() : $message->getId();
-            } else {
-                $formerAskHistory = $this->askHistoryRepository->findLastAskHistoryWithMessage($ask);
-                if (count($formerAskHistory)>0 && $formerAskHistory[0]->getMessage()) {
-                    if ($formerAskHistory[0]->getMessage()->getMessage()) {
-                        $idMessage = $formerAskHistory[0]->getMessage()->getMessage()->getId();
-                    } else {
-                        $idMessage = $formerAskHistory[0]->getMessage()->getId();
+                $message = $askHistory->getMessage();
+
+                $currentThread = [
+                    'idAskHistory'=>$askHistory->getId(),
+                    'idAsk'=>$ask->getId(),
+                    'idRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getId() : $ask->getUser('user')->getId(),
+                    'avatarsRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getAvatars()[0] : $ask->getUser('user')->getAvatars()[0],
+                    'givenName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getGivenName() : $ask->getUser('user')->getGivenName(),
+                    'familyName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getFamilyName() : $ask->getUser('user')->getFamilyName(),
+                    'date' => ($message===null) ? $askHistory->getCreatedDate() : $message->getCreatedDate(),
+                    'selected' => false
+                ];
+
+                // The message id : the one linked to the current askHistory or we try to find the last existing one
+                $idMessage = -99;
+                if ($message !== null) {
+                    ($idMessage = $message->getMessage()!==null) ? $idMessage = $message->getMessage()->getId() : $message->getId();
+                } else {
+                    $formerAskHistory = $this->askHistoryRepository->findLastAskHistoryWithMessage($ask);
+                    if (count($formerAskHistory)>0 && $formerAskHistory[0]->getMessage()) {
+                        if ($formerAskHistory[0]->getMessage()->getMessage()) {
+                            $idMessage = $formerAskHistory[0]->getMessage()->getMessage()->getId();
+                        } else {
+                            $idMessage = $formerAskHistory[0]->getMessage()->getId();
+                        }
                     }
                 }
+                $currentThread['idMessage'] = $idMessage;
+
+                $waypoints = $ask->getMatching()->getWaypoints();
+                $criteria = $ask->getMatching()->getCriteria();
+                $currentThread["carpoolInfos"] = [
+                    "askHistoryId" => $askHistory->getId(),
+                    "origin" => $waypoints[0]->getAddress()->getAddressLocality(),
+                    "destination" => $waypoints[count($waypoints)-1]->getAddress()->getAddressLocality(),
+                    "criteria" => [
+                        "frequency" => $criteria->getFrequency(),
+                        "fromDate" => $criteria->getFromDate(),
+                        "fromTime" => $criteria->getFromTime(),
+                        "monCheck" => $criteria->isMonCheck(),
+                        "tueCheck" => $criteria->isTueCheck(),
+                        "wedCheck" => $criteria->isWedCheck(),
+                        "thuCheck" => $criteria->isThuCheck(),
+                        "friCheck" => $criteria->isFriCheck(),
+                        "satCheck" => $criteria->isSatCheck(),
+                        "sunCheck" => $criteria->isSunCheck()
+                    ]
+                ];
+
+                $messages[] = $currentThread;
             }
-            $currentThread['idMessage'] = $idMessage;
-
-            $waypoints = $ask->getMatching()->getWaypoints();
-            $criteria = $ask->getMatching()->getCriteria();
-            $currentThread["carpoolInfos"] = [
-                "askHistoryId" => $askHistory->getId(),
-                "origin" => $waypoints[0]->getAddress()->getAddressLocality(),
-                "destination" => $waypoints[count($waypoints)-1]->getAddress()->getAddressLocality(),
-                "criteria" => [
-                    "frequency" => $criteria->getFrequency(),
-                    "fromDate" => $criteria->getFromDate(),
-                    "fromTime" => $criteria->getFromTime(),
-                    "monCheck" => $criteria->isMonCheck(),
-                    "tueCheck" => $criteria->isTueCheck(),
-                    "wedCheck" => $criteria->isWedCheck(),
-                    "thuCheck" => $criteria->isThuCheck(),
-                    "friCheck" => $criteria->isFriCheck(),
-                    "satCheck" => $criteria->isSatCheck(),
-                    "sunCheck" => $criteria->isSunCheck()
-                ]
-            ];
-
-            $messages[] = $currentThread;
         }
 
         return $messages;
