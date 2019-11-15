@@ -1,6 +1,7 @@
 {
   "fr": {
     "eventsAvailable":"Événements disponibles",
+    "eventsPassed":"Événements passés",
     "createEvent" : "Créer un événement",
     "search":"Rechercher",
     "all":"Tous",
@@ -9,6 +10,7 @@
   },
   "en": {
     "eventsAvailable":"Events available",
+    "eventsPassed":"Passed events",
     "createEvent" : "Create an event",
     "search":"Search",
     "all":"All",

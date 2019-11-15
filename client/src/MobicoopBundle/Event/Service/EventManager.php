@@ -79,12 +79,12 @@ class EventManager
         $address->setDisplayLabel($communityAddress['displayLabel']);
 
         // Set Datetime from data
-        $from = $data->get('outwardTime') == null ? new \DateTime($data->get('outwardDate').'.'.$data->get('outwardTime'))  : new \DateTime($data->get('outwardDate'));
-        $to = $data->get('returnTime') == null ? new \DateTime($data->get('returnDate').'.'.$data->get('returnTime'))  : new \DateTime($data->get('returnDate'));
+        $from = $data->get('outwardTime') != null ? new \DateTime($data->get('outwardDate').'.'.$data->get('outwardTime'))  : new \DateTime($data->get('outwardDate'));
+        $to = $data->get('returnTime') != null ? new \DateTime($data->get('returnDate').'.'.$data->get('returnTime'))  : new \DateTime($data->get('returnDate'));
         //Set use time = 1, if user set time
         $flagTime = ($data->get('returnTime') == null && $data->get('outwardTime') == null) ?  0 : 1;
         $event->setUseTime($flagTime);
-        $event->setStatus(0);
+        $event->setStatus(1);
 
         // set event infos
         $event->setName($data->get('name'));
@@ -105,19 +105,23 @@ class EventManager
     /**
      * Get all events which end date happens after a certain date.
      * @param \DateTimeInterface    $endDateIsAfter     The date after which the end date of events are taken account (usually the current date)
+     * @param int                   $flag               Flag for know if we want event passed or incoming (0, past, 1 incoming)
      * @param string                $orderBy            Property on which order the results (id or fromDate)
      * @param string                $order              Order type (asc or desc)
      * @param int                   $limit              The max number of results
      * @return array|null The events found or null if not found.
      */
-    public function getEvents(?\DateTimeInterface $endDateIsAfter, string $orderBy="fromDate", string $order="asc", int $limit=null)
+    public function getEvents($flag = 1, ?\DateTimeInterface $endDateIsAfter = null, string $orderBy="fromDate", string $order="asc", int $limit=null)
     {
         $params=[];
-        if ($endDateIsAfter) {
-            $params['toDate[after]'] = $endDateIsAfter->format('Y-m-d');
+
+        $endDate = $endDateIsAfter ? $endDateIsAfter :  $now = new \DateTime();
+        if ($flag == 0) {
+            $params['toDate[strictly_before]'] = $endDate->format('Y-m-d');
         } else {
-            $params['toDate[after]'] = new \DateTime();
+            $params['toDate[after]'] = $endDate->format('Y-m-d');
         }
+
         if ($orderBy == "fromDate") {
             $params['order[fromDate]'] = $order;
         }

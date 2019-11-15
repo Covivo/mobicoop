@@ -1,18 +1,16 @@
 {
   "fr": {
     "routes": {
-      "community": "/communaute/{id}"
+      "event": "/evenement/{id}"
     },
-    "communityDetails":"Détails de la communauté",
-    "join":"Rejoindre la communauté",
-    "protected": "Cette communauté n'est visible que par ses membres"
+    "eventDetails":"Détails de l'événement",
+    "join":"Rejoindre l'événement"
   },
   "en": {
     "routes": {
-        "community": "/communaute/{id}"
+        "community": "/event/{id}"
       }
     },
-    "communityDetails":"Community details",
-    "join":"Join the community",
-    "protected": "This community is only visible by its members"
+    "eventDetails":"Evennt details",
+    "join":"Join the event"
 }

@@ -25,7 +25,7 @@
         <v-card-title>
           <div>
             <h4>
-              <a :href="linkToCommunityShow(item)">{{ item.name }}</a>
+              <a :href="linkToEventShow(item)">{{ item.name }}</a>
             </h4>
           </div>
         </v-card-title>
@@ -48,9 +48,9 @@
           <v-btn
             color="secondary"
             rounded
-            :href="linkToCommunityShow(item)"
+            :href="linkToEventShow(item)"
           >
-            {{ $t('communityDetails') }}
+            {{ $t('eventDetails') }}
           </v-btn>
         </div>
       </v-col>
@@ -59,8 +59,8 @@
 </template>
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/community/CommunityListItem.json";
-import TranslationsClient from "@clientTranslations/components/community/CommunityList.json";
+import Translations from "@translations/components/event/EventListItem.json";
+import TranslationsClient from "@clientTranslations/components/event/EventListItem.json";
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
@@ -74,8 +74,8 @@ export default {
     }
   },
   methods:{
-    linkToCommunityShow: function (item) {
-      return this.$t('routes.community', {id:item.id});
+    linkToEventShow: function (item) {
+      return this.$t('routes.event', {id:item.id});
     }
   }
 }
