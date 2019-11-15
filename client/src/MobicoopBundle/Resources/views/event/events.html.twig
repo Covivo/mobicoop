@@ -24,7 +24,8 @@
             <br/><br/>
             <event-list
                     :paths="{{ {'event_create':path('event_create')}|json_encode }}"
-                    :allevents="{{ allevents }}"
+                    :eventscoming="{{ eventComing }}"
+                    :eventspassed="{{ eventPassed }}"
             ></event-list>
             <br/><br/>
         </div>

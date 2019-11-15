@@ -49,11 +49,14 @@ class EventController extends AbstractController
      */
     public function eventList(EventManager $eventManager, SerializerInterface $serializer)
     {
+
         // We get all the events
-        $allevents = $serializer->serialize($eventManager->getEvents(new \DateTime()), 'json');
+        $eventComing = $serializer->serialize($eventManager->getEvents(), 'json');
+        $eventPassed = $serializer->serialize($eventManager->getEvents(0), 'json');
 
         return $this->render('@Mobicoop/event/events.html.twig', [
-            'allevents' => $allevents,
+            'eventComing' => $eventComing,
+            'eventPassed' => $eventPassed,
         ]);
     }
     /**
