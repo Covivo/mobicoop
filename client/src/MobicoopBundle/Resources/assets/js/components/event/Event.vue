@@ -224,7 +224,7 @@ export default {
   mounted() {
     // this.getCommunityUser();
     // this.checkIfUserLogged();
-    // this.getCommunityProposals();
+    this.getEventProposals();
     this.checkDomain();
   },
   methods:{
@@ -303,36 +303,33 @@ export default {
       };
       this.post(`${this.$t("buttons.publish.route")}`, lParams);
     },
-    // getCommunityProposals () {
-    //   this.loadingMap = true;
-    //   axios
-    //
-    //     .get('/community-proposals/'+this.community.id,
-    //       {
-    //         headers:{
-    //           'content-type': 'application/json'
-    //         }
-    //       })
-    //     .then(res => {
-    //       this.errorUpdate = res.data.state;
-    //       this.pointsToMap.length = 0;
-    //       // add the community address to display on the map
-    //       if (this.community.address) {
-    //         this.pointsToMap.push(this.buildPoint(this.community.address.latitude,this.community.address.longitude,this.community.name));
-    //       }
-    //
-    //       // add all the waypoints of the community to display on the map :
-    //       // if the user is already accepted or if the doesn't hide members or proposals to non members.
-    //       if(this.isAccepted || (!this.community.membersHidden && !this.community.proposalsHidden) ){
-    //         res.data.forEach((waypoint, index) => {
-    //           this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
-    //         });
-    //       }
-    //       this.loadingMap = false;
-    //       setTimeout(this.$refs.mmap.redrawMap(),600);
-    //
-    //     });
-    // },
+    getEventProposals () {
+      this.loadingMap = true;
+      axios
+
+        .get('/event-proposals/'+this.event.id,
+          {
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
+        .then(res => {
+          this.errorUpdate = res.data.state;
+          this.pointsToMap.length = 0;
+          // add the community address to display on the map
+          if (this.event.address) {
+            this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name));
+          }
+
+          // add all the waypoints of the event to display on the map :
+          res.data.forEach((waypoint, index) => {
+            this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+          });
+          this.loadingMap = false;
+          setTimeout(this.$refs.mmap.redrawMap(),600);
+
+        });
+    },
 
     buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
       let point = {

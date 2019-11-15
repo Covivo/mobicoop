@@ -56,8 +56,8 @@
 <script>
 import moment from "moment";
 import { merge } from "lodash";
-import Translations from "@translations/components/event/Event.json";
-import TranslationsClient from "@clientTranslations/components/event/Event.json";
+import Translations from "@translations/components/event/EventInfos.json";
+import TranslationsClient from "@clientTranslations/components/event/EventInfos.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -86,11 +86,12 @@ export default {
     };
   },
   methods: {
-    computedDateFormat() {
-      moment.locale(this.locale);
-      return this.date
-        ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
-        : null;
+    computedDateFormat(date) {
+      // moment.locale(this.locale);
+      // return this.date
+      //   ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
+      //   : null;
+      return moment(this.date).format(this.$t("DD/MM/YYYY hh:mm"));
     }
   },
 }
