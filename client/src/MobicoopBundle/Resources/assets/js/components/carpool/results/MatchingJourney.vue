@@ -69,7 +69,7 @@
                 cols="4"
                 class="title text-center"
               >
-                {{ lResult.price ? lResult.price +'€' : '' }}
+                {{ lResult.roundedPrice ? lResult.roundedPrice +'€' : '' }}
               </v-col>
             </v-row>
 
@@ -305,9 +305,9 @@
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
-        @click="lResult.frequency == 1 ? carpool(0) : step = 2"
+        @click="lResult.frequency == 1 ? (driver ? carpool(1) : carpool(2)) : step = 2"
       >
-        {{ $t('outward') }}
+        {{ lResult.frequency == 1 ? $t('carpool') : $t('outward') }}
       </v-btn>
 
       <!-- Carpool (driver) --> 
@@ -540,14 +540,27 @@ export default {
         "passenger": this.lResult.resultPassenger ? true : false,
         "regular" : this.lResult.frequency == 2
       };
-      // if the requester can be passenger, we take the informations from the resultPassenger outward item
-      if (this.lResult.resultPassenger) {
-        params.proposalId = this.lResult.resultPassenger.outward.proposalId;
-        params.origin = this.lResult.resultPassenger.outward.origin;
-        params.destination = this.lResult.resultPassenger.outward.destination;
-        params.date = this.lResult.resultPassenger.outward.date;
-        params.time = this.lResult.resultPassenger.outward.time;
-        params.priceKm = this.lResult.resultPassenger.outward.priceKm;
+      let resultChoice = null;
+      if (this.lResult.resultDriver) {
+        resultChoice = this.lResult.resultDriver;
+      } else {
+        resultChoice = this.lResult.resultPassenger;
+      }      
+      params.proposalId = resultChoice.outward.proposalId;
+      params.origin = resultChoice.outward.origin;
+      params.destination = resultChoice.outward.destination;
+      params.date = resultChoice.outward.date;
+      params.time = resultChoice.outward.time;
+      params.priceKm = resultChoice.outward.priceKm;
+      params.outwardPrice = resultChoice.outward.originalPrice;
+      params.outwardRoundedPrice = resultChoice.outward.originalRoundedPrice;
+      params.outwardComputedPrice = resultChoice.outward.computedPrice;
+      params.outwardComputedRoundedPrice = resultChoice.outward.computedRoundedPrice;
+      if (resultChoice.return) {
+        params.returnPrice = resultChoice.return.originalPrice;
+        params.returnRoundedPrice = resultChoice.return.originalRoundedPrice;
+        params.returnComputedPrice = resultChoice.return.computedPrice;
+        params.returnComputedRoundedPrice = resultChoice.return.computedRoundedPrice;
       }
       this.$emit('contact', params);
     },
@@ -555,18 +568,31 @@ export default {
       this.carpoolLoading = true;
       this.contactDisabled = true;
       let params = {
-        "driver": this.lResult.resultDriver && role<2 ? true : false,
-        "passenger": this.lResult.resultPassenger && role != 1 ? true : false,
-        "regular" : this.lResult.frequency == 2
+        "driver": role==1,
+        "passenger": role==2,
+        "regular": this.lResult.frequency == 2,
+        "outwardSchedule": this.getDays(this.outwardTrip),
+        "returnSchedule": this.getDays(this.returnTrip),
+        "fromDate": moment(this.fromDate).format(this.$t('i18n.date.format.computeDate')),
+        "toDate": moment(this.maxDate).format(this.$t('i18n.date.format.computeDate'))
       };
-      // if the requester can be passenger, we take the informations from the resultPassenger outward item
-      if (this.lResult.resultPassenger) {
-        params.proposalId = this.lResult.resultPassenger.outward.proposalId;
-        params.origin = this.lResult.resultPassenger.outward.origin;
-        params.destination = this.lResult.resultPassenger.outward.destination;
-        params.date = this.lResult.resultPassenger.outward.date;
-        params.time = this.lResult.resultPassenger.outward.time;
-        params.priceKm = this.lResult.resultPassenger.outward.priceKm;
+      let resultChoice = this.lResult.resultDriver;
+      if (role == 2) resultChoice = this.lResult.resultPassenger;
+      params.proposalId = resultChoice.outward.proposalId;
+      params.origin = resultChoice.outward.origin;
+      params.destination = resultChoice.outward.destination;
+      params.date = resultChoice.outward.date;
+      params.time = resultChoice.outward.time;
+      params.priceKm = resultChoice.outward.priceKm;
+      params.outwardPrice = resultChoice.outward.originalPrice;
+      params.outwardRoundedPrice = resultChoice.outward.originalRoundedPrice;
+      params.outwardComputedPrice = resultChoice.outward.computedPrice;
+      params.outwardComputedRoundedPrice = resultChoice.outward.computedRoundedPrice;
+      if (resultChoice.return) {
+        params.returnPrice = resultChoice.return.originalPrice;
+        params.returnRoundedPrice = resultChoice.return.originalRoundedPrice;
+        params.returnComputedPrice = resultChoice.return.computedPrice;
+        params.returnComputedRoundedPrice = resultChoice.return.computedRoundedPrice;
       }
       this.$emit('carpool', params);
     },
@@ -579,6 +605,27 @@ export default {
     changeReturn(params) {
       this.returnTrip = params;
     },
+    getDays(trip) {
+      let days = {
+        "monTime": null,
+        "tueTime": null,
+        "wedTime": null,
+        "thuTime": null,
+        "friTime": null,
+        "satTime": null,
+        "sunTime": null
+      };
+      for (var i = 0; i < trip.length; i++) {
+        if (trip[i].day == "mon") days.monTime = trip[i].time.replace("h",":");
+        if (trip[i].day == "tue") days.tueTime = trip[i].time.replace("h",":");
+        if (trip[i].day == "wed") days.wedTime = trip[i].time.replace("h",":");
+        if (trip[i].day == "thu") days.thuTime = trip[i].time.replace("h",":");
+        if (trip[i].day == "fri") days.friTime = trip[i].time.replace("h",":");
+        if (trip[i].day == "sat") days.satTime = trip[i].time.replace("h",":");
+        if (trip[i].day == "sun") days.sunTime = trip[i].time.replace("h",":");
+      }
+      return days;
+    }
   }
 };
 </script>

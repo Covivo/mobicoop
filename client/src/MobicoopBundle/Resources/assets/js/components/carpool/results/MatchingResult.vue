@@ -60,7 +60,7 @@
             :date="result.date"
             :time="result.time"
             :seats="result.seats"
-            :price="result.price"
+            :price="result.roundedPrice"
           />
 
           <v-divider />

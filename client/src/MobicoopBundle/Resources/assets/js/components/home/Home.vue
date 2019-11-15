@@ -3,12 +3,12 @@
     <v-container
       text-center
     >
-      <!-- Title and subtitle -->
-      <v-row
-        align="center"
-        class="mt-5"
-        justify="center"
-      >
+    <!-- Title and subtitle -->
+    <v-row
+      align="center"
+      class="mt-5"
+      justify="center"
+    >
         <v-col
           cols="12"
           xl="6"
@@ -44,12 +44,14 @@
           />
         </v-col>
       </v-row>
+      <Cookies />
     </v-container>
   </v-content>
 </template>
 
 <script>
 import {merge} from "lodash";
+import Cookies from "@components/utilities/Cookies";
 import Translations from "@translations/components/home/Home.json";
 import TranslationsClient from "@clientTranslations/components/home/Home.json";
 import Search from "@components/carpool/search/Search";
@@ -63,7 +65,8 @@ export default {
   },
   components: {
     Search,
-    HomeContent
+    HomeContent,
+    Cookies
   },
   props: {
     geoSearchUrl: {
@@ -81,6 +84,18 @@ export default {
     punctualDateOptional: {
       type: Boolean,
       default: false
+    },
+    debug: {
+      type: Boolean,
+      default: false
+    },
+    position: {
+      type: String,
+      default: ""
+    },
+    transitionName: {
+      type: String,
+      default: ""
     },
     solidaryDisplay: {
       type: Boolean,

@@ -471,7 +471,8 @@ class UserManager
     public function getProposals(User $user)
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
-        $response = $this->dataProvider->getSubCollection($user->getId(), 'proposal', 'proposals');
+        // we set the private param to false to get only published ad, not proposals posted after a search
+        $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class, null, ['private'=>false]);
         $proposals = $response->getValue();
         
         $proposalsSanitized = [

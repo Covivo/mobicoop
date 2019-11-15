@@ -22,6 +22,8 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -164,7 +166,7 @@ class CommunityController extends AbstractController
         // retreive community;
         $community = $communityManager->getCommunity($id);
 
-        //$this->denyAccessUnlessGranted('show', $community);
+        $this->denyAccessUnlessGranted('show', $community);
 
         // retreive logged user
         $user = $userManager->getLoggedUser();
@@ -200,6 +202,9 @@ class CommunityController extends AbstractController
     public function communityJoin($id, CommunityManager $communityManager, UserManager $userManager)
     {
         $community = $communityManager->getCommunity($id);
+
+        $this->denyAccessUnlessGranted('join', $community);
+
         $user = $userManager->getLoggedUser();
         $reponseofmanager= $this->handleManagerReturnValue($user);
         if (!empty($reponseofmanager)) {
@@ -231,10 +236,15 @@ class CommunityController extends AbstractController
      * @param UserManager $userManager
      * @return Response
      */
-    public function communityUser(CommunityManager $communityManager, Request $request)
+    public function communityUser(CommunityManager $communityManager, UserManager $userManager, Request $request)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
+
+            // Maybe to discuss I think that only a user can get access to the community user associate
+            $user = $userManager->getUser($data['userId']);
+            $this->denyAccessUnlessGranted('update', $user);
+            
             return new Response(json_encode($communityManager->getCommunityUser($data['communityId'], $data['userId'], 1)));
         }
         
@@ -243,6 +253,7 @@ class CommunityController extends AbstractController
 
     /**
      * Get last three users
+     * Ajax
      *
      * @param [type] $id
      * @param CommunityManager $communityManager
@@ -251,6 +262,9 @@ class CommunityController extends AbstractController
      */
     public function communityLastUsers(int $id, CommunityManager $communityManager)
     {
+        $community = $communityManager->getCommunity($id);
+        $this->denyAccessUnlessGranted('show', $community);
+
         // get the last 3 users and formate them to be used with vue
         $lastUsers = $communityManager->getLastUsers($id);
         $lastUsersFormated = [];
@@ -263,6 +277,7 @@ class CommunityController extends AbstractController
 
     /**
      * Get all users of a community
+     * Ajax
      *
      * @param integer $id
      * @param CommunityManager $communityManager
@@ -276,6 +291,8 @@ class CommunityController extends AbstractController
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
+        $this->denyAccessUnlessGranted('show', $community);
+
         $users = [];
         //test if the community has members
         if (count($community->getCommunityUsers()) > 0) {
@@ -291,6 +308,7 @@ class CommunityController extends AbstractController
 
     /**
      * Get all proposals of a community
+     * Ajax
      *
      * @param integer $id
      * @param CommunityManager $communityManager
@@ -298,23 +316,34 @@ class CommunityController extends AbstractController
      */
     public function communityProposals(int $id, CommunityManager $communityManager)
     {
+        $community = $communityManager->getCommunity($id);
+        $this->denyAccessUnlessGranted('show', $community);
+
         $proposals = $communityManager->getProposals($id);
-        $points = [];
+        $ways = [];
         if ($proposals!==null) {
             foreach ($proposals as $proposal) {
+                $currentProposal = [
+                    "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
+                    "frequency"=>($proposal["criteria"]["frequency"]==Criteria::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
+                    "waypoints"=>[]
+                ];
                 foreach ($proposal["waypoints"] as $waypoint) {
-                    $points[] = [
-                        "title"=>$waypoint["address"]["displayLabel"],
+                    $currentProposal["waypoints"][] = [
+                        "title"=>(is_array($waypoint["address"]["displayLabel"])) ? implode(", ", $waypoint["address"]["displayLabel"]) : $waypoint["address"]["displayLabel"],
+                        "destination"=>$waypoint['destination'],
                         "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
                     ];
                 }
+                $ways[] = $currentProposal;
             }
         }
-        return new Response(json_encode($points));
+        return new Response(json_encode($ways));
     }
 
     /**
      * Get available communities for the logged user
+     * Ajax
      *
      * @param UserManager $userManager
      * @param CommunityManager $communityManager
@@ -329,9 +358,14 @@ class CommunityController extends AbstractController
 
         return new Response();
     }
-    
+
     /**
-     * Check if a user is an accepted member of a community (AJAX)
+     * Check if a user is an accepted member of a community
+     * Ajax
+     *
+     * @param CommunityManager $communityManager
+     * @param Request $request
+     * @return boolean
      */
     public function isMember(CommunityManager $communityManager, Request $request)
     {

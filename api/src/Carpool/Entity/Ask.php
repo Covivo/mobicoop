@@ -147,7 +147,16 @@ class Ask
     private $matching;
 
     /**
-     * @var Ask|null The linked ask.
+     * @var Ask|null The linked ask if a user proposes another ask.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask")
+     * @Groups({"read","threads","thread"})
+     * @MaxDepth(1)
+     */
+    private $ask;
+
+    /**
+     * @var Ask|null The linked ask for return trips.
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask")
      * @Groups({"read","threads","thread"})
@@ -284,6 +293,24 @@ class Ask
         return $this;
     }
 
+    public function getAsk(): ?self
+    {
+        return $this->ask;
+    }
+
+    public function setAsk(?self $ask): self
+    {
+        $this->ask = $ask;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newAsk = $ask === null ? null : $this;
+        if ($newAsk !== $ask->getAskl()) {
+            $ask->setAsk($newAsk);
+        }
+
+        return $this;
+    }
+
     public function getAskLinked(): ?self
     {
         return $this->askLinked;
@@ -295,7 +322,7 @@ class Ask
 
         // set (or unset) the owning side of the relation if necessary
         $newAskLinked = $askLinked === null ? null : $this;
-        if ($newAskLinked !== $askLinked->getAsklLinked()) {
+        if ($newAskLinked !== $askLinked->getAskLinked()) {
             $askLinked->setAskLinked($newAskLinked);
         }
 

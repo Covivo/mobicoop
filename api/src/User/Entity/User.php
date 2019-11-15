@@ -189,6 +189,8 @@ use App\User\EntityListener\UserListener;
  */
 class User implements UserInterface, EquatableInterface
 {
+    const DEFAULT_ID = 999999999999;
+    
     const MAX_DETOUR_DURATION = 600;
     const MAX_DETOUR_DISTANCE = 10000;
 

@@ -115,6 +115,8 @@ class UserController extends AbstractController
      */
     public function userSignUp(UserManager $userManager, Request $request, TranslatorInterface $translator)
     {
+        $this->denyAccessUnlessGranted('register');
+
         $user = new User();
         $address = new Address();
         $error = false;
@@ -238,6 +240,9 @@ class UserController extends AbstractController
             if (!$homeAddress) {
                 $homeAddress = new Address();
             }
+
+            $this->denyAccessUnlessGranted('address_update_self', $user);
+            
             
             $address=json_decode($data->get('homeAddress'), true);
             $homeAddress->setAddressCountry($address['addressCountry']);
@@ -309,6 +314,7 @@ class UserController extends AbstractController
     public function userProfileAvatarDelete(ImageManager $imageManager, UserManager $userManager)
     {
         $user = clone $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('update', $user);
         $imageId = $user->getImages()[0]->getId();
         $imageManager->deleteImage($imageId);
 
@@ -372,6 +378,7 @@ class UserController extends AbstractController
      */
     public function userPasswordRecovery()
     {
+        $this->denyAccessUnlessGranted('login');
         return $this->render('@Mobicoop/user/passwordRecovery.html.twig', []);
     }
 
@@ -382,6 +389,7 @@ class UserController extends AbstractController
      */
     public function userPasswordForRecovery(UserManager $userManager, Request $request)
     {
+        $this->denyAccessUnlessGranted('login');
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
@@ -423,6 +431,8 @@ class UserController extends AbstractController
             $data = json_decode($request->getContent(), true);
             
             $user = $userManager->findByPwdToken($token);
+
+            $this->denyAccessUnlessGranted('password', $user);
 
             if (!empty($user)) {
                 $user->setPassword($data["password"]);
@@ -512,6 +522,7 @@ class UserController extends AbstractController
     public function userMessageDirectThreadsList(UserManager $userManager, InternalMessageManager $internalMessageManager)
     {
         $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
         $threads = $userManager->getThreadsDirectMessages($user);
         return new Response(json_encode($threads));
     }
@@ -522,6 +533,7 @@ class UserController extends AbstractController
     public function userMessageCarpoolThreadsList(UserManager $userManager, InternalMessageManager $internalMessageManager)
     {
         $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
         $threads = $userManager->getThreadsCarpoolMessages($user);
         return new Response(json_encode($threads));
     }
@@ -529,8 +541,10 @@ class UserController extends AbstractController
     /**
      * Get direct messages threads
      */
-    public function userMessageThread($idMessage, InternalMessageManager $internalMessageManager)
+    public function userMessageThread($idMessage, InternalMessageManager $internalMessageManager, UserManager $userManager)
     {
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
         $completeThread = $internalMessageManager->getThread($idMessage, DataProvider::RETURN_JSON);
         return new Response(json_encode($completeThread));
     }
@@ -917,10 +931,11 @@ class UserController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            $communityUsers = $communityManager->getAllCommunityUser($data['userId']);
             $communities = [];
-            foreach ($communityUsers as $communityUser) {
-                $communities[] = $communityUser->getCommunity();
+            if ($communityUsers = $communityManager->getAllCommunityUser($data['userId'])) {
+                foreach ($communityUsers as $communityUser) {
+                    $communities[] = $communityUser->getCommunity();
+                }
             }
             return new JsonResponse($communities);
         }
