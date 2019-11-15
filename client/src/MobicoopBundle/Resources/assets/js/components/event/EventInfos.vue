@@ -8,16 +8,16 @@
         color="grey lighten-3"
         size="225"
       >
-        <!--        <img-->
-        <!--          v-if="event.images[0]"-->
-        <!--          :src="event['images'][0]['versions'][avatarVersion]"-->
-        <!--          alt="avatar"-->
-        <!--        >-->
-        <!--        <img-->
-        <!--          v-else-->
-        <!--          :src="urlAltAvatar"-->
-        <!--          alt="avatar"-->
-        <!--        >-->
+        <img
+          v-if="event.images[0]"
+          :src="event['images'][0]['versions'][avatarVersion]"
+          alt="avatar"
+        >
+        <img
+          v-else
+          :src="urlAltAvatar"
+          alt="avatar"
+        >
       </v-avatar>
     </v-col>
       
@@ -40,10 +40,12 @@
           </p>
           <v-row>
             <p class="body-2">
-              {{ event.fromDate.date }}
+              {{ computedDateFormat(event.fromDate.date) }}
+              {{ computedDateFormat(event.fromDate.date) }}
             </p>
             <p class="body-2">
-              {{ event.toDate.date }}
+              {{ computedDateFormat(event.toDate.date) }}
+              {{ computedDateFormat(event.toDate.date) }}
             </p>
           </v-row>
         </v-card-text>
@@ -52,6 +54,13 @@
   </v-row>
 </template>
 <script>
+import moment from "moment";
+import { merge } from "lodash";
+import Translations from "@translations/components/event/Event.json";
+import TranslationsClient from "@clientTranslations/components/event/Event.json";
+
+let TranslationsMerged = merge(Translations, TranslationsClient);
+
 export default {
   props:{
     event: {
@@ -66,6 +75,23 @@ export default {
       type: String,
       default: null
     }
-  }
+  },
+  i18n: {
+    messages: TranslationsMerged,
+  },
+  data() {
+    return {
+      locale: this.$i18n.locale,
+      origin: this.initOrigin,
+    };
+  },
+  methods: {
+    computedDateFormat() {
+      moment.locale(this.locale);
+      return this.date
+        ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
+        : null;
+    }
+  },
 }
 </script>

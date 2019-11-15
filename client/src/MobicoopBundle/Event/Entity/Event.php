@@ -277,9 +277,9 @@ class Event implements ResourceInterface, \JsonSerializable
     /**
      * @return Collection|Image[]
      */
-    public function getImages(): Collection
+    public function getImages()
     {
-        return $this->images;
+        return $this->images->getValues();
     }
 
     public function addImage(Image $image): self

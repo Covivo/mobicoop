@@ -50,6 +50,13 @@
                 >
                   {{ $t('buttons.publish.label') }}
                 </v-btn>
+                <v-btn
+                  color="secondary"
+                  rounded
+                  @click="publish"
+                >
+                  {{ $t('buttons.widget.label') }}
+                </v-btn>
               </div>
               <!-- button if user ask to join community but is not accepted yet -->
             </v-col>
@@ -117,10 +124,8 @@ import axios from "axios";
 import { merge } from "lodash";
 import Translations from "@translations/components/event/Event.json";
 import TranslationsClient from "@clientTranslations/components/event/Event.json";
-import CommunityMemberList from "@components/community/CommunityMemberList";
 import EventInfos from "@components/event/EventInfos";
 import Search from "@components/carpool/search/Search";
-import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
 

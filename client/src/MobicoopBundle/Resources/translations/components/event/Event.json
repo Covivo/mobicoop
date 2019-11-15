@@ -5,6 +5,10 @@
           "label": "Publier une annonce",
           "route": "covoiturage/recherche/poster"
       },
+      "widget": {
+        "label": "Voir le Widget",
+        "route": ""
+      },
       "search": {
         "label": "Rechercher",
         "route": ""
@@ -28,6 +32,10 @@
       "publish": {
           "label": "Publish an ad",
           "route": "carpool/search/post"
+      },
+      "widget": {
+        "label": "See Widget",
+        "route": ""
       },
       "search": {
         "label": "Search",

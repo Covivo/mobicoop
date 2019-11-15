@@ -1,0 +1,18 @@
+{
+  "fr": {
+    "startEvent": {
+      "label" : "Début"
+    },
+    "endEvent": {
+      "label" : "Fin"
+    }
+  },
+  "en": {
+    "startEvent": {
+      "label" : "Start"
+    },
+    "endEvent": {
+      "label" : "End"
+    }
+  }
+}
