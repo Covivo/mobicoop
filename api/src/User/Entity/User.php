@@ -208,6 +208,10 @@ class User implements UserInterface, EquatableInterface
         self::GENDER_OTHER
     ];
 
+    const PHONE_DISPLAY_RESTRICTED = 1;
+    const PHONE_DISPLAY_COMMUNITY = 2;
+    const PHONE_DISPLAY_ALL = 3;
+
     const AUTHORIZED_SIZES_DEFAULT_AVATAR = [
         "square_100",
         "square_250",
@@ -312,6 +316,15 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","results","write"})
      */
     private $telephone;
+
+    /**
+     * @var int phone display configuration (1 = restricted (default); 2 = community; 3 = all).
+     *
+     * @Assert\NotBlank
+     * @ORM\Column(type="smallint")
+     * @Groups({"read","write"})
+     */
+    private $phoneDisplay;
 
     /**
      * @var int|null The maximum detour duration (in seconds) as a driver to accept a request proposal.
@@ -828,6 +841,18 @@ class User implements UserInterface, EquatableInterface
     public function setTelephone(?string $telephone): self
     {
         $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function getPhoneDisplay(): int
+    {
+        return $this->phoneDisplay;
+    }
+
+    public function setPhoneDisplay(int $phoneDisplay): self
+    {
+        $this->phoneDisplay = $phoneDisplay;
 
         return $this;
     }

@@ -59,6 +59,10 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         'gender.choice.nc'      => self::GENDER_OTHER
     ];
 
+    const PHONE_DISPLAY_RESTRICTED = 1;
+    const PHONE_DISPLAY_COMMUNITY = 2;
+    const PHONE_DISPLAY_ALL = 3;
+    
     const HOME_ADDRESS_NAME = 'homeAddress';
     
     /**
@@ -144,6 +148,14 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * @Groups({"post","put"})
      */
     private $telephone;
+
+    /**
+     * @var int phone display configuration (1 = restricted; 2 = community; 3 = all).
+     *
+     * @Assert\NotBlank
+     * @Groups({"post","put"})
+     */
+    private $phoneDisplay;
     
     /**
      * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
@@ -503,6 +515,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         $this->telephone = $telephone;
         
+        return $this;
+    }
+
+    public function getPhoneDisplay(): int
+    {
+        return $this->phoneDisplay;
+    }
+
+    public function setPhoneDisplay(int $phoneDisplay): self
+    {
+        $this->phoneDisplay = $phoneDisplay;
+
         return $this;
     }
     
