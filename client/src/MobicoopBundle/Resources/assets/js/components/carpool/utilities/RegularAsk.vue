@@ -365,10 +365,6 @@ export default {
       type: String,
       default: null
     },
-    period: {
-      type: Number,
-      default: 0
-    },
     monTime: {
       type: String,
       default: null
@@ -396,18 +392,46 @@ export default {
     sunTime: {
       type: String,
       default: null
-    }
+    },
+    monCheckDefault: {
+      type: Boolean,
+      default:null
+    },
+    tueCheckDefault: {
+      type: Boolean,
+      default:null
+    },
+    wedCheckDefault: {
+      type: Boolean,
+      default:null
+    },
+    thuCheckDefault: {
+      type: Boolean,
+      default:null
+    },
+    friCheckDefault: {
+      type: Boolean,
+      default:null
+    },
+    satCheckDefault: {
+      type: Boolean,
+      default:null
+    },
+    sunCheckDefault: {
+      type: Boolean,
+      default:null
+    },
   },
   data() {
     return {
       locale: this.$i18n.locale,
-      monCheck: null,
-      tueCheck: null,
-      wedCheck: null,
-      thuCheck: null,
-      friCheck: null,
-      satCheck: null,
-      sunCheck: null
+      monCheck: this.monCheckDefault,
+      tueCheck: this.tueCheckDefault,
+      wedCheck: this.wedCheckDefault,
+      thuCheck: this.thuCheckDefault,
+      friCheck: this.friCheckDefault,
+      satCheck: this.satCheckDefault,
+      sunCheck: this.sunCheckDefault
     };
   },
   computed: {

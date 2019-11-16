@@ -2,11 +2,17 @@
     "fr": {
         "notLinkedToACarpool":"Ce fil de discussion n'est pas lié à un covoiturage",
         "roundTrip":"Trajet Aller-Retour",
-        "urlGetAskHistory":"/utilisateur/messages/actions/infos"
+        "urlGetAskHistory":"/utilisateur/messages/actions/infos",
+        "regular":{
+            "ask":"Proposer un covoiturage régulier"
+        }
      },
     "en": {
         "notLinkedToACarpool":"There is no carpool linked to this thread",
         "roundTrip":"Round trip",
-        "urlGetAskHistory":"/user/messages/actions/infos"
+        "urlGetAskHistory":"/user/messages/actions/infos",
+        "regular":{
+            "ask":"Ask a regular carpool"
+        }
     }
 }

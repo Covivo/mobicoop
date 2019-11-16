@@ -2,14 +2,15 @@
   <v-content>
     <!-- The Ask is just Initiated -->
     <!-- Only the Ask User can make a formal request of carpool -->
-    <div v-if="status==1 && userId==requesterId">
+    <div v-if="status==1 && requester">
       <v-tooltip
+        v-if="driver"
         bottom
-        color="warning"
+        color="primary"
       >
         <template v-slot:activator="{ on }">
           <v-btn
-            color="warning"
+            color="primary"
             fab
             large
             dark
@@ -23,10 +24,33 @@
             </v-icon>
           </v-btn> 
         </template>
-        <span>{{ $t('askCarpool') }}</span>
+        <span>{{ $t('button.askCarpoolAsDriver') }}</span>
+      </v-tooltip>     
+      <v-tooltip
+        v-if="passenger"
+        bottom
+        color="primary"
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn
+            color="primary"
+            fab
+            large
+            dark
+            depressed
+            :loading="loading"
+            v-on="on"
+            @click="updateStatus(2)"
+          >
+            <v-icon class="display-2">
+              mdi-walk
+            </v-icon>
+          </v-btn> 
+        </template>
+        <span>{{ $t('button.askCarpoolAsPassenger') }}</span>
       </v-tooltip>     
     </div>
-    <div v-if="status==1 && userId!=requesterId">
+    <div v-if="status==1 && !requester">
       <v-card-text>{{ $t('onlyAskUser') }}</v-card-text>
     </div>
     <!-- end ask just Initiated -->
@@ -34,7 +58,7 @@
 
     <!-- The Ask is pending -->
     <!-- If you are the ask user you cannot accept or delined -->
-    <div v-if="status==2 && userId != requesterId">
+    <div v-if="status==2 && !requester">
       <v-tooltip
         bottom
         color="success"
@@ -54,7 +78,7 @@
             </v-icon>
           </v-btn> 
         </template>
-        <span>{{ $t('accept') }}</span>
+        <span>{{ $t('button.accept') }}</span>
       </v-tooltip>     
       <v-tooltip
         bottom
@@ -75,7 +99,7 @@
             </v-icon>
           </v-btn>      
         </template>
-        <span>{{ $t('refuse') }}</span>
+        <span>{{ $t('button.refuse') }}</span>
       </v-tooltip>     
     </div>
     <div v-else-if="status==2">
@@ -123,13 +147,9 @@ export default {
       type:Number,
       default:1
     },
-    userId:{
-      type:Number,
-      default:0
-    },
-    requesterId:{
-      type:Number,
-      default:0
+    requester:{
+      type:Boolean,
+      default:false
     },
     regular:{
       type:Boolean,
@@ -138,7 +158,15 @@ export default {
     loadingBtn:{
       type:Boolean,
       default:false
-    }
+    },
+    driver:{
+      type:Boolean,
+      default:false
+    },
+    passenger:{
+      type:Boolean,
+      default:false
+    },
   },
   data(){
     return {
@@ -152,13 +180,7 @@ export default {
   },
   methods:{
     updateStatus(status){
-      if(this.regular){
-        console.error("regular");
-      }
-      else{
-        this.loading = true;
-        this.$emit("updateStatus",{status:status});
-      }
+      this.$emit("updateStatus",{status:status});
     }
   }
 }

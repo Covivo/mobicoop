@@ -20,7 +20,10 @@
         class="mb-3"
         flat
       >
-        <v-chip class="secondary mb-4">
+        <v-chip
+          v-if="infos.roundTrip"
+          class="secondary mb-4"
+        >
           <v-icon
             left
             color="white"
@@ -32,16 +35,20 @@
 
         <regular-days-summary
           v-if="infos.frequency==2" 
-          :mon-active="infos.days.monCheck"
-          :tue-active="infos.days.tueCheck"
-          :wed-active="infos.days.wedCheck"
-          :thu-active="infos.days.thuCheck"
-          :fri-active="infos.days.friCheck"
-          :sat-active="infos.days.satCheck"
-          :sun-active="infos.days.sunCheck"
+          :mon-active="infos.regular.days.monCheck"
+          :tue-active="infos.regular.days.tueCheck"
+          :wed-active="infos.regular.days.wedCheck"
+          :thu-active="infos.regular.days.thuCheck"
+          :fri-active="infos.regular.days.friCheck"
+          :sat-active="infos.regular.days.satCheck"
+          :sun-active="infos.regular.days.sunCheck"
         />
 
-        <v-journey :waypoints="infos.waypoints" />
+        <v-journey
+          :waypoints="infos.waypoints"
+          :time="true"
+          :role="driver ? 'driver' : 'passenger'"
+        />
         <v-simple-table>
           <tbody>
             <tr>
@@ -71,11 +78,12 @@
           </tbody>
         </v-simple-table>
         <threads-actions-buttons
-          :user-id="idUser"
-          :requester-id="infos.requester"
+          :requester="infos.requester"
           :status="infos.status"
           :regular="infos.frequency==2"
           :loading-btn="dataLoadingBtn"
+          :driver="driver"
+          :passenger="passenger"
           @updateStatus="updateStatus"
         />
       </v-card>
@@ -97,6 +105,44 @@
         class="mx-auto"
       />
     </v-card>
+
+
+
+
+    <!-- Modal to propose a carpool -->
+    <v-dialog
+      v-if="infos.frequency==2"
+      v-model="dialogRegular"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          {{ $t('regular.ask') }}
+        </v-card-title>
+        <regular-ask
+          :type="infos.type"
+          :origin-driver="infos.regular.originDriver"
+          :destination-driver="infos.regular.destinationDriver"
+          :origin-passenger="infos.regular.originPassenger"
+          :destination-passenger="infos.regular.destinationPassenger"
+          :from-date="infos.regular.fromDate"
+          :max-date="infos.regular.maxDate"
+          :mon-check-default="infos.regular.days.monCheck"
+          :mon-time="infos.regular.days.monTime"
+          :tue-check-default="infos.regular.days.tueCheck"
+          :tue-time="infos.regular.days.tueTime"
+          :wed-check-default="infos.regular.days.wedCheck"
+          :wed-time="infos.regular.days.wedTime"
+          :thu-check-default="infos.regular.days.thuCheck"
+          :thu-time="infos.regular.days.thuTime"
+          :fri-check-default="infos.regular.days.friCheck"
+          :fri-time="infos.regular.days.friTime"
+          :sat-check-default="infos.regular.days.satCheck"
+          :sat-time="infos.regular.days.satTime"
+          :sun-check-default="infos.regular.days.sunCheck"
+          :sun-time="infos.regular.days.sunTime"
+        />
+      </v-card>
+    </v-dialog>
   </v-content>
 </template>
 <script>
@@ -104,6 +150,7 @@ import Translations from "@translations/components/user/mailbox/ThreadActions.js
 import ThreadsActionsButtons from '@components/user/mailbox/ThreadsActionsButtons'
 import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary'
 import VJourney from '@components/carpool/utilities/VJourney'
+import RegularAsk from '@components/carpool/utilities/RegularAsk'
 import axios from "axios";
 
 export default {
@@ -113,7 +160,8 @@ export default {
   components:{
     ThreadsActionsButtons,
     RegularDaysSummary,
-    VJourney
+    VJourney,
+    RegularAsk
   },
   props: {
     idAsk: {
@@ -146,7 +194,10 @@ export default {
       loading:this.loadingInit,
       recipientName:"",
       dataLoadingBtn:this.loadingBtn,
-      infos:[]
+      infos:[],
+      driver:false,
+      passenger:false,
+      dialogRegular:false
     }
   },
   computed:{
@@ -175,7 +226,21 @@ export default {
       axios.post(this.$t("urlGetAskHistory"),params)
         .then(response => {
           console.error(response.data);
-          this.infos = response.data;
+          // If the user can be driver and passenger, we display driver infos by default
+          if(response.data.driver !== undefined && response.data.passenger !== undefined){
+            this.infos = response.data.driver;
+            this.driver = this.passenger = true;
+          }
+          else if(response.data.passenger !== undefined){
+            this.infos = response.data.passenger;
+            this.driver = false;
+            this.passenger = true;
+          }
+          else{
+            this.infos = response.data.driver;
+            this.driver = true;
+            this.passenger = false;
+          }
         })
         .catch(function (error) {
           console.log(error);
@@ -185,7 +250,14 @@ export default {
         });
     },
     updateStatus(data){
-      this.$emit("updateStatusAskHistory",data);
+      if(this.infos.status==1 && this.infos.frequency==2){
+        // If the Ask is only initiated and that the carpool is regular
+        this.dialogRegular = true;
+      }
+      else{
+        this.dataLoadingBtn = true;
+        this.$emit("updateStatusAskHistory",data);
+      }
     }
   }
 }

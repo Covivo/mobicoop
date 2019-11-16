@@ -67,9 +67,10 @@ use App\Carpool\Controller\AskPut;
 class Ask
 {
     const STATUS_INITIATED = 1;
-    const STATUS_PENDING = 2;
-    const STATUS_ACCEPTED = 3;
-    const STATUS_DECLINED = 4;
+    const STATUS_PENDING_AS_DRIVER = 2;
+    const STATUS_PENDING_AS_PASSENGER = 3;
+    const STATUS_ACCEPTED = 4;
+    const STATUS_DECLINED = 5;
     
     /**
      * @var int The id of this ask.

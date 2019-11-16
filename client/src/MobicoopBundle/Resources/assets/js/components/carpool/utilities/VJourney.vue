@@ -6,20 +6,33 @@
       v-for="waypoint in waypoints"
       :key="waypoint.id"
       :color="waypoint.person == 'requester' ? 'primary' : 'secondary'"
-      :icon="getIcon(waypoint.type,waypoint.role)"
       fill-dot
     >
+      <template v-slot:icon>
+        <v-avatar>
+          <img
+            v-if="waypoint.avatar && waypoint.avatar!==''"
+            :src="waypoint.avatar"
+          >
+          <v-icon v-else>
+            {{ getIcon(waypoint.type,waypoint.role) }}
+          </v-icon>
+        </v-avatar>
+      </template>    
       <v-row dense>
         <v-col 
           v-if="time"
-          cols="2"
+          cols="3"
+          class="text-left"
         >
-          <strong>{{ formatTime(waypoint.time) }}</strong>
+          <span :class="role == waypoint.role ? 'font-weight-bold' : ''">{{ formatTime(waypoint.time) }}</span>
         </v-col>
         <v-col 
-          :cols="time ? '10' : '12'"
+          :cols="time ? '9' : '12'"
+          class="text-left"
         >
-          <strong>{{ waypoint.address.addressLocality }}</strong> {{ waypoint.address.venue ? ' - ' + waypoint.address.venue : waypoint.address.streetAddress ? ' - ' + waypoint.address.streetAddress : null }}
+          <v-icon>{{ getIcon(waypoint.type,waypoint.role) }}</v-icon>
+          <span :class="role == waypoint.role ? 'font-weight-bold' : ''">{{ waypoint.address.addressLocality }}</span> {{ waypoint.address.venue ? ' - ' + waypoint.address.venue : waypoint.address.streetAddress ? ' - ' + waypoint.address.streetAddress : null }}
         </v-col>
       </v-row>
     </v-timeline-item>
@@ -48,7 +61,11 @@ export default {
     waypoints: {
       type: Array,
       default: null
-    }
+    },
+    role: {
+      type: String,
+      default: null
+    },
   },
   data() {
     return {
