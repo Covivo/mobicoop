@@ -122,8 +122,11 @@ class UserManager
      */
     public function updateUser(User $user)
     {
-        var_dump($user->getTelephone());
-        die;
+        // check if the phone is updated and if so reset phoneToken and validatedDate
+        if ($user->getTelephone() != $user->getOldTelephone()) {
+            $user->setPhoneToken(null);
+            $user->setPhoneValidatedDate(null);
+        }
         // update of the geotoken
         $datetime = new DateTime();
         $time = $datetime->getTimestamp();

@@ -92,27 +92,25 @@
 
           <!--Email-->
           <v-text-field
-            v-model="user.email"
+            v-model="email"
             :label="$t('models.user.email.label')"
             type="email"
             class="email"
           />
 
-          <!--Telephone if verified-->
+          <!--Telephone-->
           <v-row 
             justify="center" 
-            v-if="user.telephone && phoneVerified == true"
           >
             <v-col>
               <v-text-field
-                v-model="user.telephone"
+                v-model="telephone"
                 :label="$t('models.user.phone.label')"
                 class="telephone"
               />
             </v-col>
-          <!-- phone number verification -->
-          
-            <v-col cols="1" >
+          <!-- phone number verified -->
+            <v-col cols="1" v-if="telephone && phoneVerified == true" >
               <v-tooltip 
                 color="info" 
                 top
@@ -129,22 +127,8 @@
                   <span> {{$t('phone.tooltips.verified')}}</span>
               </v-tooltip>
             </v-col>
-          </v-row>
-
-          <!--Telephone if not verified-->
-          <v-row 
-            justify="center" 
-            v-if="user.telephone && phoneVerified == false"
-          >
-            <v-col>
-              <v-text-field
-                v-model="user.telephone"
-                :label="$t('models.user.phone.label')"
-                class="telephone"
-              />
-            </v-col>
           <!-- phone number verification -->
-            <v-col cols="1" >
+            <v-col cols="1"  v-if="telephone && phoneVerified == false">
               <v-tooltip 
                 color="info" 
                 top
@@ -163,18 +147,18 @@
                   <span>{{$t('phone.tooltips.notVerified')}}</span>
               </v-tooltip>
             </v-col>
-            <v-col cols="3">
+            <v-col cols="3"  v-if="telephone && phoneVerified == false">
               <v-btn 
                 rounded color="secondary" 
                 @click="generateToken" class="mt-4" 
                 :loading="loadingToken"
               >
-                {{user.phoneToken == null ? $t('phone.buttons.label.generateToken') : $t('phone.buttons.label.generateNewToken')}}
+                {{phoneToken == null ? $t('phone.buttons.label.generateToken') : $t('phone.buttons.label.generateNewToken')}}
               </v-btn>
             </v-col>
             <v-col 
               cols="3" 
-              v-if="displayTokenInput"
+              v-if="phoneToken != null && telephone && phoneVerified == false"
             >
               <v-text-field
                 v-model="token"
@@ -185,7 +169,7 @@
             </v-col>
             <v-col 
               cols="2" 
-              v-if="displayTokenInput"
+              v-if="phoneToken != null && telephone && phoneVerified == false"
             >
               <v-btn 
                 rounded 
@@ -201,21 +185,21 @@
 
           <!--GivenName-->
           <v-text-field
-            v-model="user.givenName"
+            v-model="givenName"
             :label="$t('models.user.givenName.label')"
             class="givenName"
           />
 
           <!--FamilyName-->
           <v-text-field
-            v-model="user.familyName"
+            v-model="familyName"
             :label="$t('models.user.familyName.label')"
             class="familyName"
           />
 
           <!--Gender-->
           <v-select
-            v-model="user.gender"
+            v-model="gender"
             :label="$t('models.user.gender.label')"
             :items="genders"
             item-text="gender"
@@ -225,7 +209,7 @@
           <!--birthyear-->
           <v-select
             id="birthYear"
-            v-model="user.birthYear"
+            v-model="birthYear"
             :items="years"
             :label="$t('models.user.birthYear.label')"
             class="birthYear"
@@ -364,7 +348,15 @@ export default {
       gender: {
         value: this.user.gender
       },
+      email: this.user.email,
+      telephone: this.user.telephone,
+      givenName: this.user.givenName,
+      familyName: this.user.familyName,
+      birthYear: this.user.birthYear,
       homeAddress: null,
+      phoneToken: this.user.phoneToken,
+      phoneValidatedDate: this.user.phoneValidatedDate,
+      token: null,
       genders:[
         { value: 1, gender: this.$t('models.user.gender.values.female')},
         { value: 2, gender: this.$t('models.user.gender.values.male')},
@@ -381,8 +373,6 @@ export default {
       urlAvatar:this.user.avatars[this.user.avatars.length-1],
       displayFileUpload:(this.user.images[0]) ? false : true,
       phoneVerified: null,
-      displayTokenInput: this.user.phoneToken ? true : false,
-      token: null,
       loadingToken: false,
       loadingValidatePhone: false
     };
@@ -410,13 +400,13 @@ export default {
     checkForm () {
       this.loading = true;
       let updateUser = new FormData();
-      updateUser.append("email", this.user.email);
-      updateUser.append("familyName", this.user.familyName);
-      updateUser.append("gender", this.user.gender);
-      updateUser.append("givenName", this.user.givenName);
+      updateUser.append("email", this.email);
+      updateUser.append("familyName", this.familyName);
+      updateUser.append("gender", this.gender.value);
+      updateUser.append("givenName", this.givenName);
       updateUser.append("homeAddress", JSON.stringify(this.user.homeAddress));
-      updateUser.append("telephone", this.user.telephone);
-      updateUser.append("birthYear", this.user.birthYear);
+      updateUser.append("telephone", this.telephone);
+      updateUser.append("birthYear", this.birthYear);
       updateUser.append("avatar", this.avatar);
       updateUser.append("newsSubscription", this.newsSubscription);
 
@@ -431,9 +421,13 @@ export default {
           this.errorUpdate = res.data.state;
           this.snackbar = true;
           this.loading = false;
-          this.checkVerifiedPhone();
+          if (this.user.telephone != this.telephone) {
+            this.phoneValidatedDate = null;
+            this.phoneToken = null;
+            this.checkVerifiedPhone();
+          }
           this.urlAvatar = res.data.versions.square_800;
-          this.displayFileUpload = false;
+          this.displayFileUpload = false; 
         });
     },
     avatarDelete () {
@@ -448,8 +442,8 @@ export default {
         });
     },
     checkVerifiedPhone() {
-      if (this.user.telephone !== null) {
-        this.phoneVerified = this.user.phoneValidatedDate ? true : false;
+      if (this.telephone !== null) {
+        this.phoneVerified = this.phoneValidatedDate ? true : false;
       }
     },
     generateToken() {
@@ -457,7 +451,6 @@ export default {
     axios 
       .get(this.$t('phone.token.route'))
       .then(res => {
-          console.error(res.data.state);
           if (res.data.state) {
             this.errorUpdate = true;
             this.textSnackError = this.$t('snackBar.tokenError');
@@ -465,7 +458,8 @@ export default {
           }
           this.textSnackOk = this.$t('snackBar.tokenOk');
           this.snackbar = true;
-          this.displayTokenInput = true;
+          this.phoneToken = true;
+          this.token = null;
           this.loadingToken = false;
         })
     },
