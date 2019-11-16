@@ -29,7 +29,7 @@ import Vuetify, {
   VSkeletonLoader, VSnackbar, VDataIterator, VOverlay, VDialog, VSlider, VCarousel, VCarouselItem, VSheet, VResponsive,
   VFileInput, VProgressCircular, VSimpleTable, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
   // header
-  VToolbar, VToolbarTitle, VBtn, VImg,
+  VToolbar, VToolbarTitle, VToolbarItems, VBtn, VImg,
   // footer
   VFooter, VCardText,
 } from 'vuetify/lib'
@@ -42,7 +42,7 @@ Vue.use(Vuetify, {
     VSkeletonLoader, VSnackbar, VDataIterator, VOverlay, VDialog, VSlider, VCarousel, VCarouselItem, VSheet, VResponsive,
     VFileInput, VProgressCircular, VSimpleTable, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
     // header
-    VToolbar, VToolbarTitle, VBtn, VImg,
+    VToolbar, VToolbarTitle, VToolbarItems, VBtn, VImg,
     // footer
     VFooter, VCardText,
     //Vue2Leaflet

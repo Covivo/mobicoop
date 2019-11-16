@@ -115,9 +115,20 @@
       v-model="dialogRegular"
     >
       <v-card>
-        <v-card-title class="headline">
-          {{ $t('regular.ask') }}
-        </v-card-title>
+        <v-toolbar
+          flat
+          color="primary"
+        >
+          <v-toolbar-title>{{ $t('regular.ask') }}</v-toolbar-title>
+          <v-spacer />
+          
+          <v-btn
+            icon
+            @click="dialogRegular = false"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
         <regular-ask
           :type="infos.type"
           :origin-driver="infos.regular.originDriver"
