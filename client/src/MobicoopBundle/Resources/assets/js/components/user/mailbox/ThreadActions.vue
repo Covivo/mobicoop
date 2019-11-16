@@ -11,7 +11,7 @@
         v-if="!loading"
         class="font-weight-bold headline"
       >
-        {{ infos.recipientName }}
+        {{ infos.contactName }}
       </v-card-text>
 
       <!-- Only visible for carpool -->
@@ -20,10 +20,62 @@
         class="mb-3"
         flat
       >
+        <v-chip class="secondary mb-4">
+          <v-icon
+            left
+            color="white"
+          >
+            mdi-swap-horizontal
+          </v-icon>
+          {{ $t('roundTrip') }}
+        </v-chip>
+
+        <regular-days-summary
+          v-if="infos.frequency==2" 
+          :mon-active="infos.days.monCheck"
+          :tue-active="infos.days.tueCheck"
+          :wed-active="infos.days.wedCheck"
+          :thu-active="infos.days.thuCheck"
+          :fri-active="infos.days.friCheck"
+          :sat-active="infos.days.satCheck"
+          :sun-active="infos.days.sunCheck"
+        />
+
+        <v-journey :waypoints="infos.waypoints" />
+        <v-simple-table>
+          <tbody>
+            <tr>
+              <td class="text-left">
+                Distance
+              </td>
+              <td class="text-left">
+                {{ distanceInKm }}
+              </td>
+            </tr>
+            <tr>
+              <td class="text-left">
+                Places disponibles
+              </td>
+              <td class="text-left">
+                {{ infos.seats }}
+              </td>
+            </tr>
+            <tr>
+              <td class="text-left font-weight-bold">
+                Prix
+              </td>
+              <td class="text-left font-weight-bold">
+                {{ infos.rounded_price }} €
+              </td>
+            </tr>
+          </tbody>
+        </v-simple-table>
         <threads-actions-buttons
           :user-id="idUser"
-          :ask-user-id="infos.askUserId"
+          :requester-id="infos.requester"
           :status="infos.status"
+          :regular="infos.frequency==2"
+          :loading-btn="dataLoadingBtn"
           @updateStatus="updateStatus"
         />
       </v-card>
@@ -50,6 +102,8 @@
 <script>
 import Translations from "@translations/components/user/mailbox/ThreadActions.json";
 import ThreadsActionsButtons from '@components/user/mailbox/ThreadsActionsButtons'
+import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary'
+import VJourney from '@components/carpool/utilities/VJourney'
 import axios from "axios";
 
 export default {
@@ -57,7 +111,9 @@ export default {
     messages: Translations,
   },
   components:{
-    ThreadsActionsButtons
+    ThreadsActionsButtons,
+    RegularDaysSummary,
+    VJourney
   },
   props: {
     idAsk: {
@@ -79,13 +135,23 @@ export default {
     refresh: {
       type: Boolean,
       default: false
+    },
+    loadingBtn: {
+      type: Boolean,
+      default: false
     }
   },
   data(){
     return{
       loading:this.loadingInit,
       recipientName:"",
+      dataLoadingBtn:this.loadingBtn,
       infos:[]
+    }
+  },
+  computed:{
+    distanceInKm(){
+      return parseInt(this.infos.distance) / 1000 + 'km';
     }
   },
   watch:{
@@ -94,6 +160,9 @@ export default {
     },
     refresh(){
       (this.refresh) ? this.refreshInfos() : this.loading = false;
+    },
+    loadingBtn(){
+      this.dataLoadingBtn = this.loadingBtn;
     }
   },
   methods:{
@@ -105,7 +174,7 @@ export default {
       }
       axios.post(this.$t("urlGetAskHistory"),params)
         .then(response => {
-          //console.error(response.data);
+          console.error(response.data);
           this.infos = response.data;
         })
         .catch(function (error) {

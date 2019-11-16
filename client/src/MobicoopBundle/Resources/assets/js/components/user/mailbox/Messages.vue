@@ -116,6 +116,7 @@
             :id-recipient="idRecipient"
             :loading-init="loadingDetails"
             :refresh="refreshActions"
+            :loading-btn="loadingBtnAction"
             @refreshActionsCompleted="refreshActionsCompleted"
             @updateStatusAskHistory="updateStatusAskHistory"
           />
@@ -174,7 +175,8 @@ export default {
       refreshThreadsDirect:false,
       refreshThreadsCarpool:false,
       refreshActions:false,
-      loadingDetails:false
+      loadingDetails:false,
+      loadingBtnAction:false
     };
   },
   mounted() {
@@ -219,6 +221,7 @@ export default {
       });
     },
     updateStatusAskHistory(data){
+      this.loadingBtnAction = true;
       let params = {
         idAsk:this.currentIdAsk,
         status:data.status
@@ -227,6 +230,7 @@ export default {
         .then(response => {
           //console.error(response.data);
           this.refreshActions = true;
+          this.loadingBtnAction = false;
         })
         .catch(function (error) {
           console.error(error);

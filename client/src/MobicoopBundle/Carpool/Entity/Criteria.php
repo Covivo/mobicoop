@@ -32,7 +32,7 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Direction;
 /**
  * Carpooling : criteria (restriction for an offer / selection for a request).
  */
-class Criteria
+class Criteria implements \JsonSerializable
 {
     const FREQUENCY_PUNCTUAL = 1;
     const FREQUENCY_REGULAR = 2;
@@ -991,5 +991,24 @@ class Criteria
         $this->ptjourney = $ptjourney;
         
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+         [
+             "id"               => $this->getId(),
+             "seats"            => $this->getSeats(),
+             "rounded_price"    => $this->getRoundedPrice(),
+             "fromDate"         => $this->getFromDate(),
+             "fromTime"         => $this->getFromTime(),
+             "monCheck"         => $this->getMonCheck(),
+             "tueCheck"         => $this->getTueCheck(),
+             "wedCheck"         => $this->getWedCheck(),
+             "thuCheck"         => $this->getThuCheck(),
+             "friCheck"         => $this->getFriCheck(),
+             "satCheck"         => $this->getSatCheck(),
+             "sunCheck"         => $this->getSunCheck()
+         ];
     }
 }

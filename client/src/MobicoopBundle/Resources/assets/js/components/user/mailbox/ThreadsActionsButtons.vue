@@ -2,7 +2,7 @@
   <v-content>
     <!-- The Ask is just Initiated -->
     <!-- Only the Ask User can make a formal request of carpool -->
-    <div v-if="status==1 && userId==askUserId">
+    <div v-if="status==1 && userId==requesterId">
       <v-tooltip
         bottom
         color="warning"
@@ -14,6 +14,7 @@
             large
             dark
             depressed
+            :loading="loading"
             v-on="on"
             @click="updateStatus(2)"
           >
@@ -25,7 +26,7 @@
         <span>{{ $t('askCarpool') }}</span>
       </v-tooltip>     
     </div>
-    <div v-if="status==1 && userId!=askUserId">
+    <div v-if="status==1 && userId!=requesterId">
       <v-card-text>{{ $t('onlyAskUser') }}</v-card-text>
     </div>
     <!-- end ask just Initiated -->
@@ -33,7 +34,7 @@
 
     <!-- The Ask is pending -->
     <!-- If you are the ask user you cannot accept or delined -->
-    <div v-if="status==2 && userId != askUserId">
+    <div v-if="status==2 && userId != requesterId">
       <v-tooltip
         bottom
         color="success"
@@ -126,14 +127,38 @@ export default {
       type:Number,
       default:0
     },
-    askUserId:{
+    requesterId:{
       type:Number,
       default:0
+    },
+    regular:{
+      type:Boolean,
+      default:false
+    },
+    loadingBtn:{
+      type:Boolean,
+      default:false
+    }
+  },
+  data(){
+    return {
+      loading:this.loadingBtn
+    }
+  },
+  watch:{
+    loadingBtn(){
+      this.loading = this.loadingBtn
     }
   },
   methods:{
     updateStatus(status){
-      this.$emit("updateStatus",{status:status});
+      if(this.regular){
+        console.error("regular");
+      }
+      else{
+        this.loading = true;
+        this.$emit("updateStatus",{status:status});
+      }
     }
   }
 }

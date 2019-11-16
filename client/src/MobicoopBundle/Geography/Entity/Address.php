@@ -168,6 +168,12 @@ class Address implements ResourceInterface, \JsonSerializable
     private $name;
     
     /**
+     * @var string|null The venue name of this address.
+     * @Groups({"post","put"})
+     */
+    private $venue;
+
+    /**
      * @var User|null The owner of the address.
      */
     private $user;
@@ -382,6 +388,16 @@ class Address implements ResourceInterface, \JsonSerializable
         $this->name = $name;
     }
     
+    public function getVenue(): ?string
+    {
+        return $this->venue;
+    }
+
+    public function setVenue(?string $venue)
+    {
+        $this->venue = $venue;
+    }
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -435,7 +451,8 @@ class Address implements ResourceInterface, \JsonSerializable
              'region'               => $this->getRegion(),
              'subLocality'          => $this->getSubLocality(),
              'displayLabel'         => $this->getDisplayLabel(),
-             'home'                 => $this->isHome()
+             'home'                 => $this->isHome(),
+             'venue'                => $this->getVenue()
          ];
     }
 }

@@ -562,18 +562,71 @@ class UserController extends AbstractController
             $user = $userManager->getLoggedUser();
             if ($data['idAsk']) {
                 // Carpool
-                $ask = $askManager->getAsk($data['idAsk']);
-                $askUser = $ask->getUser('user');
-                $askUserRelated = $ask->getUserRelated();
-
-                $response = [];
 
                 $response = [
-                    'avatar'=>($user->getId() === $askUser->getId()) ? $askUserRelated->getAvatars()[0] : $askUser->getAvatars()[0],
-                    'recipientName'=>($user->getId() === $askUser->getId()) ? $askUserRelated->getGivenName()." ".$askUserRelated->getShortFamilyName() : $askUser->getGivenName()." ".$askUser->getShortFamilyName(),
-                    'askUserId'=>$askUser->getId(),
-                    'status' => $ask->getStatus(),
-                    'frequency' => $ask->getCriteria()->getFrequency()
+                    'avatar'=>"http://localhost:8080/upload/users/images/versions/100-52cd1510b1c8946556b21d54978b1c-1.png",
+                    'contactName'=>"Tenshi K.",
+                    'requester'=>2,
+                    'carpooler'=>1,
+                    'status' => 1,
+                    'frequency' => 2,
+                    'roundTrip' => true,
+                    'distance' => "2500",
+                    'rounded_price' => "2.50",
+                    'seats' => '2'
+                ];
+
+                $response["waypoints"] = [
+                    "0" => [
+                        "id" => 1,
+                        "address" => [
+                            "addressLocality" => "Seichamps",
+                        ],
+                        "type" => "origin",
+                        "role" => "driver",
+                        "person" => "",
+                        "time" => "08:00"
+                    ],
+                    "1" => [
+                        "id" => 2,
+                        "address" => [
+                            "addressLocality" => "Nancy",
+                        ],
+                        "type" => "step",
+                        "role" => "passenger",
+                        "person" => "requester",
+                        "time" => "08:00"
+                    ],
+                    "2" => [
+                        "id" => 3,
+                        "address" => [
+                            "addressLocality" => "Ludres",
+                        ],
+                        "type" => "step",
+                        "role" => "passenger",
+                        "person" => "requester",
+                        "time" => "08:00"
+                    ],
+                    "3" => [
+                        "id" => 4,
+                        "address" => [
+                            "addressLocality" => "Igney",
+                        ],
+                        "type" => "destination",
+                        "role" => "driver",
+                        "person" => "",
+                        "time" => "08:00"
+                    ]
+                ];
+
+                $response["days"] = [
+                    "monCheck" => true,
+                    "tueCheck" => true,
+                    "wedCheck" => true,
+                    "thuCheck" => true,
+                    "friCheck" => true,
+                    "satCheck" => true,
+                    "sunCheck" => true
                 ];
             } else {
                 // Direct
