@@ -122,11 +122,19 @@ class UserManager
      */
     public function updateUser(User $user)
     {
+
+         // activate sms notification if phone validated
+        if ($user->getPhoneValidatedDate()) {
+            $user = $this->activateSmsNotification($user);
+        }
         // check if the phone is updated and if so reset phoneToken and validatedDate
         if ($user->getTelephone() != $user->getOldTelephone()) {
             $user->setPhoneToken(null);
             $user->setPhoneValidatedDate(null);
+            // deactivate sms notification since the phone is new
+            $user = $this->deActivateSmsNotification($user);
         }
+       
         // update of the geotoken
         $datetime = new DateTime();
         $time = $datetime->getTimestamp();
@@ -393,6 +401,54 @@ class UserManager
         return $this->getAlerts($user);
     }
 
+    /**
+     * set sms notification to active when phone is validated
+     *
+     * @param User $user
+     * @return void
+     */
+    public function activateSmsNotification(User $user)
+    {
+        $userNotifications = $this->userNotificationRepository->findUserNotifications($user->getId());
+        foreach ($userNotifications as $userNotification) {
+            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS) {
+                // check telephone for sms
+                $userNotification->setActive(true);
+                $userNotification->setUser($user);
+                $this->entityManager->persist($userNotification);
+            }
+        }
+        $this->entityManager->flush();
+        return $user;
+    }
+
+    /**
+    * set sms notification to non active when phone change or is removed
+    *
+    * @param User $user
+    * @return void
+    */
+    public function deActivateSmsNotification(User $user)
+    {
+        $userNotifications = $this->userNotificationRepository->findUserNotifications($user->getId());
+        foreach ($userNotifications as $userNotification) {
+            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS) {
+                $userNotification->setActive(false);
+                $userNotification->setUser($user);
+                $this->entityManager->persist($userNotification);
+            }
+        }
+        $this->entityManager->flush();
+        return $user;
+    }
+
+    /**
+     * Generate a validation token
+     * (Ajax)
+     *
+     * @param User $user
+     * @return void
+     */
     public function generatePhoneToken(User $user)
     {
         // Generate the token
