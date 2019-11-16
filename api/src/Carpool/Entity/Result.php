@@ -30,7 +30,7 @@ use App\User\Entity\User;
 use App\Geography\Entity\Address;
 
 /**
- * Carpooling : result resource for a search / ad post.
+ * Carpooling : result resource for an ad.
  *
  * @ApiResource(
  *      attributes={
@@ -52,13 +52,13 @@ class Result
     private $id;
 
     /**
-     * @var ResultRole|null The result with the carpooler as driver and the person who search / post as a passenger.
+     * @var ResultRole|null The result with the requester as a driver and the carpooler as a passenger.
      * @Groups("results")
      */
     private $resultDriver;
 
     /**
-     * @var ResultRole|null The result with the carpooler as passenger and the person who search / post as a driver.
+     * @var ResultRole|null The result with the requester as a passenger and the carpooler as a driver.
      * @Groups("results")
      */
     private $resultPassenger;
@@ -70,7 +70,7 @@ class Result
     private $carpooler;
 
     /**
-     * @var int The frequency of the search/ad (1 = punctual / 2 = regular).
+     * @var int The frequency of the ad (1 = punctual / 2 = regular).
      * @Groups("results")
      */
     private $frequency;

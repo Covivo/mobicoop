@@ -28,7 +28,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Carpooling : result, for a given role, for a search / ad post.
+ * Carpooling : result, for a given role, for an ad.
  *
  * @ApiResource(
  *      attributes={

@@ -516,40 +516,64 @@ class Criteria
     private $priceKm;
 
     /**
-    * @var float|null The total price selected by the user :
-    * - as a driver if driver and passenger
-    * - as a passenger only if passenger
+    * @var float|null The total price selected by the user as a driver.
     *
     * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
     * @Groups({"read","results","write","thread"})
     */
-    private $price;
+    private $driverPrice;
 
     /**
-    * @var float|null The total price rounded using the rounding rules.
+    * @var float|null The total price computed by the system, using the user price per km, not rounded, as a driver.
     *
     * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
     * @Groups({"read","results","write","thread"})
     */
-    private $roundedPrice;
+    private $driverComputedPrice;
 
     /**
-    * @var float|null The total price computed by the system, using the user price per km, not rounded :
-    * - as a driver if driver and passenger
-    * - as a passenger only if passenger
+    * @var float|null The driver computed price rounded using the rounding rules.
     *
     * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
     * @Groups({"read","results","write","thread"})
     */
-    private $computedPrice;
+    private $driverComputedRoundedPrice;
 
     /**
-    * @var float|null The computed price rounded using the rounding rules.
+    * @var float|null The driver master price to use. It's the price if it's not null, otherwise the computedPrice.
+    * @Groups({"read","results","thread"})
+    */
+    private $driverMasterPrice;
+
+    /**
+    * @var float|null The total price selected by the user as a driver.
     *
     * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
     * @Groups({"read","results","write","thread"})
     */
-    private $computedRoundedPrice;
+    private $passengerPrice;
+
+    /**
+    * @var float|null The total price computed by the system, using the user price per km, not rounded, as a passenger.
+    *
+    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @Groups({"read","results","write","thread"})
+    */
+    private $passengerComputedPrice;
+
+    /**
+    * @var float|null The passenger computed price rounded using the rounding rules.
+    *
+    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @Groups({"read","results","write","thread"})
+    */
+    private $passengerComputedRoundedPrice;
+
+    /**
+    * @var float|null The passenger master price to use. It's the price if it's not null, otherwise the computedPrice.
+    * @Groups({"read","results","thread"})
+    */
+    private $passengerMasterPrice;
 
     /**
      * @var boolean Big luggage accepted / asked.
@@ -1381,44 +1405,84 @@ class Criteria
         $this->priceKm = $priceKm;
     }
 
-    public function getPrice(): ?string
+    public function getDriverPrice(): ?string
     {
-        return $this->price;
+        return $this->driverPrice;
     }
     
-    public function setPrice(?string $price)
+    public function setDriverPrice(?string $driverPrice)
     {
-        $this->price = $price;
+        $this->driverPrice = $driverPrice;
     }
 
-    public function getRoundedPrice(): ?string
+    public function getDriverComputedPrice(): ?string
     {
-        return $this->roundedPrice;
+        return $this->driverComputedPrice;
     }
     
-    public function setRoundedPrice(?string $roundedPrice)
+    public function setDriverComputedPrice(?string $driverComputedPrice)
     {
-        $this->roundedPrice = $roundedPrice;
+        $this->driverComputedPrice = $driverComputedPrice;
     }
 
-    public function getComputedPrice(): ?string
+    public function getDriverComputedRoundedPrice(): ?string
     {
-        return $this->computedPrice;
+        return $this->driverComputedRoundedPrice;
     }
     
-    public function setComputedPrice(?string $computedPrice)
+    public function setDriverComputedRoundedPrice(?string $driverComputedRoundedPrice)
     {
-        $this->computedPrice = $computedPrice;
+        $this->driverComputedRoundedPrice = $driverComputedRoundedPrice;
     }
 
-    public function getComputedRoundedPrice(): ?string
+    public function getDriverMasterPrice(): ?string
     {
-        return $this->computedRoundedPrice;
+        if (!is_null($this->getDriverPrice())) {
+            $this->driverMasterPrice = $this->getDriverPrice();
+        } elseif (!is_null($this->getDriverComputedRoundedPrice())) {
+            $this->driverMasterPrice = $this->getDriverComputedRoundedPrice();
+        }
+        return $this->driverMasterPrice;
+    }
+
+    public function getPassengerPrice(): ?string
+    {
+        return $this->passengerPrice;
     }
     
-    public function setComputedRoundedPrice(?string $computedRoundedPrice)
+    public function setPassengerPrice(?string $passengerPrice)
     {
-        $this->computedRoundedPrice = $computedRoundedPrice;
+        $this->passengerPrice = $passengerPrice;
+    }
+
+    public function getPassengerComputedPrice(): ?string
+    {
+        return $this->passengerComputedPrice;
+    }
+    
+    public function setPassengerComputedPrice(?string $passengerComputedPrice)
+    {
+        $this->passengerComputedPrice = $passengerComputedPrice;
+    }
+
+    public function getPassengerComputedRoundedPrice(): ?string
+    {
+        return $this->passengerComputedRoundedPrice;
+    }
+    
+    public function setPassengerComputedRoundedPrice(?string $passengerComputedRoundedPrice)
+    {
+        $this->passengerComputedRoundedPrice = $passengerComputedRoundedPrice;
+    }
+
+    public function getPassengerMasterPrice(): ?string
+    {
+        if (!is_null($this->getPassengerPrice())) {
+            $this->passengerMasterPrice = $this->getPassengerPrice();
+        } elseif (!is_null($this->getPassengerComputedRoundedPrice())) {
+            $this->passengerMasterPrice = $this->getPassengerComputedRoundedPrice();
+        }
+        return $this->passengerMasterPrice;
     }
 
     public function hasLuggage(): ?bool

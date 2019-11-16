@@ -48,6 +48,7 @@ class AdManager
     private $userManager;
     private $communityManager;
     private $eventManager;
+    private $resultManager;
     private $params;
 
     /**
@@ -56,13 +57,14 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, array $params)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, array $params)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
         $this->userManager = $userManager;
         $this->communityManager = $communityManager;
         $this->eventManager = $eventManager;
+        $this->resultManager = $resultManager;
         $this->params = $params;
     }
     
@@ -71,7 +73,7 @@ class AdManager
      * This method creates a proposal, and its linked proposal for a return trip.
      * It returns the ad created, with its outward and return results.
      *
-     * @param Ad $ad    The ad to create
+     * @param Ad $ad            The ad to create
      * @return Ad
      */
     public function createAd(Ad $ad)
@@ -79,14 +81,16 @@ class AdManager
         $outwardProposal = new Proposal();
         $outwardCriteria = new Criteria();
 
+        // the proposal is private if it's a search only ad
+        $outwardProposal->setPrivate($ad->isSearch());
+
         // we check if it's a round trip
-        // it's a round trip if the return waypoints are set or if the type is set to round trip (the type is nullable)
-        if ($ad->getReturnWaypoints() || $ad->getType() == Ad::TYPE_ROUND) {
-            $ad->setType(Ad::TYPE_ROUND);
-            $outwardProposal->setType(Proposal::TYPE_OUTWARD);
-        } else {
-            $ad->setType(Ad::TYPE_ONE_WAY);
+        if ($ad->isOneWay()) {
+            // the ad has explicitly been set to one way
             $outwardProposal->setType(Proposal::TYPE_ONE_WAY);
+        } else {
+            // the ad type has not been set, we assume it's a round trip
+            $outwardProposal->setType(Proposal::TYPE_OUTWARD);
         }
 
         // we set the user of the proposal
@@ -141,11 +145,14 @@ class AdManager
 
         // prices
         $outwardCriteria->setPriceKm($ad->getPriceKm());
-        $outwardCriteria->setPrice($ad->getOutwardPrice());
-        $outwardCriteria->setRoundedPrice($ad->getOutwardRoundedPrice());
-        $outwardCriteria->setComputedPrice($ad->getOutwardComputedPrice());
-        $outwardCriteria->setComputedRoundedPrice($ad->getOutwardComputedRoundedPrice());
-        
+        $outwardCriteria->setDriverPrice($ad->getOutwardDriverPrice());
+        $outwardCriteria->setPassengerPrice($ad->getOutwardPassengerPrice());
+
+        // strict
+        $outwardCriteria->setStrictDate($ad->isStrictDate());
+        $outwardCriteria->setStrictPunctual($ad->isStrictPunctual());
+        $outwardCriteria->setStrictRegular($ad->isStrictRegular());
+
         // misc
         $outwardCriteria->setLuggage($ad->hasLuggage());
         $outwardCriteria->setBike($ad->hasBike());
@@ -269,10 +276,11 @@ class AdManager
 
         $outwardProposal->setCriteria($outwardCriteria);
         $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal);
+
         $this->entityManager->persist($outwardProposal);
 
         // return trip ?
-        if ($ad->getType() == Ad::TYPE_ROUND) {
+        if (!$ad->isOneWay()) {
             // we clone the outward proposal
             $returnProposal = clone $outwardProposal;
             // we link the outward and the return
@@ -292,18 +300,22 @@ class AdManager
 
             // prices
             $returnCriteria->setPriceKm($outwardCriteria->getPriceKm());
-            $returnCriteria->setPrice($ad->getReturnPrice());
-            $returnCriteria->setRoundedPrice($ad->getReturnRoundedPrice());
-            $returnCriteria->setComputedPrice($ad->getReturnComputedPrice());
-            $returnCriteria->setComputedRoundedPrice($ad->getReturnComputedRoundedPrice());
-            
+            $returnCriteria->setDriverPrice($ad->getReturnDriverPrice());
+            $returnCriteria->setPassengerPrice($ad->getReturnPassengerPrice());
+
+            // strict
+            $returnCriteria->setStrictDate($outwardCriteria->isStrictDate());
+            $returnCriteria->setStrictPunctual($outwardCriteria->isStrictPunctual());
+            $returnCriteria->setStrictRegular($outwardCriteria->isStrictRegular());
+
             // misc
             $returnCriteria->setLuggage($outwardCriteria->hasLuggage());
             $returnCriteria->setBike($outwardCriteria->hasBike());
             $returnCriteria->setBackSeats($outwardCriteria->hasBackSeats());
 
             // dates and times
-            $returnCriteria->setFromDate($ad->getReturnDate() ? $ad->getReturnDate() : new \DateTime());
+            // if no return date is specified, we use the outward date to be sure the return date is not before the outward date
+            $returnCriteria->setFromDate($ad->getReturnDate() ? $ad->getReturnDate() : $ad->getOutwardDate());
             if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
                 $returnCriteria->setToDate($ad->getReturnLimitDate() ? \DateTime::createFromFormat('Y-m-d', $ad->getReturnLimitDate()) : null);
@@ -427,12 +439,34 @@ class AdManager
             $this->entityManager->persist($returnProposal);
         }
 
+        // we persist the proposals
         $this->entityManager->flush();
 
-        $ad->setOutwardResults($outwardProposal->getResults());
-        if (isset($returnProposal)) {
-            $ad->setReturnResults($returnProposal->getResults());
+        // if the ad is a round trip, we want to link the potential matching results
+        if (!$ad->isOneWay()) {
+            $outwardProposal = $this->proposalManager->linkRelatedMatchings($outwardProposal);
+            $this->entityManager->persist($outwardProposal);
+            $this->entityManager->flush();
         }
+        // if the requester can be driver and passenger, we want to link the potential opposite matching results
+        if ($ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER) {
+            // linking for the outward
+            $outwardProposal = $this->proposalManager->linkOppositeMatchings($outwardProposal);
+            $this->entityManager->persist($outwardProposal);
+            if (!$ad->isOneWay()) {
+                // linking for the return
+                $returnProposal = $this->proposalManager->linkOppositeMatchings($returnProposal);
+                $this->entityManager->persist($returnProposal);
+            }
+            $this->entityManager->flush();
+        }
+
+        // we compute the results
+        $ad->setOutwardResults($this->resultManager->createAdResults($outwardProposal));
+        if (isset($returnProposal)) {
+            $ad->setReturnResults($this->resultManager->createAdResults($outwardProposal));
+        }
+
         return $ad;
     }
 }

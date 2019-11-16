@@ -67,9 +67,10 @@ use App\Carpool\Controller\AskPut;
 class Ask
 {
     const STATUS_INITIATED = 1;
-    const STATUS_PENDING = 2;
-    const STATUS_ACCEPTED = 3;
-    const STATUS_DECLINED = 4;
+    const STATUS_PENDING_AS_DRIVER = 2;
+    const STATUS_PENDING_AS_PASSENGER = 3;
+    const STATUS_ACCEPTED = 4;
+    const STATUS_DECLINED = 5;
     
     /**
      * @var int The id of this ask.
@@ -82,7 +83,7 @@ class Ask
     private $id;
 
     /**
-     * @var int Ask status (1 = initiated; 2 = pending, 3 = accepted; 4 = declined).
+     * @var int Ask status (1 = initiated; 2 = pending as driver, 3 = pending as passenger, 4 = accepted; 5 = declined).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")

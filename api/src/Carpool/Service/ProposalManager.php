@@ -246,6 +246,66 @@ class ProposalManager
     }
 
     /**
+     * Prepare a proposal for persist.
+     * Used when posting a proposal to populate default values like proposal validity.
+     *
+     * @param Proposal $proposal
+     * @return void
+     */
+    public function prepareProposal(Proposal $proposal): Proposal
+    {
+        if (is_null($proposal->getCriteria()->getAnyRouteAsPassenger())) {
+            $proposal->getCriteria()->setAnyRouteAsPassenger($this->params['defaultAnyRouteAsPassenger']);
+        }
+        if (is_null($proposal->getCriteria()->isStrictDate())) {
+            $proposal->getCriteria()->setStrictDate($this->params['defaultStrictDate']);
+        }
+        if (is_null($proposal->getCriteria()->getPriceKm())) {
+            $proposal->getCriteria()->setPriceKm($this->params['defaultPriceKm']);
+        }
+        if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+            if (is_null($proposal->getCriteria()->isStrictPunctual())) {
+                $proposal->getCriteria()->setStrictPunctual($this->params['defaultStrictPunctual']);
+            }
+            if (is_null($proposal->getCriteria()->getMarginDuration())) {
+                $proposal->setMarginDuration($this->params['defaultMarginTime']);
+            }
+        } else {
+            if (is_null($proposal->getCriteria()->isStrictRegular())) {
+                $proposal->getCriteria()->setStrictRegular($this->params['defaultStrictRegular']);
+            }
+            if (is_null($proposal->getCriteria()->getMonMarginDuration())) {
+                $proposal->getCriteria()->setMonMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getTueMarginDuration())) {
+                $proposal->getCriteria()->setTueMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getWedMarginDuration())) {
+                $proposal->getCriteria()->setWedMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getThuMarginDuration())) {
+                $proposal->getCriteria()->setThuMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getFriMarginDuration())) {
+                $proposal->getCriteria()->setFriMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getSatMarginDuration())) {
+                $proposal->getCriteria()->setSatMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getSunMarginDuration())) {
+                $proposal->getCriteria()->setSunMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getToDate())) {
+                // end date is usually null, except when creating a proposal after a matching search
+                $endDate = clone $proposal->getCriteria()->getFromDate();
+                $endDate->add(new \DateInterval('P' . $this->params['defaultRegularLifeTime'] . 'Y'));
+                $proposal->getCriteria()->setToDate($endDate);
+            }
+        }
+        return $this->createProposal($proposal);
+    }
+
+    /**
      * Create a proposal.
      *
      * @param Proposal  $proposal               The proposal to create
@@ -329,6 +389,16 @@ class ProposalManager
                 $proposal->getCriteria()->setDirectionPassenger($direction);
             }
         }
+
+        // we have the directions, we can compute the lacking prices
+        if ($proposal->getCriteria()->getDirectionDriver()) {
+            $proposal->getCriteria()->setDriverComputedPrice((string)((int)$proposal->getCriteria()->getDirectionDriver()->getDistance()*(float)$proposal->getCriteria()->getPriceKm()/1000));
+            $proposal->getCriteria()->setDriverComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$proposal->getCriteria()->getDriverComputedPrice(), $proposal->getCriteria()->getFrequency()));
+        }
+        if ($proposal->getCriteria()->getDirectionPassenger()) {
+            $proposal->getCriteria()->setPassengerComputedPrice((string)((int)$proposal->getCriteria()->getDirectionPassenger()->getDistance()*(float)$proposal->getCriteria()->getPriceKm()/1000));
+            $proposal->getCriteria()->setPassengerComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$proposal->getCriteria()->getPassengerComputedPrice(), $proposal->getCriteria()->getFrequency()));
+        }
         
         // matching analyze
         $this->logger->info('Proposal creation | Start matching ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -395,73 +465,74 @@ class ProposalManager
         }
 
         // we treat the matchings to return the results
-        $proposal->setResults($this->resultManager->createResults($proposal));
+        //$proposal->setResults($this->resultManager->createResults($proposal));
 
         return $proposal;
     }
 
     /**
-     * Prepare a proposal for persist.
-     * Used when posting a proposal to populate default values like proposal validity.
+     * Link related matchings of a proposal.
+     * This methods links the corresponding outward and return matchings of a proposal.
      *
      * @param Proposal $proposal
-     * @return void
+     * @return Proposal
      */
-    public function prepareProposal(Proposal $proposal): Proposal
+    public function linkRelatedMatchings(Proposal $proposal)
     {
-        if (is_null($proposal->getCriteria()->getAnyRouteAsPassenger())) {
-            $proposal->getCriteria()->setAnyRouteAsPassenger($this->params['defaultAnyRouteAsPassenger']);
-        }
-        if (is_null($proposal->getCriteria()->isStrictDate())) {
-            $proposal->getCriteria()->setStrictDate($this->params['defaultStrictDate']);
-        }
-        if (is_null($proposal->getCriteria()->getPriceKm())) {
-            $proposal->getCriteria()->setPriceKm($this->params['defaultPriceKm']);
-        }
-        if (!is_null($proposal->getCriteria()->getPrice()) && is_null($proposal->getCriteria()->getRoundedPrice())) {
-            $proposal->getCriteria()->setRoundedPrice((string)$this->formatDataManager->roundPrice((float)$proposal->getCriteria()->getPrice(), $proposal->getCriteria()->getFrequency()));
-        }
-        if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-            if (is_null($proposal->getCriteria()->isStrictPunctual())) {
-                $proposal->getCriteria()->setStrictPunctual($this->params['defaultStrictPunctual']);
-            }
-            if (is_null($proposal->getCriteria()->getMarginDuration())) {
-                $proposal->setMarginDuration($this->params['defaultMarginTime']);
-            }
-        } else {
-            if (is_null($proposal->getCriteria()->isStrictRegular())) {
-                $proposal->getCriteria()->setStrictRegular($this->params['defaultStrictRegular']);
-            }
-            if (is_null($proposal->getCriteria()->getMonMarginDuration())) {
-                $proposal->getCriteria()->setMonMarginDuration($this->params['defaultMarginTime']);
-            }
-            if (is_null($proposal->getCriteria()->getTueMarginDuration())) {
-                $proposal->getCriteria()->setTueMarginDuration($this->params['defaultMarginTime']);
-            }
-            if (is_null($proposal->getCriteria()->getWedMarginDuration())) {
-                $proposal->getCriteria()->setWedMarginDuration($this->params['defaultMarginTime']);
-            }
-            if (is_null($proposal->getCriteria()->getThuMarginDuration())) {
-                $proposal->getCriteria()->setThuMarginDuration($this->params['defaultMarginTime']);
-            }
-            if (is_null($proposal->getCriteria()->getFriMarginDuration())) {
-                $proposal->getCriteria()->setFriMarginDuration($this->params['defaultMarginTime']);
-            }
-            if (is_null($proposal->getCriteria()->getSatMarginDuration())) {
-                $proposal->getCriteria()->setSatMarginDuration($this->params['defaultMarginTime']);
-            }
-            if (is_null($proposal->getCriteria()->getSunMarginDuration())) {
-                $proposal->getCriteria()->setSunMarginDuration($this->params['defaultMarginTime']);
-            }
-            if (is_null($proposal->getCriteria()->getToDate())) {
-                // end date is usually null, except when creating a proposal after a matching search
-                $endDate = clone $proposal->getCriteria()->getFromDate();
-                $endDate->add(new \DateInterval('P' . $this->params['defaultRegularLifeTime'] . 'Y'));
-                $proposal->getCriteria()->setToDate($endDate);
+        // link as an offer
+        foreach ($proposal->getMatchingRequests() as $matching) {
+            // we search the linked matching
+            if ($matching->getProposalRequest()->getProposalLinked()) {
+                // the request proposal has a linked proposal, we loop through its matchingOffers to check if one of them is the proposalLinked
+                foreach ($matching->getProposalRequest()->getProposalLinked()->getMatchingOffers() as $potentialMatchingLinked) {
+                    if ($potentialMatchingLinked->getProposalOffer() === $proposal->getProposalLinked()) {
+                        // we found a matching linked !
+                        $matching->setMatchingLinked($potentialMatchingLinked);
+                        break;
+                    }
+                }
             }
         }
-        return $this->createProposal($proposal);
+        // link as a request
+        foreach ($proposal->getMatchingOffers() as $matching) {
+            // we search the linked matching
+            if ($matching->getProposalOffer()->getProposalLinked()) {
+                // the offer proposal has a linked proposal, we loop through its matchingRequests to check if one of them is the proposalLinked
+                foreach ($matching->getProposalOffer()->getProposalLinked()->getMatchingRequests() as $potentialMatchingLinked) {
+                    if ($potentialMatchingLinked->getProposalRequest() === $proposal->getProposalLinked()) {
+                        // we found a matching linked !
+                        $matching->setMatchingLinked($potentialMatchingLinked);
+                        break;
+                    }
+                }
+            }
+        }
+        return $proposal;
     }
+
+    /**
+     * Link opposite matchings of a proposal.
+     * This methods links the corresponding matchings of a proposal where the roles can be reversed.
+     *
+     * @param Proposal $proposal
+     * @return Proposal
+     */
+    public function linkOppositeMatchings(Proposal $proposal)
+    {
+        // link as an offer
+        foreach ($proposal->getMatchingRequests() as $matchingRequest) {
+            // we search the opposite matching
+            foreach ($proposal->getMatchingOffers() as $matchingOffer) {
+                if ($matchingRequest->getProposalRequest() === $matchingOffer->getProposalOffer()) {
+                    // we found a matching linked !
+                    $matchingRequest->setMatchingOpposite($matchingOffer);
+                    break;
+                }
+            }
+        }
+        return $proposal;
+    }
+
 
     /**
      * Updates directions without zones (so by extension, updates the related proposals, that's why it's in this file...)

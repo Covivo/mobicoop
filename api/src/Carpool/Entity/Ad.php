@@ -37,14 +37,13 @@ use App\Carpool\Controller\AdPost;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get",
  *          "post"={
  *              "method"="POST",
  *              "controller"=AdPost::class,
  *          },
  *      },
  *      itemOperations={
- *          "get","delete","put"
+ *          "get"
  *      }
  * )
  */
@@ -56,9 +55,6 @@ class Ad
     const ROLE_PASSENGER = 2;
     const ROLE_DRIVER_OR_PASSENGER = 3;
 
-    const TYPE_ONE_WAY = 1;
-    const TYPE_ROUND = 2;
-
     /**
      * @var int The id of this ad.
      *
@@ -68,6 +64,13 @@ class Ad
     private $id;
 
     /**
+     * @var boolean|null The ad is a search only.
+     *
+     * @Groups({"read","write"})
+     */
+    private $search;
+
+    /**
      * @var int The role for this ad.
      *
      * @Groups({"read","write"})
@@ -75,11 +78,11 @@ class Ad
     private $role;
 
     /**
-     * @var int|null The ad type (1 = one way; 2 = round trip).
+     * @var boolean|null The ad is a one way trip.
      *
      * @Groups({"read","write"})
      */
-    private $type;
+    private $oneWay;
 
     /**
      * @var int The frequency for this ad.
@@ -150,6 +153,27 @@ class Ad
      * @Groups({"read","write"})
      */
     private $schedule;
+
+    /**
+     * @var boolean|null For punctual proposals, the user accepts only matchings for the defined date (no ranges).
+     *
+     * @Groups({"read","write"})
+     */
+    private $strictDate;
+
+    /**
+     * @var boolean|null For punctual proposals, the user accepts only matchings with punctual trips (no regular trips).
+     *
+     * @Groups({"read","write"})
+     */
+    private $strictPunctual;
+
+    /**
+     * @var boolean|null For regular proposals, the user accepts only matchings with regular trips (no punctual trips).
+     *
+     * @Groups({"read","write"})
+     */
+    private $strictRegular;
     
     /**
     * @var float|null The price per km.
@@ -159,68 +183,32 @@ class Ad
     private $priceKm;
 
     /**
-    * @var float|null The total price of the outward selected by the user :
-    * - as a driver if driver and passenger
-    * - as a passenger only if passenger
+    * @var float|null The total price of the outward selected by the user as a driver.
     *
     * @Groups({"read","write"})
     */
-    private $outwardPrice;
+    private $outwardDriverPrice;
 
     /**
-    * @var float|null The total price of the outward rounded using the rounding rules.
+    * @var float|null The total price of the return selected by the user as a driver.
     *
     * @Groups({"read","write"})
     */
-    private $outwardRoundedPrice;
+    private $returnDriverPrice;
 
     /**
-    * @var float|null The total price of the outward computed by the system, using the user price per km, not rounded :
-    * - as a driver if driver and passenger
-    * - as a passenger only if passenger
+    * @var float|null The total price of the outward selected by the user as a passenger.
     *
     * @Groups({"read","write"})
     */
-    private $outwardComputedPrice;
+    private $outwardPassengerPrice;
 
     /**
-    * @var float|null The computed price of the outward rounded using the rounding rules.
+    * @var float|null The total price of the return selected by the user as a passenger.
     *
     * @Groups({"read","write"})
     */
-    private $outwardComputedRoundedPrice;
-
-    /**
-    * @var float|null The total price of the return selected by the user :
-    * - as a driver if driver and passenger
-    * - as a passenger only if passenger
-    *
-    * @Groups({"read","write"})
-    */
-    private $returnPrice;
-
-    /**
-    * @var float|null The total price of the return rounded using the rounding rules.
-    *
-    * @Groups({"read","write"})
-    */
-    private $returnRoundedPrice;
-
-    /**
-    * @var float|null The total price of the return computed by the system, using the user price per km, not rounded :
-    * - as a driver if driver and passenger
-    * - as a passenger only if passenger
-    *
-    * @Groups({"read","write"})
-    */
-    private $returnComputedPrice;
-
-    /**
-    * @var float|null The computed price of the return rounded using the rounding rules.
-    *
-    * @Groups({"read","write"})
-    */
-    private $returnComputedRoundedPrice;
+    private $returnPassengerPrice;
 
     /**
      * @var int|null The number of seats available / required.
@@ -343,6 +331,18 @@ class Ad
         return $this->id;
     }
 
+    public function isSearch(): ?bool
+    {
+        return $this->search;
+    }
+
+    public function setSearch(bool $search): self
+    {
+        $this->search = $search;
+
+        return $this;
+    }
+    
     public function getRole(): int
     {
         return $this->role;
@@ -355,14 +355,14 @@ class Ad
         return $this;
     }
 
-    public function getType(): ?int
+    public function isOneWay(): ?bool
     {
-        return $this->type;
+        return $this->oneWay;
     }
 
-    public function setType(int $type): self
+    public function setOneWay(bool $oneWay): self
     {
-        $this->type = $type;
+        $this->oneWay = $oneWay;
 
         return $this;
     }
@@ -439,12 +439,12 @@ class Ad
         return $this;
     }
 
-    public function getReturnDate(): ?string
+    public function getReturnDate(): ?\DateTimeInterface
     {
         return $this->returnDate;
     }
 
-    public function setReturnDate(?string $returnDate): self
+    public function setReturnDate(?\DateTimeInterface $returnDate): self
     {
         $this->returnDate = $returnDate;
 
@@ -511,6 +511,42 @@ class Ad
         return $this;
     }
 
+    public function isStrictDate(): ?bool
+    {
+        return $this->strictDate;
+    }
+    
+    public function setStrictDate(?bool $isStrictDate): self
+    {
+        $this->strictDate = $isStrictDate;
+        
+        return $this;
+    }
+
+    public function isStrictPunctual(): ?bool
+    {
+        return $this->strictPunctual;
+    }
+    
+    public function setStrictPunctual(?bool $isStrictPunctual): self
+    {
+        $this->strictPunctual = $isStrictPunctual;
+        
+        return $this;
+    }
+
+    public function isStrictRegular(): ?bool
+    {
+        return $this->strictRegular;
+    }
+    
+    public function setStrictRegular(?bool $isStrictRegular): self
+    {
+        $this->strictRegular = $isStrictRegular;
+        
+        return $this;
+    }
+
     public function getPriceKm(): ?string
     {
         return $this->priceKm;
@@ -521,84 +557,44 @@ class Ad
         $this->priceKm = $priceKm;
     }
 
-    public function getOutwardPrice(): ?string
+    public function getOutwardDriverPrice(): ?string
     {
-        return $this->outwardPrice;
+        return $this->outwardDriverPrice;
     }
     
-    public function setOutwardPrice(?string $outwardPrice)
+    public function setOutwardDriverPrice(?string $outwardDriverPrice)
     {
-        $this->outwardPrice = $outwardPrice;
+        $this->outwardDriverPrice = $outwardDriverPrice;
     }
 
-    public function getOutwardRoundedPrice(): ?string
+    public function getReturnDriverPrice(): ?string
     {
-        return $this->outwardRoundedPrice;
+        return $this->returnDriverPrice;
     }
     
-    public function setOutwardRoundedPrice(?string $outwardRoundedPrice)
+    public function setReturnDriverPrice(?string $returnDriverPrice)
     {
-        $this->outwardRoundedPrice = $outwardRoundedPrice;
+        $this->returnDriverPrice = $returnDriverPrice;
     }
 
-    public function getOutwardComputedPrice(): ?string
+    public function getOutwardPassengerPrice(): ?string
     {
-        return $this->outwardComputedPrice;
+        return $this->outwardPassengerPrice;
     }
     
-    public function setOutwardComputedPrice(?string $outwardComputedPrice)
+    public function setOutwardPassengerPrice(?string $outwardPassengerPrice)
     {
-        $this->outwardComputedPrice = $outwardComputedPrice;
+        $this->outwardPassengerPrice = $outwardPassengerPrice;
     }
 
-    public function getOutwardComputedRoundedPrice(): ?string
+    public function getReturnPassengerPrice(): ?string
     {
-        return $this->outwardComputedRoundedPrice;
+        return $this->returnPassengerPrice;
     }
     
-    public function setOutwardComputedRoundedPrice(?string $outwardComputedRoundedPrice)
+    public function setReturnPassengerPrice(?string $returnPassengerPrice)
     {
-        $this->outwardComputedRoundedPrice = $outwardComputedRoundedPrice;
-    }
-
-    public function getReturnPrice(): ?string
-    {
-        return $this->returnPrice;
-    }
-    
-    public function setReturnPrice(?string $returnPrice)
-    {
-        $this->returnPrice = $returnPrice;
-    }
-
-    public function getReturnRoundedPrice(): ?string
-    {
-        return $this->returnRoundedPrice;
-    }
-    
-    public function setReturnRoundedPrice(?string $returnRoundedPrice)
-    {
-        $this->returnRoundedPrice = $returnRoundedPrice;
-    }
-
-    public function getReturnComputedPrice(): ?string
-    {
-        return $this->returnComputedPrice;
-    }
-    
-    public function setReturnComputedPrice(?string $returnComputedPrice)
-    {
-        $this->returnComputedPrice = $returnComputedPrice;
-    }
-
-    public function getReturnComputedRoundedPrice(): ?string
-    {
-        return $this->returnComputedRoundedPrice;
-    }
-    
-    public function setReturnComputedRoundedPrice(?string $returnComputedRoundedPrice)
-    {
-        $this->returnComputedRoundedPrice = $returnComputedRoundedPrice;
+        $this->returnPassengerPrice = $returnPassengerPrice;
     }
 
     public function getSeats(): int
