@@ -37,6 +37,7 @@ use App\Geography\Repository\DirectionRepository;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\TerritoryManager;
 use App\Geography\Service\ZoneManager;
+use App\Service\FormatDataManager;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -66,6 +67,7 @@ class ProposalManager
     private $communityManager;
     private $askManager;
     private $resultManager;
+    private $formatDataManager;
     private $params;
 
     /**
@@ -78,7 +80,7 @@ class ProposalManager
      * @param GeoRouter $geoRouter
      * @param ZoneManager $zoneManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, CommunityManager $communityManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher, AskManager $askManager, ResultManager $resultManager, array $params)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, CommunityManager $communityManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher, AskManager $askManager, ResultManager $resultManager, FormatDataManager $formatDataManager, array $params)
     {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -94,6 +96,7 @@ class ProposalManager
         $this->askManager = $askManager;
         $this->resultManager = $resultManager;
         $this->resultManager->setParams($params);
+        $this->formatDataManager = $formatDataManager;
         $this->params = $params;
     }
 
@@ -334,6 +337,7 @@ class ProposalManager
         while (($item = array_shift($matchingOffers)) !== null && array_push($matchings, $item));
         while (($item = array_shift($matchingRequests)) !== null && array_push($matchings, $item));
         if ($persist) {
+            // array used to keep already linked matching for return trips (must be one to one)
             foreach ($matchings as $matching) {
                 if (!is_null($proposal->getMatchingProposal())) {
                     // if there is a matched proposal we need to find the right matching and create the Ask
@@ -344,22 +348,24 @@ class ProposalManager
                         ) {
                             // we create the ask
                             $newAsk = $this->askManager->createAskFromMatchedProposal($proposal, $matching, $proposal->hasFormalAsk());
-                            // we set the matching linked if we need to create a forced reverse matching (can be the case for regular return trips)
-                            $proposal->setMatchingLinked($matching);
                             // we set the ask linked of the matching if we need to create a forced reverse matching (can be the case for regular return trips)
                             $proposal->setAskLinked($newAsk);
+                            // if there's un matching role undecided we create the related ask
+                            if ($matching->getMatchingRoleUndecided()) {
+                                $this->askManager->createAskFromMatchedProposal($proposal, $matching->getMatchingRoleUndecided(), $proposal->hasFormalAsk());
+                            }
+                            // we set the matching linked if we need to create a forced reverse matching (can be the case for regular return trips)
+                            $proposal->setMatchingLinked($matching);
                         }
                     } else {
-                        // it's a return trip
-                        if ($proposal->getMatchingProposal()->getProposalLinked()->getId() === $matching->getProposalOffer()->getId() ||
-                            $proposal->getMatchingProposal()->getProposalLinked()->getId() === $matching->getProposalRequest()->getId()
+                        // it's a return trip, or the link as already been treated in a previous loop
+                        if (
+                            !$proposal->getMatchingLinked()->getMatchingRoleUndecided() &&
+                            ($proposal->getMatchingProposal()->getProposalLinked()->getId() === $matching->getProposalOffer()->getId() ||
+                            $proposal->getMatchingProposal()->getProposalLinked()->getId() === $matching->getProposalRequest()->getId())
                         ) {
                             // we create the ask
                             $newAsk = $this->askManager->createAskFromMatchedProposal($proposal, $matching, $proposal->hasFormalAsk());
-                            // we set the matching linked if we need to create a forced reverse matching (can be the case for regular return trips)
-                            $proposal->setMatchingLinked($matching);
-                            // we set the ask linked of the matching if we need to create a forced reverse matching (can be the case for regular return trips)
-                            $proposal->setAskLinked($newAsk);
                         }
                     }
                 }
@@ -369,6 +375,7 @@ class ProposalManager
                 $event = new MatchingNewEvent($matching, $proposal->getUser());
                 $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
             }
+
             // dispatch en event
             $event = new ProposalPostedEvent($proposal);
             $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
@@ -397,6 +404,9 @@ class ProposalManager
         }
         if (is_null($proposal->getCriteria()->getPriceKm())) {
             $proposal->getCriteria()->setPriceKm($this->params['defaultPriceKm']);
+        }
+        if (!is_null($proposal->getCriteria()->getPrice()) && is_null($proposal->getCriteria()->getRoundedPrice())) {
+            $proposal->getCriteria()->setRoundedPrice((string)$this->formatDataManager->roundPrice((float)$proposal->getCriteria()->getPrice(), $proposal->getCriteria()->getFrequency()));
         }
         if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
             if (is_null($proposal->getCriteria()->isStrictPunctual())) {
@@ -452,7 +462,7 @@ class ProposalManager
             foreach ($directions as $direction) {
                 if (is_null($direction->getPoints())) {
                     // we use the GeoRouterProvider as a service
-                    $georouter = new GeoRouterProvider();
+                    $georouter = new GeoRouterProvider(null, false);
                     $direction->setPoints($georouter->deserializePoints($direction->getDetail(), true, filter_var($georouter::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
                 }
                 // creation of the crossed zones

@@ -18,7 +18,7 @@
  *    Licence MOBICOOP described in the file
  *    LICENSE
  **************************/
- 
+
 <template>
   <v-container>
     <!--SnackBar-->
@@ -244,28 +244,42 @@
           <!--NewsSubscription-->
           <v-row>
             <v-col>
-              <v-switch 
-                v-model="newsSubscription" 
-                :label="switchLabel" 
-                inset 
+              <v-switch
+                v-model="newsSubscription"
+                :label="$t('news.label', {platform:platform})"
+                inset
                 color="secondary"
-              />
-            </v-col>
-            <v-col>
-              <v-tooltip 
-                right 
-                color="info" 
-                :max-width="'35%'"
+                @change="dialog = !newsSubscription"
               >
-                <template v-slot:activator="{ on }">
-                  <v-icon v-on="on">
-                    mdi-help-circle-outline
-                  </v-icon>
-                </template>
-                <span>{{ $t('news.tooltip') }}</span>
-              </v-tooltip>
+                <v-tooltip
+                  right
+                  slot="append"
+                  color="info"
+                  :max-width="'35%'"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-icon justify="left" v-on="on">
+                      mdi-help-circle-outline
+                    </v-icon>
+                  </template>
+                  <span>{{ $t('news.tooltip') }}</span>
+                </v-tooltip>
+              </v-switch>
             </v-col>
           </v-row>
+
+          <!--Confirmation Popup-->
+          <v-dialog v-model="dialog" persistent max-width="500">
+            <v-card>
+              <v-card-title class="headline">{{ $t('news.confirmation.title') }}</v-card-title>
+              <v-card-text v-html="$t('news.confirmation.content')"></v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary darken-1" text @click="dialog=false; newsSubscription=true">{{ $t('ui.common.no') }}</v-btn>
+                <v-btn color="secondary darken-1" text @click="dialog=false">{{ $t('ui.common.yes') }}</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
 
           <!--Save Button-->
           <v-btn
@@ -338,10 +352,11 @@ export default {
   },
   data() {
     return {
+      dialog: false,
       snackbar: false,
       textSnackOk: this.$t('snackBar.profileUpdated'),
       textSnackError: this.$t("snackBar.passwordUpdateError"),
-      errorUpdate: false,  
+      errorUpdate: false,
       valid: true,
       errors: [],
       loading: false,
@@ -379,9 +394,6 @@ export default {
       const ageMax = Number(this.ageMax);
       return Array.from({length: ageMax - ageMin}, (value, index) => (currentYear - ageMin) - index)
     },
-    switchLabel () {
-      return this.$t('news.label') + ' ' + this.platform;
-    }
   },
   mounted() {
     this.checkVerifiedPhone();
@@ -408,8 +420,8 @@ export default {
       updateUser.append("avatar", this.avatar);
       updateUser.append("newsSubscription", this.newsSubscription);
 
-      axios 
-        .post(this.$t('route.update'), updateUser, 
+      axios
+        .post(this.$t('route.update'), updateUser,
           {
             headers:{
               'content-type': 'multipart/form-data'

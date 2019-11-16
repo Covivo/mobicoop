@@ -7,6 +7,7 @@
 
       <!-- Outward -->
       <v-col
+        v-if="returnTrip && (outwardTime || returnTime)"
         :cols="returnTrip ? '3' : '7'"
       >
         <v-row
@@ -43,7 +44,7 @@
 
       <!-- Return -->
       <v-col
-        v-if="returnTrip"
+        v-if="returnTrip && (outwardTime || returnTime)"
         cols="3"
         offset="1"
       >

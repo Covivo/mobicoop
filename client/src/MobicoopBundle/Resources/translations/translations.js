@@ -1,6 +1,11 @@
 export default {
   fr: {
     ui: {
+      common: {
+        yes: "Oui",
+        no: "Non",
+        ok: "OK"
+      },
       button: {
         previous: "Précédent",
         next: "Suivant",
@@ -157,6 +162,11 @@ export default {
   },
   en: {
     ui: {
+      common: {
+        yes: "Yes",
+        no: "No",
+        ok: "OK"
+      },
       button: {
         previous: "",
         next: "",
