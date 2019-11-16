@@ -128,7 +128,7 @@
               </v-tooltip>
             </v-col>
           <!-- phone number verification -->
-            <v-col cols="1"  v-if="telephone && phoneVerified == false">
+            <v-col cols="1"  v-if="diplayVerification && telephone && phoneVerified == false">
               <v-tooltip 
                 color="info" 
                 top
@@ -147,7 +147,7 @@
                   <span>{{$t('phone.tooltips.notVerified')}}</span>
               </v-tooltip>
             </v-col>
-            <v-col cols="3"  v-if="telephone && phoneVerified == false">
+            <v-col cols="3"  v-if="diplayVerification && telephone && phoneVerified == false">
               <v-btn 
                 rounded color="secondary" 
                 @click="generateToken" class="mt-4" 
@@ -373,6 +373,7 @@ export default {
       urlAvatar:this.user.avatars[this.user.avatars.length-1],
       displayFileUpload:(this.user.images[0]) ? false : true,
       phoneVerified: null,
+      diplayVerification: this.user.telephone ? true : false,
       loadingToken: false,
       loadingValidatePhone: false
     };
@@ -424,6 +425,7 @@ export default {
           if (this.user.telephone != this.telephone) {
             this.phoneValidatedDate = null;
             this.phoneToken = null;
+            this.diplayVerification = true;
             this.checkVerifiedPhone();
           }
           this.urlAvatar = res.data.versions.square_800;
