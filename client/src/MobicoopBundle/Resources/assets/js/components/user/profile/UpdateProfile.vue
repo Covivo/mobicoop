@@ -485,6 +485,7 @@ export default {
           this.phoneVerified = !res.data.state ? true : false;
           this.loadingValidatePhone = false; 
         })
+        // Todo create "emit" event to refresh the alerts
     }
   }
 }
