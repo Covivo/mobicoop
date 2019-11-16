@@ -2,7 +2,7 @@
   <v-content>
     <!-- The Ask is just Initiated -->
     <!-- Only the Ask User can make a formal request of carpool -->
-    <div v-if="status==1 && requester">
+    <div v-if="status==1 && canAsk">
       <v-tooltip
         v-if="driver"
         bottom
@@ -17,7 +17,7 @@
             depressed
             :loading="loading"
             v-on="on"
-            @click="updateStatus(2)"
+            @click="updateStatus(2,'driver')"
           >
             <v-icon class="display-2">
               mdi-car
@@ -40,7 +40,7 @@
             depressed
             :loading="loading"
             v-on="on"
-            @click="updateStatus(2)"
+            @click="updateStatus(2,'passenger')"
           >
             <v-icon class="display-2">
               mdi-walk
@@ -50,7 +50,7 @@
         <span>{{ $t('button.askCarpoolAsPassenger') }}</span>
       </v-tooltip>     
     </div>
-    <div v-if="status==1 && !requester">
+    <div v-if="status==1 && !canAsk">
       <v-card-text>{{ $t('onlyAskUser') }}</v-card-text>
     </div>
     <!-- end ask just Initiated -->
@@ -58,7 +58,7 @@
 
     <!-- The Ask is pending -->
     <!-- If you are the ask user you cannot accept or delined -->
-    <div v-if="status==2 && !requester">
+    <div v-if="status==2 && !canAsk">
       <v-tooltip
         bottom
         color="success"
@@ -147,7 +147,7 @@ export default {
       type:Number,
       default:1
     },
-    requester:{
+    canAsk:{
       type:Boolean,
       default:false
     },
@@ -179,8 +179,8 @@ export default {
     }
   },
   methods:{
-    updateStatus(status){
-      this.$emit("updateStatus",{status:status});
+    updateStatus(status,role=null){
+      this.$emit("updateStatus",{status:status,role:role});
     }
   }
 }

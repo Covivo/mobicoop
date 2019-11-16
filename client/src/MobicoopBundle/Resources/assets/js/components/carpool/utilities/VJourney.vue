@@ -31,7 +31,9 @@
           :cols="time ? '9' : '12'"
           class="text-left"
         >
-          <v-icon>{{ getIcon(waypoint.type,waypoint.role) }}</v-icon>
+          <v-icon v-if="waypoint.avatar">
+            {{ getIcon(waypoint.type,waypoint.role) }}
+          </v-icon>
           <span :class="role == waypoint.role ? 'font-weight-bold' : ''">{{ waypoint.address.addressLocality }}</span> {{ waypoint.address.venue ? ' - ' + waypoint.address.venue : waypoint.address.streetAddress ? ' - ' + waypoint.address.streetAddress : null }}
         </v-col>
       </v-row>

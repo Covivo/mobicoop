@@ -4,14 +4,14 @@
       class="pa-2 text-center"
     >
       <!-- Always visible (carpool or not) -->
-      <v-avatar v-if="infos.avatar && !loading">
-        <img :src="infos.avatar">
+      <v-avatar v-if="infosFromAPI.carpooler && (infosFromAPI.carpooler.avatars || infos.avatar) && !loading">
+        <img :src="infosFromAPI.carpooler ? infosFromAPI.carpooler.avatars[0] : infos.avatar">
       </v-avatar>
       <v-card-text
         v-if="!loading"
         class="font-weight-bold headline"
       >
-        {{ infos.contactName }}
+        {{ infosFromAPI.carpooler ? infosFromAPI.carpooler.givenName+' '+infosFromAPI.carpooler.shortFamilyName : infos.contactName }}
       </v-card-text>
 
       <!-- Only visible for carpool -->
@@ -21,7 +21,7 @@
         flat
       >
         <v-chip
-          v-if="infos.roundTrip"
+          v-if="infos.return"
           class="secondary mb-4"
         >
           <v-icon
@@ -34,18 +34,18 @@
         </v-chip>
 
         <regular-days-summary
-          v-if="infos.frequency==2" 
-          :mon-active="infos.regular.days.monCheck"
-          :tue-active="infos.regular.days.tueCheck"
-          :wed-active="infos.regular.days.wedCheck"
-          :thu-active="infos.regular.days.thuCheck"
-          :fri-active="infos.regular.days.friCheck"
-          :sat-active="infos.regular.days.satCheck"
-          :sun-active="infos.regular.days.sunCheck"
+          v-if="infosFromAPI.frequency==2" 
+          :mon-active="infos.outward.monCheck"
+          :tue-active="infos.outward.tueCheck"
+          :wed-active="infos.outward.wedCheck"
+          :thu-active="infos.outward.thuCheck"
+          :fri-active="infos.outward.friCheck"
+          :sat-active="infos.outward.satCheck"
+          :sun-active="infos.outward.sunCheck"
         />
 
         <v-journey
-          :waypoints="infos.waypoints"
+          :waypoints="infos.outward.waypoints"
           :time="true"
           :role="driver ? 'driver' : 'passenger'"
         />
@@ -72,15 +72,15 @@
                 Prix
               </td>
               <td class="text-left font-weight-bold">
-                {{ infos.rounded_price }} €
+                {{ infosFromAPI.roundedPrice }} €
               </td>
             </tr>
           </tbody>
         </v-simple-table>
         <threads-actions-buttons
-          :requester="infos.requester"
-          :status="infos.status"
-          :regular="infos.frequency==2"
+          :can-ask="infosFromAPI.canAsk"
+          :status="infosFromAPI.status"
+          :regular="infosFromAPI.frequency==2"
           :loading-btn="dataLoadingBtn"
           :driver="driver"
           :passenger="passenger"
@@ -111,11 +111,10 @@
 
     <!-- Modal to propose a carpool -->
     <v-dialog
-      v-if="infos.frequency==2"
       v-model="dialogRegular"
     >
       <v-card>
-        <v-toolbar
+        <!-- <v-toolbar
           flat
           color="primary"
         >
@@ -128,8 +127,8 @@
           >
             <v-icon>mdi-close</v-icon>
           </v-btn>
-        </v-toolbar>
-        <regular-ask
+        </v-toolbar> -->
+        <!-- <regular-ask
           :type="infos.type"
           :origin-driver="infos.regular.originDriver"
           :destination-driver="infos.regular.destinationDriver"
@@ -151,6 +150,10 @@
           :sat-time="infos.regular.days.satTime"
           :sun-check-default="infos.regular.days.sunCheck"
           :sun-time="infos.regular.days.sunTime"
+        /> -->
+        <matching-journey
+          :result="infosFromAPI"
+          @close="dialogRegular=false"
         />
       </v-card>
     </v-dialog>
@@ -161,7 +164,8 @@ import Translations from "@translations/components/user/mailbox/ThreadActions.js
 import ThreadsActionsButtons from '@components/user/mailbox/ThreadsActionsButtons'
 import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary'
 import VJourney from '@components/carpool/utilities/VJourney'
-import RegularAsk from '@components/carpool/utilities/RegularAsk'
+//import RegularAsk from '@components/carpool/utilities/RegularAsk'
+import MatchingJourney from '@components/carpool/results/MatchingJourney'
 import axios from "axios";
 
 export default {
@@ -172,7 +176,8 @@ export default {
     ThreadsActionsButtons,
     RegularDaysSummary,
     VJourney,
-    RegularAsk
+    //RegularAsk,
+    MatchingJourney
   },
   props: {
     idAsk: {
@@ -205,6 +210,7 @@ export default {
       loading:this.loadingInit,
       recipientName:"",
       dataLoadingBtn:this.loadingBtn,
+      infosFromAPI:[],
       infos:[],
       driver:false,
       passenger:false,
@@ -213,7 +219,7 @@ export default {
   },
   computed:{
     distanceInKm(){
-      return parseInt(this.infos.distance) / 1000 + 'km';
+      return (this.driver) ? parseInt(this.infos.outward.newDistance) / 1000 + ' km' : parseInt(this.infos.outward.originalDistance) / 1000 + ' km';
     }
   },
   watch:{
@@ -237,18 +243,20 @@ export default {
       axios.post(this.$t("urlGetAskHistory"),params)
         .then(response => {
           console.error(response.data);
+          this.infosFromAPI = response.data;
+
           // If the user can be driver and passenger, we display driver infos by default
-          if(response.data.driver !== undefined && response.data.passenger !== undefined){
-            this.infos = response.data.driver;
+          if(this.infosFromAPI.resultDriver !== undefined && this.infosFromAPI.resultPassenger !== undefined){
+            this.infos = this.infosFromAPI.resultDriver;
             this.driver = this.passenger = true;
           }
-          else if(response.data.passenger !== undefined){
-            this.infos = response.data.passenger;
+          else if(this.infosFromAPI.resultPassenger !== undefined){
+            this.infos = this.infosFromAPI.resultPassenger;
             this.driver = false;
             this.passenger = true;
           }
           else{
-            this.infos = response.data.driver;
+            this.infos = this.infosFromAPI.resultDriver;
             this.driver = true;
             this.passenger = false;
           }
@@ -261,8 +269,14 @@ export default {
         });
     },
     updateStatus(data){
-      if(this.infos.status==1 && this.infos.frequency==2){
+      if(this.infosFromAPI.status==1 && this.infosFromAPI.frequency==2){
         // If the Ask is only initiated and that the carpool is regular
+
+        // If the user can be driver and passenger, we swich the right infos
+        // if(this.driver && this.passenger){
+        //   data.role=="driver" ? this.infos = this.infosFromAPI.driver : this.infos = this.infosFromAPI.passenger
+        // }
+        console.error("regular");
         this.dialogRegular = true;
       }
       else{
