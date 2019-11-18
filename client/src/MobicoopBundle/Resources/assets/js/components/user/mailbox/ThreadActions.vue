@@ -53,7 +53,7 @@
           <tbody>
             <tr>
               <td class="text-left">
-                Distance
+                {{ $t('distance') }}
               </td>
               <td class="text-left">
                 {{ distanceInKm }}
@@ -61,7 +61,7 @@
             </tr>
             <tr>
               <td class="text-left">
-                Places disponibles
+                {{ $t('seatsAvailable') }}
               </td>
               <td class="text-left">
                 {{ infos.seats }}
@@ -69,7 +69,23 @@
             </tr>
             <tr>
               <td class="text-left font-weight-bold">
-                Prix
+                {{ $t('price') }}
+                <v-tooltip
+                  slot="append"
+                  right
+                  color="info"
+                  :max-width="'35%'"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                      justify="left"
+                      v-on="on"
+                    >
+                      mdi-help-circle-outline
+                    </v-icon>
+                  </template>
+                  <span>{{ $t('priceTooltip') }}</span>
+                </v-tooltip>                
               </td>
               <td class="text-left font-weight-bold">
                 {{ infosComplete.roundedPrice }} €
@@ -389,6 +405,7 @@ export default {
         
         // Outward parameters (checkbox and time)
         if(results.outward){
+          // Times day by day
           if(results.outward.monTime) this.outwardMonTime = this.formatHour(results.outward.monTime);
           if(results.outward.tueTime) this.outwardTueTime = this.formatHour(results.outward.tueTime);
           if(results.outward.wedTime) this.outwardWedTime = this.formatHour(results.outward.wedTime);
@@ -397,11 +414,13 @@ export default {
           if(results.outward.satTime) this.outwardSatTime = this.formatHour(results.outward.satTime);
           if(results.outward.sunTime) this.outwardSunTime = this.formatHour(results.outward.sunTime);
 
+          // For the checkboxes day by day
           this.formatArrayForRegular(results.outward,"outward");
         }
 
         // Return parameters (checkbox and time)
         if(results.return){
+          // Times day by day
           if(results.return.monTime) this.returnMonTime = this.formatHour(results.return.monTime);
           if(results.return.tueTime) this.returnTueTime = this.formatHour(results.return.tueTime);
           if(results.return.wedTime) this.returnWedTime = this.formatHour(results.return.wedTime);
@@ -410,6 +429,7 @@ export default {
           if(results.return.satTime) this.returnSatTime = this.formatHour(results.return.satTime);
           if(results.return.sunTime) this.returnSunTime = this.formatHour(results.return.sunTime);
 
+          // For the checkboxes day by day
           this.formatArrayForRegular(results.outward,"return");
         }
 
