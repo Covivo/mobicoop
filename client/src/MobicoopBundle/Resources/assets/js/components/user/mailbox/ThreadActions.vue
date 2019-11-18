@@ -4,14 +4,14 @@
       class="pa-2 text-center"
     >
       <!-- Always visible (carpool or not) -->
-      <v-avatar v-if="infosFromAPI.carpooler && (infosFromAPI.carpooler.avatars || infos.avatar) && !loading">
-        <img :src="infosFromAPI.carpooler ? infosFromAPI.carpooler.avatars[0] : infos.avatar">
+      <v-avatar v-if="infosComplete.carpooler && (infosComplete.carpooler.avatars || infos.avatar) && !loading">
+        <img :src="infosComplete.carpooler ? infosComplete.carpooler.avatars[0] : infos.avatar">
       </v-avatar>
       <v-card-text
         v-if="!loading"
         class="font-weight-bold headline"
       >
-        {{ infosFromAPI.carpooler ? infosFromAPI.carpooler.givenName+' '+infosFromAPI.carpooler.shortFamilyName : infos.contactName }}
+        {{ infosComplete.carpooler ? infosComplete.carpooler.givenName+' '+infosComplete.carpooler.shortFamilyName : infos.contactName }}
       </v-card-text>
 
       <!-- Only visible for carpool -->
@@ -34,7 +34,7 @@
         </v-chip>
 
         <regular-days-summary
-          v-if="infosFromAPI.frequency==2" 
+          v-if="infosComplete.frequency==2" 
           :mon-active="infos.outward.monCheck"
           :tue-active="infos.outward.tueCheck"
           :wed-active="infos.outward.wedCheck"
@@ -72,15 +72,15 @@
                 Prix
               </td>
               <td class="text-left font-weight-bold">
-                {{ infosFromAPI.roundedPrice }} €
+                {{ infosComplete.roundedPrice }} €
               </td>
             </tr>
           </tbody>
         </v-simple-table>
         <threads-actions-buttons
-          :can-ask="infosFromAPI.canAsk"
-          :status="infosFromAPI.status"
-          :regular="infosFromAPI.frequency==2"
+          :can-ask="infosComplete.canAsk"
+          :status="infosComplete.status"
+          :regular="infosComplete.frequency==2"
           :loading-btn="dataLoadingBtn"
           :driver="driver"
           :passenger="passenger"
@@ -152,7 +152,24 @@
           :sun-time="infos.regular.days.sunTime"
         /> -->
         <matching-journey
-          :result="infosFromAPI"
+          :result="infosComplete"
+          :default-step="2"
+          :default-outward-mon-time="outwardMonTime"
+          :default-outward-tue-time="outwardTueTime"
+          :default-outward-wed-time="outwardWedTime"
+          :default-outward-thu-time="outwardThuTime"
+          :default-outward-fri-time="outwardFriTime"
+          :default-outward-sat-time="outwardSatTime"
+          :default-outward-sun-time="outwardSunTime"
+          :default-return-mon-time="returnMonTime"
+          :default-return-tue-time="returnTueTime"
+          :default-return-wed-time="returnWedTime"
+          :default-return-thu-time="returnThuTime"
+          :default-return-fri-time="returnFriTime"
+          :default-return-sat-time="returnSatTime"
+          :default-return-sun-time="returnSunTime"
+          :default-outward-trip="outwardTrip"
+          :default-return-trip="returnTrip"
           @close="dialogRegular=false"
         />
       </v-card>
@@ -167,6 +184,7 @@ import VJourney from '@components/carpool/utilities/VJourney'
 //import RegularAsk from '@components/carpool/utilities/RegularAsk'
 import MatchingJourney from '@components/carpool/results/MatchingJourney'
 import axios from "axios";
+import moment from "moment";
 
 export default {
   i18n: {
@@ -210,11 +228,27 @@ export default {
       loading:this.loadingInit,
       recipientName:"",
       dataLoadingBtn:this.loadingBtn,
-      infosFromAPI:[],
+      infosComplete:[],
       infos:[],
       driver:false,
       passenger:false,
-      dialogRegular:false
+      dialogRegular:false,
+      outwardMonTime: null,
+      outwardTueTime: null,
+      outwardWedTime: null,
+      outwardThuTime: null,
+      outwardFriTime: null,
+      outwardSatTime: null,
+      outwardSunTime: null,
+      returnMonTime: null,
+      returnTueTime: null,
+      returnWedTime: null,
+      returnThuTime: null,
+      returnFriTime: null,
+      returnSatTime: null,
+      returnSunTime: null,
+      outwardTrip:[],
+      returnTrip:[],
     }
   },
   computed:{
@@ -243,20 +277,20 @@ export default {
       axios.post(this.$t("urlGetAskHistory"),params)
         .then(response => {
           console.error(response.data);
-          this.infosFromAPI = response.data;
+          this.infosComplete = response.data;
 
           // If the user can be driver and passenger, we display driver infos by default
-          if(this.infosFromAPI.resultDriver !== undefined && this.infosFromAPI.resultPassenger !== undefined){
-            this.infos = this.infosFromAPI.resultDriver;
+          if(this.infosComplete.resultDriver !== undefined && this.infosComplete.resultPassenger !== undefined){
+            this.infos = this.infosComplete.resultDriver;
             this.driver = this.passenger = true;
           }
-          else if(this.infosFromAPI.resultPassenger !== undefined){
-            this.infos = this.infosFromAPI.resultPassenger;
+          else if(this.infosComplete.resultPassenger !== undefined){
+            this.infos = this.infosComplete.resultPassenger;
             this.driver = false;
             this.passenger = true;
           }
           else{
-            this.infos = this.infosFromAPI.resultDriver;
+            this.infos = this.infosComplete.resultDriver;
             this.driver = true;
             this.passenger = false;
           }
@@ -268,15 +302,113 @@ export default {
           this.$emit("refreshActionsCompleted");
         });
     },
+    formatHour(date){
+      return moment(date).format("HH")+'h'+moment(date).format("mm")
+    },
+    formatArrayForRegular(results,direction){
+      let currentTrip = null;
+      (direction=="outward") ? currentTrip = this.outwardTrip : currentTrip = this.returnTrip;
+
+      if(results.monCheck){
+        currentTrip.push({
+          "day": "mon",
+          "time": this.formatHour(results.monTime),
+          "min": results.fromDate,
+          "max": null
+        });
+      }
+      if(results.tueCheck){
+        currentTrip.push({
+          "day": "tue",
+          "time": this.formatHour(results.tueTime),
+          "min": results.fromDate,
+          "max": null
+        });
+      }
+      if(results.wedCheck){
+        currentTrip.push({
+          "day": "wed",
+          "time": this.formatHour(results.wedTime),
+          "min": results.fromDate,
+          "max": null
+        });
+      }
+      if(results.thuCheck){
+        currentTrip.push({
+          "day": "thu",
+          "time": this.formatHour(results.thuTime),
+          "min": results.fromDate,
+          "max": null
+        });
+      }
+      if(results.friCheck){
+        currentTrip.push({
+          "day": "fri",
+          "time": this.formatHour(results.friTime),
+          "min": results.fromDate,
+          "max": null
+        });
+      }
+      if(results.satCheck){
+        currentTrip.push({
+          "day": "sat",
+          "time": this.formatHour(results.satTime),
+          "min": results.fromDate,
+          "max": null
+        });
+      }
+      if(results.sunCheck){
+        currentTrip.push({
+          "day": "sun",
+          "time": this.formatHour(results.sunTime),
+          "min": results.fromDate,
+          "max": null
+        });
+      }
+
+
+    },
     updateStatus(data){
-      if(this.infosFromAPI.status==1 && this.infosFromAPI.frequency==2){
+      if(this.infosComplete.status==1 && this.infosComplete.frequency==2){
         // If the Ask is only initiated and that the carpool is regular
 
-        // If the user can be driver and passenger, we swich the right infos
-        // if(this.driver && this.passenger){
-        //   data.role=="driver" ? this.infos = this.infosFromAPI.driver : this.infos = this.infosFromAPI.passenger
-        // }
-        console.error("regular");
+        let results = null;
+
+        // We build the params to prefill MathingJourney
+
+        if(data.role=='driver'){
+          results = this.infosComplete.resultDriver;
+        }
+        else{
+          results = this.infosComplete.resultPassenger;
+        }
+        
+        // Outward parameters (checkbox and time)
+        if(results.outward){
+          if(results.outward.monTime) this.outwardMonTime = this.formatHour(results.outward.monTime);
+          if(results.outward.tueTime) this.outwardTueTime = this.formatHour(results.outward.tueTime);
+          if(results.outward.wedTime) this.outwardWedTime = this.formatHour(results.outward.wedTime);
+          if(results.outward.thuTime) this.outwardThuTime = this.formatHour(results.outward.thuTime);
+          if(results.outward.friTime) this.outwardFriTime = this.formatHour(results.outward.friTime);
+          if(results.outward.satTime) this.outwardSatTime = this.formatHour(results.outward.satTime);
+          if(results.outward.sunTime) this.outwardSunTime = this.formatHour(results.outward.sunTime);
+
+          this.formatArrayForRegular(results.outward,"outward");
+        }
+
+        // Return parameters (checkbox and time)
+        if(results.return){
+          if(results.return.monTime) this.returnMonTime = this.formatHour(results.return.monTime);
+          if(results.return.tueTime) this.returnTueTime = this.formatHour(results.return.tueTime);
+          if(results.return.wedTime) this.returnWedTime = this.formatHour(results.return.wedTime);
+          if(results.return.thuTime) this.returnThuTime = this.formatHour(results.return.thuTime);
+          if(results.return.friTime) this.returnFriTime = this.formatHour(results.return.friTime);
+          if(results.return.satTime) this.returnSatTime = this.formatHour(results.return.satTime);
+          if(results.return.sunTime) this.returnSunTime = this.formatHour(results.return.sunTime);
+
+          this.formatArrayForRegular(results.outward,"return");
+        }
+
         this.dialogRegular = true;
       }
       else{

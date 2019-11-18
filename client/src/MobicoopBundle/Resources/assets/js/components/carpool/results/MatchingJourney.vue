@@ -254,6 +254,13 @@
 
           <regular-ask 
             :type="1"
+            :mon-check-default="monCheckDefault"
+            :tue-check-default="tueCheckDefault"
+            :wed-check-default="wedCheckDefault"
+            :thu-check-default="thuCheckDefault"
+            :fri-check-default="friCheckDefault"
+            :sat-check-default="satCheckDefault"
+            :sun-check-default="sunCheckDefault"
             :mon-time="outwardMonTime"
             :tue-time="outwardTueTime"
             :wed-time="outwardWedTime"
@@ -275,6 +282,13 @@
         <v-stepper-content step="3">
           <regular-ask
             :type="2"
+            :mon-check-default="monCheckDefault"
+            :tue-check-default="tueCheckDefault"
+            :wed-check-default="wedCheckDefault"
+            :thu-check-default="thuCheckDefault"
+            :fri-check-default="friCheckDefault"
+            :sat-check-default="satCheckDefault"
+            :sun-check-default="sunCheckDefault"
             :mon-time="returnMonTime"
             :tue-time="returnTueTime"
             :wed-time="returnWedTime"
@@ -396,6 +410,74 @@ export default {
       type: Object,
       default: null
     },
+    defaultStep: {
+      type: Number,
+      default: 1
+    },
+    defaultOutwardTrip: {
+      type: Array,
+      default: function(){return []}
+    },
+    defaultReturnTrip: {
+      type: Array,
+      default: function(){return []}
+    },
+    defaultOutwardMonTime: {
+      type: String,
+      default: null
+    },
+    defaultOutwardTueTime: {
+      type: String,
+      default: null
+    },
+    defaultOutwardWedTime: {
+      type: String,
+      default: null
+    },
+    defaultOutwardThuTime: {
+      type: String,
+      default: null
+    },
+    defaultOutwardFriTime: {
+      type: String,
+      default: null
+    },
+    defaultOutwardSatTime: {
+      type: String,
+      default: null
+    },
+    defaultOutwardSunTime: {
+      type: String,
+      default: null
+    },
+    defaultReturnMonTime: {
+      type: String,
+      default: null
+    },
+    defaultReturnTueTime: {
+      type: String,
+      default: null
+    },
+    defaultReturnWedTime: {
+      type: String,
+      default: null
+    },
+    defaultReturnThuTime: {
+      type: String,
+      default: null
+    },
+    defaultReturnFriTime: {
+      type: String,
+      default: null
+    },
+    defaultReturnSatTime: {
+      type: String,
+      default: null
+    },
+    defaultReturnSunTime: {
+      type: String,
+      default: null
+    }
   },
   data : function() {
     return {
@@ -405,29 +487,29 @@ export default {
       carpoolLoading: false,
       contactDisabled: false,
       carpoolDisabled: false,
-      step:1,
+      step:this.defaultStep,
       fromDate: this.result.startDate ? this.result.startDate : null,
       menuFromDate: false,
       maxDate: this.result.startDate ? this.result.startDate : null,
       menuMaxDate: false,
       toDate: this.result.toDate ? this.result.toDate : null,
       range: 0,
-      outwardMonTime: null,
-      outwardTueTime: null,
-      outwardWedTime: null,
-      outwardThuTime: null,
-      outwardFriTime: null,
-      outwardSatTime: null,
-      outwardSunTime: null,
-      returnMonTime: null,
-      returnTueTime: null,
-      returnWedTime: null,
-      returnThuTime: null,
-      returnFriTime: null,
-      returnSatTime: null,
-      returnSunTime: null,
-      outwardTrip: [],
-      returnTrip: []
+      outwardMonTime: this.defaultOutwardMonTime,
+      outwardTueTime: this.defaultOutwardTueTime,
+      outwardWedTime: this.defaultOutwardWedTime,
+      outwardThuTime: this.defaultOutwardThuTime,
+      outwardFriTime: this.defaultOutwardFriTime,
+      outwardSatTime: this.defaultOutwardSatTime,
+      outwardSunTime: this.defaultOutwardSunTime,
+      returnMonTime: this.defaultReturnMonTime,
+      returnTueTime: this.defaultReturnTueTime,
+      returnWedTime: this.defaultReturnWedTime,
+      returnThuTime: this.defaultReturnThuTime,
+      returnFriTime: this.defaultReturnFriTime,
+      returnSatTime: this.defaultReturnSatTime,
+      returnSunTime: this.defaultReturnSunTime,
+      outwardTrip: this.defaultOutwardTrip,
+      returnTrip: this.defaultReturnTrip
     }
   },
   computed: {
@@ -468,6 +550,27 @@ export default {
     },
     waypoints() {
       return this.lResult.resultPassenger ? this.lResult.resultPassenger.outward.waypoints : this.lResult.resultDriver.outward.waypoints;
+    },
+    monCheckDefault(){
+      return this.checkDay("mon");
+    },
+    tueCheckDefault(){
+      return this.checkDay("tue");
+    },
+    wedCheckDefault(){
+      return this.checkDay("wed");
+    },
+    thuCheckDefault(){
+      return this.checkDay("thu");
+    },
+    friCheckDefault(){
+      return this.checkDay("fri");
+    },
+    satCheckDefault(){
+      return this.checkDay("sat");
+    },
+    sunCheckDefault(){
+      return this.checkDay("sun");
     }
   },
   watch: {
@@ -625,6 +728,15 @@ export default {
         if (trip[i].day == "sun") days.sunTime = trip[i].time.replace("h",":");
       }
       return days;
+    },
+    checkDay(day){
+      let found = false;
+      this.outwardTrip.forEach((currentDay, index) => {
+        if(currentDay.day==day){
+          found = true;
+        }
+      });      
+      return found;
     }
   }
 };
