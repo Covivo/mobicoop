@@ -503,7 +503,6 @@ class Proposal implements ResourceInterface, \JsonSerializable
 
         return $this;
     }
-
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -517,7 +516,7 @@ class Proposal implements ResourceInterface, \JsonSerializable
             'criteria'          => $this->getCriteria(),
             'type'              => $this->getType(),
             'waypoints'         => $this->getWaypoints(),
-            'results'           => $this->getResults()git stat
+            'results'           => $this->getResults()
         ];
     }
 }
