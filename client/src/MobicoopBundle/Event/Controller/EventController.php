@@ -53,6 +53,8 @@ class EventController extends AbstractController
         $eventComing = $eventManager->getEvents();
         $eventPassed = $eventManager->getEvents(0);
 
+        dump($eventComing);
+
         return $this->render('@Mobicoop/event/events.html.twig', [
             'eventComing' => $eventComing,
             'eventPassed' => $eventPassed,

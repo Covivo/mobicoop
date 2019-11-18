@@ -23,6 +23,7 @@
 
 namespace App\Event\Entity;
 
+use App\Carpool\Entity\Proposal;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -59,6 +60,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Event
 {
+    const STATUS_PENDING = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 2;
     /**
      * @var int The id of this event.
      *
@@ -160,12 +164,21 @@ class Event
      * @MaxDepth(1)
      */
     private $user;
+
+    /**
+     * @var Event Event related for the proposal
+     *
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Proposal", mappedBy="event")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $proposals;
     
     /**
      * @var Address The address of the event.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="event", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -187,6 +200,7 @@ class Event
     {
         $this->id = $id;
         $this->images = new ArrayCollection();
+        $this->proposals = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -320,16 +334,17 @@ class Event
         
         return $this;
     }
-    
+
     public function getAddress(): Address
     {
         return $this->address;
     }
-    
+
     public function setAddress(Address $address): self
     {
         $this->address = $address;
-        
+        $address->setEvent($this);
+
         return $this;
     }
     
@@ -381,5 +396,36 @@ class Event
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \Datetime());
+    }
+
+    /**
+     * @return Collection|Proposal[]
+     */
+    public function getProposals(): Collection
+    {
+        return $this->proposals;
+    }
+
+    public function addProposal(Proposal $proposal): self
+    {
+        if (!$this->proposals->contains($proposal)) {
+            $this->proposals[] = $proposal;
+            $proposal->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProposal(Proposal $proposal): self
+    {
+        if ($this->proposals->contains($proposal)) {
+            $this->proposals->removeElement($proposal);
+            // set the owning side to null (unless already changed)
+            if ($proposal->getEvent() === $this) {
+                $proposal->setEvent(null);
+            }
+        }
+
+        return $this;
     }
 }

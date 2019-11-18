@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Matching;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
@@ -40,18 +41,20 @@ class ProposalManager
     private $dataProvider;
     private $userManager;
     private $marginTime;
+    private $eventManager;
     
     /**
      * Constructor.
      *
      * @param DataProvider $dataProvider
      */
-    public function __construct(DataProvider $dataProvider, UserManager $userManager, int $marginTime)
+    public function __construct(DataProvider $dataProvider, UserManager $userManager, EventManager $eventManager, int $marginTime)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Proposal::class);
         $this->userManager = $userManager;
         $this->marginTime = $marginTime;
+        $this->eventManager = $eventManager;
     }
 
     /**
@@ -437,6 +440,13 @@ class ProposalManager
         if (isset($ad['proposalId'])) {
             // There' a proposalId : we know that is a match
             $proposal->setMatchedProposal(new Proposal($ad['proposalId']));
+        }
+
+        
+        //Gestion events : If an event is set as destination or arrival, we set the event in proposal
+        if ($ad['origin']['event'] != null || $ad['destination']['event'] != null) {
+            $event = $ad['origin']['event']  != null ? $ad['origin']['event'] : $ad['destination']['event'];
+            $proposal->setEvent($this->eventManager->getEvent($event['id']));
         }
 
         // creation of the outward proposal

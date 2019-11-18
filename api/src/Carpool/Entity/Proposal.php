@@ -23,6 +23,7 @@
 
 namespace App\Carpool\Entity;
 
+use App\Event\Entity\Event;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -363,6 +364,16 @@ class Proposal
      * @Groups("results")
      */
     private $results;
+
+
+    /**
+     * @var Event related for the proposal
+     *
+     * @ORM\ManyToOne(targetEntity="App\Event\Entity\Event", inversedBy="proposals")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $event;
         
     public function __construct($id=null)
     {
@@ -744,5 +755,22 @@ class Proposal
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \Datetime());
+    }
+
+    public function getPrivate(): ?bool
+    {
+        return $this->private;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
+
+        return $this;
     }
 }
