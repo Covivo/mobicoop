@@ -396,7 +396,4 @@ class Event
     {
         $this->setUpdatedDate(new \Datetime());
     }
-
-
-
 }
