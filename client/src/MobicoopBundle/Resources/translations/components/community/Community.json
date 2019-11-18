@@ -31,7 +31,14 @@
     "title": {
       "searchCarpool" : "Chercher un trajet dans la communauté"
     },
+    "map": {
+      "findMatchings":"<strong>Chercher les annonces correspondant</strong>",
+      "origin":"Départ",
+      "destination":"Destination",
+      "regular":"Trajet régulier"
+    },
     "urlCommunityUser":"/community-user"
+    
   },
   "en": {
     "buttons": {
@@ -64,6 +71,12 @@
     },
     "title": {
       "searchCarpool" : "Search a journey in the community"
+    },
+    "map": {
+      "findMatchings":"Find the matchings ads",
+      "origin":"Origin",
+      "destination":"Destination",
+      "regular":"Regular journey"
     },
     "urlCommunityUser":"/community-user"
   }
