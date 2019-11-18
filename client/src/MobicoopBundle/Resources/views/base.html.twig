@@ -10,6 +10,8 @@
         <meta content="width=device-width, initial-scale=1" name="viewport">
         {{ encore_entry_link_tags("#{assets_prefix ?? ''}app") }}
         {{ encore_entry_link_tags("#{assets_prefix ?? ''}main") }}
+        {% block favicon %}
+         {% endblock %}
          {% block stylesheets %}
          {% endblock %}
     </head>
