@@ -40,11 +40,11 @@
           </p>
           <v-row>
             <p class="body-2">
-              {{ $t('startEvent.label') }} : {{ computedDateFormat(event.fromDate.date) }}
+              <span class="font-weight-black"> {{ $t('startEvent.label') }} :</span> {{ computedDateFormat(event.fromDate.date) }}
             </p>
             <v-spacer />
             <p class="body-2">
-              {{ $t('endEvent.label') }} : {{ computedDateFormat(event.toDate.date) }}
+              <span class="font-weight-black"> {{ $t('endEvent.label') }} :  </span>{{ computedDateFormat(event.toDate.date) }}
             </p>
           </v-row>
         </v-card-text>

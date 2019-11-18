@@ -306,7 +306,6 @@ export default {
     getEventProposals () {
       this.loadingMap = true;
       axios
-
         .get('/event-proposals/'+this.event.id,
           {
             headers:{
@@ -316,7 +315,7 @@ export default {
         .then(res => {
           this.errorUpdate = res.data.state;
           this.pointsToMap.length = 0;
-          // add the community address to display on the map
+          // add the event address to display on the map
           if (this.event.address) {
             this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name));
           }

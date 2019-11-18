@@ -473,3 +473,12 @@ event_show:
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventShow
     requirements:
         id: '\d+'
+
+# get all community proposals (AJAX)
+event_proposals:
+    path:
+        fr: /event-proposals/{id}
+        en: /event-proposals/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventProposals
+    requirements:
+        id: '\d+'

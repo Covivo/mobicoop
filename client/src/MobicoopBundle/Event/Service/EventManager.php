@@ -180,4 +180,18 @@ class EventManager
         }
         return false;
     }
+
+    /**
+     * Undocumented function
+     *
+     * @param integer $id
+     * @return void
+     */
+    public function getProposals(int $id)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $proposals = $this->dataProvider->getSubCollection($id, "proposal", "proposals");
+        return $proposals->getValue();
+    }
+
 }
