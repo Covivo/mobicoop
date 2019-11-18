@@ -112,4 +112,30 @@ class EventController extends AbstractController
             'error' => (isset($error)) ? $error : false
         ]);
     }
+
+    /**
+     * Get all proposals of an event
+     *
+     * @param integer $id
+     * @param EventManager $eventManager
+     * @return void
+     */
+    public function eventProposals(int $id, EventManager $eventManager)
+    {
+        $proposals = $eventManager->getProposals($id);
+        $points = [];
+        if ($proposals!==null) {
+            foreach ($proposals as $proposal) {
+                foreach ($proposal["waypoints"] as $waypoint) {
+                    $points[] = [
+                        "title"=>$waypoint["address"]["displayLabel"],
+                        "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
+                    ];
+                }
+            }
+        }
+        return new Response(json_encode($points));
+    }
+
+
 }
