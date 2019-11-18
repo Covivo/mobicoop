@@ -373,7 +373,7 @@ class Proposal
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
-    private $proposalevent;
+    private $event;
         
     public function __construct($id=null)
     {
@@ -762,15 +762,16 @@ class Proposal
         return $this->private;
     }
 
-    public function getProposalevent(): ?Event
+    public function getEvent(): ?Event
     {
-        return $this->proposalevent;
+        return $this->event;
     }
 
-    public function setProposalevent(?Event $proposalevent): self
+    public function setEvent(?Event $event): self
     {
-        $this->proposalevent = $proposalevent;
+        $this->event = $event;
 
         return $this;
     }
+
 }

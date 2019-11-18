@@ -97,7 +97,6 @@ class GeoSearcher
                 }
             }
         }
-
         // 2 - Events points
         $events = $this->eventRepository->findByNameAndStatus($input, Event::STATUS_ACTIVE);
         // exclude the private relay points

@@ -279,7 +279,7 @@ class Address
     /**
      * @var User|null The event of the adresse.
      *
-     * @ORM\OneToOne(targetEntity="App\Event\Entity\Event", inversedBy="address")
+     * @ORM\OneToOne(targetEntity="App\Event\Entity\Event", mappedBy="address")
      * @Groups({"read","pt"})
      */
     private $event;

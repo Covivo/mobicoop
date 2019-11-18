@@ -167,7 +167,7 @@ class Event
     /**
      * @var Event Event related for the proposal
      *
-     * @ORM\OneToMany(targetEntity="App\Event\Entity\Event", mappedBy="proposalevent")
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Proposal", mappedBy="event")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -177,7 +177,7 @@ class Event
      * @var Address The address of the event.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", mappedBy="event", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="event", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -397,34 +397,6 @@ class Event
         $this->setUpdatedDate(new \Datetime());
     }
 
-    /**
-     * @return Collection|Event[]
-     */
-    public function getProposals(): Collection
-    {
-        return $this->proposals;
-    }
 
-    public function addProposal(Event $proposal): self
-    {
-        if (!$this->proposals->contains($proposal)) {
-            $this->proposals[] = $proposal;
-            $proposal->setProposalevent($this);
-        }
 
-        return $this;
-    }
-
-    public function removeProposal(Event $proposal): self
-    {
-        if ($this->proposals->contains($proposal)) {
-            $this->proposals->removeElement($proposal);
-            // set the owning side to null (unless already changed)
-            if ($proposal->getProposalevent() === $this) {
-                $proposal->setProposalevent(null);
-            }
-        }
-
-        return $this;
-    }
 }
