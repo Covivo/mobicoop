@@ -30,7 +30,9 @@ export default {
         },
         signup: {
           chart: {
-            chartValid: "Je valide la charte",
+            text: "J'accepte la charte de la plateforme et sa ",
+            link: "politique de protection des données",
+            route: "/protection-donnees",
             errors: {
               required: "La validation de la charte est requise"
             }
@@ -191,7 +193,9 @@ export default {
         },
         signup: {
           chart: {
-            chartValid: "",
+            text: "",
+            link: "",
+            route: "",
             errors: {
               required: ""
             }
