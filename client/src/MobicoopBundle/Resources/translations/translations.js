@@ -123,8 +123,8 @@ export default {
           }
         },
         phone: {
-          label: "Téléphone",
-          placeholder: "Numéro de téléphone",
+          label: "Téléphone portable",
+          placeholder: "Téléphone portable",
           errors: {
             required: "Le numéro de téléphone est requis",
             valid: "Le numéro de téléphone doit être valide"
