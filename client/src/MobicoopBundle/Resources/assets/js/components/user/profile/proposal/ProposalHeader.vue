@@ -40,7 +40,7 @@
         :class="isArchived ? 'mr-1' : ''"
         icon
         :loading="loading"
-        @click="hasAsk ? activeDialog() : deleteProposal()"
+        @click="hasAcceptedAsk ? activeAcceptedAskDialog() : hasAsk ? activeAskDialog() : deleteProposal()"
       >
         <v-icon
           class="white--text"
@@ -52,6 +52,7 @@
         v-if="!isArchived"
         class="secondary ma-1"
         icon
+        :loading="loading"
       >
         <v-icon class="white--text">
           mdi-pencil
@@ -61,24 +62,27 @@
         v-if="isPausable && !isArchived"
         class="secondary my-1 mr-1"
         icon
+        :loading="loading"
       >
         <v-icon class="white--text">
           mdi-pause
         </v-icon>
       </v-btn>
     </v-row>
+
+    <!--DIALOG-->
     <v-row justify="center">
       <v-dialog
-        v-model="dialog"
+        v-model="dialogActive"
         persistent
         max-width="500"
       >
         <v-card>
           <v-card-title class="headline">
-            {{ $t("delete.dialog.title") }}
+            {{ dialog.title }}
           </v-card-title>
           <v-card-text>
-            <p>{{ $t("delete.dialog.text") }}</p>
+            <p>{{ dialog.content }}</p>
             <v-textarea v-model="deleteMessage" />
           </v-card-text>
           <v-card-actions>
@@ -86,13 +90,15 @@
             <v-btn
               color="green darken-1"
               text
-              @click="dialog = false"
+              :loading="loading"
+              @click="dialogActive = false"
             >
               {{ $t("delete.dialog.cancel") }}
             </v-btn>
             <v-btn
               color="green darken-1"
               text
+              :loading="loading"
               @click="deleteProposal()"
             >
               {{ $t("delete.dialog.validate") }}
@@ -142,7 +148,7 @@ export default {
       type: Boolean,
       default: false
     },
-    hasFormalAsk: {
+    hasAcceptedAsk: {
       type: Boolean,
       default: false
     }
@@ -155,7 +161,11 @@ export default {
         type: "success",
         message: ""
       },
-      dialog: false,
+      dialogActive: false,
+      dialog: {
+        title: "",
+        content: ""
+      },
       deleteMessage: ""
     }
   },
@@ -201,9 +211,21 @@ export default {
         message: ""
       }
     },
-    activeDialog () {
+    activeAskDialog () {
       this.deleteMessage = "";
-      this.dialog = true;
+      this.dialog = {
+        title: this.$t('delete.dialog.pending.title'),
+        content: this.$t('delete.dialog.pending.text')
+      };
+      this.dialogActive = true;
+    },
+    activeAcceptedAskDialog () {
+      this.deleteMessage = "";
+      this.dialog = {
+        title: this.$t('delete.dialog.accepted.title'),
+        content: this.$t('delete.dialog.accepted.text')
+      };
+      this.dialogActive = true;
     }
   }
 }

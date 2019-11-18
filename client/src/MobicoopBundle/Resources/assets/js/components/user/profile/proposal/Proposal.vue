@@ -5,7 +5,7 @@
       :is-passenger="isPassenger"
       :is-pausable="isRegular"
       :is-archived="isArchived"
-      :has-formal-ask="hasFormalAsk"
+      :has-accepted-ask="hasAtLeastOneAcceptedAsk"
       :has-ask="hasAtLeastOneAsk"
       :proposal-id="proposal.outward ? proposal.outward.id : proposal.return ? proposal.return.id : null"
       @proposal-deleted="proposalDeleted()"
@@ -59,7 +59,8 @@ export default {
   },
   data () {
     return {
-      
+      hasAtLeastOneAsk: false,
+      hasAtLeastOneAcceptedAsk: false
     }
   },
   computed: {
@@ -74,40 +75,66 @@ export default {
     },
     hasReturn () {
       return this.proposal.return;
-    },
-    hasAtLeastOneAsk () {
+    }
+  },
+  mounted () {
+    this.checkAsks();
+  },
+  methods: {
+    checkAsks () {
       let hasAtLeastOneAsk = false;
+      let hasAtLeastOneAcceptedAsk = false;
       // check offers of outward
       if (this.proposal.outward && this.proposal.outward.matchingOffers) {
-        hasAtLeastOneAsk = this.proposal.outward.matchingOffers.some(offer => {
-          return offer.asks.length > 0;
+        this.proposal.outward.matchingOffers.forEach(offer => {
+          if (offer.asks.length > 0) {
+            hasAtLeastOneAsk = true;
+            offer.asks.forEach(ask => {
+              // todo: passer le statut a 4 après merge de l'update
+              if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
+            })
+          }
         })
       }
       // check requests of outward
-      if (!hasAtLeastOneAsk && this.proposal.outward && this.proposal.outward.matchingRequests) {
-        hasAtLeastOneAsk = this.proposal.outward.matchingRequests.some(request => {
-          return request.asks.length > 0;
+      if (!hasAtLeastOneAsk && !hasAtLeastOneAcceptedAsk && this.proposal.outward && this.proposal.outward.matchingRequests) {
+        this.proposal.outward.matchingRequests.forEach(request => {
+          if (request.asks.length > 0) {
+            hasAtLeastOneAsk = true;
+            request.asks.forEach(ask => {
+              // todo: passer le statut a 4 après merge de l'update
+              if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
+            })
+          }
         })
       }
       // check offers of return
-      if (!hasAtLeastOneAsk && this.proposal.return && this.proposal.return.matchingOffers) {
-        hasAtLeastOneAsk = this.proposal.return.matchingOffers.some(offer => {
-          return offer.asks.length > 0;
+      if (!hasAtLeastOneAsk && !hasAtLeastOneAcceptedAsk && this.proposal.return && this.proposal.return.matchingOffers) {
+        this.proposal.return.matchingOffers.forEach(offer => {
+          if (offer.asks.length > 0) {
+            hasAtLeastOneAsk = true;
+            offer.asks.forEach(ask => {
+              // todo: passer le statut a 4 après merge de l'update
+              if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
+            })
+          }
         })
       }
       // check requests of outward
-      if (!hasAtLeastOneAsk && this.proposal.return && this.proposal.return.matchingRequests) {
-        hasAtLeastOneAsk = this.proposal.return.matchingRequests.some(request => {
-          return request.asks.length > 0;
+      if (!hasAtLeastOneAsk && !hasAtLeastOneAcceptedAsk && this.proposal.return && this.proposal.return.matchingRequests) {
+        this.proposal.return.matchingRequests.forEach(request => {
+          if (request.asks.length > 0) {
+            hasAtLeastOneAsk = true;
+            request.asks.forEach(ask => {
+              // todo: passer le statut a 4 après merge de l'update
+              if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
+            })
+          }
         })
       }
-      return hasAtLeastOneAsk;
+      this.hasAtLeastOneAsk = hasAtLeastOneAsk;
+      this.hasAtLeastOneAcceptedAsk = hasAtLeastOneAcceptedAsk;
     },
-    hasFormalAsk () {
-      return this.proposal.outward ? this.proposal.outward.formalAsk ? this.proposal.outward.formalAsk : this.proposal.return ? this.proposal.return.formalAsk : false : false;
-    }
-  },
-  methods: {
     proposalDeleted(id) {
       this.$emit('proposal-deleted', id)
     }
