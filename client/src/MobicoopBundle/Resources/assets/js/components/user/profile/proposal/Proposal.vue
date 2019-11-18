@@ -5,6 +5,8 @@
       :is-passenger="isPassenger"
       :is-pausable="isRegular"
       :is-archived="isArchived"
+      :has-formal-ask="hasFormalAsk"
+      :has-ask="hasAtLeastOneAsk"
       :proposal-id="proposal.outward ? proposal.outward.id : proposal.return ? proposal.return.id : null"
       @proposal-deleted="proposalDeleted()"
     />
@@ -72,6 +74,37 @@ export default {
     },
     hasReturn () {
       return this.proposal.return;
+    },
+    hasAtLeastOneAsk () {
+      let hasAtLeastOneAsk = false;
+      // check offers of outward
+      if (this.proposal.outward && this.proposal.outward.matchingOffers) {
+        hasAtLeastOneAsk = this.proposal.outward.matchingOffers.some(offer => {
+          return offer.asks.length > 0;
+        })
+      }
+      // check requests of outward
+      if (!hasAtLeastOneAsk && this.proposal.outward && this.proposal.outward.matchingRequests) {
+        hasAtLeastOneAsk = this.proposal.outward.matchingRequests.some(request => {
+          return request.asks.length > 0;
+        })
+      }
+      // check offers of return
+      if (!hasAtLeastOneAsk && this.proposal.return && this.proposal.return.matchingOffers) {
+        hasAtLeastOneAsk = this.proposal.return.matchingOffers.some(offer => {
+          return offer.asks.length > 0;
+        })
+      }
+      // check requests of outward
+      if (!hasAtLeastOneAsk && this.proposal.return && this.proposal.return.matchingRequests) {
+        hasAtLeastOneAsk = this.proposal.return.matchingRequests.some(request => {
+          return request.asks.length > 0;
+        })
+      }
+      return hasAtLeastOneAsk;
+    },
+    hasFormalAsk () {
+      return this.proposal.outward ? this.proposal.outward.formalAsk ? this.proposal.outward.formalAsk : this.proposal.return ? this.proposal.return.formalAsk : false : false;
     }
   },
   methods: {

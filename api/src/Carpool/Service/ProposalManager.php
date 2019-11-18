@@ -593,6 +593,7 @@ class ProposalManager
         $this->entityManager->remove($proposal);
         $this->entityManager->flush();
 
+        // todo : send generalist notification to asks and formal asks
         return new Response(204, "Deleted with success");
     }
     

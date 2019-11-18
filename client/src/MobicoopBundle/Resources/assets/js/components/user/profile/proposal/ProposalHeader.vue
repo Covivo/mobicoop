@@ -40,7 +40,7 @@
         :class="isArchived ? 'mr-1' : ''"
         icon
         :loading="loading"
-        @click="deleteProposal()"
+        @click="hasAsk ? activeDialog() : deleteProposal()"
       >
         <v-icon
           class="white--text"
@@ -66,6 +66,40 @@
           mdi-pause
         </v-icon>
       </v-btn>
+    </v-row>
+    <v-row justify="center">
+      <v-dialog
+        v-model="dialog"
+        persistent
+        max-width="500"
+      >
+        <v-card>
+          <v-card-title class="headline">
+            {{ $t("delete.dialog.title") }}
+          </v-card-title>
+          <v-card-text>
+            <p>{{ $t("delete.dialog.text") }}</p>
+            <v-textarea v-model="deleteMessage" />
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="green darken-1"
+              text
+              @click="dialog = false"
+            >
+              {{ $t("delete.dialog.cancel") }}
+            </v-btn>
+            <v-btn
+              color="green darken-1"
+              text
+              @click="deleteProposal()"
+            >
+              {{ $t("delete.dialog.validate") }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-row>
   </v-container>
 </template>
@@ -103,6 +137,14 @@ export default {
     proposalId: {
       type: Number,
       default: null
+    },
+    hasAsk: {
+      type: Boolean,
+      default: false
+    },
+    hasFormalAsk: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -112,7 +154,9 @@ export default {
       alert: {
         type: "success",
         message: ""
-      }
+      },
+      dialog: false,
+      deleteMessage: ""
     }
   },
   methods: {
@@ -122,7 +166,8 @@ export default {
       this.loading = true;
       axios.delete(this.$t('delete.route'), {
         data: {
-          proposalId: this.proposalId
+          proposalId: this.proposalId,
+          message: this.deleteMessage
         }
       })
         .then(function (response) {
@@ -155,6 +200,10 @@ export default {
         type: "success",
         message: ""
       }
+    },
+    activeDialog () {
+      this.deleteMessage = "";
+      this.dialog = true;
     }
   }
 }

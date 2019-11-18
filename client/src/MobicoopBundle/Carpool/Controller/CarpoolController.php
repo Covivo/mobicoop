@@ -137,6 +137,7 @@ class CarpoolController extends AbstractController
 
             $this->denyAccessUnlessGranted('delete_ad', $proposal);
 
+            //todo : gérer la messagerie interne avec le message de suppression laissé par l'auteur
             if ($response = $proposalManager->deleteProposal($data['proposalId'])) {
                 return new JsonResponse(
                     ["message" => "delete.success"],
