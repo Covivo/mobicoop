@@ -517,7 +517,7 @@ class Proposal implements ResourceInterface, \JsonSerializable
             'criteria'          => $this->getCriteria(),
             'type'              => $this->getType(),
             'waypoints'         => $this->getWaypoints(),
-            'results'           => $this->getResults()
+            'results'           => $this->getResults()git stat
         ];
     }
 }
