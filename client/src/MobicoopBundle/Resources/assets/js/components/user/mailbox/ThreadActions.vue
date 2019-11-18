@@ -130,43 +130,6 @@
       v-model="dialogRegular"
     >
       <v-card>
-        <!-- <v-toolbar
-          flat
-          color="primary"
-        >
-          <v-toolbar-title>{{ $t('regular.ask') }}</v-toolbar-title>
-          <v-spacer />
-          
-          <v-btn
-            icon
-            @click="dialogRegular = false"
-          >
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-toolbar> -->
-        <!-- <regular-ask
-          :type="infos.type"
-          :origin-driver="infos.regular.originDriver"
-          :destination-driver="infos.regular.destinationDriver"
-          :origin-passenger="infos.regular.originPassenger"
-          :destination-passenger="infos.regular.destinationPassenger"
-          :from-date="infos.regular.fromDate"
-          :max-date="infos.regular.maxDate"
-          :mon-check-default="infos.regular.days.monCheck"
-          :mon-time="infos.regular.days.monTime"
-          :tue-check-default="infos.regular.days.tueCheck"
-          :tue-time="infos.regular.days.tueTime"
-          :wed-check-default="infos.regular.days.wedCheck"
-          :wed-time="infos.regular.days.wedTime"
-          :thu-check-default="infos.regular.days.thuCheck"
-          :thu-time="infos.regular.days.thuTime"
-          :fri-check-default="infos.regular.days.friCheck"
-          :fri-time="infos.regular.days.friTime"
-          :sat-check-default="infos.regular.days.satCheck"
-          :sat-time="infos.regular.days.satTime"
-          :sun-check-default="infos.regular.days.sunCheck"
-          :sun-time="infos.regular.days.sunTime"
-        /> -->
         <matching-journey
           :result="infosComplete"
           :default-step="2"
@@ -199,7 +162,6 @@ import Translations from "@translations/components/user/mailbox/ThreadActions.js
 import ThreadsActionsButtons from '@components/user/mailbox/ThreadsActionsButtons'
 import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary'
 import VJourney from '@components/carpool/utilities/VJourney'
-//import RegularAsk from '@components/carpool/utilities/RegularAsk'
 import MatchingJourney from '@components/carpool/results/MatchingJourney'
 import axios from "axios";
 import moment from "moment";
@@ -212,7 +174,6 @@ export default {
     ThreadsActionsButtons,
     RegularDaysSummary,
     VJourney,
-    //RegularAsk,
     MatchingJourney
   },
   props: {
@@ -295,7 +256,7 @@ export default {
       }
       axios.post(this.$t("urlGetAskHistory"),params)
         .then(response => {
-          console.error(response.data);
+          //console.error(response.data);
           this.infosComplete = response.data;
 
           // If the user can be driver and passenger, we display driver infos by default
