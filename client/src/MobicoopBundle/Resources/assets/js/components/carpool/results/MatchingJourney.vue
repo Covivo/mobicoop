@@ -477,6 +477,10 @@ export default {
     defaultReturnSunTime: {
       type: String,
       default: null
+    },
+    defaultRole:{
+      type: String,
+      default:null
     }
   },
   data : function() {
@@ -517,10 +521,20 @@ export default {
       return moment().toISOString();
     },
     driver() {
-      return this.lResult && this.lResult.resultDriver ? true : false;
+      if(this.defaultRole){
+        return (this.defaultRole=="driver") ? true : false;
+      }
+      else{
+        return this.lResult && this.lResult.resultDriver ? true : false;
+      }
     },
     passenger() {
-      return this.lResult && this.lResult.resultPassenger ? true : false;
+      if(this.defaultRole){
+        return (this.defaultRole=="passenger") ? true : false;
+      }
+      else{
+        return this.lResult && this.lResult.resultPassenger ? true : false;
+      }
     },
     regular() {
       return this.lResult && this.lResult.frequency == 2;

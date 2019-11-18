@@ -170,7 +170,9 @@
           :default-return-sun-time="returnSunTime"
           :default-outward-trip="outwardTrip"
           :default-return-trip="returnTrip"
+          :default-role="chosenRole"
           @close="dialogRegular=false"
+          @carpool="carpoolFromMatchingJourney"
         />
       </v-card>
     </v-dialog>
@@ -249,6 +251,7 @@ export default {
       returnSunTime: null,
       outwardTrip:[],
       returnTrip:[],
+      chosenRole:null
     }
   },
   computed:{
@@ -373,6 +376,7 @@ export default {
         // If the Ask is only initiated and that the carpool is regular
 
         let results = null;
+        this.chosenRole = data.role; // The chosen role to init MatchingJourney
 
         // We build the params to prefill MathingJourney
 
@@ -415,6 +419,9 @@ export default {
         this.dataLoadingBtn = true;
         this.$emit("updateStatusAskHistory",data);
       }
+    },
+    carpoolFromMatchingJourney(data){
+      console.error(data);
     }
   }
 }
