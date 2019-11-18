@@ -446,7 +446,7 @@ class ProposalManager
         //Gestion events : If an event is set as destination or arrival, we set the event in proposal
         if ($ad['origin']['event'] != null || $ad['destination']['event'] != null) {
             $event = $ad['origin']['event']  != null ? $ad['origin']['event'] : $ad['destination']['event'];
-            $proposal->setEvent( $this->eventManager->getEvent($event['id']));
+            $proposal->setEvent($this->eventManager->getEvent($event['id']));
         }
 
         // creation of the outward proposal

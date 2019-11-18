@@ -773,6 +773,4 @@ class Proposal
 
         return $this;
     }
-
-   
 }
