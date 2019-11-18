@@ -70,6 +70,22 @@
                 class="title text-center"
               >
                 {{ lResult.roundedPrice ? lResult.roundedPrice +'€' : '' }}
+                <v-tooltip
+                  slot="append"
+                  right
+                  color="info"
+                  :max-width="'35%'"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                      justify="left"
+                      v-on="on"
+                    >
+                      mdi-help-circle-outline
+                    </v-icon>
+                  </template>
+                  <span>{{ $t('priceTooltip') }}</span>
+                </v-tooltip>
               </v-col>
             </v-row>
 
