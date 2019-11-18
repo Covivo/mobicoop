@@ -93,7 +93,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * Show a community
+     * Show a event
      */
     public function eventShow($id, EventManager $eventManager, UserManager $userManager, Request $request)
     {

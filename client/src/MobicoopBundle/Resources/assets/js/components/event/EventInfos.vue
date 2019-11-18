@@ -40,12 +40,11 @@
           </p>
           <v-row>
             <p class="body-2">
-              {{ computedDateFormat(event.fromDate.date) }}
-              {{ computedDateFormat(event.fromDate.date) }}
+              {{ $t('startEvent.label') }} : {{ computedDateFormat(event.fromDate.date) }}
             </p>
+            <v-spacer />
             <p class="body-2">
-              {{ computedDateFormat(event.toDate.date) }}
-              {{ computedDateFormat(event.toDate.date) }}
+              {{ $t('endEvent.label') }} : {{ computedDateFormat(event.toDate.date) }}
             </p>
           </v-row>
         </v-card-text>
@@ -91,7 +90,7 @@ export default {
       // return this.date
       //   ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
       //   : null;
-      return moment(this.date).format(this.$t("DD/MM/YYYY hh:mm"));
+      return moment(date).format(this.$t("DD/MM/YYYY hh:mm"));
     }
   },
 }
