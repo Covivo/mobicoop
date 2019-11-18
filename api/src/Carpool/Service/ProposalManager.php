@@ -23,9 +23,11 @@
 
 namespace App\Carpool\Service;
 
+use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
+use App\Carpool\Event\AskAdDeletedEvent;
 use App\Carpool\Event\MatchingNewEvent;
 use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\ProposalRepository;
@@ -590,10 +592,28 @@ class ProposalManager
      */
     public function deleteProposal(Proposal $proposal)
     {
+        $asks = $this->askManager->getAsksFromProposal($proposal);
+
+        if (count($asks) > 0) {
+            /** @var Ask $ask */
+            foreach ($asks as $ask) {
+                // todo: change status after update
+                // Accepted
+                if ($ask->getStatus() === 3) {
+//                    $this->notificationManager->notifies();
+                }
+                // Pending
+                elseif ($ask->getStatus() === 2) {
+                    $event = new AskAdDeletedEvent($proposal, $ask);
+                    $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
+                }
+            }
+        }
+
         $this->entityManager->remove($proposal);
         $this->entityManager->flush();
 
-        // todo : send generalist notification to asks and formal asks
+        // todo : send generalist notification to asks and accepted asks
         return new Response(204, "Deleted with success");
     }
     

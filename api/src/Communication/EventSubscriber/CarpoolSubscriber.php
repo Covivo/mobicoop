@@ -26,6 +26,7 @@ namespace App\Communication\EventSubscriber;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Event\AdRenewalEvent;
 use App\Carpool\Event\AskAcceptedEvent;
+use App\Carpool\Event\AskAdDeletedEvent;
 use App\Carpool\Event\AskPostedEvent;
 use App\Carpool\Event\AskRefusedEvent;
 use App\Carpool\Event\AskUpdatedEvent;
@@ -61,7 +62,8 @@ class CarpoolSubscriber implements EventSubscriberInterface
             AdRenewalEvent::NAME => 'onAdRenewal',
             ProposalPostedEvent::NAME => 'onProposalPosted',
             ProposalCanceledEvent::NAME => 'onProposalCanceled',
-            AskUpdatedEvent::NAME => 'onAskUpdated'
+            AskUpdatedEvent::NAME => 'onAskUpdated',
+            AskAdDeletedEvent::NAME => 'onAskAdDeleted'
         ];
     }
     
@@ -170,5 +172,16 @@ class CarpoolSubscriber implements EventSubscriberInterface
     {
         // we must notify the creator of the proposal
         $this->notificationManager->notifies(AdRenewalEvent::NAME, $event->getProposal()->getUser());
+    }
+
+    /**
+     * Executed when an ad is deleted
+     *
+     * @param AskAdDeletedEvent $event
+     * @return void
+     */
+    public function onAskAdDeleted(AskAdDeletedEvent $event)
+    {
+        $this->notificationManager->notifies(AskAdDeletedEvent::NAME, $event->getAsk()->getUser(), $event->getProposal());
     }
 }

@@ -151,4 +151,31 @@ class AskManager
         
         return $this->createAsk($ask);
     }
+
+    public function getAsksFromProposal(Proposal $proposal)
+    {
+        $asks = [];
+
+        if (!empty($proposal->getMatchingOffers())) {
+            $offers = $proposal->getMatchingOffers();
+            /** @var Matching $offer */
+            foreach ($offers as $offer) {
+                if (!empty($offer->getAsks())) {
+                    $asks = array_merge($asks, $offer->getAsks());
+                }
+            }
+        }
+
+        if (!empty($proposal->getMatchingRequests())) {
+            $requests = $proposal->getMatchingRequests();
+            /** @var Matching $request */
+            foreach ($requests as $request) {
+                if (!empty($request->getAsks())) {
+                    $asks = array_merge($asks, $request->getAsks());
+                }
+            }
+        }
+
+        return $asks;
+    }
 }
