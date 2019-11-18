@@ -1,5 +1,6 @@
 <template>
   <cookie-law
+    theme="custom-theme"
     :button-text="$t('iUnderstand')"
   >
     <div slot="message">
@@ -27,3 +28,22 @@ export default {
   }
 }
 </script>
+ <style lang="scss" >
+   .Cookie--custom-theme {
+     .Cookie__button {
+     background: #f045ab;
+     padding: 8px;
+     color: #fff;
+     border-width: 2px 4px;
+     border-radius: 40px;
+     font-size: 1em;
+     margin: 16px;
+     }
+     .Cookie__buttons {
+       align-self: center;
+       white-space: nowrap;
+     }
+     padding:20px;
+     background: white;
+     }
+ </style>
