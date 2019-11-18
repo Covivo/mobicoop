@@ -107,12 +107,16 @@
         align="center"
         justify="center"
       >
-        <search
-          :geo-search-url="geodata.geocompleteuri"
+        <search-journey
+          :solidary-ad="solidary"
+          display-roles
+          :geo-search-url="geoSearchUrl"
           :user="user"
-          :params="params"
-          :punctual-date-optional="punctualDateOptional"
-          :regular="regular"
+          :init-outward-date="outwardDate"
+          :init-origin="origin"
+          :init-destination="destination"
+          :init-regular="regular"
+          @change="searchChanged"
         />
       </v-row>
     </v-container>

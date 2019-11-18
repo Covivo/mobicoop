@@ -53,8 +53,6 @@ class EventController extends AbstractController
         $eventComing = $eventManager->getEvents();
         $eventPassed = $eventManager->getEvents(0);
 
-        dump($eventComing);
-
         return $this->render('@Mobicoop/event/events.html.twig', [
             'eventComing' => $eventComing,
             'eventPassed' => $eventPassed,
@@ -104,10 +102,12 @@ class EventController extends AbstractController
         $event = $eventManager->getEvent($id);
         //$this->denyAccessUnlessGranted('show', $community);
         // retreive logged user
+
         $user = $userManager->getLoggedUser();
         return $this->render('@Mobicoop/event/event.html.twig', [
             'event' => $event,
             'user' => $user,
+            'destination' => $event->getAddress(),
             'searchRoute' => "covoiturage/recherche",
             'error' => (isset($error)) ? $error : false
         ]);
