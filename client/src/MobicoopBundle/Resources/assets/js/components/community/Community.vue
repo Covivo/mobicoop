@@ -151,9 +151,11 @@
                 ref="mmap"
                 type-map="community"
                 :points="pointsToMap"
+                :ways="directionWay"
                 :provider="mapProvider"
                 :url-tiles="urlTiles"
                 :attribution-copyright="attributionCopyright"
+                :markers-draggable="false"
               />
             </v-col>
           </v-row>
@@ -421,11 +423,53 @@ export default {
             this.pointsToMap.push(this.buildPoint(this.community.address.latitude,this.community.address.longitude,this.community.name));
           }
           
-          // add all the waypoints of the community to display on the map :
+          // add all the waypoints of the community to display on the map
+          // We draw straight lines between those points
           // if the user is already accepted or if the doesn't hide members or proposals to non members.
           if(this.isAccepted || (!this.community.membersHidden && !this.community.proposalsHidden) ){
-            res.data.forEach((waypoint, index) => {
-              this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+            res.data.forEach((proposal, index) => {
+              let currentProposal = {latLngs:[]};
+              let infosForPopUp = {
+                origin:'',
+                destination:'',
+                originLat:null,
+                originLon:null,
+                destinationLat:null,
+                destinationLon:null,
+              };
+
+              if(proposal.type !== 'return'){ // We show only outward or one way proposals
+                proposal.waypoints.forEach((waypoint, index) => {
+                  this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+                  currentProposal.latLngs.push(waypoint.latLng);
+                  if(index==0){
+                    infosForPopUp.origin = waypoint.title;
+                    infosForPopUp.originLat = waypoint.latLng.lat;
+                    infosForPopUp.originLon = waypoint.latLng.lon;
+                  }
+                  else if(waypoint.destination){
+                    infosForPopUp.destination = waypoint.title;
+                    infosForPopUp.destinationLat = waypoint.latLng.lat;
+                    infosForPopUp.destinationLon = waypoint.latLng.lon;
+                  }
+                });
+
+                // We build the content of the popup
+                currentProposal.desc = "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
+                currentProposal.desc += "<strong>"+this.$t('map.destination')+"</strong> : "+infosForPopUp.destination+"<br />";
+                if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em>";
+                // And now the content of a tooltip (same as popup but without the button)
+                currentProposal.title = currentProposal.desc;
+                
+                // We add the button to the popup (To Do: Button isn't functionnal. Find a good way to launch a research)
+                //currentProposal.desc += "<br /><button type='button' class='v-btn v-btn--contained v-btn--rounded theme--light v-size--small secondary overline'>"+this.$t('map.findMatchings')+"</button>";
+
+                // We are closing the two p
+                currentProposal.title += "</p>";
+                currentProposal.desc += "</p>";
+                this.directionWay.push(currentProposal);
+
+              }
             });
           }
           this.loadingMap = false;
@@ -481,8 +525,10 @@ export default {
     },
     lastUsersRefreshed(){
       this.refreshLastUsers = false;
+    },
+    searchMatchings(){
+      console.error("searchMatchings");
     }
-
   }
 }
 </script>
