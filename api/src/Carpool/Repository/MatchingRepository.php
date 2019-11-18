@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,35 +21,31 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Event;
+namespace App\Carpool\Repository;
 
-use Symfony\Component\EventDispatcher\Event;
 use App\Carpool\Entity\Matching;
-use App\User\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * Event sent when a new matching is created.
+ * @method Matching|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Matching|null findOneBy(array $criteria, array $orderBy = null)
  */
-class MatchingNewEvent extends Event
+class MatchingRepository
 {
-    public const NAME = 'carpool_matching_new';
-
-    protected $matching;
-    protected $sender;
-
-    public function __construct(Matching $matching, ?User $user)
+    private $repository;
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->matching = $matching;
-        $this->sender = $user;
+        $this->repository = $entityManager->getRepository(Matching::class);
     }
 
-    public function getMatching()
+    public function find(int $id): ?Proposal
     {
-        return $this->matching;
+        return $this->repository->find($id);
     }
 
-    public function getSender()
+    public function findOneBy(array $criteria, array $orderBy = null)
     {
-        return $this->sender;
+        return $this->repository->findOneBy($criteria, $orderBy);
     }
 }

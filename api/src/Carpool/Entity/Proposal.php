@@ -274,11 +274,10 @@ class Proposal
     private $proposalLinked;
     
     /**
-     * @var User User for whom the proposal is submitted (in general the user itself, except when it is a "posting for").
+     * @var User|null User for whom the proposal is submitted (in general the user itself, except when it is a "posting for").
+     * Can be null for an anonymous search.
      *
-     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
-     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","results","write"})
      * @MaxDepth(1)
      */

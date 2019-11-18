@@ -32,6 +32,7 @@ use App\Community\Service\CommunityManager;
 use App\Event\Exception\EventNotFoundException;
 use App\Event\Service\EventManager;
 use App\Geography\Entity\Address;
+use App\User\Exception\AdException;
 use App\User\Exception\UserNotFoundException;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -81,6 +82,31 @@ class AdManager
         $outwardProposal = new Proposal();
         $outwardCriteria = new Criteria();
 
+        // validation
+
+        // try for an anonymous post ?
+        if (!$ad->isSearch() && !$ad->getUserId()) {
+            throw new AdException('Anonymous users can\'t post an ad');
+        }
+
+        // we set the user of the proposal
+        if ($ad->getUserId()) {
+            if ($user = $this->userManager->getUser($ad->getUserId())) {
+                $outwardProposal->setUser($user);
+            } else {
+                throw new UserNotFoundException('User ' . $ad->getUserId() . ' not found');
+            }
+        }
+        
+        // we check if the ad is posted for another user (delegation)
+        if ($ad->getPosterId()) {
+            if ($poster = $this->userManager->getUser($ad->getPosterId())) {
+                $outwardProposal->setUserDelegate($poster);
+            } else {
+                throw new UserNotFoundException('Poster ' . $ad->getPosterId() . ' not found');
+            }
+        }
+
         // the proposal is private if it's a search only ad
         $outwardProposal->setPrivate($ad->isSearch());
 
@@ -93,27 +119,12 @@ class AdManager
             $outwardProposal->setType(Proposal::TYPE_OUTWARD);
         }
 
-        // we set the user of the proposal
-        if ($user = $this->userManager->getUser($ad->getUserId())) {
-            $outwardProposal->setUser($user);
-        } else {
-            throw new UserNotFoundException('User ' . $ad->getUserId() . ' not found');
-        }
-
-        // we check if the ad is posted for another user (delegation)
-        if ($ad->getPosterId()) {
-            if ($poster = $this->userManager->getUser($ad->getPosterId())) {
-                $outwardProposal->setUserDelegate($poster);
-            } else {
-                throw new UserNotFoundException('Poster ' . $ad->getPosterId() . ' not found');
-            }
-        }
-
         // comment
         $outwardProposal->setComment($ad->getComment());
 
         // communities
         if ($ad->getCommunities()) {
+            // todo : check if the user can post/search in each community
             foreach ($ad->getCommunities() as $communityId) {
                 if ($community = $this->communityManager->getCommunity($communityId)) {
                     $outwardProposal->addCommunity($community);
@@ -159,54 +170,68 @@ class AdManager
         $outwardCriteria->setBackSeats($ad->hasBackSeats());
 
         // dates and times
+
+        // if the date is not set we use the current date
         $outwardCriteria->setFromDate($ad->getOutwardDate() ? $ad->getOutwardDate() : new \DateTime());
         if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
             $outwardCriteria->setToDate($ad->getOutwardLimitDate() ? \DateTime::createFromFormat('Y-m-d', $ad->getOutwardLimitDate()) : null);
             
+            $hasSchedule = false;
             foreach ($ad->getSchedule() as $schedule) {
                 if ($schedule['outwardTime'] != '') {
                     if (isset($schedule['mon']) && $schedule['mon']) {
+                        $hasSchedule = true;
                         $outwardCriteria->setMonCheck(true);
                         $outwardCriteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
                         $outwardCriteria->setMonMarginDuration($this->params['defaultMarginTime']);
                     }
                     if (isset($schedule['tue']) && $schedule['tue']) {
+                        $hasSchedule = true;
                         $outwardCriteria->setTueCheck(true);
                         $outwardCriteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
                         $outwardCriteria->setTueMarginDuration($this->params['defaultMarginTime']);
                     }
                     if (isset($schedule['wed']) && $schedule['wed']) {
+                        $hasSchedule = true;
                         $outwardCriteria->setWedCheck(true);
                         $outwardCriteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
                         $outwardCriteria->setWedMarginDuration($this->params['defaultMarginTime']);
                     }
                     if (isset($schedule['thu']) && $schedule['thu']) {
+                        $hasSchedule = true;
                         $outwardCriteria->setThuCheck(true);
                         $outwardCriteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
                         $outwardCriteria->setThuMarginDuration($this->params['defaultMarginTime']);
                     }
                     if (isset($schedule['fri']) && $schedule['fri']) {
+                        $hasSchedule = true;
                         $outwardCriteria->setFriCheck(true);
                         $outwardCriteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
                         $outwardCriteria->setFriMarginDuration($this->params['defaultMarginTime']);
                     }
                     if (isset($schedule['sat']) && $schedule['sat']) {
+                        $hasSchedule = true;
                         $outwardCriteria->setSatCheck(true);
                         $outwardCriteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
                         $outwardCriteria->setSatMarginDuration($this->params['defaultMarginTime']);
                     }
                     if (isset($schedule['sun']) && $schedule['sun']) {
+                        $hasSchedule = true;
                         $outwardCriteria->setSunCheck(true);
                         $outwardCriteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
                         $outwardCriteria->setSunMarginDuration($this->params['defaultMarginTime']);
                     }
                 }
             }
+            if (!$hasSchedule) {
+                throw new AdException('At least one day should be selected for a regular trip');
+            }
         } else {
             // punctual
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
-            $outwardCriteria->setFromTime($ad->getOutwardTime() ? \DateTime::createFromFormat('H:i', $ad->getOutwardTime()) : null);
+            // if the time is not set we use the current time for an ad post, and null for a search
+            $outwardCriteria->setFromTime($ad->getOutwardTime() ? \DateTime::createFromFormat('H:i', $ad->getOutwardTime()) : (!$ad->isSearch() ? new \DateTime() : null));
             $outwardCriteria->setMarginDuration($this->params['defaultMarginTime']);
         }
 
@@ -320,49 +345,61 @@ class AdManager
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
                 $returnCriteria->setToDate($ad->getReturnLimitDate() ? \DateTime::createFromFormat('Y-m-d', $ad->getReturnLimitDate()) : null);
                 
+                $hasSchedule = false;
                 foreach ($ad->getSchedule() as $schedule) {
                     if ($schedule['returnTime'] != '') {
                         if (isset($schedule['mon']) && $schedule['mon']) {
+                            $hasSchedule = true;
                             $returnCriteria->setMonCheck(true);
                             $returnCriteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
                             $returnCriteria->setMonMarginDuration($this->params['defaultMarginTime']);
                         }
                         if (isset($schedule['tue']) && $schedule['tue']) {
+                            $hasSchedule = true;
                             $returnCriteria->setTueCheck(true);
                             $returnCriteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
                             $returnCriteria->setTueMarginDuration($this->params['defaultMarginTime']);
                         }
                         if (isset($schedule['wed']) && $schedule['wed']) {
+                            $hasSchedule = true;
                             $returnCriteria->setWedCheck(true);
                             $returnCriteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
                             $returnCriteria->setWedMarginDuration($this->params['defaultMarginTime']);
                         }
                         if (isset($schedule['thu']) && $schedule['thu']) {
+                            $hasSchedule = true;
                             $returnCriteria->setThuCheck(true);
                             $returnCriteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
                             $returnCriteria->setThuMarginDuration($this->params['defaultMarginTime']);
                         }
                         if (isset($schedule['fri']) && $schedule['fri']) {
+                            $hasSchedule = true;
                             $returnCriteria->setFriCheck(true);
                             $returnCriteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
                             $returnCriteria->setFriMarginDuration($this->params['defaultMarginTime']);
                         }
                         if (isset($schedule['sat']) && $schedule['sat']) {
+                            $hasSchedule = true;
                             $returnCriteria->setSatCheck(true);
                             $returnCriteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
                             $returnCriteria->setSatMarginDuration($this->params['defaultMarginTime']);
                         }
                         if (isset($schedule['sun']) && $schedule['sun']) {
+                            $hasSchedule = true;
                             $returnCriteria->setSunCheck(true);
                             $returnCriteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
                             $returnCriteria->setSunMarginDuration($this->params['defaultMarginTime']);
                         }
                     }
                 }
+                if (!$hasSchedule) {
+                    throw new AdException('At least one day should be selected for a regular trip');
+                }
             } else {
                 // punctual
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
-                $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : null);
+                // if no return time is specified, we use the outward time to be sure the return date is not before the outward date, and null for a search
+                $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : (!$ad->isSearch() ? $outwardCriteria->getFromTime() : null));
                 $returnCriteria->setMarginDuration($this->params['defaultMarginTime']);
             }
 
@@ -462,10 +499,7 @@ class AdManager
         }
 
         // we compute the results
-        $ad->setOutwardResults($this->resultManager->createAdResults($outwardProposal));
-        if (isset($returnProposal)) {
-            $ad->setReturnResults($this->resultManager->createAdResults($outwardProposal));
-        }
+        $ad->setResults($this->resultManager->createAdResults($outwardProposal, ($returnProposal ? $returnProposal : null)));
 
         return $ad;
     }

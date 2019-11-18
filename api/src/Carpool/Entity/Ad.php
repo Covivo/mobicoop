@@ -33,7 +33,7 @@ use App\Carpool\Controller\AdPost;
  *
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","results"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
@@ -274,7 +274,7 @@ class Ad
     private $comment;
 
     /**
-     * @var int The user id of the ad owner.
+     * @var int|null The user id of the ad owner. Null for an anonymous search.
      *
      * @Groups({"read","write"})
      */
@@ -302,18 +302,11 @@ class Ad
     private $eventId;
 
     /**
-     * @var array|null The carpool results for the outward.
+     * @var array|null The carpool results.
      *
      * @Groups("read")
      */
-    private $outwardResults;
-
-    /**
-     * @var array|null The carpool results for the return.
-     *
-     * @Groups("read")
-     */
-    private $returnResults;
+    private $results;
 
     public function __construct()
     {
@@ -322,8 +315,7 @@ class Ad
         $this->returnWaypoints = [];
         $this->schedule = [];
         $this->communities = [];
-        $this->outwardResults = [];
-        $this->returnResults = [];
+        $this->results = [];
     }
     
     public function getId(): ?int
@@ -705,12 +697,12 @@ class Ad
         return $this;
     }
 
-    public function getUserId(): int
+    public function getUserId(): ?int
     {
         return $this->userId;
     }
 
-    public function setUserId(int $userId): self
+    public function setUserId(?int $userId): self
     {
         $this->userId = $userId;
 
@@ -729,26 +721,14 @@ class Ad
         return $this;
     }
 
-    public function getOutwardResults(): array
+    public function getResults(): array
     {
-        return $this->outwardResults;
+        return $this->results;
     }
 
-    public function setOutwardResults(array $outwardResults)
+    public function setResults(array $results)
     {
-        $this->outwardResults = $outwardResults;
-
-        return $this;
-    }
-
-    public function getReturnResults(): array
-    {
-        return $this->returnResults;
-    }
-
-    public function setReturnResults(array $returnResults)
-    {
-        $this->returnResults = $returnResults;
+        $this->results = $results;
 
         return $this;
     }

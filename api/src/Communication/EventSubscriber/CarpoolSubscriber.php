@@ -136,8 +136,11 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onNewMatching(MatchingNewEvent $event)
     {
         // the recipient is the user that is not the "sender" of the matching
-        $askRecipient = ($event->getMatching()->getProposalOffer()->getUser()->getId() != $event->getSender()->getId()) ? $event->getMatching()->getProposalOffer()->getUser() : $event->getMatching()->getProposalRequest()->getUser();
-        $this->notificationManager->notifies(MatchingNewEvent::NAME, $askRecipient, $event->getMatching());
+        // we check if it's not an anonymous proposal
+        if ($event->getMatching()->getProposalOffer()->getUser()) {
+            $askRecipient = ($event->getMatching()->getProposalOffer()->getUser()->getId() != $event->getSender()->getId()) ? $event->getMatching()->getProposalOffer()->getUser() : $event->getMatching()->getProposalRequest()->getUser();
+            $this->notificationManager->notifies(MatchingNewEvent::NAME, $askRecipient, $event->getMatching());
+        }
     }
     
     /**
@@ -147,7 +150,10 @@ class CarpoolSubscriber implements EventSubscriberInterface
      */
     public function onProposalPosted(ProposalPostedEvent $event)
     {
-        $this->notificationManager->notifies(ProposalPostedEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
+        // we check if it's not an anonymous proposal
+        if ($event->getProposal()->getUser()) {
+            $this->notificationManager->notifies(ProposalPostedEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
+        }
     }
 
     /**
