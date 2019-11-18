@@ -23,6 +23,7 @@
 
 namespace App\Event\Entity;
 
+use App\Carpool\Entity\Proposal;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -395,5 +396,36 @@ class Event
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \Datetime());
+    }
+
+    /**
+     * @return Collection|Proposal[]
+     */
+    public function getProposals(): Collection
+    {
+        return $this->proposals;
+    }
+
+    public function addProposal(Proposal $proposal): self
+    {
+        if (!$this->proposals->contains($proposal)) {
+            $this->proposals[] = $proposal;
+            $proposal->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProposal(Proposal $proposal): self
+    {
+        if ($this->proposals->contains($proposal)) {
+            $this->proposals->removeElement($proposal);
+            // set the owning side to null (unless already changed)
+            if ($proposal->getEvent() === $this) {
+                $proposal->setEvent(null);
+            }
+        }
+
+        return $this;
     }
 }
