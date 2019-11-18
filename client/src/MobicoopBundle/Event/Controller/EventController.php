@@ -137,5 +137,23 @@ class EventController extends AbstractController
         return new Response(json_encode($points));
     }
 
+    /**
+     * Show a widget event
+     */
+    public function eventWidget($id, EventManager $eventManager, UserManager $userManager, Request $request)
+    {
+
+        // retreive event;
+        $event = $eventManager->getEvent($id);
+        //$this->denyAccessUnlessGranted('show', $community);
+        // retreive logged user
+        $user = $userManager->getLoggedUser();
+        return $this->render('@Mobicoop/event/event-widget.html.twig', [
+            'event' => $event,
+            'user' => $user,
+            'searchRoute' => "covoiturage/recherche",
+            'error' => (isset($error)) ? $error : false
+        ]);
+    }
 
 }

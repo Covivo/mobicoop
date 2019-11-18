@@ -38,6 +38,7 @@ import Solidary from '@components/solidary/Solidary'
 import EventList from "@components/event/EventList";
 import EventCreate from "@components/event/EventCreate";
 import Event from "@components/event/Event";
+import EventWidget from "@components/event/EventWidget";
 
 export default {
   MHeader,
@@ -62,5 +63,6 @@ export default {
   Solidary,
   EventList,
   EventCreate,
-  Event
+  Event,
+  EventWidget
 }

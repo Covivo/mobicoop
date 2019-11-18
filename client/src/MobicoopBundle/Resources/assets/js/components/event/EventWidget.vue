@@ -34,59 +34,6 @@
             :avatar-version="avatarVersion"
           />
           <!-- event buttons and map -->
-          <v-row
-            align="center"
-          >
-            <v-col
-              cols="4"
-              class="text-center"
-            >
-              <!-- button  -->
-              <div>
-                <v-btn
-                  color="secondary"
-                  rounded
-                  @click="publish"
-                >
-                  {{ $t('buttons.publish.label') }}
-                </v-btn>
-                <v-btn
-                  color="secondary"
-                  rounded
-                  :href="$t('buttons.widget.route')"
-                >
-                  {{ $t('buttons.widget.label') }}
-                </v-btn>
-              </div>
-              <!-- button if user ask to join community but is not accepted yet -->
-            </v-col>
-            <!-- map -->
-            <v-col
-              cols="8"
-            >
-              <v-card
-                v-show="loadingMap"
-                flat
-                align="center"
-                height="500"
-                color="backSpiner"
-              >
-                <v-progress-circular
-                  size="250"
-                  indeterminate
-                  color="tertiary"
-                />
-              </v-card>
-              <m-map
-                v-show="!loadingMap"
-                ref="mmap"
-                :points="pointsToMap"
-                :provider="mapProvider"
-                :url-tiles="urlTiles"
-                :attribution-copyright="attributionCopyright"
-              />
-            </v-col>
-          </v-row>
         </v-col>
       </v-row>
       <!-- search journey -->
@@ -126,14 +73,14 @@ import Translations from "@translations/components/event/Event.json";
 import TranslationsClient from "@clientTranslations/components/event/Event.json";
 import EventInfos from "@components/event/EventInfos";
 import Search from "@components/carpool/search/Search";
-import MMap from "@components/utilities/MMap"
+// import MMap from "@components/utilities/MMap"
 import L from "leaflet";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    EventInfos, Search, MMap
+    EventInfos, Search
   },
   i18n: {
     messages: TranslationsMerged,

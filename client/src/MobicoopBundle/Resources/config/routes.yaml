@@ -482,3 +482,12 @@ event_proposals:
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventProposals
     requirements:
         id: '\d+'
+
+# display one community
+event_widget:
+    path:
+        fr: /evenement-widget/{id}
+        en: /event-widget/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventWidget
+    requirements:
+        id: '\d+'
