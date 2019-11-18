@@ -22,7 +22,7 @@
       </v-col>
       <!-- Route -->
       <v-col
-        :cols="!date ? '9' : '6'"
+        :cols="!date ? '8' : '6'"
       >
         <route-summary
           :origin="origin"
@@ -41,10 +41,26 @@
       </v-col>
       <!-- Price -->
       <v-col
-        cols="1"
+        cols="2"
         class="title"
       >
         {{ price ? price +'€' : '' }}
+        <v-tooltip
+          slot="append"
+          right
+          color="info"
+          :max-width="'35%'"
+        >
+          <template v-slot:activator="{ on }">
+            <v-icon
+              justify="left"
+              v-on="on"
+            >
+              mdi-help-circle-outline
+            </v-icon>
+          </template>
+          <span>{{ $t('priceTooltip') }}</span>
+        </v-tooltip>
       </v-col>
     </v-row>
   </div>
