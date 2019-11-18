@@ -163,6 +163,14 @@ newCarpoolAd: "Nouvelle(s) annonce(s) de covoiturage"
 
 newAd: "Nouvelle(s) annonce(s) sur "
 
+# AD_DELETED
+
+askLinkedAdDeleted: "Une annonce à laquelle vous aviez postulé a été supprimée"
+driverAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez conducteur a été supprimée"
+driverAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez conducteur a été supprimée"
+passengerAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez passagé a été supprimée"
+passengerAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez passagé a été supprimée"
+
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
 contactYou: "vous contacte"

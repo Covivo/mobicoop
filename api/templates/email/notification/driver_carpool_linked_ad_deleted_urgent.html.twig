@@ -1,0 +1,9 @@
+{% extends '/email/notification/base.html.twig' %}
+{% block body %}
+    <p>Attention !
+        Votre covoiturage pour un (OrigineDemande) => (DestinationDemande) avec le passager (PseudoCovoitureur) vient d’être annulé, car (PseudoCovoitureur) a supprimé son annonce associée.
+        Cliquez sur ce lien pour relancer votre recherche (OrigineDemande) => (DestinationDemande) .
+
+        Il n’y a pas de pénalité pour l’annulation de ce covoiturage. Cependant afin de garantir la fiabilité des annonces et protéger les covoitureurs d'annulations trop répétées,
+        nous nous réservons le droit de suspendre les possibilités de publier des annonces si un covoitureur annule trop souvent.</p>
+{% endblock %}
