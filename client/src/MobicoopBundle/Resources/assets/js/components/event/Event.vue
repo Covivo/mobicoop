@@ -107,17 +107,21 @@
         align="center"
         justify="center"
       >
-        <search-journey
-          :solidary-ad="solidary"
-          display-roles
-          :geo-search-url="geoSearchUrl"
-          :user="user"
-          :init-outward-date="outwardDate"
-          :init-origin="origin"
-          :init-destination="destination"
-          :init-regular="regular"
-          @change="searchChanged"
-        />
+        <v-col
+          cols="6"
+          class="mt-6"
+        >
+          <search-journey
+            :geo-search-url="geodata.geocompleteuri"
+            :user="user"
+            :init-regular="regular"
+            :init-origin="origin"
+            :init-destination="destination"
+            :punctual-date-optional="punctualDateOptional"
+            :show-required="true"
+            @change="searchChanged"
+          />
+        </v-col>
       </v-row>
     </v-container>
   </v-content>
@@ -129,7 +133,7 @@ import { merge } from "lodash";
 import Translations from "@translations/components/event/Event.json";
 import TranslationsClient from "@clientTranslations/components/event/Event.json";
 import EventInfos from "@components/event/EventInfos";
-import Search from "@components/carpool/search/Search";
+import SearchJourney from "@components/carpool/search/SearchJourney";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
 
@@ -137,7 +141,7 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    EventInfos, Search, MMap
+    EventInfos, SearchJourney, MMap
   },
   i18n: {
     messages: TranslationsMerged,
@@ -191,9 +195,19 @@ export default {
       type: String,
       default: ""
     },
+    initDestination: {
+      type: Object,
+      default: null
+    },
+    initOrigin: {
+      type: Object,
+      default: null
+    },
   },
   data () {
     return {
+      destination: this.initDestination,
+      origin: this.initOrigin,
       search: '',
       headers: [
         {
@@ -232,6 +246,12 @@ export default {
     this.checkDomain();
   },
   methods:{
+    searchChanged: function (search) {
+      this.origin = search.origin;
+      this.destination = search.destination;
+      this.dataRegular = search.regular;
+      this.date = search.date;
+    },
     post: function (path, params, method='post') {
       const form = document.createElement('form');
       form.method = method;
@@ -310,6 +330,7 @@ export default {
     getEventProposals () {
       this.loadingMap = true;
       axios
+
         .get('/event-proposals/'+this.event.id,
           {
             headers:{
@@ -319,7 +340,7 @@ export default {
         .then(res => {
           this.errorUpdate = res.data.state;
           this.pointsToMap.length = 0;
-          // add the event address to display on the map
+          // add the community address to display on the map
           if (this.event.address) {
             this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name));
           }
