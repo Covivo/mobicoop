@@ -40,7 +40,7 @@
         :class="isArchived ? 'mr-1' : ''"
         icon
         :loading="loading"
-        @click="hasAcceptedAsk ? activeAcceptedAskDialog() : hasAsk ? activeAskDialog() : deleteProposal()"
+        @click="hasAcceptedAsk ? activeAcceptedAskDialog() : hasAsk ? activeAskDialog() : activeBaseDialog()"
       >
         <v-icon
           class="white--text"
@@ -83,7 +83,10 @@
           </v-card-title>
           <v-card-text>
             <p>{{ dialog.content }}</p>
-            <v-textarea v-model="deleteMessage" />
+            <v-textarea
+              v-if="dialog.textarea"
+              v-model="deleteMessage"
+            />
           </v-card-text>
           <v-card-actions>
             <v-spacer />
@@ -164,7 +167,8 @@ export default {
       dialogActive: false,
       dialog: {
         title: "",
-        content: ""
+        content: "",
+        textarea: true
       },
       deleteMessage: ""
     }
@@ -211,11 +215,21 @@ export default {
         message: ""
       }
     },
+    activeBaseDialog () {
+      this.deleteMessage = "";
+      this.dialog = {
+        title: this.$t('delete.dialog.base.title'),
+        content: this.$t('delete.dialog.base.text'),
+        textarea: false
+      };
+      this.dialogActive = true;
+    },
     activeAskDialog () {
       this.deleteMessage = "";
       this.dialog = {
         title: this.$t('delete.dialog.pending.title'),
-        content: this.$t('delete.dialog.pending.text')
+        content: this.$t('delete.dialog.pending.text'),
+        textarea: true
       };
       this.dialogActive = true;
     },
@@ -223,7 +237,8 @@ export default {
       this.deleteMessage = "";
       this.dialog = {
         title: this.$t('delete.dialog.accepted.title'),
-        content: this.$t('delete.dialog.accepted.text')
+        content: this.$t('delete.dialog.accepted.text'),
+        textarea: true
       };
       this.dialogActive = true;
     }

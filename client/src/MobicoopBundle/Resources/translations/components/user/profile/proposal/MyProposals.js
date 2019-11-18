@@ -9,6 +9,10 @@ export default {
       success: "Votre annonce a été supprimée avec succès.",
       error: "Une erreur est survenue lors de la suppression de votre annonce.",
       dialog: {
+        base: {
+          title: "Etes-vous sur de vouloir supprimer cette annonce ?",
+          text: "Toute suppression d'annonce est définitive, êtes-vous sur de vouloir supprimer cette annonce ?"
+        },
         accepted: {
           title: "Il existe au moins un covoiturage planifié pour cette annonce",
           text: "Un ou plusieurs covoiturages ont déjà été planifiés en lien avec cette annonce. Votre suppression annulera donc ces covoiturages acceptés. " +
