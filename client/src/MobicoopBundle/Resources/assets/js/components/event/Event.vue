@@ -107,21 +107,14 @@
         align="center"
         justify="center"
       >
-        <v-col
-          cols="6"
-          class="mt-6"
-        >
-          <search-journey
-            :geo-search-url="geodata.geocompleteuri"
-            :user="user"
-            :init-regular="regular"
-            :init-origin="origin"
-            :init-destination="destination"
-            :punctual-date-optional="punctualDateOptional"
-            :show-required="true"
-            @change="searchChanged"
-          />
-        </v-col>
+        <search
+          :geo-search-url="geodata.geocompleteuri"
+          :user="user"
+          :params="params"
+          :punctual-date-optional="punctualDateOptional"
+          :regular="regular"
+          :init-destination="destination"
+        />
       </v-row>
     </v-container>
   </v-content>
@@ -133,7 +126,7 @@ import { merge } from "lodash";
 import Translations from "@translations/components/event/Event.json";
 import TranslationsClient from "@clientTranslations/components/event/Event.json";
 import EventInfos from "@components/event/EventInfos";
-import SearchJourney from "@components/carpool/search/SearchJourney";
+import Search from "@components/carpool/search/Search";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
 
@@ -141,7 +134,7 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    EventInfos, SearchJourney, MMap
+    EventInfos, Search, MMap
   },
   i18n: {
     messages: TranslationsMerged,
