@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
@@ -152,6 +153,12 @@ class Proposal implements ResourceInterface, \JsonSerializable
      * @var array The matching results of a proposal in a user-friendly format.
      */
     private $results;
+
+    /**
+     * @var Event related for the proposal
+     * @Groups({"post","put"})
+     */
+    private $event;
 
     public function __construct($id=null)
     {
@@ -481,6 +488,18 @@ class Proposal implements ResourceInterface, \JsonSerializable
     public function setResults($results)
     {
         $this->results = $results;
+
+        return $this;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
 
         return $this;
     }
