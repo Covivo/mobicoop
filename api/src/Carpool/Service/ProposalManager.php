@@ -594,12 +594,16 @@ class ProposalManager
     {
         $asks = $this->askManager->getAsksFromProposal($proposal);
 
+        $this->entityManager->remove($proposal);
+        $this->entityManager->flush();
+
         if (count($asks) > 0) {
             /** @var Ask $ask */
             foreach ($asks as $ask) {
                 // todo: change status after update
                 // Accepted
                 if ($ask->getStatus() === 3) {
+                    // todo : distinguer le cas du driver et du passenger
 //                    $this->notificationManager->notifies();
                 }
                 // Pending
@@ -610,10 +614,6 @@ class ProposalManager
             }
         }
 
-        $this->entityManager->remove($proposal);
-        $this->entityManager->flush();
-
-        // todo : send generalist notification to asks and accepted asks
         return new Response(204, "Deleted with success");
     }
     

@@ -28,7 +28,7 @@ use App\Carpool\Entity\Proposal;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Event sent when a new proposal is posted.
+ * Event sent when a new proposal is deleted.
  */
 class AskAdDeletedEvent extends Event
 {
