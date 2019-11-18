@@ -31,7 +31,6 @@
             "label": {
                 "general": "Visibilité de mon numéro de téléphone.",
                 "restricted": "Visible seulement après acceptation du covoiturage, uniquement par les participants.",
-                "community": "Visible dès la publication de l'annonce, par les membres de ma communauté.",
                 "all": "Visible dès la publication de l'annonce, par tous les inscrits."
             }
         }

@@ -300,8 +300,7 @@ export default {
       },
       phoneDisplays:[
         { value: 1, label: this.$t('phoneDisplay.label.restricted')},
-        { value: 2, label: this.$t('phoneDisplay.label.community')},
-        { value: 3, label: this.$t('phoneDisplay.label.all')},
+        { value: 2, label: this.$t('phoneDisplay.label.all')}
       ],
 
       avatar: null,

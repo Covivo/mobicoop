@@ -209,8 +209,7 @@ class User implements UserInterface, EquatableInterface
     ];
 
     const PHONE_DISPLAY_RESTRICTED = 1;
-    const PHONE_DISPLAY_COMMUNITY = 2;
-    const PHONE_DISPLAY_ALL = 3;
+    const PHONE_DISPLAY_ALL = 2;
 
     const AUTHORIZED_SIZES_DEFAULT_AVATAR = [
         "square_100",

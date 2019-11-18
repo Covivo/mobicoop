@@ -60,8 +60,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     ];
 
     const PHONE_DISPLAY_RESTRICTED = 1;
-    const PHONE_DISPLAY_COMMUNITY = 2;
-    const PHONE_DISPLAY_ALL = 3;
+    const PHONE_DISPLAY_ALL = 2;
     
     const HOME_ADDRESS_NAME = 'homeAddress';
     
