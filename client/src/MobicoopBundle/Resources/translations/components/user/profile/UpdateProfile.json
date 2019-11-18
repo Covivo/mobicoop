@@ -26,8 +26,15 @@
                 "title": "Confirmation de désinscription",
                 "content": "Attention, en vous désinscrivant de ces actualités de service, vous ne recevrez plus aucune information sur tous les sujets suivants :<br><ul><li>nouvelles fonctionnalités et nouveaux services de la plate-forme</li><li>actualités covoiturage de votre territoire</li><li>actualités de vos communautés</li><li>accompagnement personnalisé</li></ul><br>Êtes-vous sûr de vouloir vous désinscrire ?"
             }
+        },
+        "phoneDisplay": {
+            "label": {
+                "general": "Visibilité de mon numéro de téléphone.",
+                "restricted": "Visible seulement après acceptation du covoiturage, uniquement par les participants.",
+                "community": "Visible dès la publication de l'annonce, par les membres de ma communauté.",
+                "all": "Visible dès la publication de l'annonce, par tous les inscrits."
+            }
         }
-
     },
     "en":{
         "titles": {
