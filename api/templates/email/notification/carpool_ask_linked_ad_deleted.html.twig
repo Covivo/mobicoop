@@ -1,18 +1,9 @@
-{% extends '/email/notification/base.html.twig' %}
+{% extends '/email/notification/linked_ad_deleted.html.twig' %}
 {% block body %}
-    {% set matching = context.matching %}
-    {# todo: better handle ask #}
-    {% set ask = matching.asks[0] %}
-
-    {% if matching.proposalOffer.user.id != ask.user.id %}
-        {% set carpooler = matching.proposalOffer.user.givenName %}
-    {% else %}
-        {% set carpooler = matching.proposalOffer.user.givenName %}
-    {% endif %}
     <p>
         Votre demande pour un {{ (matching.waypoints|first).address.county }} => {{ (matching.waypoints|last).address.county }} avec {{ carpooler }} a
         été
         rejetée, car {{ carpooler }} a supprimé son annonce.
-        Cliquez sur ce lien pour relancer votre recherche (OrigineDemande) => (DestinationDemande).
+        Cliquez sur ce lien pour relancer votre recherche {{ (matching.waypoints|first).address.county }} => {{ (matching.waypoints|last).address.county }}.
     </p>
 {% endblock %}
