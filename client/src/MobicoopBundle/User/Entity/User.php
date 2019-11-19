@@ -322,6 +322,12 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $phoneToken;
 
     /**
+     * @var \DateTimeInterface|null Validation date of the phone number.
+     * @Groups({"post","put"})
+     */
+    private $phoneValidatedDate;
+
+    /**
      * @var string|null iOS app ID.
      * @Groups({"post","put"})
      */
@@ -981,6 +987,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    public function getPhoneValidatedDate(): ?\DateTimeInterface
+    {
+        return $this->phoneValidatedDate;
+    }
+
+    public function setPhoneValidatedDate(?\DateTimeInterface $phoneValidatedDate): ?self
+    {
+        $this->phoneValidatedDate = $phoneValidatedDate;
+
+        return $this;
+    }
+
     public function getIosAppId(): ?string
     {
         return $this->iosAppId;
@@ -1057,7 +1075,9 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'chatFavorites'  => $this->getChatFavorites(),
             'music'          => $this->hasMusic(),
             'musicFavorites' => $this->getMusicFavorites(),
-            'newsSubscription' => $this->hasNewsSubscription()
+            'newsSubscription' => $this->hasNewsSubscription(),
+            'phoneValidatedDate' => $this->getPhoneValidatedDate(),
+            'phoneToken'        => $this->getPhoneToken()
         ];
     }
 }
