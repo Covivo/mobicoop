@@ -86,6 +86,7 @@
     >
       <matching-journey
         :result="result"
+        :user="user"
         @close="carpoolDialog = false"
         @contact="contact"
         @carpool="launchCarpool"

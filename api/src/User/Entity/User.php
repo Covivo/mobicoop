@@ -58,6 +58,7 @@ use App\User\Controller\UserThreads;
 use App\User\Controller\UserThreadsDirectMessages;
 use App\User\Controller\UserThreadsCarpoolMessages;
 use App\User\Controller\UserUpdatePassword;
+use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserUpdate;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
@@ -116,6 +117,11 @@ use App\User\EntityListener\UserListener;
  *              "controller"=UserUpdatePassword::class,
  *              "defaults"={"name"="request"}
  *          },
+ *          "generate_phone_token"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/generate_phone_token",
+ *              "controller"=UserGeneratePhoneToken::class,
+ *          },
  *          "permissions"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"permissions"}},
@@ -167,7 +173,7 @@ use App\User\EntityListener\UserListener;
  *          "put"={
  *              "method"="PUT",
  *              "path"="/users/{id}",
- *              "controller"=UserUpdate::class,
+ *              "controller"=UserUpdate::class
  *          },
  *          "delete"
  *      }
@@ -207,6 +213,9 @@ class User implements UserInterface, EquatableInterface
         self::GENDER_MALE,
         self::GENDER_OTHER
     ];
+
+    const PHONE_DISPLAY_RESTRICTED = 1;
+    const PHONE_DISPLAY_ALL = 2;
 
     const AUTHORIZED_SIZES_DEFAULT_AVATAR = [
         "square_100",
@@ -312,6 +321,21 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","results","write"})
      */
     private $telephone;
+    
+    /**
+     * @var string|null The telephone number of the user.
+     * @Groups({"read", "write"})
+     */
+    private $oldTelephone;
+
+    /**
+     * @var int phone display configuration (1 = restricted (default); 2 = community; 3 = all).
+     *
+     * @Assert\NotBlank
+     * @ORM\Column(type="smallint")
+     * @Groups({"read","write", "results"})
+     */
+    private $phoneDisplay;
 
     /**
      * @var int|null The maximum detour duration (in seconds) as a driver to accept a request proposal.
@@ -465,7 +489,7 @@ class User implements UserInterface, EquatableInterface
     private $phoneToken;
 
     /**
-     * @var \DateTimeInterface Validation date of the phone number.
+     * @var \DateTimeInterface|null Validation date of the phone number.
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -832,6 +856,30 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getPhoneDisplay(): ?int
+    {
+        return $this->phoneDisplay;
+    }
+
+    public function setPhoneDisplay(?int $phoneDisplay): self
+    {
+        $this->phoneDisplay = $phoneDisplay;
+        
+        return $this;
+    }
+    
+    public function getOldTelephone(): ?string
+    {
+        return $this->oldTelephone;
+    }
+
+    public function setOldTelephone(?string $oldTelephone): self
+    {
+        $this->oldTelephone = $oldTelephone;
+
+        return $this;
+    }
+
     public function getMaxDetourDuration(): ?int
     {
         return (!is_null($this->maxDetourDuration) ? $this->maxDetourDuration : self::MAX_DETOUR_DURATION);
@@ -1002,7 +1050,7 @@ class User implements UserInterface, EquatableInterface
         return $this->phoneValidatedDate;
     }
 
-    public function setPhoneValidatedDate(\DateTimeInterface $phoneValidatedDate): self
+    public function setPhoneValidatedDate(?\DateTimeInterface $phoneValidatedDate): ?self
     {
         $this->phoneValidatedDate = $phoneValidatedDate;
 

@@ -41,6 +41,7 @@ use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Entity\UserNotification;
+use App\User\Event\UserGeneratePhoneTokenAskedEvent;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\User\Event\UserUpdatedSelfEvent;
 use App\User\Repository\UserRepository;
@@ -107,6 +108,8 @@ class UserManager
         $userRole = new UserRole();
         $userRole->setRole($role);
         $user->addUserRole($userRole);
+        // default phone display : restricted
+        $user->setPhoneDisplay(1);
         // creation of the geotoken
         $datetime = new DateTime();
         $time = $datetime->getTimestamp();
@@ -127,11 +130,24 @@ class UserManager
     /**
      * Update a user.
      *
-     * @param User $user    The user to register
-     * @return User         The user created
+     * @param User $user    The user to update
+     * @return User         The user updated
      */
     public function updateUser(User $user)
     {
+
+         // activate sms notification if phone validated
+        if ($user->getPhoneValidatedDate()) {
+            $user = $this->activateSmsNotification($user);
+        }
+        // check if the phone is updated and if so reset phoneToken and validatedDate
+        if ($user->getTelephone() != $user->getOldTelephone()) {
+            $user->setPhoneToken(null);
+            $user->setPhoneValidatedDate(null);
+            // deactivate sms notification since the phone is new
+            $user = $this->deActivateSmsNotification($user);
+        }
+       
         // update of the geotoken
         $datetime = new DateTime();
         $time = $datetime->getTimestamp();
@@ -140,7 +156,7 @@ class UserManager
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-        // dispatch en event
+        // dispatch an event
         $event = new UserUpdatedSelfEvent($user);
         $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
         // return the user
@@ -396,5 +412,67 @@ class UserManager
             $this->entityManager->flush();
         }
         return $this->getAlerts($user);
+    }
+
+    /**
+     * set sms notification to active when phone is validated
+     *
+     * @param User $user
+     * @return void
+     */
+    public function activateSmsNotification(User $user)
+    {
+        $userNotifications = $this->userNotificationRepository->findUserNotifications($user->getId());
+        foreach ($userNotifications as $userNotification) {
+            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS) {
+                // check telephone for sms
+                $userNotification->setActive(true);
+                $userNotification->setUser($user);
+                $this->entityManager->persist($userNotification);
+            }
+        }
+        $this->entityManager->flush();
+        return $user;
+    }
+
+    /**
+    * set sms notification to non active when phone change or is removed
+    *
+    * @param User $user
+    * @return void
+    */
+    public function deActivateSmsNotification(User $user)
+    {
+        $userNotifications = $this->userNotificationRepository->findUserNotifications($user->getId());
+        foreach ($userNotifications as $userNotification) {
+            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS) {
+                $userNotification->setActive(false);
+                $userNotification->setUser($user);
+                $this->entityManager->persist($userNotification);
+            }
+        }
+        $this->entityManager->flush();
+        return $user;
+    }
+
+    /**
+     * Generate a validation token
+     * (Ajax)
+     *
+     * @param User $user
+     * @return void
+     */
+    public function generatePhoneToken(User $user)
+    {
+        // Generate the token
+        $phoneToken= strval(mt_rand(1000, 9999));
+        $user->setPhoneToken($phoneToken);
+        // dispatch the event
+        $event = new UserGeneratePhoneTokenAskedEvent($user);
+        $this->eventDispatcher->dispatch(UserGeneratePhoneTokenAskedEvent::NAME, $event);
+        // Persist user
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        return $user;
     }
 }

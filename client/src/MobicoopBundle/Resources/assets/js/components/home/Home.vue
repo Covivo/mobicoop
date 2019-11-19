@@ -1,45 +1,80 @@
 <template>
-  <v-container
-    grid-list-md
-    text-xs-center
-  >
-    <!-- Title and subtitle -->
-    <v-row
-      align="center"
-      class="mt-5"
-      justify="center"
+  <v-content color="secondary">
+    <v-container
+      text-center
     >
-      <v-col
-        cols="6"
+      <v-row v-if="displayVerifiedMessage">
+        <v-col>
+          <v-snackbar
+            v-model="snackbar"
+            top
+            multi-line
+            color="info"
+            vertical
+          >
+            {{ $t('snackbar') }}
+            <v-btn
+              color="info"
+              @click="snackbar = false"
+            >
+              <v-icon
+                color="primary"
+              >
+                mdi-close
+              </v-icon>
+            </v-btn>
+          </v-snackbar>
+        </v-col>
+      </v-row>
+      <!-- Title and subtitle -->
+      <v-row
+        align="center"
+        class="mt-5"
+        justify="center"
       >
-        <h1>{{ $t('title') }}</h1>
-        <h3 v-html="$t('subtitle')" />
-      </v-col>
-    </v-row>
-    <search
-      :geo-search-url="geoSearchUrl" 
-      :user="user"
-      :regular="regular"
-      :punctual-date-optional="punctualDateOptional"
-    />
-    <v-row
-      align="center"
-      class="mt-5"
-      justify="center"
-    >
-      <v-col cols="6">
-        <home-content 
-          :community-display="communityDisplay"
-          :event-display="eventDisplay"
-          :solidary-display="solidaryDisplay"
-        />
-      </v-col>
-    </v-row>
-  </v-container>
+        <v-col
+          cols="12"
+          xl="6"
+          lg="9"
+          md="12"
+          class="text-center"
+        >
+          <h1>{{ $t('title') }}</h1>
+          <h3 v-html="$t('subtitle')" />
+        </v-col>
+      </v-row>
+      <search
+        :geo-search-url="geoSearchUrl" 
+        :user="user"
+        :regular="regular"
+        :punctual-date-optional="punctualDateOptional"
+      />
+      <v-row
+        align="center"
+        class="mt-5"
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          xl="6"
+          lg="9"
+          md="12"
+        >
+          <home-content 
+            :community-display="communityDisplay"
+            :event-display="eventDisplay"
+            :solidary-display="solidaryDisplay"
+          />
+        </v-col>
+      </v-row>
+      <Cookies />
+    </v-container>
+  </v-content>
 </template>
 
 <script>
 import {merge} from "lodash";
+import Cookies from "@components/utilities/Cookies";
 import Translations from "@translations/components/home/Home.json";
 import TranslationsClient from "@clientTranslations/components/home/Home.json";
 import Search from "@components/carpool/search/Search";
@@ -53,7 +88,8 @@ export default {
   },
   components: {
     Search,
-    HomeContent
+    HomeContent,
+    Cookies
   },
   props: {
     geoSearchUrl: {
@@ -72,6 +108,18 @@ export default {
       type: Boolean,
       default: false
     },
+    debug: {
+      type: Boolean,
+      default: false
+    },
+    position: {
+      type: String,
+      default: ""
+    },
+    transitionName: {
+      type: String,
+      default: ""
+    },
     solidaryDisplay: {
       type: Boolean,
       default: false
@@ -88,6 +136,22 @@ export default {
     params: {
       type: Object,
       default: null
+    }
+  },
+  data () {
+    return {
+      snackbar: true,
+      displayVerifiedMessage: false,
+    }
+  },
+  mounted() {
+    this.checkVerifiedPhone();
+  },
+  methods:{
+    checkVerifiedPhone() {
+      if (this.user !==null && this.user.telephone !== null) {
+        this.displayVerifiedMessage = this.user.phoneValidatedDate ? false : true;
+      }
     }
   }
 };
