@@ -100,7 +100,8 @@ export default {
       isLoading: false,
       search: null,
       address: null,
-      filter: null
+      filter: null,
+      cancelSource: null,
     };
   },
   computed: {
@@ -160,9 +161,16 @@ export default {
     },
     getAsyncData: debounce(function(val) {
       this.isLoading = true;
+
+      this.cancelRequest(); // CANCEL PREVIOUS REQUEST
+      this.cancelSource = axios.CancelToken.source();
+
       axios
-        .get(`${this.url}${val}` + (this.token ? "&token=" + this.token : ""))
+        .get(`${this.url}${val}` + (this.token ? "&token=" + this.token : ""), {
+          cancelToken: this.cancelSource.token
+        })
         .then(res => {
+          this.cancelSource = null;
           this.isLoading = false;
 
           // Modify property displayLabel to be shown into the autocomplete field after selection
@@ -171,6 +179,7 @@ export default {
           if (!addresses.length) {
             return;
           }
+
           addresses.forEach((address, addressKey) => {
             addresses[addressKey].icon = "mdi-map-marker";
             addresses[addressKey].displayedLabel = `${address.displayLabel[0]}`;
@@ -190,6 +199,7 @@ export default {
               if (this.displayIcon) addresses[addressKey].icon = "mdi-map-marker-radius";
             }
           });
+
           addresses.forEach((address, addressKey) => {
             let addressLocality = address.addressLocality
               ? address.addressLocality
@@ -199,6 +209,7 @@ export default {
               addresses.splice(addressKey, 1);
             }
           });
+
           // Set Data & show them
           if (this.isLoading) return; // Another request is fetching, we do not show the previous one
           this.entries = [...res.data["hydra:member"]];
@@ -208,7 +219,13 @@ export default {
           console.error(err);
         })
         .finally(() => (this.isLoading = false));
-    }, 1000)
+    }, 1000),
+
+    cancelRequest() {
+      if(this.cancelSource) {
+        this.cancelSource.cancel('Start new search, stop active search');
+      }
+    }
   }
 };
 </script>
