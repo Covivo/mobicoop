@@ -608,7 +608,7 @@ class ProposalManager
                 }
                 // Pending
                 elseif ($ask->getStatus() === 2) {
-                    $event = new AskAdDeletedEvent($proposal, $ask);
+                    $event = new AskAdDeletedEvent($ask);
                     $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
                 }
             }

@@ -24,7 +24,6 @@
 namespace App\Carpool\Event;
 
 use App\Carpool\Entity\Ask;
-use App\Carpool\Entity\Proposal;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -34,18 +33,11 @@ class AskAdDeletedEvent extends Event
 {
     public const NAME = 'carpool_ask_linked_ad_deleted';
 
-    protected $proposal;
     private $ask;
 
-    public function __construct(Proposal $proposal, Ask $ask)
+    public function __construct(Ask $ask)
     {
-        $this->proposal = $proposal;
         $this->ask = $ask;
-    }
-
-    public function getProposal()
-    {
-        return $this->proposal;
     }
 
     public function getAsk()
