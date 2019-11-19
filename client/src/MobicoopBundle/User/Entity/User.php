@@ -333,6 +333,12 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $phoneToken;
 
     /**
+     * @var \DateTimeInterface|null Validation date of the phone number.
+     * @Groups({"post","put"})
+     */
+    private $phoneValidatedDate;
+
+    /**
      * @var string|null iOS app ID.
      * @Groups({"post","put"})
      */
@@ -1004,6 +1010,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    public function getPhoneValidatedDate(): ?\DateTimeInterface
+    {
+        return $this->phoneValidatedDate;
+    }
+
+    public function setPhoneValidatedDate(?\DateTimeInterface $phoneValidatedDate): ?self
+    {
+        $this->phoneValidatedDate = $phoneValidatedDate;
+
+        return $this;
+    }
+
     public function getIosAppId(): ?string
     {
         return $this->iosAppId;
@@ -1062,26 +1080,28 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         return
         [
-            'id'                => $this->getId(),
-            'givenName'         => $this->getGivenName(),
-            'familyName'        => $this->getFamilyName(),
-            'shortFamilyName'   => $this->getShortFamilyName(),
-            'gender'            => $this->getGender(),
-            'status'            => $this->getStatus(),
-            'email'             => $this->getEmail(),
-            'telephone'         => $this->getTelephone(),
-            'geoToken'          => $this->getGeoToken(),
-            'birthYear'         => $this->getBirthYear(),
-            'homeAddress'       => $this->getHomeAddress(),
-            'images'            => $this->getImages(),
-            'avatars'           => $this->getAvatars(),
-            'smoke'             => $this->getSmoke(),
-            'chat'              => $this->hasChat(),
-            'chatFavorites'     => $this->getChatFavorites(),
-            'music'             => $this->hasMusic(),
-            'musicFavorites'    => $this->getMusicFavorites(),
-            'newsSubscription'  => $this->hasNewsSubscription(),
-            'phoneDisplay'      => $this->getPhoneDisplay()
+            'id'                    => $this->getId(),
+            'givenName'             => $this->getGivenName(),
+            'familyName'            => $this->getFamilyName(),
+            'shortFamilyName'       => $this->getShortFamilyName(),
+            'gender'                => $this->getGender(),
+            'status'                => $this->getStatus(),
+            'email'                 => $this->getEmail(),
+            'telephone'             => $this->getTelephone(),
+            'geoToken'              => $this->getGeoToken(),
+            'birthYear'             => $this->getBirthYear(),
+            'homeAddress'           => $this->getHomeAddress(),
+            'images'                => $this->getImages(),
+            'avatars'               => $this->getAvatars(),
+            'smoke'                 => $this->getSmoke(),
+            'chat'                  => $this->hasChat(),
+            'chatFavorites'         => $this->getChatFavorites(),
+            'music'                 => $this->hasMusic(),
+            'musicFavorites'        => $this->getMusicFavorites(),
+            'newsSubscription'      => $this->hasNewsSubscription(),
+            'phoneDisplay'          => $this->getPhoneDisplay()
+            'phoneValidatedDate'    => $this->getPhoneValidatedDate(),
+            'phoneToken'            => $this->getPhoneToken()
         ];
     }
 }

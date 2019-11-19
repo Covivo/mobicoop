@@ -6,7 +6,12 @@
         },
         "snackBar": {
             "profileUpdated":"Votre profil a bien été mis à jour!",
-            "errorProfileUpdate": "Erreur, votre profil n'a pas été mis à jour."
+            "errorProfileUpdate": "Erreur, votre profil n'a pas été mis à jour.",
+            "phoneAlreadyVerified": "Votre téléphone est déjà vérifié.",
+            "phoneUpdate": "Erreur votre télephone n'a pas été vérifié.",
+            "unknown": "Le code de validation est érroné.",
+            "tokenOk": "Le code de validation a bien été envoyé.",
+            "tokenError": "Erreur le code n'a pas été envoyé"
         },
         "avatar": {
             "label": "Avatar",
@@ -33,6 +38,28 @@
                 "restricted": "Visible seulement après acceptation du covoiturage, uniquement par les participants.",
                 "all": "Visible dès la publication de l'annonce, par tous les inscrits."
             }
+        },    
+        "phone": {
+            "tooltips": {
+                "verified": "Votre numéro de portable est vérifié",
+                "notVerified": "Votre numéro de portable n'est pas vérifié"
+            },
+            "buttons": {
+                "label": {
+                    "generateToken": "Envoyer un code de vérification",
+                    "generateNewToken": "Envoyer un nouveau code",
+                    "validate": "Valider"
+                }
+            },
+            "validation": {
+                "label": "Votre code de vérification",
+                "route": "/utilisateur/telephone/validation"
+            },
+            "token": {
+                "route": "/utilisateur/telephone/token",
+                "inputError": "Le code de validation est composé de 4 chiffres."
+            }   
+           
         }
     },
     "en":{

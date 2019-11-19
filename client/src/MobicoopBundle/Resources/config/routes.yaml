@@ -52,6 +52,20 @@ user_profile_update:
         fr: /utilisateur/profil/modifier/{tabDefault?}
         en: /user/profile/update/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
+    
+# phone validation
+user_phone_validation:
+    path:
+        fr: /utilisateur/telephone/validation
+        en: /user/phone/validation
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPhoneValidation
+
+# send code phone validation
+user_phone_token:
+    path:
+        fr: /utilisateur/telephone/token
+        en: /user/phone/token
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::generatePhoneToken    
 
 # delete avatar
 user_profile_image_delete:
@@ -110,7 +124,7 @@ user_update_alert:
         en: /user/alert/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::updateAlert
 
-    # proposal list
+# proposal list
 user_proposal_list:
     path:
         fr: /utilisateur/annonces
@@ -342,7 +356,7 @@ community_user:
     requirements:
         id: '\d+'
 
-        # get the last community users (AJAX)
+# get the last community users (AJAX)
 community_last_users:
     path:
         fr: /community-last-users/{id}
