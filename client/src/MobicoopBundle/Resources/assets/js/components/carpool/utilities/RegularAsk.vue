@@ -565,7 +565,7 @@ export default {
   methods: {
     nextDay(weekday) {
       const dayToCheck = moment(this.fromDate).isoWeekday();
-      if (dayToCheck <= weekday) { 
+      if (dayToCheck <= weekday) {
         return moment(this.fromDate).isoWeekday(weekday);
       } else {
         return moment(this.fromDate).add(1, 'weeks').isoWeekday(weekday);
@@ -581,7 +581,7 @@ export default {
     },
     change() {
       let params = [];
-      if (this.monCheck) {
+      if (this.monCheck && this.monTime !== null) {
         params.push({
           "day": "mon",
           "time": this.monTime,
@@ -589,7 +589,7 @@ export default {
           "max": this.monMax.isAfter(this.monMin) ? this.monMax.toISOString() : null
         });
       }
-      if (this.tueCheck) {
+      if (this.tueCheck && this.tueTime !== null) {
         params.push({
           "day": "tue",
           "time": this.tueTime,
@@ -597,7 +597,7 @@ export default {
           "max": this.tueMax.isAfter(this.tueMin) ? this.tueMax.toISOString() : null
         });
       }
-      if (this.wedCheck) {
+      if (this.wedCheck && this.wedTime !== null) {
         params.push({
           "day": "wed",
           "time": this.wedTime,
@@ -605,7 +605,7 @@ export default {
           "max": this.wedMax.isAfter(this.wedMin) ? this.wedMax.toISOString() : null
         });
       }
-      if (this.thuCheck) {
+      if (this.thuCheck && this.thuTime !== null) {
         params.push({
           "day": "thu",
           "time": this.thuTime,
@@ -613,7 +613,7 @@ export default {
           "max": this.thuMax.isAfter(this.thuMin) ? this.thuMax.toISOString() : null
         });
       }
-      if (this.friCheck) {
+      if (this.friCheck && this.friTime !== null) {
         params.push({
           "day": "fri",
           "time": this.friTime,
@@ -621,7 +621,7 @@ export default {
           "max": this.friMax.isAfter(this.friMin) ? this.friMax.toISOString() : null
         });
       }
-      if (this.satCheck) {
+      if (this.satCheck && this.satTime !== null) {
         params.push({
           "day": "sat",
           "time": this.satTime,
@@ -629,7 +629,7 @@ export default {
           "max": this.satMax.isAfter(this.satMin) ? this.satMax.toISOString() : null
         });
       }
-      if (this.sunCheck) {
+      if (this.sunCheck && this.sunTime !== null) {
         params.push({
           "day": "sun",
           "time": this.sunTime,

@@ -723,6 +723,9 @@ export default {
       this.returnTrip = params;
     },
     getDays(trip) {
+      
+      if(trip.length==0) return null;
+      
       let days = {
         "monTime": null,
         "tueTime": null,
@@ -733,13 +736,13 @@ export default {
         "sunTime": null
       };
       for (var i = 0; i < trip.length; i++) {
-        if (trip[i].day == "mon") days.monTime = trip[i].time.replace("h",":");
-        if (trip[i].day == "tue") days.tueTime = trip[i].time.replace("h",":");
-        if (trip[i].day == "wed") days.wedTime = trip[i].time.replace("h",":");
-        if (trip[i].day == "thu") days.thuTime = trip[i].time.replace("h",":");
-        if (trip[i].day == "fri") days.friTime = trip[i].time.replace("h",":");
-        if (trip[i].day == "sat") days.satTime = trip[i].time.replace("h",":");
-        if (trip[i].day == "sun") days.sunTime = trip[i].time.replace("h",":");
+        if (trip[i].day == "mon") days.monTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
+        if (trip[i].day == "tue") days.tueTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
+        if (trip[i].day == "wed") days.wedTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
+        if (trip[i].day == "thu") days.thuTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
+        if (trip[i].day == "fri") days.friTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
+        if (trip[i].day == "sat") days.satTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
+        if (trip[i].day == "sun") days.sunTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
       }
       return days;
     },

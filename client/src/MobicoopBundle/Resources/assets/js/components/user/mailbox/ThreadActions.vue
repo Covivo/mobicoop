@@ -294,7 +294,7 @@ export default {
           "day": "mon",
           "time": this.formatHour(results.monTime),
           "min": results.fromDate,
-          "max": null
+          "max": results.fromDate
         });
       }
       if(results.tueCheck){
@@ -302,7 +302,7 @@ export default {
           "day": "tue",
           "time": this.formatHour(results.tueTime),
           "min": results.fromDate,
-          "max": null
+          "max": results.fromDate
         });
       }
       if(results.wedCheck){
@@ -310,7 +310,7 @@ export default {
           "day": "wed",
           "time": this.formatHour(results.wedTime),
           "min": results.fromDate,
-          "max": null
+          "max": results.fromDate
         });
       }
       if(results.thuCheck){
@@ -318,7 +318,7 @@ export default {
           "day": "thu",
           "time": this.formatHour(results.thuTime),
           "min": results.fromDate,
-          "max": null
+          "max": results.fromDate
         });
       }
       if(results.friCheck){
@@ -326,7 +326,7 @@ export default {
           "day": "fri",
           "time": this.formatHour(results.friTime),
           "min": results.fromDate,
-          "max": null
+          "max": results.fromDate
         });
       }
       if(results.satCheck){
@@ -334,7 +334,7 @@ export default {
           "day": "sat",
           "time": this.formatHour(results.satTime),
           "min": results.fromDate,
-          "max": null
+          "max": results.fromDate
         });
       }
       if(results.sunCheck){
@@ -342,7 +342,7 @@ export default {
           "day": "sun",
           "time": this.formatHour(results.sunTime),
           "min": results.fromDate,
-          "max": null
+          "max": results.fromDate
         });
       }
 
