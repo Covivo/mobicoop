@@ -523,12 +523,12 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
-    public function getPhoneDisplay(): int
+    public function getPhoneDisplay(): ?int
     {
         return $this->phoneDisplay;
     }
 
-    public function setPhoneDisplay(int $phoneDisplay): self
+    public function setPhoneDisplay(?int $phoneDisplay): self
     {
         $this->phoneDisplay = $phoneDisplay;
 
