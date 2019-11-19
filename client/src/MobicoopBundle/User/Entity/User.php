@@ -1099,7 +1099,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'music'                 => $this->hasMusic(),
             'musicFavorites'        => $this->getMusicFavorites(),
             'newsSubscription'      => $this->hasNewsSubscription(),
-            'phoneDisplay'          => $this->getPhoneDisplay()
+            'phoneDisplay'          => $this->getPhoneDisplay(),
             'phoneValidatedDate'    => $this->getPhoneValidatedDate(),
             'phoneToken'            => $this->getPhoneToken()
         ];
