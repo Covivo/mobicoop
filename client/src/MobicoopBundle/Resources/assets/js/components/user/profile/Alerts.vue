@@ -63,6 +63,7 @@ export default {
         id:data.id,
         active:data.active
       }
+      // Todo create axios method to get alerts to be able to refresh this component
       axios.post(this.$t("urlUpdate"), params)
         .then(res => {
           if(res.data.error !== undefined){
