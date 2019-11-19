@@ -28,7 +28,11 @@ use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Event\AskAdDeletedEvent;
+use App\Carpool\Event\DriverAskAdDeletedEvent;
+use App\Carpool\Event\DriverAskAdDeletedUrgentEvent;
 use App\Carpool\Event\MatchingNewEvent;
+use App\Carpool\Event\PassengerAskAdDeletedEvent;
+use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
 use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\ProposalRepository;
 use App\Community\Service\CommunityManager;
@@ -43,6 +47,7 @@ use App\Geography\Service\ZoneManager;
 use App\Service\FormatDataManager;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use PhpOffice\PhpSpreadsheet\Calculation\DateTime;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -589,6 +594,7 @@ class ProposalManager
     /**
      * @param Proposal $proposal
      * @return Response
+     * @throws \Exception
      */
     public function deleteProposal(Proposal $proposal)
     {
@@ -600,11 +606,47 @@ class ProposalManager
         if (count($asks) > 0) {
             /** @var Ask $ask */
             foreach ($asks as $ask) {
+                $now = new \DateTime();
+
                 // todo: change status after update
                 // Accepted
                 if ($ask->getStatus() === 3) {
-                    // todo : distinguer le cas du driver et du passenger
-//                    $this->notificationManager->notifies();
+
+                    // Ask user is driver
+                    if ($this->askManager->isAskUserDriver($ask)) {
+                        /** @var Criteria $criteria */
+                        $criteria = $ask->getMatching()->getProposalOffer()->getCriteria()->getFromDate();
+                        $askDateTime = $criteria->getFromTime() ?
+                            new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
+                            new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
+
+                        // If ad is in more than 24h
+                        if (strtotime($now) - strtotime($askDateTime) > 24*60*60) {
+                            $event = new DriverAskAdDeletedEvent($ask);
+                            $this->eventDispatcher->dispatch(DriverAskAdDeletedEvent::NAME, $event);
+                        } else {
+                            $event = new DriverAskAdDeletedUrgentEvent($ask);
+                            $this->eventDispatcher->dispatch(DriverAskAdDeletedUrgentEvent::NAME, $event);
+                        }
+
+                        // Ask user is passenger
+                    } elseif ($this->askManager->isAskUserPassenger($ask)) {
+
+                        /** @var Criteria $criteria */
+                        $criteria = $ask->getMatching()->getProposalRequest()->getCriteria();
+                        $askDateTime = $criteria->getFromTime() ?
+                            new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
+                            new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
+
+                        // If ad is in more than 24h
+                        if ($askDateTime->getTimestamp() - $now->getTimestamp() < 24*60*60) {
+                            $event = new PassengerAskAdDeletedEvent($ask);
+                            $this->eventDispatcher->dispatch(PassengerAskAdDeletedEvent::NAME, $event);
+                        } else {
+                            $event = new PassengerAskAdDeletedUrgentEvent($ask);
+                            $this->eventDispatcher->dispatch(PassengerAskAdDeletedUrgentEvent::NAME, $event);
+                        }
+                    }
                 }
                 // Pending
                 elseif ($ask->getStatus() === 2) {

@@ -178,4 +178,26 @@ class AskManager
 
         return $asks;
     }
+
+    /**
+     * Ask user is considered passenger if he has made a proposal offer
+     *
+     * @param Ask $ask
+     * @return bool
+     */
+    public function isAskUserDriver(Ask $ask)
+    {
+        return $ask->getUser()->getId() === $ask->getMatching()->getProposalOffer()->getUser()->getId();
+    }
+
+    /**
+     * Ask user is considered passenger if he has made a proposal request
+     *
+     * @param Ask $ask
+     * @return bool
+     */
+    public function isAskUserPassenger(Ask $ask)
+    {
+        return $ask->getUser()->getId() === $ask->getMatching()->getProposalRequest()->getUser()->getId();
+    }
 }
