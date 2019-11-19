@@ -858,8 +858,6 @@ class ProposalManager
     public function deleteProposal(int $id)
     {
         $response = $this->dataProvider->delete($id);
-        dump($response);
-        die;
         if ($response->getCode() == 204) {
             return true;
         }
