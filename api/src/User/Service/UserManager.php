@@ -97,6 +97,8 @@ class UserManager
         $userRole = new UserRole();
         $userRole->setRole($role);
         $user->addUserRole($userRole);
+        // default phone display : restricted
+        $user->setPhoneDisplay(1);
         // creation of the geotoken
         $datetime = new DateTime();
         $time = $datetime->getTimestamp();

@@ -72,7 +72,7 @@
           justify="end"
           class="min-width-no-flex"
         >
-          <div v-if="user">
+          <div v-if="user && carpooler.phoneDisplay == 2">
             <v-btn
               color="secondary"
               small

@@ -59,6 +59,9 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         'gender.choice.nc'      => self::GENDER_OTHER
     ];
 
+    const PHONE_DISPLAY_RESTRICTED = 1;
+    const PHONE_DISPLAY_ALL = 2;
+    
     const HOME_ADDRESS_NAME = 'homeAddress';
     
     /**
@@ -144,6 +147,14 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * @Groups({"post","put"})
      */
     private $telephone;
+
+    /**
+     * @var int phone display configuration (1 = restricted; 2 = community; 3 = all).
+     *
+     * @Assert\NotBlank
+     * @Groups({"post","put"})
+     */
+    private $phoneDisplay;
     
     /**
      * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
@@ -509,6 +520,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         $this->telephone = $telephone;
         
+        return $this;
+    }
+
+    public function getPhoneDisplay(): int
+    {
+        return $this->phoneDisplay;
+    }
+
+    public function setPhoneDisplay(int $phoneDisplay): self
+    {
+        $this->phoneDisplay = $phoneDisplay;
+
         return $this;
     }
     
@@ -1057,27 +1080,28 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         return
         [
-            'id'             => $this->getId(),
-            'givenName'      => $this->getGivenName(),
-            'familyName'     => $this->getFamilyName(),
-            'shortFamilyName' => $this->getShortFamilyName(),
-            'gender'         => $this->getGender(),
-            'status'         => $this->getStatus(),
-            'email'          => $this->getEmail(),
-            'telephone'      => $this->getTelephone(),
-            'geoToken'       => $this->getGeoToken(),
-            'birthYear'      => $this->getBirthYear(),
-            'homeAddress'    => $this->getHomeAddress(),
-            'images'        => $this->getImages(),
-            'avatars'        => $this->getAvatars(),
-            'smoke'          => $this->getSmoke(),
-            'chat'           => $this->hasChat(),
-            'chatFavorites'  => $this->getChatFavorites(),
-            'music'          => $this->hasMusic(),
-            'musicFavorites' => $this->getMusicFavorites(),
-            'newsSubscription' => $this->hasNewsSubscription(),
-            'phoneValidatedDate' => $this->getPhoneValidatedDate(),
-            'phoneToken'        => $this->getPhoneToken()
+            'id'                    => $this->getId(),
+            'givenName'             => $this->getGivenName(),
+            'familyName'            => $this->getFamilyName(),
+            'shortFamilyName'       => $this->getShortFamilyName(),
+            'gender'                => $this->getGender(),
+            'status'                => $this->getStatus(),
+            'email'                 => $this->getEmail(),
+            'telephone'             => $this->getTelephone(),
+            'geoToken'              => $this->getGeoToken(),
+            'birthYear'             => $this->getBirthYear(),
+            'homeAddress'           => $this->getHomeAddress(),
+            'images'                => $this->getImages(),
+            'avatars'               => $this->getAvatars(),
+            'smoke'                 => $this->getSmoke(),
+            'chat'                  => $this->hasChat(),
+            'chatFavorites'         => $this->getChatFavorites(),
+            'music'                 => $this->hasMusic(),
+            'musicFavorites'        => $this->getMusicFavorites(),
+            'newsSubscription'      => $this->hasNewsSubscription(),
+            'phoneDisplay'          => $this->getPhoneDisplay(),
+            'phoneValidatedDate'    => $this->getPhoneValidatedDate(),
+            'phoneToken'            => $this->getPhoneToken()
         ];
     }
 }

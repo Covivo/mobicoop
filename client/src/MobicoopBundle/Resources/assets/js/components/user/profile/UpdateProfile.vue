@@ -183,6 +183,21 @@
             </v-col>
           </v-row>
 
+          <!-- Phone display preferences -->
+          <v-radio-group
+            :label="$t('phoneDisplay.label.general')"
+            v-model="phoneDisplay['value']"
+          >
+            <v-radio
+              color="secondary"
+              v-for="(phoneDisplay, index) in phoneDisplays"
+              :key="index"
+              :label="phoneDisplay.label"
+              :value="phoneDisplay.value"
+            >
+            </v-radio>
+          </v-radio-group>
+
           <!--GivenName-->
           <v-text-field
             v-model="givenName"
@@ -362,6 +377,14 @@ export default {
         { value: 2, gender: this.$t('models.user.gender.values.male')},
         { value: 3, gender: this.$t('models.user.gender.values.other')},
       ],
+      phoneDisplay: {
+        value: this.user.phoneDisplay
+      },
+      phoneDisplays:[
+        { value: 1, label: this.$t('phoneDisplay.label.restricted')},
+        { value: 2, label: this.$t('phoneDisplay.label.all')}
+      ],
+
       avatar: null,
       avatarRules: [
         v => !v || v.size < this.avatarSize || this.$t("avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
@@ -410,6 +433,7 @@ export default {
       updateUser.append("birthYear", this.birthYear);
       updateUser.append("avatar", this.avatar);
       updateUser.append("newsSubscription", this.newsSubscription);
+      updateUser.append("phoneDisplay", this.phoneDisplay.value);
 
       axios
         .post(this.$t('route.update'), updateUser,
