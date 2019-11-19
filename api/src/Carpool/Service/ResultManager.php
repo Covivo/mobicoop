@@ -1390,24 +1390,23 @@ class ResultManager
     /**
      * Create "user-friendly" results from the matchings of an ad proposal
      *
-     * @param Proposal $outwardProposal     The outward proposal with its matchings
-     * @param Proposal|null $returnProposal The return proposal with its matchings
-     * @return array                        The array of results
+     * @param Proposal $proposal    The proposal with its matchings
+     * @return array                The array of results
      */
-    public function createAdResults(Proposal $outwardProposal, ?Proposal $returnProposal)
+    public function createAdResults(Proposal $proposal)
     {
         // the outward results are the base results
-        $results = $this->createProposalResults($outwardProposal);
+        $results = $this->createProposalResults($proposal);
         $returnResults = null;
-        if ($returnProposal) {
-            $returnResults = $this->createProposalResults($returnProposal, true);
+        if ($proposal->getProposalLinked()) {
+            $returnResults = $this->createProposalResults($proposal->getProposalLinked(), true);
         }
 
         // the outward results are the base
         // we will have to check for each return result if it's a return of an outward result
 
         // we loop through the return results
-        foreach ($returnResults as $matchingProposalId=>$result) {
+        foreach ($returnResults as $result) {
             if (!is_null($result->getResultDriver())) {
                 // there's a return as a driver
                 if ($linkedMatching = $this->matchingRepository->findOneBy(['matchingLinked'=>$result->getResultDriver()->getReturn()->getMatchingId()])) {
@@ -1458,7 +1457,7 @@ class ResultManager
             // we first get the origin and destination of the requester
             $requesterOrigin = null;
             $requesterDestination = null;
-            foreach ($outwardProposal->getWaypoints() as $waypoint) {
+            foreach ($proposal->getWaypoints() as $waypoint) {
                 if ($waypoint->getPosition() == 0) {
                     $requesterOrigin = $waypoint->getAddress();
                 }
@@ -1657,10 +1656,16 @@ class ResultManager
         $matchings = [];
         // we search the matchings as an offer
         foreach ($proposal->getMatchingRequests() as $request) {
+            if (is_null($request->getFilters())) {
+                $request->setFilters($this->proposalMatcher->getMatchingFilters($request));
+            }
             $matchings[$request->getProposalRequest()->getId()]['request'] = $request;
         }
         // we search the matchings as a request
         foreach ($proposal->getMatchingOffers() as $offer) {
+            if (is_null($offer->getFilters())) {
+                $offer->setFilters($this->proposalMatcher->getMatchingFilters($offer));
+            }
             $matchings[$offer->getProposalOffer()->getId()]['offer'] = $offer;
         }
         // we iterate through the matchings to create the results

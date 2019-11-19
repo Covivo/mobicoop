@@ -137,7 +137,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     {
         // the recipient is the user that is not the "sender" of the matching
         // we check if it's not an anonymous proposal
-        if ($event->getMatching()->getProposalOffer()->getUser()) {
+        if ($event->getMatching()->getProposalOffer()->getUser() && $event->getMatching()->getProposalRequest()->getUser()) {
             $askRecipient = ($event->getMatching()->getProposalOffer()->getUser()->getId() != $event->getSender()->getId()) ? $event->getMatching()->getProposalOffer()->getUser() : $event->getMatching()->getProposalRequest()->getUser();
             $this->notificationManager->notifies(MatchingNewEvent::NAME, $askRecipient, $event->getMatching());
         }

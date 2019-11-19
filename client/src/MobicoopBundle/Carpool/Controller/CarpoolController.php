@@ -34,6 +34,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -50,7 +51,7 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function carpoolAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    public function carpoolAdPost(AdManager $adManager, UserManager $userManager, Request $request)
     {
         $proposal = new Proposal();
         $poster = $userManager->getLoggedUser();
@@ -62,7 +63,8 @@ class CarpoolController extends AbstractController
             } else {
                 $this->denyAccessUnlessGranted('post', $proposal);
             }
-            return $this->json(['result'=>$proposalManager->createProposalFromAd($data, $poster)]);
+            //return $this->json(['result'=>$proposalManager->createProposalFromAd($data, $poster)]);
+            return $this->json(['result'=>$adManager->createAd($data, $poster)]);
         }
 
         $this->denyAccessUnlessGranted('create_ad', $proposal);
@@ -135,12 +137,11 @@ class CarpoolController extends AbstractController
      * Ad result detail data.
      * (AJAX)
      */
-    public function carpoolAdDetail($id, ProposalManager $proposalManager)
+    public function carpoolAdDetail($id, ProposalManager $proposalManager, AdManager $adManager)
     {
         $proposal = $proposalManager->getProposal($id);
         $this->denyAccessUnlessGranted('results', $proposal);
-
-        if ($results = $proposalManager->getResults($id)) {
+        if ($results = $adManager->getAd($id)) {
             return $this->json($results->getResults());
         }
         return $this->json([]);
@@ -167,7 +168,7 @@ class CarpoolController extends AbstractController
      * Matching Search
      * (AJAX POST)
      */
-    public function carpoolSearchMatching(Request $request, ProposalManager $proposalManager)
+    public function carpoolSearchMatching(Request $request, AdManager $adManager)
     {
         $params = json_decode($request->getContent(), true);
         if ($params['date'] && $params['date'] != '') {
@@ -177,42 +178,31 @@ class CarpoolController extends AbstractController
         }
         //$time = \Datetime::createFromFormat("H:i", $request->query->get('time'));
         $frequency = isset($params['regular']) ? ($params['regular'] ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL) : Criteria::FREQUENCY_PUNCTUAL;
-        $regularLifeTime = isset($params['regularLifeTime']) ? $params['regularLifeTime'] : null;
         $strictDate = isset($params['strictDate']) ? $params['strictDate'] : null;
-        $useTime = isset($params['useTime']) ? $params['useTime'] : null;
         $strictPunctual = isset($params['strictPunctual']) ? $params['strictPunctual'] : null;
         $strictRegular = isset($params['strictRegular']) ? $params['strictRegular'] : null;
         $role = isset($params['role']) ? $params['role'] : Criteria::ROLE_BOTH;
         $userId = isset($params['userId']) ? $params['userId'] : null;
         $communityId = isset($params['communityId']) ? $params['communityId'] : null;
 
-        $matchings = [];
-        $proposalResult = null;
-
-        // we post to the special collection /proposals/search, that will return only one virtual proposal (with its matchings)
-        if ($proposalResults = $proposalManager->getMatchingsForSearch(
+        $result = [];
+        if ($ad = $adManager->getResultsForSearch(
             $params['origin'],
             $params['destination'],
             $date,
+            null,
             $frequency,
-            $regularLifeTime,
             $strictDate,
-            $useTime,
             $strictPunctual,
             $strictRegular,
             $role,
             $userId,
             $communityId
         )) {
-            if (is_array($proposalResults->getMember()) && count($proposalResults->getMember()) == 1) {
-                $proposalResult = $proposalResults->getMember()[0];
-            }
-        }
-        if ($proposalResult) {
-            $matchings = $proposalResult->getResults();
+            $result = $ad->getResults();
         }
 
-        return $this->json($matchings);
+        return $this->json($result);
     }
 
     /**

@@ -21,302 +21,271 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Carpool\Controller\AdPost;
-use App\Carpool\Controller\AdGet;
 
 /**
  * Carpooling : an ad.
  * All actions related to a carpooling should be related to this entity.
- *
- * @ApiResource(
- *      attributes={
- *          "normalization_context"={"groups"={"read","results"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *      collectionOperations={
- *          "post"={
- *              "method"="POST",
- *              "controller"=AdPost::class,
- *          },
- *      },
- *      itemOperations={
- *          "get"={
- *              "method"="GET",
- *              "controller"=AdGet::class,
- *              "read"=false,
- *          }
- *      }
- * )
  */
-class Ad
+class Ad implements ResourceInterface
 {
-    const DEFAULT_ID = 999999999999;
-    
     const ROLE_DRIVER = 1;
     const ROLE_PASSENGER = 2;
     const ROLE_DRIVER_OR_PASSENGER = 3;
 
     /**
      * @var int The id of this ad.
-     *
-     * @ApiProperty(identifier=true)
-     * @Groups("read")
      */
     private $id;
 
     /**
      * @var boolean|null The ad is a search only.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $search;
 
     /**
      * @var int The role for this ad.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $role;
 
     /**
      * @var boolean|null The ad is a one way trip.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $oneWay;
 
     /**
      * @var int The frequency for this ad.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $frequency;
 
     /**
      * @var array The waypoints for the outward.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $outwardWaypoints;
 
     /**
      * @var array|null The waypoints for the return.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $returnWaypoints;
 
     /**
      * @var \DateTimeInterface|null The date for the outward if the frequency is punctual, the start date of the outward if the frequency is regular.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $outwardDate;
 
     /**
      * @var \DateTimeInterface|null The limit date for the outward if the frequency is regular.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $outwardLimitDate;
 
     /**
      * @var \DateTimeInterface|null The date for the return if the frequency is punctual, the start date of the return if the frequency is regular.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $returnDate;
 
     /**
      * @var \DateTimeInterface|null The limit date for the return if the frequency is regular.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $returnLimitDate;
 
     /**
      * @var string|null The time for the outward if the frequency is punctual.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $outwardTime;
 
     /**
      * @var string|null The time for the return if the frequency is punctual.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $returnTime;
 
     /**
      * @var array|null The schedule for if the frequency is regular.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $schedule;
 
     /**
      * @var boolean|null For punctual proposals, the user accepts only matchings for the defined date (no ranges).
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $strictDate;
 
     /**
      * @var boolean|null For punctual proposals, the user accepts only matchings with punctual trips (no regular trips).
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $strictPunctual;
 
     /**
      * @var boolean|null For regular proposals, the user accepts only matchings with regular trips (no punctual trips).
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $strictRegular;
     
     /**
-    * @var string|null The price per km.
+    * @var float|null The price per km.
     *
-    * @Groups({"read","write"})
+    * @Groups({"post","put"})
     */
     private $priceKm;
 
     /**
-    * @var string|null The total price of the outward selected by the user as a driver.
+    * @var float|null The total price of the outward selected by the user as a driver.
     *
-    * @Groups({"read","write"})
+    * @Groups({"post","put"})
     */
     private $outwardDriverPrice;
 
     /**
-    * @var string|null The total price of the return selected by the user as a driver.
+    * @var float|null The total price of the return selected by the user as a driver.
     *
-    * @Groups({"read","write"})
+    * @Groups({"post","put"})
     */
     private $returnDriverPrice;
 
     /**
-    * @var string|null The total price of the outward selected by the user as a passenger.
+    * @var float|null The total price of the outward selected by the user as a passenger.
     *
-    * @Groups({"read","write"})
+    * @Groups({"post","put"})
     */
     private $outwardPassengerPrice;
 
     /**
-    * @var string|null The total price of the return selected by the user as a passenger.
+    * @var float|null The total price of the return selected by the user as a passenger.
     *
-    * @Groups({"read","write"})
+    * @Groups({"post","put"})
     */
     private $returnPassengerPrice;
 
     /**
      * @var int|null The number of seats available / required.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $seats;
 
     /**
      * @var boolean|null Big luggage accepted / asked.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $luggage;
 
     /**
      * @var boolean|null Bike accepted / asked.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $bike;
 
     /**
      * @var boolean|null 2 passengers max on the back seats.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $backSeats;
 
     /**
      * @var boolean|null Solidary request.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $solidary;
 
     /**
      * @var boolean|null Solidary exclusive.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $solidaryExclusive;
 
     /**
      * @var boolean|null Avoid motorway.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $avoidMotorway;
 
     /**
      * @var boolean|null Avoid toll.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $avoidToll;
 
     /**
      * @var string A comment about the ad.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $comment;
 
     /**
      * @var int|null The user id of the ad owner. Null for an anonymous search.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $userId;
 
     /**
      * @var int|null The user id of the poster (used for delegation).
      *
-     *@Groups({"read","write"})
+     *@Groups({"post","put"})
      */
     private $posterId;
 
     /**
      * @var array|null The communities associated with the ad.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $communities;
 
     /**
      * @var int|null The event id associated with the ad.
      *
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $eventId;
 
     /**
      * @var array|null The carpool results.
-     *
-     * @Groups("read")
      */
     private $results;
-
+    
     public function __construct()
     {
-        $this->id = self::DEFAULT_ID;
         $this->outwardWaypoints = [];
         $this->returnWaypoints = [];
         $this->schedule = [];

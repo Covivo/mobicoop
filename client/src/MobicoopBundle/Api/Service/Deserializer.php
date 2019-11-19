@@ -49,6 +49,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Article;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Section;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Paragraph;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Permission\Entity\Permission;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
@@ -107,6 +108,9 @@ class Deserializer
                 break;
             case Image::class:
                 return self::deserializeImage($data);
+                break;
+            case Ad::class:
+                return self::deserializeAd($data);
                 break;
             case Proposal::class:
                 return self::deserializeProposal($data);
@@ -241,6 +245,13 @@ class Deserializer
             $image->setIri($data["@id"]);
         }
         return $image;
+    }
+
+    private function deserializeAd(array $data): ?Ad
+    {
+        $ad = new Ad();
+        $ad = self::autoSet($ad, $data);
+        return $ad;
     }
 
     private function deserializeProposal(array $data): ?Proposal

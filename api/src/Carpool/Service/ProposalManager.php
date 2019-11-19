@@ -101,6 +101,17 @@ class ProposalManager
     }
 
     /**
+     * Get a proposal by its id.
+     *
+     * @param integer $id
+     * @return Proposal|null
+     */
+    public function get(int $id)
+    {
+        return $this->proposalRepository->find($id);
+    }
+
+    /**
      * Return the proposal with its formatted results.
      *
      * @param Proposal $proposal

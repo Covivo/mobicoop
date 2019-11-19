@@ -335,7 +335,6 @@ class DataProvider
      */
     public function post(ResourceInterface $object): Response
     {
-        //var_dump($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]));
         try {
             if ($this->format == self::RETURN_ARRAY) {
                 $clientResponse = $this->client->post($this->resource, [

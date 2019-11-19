@@ -108,6 +108,8 @@ services:
         arguments:
             $params:
                 defaultMarginTime: '%env(int:CARPOOL_MARGIN_TIME)%'
+        tags:
+            - { name: monolog.logger, channel: carpool }
 
     App\Carpool\Service\ProposalManager:
         arguments:
