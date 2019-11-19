@@ -179,3 +179,7 @@ yourInscription: "Votre inscription"
 # USER_UPDATED_SELF
 
 updatedSefl: "Modification de votre profil"
+
+# USER_GENERATE_PHONE_TOKEN_ASKED 
+
+yourValidationToken: "Votre code de validation"
