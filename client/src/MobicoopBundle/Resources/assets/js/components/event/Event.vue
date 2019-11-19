@@ -199,7 +199,7 @@ export default {
   },
   data () {
     return {
-      destination: this.initDestination,
+      destination: '',
       origin: this.initOrigin,
       search: '',
       headers: [
@@ -231,6 +231,10 @@ export default {
       params: { 'eventId' : this.event.id },
 
     }
+  // Link the event in the adresse
+  },created: function () {
+    this.$set(this.initDestination, 'event', this.event);
+    this.destination = this.initDestination;
   },
   mounted() {
     // this.getCommunityUser();
