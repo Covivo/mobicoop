@@ -58,7 +58,8 @@ class EventController extends AbstractController
             foreach ($eventComing as $event) {
                 $pointsComing[] = [
                     "title"=>$event->getName().', '.$event->getAddress()->getAddressLocality(),
-                    "latLng"=>["lat"=>$event->getAddress()->getLatitude(),"lon"=>$event->getAddress()->getLongitude()]
+                    "latLng"=>["lat"=>$event->getAddress()->getLatitude(),"lon"=>$event->getAddress()->getLongitude()],
+                    "event" => $event
                 ];
             }
         }

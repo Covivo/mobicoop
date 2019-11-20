@@ -240,6 +240,7 @@
 <script>
 
 import { merge } from "lodash";
+import moment from "moment";
 import Translations from "@translations/components/event/EventList.json";
 import TranslationsClient from "@clientTranslations/components/event/EventList.json";
 import MMap from "@components/utilities/MMap"
@@ -341,9 +342,10 @@ export default {
       }
     },
 
-    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
+    buildPoint: function(e,lat,lng,title="",pictoUrl="",size=[],anchor=[]){
       let point = {
         title:title,
+        popup : this.buildPopup(e),
         latLng:L.latLng(lat, lng),
         icon: {}
       }
@@ -357,6 +359,18 @@ export default {
       }
       return point;
     },
+    buildPopup : function(evt){
+      let popup = {
+        titre : evt.name,
+        images : evt.images,
+        description  : evt.fullDescription,
+        date_begin   : this.$t('startEvent') +' : '+  this.computedDateFormat(evt.fromDate.date),
+        date_end   : this.$t('endEvent') +' : '+ this.computedDateFormat(evt.toDate.date),
+        linktoevent  : this.$t('routes.event', {id:evt.id})
+      };
+      return popup;
+
+    },
     createMapComing () {
       this.errorUpdate =200;
       this.loadingMap = true;
@@ -364,41 +378,18 @@ export default {
 
       if(this.pointsComing != null){
         this.pointsComing.forEach((waypoint, index) => {
-          this.pointsComingMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+          this.pointsComingMap.push(this.buildPoint(waypoint.event,waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
         });
         this.loadingMap = false;
         setTimeout(this.$refs.mmap.redrawMap(),1000);
       }
-      /*
-          axios
-
-            .get('/events-available',
-              {
-                headers:{
-                  'content-type': 'application/json'
-                }
-              })
-            .then(res => {
-              console.info(res)
-
-              this.errorUpdate = res.data.state;
-              this.pointsToMap.length = 0;
-              // add the community address to display on the map
-              if (this.event.address) {
-                this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name));
-              }
-
-              // add all the waypoints of the event to display on the map :
-              res.data.forEach((waypoint, index) => {
-                this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
-              });
-              this.loadingMap = false;
-
-            });            setTimeout(this.$refs.mmap.redrawMap(),600);
-
-
-            */
-    },
+    },computedDateFormat(date) {
+      // moment.locale(this.locale);
+      // return this.date
+      //   ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
+      //   : null;
+      return moment(date).format("DD/MM/YYYY hh:mm");
+    }
 
   }
 }

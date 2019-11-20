@@ -23,16 +23,28 @@
             :icon-anchor="point.icon.anchor"
             :icon-url="point.icon.url"
           />
+
           <l-tooltip v-if="point.title!==''">
             {{ point.title }}
           </l-tooltip>
+
+          <l-popup v-if="point.popup!==''">
+            <h3>{{ point.popup.titre }}</h3>
+            <img
+              v-if="point.popup.images[0]"
+              :src="point.popup.images[0]['versions']['square_100']"
+              alt="avatar"
+            >
+            <p>{{ point.popup.description }}</p>
+            <p>{{ point.popup.date_begin }}<br> {{ point.popup.date_end }}</p>
+          </l-popup>
         </l-marker>
         <l-polyline
           v-for="(way, i) in ways"
           :key="'w'+i"
           :lat-lngs="way.latLngs"
           :color="(way.color!=='' && way.color !==undefined)?way.color:'blue'"
-        >        
+        >
           <l-tooltip v-if="way.title!=='' && way.title !==undefined">
             {{ way.title }}
           </l-tooltip>
