@@ -603,4 +603,34 @@ class ProposalManager
             $maxTime
         ];
     }
+    
+    /**
+     * Order the results of a Proposal
+    */
+    public function orderResultsBy(Proposal $proposal)
+    {
+
+        /** To do : Put this params in Proposal entity */
+        $field="date";
+        $order="ASC";
+
+        // Order anonymous function
+        $cmp = function ($a, $b) use ($field,$order) {
+            $return = -1;
+            switch ($field) {
+                case "date":
+                    ($order=="ASC") ? $return = $a->getDate() <=> $b->getDate() : $return = $b->getDate() <=> $a->getDate();
+                break;
+            }
+
+            return $return;
+        };
+
+        $results = $proposal->getResults();
+        usort($results, $cmp);
+
+        $proposal->setResults($results);
+
+        return $proposal;
+    }
 }

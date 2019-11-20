@@ -178,7 +178,7 @@ final class ProposalSimpleSearchCollectionDataProvider implements CollectionData
         if (isset($destination['displayLabel'])) {
             $destinationAddress->setDisplayLabel($destination['displayLabel']);
         }
-        return [$this->proposalManager->searchMatchings(
+        return [$this->proposalManager->orderResultsBy($this->proposalManager->searchMatchings(
             $originAddress,
             $destinationAddress,
             $this->request->get("frequency"),
@@ -194,6 +194,6 @@ final class ProposalSimpleSearchCollectionDataProvider implements CollectionData
             $this->request->get("type"),
             $this->request->get("anyRouteAsPassenger"),
             $this->request->get("communityId")
-        )];
+        ))];
     }
 }
