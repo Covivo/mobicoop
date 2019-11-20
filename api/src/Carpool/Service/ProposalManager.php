@@ -633,4 +633,33 @@ class ProposalManager
 
         return $proposal;
     }
+
+    /**
+     * Order the results of a Proposal
+    */
+    public function filterResultsBy(Proposal $proposal)
+    {
+        /** To do : Put this params in Proposal entity */
+        $field="time";
+        $value=str_replace("h", ":", "06h00");
+
+        // Order anonymous function
+        $cmp = function ($a) use ($field,$value) {
+            $return = true;
+            switch ($field) {
+                case "time":
+                    $value = new \DateTime($value);
+                    $return = $a->getTime()->format("H:i") === $value->format("H:i");
+                break;
+            }
+            return $return;
+        };
+
+        $results = $proposal->getResults();
+        $resultsFiltered = array_filter($results, $cmp);
+
+        $proposal->setResults($resultsFiltered);
+
+        return $proposal;
+    }
 }
