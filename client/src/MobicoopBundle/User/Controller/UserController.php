@@ -1614,12 +1614,12 @@ class UserController extends AbstractController
             $idAsk = $data['idAsk'];
             $status = $data['status'];
             $criteria = ($data['criteria']) ? $data['criteria'] : null;
-            //var_dump($criteria);die;
 
             // Get the Ask
             $ask = $askManager->getAsk($idAsk);
-            /** TO DO : Get the Ask of the return */
-            $askReturn = null;
+
+            // Get the Ask of the return
+            $askReturn = $ask->getAskLinked();
 
             $reponseofmanager= $this->handleManagerReturnValue($ask);
             if (!empty($reponseofmanager)) {
@@ -1638,6 +1638,10 @@ class UserController extends AbstractController
 
                 $ask->getCriteria()->setFromDate(new \DateTime($criteria['fromDate']));
                 $ask->getCriteria()->setToDate(new \DateTime($criteria['toDate']));
+                if ($askReturn!=null) {
+                    $askReturn->getCriteria()->setFromDate(new \DateTime($criteria['fromDate']));
+                    $askReturn->getCriteria()->setToDate(new \DateTime($criteria['toDate']));
+                }
 
                 if (isset($criteria['outwardSchedule'])) {
                     $ask->getCriteria()->setMonCheck(($criteria['outwardSchedule']['monTime']) ? true : false);
@@ -1664,11 +1668,15 @@ class UserController extends AbstractController
             // Update the Ask via API
             $ask = $askManager->updateAsk($ask);
 
-            // To do : Update the return Ask
+            // Update the return Ask
+            if ($askReturn!=null) {
+                $askReturn = $askManager->updateAsk($askReturn);
+            }
 
             $return = [
                 "id"=>$ask->getId(),
-                "status"=>$ask->getStatus()
+                "status"=>$ask->getStatus(),
+                "return" => ($askReturn!=null) ? ["id"=>$askReturn->getId(),"status"=>$askReturn->getStatus()] : null
             ];
 
             return new JsonResponse($return);
