@@ -157,7 +157,6 @@ class UserController extends AbstractController
             //$user->setNewsSubscription by default
             $user->setNewsSubscription(($this->news_subscription==="true") ? true : false);
 
-
             if (!is_null($data['idFacebook'])) {
                 $user->setFacebookId($data['idFacebook']);
             }
@@ -217,6 +216,67 @@ class UserController extends AbstractController
     }
 
     /**
+     * Generate a phone token
+     *
+     * @param UserManager $userManager
+     * @return void
+     */
+    public function generatePhoneToken(UserManager $userManager)
+    {
+        $tokenError = [
+            'state' => false,
+        ];
+        $user = clone $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('update', $user);
+        $user = $userManager->generatePhoneToken($user) ?  $tokenError['state'] = false : $tokenError['state'] = true ;
+            
+        return new Response(json_encode($tokenError));
+    }
+
+    /**
+     * Phone validation
+     *
+     * @param $token
+     * @param UserManager $userManager
+     * @param Request $request
+     * @return void
+     */
+    public function userPhoneValidation(UserManager $userManager, Request $request)
+    {
+        $user = clone $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('update', $user);
+        
+        $phoneError = [
+            'state' => false,
+            'message' => "",
+        ];
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            // We need to check if the token is right
+            if ($user->getPhoneToken() == $data['token']) {
+                if ($user->getPhoneValidatedDate()!==null) {
+                    $phoneError["state"] = "true";
+                    $phoneError["message"] = "snackBar.phoneAlreadyVerified";
+                } else {
+                    $user->setPhoneValidatedDate(new \Datetime()); // TO DO : Correct timezone
+                    $user = $userManager->updateUser($user);
+                    if (!$user) {
+                        $phoneError["state"] = "true";
+                        $phoneError["message"] = "snackBar.phoneUpdate";
+                    }
+                }
+            } else {
+                $phoneError["state"] = "true";
+                $phoneError["message"] = "snackBar.unknown";
+            }
+        }
+        return new Response(json_encode($phoneError));
+    }
+
+ 
+  
+
+    /**
      * User profile update.
      */
     public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault)
@@ -272,15 +332,22 @@ class UserController extends AbstractController
                     return $reponseofmanager;
                 }
             }
-
+            // check if the phone number is new and if so change token and validationdate
+            if ($user->getTelephone() != $data->get('telephone')) {
+                $user->setTelephone($data->get('telephone'));
+                $user->setPhoneValidatedDate(null);
+                $user->setPhoneToken(null);
+            }
             $user->setEmail($data->get('email'));
             $user->setTelephone($data->get('telephone'));
+            $user->setPhoneDisplay($data->get('phoneDisplay'));
             $user->setGivenName($data->get('givenName'));
             $user->setFamilyName($data->get('familyName'));
             $user->setGender($data->get('gender'));
             $user->setBirthYear($data->get('birthYear'));
             // cause we use FormData to post data
             $user->setNewsSubscription($data->get('newsSubscription') === "true" ? true : false);
+            
             
             if ($user = $userManager->updateUser($user)) {
                 if ($file) {
@@ -304,7 +371,7 @@ class UserController extends AbstractController
                 'error' => $error,
                 'alerts' => $userManager->getAlerts($user)['alerts'],
                 'tabDefault' => $tabDefault,
-            'proposals' => $userManager->getProposals($user)
+                'proposals' => $userManager->getProposals($user)
         ]);
     }
 

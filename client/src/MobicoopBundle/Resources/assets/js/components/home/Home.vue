@@ -3,6 +3,29 @@
     <v-container
       text-center
     >
+      <v-row v-if="displayVerifiedMessage">
+        <v-col>
+          <v-snackbar
+            v-model="snackbar"
+            top
+            multi-line
+            color="info"
+            vertical
+          >
+            {{ $t('snackbar') }}
+            <v-btn
+              color="info"
+              @click="snackbar = false"
+            >
+              <v-icon
+                color="primary"
+              >
+                mdi-close
+              </v-icon>
+            </v-btn>
+          </v-snackbar>
+        </v-col>
+      </v-row>
       <!-- Title and subtitle -->
       <v-row
         align="center"
@@ -113,6 +136,22 @@ export default {
     params: {
       type: Object,
       default: null
+    }
+  },
+  data () {
+    return {
+      snackbar: true,
+      displayVerifiedMessage: false,
+    }
+  },
+  mounted() {
+    this.checkVerifiedPhone();
+  },
+  methods:{
+    checkVerifiedPhone() {
+      if (this.user !==null && this.user.telephone !== null) {
+        this.displayVerifiedMessage = this.user.phoneValidatedDate ? false : true;
+      }
     }
   }
 };

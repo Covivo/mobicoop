@@ -302,7 +302,6 @@ export default {
         },
         { text: 'Nom', value: 'familyName' },
         { text: 'Prenom', value: 'givenName' },
-        { text: 'Telephone', value: 'telephone' },
       ],
       pointsToMap:[],
       directionWay:[],

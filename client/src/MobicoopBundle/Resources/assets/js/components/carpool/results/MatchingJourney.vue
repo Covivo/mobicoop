@@ -138,12 +138,12 @@
                         {{ age }}
                       </v-col>
                       <v-col
+                        v-if="user && lResult.carpooler.phoneDisplay == 2"
                         cols="12"
                         class="text-center"
                       >
                         {{ lResult.carpooler.telephone }}
                       </v-col>
-                      
                       <v-col  
                         cols="12"
                         class="text-center"
@@ -481,7 +481,11 @@ export default {
     defaultRole:{
       type: String,
       default:null
-    }
+    },
+    user: {
+      type: Object,
+      default: null
+    },
   },
   data : function() {
     return {

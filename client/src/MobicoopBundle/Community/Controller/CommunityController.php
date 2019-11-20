@@ -371,6 +371,11 @@ class CommunityController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
+
+            // authorization control
+            $community = $communityManager->getCommunity($data['communityId']);
+            $this->denyAccessUnlessGranted('show', $community);
+
             return new Response(json_encode($communityManager->checkStatus($data['communityId'], $data['userId'], 1)));
         }
 

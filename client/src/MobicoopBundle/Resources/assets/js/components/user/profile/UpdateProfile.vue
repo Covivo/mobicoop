@@ -86,46 +86,135 @@
               />
             </v-col>
           </v-row>
-
-
-
-
           <v-row class="text-left title font-weight-bold">
             <v-col>{{ $t('titles.personnalInfos') }}</v-col>
           </v-row>
 
           <!--Email-->
           <v-text-field
-            v-model="user.email"
+            v-model="email"
             :label="$t('models.user.email.label')"
             type="email"
             class="email"
           />
 
           <!--Telephone-->
-          <v-text-field
-            v-model="user.telephone"
-            :label="$t('models.user.phone.label')"
-            class="telephone"
-          />
+          <v-row 
+            justify="center" 
+          >
+            <v-col>
+              <v-text-field
+                v-model="telephone"
+                :label="$t('models.user.phone.label')"
+                class="telephone"
+              />
+            </v-col>
+          <!-- phone number verified -->
+            <v-col cols="1" v-if="telephone && phoneVerified == true" >
+              <v-tooltip 
+                color="info" 
+                top
+              >
+                <template v-slot:activator="{ on }">
+                  <v-icon 
+                    color="success" 
+                    v-on="on"  
+                    class="mt-7 ml-n12"
+                  >
+                    mdi-check-circle-outline
+                  </v-icon>
+                </template>
+                  <span> {{$t('phone.tooltips.verified')}}</span>
+              </v-tooltip>
+            </v-col>
+          <!-- phone number verification -->
+            <v-col cols="1"  v-if="diplayVerification && telephone && phoneVerified == false">
+              <v-tooltip 
+                color="info" 
+                top
+              >
+                <template 
+                  v-slot:activator="{ on }"
+                >
+                  <v-icon 
+                    color="warning" 
+                    v-on="on" 
+                    class="mt-7 ml-n12" 
+                  >
+                    mdi-alert-circle-outline
+                  </v-icon>
+                </template>
+                  <span>{{$t('phone.tooltips.notVerified')}}</span>
+              </v-tooltip>
+            </v-col>
+            <v-col cols="3"  v-if="diplayVerification && telephone && phoneVerified == false">
+              <v-btn 
+                rounded color="secondary" 
+                @click="generateToken" class="mt-4" 
+                :loading="loadingToken"
+              >
+                {{phoneToken == null ? $t('phone.buttons.label.generateToken') : $t('phone.buttons.label.generateNewToken')}}
+              </v-btn>
+            </v-col>
+            <v-col 
+              cols="3" 
+              v-if="phoneToken != null && telephone && phoneVerified == false"
+            >
+              <v-text-field
+                v-model="token"
+                :rules="tokenRules"
+                class="mt-2"
+                :label="$t('phone.validation.label')"
+                  />
+            </v-col>
+            <v-col 
+              cols="2" 
+              v-if="phoneToken != null && telephone && phoneVerified == false"
+            >
+              <v-btn 
+                rounded 
+                color="secondary" 
+                @click="validateToken" 
+                class="mt-4"
+                :loading="loadingValidatePhone"
+              >
+                {{$t('phone.buttons.label.validate')}}
+              </v-btn>
+            </v-col>
+          </v-row>
+
+          <!-- Phone display preferences -->
+          <v-radio-group
+            :label="$t('phoneDisplay.label.general')"
+            v-model="phoneDisplay['value']"
+          >
+            <v-radio
+              color="secondary"
+              v-for="(phoneDisplay, index) in phoneDisplays"
+              :key="index"
+              :label="phoneDisplay.label"
+              :value="phoneDisplay.value"
+            >
+            </v-radio>
+          </v-radio-group>
 
           <!--GivenName-->
           <v-text-field
-            v-model="user.givenName"
+            v-model="givenName"
             :label="$t('models.user.givenName.label')"
             class="givenName"
           />
 
           <!--FamilyName-->
           <v-text-field
-            v-model="user.familyName"
+            v-model="familyName"
             :label="$t('models.user.familyName.label')"
             class="familyName"
           />
 
           <!--Gender-->
           <v-select
-            v-model="user.gender"
+            v-model="gender"
             :label="$t('models.user.gender.label')"
             :items="genders"
             item-text="gender"
@@ -135,7 +224,7 @@
           <!--birthyear-->
           <v-select
             id="birthYear"
-            v-model="user.birthYear"
+            v-model="birthYear"
             :items="years"
             :label="$t('models.user.birthYear.label')"
             class="birthYear"
@@ -274,19 +363,42 @@ export default {
       gender: {
         value: this.user.gender
       },
+      email: this.user.email,
+      telephone: this.user.telephone,
+      givenName: this.user.givenName,
+      familyName: this.user.familyName,
+      birthYear: this.user.birthYear,
       homeAddress: null,
+      phoneToken: this.user.phoneToken,
+      phoneValidatedDate: this.user.phoneValidatedDate,
+      token: null,
       genders:[
         { value: 1, gender: this.$t('models.user.gender.values.female')},
         { value: 2, gender: this.$t('models.user.gender.values.male')},
         { value: 3, gender: this.$t('models.user.gender.values.other')},
       ],
+      phoneDisplay: {
+        value: this.user.phoneDisplay
+      },
+      phoneDisplays:[
+        { value: 1, label: this.$t('phoneDisplay.label.restricted')},
+        { value: 2, label: this.$t('phoneDisplay.label.all')}
+      ],
+
       avatar: null,
       avatarRules: [
         v => !v || v.size < this.avatarSize || this.$t("avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
       ],
+      tokenRules: [
+         v => (/^\d{4}$/).test(v) || this.$t("phone.token.inputError")
+      ],
       newsSubscription: this.user && this.user.newsSubscription !== null ? this.user.newsSubscription : null,
       urlAvatar:this.user.avatars[this.user.avatars.length-1],
-      displayFileUpload:(this.user.images[0]) ? false : true
+      displayFileUpload:(this.user.images[0]) ? false : true,
+      phoneVerified: null,
+      diplayVerification: this.user.telephone ? true : false,
+      loadingToken: false,
+      loadingValidatePhone: false
     };
   },
   computed : {
@@ -297,6 +409,9 @@ export default {
       return Array.from({length: ageMax - ageMin}, (value, index) => (currentYear - ageMin) - index)
     },
   },
+  mounted() {
+    this.checkVerifiedPhone();
+  },
   methods: {
     homeAddressSelected(address){
       this.homeAddress = address;
@@ -306,19 +421,19 @@ export default {
         this.checkForm();
       }
     },
-
     checkForm () {
       this.loading = true;
       let updateUser = new FormData();
-      updateUser.append("email", this.user.email);
-      updateUser.append("familyName", this.user.familyName);
-      updateUser.append("gender", this.user.gender);
-      updateUser.append("givenName", this.user.givenName);
+      updateUser.append("email", this.email);
+      updateUser.append("familyName", this.familyName);
+      updateUser.append("gender", this.gender.value);
+      updateUser.append("givenName", this.givenName);
       updateUser.append("homeAddress", JSON.stringify(this.user.homeAddress));
-      updateUser.append("telephone", this.user.telephone);
-      updateUser.append("birthYear", this.user.birthYear);
+      updateUser.append("telephone", this.telephone);
+      updateUser.append("birthYear", this.birthYear);
       updateUser.append("avatar", this.avatar);
       updateUser.append("newsSubscription", this.newsSubscription);
+      updateUser.append("phoneDisplay", this.phoneDisplay.value);
 
       axios
         .post(this.$t('route.update'), updateUser,
@@ -331,11 +446,16 @@ export default {
           this.errorUpdate = res.data.state;
           this.snackbar = true;
           this.loading = false;
+          if (this.user.telephone != this.telephone) {
+            this.phoneValidatedDate = null;
+            this.phoneToken = null;
+            this.diplayVerification = true;
+            this.checkVerifiedPhone();
+          }
           this.urlAvatar = res.data.versions.square_800;
-          this.displayFileUpload = false;
+          this.displayFileUpload = false; 
         });
     },
-
     avatarDelete () {
       this.loadingDelete = true;
       axios
@@ -346,6 +466,50 @@ export default {
           this.displayFileUpload = true;
           this.loadingDelete = false;
         });
+    },
+    checkVerifiedPhone() {
+      if (this.telephone !== null) {
+        this.phoneVerified = this.phoneValidatedDate ? true : false;
+      }
+    },
+    generateToken() {
+    this.loadingToken = true;   
+    axios 
+      .get(this.$t('phone.token.route'))
+      .then(res => {
+          if (res.data.state) {
+            this.errorUpdate = true;
+            this.textSnackError = this.$t('snackBar.tokenError');
+            this.snackbar = true;
+          }
+          this.textSnackOk = this.$t('snackBar.tokenOk');
+          this.snackbar = true;
+          this.phoneToken = true;
+          this.token = null;
+          this.loadingToken = false;
+        })
+    },
+    validateToken() {
+      this.loadingValidatePhone = true; 
+      axios
+        .post(this.$t('phone.validation.route'),
+        {
+          token: this.token
+        },{
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then(res => {
+          if (res.data.state) {
+            this.errorUpdate = true;
+            this.textSnackError = this.$t(res.data.message);
+            this.snackbar = true;
+          }
+          this.phoneVerified = !res.data.state ? true : false;
+          this.loadingValidatePhone = false; 
+        })
+        // Todo create "emit" event to refresh the alerts
     }
   }
 }
