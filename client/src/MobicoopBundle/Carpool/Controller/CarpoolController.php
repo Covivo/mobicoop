@@ -121,6 +121,9 @@ class CarpoolController extends AbstractController
 
     /**
      * Delete a carpooling ad.
+     * @param ProposalManager $proposalManager
+     * @param Request $request
+     * @return JsonResponse
      */
     public function carpoolAdDelete(ProposalManager $proposalManager, Request $request)
     {
@@ -137,8 +140,7 @@ class CarpoolController extends AbstractController
 
             $this->denyAccessUnlessGranted('delete_ad', $proposal);
 
-            //todo : gérer la messagerie interne avec le message de suppression laissé par l'auteur
-            if ($response = $proposalManager->deleteProposal($data['proposalId'])) {
+            if ($response = $proposalManager->deleteProposal($data['proposalId'], $data)) {
                 return new JsonResponse(
                     ["message" => "delete.success"],
                     \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED

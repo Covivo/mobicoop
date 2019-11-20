@@ -27,6 +27,7 @@ use App\Carpool\Service\ProposalManager;
 use App\Carpool\Entity\Proposal;
 use App\DataProvider\Entity\Response;
 use App\TranslatorTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Controller class for proposal delete.
@@ -36,10 +37,12 @@ class ProposalDelete
 {
     use TranslatorTrait;
     private $proposalManager;
+    private $request;
 
-    public function __construct(ProposalManager $proposalManager)
+    public function __construct(ProposalManager $proposalManager, RequestStack $requestStack)
     {
         $this->proposalManager = $proposalManager;
+        $this->request = $requestStack->getCurrentRequest();
     }
 
     /**
@@ -47,14 +50,14 @@ class ProposalDelete
      *
      * @param Proposal $data
      * @return Response
+     * @throws \Exception
      */
     public function __invoke(Proposal $data)
     {
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad proposal id is provided"));
         }
-
-        $data = $this->proposalManager->deleteProposal($data);
+        $data = $this->proposalManager->deleteProposal($data, json_decode($this->request->getContent(), true));
         return $data;
     }
 }
