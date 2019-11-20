@@ -1558,8 +1558,11 @@ class UserController extends AbstractController
                 // Direct
                 $recipient = $userManager->getUser($data['idRecipient']);
                 $response = [
-                    'avatar'=>$recipient->getAvatars()[0],
-                    'recipientName'=>$recipient->getGivenName()." ".$recipient->getShortFamilyName(),
+                    'carpooler' => [
+                        'avatars'=>$recipient->getAvatars(),
+                        'givenName'=>$recipient->getGivenName(),
+                        'shortFamilyName' => $recipient->getShortFamilyName()
+                    ]
                 ];
                 return new JsonResponse($response);
             }

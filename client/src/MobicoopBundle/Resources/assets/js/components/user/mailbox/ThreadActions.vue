@@ -4,14 +4,14 @@
       class="pa-2 text-center"
     >
       <!-- Always visible (carpool or not) -->
-      <v-avatar v-if="infosComplete.carpooler && (infosComplete.carpooler.avatars || infos.avatar) && !loading">
-        <img :src="infosComplete.carpooler ? infosComplete.carpooler.avatars[0] : infos.avatar">
+      <v-avatar v-if="infosComplete.carpooler && infosComplete.carpooler.avatars && !loading">
+        <img :src="infosComplete.carpooler.avatars[0]">
       </v-avatar>
       <v-card-text
         v-if="!loading"
         class="font-weight-bold headline"
       >
-        {{ infosComplete.carpooler ? infosComplete.carpooler.givenName+' '+infosComplete.carpooler.shortFamilyName : infos.contactName }}
+        {{ infosComplete.carpooler.givenName+' '+infosComplete.carpooler.shortFamilyName }}
       </v-card-text>
 
       <!-- Only visible for carpool -->
