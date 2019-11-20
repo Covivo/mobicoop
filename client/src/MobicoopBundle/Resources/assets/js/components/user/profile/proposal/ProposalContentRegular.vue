@@ -82,7 +82,7 @@ export default {
         this.proposal.outward.criteria.friTime, 
         this.proposal.outward.criteria.satTime, 
         this.proposal.outward.criteria.sunTime
-      ] : [],
+      ].filter(Boolean) : [],
       returnTimes: this.proposal.return ? [
         this.proposal.return.criteria.monTime,
         this.proposal.return.criteria.tueTime,
@@ -91,7 +91,7 @@ export default {
         this.proposal.return.criteria.friTime,
         this.proposal.return.criteria.satTime,
         this.proposal.return.criteria.sunTime
-      ] : []
+      ].filter(Boolean) : []
     }
   },
   computed: {

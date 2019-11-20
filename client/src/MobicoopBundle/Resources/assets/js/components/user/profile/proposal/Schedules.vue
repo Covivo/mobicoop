@@ -15,7 +15,7 @@
         </v-icon>
 
         <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('return') }}</span>
-
+        <!--multiple times slot for outward and return-->
         <p
           class="font-italic mt-1 primary--text text--darken-3"
         >
@@ -79,7 +79,6 @@
               >
                 {{ $t('multipleTimesSlots') }}
               </span>
-              <!--multiple times slot for outward and return-->
             </v-col>
           </v-row>
         </v-container>
@@ -128,14 +127,16 @@ export default {
   },
   computed: {
     hasSameOutwardTimes () {
-      // moment.locale(this.locale);
+      moment.locale(this.locale);
       let isSame = true;
+      const times = this.outwardTimes;
+      const days = times.length;
+      if (days < 2) {
+        return isSame;
+      }
       // start to 1 because we don't compare index 0 with index 0
-      for (let i = 1; i < this.outwardTimes.length; i++) {
-        if (!this.outwardTimes[i]) {
-          continue;
-        }
-        isSame = moment(this.outwardTimes[0]).isSame(this.outwardTimes[i]);
+      for (let i = 1; i < days; i++) {
+        isSame = moment(times[0]).isSame(times[i]);
         if (!isSame) {
           break;
         }
@@ -143,14 +144,16 @@ export default {
       return isSame;
     },
     hasSameReturnTimes () {
-      // moment.locale(this.locale);
+      moment.locale(this.locale);
       let isSame = true;
+      const times = this.returnTimes;
+      const days = times.length;
+      if (days < 2) {
+        return isSame;
+      }
       // start to 1 because we don't compare index 0 with index 0
-      for (let i = 1; i < this.returnTimes.length; i++) {
-        if (!this.returnTimes[i]) {
-          continue;
-        }
-        isSame = moment(this.returnTimes[0]).isSame(this.returnTimes[i]);
+      for (let i = 1; i < days; i++) {
+        isSame = moment(times[0]).isSame(times[i]);
         if (!isSame) {
           break;
         }
@@ -160,6 +163,7 @@ export default {
   },
   methods: {
     formatTime(time) {
+      moment.locale(this.locale);
       return moment(time).format(this.$t(this.dateTimeFormat));
     }
   }
