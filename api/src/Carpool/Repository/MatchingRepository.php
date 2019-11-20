@@ -39,7 +39,7 @@ class MatchingRepository
         $this->repository = $entityManager->getRepository(Matching::class);
     }
 
-    public function find(int $id): ?Proposal
+    public function find(int $id): ?Matching
     {
         return $this->repository->find($id);
     }

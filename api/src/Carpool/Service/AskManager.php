@@ -23,6 +23,7 @@
 
 namespace App\Carpool\Service;
 
+use App\Carpool\Entity\Ad;
 use App\Carpool\Entity\Ask;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -33,6 +34,7 @@ use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Matching;
+use App\Carpool\Repository\MatchingRepository;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
 
@@ -45,6 +47,7 @@ class AskManager
 {
     private $eventDispatcher;
     private $entityManager;
+    private $matchingRepository;
     private $logger;
 
     /**
@@ -52,10 +55,11 @@ class AskManager
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager, LoggerInterface $logger)
+    public function __construct(EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager, MatchingRepository $matchingRepository, LoggerInterface $logger)
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->entityManager = $entityManager;
+        $this->matchingRepository = $matchingRepository;
         $this->logger = $logger;
     }
     
@@ -155,5 +159,57 @@ class AskManager
         }
         
         return $this->createAsk($ask);
+    }
+
+    /**
+     * Create an ask from an ad.
+     *
+     * @param Ad $ad        The ad used to create the ask
+     * @param bool $formal  The ask is a formal ask
+     * @return Ad
+     */
+    public function createAskFromAd(Ad $ad, bool $formal)
+    {
+        $ask = new Ask();
+        $matching = $this->matchingRepository->find($ad->getMatchingId());
+        
+        if ($ad->getAdId() == $matching->getProposalOffer()->getId()) {
+            // the carpooler is the driver, the requester is the passenger
+            $ask->setType($matching->getProposalRequest()->getType());
+            $ask->setUser($matching->getProposalRequest()->getUser());
+        } else {
+            // the carpooler is the passenger, the requester is the driver
+            $ask->setType($matching->getProposalOffer()->getType());
+            $ask->setUser($matching->getProposalOffer()->getUser());
+        }
+        
+        if ($formal) {
+            // if it's a formal ask, the status is pending, depending on the role
+            $ask->setStatus($ad->getRole() == Ad::ROLE_DRIVER ? Ask::STATUS_PENDING_AS_DRIVER : Ask::STATUS_PENDING_AS_PASSENGER);
+        } else {
+            // if it's not a formal ask, the status is initiated
+            $ask->setStatus(Ask::STATUS_INITIATED);
+        }
+
+        $ask->setMatching($matching);
+
+        // we use the matching criteria
+        $criteria = clone $matching->getCriteria();
+        $ask->setCriteria($criteria);
+        
+        // we use the matching waypoints
+        $waypoints = $matching->getWaypoints();
+        foreach ($waypoints as $waypoint) {
+            $ask->addWaypoint($waypoint);
+        }
+
+        $this->entityManager->persist($ask);
+        $this->entityManager->flush($ask);
+        
+        // dispatch en event
+        $event = new AskPostedEvent($ask);
+        $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
+        
+        return $ad;
     }
 }

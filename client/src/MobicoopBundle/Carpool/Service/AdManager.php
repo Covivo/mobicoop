@@ -63,11 +63,10 @@ class AdManager
     /**
      * Create an ad. The ad can be a search.
      *
-     * @param array $data   The data posted by the user
-     * @param User|null $poster  The poster of the ad
+     * @param array $data   The data used to create the ad
      * @return Ad
      */
-    public function createAd(array $data, ?User $poster=null)
+    public function createAd(array $data)
     {
         $ad = new Ad();
 
@@ -107,10 +106,12 @@ class AdManager
             if (isset($data['toDate'])) {
                 $ad->setOutwardLimitdate(\DateTime::createFromFormat('Y-m-d', $data['toDate']));
             }
-            $ad->setSchedule($data['schedules']);
+            if (isset($data['schedules'])) {
+                $ad->setSchedule($data['schedules']);
+            }
         } else {
-            $ad->setOutwardDate(\DateTime::createFromFormat('Y-m-d', $data['outwardDate']));
-            $ad->setOutwardTime($data['outwardTime'] ? \DateTime::createFromFormat('H:i', $data['outwardTime']): null);
+            $ad->setOutwardDate($data['outwardDate']);
+            $ad->setOutwardTime(isset($data['outwardTime']) ? $data['outwardTime'] : null);
         }
 
         if (isset($data["strictDate"])) {
@@ -141,7 +142,12 @@ class AdManager
         }
 
         // seats
-        $ad->setSeats($data['seats']);
+        if (isset($data['seatsDriver'])) {
+            $ad->setSeatsDriver($data['seatsDriver']);
+        }
+        if (isset($data['seatsPassenger'])) {
+            $ad->setSeatsPassenger($data['seatsPassenger']);
+        }
 
         // luggage
         if (isset($data['luggage'])) {
@@ -183,12 +189,13 @@ class AdManager
             $ad->setComment($data['message']);
         }
 
+        // user
+        if (isset($data['userId'])) {
+            $ad->setUserId($data['userId']);
+        }
         // we check if the ad is posted for another user (delegation)
-        if (isset($data['user'])) {
-            $ad->setUserId($data['user']);
-            $ad->setPosterId($poster->getId());
-        } elseif ($poster) {
-            $ad->setUserId($poster->getId());
+        if (isset($data['posterId'])) {
+            $ad->setPosterId($data['posterId']);
         }
 
         // communities
@@ -215,17 +222,15 @@ class AdManager
      *
      * @param array $origin               The origin address
      * @param array $destination          The destination address
-     * @param \Datetime $date               The date and time in a Datetime object
-     * @param int $frequency                The frequency of the trip
-     * @param integer $regularLifeTime      The lifetime of a regular trip in years
+     * @param \Datetime $date               The date in a Datetime object
+     * @param \Datetime $time               The time in a Datetime object
+     * @param boolean $regular              The trip is regular
      * @param boolean|null $strictDate      Strict date
-     * @param boolean|null $useTime         Use the time part of the date
      * @param boolean $strictPunctual       Strictly punctual
      * @param boolean $strictRegular        Strictly regular
      * @param integer $role                 Role (driver and/or passenger)
-     * @param integer $userId               User id of the requester (to exclude its own results)
+     * @param integer|null $userId          User id of the requester (to exclude its own results)
      * @param integer $communityId          Community id of the requester (to get only results from that community)
-     * @param $format                       Return format
      * @return array|null The matchings found or null if not found.
      */
     public function getResultsForSearch(
@@ -233,7 +238,7 @@ class AdManager
         array $destination,
         \Datetime $date,
         ?\Datetime $time,
-        int $frequency,
+        bool $regular,
         ?bool $strictDate = null,
         ?bool $strictPunctual = null,
         ?bool $strictRegular = null,
@@ -246,16 +251,15 @@ class AdManager
             "origin" => $origin,
             "destination" => $destination,
             "waypoints" => [],
-            "date" => $date->format('Y-m-d\TH:i:s\Z'),
-            "regular" => $frequency == Criteria::FREQUENCY_REGULAR ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL,
-            "search" => true,
-            "seats" => 1
+            "outwardDate" => $date,
+            "regular" => $regular,
+            "search" => true
         ];
         if (!is_null($strictDate)) {
             $params["strictDate"] = $strictDate;
         }
         if (!is_null($time)) {
-            $params["outwardTime"] = $time->format('H:i');
+            $params["outwardTime"] = $time;
         }
         if (!is_null($strictPunctual)) {
             $params["strictPunctual"] = $strictPunctual;
@@ -273,17 +277,45 @@ class AdManager
         if (!is_null($communityId)) {
             $params["communityId"] = $communityId;
         }
-        // for regular search, we set every day as a possible carpooling day
-        $params["schedules"] = [[
-            'mon' => true,
-            'tue' => true,
-            'wed' => true,
-            'thu' => true,
-            'fri' => true,
-            'sat' => true,
-            'sun' => true
-        ]];
-
         return $this->createAd($params);
+    }
+
+    /**
+     * Create an ask from an ad result
+     *
+     * @param array $data           The data used to create the ask
+     * @param boolean|null $formal  If the ask is formal
+     * @return void
+     */
+    public function createAsk(array $params, ?bool $formal=false)
+    {
+        if (!isset($params['regular']) || !isset($params['adId']) || !isset($params['matchingId'])) {
+            return null;
+        }
+
+        $ad = new Ad();
+
+        // role
+        $ad->setRole($params['driver'] ? ($params['passenger'] ? Ad::ROLE_DRIVER_OR_PASSENGER : ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
+
+        // ad
+        $ad->setAdId($params['adId']);
+
+        // matching
+        $ad->setMatchingId($params['matchingId']);
+
+        if ($params['regular']) {
+            // regular ask
+        } else {
+            // punctual ask
+        }
+
+        // creation of the ad ask
+        $response = $this->dataProvider->post($ad, 'ask');
+        if ($response->getCode() != 201) {
+            return $response->getValue();
+        }
+
+        return $response->getValue();
     }
 }

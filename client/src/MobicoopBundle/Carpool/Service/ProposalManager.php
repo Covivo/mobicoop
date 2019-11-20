@@ -320,7 +320,8 @@ class ProposalManager
         }
         $criteria->setDriver($ad['driver']);
         $criteria->setPassenger($ad['passenger']);
-        $criteria->setSeats($ad['seats']);
+        $criteria->setSeatsDriver($ad['seatsDriver']);
+        $criteria->setSeatsPassenger($ad['seatsPassenger']);
         if (isset($ad['solidary'])) {
             $criteria->setSolidaryExclusive($ad['solidary']);
         }
@@ -657,7 +658,8 @@ class ProposalManager
             $criteriaReturn = new Criteria();
             $criteriaReturn->setDriver($ad['driver']);
             $criteriaReturn->setPassenger($ad['passenger']);
-            $criteriaReturn->setSeats($ad['seats']);
+            $criteriaReturn->setSeatsDriver($ad['seatsDriver']);
+            $criteriaReturn->setSeatsPassenger($ad['seatsPassenger']);
             if (isset($ad['priceKm'])) {
                 $criteriaReturn->setPriceKm($ad['priceKm']);
             }

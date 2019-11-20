@@ -24,7 +24,7 @@
             <v-radio-group
               v-model="role"
               row
-              :disabled="solidaryAd"
+              :disabled="solidaryExclusiveAd"
               @change="roleChanged"
             >
               <v-radio
@@ -242,7 +242,7 @@ export default {
       type: Boolean,
       default: false
     },
-    solidaryAd: {
+    solidaryExclusiveAd: {
       type: Boolean,
       default: false
     },
@@ -257,7 +257,7 @@ export default {
       outwardDateClicked: false,
       menu: false,
       regular: this.initRegular,
-      role: this.solidaryAd ? 1 : 3,
+      role: this.solidaryExclusiveAd ? 1 : 3,
       passenger: true,
       driver: true,
       labelOrigin: this.$t("origin.label"),

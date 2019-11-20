@@ -224,7 +224,8 @@ class AskManager
         }
         $criteria->setDriver($params['driver']);
         $criteria->setPassenger($params['passenger']);
-        $criteria->setSeats(isset($params['seats']) ? $params['seats'] : 1);
+        $criteria->setSeatsDriver(isset($params['seatsDriver']) ? $params['seatsDriver'] : 1);
+        $criteria->setSeatsPassenger(isset($params['seatsPassenger']) ? $params['seatsPassenger'] : 1);
 
         if ($params['regular']) {
             // regular

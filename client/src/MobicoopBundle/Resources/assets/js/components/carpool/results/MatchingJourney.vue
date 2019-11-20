@@ -550,25 +550,11 @@ export default {
       } else {
         resultChoice = this.lResult.resultPassenger;
       }      
-      params.proposalId = resultChoice.outward.proposalId;
-      params.origin = resultChoice.outward.origin;
-      params.destination = resultChoice.outward.destination;
+      // proposal and matching results
+      params.adId = resultChoice.outward.proposalId;
+      params.matchingId = resultChoice.outward.matchingId;
       params.date = resultChoice.outward.date;
-      params.time = resultChoice.outward.time;
-      params.priceKm = resultChoice.outward.priceKm;
-      params.outwardPrice = resultChoice.outward.originalPrice;
-      params.outwardRoundedPrice = resultChoice.outward.originalRoundedPrice;
-      params.outwardComputedPrice = resultChoice.outward.computedPrice;
-      params.outwardComputedRoundedPrice = resultChoice.outward.computedRoundedPrice;
-      if (resultChoice.return) {
-        params.returnPrice = resultChoice.return.originalPrice;
-        params.returnRoundedPrice = resultChoice.return.originalRoundedPrice;
-        params.returnComputedPrice = resultChoice.return.computedPrice;
-        params.returnComputedRoundedPrice = resultChoice.return.computedRoundedPrice;
-      }
-      if (resultChoice.outward.matchingId) {
-        params.matchingId = resultChoice.outward.matchingId;
-      }
+      params.time = resultChoice.outward.time;      
       this.$emit('contact', params);
     },
     carpool(role) {
@@ -577,33 +563,22 @@ export default {
       let params = {
         "driver": role==1,
         "passenger": role==2,
-        "regular": this.lResult.frequency == 2,
-        "outwardSchedule": this.getDays(this.outwardTrip),
-        "returnSchedule": this.getDays(this.returnTrip),
-        "fromDate": moment(this.fromDate).format(this.$t('i18n.date.format.computeDate')),
-        "toDate": moment(this.maxDate).format(this.$t('i18n.date.format.computeDate'))
+        "regular": this.lResult.frequency == 2
       };
       let resultChoice = this.lResult.resultDriver;
       if (role == 2) resultChoice = this.lResult.resultPassenger;
-      params.proposalId = resultChoice.outward.proposalId;
-      params.origin = resultChoice.outward.origin;
-      params.destination = resultChoice.outward.destination;
-      params.date = resultChoice.outward.date;
-      params.time = resultChoice.outward.time;
-      params.priceKm = resultChoice.outward.priceKm;
-      params.outwardPrice = resultChoice.outward.originalPrice;
-      params.outwardRoundedPrice = resultChoice.outward.originalRoundedPrice;
-      params.outwardComputedPrice = resultChoice.outward.computedPrice;
-      params.outwardComputedRoundedPrice = resultChoice.outward.computedRoundedPrice;
-      if (resultChoice.return) {
-        params.returnPrice = resultChoice.return.originalPrice;
-        params.returnRoundedPrice = resultChoice.return.originalRoundedPrice;
-        params.returnComputedPrice = resultChoice.return.computedPrice;
-        params.returnComputedRoundedPrice = resultChoice.return.computedRoundedPrice;
-      }
-      if (resultChoice.outward.matchingId) {
-        params.matchingId = resultChoice.outward.matchingId;
-      }
+      if (this.lResult.frequency == 2) {
+        params.outwardSchedule = this.getDays(this.outwardTrip);
+        params.returnSchedule = this.getDays(this.returnTrip);
+        params.fromDate = this.fromDate ? moment(this.fromDate).format(this.$t('i18n.date.format.computeDate')) : null;
+        params.toDate = this.maxDate ? moment(this.maxDate).format(this.$t('i18n.date.format.computeDate')) : null;
+      } else {
+        params.date = resultChoice.outward.date;
+        params.time = resultChoice.outward.time;
+      }        
+      // proposal and matching results
+      params.adId = resultChoice.outward.proposalId;
+      params.matchingId = resultChoice.outward.matchingId;
       this.$emit('carpool', params);
     },
     change() {

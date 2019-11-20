@@ -189,11 +189,18 @@ class Ad implements ResourceInterface
     private $returnPassengerPrice;
 
     /**
-     * @var int|null The number of seats available / required.
+     * @var int|null The number of seats available.
      *
      * @Groups({"post","put"})
      */
-    private $seats;
+    private $seatsDriver;
+
+    /**
+     * @var int|null The number of seats required.
+     *
+     * @Groups({"post","put"})
+     */
+    private $seatsPassenger;
 
     /**
      * @var boolean|null Big luggage accepted / asked.
@@ -283,6 +290,20 @@ class Ad implements ResourceInterface
      * @var array|null The carpool results.
      */
     private $results;
+
+    /**
+     * @var int|null The ad id for which the current ad is an ask.
+     *
+     * @Groups({"post","put"})
+     */
+    private $adId;
+
+    /**
+     * @var int|null The matching id related to the above ad id.
+     *
+     * @Groups({"post","put"})
+     */
+    private $matchingId;
     
     public function __construct()
     {
@@ -572,14 +593,26 @@ class Ad implements ResourceInterface
         $this->returnPassengerPrice = $returnPassengerPrice;
     }
 
-    public function getSeats(): int
+    public function getSeatsDriver(): ?int
     {
-        return $this->seats;
+        return $this->seatsDriver;
     }
 
-    public function setSeats(int $seats): self
+    public function setSeatsDriver(int $seatsDriver): self
     {
-        $this->seats = $seats;
+        $this->seatsDriver = $seatsDriver;
+
+        return $this;
+    }
+
+    public function getSeatsPassenger(): ?int
+    {
+        return $this->seatsPassenger;
+    }
+
+    public function setSeatsPassenger(int $seatsPassenger): self
+    {
+        $this->seatsPassenger = $seatsPassenger;
 
         return $this;
     }
@@ -712,6 +745,30 @@ class Ad implements ResourceInterface
     public function setResults(array $results)
     {
         $this->results = $results;
+
+        return $this;
+    }
+
+    public function getAdId(): ?int
+    {
+        return $this->adId;
+    }
+
+    public function setAdId(?int $adId): self
+    {
+        $this->adId = $adId;
+
+        return $this;
+    }
+
+    public function getMatchingId(): ?int
+    {
+        return $this->matchingId;
+    }
+
+    public function setMatchingId(?int $matchingId): self
+    {
+        $this->matchingId = $matchingId;
 
         return $this;
     }

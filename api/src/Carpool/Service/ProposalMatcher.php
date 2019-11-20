@@ -421,7 +421,8 @@ class ProposalMatcher
             }
 
             // seats (set to 1 for now)
-            $matchingCriteria->setSeats(1);
+            $matchingCriteria->setSeatsDriver(1);
+            $matchingCriteria->setSeatsPassenger(1);
 
             // pickup times
             if (isset($matching->getFilters()['pickup']['minPickupTime']) && isset($matching->getFilters()['pickup']['maxPickupTime'])) {
@@ -586,7 +587,8 @@ class ProposalMatcher
         $criteriaLinked->setDriver($matching->getCriteria()->isDriver() ? true : false);
         $criteriaLinked->setPassenger($matching->getCriteria()->isPassenger() ? true : false);
         $criteriaLinked->setPriceKm($matching->getCriteria()->getPriceKm());
-        $criteriaLinked->setSeats($matching->getCriteria()->getSeats());
+        $criteriaLinked->setSeatsDriver($matching->getCriteria()->getSeatsDriver());
+        $criteriaLinked->setSeatsPassenger($matching->getCriteria()->getSeatsPassenger());
         $matchingRelated->setCriteria($criteriaLinked);
 
         // We use the outward waypoints in reverse order

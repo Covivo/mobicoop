@@ -221,12 +221,12 @@ carpool_first_ad_post:
         en: /carpool/ad/post/first
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolFirstAdPost       
 
-# post a solidary ad
-carpool_solidary_ad_post:
+# post a solidary exclusive ad
+carpool_solidary_exclusive_ad_post:
     path:
         fr: /covoiturage/annonce/poster/solidaire
         en: /carpool/ad/post/solidary
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryAdPost    
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryExclusiveAdPost    
 
 # post an ad from a search
 carpool_ad_post_search:
@@ -252,7 +252,6 @@ carpool_ad_detail:
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDetail
     requirements:
         id: '\d+'
-
 
 # search results (POST)
 carpool_search_result:

@@ -630,7 +630,7 @@ class ResultManager
                 }
 
                 // seats
-                $resultDriver->setSeats($proposal->getCriteria()->getSeats() ? $proposal->getCriteria()->getSeats() : 1);
+                $resultDriver->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger() ? $proposal->getCriteria()->getSeatsPassenger() : 1);
                 $result->setResultDriver($resultDriver);
             }
 
@@ -1183,7 +1183,7 @@ class ResultManager
                 }
 
                 // seats
-                $resultPassenger->setSeats($matching['offer']->getProposalOffer()->getCriteria()->getSeats() ? $matching['offer']->getProposalOffer()->getCriteria()->getSeats() : 1);
+                $resultPassenger->setSeatsDriver($matching['offer']->getProposalOffer()->getCriteria()->getSeatsDriver() ? $matching['offer']->getProposalOffer()->getCriteria()->getSeatsDriver() : 1);
                 $result->setResultPassenger($resultPassenger);
             }
 
@@ -1263,7 +1263,7 @@ class ResultManager
                 }
                 $result->setPrice($result->getResultDriver()->getOutward()->getComputedPrice());
                 $result->setRoundedPrice($result->getResultDriver()->getOutward()->getComputedRoundedPrice());
-                $result->setSeats($result->getResultDriver()->getSeats());
+                $result->setSeatsPassenger($result->getResultDriver()->getSeatsPassenger());
             } else {
                 // the carpooler is driver or passenger
                 if ($result->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
@@ -1275,7 +1275,7 @@ class ResultManager
                 }
                 $result->setPrice($result->getResultPassenger()->getOutward()->getComputedPrice());
                 $result->setRoundedPrice($result->getResultPassenger()->getOutward()->getComputedRoundedPrice());
-                $result->setSeats($result->getResultPassenger()->getSeats());
+                $result->setSeatsDriver($result->getResultPassenger()->getSeatsDriver());
             }
             // regular days and times
             if ($result->getFrequencyResult() == Criteria::FREQUENCY_REGULAR) {
@@ -1397,7 +1397,7 @@ class ResultManager
     {
         // the outward results are the base results
         $results = $this->createProposalResults($proposal);
-        $returnResults = null;
+        $returnResults = [];
         if ($proposal->getProposalLinked()) {
             $returnResults = $this->createProposalResults($proposal->getProposalLinked(), true);
         }
@@ -1519,7 +1519,9 @@ class ResultManager
                 }
                 $result->setPrice($result->getResultDriver()->getOutward()->getComputedPrice());
                 $result->setRoundedPrice($result->getResultDriver()->getOutward()->getComputedRoundedPrice());
-                $result->setSeats($result->getResultDriver()->getSeats());
+                $result->setSeatsDriver($result->getResultDriver()->getSeatsDriver());
+                $result->setSeatsPassenger($result->getResultDriver()->getSeatsPassenger());
+                $result->setSeats($result->getResultDriver()->getSeatsPassenger());
             } else {
                 // the carpooler is driver or passenger
                 if ($result->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
@@ -1531,7 +1533,9 @@ class ResultManager
                 }
                 $result->setPrice($result->getResultPassenger()->getOutward()->getComputedPrice());
                 $result->setRoundedPrice($result->getResultPassenger()->getOutward()->getComputedRoundedPrice());
-                $result->setSeats($result->getResultPassenger()->getSeats());
+                $result->setSeatsDriver($result->getResultPassenger()->getSeatsDriver());
+                $result->setSeatsPassenger($result->getResultPassenger()->getSeatsPassenger());
+                $result->setSeats($result->getResultPassenger()->getSeatsDriver());
             }
             // regular days and times
             if ($result->getFrequencyResult() == Criteria::FREQUENCY_REGULAR) {
@@ -2008,7 +2012,7 @@ class ResultManager
             }
             
             // seats
-            $resultDriver->setSeats($proposal->getCriteria()->getSeats() ? $proposal->getCriteria()->getSeats() : 1);
+            $resultDriver->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger() ? $proposal->getCriteria()->getSeatsPassenger() : 1);
             $result->setResultDriver($resultDriver);
         }
 
@@ -2342,7 +2346,7 @@ class ResultManager
             }
 
             // seats
-            $resultPassenger->setSeats($matching['offer']->getProposalOffer()->getCriteria()->getSeats() ? $matching['offer']->getProposalOffer()->getCriteria()->getSeats() : 1);
+            $resultPassenger->setSeatsDriver($matching['offer']->getProposalOffer()->getCriteria()->getSeatsDriver() ? $matching['offer']->getProposalOffer()->getCriteria()->getSeatsDriver() : 1);
             $result->setResultPassenger($resultPassenger);
         }
 

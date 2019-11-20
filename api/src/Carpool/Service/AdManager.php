@@ -120,8 +120,14 @@ class AdManager
             // the ad has explicitly been set to one way
             $outwardProposal->setType(Proposal::TYPE_ONE_WAY);
         } else {
-            // the ad type has not been set, we assume it's a round trip
-            $outwardProposal->setType(Proposal::TYPE_OUTWARD);
+            // the ad type has not been set, we assume it's a round trip for a regular trip and a one way for a punctual trip
+            if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                $ad->setOneWay(false);
+                $outwardProposal->setType(Proposal::TYPE_OUTWARD);
+            } else {
+                $ad->setOneWay(true);
+                $outwardProposal->setType(Proposal::TYPE_ONE_WAY);
+            }
         }
 
         // comment
@@ -153,7 +159,8 @@ class AdManager
         // driver / passenger / seats
         $outwardCriteria->setDriver($ad->getRole() == Ad::ROLE_DRIVER || $ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER);
         $outwardCriteria->setPassenger($ad->getRole() == Ad::ROLE_PASSENGER || $ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER);
-        $outwardCriteria->setSeats($ad->getSeats());
+        $outwardCriteria->setSeatsDriver($ad->getSeatsDriver() ? $ad->getSeatsDriver() : $this->params['defaultSeatsDriver']);
+        $outwardCriteria->setSeatsPassenger($ad->getSeatsPassenger() ? $ad->getSeatsPassenger() : $this->params['defaultSeatsPassenger']);
 
         // solidary
         $outwardCriteria->setSolidary($ad->isSolidary());
@@ -228,8 +235,25 @@ class AdManager
                     }
                 }
             }
-            if (!$hasSchedule) {
+            if (!$hasSchedule && !$ad->isSearch()) {
+                // for a post, we need aschedule !
                 throw new AdException('At least one day should be selected for a regular trip');
+            } elseif (!$hasSchedule) {
+                // for a search we set the schedule to every day
+                $outwardCriteria->setMonCheck(true);
+                $outwardCriteria->setMonMarginDuration($this->params['defaultMarginTime']);
+                $outwardCriteria->setTueCheck(true);
+                $outwardCriteria->setTueMarginDuration($this->params['defaultMarginTime']);
+                $outwardCriteria->setWedCheck(true);
+                $outwardCriteria->setWedMarginDuration($this->params['defaultMarginTime']);
+                $outwardCriteria->setThuCheck(true);
+                $outwardCriteria->setThuMarginDuration($this->params['defaultMarginTime']);
+                $outwardCriteria->setFriCheck(true);
+                $outwardCriteria->setFriMarginDuration($this->params['defaultMarginTime']);
+                $outwardCriteria->setSatCheck(true);
+                $outwardCriteria->setSatMarginDuration($this->params['defaultMarginTime']);
+                $outwardCriteria->setSunCheck(true);
+                $outwardCriteria->setSunMarginDuration($this->params['defaultMarginTime']);
             }
         } else {
             // punctual
@@ -312,6 +336,8 @@ class AdManager
         if (!$ad->isOneWay()) {
             // we clone the outward proposal
             $returnProposal = clone $outwardProposal;
+            $returnProposal->setType(Proposal::TYPE_RETURN);
+            
             // we link the outward and the return
             $outwardProposal->setProposalLinked($returnProposal);
 
@@ -321,7 +347,8 @@ class AdManager
             // driver / passenger / seats
             $returnCriteria->setDriver($outwardCriteria->isDriver());
             $returnCriteria->setPassenger($outwardCriteria->isPassenger());
-            $returnCriteria->setSeats($outwardCriteria->getSeats());
+            $returnCriteria->setSeatsDriver($outwardCriteria->getSeatsDriver());
+            $returnCriteria->setSeatsPassenger($outwardCriteria->getSeatsPassenger());
 
             // solidary
             $returnCriteria->setSolidary($outwardCriteria->isSolidary());
@@ -344,11 +371,10 @@ class AdManager
 
             // dates and times
             // if no return date is specified, we use the outward date to be sure the return date is not before the outward date
-            $returnCriteria->setFromDate($ad->getReturnDate() ? $ad->getReturnDate() : $ad->getOutwardDate());
+            $returnCriteria->setFromDate($ad->getReturnDate() ? $ad->getReturnDate() : $outwardCriteria->getFromDate());
             if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
                 $returnCriteria->setToDate($ad->getReturnLimitDate() ? \DateTime::createFromFormat('Y-m-d', $ad->getReturnLimitDate()) : null);
-                
                 $hasSchedule = false;
                 foreach ($ad->getSchedule() as $schedule) {
                     if ($schedule['returnTime'] != '') {
@@ -396,8 +422,25 @@ class AdManager
                         }
                     }
                 }
-                if (!$hasSchedule) {
+                if (!$hasSchedule && !$ad->isSearch()) {
+                    // for a post, we need a schedule !
                     throw new AdException('At least one day should be selected for a regular trip');
+                } elseif (!$hasSchedule) {
+                    // for a search we set the schedule to every day
+                    $returnCriteria->setMonCheck(true);
+                    $returnCriteria->setMonMarginDuration($this->params['defaultMarginTime']);
+                    $returnCriteria->setTueCheck(true);
+                    $returnCriteria->setTueMarginDuration($this->params['defaultMarginTime']);
+                    $returnCriteria->setWedCheck(true);
+                    $returnCriteria->setWedMarginDuration($this->params['defaultMarginTime']);
+                    $returnCriteria->setThuCheck(true);
+                    $returnCriteria->setThuMarginDuration($this->params['defaultMarginTime']);
+                    $returnCriteria->setFriCheck(true);
+                    $returnCriteria->setFriMarginDuration($this->params['defaultMarginTime']);
+                    $returnCriteria->setSatCheck(true);
+                    $returnCriteria->setSatMarginDuration($this->params['defaultMarginTime']);
+                    $returnCriteria->setSunCheck(true);
+                    $returnCriteria->setSunMarginDuration($this->params['defaultMarginTime']);
                 }
             } else {
                 // punctual
@@ -533,7 +576,8 @@ class AdManager
         $ad->setId($id);
         $ad->setFrequency($proposal->getCriteria()->getFrequency());
         $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
-        $ad->setSeats($proposal->getCriteria()->getSeats());
+        $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
+        $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
         $ad->setResults($this->resultManager->createAdResults($proposal));
         return $ad;
     }

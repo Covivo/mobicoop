@@ -90,13 +90,22 @@ class Criteria
     private $frequency;
 
     /**
-     * @var int The number of available seats.
+     * @var int The number of available seats for a driver.
      *
      * @Assert\NotBlank
      * @ORM\Column(type="integer")
      * @Groups({"read","results","write","thread"})
      */
-    private $seats;
+    private $seatsDriver;
+
+    /**
+     * @var int The number of requested seats for a passenger.
+     *
+     * @Assert\NotBlank
+     * @ORM\Column(type="integer")
+     * @Groups({"read","results","write","thread"})
+     */
+    private $seatsPassenger;
 
     /**
      * @var \DateTimeInterface The starting date (= proposal date if punctual).
@@ -734,14 +743,26 @@ class Criteria
         return $this;
     }
 
-    public function getSeats(): ?int
+    public function getSeatsDriver(): ?int
     {
-        return $this->seats;
+        return $this->seatsDriver;
     }
 
-    public function setSeats(int $seats): self
+    public function setSeatsDriver(int $seatsDriver): self
     {
-        $this->seats = $seats;
+        $this->seatsDriver = $seatsDriver;
+
+        return $this;
+    }
+
+    public function getSeatsPassenger(): ?int
+    {
+        return $this->seatsPassenger;
+    }
+
+    public function setSeatsPassenger(int $seatsPassenger): self
+    {
+        $this->seatsPassenger = $seatsPassenger;
 
         return $this;
     }
@@ -1633,7 +1654,8 @@ class Criteria
     {
         // for now we just clone frequency, seats, fromDate, fromTime and toDate
         $this->setFrequency($criteria->getFrequency());
-        $this->setSeats($criteria->getSeats());
+        $this->setSeatsDriver($criteria->getSeatsDriver());
+        $this->setSeatsPassenger($criteria->getSeatsPassenger());
         $this->setPriceKm($criteria->getPriceKm());
         $this->setFromDate($criteria->getFromDate());
         $this->setFromTime($criteria->getFromTime());

@@ -249,27 +249,27 @@ export default {
         })
     },
     launchCarpool(params) {
-      //console.log(params);
-      axios.post(this.$t("carpoolUrl"), params,
-        {
-          headers:{
-            'content-type': 'application/json'
-          }
-        })
-        .then((response) => {
-          if(response.data=="ok"){
-            window.location = this.$t("mailboxUrl");
-          }
-          else{
-            console.log(response);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-        .finally(() => {
-          this.carpoolDialog = false;
-        })
+      console.log(params);
+      // axios.post(this.$t("carpoolUrl"), params,
+      //   {
+      //     headers:{
+      //       'content-type': 'application/json'
+      //     }
+      //   })
+      //   .then((response) => {
+      //     if(response.data=="ok"){
+      //       window.location = this.$t("mailboxUrl");
+      //     }
+      //     else{
+      //       console.log(response);
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   })
+      //   .finally(() => {
+      //     this.carpoolDialog = false;
+      //   })
     }
   }
 };

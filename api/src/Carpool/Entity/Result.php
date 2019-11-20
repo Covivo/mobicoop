@@ -154,10 +154,22 @@ class Result
     private $toDate;
 
     /**
-     * @var int The number of places offered / requested to display.
+     * @var int The global number of places to display.
      * @Groups("results")
      */
     private $seats;
+
+    /**
+     * @var int The number of places offered to display.
+     * @Groups("results")
+     */
+    private $seatsDriver;
+
+    /**
+     * @var int The number of places asked to display.
+     * @Groups("results")
+     */
+    private $seatsPassenger;
 
     /**
      * @var string The computed price to display.
@@ -456,9 +468,33 @@ class Result
         return $this->seats;
     }
 
-    public function setSeats(int $seats): self
+    public function setSeats(?int $seats): self
     {
         $this->seats = $seats;
+
+        return $this;
+    }
+
+    public function getSeatsDriver(): ?int
+    {
+        return $this->seatsDriver;
+    }
+
+    public function setSeatsDriver(?int $seatsDriver): self
+    {
+        $this->seatsDriver = $seatsDriver;
+
+        return $this;
+    }
+
+    public function getSeatsPassenger(): ?int
+    {
+        return $this->seatsPassenger;
+    }
+
+    public function setSeatsPassenger(?int $seatsPassenger): self
+    {
+        $this->seatsPassenger = $seatsPassenger;
 
         return $this;
     }

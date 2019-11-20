@@ -60,11 +60,13 @@ class CarpoolController extends AbstractController
             $data = json_decode($request->getContent(), true);
             if ($poster && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
                 $this->denyAccessUnlessGranted('post_delegate', $proposal);
+                $data['userId'] = $data['userDelegated'];
+                $data['posterId'] = $poster->getId();
             } else {
                 $this->denyAccessUnlessGranted('post', $proposal);
+                $data['userId'] = $poster->getId();
             }
-            //return $this->json(['result'=>$proposalManager->createProposalFromAd($data, $poster)]);
-            return $this->json(['result'=>$adManager->createAd($data, $poster)]);
+            return $this->json(['result'=>$adManager->createAd($data)]);
         }
 
         $this->denyAccessUnlessGranted('create_ad', $proposal);
@@ -74,7 +76,7 @@ class CarpoolController extends AbstractController
     /**
      * Create the first carpooling ad.
      */
-    public function carpoolFirstAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    public function carpoolFirstAdPost()
     {
         $proposal = new Proposal();
         $this->denyAccessUnlessGranted('create_ad', $proposal);
@@ -82,16 +84,16 @@ class CarpoolController extends AbstractController
     }
         
     /**
-    * Create a solidary carpooling ad.
+    * Create a solidary exclusive carpooling ad.
     */
-    public function carpoolSolidaryAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    public function carpoolSolidaryExclusiveAdPost()
     {
         $proposal = new Proposal();
         $this->denyAccessUnlessGranted('create_ad', $proposal);
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
-                'solidaryAd'=>true,
+                'solidaryExclusiveAd'=>true,
             ]
         );
     }
@@ -171,13 +173,16 @@ class CarpoolController extends AbstractController
     public function carpoolSearchMatching(Request $request, AdManager $adManager)
     {
         $params = json_decode($request->getContent(), true);
-        if ($params['date'] && $params['date'] != '') {
+        if (isset($params['date']) && $params['date'] != '') {
             $date = \Datetime::createFromFormat("Y-m-d", $params['date']);
         } else {
             $date = new \DateTime();
         }
-        //$time = \Datetime::createFromFormat("H:i", $request->query->get('time'));
-        $frequency = isset($params['regular']) ? ($params['regular'] ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL) : Criteria::FREQUENCY_PUNCTUAL;
+        $time = null;
+        if (isset($params['time']) && $params['time'] != '') {
+            $time = \Datetime::createFromFormat("H:i", $params['time']);
+        }
+        $regular = isset($params['regular']) ? $params['regular'] : false;
         $strictDate = isset($params['strictDate']) ? $params['strictDate'] : null;
         $strictPunctual = isset($params['strictPunctual']) ? $params['strictPunctual'] : null;
         $strictRegular = isset($params['strictRegular']) ? $params['strictRegular'] : null;
@@ -190,8 +195,8 @@ class CarpoolController extends AbstractController
             $params['origin'],
             $params['destination'],
             $date,
-            null,
-            $frequency,
+            $time,
+            $regular,
             $strictDate,
             $strictPunctual,
             $strictRegular,
@@ -209,17 +214,11 @@ class CarpoolController extends AbstractController
      * Initiate contact from carpool results
      * (AJAX POST)
      */
-    public function carpoolContact(Request $request, ProposalManager $proposalManager, UserManager $userManager)
+    public function carpoolContact(Request $request, AdManager $adManager)
     {
         $params = json_decode($request->getContent(), true);
 
-        // if the matching set, it means the contact is made after an ad matching
-        if (isset($params['matchingId'])) {
-            // create the ask and return the result
-            return $this->json("ok");
-        }
-        
-        if (!is_null($proposalManager->createProposalFromSearch($userManager->getLoggedUser(), $params))) {
+        if (!is_null($adManager->createAsk($params))) {
             return $this->json("ok");
         } else {
             return $this->json("error");
@@ -230,17 +229,11 @@ class CarpoolController extends AbstractController
      * Formal ask from carpool results
      * (AJAX POST)
      */
-    public function carpoolAsk(Request $request, ProposalManager $proposalManager, UserManager $userManager)
+    public function carpoolAsk(Request $request, AdManager $adManager)
     {
         $params = json_decode($request->getContent(), true);
-
-        // if the matching is set, it means the ask is made after an ad matching
-        if (isset($params['matchingId'])) {
-            // create the ask and return the result
-            return $this->json("ok");
-        }
                 
-        if (!is_null($proposalManager->createProposalFromSearch($userManager->getLoggedUser(), $params, true))) {
+        if (!is_null($adManager->createAsk($params, true))) {
             return $this->json("ok");
         } else {
             return $this->json("error");

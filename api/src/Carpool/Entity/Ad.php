@@ -28,6 +28,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Carpool\Controller\AdPost;
 use App\Carpool\Controller\AdGet;
+use App\Carpool\Controller\AdAsk;
 
 /**
  * Carpooling : an ad.
@@ -43,6 +44,18 @@ use App\Carpool\Controller\AdGet;
  *              "method"="POST",
  *              "controller"=AdPost::class,
  *          },
+ *          "ask"={
+ *              "method"="POST",
+ *              "path"="/ads/ask",
+ *              "controller"=AdAsk::class,
+ *              "defaults"={"type"="ask"}
+ *          },
+ *          "contact"={
+ *              "method"="POST",
+ *              "path"="/ads/ask",
+ *              "controller"=AdAsk::class,
+ *              "defaults"={"type"="contact"}
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
@@ -91,14 +104,14 @@ class Ad
     private $oneWay;
 
     /**
-     * @var int The frequency for this ad.
+     * @var int|null The frequency for this ad.
      *
      * @Groups({"read","write"})
      */
     private $frequency;
 
     /**
-     * @var array The waypoints for the outward.
+     * @var array|null The waypoints for the outward.
      *
      * @Groups({"read","write"})
      */
@@ -154,7 +167,8 @@ class Ad
     private $returnTime;
 
     /**
-     * @var array|null The schedule for if the frequency is regular.
+     * @var array|null The schedule if the frequency is regular.
+     * The schedule contains the outward and return elements.
      *
      * @Groups({"read","write"})
      */
@@ -217,11 +231,18 @@ class Ad
     private $returnPassengerPrice;
 
     /**
-     * @var int|null The number of seats available / required.
+     * @var int|null The number of seats available.
      *
      * @Groups({"read","write"})
      */
-    private $seats;
+    private $seatsDriver;
+
+    /**
+     * @var int|null The number of seats required.
+     *
+     * @Groups({"read","write"})
+     */
+    private $seatsPassenger;
 
     /**
      * @var boolean|null Big luggage accepted / asked.
@@ -273,7 +294,7 @@ class Ad
     private $avoidToll;
 
     /**
-     * @var string A comment about the ad.
+     * @var string|null A comment about the ad.
      *
      * @Groups({"read","write"})
      */
@@ -313,6 +334,20 @@ class Ad
      * @Groups("read")
      */
     private $results;
+
+    /**
+     * @var int|null The ad id for which the current ad is an ask.
+     *
+     * @Groups({"read","write"})
+     */
+    private $adId;
+
+    /**
+     * @var int|null The matching id related to the above ad id.
+     *
+     * @Groups({"read","write"})
+     */
+    private $matchingId;
 
     public function __construct()
     {
@@ -373,24 +408,24 @@ class Ad
         return $this;
     }
     
-    public function getFrequency(): int
+    public function getFrequency(): ?int
     {
         return $this->frequency;
     }
 
-    public function setFrequency(int $frequency): self
+    public function setFrequency(?int $frequency): self
     {
         $this->frequency = $frequency;
 
         return $this;
     }
 
-    public function getOutwardWaypoints(): array
+    public function getOutwardWaypoints(): ?array
     {
         return $this->outwardWaypoints;
     }
     
-    public function setOutwardWaypoints(array $outwardWaypoints): self
+    public function setOutwardWaypoints(?array $outwardWaypoints): self
     {
         $this->outwardWaypoints = $outwardWaypoints;
         
@@ -603,14 +638,26 @@ class Ad
         $this->returnPassengerPrice = $returnPassengerPrice;
     }
 
-    public function getSeats(): int
+    public function getSeatsDriver(): ?int
     {
-        return $this->seats;
+        return $this->seatsDriver;
     }
 
-    public function setSeats(int $seats): self
+    public function setSeatsDriver(int $seatsDriver): self
     {
-        $this->seats = $seats;
+        $this->seatsDriver = $seatsDriver;
+
+        return $this;
+    }
+
+    public function getSeatsPassenger(): ?int
+    {
+        return $this->seatsPassenger;
+    }
+
+    public function setSeatsPassenger(int $seatsPassenger): self
+    {
+        $this->seatsPassenger = $seatsPassenger;
 
         return $this;
     }
@@ -743,6 +790,30 @@ class Ad
     public function setResults(array $results)
     {
         $this->results = $results;
+
+        return $this;
+    }
+
+    public function getAdId(): ?int
+    {
+        return $this->adId;
+    }
+
+    public function setAdId(?int $adId): self
+    {
+        $this->adId = $adId;
+
+        return $this;
+    }
+
+    public function getMatchingId(): ?int
+    {
+        return $this->matchingId;
+    }
+
+    public function setMatchingId(?int $matchingId): self
+    {
+        $this->matchingId = $matchingId;
 
         return $this;
     }

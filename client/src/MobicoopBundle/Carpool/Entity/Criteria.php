@@ -79,12 +79,22 @@ class Criteria
     private $frequency;
 
     /**
-     * @var int The number of available seats.
-     * @Assert\NotBlank
+     * @var int The number of available seats for a driver.
      *
+     * @Assert\NotBlank
+     * @ORM\Column(type="integer")
      * @Groups({"post","put"})
      */
-    private $seats;
+    private $seatsDriver;
+
+    /**
+     * @var int The number of requested seats for a passenger.
+     *
+     * @Assert\NotBlank
+     * @ORM\Column(type="integer")
+     * @Groups({"post","put"})
+     */
+    private $seatsPassenger;
 
     /**
      * @var \DateTimeInterface The starting date (= proposal date if punctual).
@@ -439,15 +449,27 @@ class Criteria
         return $this;
     }
     
-    public function getSeats(): ?int
+    public function getSeatsDriver(): ?int
     {
-        return $this->seats;
+        return $this->seatsDriver;
     }
-    
-    public function setSeats(int $seats): self
+
+    public function setSeatsDriver(int $seatsDriver): self
     {
-        $this->seats = $seats;
-        
+        $this->seatsDriver = $seatsDriver;
+
+        return $this;
+    }
+
+    public function getSeatsPassenger(): ?int
+    {
+        return $this->seatsPassenger;
+    }
+
+    public function setSeatsPassenger(int $seatsPassenger): self
+    {
+        $this->seatsPassenger = $seatsPassenger;
+
         return $this;
     }
     

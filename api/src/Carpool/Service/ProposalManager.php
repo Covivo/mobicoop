@@ -309,8 +309,9 @@ class ProposalManager
             if (is_null($proposal->getCriteria()->getToDate())) {
                 // end date is usually null, except when creating a proposal after a matching search
                 $endDate = clone $proposal->getCriteria()->getFromDate();
-                $endDate->add(new \DateInterval('P' . $this->params['defaultRegularLifeTime'] . 'Y'));
-                $proposal->getCriteria()->setToDate($endDate);
+                // the date can be immutable
+                $toDate = $endDate->add(new \DateInterval('P' . $this->params['defaultRegularLifeTime'] . 'Y'));
+                $proposal->getCriteria()->setToDate($toDate);
             }
         }
         return $this->createProposal($proposal);
