@@ -31,7 +31,12 @@
           <v-list>
             <v-list-item>
               <v-list-item-avatar v-if="displayIcon">
-                <v-icon v-text="data.item.icon" />
+                <v-avatar size="36">
+                  <v-img
+                    :src="data.item.icon"
+                    contain
+                  />
+                </v-avatar>
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title v-html="data.item.displayedLabel" />
@@ -132,7 +137,6 @@ export default {
         this.address = this.initAddress;
         this.entries = [];
         if (this.address) {
-          this.address.icon = "mdi-map-marker";
           this.address.displayedLabel = `${this.address.displayLabel[0]}`;
           this.address.displayedSecondLabel = `${this.address.displayLabel[1]}`;
           this.address.selectedDisplayedLabel = `${this.address.displayLabel[0]}`;
