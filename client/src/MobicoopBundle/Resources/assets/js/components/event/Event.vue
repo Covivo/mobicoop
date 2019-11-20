@@ -53,7 +53,7 @@
                 <v-btn
                   color="secondary"
                   rounded
-                  :href="$t('buttons.widget.route')"
+                  :href="$t('buttons.widget.route') + event.id"
                 >
                   {{ $t('buttons.widget.label') }}
                 </v-btn>

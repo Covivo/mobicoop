@@ -7,7 +7,7 @@
       },
       "widget": {
         "label": "Voir le Widget",
-        "route": "/evenement-widget/2"
+        "route": "/evenement-widget/"
       },
       "search": {
         "label": "Rechercher",

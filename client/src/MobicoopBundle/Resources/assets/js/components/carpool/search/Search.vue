@@ -90,6 +90,10 @@ export default {
     params: {
       type: Object,
       default: null
+    },
+    defaultOrigin: {
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -100,7 +104,7 @@ export default {
       dataRegular: this.regular,
       date: null,
       time: null,
-      origin: null,
+      origin: this.defaultOrigin,
       destination: null,
       locale: this.$i18n.locale
     };

@@ -22,33 +22,35 @@
         justify="center"
       >
         <v-col
-          cols="8"
-          md="8"
-          xl="8"
+          cols="7"
+          md="7"
+          xl="7"
           align="center"
         >
-          <!-- Community : avatar, title and description -->
-          <event-infos
-            :event="event"
-            :url-alt-avatar="urlAltAvatar"
-            :avatar-version="avatarVersion"
+          <iframe
+            src="/evenement-widget/2 "
+            width="100%"
+            height="1440px"
+            frameborder="0"
+            scrolling="no"
           />
-          <!-- event buttons and map -->
-          <v-row
-            align="center"
-            justify="center"
-          >
-            <!-- search journey -->
-            <p class="headline">
-              {{ $t('title.searchCarpool') }}
+        </v-col>
+        <v-col
+          cols="5"
+          md="5"
+          xl="5"
+          class="mt-12"
+        >
+          <v-row class="mt-12">
+            <h4>Intégrer le widget</h4>
+            <p class="mt-8">
+              Pour intégrer le widget, il faut copier le texte ci-dessous et le coller sur votre site web.<br>
+              Vous pouvez modifier les éléments en gras afin de personnaliser votre widget.
             </p>
-            <search
-              :geo-search-url="geodata.geocompleteuri"
-              :user="user"
-              :params="params"
-              :punctual-date-optional="punctualDateOptional"
-              :regular="regular"
-            />
+            <p>
+              &lt;iframe src="{{ `http://localhost:8081/evenement-get-widget/${event.id} ` }}" width="<strong>100%</strong>" height="<strong>440px</strong>" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;
+            </p>
+            <p><strong>Attention</strong> : Certains outils de publication comme Wordpress nécessitent l'ajout de plugins spécifiques pour pouvoir utiliser une iFrame.</p>
           </v-row>
         </v-col>
       </v-row>
@@ -70,7 +72,6 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    EventInfos, Search
   },
   i18n: {
     messages: TranslationsMerged,
@@ -161,8 +162,8 @@ export default {
   mounted() {
     // this.getCommunityUser();
     // this.checkIfUserLogged();
-    this.getEventProposals();
-    this.checkDomain();
+    // this.getEventProposals();
+    // this.checkDomain();
   },
   methods:{
     post: function (path, params, method='post') {
@@ -229,43 +230,43 @@ export default {
         }
       }
     },
-    publish() {
-      let lParams = {
-        origin: null,
-        destination: null,
-        regular: null,
-        date: null,
-        time: null,
-        ...this.params
-      };
-      this.post(`${this.$t("buttons.publish.route")}`, lParams);
-    },
-    getEventProposals () {
-      this.loadingMap = true;
-      axios
-        .get('/event-proposals/'+this.event.id,
-          {
-            headers:{
-              'content-type': 'application/json'
-            }
-          })
-        .then(res => {
-          this.errorUpdate = res.data.state;
-          this.pointsToMap.length = 0;
-          // add the event address to display on the map
-          if (this.event.address) {
-            this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name));
-          }
-
-          // add all the waypoints of the event to display on the map :
-          res.data.forEach((waypoint, index) => {
-            this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
-          });
-          this.loadingMap = false;
-          // setTimeout(this.$refs.mmap.redrawMap(),600);
-
-        });
-    },
+    // publish() {
+    //   let lParams = {
+    //     origin: null,
+    //     destination: null,
+    //     regular: null,
+    //     date: null,
+    //     time: null,
+    //     ...this.params
+    //   };
+    //   this.post(`${this.$t("buttons.publish.route")}`, lParams);
+    // },
+    // getEventProposals () {
+    //   this.loadingMap = true;
+    //   axios
+    //     .get('/event-proposals/'+this.event.id,
+    //       {
+    //         headers:{
+    //           'content-type': 'application/json'
+    //         }
+    //       })
+    //     .then(res => {
+    //       this.errorUpdate = res.data.state;
+    //       this.pointsToMap.length = 0;
+    //       // add the event address to display on the map
+    //       if (this.event.address) {
+    //         this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name));
+    //       }
+    //
+    //       // add all the waypoints of the event to display on the map :
+    //       res.data.forEach((waypoint, index) => {
+    //         this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+    //       });
+    //       // this.loadingMap = false;
+    //       // setTimeout(this.$refs.mmap.redrawMap(),600);
+    //
+    //     });
+    // },
 
     buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
       let point = {

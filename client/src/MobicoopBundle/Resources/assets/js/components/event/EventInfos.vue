@@ -3,7 +3,11 @@
     align="center"
     justify="center"
   >
-    <v-col cols="4">
+    <v-col
+      cols="4"
+      md="4"
+      sm="10"
+    >
       <v-avatar
         color="grey lighten-3"
         size="225"
@@ -23,10 +27,12 @@
       
     <v-col
       cols="8"
+      md="4"
+      sm="10"
     >
       <v-card
         flat
-        height="25vh"
+        max-height="25vh"
       >
         <v-card-text>
           <h3 class="headline">

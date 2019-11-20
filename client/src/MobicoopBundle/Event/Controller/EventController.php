@@ -145,10 +145,30 @@ class EventController extends AbstractController
 
         // retreive event;
         $event = $eventManager->getEvent($id);
+
         //$this->denyAccessUnlessGranted('show', $community);
         // retreive logged user
         $user = $userManager->getLoggedUser();
         return $this->render('@Mobicoop/event/event-widget.html.twig', [
+            'event' => $event,
+            'user' => $user,
+            'searchRoute' => "covoiturage/recherche",
+            'error' => (isset($error)) ? $error : false
+        ]);
+    }
+
+    /**
+     * Show a widget event
+     */
+    public function eventGetWidget($id, EventManager $eventManager, UserManager $userManager, Request $request)
+    {
+
+        // retreive event;
+        $event = $eventManager->getEvent($id);
+        //$this->denyAccessUnlessGranted('show', $community);
+        // retreive logged user
+        $user = $userManager->getLoggedUser();
+        return $this->render('@Mobicoop/event/event-get-widget.html.twig', [
             'event' => $event,
             'user' => $user,
             'searchRoute' => "covoiturage/recherche",

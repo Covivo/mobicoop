@@ -483,11 +483,20 @@ event_proposals:
     requirements:
         id: '\d+'
 
-# display one community
+# display one widget
 event_widget:
     path:
         fr: /evenement-widget/{id}
         en: /event-widget/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventWidget
+    requirements:
+        id: '\d+'
+
+# display one widget
+event_get_widget:
+    path:
+        fr: /evenement-get-widget/{id}
+        en: /event-get-widget/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventGetWidget
     requirements:
         id: '\d+'
