@@ -24,6 +24,7 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
@@ -35,6 +36,8 @@ use App\Carpool\Event\PassengerAskAdDeletedEvent;
 use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
 use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\ProposalRepository;
+use App\Communication\Entity\Message;
+use App\Communication\Service\InternalMessageManager;
 use App\Community\Service\CommunityManager;
 use App\DataProvider\Entity\GeoRouterProvider;
 use App\DataProvider\Entity\Response;
@@ -77,6 +80,7 @@ class ProposalManager
     private $resultManager;
     private $formatDataManager;
     private $params;
+    private $internalMessageManager;
 
     /**
      * Constructor.
@@ -88,7 +92,7 @@ class ProposalManager
      * @param GeoRouter $geoRouter
      * @param ZoneManager $zoneManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, CommunityManager $communityManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher, AskManager $askManager, ResultManager $resultManager, FormatDataManager $formatDataManager, array $params)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, CommunityManager $communityManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher, AskManager $askManager, ResultManager $resultManager, FormatDataManager $formatDataManager, InternalMessageManager $internalMessageManager, array $params)
     {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -106,6 +110,7 @@ class ProposalManager
         $this->resultManager->setParams($params);
         $this->formatDataManager = $formatDataManager;
         $this->params = $params;
+        $this->internalMessageManager = $internalMessageManager;
     }
 
     /**
@@ -593,19 +598,31 @@ class ProposalManager
 
     /**
      * @param Proposal $proposal
+     * @param array|null $body
      * @return Response
      * @throws \Exception
      */
-    public function deleteProposal(Proposal $proposal)
+    public function deleteProposal(Proposal $proposal, ?array $body)
     {
         $asks = $this->askManager->getAsksFromProposal($proposal);
 
         $this->entityManager->remove($proposal);
-        $this->entityManager->flush();
 
         if (count($asks) > 0) {
             /** @var Ask $ask */
             foreach ($asks as $ask) {
+                if ($body["deletionMessage"]) {
+                    // creates a new thread, todo: adapt after "carpoolMessagesFromAskHistories" branch merge to avoid that
+                    $askHistory = new AskHistory();
+                    $message = $this->internalMessageManager->createMessage($proposal->getUser(), [$ask->getUser()], $body["deletionMessage"], null, null);
+                    $askHistory->setMessage($message);
+                    $askHistory->setAsk($ask);
+                    $askHistory->setStatus($ask->getStatus());
+                    $askHistory->setType($ask->getType());
+
+                    $this->entityManager->persist($askHistory);
+                }
+
                 $now = new \DateTime();
 
                 // todo: change status after update
@@ -655,6 +672,8 @@ class ProposalManager
                 }
             }
         }
+
+        $this->entityManager->flush();
 
         return new Response(204, "Deleted with success");
     }
