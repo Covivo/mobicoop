@@ -221,14 +221,52 @@ export default {
       });
     },
     updateStatusAskHistory(data){
-      this.loadingBtnAction = true;
+      //this.loadingBtnAction = true;
       let params = {
-        idAsk:this.currentIdAsk,
-        status:data.status
+        idAsk:this.currentIdAsk
       }
+
+      if(data.status){
+        params.status = data.status;
+      }
+      else{
+        // This is a regular journey. We come from MatchingJourney
+        (data.driver) ? params.status = 2 : params.status = 3
+
+        // We need to give new criteria to update the Ask Criteria
+        params.criteria = {
+          "fromDate":data.fromDate,
+          "toDate":data.toDate,
+        }
+        if(data.outwardSchedule){
+          params.criteria.outwardSchedule = {
+            "monTime":data.outwardSchedule.monTime,
+            "tueTime":data.outwardSchedule.tueTime,
+            "wedTime":data.outwardSchedule.wedTime,
+            "thuTime":data.outwardSchedule.thuTime,
+            "friTime":data.outwardSchedule.friTime,
+            "satTime":data.outwardSchedule.satTime,
+            "sunTime":data.outwardSchedule.sunTime
+          }
+        }
+        if(data.returnSchedule){
+          params.criteria.returnSchedule = {
+            "monTime":data.returnSchedule.monTime,
+            "tueTime":data.returnSchedule.tueTime,
+            "wedTime":data.returnSchedule.wedTime,
+            "thuTime":data.returnSchedule.thuTime,
+            "friTime":data.returnSchedule.friTime,
+            "satTime":data.returnSchedule.satTime,
+            "sunTime":data.returnSchedule.sunTime
+          }
+        }
+      }
+
+      console.error(data);
+      console.error(params);
       axios.post(this.$t("urlUpdateAsk"),params)
         .then(response => {
-          //console.error(response.data);
+          console.error(response.data);
           this.refreshActions = true;
           this.loadingBtnAction = false;
         })

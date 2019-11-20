@@ -48,6 +48,7 @@ class Criteria implements \JsonSerializable
     
     /**
      * @var int The id of this criteria.
+     * @Groups({"put"})
      */
     private $id;
     

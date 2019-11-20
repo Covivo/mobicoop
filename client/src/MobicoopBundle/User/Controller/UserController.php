@@ -1546,29 +1546,58 @@ class UserController extends AbstractController
 
             $idAsk = $data['idAsk'];
             $status = $data['status'];
+            $criteria = ($data['criteria']) ? $data['criteria'] : null;
+            //var_dump($criteria);die;
 
             // Get the Ask
             $ask = $askManager->getAsk($idAsk);
-            
+            /** TO DO : Get the Ask of the return */
+            $askReturn = null;
+
             $reponseofmanager= $this->handleManagerReturnValue($ask);
             if (!empty($reponseofmanager)) {
                 return $reponseofmanager;
             }
             
             // Change the status
-            if ($status!==null &&
-                is_numeric($status)
-            ) {
-                // Modify the Ask status
+            if ($status!==null && is_numeric($status)) {
                 $ask->setStatus($status);
             }
             
+            // If we need to, we update the criteria
+            if ($criteria!==null) {
+
+                /** TO DO : Get the criteria of the return */
+
+                $ask->getCriteria()->setFromDate(new \DateTime($criteria['fromDate']));
+                $ask->getCriteria()->setToDate(new \DateTime($criteria['toDate']));
+
+                if (isset($criteria['outwardSchedule'])) {
+                    $ask->getCriteria()->setMonCheck(($criteria['outwardSchedule']['monTime']) ? true : false);
+                    $ask->getCriteria()->setTueCheck(($criteria['outwardSchedule']['tueTime']) ? true : false);
+                    $ask->getCriteria()->setWedCheck(($criteria['outwardSchedule']['wedTime']) ? true : false);
+                    $ask->getCriteria()->setThuCheck(($criteria['outwardSchedule']['thuTime']) ? true : false);
+                    $ask->getCriteria()->setFriCheck(($criteria['outwardSchedule']['friTime']) ? true : false);
+                    $ask->getCriteria()->setSatCheck(($criteria['outwardSchedule']['satTime']) ? true : false);
+                    $ask->getCriteria()->setSunCheck(($criteria['outwardSchedule']['sunTime']) ? true : false);
+                }
+
+
+                if ($askReturn!==null && isset($criteria['returnSchedule'])) {
+                    $askReturn->getCriteria()->setMonCheck(($criteria['returnSchedule']['monTime']) ? true : false);
+                    $askReturn->getCriteria()->setTueCheck(($criteria['returnSchedule']['tueTime']) ? true : false);
+                    $askReturn->getCriteria()->setWedCheck(($criteria['returnSchedule']['wedTime']) ? true : false);
+                    $askReturn->getCriteria()->setThuCheck(($criteria['returnSchedule']['thuTime']) ? true : false);
+                    $askReturn->getCriteria()->setFriCheck(($criteria['returnSchedule']['friTime']) ? true : false);
+                    $askReturn->getCriteria()->setSatCheck(($criteria['returnSchedule']['satTime']) ? true : false);
+                    $askReturn->getCriteria()->setSunCheck(($criteria['returnSchedule']['sunTime']) ? true : false);
+                }
+            }
+
             // Update the Ask via API
             $ask = $askManager->updateAsk($ask);
-            $reponseofmanager= $this->handleManagerReturnValue($ask);
-            if (!empty($reponseofmanager)) {
-                return $reponseofmanager;
-            }
+
+            // To do : Update the return Ask
 
             $return = [
                 "id"=>$ask->getId(),

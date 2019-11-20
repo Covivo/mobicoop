@@ -110,7 +110,7 @@ class Ask implements ResourceInterface
      * @var Criteria The criteria applied to the ask.
      *
      * @Assert\NotBlank
-     * @Groups({"post"})
+     * @Groups({"post","put"})
      */
     private $criteria;
     

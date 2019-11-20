@@ -40,7 +40,7 @@
             depressed
             :loading="loading"
             v-on="on"
-            @click="updateStatus(2,'passenger')"
+            @click="updateStatus(3,'passenger')"
           >
             <v-icon class="display-2">
               mdi-walk
@@ -58,7 +58,7 @@
 
     <!-- The Ask is pending -->
     <!-- If you are the ask user you cannot accept or delined -->
-    <div v-if="status==2 && !canAsk">
+    <div v-if="(status==2 || status==3) && !canAsk">
       <v-tooltip
         bottom
         color="success"
@@ -102,7 +102,7 @@
         <span>{{ $t('button.refuse') }}</span>
       </v-tooltip>     
     </div>
-    <div v-else-if="status==2">
+    <div v-else-if="(status==2 || status==3)">
       <v-card
         color="warning"
         class="white--text"
@@ -115,7 +115,7 @@
 
 
     <!-- The Ask is accepted -->
-    <div v-if="status==3">
+    <div v-if="status==4">
       <v-card
         color="success"
         class="white--text"
@@ -125,7 +125,7 @@
       </v-card>
     </div>
     <!-- The Ask is refused -->
-    <div v-if="status==4">
+    <div v-if="status==5">
       <v-card
         color="error"
         class="white--text"

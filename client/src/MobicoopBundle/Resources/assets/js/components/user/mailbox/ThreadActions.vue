@@ -402,7 +402,8 @@ export default {
       }
     },
     carpoolFromMatchingJourney(data){
-      console.error(data);
+      this.dialogRegular = false;
+      this.$emit("updateStatusAskHistory",data);
     }
   }
 }
