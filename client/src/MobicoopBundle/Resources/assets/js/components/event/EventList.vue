@@ -44,6 +44,35 @@
 
    -->
 
+
+
+
+    <v-col
+      cols="12"
+    >
+      <v-card
+        v-show="loadingMap"
+        flat
+        align="center"
+        height="500"
+        color="backSpiner"
+      >
+        <v-progress-circular
+          size="250"
+          indeterminate
+          color="tertiary"
+        />
+      </v-card>
+      <m-map
+        v-show="!loadingMap"
+        ref="mmap"
+        :points="pointsComingMap"
+        :provider="mapProvider"
+        :url-tiles="urlTiles"
+        :attribution-copyright="attributionCopyright"
+      />
+    </v-col>
+
     <v-row>
       <v-col
         cols="12"
@@ -213,13 +242,16 @@
 import { merge } from "lodash";
 import Translations from "@translations/components/event/EventList.json";
 import TranslationsClient from "@clientTranslations/components/event/EventList.json";
+import MMap from "@components/utilities/MMap"
+import L from "leaflet";
 import EventListItem from "@components/event/EventListItem";
+
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components:{
-    EventListItem
+    EventListItem,MMap
   },
   i18n: {
     messages: TranslationsMerged,
@@ -236,7 +268,23 @@ export default {
     paths: {
       type: Object,
       default: null
-    }
+    },
+    mapProvider:{
+      type: String,
+      default: ""
+    },
+    urlTiles:{
+      type: String,
+      default: ""
+    },
+    attributionCopyright:{
+      type: String,
+      default: ""
+    },
+    pointsComing: {
+      type: Array,
+      default: null
+    },
   },
   data () {
     return {
@@ -254,9 +302,105 @@ export default {
         { text: 'Nom', value: 'name' },
         { text: 'Description', value: 'fulldescription' },
         { text: 'Image', value: 'logos' }
-      ]
+      ],
+      loadingMap: false,
+      errorUpdate: false,
+      pointsComingMap : [],
     }
   },
+  mounted() {
+    this.createMapComing();
+  },
+  methods:{
+    searchChanged: function (search) {
+      this.origin = search.origin;
+      this.destination = search.destination;
+      this.dataRegular = search.regular;
+      this.date = search.date;
+    },
+    post: function (path, params, method='post') {
+      const form = document.createElement('form');
+      form.method = method;
+      form.action = window.location.origin+'/'+path;
+
+      for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+          const hiddenField = document.createElement('input');
+          hiddenField.type = 'hidden';
+          hiddenField.name = key;
+          hiddenField.value = params[key];
+          form.appendChild(hiddenField);
+        }
+      }
+      document.body.appendChild(form);
+      form.submit();
+    },
+    checkIfUserLogged() {
+      if (this.user !== null) {
+        this.isLogged = true;
+      }
+    },
+
+    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
+      let point = {
+        title:title,
+        latLng:L.latLng(lat, lng),
+        icon: {}
+      }
+
+      if(pictoUrl!==""){
+        point.icon = {
+          url:pictoUrl,
+          size:size,
+          anchor:anchor
+        }
+      }
+      return point;
+    },
+    createMapComing () {
+      this.errorUpdate =200;
+      this.loadingMap = true;
+      this.pointsComingMap.length = 0;
+
+      if(this.pointsComing != null){
+        this.pointsComing.forEach((waypoint, index) => {
+          this.pointsComingMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+        });
+        this.loadingMap = false;
+        setTimeout(this.$refs.mmap.redrawMap(),1000);
+      }
+      /*
+          axios
+
+            .get('/events-available',
+              {
+                headers:{
+                  'content-type': 'application/json'
+                }
+              })
+            .then(res => {
+              console.info(res)
+
+              this.errorUpdate = res.data.state;
+              this.pointsToMap.length = 0;
+              // add the community address to display on the map
+              if (this.event.address) {
+                this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name));
+              }
+
+              // add all the waypoints of the event to display on the map :
+              res.data.forEach((waypoint, index) => {
+                this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+              });
+              this.loadingMap = false;
+
+            });            setTimeout(this.$refs.mmap.redrawMap(),600);
+
+
+            */
+    },
+
+  }
 }
 </script>
 

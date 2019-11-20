@@ -315,8 +315,8 @@ export default {
     },
     publish() {
       let lParams = {
-        origin: null,
-        destination: null,
+        origin: JSON.stringify(this.destination),
+        destination: JSON.stringify(this.destination),
         regular: null,
         date: null,
         time: null,
@@ -325,6 +325,7 @@ export default {
       this.post(`${this.$t("buttons.publish.route")}`, lParams);
     },
     getEventProposals () {
+
       this.loadingMap = true;
       axios
 

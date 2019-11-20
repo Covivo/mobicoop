@@ -53,9 +53,20 @@ class EventController extends AbstractController
         $eventComing = $eventManager->getEvents();
         $eventPassed = $eventManager->getEvents(0);
 
+        if ($eventComing !== null ){
+            $pointsComing = [];
+            foreach ($eventComing as $event) {
+                $pointsComing[] = [
+                    "title"=>$event->getName().', '.$event->getAddress()->getAddressLocality(),
+                    "latLng"=>["lat"=>$event->getAddress()->getLatitude(),"lon"=>$event->getAddress()->getLongitude()]
+                ];
+            }
+        }
+
         return $this->render('@Mobicoop/event/events.html.twig', [
             'eventComing' => $eventComing,
             'eventPassed' => $eventPassed,
+            'pointComing' => $pointsComing
         ]);
     }
     /**
@@ -136,6 +147,5 @@ class EventController extends AbstractController
         }
         return new Response(json_encode($points));
     }
-
 
 }
