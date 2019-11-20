@@ -5,30 +5,61 @@
       align="center"
     >
       <v-col
-        cols="6"
+        cols="12"
         align-self="start"
+        class="text-left"
       >
-        <!--TODO : REMOVE WHEN START CODING FILTER COMPONENT-->
-        <!-- <v-combobox
-            v-model="chips"
-            :items="items"
-            chips
-            clearable
-            multiple
-            label="Filtres"
+        <p v-if="chips">
+          <v-chip
+            v-for="chip in chips"
+            :key="chip.id"
+            close
+            @click:close="removeFilter(chip)"
           >
-            <template v-slot:selection="{ attrs, item, select, selected }">
-              <v-chip
-                v-bind="attrs"
-                :input-value="selected"
-                close
-                @click="select"
-                @click:close="remove(item)"
-              >
-                <strong>{{ item }}</strong>&nbsp;
-              </v-chip>
-            </template>
-          </v-combobox> -->
+            {{ chip.text }}
+          </v-chip>
+        </p>
+
+        <v-expansion-panels
+          v-model="panel"
+          accordion
+        >
+          <v-expansion-panel
+            v-for="(panel,i) in 1"
+            :key="i"
+            flat
+          >
+            <v-expansion-panel-header>{{ $t('filters') }}</v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-row>
+                <v-col cols="3">
+                  <v-select
+                    v-model="filters.date"
+                    :items="itemsDate"
+                    :label="$t('select.date.label')"
+                    outlined
+                    dense
+                    flat
+                    :disabled="!filterEnabled.date"
+                    @change="updateFilterDate"
+                  />
+                </v-col>
+                <v-col cols="3">
+                  <v-select
+                    v-model="filters.time"
+                    :items="itemsTime"
+                    :label="$t('select.hour.label')"
+                    outlined
+                    dense
+                    flat
+                    :disabled="!filterEnabled.time"
+                    @change="updateFilterTime"
+                  />
+                </v-col>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-col>
     </v-row>
   </v-content>
@@ -49,10 +80,50 @@ export default {
   },
   data : function() {
     return {
-      
+      chips:[],
+      filterEnabled:{
+        "time":true,
+        "date":true
+      },
+      itemsDate: [
+        {text:this.$t('select.date.increasing'),value:'ASC'},
+        {text:this.$t('select.date.decreasing'),value:'DESC'}
+      ],
+      panel:null,
+      filters:{
+        date:null,
+        time:null
+      }
     };
   },
+  computed:{
+    itemsTime(){
+      let hours = [];
+      for (let i = 1; i < 24; i++) {
+        hours.push({text:i+'h00',value:i+'h00'});
+      }
+      return hours;
+    }
+  },
   methods :{
+    updateFilterDate(data){
+      this.filterEnabled.date = false;
+      this.chips.push({id:"date",text:this.$t('chips.date')+' : '+this.$t('chips.value.'+data),value:data});
+      this.closePanel();
+    },
+    updateFilterTime(data){
+      this.filterEnabled.time = false;
+      this.chips.push({id:"time",text:this.$t('chips.hour')+' : '+data,value:data});
+      this.closePanel();
+    },
+    removeFilter(item){
+      this.filterEnabled[item.id] = true;
+      this.filters[item.id] = null;
+      this.chips.splice(this.chips.indexOf(item), 1);
+    },
+    closePanel(){
+      this.panel = null;
+    }
   }
 };
 </script>

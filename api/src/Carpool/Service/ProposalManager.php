@@ -640,7 +640,8 @@ class ProposalManager
     public function filterResultsBy(Proposal $proposal)
     {
         /** To do : Put this params in Proposal entity */
-        $field="time";
+        $field="";
+        //$field="time";
         $value=str_replace("h", ":", "06h00");
 
         // Order anonymous function
