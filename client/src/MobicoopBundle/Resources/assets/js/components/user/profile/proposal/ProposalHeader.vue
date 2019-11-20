@@ -181,7 +181,7 @@ export default {
       axios.delete(this.$t('delete.route'), {
         data: {
           proposalId: this.proposalId,
-          message: this.deleteMessage
+          deletionMessage: this.deleteMessage
         }
       })
         .then(function (response) {
