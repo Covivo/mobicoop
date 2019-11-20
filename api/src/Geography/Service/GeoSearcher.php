@@ -32,6 +32,7 @@ use App\Geography\Repository\AddressRepository;
 use App\RelayPoint\Repository\RelayPointRepository;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Repository\UserRepository;
+use App\Image\Repository\IconRepository;
 
 /**
  * The geo searcher service.
@@ -40,22 +41,33 @@ use App\User\Repository\UserRepository;
  */
 class GeoSearcher
 {
+    const ICON_ADDRESS_ANY = 1;
+    const ICON_ADDRESS_PERSONAL = 2;
+    const ICON_COMMUNITY = 3;
+    const ICON_EVENT = 4;
+    const ICON_RELAYPOINT = "relaypoint-";
+    const ICON_PRIVATE_RELAYPOINT = "private-relaypoint-";
+    const ICON_VENUE = 5;
+
+    
     private $geocoder;
     private $geoTools;
     private $userRepository;
     private $addressRepository;
     private $relayPointRepository;
+    private $iconRepository;
 
     /**
      * Constructor.
      */
-    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository)
+    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, IconRepository $iconRepository)
     {
         $this->geocoder = $geocoder;
         $this->geoTools = $geoTools;
         $this->userRepository = $userRepository;
         $this->addressRepository = $addressRepository;
         $this->relayPointRepository = $relayPointRepository;
+        $this->iconRepository = $iconRepository;
     }
 
     /**
@@ -114,6 +126,9 @@ class GeoSearcher
             if (!$exclude) {
                 $address = $relayPoint->getAddress();
                 $address->setRelayPoint($relayPoint);
+                // $address->setIcon($relayPoint->getRelayPointType()->getIcon()->getFileName());
+                // $address->setIcon($this->iconRepository->find(self::ICON_ADDRESS_ANY)->getFileName());
+                
                 $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
                 $result[] = $address;
             }
