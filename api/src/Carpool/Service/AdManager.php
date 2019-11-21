@@ -119,7 +119,7 @@ class AdManager
         if ($ad->isOneWay()) {
             // the ad has explicitly been set to one way
             $outwardProposal->setType(Proposal::TYPE_ONE_WAY);
-        } else {
+        } elseif (is_null($ad->isOneWay())) {
             // the ad type has not been set, we assume it's a round trip for a regular trip and a one way for a punctual trip
             if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                 $ad->setOneWay(false);
@@ -128,6 +128,8 @@ class AdManager
                 $ad->setOneWay(true);
                 $outwardProposal->setType(Proposal::TYPE_ONE_WAY);
             }
+        } else {
+            $outwardProposal->setType(Proposal::TYPE_OUTWARD);
         }
 
         // comment
