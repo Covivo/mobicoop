@@ -48,7 +48,7 @@ class Ask implements ResourceInterface
     private $iri;
 
     /**
-     * @var int Ask status (0 = waiting; 1 = accepted; 2 = declined).
+     * @var int Ask status (1 = initiated; 2 = pending ; 3 = accepted; 4 = declined).
      *
      * @Assert\NotBlank
      * @Groups({"post","put"})
@@ -83,6 +83,15 @@ class Ask implements ResourceInterface
      */
     private $user;
 
+
+    /**
+     * @var User The user the ask is for
+     *
+     * @Assert\NotBlank
+     * @Groups({"post"})
+     */
+    private $userRelated;
+
     /**
      * @var Matching The matching at the origin of the ask.
      *
@@ -101,7 +110,7 @@ class Ask implements ResourceInterface
      * @var Criteria The criteria applied to the ask.
      *
      * @Assert\NotBlank
-     * @Groups({"post"})
+     * @Groups({"post","put"})
      */
     private $criteria;
     
@@ -194,6 +203,18 @@ class Ask implements ResourceInterface
     public function setUser(User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getUserRelated(): ?User
+    {
+        return $this->userRelated;
+    }
+
+    public function setUserRelated(?User $userRelated): self
+    {
+        $this->userRelated = $userRelated;
 
         return $this;
     }

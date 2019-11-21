@@ -17,3 +17,8 @@
     }
   }
 }
+// vuetify breaks card title words by default to be e11 compliant and no props exists to handle this
+.v-card__text,
+.v-card__title {
+  word-break: normal; /* maybe !important  */
+}

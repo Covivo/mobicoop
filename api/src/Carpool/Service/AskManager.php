@@ -151,4 +151,53 @@ class AskManager
         
         return $this->createAsk($ask);
     }
+
+    public function getAsksFromProposal(Proposal $proposal)
+    {
+        $asks = [];
+
+        if (!empty($proposal->getMatchingOffers())) {
+            $offers = $proposal->getMatchingOffers();
+            /** @var Matching $offer */
+            foreach ($offers as $offer) {
+                if (!empty($offer->getAsks())) {
+                    $asks = array_merge($asks, $offer->getAsks());
+                }
+            }
+        }
+
+        if (!empty($proposal->getMatchingRequests())) {
+            $requests = $proposal->getMatchingRequests();
+            /** @var Matching $request */
+            foreach ($requests as $request) {
+                if (!empty($request->getAsks())) {
+                    $asks = array_merge($asks, $request->getAsks());
+                }
+            }
+        }
+
+        return $asks;
+    }
+
+    /**
+     * Ask user is considered passenger if he has made a proposal offer
+     *
+     * @param Ask $ask
+     * @return bool
+     */
+    public function isAskUserDriver(Ask $ask)
+    {
+        return $ask->getUser()->getId() === $ask->getMatching()->getProposalOffer()->getUser()->getId();
+    }
+
+    /**
+     * Ask user is considered passenger if he has made a proposal request
+     *
+     * @param Ask $ask
+     * @return bool
+     */
+    public function isAskUserPassenger(Ask $ask)
+    {
+        return $ask->getUser()->getId() === $ask->getMatching()->getProposalRequest()->getUser()->getId();
+    }
 }
