@@ -17,7 +17,7 @@
     </v-snackbar>
 
     <v-container>
-      <!-- community buttons and map -->
+      <!-- eventGetWidget buttons and map -->
       <v-row
         justify="center"
       >
@@ -144,8 +144,6 @@ export default {
       directionWay:[],
       loading: false,
       snackbar: false,
-      // textSnackOk: this.$t("snackbar.joinCommunity.textOk"),
-      // textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
       isAccepted: false,
       askToJoin: false,
@@ -197,25 +195,6 @@ export default {
 
           });
       }
-    },
-    joinCommunity() {
-      this.loading = true;
-      axios
-        .post(this.$t('buttons.join.route',{id:this.community.id}),
-          {
-            headers:{
-              'content-type': 'application/json'
-            }
-          })
-        .then(res => {
-          this.errorUpdate = res.data.state;
-          this.askToJoin = true;
-          this.snackbar = true;
-          this.refreshMemberList = true;
-          this.refreshLastUsers = true;
-          this.getCommunityUser();
-          this.loading = false;
-        });
     },
     checkIfUserLogged() {
       if (this.user !== null) {

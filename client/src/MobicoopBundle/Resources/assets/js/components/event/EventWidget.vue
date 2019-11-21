@@ -17,7 +17,7 @@
     </v-snackbar>
 
     <v-container>
-      <!-- community buttons and map -->
+      <!-- eventWidget buttons and map -->
       <v-row
         justify="center"
       >
@@ -27,7 +27,7 @@
           xl="8"
           align="center"
         >
-          <!-- Community : avatar, title and description -->
+          <!-- Event : avatar, title and description -->
           <v-row
             align="center"
             justify="center"
@@ -36,29 +36,30 @@
               :event="event"
               :url-alt-avatar="urlAltAvatar"
               :avatar-version="avatarVersion"
-            />
-          </v-row>
-          <!-- event buttons and map -->
-          <v-row
-            align="center"
-            justify="center"
-          >
-            <!-- search journey -->
-            <p class="headline">
-              {{ $t('title.searchCarpool') }}
-            </p>
-            <search
-              :geo-search-url="geodata.geocompleteuri"
-              :user="user"
-              :params="params"
-              :punctual-date-optional="punctualDateOptional"
-              :regular="regular"
-              :default-destination="defaultDestination"
-              :hide-publish="true"
-              :disable-search="disableSearch"
+              :display-description="false"
             />
           </v-row>
         </v-col>
+      </v-row>
+      <!-- search journey -->
+      <p class="headline">
+        {{ $t('title.searchCarpool') }}
+      </p>
+      <!-- event buttons and map -->
+      <v-row
+        align="center"
+        justify="center"
+      >
+        <search
+          :geo-search-url="geodata.geocompleteuri"
+          :user="user"
+          :params="params"
+          :punctual-date-optional="punctualDateOptional"
+          :regular="regular"
+          :default-destination="defaultDestination"
+          :hide-publish="true"
+          :disable-search="disableSearch"
+        />
       </v-row>
     </v-container>
   </v-content>
@@ -152,8 +153,6 @@ export default {
       directionWay:[],
       loading: false,
       snackbar: false,
-      // textSnackOk: this.$t("snackbar.joinCommunity.textOk"),
-      // textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
       isAccepted: false,
       askToJoin: false,
@@ -170,8 +169,6 @@ export default {
   computed: {
     disableSearch() {
       let now = moment();
-      // console.error(now);
-      // console.error(moment(this.event.toDate.date));
       if (now > moment(this.event.toDate.date))
         return true;
       else
@@ -200,40 +197,6 @@ export default {
       document.body.appendChild(form);
       form.submit();
     },
-    getCommunityUser() {
-      if(this.user){
-        this.checkValidation = true;
-        axios
-          .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
-          .then(res => {
-            if (res.data.length > 0) {
-              this.isAccepted = res.data[0].status == 1;
-              this.askToJoin = true
-            }
-            this.checkValidation = false;
-
-          });
-      }
-    },
-    joinCommunity() {
-      this.loading = true;
-      axios
-        .post(this.$t('buttons.join.route',{id:this.community.id}),
-          {
-            headers:{
-              'content-type': 'application/json'
-            }
-          })
-        .then(res => {
-          this.errorUpdate = res.data.state;
-          this.askToJoin = true;
-          this.snackbar = true;
-          this.refreshMemberList = true;
-          this.refreshLastUsers = true;
-          this.getCommunityUser();
-          this.loading = false;
-        });
-    },
     checkIfUserLogged() {
       if (this.user !== null) {
         this.isLogged = true;
@@ -246,17 +209,6 @@ export default {
           return this.domain = false;
         }
       }
-    },
-    publish() {
-      let lParams = {
-        origin: null,
-        destination: null,
-        regular: null,
-        date: null,
-        time: null,
-        ...this.params
-      };
-      this.post(`${this.$t("buttons.publish.route")}`, lParams);
     },
     getEventProposals () {
       this.loadingMap = true;

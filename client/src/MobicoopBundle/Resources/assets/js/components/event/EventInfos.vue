@@ -38,10 +38,16 @@
           <h3 class="headline">
             {{ event.name }}
           </h3>
-          <p class="body-1">
+          <p
+            v-if="displayDescription"
+            class="body-1"
+          >
             {{ event.description }}
           </p>
-          <p class="body-2">
+          <p
+            v-if="displayDescription"
+            class="body-2"
+          >
             {{ event.fullDescription }}
           </p>
           <v-row>
@@ -79,7 +85,11 @@ export default {
     avatarVersion: {
       type: String,
       default: null
-    }
+    },
+    displayDescription: {
+      type: Boolean,
+      default: true
+    },
   },
   i18n: {
     messages: TranslationsMerged,

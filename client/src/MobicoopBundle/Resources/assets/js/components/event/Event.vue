@@ -17,7 +17,7 @@
     </v-snackbar>
 
     <v-container>
-      <!-- community buttons and map -->
+      <!-- event buttons and map -->
       <v-row
         justify="center"
       >
@@ -27,7 +27,7 @@
           xl="6"
           align="center"
         >
-          <!-- Community : avatar, title and description -->
+          <!-- event : avatar, title and description -->
           <event-infos
             :event="event"
             :url-alt-avatar="urlAltAvatar"
@@ -58,7 +58,6 @@
                   {{ $t('buttons.widget.label') }}
                 </v-btn>
               </div>
-              <!-- button if user ask to join community but is not accepted yet -->
             </v-col>
             <!-- map -->
             <v-col
@@ -113,6 +112,9 @@
           :params="params"
           :punctual-date-optional="punctualDateOptional"
           :regular="regular"
+          :hide-publish="true"
+          :default-destination="defaultDestination"
+          :disable-search="disableSearch"
         />
       </v-row>
     </v-container>
@@ -128,6 +130,7 @@ import EventInfos from "@components/event/EventInfos";
 import Search from "@components/carpool/search/Search";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
+import moment from "moment";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -206,8 +209,6 @@ export default {
       directionWay:[],
       loading: false,
       snackbar: false,
-      // textSnackOk: this.$t("snackbar.joinCommunity.textOk"),
-      // textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
       isAccepted: false,
       askToJoin: false,
@@ -218,12 +219,19 @@ export default {
       refreshMemberList: false,
       refreshLastUsers: false,
       params: { 'eventId' : this.event.id },
-
+      defaultDestination: this.event.address,
+    }
+  },
+  computed: {
+    disableSearch() {
+      let now = moment();
+      if (now > moment(this.event.toDate.date))
+        return true;
+      else
+        return false;
     }
   },
   mounted() {
-    // this.getCommunityUser();
-    // this.checkIfUserLogged();
     this.getEventProposals();
     this.checkDomain();
   },
@@ -244,40 +252,6 @@ export default {
       }
       document.body.appendChild(form);
       form.submit();
-    },
-    getCommunityUser() {
-      if(this.user){
-        this.checkValidation = true;
-        axios
-          .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
-          .then(res => {
-            if (res.data.length > 0) {
-              this.isAccepted = res.data[0].status == 1;
-              this.askToJoin = true
-            }
-            this.checkValidation = false;
-
-          });
-      }
-    },
-    joinCommunity() {
-      this.loading = true;
-      axios
-        .post(this.$t('buttons.join.route',{id:this.community.id}),
-          {
-            headers:{
-              'content-type': 'application/json'
-            }
-          })
-        .then(res => {
-          this.errorUpdate = res.data.state;
-          this.askToJoin = true;
-          this.snackbar = true;
-          this.refreshMemberList = true;
-          this.refreshLastUsers = true;
-          this.getCommunityUser();
-          this.loading = false;
-        });
     },
     checkIfUserLogged() {
       if (this.user !== null) {
