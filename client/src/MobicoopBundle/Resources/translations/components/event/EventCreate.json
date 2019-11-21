@@ -49,10 +49,10 @@
     "endDate" : {
       "label": "Date de fin"
     },
-    "outwardTime": {
+    "startTime": {
       "label": "Heure de début"
     },
-    "returnTime" : {
+    "endTime" : {
       "label": "Heure de fin"
     },
     "popUp" : {

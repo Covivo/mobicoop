@@ -103,7 +103,7 @@
                   </v-text-field>
                 </template>
                 <v-date-picker
-                  v-model="outwardDate"
+                  v-model="startDate"
                   :locale="locale"
                   no-title
                   :max="startDatePickerMaxDate"
@@ -140,7 +140,7 @@
                   </v-text-field>
                 </template>
                 <v-date-picker
-                  v-model="returnDate"
+                  v-model="endDate"
                   :locale="locale"
                   no-title
                   :min="endDatePickerMinDate"
@@ -163,10 +163,10 @@
               cols="3"
             >
               <v-menu
-                ref="menuOutwardTime"
-                v-model="menuOutwardTime"
+                ref="menuStartTime"
+                v-model="menuStartTime"
                 :close-on-content-click="false"
-                :return-value.sync="outwardTime"
+                :return-value.sync="startTime"
                 transition="scale-transition"
                 offset-y
                 full-width
@@ -175,20 +175,20 @@
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
-                    v-model="outwardTime"
-                    :label="$t('outwardTime.label')"
+                    v-model="startTime"
+                    :label="$t('startTime.label')"
                     prepend-icon=""
                     readonly
                     v-on="on"
                   />
                 </template>
                 <v-time-picker
-                  v-if="menuOutwardTime"
-                  v-model="outwardTime"
+                  v-if="menuStartTime"
+                  v-model="startTime"
                   format="24hr"
                   :max="startDatePickerMaxTime"
                   header-color="secondary"
-                  @click:minute="$refs.menuOutwardTime.save(outwardTime)"
+                  @click:minute="$refs.menuStartTime.save(startTime)"
                   @change="updateEndTimePickerMinTime()"
                 />
               </v-menu>
@@ -198,10 +198,10 @@
               cols="3"
             >
               <v-menu
-                ref="menuReturnTime"
-                v-model="menuReturnTime"
+                ref="menuEndTime"
+                v-model="menuEndTime"
                 :close-on-content-click="false"
-                :return-value.sync="returnTime"
+                :return-value.sync="endTime"
                 transition="scale-transition"
                 offset-y
                 full-width
@@ -210,20 +210,20 @@
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
-                    v-model="returnTime"
-                    :label="$t('returnTime.label')"
+                    v-model="endTime"
+                    :label="$t('endTime.label')"
                     prepend-icon=""
                     readonly
                     v-on="on"
                   />
                 </template>
                 <v-time-picker
-                  v-if="menuReturnTime"
-                  v-model="returnTime"
+                  v-if="menuEndTime"
+                  v-model="endTime"
                   format="24hr"
                   :min="endDatePickerMinTime"
                   header-color="secondary"
-                  @click:minute="$refs.menuReturnTime.save(returnTime)"
+                  @click:minute="$refs.menuEndTime.save(endTime)"
                   @change="updateStartTimePickerMaxTime()"
                 />
               </v-menu>
@@ -359,14 +359,14 @@ export default {
   },
   data () {
     return {
-      outwardDate: null,
-      returnDate : null,
-      outwardTime: null,
-      returnTime: null,
+      startDate: null,
+      endDate : null,
+      startTime: null,
+      endTime: null,
       menuOutwardDate: false,
       menuReturnDate: false,
-      menuOutwardTime: false,
-      menuReturnTime: false,
+      menuStartTime: false,
+      menuEndTime: false,
       locale: this.$i18n.locale,
       avatarRules: [
         v => !!v || this.$t("form.avatar.required"),
@@ -399,14 +399,14 @@ export default {
   computed :{
     computedOutwardDateFormat() {
       moment.locale(this.locale);
-      return this.outwardDate
-        ? moment(this.outwardDate).format(this.$t("ui.i18n.date.format.fullDate"))
+      return this.startDate
+        ? moment(this.startDate).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
     },
     computedReturnDateFormat() {
       moment.locale(this.locale);
-      return this.returnDate
-        ? moment(this.returnDate).format(this.$t("ui.i18n.date.format.fullDate"))
+      return this.endDate
+        ? moment(this.endDate).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
     },
   },
@@ -423,10 +423,10 @@ export default {
         newEvent.append("fullDescription", this.fullDescription);
         newEvent.append("avatar", this.avatar);
         newEvent.append("address", JSON.stringify(this.eventAddress));
-        newEvent.append("outwardDate", this.outwardDate);
-        newEvent.append("returnDate", this.returnDate);
-        if (this.outwardTime) newEvent.append("outwardTime", this.outwardTime);
-        if (this.returnTime) newEvent.append("returnTime", this.returnTime);
+        newEvent.append("startDate", this.startDate);
+        newEvent.append("endDate", this.endDate);
+        if (this.startTime) newEvent.append("startTime", this.startTime);
+        if (this.endTime) newEvent.append("endTime", this.endTime);
         if (this.urlEvent) newEvent.append("urlEvent", this.urlEvent);
 
         axios 
@@ -451,17 +451,17 @@ export default {
     },
     updateEndDatePickerMinDate () {
       // add one day because otherwise we get one day before the actual date
-      this.endDatePickerMinDate = moment(this.outwardDate).add(1, 'd').toISOString();
+      this.endDatePickerMinDate = moment(this.startDate).add(1, 'd').toISOString();
     },
     updateStartDatePickerMaxDate () {
       // add one day because otherwise we get one day before the actual date
-      this.startDatePickerMaxDate = moment(this.returnDate).add(1, 'd').toISOString();
+      this.startDatePickerMaxDate = moment(this.endDate).add(1, 'd').toISOString();
     },
     updateStartTimePickerMaxTime () {
-      this.startDatePickerMaxTime = this.returnTime;
+      this.startDatePickerMaxTime = this.endTime;
     },
     updateEndTimePickerMinTime () {
-      this.endDatePickerMinTime = this.outwardTime;
+      this.endDatePickerMinTime = this.startTime;
     }
   }
 }
