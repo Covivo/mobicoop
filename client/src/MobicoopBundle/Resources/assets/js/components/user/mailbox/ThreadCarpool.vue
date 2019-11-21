@@ -121,6 +121,10 @@ export default {
     selectedDefault: {
       type: Boolean,
       default: false
+    },
+    idAsk:{
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -173,9 +177,11 @@ export default {
       this.$emit("toggleSelected",{idMessage:this.idMessage});
       this.$emit("idMessageForTimeLine",
         {
+          type:"Carpool",
           idMessage:this.idMessage,
           idRecipient:this.idRecipient,
-          name:this.name
+          name:this.name,
+          idAsk:this.idAsk
         }
       );
     }
