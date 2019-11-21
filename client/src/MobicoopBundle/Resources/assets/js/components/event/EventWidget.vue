@@ -53,6 +53,9 @@
               :params="params"
               :punctual-date-optional="punctualDateOptional"
               :regular="regular"
+              :default-destination="defaultDestination"
+              :hide-publish="true"
+              :disable-search="disableSearch"
             />
           </v-row>
         </v-col>
@@ -70,12 +73,13 @@ import EventInfos from "@components/event/EventInfos";
 import Search from "@components/carpool/search/Search";
 // import MMap from "@components/utilities/MMap"
 import L from "leaflet";
+import moment from "moment";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    EventInfos, Search
+    EventInfos, Search,
   },
   i18n: {
     messages: TranslationsMerged,
@@ -160,12 +164,21 @@ export default {
       refreshMemberList: false,
       refreshLastUsers: false,
       params: { 'eventId' : this.event.id },
-
+      defaultDestination: this.event.address,
+    }
+  },
+  computed: {
+    disableSearch() {
+      let now = moment();
+      // console.error(now);
+      // console.error(moment(this.event.toDate.date));
+      if (now > moment(this.event.toDate.date))
+        return true;
+      else
+        return false;
     }
   },
   mounted() {
-    // this.getCommunityUser();
-    // this.checkIfUserLogged();
     this.getEventProposals();
     this.checkDomain();
   },

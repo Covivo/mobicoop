@@ -15,7 +15,9 @@
             :geo-search-url="geoSearchUrl"
             :user="user"
             :init-regular="dataRegular"
+            :init-destination="destination"
             :punctual-date-optional="punctualDateOptional"
+            :show-destination="false"
             @change="searchChanged"
           />
         </v-col>
@@ -30,6 +32,7 @@
           class="text-right"
         >
           <v-btn
+            v-if="!hidePublish"
             outlined
             :disabled="searchUnavailable || !logged"
             rounded
@@ -39,7 +42,7 @@
             {{ $t('buttons.publish.label') }}
           </v-btn>
           <v-btn
-            :disabled="searchUnavailable"
+            :disabled="searchUnavailable || disableSearch"
             :loading="loadingSearch"
             color="secondary"
             rounded
@@ -91,10 +94,18 @@ export default {
       type: Object,
       default: null
     },
-    defaultOrigin: {
+    defaultDestination: {
       type: Object,
       default: null
-    }
+    },
+    disableSearch: {
+      type: Boolean,
+      default: false
+    },
+    hidePublish: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -104,8 +115,8 @@ export default {
       dataRegular: this.regular,
       date: null,
       time: null,
-      origin: this.defaultOrigin,
-      destination: null,
+      origin: null,
+      destination: this.defaultDestination,
       locale: this.$i18n.locale
     };
   },
