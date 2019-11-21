@@ -50,7 +50,7 @@
                 </v-col>
                 <v-col cols="3">
                   <v-select
-                    v-model="filters.time"
+                    v-model="filters.filters.time"
                     :items="itemsTime"
                     :label="$t('select.hour.label')"
                     outlined
@@ -90,13 +90,16 @@ export default {
         "order":true
       },
       itemsOrder: [
-        {text:this.$t('select.order.date.increasing'),value:'ASC'},
-        {text:this.$t('select.order.date.decreasing'),value:'DESC'}
+        {text:this.$t('select.order.date.increasing'),value:{criteria:'date',value:'ASC'}},
+        {text:this.$t('select.order.date.decreasing'),value:{criteria:'date',value:'DESC'}}
       ],
       panel:null,
       filters:{
         order:null,
-        time:null
+        filters:{
+          // You can add here other filters
+          time:null
+        }
       }
     };
   },
@@ -111,8 +114,8 @@ export default {
   },
   methods :{
     updateFilterDate(data){
-      this.filterEnabled.date = false;
-      this.chips.push({id:"order",text:this.$t('chips.date')+' : '+this.$t('chips.value.'+data),value:data});
+      this.filterEnabled.order = false;
+      this.chips.push({id:"order",text:this.$t('chips.date')+' : '+this.$t('chips.value.'+data.value),value:data.value});
       this.closePanel();
       this.$emit("updateFilters",this.filters);
     },
@@ -123,8 +126,9 @@ export default {
       this.$emit("updateFilters",this.filters);
     },
     removeFilter(item){
+      console.error(item);
       this.filterEnabled[item.id] = true;
-      this.filters[item.id] = null;
+      (item.id=="order") ? this.filters[item.id] = null : this.filters.filters[item.id] = null;
       this.chips.splice(this.chips.indexOf(item), 1);
       this.$emit("updateFilters",this.filters);
     },

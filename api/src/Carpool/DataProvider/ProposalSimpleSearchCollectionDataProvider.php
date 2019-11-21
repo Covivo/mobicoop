@@ -196,8 +196,10 @@ final class ProposalSimpleSearchCollectionDataProvider implements CollectionData
                     $this->request->get("type"),
                     $this->request->get("anyRouteAsPassenger"),
                     $this->request->get("communityId")
-                )
-            )
+                ),
+                $this->request->get("filters")
+            ),
+            $this->request->get("filters")
         )];
     }
 }

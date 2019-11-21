@@ -217,8 +217,10 @@ export default {
           "time": this.time,
           "regular": this.regular,
           "userId": this.user ? this.user.id : null,
-          "communityId": this.communityId
+          "communityId": this.communityId,
+          "filters": this.filters
         };
+        console.error(postParams);
         axios.post(this.$t("matchingUrl"), postParams,
           {
             headers:{
@@ -281,6 +283,7 @@ export default {
         })
     },
     updateFilters(data){
+      this.filters = data;
       this.search();
     }
   }

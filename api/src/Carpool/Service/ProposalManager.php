@@ -607,15 +607,19 @@ class ProposalManager
     /**
      * Order the results of a Proposal
     */
-    public function orderResultsBy(Proposal $proposal)
+    public function orderResultsBy(Proposal $proposal, $filters=null)
     {
+        $field=""; // Default value
+        $order=""; // Default value
 
-        /** To do : Put this params in Proposal entity */
-        $field="date";
-        $order="ASC";
+        if ($filters!==null && isset($filters['order']) && $filters['order'] !==null) {
+            $field = $filters['order']['criteria'];
+            $order = $filters['order']['value'];
+        }
+        
 
-        // Order anonymous function
-        $cmp = function ($a, $b) use ($field,$order) {
+        $results = $proposal->getResults();
+        usort($results, function ($a, $b) use ($field,$order) {
             $return = -1;
             switch ($field) {
                 case "date":
@@ -624,10 +628,7 @@ class ProposalManager
             }
 
             return $return;
-        };
-
-        $results = $proposal->getResults();
-        usort($results, $cmp);
+        });
 
         $proposal->setResults($results);
 
@@ -637,29 +638,27 @@ class ProposalManager
     /**
      * Order the results of a Proposal
     */
-    public function filterResultsBy(Proposal $proposal)
+    public function filterResultsBy(Proposal $proposal, $filters=null)
     {
-        /** To do : Put this params in Proposal entity */
-        $field="";
-        //$field="time";
-        $value=str_replace("h", ":", "06h00");
-
-        // Order anonymous function
-        $cmp = function ($a) use ($field,$value) {
-            $return = true;
-            switch ($field) {
-                case "time":
-                    $value = new \DateTime($value);
-                    $return = $a->getTime()->format("H:i") === $value->format("H:i");
-                break;
-            }
-            return $return;
-        };
-
         $results = $proposal->getResults();
-        $resultsFiltered = array_filter($results, $cmp);
 
-        $proposal->setResults($resultsFiltered);
+        if ($filters !== null && isset($filters['filters']) && $filters['filters']!==null) {
+            foreach ($filters['filters'] as $field => $value) {
+                $results = array_filter($results, function ($a) use ($field,$value) {
+                    $return = true;
+                    switch ($field) {
+                        // Filter on Time (the hour)
+                        case "time":
+                            $value = new \DateTime(str_replace("h", ":", $value));
+                            $return = $a->getTime()->format("H:i") === $value->format("H:i");
+                        break;
+                    }
+                    return $return;
+                });
+            }
+        }
+
+        $proposal->setResults($results);
 
         return $proposal;
     }
