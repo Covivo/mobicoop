@@ -533,7 +533,7 @@
       </v-btn>
 
       <v-btn
-        v-if="validNext"
+        v-if="((step < 7 && driver)|| (step < 5 && !driver))"
         :disabled="!validNext"
         rounded
         color="primary"
@@ -744,6 +744,7 @@ export default {
       return true;
     },
     validNext() {
+
       // For the next button
       if(this.origin == null || this.destination == null) return false;
       if(!this.passenger && !this.driver) return false;

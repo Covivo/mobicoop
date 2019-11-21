@@ -182,6 +182,7 @@
               color="secondary"
               :locale="locale"
               no-title
+              :min="nowDate"
               @input="menu=false"
               @change="dateChanged"
             />
@@ -270,7 +271,8 @@ export default {
       destination: this.initDestination,
       customInitOrigin: (this.initOrigin)?this.initOrigin:null,
       customInitDestination: (this.initDestination)?this.initDestination:null,
-      valid: false
+      valid: false,
+      nowDate : new Date().toISOString().slice(0,10)
     };
   },
   computed: {
