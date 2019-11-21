@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Community\Security;
+namespace Mobicoop\Bundle\MobicoopBundle\Event\Security;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -63,8 +63,6 @@ class EventVoter extends Voter
         if (!$user instanceof User) {
             $user = null;
         }
-
-        $community = $subject;
 
         switch ($attribute) {
             case self::CREATE:

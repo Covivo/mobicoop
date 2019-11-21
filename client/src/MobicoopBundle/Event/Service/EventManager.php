@@ -193,5 +193,4 @@ class EventManager
         $proposals = $this->dataProvider->getSubCollection($id, "proposal", "proposals");
         return $proposals->getValue();
     }
-
 }

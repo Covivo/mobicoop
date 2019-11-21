@@ -53,7 +53,7 @@ class EventController extends AbstractController
         $eventComing = $eventManager->getEvents();
         $eventPassed = $eventManager->getEvents(0);
 
-        if ($eventComing !== null ){
+        if ($eventComing !== null) {
             $pointsComing = [];
             foreach ($eventComing as $event) {
                 $pointsComing[] = [
@@ -80,8 +80,8 @@ class EventController extends AbstractController
         ImageManager $imageManager
     ) {
         $event = new Event();
-        //$this->denyAccessUnlessGranted('create', $event);
-        $user = new User($userManager->getLoggedUser()->getId());
+        $this->denyAccessUnlessGranted('create', $event);
+        $user = $userManager->getLoggedUser();
 
         if ($request->isMethod('POST')) {
             // Create event and return response code
@@ -148,5 +148,4 @@ class EventController extends AbstractController
         }
         return new Response(json_encode($points));
     }
-
 }
