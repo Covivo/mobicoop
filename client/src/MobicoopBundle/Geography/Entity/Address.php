@@ -189,6 +189,12 @@ class Address implements ResourceInterface, \JsonSerializable
      */
     private $displayLabel;
 
+    /**
+     * @var string|null The icon of the address.
+     *
+     */
+    private $icon;
+
     public function __construct()
     {
         $this->userAddresses = new ArrayCollection();
@@ -428,6 +434,16 @@ class Address implements ResourceInterface, \JsonSerializable
         $this->displayLabel = $displayLabel;
     }
 
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?string $icon)
+    {
+        $this->icon = $icon;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -452,6 +468,7 @@ class Address implements ResourceInterface, \JsonSerializable
              'subLocality'          => $this->getSubLocality(),
              'displayLabel'         => $this->getDisplayLabel(),
              'home'                 => $this->isHome(),
+             'icon'                 => $this->getIcon(),
              'venue'                => $this->getVenue()
          ];
     }
