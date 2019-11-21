@@ -63,7 +63,7 @@ class Ad implements ResourceInterface
     private $oneWay;
 
     /**
-     * @var int The frequency for this ad.
+     * @var int|null The frequency for this ad.
      *
      * @Groups({"post","put"})
      */
@@ -363,7 +363,7 @@ class Ad implements ResourceInterface
         return $this;
     }
     
-    public function getFrequency(): int
+    public function getFrequency(): ?int
     {
         return $this->frequency;
     }

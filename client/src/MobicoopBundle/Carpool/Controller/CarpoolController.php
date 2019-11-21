@@ -66,6 +66,9 @@ class CarpoolController extends AbstractController
                 $this->denyAccessUnlessGranted('post', $proposal);
                 $data['userId'] = $poster->getId();
             }
+            if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
+                $data['outwardDate'] = new \DateTime();
+            }
             return $this->json(['result'=>$adManager->createAd($data)]);
         }
 
