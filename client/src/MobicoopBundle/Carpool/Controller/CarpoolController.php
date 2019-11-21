@@ -70,6 +70,8 @@ class CarpoolController extends AbstractController
             }
             if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
                 $data['outwardDate'] = new \DateTime();
+            } else {
+                $data['outwardDate'] = \DateTime::createFromFormat('Y-m-d', $data['outwardDate']);
             }
             return $this->json(['result'=>$adManager->createAd($data)]);
         }
