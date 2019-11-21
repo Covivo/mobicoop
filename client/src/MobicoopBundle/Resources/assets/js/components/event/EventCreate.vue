@@ -106,7 +106,9 @@
                   v-model="outwardDate"
                   :locale="locale"
                   no-title
+                  :max="startDatePickerMaxDate"
                   @input="menuOutwardDate = false"
+                  @change="updateEndDatePickerMinDate()"
                 />
               </v-menu>
             </v-col>
@@ -141,7 +143,9 @@
                   v-model="returnDate"
                   :locale="locale"
                   no-title
+                  :min="endDatePickerMinDate"
                   @input="menuReturnDate = false"
+                  @change="updateStartDatePickerMaxDate()"
                 />
               </v-menu>
             </v-col>
@@ -182,8 +186,10 @@
                   v-if="menuOutwardTime"
                   v-model="outwardTime"
                   format="24hr"
+                  :max="startDatePickerMaxTime"
                   header-color="secondary"
                   @click:minute="$refs.menuOutwardTime.save(outwardTime)"
+                  @change="updateEndTimePickerMinTime()"
                 />
               </v-menu>
             </v-col>
@@ -215,8 +221,10 @@
                   v-if="menuReturnTime"
                   v-model="returnTime"
                   format="24hr"
+                  :min="endDatePickerMinTime"
                   header-color="secondary"
                   @click:minute="$refs.menuReturnTime.save(returnTime)"
+                  @change="updateStartTimePickerMaxTime()"
                 />
               </v-menu>
             </v-col>
@@ -381,7 +389,11 @@ export default {
       urlEventRules: [
         v => !v || /([\w+-]*\.[\w+]*$)/.test(v) || this.$t("form.urlEvent.error")
       ],
-      dialog: false
+      dialog: false,
+      endDatePickerMinDate: null,
+      startDatePickerMaxDate: null,
+      endDatePickerMinTime: null,
+      startDatePickerMaxTime: null
     }
   },
   computed :{
@@ -437,6 +449,20 @@ export default {
         this.loading = false;
       }    
     },
+    updateEndDatePickerMinDate () {
+      // add one day because otherwise we get one day before the actual date
+      this.endDatePickerMinDate = moment(this.outwardDate).add(1, 'd').toISOString();
+    },
+    updateStartDatePickerMaxDate () {
+      // add one day because otherwise we get one day before the actual date
+      this.startDatePickerMaxDate = moment(this.returnDate).add(1, 'd').toISOString();
+    },
+    updateStartTimePickerMaxTime () {
+      this.startDatePickerMaxTime = this.returnTime;
+    },
+    updateEndTimePickerMinTime () {
+      this.endDatePickerMinTime = this.outwardTime;
+    }
   }
 }
 </script>
