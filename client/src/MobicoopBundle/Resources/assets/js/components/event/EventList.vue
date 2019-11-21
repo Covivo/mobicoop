@@ -44,35 +44,6 @@
 
    -->
 
-
-
-
-    <v-col
-      cols="12"
-    >
-      <v-card
-        v-show="loadingMap"
-        flat
-        align="center"
-        height="500"
-        color="backSpiner"
-      >
-        <v-progress-circular
-          size="250"
-          indeterminate
-          color="tertiary"
-        />
-      </v-card>
-      <m-map
-        v-show="!loadingMap"
-        ref="mmap"
-        :points="pointsComingMap"
-        :provider="mapProvider"
-        :url-tiles="urlTiles"
-        :attribution-copyright="attributionCopyright"
-      />
-    </v-col>
-
     <v-row>
       <v-col
         cols="12"
@@ -99,6 +70,33 @@
             :value="'tab-current'"
           >
             <v-card class="pa-6">
+              <v-row>
+                <v-col
+                  cols="12"
+                >
+                  <v-card
+                    v-show="loadingMap"
+                    flat
+                    align="center"
+                    height="500"
+                    color="backSpiner"
+                  >
+                    <v-progress-circular
+                      size="250"
+                      indeterminate
+                      color="tertiary"
+                    />
+                  </v-card>
+                  <m-map
+                    v-show="!loadingMap"
+                    ref="mmap"
+                    :points="pointsComingMap"
+                    :provider="mapProvider"
+                    :url-tiles="urlTiles"
+                    :attribution-copyright="attributionCopyright"
+                  />
+                </v-col>
+              </v-row>
               <v-card-title>
                 <v-row>
                   <v-col
@@ -372,6 +370,7 @@ export default {
 
     },
     createMapComing () {
+      const self = this;
       this.errorUpdate =200;
       this.loadingMap = true;
       this.pointsComingMap.length = 0;
@@ -381,7 +380,9 @@ export default {
           this.pointsComingMap.push(this.buildPoint(waypoint.event,waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
         });
         this.loadingMap = false;
-        setTimeout(this.$refs.mmap.redrawMap(),1000);
+        setTimeout(() => {
+          self.$refs.mmap.redrawMap()
+        },500);
       }
     },computedDateFormat(date) {
       // moment.locale(this.locale);
