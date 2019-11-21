@@ -176,22 +176,22 @@ export default {
             return;
           }
           addresses.forEach((address, addressKey) => {
-            addresses[addressKey].icon = "mdi-map-marker";
+            // addresses[addressKey].icon = "mdi-map-marker";
             addresses[addressKey].displayedLabel = `${address.displayLabel[0]}`;
             addresses[addressKey].displayedSecondLabel = `${address.displayLabel[1]}`;
             addresses[addressKey].selectedDisplayedLabel = `${address.displayLabel[0]}`;
             if (address.home) {
               addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel[0]}`;
               if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel[0]}`;
-              if (this.displayIcon) addresses[addressKey].icon = "mdi-home-map-marker";
+              // if (this.displayIcon) addresses[addressKey].icon = "mdi-home-map-marker";
             } else if (address.relayPoint) {
-              if (this.displayIcon) addresses[addressKey].icon = "mdi-parking";
+              // if (this.displayIcon) addresses[addressKey].icon = "mdi-parking";
             } else if (address.name) {
               addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel[0]}`;
               if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel[0]}`;
-              if (this.displayIcon) addresses[addressKey].icon = "mdi-map";
+              // if (this.displayIcon) addresses[addressKey].icon = "mdi-map";
             } else if (address.venue) {
-              if (this.displayIcon) addresses[addressKey].icon = "mdi-map-marker-radius";
+              // if (this.displayIcon) addresses[addressKey].icon = "mdi-map-marker-radius";
             }
           });
           addresses.forEach((address, addressKey) => {
