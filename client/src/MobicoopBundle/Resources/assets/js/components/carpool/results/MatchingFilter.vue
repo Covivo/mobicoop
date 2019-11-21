@@ -9,38 +9,42 @@
         align-self="start"
         class="text-left"
       >
-        <p v-if="chips">
-          <v-chip
-            v-for="chip in chips"
-            :key="chip.id"
-            close
-            @click:close="removeFilter(chip)"
-          >
-            {{ chip.text }}
-          </v-chip>
-        </p>
-
         <v-expansion-panels
           v-model="panel"
           accordion
         >
           <v-expansion-panel
-            v-for="(panel,i) in 1"
+            v-for="(currentPanel,i) in 1"
             :key="i"
             flat
           >
-            <v-expansion-panel-header>{{ $t('filters') }}</v-expansion-panel-header>
+            <v-expansion-panel-header>
+              {{ $t('filters') }} :
+              <span
+                v-if="chips"
+                class="pl-4"
+              >          
+                <v-chip
+                  v-for="chip in chips"
+                  :key="chip.id"
+                  close
+                  @click:close="removeFilter(chip)"
+                >
+                  {{ chip.text }}
+                </v-chip>
+              </span>
+            </v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-row>
                 <v-col cols="3">
                   <v-select
-                    v-model="filters.date"
-                    :items="itemsDate"
-                    :label="$t('select.date.label')"
+                    v-model="filters.order"
+                    :items="itemsOrder"
+                    :label="$t('select.order.label')"
                     outlined
                     dense
                     flat
-                    :disabled="!filterEnabled.date"
+                    :disabled="!filterEnabled.order"
                     @change="updateFilterDate"
                   />
                 </v-col>
@@ -83,15 +87,15 @@ export default {
       chips:[],
       filterEnabled:{
         "time":true,
-        "date":true
+        "order":true
       },
-      itemsDate: [
-        {text:this.$t('select.date.increasing'),value:'ASC'},
-        {text:this.$t('select.date.decreasing'),value:'DESC'}
+      itemsOrder: [
+        {text:this.$t('select.order.date.increasing'),value:'ASC'},
+        {text:this.$t('select.order.date.decreasing'),value:'DESC'}
       ],
       panel:null,
       filters:{
-        date:null,
+        order:null,
         time:null
       }
     };
@@ -108,7 +112,7 @@ export default {
   methods :{
     updateFilterDate(data){
       this.filterEnabled.date = false;
-      this.chips.push({id:"date",text:this.$t('chips.date')+' : '+this.$t('chips.value.'+data),value:data});
+      this.chips.push({id:"order",text:this.$t('chips.date')+' : '+this.$t('chips.value.'+data),value:data});
       this.closePanel();
     },
     updateFilterTime(data){
@@ -127,5 +131,11 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="scss" scoped>
+.v-expansion-panel{
+  border:1px solid #E0E0E0;
+  &::before{
+    box-shadow:none;  
+  }
+}
 </style>

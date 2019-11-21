@@ -2,10 +2,12 @@
   "fr":{
     "filters":"Filtres",
     "select": {
-      "date":{
-        "label":"Par Date",
-        "increasing":"Croissante",
-        "decreasing":"Decroissant"
+      "order":{
+        "label":"Ordre",
+        "date":{
+          "increasing":"Par Date Croissante",
+          "decreasing":"Par Date Decroissante"
+        }
       },
       "hour":{
         "label":"Heure"
