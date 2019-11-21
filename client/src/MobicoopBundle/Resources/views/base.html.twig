@@ -12,6 +12,11 @@
         {{ encore_entry_link_tags("#{assets_prefix ?? ''}main") }}
          {% block stylesheets %}
          {% endblock %}
+
+        {% if matomoUrl is defined and matomoUrl is not null %}
+            {% include '@Mobicoop/matomo.html.twig' %}
+        {% endif %}
+
     </head>
     <body>
         <div id="app">
