@@ -108,8 +108,18 @@ class GeoSearcher
                 }
             }
         }
+        // 2 - Events points
+        $events = $this->eventRepository->findByNameAndStatus($input, Event::STATUS_ACTIVE);
+        // exclude the private relay points
+        foreach ($events as $event) {
+            $address = $event->getAddress();
+            $address->setEvent($event);
+            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+            $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_EVENT)->getFileName());
+            $result[] = $address;
+        }
 
-        // 2 - relay points
+        // 3 - relay points
         $relayPoints = $this->relayPointRepository->findByNameAndStatus($input, RelayPoint::STATUS_ACTIVE);
         // exclude the private relay points
         foreach ($relayPoints as $relayPoint) {
@@ -139,8 +149,8 @@ class GeoSearcher
                 $result[] = $address;
             }
         }
-        
-        // 3 - sig addresses
+                
+        // 4 - sig addresses
         $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input))->all();
         // var_dump($geoResults);exit;
         foreach ($geoResults as $geoResult) {
