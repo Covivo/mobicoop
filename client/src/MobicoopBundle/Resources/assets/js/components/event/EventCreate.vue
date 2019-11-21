@@ -142,7 +142,6 @@
                   :locale="locale"
                   no-title
                   @input="menuReturnDate = false"
-                  @change="checkDateReturn($event),change()"
                 />
               </v-menu>
             </v-col>
