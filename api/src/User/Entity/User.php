@@ -329,7 +329,7 @@ class User implements UserInterface, EquatableInterface
     private $oldTelephone;
 
     /**
-     * @var int phone display configuration (1 = restricted (default); 2 = community; 3 = all).
+     * @var int phone display configuration (1 = restricted (default); 2 = all).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")

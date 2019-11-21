@@ -149,7 +149,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $telephone;
 
     /**
-     * @var int phone display configuration (1 = restricted; 2 = community; 3 = all).
+     * @var int phone display configuration (1 = restricted; 2 = all).
      *
      * @Assert\NotBlank
      * @Groups({"post","put"})
