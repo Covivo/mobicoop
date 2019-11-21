@@ -31,7 +31,7 @@
             <p v-html="point.title" />
           </l-tooltip>
 
-          <l-popup v-if="point.popup!==''">
+          <l-popup v-if="point.popup">
             <h3>{{ point.popup.titre }}</h3>
             <img
               v-if="point.popup.images[0]"
