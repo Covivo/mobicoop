@@ -32,6 +32,7 @@ use Mobicoop\Bundle\MobicoopBundle\Permission\Service\PermissionManager;
 class ProposalVoter extends Voter
 {
     const CREATE_AD = 'create_ad';
+    const DELETE_AD = 'delete_ad';
     const POST = 'post';
     const POST_DELEGATE = 'post_delegate';
     const RESULTS = 'results';
@@ -48,6 +49,7 @@ class ProposalVoter extends Voter
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
             self::CREATE_AD,
+            self::DELETE_AD,
             self::POST,
             self::POST_DELEGATE,
             self::RESULTS
@@ -71,6 +73,8 @@ class ProposalVoter extends Voter
         switch ($attribute) {
             case self::CREATE_AD:
                 return $this->canCreateProposal();
+            case self::DELETE_AD:
+                return $this->canDeleteProposal($proposal, $user);
             case self::POST:
                 return $this->canPostProposal($user);
             case self::POST_DELEGATE:
@@ -86,6 +90,19 @@ class ProposalVoter extends Voter
     {
         // everbody can create a proposal
         return true;
+    }
+
+    private function canDeleteProposal(Proposal $proposal, User $user)
+    {
+        // only registered users can delete proposal
+        if (!$user instanceof User) {
+            return false;
+        }
+        // only the author of the proposal can delete the proposal
+        if ($proposal->getUser()->getId() !== $user->getId()) {
+            return false;
+        }
+        return $this->permissionManager->checkPermission('proposal_delete_self', $user);
     }
 
     private function canPostProposal(User $user)

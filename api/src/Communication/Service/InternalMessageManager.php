@@ -90,6 +90,29 @@ class InternalMessageManager
      */
     public function send(User $sender, array $recipients, string $text, ?string $title=null, ?Message $reply)
     {
+        $message = $this->createMessage($sender, $recipients, $text, $title, $reply);
+        $this->entityManager->persist($message);
+        $this->entityManager->flush();
+
+        // the message has been sent, we browse the recipients again to send the event
+        foreach ($message->getRecipients() as $recipient) {
+            // dispatch en event
+            $event = new InternalMessageReceivedEvent($recipient);
+            $this->eventDispatcher->dispatch(InternalMessageReceivedEvent::NAME, $event);
+        }
+    }
+
+    /**
+     * @param User $sender
+     * @param array $recipients
+     * @param string $text
+     * @param string|null $title
+     * @param Message|null $reply
+     * @return Message
+     * @throws \Exception
+     */
+    public function createMessage(User $sender, array $recipients, string $text, ?string $title=null, ?Message $reply)
+    {
         $message = new Message();
         $message->setUser($sender);
         $message->setText($text);
@@ -106,15 +129,8 @@ class InternalMessageManager
             $orecipient->setSentDate(new \DateTime());
             $message->addRecipient($orecipient);
         }
-        $this->entityManager->persist($message);
-        $this->entityManager->flush();
 
-        // the message has been sent, we browse the recipients again to send the event
-        foreach ($message->getRecipients() as $recipient) {
-            // dispatch en event
-            $event = new InternalMessageReceivedEvent($recipient);
-            $this->eventDispatcher->dispatch(InternalMessageReceivedEvent::NAME, $event);
-        }
+        return $message;
     }
 
     /**

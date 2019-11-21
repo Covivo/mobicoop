@@ -5,30 +5,65 @@
       align="center"
     >
       <v-col
-        cols="6"
+        cols="12"
         align-self="start"
+        class="text-left"
       >
-        <!--TODO : REMOVE WHEN START CODING FILTER COMPONENT-->
-        <!-- <v-combobox
-            v-model="chips"
-            :items="items"
-            chips
-            clearable
-            multiple
-            label="Filtres"
+        <v-expansion-panels
+          v-model="panel"
+          accordion
+        >
+          <v-expansion-panel
+            v-for="(currentPanel,i) in 1"
+            :key="i"
+            flat
           >
-            <template v-slot:selection="{ attrs, item, select, selected }">
-              <v-chip
-                v-bind="attrs"
-                :input-value="selected"
-                close
-                @click="select"
-                @click:close="remove(item)"
-              >
-                <strong>{{ item }}</strong>&nbsp;
-              </v-chip>
-            </template>
-          </v-combobox> -->
+            <v-expansion-panel-header>
+              {{ $t('filters') }} :
+              <span
+                v-if="chips"
+                class="pl-4"
+              >          
+                <v-chip
+                  v-for="chip in chips"
+                  :key="chip.id"
+                  close
+                  @click:close="removeFilter(chip)"
+                >
+                  {{ chip.text }}
+                </v-chip>
+              </span>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-row>
+                <v-col cols="3">
+                  <v-select
+                    v-model="filters.order"
+                    :items="itemsOrder"
+                    :label="$t('select.order.label')"
+                    outlined
+                    dense
+                    flat
+                    :disabled="!filterEnabled.order"
+                    @change="updateFilterDate"
+                  />
+                </v-col>
+                <v-col cols="3">
+                  <v-select
+                    v-model="filters.filters.time"
+                    :items="itemsTime"
+                    :label="$t('select.hour.label')"
+                    outlined
+                    dense
+                    flat
+                    :disabled="!filterEnabled.time"
+                    @change="updateFilterTime"
+                  />
+                </v-col>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-col>
     </v-row>
   </v-content>
@@ -49,12 +84,65 @@ export default {
   },
   data : function() {
     return {
-      
+      chips:[],
+      filterEnabled:{
+        "time":true,
+        "order":true
+      },
+      itemsOrder: [
+        {text:this.$t('select.order.date.increasing'),value:{criteria:'date',value:'ASC'}},
+        {text:this.$t('select.order.date.decreasing'),value:{criteria:'date',value:'DESC'}}
+      ],
+      panel:null,
+      filters:{
+        order:null,
+        filters:{
+          // You can add here other filters
+          time:null
+        }
+      }
     };
   },
+  computed:{
+    itemsTime(){
+      let hours = [];
+      for (let i = 1; i < 24; i++) {
+        hours.push({text:i+'h00',value:i+'h00'});
+      }
+      return hours;
+    }
+  },
   methods :{
+    updateFilterDate(data){
+      this.filterEnabled.order = false;
+      this.chips.push({id:"order",text:this.$t('chips.date')+' : '+this.$t('chips.value.'+data.value),value:data.value});
+      this.closePanel();
+      this.$emit("updateFilters",this.filters);
+    },
+    updateFilterTime(data){
+      this.filterEnabled.time = false;
+      this.chips.push({id:"time",text:this.$t('chips.hour')+' : '+data,value:data});
+      this.closePanel();
+      this.$emit("updateFilters",this.filters);
+    },
+    removeFilter(item){
+      console.error(item);
+      this.filterEnabled[item.id] = true;
+      (item.id=="order") ? this.filters[item.id] = null : this.filters.filters[item.id] = null;
+      this.chips.splice(this.chips.indexOf(item), 1);
+      this.$emit("updateFilters",this.filters);
+    },
+    closePanel(){
+      this.panel = null;
+    }
   }
 };
 </script>
-<style>
+<style lang="scss" scoped>
+.v-expansion-panel{
+  border:1px solid #E0E0E0;
+  &::before{
+    box-shadow:none;  
+  }
+}
 </style>

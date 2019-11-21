@@ -128,6 +128,18 @@ class Ask
     private $user;
 
     /**
+     * @var User The user the ask is for
+     * This field is nullable for migration purpose but it can't be null
+     *
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="asksRelated")
+     * @ORM\JoinColumn(nullable=true)
+     * @Groups({"read","write","thread"})
+     * @MaxDepth(1)
+     */
+    private $userRelated;
+
+    /**
      * @var User|null User that create the proposal for another user.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="asksDelegate")
@@ -289,6 +301,18 @@ class Ask
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getUserRelated(): User
+    {
+        return $this->userRelated;
+    }
+
+    public function setUserRelated(?User $userRelated): self
+    {
+        $this->userRelated = $userRelated;
 
         return $this;
     }
@@ -483,5 +507,19 @@ class Ask
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \Datetime());
+    }
+
+    /**
+     * User related by this Ask
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoUserRelated()
+    {
+        if ($this->getMatching()->getProposalOffer()->getUser()->getId()==$this->getUser()->getId()) {
+            $this->setUserRelated($this->getMatching()->getProposalRequest()->getUser());
+        } else {
+            $this->setUserRelated($this->getMatching()->getProposalOffer()->getUser());
+        }
     }
 }

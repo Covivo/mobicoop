@@ -794,6 +794,9 @@ class Deserializer
         if (isset($data["user"])) {
             $ask->setUser(self::deserializeUser($data["user"]));
         }
+        if (isset($data["userRelated"])) {
+            $ask->setUserRelated(self::deserializeUser($data["userRelated"]));
+        }
         if (isset($data["matching"])) {
             $ask->setMatching(self::deserializeMatching($data["matching"]));
         }

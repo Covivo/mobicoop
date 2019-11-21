@@ -44,7 +44,7 @@ use App\PublicTransport\Entity\PTJourney;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={"get","post"},
- *      itemOperations={"get"}
+ *      itemOperations={"get","put"}
  * )
  */
 class Criteria

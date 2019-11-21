@@ -231,6 +231,7 @@ class AdManager
      * @param integer $role                 Role (driver and/or passenger)
      * @param integer|null $userId          User id of the requester (to exclude its own results)
      * @param integer $communityId          Community id of the requester (to get only results from that community)
+     * @param array|null $filters           Filters and order choices
      * @return array|null The matchings found or null if not found.
      */
     public function getResultsForSearch(
@@ -244,7 +245,8 @@ class AdManager
         ?bool $strictRegular = null,
         ?int $role = null,
         ?int $userId = null,
-        ?int $communityId = null
+        ?int $communityId = null,
+        ?array $filters = null
     ) {
         // we set the params
         $params = [
@@ -276,6 +278,9 @@ class AdManager
         }
         if (!is_null($communityId)) {
             $params["communityId"] = $communityId;
+        }
+        if (!is_null($filters)) {
+            $params["filters"] = $filters;
         }
         return $this->createAd($params);
     }

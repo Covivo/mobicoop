@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
@@ -38,6 +39,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller class for carpooling related actions.
@@ -125,7 +127,46 @@ class CarpoolController extends AbstractController
     }
 
     /**
-     * Ad results page.
+     * Delete a carpooling ad.
+     * @param ProposalManager $proposalManager
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function carpoolAdDelete(ProposalManager $proposalManager, Request $request)
+    {
+        if ($request->isMethod('DELETE')) {
+            $data = json_decode($request->getContent(), true);
+
+            if (!isset($data['proposalId'])) {
+                return new JsonResponse([
+                    'message' => 'error'
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            $proposal = $proposalManager->getProposal($data['proposalId']);
+
+            $this->denyAccessUnlessGranted('delete_ad', $proposal);
+
+            if ($response = $proposalManager->deleteProposal($data['proposalId'], $data)) {
+                return new JsonResponse(
+                    ["message" => "delete.success"],
+                    \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
+                );
+            }
+            return new JsonResponse(
+                ["message" => "delete.error"],
+                \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        return new JsonResponse(
+            ["message" => "delete.error"],
+            \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN
+        );
+    }
+
+    /**
+     * Ad results.
      * (POST)
      */
     public function carpoolAdResults($id, ProposalManager $proposalManager)
@@ -193,6 +234,8 @@ class CarpoolController extends AbstractController
         $userId = isset($params['userId']) ? $params['userId'] : null;
         $communityId = isset($params['communityId']) ? $params['communityId'] : null;
 
+        $filters = isset($params['filters']) ? $params['filters'] : null;
+
         $result = [];
         if ($ad = $adManager->getResultsForSearch(
             $params['origin'],
@@ -205,7 +248,8 @@ class CarpoolController extends AbstractController
             $strictRegular,
             $role,
             $userId,
-            $communityId
+            $communityId,
+            $filters
         )) {
             $result = $ad->getResults();
         }

@@ -149,7 +149,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $telephone;
 
     /**
-     * @var int phone display configuration (1 = restricted; 2 = community; 3 = all).
+     * @var int phone display configuration (1 = restricted; 2 = all).
      *
      * @Assert\NotBlank
      * @Groups({"post","put"})
@@ -270,6 +270,11 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $asks;
 
     /**
+     * @var Ask[]|null The asks related to this user.
+     */
+    private $asksRelated;
+
+    /**
      * @var Image[]|null The images of the user.
      *
      * @Groups({"post","put"})
@@ -374,6 +379,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
+        $this->asksRelated = new ArrayCollection();
         $this->masses = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->userNotifications = new ArrayCollection();
@@ -784,6 +790,34 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             // set the owning side to null (unless already changed)
             if ($ask->getUser() === $this) {
                 $ask->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getAsksRelated(): Collection
+    {
+        return $this->asksRelated;
+    }
+    
+    public function addAskRelated(Ask $asksRelated): self
+    {
+        if (!$this->asksRelated->contains($asksRelated)) {
+            $this->asksRelated->add($asksRelated);
+            $asksRelated->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeAskRelated(Ask $asksRelated): self
+    {
+        if ($this->asksRelated->contains($asksRelated)) {
+            $this->asksRelated->removeElement($asksRelated);
+            // set the owning side to null (unless already changed)
+            if ($asksRelated->getUser() === $this) {
+                $asksRelated->setUser(null);
             }
         }
         
