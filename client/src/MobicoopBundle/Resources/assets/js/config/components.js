@@ -54,5 +54,5 @@ export default {
   Signupform,
   SignupValidation,
   UpdateProfile,
-  Solidary
+  Solidary,
 }

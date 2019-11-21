@@ -60,6 +60,7 @@
               </v-avatar>
             </v-col>
           </v-row>
+
           <v-row justify="center">
             <v-col cols="3" justify-self="center" align-self="center" v-if="!displayFileUpload">
 
@@ -76,6 +77,7 @@
 
 
             </v-col>
+
             <v-col cols="5" class="text-center" v-else>
               <v-file-input
                 v-model="avatar"
@@ -83,6 +85,7 @@
                 accept="image/png, image/jpeg, image/bmp"
                 :label="$t('avatar.label')"
                 prepend-icon="mdi-image"
+                :change="previewAvatar()"
               />
             </v-col>
           </v-row>
@@ -393,8 +396,8 @@ export default {
          v => (/^\d{4}$/).test(v) || this.$t("phone.token.inputError")
       ],
       newsSubscription: this.user && this.user.newsSubscription !== null ? this.user.newsSubscription : null,
-      urlAvatar:this.user.avatars[this.user.avatars.length-1],
-      displayFileUpload:(this.user.images[0]) ? false : true,
+      urlAvatar: this.user.avatars[this.user.avatars.length-1],
+      displayFileUpload: (this.user.images[0]) ? false : true,
       phoneVerified: null,
       diplayVerification: this.user.telephone ? true : false,
       loadingToken: false,
@@ -416,6 +419,7 @@ export default {
     homeAddressSelected(address){
       this.homeAddress = address;
     },
+
     validate () {
       if (this.$refs.form.validate()) {
         this.checkForm();
@@ -466,6 +470,18 @@ export default {
           this.displayFileUpload = true;
           this.loadingDelete = false;
         });
+    },
+    previewAvatar() {
+      if(this.avatar) {
+        let reader  = new FileReader();
+        reader.addEventListener("load", function () {
+          this.urlAvatar = reader.result; // UPDATE PREVIEW
+        }.bind(this), false);
+        reader.readAsDataURL(this.avatar); // FIRE LOAD EVENT
+
+      } else {
+        this.urlAvatar = this.user.avatars[this.user.avatars.length-1]; // RESET AVATAR
+      }
     },
     checkVerifiedPhone() {
       if (this.telephone !== null) {

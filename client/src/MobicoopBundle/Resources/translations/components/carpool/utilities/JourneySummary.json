@@ -1,8 +1,10 @@
 {
     "fr": {
+        "priceTooltip": "Tarif indicatif",
         "places": "{seats} place | {seats} places"
     },
     "en": {
-        
+        "priceTooltip": "",
+        "places": ""
     }
 }

@@ -1,5 +1,6 @@
 {
   "fr": {
+    "priceTooltip": "Tarif indicatif",
     "detailTitle": "Détail du trajet",
     "places": "{seats} place | {seats} places",
     "carpool": "Covoiturer",
@@ -35,6 +36,7 @@
     }
   },
   "en": {
+    "priceTooltip": "",
     "detailTitle": "Journey detail",
     "places": "{seats} seat | {seats} seats",
     "carpool": "Carpool",

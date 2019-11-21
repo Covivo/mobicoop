@@ -26,7 +26,7 @@
       class="overflow-y-auto"
       fluid
     >
-      <v-row 
+      <v-row
         justify="center"
       >
         <v-col
@@ -289,12 +289,13 @@
                 v-slot:label
                 v-slot:activator="{ on }"
               >
+                {{ $t('ui.pages.signup.chart.text') }}
                 <a
                   class="secondary--text"
                   target="_blank"
-                  href="/cgu"
+                  :href="$t('ui.pages.signup.chart.route')"
                   @click.stop
-                >{{ $t('ui.pages.signup.chart.chartValid') }}
+                >{{ $t('ui.pages.signup.chart.link') }}
                 </a>
               </template>
             </v-checkbox>
@@ -581,5 +582,9 @@ export default {
   }
   .mb-40 {
     margin-bottom:  160px;
+  }
+
+  #step5 .check .v-label {
+    display: inline;
   }
 </style>
