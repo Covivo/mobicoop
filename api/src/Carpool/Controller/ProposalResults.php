@@ -21,42 +21,40 @@
  *    LICENSE
  **************************/
 
-namespace App\Event\Service;
+namespace App\Carpool\Controller;
 
-use App\Event\Repository\EventRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Carpool\Service\ProposalManager;
+use App\Carpool\Entity\Proposal;
+use App\TranslatorTrait;
 
 /**
- * Event manager.
- *
- * This service contains methods related to event manipulations.
+ * Controller class for proposal results.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class EventManager
+class ProposalResults
 {
-    private $entityManager;
-    private $eventRepository;
-    
-    /**
-     * Constructor.
-     *
-     * @param EntityManagerInterface $entityManager
-     */
-    public function __construct(EntityManagerInterface $entityManager, EventRepository $eventRepository)
+    use TranslatorTrait;
+    private $proposalManager;
+
+    public function __construct(ProposalManager $proposalManager)
     {
-        $this->entityManager = $entityManager;
-        $this->eventRepository = $eventRepository;
+        $this->proposalManager = $proposalManager;
     }
 
     /**
-     * Get an event by its id
+     * This method is invoked when a new proposal is posted.
+     * It returns the new proposal created, with its matchings as subresources.
      *
-     * @param integer $eventId
-     * @return Event|null
+     * @param Proposal $data
+     * @return Proposal
      */
-    public function getEvent(int $eventId)
+    public function __invoke(Proposal $data): Proposal
     {
-        return $this->eventRepository->find($eventId);
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad proposal id is provided"));
+        }
+        $data = $this->proposalManager->getResults($data);
+        return $data;
     }
 }

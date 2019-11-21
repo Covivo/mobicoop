@@ -104,6 +104,15 @@ services:
         tags:
             - { name: monolog.logger, channel: carpool }
 
+    App\Carpool\Service\AdManager:
+        arguments:
+            $params:
+                defaultMarginTime: '%env(int:CARPOOL_MARGIN_TIME)%'
+                defaultSeatsDriver: '%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%'
+                defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
+        tags:
+            - { name: monolog.logger, channel: carpool }
+
     App\Carpool\Service\ProposalManager:
         arguments:
             $params:

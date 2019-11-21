@@ -56,6 +56,20 @@ class ProposalManager
     }
 
     /**
+     * Get the results for a proposal
+     *
+     * @param int $id The proposal id
+     * @return void
+     */
+    public function getResults(int $id)
+    {
+        if ($data = $this->dataProvider->getSpecialItem($id, "results")) {
+            return $data->getValue();
+        }
+        return null;
+    }
+
+    /**
      * Get all matchings for a search.
      *
      * @param array $origin               The origin address
@@ -311,7 +325,8 @@ class ProposalManager
         }
         $criteria->setDriver($ad['driver']);
         $criteria->setPassenger($ad['passenger']);
-        $criteria->setSeats($ad['seats']);
+        $criteria->setSeatsDriver($ad['seatsDriver']);
+        $criteria->setSeatsPassenger($ad['seatsPassenger']);
         if (isset($ad['solidary'])) {
             $criteria->setSolidaryExclusive($ad['solidary']);
         }
@@ -648,7 +663,8 @@ class ProposalManager
             $criteriaReturn = new Criteria();
             $criteriaReturn->setDriver($ad['driver']);
             $criteriaReturn->setPassenger($ad['passenger']);
-            $criteriaReturn->setSeats($ad['seats']);
+            $criteriaReturn->setSeatsDriver($ad['seatsDriver']);
+            $criteriaReturn->setSeatsPassenger($ad['seatsPassenger']);
             if (isset($ad['priceKm'])) {
                 $criteriaReturn->setPriceKm($ad['priceKm']);
             }

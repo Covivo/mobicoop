@@ -300,6 +300,12 @@ class Address
         $this->displayLabel = new ArrayCollection();
     }
 
+    public function __clone()
+    {
+        // when we clone an Address we exclude the id
+        $this->id = null;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

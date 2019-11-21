@@ -83,7 +83,7 @@ class Ask
     private $id;
 
     /**
-     * @var int Ask status (1 = initiated; 2 = pending, 3 = accepted; 4 = declined).
+     * @var int Ask status (1 = initiated; 2 = pending as driver, 3 = pending as passenger, 4 = accepted; 5 = declined).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -171,11 +171,20 @@ class Ask
     /**
      * @var Ask|null The linked ask for return trips.
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", cascade={"remove"})
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", cascade={"persist", "remove"}, orphanRemoval=true)
      * @Groups({"read","threads","thread"})
      * @MaxDepth(1)
      */
     private $askLinked;
+
+    /**
+     * @var Ask|null Related ask for opposite role : driver ask if the current ask is as passenger, passenger ask if the current ask is as driver.
+     * Used when the ask is created with an undefined role.
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @Groups({"read","threads","thread"})
+     * @MaxDepth(1)
+     */
+    private $askOpposite;
 
     /**
      * @var Criteria The criteria applied to the ask.
@@ -210,6 +219,20 @@ class Ask
      * @ApiSubresource(maxDepth=1)
      */
     private $askHistories;
+
+    /**
+     * @var Matching|null Related matching for a round trip (return or outward journey).
+     * Not persisted : used only to get the return trip information.
+     * @Groups("write")
+     */
+    private $matchingRelated;
+
+    /**
+     * @var Matching|null Opposite matching (if proposal and request can be switched, so if driver and passenger can switch roles)
+     * Not persisted : used only to get the link information.
+     * @Groups("write")
+     */
+    private $matchingOpposite;
     
     public function __construct()
     {
@@ -354,6 +377,24 @@ class Ask
         return $this;
     }
 
+    public function getAskOpposite(): ?self
+    {
+        return $this->askOpposite;
+    }
+
+    public function setAskOpposite(?self $askOpposite): self
+    {
+        $this->askOpposite = $askOpposite;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newAskOpposite = $askOpposite === null ? null : $this;
+        if ($newAskOpposite !== $askOpposite->getAskOpposite()) {
+            $askOpposite->setAskOpposite($newAskOpposite);
+        }
+
+        return $this;
+    }
+
     public function getCriteria(): Criteria
     {
         return $this->criteria;
@@ -418,6 +459,30 @@ class Ask
                 $askHistory->setAsk(null);
             }
         }
+        
+        return $this;
+    }
+
+    public function getMatchingRelated(): ?Matching
+    {
+        return $this->matchingRelated;
+    }
+    
+    public function setMatchingRelated(?Matching $matchingRelated): self
+    {
+        $this->matchingRelated = $matchingRelated;
+                
+        return $this;
+    }
+
+    public function getMatchingOpposite(): ?Matching
+    {
+        return $this->matchingOpposite;
+    }
+    
+    public function setMatchingOpposite(?Matching $matchingOpposite): self
+    {
+        $this->matchingOpposite = $matchingOpposite;
         
         return $this;
     }

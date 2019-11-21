@@ -65,10 +65,10 @@ class UserManager
     private $askHistoryRepository;
     private $notificationRepository;
     private $userNotificationRepository;
+    private $userRepository;
     private $logger;
     private $eventDispatcher;
     private $encoder;
-    private $userRepository;
  
     /**
         * Constructor.
@@ -91,6 +91,17 @@ class UserManager
         $this->userNotificationRepository = $userNotificationRepository;
         $this->userRepository = $userRepository;
     }
+
+    /**
+     * Get a user by its id.
+     *
+     * @param integer $id
+     * @return User|null
+     */
+    public function getUser(int $id)
+    {
+        return $this->userRepository->find($id);
+    }
     
     /**
      * Registers a user.
@@ -106,7 +117,7 @@ class UserManager
         $userRole->setRole($role);
         $user->addUserRole($userRole);
         // default phone display : restricted
-        $user->setPhoneDisplay(1);
+        $user->setPhoneDisplay(User::PHONE_DISPLAY_RESTRICTED);
         // creation of the geotoken
         $datetime = new DateTime();
         $time = $datetime->getTimestamp();

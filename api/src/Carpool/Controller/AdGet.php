@@ -21,35 +21,43 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Event;
+namespace App\Carpool\Controller;
 
-use Symfony\Component\EventDispatcher\Event;
-use App\Carpool\Entity\Matching;
-use App\User\Entity\User;
+use App\Carpool\Entity\Ad;
+use App\Carpool\Service\AdManager;
+use App\TranslatorTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Event sent when a new matching is created.
+ * Controller class for ad get.
+ * We return the Ad with its results.
+ *
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-class MatchingNewEvent extends Event
+class AdGet
 {
-    public const NAME = 'carpool_matching_new';
-
-    protected $matching;
-    protected $sender;
-
-    public function __construct(Matching $matching, ?User $user)
+    use TranslatorTrait;
+    
+    private $adManager;
+    
+    public function __construct(RequestStack $requestStack, AdManager $adManager)
     {
-        $this->matching = $matching;
-        $this->sender = $user;
+        $this->request = $requestStack->getCurrentRequest();
+        $this->adManager = $adManager;
     }
 
-    public function getMatching()
+    /**
+     * This method is invoked when a new ad is asked.
+     *
+     * @param Ad $data
+     * @return Ad
+     */
+    public function __invoke(Ad $data): Ad
     {
-        return $this->matching;
-    }
-
-    public function getSender()
-    {
-        return $this->sender;
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
+        }
+        $data = $this->adManager->getAd($this->request->get("id"));
+        return $data;
     }
 }

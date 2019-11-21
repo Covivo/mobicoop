@@ -35,6 +35,11 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
  */
 class Ask implements ResourceInterface
 {
+    const STATUS_INITIATED = 1;
+    const STATUS_PENDING = 2;
+    const STATUS_ACCEPTED = 3;
+    const STATUS_DECLINED = 4;
+    
     /**
      * @var int The id of this ask.
      * @Groups({"post"})

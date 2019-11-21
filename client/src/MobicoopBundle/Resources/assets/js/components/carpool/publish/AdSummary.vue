@@ -71,7 +71,7 @@
         
           <!-- price -->
           <v-col
-            v-if="displayInfo && !solidary"
+            v-if="displayInfo && !solidaryExclusive"
             cols="3"
             offset="1"
             align="right"
@@ -534,7 +534,7 @@ export default {
       type: Boolean,
       default: true
     },
-    solidary: {
+    solidaryExclusive: {
       type: Boolean,
       default: false
     },

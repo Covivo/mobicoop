@@ -96,9 +96,14 @@ class Result implements ResourceInterface, \JsonSerializable
     private $time;
 
     /**
-     * @var int The number of places offered / requested to display.
+     * @var int The number of places offered to display.
      */
-    private $seats;
+    private $seatsDriver;
+
+    /**
+     * @var int The number of places asked to display.
+     */
+    private $seatsPassenger;
 
     /**
      * @var string The computed price to display.
@@ -320,14 +325,26 @@ class Result implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
-    public function getSeats(): ?int
+    public function getSeatsDriver(): ?int
     {
-        return $this->seats;
+        return $this->seatsDriver;
     }
 
-    public function setSeats(int $seats): self
+    public function setSeatsDriver(int $seatsDriver): self
     {
-        $this->seats = $seats;
+        $this->seatsDriver = $seatsDriver;
+
+        return $this;
+    }
+
+    public function getSeatsPassenger(): ?int
+    {
+        return $this->seatsPassenger;
+    }
+
+    public function setSeatsPassenger(int $seatsPassenger): self
+    {
+        $this->seatsPassenger = $seatsPassenger;
 
         return $this;
     }

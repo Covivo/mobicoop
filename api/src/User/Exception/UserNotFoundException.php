@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,35 +21,8 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Event;
+namespace App\User\Exception;
 
-use Symfony\Component\EventDispatcher\Event;
-use App\Carpool\Entity\Matching;
-use App\User\Entity\User;
-
-/**
- * Event sent when a new matching is created.
- */
-class MatchingNewEvent extends Event
+class UserNotFoundException extends \LogicException
 {
-    public const NAME = 'carpool_matching_new';
-
-    protected $matching;
-    protected $sender;
-
-    public function __construct(Matching $matching, ?User $user)
-    {
-        $this->matching = $matching;
-        $this->sender = $user;
-    }
-
-    public function getMatching()
-    {
-        return $this->matching;
-    }
-
-    public function getSender()
-    {
-        return $this->sender;
-    }
 }

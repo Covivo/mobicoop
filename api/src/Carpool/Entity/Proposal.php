@@ -38,6 +38,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\ProposalPost;
+use App\Carpool\Controller\ProposalResults;
 use App\Carpool\Controller\ProposalDelete;
 use App\Travel\Entity\TravelMode;
 use App\Community\Entity\Community;
@@ -179,12 +180,21 @@ use App\Communication\Entity\Notified;
  *              }
  *          }
  *      },
- *      itemOperations={"get","put","delete"={
+ *      itemOperations={
+ *          "results"={
+ *              "method"="GET",
+ *              "path"="/proposals/{id}/results",
+ *              "normalization_context"={"groups"={"results"}},
+ *              "controller"=ProposalResults::class,
+ *          },
+ *          "get",
+ *          "put",
+ *          "delete"={
  *              "method"="DELETE",
  *              "path"="/proposals/{id}",
  *              "controller"=ProposalDelete::class
  *          }
- *     }
+ *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"proposalType"})
  * @ApiFilter(BooleanFilter::class, properties={"private"})
@@ -269,11 +279,10 @@ class Proposal
     private $proposalLinked;
     
     /**
-     * @var User User for whom the proposal is submitted (in general the user itself, except when it is a "posting for").
+     * @var User|null User for whom the proposal is submitted (in general the user itself, except when it is a "posting for").
+     * Can be null for an anonymous search.
      *
-     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
-     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","results","write"})
      * @MaxDepth(1)
      */
@@ -397,7 +406,7 @@ class Proposal
     private $formalAsk;
 
     /**
-     * @var ArrayCollection|null The carpool results for the proposal.
+     * @var array|null The carpool results for the proposal.
      * Results are taken from the matchings, but returned in a more user-friendly way.
      * @Groups("results")
      */
@@ -416,7 +425,7 @@ class Proposal
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
-        $this->results = new ArrayCollection();
+        $this->results = [];
     }
     
     public function __clone()
@@ -424,11 +433,11 @@ class Proposal
         // when we clone a Proposal we keep only the basic properties, we re-initialize all the collections
         $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
-        $this->communities = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
+        $this->results = [];
     }
 
     public function getId(): ?int

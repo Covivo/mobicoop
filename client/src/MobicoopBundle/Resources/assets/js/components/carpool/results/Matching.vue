@@ -12,6 +12,7 @@
         >
           <!-- Matching header -->
           <matching-header
+            v-if="!proposalId"
             :origin="origin"
             :destination="destination"
             :date="date"
@@ -178,6 +179,8 @@ export default {
       result: null,
       loading : true,
       results: null,
+      lOrigin: null,
+      lDestination: null,
       filters: null
     };
   },
@@ -220,7 +223,6 @@ export default {
           "communityId": this.communityId,
           "filters": this.filters
         };
-        console.error(postParams);
         axios.post(this.$t("matchingUrl"), postParams,
           {
             headers:{
@@ -238,6 +240,7 @@ export default {
 
     },
     contact(params) {
+      // console.log(params);
       axios.post(this.$t("contactUrl"), params,
         {
           headers:{
@@ -260,7 +263,7 @@ export default {
         })
     },
     launchCarpool(params) {
-      //console.log(params);
+      // console.log(params);
       axios.post(this.$t("carpoolUrl"), params,
         {
           headers:{
