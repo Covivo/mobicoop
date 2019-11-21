@@ -28,7 +28,7 @@
           align="center"
         >
           <iframe
-            src="/evenement-widget/2 "
+            :src="`/evenement-widget/${event.id}`"
             width="100%"
             height="1440px"
             frameborder="0"
@@ -48,7 +48,8 @@
               Vous pouvez modifier les éléments en gras afin de personnaliser votre widget.
             </p>
             <p>
-              &lt;iframe src="{{ `http://localhost:8081/evenement-get-widget/${event.id} ` }}" width="<strong>100%</strong>" height="<strong>440px</strong>" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;
+              <!--              &lt;iframe src="{{ `https://localhost:8081/evenement-get-widget/${event.id} ` }}" width="<strong>100%</strong>" height="<strong>440px</strong>" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;-->
+              &lt;iframe src="{{ getUrl() }}" width="<strong>100%</strong>" height="<strong>440px</strong>" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;
             </p>
             <p><strong>Attention</strong> : Certains outils de publication comme Wordpress nécessitent l'ajout de plugins spécifiques pour pouvoir utiliser une iFrame.</p>
           </v-row>
@@ -208,6 +209,9 @@ export default {
           return this.domain = false;
         }
       }
+    },
+    getUrl() {
+      return window.location.protocol + window.location.host + window.location.pathname;
     },
     // publish() {
     //   let lParams = {
