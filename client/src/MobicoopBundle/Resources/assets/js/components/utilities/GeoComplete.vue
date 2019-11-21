@@ -143,16 +143,10 @@ export default {
           if (this.address.home) {
             this.address.displayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
             if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
-            if (this.displayIcon) this.address.icon = "mdi-home-map-marker";
-          } else if (this.address.relayPoint) {
-            if (this.displayIcon) this.address.icon = "mdi-parking";
           } else if (this.address.name) {
             this.address.displayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
             if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
-            if (this.displayIcon) this.address.icon = "mdi-map";
-          } else if (this.address.venue) {
-            if (this.displayIcon) this.address.icon = "mdi-map-marker-radius";
-          }
+          } 
           this.entries.push(this.address);
         } 
       }
@@ -176,22 +170,15 @@ export default {
             return;
           }
           addresses.forEach((address, addressKey) => {
-            // addresses[addressKey].icon = "mdi-map-marker";
             addresses[addressKey].displayedLabel = `${address.displayLabel[0]}`;
             addresses[addressKey].displayedSecondLabel = `${address.displayLabel[1]}`;
             addresses[addressKey].selectedDisplayedLabel = `${address.displayLabel[0]}`;
             if (address.home) {
               addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel[0]}`;
               if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel[0]}`;
-              // if (this.displayIcon) addresses[addressKey].icon = "mdi-home-map-marker";
-            } else if (address.relayPoint) {
-              // if (this.displayIcon) addresses[addressKey].icon = "mdi-parking";
             } else if (address.name) {
               addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel[0]}`;
               if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel[0]}`;
-              // if (this.displayIcon) addresses[addressKey].icon = "mdi-map";
-            } else if (address.venue) {
-              // if (this.displayIcon) addresses[addressKey].icon = "mdi-map-marker-radius";
             }
           });
           addresses.forEach((address, addressKey) => {
