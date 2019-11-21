@@ -114,16 +114,19 @@ export default {
       this.filterEnabled.date = false;
       this.chips.push({id:"order",text:this.$t('chips.date')+' : '+this.$t('chips.value.'+data),value:data});
       this.closePanel();
+      this.$emit("updateFilters",this.filters);
     },
     updateFilterTime(data){
       this.filterEnabled.time = false;
       this.chips.push({id:"time",text:this.$t('chips.hour')+' : '+data,value:data});
       this.closePanel();
+      this.$emit("updateFilters",this.filters);
     },
     removeFilter(item){
       this.filterEnabled[item.id] = true;
       this.filters[item.id] = null;
       this.chips.splice(this.chips.indexOf(item), 1);
+      this.$emit("updateFilters",this.filters);
     },
     closePanel(){
       this.panel = null;

@@ -20,7 +20,7 @@
           />
 
           <!-- Matching filter -->
-          <matching-filter />
+          <matching-filter @updateFilters="updateFilters" />
 
           <!-- Number of matchings -->
           <v-row 
@@ -177,7 +177,8 @@ export default {
       proposal: null,
       result: null,
       loading : true,
-      results: null
+      results: null,
+      filters: null
     };
   },
   computed: {
@@ -186,43 +187,7 @@ export default {
     }
   },
   created() {
-    // if a proposalId is provided, we load the proposal results
-    if (this.proposalId) {
-      this.loading = true;
-      axios.get(this.$t("proposalUrl",{id: Number(this.proposalId)}))
-        .then((response) => {
-          this.loading = false;
-          this.proposal = response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      // otherwise we send a proposal search
-      this.loading = true;
-      let postParams = {
-        "origin": this.origin,
-        "destination": this.destination,
-        "date": this.date,
-        "time": this.time,
-        "regular": this.regular,
-        "userId": this.user ? this.user.id : null,
-        "communityId": this.communityId
-      };
-      axios.post(this.$t("matchingUrl"), postParams,
-        {
-          headers:{
-            'content-type': 'application/json'
-          }
-        })
-        .then((response) => {
-          this.loading = false;
-          this.results = response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+    this.search();
   },
   methods :{
     carpool(result) {
@@ -230,10 +195,45 @@ export default {
       // open the dialog
       this.carpoolDialog = true;
     },
-    // TODO : REMOVE WHEN START CODING FILTER COMPONENT
-    remove (item) {
-      this.chips.splice(this.chips.indexOf(item), 1)
-      this.chips = [...this.chips]
+    search(){
+    // if a proposalId is provided, we load the proposal results
+      if (this.proposalId) {
+        this.loading = true;
+        axios.get(this.$t("proposalUrl",{id: Number(this.proposalId)}))
+          .then((response) => {
+            this.loading = false;
+            this.proposal = response.data;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+      // otherwise we send a proposal search
+        this.loading = true;
+        let postParams = {
+          "origin": this.origin,
+          "destination": this.destination,
+          "date": this.date,
+          "time": this.time,
+          "regular": this.regular,
+          "userId": this.user ? this.user.id : null,
+          "communityId": this.communityId
+        };
+        axios.post(this.$t("matchingUrl"), postParams,
+          {
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
+          .then((response) => {
+            this.loading = false;
+            this.results = response.data;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+
     },
     contact(params) {
       axios.post(this.$t("contactUrl"), params,
@@ -279,6 +279,9 @@ export default {
         .finally(() => {
           this.carpoolDialog = false;
         })
+    },
+    updateFilters(data){
+      this.search();
     }
   }
 };
