@@ -470,19 +470,18 @@ class DataProvider
     }
 
 
-
-
     /**
      * Delete item operation
      *
      * @param int $id The id of the object representing the resource to delete
      *
+     * @param array|null $data
      * @return Response The response of the operation.
      */
-    public function delete(int $id): Response
+    public function delete(int $id, ?array $data): Response
     {
         try {
-            $clientResponse = $this->client->delete($this->resource."/".$id);
+            $clientResponse = $this->client->delete($this->resource."/".$id, ['json' => $data]);
             if ($clientResponse->getStatusCode() == 204) {
                 return new Response($clientResponse->getStatusCode());
             }

@@ -38,6 +38,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\ProposalPost;
+use App\Carpool\Controller\ProposalDelete;
 use App\Travel\Entity\TravelMode;
 use App\Community\Entity\Community;
 use App\User\Entity\User;
@@ -178,7 +179,12 @@ use App\Communication\Entity\Notified;
  *              }
  *          }
  *      },
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={"get","put","delete"={
+ *              "method"="DELETE",
+ *              "path"="/proposals/{id}",
+ *              "controller"=ProposalDelete::class
+ *          }
+ *     }
  * )
  * @ApiFilter(NumericFilter::class, properties={"proposalType"})
  * @ApiFilter(BooleanFilter::class, properties={"private"})
@@ -315,6 +321,7 @@ class Proposal
      * @var ArrayCollection|null The matchings of the proposal (if proposal is a request).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","results"})
      * @MaxDepth(1)
      */
     private $matchingOffers;
@@ -323,6 +330,7 @@ class Proposal
      * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","results"})
      * @MaxDepth(1)
      */
     private $matchingRequests;

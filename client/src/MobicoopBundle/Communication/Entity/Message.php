@@ -81,6 +81,13 @@ class Message implements ResourceInterface
     private $askHistory;
 
     /**
+     * @var int|null Id of an Ask if this message is related to an Ask
+     *
+     * @Groups({"post"})
+     */
+    private $idAsk;
+
+    /**
      * @var Message|null The original message if the message is a reply to another message.
      *
      * @Groups({"put","post","get"})
@@ -174,6 +181,18 @@ class Message implements ResourceInterface
     public function setAskHistory($askHistory)
     {
         $this->askHistory = $askHistory;
+    }
+
+    public function getIdAsk()
+    {
+        return $this->idAsk;
+    }
+
+    public function setIdAsk($idAsk)
+    {
+        $this->idAsk = $idAsk;
+
+        return $this;
     }
 
     public function getMessage()

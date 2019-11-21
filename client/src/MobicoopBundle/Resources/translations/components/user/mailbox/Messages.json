@@ -5,7 +5,8 @@
             "messages":"Messages",
             "context":"Annonce"
         },
-        "urlSend":"/utilisateur/messages/envoyer"
+        "urlSend":"/utilisateur/messages/envoyer",
+        "urlUpdateAsk":"/utilisateur/messages/updateAsk"
     },
     "en": {
         "title":"Mailbox",
@@ -13,6 +14,7 @@
             "messages":"Messages",
             "context":"Ad"
         },
-        "urlSend":"/user/messages/send"
+        "urlSend":"/user/messages/send",
+        "urlUpdateAsk":"/user/messages/updateAsk"
     }
 }

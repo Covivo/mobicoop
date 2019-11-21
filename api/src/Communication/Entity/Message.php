@@ -34,6 +34,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\User\Entity\User;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\DataProvider\ThreadCollectionDataProvider;
+use App\Communication\Controller\SendAction;
 
 /**
  * A message sent from a user to other users.
@@ -48,8 +49,10 @@ use App\Carpool\DataProvider\ThreadCollectionDataProvider;
  *      },
  *      collectionOperations={
  *          "get",
- *          "post",
-  *          "completeThread"={
+ *          "post"={
+ *              "controller"=SendAction::class,
+ *          },
+ *          "completeThread"={
  *              "method"="GET",
  *              "path"="/messages/completeThread",
  *              "normalization_context"={"groups"={"thread"}},
@@ -106,6 +109,13 @@ class Message
      * @MaxDepth(1)
      */
     private $askHistory;
+
+    /**
+     * @var int|null Id of an Ask if this message is related to an Ask
+     *
+     * @Groups("write")
+     */
+    private $idAsk;
 
     /**
      * @var Message|null The original message if the message is a reply to another message.
@@ -215,6 +225,18 @@ class Message
     public function setAskHistory(?AskHistory $askHistory): self
     {
         $this->askHistory = $askHistory;
+
+        return $this;
+    }
+
+    public function getIdAsk(): ?int
+    {
+        return $this->idAsk;
+    }
+
+    public function setIdAsk(?int $idAsk): self
+    {
+        $this->idAsk = $idAsk;
 
         return $this;
     }

@@ -26,10 +26,15 @@ namespace App\Communication\EventSubscriber;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Event\AdRenewalEvent;
 use App\Carpool\Event\AskAcceptedEvent;
+use App\Carpool\Event\AskAdDeletedEvent;
 use App\Carpool\Event\AskPostedEvent;
 use App\Carpool\Event\AskRefusedEvent;
 use App\Carpool\Event\AskUpdatedEvent;
+use App\Carpool\Event\DriverAskAdDeletedEvent;
+use App\Carpool\Event\DriverAskAdDeletedUrgentEvent;
 use App\Carpool\Event\MatchingNewEvent;
+use App\Carpool\Event\PassengerAskAdDeletedEvent;
+use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
 use App\Carpool\Event\ProposalCanceledEvent;
 use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\AskHistoryRepository;
@@ -61,7 +66,12 @@ class CarpoolSubscriber implements EventSubscriberInterface
             AdRenewalEvent::NAME => 'onAdRenewal',
             ProposalPostedEvent::NAME => 'onProposalPosted',
             ProposalCanceledEvent::NAME => 'onProposalCanceled',
-            AskUpdatedEvent::NAME => 'onAskUpdated'
+            //AskUpdatedEvent::NAME => 'onAskUpdated',  // Is this really usefull ?
+            AskAdDeletedEvent::NAME => 'onAskAdDeleted',
+            PassengerAskAdDeletedEvent::NAME => 'onPassengerAskAdDeleted',
+            PassengerAskAdDeletedUrgentEvent::NAME => 'onPassengerAskAdDeletedUrgent',
+            DriverAskAdDeletedEvent::NAME => 'onDriverAskAdDeleted',
+            DriverAskAdDeletedUrgentEvent::NAME => 'onDriverAskAdDeletedUrgent'
         ];
     }
     
@@ -122,7 +132,12 @@ class CarpoolSubscriber implements EventSubscriberInterface
         // we must notify the recipient of the ask, the message is related to the last accepted status of the ask history
         $lastAskHistory = $this->askHistoryRepository->findLastByAskAndstatus($event->getAsk(), Ask::STATUS_PENDING);
         // the recipient is the user that has made the last ask history
+        // ATTENTION : Doesn't work because of ->getMessage(). There's not always a message with a askhistory
         $askRecipient = ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $lastAskHistory->getMessage()->getUser()->getId()) ? $event->getAsk()->getMatching()->getProposalOffer()->getUser() : $event->getAsk()->getMatching()->getProposalRequest()->getUser();
+
+
+
+
         $this->notificationManager->notifies(AskUpdatedEvent::NAME, $askRecipient, $lastAskHistory);
     }
     
@@ -170,5 +185,65 @@ class CarpoolSubscriber implements EventSubscriberInterface
     {
         // we must notify the creator of the proposal
         $this->notificationManager->notifies(AdRenewalEvent::NAME, $event->getProposal()->getUser());
+    }
+
+    /**
+     * Executed when an ad is deleted with ask
+     *
+     * @param AskAdDeletedEvent $event
+     * @return void
+     */
+    public function onAskAdDeleted(AskAdDeletedEvent $event)
+    {
+        // todo: passer directement la ask pour pouvoir mieux vérifier qui est à l'origine de l'annonce
+        // pas réussi, array vide depuis le template en passant la ask
+        $this->notificationManager->notifies(AskAdDeletedEvent::NAME, $event->getAsk()->getUser(), $event->getAsk()->getMatching());
+    }
+
+    /**
+     * Executed when an ad is deleted with driver accepted
+     *
+     * @param PassengerAskAdDeletedEvent $event
+     * @return void
+     */
+    public function onPassengerAskAdDeleted(PassengerAskAdDeletedEvent $event)
+    {
+        // todo : idem
+        $this->notificationManager->notifies(PassengerAskAdDeletedEvent::NAME, $event->getAsk()->getUser(), $event->getAsk()->getMatching());
+    }
+
+    /**
+     * Executed when an ad is deleted with driver accepted and in less than 24h
+     * @param PassengerAskAdDeletedUrgentEvent $event
+     * @return void
+     */
+    public function onPassengerAskAdDeletedUrgent(PassengerAskAdDeletedUrgentEvent $event)
+    {
+        // todo : idem
+        $this->notificationManager->notifies(PassengerAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUser(), $event->getAsk()->getMatching());
+    }
+
+    /**
+     * Executed when an ad is deleted with passenger accepted
+     *
+     * @param DriverAskAdDeletedEvent $event
+     * @return void
+     */
+    public function onDriverAskAdDeleted(DriverAskAdDeletedEvent $event)
+    {
+        // todo : idem
+        $this->notificationManager->notifies(DriverAskAdDeletedEvent::NAME, $event->getAsk()->getUser(), $event->getAsk()->getMatching());
+    }
+
+    /**
+     * Executed when an ad is deleted with passenger accepted and in less than 24h
+     *
+     * @param DriverAskAdDeletedUrgentEvent $event
+     * @return void
+     */
+    public function onDriverAskAdDeletedUrgent(DriverAskAdDeletedUrgentEvent $event)
+    {
+        // todo : idem
+        $this->notificationManager->notifies(DriverAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUser(), $event->getAsk()->getMatching());
     }
 }
