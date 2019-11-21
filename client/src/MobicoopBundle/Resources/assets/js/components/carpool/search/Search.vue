@@ -8,7 +8,7 @@
         justify="center"
       >
         <v-col
-          cols="6"
+          cols="12"
         >
           <!--SearchJourney-->
           <search-journey

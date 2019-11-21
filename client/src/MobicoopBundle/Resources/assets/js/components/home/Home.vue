@@ -12,17 +12,28 @@
       >
         <v-col
           cols="6"
+          align="center"
         >
           <h1>{{ $t('title') }}</h1>
           <h3 v-html="$t('subtitle')" />
+          <!--        </v-col>-->
+          <!--      </v-row>-->
+          <!--      <v-row-->
+          <!--        align="center"-->
+          <!--        class="mt-5"-->
+          <!--        justify="center"-->
+          <!--      >-->
+          <!--        <v-col-->
+          <!--          cols="6"-->
+          <!--        >-->
+          <search
+            :geo-search-url="geoSearchUrl" 
+            :user="user"
+            :regular="regular"
+            :punctual-date-optional="punctualDateOptional"
+          />
         </v-col>
       </v-row>
-      <search
-        :geo-search-url="geoSearchUrl" 
-        :user="user"
-        :regular="regular"
-        :punctual-date-optional="punctualDateOptional"
-      />
       <v-row
         align="center"
         class="mt-5"

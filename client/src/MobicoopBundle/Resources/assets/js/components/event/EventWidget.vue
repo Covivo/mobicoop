@@ -28,11 +28,16 @@
           align="center"
         >
           <!-- Community : avatar, title and description -->
-          <event-infos
-            :event="event"
-            :url-alt-avatar="urlAltAvatar"
-            :avatar-version="avatarVersion"
-          />
+          <v-row
+            align="center"
+            justify="center"
+          >
+            <event-infos
+              :event="event"
+              :url-alt-avatar="urlAltAvatar"
+              :avatar-version="avatarVersion"
+            />
+          </v-row>
           <!-- event buttons and map -->
           <v-row
             align="center"
