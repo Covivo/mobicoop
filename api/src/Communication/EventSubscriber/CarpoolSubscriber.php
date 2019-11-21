@@ -66,7 +66,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
             AdRenewalEvent::NAME => 'onAdRenewal',
             ProposalPostedEvent::NAME => 'onProposalPosted',
             ProposalCanceledEvent::NAME => 'onProposalCanceled',
-            AskUpdatedEvent::NAME => 'onAskUpdated',
+            //AskUpdatedEvent::NAME => 'onAskUpdated',  // Is this really usefull ?
             AskAdDeletedEvent::NAME => 'onAskAdDeleted',
             PassengerAskAdDeletedEvent::NAME => 'onPassengerAskAdDeleted',
             PassengerAskAdDeletedUrgentEvent::NAME => 'onPassengerAskAdDeletedUrgent',
@@ -132,7 +132,12 @@ class CarpoolSubscriber implements EventSubscriberInterface
         // we must notify the recipient of the ask, the message is related to the last accepted status of the ask history
         $lastAskHistory = $this->askHistoryRepository->findLastByAskAndstatus($event->getAsk(), Ask::STATUS_PENDING);
         // the recipient is the user that has made the last ask history
+        // ATTENTION : Doesn't work because of ->getMessage(). There's not always a message with a askhistory
         $askRecipient = ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $lastAskHistory->getMessage()->getUser()->getId()) ? $event->getAsk()->getMatching()->getProposalOffer()->getUser() : $event->getAsk()->getMatching()->getProposalRequest()->getUser();
+
+
+
+
         $this->notificationManager->notifies(AskUpdatedEvent::NAME, $askRecipient, $lastAskHistory);
     }
     

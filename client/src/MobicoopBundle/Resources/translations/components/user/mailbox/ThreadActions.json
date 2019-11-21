@@ -1,8 +1,27 @@
 {
     "fr": {
-        "notLinkedToACarpool":"Ce fil de discussion n'est pas lié à un covoiturage"
+        "notLinkedToACarpool":"Ce fil de discussion n'est pas lié à un covoiturage",
+        "roundTrip":"Trajet Aller-Retour",
+        "urlGetAskHistory":"/utilisateur/messages/actions/infos",
+        "regular":{
+            "ask":"Proposer un covoiturage régulier"
+        },
+        "distance":"Distance",
+        "seatsAvailable":"Places disponibles",
+        "price":"Prix",
+        "priceTooltip":"Tarif indicatif"
+
      },
     "en": {
-        "notLinkedToACarpool":"There is no carpool linked to this thread"
+        "notLinkedToACarpool":"There is no carpool linked to this thread",
+        "roundTrip":"Round trip",
+        "urlGetAskHistory":"/user/messages/actions/infos",
+        "regular":{
+            "ask":"Ask a regular carpool"
+        },
+        "distance":"Distance",
+        "seatsAvailable":"Available seats",
+        "price":"Price",
+        "priceTooltip":"Indicative price"
     }
 }

@@ -85,14 +85,6 @@ export default {
       this.messages.forEach((item, index) => {
         if(item.idMessage == idMessage){
           this.$set(item, 'selected', true);
-          // After the select we need to refresh the details
-          this.emit(
-            {
-              idMessage:item.idMessage,
-              idRecipient:item.idRecipient,
-              name:this.name(item.givenName,item.familyName)
-            }
-          )
         }
         else{
           this.$set(item, 'selected', false);
@@ -104,10 +96,10 @@ export default {
       axios.get(this.$t("urlGet"))
         .then(response => {
           this.SkeletonHidden = true;
-          this.messages = response.data.threads;
           // I'm pushing the new "virtual" thread
           if(this.newThread){
             response.data.threads.push({
+              avatarsRecipient:this.newThread.avatar,
               date:moment().format(),
               familyName:this.newThread.familyName,
               givenName:this.newThread.givenName,
@@ -115,6 +107,7 @@ export default {
               idRecipient:this.newThread.idRecipient
             });
           }
+          this.messages = response.data.threads;
           (idMessageSelected) ? this.refreshSelected(idMessageSelected) : '';
           this.$emit("refreshThreadsDirectCompleted");
         })

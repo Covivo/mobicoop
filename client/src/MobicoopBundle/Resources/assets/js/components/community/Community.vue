@@ -503,7 +503,8 @@ export default {
         carpool:0,
         idRecipient:data.id,
         familyName:data.familyName,
-        givenName:data.givenName
+        givenName:data.givenName,
+        avatar:data.avatars[0]
       }
       
       for (const key in params) {
