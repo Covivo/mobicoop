@@ -205,7 +205,7 @@ export default {
         axios.get(this.$t("proposalUrl",{id: Number(this.proposalId)}))
           .then((response) => {
             this.loading = false;
-            this.proposal = response.data;
+            this.results = response.data;
           })
           .catch((error) => {
             console.log(error);
