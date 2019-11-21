@@ -5,13 +5,11 @@
         <v-col class="col-9">
           <v-textarea
             v-model="textToSend"
+            outlined
             name="typedMessage"
-            filled
             :label="$t('enterMessage')"
-            auto-grow
-            rows="2"
             background-color="#FFFFFF"
-            value
+            rows="2"
           />
         </v-col>
         <v-col

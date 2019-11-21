@@ -30,7 +30,7 @@ use App\User\Entity\User;
 use App\Geography\Entity\Address;
 
 /**
- * Carpooling : result resource for a search / ad post.
+ * Carpooling : result resource for an ad.
  *
  * @ApiResource(
  *      attributes={
@@ -52,13 +52,13 @@ class Result
     private $id;
 
     /**
-     * @var ResultRole|null The result with the carpooler as driver and the person who search / post as a passenger.
+     * @var ResultRole|null The result with the requester as a driver and the carpooler as a passenger.
      * @Groups("results")
      */
     private $resultDriver;
 
     /**
-     * @var ResultRole|null The result with the carpooler as passenger and the person who search / post as a driver.
+     * @var ResultRole|null The result with the requester as a passenger and the carpooler as a driver.
      * @Groups("results")
      */
     private $resultPassenger;
@@ -70,7 +70,7 @@ class Result
     private $carpooler;
 
     /**
-     * @var int The frequency of the search/ad (1 = punctual / 2 = regular).
+     * @var int The frequency of the ad (1 = punctual / 2 = regular).
      * @Groups("results")
      */
     private $frequency;
@@ -106,6 +106,30 @@ class Result
     private $destinationLast;
 
     /**
+     * @var Address The origin address of the driver.
+     * @Groups("results")
+     */
+    private $originDriver;
+
+    /**
+     * @var Address The destination address of the driver.
+     * @Groups("results")
+     */
+    private $destinationDriver;
+
+    /**
+     * @var Address The origin address of the passenger.
+     * @Groups("results")
+     */
+    private $originPassenger;
+
+    /**
+     * @var Address The destination address of the passenger.
+     * @Groups("results")
+     */
+    private $destinationPassenger;
+
+    /**
      * @var \DateTimeInterface|null The date to display.
      * @Groups("results")
      */
@@ -118,16 +142,46 @@ class Result
     private $time;
 
     /**
-     * @var int The number of places offered / requested to display.
+     * @var \DateTimeInterface|null The possible start date if regular.
+     * @Groups("results")
+     */
+    private $startDate;
+
+    /**
+     * @var \DateTimeInterface|null The possible end date if regular.
+     * @Groups("results")
+     */
+    private $toDate;
+
+    /**
+     * @var int The global number of places to display.
      * @Groups("results")
      */
     private $seats;
+
+    /**
+     * @var int The number of places offered to display.
+     * @Groups("results")
+     */
+    private $seatsDriver;
+
+    /**
+     * @var int The number of places asked to display.
+     * @Groups("results")
+     */
+    private $seatsPassenger;
 
     /**
      * @var string The computed price to display.
      * @Groups("results")
      */
     private $price;
+
+    /**
+     * @var string The computed rounded price to display.
+     * @Groups("results")
+     */
+    private $roundedPrice;
 
     /**
      * @var string The comment to display.
@@ -313,6 +367,54 @@ class Result
         return $this;
     }
 
+    public function getOriginDriver(): ?Address
+    {
+        return $this->originDriver;
+    }
+
+    public function setOriginDriver(?Address $originDriver): self
+    {
+        $this->originDriver = $originDriver;
+
+        return $this;
+    }
+
+    public function getDestinationDriver(): ?Address
+    {
+        return $this->destinationDriver;
+    }
+
+    public function setDestinationDriver(?Address $destinationDriver): self
+    {
+        $this->destinationDriver = $destinationDriver;
+
+        return $this;
+    }
+
+    public function getOriginPassenger(): ?Address
+    {
+        return $this->originPassenger;
+    }
+
+    public function setOriginPassenger(?Address $originPassenger): self
+    {
+        $this->originPassenger = $originPassenger;
+
+        return $this;
+    }
+
+    public function getDestinationPassenger(): ?Address
+    {
+        return $this->destinationPassenger;
+    }
+
+    public function setDestinationPassenger(?Address $destinationPassenger): self
+    {
+        $this->destinationPassenger = $destinationPassenger;
+
+        return $this;
+    }
+
     public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
@@ -337,14 +439,62 @@ class Result
         return $this;
     }
 
+    public function getStartDate(): ?\DateTimeInterface
+    {
+        return $this->startDate;
+    }
+
+    public function setStartDate(?\DateTimeInterface $startDate): self
+    {
+        $this->startDate = $startDate;
+
+        return $this;
+    }
+
+    public function getToDate(): ?\DateTimeInterface
+    {
+        return $this->toDate;
+    }
+
+    public function setToDate(?\DateTimeInterface $toDate): self
+    {
+        $this->toDate = $toDate;
+
+        return $this;
+    }
+
     public function getSeats(): ?int
     {
         return $this->seats;
     }
 
-    public function setSeats(int $seats): self
+    public function setSeats(?int $seats): self
     {
         $this->seats = $seats;
+
+        return $this;
+    }
+
+    public function getSeatsDriver(): ?int
+    {
+        return $this->seatsDriver;
+    }
+
+    public function setSeatsDriver(?int $seatsDriver): self
+    {
+        $this->seatsDriver = $seatsDriver;
+
+        return $this;
+    }
+
+    public function getSeatsPassenger(): ?int
+    {
+        return $this->seatsPassenger;
+    }
+
+    public function setSeatsPassenger(?int $seatsPassenger): self
+    {
+        $this->seatsPassenger = $seatsPassenger;
 
         return $this;
     }
@@ -357,6 +507,16 @@ class Result
     public function setPrice(?string $price)
     {
         $this->price = $price;
+    }
+
+    public function getRoundedPrice(): ?string
+    {
+        return $this->roundedPrice;
+    }
+    
+    public function setRoundedPrice(?string $roundedPrice)
+    {
+        $this->roundedPrice = $roundedPrice;
     }
 
     public function getComment(): ?string

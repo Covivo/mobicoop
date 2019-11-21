@@ -32,6 +32,7 @@ use App\Geography\Repository\AddressRepository;
 use App\RelayPoint\Repository\RelayPointRepository;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Repository\UserRepository;
+use App\Image\Repository\IconRepository;
 
 /**
  * The geo searcher service.
@@ -40,22 +41,35 @@ use App\User\Repository\UserRepository;
  */
 class GeoSearcher
 {
+    const ICON_ADDRESS_ANY = 1;
+    const ICON_ADDRESS_PERSONAL = 2;
+    const ICON_COMMUNITY = 3;
+    const ICON_EVENT = 4;
+    const ICON_VENUE = 23;
+
+    
     private $geocoder;
     private $geoTools;
     private $userRepository;
     private $addressRepository;
     private $relayPointRepository;
+    private $iconRepository;
+    private $iconPath;
+    private $dataPath;
 
     /**
      * Constructor.
      */
-    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository)
+    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, IconRepository $iconRepository, string $iconPath, string $dataPath)
     {
         $this->geocoder = $geocoder;
         $this->geoTools = $geoTools;
         $this->userRepository = $userRepository;
         $this->addressRepository = $addressRepository;
         $this->relayPointRepository = $relayPointRepository;
+        $this->iconRepository = $iconRepository;
+        $this->iconPath = $iconPath;
+        $this->dataPath = $dataPath;
     }
 
     /**
@@ -89,12 +103,14 @@ class GeoSearcher
             if (count($namedAddresses)>0) {
                 foreach ($namedAddresses as $address) {
                     $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+                    $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_ADDRESS_PERSONAL)->getFileName());
                     $result[] = $address;
                 }
             }
         }
+        
 
-        // 2 - relay points
+        // 3 - relay points
         $relayPoints = $this->relayPointRepository->findByNameAndStatus($input, RelayPoint::STATUS_ACTIVE);
         // exclude the private relay points
         foreach ($relayPoints as $relayPoint) {
@@ -114,17 +130,25 @@ class GeoSearcher
             if (!$exclude) {
                 $address = $relayPoint->getAddress();
                 $address->setRelayPoint($relayPoint);
+                // set address icon
+                if ($relayPoint->getRelayPointType()->getIcon()->getPrivateIconLinked()) {
+                    $address->setIcon($this->dataPath.$this->iconPath.$relayPoint->getRelayPointType()->getIcon()->getPrivateIconLinked()->getFileName());
+                } else {
+                    $address->setIcon($this->dataPath.$this->iconPath.$relayPoint->getRelayPointType()->getIcon()->getFileName());
+                }
                 $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
                 $result[] = $address;
             }
         }
-        
-        // 3 - sig addresses
+                
+        // 4 - sig addresses
         $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input))->all();
         // var_dump($geoResults);exit;
         foreach ($geoResults as $geoResult) {
             // ?? todo : exclude all results that doesn't include any input word at all
             $address = new Address();
+            // set address icon
+            $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_ADDRESS_ANY)->getFileName());
             if ($geoResult->getCoordinates() && $geoResult->getCoordinates()->getLatitude()) {
                 $address->setLatitude((string)$geoResult->getCoordinates()->getLatitude());
             }
@@ -165,6 +189,9 @@ class GeoSearcher
             // add venue if handled by the provider
             if (method_exists($geoResult, 'getVenue')) {
                 $address->setVenue($geoResult->getVenue());
+                if ($address->getVenue()) {
+                    $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_VENUE)->getFileName());
+                }
             }
             
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));

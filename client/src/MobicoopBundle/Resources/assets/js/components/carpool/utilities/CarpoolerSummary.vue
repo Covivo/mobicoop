@@ -16,13 +16,13 @@
           >
             <v-img
               aspect-ratio="2"
-              src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortRound&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
+              :src="carpooler.avatars[0]"
             />
           </v-list-item-avatar>
           <!--Carpooler data-->
           <v-list-item-content>
             <v-list-item-title class="font-weight-bold">
-              {{ carpooler.givenName }} {{ carpooler.familyName.substr(0,1).toUpperCase()+"." }}
+              {{ carpooler.givenName }} {{ carpooler.shortFamilyName }}
             </v-list-item-title>
             <v-list-item-title>{{ age }} </v-list-item-title>
           </v-list-item-content>
@@ -72,45 +72,48 @@
           justify="end"
           class="min-width-no-flex"
         >
-          <v-btn
-            color="secondary"
-            small
-            dark
-            depressed
-            rounded
-            :hidden="!phoneButtonToggled"
-            height="40px"
-            @click="toggleButton"
-          >
-            <v-icon>mdi-phone</v-icon>
-            {{ carpooler.telephone }}
-          </v-btn>
-          <v-btn
-            color="secondary"
-            small
-            depressed
-            fab
-            :hidden="phoneButtonToggled"
-            @click="toggleButton"
-          >
-            <v-icon>
-              mdi-phone
-            </v-icon>
-          </v-btn>
-
-          <v-btn
-            color="secondary"
-            small
-            depressed
-            fab
-            class="ml-2"
-          >
-            <v-icon
-              @click="buttonAlert(inDev,$event);"
+          <div v-if="user && carpooler.phoneDisplay == 2">
+            <v-btn
+              color="secondary"
+              small
+              dark
+              depressed
+              rounded
+              :hidden="!phoneButtonToggled"
+              height="40px"
+              @click="toggleButton"
             >
-              mdi-email
-            </v-icon>
-          </v-btn>
+              <v-icon>mdi-phone</v-icon>
+              {{ carpooler.telephone }}
+            </v-btn>
+            <v-btn
+              color="secondary"
+              small
+              depressed
+              fab
+              :hidden="phoneButtonToggled"
+              @click="toggleButton"
+            >
+              <v-icon>
+                mdi-phone
+              </v-icon>
+            </v-btn>
+          </div>
+          <div>
+            <v-btn
+              color="secondary"
+              small
+              depressed
+              fab
+              class="ml-2"
+            >
+              <v-icon
+                @click="buttonAlert(inDev,$event);"
+              >
+                mdi-email
+              </v-icon>
+            </v-btn>
+          </div>
         </v-row>
       </v-col>
 
@@ -158,6 +161,10 @@ export default {
       type: Boolean,
       default: true
     },
+    user: {
+      type: Object,
+      default: null
+    }
   },
   data() {
     return {

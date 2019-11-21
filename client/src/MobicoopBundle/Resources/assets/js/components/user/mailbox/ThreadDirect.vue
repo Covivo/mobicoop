@@ -12,10 +12,7 @@
         <v-row class="ma-0">
           <v-col class="col-3 text-center ma-0 pa-0">
             <v-avatar>
-              <!-- For now, we are not supporting the avatar. We show an icon instead -->
-              <v-icon class="display-2">
-                mdi-account-circle
-              </v-icon>
+              <img :src="avatar">
             </v-avatar>
           </v-col>
           <v-col class="col-3 ma-0 pa-0">
@@ -102,6 +99,7 @@ export default {
       this.$emit("toggleSelected",{idMessage:this.idMessage});
       this.$emit("idMessageForTimeLine",
         {
+          type:"Direct",
           idMessage:this.idMessage,
           idRecipient:this.idRecipient,
           name:this.name

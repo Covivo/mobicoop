@@ -1,6 +1,11 @@
 export default {
   fr: {
     ui: {
+      common: {
+        yes: "Oui",
+        no: "Non",
+        ok: "OK"
+      },
       button: {
         previous: "Précédent",
         next: "Suivant",
@@ -25,7 +30,9 @@ export default {
         },
         signup: {
           chart: {
-            chartValid: "Je valide la charte",
+            text: "J'accepte la charte de la plateforme et sa ",
+            link: "politique de protection des données",
+            route: "/protection-donnees",
             errors: {
               required: "La validation de la charte est requise"
             }
@@ -38,7 +45,8 @@ export default {
             fullDate: "ddd Do MMMM YYYY",
             fullNumericDate: "YMMDDHHmmss",
             shortDate: "ddd DD/MM",
-            urlDate: "YMMDD"
+            urlDate: "YMMDD",
+            shortCompleteDate: "DD/MM/YYYY"
           }
         },
         time: {
@@ -98,6 +106,14 @@ export default {
             required: "L'année de naissance est requise"
           }
         },
+        birthDay: {
+          label: "Date de naissance",
+          placeholder: "Date de naissance",
+          errors: {
+            required: "La date de naissance est requise",
+            notadult: "Vous devez avoir 18 ans pour vous inscrire sur la plateforme"
+          }
+        },
         email: {
           label: "Email",
           placeholder: "Email",
@@ -107,8 +123,8 @@ export default {
           }
         },
         phone: {
-          label: "Téléphone",
-          placeholder: "Numéro de téléphone",
+          label: "Téléphone portable",
+          placeholder: "Téléphone portable",
           errors: {
             required: "Le numéro de téléphone est requis",
             valid: "Le numéro de téléphone doit être valide"
@@ -148,6 +164,11 @@ export default {
   },
   en: {
     ui: {
+      common: {
+        yes: "Yes",
+        no: "No",
+        ok: "OK"
+      },
       button: {
         previous: "",
         next: "",
@@ -172,7 +193,9 @@ export default {
         },
         signup: {
           chart: {
-            chartValid: "",
+            text: "",
+            link: "",
+            route: "",
             errors: {
               required: ""
             }

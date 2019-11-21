@@ -31,7 +31,12 @@
           <v-list>
             <v-list-item>
               <v-list-item-avatar v-if="displayIcon">
-                <v-icon v-text="data.item.icon" />
+                <v-avatar size="36">
+                  <v-img
+                    :src="data.item.icon"
+                    contain
+                  />
+                </v-avatar>
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title v-html="data.item.displayedLabel" />
@@ -100,7 +105,8 @@ export default {
       isLoading: false,
       search: null,
       address: null,
-      filter: null
+      filter: null,
+      cancelSource: null,
     };
   },
   computed: {
@@ -132,23 +138,16 @@ export default {
         this.address = this.initAddress;
         this.entries = [];
         if (this.address) {
-          this.address.icon = "mdi-map-marker";
           this.address.displayedLabel = `${this.address.displayLabel[0]}`;
           this.address.displayedSecondLabel = `${this.address.displayLabel[1]}`;
           this.address.selectedDisplayedLabel = `${this.address.displayLabel[0]}`;
           if (this.address.home) {
             this.address.displayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
             if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
-            if (this.displayIcon) this.address.icon = "mdi-home-map-marker";
-          } else if (this.address.relayPoint) {
-            if (this.displayIcon) this.address.icon = "mdi-parking";
           } else if (this.address.name) {
             this.address.displayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
             if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
-            if (this.displayIcon) this.address.icon = "mdi-map";
-          } else if (this.address.venue) {
-            if (this.displayIcon) this.address.icon = "mdi-map-marker-radius";
-          }
+          } 
           this.entries.push(this.address);
         } 
       }
@@ -160,9 +159,16 @@ export default {
     },
     getAsyncData: debounce(function(val) {
       this.isLoading = true;
+
+      this.cancelRequest(); // CANCEL PREVIOUS REQUEST
+      this.cancelSource = axios.CancelToken.source();
+
       axios
-        .get(`${this.url}${val}` + (this.token ? "&token=" + this.token : ""))
+        .get(`${this.url}${val}` + (this.token ? "&token=" + this.token : ""), {
+          cancelToken: this.cancelSource.token
+        })
         .then(res => {
+          this.cancelSource = null;
           this.isLoading = false;
 
           // Modify property displayLabel to be shown into the autocomplete field after selection
@@ -171,25 +177,20 @@ export default {
           if (!addresses.length) {
             return;
           }
+
           addresses.forEach((address, addressKey) => {
-            addresses[addressKey].icon = "mdi-map-marker";
             addresses[addressKey].displayedLabel = `${address.displayLabel[0]}`;
             addresses[addressKey].displayedSecondLabel = `${address.displayLabel[1]}`;
             addresses[addressKey].selectedDisplayedLabel = `${address.displayLabel[0]}`;
             if (address.home) {
               addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel[0]}`;
               if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel[0]}`;
-              if (this.displayIcon) addresses[addressKey].icon = "mdi-home-map-marker";
-            } else if (address.relayPoint) {
-              if (this.displayIcon) addresses[addressKey].icon = "mdi-parking";
             } else if (address.name) {
               addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel[0]}`;
               if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel[0]}`;
-              if (this.displayIcon) addresses[addressKey].icon = "mdi-map";
-            } else if (address.venue) {
-              if (this.displayIcon) addresses[addressKey].icon = "mdi-map-marker-radius";
             }
           });
+
           addresses.forEach((address, addressKey) => {
             let addressLocality = address.addressLocality
               ? address.addressLocality
@@ -199,6 +200,7 @@ export default {
               addresses.splice(addressKey, 1);
             }
           });
+
           // Set Data & show them
           if (this.isLoading) return; // Another request is fetching, we do not show the previous one
           this.entries = [...res.data["hydra:member"]];
@@ -208,7 +210,13 @@ export default {
           console.error(err);
         })
         .finally(() => (this.isLoading = false));
-    }, 1000)
+    }, 1000),
+
+    cancelRequest() {
+      if(this.cancelSource) {
+        this.cancelSource.cancel('Start new search, stop active search');
+      }
+    }
   }
 };
 </script>

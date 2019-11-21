@@ -35,6 +35,11 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
  */
 class Ask implements ResourceInterface
 {
+    const STATUS_INITIATED = 1;
+    const STATUS_PENDING = 2;
+    const STATUS_ACCEPTED = 3;
+    const STATUS_DECLINED = 4;
+    
     /**
      * @var int The id of this ask.
      * @Groups({"post"})
@@ -48,7 +53,7 @@ class Ask implements ResourceInterface
     private $iri;
 
     /**
-     * @var int Ask status (0 = waiting; 1 = accepted; 2 = declined).
+     * @var int Ask status (1 = initiated; 2 = pending ; 3 = accepted; 4 = declined).
      *
      * @Assert\NotBlank
      * @Groups({"post","put"})
@@ -83,6 +88,15 @@ class Ask implements ResourceInterface
      */
     private $user;
 
+
+    /**
+     * @var User The user the ask is for
+     *
+     * @Assert\NotBlank
+     * @Groups({"post"})
+     */
+    private $userRelated;
+
     /**
      * @var Matching The matching at the origin of the ask.
      *
@@ -101,7 +115,7 @@ class Ask implements ResourceInterface
      * @var Criteria The criteria applied to the ask.
      *
      * @Assert\NotBlank
-     * @Groups({"post"})
+     * @Groups({"post","put"})
      */
     private $criteria;
     
@@ -198,6 +212,18 @@ class Ask implements ResourceInterface
         return $this;
     }
 
+    public function getUserRelated(): ?User
+    {
+        return $this->userRelated;
+    }
+
+    public function setUserRelated(?User $userRelated): self
+    {
+        $this->userRelated = $userRelated;
+
+        return $this;
+    }
+
     public function getMatching(): Matching
     {
         return $this->matching;
@@ -221,7 +247,7 @@ class Ask implements ResourceInterface
 
         // set (or unset) the owning side of the relation if necessary
         $newAskLinked = $askLinked === null ? null : $this;
-        if ($newAskLinked !== $askLinked->getAsklLinked()) {
+        if ($newAskLinked !== $askLinked->getAskLinked()) {
             $askLinked->setAskLinked($newAskLinked);
         }
 

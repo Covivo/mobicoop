@@ -26,7 +26,7 @@
       class="overflow-y-auto"
       fluid
     >
-      <v-row 
+      <v-row
         justify="center"
       >
         <v-col
@@ -204,14 +204,34 @@
             v-model="step4"
             :hidden="!step2"
           >
-            <v-select
-              v-model="form.birthYear"
-              :items="years"
-              :rules="form.birthYearRules"
-              :label="$t('models.user.birthYear.placeholder')+` *`"
-              required
-              :disabled="!step3"
-            />
+            <v-menu
+              ref="menu"
+              v-model="menu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-y
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-model="form.date"
+                  :label="$t('models.user.birthDay.placeholder')+` *`"
+                  readonly
+                  :rules="[ form.birthdayRules.checkIfAdult ]"
+                  required
+                  :disabled="!step3"
+                  v-on="on"
+                />
+              </template>
+              <v-date-picker
+                ref="picker"
+                v-model="form.date"
+                :max="new Date().toISOString().substr(0, 10)"
+                :locale="locale"
+                @change="save"
+              />
+            </v-menu>
+
             <v-row
               justify="center"
               align="center"
@@ -269,12 +289,13 @@
                 v-slot:label
                 v-slot:activator="{ on }"
               >
+                {{ $t('ui.pages.signup.chart.text') }}
                 <a
                   class="secondary--text"
                   target="_blank"
-                  href="/cgu"
+                  :href="$t('ui.pages.signup.chart.route')"
                   @click.stop
-                >{{ $t('ui.pages.signup.chart.chartValid') }}
+                >{{ $t('ui.pages.signup.chart.link') }}
                 </a>
               </template>
             </v-checkbox>
@@ -296,6 +317,7 @@
 </template>
 
 <script>
+import moment from "moment";
 import axios from "axios";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 
@@ -355,6 +377,7 @@ export default {
       step3: true,
       step4: true,
       step5: true,
+      menu : false,
 
       // disable validation if homeAddress is empty and required
       isDisable: this.requiredHomeAddress ? true : false,
@@ -391,10 +414,7 @@ export default {
           {genderItem: this.$t('models.user.gender.values.male'), genderValue: '2'},
           {genderItem: this.$t('models.user.gender.values.other'), genderValue: '3'},
         ],
-        birthYear: null,
-        birthYearRules: [
-          v => !!v || this.$t("models.user.birthYear.errors.required")
-        ],
+        date : null,
         telephone: null,
         telephoneRules: [
           v => !!v || this.$t("models.user.phone.errors.required"),
@@ -404,7 +424,7 @@ export default {
         showPassword: false,
         passWordRules: {
           required:  v => !!v || this.$t("models.user.password.errors.required"),
-          min: v => v.length >= 8 || this.$t("models.user.password.errors.min"),
+          min: v => (v && v.length >= 8 ) || this.$t("models.user.password.errors.min"),
           checkUpper : value => {
             const pattern = /^(?=.*[A-Z]).*$/
             return pattern.test(value) || this.$t("models.user.password.errors.upper")
@@ -421,12 +441,26 @@ export default {
 
           },
         },
+        birthdayRules : {
+          checkIfAdult : value =>{
+            var d1 = new Date();
+            var d2 = new Date(value);
+
+            var diff =(d1.getTime() - d2.getTime()) / 1000;
+            diff /= (60 * 60 * 24);
+
+            var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
+            return diffYears >= 18 || this.$t("models.user.birthDay.errors.notadult")
+          }
+        },
         homeAddress:null,
         checkboxRules: [
           v => !!v || this.$t("ui.pages.signup.chart.errors.required")
         ],
         idFacebook:null
-      }
+      },
+      locale: this.$i18n.locale
+
     };
   },
   computed : {
@@ -446,6 +480,11 @@ export default {
       }
     }
   },
+  watch: {
+    menu (val) {
+      val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+    },
+  },
   mounted: function () {
     //get scroll target
     this.container = document.getElementById ( "scroll-target" )
@@ -457,9 +496,12 @@ export default {
         this.isDisable = address ? false : true;
       }
     },
+    save (date) {
+      this.$refs.menu.save(date)
+    },
     validate: function (e) {
-      this.loading = true,
-      axios.post('/utilisateur/inscription',
+      this.loading = true;
+      axios.post(this.$t('urlSignUp'),
         {
           email:this.form.email,
           telephone:this.form.telephone,
@@ -467,7 +509,7 @@ export default {
           givenName:this.form.givenName,
           familyName:this.form.familyName,
           gender:this.form.gender,
-          birthYear:this.form.birthYear,
+          birthDay:this.form.date,
           address:this.form.homeAddress,
           idFacebook:this.form.idFacebook
         },{
@@ -483,7 +525,6 @@ export default {
           console.log(error);
         });
     },
-
     isNumber: function(evt) {
       evt = (evt) ? evt : window.event;
       var charCode = (evt.which) ? evt.which : evt.keyCode;
@@ -499,7 +540,16 @@ export default {
       this.form.familyName = data.last_name;
       this.form.idFacebook = data.id;
     },
-    
+    checkAdult (value) {
+      var d1 = new Date();
+      var d2 = new Date(value);
+
+      var diff =(d1.getTime() - d2.getTime()) / 1000;
+      diff /= (60 * 60 * 24);
+
+      var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
+    },
+
   }
 
 };
@@ -532,5 +582,9 @@ export default {
   }
   .mb-40 {
     margin-bottom:  160px;
+  }
+
+  #step5 .check .v-label {
+    display: inline;
   }
 </style>

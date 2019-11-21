@@ -1,0 +1,54 @@
+{
+    "fr": {
+        "page": {
+            "title": "Profil"
+        },
+        "tabs": {
+            "myProfile": "Profil",
+            "password": "Mot de passe",
+            "myProposals": "Mes annonces",
+            "carpoolSettings": "Mes préférences",
+            "alerts": "Mes alertes",
+            "carpoolsAccepted": "Covoiturages acceptés",
+            "myAccount":"Mon compte"
+        },
+        "form":{
+            "newPassword":"Nouveau mot de passe",
+            "newPasswordRepeat":"Nouveau mot de passe (confirmation)",
+            "errors":{
+                "required":"Le mot de passe est requis",
+                "notIdentiquals":"Les mots de passes ne sont pas identiques"
+            }
+        },
+        "snackBar":{
+            "passwordUpdated":"Mot de passe mis à jour",
+            "textSnackError":"Erreur dans la mise à jour du mot de passe"
+        }
+    },    
+    "en": {
+        "page": {
+            "title": "Profile"
+        },
+        "tabs": {
+            "myProfile": "Profile",
+            "password": "Password",
+            "myProposals": "My proposals",
+            "carpoolSettings": "My settings",
+            "alerts": "My alerts",
+            "carpoolsAccepted": "Accepted carpools",
+            "myAccount":"My account"
+        },
+        "form":{
+            "newPassword":"New password",
+            "newPasswordRepeat":"New password (confirmation)",
+            "errors":{
+                "required":"Password is required",
+                "notIdentiquals":"Passwords are not identical"
+            }
+        },
+        "snackBar":{
+            "passwordUpdated":"Password updated",
+            "textSnackError":"Password update has failed"
+        }
+    }    
+}

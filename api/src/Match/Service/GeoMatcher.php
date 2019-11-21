@@ -181,6 +181,27 @@ class GeoMatcher
         return $matchesReturned;
     }
 
+    /**
+     * Force the match between 2 candidates.
+     * Used for example to compute the reverse route after a successful outward matching.
+     */
+    public function forceMatch(Candidate $candidate1, Candidate $candidate2): ?array
+    {
+        $result = [];
+        
+        $pointsArray = $this->generatePointsArray($candidate1, $candidate2);
+
+        // for each possible route, we compute its results
+        foreach ($pointsArray as $points) {
+            if ($routes = $this->geoRouter->getRoutes(array_values($points), true)) {
+                if ($match = $this->getMatch($candidate1, $candidate2, $routes, $points)) {
+                    $result[] = $match;
+                }
+            }
+        }
+        return $result;
+    }
+
 
     /**
      * Matching function between 2 candidates.
@@ -258,7 +279,7 @@ class GeoMatcher
             // we add the zones to the direction
             $direction = $this->zoneManager->createZonesForDirection($routes[0]);
             $result = [
-                'order' => is_array($points) ? $this->generateOrder($points, $routes[0]->getDurations()) : null,
+                'route' => is_array($points) ? $this->generateRoute($points, $routes[0]->getDurations()) : null,
                 'originalDistance' => $candidate1->getDirection()->getDistance(),
                 'acceptedDetourDistance' => $candidate1->getMaxDetourDistance(),
                 'newDistance' => $routes[0]->getDistance(),
@@ -325,7 +346,7 @@ class GeoMatcher
         // if the detour is acceptable we keep the candidate
         if ($detourDistance && $detourDuration && $commonDistance) {
             $result[] = [
-                'order' => is_array($points) ? $this->generateOrder($points, null) : null,
+                'route' => is_array($points) ? $this->generateRoute($points, null) : null,
                 'originalDistance' => $candidate1->getMassPerson()->getDistance(),
                 'acceptedDetourDistance' => $candidate1->getMaxDetourDistance(),
                 'newDistance' => $routes[0]['distance'],
@@ -345,7 +366,38 @@ class GeoMatcher
         return $result;
     }
 
-    private function generatePointsArray(Candidate $candidate1, Candidate $candidate2): ?array
+    private function getMatch(Candidate $candidate1, Candidate $candidate2, array $routes, ?array $points): ?array
+    {
+        $result = null;
+
+        // we add the zones to the direction
+        $direction = $this->zoneManager->createZonesForDirection($routes[0]);
+
+        // /!\ detour can be empty has we "force" the match, all directions may not be computed /!\
+        $result = [
+            'route' => is_array($points) ? $this->generateRoute($points, $routes[0]->getDurations()) : null,
+            'originalDistance' => !is_null($candidate1->getDirection()) ? $candidate1->getDirection()->getDistance() : null,
+            'acceptedDetourDistance' => $candidate1->getMaxDetourDistance(),
+            'newDistance' => $routes[0]->getDistance(),
+            'detourDistance' => !is_null($candidate1->getDirection()) ? ($routes[0]->getDistance()-$candidate1->getDirection()->getDistance()) : null,
+            'detourDistancePercent' => !is_null($candidate1->getDirection()) ? round($routes[0]->getDistance()*100/$candidate1->getDirection()->getDistance()-100, 2) : null,
+            'originalDuration' => !is_null($candidate1->getDirection()) ? $candidate1->getDirection()->getDuration() : null,
+            'acceptedDetourDuration' => $candidate1->getMaxDetourDuration(),
+            'newDuration' => $routes[0]->getDuration(),
+            'detourDuration' => !is_null($candidate1->getDirection()) ? ($routes[0]->getDuration()-$candidate1->getDirection()->getDuration()) : null,
+            'detourDurationPercent' => !is_null($candidate1->getDirection()) ? round($routes[0]->getDuration()*100/$candidate1->getDirection()->getDuration()-100, 2) : null,
+            'commonDistance' => !is_null($candidate2->getDirection()) ? $candidate2->getDirection()->getDistance() : null,
+            'direction' => $direction,
+            'id' => $candidate2->getId()
+        ];
+        return $result;
+    }
+
+    /**
+     * Generate waypoints for two candidates.
+     * Returns all combinations of the points keeping the overall order of the points
+     */
+    public function generatePointsArray(Candidate $candidate1, Candidate $candidate2): ?array
     {
         $pointsArray = [];
 
@@ -416,20 +468,20 @@ class GeoMatcher
     }
 
     /**
-     * Returns the order of the points.
+     * Returns the route (order of the points).
      *
      * @param array $points     The points in order
      * @param array $durations  The duration of each part
      * @return void
      */
-    private function generateOrder(array $points, ?array $durations)
+    private function generateRoute(array $points, ?array $durations)
     {
-        $order = [];
+        $route = [];
         $i = 0;
         $curDuration = 0;
         foreach ($points as $key=>$point) {
             $curDuration = isset($durations[$i]['duration']) ? $durations[$i]['duration'] : $curDuration;
-            $order[] = [
+            $route[] = [
                 'candidate'         => (substr($key, 0, 1) == 'A') ? 1 : 2,
                 'position'          => substr($key, 1),
                 'duration'          => isset($durations[$i]) ? $durations[$i]['duration'] : $curDuration,
@@ -439,7 +491,7 @@ class GeoMatcher
             ];
             $i++;
         }
-        return $order;
+        return $route;
     }
 }
 

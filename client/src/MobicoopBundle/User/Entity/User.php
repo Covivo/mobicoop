@@ -59,6 +59,9 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         'gender.choice.nc'      => self::GENDER_OTHER
     ];
 
+    const PHONE_DISPLAY_RESTRICTED = 1;
+    const PHONE_DISPLAY_ALL = 2;
+    
     const HOME_ADDRESS_NAME = 'homeAddress';
     
     /**
@@ -91,7 +94,12 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * @Groups({"post","put"})
      */
     private $familyName;
-    
+
+    /**
+     * @var string|null The shorten family name of the user.
+     */
+    private $shortFamilyName;
+
     /**
      * @var string The email of the user.
      *
@@ -139,6 +147,14 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * @Groups({"post","put"})
      */
     private $telephone;
+
+    /**
+     * @var int phone display configuration (1 = restricted; 2 = all).
+     *
+     * @Assert\NotBlank
+     * @Groups({"post","put"})
+     */
+    private $phoneDisplay;
     
     /**
      * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
@@ -254,12 +270,22 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $asks;
 
     /**
+     * @var Ask[]|null The asks related to this user.
+     */
+    private $asksRelated;
+
+    /**
      * @var Image[]|null The images of the user.
      *
      * @Groups({"post","put"})
      */
     private $images;
     
+    /**
+     * @var Array|null The images of the user.
+     */
+    private $avatars;
+
     /**
     * @var array|null User notification alert preferences.
     * @Groups({"put"})
@@ -312,6 +338,12 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $phoneToken;
 
     /**
+     * @var \DateTimeInterface|null Validation date of the phone number.
+     * @Groups({"post","put"})
+     */
+    private $phoneValidatedDate;
+
+    /**
      * @var string|null iOS app ID.
      * @Groups({"post","put"})
      */
@@ -347,6 +379,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
+        $this->asksRelated = new ArrayCollection();
         $this->masses = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->userNotifications = new ArrayCollection();
@@ -411,7 +444,19 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         
         return $this;
     }
-    
+
+    public function getShortFamilyName(): ?string
+    {
+        return $this->shortFamilyName;
+    }
+        
+    public function setShortFamilyName(?string $shortFamilyName): self
+    {
+        $this->shortFamilyName = $shortFamilyName;
+        
+        return $this;
+    }
+
     public function getEmail(): ?string
     {
         return $this->email;
@@ -481,6 +526,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         $this->telephone = $telephone;
         
+        return $this;
+    }
+
+    public function getPhoneDisplay(): ?int
+    {
+        return $this->phoneDisplay;
+    }
+
+    public function setPhoneDisplay(?int $phoneDisplay): self
+    {
+        $this->phoneDisplay = $phoneDisplay;
+
         return $this;
     }
     
@@ -739,6 +796,34 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    public function getAsksRelated(): Collection
+    {
+        return $this->asksRelated;
+    }
+    
+    public function addAskRelated(Ask $asksRelated): self
+    {
+        if (!$this->asksRelated->contains($asksRelated)) {
+            $this->asksRelated->add($asksRelated);
+            $asksRelated->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeAskRelated(Ask $asksRelated): self
+    {
+        if ($this->asksRelated->contains($asksRelated)) {
+            $this->asksRelated->removeElement($asksRelated);
+            // set the owning side to null (unless already changed)
+            if ($asksRelated->getUser() === $this) {
+                $asksRelated->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+
     /**
      *
      * @return Collection|Image[]
@@ -772,6 +857,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     }
         
         
+    public function getAvatars(): ?array
+    {
+        return $this->avatars;
+    }
+    
+    public function setAvatars(?array $avatars): self
+    {
+        $this->avatars = $avatars;
+        
+        return $this;
+    }
+
     public function getAlerts()
     {
         return $this->alerts;
@@ -947,6 +1044,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    public function getPhoneValidatedDate(): ?\DateTimeInterface
+    {
+        return $this->phoneValidatedDate;
+    }
+
+    public function setPhoneValidatedDate(?\DateTimeInterface $phoneValidatedDate): ?self
+    {
+        $this->phoneValidatedDate = $phoneValidatedDate;
+
+        return $this;
+    }
+
     public function getIosAppId(): ?string
     {
         return $this->iosAppId;
@@ -1005,22 +1114,28 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         return
         [
-            'id'             => $this->getId(),
-            'givenName'      => $this->getGivenName(),
-            'familyName'     => $this->getFamilyName(),
-            'gender'         => $this->getGender(),
-            'status'         => $this->getStatus(),
-            'email'          => $this->getEmail(),
-            'telephone'      => $this->getTelephone(),
-            'geoToken'       => $this->getGeoToken(),
-            'birthYear'      => $this->getBirthYear(),
-            'homeAddress'    => $this->getHomeAddress(),
-            'images'        => $this->getImages(),
-            'smoke'          => $this->getSmoke(),
-            'chat'           => $this->hasChat(),
-            'chatFavorites'  => $this->getChatFavorites(),
-            'music'          => $this->hasMusic(),
-            'musicFavorites' => $this->getMusicFavorites()
+            'id'                    => $this->getId(),
+            'givenName'             => $this->getGivenName(),
+            'familyName'            => $this->getFamilyName(),
+            'shortFamilyName'       => $this->getShortFamilyName(),
+            'gender'                => $this->getGender(),
+            'status'                => $this->getStatus(),
+            'email'                 => $this->getEmail(),
+            'telephone'             => $this->getTelephone(),
+            'geoToken'              => $this->getGeoToken(),
+            'birthYear'             => $this->getBirthYear(),
+            'homeAddress'           => $this->getHomeAddress(),
+            'images'                => $this->getImages(),
+            'avatars'               => $this->getAvatars(),
+            'smoke'                 => $this->getSmoke(),
+            'chat'                  => $this->hasChat(),
+            'chatFavorites'         => $this->getChatFavorites(),
+            'music'                 => $this->hasMusic(),
+            'musicFavorites'        => $this->getMusicFavorites(),
+            'newsSubscription'      => $this->hasNewsSubscription(),
+            'phoneDisplay'          => $this->getPhoneDisplay(),
+            'phoneValidatedDate'    => $this->getPhoneValidatedDate(),
+            'phoneToken'            => $this->getPhoneToken()
         ];
     }
 }

@@ -5,10 +5,10 @@
     >
       <!-- Times -->
 
-      <!-- Single outward -->
+      <!-- Outward -->
       <v-col
-        v-if="outwardTime"
-        :cols="returnTime ? '3' : '7'"
+        v-if="returnTrip && (outwardTime || returnTime)"
+        :cols="returnTrip ? '3' : '7'"
       >
         <v-row
           dense
@@ -28,16 +28,23 @@
             </v-icon>
           </v-col>
           <v-col
+            v-if="outwardTime"
             cols="auto"
           >
             {{ formatTime(outwardTime) }}
           </v-col>
+          <v-col
+            v-else
+            cols="auto"
+          >
+            <span class="font-italic">{{ $t('multiple') }}</span>
+          </v-col>
         </v-row>
       </v-col>
 
-      <!-- Single return -->
+      <!-- Return -->
       <v-col
-        v-if="outwardTime && returnTime"
+        v-if="returnTrip && (outwardTime || returnTime)"
         cols="3"
         offset="1"
       >
@@ -59,46 +66,23 @@
             </v-icon>
           </v-col>
           <v-col
+            v-if="returnTime"
             cols="auto"
           >
             {{ formatTime(returnTime) }}
           </v-col>
-        </v-row>
-      </v-col>
-
-      <!-- Multi outward only -->
-      <v-col
-        v-if="!outwardTime && !returnTrip"
-        cols="7"
-      >
-        <v-row
-          dense
-        >
           <v-col
+            v-else
             cols="auto"
           >
-            {{ $t('outward') }}
-          </v-col>
-          <v-col
-            cols="auto"
-          >
-            <v-icon
-              slot="prepend"
-            >
-              mdi-arrow-left-circle
-            </v-icon>
-          </v-col>
-          <v-col
-            cols="auto"
-          >
-            <span class="font-italic">{{ $t('multi') }}</span>
+            <span class="font-italic">{{ $t('multiple') }}</span>
           </v-col>
         </v-row>
       </v-col>
 
-      <!-- Multi outward/return -->
+      <!-- Multi Outward & Return -->
       <v-col
-        v-if="!outwardTime && returnTrip"
+        v-if="returnTrip && !outwardTime && !returnTime"
         cols="7"
       >
         <v-row
@@ -121,7 +105,12 @@
           <v-col
             cols="auto"
           >
-            {{ $t('return') }} <span class="font-italic">{{ $t('multi') }}</span>
+            {{ $t('return') }}
+          </v-col>
+          <v-col
+            cols="auto"
+          >
+            <span class="font-italic">{{ $t('fullMultiple') }}</span>
           </v-col>
         </v-row>
       </v-col>
@@ -165,13 +154,13 @@ export default {
       type: String,
       default: null
     },
-    returnTime: {
-      type: String,
-      default: null
-    },
     returnTrip: {
       type: Boolean,
       default: false
+    },
+    returnTime: {
+      type: String,
+      default: null
     },
     monActive: {
       type: Boolean,

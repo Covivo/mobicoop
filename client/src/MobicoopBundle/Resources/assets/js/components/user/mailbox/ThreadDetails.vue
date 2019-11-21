@@ -20,7 +20,7 @@
             v-slot:icon
           >
             <v-avatar color="secondary">
-              <v-icon>mdi-account-circle</v-icon>
+              <img :src="item.user.avatars[0]">
             </v-avatar>
           </template>
           <template
@@ -78,14 +78,6 @@ export default {
       type: Number,
       default:null
     },
-    iconUser:{ // Not used for now
-      type: String,
-      default:null
-    },
-    iconRecipient:{ // Not used for now
-      type: String,
-      default:null
-    },
     refresh:{
       type: Boolean,
       default:false
@@ -95,7 +87,7 @@ export default {
     return{
       textToSend:"",
       items:[],
-      currentAskHistory:null,
+      currentAsk:null,
       locale: this.$i18n.locale,
       boilerplate: false,
       tile: false,
@@ -115,8 +107,9 @@ export default {
   methods: {
     getCompleteThread(){
       this.items = [];
+
       // if idMessage = -1 it means that is a "virtuel" thread. When you initiate a contact without previous message
-      if(this.idMessage!==-1){
+      if(this.idMessage>-1){
         this.loading = true;
         axios.get(this.$t("urlCompleteThread",{idMessage:this.idMessage}))
           .then(response => {
@@ -151,8 +144,6 @@ export default {
               }
               this.items.push(item);
 
-              // Update the current AskHistory
-              if(item.askHistory){this.currentAskHistory = item.askHistory.id}else{this.currentAskHistory=null};
               this.emit();
             });
 
@@ -161,12 +152,14 @@ export default {
             console.log(error);
           });
       }
+      else{
+        this.emit();
+      }
     },
     createdTime(date){
       return moment(date).format("HH:mm");
     },
     emit(){
-      this.$emit("updateAskHistory",{currentAskHistory:this.currentAskHistory});
       this.$emit("refreshCompleted");
     }
   }

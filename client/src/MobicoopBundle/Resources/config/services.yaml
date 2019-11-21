@@ -35,6 +35,7 @@ services:
     # Api
     Mobicoop\Bundle\MobicoopBundle\Api\Service\:
         resource: '@MobicoopBundle/Api/Service/*'
+    
     Mobicoop\Bundle\MobicoopBundle\Api\Serializer\:
         resource: '@MobicoopBundle/Api/Serializer/*'
 
@@ -114,6 +115,7 @@ services:
             $facebook_show: '%env(resolve:FACEBOOK_SHOW)%'
             $facebook_appid: '%env(resolve:FACEBOOK_APPID)%'
             $required_home_address: '%env(resolve:REQUIRED_HOME_ADDRESS)%'
+            $news_subscription: '%env(resolve:NEWS_SUBSCRIPTION)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\User\Service\:
         resource: '@MobicoopBundle/User/Service/*'

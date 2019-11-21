@@ -41,8 +41,9 @@
               v-model="outwardDate"
               :locale="locale"
               no-title
+              :min="nowDate"
               @input="menuOutwardDate = false"
-              @change="change"
+              @change="change,blockTime(),blockDate()"
             />
           </v-menu>
         </v-col>
@@ -75,9 +76,10 @@
               v-if="menuOutwardTime"
               v-model="outwardTime"
               format="24hr"
+              :min="maxTimeIfToday"
               header-color="secondary"
               @click:minute="$refs.menuOutwardTime.save(outwardTime)"
-              @change="change"
+              @change="change(),blockTime()"
             />
           </v-menu>
         </v-col>
@@ -116,7 +118,7 @@
             :label="$t('returnTrip.label')"
             color="primary"
             hide-details
-            @change="change"
+            @change="change(),checkReturnDesactivate($event)"
           />
         </v-col>
 
@@ -138,7 +140,6 @@
                 :label="$t('returnDate.label')"
                 prepend-icon=""
                 readonly
-                :disabled="!returnTrip"
                 v-on="on"
               >
                 <v-icon
@@ -152,8 +153,9 @@
               v-model="returnDate"
               :locale="locale"
               no-title
+              :min="maxDateFromOutward"
               @input="menuReturnDate = false"
-              @change="change"
+              @change="checkDateReturn($event),change(),blockTime()"
             />
           </v-menu>
         </v-col>
@@ -179,7 +181,6 @@
                 :label="$t('returnTime.label')"
                 prepend-icon=""
                 readonly
-                :disabled="!returnTrip"
                 v-on="on"
               />
             </template>
@@ -187,9 +188,10 @@
               v-if="menuReturnTime"
               v-model="returnTime"
               format="24hr"
+              :min="maxTimeFromOutward"
               header-color="secondary"
               @click:minute="$refs.menuReturnTime.save(returnTime)"
-              @change="change"
+              @change="checkDateReturn($event),change()"
             />
           </v-menu>
         </v-col>
@@ -301,6 +303,8 @@
                   <template v-slot:activator="{ on }">
                     <v-text-field
                       v-model="item.outwardTime"
+                      :hint="item.id > 0 ? $t('ui.form.optional') : ''"
+                      persistent-hint
                       :label="$t('regularOutwardTime.label')"
                       prepend-icon=""
                       readonly
@@ -324,7 +328,7 @@
                     header-color="secondary"
                     :disabled="item.outwardDisabled"
                     @click:minute="closeOutwardTime(item.id)"
-                    @change="change"
+                    @change="change,blockTimeRegular($event,item.id)"
                   />
                 </v-menu>
               </v-col>
@@ -387,6 +391,7 @@
                     format="24hr"
                     header-color="secondary"
                     :disabled="item.returnDisabled"
+                    :min="item.maxTimeFromOutwardRegular"
                     @click:minute="closeReturnTime(item.id)"
                     @change="change"
                   />
@@ -456,8 +461,8 @@
             <v-icon>
               mdi-plus-circle-outline
             </v-icon>
+            {{ $t('addSchedule') }}
           </v-btn>
-          {{ $t('addSchedule') }}
         </v-col>
       </v-row>
     </v-form>
@@ -511,7 +516,10 @@ export default {
       locale: this.$i18n.locale,
       arrayDay : ['mon','tue','wed','thu','fri','sat','sun'],
       schedules: [],
-
+      maxDateFromOutward : null,
+      maxTimeFromOutward : null,
+      maxTimeIfToday : null,
+      nowDate : new Date().toISOString().slice(0,10)
 
     };
   },
@@ -552,6 +560,7 @@ export default {
   watch: {
     initOutwardDate() {
       this.outwardDate = this.initOutwardDate;
+      this.blockDate();
     }
   },
   created:function(){
@@ -583,6 +592,28 @@ export default {
         schedules: validSchedules
       });
     },
+    checkDateReturn(e){
+      if (e) this.returnTrip = true
+    },
+    blockDate(){
+      this.maxDateFromOutward = this.outwardDate
+      //We are Today -> we block min time for outwardTime < now time
+      this.maxTimeIfToday = (this.maxDateFromOutward == this.nowDate) ? moment().format('H:mm') : null;
+    },
+    blockTime(){
+      this.maxTimeFromOutward = (this.outwardDate == this.returnDate) ? this.outwardTime : null;
+      //Security -> if try to set return then outward, if outward is more far, we set return = outward
+      if ( this.outwardDate > this.returnDate )  this.returnDate = this.outwardDate;
+    },
+    blockTimeRegular(e,id){
+      this.schedules[id].maxTimeFromOutwardRegular = e;
+    },
+    checkReturnDesactivate(e){
+      if (!e) {
+        this.returnDate = null
+        this.returnTime = null
+      }
+    },
     getValueCheckbox(event,item,day){
 
       //If we have more than 1 day and checkbox is set to true
@@ -594,17 +625,12 @@ export default {
         this.schedules[id].returnDisabled = false;
 
         if (event) {
-
           this.verifCurrentdDayInAllSchedules(day,id)
-
-
           // We uncheck a day
         }else{
 
           // TODO verif if all schedule have current day open, not just the currrent one
         }
-
-
 
       }
     },
@@ -654,44 +680,26 @@ export default {
 
       //Fill array schedules
       for (var j in [0,1,2,3,4,5,6]){
-        if (j == 0){
-          this.schedules.push({
-            id:j,
-            visible: true,
-            mon: false,
-            tue: false,
-            wed: false,
-            thu: false,
-            fri: false,
-            sat: false,
-            sun: false,
-            outwardTime: null,
-            returnTime: null,
-            menuOutwardTime: false,
-            menuReturnTime: false,
-            outwardDisabled : false,
-            returnDisabled : false,
-          })
-        }else{
-          this.schedules.push({
-            id:j,
-            visible: false,
-            mon: false,
-            tue: false,
-            wed: false,
-            thu: false,
-            fri: false,
-            sat: false,
-            sun: false,
-            outwardTime: null,
-            returnTime: null,
-            menuOutwardTime: false,
-            menuReturnTime: false,
-            outwardDisabled : false,
-            returnDisabled : false,
-          })
-        }
+        this.schedules.push({
+          id:j,
+          visible: false,
+          mon: false,
+          tue: false,
+          wed: false,
+          thu: false,
+          fri: false,
+          sat: false,
+          sun: false,
+          outwardTime: null,
+          returnTime: null,
+          menuOutwardTime: false,
+          menuReturnTime: false,
+          outwardDisabled : false,
+          returnDisabled : false,
+          maxTimeFromOutwardRegular : null
+        });
       }
+      this.schedules[0].visible = true;
     },
 
     clearOutwardDate() {

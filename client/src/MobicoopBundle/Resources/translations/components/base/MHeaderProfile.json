@@ -1,0 +1,38 @@
+{
+    "fr": {
+            "myAds": {
+                "label": "Mes annonces",
+                "route": "/utilisateur/profil/modifier/myProposals"
+            },
+            "myAcceptedCarpools": {
+                "label": "Covoiturages acceptés",
+                "route": "/utilisateur/profil/modifier/carpoolsAccepted"
+            },
+            "myProfile": {
+                "label": "Profil",
+                "route": "/utilisateur/profil/modifier/myProfile"
+            },
+            "logOut": {
+                "label": "Déconnexion",
+                "route": "/user/logout"
+            }
+    },
+    "en": {
+            "myAds": {
+                "label": "My proposals",
+                "route": "#"
+            },
+            "myAcceptedCarpools": {
+                "label": "Accepted carpools",
+                "route": "#"
+            },
+            "myProfile": {
+                "label": "Profile",
+                "route": "/user/profile/update"
+            },
+            "logOut": {
+                "label": "Logout",
+                "route": "/user/logout"
+            }
+    }
+}

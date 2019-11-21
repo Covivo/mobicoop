@@ -23,6 +23,9 @@
 
 namespace App\User\Service;
 
+use App\Carpool\Repository\AskHistoryRepository;
+use App\Carpool\Repository\AskRepository;
+use App\Carpool\Service\AskManager;
 use App\Communication\Entity\Medium;
 use App\User\Entity\User;
 use App\User\Event\UserPasswordChangeAskedEvent;
@@ -41,8 +44,11 @@ use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Entity\UserNotification;
+use App\User\Event\UserGeneratePhoneTokenAskedEvent;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\User\Event\UserUpdatedSelfEvent;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\User\Repository\UserRepository;
 
 /**
  * User manager service.
@@ -55,8 +61,11 @@ class UserManager
     private $roleRepository;
     private $communityRepository;
     private $messageRepository;
+    private $askRepository;
+    private $askHistoryRepository;
     private $notificationRepository;
     private $userNotificationRepository;
+    private $userRepository;
     private $logger;
     private $eventDispatcher;
     private $encoder;
@@ -67,17 +76,31 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->roleRepository = $roleRepository;
         $this->communityRepository = $communityRepository;
         $this->messageRepository = $messageRepository;
+        $this->askRepository = $askRepository;
+        $this->askHistoryRepository = $askHistoryRepository;
         $this->eventDispatcher = $dispatcher;
         $this->encoder = $encoder;
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
+        $this->userRepository = $userRepository;
+    }
+
+    /**
+     * Get a user by its id.
+     *
+     * @param integer $id
+     * @return User|null
+     */
+    public function getUser(int $id)
+    {
+        return $this->userRepository->find($id);
     }
     
     /**
@@ -93,6 +116,8 @@ class UserManager
         $userRole = new UserRole();
         $userRole->setRole($role);
         $user->addUserRole($userRole);
+        // default phone display : restricted
+        $user->setPhoneDisplay(User::PHONE_DISPLAY_RESTRICTED);
         // creation of the geotoken
         $datetime = new DateTime();
         $time = $datetime->getTimestamp();
@@ -113,11 +138,24 @@ class UserManager
     /**
      * Update a user.
      *
-     * @param User $user    The user to register
-     * @return User         The user created
+     * @param User $user    The user to update
+     * @return User         The user updated
      */
     public function updateUser(User $user)
     {
+
+         // activate sms notification if phone validated
+        if ($user->getPhoneValidatedDate()) {
+            $user = $this->activateSmsNotification($user);
+        }
+        // check if the phone is updated and if so reset phoneToken and validatedDate
+        if ($user->getTelephone() != $user->getOldTelephone()) {
+            $user->setPhoneToken(null);
+            $user->setPhoneValidatedDate(null);
+            // deactivate sms notification since the phone is new
+            $user = $this->deActivateSmsNotification($user);
+        }
+       
         // update of the geotoken
         $datetime = new DateTime();
         $time = $datetime->getTimestamp();
@@ -126,7 +164,7 @@ class UserManager
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-        // dispatch en event
+        // dispatch an event
         $event = new UserUpdatedSelfEvent($user);
         $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
         // return the user
@@ -170,7 +208,7 @@ class UserManager
         if ($type=="Direct") {
             $threads = $this->messageRepository->findThreadsDirectMessages($user);
         } elseif ($type=="Carpool") {
-            $threads = $this->messageRepository->findThreadsCarpoolMessages($user);
+            $threads = $this->askRepository->findAskByUser($user);
         } else {
             return [];
         }
@@ -178,46 +216,108 @@ class UserManager
         if (!$threads) {
             return [];
         } else {
-            $messages = [];
-            foreach ($threads as $thread) {
-                // To Do : We support only one recipient at this time...
-                $currentMessage = [
-                    'idMessage' => $thread->getId(),
-                    'idRecipient' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getId() : $thread->getUser('user')->getId(),
-                    'givenName' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getGivenName() : $thread->getUser('user')->getGivenName(),
-                    'familyName' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getFamilyName() : $thread->getUser('user')->getFamilyName(),
-                    'date' => ($thread->getLastMessage()===null) ? $thread->getCreatedDate() : $thread->getLastMessage()->getCreatedDate(),
-                    'selected' => false
-                ];
-
-                if ($type=="Carpool") {
-                    $waypoints = $thread->getAskHistory()->getAsk()->getMatching()->getWaypoints();
-                    $criteria = $thread->getAskHistory()->getAsk()->getMatching()->getCriteria();
-                    $currentMessage["carpoolInfos"] = [
-                        "askHistoryId" => $thread->getAskHistory()->getId(),
-                        "origin" => $waypoints[0]->getAddress()->getAddressLocality(),
-                        "destination" => $waypoints[count($waypoints)-1]->getAddress()->getAddressLocality(),
-                        "criteria" => [
-                            "frequency" => $criteria->getFrequency(),
-                            "fromDate" => $criteria->getFromDate(),
-                            "fromTime" => $criteria->getFromTime(),
-                            "monCheck" => $criteria->isMonCheck(),
-                            "tueCheck" => $criteria->isTueCheck(),
-                            "wedCheck" => $criteria->isWedCheck(),
-                            "thuCheck" => $criteria->isThuCheck(),
-                            "friCheck" => $criteria->isFriCheck(),
-                            "satCheck" => $criteria->isSatCheck(),
-                            "sunCheck" => $criteria->isSunCheck()
-                        ]
-                    ];
-                }
-
-                $messages[] = $currentMessage;
+            switch ($type) {
+                case "Direct":
+                    $messages = $this->parseThreadsDirectMessages($user, $threads);
+                break;
+                case "Carpool":
+                    $messages = $this->parseThreadsCarpoolMessages($user, $threads);
+                break;
             }
             return $messages;
         }
     }
     
+    public function parseThreadsDirectMessages(User $user, array $threads)
+    {
+        $messages = [];
+        foreach ($threads as $message) {
+            // To Do : We support only one recipient at this time...
+            $currentMessage = [
+                'idMessage' => $message->getId(),
+                'idRecipient' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getId() : $message->getUser('user')->getId(),
+                'avatarsRecipient' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getAvatars()[0] : $message->getUser('user')->getAvatars()[0],
+                'givenName' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getGivenName() : $message->getUser('user')->getGivenName(),
+                'familyName' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getFamilyName() : $message->getUser('user')->getFamilyName(),
+                'date' => ($message->getLastMessage()===null) ? $message->getCreatedDate() : $message->getLastMessage()->getCreatedDate(),
+                'selected' => false
+            ];
+
+            $messages[] = $currentMessage;
+        }
+        return $messages;
+    }
+
+    public function parseThreadsCarpoolMessages(User $user, array $threads)
+    {
+        $messages = [];
+
+
+        foreach ($threads as $ask) {
+            $askHistories = $this->askHistoryRepository->findLastAskHistory($ask);
+            
+            // Only the Ask with at least one AskHistory
+            // Only one-way or outward of a round trip.
+            if (count($askHistories)>0 && ($ask->getType()==1 || $ask->getType()==2)) {
+                $askHistory = $askHistories[0];
+
+
+                $message = $askHistory->getMessage();
+
+                $currentThread = [
+                    'idAskHistory'=>$askHistory->getId(),
+                    'idAsk'=>$ask->getId(),
+                    'idRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getId() : $ask->getUser('user')->getId(),
+                    'avatarsRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getAvatars()[0] : $ask->getUser('user')->getAvatars()[0],
+                    'givenName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getGivenName() : $ask->getUser('user')->getGivenName(),
+                    'familyName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getFamilyName() : $ask->getUser('user')->getFamilyName(),
+                    'date' => ($message===null) ? $askHistory->getCreatedDate() : $message->getCreatedDate(),
+                    'selected' => false
+                ];
+
+                // The message id : the one linked to the current askHistory or we try to find the last existing one
+                $idMessage = -99;
+                if ($message !== null) {
+                    ($idMessage = $message->getMessage()!==null) ? $idMessage = $message->getMessage()->getId() : $message->getId();
+                } else {
+                    $formerAskHistory = $this->askHistoryRepository->findLastAskHistoryWithMessage($ask);
+                    if (count($formerAskHistory)>0 && $formerAskHistory[0]->getMessage()) {
+                        if ($formerAskHistory[0]->getMessage()->getMessage()) {
+                            $idMessage = $formerAskHistory[0]->getMessage()->getMessage()->getId();
+                        } else {
+                            $idMessage = $formerAskHistory[0]->getMessage()->getId();
+                        }
+                    }
+                }
+                $currentThread['idMessage'] = $idMessage;
+
+                $waypoints = $ask->getMatching()->getWaypoints();
+                $criteria = $ask->getMatching()->getCriteria();
+                $currentThread["carpoolInfos"] = [
+                    "askHistoryId" => $askHistory->getId(),
+                    "origin" => $waypoints[0]->getAddress()->getAddressLocality(),
+                    "destination" => $waypoints[count($waypoints)-1]->getAddress()->getAddressLocality(),
+                    "criteria" => [
+                        "frequency" => $criteria->getFrequency(),
+                        "fromDate" => $criteria->getFromDate(),
+                        "fromTime" => $criteria->getFromTime(),
+                        "monCheck" => $criteria->isMonCheck(),
+                        "tueCheck" => $criteria->isTueCheck(),
+                        "wedCheck" => $criteria->isWedCheck(),
+                        "thuCheck" => $criteria->isThuCheck(),
+                        "friCheck" => $criteria->isFriCheck(),
+                        "satCheck" => $criteria->isSatCheck(),
+                        "sunCheck" => $criteria->isSunCheck()
+                    ]
+                ];
+
+                $messages[] = $currentThread;
+            }
+        }
+
+        return $messages;
+    }
+
     public function getThreadsDirectMessages(User $user): array
     {
         return $this->getThreadsMessages($user, "Direct");
@@ -381,5 +481,67 @@ class UserManager
             $this->entityManager->flush();
         }
         return $this->getAlerts($user);
+    }
+
+    /**
+     * set sms notification to active when phone is validated
+     *
+     * @param User $user
+     * @return void
+     */
+    public function activateSmsNotification(User $user)
+    {
+        $userNotifications = $this->userNotificationRepository->findUserNotifications($user->getId());
+        foreach ($userNotifications as $userNotification) {
+            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS) {
+                // check telephone for sms
+                $userNotification->setActive(true);
+                $userNotification->setUser($user);
+                $this->entityManager->persist($userNotification);
+            }
+        }
+        $this->entityManager->flush();
+        return $user;
+    }
+
+    /**
+    * set sms notification to non active when phone change or is removed
+    *
+    * @param User $user
+    * @return void
+    */
+    public function deActivateSmsNotification(User $user)
+    {
+        $userNotifications = $this->userNotificationRepository->findUserNotifications($user->getId());
+        foreach ($userNotifications as $userNotification) {
+            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS) {
+                $userNotification->setActive(false);
+                $userNotification->setUser($user);
+                $this->entityManager->persist($userNotification);
+            }
+        }
+        $this->entityManager->flush();
+        return $user;
+    }
+
+    /**
+     * Generate a validation token
+     * (Ajax)
+     *
+     * @param User $user
+     * @return void
+     */
+    public function generatePhoneToken(User $user)
+    {
+        // Generate the token
+        $phoneToken= strval(mt_rand(1000, 9999));
+        $user->setPhoneToken($phoneToken);
+        // dispatch the event
+        $event = new UserGeneratePhoneTokenAskedEvent($user);
+        $this->eventDispatcher->dispatch(UserGeneratePhoneTokenAskedEvent::NAME, $event);
+        // Persist user
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        return $user;
     }
 }

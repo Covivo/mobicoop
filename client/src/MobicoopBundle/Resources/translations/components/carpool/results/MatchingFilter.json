@@ -1,6 +1,26 @@
 {
   "fr":{
-
+    "filters":"Filtres",
+    "select": {
+      "order":{
+        "label":"Ordre",
+        "date":{
+          "increasing":"Par Date Croissante",
+          "decreasing":"Par Date Decroissante"
+        }
+      },
+      "hour":{
+        "label":"Heure"
+      }
+    },
+    "chips":{
+      "date":"Date",
+      "hour":"Heure",
+      "value":{
+        "ASC":"Croissante",
+        "DESC":"Decroissant"
+      }
+  }
   },
   "en":{
 

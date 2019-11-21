@@ -34,6 +34,8 @@ class CommunityVoter extends Voter
     const LIST = 'list';
     const CREATE = 'create';
     const SHOW = 'show';
+    const JOIN = 'join';
+
     
     private $permissionManager;
 
@@ -48,7 +50,8 @@ class CommunityVoter extends Voter
         if (!in_array($attribute, [
             self::LIST,
             self::CREATE,
-            self::SHOW
+            self::SHOW,
+            self::JOIN,
             ])) {
             return false;
         }
@@ -77,6 +80,8 @@ class CommunityVoter extends Voter
                 return $this->canCreate($user);
             case self::SHOW:
                 return $this->canShow($user);
+            case self::JOIN:
+                return $this->canJoin($user);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -95,5 +100,10 @@ class CommunityVoter extends Voter
     private function canShow(?User $user=null)
     {
         return $this->permissionManager->checkPermission('community_read', $user);
+    }
+    
+    private function canJoin(?User $user=null)
+    {
+        return $this->permissionManager->checkPermission('community_join', $user);
     }
 }

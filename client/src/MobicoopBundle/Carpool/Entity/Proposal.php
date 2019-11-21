@@ -100,6 +100,13 @@ class Proposal implements ResourceInterface, \JsonSerializable
     private $private;
 
     /**
+     * @var boolean Paused proposal.
+     * A paused proposal can't be the found in the result of a search, and can be unpaused at any moment.
+     * @Groups({"post","put"})
+     */
+    private $paused;
+
+    /**
      * @var Waypoint[] The waypoints of the proposal.
      * @Groups({"post","put"})
      *
@@ -120,12 +127,12 @@ class Proposal implements ResourceInterface, \JsonSerializable
     private $communities;
 
     /**
-     * @var Matching[]|null The matching of the proposal (if proposal is an offer).
+     * @var Matching[]|null The matchings of the proposal (if proposal is a request).
      */
     private $matchingOffers;
 
     /**
-     * @var Matching[]|null The matching of the proposal (if proposal is a request).
+     * @var Matching[]|null The matchings of the proposal (if proposal is an offer).
      */
     private $matchingRequests;
 
@@ -146,7 +153,25 @@ class Proposal implements ResourceInterface, \JsonSerializable
      * @var Proposal|null The proposal we know that already matched by this new proposal
      * @Groups({"post","put"})
      */
-    private $matchedProposal;
+    private $matchingProposal;
+
+    /**
+     * @var mixed|null The matching of the linked proposal (used for regular return trips).
+     * @Groups({"post","put"})
+     */
+    private $matchingLinked;
+
+    /**
+     * @var mixed|null The ask of the linked proposal (used for regular return trips).
+     * @Groups({"post","put"})
+     */
+    private $askLinked;
+
+    /**
+     * @var boolean Create a formal ask after posting the proposal.
+     * @Groups({"post","put"})
+     */
+    private $formalAsk;
 
     /**
      * @var array The matching results of a proposal in a user-friendly format.
@@ -230,6 +255,18 @@ class Proposal implements ResourceInterface, \JsonSerializable
     public function setPrivate(?bool $private): self
     {
         $this->private = $private;
+
+        return $this;
+    }
+
+    public function isPaused(): bool
+    {
+        return $this->paused ? true : false;
+    }
+
+    public function setPaused(?bool $paused): self
+    {
+        $this->paused = $paused;
 
         return $this;
     }
@@ -461,14 +498,50 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
-    public function getMatchedProposal(): ?Proposal
+    public function getMatchingProposal(): ?Proposal
     {
-        return $this->matchedProposal;
+        return $this->matchingProposal;
     }
 
-    public function setMatchedProposal(?Proposal $matchedProposal): self
+    public function setMatchingProposal(?Proposal $matchingProposal): self
     {
-        $this->matchedProposal = $matchedProposal;
+        $this->matchingProposal = $matchingProposal;
+
+        return $this;
+    }
+
+    public function getMatchingLinked()
+    {
+        return $this->matchingLinked;
+    }
+
+    public function setMatchingLinked($matchingLinked): self
+    {
+        $this->matchingLinked = $matchingLinked;
+
+        return $this;
+    }
+
+    public function getAskLinked()
+    {
+        return $this->askLinked;
+    }
+
+    public function setAskLinked($askLinked): self
+    {
+        $this->askLinked = $askLinked;
+
+        return $this;
+    }
+
+    public function hasFormalAsk(): bool
+    {
+        return $this->formalAsk ? true : false;
+    }
+
+    public function setFormalAsk(?bool $formalAsk): self
+    {
+        $this->formalAsk = $formalAsk;
 
         return $this;
     }
@@ -491,7 +564,9 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return
         [
             'id'                => $this->getId(),
-            'matchedProposal'   => $this->getMatchedProposal(),
+            'matchingProposal'  => $this->getMatchingProposal(),
+            'matchingLinked'    => $this->getMatchingLinked(),
+            'askLinked'         => $this->getAskLinked(),
             'proposalLinked'    => $this->getProposalLinked(),
             'comment'           => $this->getComment(),
             'user'              => $this->getUser(),

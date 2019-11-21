@@ -1,0 +1,50 @@
+{
+    "fr": {
+        "outward": "Aller",
+        "return": "Retour",
+        "mon": "Lundi",
+        "tue": "Mardi",
+        "wed": "Mercredi",
+        "thu": "Jeudi",
+        "fri": "Vendredi",
+        "sat": "Samedi",
+        "sun": "Dimanche",
+        "notSelected": "Non covoituré",
+        "i18n": {
+            "date": {
+              "format": {
+                "fullDate": "ddd Do MMMM YYYY"
+              }
+            },
+            "time": {
+              "format": {
+                "hourMinute": "HH[h]mm"
+              }
+            }
+        }
+    },
+    "en": {
+      "outward": "Outward",
+      "return": "Return",
+      "mon": "Monday",
+      "tue": "Tuesday",
+      "wed": "Wednesday",
+      "thu": "Thursday",
+      "fri": "Friday",
+      "sat": "Saturday",
+      "sun": "Sunday",
+      "notSelected": "No carpooling",
+      "i18n": {
+          "date": {
+            "format": {
+              "fullDate": "ddd Do MMMM YYYY"
+            }
+          },
+          "time": {
+            "format": {
+              "hourMinute": "HH[h]mm"
+            }
+          }
+      }
+    }
+}

@@ -178,22 +178,28 @@ final class ProposalSimpleSearchCollectionDataProvider implements CollectionData
         if (isset($destination['displayLabel'])) {
             $destinationAddress->setDisplayLabel($destination['displayLabel']);
         }
-        return [$this->proposalManager->searchMatchings(
-            $originAddress,
-            $destinationAddress,
-            $this->request->get("frequency"),
-            \DateTime::createFromFormat(\DateTime::RFC3339, $this->request->get("date")),
-            $this->request->get("useTime"),
-            $this->request->get("strictDate"),
-            $this->request->get("strictPunctual"),
-            $this->request->get("strictRegular"),
-            $this->request->get("marginTime"),
-            $this->request->get("regularLifeTime"),
-            $this->request->get("userId"),
-            $this->request->get("role"),
-            $this->request->get("type"),
-            $this->request->get("anyRouteAsPassenger"),
-            $this->request->get("communityId")
+        return [$this->proposalManager->orderResultsBy(
+            $this->proposalManager->filterResultsBy(
+                $this->proposalManager->searchMatchings(
+                    $originAddress,
+                    $destinationAddress,
+                    $this->request->get("frequency"),
+                    \DateTime::createFromFormat(\DateTime::RFC3339, $this->request->get("date")),
+                    $this->request->get("useTime"),
+                    $this->request->get("strictDate"),
+                    $this->request->get("strictPunctual"),
+                    $this->request->get("strictRegular"),
+                    $this->request->get("marginTime"),
+                    $this->request->get("regularLifeTime"),
+                    $this->request->get("userId"),
+                    $this->request->get("role"),
+                    $this->request->get("type"),
+                    $this->request->get("anyRouteAsPassenger"),
+                    $this->request->get("communityId")
+                ),
+                $this->request->get("filters")
+            ),
+            $this->request->get("filters")
         )];
     }
 }

@@ -33,10 +33,13 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\ProposalPost;
+use App\Carpool\Controller\ProposalResults;
+use App\Carpool\Controller\ProposalDelete;
 use App\Travel\Entity\TravelMode;
 use App\Community\Entity\Community;
 use App\User\Entity\User;
@@ -177,9 +180,24 @@ use App\Communication\Entity\Notified;
  *              }
  *          }
  *      },
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={
+ *          "results"={
+ *              "method"="GET",
+ *              "path"="/proposals/{id}/results",
+ *              "normalization_context"={"groups"={"results"}},
+ *              "controller"=ProposalResults::class,
+ *          },
+ *          "get",
+ *          "put",
+ *          "delete"={
+ *              "method"="DELETE",
+ *              "path"="/proposals/{id}",
+ *              "controller"=ProposalDelete::class
+ *          }
+ *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"proposalType"})
+ * @ApiFilter(BooleanFilter::class, properties={"private"})
  * @ApiFilter(DateFilter::class, properties={"criteria.fromDate"})
  */
 class Proposal
@@ -226,6 +244,15 @@ class Proposal
     private $private;
 
     /**
+     * @var boolean Paused proposal.
+     * A paused proposal can't be the found in the result of a search, and can be unpaused at any moment.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $paused;
+
+    /**
      * @var \DateTimeInterface Creation date of the proposal.
      *
      * @ORM\Column(type="datetime")
@@ -252,11 +279,10 @@ class Proposal
     private $proposalLinked;
     
     /**
-     * @var User User for whom the proposal is submitted (in general the user itself, except when it is a "posting for").
+     * @var User|null User for whom the proposal is submitted (in general the user itself, except when it is a "posting for").
+     * Can be null for an anonymous search.
      *
-     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
-     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","results","write"})
      * @MaxDepth(1)
      */
@@ -301,19 +327,19 @@ class Proposal
     private $communities;
 
     /**
-     * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
+     * @var ArrayCollection|null The matchings of the proposal (if proposal is a request).
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read"})
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","results"})
      * @MaxDepth(1)
      */
     private $matchingOffers;
 
     /**
-     * @var ArrayCollection|null The matching of the proposal (if proposal is a request).
+     * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read"})
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","results"})
      * @MaxDepth(1)
      */
     private $matchingRequests;
@@ -330,6 +356,7 @@ class Proposal
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups({"read","results","write","thread"})
+     * @MaxDepth(1)
      */
     private $criteria;
     
@@ -352,13 +379,34 @@ class Proposal
     private $notifieds;
 
     /**
-     * @var Proposal|null The proposal we know that already matched by this new proposal
+     * @var Proposal|null The proposal we want to force matching with (we assume the corresponding matching doesn't exist yet).
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
-    private $matchedProposal;
+    private $matchingProposal;
 
     /**
-     * @var ArrayCollection|null The carpool results for the proposal.
+     * @var Matching|null The matching of the linked proposal (used for regular return trips).
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $matchingLinked;
+
+    /**
+     * @var Ask|null The ask of the linked proposal (used for regular return trips).
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $askLinked;
+
+    /**
+     * @var boolean Create a formal ask after posting the proposal.
+     * @Groups({"read","write"})
+     */
+    private $formalAsk;
+
+    /**
+     * @var array|null The carpool results for the proposal.
      * Results are taken from the matchings, but returned in a more user-friendly way.
      * @Groups("results")
      */
@@ -377,7 +425,7 @@ class Proposal
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
-        $this->results = new ArrayCollection();
+        $this->results = [];
     }
     
     public function __clone()
@@ -385,11 +433,11 @@ class Proposal
         // when we clone a Proposal we keep only the basic properties, we re-initialize all the collections
         $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
-        $this->communities = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
+        $this->results = [];
     }
 
     public function getId(): ?int
@@ -429,6 +477,18 @@ class Proposal
     public function setPrivate(?bool $private): self
     {
         $this->private = $private;
+
+        return $this;
+    }
+
+    public function isPaused(): bool
+    {
+        return $this->paused ? true : false;
+    }
+
+    public function setPaused(?bool $paused): self
+    {
+        $this->paused = $paused;
 
         return $this;
     }
@@ -582,7 +642,7 @@ class Proposal
     {
         if (!$this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests[] = $matchingRequest;
-            $matchingRequest->setProposalRequest($this);
+            $matchingRequest->setProposalOffer($this);
         }
 
         return $this;
@@ -593,8 +653,8 @@ class Proposal
         if ($this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests->removeElement($matchingRequest);
             // set the owning side to null (unless already changed)
-            if ($matchingRequest->getProposalRequest() === $this) {
-                $matchingRequest->setProposalRequest(null);
+            if ($matchingRequest->getProposalOffer() === $this) {
+                $matchingRequest->setProposalOffer(null);
             }
         }
 
@@ -610,7 +670,7 @@ class Proposal
     {
         if (!$this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers[] = $matchingOffer;
-            $matchingOffer->setProposalOffer($this);
+            $matchingOffer->setProposalRequest($this);
         }
         
         return $this;
@@ -621,8 +681,8 @@ class Proposal
         if ($this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers->removeElement($matchingOffer);
             // set the owning side to null (unless already changed)
-            if ($matchingOffer->getProposalOffer() === $this) {
-                $matchingOffer->setProposalOffer(null);
+            if ($matchingOffer->getProposalRequest() === $this) {
+                $matchingOffer->setProposalRequest(null);
             }
         }
         
@@ -700,14 +760,50 @@ class Proposal
         return $this;
     }
     
-    public function getMatchedProposal(): ?Proposal
+    public function hasFormalAsk(): bool
     {
-        return $this->matchedProposal;
+        return $this->formalAsk ? true : false;
     }
 
-    public function setMatchedProposal(?Proposal $matchedProposal): self
+    public function setFormalAsk(?bool $formalAsk): self
     {
-        $this->matchedProposal = $matchedProposal;
+        $this->formalAsk = $formalAsk;
+
+        return $this;
+    }
+
+    public function getMatchingProposal(): ?Proposal
+    {
+        return $this->matchingProposal;
+    }
+
+    public function setMatchingProposal(?Proposal $matchingProposal): self
+    {
+        $this->matchingProposal = $matchingProposal;
+
+        return $this;
+    }
+
+    public function getMatchingLinked(): ?Matching
+    {
+        return $this->matchingLinked;
+    }
+
+    public function setMatchingLinked(?Matching $matchingLinked): self
+    {
+        $this->matchingLinked = $matchingLinked;
+
+        return $this;
+    }
+
+    public function getAskLinked(): ?Ask
+    {
+        return $this->askLinked;
+    }
+
+    public function setAskLinked(?Ask $askLinked): self
+    {
+        $this->askLinked = $askLinked;
 
         return $this;
     }

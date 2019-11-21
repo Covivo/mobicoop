@@ -23,6 +23,8 @@
 
 namespace App\Service;
 
+use App\Carpool\Entity\Criteria;
+
 /**
  * Format Data Manager
  *
@@ -32,6 +34,12 @@ namespace App\Service;
  */
 class FormatDataManager
 {
+    // limit price to round at .5 cents
+    const PRICE_LIMIT = 5;
+    const PRICE_ROUND_TYPE_1 = .1;
+    const PRICE_ROUND_TYPE_2 = .5;
+    const PRICE_ROUND_TYPE_3 = 1;
+
     /**
      * Convert time given in seconds to a human readable format
      * hours minutes seconds
@@ -57,5 +65,34 @@ class FormatDataManager
 
 
         return $humanReturn;
+    }
+
+    //
+    /**
+     * Round a price depending on a trip frequency.
+     *
+     * @param float $price          The price to be rounded
+     * @param integer $frequency    The frequency
+     * @return float
+     */
+    public function roundPrice(float $price, int $frequency)
+    {
+        switch ($frequency) {
+            case Criteria::FREQUENCY_REGULAR:
+                return self::roundNearest($price, self::PRICE_ROUND_TYPE_1);
+                break;
+            case Criteria::FREQUENCY_PUNCTUAL:
+                if ($price<=self::PRICE_LIMIT) {
+                    return self::roundNearest($price, self::PRICE_ROUND_TYPE_2);
+                }
+                return self::roundNearest($price, self::PRICE_ROUND_TYPE_3);
+                break;
+        }
+    }
+
+    // rounds to the nearest subdivision
+    private static function roundNearest($num, $nearest = .5)
+    {
+        return round($num / $nearest) * $nearest;
     }
 }

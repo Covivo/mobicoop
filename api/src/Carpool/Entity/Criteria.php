@@ -44,7 +44,7 @@ use App\PublicTransport\Entity\PTJourney;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={"get","post"},
- *      itemOperations={"get"}
+ *      itemOperations={"get","put"}
  * )
  */
 class Criteria
@@ -90,13 +90,22 @@ class Criteria
     private $frequency;
 
     /**
-     * @var int The number of available seats.
+     * @var int The number of available seats for a driver.
      *
      * @Assert\NotBlank
      * @ORM\Column(type="integer")
      * @Groups({"read","results","write","thread"})
      */
-    private $seats;
+    private $seatsDriver;
+
+    /**
+     * @var int The number of requested seats for a passenger.
+     *
+     * @Assert\NotBlank
+     * @ORM\Column(type="integer")
+     * @Groups({"read","results","write","thread"})
+     */
+    private $seatsPassenger;
 
     /**
      * @var \DateTimeInterface The starting date (= proposal date if punctual).
@@ -516,12 +525,64 @@ class Criteria
     private $priceKm;
 
     /**
-    * @var float|null The price for the whole journey (usually, the rounded (priceKm * distance)).
+    * @var float|null The total price selected by the user as a driver.
     *
-    * @ORM\Column(type="decimal", precision=4, scale=2, nullable=true)
+    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
     * @Groups({"read","results","write","thread"})
     */
-    private $price;
+    private $driverPrice;
+
+    /**
+    * @var float|null The total price computed by the system, using the user price per km, not rounded, as a driver.
+    *
+    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @Groups({"read","results","write","thread"})
+    */
+    private $driverComputedPrice;
+
+    /**
+    * @var float|null The driver computed price rounded using the rounding rules.
+    *
+    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @Groups({"read","results","write","thread"})
+    */
+    private $driverComputedRoundedPrice;
+
+    /**
+    * @var float|null The driver master price to use. It's the price if it's not null, otherwise the computedPrice.
+    * @Groups({"read","results","thread"})
+    */
+    private $driverMasterPrice;
+
+    /**
+    * @var float|null The total price selected by the user as a driver.
+    *
+    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @Groups({"read","results","write","thread"})
+    */
+    private $passengerPrice;
+
+    /**
+    * @var float|null The total price computed by the system, using the user price per km, not rounded, as a passenger.
+    *
+    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @Groups({"read","results","write","thread"})
+    */
+    private $passengerComputedPrice;
+
+    /**
+    * @var float|null The passenger computed price rounded using the rounding rules.
+    *
+    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @Groups({"read","results","write","thread"})
+    */
+    private $passengerComputedRoundedPrice;
+
+    /**
+    * @var float|null The passenger master price to use. It's the price if it's not null, otherwise the computedPrice.
+    * @Groups({"read","results","thread"})
+    */
+    private $passengerMasterPrice;
 
     /**
      * @var boolean Big luggage accepted / asked.
@@ -682,14 +743,26 @@ class Criteria
         return $this;
     }
 
-    public function getSeats(): ?int
+    public function getSeatsDriver(): ?int
     {
-        return $this->seats;
+        return $this->seatsDriver;
     }
 
-    public function setSeats(int $seats): self
+    public function setSeatsDriver(int $seatsDriver): self
     {
-        $this->seats = $seats;
+        $this->seatsDriver = $seatsDriver;
+
+        return $this;
+    }
+
+    public function getSeatsPassenger(): ?int
+    {
+        return $this->seatsPassenger;
+    }
+
+    public function setSeatsPassenger(int $seatsPassenger): self
+    {
+        $this->seatsPassenger = $seatsPassenger;
 
         return $this;
     }
@@ -1353,14 +1426,84 @@ class Criteria
         $this->priceKm = $priceKm;
     }
 
-    public function getPrice(): ?string
+    public function getDriverPrice(): ?string
     {
-        return $this->price;
+        return $this->driverPrice;
     }
     
-    public function setPrice(?string $price)
+    public function setDriverPrice(?string $driverPrice)
     {
-        $this->price = $price;
+        $this->driverPrice = $driverPrice;
+    }
+
+    public function getDriverComputedPrice(): ?string
+    {
+        return $this->driverComputedPrice;
+    }
+    
+    public function setDriverComputedPrice(?string $driverComputedPrice)
+    {
+        $this->driverComputedPrice = $driverComputedPrice;
+    }
+
+    public function getDriverComputedRoundedPrice(): ?string
+    {
+        return $this->driverComputedRoundedPrice;
+    }
+    
+    public function setDriverComputedRoundedPrice(?string $driverComputedRoundedPrice)
+    {
+        $this->driverComputedRoundedPrice = $driverComputedRoundedPrice;
+    }
+
+    public function getDriverMasterPrice(): ?string
+    {
+        if (!is_null($this->getDriverPrice())) {
+            $this->driverMasterPrice = $this->getDriverPrice();
+        } elseif (!is_null($this->getDriverComputedRoundedPrice())) {
+            $this->driverMasterPrice = $this->getDriverComputedRoundedPrice();
+        }
+        return $this->driverMasterPrice;
+    }
+
+    public function getPassengerPrice(): ?string
+    {
+        return $this->passengerPrice;
+    }
+    
+    public function setPassengerPrice(?string $passengerPrice)
+    {
+        $this->passengerPrice = $passengerPrice;
+    }
+
+    public function getPassengerComputedPrice(): ?string
+    {
+        return $this->passengerComputedPrice;
+    }
+    
+    public function setPassengerComputedPrice(?string $passengerComputedPrice)
+    {
+        $this->passengerComputedPrice = $passengerComputedPrice;
+    }
+
+    public function getPassengerComputedRoundedPrice(): ?string
+    {
+        return $this->passengerComputedRoundedPrice;
+    }
+    
+    public function setPassengerComputedRoundedPrice(?string $passengerComputedRoundedPrice)
+    {
+        $this->passengerComputedRoundedPrice = $passengerComputedRoundedPrice;
+    }
+
+    public function getPassengerMasterPrice(): ?string
+    {
+        if (!is_null($this->getPassengerPrice())) {
+            $this->passengerMasterPrice = $this->getPassengerPrice();
+        } elseif (!is_null($this->getPassengerComputedRoundedPrice())) {
+            $this->passengerMasterPrice = $this->getPassengerComputedRoundedPrice();
+        }
+        return $this->passengerMasterPrice;
     }
 
     public function hasLuggage(): ?bool
@@ -1511,7 +1654,8 @@ class Criteria
     {
         // for now we just clone frequency, seats, fromDate, fromTime and toDate
         $this->setFrequency($criteria->getFrequency());
-        $this->setSeats($criteria->getSeats());
+        $this->setSeatsDriver($criteria->getSeatsDriver());
+        $this->setSeatsPassenger($criteria->getSeatsPassenger());
         $this->setPriceKm($criteria->getPriceKm());
         $this->setFromDate($criteria->getFromDate());
         $this->setFromTime($criteria->getFromTime());

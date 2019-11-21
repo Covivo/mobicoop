@@ -28,7 +28,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Carpooling : result, for a given role, for a search / ad post.
+ * Carpooling : result, for a given role, for an ad.
  *
  * @ApiResource(
  *      attributes={
@@ -62,10 +62,16 @@ class ResultRole
     private $return;
 
     /**
-     * @var int The number of places offered / requested.
+     * @var int The number of places offered to display.
      * @Groups("results")
      */
-    private $seats;
+    private $seatsDriver;
+
+    /**
+     * @var int The number of places asked to display.
+     * @Groups("results")
+     */
+    private $seatsPassenger;
 
     public function __construct()
     {
@@ -101,14 +107,26 @@ class ResultRole
         return $this;
     }
 
-    public function getSeats(): ?int
+    public function getSeatsDriver(): ?int
     {
-        return $this->seats;
+        return $this->seatsDriver;
     }
 
-    public function setSeats(int $seats): self
+    public function setSeatsDriver(int $seatsDriver): self
     {
-        $this->seats = $seats;
+        $this->seatsDriver = $seatsDriver;
+
+        return $this;
+    }
+
+    public function getSeatsPassenger(): ?int
+    {
+        return $this->seatsPassenger;
+    }
+
+    public function setSeatsPassenger(int $seatsPassenger): self
+    {
+        $this->seatsPassenger = $seatsPassenger;
 
         return $this;
     }

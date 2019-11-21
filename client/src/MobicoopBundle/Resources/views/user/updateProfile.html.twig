@@ -4,7 +4,6 @@
   {% trans from 'ui' %}user.profile.title{% endtrans %}
 {% endblock %}
 {% block stylesheets %}
-  {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/profile") }}#}
 {% endblock %}
 
 {% block main %}
@@ -15,9 +14,10 @@
  			age-min="{{ ageMin }}"
             age-max="{{ ageMax }}"
 			avatar-size="{{ userAvatarSize }}"
-			url-alt-avatar="{{ urlAltUserAvatar }}"
-        	avatar-version="{{ userAvatarVersion }}"
         	:alerts="{{ alerts|json_encode }}"
-			></Profile>
+			:platform="{{ app_name|json_encode }}"
+            :proposals="{{ proposals|json_encode }}"
+            tab-default="{{ tabDefault }}"
+            ></Profile>
 
 {% endblock %}

@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use App\Geography\Entity\Address;
 
 /**
- * Carpooling : result item for a search / ad post.
+ * Carpooling : result item for an ad.
  *
  * @ApiResource(
  *      attributes={
@@ -63,28 +63,64 @@ class ResultItem
     private $matchingId;
 
     /**
-     * @var \DateTimeInterface The computed date for a punctual journey for the person who search / post.
+     * @var \DateTimeInterface The computed date for a punctual journey for the requester.
      * @Groups("results")
      */
     private $date;
 
     /**
-     * @var \DateTimeInterface The computed time for a punctual journey for the person who search / post.
+     * @var \DateTimeInterface The computed time for a punctual journey for the requester.
      * @Groups("results")
      */
     private $time;
 
     /**
-     * @var Address The origin address (the origin of the carpooler who search or post).
+     * @var \DateTimeInterface The min date for a regular journey.
+     * @Groups("results")
+     */
+    private $fromDate;
+
+    /**
+     * @var \DateTimeInterface The max date for a regular journey.
+     * @Groups("results")
+     */
+    private $toDate;
+
+    /**
+     * @var Address The origin address (the origin of the requester).
      * @Groups("results")
      */
     private $origin;
 
     /**
-     * @var Address The destination address (the destination of the carpooler who search or post).
+     * @var Address The destination address (the destination of the requester).
      * @Groups("results")
      */
     private $destination;
+
+    /**
+     * @var Address The origin address of the driver.
+     * @Groups("results")
+     */
+    private $originDriver;
+
+    /**
+     * @var Address The destination address of the driver.
+     * @Groups("results")
+     */
+    private $destinationDriver;
+
+    /**
+     * @var Address The origin address of the passenger.
+     * @Groups("results")
+     */
+    private $originPassenger;
+
+    /**
+     * @var Address The destination address of the passenger.
+     * @Groups("results")
+     */
+    private $destinationPassenger;
 
     /**
      * @var array The waypoints of the journey.
@@ -186,22 +222,40 @@ class ResultItem
      * @var string The price by km asked by the driver.
      * @Groups("results")
      */
-    private $priceKm;
+    private $driverPriceKm;
+
+    /**
+     * @var string The price by km proposed by the passenger.
+     * @Groups("results")
+     */
+    private $passengerPriceKm;
 
     /**
      * @var string The original price asked by the driver for his trip.
      * @Groups("results")
      */
-    private $originalPrice;
+    private $driverOriginalPrice;
 
     /**
-     * @var string The computed price for the common distance carpooled.
+     * @var string The original price proposed by the passenger for his trip.
+     * @Groups("results")
+     */
+    private $passengerOriginalPrice;
+
+    /**
+     * @var string The computed price for the carpool.
      * @Groups("results")
      */
     private $computedPrice;
 
     /**
-     * @var int The original distance in metres.
+     * @var string The rounded computed price.
+     * @Groups("results")
+     */
+    private $computedRoundedPrice;
+
+    /**
+     * @var int The driver original distance in metres.
      * @Groups("results")
      */
     private $originalDistance;
@@ -252,7 +306,6 @@ class ResultItem
      * @var int The detour duration in seconds.
      * @Groups("results")
      */
-    
     private $detourDuration;
 
     /**
@@ -262,7 +315,7 @@ class ResultItem
     private $detourDurationPercent;
     
     /**
-     * @var int The common distance in metres.
+     * @var int The common distance in metres (=passenger distance).
      * @Groups("results")
      */
     private $commonDistance;
@@ -326,6 +379,30 @@ class ResultItem
         return $this;
     }
 
+    public function getFromDate(): ?\DateTimeInterface
+    {
+        return $this->fromDate;
+    }
+
+    public function setFromDate(\DateTimeInterface $fromDate): self
+    {
+        $this->fromDate = $fromDate;
+
+        return $this;
+    }
+
+    public function getToDate(): ?\DateTimeInterface
+    {
+        return $this->toDate;
+    }
+
+    public function setToDate(\DateTimeInterface $toDate): self
+    {
+        $this->toDate = $toDate;
+
+        return $this;
+    }
+
     public function getOrigin(): ?Address
     {
         return $this->origin;
@@ -350,6 +427,54 @@ class ResultItem
         return $this;
     }
 
+    public function getOriginDriver(): ?Address
+    {
+        return $this->originDriver;
+    }
+
+    public function setOriginDriver(?Address $originDriver): self
+    {
+        $this->originDriver = $originDriver;
+
+        return $this;
+    }
+
+    public function getDestinationDriver(): ?Address
+    {
+        return $this->destinationDriver;
+    }
+
+    public function setDestinationDriver(?Address $destinationDriver): self
+    {
+        $this->destinationDriver = $destinationDriver;
+
+        return $this;
+    }
+
+    public function getOriginPassenger(): ?Address
+    {
+        return $this->originPassenger;
+    }
+
+    public function setOriginPassenger(?Address $originPassenger): self
+    {
+        $this->originPassenger = $originPassenger;
+
+        return $this;
+    }
+
+    public function getDestinationPassenger(): ?Address
+    {
+        return $this->destinationPassenger;
+    }
+
+    public function setDestinationPassenger(?Address $destinationPassenger): self
+    {
+        $this->destinationPassenger = $destinationPassenger;
+
+        return $this;
+    }
+    
     public function getWaypoints()
     {
         return $this->waypoints;
@@ -558,25 +683,25 @@ class ResultItem
     public function setMultipleTimes(): self
     {
         $time = [];
-        if ($this->isMonCheck()) {
+        if ($this->isMonCheck() && $this->getMonTime()) {
             $time[$this->getMonTime()->format('His')] = 1;
         }
-        if ($this->isTueCheck()) {
+        if ($this->isTueCheck() && $this->getTueTime()) {
             $time[$this->getTueTime()->format('His')] = 1;
         }
-        if ($this->isWedCheck()) {
+        if ($this->isWedCheck() && $this->getWedTime()) {
             $time[$this->getWedTime()->format('His')] = 1;
         }
-        if ($this->isThuCheck()) {
+        if ($this->isThuCheck() && $this->getThuTime()) {
             $time[$this->getThuTime()->format('His')] = 1;
         }
-        if ($this->isFriCheck()) {
+        if ($this->isFriCheck() && $this->getFriTime()) {
             $time[$this->getFriTime()->format('His')] = 1;
         }
-        if ($this->isSatCheck()) {
+        if ($this->isSatCheck() && $this->getSatTime()) {
             $time[$this->getSatTime()->format('His')] = 1;
         }
-        if ($this->isSunCheck()) {
+        if ($this->isSunCheck() && $this->getSunTime()) {
             $time[$this->getSunTime()->format('His')] = 1;
         }
         $this->multipleTimes = (count($time) > 1);
@@ -584,24 +709,44 @@ class ResultItem
         return $this;
     }
 
-    public function getPriceKm(): ?string
+    public function getDriverPriceKm(): ?string
     {
-        return $this->priceKm;
+        return $this->driverPriceKm;
     }
     
-    public function setPriceKm(?string $priceKm)
+    public function setDriverPriceKm(?string $driverPriceKm)
     {
-        $this->priceKm = $priceKm;
+        $this->driverPriceKm = $driverPriceKm;
     }
 
-    public function getOriginalPrice(): ?string
+    public function getPassengerPriceKm(): ?string
     {
-        return $this->originalPrice;
+        return $this->passengerPriceKm;
     }
     
-    public function setOriginalPrice(?string $originalPrice)
+    public function setPassengerPriceKm(?string $passengerPriceKm)
     {
-        $this->originalPrice = $originalPrice;
+        $this->passengerPriceKm = $passengerPriceKm;
+    }
+
+    public function getDriverOriginalPrice(): ?string
+    {
+        return $this->driverOriginalPrice;
+    }
+    
+    public function setDriverOriginalPrice(?string $driverOriginalPrice)
+    {
+        $this->driverOriginalPrice = $driverOriginalPrice;
+    }
+
+    public function getPassengerOriginalPrice(): ?string
+    {
+        return $this->passengerOriginalPrice;
+    }
+    
+    public function setPassengerOriginalPrice(?string $passengerOriginalPrice)
+    {
+        $this->passengerOriginalPrice = $passengerOriginalPrice;
     }
 
     public function getComputedPrice(): ?string
@@ -612,6 +757,16 @@ class ResultItem
     public function setComputedPrice(?string $computedPrice)
     {
         $this->computedPrice = $computedPrice;
+    }
+
+    public function getComputedRoundedPrice(): ?string
+    {
+        return $this->computedRoundedPrice;
+    }
+    
+    public function setComputedRoundedPrice(?string $computedRoundedPrice)
+    {
+        $this->computedRoundedPrice = $computedRoundedPrice;
     }
 
     public function getOriginalDistance(): ?int

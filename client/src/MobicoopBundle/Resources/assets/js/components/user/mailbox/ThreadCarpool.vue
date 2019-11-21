@@ -12,10 +12,7 @@
         <v-row class="ma-0">
           <v-col class="col-3 text-center ma-0 pa-0">
             <v-avatar>
-              <!-- For now, we are not supporting the avatar. We show an icon instead -->
-              <v-icon class="display-2">
-                mdi-account-circle
-              </v-icon>
+              <img :src="avatar">
             </v-avatar>
           </v-col>
           <v-col class="col-8 ma-0 pa-0">
@@ -124,6 +121,10 @@ export default {
     selectedDefault: {
       type: Boolean,
       default: false
+    },
+    idAsk:{
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -176,9 +177,11 @@ export default {
       this.$emit("toggleSelected",{idMessage:this.idMessage});
       this.$emit("idMessageForTimeLine",
         {
+          type:"Carpool",
           idMessage:this.idMessage,
           idRecipient:this.idRecipient,
-          name:this.name
+          name:this.name,
+          idAsk:this.idAsk
         }
       );
     }

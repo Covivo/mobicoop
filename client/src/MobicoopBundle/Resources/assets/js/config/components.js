@@ -26,10 +26,10 @@ import Login from '@components/user/Login'
 import Messages from '@components/user/mailbox/Messages'
 import PasswordRecovery from '@components/user/PasswordRecovery'
 import PasswordRecoveryUpdate from '@components/user/PasswordRecoveryUpdate'
-import Profile from '@components/user/Profile'
+import Profile from '@components/user/profile/Profile'
 import Signupform from '@components/user/Signupform'
 import SignupValidation from '@components/user/SignupValidation'
-import UpdateProfile from '@components/user/UpdateProfile'
+import UpdateProfile from '@components/user/profile/UpdateProfile'
 
 // SOLIDARITY
 import Solidary from '@components/solidary/Solidary'
@@ -54,5 +54,5 @@ export default {
   Signupform,
   SignupValidation,
   UpdateProfile,
-  Solidary
+  Solidary,
 }

@@ -58,6 +58,7 @@ use App\User\Controller\UserThreads;
 use App\User\Controller\UserThreadsDirectMessages;
 use App\User\Controller\UserThreadsCarpoolMessages;
 use App\User\Controller\UserUpdatePassword;
+use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserUpdate;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
@@ -73,6 +74,7 @@ use App\User\Filter\ValidatedDateTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
 use App\Solidary\Entity\Solidary;
+use App\User\EntityListener\UserListener;
 
 /**
  * A user.
@@ -114,6 +116,11 @@ use App\Solidary\Entity\Solidary;
  *              "path"="/users/{id}/password_update_request",
  *              "controller"=UserUpdatePassword::class,
  *              "defaults"={"name"="request"}
+ *          },
+ *          "generate_phone_token"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/generate_phone_token",
+ *              "controller"=UserGeneratePhoneToken::class,
  *          },
  *          "permissions"={
  *              "method"="GET",
@@ -166,7 +173,7 @@ use App\Solidary\Entity\Solidary;
  *          "put"={
  *              "method"="PUT",
  *              "path"="/users/{id}",
- *              "controller"=UserUpdate::class,
+ *              "controller"=UserUpdate::class
  *          },
  *          "delete"
  *      }
@@ -188,6 +195,8 @@ use App\Solidary\Entity\Solidary;
  */
 class User implements UserInterface, EquatableInterface
 {
+    const DEFAULT_ID = 999999999999;
+    
     const MAX_DETOUR_DURATION = 600;
     const MAX_DETOUR_DISTANCE = 10000;
 
@@ -203,6 +212,15 @@ class User implements UserInterface, EquatableInterface
         self::GENDER_FEMALE,
         self::GENDER_MALE,
         self::GENDER_OTHER
+    ];
+
+    const PHONE_DISPLAY_RESTRICTED = 1;
+    const PHONE_DISPLAY_ALL = 2;
+
+    const AUTHORIZED_SIZES_DEFAULT_AVATAR = [
+        "square_100",
+        "square_250",
+        "square_800"
     ];
 
     /**
@@ -240,6 +258,13 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","results","write", "threads", "thread"})
      */
     private $familyName;
+
+    /**
+     * @var string|null The shorten family name of the user.
+     *
+     * @Groups({"read","results","write", "threads", "thread"})
+     */
+    private $shortFamilyName;
 
     /**
      * @var string The email of the user.
@@ -296,6 +321,21 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","results","write"})
      */
     private $telephone;
+    
+    /**
+     * @var string|null The telephone number of the user.
+     * @Groups({"read", "write"})
+     */
+    private $oldTelephone;
+
+    /**
+     * @var int phone display configuration (1 = restricted (default); 2 = all).
+     *
+     * @Assert\NotBlank
+     * @ORM\Column(type="smallint")
+     * @Groups({"read","write", "results"})
+     */
+    private $phoneDisplay;
 
     /**
      * @var int|null The maximum detour duration (in seconds) as a driver to accept a request proposal.
@@ -449,7 +489,7 @@ class User implements UserInterface, EquatableInterface
     private $phoneToken;
 
     /**
-     * @var \DateTimeInterface Validation date of the phone number.
+     * @var \DateTimeInterface|null Validation date of the phone number.
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -502,6 +542,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      * @MaxDepth(1)
+     * @Groups({"proposals", "get"})
      * @Apisubresource
      */
     private $proposals;
@@ -516,11 +557,18 @@ class User implements UserInterface, EquatableInterface
     private $proposalsDelegate;
 
     /**
-     * @var ArrayCollection|null The asks made for this user.
+     * @var ArrayCollection|null The asks made by this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      */
     private $asks;
+
+    /**
+     * @var ArrayCollection|null The asks made for this user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="userRelated", cascade={"remove"}, orphanRemoval=true)
+     */
+    private $asksRelated;
 
     /**
      * @var ArrayCollection|null The asks made by this user (in general by the user itself, except when it is a "posting for").
@@ -639,6 +687,12 @@ class User implements UserInterface, EquatableInterface
     private $userNotifications;
 
     /**
+     * @var array|null The avatars of the user
+     * @Groups({"read","results","threads","thread"})
+     */
+    private $avatars;
+
+    /**
      * @var array|null The threads of the user
      * @Groups("threads")
      */
@@ -671,6 +725,7 @@ class User implements UserInterface, EquatableInterface
         $this->proposals = new ArrayCollection();
         $this->proposalsDelegate = new ArrayCollection();
         $this->asks = new ArrayCollection();
+        $this->asksRelated = new ArrayCollection();
         $this->asksDelegate = new ArrayCollection();
         $this->userRoles = new ArrayCollection();
         $this->userRights = new ArrayCollection();
@@ -730,6 +785,11 @@ class User implements UserInterface, EquatableInterface
         $this->familyName = $familyName;
 
         return $this;
+    }
+
+    public function getShortFamilyName(): ?string
+    {
+        return strtoupper($this->familyName[0]) . ".";
     }
 
     public function getEmail(): string
@@ -800,6 +860,30 @@ class User implements UserInterface, EquatableInterface
     public function setTelephone(?string $telephone): self
     {
         $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function getPhoneDisplay(): ?int
+    {
+        return $this->phoneDisplay;
+    }
+
+    public function setPhoneDisplay(?int $phoneDisplay): self
+    {
+        $this->phoneDisplay = $phoneDisplay;
+        
+        return $this;
+    }
+    
+    public function getOldTelephone(): ?string
+    {
+        return $this->oldTelephone;
+    }
+
+    public function setOldTelephone(?string $oldTelephone): self
+    {
+        $this->oldTelephone = $oldTelephone;
 
         return $this;
     }
@@ -974,7 +1058,7 @@ class User implements UserInterface, EquatableInterface
         return $this->phoneValidatedDate;
     }
 
-    public function setPhoneValidatedDate(\DateTimeInterface $phoneValidatedDate): self
+    public function setPhoneValidatedDate(?\DateTimeInterface $phoneValidatedDate): ?self
     {
         $this->phoneValidatedDate = $phoneValidatedDate;
 
@@ -1176,6 +1260,34 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($ask->getUser() === $this) {
                 $ask->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getAsksRelated()
+    {
+        return $this->asksRelated->getValues();
+    }
+
+    public function addAsksRelated(Ask $asksRelated): self
+    {
+        if (!$this->asksRelated->contains($asksRelated)) {
+            $this->asksRelated->add($asksRelated);
+            $asksRelated->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAsksRelated(Ask $asksRelated): self
+    {
+        if ($this->asksRelated->contains($asksRelated)) {
+            $this->asksRelated->removeElement($asksRelated);
+            // set the owning side to null (unless already changed)
+            if ($asksRelated->getUser() === $this) {
+                $asksRelated->setUser(null);
             }
         }
 
@@ -1672,6 +1784,37 @@ class User implements UserInterface, EquatableInterface
         $this->threads = $threads;
 
         return $this;
+    }
+
+    public function getAvatars(): ?array
+    {
+        return $this->avatars;
+    }
+
+    public function setAvatars(array $avatars): self
+    {
+        $this->avatars = $avatars;
+
+        return $this;
+    }
+
+    public function addAvatar(string $avatar): ?array
+    {
+        if (is_null($this->avatars)) {
+            $this->avatars = [];
+        }
+        if (!in_array($avatar, $this->avatars)) {
+            $this->avatars[]=$avatar;
+        }
+        return $this->avatars;
+    }
+
+    public function removeAvatar(string $avatar): ?array
+    {
+        if ($key = array_search($avatar, $this->avatars)) {
+            unset($this->avatars[$key]);
+        }
+        return $this->avatars;
     }
 
     public function getFacebookId(): ?string

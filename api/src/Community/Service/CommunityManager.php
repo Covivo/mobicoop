@@ -98,7 +98,7 @@ class CommunityManager
         }
         // check validation domain
         if ($community->getValidationType() == Community::DOMAIN_VALIDATION &&
-        ($community->getDomain() != (explode("@", $communityUser->getEmail()))[1])) {
+        ($community->getDomain() != (explode("@", $communityUser->getUser()->getEmail()))[1])) {
             $authorized = false;
         }
         return $authorized;
@@ -187,12 +187,12 @@ class CommunityManager
     }
 
     /**
-     * Return a community
+     * Get a community by its id
      *
      * @param integer $communityId
      * @return Community|null
      */
-    public function get(int $communityId)
+    public function getCommunity(int $communityId)
     {
         return $this->communityRepository->find($communityId);
     }

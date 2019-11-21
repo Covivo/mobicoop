@@ -67,9 +67,10 @@ use App\Carpool\Controller\AskPut;
 class Ask
 {
     const STATUS_INITIATED = 1;
-    const STATUS_PENDING = 2;
-    const STATUS_ACCEPTED = 3;
-    const STATUS_DECLINED = 4;
+    const STATUS_PENDING_AS_DRIVER = 2;
+    const STATUS_PENDING_AS_PASSENGER = 3;
+    const STATUS_ACCEPTED = 4;
+    const STATUS_DECLINED = 5;
     
     /**
      * @var int The id of this ask.
@@ -82,7 +83,7 @@ class Ask
     private $id;
 
     /**
-     * @var int Ask status (1 = initiated; 2 = pending, 3 = accepted; 4 = declined).
+     * @var int Ask status (1 = initiated; 2 = pending as driver, 3 = pending as passenger, 4 = accepted; 5 = declined).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -127,6 +128,18 @@ class Ask
     private $user;
 
     /**
+     * @var User The user the ask is for
+     * This field is nullable for migration purpose but it can't be null
+     *
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="asksRelated")
+     * @ORM\JoinColumn(nullable=true)
+     * @Groups({"read","write","thread"})
+     * @MaxDepth(1)
+     */
+    private $userRelated;
+
+    /**
      * @var User|null User that create the proposal for another user.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="asksDelegate")
@@ -147,13 +160,31 @@ class Ask
     private $matching;
 
     /**
-     * @var Ask|null The linked ask.
+     * @var Ask|null The linked ask if a user proposes another ask.
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask")
      * @Groups({"read","threads","thread"})
      * @MaxDepth(1)
      */
+    private $ask;
+
+    /**
+     * @var Ask|null The linked ask for return trips.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @Groups({"read","threads","thread"})
+     * @MaxDepth(1)
+     */
     private $askLinked;
+
+    /**
+     * @var Ask|null Related ask for opposite role : driver ask if the current ask is as passenger, passenger ask if the current ask is as driver.
+     * Used when the ask is created with an undefined role.
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @Groups({"read","threads","thread"})
+     * @MaxDepth(1)
+     */
+    private $askOpposite;
 
     /**
      * @var Criteria The criteria applied to the ask.
@@ -188,6 +219,20 @@ class Ask
      * @ApiSubresource(maxDepth=1)
      */
     private $askHistories;
+
+    /**
+     * @var Matching|null Related matching for a round trip (return or outward journey).
+     * Not persisted : used only to get the return trip information.
+     * @Groups("write")
+     */
+    private $matchingRelated;
+
+    /**
+     * @var Matching|null Opposite matching (if proposal and request can be switched, so if driver and passenger can switch roles)
+     * Not persisted : used only to get the link information.
+     * @Groups("write")
+     */
+    private $matchingOpposite;
     
     public function __construct()
     {
@@ -260,6 +305,18 @@ class Ask
         return $this;
     }
 
+    public function getUserRelated(): User
+    {
+        return $this->userRelated;
+    }
+
+    public function setUserRelated(?User $userRelated): self
+    {
+        $this->userRelated = $userRelated;
+
+        return $this;
+    }
+
     public function getUserDelegate(): ?User
     {
         return $this->userDelegate;
@@ -284,6 +341,24 @@ class Ask
         return $this;
     }
 
+    public function getAsk(): ?self
+    {
+        return $this->ask;
+    }
+
+    public function setAsk(?self $ask): self
+    {
+        $this->ask = $ask;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newAsk = $ask === null ? null : $this;
+        if ($newAsk !== $ask->getAskl()) {
+            $ask->setAsk($newAsk);
+        }
+
+        return $this;
+    }
+
     public function getAskLinked(): ?self
     {
         return $this->askLinked;
@@ -295,8 +370,26 @@ class Ask
 
         // set (or unset) the owning side of the relation if necessary
         $newAskLinked = $askLinked === null ? null : $this;
-        if ($newAskLinked !== $askLinked->getAsklLinked()) {
+        if ($newAskLinked !== $askLinked->getAskLinked()) {
             $askLinked->setAskLinked($newAskLinked);
+        }
+
+        return $this;
+    }
+
+    public function getAskOpposite(): ?self
+    {
+        return $this->askOpposite;
+    }
+
+    public function setAskOpposite(?self $askOpposite): self
+    {
+        $this->askOpposite = $askOpposite;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newAskOpposite = $askOpposite === null ? null : $this;
+        if ($newAskOpposite !== $askOpposite->getAskOpposite()) {
+            $askOpposite->setAskOpposite($newAskOpposite);
         }
 
         return $this;
@@ -369,6 +462,30 @@ class Ask
         
         return $this;
     }
+
+    public function getMatchingRelated(): ?Matching
+    {
+        return $this->matchingRelated;
+    }
+    
+    public function setMatchingRelated(?Matching $matchingRelated): self
+    {
+        $this->matchingRelated = $matchingRelated;
+                
+        return $this;
+    }
+
+    public function getMatchingOpposite(): ?Matching
+    {
+        return $this->matchingOpposite;
+    }
+    
+    public function setMatchingOpposite(?Matching $matchingOpposite): self
+    {
+        $this->matchingOpposite = $matchingOpposite;
+        
+        return $this;
+    }
     
     // DOCTRINE EVENTS
     
@@ -390,5 +507,19 @@ class Ask
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \Datetime());
+    }
+
+    /**
+     * User related by this Ask
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoUserRelated()
+    {
+        if ($this->getMatching()->getProposalOffer()->getUser()->getId()==$this->getUser()->getId()) {
+            $this->setUserRelated($this->getMatching()->getProposalRequest()->getUser());
+        } else {
+            $this->setUserRelated($this->getMatching()->getProposalOffer()->getUser());
+        }
     }
 }

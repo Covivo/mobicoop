@@ -1,26 +1,20 @@
 {
   "fr": {
-    "routes": {
-      "community": "/communaute/{id}"
-    },
     "communitiesAvailable":"Communautés disponibles",
+    "myCommunities": "Mes communautés",
     "createCommunity":"Créer une communauté",
     "search":"Rechercher",
     "all":"Tous",
     "linePerPage":"Nombre de lignes par page",
-    "seeAds":"Voir les annonces",
-    "join":"Rejoindre la communauté",
-    "protected": "Cette communauté n'est visible que par ses membres",
-    "communityDetails":"Détails de la communauté"
+    "seeAds":"Voir les annonces"
   },
   "en": {
     "communitiesAvailable":"Communities available",
+    "myCommunities": "My communities",
     "createCommunity":"Create a community",
     "search":"Search",
     "all":"All",
     "linePerPage":"Nomber of line per page",
-    "seeAds":"See the ads",
-    "join":"Join the community",
-    "communityDetails":"Community details"
+    "seeAds":"See the ads"
   }
 }
