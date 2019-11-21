@@ -23,14 +23,24 @@
 
 namespace App\Carpool\Service;
 
+use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
+use App\Carpool\Event\AskAdDeletedEvent;
+use App\Carpool\Event\DriverAskAdDeletedEvent;
+use App\Carpool\Event\DriverAskAdDeletedUrgentEvent;
 use App\Carpool\Event\MatchingNewEvent;
+use App\Carpool\Event\PassengerAskAdDeletedEvent;
+use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
 use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\ProposalRepository;
+use App\Communication\Entity\Message;
+use App\Communication\Service\InternalMessageManager;
 use App\Community\Service\CommunityManager;
 use App\DataProvider\Entity\GeoRouterProvider;
+use App\DataProvider\Entity\Response;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Zone;
 use App\Geography\Repository\DirectionRepository;
@@ -40,6 +50,7 @@ use App\Geography\Service\ZoneManager;
 use App\Service\FormatDataManager;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use PhpOffice\PhpSpreadsheet\Calculation\DateTime;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -69,6 +80,7 @@ class ProposalManager
     private $resultManager;
     private $formatDataManager;
     private $params;
+    private $internalMessageManager;
 
     /**
      * Constructor.
@@ -80,7 +92,7 @@ class ProposalManager
      * @param GeoRouter $geoRouter
      * @param ZoneManager $zoneManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, CommunityManager $communityManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher, AskManager $askManager, ResultManager $resultManager, FormatDataManager $formatDataManager, array $params)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, CommunityManager $communityManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher, AskManager $askManager, ResultManager $resultManager, FormatDataManager $formatDataManager, InternalMessageManager $internalMessageManager, array $params)
     {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -98,6 +110,7 @@ class ProposalManager
         $this->resultManager->setParams($params);
         $this->formatDataManager = $formatDataManager;
         $this->params = $params;
+        $this->internalMessageManager = $internalMessageManager;
     }
 
     /**
@@ -581,6 +594,88 @@ class ProposalManager
         // for now we don't use the time parameters
         // @todo add the time parameters
         return $this->proposalRepository->findMatchingProposals($proposal, false);
+    }
+
+    /**
+     * @param Proposal $proposal
+     * @param array|null $body
+     * @return Response
+     * @throws \Exception
+     */
+    public function deleteProposal(Proposal $proposal, ?array $body)
+    {
+        $asks = $this->askManager->getAsksFromProposal($proposal);
+
+        $this->entityManager->remove($proposal);
+
+        if (count($asks) > 0) {
+            /** @var Ask $ask */
+            foreach ($asks as $ask) {
+                if ($body["deletionMessage"]) {
+                    // creates a new thread, todo: adapt after "carpoolMessagesFromAskHistories" branch merge to avoid that
+                    $askHistory = new AskHistory();
+                    $message = $this->internalMessageManager->createMessage($proposal->getUser(), [$ask->getUser()], $body["deletionMessage"], null, null);
+                    $askHistory->setMessage($message);
+                    $askHistory->setAsk($ask);
+                    $askHistory->setStatus($ask->getStatus());
+                    $askHistory->setType($ask->getType());
+
+                    $this->entityManager->persist($askHistory);
+                }
+
+                $now = new \DateTime();
+
+                // todo: change status after update
+                // Accepted
+                if ($ask->getStatus() === 3) {
+
+                    // Ask user is driver
+                    if ($this->askManager->isAskUserDriver($ask)) {
+                        /** @var Criteria $criteria */
+                        $criteria = $ask->getMatching()->getProposalOffer()->getCriteria()->getFromDate();
+                        $askDateTime = $criteria->getFromTime() ?
+                            new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
+                            new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
+
+                        // If ad is in more than 24h
+                        if (strtotime($now) - strtotime($askDateTime) > 24*60*60) {
+                            $event = new DriverAskAdDeletedEvent($ask);
+                            $this->eventDispatcher->dispatch(DriverAskAdDeletedEvent::NAME, $event);
+                        } else {
+                            $event = new DriverAskAdDeletedUrgentEvent($ask);
+                            $this->eventDispatcher->dispatch(DriverAskAdDeletedUrgentEvent::NAME, $event);
+                        }
+
+                        // Ask user is passenger
+                    } elseif ($this->askManager->isAskUserPassenger($ask)) {
+
+                        /** @var Criteria $criteria */
+                        $criteria = $ask->getMatching()->getProposalRequest()->getCriteria();
+                        $askDateTime = $criteria->getFromTime() ?
+                            new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
+                            new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
+
+                        // If ad is in more than 24h
+                        if ($askDateTime->getTimestamp() - $now->getTimestamp() < 24*60*60) {
+                            $event = new PassengerAskAdDeletedEvent($ask);
+                            $this->eventDispatcher->dispatch(PassengerAskAdDeletedEvent::NAME, $event);
+                        } else {
+                            $event = new PassengerAskAdDeletedUrgentEvent($ask);
+                            $this->eventDispatcher->dispatch(PassengerAskAdDeletedUrgentEvent::NAME, $event);
+                        }
+                    }
+                }
+                // Pending
+                elseif ($ask->getStatus() === 2) {
+                    $event = new AskAdDeletedEvent($ask);
+                    $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
+                }
+            }
+        }
+
+        $this->entityManager->flush();
+
+        return new Response(204, "Deleted with success");
     }
     
     // returns the min and max time from a time and a margin

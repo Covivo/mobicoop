@@ -171,7 +171,7 @@ class Ask
     /**
      * @var Ask|null The linked ask for return trips.
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask")
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", cascade={"remove"})
      * @Groups({"read","threads","thread"})
      * @MaxDepth(1)
      */
