@@ -21,7 +21,7 @@
       </v-col>
     </v-row>
     <v-row
-      v-if="solidaryAd"
+      v-if="solidaryExclusiveAd"
       justify="center"
     >
       <v-col
@@ -30,12 +30,12 @@
         xl="6"
       >
         <v-alert type="info">
-          <p>{{ $t("messageSolidaryAd.message") }}</p>
+          <p>{{ $t("messageSolidaryExclusiveAd.message") }}</p>
         </v-alert>
       </v-col>
     </v-row>
     <v-row
-      v-if="solidaryAd"
+      v-if="solidaryExclusiveAd"
       justify="center"
     >
       <v-col
@@ -45,10 +45,10 @@
         class="d-flex justify-center"
       >
         <v-switch
-          v-model="solidary"
+          v-model="solidaryExclusive"
           color="success"
           inset
-          :label="this.$t('messageSolidaryAd.switch.label')"
+          :label="this.$t('messageSolidaryExclusiveAd.switch.label')"
         />
       </v-col>
     </v-row>
@@ -131,7 +131,7 @@
 
             <!-- Step 5 : participation (if driver) -->
             <v-stepper-step
-              v-if="driver && !solidary"
+              v-if="driver && !solidaryExclusive"
               editable
               :step="5"
               color="primary"
@@ -165,7 +165,7 @@
             <!-- Step 1 : search journey -->
             <v-stepper-content step="1">
               <search-journey
-                :solidary-ad="solidary"
+                :solidary-exclusive-ad="solidaryExclusive"
                 display-roles
                 :geo-search-url="geoSearchUrl"
                 :user="user"
@@ -377,7 +377,7 @@
 
             <!-- Step 5 : participation (if driver) -->
             <v-stepper-content
-              v-if="driver && !solidary"
+              v-if="driver && !solidaryExclusive"
               step="5"
             >
               <v-row
@@ -491,7 +491,7 @@
                       :user="user"
                       :origin="origin"
                       :destination="destination"
-                      :solidary="solidary"
+                      :solidary-exclusive="solidaryExclusive"
                     />
                   </v-col>
                 </v-row>
@@ -612,10 +612,6 @@ export default {
       type: Number,
       default: 0.06
     },
-    resultsUrl: {
-      type: String,
-      default: 'covoiturage/annonce/{id}/resultats'
-    },
     defaultMarginTime: {
       type: Number,
       default: null
@@ -660,7 +656,7 @@ export default {
       type: Boolean,
       default: false
     },
-    solidaryAd: {
+    solidaryExclusiveAd: {
       type: Boolean,
       default: false
     },
@@ -669,6 +665,7 @@ export default {
   },
   data() {
     return {
+      locale: this.$i18n.locale,
       distance: 0, 
       duration: 0,
       outwardDate: this.initDate,
@@ -703,12 +700,10 @@ export default {
       strictPunctual: null,     // not used yet
       useTime: null,            // not used yet
       anyRouteAsPassenger: null, // not used yet
-      solidary: this.solidaryAd,
+      solidaryExclusive: this.solidaryExclusiveAd,
       numberSeats : [ 1,2,3,4],
       seats : 3
     }
-
-
   },
   computed: {
    
@@ -888,7 +883,7 @@ export default {
         passenger: this.passenger,
         origin: this.origin,
         destination: this.destination,
-        solidary: this.solidary
+        solidaryExclusive: this.solidaryExclusive
       };
       if (this.userDelegated) postObject.userDelegated = this.userDelegated;
       if (this.validWaypoints) postObject.waypoints = this.validWaypoints;
@@ -901,12 +896,17 @@ export default {
       } else if (this.schedules) {
         postObject.schedules = this.schedules;
       }
-      if (this.seats) postObject.seats = this.seats;
+      // seats proposed as a driver (not handled yet for passengers)
+      if (this.driver && this.seats) postObject.seatsDriver = this.seats;
       if (this.luggage) postObject.luggage = this.luggage;
       if (this.bike) postObject.bike = this.bike;
       if (this.backSeats) postObject.backSeats = this.backSeats;
-      if (this.price) postObject.price = this.solidary ? 0 : this.price;
-      if (this.pricePerKm) postObject.priceKm = this.solidary ? 0 : this.pricePerKm;
+      // price chosen by the driver (not handled yet for passengers)
+      if (this.driver && this.price) {
+        // for now we just handle the outward price
+        postObject.outwardDriverPrice = this.solidaryExclusive ? 0 : this.price;
+      } 
+      if (this.pricePerKm) postObject.priceKm = this.solidaryExclusive ? 0 : this.pricePerKm;
       if (this.message) postObject.message = this.message;
       // the following parameters are not used yet but we keep them here for possible future use
       if (this.regularLifetime) postObject.regularLifetime = this.regularLifetime;
@@ -926,9 +926,8 @@ export default {
         .then(function (response) {
           if (response.data && response.data.result && response.data.result.id) {
             // uncomment when results page activated
-            // var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
-            // window.location.href = urlRedirect;
-            window.location.href = "/";
+            //var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
+            window.location.href = `${self.baseUrl}/`+self.$t("route.results",{id: Number(response.data.result.id)});
           }
           //console.log(response);
         })

@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use App\Geography\Entity\Address;
 
 /**
- * Carpooling : result item for a search / ad post.
+ * Carpooling : result item for an ad.
  *
  * @ApiResource(
  *      attributes={
@@ -63,13 +63,13 @@ class ResultItem
     private $matchingId;
 
     /**
-     * @var \DateTimeInterface The computed date for a punctual journey for the person who search / post.
+     * @var \DateTimeInterface The computed date for a punctual journey for the requester.
      * @Groups("results")
      */
     private $date;
 
     /**
-     * @var \DateTimeInterface The computed time for a punctual journey for the person who search / post.
+     * @var \DateTimeInterface The computed time for a punctual journey for the requester.
      * @Groups("results")
      */
     private $time;
@@ -87,13 +87,13 @@ class ResultItem
     private $toDate;
 
     /**
-     * @var Address The origin address (the origin of the carpooler who search or post).
+     * @var Address The origin address (the origin of the requester).
      * @Groups("results")
      */
     private $origin;
 
     /**
-     * @var Address The destination address (the destination of the carpooler who search or post).
+     * @var Address The destination address (the destination of the requester).
      * @Groups("results")
      */
     private $destination;
@@ -241,18 +241,6 @@ class ResultItem
      * @Groups("results")
      */
     private $passengerOriginalPrice;
-
-    /**
-     * @var string The rounded driver original price.
-     * @Groups("results")
-     */
-    private $driverOriginalRoundedPrice;
-
-    /**
-     * @var string The rounded passenger original price.
-     * @Groups("results")
-     */
-    private $passengerOriginalRoundedPrice;
 
     /**
      * @var string The computed price for the carpool.
@@ -759,26 +747,6 @@ class ResultItem
     public function setPassengerOriginalPrice(?string $passengerOriginalPrice)
     {
         $this->passengerOriginalPrice = $passengerOriginalPrice;
-    }
-
-    public function getDriverOriginalRoundedPrice(): ?string
-    {
-        return $this->driverOriginalRoundedPrice;
-    }
-    
-    public function setDriverOriginalRoundedPrice(?string $driverOriginalRoundedPrice)
-    {
-        $this->driverOriginalRoundedPrice = $driverOriginalRoundedPrice;
-    }
-
-    public function getPassengerOriginalRoundedPrice(): ?string
-    {
-        return $this->passengerOriginalRoundedPrice;
-    }
-    
-    public function setPassengerOriginalRoundedPrice(?string $passengerOriginalRoundedPrice)
-    {
-        $this->passengerOriginalRoundedPrice = $passengerOriginalRoundedPrice;
     }
 
     public function getComputedPrice(): ?string

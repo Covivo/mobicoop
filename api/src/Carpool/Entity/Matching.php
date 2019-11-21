@@ -129,14 +129,14 @@ class Matching
     private $matchingLinked;
 
     /**
-     * @var Matching|null Linked matching used when creating an ask without defined role at initialization..
+     * @var Matching|null Opposite matching (if proposal and request can be switched, so if driver and passenger can switch roles).
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","results","write"})
      * @MaxDepth(1)
      */
-    private $matchingRoleUndecided;
+    private $matchingOpposite;
 
     /**
      * @var ArrayCollection The asks made for this matching.
@@ -290,23 +290,23 @@ class Matching
         return $this;
     }
 
-    public function getMatchingRoleUndecided(): ?self
+    public function getMatchingOpposite(): ?self
     {
-        return $this->matchingRoleUndecided;
+        return $this->matchingOpposite;
     }
     
-    public function setMatchingRoleUndecided(?self $matchingRoleUndecided): self
+    public function setMatchingOpposite(?self $matchingOpposite): self
     {
-        $this->matchingRoleUndecided = $matchingRoleUndecided;
+        $this->matchingOpposite = $matchingOpposite;
 
-        if (!$this->getMatchingRoleUndecided()) {
+        if (!$this->getMatchingOpposite()) {
             return $this;
         }
         
         // set (or unset) the owning side of the relation if necessary
-        $newMatchingRoleUndecided = $matchingRoleUndecided === null ? null : $this;
-        if ($newMatchingRoleUndecided !== $matchingRoleUndecided->getMatchingRoleUndecided()) {
-            $matchingRoleUndecided->setMatchingRoleUndecided($newMatchingRoleUndecided);
+        $newMatchingOpposite = $matchingOpposite === null ? null : $this;
+        if ($newMatchingOpposite !== $matchingOpposite->getMatchingOpposite()) {
+            $matchingOpposite->setMatchingOpposite($newMatchingOpposite);
         }
         
         return $this;

@@ -168,6 +168,12 @@ class Address implements ResourceInterface, \JsonSerializable
     private $name;
     
     /**
+     * @var string|null The venue name of this address.
+     * @Groups({"post","put"})
+     */
+    private $venue;
+
+    /**
      * @var User|null The owner of the address.
      */
     private $user;
@@ -182,6 +188,12 @@ class Address implements ResourceInterface, \JsonSerializable
      * @var array|null Label for display
      */
     private $displayLabel;
+
+    /**
+     * @var string|null The icon of the address.
+     *
+     */
+    private $icon;
 
     public function __construct()
     {
@@ -382,6 +394,16 @@ class Address implements ResourceInterface, \JsonSerializable
         $this->name = $name;
     }
     
+    public function getVenue(): ?string
+    {
+        return $this->venue;
+    }
+
+    public function setVenue(?string $venue)
+    {
+        $this->venue = $venue;
+    }
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -412,6 +434,16 @@ class Address implements ResourceInterface, \JsonSerializable
         $this->displayLabel = $displayLabel;
     }
 
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?string $icon)
+    {
+        $this->icon = $icon;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -435,7 +467,9 @@ class Address implements ResourceInterface, \JsonSerializable
              'region'               => $this->getRegion(),
              'subLocality'          => $this->getSubLocality(),
              'displayLabel'         => $this->getDisplayLabel(),
-             'home'                 => $this->isHome()
+             'home'                 => $this->isHome(),
+             'icon'                 => $this->getIcon(),
+             'venue'                => $this->getVenue()
          ];
     }
 }

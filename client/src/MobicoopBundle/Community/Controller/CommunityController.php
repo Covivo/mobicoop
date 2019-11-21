@@ -128,6 +128,7 @@ class CommunityController extends AbstractController
         $user = $userManager->getLoggedUser();
 
         if ($user) {
+            
             // We get all the communities
             $communities = $communityManager->getCommunities($user->getId());
 
@@ -141,11 +142,13 @@ class CommunityController extends AbstractController
             }
 
             // we delete those who the user is already in
+            $tempCommunities = [];
             foreach ($communities as $key => $community) {
-                if (in_array($community->getId(), $idCommunitiesUser)) {
-                    unset($communities[$key]);
+                if (!in_array($community->getId(), $idCommunitiesUser)) {
+                    $tempCommunities[] = $communities[$key];
                 }
             }
+            $communities = $tempCommunities;
         } else {
             $communitiesUser = [];
             $communities = $communityManager->getCommunities();
@@ -371,6 +374,11 @@ class CommunityController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
+
+            // authorization control
+            $community = $communityManager->getCommunity($data['communityId']);
+            $this->denyAccessUnlessGranted('show', $community);
+
             return new Response(json_encode($communityManager->checkStatus($data['communityId'], $data['userId'], 1)));
         }
 

@@ -52,6 +52,20 @@ user_profile_update:
         fr: /utilisateur/profil/modifier/{tabDefault?}
         en: /user/profile/update/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
+    
+# phone validation
+user_phone_validation:
+    path:
+        fr: /utilisateur/telephone/validation
+        en: /user/phone/validation
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPhoneValidation
+
+# send code phone validation
+user_phone_token:
+    path:
+        fr: /utilisateur/telephone/token
+        en: /user/phone/token
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::generatePhoneToken    
 
 # delete avatar
 user_profile_image_delete:
@@ -110,7 +124,7 @@ user_update_alert:
         en: /user/alert/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::updateAlert
 
-    # proposal list
+# proposal list
 user_proposal_list:
     path:
         fr: /utilisateur/annonces
@@ -149,7 +163,14 @@ user_message_complete_thread:
         en: /user/messages/{idMessage}/thread
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageThread
 
-# send an internal message
+user_message_actions_infos:
+    methods: [POST]
+    path:
+        fr: /utilisateur/messages/actions/infos
+        en: /user/messages/actions/infos
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessagesActionsInfos
+
+    # send an internal message
 user_message_send:
     path:
         fr: /utilisateur/messages/envoyer
@@ -167,6 +188,7 @@ user_message_thread:
 
 # update an Ask from messages
 user_message_update_ask:
+    methods: [POST]
     path:
         fr: /utilisateur/messages/updateAsk
         en: /user/messages/updateAsk
@@ -207,12 +229,12 @@ carpool_first_ad_post:
         en: /carpool/ad/post/first
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolFirstAdPost       
 
-# post a solidary ad
-carpool_solidary_ad_post:
+# post a solidary exclusive ad
+carpool_solidary_exclusive_ad_post:
     path:
         fr: /covoiturage/annonce/poster/solidaire
         en: /carpool/ad/post/solidary
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryAdPost    
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryExclusiveAdPost    
 
 # post an ad from a search
 carpool_ad_post_search:
@@ -221,23 +243,23 @@ carpool_ad_post_search:
         en: /carpool/search/post
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
 
-# ad results
-carpool_ad_result:
+# ad results list
+carpool_ad_results:
     path:
         fr: /covoiturage/annonce/{id}/resultats
         en: /carpool/ad/{id}/results
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdResult
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdResults
     requirements:
         id: '\d+'
 
+# ad result detail
 carpool_ad_detail:
     path:
         fr: /covoiturage/annonce/{id}/detail
         en: /carpool/ad/{id}/detail
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdResult
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDetail
     requirements:
         id: '\d+'
-
 
 # search results (POST)
 carpool_search_result:
@@ -285,6 +307,12 @@ rdex_journey:
         en: /journey/rdex
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney
 
+# delete an ad (AJAX)
+carpool_ad_delete:
+    path:
+        fr: /covoiturage/annonce/supprimer
+        en: /carpool/ad/delete
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDelete
 
 ####################
 # community routes #
@@ -342,7 +370,7 @@ community_user:
     requirements:
         id: '\d+'
 
-        # get the last community users (AJAX)
+# get the last community users (AJAX)
 community_last_users:
     path:
         fr: /community-last-users/{id}

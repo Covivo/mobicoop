@@ -1,15 +1,5 @@
 <template>
   <div>
-    <!--loading overlay-->
-    <v-overlay 
-      :value="loading"
-      absolute
-    >
-      <v-progress-circular
-        indeterminate
-      />
-    </v-overlay>
-
     <v-container fluid>
       <v-row
         justify="center"
@@ -22,6 +12,7 @@
         >
           <!-- Matching header -->
           <matching-header
+            v-if="!proposalId"
             :origin="origin"
             :destination="destination"
             :date="date"
@@ -30,7 +21,7 @@
           />
 
           <!-- Matching filter -->
-          <matching-filter />
+          <matching-filter @updateFilters="updateFilters" />
 
           <!-- Number of matchings -->
           <v-row 
@@ -55,25 +46,47 @@
           </v-row>
 
           <!-- Matching results -->
-          <v-row 
-            v-for="(result,index) in results"
-            :key="index"
-            justify="center"
-          >
-            <v-col
-              cols="12"
-              align="left"
+          <div v-if="loading">
+            <v-row
+              v-for="n in 3"
+              :key="n"
+              class="text-left"
             >
-              <!-- Matching result -->
-              <matching-result
-                :result="result"
-                :user="user"
-                :distinguish-regular="distinguishRegular"
-                :carpooler-rate="carpoolerRate"
-                @carpool="carpool(result)"
-              />
-            </v-col>
-          </v-row>
+              <v-col cols="12">
+                <v-skeleton-loader
+                  ref="skeleton"
+                  type="article"
+                  class="mx-auto"
+                />
+                <v-skeleton-loader
+                  ref="skeleton"
+                  type="actions"
+                  class="mx-auto"
+                />
+              </v-col>
+            </v-row>
+          </div>
+          <div v-else>
+            <v-row 
+              v-for="(result,index) in results"
+              :key="index"
+              justify="center"
+            >
+              <v-col
+                cols="12"
+                align="left"
+              >
+                <!-- Matching result -->
+                <matching-result
+                  :result="result"
+                  :user="user"
+                  :distinguish-regular="distinguishRegular"
+                  :carpooler-rate="carpoolerRate"
+                  @carpool="carpool(result)"
+                />
+              </v-col>
+            </v-row>
+          </div>
         </v-col>
       </v-row>
     </v-container>
@@ -85,6 +98,7 @@
     >
       <matching-journey
         :result="result"
+        :user="user"
         @close="carpoolDialog = false"
         @contact="contact"
         @carpool="launchCarpool"
@@ -164,7 +178,10 @@ export default {
       proposal: null,
       result: null,
       loading : true,
-      results: null
+      results: null,
+      lOrigin: null,
+      lDestination: null,
+      filters: null
     };
   },
   computed: {
@@ -173,43 +190,7 @@ export default {
     }
   },
   created() {
-    // if a proposalId is provided, we load the proposal results
-    if (this.proposalId) {
-      this.loading = true;
-      axios.get(this.$t("proposalUrl",{id: Number(this.proposalId)}))
-        .then((response) => {
-          this.loading = false;
-          this.proposal = response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      // otherwise we send a proposal search
-      this.loading = true;
-      let postParams = {
-        "origin": this.origin,
-        "destination": this.destination,
-        "date": this.date,
-        "time": this.time,
-        "regular": this.regular,
-        "userId": this.user ? this.user.id : null,
-        "communityId": this.communityId
-      };
-      axios.post(this.$t("matchingUrl"), postParams,
-        {
-          headers:{
-            'content-type': 'application/json'
-          }
-        })
-        .then((response) => {
-          this.loading = false;
-          this.results = response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+    this.search();
   },
   methods :{
     carpool(result) {
@@ -217,12 +198,49 @@ export default {
       // open the dialog
       this.carpoolDialog = true;
     },
-    // TODO : REMOVE WHEN START CODING FILTER COMPONENT
-    remove (item) {
-      this.chips.splice(this.chips.indexOf(item), 1)
-      this.chips = [...this.chips]
+    search(){
+    // if a proposalId is provided, we load the proposal results
+      if (this.proposalId) {
+        this.loading = true;
+        axios.get(this.$t("proposalUrl",{id: Number(this.proposalId)}))
+          .then((response) => {
+            this.loading = false;
+            this.proposal = response.data;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+      // otherwise we send a proposal search
+        this.loading = true;
+        let postParams = {
+          "origin": this.origin,
+          "destination": this.destination,
+          "date": this.date,
+          "time": this.time,
+          "regular": this.regular,
+          "userId": this.user ? this.user.id : null,
+          "communityId": this.communityId,
+          "filters": this.filters
+        };
+        axios.post(this.$t("matchingUrl"), postParams,
+          {
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
+          .then((response) => {
+            this.loading = false;
+            this.results = response.data;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+
     },
     contact(params) {
+      // console.log(params);
       axios.post(this.$t("contactUrl"), params,
         {
           headers:{
@@ -245,7 +263,7 @@ export default {
         })
     },
     launchCarpool(params) {
-      //console.log(params);
+      // console.log(params);
       axios.post(this.$t("carpoolUrl"), params,
         {
           headers:{
@@ -266,6 +284,10 @@ export default {
         .finally(() => {
           this.carpoolDialog = false;
         })
+    },
+    updateFilters(data){
+      this.filters = data;
+      this.search();
     }
   }
 };

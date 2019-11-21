@@ -302,7 +302,6 @@ export default {
         },
         { text: 'Nom', value: 'familyName' },
         { text: 'Prenom', value: 'givenName' },
-        { text: 'Telephone', value: 'telephone' },
       ],
       pointsToMap:[],
       directionWay:[],
@@ -504,7 +503,8 @@ export default {
         carpool:0,
         idRecipient:data.id,
         familyName:data.familyName,
-        givenName:data.givenName
+        givenName:data.givenName,
+        avatar:data.avatars[0]
       }
       
       for (const key in params) {
