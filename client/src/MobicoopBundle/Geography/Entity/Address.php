@@ -468,7 +468,7 @@ class Address implements ResourceInterface, \JsonSerializable
              'subLocality'          => $this->getSubLocality(),
              'displayLabel'         => $this->getDisplayLabel(),
              'home'                 => $this->isHome(),
-             'icon'                 => $this->getIcon()
+             'icon'                 => $this->getIcon(),
              'venue'                => $this->getVenue()
          ];
     }
