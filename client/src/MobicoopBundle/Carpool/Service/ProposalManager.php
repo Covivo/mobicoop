@@ -31,6 +31,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
@@ -42,7 +43,7 @@ class ProposalManager
     private $userManager;
     private $marginTime;
     private $eventManager;
-    
+
     /**
      * Constructor.
      *
@@ -131,14 +132,144 @@ class ProposalManager
     }
     
     /**
+     * Create a proposal from a search
+     *
+     * @param User $user
+     * @param array $params     The params
+     * @param bool $formalAsk   True if we have to create a formal ask
+     * @return void
+     */
+    public function createProposalFromSearch(User $user, array $params, bool $formalAsk=false)
+    {
+        $data = [
+            "formalAsk" => $formalAsk,
+            "private" => true,
+            "proposalId" => $params['proposalId'],
+            "origin"=>$params['origin'],
+            "destination"=>$params['destination'],
+            "outwardDate" => isset($params['date']) ? \DateTime::createFromFormat(\DateTime::ISO8601, $params['date'])->format('Y-m-d') : (new \Datetime())->format('Y-m-d'),
+            "outwardTime" => isset($params['time']) ? \DateTime::createFromFormat(\DateTime::ISO8601, $params['time'])->format('H:i') : null,
+            "seats" => isset($params['seats']) ? $params['seats'] : 1,
+            "driver" => $params['driver'],
+            "passenger" => $params['passenger'],
+            "priceKm" => isset($params['priceKm']) ? $params['priceKm'] : null,
+            "outwardPrice" => isset($params['outwardPrice']) ? $params['outwardPrice'] : null,
+            "outwardRoundedPrice" => isset($params['outwardRoundedPrice']) ? $params['outwardRoundedPrice'] : null,
+            "outwardComputedPrice" => isset($params['outwardComputedPrice']) ? $params['outwardComputedPrice'] : null,
+            "outwardComputedRoundedPrice" => isset($params['outwardComputedRoundedPrice']) ? $params['outwardComputedRoundedPrice'] : null,
+            "returnPrice" => isset($params['returnPrice']) ? $params['returnPrice'] : null,
+            "returnRoundedPrice" => isset($params['returnRoundedPrice']) ? $params['returnRoundedPrice'] : null,
+            "returnComputedPrice" => isset($params['returnComputedPrice']) ? $params['returnComputedPrice'] : null,
+            "returnComputedRoundedPrice" => isset($params['returnComputedRoundedPrice']) ? $params['returnComputedRoundedPrice'] : null,
+            "regular" => $params['regular'],
+            "waypoints" => []
+        ];
+        if (isset($params["fromDate"])) {
+            $data["fromDate"] = $params['fromDate'];
+        }
+        if (isset($params["toDate"])) {
+            $data['toDate'] = $params['toDate'];
+        }
+        if (isset($params["outwardSchedule"])) {
+            $schedules = [];
+            if (isset($params["outwardSchedule"]['monTime']) && !is_null($params["outwardSchedule"]['monTime'])) {
+                $schedules['outwardMon']['outwardTime'] = $params["outwardSchedule"]['monTime'];
+                $schedules['outwardMon']['returnTime'] = '';
+                $schedules['outwardMon']['mon'] = true;
+            }
+            if (isset($params["outwardSchedule"]['tueTime']) && !is_null($params["outwardSchedule"]['tueTime'])) {
+                $schedules['outwardTue']['outwardTime'] = $params["outwardSchedule"]['tueTime'];
+                $schedules['outwardTue']['returnTime'] = '';
+                $schedules['outwardTue']['tue'] = true;
+            }
+            if (isset($params["outwardSchedule"]['wedTime']) && !is_null($params["outwardSchedule"]['wedTime'])) {
+                $schedules['outwardWed']['outwardTime'] = $params["outwardSchedule"]['wedTime'];
+                $schedules['outwardWed']['returnTime'] = '';
+                $schedules['outwardWed']['wed'] = true;
+            }
+            if (isset($params["outwardSchedule"]['thuTime']) && !is_null($params["outwardSchedule"]['thuTime'])) {
+                $schedules['outwardThu']['outwardTime'] = $params["outwardSchedule"]['thuTime'];
+                $schedules['outwardThu']['returnTime'] = '';
+                $schedules['outwardThu']['thu'] = true;
+            }
+            if (isset($params["outwardSchedule"]['friTime']) && !is_null($params["outwardSchedule"]['friTime'])) {
+                $schedules['outwardFri']['outwardTime'] = $params["outwardSchedule"]['friTime'];
+                $schedules['outwardFri']['returnTime'] = '';
+                $schedules['outwardFri']['fri'] = true;
+            }
+            if (isset($params["outwardSchedule"]['satTime']) && !is_null($params["outwardSchedule"]['satTime'])) {
+                $schedules['outwardSat']['outwardTime'] = $params["outwardSchedule"]['satTime'];
+                $schedules['outwardSat']['returnTime'] = '';
+                $schedules['outwardSat']['sat'] = true;
+            }
+            if (isset($params["outwardSchedule"]['sunTime']) && !is_null($params["outwardSchedule"]['sunTime'])) {
+                $schedules['outwardSun']['outwardTime'] = $params["outwardSchedule"]['sunTime'];
+                $schedules['outwardSun']['returnTime'] = '';
+                $schedules['outwardSun']['sun'] = true;
+            }
+        }
+        if (isset($params["returnSchedule"])) {
+            if (!isset($schedules)) {
+                $schedules = [];
+            }
+            if (isset($params["returnSchedule"]['monTime']) && !is_null($params["returnSchedule"]['monTime'])) {
+                $schedules['returnMon']['outwardTime'] = '';
+                $schedules['returnMon']['returnTime'] = $params["returnSchedule"]['monTime'];
+                $schedules['returnMon']['mon'] = true;
+            }
+            if (isset($params["returnSchedule"]['tueTime']) && !is_null($params["returnSchedule"]['tueTime'])) {
+                $schedules['returnTue']['outwardTime'] = '';
+                $schedules['returnTue']['returnTime'] = $params["returnSchedule"]['tueTime'];
+                $schedules['returnTue']['tue'] = true;
+            }
+            if (isset($params["returnSchedule"]['wedTime']) && !is_null($params["returnSchedule"]['wedTime'])) {
+                $schedules['returnWed']['outwardTime'] = '';
+                $schedules['returnWed']['returnTime'] = $params["returnSchedule"]['wedTime'];
+                $schedules['returnWed']['wed'] = true;
+            }
+            if (isset($params["returnSchedule"]['thuTime']) && !is_null($params["returnSchedule"]['thuTime'])) {
+                $schedules['returnThu']['outwardTime'] = '';
+                $schedules['returnThu']['returnTime'] = $params["returnSchedule"]['thuTime'];
+                $schedules['returnThu']['thu'] = true;
+            }
+            if (isset($params["returnSchedule"]['friTime']) && !is_null($params["returnSchedule"]['friTime'])) {
+                $schedules['returnFri']['outwardTime'] = '';
+                $schedules['returnFri']['returnTime'] = $params["returnSchedule"]['friTime'];
+                $schedules['returnFri']['fri'] = true;
+            }
+            if (isset($params["returnSchedule"]['satTime']) && !is_null($params["returnSchedule"]['satTime'])) {
+                $schedules['returnSat']['outwardTime'] = '';
+                $schedules['returnSat']['returnTime'] = $params["returnSchedule"]['satTime'];
+                $schedules['returnSat']['sat'] = true;
+            }
+            if (isset($params["returnSchedule"]['sunTime']) && !is_null($params["returnSchedule"]['sunTime'])) {
+                $schedules['returnSun']['outwardTime'] = '';
+                $schedules['returnSun']['returnTime'] = $params["returnSchedule"]['sunTime'];
+                $schedules['returnSun']['sun'] = true;
+            }
+        }
+        if (!isset($schedules)) {
+            // no schedule => must be an undecided role ask, we set only a blank return time to create a return proposal
+            $schedules = [];
+            $schedules['outwardMon']['outwardTime'] = '';
+            $schedules['outwardMon']['returnTime'] = '';
+            $schedules['outwardMon']['mon'] = false;
+            $schedules['returnMon']['outwardTime'] = '';
+            $schedules['returnMon']['returnTime'] = 'blank';
+            $schedules['returnMon']['mon'] = false;
+        }
+        $data['schedules'] = $schedules;
+        return $this->createProposalFromAd($data, $user);
+    }
+
+    /**
      * Create a proposal from an ad
      *
      * @param array $ad The data posted by the user
      * @param User $poster The poster of the ad
-     * @param boolean $persist If we persist the proposal in the database (false for a simple search)
      * @return Proposal
      */
-    public function createProposalFromAd(array $ad, User $poster, $persist = true)
+    public function createProposalFromAd(array $ad, User $poster)
     {
         // todo : create a validation method for $ad
         $proposal = new Proposal();
@@ -152,9 +283,18 @@ class ProposalManager
         } else {
             $proposal->setUser($poster);
         }
-        // we check if the proposal is private
+        // we check if the proposal is private (usually if the proposal is created after a search)
         if (isset($ad['private']) && $ad['private']) {
             $proposal->setPrivate(true);
+        }
+        // we check if there's a proposalID
+        if (isset($ad['proposalId'])) {
+            // there's a proposalId : we know that it's a match to force
+            $proposal->setMatchingProposal(new Proposal($ad['proposalId']));
+        }
+        // we check if a formal ask has to be made after the creation of the proposal (usually if the proposal is created after a search)
+        if (isset($ad['formalAsk'])) {
+            $proposal->setFormalAsk($ad['formalAsk']);
         }
         // we set the type to one way, we'll check later if it's a return trip
         $proposal->setType(Proposal::TYPE_ONE_WAY);
@@ -164,18 +304,41 @@ class ProposalManager
         // communities
         if (isset($ad['communities'])) {
             foreach ($ad['communities'] as $community) {
-                $proposal->addCommunity($community);
+                $proposal->addCommunity(new Community($community));
             }
         }
         $criteria->setDriver($ad['driver']);
         $criteria->setPassenger($ad['passenger']);
-        (isset($ad['priceKm'])) ? $criteria->setPriceKm($ad['priceKm']) : 0;
         $criteria->setSeats($ad['seats']);
         if (isset($ad['solidary'])) {
             $criteria->setSolidaryExclusive($ad['solidary']);
         }
+        if (isset($ad['priceKm'])) {
+            $criteria->setPriceKm($ad['priceKm']);
+        }
         if (isset($ad['price'])) {
             $criteria->setPrice($ad['price']);
+        }
+        if (isset($ad['roundedPrice'])) {
+            $criteria->setRoundedPrice($ad['roundedPrice']);
+        }
+        if (isset($ad['computedPrice'])) {
+            $criteria->setComputedPrice($ad['computedPrice']);
+        }
+        if (isset($ad['computedRoundedPrice'])) {
+            $criteria->setComputedRoundedPrice($ad['computedRoundedPrice']);
+        }
+        if (isset($ad['outwardPrice'])) {
+            $criteria->setPrice($ad['outwardPrice']);
+        }
+        if (isset($ad['outwardRoundedPrice'])) {
+            $criteria->setRoundedPrice($ad['outwardRoundedPrice']);
+        }
+        if (isset($ad['outwardComputedPrice'])) {
+            $criteria->setComputedPrice($ad['outwardComputedPrice']);
+        }
+        if (isset($ad['outwardComputedRoundedPrice'])) {
+            $criteria->setComputedRoundedPrice($ad['outwardComputedRoundedPrice']);
         }
         if (isset($ad['luggage'])) {
             $criteria->setLuggage($ad['luggage']);
@@ -189,43 +352,48 @@ class ProposalManager
         if ($ad['regular']) {
             // regular
             $criteria->setFrequency(Criteria::FREQUENCY_REGULAR);
-            $criteria->setFromDate(new \Datetime());
-            // $toDate = new \Datetime();
-            // $toDate->add(new \DateInterval("P".Proposal::PROPOSAL_VALIDITY."Y"));
-            // $criteria->setToDate($toDate);
+            if (isset($ad['fromDate'])) {
+                $criteria->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad['fromDate']));
+            } else {
+                $criteria->setFromDate(new \Datetime());
+            }
+            if (isset($ad['toDate'])) {
+                $criteria->setToDate(\DateTime::createFromFormat('Y-m-d', $ad['toDate']));
+            }
+
             foreach ($ad['schedules'] as $schedule) {
                 if ($schedule['outwardTime'] != '') {
-                    if ($schedule['mon']) {
+                    if (isset($schedule['mon']) && $schedule['mon']) {
                         $criteria->setMonCheck(true);
                         $criteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
                         $criteria->setMonMarginDuration($this->marginTime);
                     }
-                    if ($schedule['tue']) {
+                    if (isset($schedule['tue']) && $schedule['tue']) {
                         $criteria->setTueCheck(true);
                         $criteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
                         $criteria->setTueMarginDuration($this->marginTime);
                     }
-                    if ($schedule['wed']) {
+                    if (isset($schedule['wed']) && $schedule['wed']) {
                         $criteria->setWedCheck(true);
                         $criteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
                         $criteria->setWedMarginDuration($this->marginTime);
                     }
-                    if ($schedule['thu']) {
+                    if (isset($schedule['thu']) && $schedule['thu']) {
                         $criteria->setThuCheck(true);
                         $criteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
                         $criteria->setThuMarginDuration($this->marginTime);
                     }
-                    if ($schedule['fri']) {
+                    if (isset($schedule['fri']) && $schedule['fri']) {
                         $criteria->setFriCheck(true);
                         $criteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
                         $criteria->setFriMarginDuration($this->marginTime);
                     }
-                    if ($schedule['sat']) {
+                    if (isset($schedule['sat']) && $schedule['sat']) {
                         $criteria->setSatCheck(true);
                         $criteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
                         $criteria->setSatMarginDuration($this->marginTime);
                     }
-                    if ($schedule['sun']) {
+                    if (isset($schedule['sun']) && $schedule['sun']) {
                         $criteria->setSunCheck(true);
                         $criteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
                         $criteria->setSunMarginDuration($this->marginTime);
@@ -442,7 +610,7 @@ class ProposalManager
             $proposal->setMatchedProposal(new Proposal($ad['proposalId']));
         }
 
-        
+
         //Gestion events : If an event is set as destination or arrival, we set the event in proposal
         if ($ad['origin']['event'] != null || $ad['destination']['event'] != null) {
             $event = $ad['origin']['event']  != null ? $ad['origin']['event'] : $ad['destination']['event'];
@@ -462,16 +630,64 @@ class ProposalManager
             $proposalReturn = clone $proposal;
             if (isset($ad['communities'])) {
                 foreach ($ad['communities'] as $community) {
-                    $proposalReturn->addCommunity($community);
+                    $proposalReturn->addCommunity(new Community($community));
                 }
+            }
+            // if there's a matching linked, it means the proposal we create may be the return trip of a "forced" matching proposal
+            if ($proposalOutward->getMatchingLinked()) {
+                $proposalReturn->setMatchingLinked($proposalOutward->getMatchingLinked()->getIri());
+            }
+            // if there's an ask linked, it means the proposal we create may be the return trip of a "forced" matching proposal, for which an ask has been created
+            if ($proposalOutward->getAskLinked()) {
+                $proposalReturn->setAskLinked($proposalOutward->getAskLinked()->getIri());
+            }
+            // we check if the proposal is private (usually if the proposal is created after a search)
+            if (isset($ad['private']) && $ad['private']) {
+                $proposalReturn->setPrivate(true);
+            }
+            // we check if there's a proposalID
+            if (isset($ad['proposalId'])) {
+                // there's a proposalId : we know that it's a match to force
+                // as it's a return trip, this proposalId will be replaced by the linked proposalId
+                $proposalReturn->setMatchingProposal(new Proposal($ad['proposalId']));
+            }
+            // we check if an formal ask has to be made after the creation of the proposal (usually if the proposal is created after a search)
+            if (isset($ad['formalAsk'])) {
+                $proposalReturn->setFormalAsk($ad['formalAsk']);
             }
             $criteriaReturn = new Criteria();
             $criteriaReturn->setDriver($ad['driver']);
             $criteriaReturn->setPassenger($ad['passenger']);
-            $criteriaReturn->setPriceKm($ad['priceKm']);
             $criteriaReturn->setSeats($ad['seats']);
+            if (isset($ad['priceKm'])) {
+                $criteriaReturn->setPriceKm($ad['priceKm']);
+            }
+            if (isset($ad['solidary'])) {
+                $criteriaReturn->setSolidaryExclusive($ad['solidary']);
+            }
             if (isset($ad['price'])) {
                 $criteriaReturn->setPrice($ad['price']);
+            }
+            if (isset($ad['roundedPrice'])) {
+                $criteriaReturn->setRoundedPrice($ad['roundedPrice']);
+            }
+            if (isset($ad['computedPrice'])) {
+                $criteriaReturn->setComputedPrice($ad['computedPrice']);
+            }
+            if (isset($ad['computedRoundedPrice'])) {
+                $criteriaReturn->setComputedRoundedPrice($ad['computedRoundedPrice']);
+            }
+            if (isset($ad['returnPrice'])) {
+                $criteriaReturn->setPrice($ad['returnPrice']);
+            }
+            if (isset($ad['returnRoundedPrice'])) {
+                $criteriaReturn->setRoundedPrice($ad['returnRoundedPrice']);
+            }
+            if (isset($ad['returnComputedPrice'])) {
+                $criteriaReturn->setComputedPrice($ad['returnComputedPrice']);
+            }
+            if (isset($ad['returnComputedRoundedPrice'])) {
+                $criteriaReturn->setComputedRoundedPrice($ad['returnComputedRoundedPrice']);
             }
             if (isset($ad['luggage'])) {
                 $criteriaReturn->setLuggage($ad['luggage']);
@@ -487,43 +703,47 @@ class ProposalManager
             if ($ad['regular']) {
                 // regular
                 $criteriaReturn->setFrequency(Criteria::FREQUENCY_REGULAR);
-                $criteriaReturn->setFromDate(new \Datetime());
-                // $toDateReturn = new \Datetime();
-                // $toDateReturn->add(new \DateInterval("P".Proposal::PROPOSAL_VALIDITY."Y"));
-                // $criteriaReturn->setToDate($toDateReturn);
+                if (isset($ad['fromDate'])) {
+                    $criteriaReturn->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad['fromDate']));
+                } else {
+                    $criteriaReturn->setFromDate(new \Datetime());
+                }
+                if (isset($ad['toDate'])) {
+                    $criteriaReturn->setToDate(\DateTime::createFromFormat('Y-m-d', $ad['toDate']));
+                }
                 foreach ($ad['schedules'] as $schedule) {
                     if (isset($schedule['returnTime']) && $schedule['returnTime'] != '') {
-                        if ($schedule['mon']) {
+                        if (isset($schedule['mon']) && $schedule['mon']) {
                             $criteriaReturn->setMonCheck(true);
                             $criteriaReturn->setMonTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
                             $criteriaReturn->setMonMarginDuration($this->marginTime);
                         }
-                        if ($schedule['tue']) {
+                        if (isset($schedule['tue']) && $schedule['tue']) {
                             $criteriaReturn->setTueCheck(true);
                             $criteriaReturn->setTueTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
                             $criteriaReturn->setTueMarginDuration($this->marginTime);
                         }
-                        if ($schedule['wed']) {
+                        if (isset($schedule['wed']) && $schedule['wed']) {
                             $criteriaReturn->setWedCheck(true);
                             $criteriaReturn->setWedTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
                             $criteriaReturn->setWedMarginDuration($this->marginTime);
                         }
-                        if ($schedule['thu']) {
+                        if (isset($schedule['thu']) && $schedule['thu']) {
                             $criteriaReturn->setThuCheck(true);
                             $criteriaReturn->setThuTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
                             $criteriaReturn->setThuMarginDuration($this->marginTime);
                         }
-                        if ($schedule['fri']) {
+                        if (isset($schedule['fri']) && $schedule['fri']) {
                             $criteriaReturn->setFriCheck(true);
                             $criteriaReturn->setFriTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
                             $criteriaReturn->setFriMarginDuration($this->marginTime);
                         }
-                        if ($schedule['sat']) {
+                        if (isset($schedule['sat']) && $schedule['sat']) {
                             $criteriaReturn->setSatCheck(true);
                             $criteriaReturn->setsatTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
                             $criteriaReturn->setSatMarginDuration($this->marginTime);
                         }
-                        if ($schedule['sun']) {
+                        if (isset($schedule['sun']) && $schedule['sun']) {
                             $criteriaReturn->setSunCheck(true);
                             $criteriaReturn->setSunTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
                             $criteriaReturn->setSunMarginDuration($this->marginTime);
@@ -611,7 +831,7 @@ class ProposalManager
     {
         // we will make the request on the User instead of the Proposal
         $this->dataProvider->setClass(User::class);
-        $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class);
+        $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class, null, ['private'=>false]);
         return $response->getValue();
     }
     
@@ -689,7 +909,7 @@ class ProposalManager
         // communities
         if (isset($ad['communities'])) {
             foreach ($ad['communities'] as $community) {
-                $proposal->addCommunity($community);
+                $proposal->addCommunity(new Community($community));
             }
         }
 //        $criteria->setDriver($ad['driver']);

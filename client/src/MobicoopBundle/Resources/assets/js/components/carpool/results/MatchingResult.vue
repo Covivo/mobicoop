@@ -60,7 +60,7 @@
             :date="result.date"
             :time="result.time"
             :seats="result.seats"
-            :price="result.price"
+            :price="result.roundedPrice"
           />
 
           <v-divider />
@@ -69,6 +69,7 @@
           <carpooler-summary
             :carpooler="result.carpooler"
             :carpooler-rate="carpoolerRate"
+            :user="user"
             @carpool="carpool"
           />
         </v-col>

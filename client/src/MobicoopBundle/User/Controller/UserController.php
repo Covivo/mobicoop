@@ -115,6 +115,8 @@ class UserController extends AbstractController
      */
     public function userSignUp(UserManager $userManager, Request $request, TranslatorInterface $translator)
     {
+        $this->denyAccessUnlessGranted('register');
+
         $user = new User();
         $address = new Address();
         $error = false;
@@ -153,7 +155,6 @@ class UserController extends AbstractController
             $user->setBirthDate(new DateTime($data['birthDay']));
             //$user->setNewsSubscription by default
             $user->setNewsSubscription(($this->news_subscription==="true") ? true : false);
-
 
             if (!is_null($data['idFacebook'])) {
                 $user->setFacebookId($data['idFacebook']);
@@ -214,6 +215,67 @@ class UserController extends AbstractController
     }
 
     /**
+     * Generate a phone token
+     *
+     * @param UserManager $userManager
+     * @return void
+     */
+    public function generatePhoneToken(UserManager $userManager)
+    {
+        $tokenError = [
+            'state' => false,
+        ];
+        $user = clone $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('update', $user);
+        $user = $userManager->generatePhoneToken($user) ?  $tokenError['state'] = false : $tokenError['state'] = true ;
+            
+        return new Response(json_encode($tokenError));
+    }
+
+    /**
+     * Phone validation
+     *
+     * @param $token
+     * @param UserManager $userManager
+     * @param Request $request
+     * @return void
+     */
+    public function userPhoneValidation(UserManager $userManager, Request $request)
+    {
+        $user = clone $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('update', $user);
+        
+        $phoneError = [
+            'state' => false,
+            'message' => "",
+        ];
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            // We need to check if the token is right
+            if ($user->getPhoneToken() == $data['token']) {
+                if ($user->getPhoneValidatedDate()!==null) {
+                    $phoneError["state"] = "true";
+                    $phoneError["message"] = "snackBar.phoneAlreadyVerified";
+                } else {
+                    $user->setPhoneValidatedDate(new \Datetime()); // TO DO : Correct timezone
+                    $user = $userManager->updateUser($user);
+                    if (!$user) {
+                        $phoneError["state"] = "true";
+                        $phoneError["message"] = "snackBar.phoneUpdate";
+                    }
+                }
+            } else {
+                $phoneError["state"] = "true";
+                $phoneError["message"] = "snackBar.unknown";
+            }
+        }
+        return new Response(json_encode($phoneError));
+    }
+
+ 
+  
+
+    /**
      * User profile update.
      */
     public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault)
@@ -238,6 +300,9 @@ class UserController extends AbstractController
             if (!$homeAddress) {
                 $homeAddress = new Address();
             }
+
+            $this->denyAccessUnlessGranted('address_update_self', $user);
+            
             
             $address=json_decode($data->get('homeAddress'), true);
             $homeAddress->setAddressCountry($address['addressCountry']);
@@ -266,15 +331,22 @@ class UserController extends AbstractController
                     return $reponseofmanager;
                 }
             }
-
+            // check if the phone number is new and if so change token and validationdate
+            if ($user->getTelephone() != $data->get('telephone')) {
+                $user->setTelephone($data->get('telephone'));
+                $user->setPhoneValidatedDate(null);
+                $user->setPhoneToken(null);
+            }
             $user->setEmail($data->get('email'));
             $user->setTelephone($data->get('telephone'));
+            $user->setPhoneDisplay($data->get('phoneDisplay'));
             $user->setGivenName($data->get('givenName'));
             $user->setFamilyName($data->get('familyName'));
             $user->setGender($data->get('gender'));
             $user->setBirthYear($data->get('birthYear'));
             // cause we use FormData to post data
             $user->setNewsSubscription($data->get('newsSubscription') === "true" ? true : false);
+            
             
             if ($user = $userManager->updateUser($user)) {
                 if ($file) {
@@ -298,7 +370,7 @@ class UserController extends AbstractController
                 'error' => $error,
                 'alerts' => $userManager->getAlerts($user)['alerts'],
                 'tabDefault' => $tabDefault,
-            'proposals' => $userManager->getProposals($user)
+                'proposals' => $userManager->getProposals($user)
         ]);
     }
 
@@ -309,6 +381,7 @@ class UserController extends AbstractController
     public function userProfileAvatarDelete(ImageManager $imageManager, UserManager $userManager)
     {
         $user = clone $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('update', $user);
         $imageId = $user->getImages()[0]->getId();
         $imageManager->deleteImage($imageId);
 
@@ -372,6 +445,7 @@ class UserController extends AbstractController
      */
     public function userPasswordRecovery()
     {
+        $this->denyAccessUnlessGranted('login');
         return $this->render('@Mobicoop/user/passwordRecovery.html.twig', []);
     }
 
@@ -382,6 +456,7 @@ class UserController extends AbstractController
      */
     public function userPasswordForRecovery(UserManager $userManager, Request $request)
     {
+        $this->denyAccessUnlessGranted('login');
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
@@ -423,6 +498,8 @@ class UserController extends AbstractController
             $data = json_decode($request->getContent(), true);
             
             $user = $userManager->findByPwdToken($token);
+
+            $this->denyAccessUnlessGranted('password', $user);
 
             if (!empty($user)) {
                 $user->setPassword($data["password"]);
@@ -512,6 +589,7 @@ class UserController extends AbstractController
     public function userMessageDirectThreadsList(UserManager $userManager, InternalMessageManager $internalMessageManager)
     {
         $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
         $threads = $userManager->getThreadsDirectMessages($user);
         return new Response(json_encode($threads));
     }
@@ -522,6 +600,7 @@ class UserController extends AbstractController
     public function userMessageCarpoolThreadsList(UserManager $userManager, InternalMessageManager $internalMessageManager)
     {
         $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
         $threads = $userManager->getThreadsCarpoolMessages($user);
         return new Response(json_encode($threads));
     }
@@ -529,8 +608,10 @@ class UserController extends AbstractController
     /**
      * Get direct messages threads
      */
-    public function userMessageThread($idMessage, InternalMessageManager $internalMessageManager)
+    public function userMessageThread($idMessage, InternalMessageManager $internalMessageManager, UserManager $userManager)
     {
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
         $completeThread = $internalMessageManager->getThread($idMessage, DataProvider::RETURN_JSON);
         return new Response(json_encode($completeThread));
     }
@@ -917,10 +998,11 @@ class UserController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            $communityUsers = $communityManager->getAllCommunityUser($data['userId']);
             $communities = [];
-            foreach ($communityUsers as $communityUser) {
-                $communities[] = $communityUser->getCommunity();
+            if ($communityUsers = $communityManager->getAllCommunityUser($data['userId'])) {
+                foreach ($communityUsers as $communityUser) {
+                    $communities[] = $communityUser->getCommunity();
+                }
             }
             return new JsonResponse($communities);
         }

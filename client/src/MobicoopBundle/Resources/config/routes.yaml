@@ -52,6 +52,20 @@ user_profile_update:
         fr: /utilisateur/profil/modifier/{tabDefault?}
         en: /user/profile/update/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
+    
+# phone validation
+user_phone_validation:
+    path:
+        fr: /utilisateur/telephone/validation
+        en: /user/phone/validation
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPhoneValidation
+
+# send code phone validation
+user_phone_token:
+    path:
+        fr: /utilisateur/telephone/token
+        en: /user/phone/token
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::generatePhoneToken    
 
 # delete avatar
 user_profile_image_delete:
@@ -110,7 +124,7 @@ user_update_alert:
         en: /user/alert/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::updateAlert
 
-    # proposal list
+# proposal list
 user_proposal_list:
     path:
         fr: /utilisateur/annonces
@@ -263,6 +277,14 @@ carpool_contact:
         en: /carpool/contact
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolContact
 
+# carpool ask from results (POST)
+carpool_result_ask:
+    methods: [POST]
+    path:
+        fr: /covoiturage/demande
+        en: /carpool/ask
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAsk
+
 # rdex provider (AJAX)
 rdex_provider:
     path:
@@ -314,16 +336,6 @@ community_join:
     requirements:
         id: '\d+'
 
-# get a community user (AJAX)
-community_user:
-    methods: [POST]
-    path:
-        fr: /community-user
-        en: /community-user
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUser
-    requirements:
-        id: '\d+'
-
 # check if a user is an accepted member of a community (AJAX)
 community_user_is_member:
     methods: [POST]
@@ -334,7 +346,17 @@ community_user_is_member:
     requirements:
         id: '\d+'
 
-        # get the last community users (AJAX)
+# get a community user (AJAX)
+community_user:
+    methods: [POST]
+    path:
+        fr: /community-user
+        en: /community-user
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUser
+    requirements:
+        id: '\d+'
+
+# get the last community users (AJAX)
 community_last_users:
     path:
         fr: /community-last-users/{id}
@@ -360,7 +382,7 @@ community_proposals:
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityProposals
     requirements:
         id: '\d+'
-        
+
 # get all available communities for the logged user (AJAX)
 community_user_available:
     path:
@@ -369,6 +391,7 @@ community_user_available:
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUserAvailable
     requirements:
         userId: '\d+'
+
 ##########################
 # editorial pages routes #
 ##########################

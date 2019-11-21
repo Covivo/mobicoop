@@ -16,6 +16,8 @@
           v-for="(point, index) in points"
           :key="index"
           :lat-lng="point.latLng"
+          :draggable="markersDraggable"
+          @update:latLng="updateLatLng"
         >
           <l-icon
             v-if="point.icon.url!==undefined"
@@ -23,9 +25,10 @@
             :icon-anchor="point.icon.anchor"
             :icon-url="point.icon.url"
           />
-
-          <l-tooltip v-if="point.title!==''">
-            {{ point.title }}
+          <l-tooltip
+            v-if="point.title!==''"
+          >
+            <p v-html="point.title" />
           </l-tooltip>
 
           <l-popup v-if="point.popup!==''">
@@ -44,10 +47,15 @@
           :key="'w'+i"
           :lat-lngs="way.latLngs"
           :color="(way.color!=='' && way.color !==undefined)?way.color:'blue'"
-        >
-          <l-tooltip v-if="way.title!=='' && way.title !==undefined">
-            {{ way.title }}
+        >        
+          <l-tooltip v-if="way.title !==undefined && way.title!==''">
+            <p v-html="way.title" />
           </l-tooltip>
+          <l-popup
+            v-if="way.desc !==undefined && way.desc!==''"
+          >
+            <p v-html="way.desc" />
+          </l-popup>
         </l-polyline>
       </l-map>
     </v-col>
@@ -97,7 +105,10 @@ export default {
       type: Array,
       default: function(){return [];}
     },
-    
+    markersDraggable: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -134,6 +145,10 @@ export default {
         }
       }, 100);
     },
+    updateLatLng(data){
+      // data containts a LatLng object.
+      this.$emit("updateLatLng",data);
+    }
   }
 };
 </script>

@@ -1,12 +1,17 @@
 {
     "fr":{
-        "titles":{
+        "titles": {
             "personnalInfos":"Informations personnelles",
             "password":"Mot de passe"
         },
-        "snackBar":{
+        "snackBar": {
             "profileUpdated":"Votre profil a bien été mis à jour!",
-            "errorProfileUpdate": "Erreur, votre profil n'a pas été mis à jour."
+            "errorProfileUpdate": "Erreur, votre profil n'a pas été mis à jour.",
+            "phoneAlreadyVerified": "Votre téléphone est déjà vérifié.",
+            "phoneUpdate": "Erreur votre télephone n'a pas été vérifié.",
+            "unknown": "Le code de validation est érroné.",
+            "tokenOk": "Le code de validation a bien été envoyé.",
+            "tokenError": "Erreur le code n'a pas été envoyé"
         },
         "avatar": {
             "label": "Avatar",
@@ -14,23 +19,55 @@
             "delete": {
                 "route": "/utilisateur/profil/avatar/supprimer",
                 "label": "Supprimer l'image"
-                } 
+                }
         },
         "route": {
             "update": "/utilisateur/profil/modifier"
         },
         "news": {
             "label": "Actualités du service {platform}  (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)",
-            "tooltip": "Les actualités du service sont des emails répondant uniquement à la finalité de vous maintenir informé des évolutions du service et favoriser votre pratique du covoiturage, comme des mises à jour de la plateforme ou des emails provenant du référent d'une communauté à laquelle vous appartenez. Aucune sollicitation commerciale n'est réalisée via ces emails."
+            "tooltip": "Les actualités du service sont des emails répondant uniquement à la finalité de vous maintenir informé des évolutions du service et favoriser votre pratique du covoiturage, comme des mises à jour de la plateforme ou des emails provenant du référent d'une communauté à laquelle vous appartenez. Aucune sollicitation commerciale n'est réalisée via ces emails.",
+            "confirmation": {
+                "title": "Confirmation de désinscription",
+                "content": "Attention, en vous désinscrivant de ces actualités de service, vous ne recevrez plus aucune information sur tous les sujets suivants :<br><ul><li>nouvelles fonctionnalités et nouveaux services de la plate-forme</li><li>actualités covoiturage de votre territoire</li><li>actualités de vos communautés</li><li>accompagnement personnalisé</li></ul><br>Êtes-vous sûr de vouloir vous désinscrire ?"
+            }
+        },
+        "phoneDisplay": {
+            "label": {
+                "general": "Visibilité de mon numéro de téléphone.",
+                "restricted": "Visible seulement après acceptation du covoiturage, uniquement par les participants.",
+                "all": "Visible dès la publication de l'annonce, par tous les inscrits."
+            }
+        },    
+        "phone": {
+            "tooltips": {
+                "verified": "Votre numéro de portable est vérifié",
+                "notVerified": "Votre numéro de portable n'est pas vérifié"
+            },
+            "buttons": {
+                "label": {
+                    "generateToken": "Envoyer un code de vérification",
+                    "generateNewToken": "Envoyer un nouveau code",
+                    "validate": "Valider"
+                }
+            },
+            "validation": {
+                "label": "Votre code de vérification",
+                "route": "/utilisateur/telephone/validation"
+            },
+            "token": {
+                "route": "/utilisateur/telephone/token",
+                "inputError": "Le code de validation est composé de 4 chiffres."
+            }   
+           
         }
-        
     },
     "en":{
-        "titles":{
+        "titles": {
             "personnalInfos":"Personnal Informations",
             "password":"Password"
         },
-        "snackBar":{
+        "snackBar": {
             "profileUpdated":"Your profile has been updated",
             "errorProfileUpdate": "Error, your profile hasn't been updated"
         },
@@ -39,7 +76,7 @@
             "size": "The size of your avatar exceeds the maximum limit",
             "delete": {
                 "route": "/user/profile/avatar/delete"
-                } 
+                }
         },
         "route": {
             "update": "/user/profile/update"
