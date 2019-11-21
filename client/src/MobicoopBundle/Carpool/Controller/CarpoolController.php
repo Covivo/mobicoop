@@ -211,7 +211,8 @@ class CarpoolController extends AbstractController
         $role = isset($params['role']) ? $params['role'] : Criteria::ROLE_BOTH;
         $userId = isset($params['userId']) ? $params['userId'] : null;
         $communityId = isset($params['communityId']) ? $params['communityId'] : null;
-
+        $filters = isset($params['filters']) ? $params['filters'] : null;
+        
         $matchings = [];
         $proposalResult = null;
 
@@ -228,7 +229,8 @@ class CarpoolController extends AbstractController
             $strictRegular,
             $role,
             $userId,
-            $communityId
+            $communityId,
+            $filters
         )) {
             if (is_array($proposalResults->getMember()) && count($proposalResults->getMember()) == 1) {
                 $proposalResult = $proposalResults->getMember()[0];

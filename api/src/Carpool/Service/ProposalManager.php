@@ -698,4 +698,63 @@ class ProposalManager
             $maxTime
         ];
     }
+    
+    /**
+     * Order the results of a Proposal
+    */
+    public function orderResultsBy(Proposal $proposal, $filters=null)
+    {
+        $field=""; // Default value
+        $order=""; // Default value
+
+        if ($filters!==null && isset($filters['order']) && $filters['order'] !==null) {
+            $field = $filters['order']['criteria'];
+            $order = $filters['order']['value'];
+        }
+        
+
+        $results = $proposal->getResults();
+        usort($results, function ($a, $b) use ($field,$order) {
+            $return = -1;
+            switch ($field) {
+                case "date":
+                    ($order=="ASC") ? $return = $a->getDate() <=> $b->getDate() : $return = $b->getDate() <=> $a->getDate();
+                break;
+            }
+
+            return $return;
+        });
+
+        $proposal->setResults($results);
+
+        return $proposal;
+    }
+
+    /**
+     * Order the results of a Proposal
+    */
+    public function filterResultsBy(Proposal $proposal, $filters=null)
+    {
+        $results = $proposal->getResults();
+
+        if ($filters !== null && isset($filters['filters']) && $filters['filters']!==null) {
+            foreach ($filters['filters'] as $field => $value) {
+                $results = array_filter($results, function ($a) use ($field,$value) {
+                    $return = true;
+                    switch ($field) {
+                        // Filter on Time (the hour)
+                        case "time":
+                            $value = new \DateTime(str_replace("h", ":", $value));
+                            $return = $a->getTime()->format("H:i") === $value->format("H:i");
+                        break;
+                    }
+                    return $return;
+                });
+            }
+        }
+
+        $proposal->setResults($results);
+
+        return $proposal;
+    }
 }
