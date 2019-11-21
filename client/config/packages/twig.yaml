@@ -30,3 +30,5 @@ twig:
         homeSolidaryDisplay: '%env(resolve:SOLIDARY_DISPLAY)%'
         userAvatarSize: '%env(resolve:USER_AVATAR_SIZE)%'
         carpoolerRate: '%env(resolve:CARPOOLER_RATE)%'
+        matomoUrl: '%env(resolve:MATOMO_URL)%'
+        matomoSiteId: '%env(resolve:MATOMO_SITE_ID)%'
