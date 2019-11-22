@@ -68,8 +68,12 @@ export default {
     }
   },
   watch: {
-    idMessageToSelect(){
-      (this.idMessageToSelect) ? this.refreshSelected(this.idMessageToSelect) : '';
+    idMessageToSelect: {
+      immediate: true,
+      handler(newVal, oldVal) {
+        console.log("aa", newVal);
+        this.idMessageToSelect ? this.refreshSelected(this.idMessageToSelect) : '';
+      }
     },
     refreshThreads(){
       (this.refreshThreads) ? this.getThreads(this.idMessageToSelect) : '';

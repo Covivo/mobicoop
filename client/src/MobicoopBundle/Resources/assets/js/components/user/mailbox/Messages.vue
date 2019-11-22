@@ -160,13 +160,25 @@ export default {
       type:Object,
       default:null
     },
+    givenIdAsk: {
+      type: Number,
+      default: null
+    },
+    givenIdMessage: {
+      type: Number,
+      default: null
+    },
+    givenIdRecipient: {
+      type: Number,
+      default: null
+    }
   },
   data() {
     return {
       modelTabs:"tab-cm",
-      idMessage:null,
-      idRecipient:null,
-      currentIdAsk:null,
+      idMessage: this.givenIdMessage ? this.givenIdMessage : null,
+      idRecipient: this.givenIdRecipient ? this.givenIdRecipient : null,
+      currentIdAsk: this.givenIdAsk ? this.givenIdAsk : null,
       recipientName:"",
       newThreadDirect:null,
       newThreadCarpool:null,
