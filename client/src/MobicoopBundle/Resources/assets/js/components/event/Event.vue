@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <div>
     <!--SnackBar-->
     <v-snackbar
       v-model="snackbar"
@@ -50,15 +50,14 @@
                 >
                   {{ $t('buttons.publish.label') }}
                 </v-btn>
-                <v-btn
-                  color="secondary"
-                  rounded
-                  @click="publish"
-                >
-                  {{ $t('buttons.widget.label') }}
-                </v-btn>
+                <!--                <v-btn-->
+                <!--                  color="secondary"-->
+                <!--                  rounded-->
+                <!--                  @click="publish"-->
+                <!--                >-->
+                <!--                  {{ $t('buttons.widget.label') }}-->
+                <!--                </v-btn>-->
               </div>
-              <!-- button if user ask to join community but is not accepted yet -->
             </v-col>
             <!-- map -->
             <v-col
@@ -117,7 +116,7 @@
         />
       </v-row>
     </v-container>
-  </v-content>
+  </div>
 </template>
 <script>
 
@@ -251,7 +250,7 @@ export default {
     },
     publish() {
       let lParams = {
-        origin: JSON.stringify(this.destination),
+        origin: null,
         destination: JSON.stringify(this.destination),
         regular: null,
         date: null,
@@ -259,34 +258,6 @@ export default {
         ...this.params
       };
       this.post(`${this.$t("buttons.publish.route")}`, lParams);
-    },
-    getEventProposals () {
-
-      this.loadingMap = true;
-      axios
-
-        .get('/event-proposals/'+this.event.id,
-          {
-            headers:{
-              'content-type': 'application/json'
-            }
-          })
-        .then(res => {
-          this.errorUpdate = res.data.state;
-          this.pointsToMap.length = 0;
-          // add the community address to display on the map
-          if (this.event.address) {
-            this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name));
-          }
-
-          // add all the waypoints of the event to display on the map :
-          res.data.forEach((waypoint, index) => {
-            this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
-          });
-          this.loadingMap = false;
-          setTimeout(this.$refs.mmap.redrawMap(),600);
-
-        });
     },
 
     showPoints () {
