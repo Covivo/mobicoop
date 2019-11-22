@@ -113,7 +113,7 @@ class AdManager
         }
 
         // the proposal is private if it's a search only ad
-        $outwardProposal->setPrivate($ad->isSearch());
+        $outwardProposal->setPrivate($ad->isSearch() ? true : false);
 
         // we check if it's a round trip
         if ($ad->isOneWay()) {

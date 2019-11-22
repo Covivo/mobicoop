@@ -480,7 +480,7 @@ class DataProvider
      * @param array|null $data
      * @return Response The response of the operation.
      */
-    public function delete(int $id, ?array $data): Response
+    public function delete(int $id, ?array $data=null): Response
     {
         try {
             $clientResponse = $this->client->delete($this->resource."/".$id, ['json' => $data]);
