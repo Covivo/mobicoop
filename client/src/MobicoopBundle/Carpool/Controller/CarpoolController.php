@@ -73,6 +73,9 @@ class CarpoolController extends AbstractController
             } else {
                 $data['outwardDate'] = \DateTime::createFromFormat('Y-m-d', $data['outwardDate']);
             }
+            if (isset($data['returnDate']) && $data['returnDate'] != '') {
+                $data['returnDate'] = \DateTime::createFromFormat('Y-m-d', $data['returnDate']);
+            }
             return $this->json(['result'=>$adManager->createAd($data)]);
         }
 
