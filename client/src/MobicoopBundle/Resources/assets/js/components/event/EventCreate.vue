@@ -186,10 +186,8 @@
                   v-if="menuStartTime"
                   v-model="startTime"
                   format="24hr"
-                  :max="startDatePickerMaxTime"
                   header-color="secondary"
                   @click:minute="$refs.menuStartTime.save(startTime)"
-                  @change="updateEndTimePickerMinTime()"
                 />
               </v-menu>
             </v-col>
@@ -221,10 +219,8 @@
                   v-if="menuEndTime"
                   v-model="endTime"
                   format="24hr"
-                  :min="endDatePickerMinTime"
                   header-color="secondary"
                   @click:minute="$refs.menuEndTime.save(endTime)"
-                  @change="updateStartTimePickerMaxTime()"
                 />
               </v-menu>
             </v-col>
@@ -391,9 +387,7 @@ export default {
       ],
       dialog: false,
       endDatePickerMinDate: null,
-      startDatePickerMaxDate: null,
-      endDatePickerMinTime: null,
-      startDatePickerMaxTime: null
+      startDatePickerMaxDate: null
     }
   },
   computed :{
@@ -456,12 +450,6 @@ export default {
     updateStartDatePickerMaxDate () {
       // add one day because otherwise we get one day before the actual date
       this.startDatePickerMaxDate = moment(this.endDate).add(1, 'd').toISOString();
-    },
-    updateStartTimePickerMaxTime () {
-      this.startDatePickerMaxTime = this.endTime;
-    },
-    updateEndTimePickerMinTime () {
-      this.endDatePickerMinTime = this.startTime;
     }
   }
 }
