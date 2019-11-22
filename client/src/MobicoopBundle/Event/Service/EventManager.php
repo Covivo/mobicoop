@@ -185,7 +185,8 @@ class EventManager
      * Undocumented function
      *
      * @param integer $id
-     * @return void
+     * @return array|object
+     * @throws \ReflectionException
      */
     public function getProposals(int $id)
     {
