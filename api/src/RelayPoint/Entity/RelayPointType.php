@@ -35,6 +35,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Image\Entity\Image;
+use App\Image\Entity\Icon;
 
 /**
  * A relay point type.
@@ -84,6 +85,15 @@ class RelayPointType
     * @ApiSubresource(maxDepth=1)
     */
     private $images;
+
+    /**
+     * @var Icon|null The icon related to the relayPointType.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Image\Entity\Icon", inversedBy="relayPointTypes")
+     * @Groups("read")
+     * @MaxDepth(1)
+     */
+    private $icon;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -155,6 +165,18 @@ class RelayPointType
             }
         }
         
+        return $this;
+    }
+
+    public function getIcon(): ?Icon
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?Icon $icon): self
+    {
+        $this->icon = $icon;
+
         return $this;
     }
 

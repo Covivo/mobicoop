@@ -1,6 +1,8 @@
 <template>
   <div>
-    <v-row>
+    <v-row
+      v-if="communitiesUser.length>0"
+    >
       <v-col
         cols="12"
         style="margin-bottom: 0px!important; padding-bottom: 0px!important;"

@@ -30,7 +30,9 @@ export default {
         },
         signup: {
           chart: {
-            chartValid: "Je valide la charte",
+            text: "J'accepte la charte de la plateforme et sa ",
+            link: "politique de protection des données",
+            route: "/protection-donnees",
             errors: {
               required: "La validation de la charte est requise"
             }
@@ -121,8 +123,8 @@ export default {
           }
         },
         phone: {
-          label: "Téléphone",
-          placeholder: "Numéro de téléphone",
+          label: "Téléphone portable",
+          placeholder: "Téléphone portable",
           errors: {
             required: "Le numéro de téléphone est requis",
             valid: "Le numéro de téléphone doit être valide"
@@ -191,7 +193,9 @@ export default {
         },
         signup: {
           chart: {
-            chartValid: "",
+            text: "",
+            link: "",
+            route: "",
             errors: {
               required: ""
             }

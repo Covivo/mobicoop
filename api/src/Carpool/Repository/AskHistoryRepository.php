@@ -26,13 +26,8 @@ namespace App\Carpool\Repository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Ask;
+use App\User\Entity\User;
 
-/**
- * @method Proposal|null find($id, $lockMode = null, $lockVersion = null)
- * @method Proposal|null findOneBy(array $criteria, array $orderBy = null)
- * @method Proposal[]    findAll()
- * @method Proposal[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
 class AskHistoryRepository
 {
     private $repository;
@@ -58,5 +53,28 @@ class AskHistoryRepository
         ->setMaxResults(1);
         ;
         return $query->getQuery()->getOneOrNullResult();
+    }
+
+    public function findLastAskHistory(Ask $ask)
+    {
+        $query = $this->repository->createQueryBuilder('ah')
+        ->join('ah.ask', 'a')
+        ->where('a = :ask')
+        ->setParameter('ask', $ask)
+        ->orderBy('ah.createdDate', 'DESC');
+        
+        return $query->getQuery()->getResult();
+    }
+
+    public function findLastAskHistoryWithMessage(Ask $ask)
+    {
+        $query = $this->repository->createQueryBuilder('ah')
+        ->join('ah.ask', 'a')
+        ->join('ah.message', 'm')
+        ->where('a = :ask')
+        ->setParameter('ask', $ask)
+        ->orderBy('ah.createdDate', 'DESC');
+        
+        return $query->getQuery()->getResult();
     }
 }

@@ -32,7 +32,7 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Direction;
 /**
  * Carpooling : criteria (restriction for an offer / selection for a request).
  */
-class Criteria
+class Criteria implements \JsonSerializable
 {
     const FREQUENCY_PUNCTUAL = 1;
     const FREQUENCY_REGULAR = 2;
@@ -48,6 +48,7 @@ class Criteria
     
     /**
      * @var int The id of this criteria.
+     * @Groups({"put"})
      */
     private $id;
     
@@ -79,12 +80,22 @@ class Criteria
     private $frequency;
 
     /**
-     * @var int The number of available seats.
-     * @Assert\NotBlank
+     * @var int The number of available seats for a driver.
      *
+     * @Assert\NotBlank
+     * @ORM\Column(type="integer")
      * @Groups({"post","put"})
      */
-    private $seats;
+    private $seatsDriver;
+
+    /**
+     * @var int The number of requested seats for a passenger.
+     *
+     * @Assert\NotBlank
+     * @ORM\Column(type="integer")
+     * @Groups({"post","put"})
+     */
+    private $seatsPassenger;
 
     /**
      * @var \DateTimeInterface The starting date (= proposal date if punctual).
@@ -439,15 +450,27 @@ class Criteria
         return $this;
     }
     
-    public function getSeats(): ?int
+    public function getSeatsDriver(): ?int
     {
-        return $this->seats;
+        return $this->seatsDriver;
     }
-    
-    public function setSeats(int $seats): self
+
+    public function setSeatsDriver(int $seatsDriver): self
     {
-        $this->seats = $seats;
-        
+        $this->seatsDriver = $seatsDriver;
+
+        return $this;
+    }
+
+    public function getSeatsPassenger(): ?int
+    {
+        return $this->seatsPassenger;
+    }
+
+    public function setSeatsPassenger(int $seatsPassenger): self
+    {
+        $this->seatsPassenger = $seatsPassenger;
+
         return $this;
     }
     
@@ -991,5 +1014,24 @@ class Criteria
         $this->ptjourney = $ptjourney;
         
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+         [
+             "id"               => $this->getId(),
+             "seats"            => $this->getSeats(),
+             "rounded_price"    => $this->getRoundedPrice(),
+             "fromDate"         => $this->getFromDate(),
+             "fromTime"         => $this->getFromTime(),
+             "monCheck"         => $this->getMonCheck(),
+             "tueCheck"         => $this->getTueCheck(),
+             "wedCheck"         => $this->getWedCheck(),
+             "thuCheck"         => $this->getThuCheck(),
+             "friCheck"         => $this->getFriCheck(),
+             "satCheck"         => $this->getSatCheck(),
+             "sunCheck"         => $this->getSunCheck()
+         ];
     }
 }

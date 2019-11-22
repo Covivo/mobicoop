@@ -163,7 +163,14 @@ user_message_complete_thread:
         en: /user/messages/{idMessage}/thread
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageThread
 
-# send an internal message
+user_message_actions_infos:
+    methods: [POST]
+    path:
+        fr: /utilisateur/messages/actions/infos
+        en: /user/messages/actions/infos
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessagesActionsInfos
+
+    # send an internal message
 user_message_send:
     path:
         fr: /utilisateur/messages/envoyer
@@ -181,6 +188,7 @@ user_message_thread:
 
 # update an Ask from messages
 user_message_update_ask:
+    methods: [POST]
     path:
         fr: /utilisateur/messages/updateAsk
         en: /user/messages/updateAsk
@@ -221,12 +229,12 @@ carpool_first_ad_post:
         en: /carpool/ad/post/first
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolFirstAdPost       
 
-# post a solidary ad
-carpool_solidary_ad_post:
+# post a solidary exclusive ad
+carpool_solidary_exclusive_ad_post:
     path:
         fr: /covoiturage/annonce/poster/solidaire
         en: /carpool/ad/post/solidary
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryAdPost    
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryExclusiveAdPost    
 
 # post an ad from a search
 carpool_ad_post_search:
@@ -235,23 +243,23 @@ carpool_ad_post_search:
         en: /carpool/search/post
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
 
-# ad results
-carpool_ad_result:
+# ad results list
+carpool_ad_results:
     path:
         fr: /covoiturage/annonce/{id}/resultats
         en: /carpool/ad/{id}/results
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdResult
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdResults
     requirements:
         id: '\d+'
 
+# ad result detail
 carpool_ad_detail:
     path:
         fr: /covoiturage/annonce/{id}/detail
         en: /carpool/ad/{id}/detail
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdResult
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDetail
     requirements:
         id: '\d+'
-
 
 # search results (POST)
 carpool_search_result:
@@ -299,6 +307,12 @@ rdex_journey:
         en: /journey/rdex
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney
 
+# delete an ad (AJAX)
+carpool_ad_delete:
+    path:
+        fr: /covoiturage/annonce/supprimer
+        en: /carpool/ad/delete
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDelete
 
 ####################
 # community routes #

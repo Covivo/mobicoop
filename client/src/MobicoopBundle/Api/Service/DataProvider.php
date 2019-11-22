@@ -333,23 +333,26 @@ class DataProvider
      *
      * @return Response The response of the operation.
      */
-    public function post(ResourceInterface $object): Response
+    public function post(ResourceInterface $object, ?string $operation = null): Response
     {
-        //var_dump($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]));
+        $op = '';
+        if (!is_null($operation)) {
+            $op = '/'.$operation;
+        }
         try {
             if ($this->format == self::RETURN_ARRAY) {
-                $clientResponse = $this->client->post($this->resource, [
+                $clientResponse = $this->client->post($this->resource.$op, [
                     RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)
                 ]);
                 $value = json_decode((string) $clientResponse->getBody(), true);
             } elseif ($this->format == self::RETURN_JSON) {
-                $clientResponse = $this->client->post($this->resource, [
+                $clientResponse = $this->client->post($this->resource.$op, [
                         'headers' => ['accept' => 'application/json'],
                         RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)
                 ]);
                 $value = (string) $clientResponse->getBody();
             } else {
-                $clientResponse = $this->client->post($this->resource, [
+                $clientResponse = $this->client->post($this->resource.$op, [
                     RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)
                 ]);
                 $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
@@ -443,7 +446,7 @@ class DataProvider
     }
 
     /**
-     * Specially Put item operation with special operation
+     * Put item with special operation
      *
      * @param ResourceInterface $object An object representing the resource to put
      *
@@ -469,20 +472,18 @@ class DataProvider
         return new Response();
     }
 
-
-
-
     /**
      * Delete item operation
      *
      * @param int $id The id of the object representing the resource to delete
      *
+     * @param array|null $data
      * @return Response The response of the operation.
      */
-    public function delete(int $id): Response
+    public function delete(int $id, ?array $data): Response
     {
         try {
-            $clientResponse = $this->client->delete($this->resource."/".$id);
+            $clientResponse = $this->client->delete($this->resource."/".$id, ['json' => $data]);
             if ($clientResponse->getStatusCode() == 204) {
                 return new Response($clientResponse->getStatusCode());
             }

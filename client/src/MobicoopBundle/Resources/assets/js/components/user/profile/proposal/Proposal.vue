@@ -5,6 +5,10 @@
       :is-passenger="isPassenger"
       :is-pausable="isRegular"
       :is-archived="isArchived"
+      :has-accepted-ask="hasAtLeastOneAcceptedAsk"
+      :has-ask="hasAtLeastOneAsk"
+      :proposal-id="proposal.outward ? proposal.outward.id : proposal.return ? proposal.return.id : null"
+      @proposal-deleted="proposalDeleted()"
     />
     
     <v-card-text v-if="isRegular">
@@ -55,7 +59,8 @@ export default {
   },
   data () {
     return {
-      
+      hasAtLeastOneAsk: false,
+      hasAtLeastOneAcceptedAsk: false
     }
   },
   computed: {
@@ -70,6 +75,68 @@ export default {
     },
     hasReturn () {
       return this.proposal.return;
+    }
+  },
+  mounted () {
+    this.checkAsks();
+  },
+  methods: {
+    checkAsks () {
+      let hasAtLeastOneAsk = false;
+      let hasAtLeastOneAcceptedAsk = false;
+      // check offers of outward
+      if (this.proposal.outward && this.proposal.outward.matchingOffers) {
+        this.proposal.outward.matchingOffers.forEach(offer => {
+          if (offer.asks.length > 0) {
+            hasAtLeastOneAsk = true;
+            offer.asks.forEach(ask => {
+              // todo: passer le statut a 4 après merge de l'update
+              if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
+            })
+          }
+        })
+      }
+      // check requests of outward
+      if (!hasAtLeastOneAsk && !hasAtLeastOneAcceptedAsk && this.proposal.outward && this.proposal.outward.matchingRequests) {
+        this.proposal.outward.matchingRequests.forEach(request => {
+          if (request.asks.length > 0) {
+            hasAtLeastOneAsk = true;
+            request.asks.forEach(ask => {
+              // todo: passer le statut a 4 après merge de l'update
+              if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
+            })
+          }
+        })
+      }
+      // check offers of return
+      if (!hasAtLeastOneAsk && !hasAtLeastOneAcceptedAsk && this.proposal.return && this.proposal.return.matchingOffers) {
+        this.proposal.return.matchingOffers.forEach(offer => {
+          if (offer.asks.length > 0) {
+            hasAtLeastOneAsk = true;
+            offer.asks.forEach(ask => {
+              // todo: passer le statut a 4 après merge de l'update
+              if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
+            })
+          }
+        })
+      }
+      // check requests of outward
+      if (!hasAtLeastOneAsk && !hasAtLeastOneAcceptedAsk && this.proposal.return && this.proposal.return.matchingRequests) {
+        this.proposal.return.matchingRequests.forEach(request => {
+          if (request.asks.length > 0) {
+            hasAtLeastOneAsk = true;
+            request.asks.forEach(ask => {
+              // todo: passer le statut a 4 après merge de l'update
+              if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
+            })
+          }
+        })
+      }
+      this.hasAtLeastOneAsk = hasAtLeastOneAsk;
+      this.hasAtLeastOneAcceptedAsk = hasAtLeastOneAcceptedAsk;
+    },
+    proposalDeleted(id) {
+      this.$emit('proposal-deleted', id)
     }
   }
 }

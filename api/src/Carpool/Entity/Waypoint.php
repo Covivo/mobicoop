@@ -132,6 +132,18 @@ class Waypoint
         $this->id = self::DEFAULT_ID;
     }
 
+    public function __clone()
+    {
+        // when we clone a Waypoint we exclude the id, proposal, matching, ask
+        $this->id = null;
+        $this->proposal = null;
+        $this->matching = null;
+        $this->ask = null;
+        // we also clone the address
+        $newAddress = clone $this->address;
+        $this->address = $newAddress;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

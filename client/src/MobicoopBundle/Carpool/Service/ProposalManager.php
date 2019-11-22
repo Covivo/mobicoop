@@ -59,6 +59,20 @@ class ProposalManager
     }
 
     /**
+     * Get the results for a proposal
+     *
+     * @param int $id The proposal id
+     * @return void
+     */
+    public function getResults(int $id)
+    {
+        if ($data = $this->dataProvider->getSpecialItem($id, "results")) {
+            return $data->getValue();
+        }
+        return null;
+    }
+
+    /**
      * Get all matchings for a search.
      *
      * @param array $origin               The origin address
@@ -73,6 +87,7 @@ class ProposalManager
      * @param integer $role                 Role (driver and/or passenger)
      * @param integer $userId               User id of the requester (to exclude its own results)
      * @param integer $communityId          Community id of the requester (to get only results from that community)
+     * @param array|null $filters           Filters and order choices
      * @param $format                       Return format
      * @return array|null The matchings found or null if not found.
      */
@@ -89,6 +104,7 @@ class ProposalManager
         ?int $role = null,
         ?int $userId = null,
         ?int $communityId = null,
+        ?array $filters = null,
         $format = null
     ) {
         // we set the params
@@ -121,6 +137,9 @@ class ProposalManager
         }
         if (!is_null($communityId)) {
             $params["communityId"] = $communityId;
+        }
+        if (!is_null($filters)) {
+            $params["filters"] = $filters;
         }
         if (is_null($format)) {
             $format = $this->dataProvider::RETURN_OBJECT;
@@ -309,7 +328,8 @@ class ProposalManager
         }
         $criteria->setDriver($ad['driver']);
         $criteria->setPassenger($ad['passenger']);
-        $criteria->setSeats($ad['seats']);
+        $criteria->setSeatsDriver($ad['seatsDriver']);
+        $criteria->setSeatsPassenger($ad['seatsPassenger']);
         if (isset($ad['solidary'])) {
             $criteria->setSolidaryExclusive($ad['solidary']);
         }
@@ -658,7 +678,8 @@ class ProposalManager
             $criteriaReturn = new Criteria();
             $criteriaReturn->setDriver($ad['driver']);
             $criteriaReturn->setPassenger($ad['passenger']);
-            $criteriaReturn->setSeats($ad['seats']);
+            $criteriaReturn->setSeatsDriver($ad['seatsDriver']);
+            $criteriaReturn->setSeatsPassenger($ad['seatsPassenger']);
             if (isset($ad['priceKm'])) {
                 $criteriaReturn->setPriceKm($ad['priceKm']);
             }
@@ -868,11 +889,12 @@ class ProposalManager
      *
      * @param int $id The id of the proposal to delete
      *
+     * @param array|null $data
      * @return boolean The result of the deletion.
      */
-    public function deleteProposal(int $id)
+    public function deleteProposal(int $id, ?array $data)
     {
-        $response = $this->dataProvider->delete($id);
+        $response = $this->dataProvider->delete($id, $data);
         if ($response->getCode() == 204) {
             return true;
         }
