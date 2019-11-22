@@ -555,7 +555,16 @@ class AdManager
 
         // we compute the results
         $this->logger->info('Ad creation | Start creation results  ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        $ad->setResults($this->resultManager->createAdResults($outwardProposal));
+
+        $ad->setResults(
+            $this->resultManager->orderResults(
+                $this->resultManager->filterResults(
+                    $this->resultManager->createAdResults($outwardProposal),
+                    $ad->getFilters()
+                ),
+                $ad->getFilters()
+            )
+        );
         $this->logger->info('Ad creation | End creation results  ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         // we set the ad id to the outward proposal id
@@ -580,7 +589,15 @@ class AdManager
         $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
         $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
         $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
-        $ad->setResults($this->resultManager->createAdResults($proposal));
+        $ad->setResults(
+            $this->resultManager->orderResults(
+                $this->resultManager->filterResults(
+                    $this->resultManager->createAdResults($proposal),
+                    $ad->getFilters()
+                ),
+                $ad->getFilters()
+            )
+        );
         return $ad;
     }
 }

@@ -2352,4 +2352,65 @@ class ResultManager
 
         return $result;
     }
+
+    /**
+     * Order the results
+     *
+     * @param array $results    The array of results to order
+     * @param array|null $order The order criteria
+     * @return array    The results ordered
+     */
+    public function orderResults(array $results, ?array $order=null)
+    {
+        $criteria = null;
+        $value = null;
+        if (is_array($order) && isset($order['order']) && is_array($order['order']) && isset($order['order']['criteria'])) {
+            $criteria = $order['order']['criteria'];
+        }
+        if (is_array($order) && isset($order['order']) && is_array($order['order']) && isset($order['order']['value'])) {
+            $value = $order['order']['value'];
+        }
+        usort($results, function ($a, $b) use ($criteria,$value) {
+            $return = -1;
+            switch ($criteria) {
+                case "date":
+                    ($value=="ASC") ? $return = $a->getDate() <=> $b->getDate() : $return = $b->getDate() <=> $a->getDate();
+                break;
+            }
+            return $return;
+        });
+
+        return $results;
+    }
+
+    /**
+     * Filter the results
+     *
+     * @param array $results        The array of results to filter
+     * @param array|null $filters   The array of filters to apply (applied successively in the order of the array)
+     * @return array    The results filtered
+     */
+    public function filterResults(array $results, ?array $filters=null)
+    {
+        if ($filters !== null && isset($filters['filters']) && $filters['filters']!==null) {
+            foreach ($filters['filters'] as $field => $value) {
+                if (is_null($value)) {
+                    continue;
+                }
+                $results = array_filter($results, function ($a) use ($field,$value) {
+                    $return = true;
+                    switch ($field) {
+                        // Filter on Time (the hour)
+                        case "time":
+                            $value = new \DateTime(str_replace("h", ":", $value));
+                            $return = $a->getTime()->format("H") === $value->format("H");
+                        break;
+                    }
+                    return $return;
+                });
+            }
+        }
+
+        return $results;
+    }
 }
