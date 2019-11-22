@@ -134,6 +134,7 @@ class UserManager
         return null;
     }
 
+    
     /**
      * Search user by email
      *
@@ -471,9 +472,10 @@ class UserManager
     public function getProposals(User $user)
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
-        $response = $this->dataProvider->getSubCollection($user->getId(), 'proposal', 'proposals');
+        // we set the private param to false to get only published ad, not proposals posted after a search
+        $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class, null, ['private'=>false]);
         $proposals = $response->getValue();
-        
+//        dump($proposals);die;
         $proposalsSanitized = [
             "ongoing" => [],
             "archived" => []
@@ -528,5 +530,23 @@ class UserManager
         }
 
         return $proposalsSanitized;
+    }
+
+    /**
+    * Generate phone token
+    *
+    * @param User $user The user to generate phone token
+    *
+    * @return User|null The user or null if error.
+    */
+    public function generatePhoneToken(User $user)
+    {
+        $response = $this->dataProvider->getSpecialItem($user->getId(), "generate_phone_token");
+        if ($response->getCode() == 200) {
+            $this->logger->info('User PhoneToken Update | Start');
+            return $response->getValue();
+        }
+        $this->logger->info('User PhoneToken Update | Fail');
+        return null;
     }
 }

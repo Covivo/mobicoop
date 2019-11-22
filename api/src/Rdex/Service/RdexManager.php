@@ -284,7 +284,7 @@ class RdexManager
             $passenger->setAlias($proposal->getUser()->getGivenName());
             $passenger->setGender($proposal->getUser()->getGender());
             if ($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER) {
-                $driver->setSeats($proposal->getCriteria()->getSeats());
+                $driver->setSeats($proposal->getCriteria()->getSeatsDriver());
                 $driver->setState(1);
                 $passenger->setState(0);
                 $journey->setDriver($driver);
@@ -292,7 +292,7 @@ class RdexManager
             } else {
                 $driver->setState(0);
                 $passenger->setState(1);
-                $passenger->setPersons($proposal->getCriteria()->getSeats());
+                $passenger->setPersons($proposal->getCriteria()->getSeatsPassenger());
             }
             $journey->setDriver($driver);
             $journey->setPassenger($passenger);

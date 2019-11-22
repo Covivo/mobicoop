@@ -102,11 +102,7 @@ export default {
   },
   methods: {
     computedDateFormat(date) {
-      // moment.locale(this.locale);
-      // return this.date
-      //   ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
-      //   : null;
-      return moment(date).format(this.$t("DD/MM/YYYY hh:mm"));
+      return moment(date).format(this.$t("ui.i18n.date.format.shortCompleteDate") + " " + this.$t("ui.i18n.time.format.hourMinute"));
     }
   },
 }

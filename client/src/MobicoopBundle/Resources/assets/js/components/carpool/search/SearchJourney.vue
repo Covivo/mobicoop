@@ -24,7 +24,7 @@
             <v-radio-group
               v-model="role"
               row
-              :disabled="solidaryAd"
+              :disabled="solidaryExclusiveAd"
               @change="roleChanged"
             >
               <v-radio
@@ -185,6 +185,7 @@
               color="secondary"
               :locale="locale"
               no-title
+              :min="nowDate"
               @input="menu=false"
               @change="dateChanged"
             />
@@ -245,7 +246,7 @@ export default {
       type: Boolean,
       default: false
     },
-    solidaryAd: {
+    solidaryExclusiveAd: {
       type: Boolean,
       default: false
     },
@@ -268,7 +269,7 @@ export default {
       outwardDateClicked: false,
       menu: false,
       regular: this.initRegular,
-      role: this.solidaryAd ? 1 : 3,
+      role: this.solidaryExclusiveAd ? 1 : 3,
       passenger: true,
       driver: true,
       labelOrigin: this.$t("origin.label"),
@@ -281,7 +282,8 @@ export default {
       destination: this.initDestination,
       customInitOrigin: (this.initOrigin)?this.initOrigin:null,
       customInitDestination: (this.initDestination)?this.initDestination:null,
-      valid: false
+      valid: false,
+      nowDate : new Date().toISOString().slice(0,10)
     };
   },
   computed: {

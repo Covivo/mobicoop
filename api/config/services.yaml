@@ -104,6 +104,15 @@ services:
         tags:
             - { name: monolog.logger, channel: carpool }
 
+    App\Carpool\Service\AdManager:
+        arguments:
+            $params:
+                defaultMarginTime: '%env(int:CARPOOL_MARGIN_TIME)%'
+                defaultSeatsDriver: '%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%'
+                defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
+        tags:
+            - { name: monolog.logger, channel: carpool }
+
     App\Carpool\Service\ProposalManager:
         arguments:
             $params:
@@ -117,6 +126,10 @@ services:
                 defaultRegularLifeTime: '%env(int:CARPOOL_REGULAR_LIFETIME)%'
                 defaultAnyRouteAsPassenger: '%env(bool:CARPOOL_ANY_ROUTE_PASSENGER)%'
                 defaultPriceKm: '%env(float:CARPOOL_PRICE)%'
+        tags:
+            - { name: monolog.logger, channel: carpool }
+    
+    App\Carpool\Service\ProposalMatcher:
         tags:
             - { name: monolog.logger, channel: carpool }
 
@@ -216,6 +229,11 @@ services:
                 displayVenue: '%env(resolve:DISPLAY_VENUE)%'
                 displayRelayPoint: '%env(resolve:DISPLAY_RELAY_POINT)%'
                 displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%'
+    
+    App\Geography\Service\GeoSearcher:
+        arguments:
+            $iconPath: '%env(resolve:GEOCOMPLETE_ICONS_PATH)%'
+            $dataPath: '%env(resolve:DATA_URI)%'
 
     # Image
     App\Image\Controller\:

@@ -41,6 +41,7 @@ use App\Communication\Entity\Notified;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -82,7 +83,7 @@ class Matching
      * @var Proposal The offer proposal.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","results","threads","thread"})
      * @MaxDepth(1)
@@ -107,20 +108,42 @@ class Matching
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","results","threads","thread"})
+     * @MaxDepth(1)
      */
     private $criteria;
 
     /**
-     * @var Matching|null Linked matching for a round trip (return or outward journey).
+     * @var Matching|null Related matching for a round trip (return or outward journey).
      * Not persisted : used only to get the return trip information.
      */
+    private $matchingRelated;
+
+    /**
+     * @var Matching|null Linked matching for return trip.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"read","results","write"})
+     * @MaxDepth(1)
+     */
     private $matchingLinked;
+
+    /**
+     * @var Matching|null Opposite matching (if proposal and request can be switched, so if driver and passenger can switch roles).
+     *
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"read","results","write"})
+     * @MaxDepth(1)
+     */
+    private $matchingOpposite;
 
     /**
      * @var ArrayCollection The asks made for this matching.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="matching", cascade={"remove"}, orphanRemoval=true)
      * @Groups({"read"})
+     * @MaxDepth(1)
      */
     private $asks;
 
@@ -131,6 +154,7 @@ class Matching
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="matching", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write","threads","thread"})
+     * @MaxDepth(1)
      */
     private $waypoints;
 
@@ -222,6 +246,28 @@ class Matching
         return $this;
     }
 
+    public function getMatchingRelated(): ?self
+    {
+        return $this->matchingRelated;
+    }
+    
+    public function setMatchingRelated(?self $matchingRelated): self
+    {
+        $this->matchingRelated = $matchingRelated;
+
+        if (!$this->getMatchingRelated()) {
+            return $this;
+        }
+        
+        // set (or unset) the owning side of the relation if necessary
+        $newMatchingRelated = $matchingRelated === null ? null : $this;
+        if ($newMatchingRelated !== $matchingRelated->getMatchingRelated()) {
+            $matchingRelated->setMatchingRelated($newMatchingRelated);
+        }
+        
+        return $this;
+    }
+
     public function getMatchingLinked(): ?self
     {
         return $this->matchingLinked;
@@ -231,10 +277,36 @@ class Matching
     {
         $this->matchingLinked = $matchingLinked;
         
+        if (!$this->getMatchingLinked()) {
+            return $this;
+        }
+
         // set (or unset) the owning side of the relation if necessary
         $newMatchingLinked = $matchingLinked === null ? null : $this;
         if ($newMatchingLinked !== $matchingLinked->getMatchingLinked()) {
             $matchingLinked->setMatchingLinked($newMatchingLinked);
+        }
+        
+        return $this;
+    }
+
+    public function getMatchingOpposite(): ?self
+    {
+        return $this->matchingOpposite;
+    }
+    
+    public function setMatchingOpposite(?self $matchingOpposite): self
+    {
+        $this->matchingOpposite = $matchingOpposite;
+
+        if (!$this->getMatchingOpposite()) {
+            return $this;
+        }
+        
+        // set (or unset) the owning side of the relation if necessary
+        $newMatchingOpposite = $matchingOpposite === null ? null : $this;
+        if ($newMatchingOpposite !== $matchingOpposite->getMatchingOpposite()) {
+            $matchingOpposite->setMatchingOpposite($newMatchingOpposite);
         }
         
         return $this;

@@ -49,6 +49,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Article;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Section;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Paragraph;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Permission\Entity\Permission;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
@@ -107,6 +108,9 @@ class Deserializer
                 break;
             case Image::class:
                 return self::deserializeImage($data);
+                break;
+            case Ad::class:
+                return self::deserializeAd($data);
                 break;
             case Proposal::class:
                 return self::deserializeProposal($data);
@@ -243,6 +247,13 @@ class Deserializer
         return $image;
     }
 
+    private function deserializeAd(array $data): ?Ad
+    {
+        $ad = new Ad();
+        $ad = self::autoSet($ad, $data);
+        return $ad;
+    }
+
     private function deserializeProposal(array $data): ?Proposal
     {
         $proposal = new Proposal();
@@ -287,6 +298,12 @@ class Deserializer
         }
         if (isset($data["proposalLinked"]) && is_array($data["proposalLinked"])) {
             $proposal->setProposalLinked(self::deserializeProposal($data['proposalLinked']));
+        }
+        if (isset($data["matchingLinked"]) && is_array($data["matchingLinked"])) {
+            $proposal->setMatchingLinked(self::deserializeMatching($data['matchingLinked']));
+        }
+        if (isset($data["askLinked"]) && is_array($data["askLinked"])) {
+            $proposal->setAskLinked(self::deserializeAsk($data['askLinked']));
         }
         //echo "<pre>" . print_r($proposal,true) . "</pre>";exit;
         return $proposal;
@@ -777,6 +794,9 @@ class Deserializer
         if (isset($data["user"])) {
             $ask->setUser(self::deserializeUser($data["user"]));
         }
+        if (isset($data["userRelated"])) {
+            $ask->setUserRelated(self::deserializeUser($data["userRelated"]));
+        }
         if (isset($data["matching"])) {
             $ask->setMatching(self::deserializeMatching($data["matching"]));
         }
@@ -785,6 +805,9 @@ class Deserializer
         }
         if (isset($data["ask"])) {
             $ask->setAsk(self::deserializeAsk($data["ask"]));
+        }
+        if (isset($data["askLinked"])) {
+            $ask->setAskLinked(self::deserializeAsk($data["askLinked"]));
         }
         if (isset($data["waypoints"])) {
             foreach ($data["waypoints"] as $waypoint) {

@@ -64,4 +64,17 @@ class UserNotificationRepository
         ;
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Find user editable notifications
+     */
+    public function findUserNotifications(int $id)
+    {
+        $query = $this->repository->createQueryBuilder('un')
+        ->join('un.user', 'u')
+        ->where('u.id = :id')
+        ->setParameter('id', $id)
+        ;
+        return $query->getQuery()->getResult();
+    }
 }

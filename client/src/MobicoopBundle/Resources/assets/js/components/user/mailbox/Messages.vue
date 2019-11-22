@@ -88,7 +88,6 @@
                 :id-message="idMessage"
                 :id-user="idUser"
                 :refresh="refreshDetails"
-                @updateAskHistory="updateAskHistory"
                 @refreshCompleted="refreshDetailsCompleted"
               />
             </v-col>
@@ -112,8 +111,14 @@
           class="col-4"
         >
           <thread-actions
-            :id-ask-history="currentIdAskHistory"
-            :recipient-name="recipientName"
+            :id-ask="currentIdAsk"
+            :id-user="idUser"
+            :id-recipient="idRecipient"
+            :loading-init="loadingDetails"
+            :refresh="refreshActions"
+            :loading-btn="loadingBtnAction"
+            @refreshActionsCompleted="refreshActionsCompleted"
+            @updateStatusAskHistory="updateStatusAskHistory"
           />
         </v-col>
       </v-row>
@@ -161,17 +166,18 @@ export default {
       modelTabs:"tab-cm",
       idMessage:null,
       idRecipient:null,
-      currentIdAskHistory:null,
+      currentIdAsk:null,
       recipientName:"",
       newThreadDirect:null,
       newThreadCarpool:null,
       loadingTypeText:false,
       refreshDetails:false,
       refreshThreadsDirect:false,
-      refreshThreadsCarpool:false
+      refreshThreadsCarpool:false,
+      refreshActions:false,
+      loadingDetails:false,
+      loadingBtnAction:false
     };
-  },
-  watch: {
   },
   mounted() {
     // If there is a new thread we give it to te right component
@@ -189,6 +195,7 @@ export default {
   },
   methods: {
     updateDetails(data){
+      (data.type=="Carpool") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
       this.idMessage = data.idMessage;
       this.idRecipient = data.idRecipient;
       this.recipientName = data.name;
@@ -199,7 +206,7 @@ export default {
         idThreadMessage: data.idThreadMessage,
         text: data.textToSend,
         idRecipient: data.idRecipient,
-        idAskHistory: this.currentIdAskHistory
+        idAsk: this.currentIdAsk
       };
       axios.post(this.$t("urlSend"), messageToSend).then(res => {
         this.idMessage = (data.idThreadMessage!==-1) ? data.idThreadMessage : res.data.id ;
@@ -213,13 +220,66 @@ export default {
         this.refreshSelected({'idMessage':this.idMessage});
       });
     },
-    updateAskHistory(data){
-      this.currentIdAskHistory = data.currentAskHistory;
+    updateStatusAskHistory(data){
+      //this.loadingBtnAction = true;
+      let params = {
+        idAsk:this.currentIdAsk
+      }
+
+      if(data.status){
+        params.status = data.status;
+      }
+      else{
+        // This is a regular journey. We come from MatchingJourney
+        (data.driver) ? params.status = 2 : params.status = 3
+
+        // We need to give new criteria to update the Ask Criteria
+        params.criteria = {
+          "fromDate":data.fromDate,
+          "toDate":data.toDate,
+        }
+        if(data.outwardSchedule){
+          params.criteria.outwardSchedule = {
+            "monTime":data.outwardSchedule.monTime,
+            "tueTime":data.outwardSchedule.tueTime,
+            "wedTime":data.outwardSchedule.wedTime,
+            "thuTime":data.outwardSchedule.thuTime,
+            "friTime":data.outwardSchedule.friTime,
+            "satTime":data.outwardSchedule.satTime,
+            "sunTime":data.outwardSchedule.sunTime
+          }
+        }
+        if(data.returnSchedule){
+          params.criteria.returnSchedule = {
+            "monTime":data.returnSchedule.monTime,
+            "tueTime":data.returnSchedule.tueTime,
+            "wedTime":data.returnSchedule.wedTime,
+            "thuTime":data.returnSchedule.thuTime,
+            "friTime":data.returnSchedule.friTime,
+            "satTime":data.returnSchedule.satTime,
+            "sunTime":data.returnSchedule.sunTime
+          }
+        }
+      }
+
+      console.error(data);
+      console.error(params);
+      axios.post(this.$t("urlUpdateAsk"),params)
+        .then(response => {
+          console.error(response.data);
+          this.refreshActions = true;
+          this.loadingBtnAction = false;
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
     },
     refreshSelected(data){
+      this.loadingDetails = true;
       this.idMessage = data.idMessage;
     },
     refreshDetailsCompleted(){
+      this.refreshActions = true;
       this.refreshDetails = false;
     },
     refreshThreadsDirectCompleted(){
@@ -227,6 +287,10 @@ export default {
     },
     refreshThreadsCarpoolCompleted(){
       this.refreshThreadsCarpool = false;
+    },
+    refreshActionsCompleted(){
+      this.loadingDetails = false;
+      this.refreshActions = false;
     }
   }
 };

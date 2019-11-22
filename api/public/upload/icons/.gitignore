@@ -1,0 +1,27 @@
+*.*
+# Except this file
+!.gitignore
+!address-any.svg
+!address-personal.svg
+!community.svg
+!event.svg
+!icons.txt
+!private-relaypoint-bus.svg
+!private-relaypoint-carpool-area.svg
+!private-relaypoint-carpool-company.svg
+!private-relaypoint-carpool-stop.svg
+!private-relaypoint-drop-off-area.svg
+!private-relaypoint-park-and-ride.svg
+!private-relaypoint-parking.svg
+!private-relaypoint-taxi.svg
+!private-relaypoint-train.svg
+!relaypoint-bus.svg
+!relaypoint-carpool-area.svg
+!relaypoint-carpool-stop.svg
+!relaypoint-company.svg
+!relaypoint-drop-off-area.svg
+!relaypoint-park-and-ride.svg
+!relaypoint-parking.svg
+!relaypoint-taxi.svg
+!relaypoint-train.svg
+!venue.svg

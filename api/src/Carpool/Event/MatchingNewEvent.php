@@ -37,7 +37,7 @@ class MatchingNewEvent extends Event
     protected $matching;
     protected $sender;
 
-    public function __construct(Matching $matching, User $user)
+    public function __construct(Matching $matching, ?User $user)
     {
         $this->matching = $matching;
         $this->sender = $user;

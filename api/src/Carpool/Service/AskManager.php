@@ -23,6 +23,7 @@
 
 namespace App\Carpool\Service;
 
+use App\Carpool\Entity\Ad;
 use App\Carpool\Entity\Ask;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -33,6 +34,7 @@ use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Matching;
+use App\Carpool\Repository\MatchingRepository;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
 
@@ -45,6 +47,7 @@ class AskManager
 {
     private $eventDispatcher;
     private $entityManager;
+    private $matchingRepository;
     private $logger;
 
     /**
@@ -52,10 +55,11 @@ class AskManager
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager, LoggerInterface $logger)
+    public function __construct(EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager, MatchingRepository $matchingRepository, LoggerInterface $logger)
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->entityManager = $entityManager;
+        $this->matchingRepository = $matchingRepository;
         $this->logger = $logger;
     }
     
@@ -112,45 +116,409 @@ class AskManager
      * Create an ask from already matched Proposal
      * @param Proposal $proposal The new Proposal
      * @param Matching $matching between those two proposals
+     * @param bool $formal Create a formal ask
+     * @param Ask $askOpposite Opposite ask if relevant
      */
-    public function createAskFromMatchedProposal(Proposal $proposal, Matching $matching)
+    public function createAskFromMatchedProposal(Proposal $proposal, Matching $matching, bool $formal=false, ?Ask $askOpposite = null)
     {
         $ask = new Ask();
-        $ask->setStatus(Ask::STATUS_INITIATED); // Initial state of an Ask
+        if ($formal) {
+            // if it's a formal ask, the status is pending
+            $ask->setStatus(Ask::STATUS_PENDING);
+        } else {
+            // if it's not a formal ask, the status is initiated
+            $ask->setStatus(Ask::STATUS_INITIATED);
+        }
         $ask->setType($proposal->getType());
         $ask->setUser($proposal->getUser());
         $ask->setMatching($matching);
 
-        $criteria = clone $proposal->getCriteria();
-
+        // we use the matching criteria
+        $criteria = clone $matching->getCriteria();
         $ask->setCriteria($criteria);
         
-        // We are using the new proposal waypoints to create the Ask's waypoints
-        $waypoints = $proposal->getWaypoints();
+        // we use the matching waypoints
+        $waypoints = $matching->getWaypoints();
         foreach ($waypoints as $waypoint) {
             $ask->addWaypoint($waypoint);
         }
 
-        // Ask History
-        $askHistory = new AskHistory();
-        $askHistory->setStatus(1);
-        $askHistory->setType($ask->getType());
-        // We need an empty initial message however it would not appear in the mailbox
-        $message = new Message();
-        $message->setText("");
-        $message->setUser($proposal->getUser());
+        if ($proposal->getAskLinked()) {
+            // there's already an ask linked to the proposal, it's the return trip
+            $ask->setAskLinked($proposal->getAskLinked());
+        } else {
+            // Ask History
+            $askHistory = new AskHistory();
+            $askHistory->setStatus($ask->getStatus());
+            $askHistory->setType($ask->getType());
+            $ask->addAskHistory($askHistory);
+        }
 
-        // I'm setting the right receipient
-        $recipient = new Recipient();
-        $recipient->setStatus(Recipient::STATUS_READ);
-        $recipient->setUser($proposal->getMatchedProposal()->getUser());
-        $message->addRecipient($recipient);
-
-        $askHistory->setMessage($message);
-
-
-        $ask->addAskHistory($askHistory);
+        if ($askOpposite) {
+            $ask->setAskOpposite($askOpposite);
+        }
         
         return $this->createAsk($ask);
+    }
+
+    /**
+     * Create an ask from an ad.
+     *
+     * @param Ad $ad        The ad used to create the ask
+     * @param bool $formal  The ask is a formal ask
+     * @return Ad
+     */
+    public function createAskFromAd(Ad $ad, bool $formal)
+    {
+        $ask = new Ask();
+        $matching = $this->matchingRepository->find($ad->getMatchingId());
+        
+        if ($ad->getAdId() == $matching->getProposalOffer()->getId()) {
+            // the carpooler is the driver, the requester is the passenger
+            $ask->setType($matching->getProposalRequest()->getType());
+            $ask->setUser($matching->getProposalRequest()->getUser());
+        } else {
+            // the carpooler is the passenger, the requester is the driver
+            $ask->setType($matching->getProposalOffer()->getType());
+            $ask->setUser($matching->getProposalOffer()->getUser());
+        }
+        
+        if ($formal) {
+            // if it's a formal ask, the status is pending, depending on the role
+            $ask->setStatus($ad->getRole() == Ad::ROLE_DRIVER ? Ask::STATUS_PENDING_AS_DRIVER : Ask::STATUS_PENDING_AS_PASSENGER);
+        } else {
+            // if it's not a formal ask, the status is initiated
+            $ask->setStatus(Ask::STATUS_INITIATED);
+        }
+
+        $ask->setMatching($matching);
+
+        // we use the matching criteria
+        $criteria = clone $matching->getCriteria();
+
+        // we treat the outward
+
+        // for regular trips we need to check the dates and days
+        if ($matching->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+            if ($ad->getOutwardDate()) {
+                $criteria->setFromDate($ad->getOutwardDate());
+            }
+            if ($ad->getOutwardLimitDate()) {
+                $criteria->setToDate($ad->getOutwardLimitDate());
+            }
+            // we init the original schedule
+            $criteria->setMonCheck(false);
+            $criteria->setTueCheck(false);
+            $criteria->setWedCheck(false);
+            $criteria->setThuCheck(false);
+            $criteria->setFriCheck(false);
+            $criteria->setSatCheck(false);
+            $criteria->setSunCheck(false);
+            if ($ad->getRole() != Ad::ROLE_DRIVER_OR_PASSENGER) {
+                // we fill the selected days if a role has been set
+                foreach ($ad->getSchedule() as $schedule) {
+                    if ($schedule['outwardTime'] != '') {
+                        if (isset($schedule['mon']) && $schedule['mon']) {
+                            $criteria->setMonCheck(true);
+                        }
+                        if (isset($schedule['tue']) && $schedule['tue']) {
+                            $criteria->setTueCheck(true);
+                        }
+                        if (isset($schedule['wed']) && $schedule['wed']) {
+                            $criteria->setWedCheck(true);
+                        }
+                        if (isset($schedule['thu']) && $schedule['thu']) {
+                            $criteria->setThuCheck(true);
+                        }
+                        if (isset($schedule['fri']) && $schedule['fri']) {
+                            $criteria->setFriCheck(true);
+                        }
+                        if (isset($schedule['sat']) && $schedule['sat']) {
+                            $criteria->setSatCheck(true);
+                        }
+                        if (isset($schedule['sun']) && $schedule['sun']) {
+                            $criteria->setSunCheck(true);
+                        }
+                    }
+                }
+            }
+        }
+
+        $ask->setCriteria($criteria);
+        
+        // we use the matching waypoints
+        $waypoints = $matching->getWaypoints();
+        foreach ($waypoints as $waypoint) {
+            $newWaypoint = clone $waypoint;
+            $ask->addWaypoint($newWaypoint);
+        }
+
+        // Ask History
+        $askHistory = new AskHistory();
+        $askHistory->setStatus($ask->getStatus());
+        $askHistory->setType($ask->getType());
+        $ask->addAskHistory($askHistory);
+
+        // opposite ask ?
+        if ($ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER && $matching->getMatchingOpposite()) {
+            // no role has been defined, we create the opposite ask
+            $askOpposite = new Ask();
+            $criteriaOpposite = clone $matching->getMatchingOpposite()->getCriteria();
+    
+            if ($ad->getAdId() == $matching->getMatchingOpposite()->getProposalOffer()->getId()) {
+                // the carpooler is the driver, the requester is the passenger
+                $askOpposite->setType($matching->getMatchingOpposite()->getProposalRequest()->getType());
+                $askOpposite->setUser($matching->getMatchingOpposite()->getProposalRequest()->getUser());
+            } else {
+                // the carpooler is the passenger, the requester is the driver
+                $askOpposite->setType($matching->getMatchingOpposite()->getProposalOffer()->getType());
+                $askOpposite->setUser($matching->getMatchingOpposite()->getProposalOffer()->getUser());
+            }
+
+            $askOpposite->setStatus($ask->getStatus());
+            $askOpposite->setMatching($matching->getMatchingOpposite());
+            
+            // for regular trips we need to check the dates and days
+            if ($matching->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                if ($ad->getOutwardDate()) {
+                    $criteriaOpposite->setFromDate($ad->getOutwardDate());
+                }
+                if ($ad->getOutwardLimitDate()) {
+                    $criteriaOpposite->setToDate($ad->getOutwardLimitDate());
+                }
+                // we init the original schedule
+                $criteriaOpposite->setMonCheck(false);
+                $criteriaOpposite->setTueCheck(false);
+                $criteriaOpposite->setWedCheck(false);
+                $criteriaOpposite->setThuCheck(false);
+                $criteriaOpposite->setFriCheck(false);
+                $criteriaOpposite->setSatCheck(false);
+                $criteriaOpposite->setSunCheck(false);
+            }
+
+            $askOpposite->setCriteria($criteriaOpposite);
+
+            // we use the matching waypoints
+            $waypoints = $matching->getMatchingOpposite()->getWaypoints();
+            foreach ($waypoints as $waypoint) {
+                $newWaypoint = clone $waypoint;
+                $askOpposite->addWaypoint($newWaypoint);
+            }
+
+            $ask->setAskOpposite($askOpposite);
+        }
+
+        // we treat the return (only for regular trips for now)
+        if ($matching->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching->getMatchingLinked() && count($ad->getSchedule())>0) {
+            $hasSchedule = false;
+            foreach ($ad->getSchedule() as $schedule) {
+                if ($schedule['returnTime'] != '') {
+                    if (isset($schedule['mon']) && $schedule['mon']) {
+                        $hasSchedule = true;
+                        break;
+                    }
+                    if (isset($schedule['tue']) && $schedule['tue']) {
+                        $hasSchedule = true;
+                        break;
+                    }
+                    if (isset($schedule['wed']) && $schedule['wed']) {
+                        $hasSchedule = true;
+                        break;
+                    }
+                    if (isset($schedule['thu']) && $schedule['thu']) {
+                        $hasSchedule = true;
+                        break;
+                    }
+                    if (isset($schedule['fri']) && $schedule['fri']) {
+                        $hasSchedule = true;
+                        break;
+                    }
+                    if (isset($schedule['sat']) && $schedule['sat']) {
+                        $hasSchedule = true;
+                        break;
+                    }
+                    if (isset($schedule['sun']) && $schedule['sun']) {
+                        $hasSchedule = true;
+                        break;
+                    }
+                }
+            }
+            if ($hasSchedule || $ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER) {
+                // there are schedules, or the role has not been defined, we create a new ask and criteria for the return trip
+                $askReturn = new Ask();
+                $criteriaReturn = clone $matching->getMatchingLinked()->getCriteria();
+    
+                $askReturn->setType($ask->getType());
+                $askReturn->setUser($ask->getUser());
+                $askReturn->setStatus($ask->getStatus());
+                $askReturn->setMatching($matching->getMatchingLinked());
+
+                if ($ad->getOutwardDate()) {
+                    $criteriaReturn->setFromDate($ad->getOutwardDate());
+                }
+                if ($ad->getOutwardLimitDate()) {
+                    $criteriaReturn->setToDate($ad->getOutwardLimitDate());
+                }
+                
+                // we init the original schedule
+                $criteriaReturn->setMonCheck(false);
+                $criteriaReturn->setTueCheck(false);
+                $criteriaReturn->setWedCheck(false);
+                $criteriaReturn->setThuCheck(false);
+                $criteriaReturn->setFriCheck(false);
+                $criteriaReturn->setSatCheck(false);
+                $criteriaReturn->setSunCheck(false);
+            
+                // we fill the selected days
+                if ($ad->getRole() != Ad::ROLE_DRIVER_OR_PASSENGER) {
+                    foreach ($ad->getSchedule() as $schedule) {
+                        if ($schedule['returnTime'] != '') {
+                            if (isset($schedule['mon']) && $schedule['mon']) {
+                                $criteriaReturn->setMonCheck(true);
+                            }
+                            if (isset($schedule['tue']) && $schedule['tue']) {
+                                $criteriaReturn->setTueCheck(true);
+                            }
+                            if (isset($schedule['wed']) && $schedule['wed']) {
+                                $criteriaReturn->setWedCheck(true);
+                            }
+                            if (isset($schedule['thu']) && $schedule['thu']) {
+                                $criteriaReturn->setThuCheck(true);
+                            }
+                            if (isset($schedule['fri']) && $schedule['fri']) {
+                                $criteriaReturn->setFriCheck(true);
+                            }
+                            if (isset($schedule['sat']) && $schedule['sat']) {
+                                $criteriaReturn->setSatCheck(true);
+                            }
+                            if (isset($schedule['sun']) && $schedule['sun']) {
+                                $criteriaReturn->setSunCheck(true);
+                            }
+                        }
+                    }
+                }
+
+                $askReturn->setCriteria($criteriaReturn);
+
+                // we use the matching waypoints
+                $waypoints = $matching->getMatchingLinked()->getWaypoints();
+                foreach ($waypoints as $waypoint) {
+                    $newWaypoint = clone $waypoint;
+                    $askReturn->addWaypoint($newWaypoint);
+                }
+
+                // opposite return ask ?
+                if ($ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER && $matching->getMatchingLinked()->getMatchingOpposite()) {
+                    // no role has been defined, we create the opposite ask
+                    $askReturnOpposite = new Ask();
+                    $criteriaReturnOpposite = clone $matching->getMatchingLinked()->getMatchingOpposite()->getCriteria();
+            
+                    if ($ad->getAdId() == $matching->getMatchingLinked()->getMatchingOpposite()->getProposalOffer()->getId()) {
+                        // the carpooler is the driver, the requester is the passenger
+                        $askReturnOpposite->setType($matching->getMatchingLinked()->getMatchingOpposite()->getProposalRequest()->getType());
+                        $askReturnOpposite->setUser($matching->getMatchingLinked()->getMatchingOpposite()->getProposalRequest()->getUser());
+                    } else {
+                        // the carpooler is the passenger, the requester is the driver
+                        $askReturnOpposite->setType($matching->getMatchingLinked()->getMatchingOpposite()->getProposalOffer()->getType());
+                        $askReturnOpposite->setUser($matching->getMatchingLinked()->getMatchingOpposite()->getProposalOffer()->getUser());
+                    }
+
+                    $askReturnOpposite->setStatus($ask->getStatus());
+                    $askReturnOpposite->setMatching($matching->getMatchingLinked()->getMatchingOpposite());
+                    
+                    // for regular trips we need to check the dates and days
+                    if ($ad->getOutwardDate()) {
+                        $criteriaReturnOpposite->setFromDate($ad->getOutwardDate());
+                    }
+                    if ($ad->getOutwardLimitDate()) {
+                        $criteriaReturnOpposite->setToDate($ad->getOutwardLimitDate());
+                    }
+
+                    // we init the original schedule
+                    $criteriaReturnOpposite->setMonCheck(false);
+                    $criteriaReturnOpposite->setTueCheck(false);
+                    $criteriaReturnOpposite->setWedCheck(false);
+                    $criteriaReturnOpposite->setThuCheck(false);
+                    $criteriaReturnOpposite->setFriCheck(false);
+                    $criteriaReturnOpposite->setSatCheck(false);
+                    $criteriaReturnOpposite->setSunCheck(false);
+
+                    $askReturnOpposite->setCriteria($criteriaReturnOpposite);
+
+                    // we use the matching waypoints
+                    $waypoints = $matching->getMatchingLinked()->getMatchingOpposite()->getWaypoints();
+                    foreach ($waypoints as $waypoint) {
+                        $newWaypoint = clone $waypoint;
+                        $askReturnOpposite->addWaypoint($newWaypoint);
+                    }
+
+                    $askReturn->setAskOpposite($askReturnOpposite);
+                    if (isset($askOpposite)) {
+                        $askReturnOpposite->setAskLinked($askOpposite);
+                    }
+                }
+                $ask->setAskLinked($askReturn);
+            }
+        }
+            
+        $this->entityManager->persist($ask);
+        $this->entityManager->flush($ask);
+        
+        // dispatch en event
+        $event = new AskPostedEvent($ask);
+        $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
+
+        return $ad;
+    }
+
+    
+    public function getAsksFromProposal(Proposal $proposal)
+    {
+        $asks = [];
+
+        if (!empty($proposal->getMatchingOffers())) {
+            $offers = $proposal->getMatchingOffers();
+            /** @var Matching $offer */
+            foreach ($offers as $offer) {
+                if (!empty($offer->getAsks())) {
+                    $asks = array_merge($asks, $offer->getAsks());
+                }
+            }
+        }
+
+        if (!empty($proposal->getMatchingRequests())) {
+            $requests = $proposal->getMatchingRequests();
+            /** @var Matching $request */
+            foreach ($requests as $request) {
+                if (!empty($request->getAsks())) {
+                    $asks = array_merge($asks, $request->getAsks());
+                }
+            }
+        }
+
+        return $asks;
+    }
+        
+
+    /**
+     * Ask user is considered passenger if he has made a proposal offer
+     *
+     * @param Ask $ask
+     * @return bool
+     */
+    public function isAskUserDriver(Ask $ask)
+    {
+        return $ask->getUser()->getId() === $ask->getMatching()->getProposalOffer()->getUser()->getId();
+    }
+
+    /**
+     * Ask user is considered passenger if he has made a proposal request
+     *
+     * @param Ask $ask
+     * @return bool
+     */
+    public function isAskUserPassenger(Ask $ask)
+    {
+        return $ask->getUser()->getId() === $ask->getMatching()->getProposalRequest()->getUser()->getId();
     }
 }

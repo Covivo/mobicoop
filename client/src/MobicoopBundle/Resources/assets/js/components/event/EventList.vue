@@ -70,6 +70,33 @@
             :value="'tab-current'"
           >
             <v-card class="pa-6">
+              <v-row>
+                <v-col
+                  cols="12"
+                >
+                  <v-card
+                    v-show="loadingMap"
+                    flat
+                    align="center"
+                    height="500"
+                    color="backSpiner"
+                  >
+                    <v-progress-circular
+                      size="250"
+                      indeterminate
+                      color="tertiary"
+                    />
+                  </v-card>
+                  <m-map
+                    v-show="!loadingMap"
+                    ref="mmap"
+                    :points="pointsComingMap"
+                    :provider="mapProvider"
+                    :url-tiles="urlTiles"
+                    :attribution-copyright="attributionCopyright"
+                  />
+                </v-col>
+              </v-row>
               <v-card-title>
                 <v-row>
                   <v-col
@@ -211,15 +238,19 @@
 <script>
 
 import { merge } from "lodash";
+import moment from "moment";
 import Translations from "@translations/components/event/EventList.json";
 import TranslationsClient from "@clientTranslations/components/event/EventList.json";
+import MMap from "@components/utilities/MMap"
+import L from "leaflet";
 import EventListItem from "@components/event/EventListItem";
+
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components:{
-    EventListItem
+    EventListItem,MMap
   },
   i18n: {
     messages: TranslationsMerged,
@@ -236,7 +267,23 @@ export default {
     paths: {
       type: Object,
       default: null
-    }
+    },
+    mapProvider:{
+      type: String,
+      default: ""
+    },
+    urlTiles:{
+      type: String,
+      default: ""
+    },
+    attributionCopyright:{
+      type: String,
+      default: ""
+    },
+    pointsComing: {
+      type: Array,
+      default: null
+    },
   },
   data () {
     return {
@@ -254,9 +301,98 @@ export default {
         { text: 'Nom', value: 'name' },
         { text: 'Description', value: 'fulldescription' },
         { text: 'Image', value: 'logos' }
-      ]
+      ],
+      loadingMap: false,
+      errorUpdate: false,
+      pointsComingMap : [],
     }
   },
+  mounted() {
+    this.createMapComing();
+  },
+  methods:{
+    searchChanged: function (search) {
+      this.origin = search.origin;
+      this.destination = search.destination;
+      this.dataRegular = search.regular;
+      this.date = search.date;
+    },
+    post: function (path, params, method='post') {
+      const form = document.createElement('form');
+      form.method = method;
+      form.action = window.location.origin+'/'+path;
+
+      for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+          const hiddenField = document.createElement('input');
+          hiddenField.type = 'hidden';
+          hiddenField.name = key;
+          hiddenField.value = params[key];
+          form.appendChild(hiddenField);
+        }
+      }
+      document.body.appendChild(form);
+      form.submit();
+    },
+    checkIfUserLogged() {
+      if (this.user !== null) {
+        this.isLogged = true;
+      }
+    },
+
+    buildPoint: function(e,lat,lng,title="",pictoUrl="",size=[],anchor=[]){
+      let point = {
+        title:title,
+        popup : this.buildPopup(e),
+        latLng:L.latLng(lat, lng),
+        icon: {}
+      }
+
+      if(pictoUrl!==""){
+        point.icon = {
+          url:pictoUrl,
+          size:size,
+          anchor:anchor
+        }
+      }
+      return point;
+    },
+    buildPopup : function(evt){
+      let popup = {
+        titre : evt.name,
+        images : evt.images,
+        description  : evt.fullDescription,
+        date_begin   : this.$t('startEvent') +' : '+  this.computedDateFormat(evt.fromDate.date),
+        date_end   : this.$t('endEvent') +' : '+ this.computedDateFormat(evt.toDate.date),
+        linktoevent  : this.$t('routes.event', {id:evt.id})
+      };
+      return popup;
+
+    },
+    createMapComing () {
+      const self = this;
+      this.errorUpdate =200;
+      this.loadingMap = true;
+      this.pointsComingMap.length = 0;
+
+      if(this.pointsComing != null){
+        this.pointsComing.forEach((waypoint, index) => {
+          this.pointsComingMap.push(this.buildPoint(waypoint.event,waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+        });
+        this.loadingMap = false;
+        setTimeout(() => {
+          self.$refs.mmap.redrawMap()
+        },500);
+      }
+    },computedDateFormat(date) {
+      // moment.locale(this.locale);
+      // return this.date
+      //   ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
+      //   : null;
+      return moment(date).format("DD/MM/YYYY hh:mm");
+    }
+
+  }
 }
 </script>
 

@@ -1,10 +1,5 @@
-@import '@css/_variables.scss';
-body {
-  .theme--light.v-footer {
-    background-color: $primary;
-  }
-}
 // color hints based on input class
+// todo: est-ce qu'on peut s'en passer en utilisant les variables vuetify ?
 .v-input {
   &.success--text {
     .v-messages {
@@ -21,4 +16,9 @@ body {
       color: var(--v-warning-base);
     }
   }
+}
+// vuetify breaks card title words by default to be e11 compliant and no props exists to handle this
+.v-card__text,
+.v-card__title {
+  word-break: normal; /* maybe !important  */
 }

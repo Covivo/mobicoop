@@ -53,11 +53,21 @@ class EventController extends AbstractController
         $eventComing = $eventManager->getEvents();
         $eventPassed = $eventManager->getEvents(0);
 
-        dump($eventComing);
+        if ($eventComing !== null) {
+            $pointsComing = [];
+            foreach ($eventComing as $event) {
+                $pointsComing[] = [
+                    "title"=>$event->getName().', '.$event->getAddress()->getAddressLocality(),
+                    "latLng"=>["lat"=>$event->getAddress()->getLatitude(),"lon"=>$event->getAddress()->getLongitude()],
+                    "event" => $event
+                ];
+            }
+        }
 
         return $this->render('@Mobicoop/event/events.html.twig', [
             'eventComing' => $eventComing,
             'eventPassed' => $eventPassed,
+            'pointComing' => $pointsComing
         ]);
     }
     /**
@@ -70,8 +80,8 @@ class EventController extends AbstractController
         ImageManager $imageManager
     ) {
         $event = new Event();
-        //$this->denyAccessUnlessGranted('create', $event);
-        $user = new User($userManager->getLoggedUser()->getId());
+        $this->denyAccessUnlessGranted('create', $event);
+        $user = $userManager->getLoggedUser();
 
         if ($request->isMethod('POST')) {
             // Create event and return response code
@@ -102,14 +112,33 @@ class EventController extends AbstractController
 
         // retreive event;
         $event = $eventManager->getEvent($id);
-        //$this->denyAccessUnlessGranted('show', $community);
+        $this->denyAccessUnlessGranted('show', $event);
+
+        // get event's proposals
+        $proposals = $eventManager->getProposals($id);
+        $points = [];
+
+        if ($proposals!==null) {
+            foreach ($proposals as $proposal) {
+                foreach ($proposal["waypoints"] as $waypoint) {
+                    $points[] = [
+                        "title"=>$waypoint["address"]["displayLabel"],
+                        "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
+                    ];
+                }
+            }
+        }
+
         // retreive logged user
         $user = $userManager->getLoggedUser();
+
         return $this->render('@Mobicoop/event/event.html.twig', [
             'event' => $event,
             'user' => $user,
+            'destination' => $event->getAddress(),
             'searchRoute' => "covoiturage/recherche",
-            'error' => (isset($error)) ? $error : false
+            'error' => (isset($error)) ? $error : false,
+            'points' => $points
         ]);
     }
 
@@ -118,7 +147,7 @@ class EventController extends AbstractController
      *
      * @param integer $id
      * @param EventManager $eventManager
-     * @return void
+     * @return Response
      */
     public function eventProposals(int $id, EventManager $eventManager)
     {

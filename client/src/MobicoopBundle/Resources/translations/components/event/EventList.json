@@ -6,7 +6,14 @@
     "search":"Rechercher",
     "all":"Tous",
     "linePerPage":"Nombre de lignes par page",
-    "seeAds":"Voir les annonces"
+    "seeAds":"Voir les annonces",
+    "all":"Tous",
+    "startEvent" : "Début",
+    "endEvent" : "Fin",
+
+    "routes": {
+      "event": "/evenement/{id}"
+    }
   },
   "en": {
     "eventsAvailable":"Events available",
@@ -15,6 +22,10 @@
     "search":"Search",
     "all":"All",
     "linePerPage":"Nomber of line per page",
-    "seeAds":"See the ads"
+    "seeAds":"See the ads",
+
+    "routes": {
+      "event": "/event/{id}"
+    }
   }
 }

@@ -99,6 +99,7 @@ export default {
       this.$emit("toggleSelected",{idMessage:this.idMessage});
       this.$emit("idMessageForTimeLine",
         {
+          type:"Direct",
           idMessage:this.idMessage,
           idRecipient:this.idRecipient,
           name:this.name

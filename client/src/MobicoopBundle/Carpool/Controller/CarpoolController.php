@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
@@ -34,8 +35,11 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller class for carpooling related actions.
@@ -49,7 +53,7 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function carpoolAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    public function carpoolAdPost(AdManager $adManager, UserManager $userManager, Request $request)
     {
         $proposal = new Proposal();
         $poster = $userManager->getLoggedUser();
@@ -58,10 +62,21 @@ class CarpoolController extends AbstractController
             $data = json_decode($request->getContent(), true);
             if ($poster && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
                 $this->denyAccessUnlessGranted('post_delegate', $proposal);
+                $data['userId'] = $data['userDelegated'];
+                $data['posterId'] = $poster->getId();
             } else {
                 $this->denyAccessUnlessGranted('post', $proposal);
+                $data['userId'] = $poster->getId();
             }
-            return $this->json(['result'=>$proposalManager->createProposalFromAd($data, $poster)]);
+            if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
+                $data['outwardDate'] = new \DateTime();
+            } else {
+                $data['outwardDate'] = \DateTime::createFromFormat('Y-m-d', $data['outwardDate']);
+            }
+            if (isset($data['returnDate']) && $data['returnDate'] != '') {
+                $data['returnDate'] = \DateTime::createFromFormat('Y-m-d', $data['returnDate']);
+            }
+            return $this->json(['result'=>$adManager->createAd($data)]);
         }
 
         $this->denyAccessUnlessGranted('create_ad', $proposal);
@@ -71,7 +86,7 @@ class CarpoolController extends AbstractController
     /**
      * Create the first carpooling ad.
      */
-    public function carpoolFirstAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    public function carpoolFirstAdPost()
     {
         $proposal = new Proposal();
         $this->denyAccessUnlessGranted('create_ad', $proposal);
@@ -79,16 +94,16 @@ class CarpoolController extends AbstractController
     }
         
     /**
-    * Create a solidary carpooling ad.
+    * Create a solidary exclusive carpooling ad.
     */
-    public function carpoolSolidaryAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    public function carpoolSolidaryExclusiveAdPost()
     {
         $proposal = new Proposal();
         $this->denyAccessUnlessGranted('create_ad', $proposal);
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
-                'solidaryAd'=>true,
+                'solidaryExclusiveAd'=>true,
             ]
         );
     }
@@ -117,14 +132,70 @@ class CarpoolController extends AbstractController
     }
 
     /**
+     * Delete a carpooling ad.
+     * @param ProposalManager $proposalManager
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function carpoolAdDelete(ProposalManager $proposalManager, Request $request)
+    {
+        if ($request->isMethod('DELETE')) {
+            $data = json_decode($request->getContent(), true);
+
+            if (!isset($data['proposalId'])) {
+                return new JsonResponse([
+                    'message' => 'error'
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            $proposal = $proposalManager->getProposal($data['proposalId']);
+
+            $this->denyAccessUnlessGranted('delete_ad', $proposal);
+
+            if ($response = $proposalManager->deleteProposal($data['proposalId'], $data)) {
+                return new JsonResponse(
+                    ["message" => "delete.success"],
+                    \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
+                );
+            }
+            return new JsonResponse(
+                ["message" => "delete.error"],
+                \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        return new JsonResponse(
+            ["message" => "delete.error"],
+            \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN
+        );
+    }
+
+    /**
      * Ad results.
      * (POST)
      */
-    public function carpoolAdResult(Request $request)
+    public function carpoolAdResults($id, ProposalManager $proposalManager)
     {
+        $proposal = $proposalManager->getProposal($id);
+        $this->denyAccessUnlessGranted('results', $proposal);
+
         return $this->render('@Mobicoop/carpool/results.html.twig', [
-            'proposalId' => $request->request->get('proposalId')
+            'proposalId' => $id
         ]);
+    }
+
+    /**
+     * Ad result detail data.
+     * (AJAX)
+     */
+    public function carpoolAdDetail($id, ProposalManager $proposalManager, AdManager $adManager)
+    {
+        $proposal = $proposalManager->getProposal($id);
+        $this->denyAccessUnlessGranted('results', $proposal);
+        if ($results = $adManager->getAd($id)) {
+            return $this->json($results->getResults());
+        }
+        return $this->json([]);
     }
 
     /**
@@ -148,91 +219,78 @@ class CarpoolController extends AbstractController
      * Matching Search
      * (AJAX POST)
      */
-    public function carpoolSearchMatching(Request $request, ProposalManager $proposalManager)
+    public function carpoolSearchMatching(Request $request, AdManager $adManager)
     {
         $params = json_decode($request->getContent(), true);
-        if ($params['date'] && $params['date'] != '') {
+        if (isset($params['date']) && $params['date'] != '') {
             $date = \Datetime::createFromFormat("Y-m-d", $params['date']);
         } else {
             $date = new \DateTime();
         }
-        //$time = \Datetime::createFromFormat("H:i", $request->query->get('time'));
-        $frequency = isset($params['regular']) ? ($params['regular'] ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL) : Criteria::FREQUENCY_PUNCTUAL;
-        $regularLifeTime = isset($params['regularLifeTime']) ? $params['regularLifeTime'] : null;
+        $time = null;
+        if (isset($params['time']) && $params['time'] != '') {
+            $time = \Datetime::createFromFormat("H:i", $params['time']);
+        }
+        $regular = isset($params['regular']) ? $params['regular'] : false;
         $strictDate = isset($params['strictDate']) ? $params['strictDate'] : null;
-        $useTime = isset($params['useTime']) ? $params['useTime'] : null;
         $strictPunctual = isset($params['strictPunctual']) ? $params['strictPunctual'] : null;
         $strictRegular = isset($params['strictRegular']) ? $params['strictRegular'] : null;
         $role = isset($params['role']) ? $params['role'] : Criteria::ROLE_BOTH;
         $userId = isset($params['userId']) ? $params['userId'] : null;
         $communityId = isset($params['communityId']) ? $params['communityId'] : null;
 
-        $matchings = [];
-        $proposalResult = null;
+        $filters = isset($params['filters']) ? $params['filters'] : null;
 
-        // we post to the special collection /proposals/search, that will return only one virtual proposal (with its matchings)
-        if ($proposalResults = $proposalManager->getMatchingsForSearch(
+        $result = [];
+        if ($ad = $adManager->getResultsForSearch(
             $params['origin'],
             $params['destination'],
             $date,
-            $frequency,
-            $regularLifeTime,
+            $time,
+            $regular,
             $strictDate,
-            $useTime,
             $strictPunctual,
             $strictRegular,
             $role,
             $userId,
-            $communityId
+            $communityId,
+            $filters
         )) {
-            if (is_array($proposalResults->getMember()) && count($proposalResults->getMember()) == 1) {
-                $proposalResult = $proposalResults->getMember()[0];
-            }
-        }
-        if ($proposalResult) {
-            $matchings = $proposalResult->getResults();
+            $result = $ad->getResults();
         }
 
-        return $this->json($matchings);
+        return $this->json($result);
     }
 
     /**
      * Initiate contact from carpool results
-     * POST
+     * (AJAX POST)
      */
-    public function carpoolContact(Request $request, ProposalManager $proposalManager, UserManager $userManager)
+    public function carpoolContact(Request $request, AdManager $adManager)
     {
         $params = json_decode($request->getContent(), true);
 
-        // if the proposal search is set, it means the contact is made after an ad matching
-        if (isset($params['proposalSearch'])) {
-            // create the ask and return the result
-        }
-        
-        // the contact is made after a search, we have to create the ad from the search
-        $data = [
-            "private" => true,
-            "proposalId" => $params['proposalId'],
-            "origin"=>$params['origin'],
-            "destination"=>$params['destination'],
-            "outwardDate" => $params['date'] ? DateTime::createFromFormat(DateTime::ISO8601, $params['date'])->format('Y-m-d') : (new \Datetime())->format('Y-m-d'),
-            "outwardTime" => $params['time'] ? DateTime::createFromFormat(DateTime::ISO8601, $params['time'])->format('H:i') : null,
-            "seats" => isset($params['seats']) ? $params['seats'] : 1,
-            "driver" => $params['driver'],
-            "passenger" => $params['passenger'],
-            "priceKm" => $params['priceKm'],
-            "regular" => $params['regular'],
-            "waypoints" => []
-        ];
-        $proposal = $proposalManager->createProposalFromAd($data, $userManager->getLoggedUser());
-        if (!is_null($proposal)) {
+        if (!is_null($adManager->createAsk($params))) {
             return $this->json("ok");
         } else {
             return $this->json("error");
         }
     }
 
-
+    /**
+     * Formal ask from carpool results
+     * (AJAX POST)
+     */
+    public function carpoolAsk(Request $request, AdManager $adManager)
+    {
+        $params = json_decode($request->getContent(), true);
+                
+        if (!is_null($adManager->createAsk($params, true))) {
+            return $this->json("ok");
+        } else {
+            return $this->json("error");
+        }
+    }
 
     /**
      * Provider rdex

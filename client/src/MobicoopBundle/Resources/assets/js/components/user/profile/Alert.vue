@@ -34,6 +34,33 @@
         </v-row>
       </v-col>
     </v-row>
+
+    <!--Confirmation Popup-->
+    <v-dialog
+      v-model="dialog"
+      max-width="500"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          {{ $t('popup.title') }}
+        </v-card-title>
+        <v-card-text
+          v-html="$t('popup.content', {
+            'alert': $t('alerts.'+alert)
+          })"
+        />
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="secondary darken-1"
+            text
+            @click="dialog=false"
+          >
+            {{ $t('ui.common.ok') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 <script>
@@ -59,13 +86,24 @@ export default {
   data(){
     return{
       dataMedium: this.medium,
-      cardHeight: '100%'
+      cardHeight: '100%',
+      dialog: false,
     }
   },
   methods:{
     emit(id,active){
-      this.$emit("changeAlert",{id:id,active:active})
-    }
+      this.$emit("changeAlert",{id:id,active:active});
+
+      let alertIsFullyInactive = true;
+
+      for (const i in this.medium) {
+        if(this.medium[i].active) {
+          alertIsFullyInactive = false;
+          break;
+        }
+      }
+      this.dialog = alertIsFullyInactive;
+    },
   }
 }
 </script>

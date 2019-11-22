@@ -75,7 +75,7 @@ notMentioned: "Non renseigné"
 askNewPassword: "Vous avez demandé un nouveau mot de passe"
 clickHereToChangePassword: "Veuillez cliquer sur ce lien pour changer votre mot de passe"
 linkChangePassword: "Lien de changement de mot de passe"
-urlUpdatePassword: 'utilisateur/mot-de-passe/reset/update/'
+urlUpdatePassword: '/utilisateur/mot-de-passe/reset/update/'
 yourPassword: "Votre mot de passe"
 successfullyChanged: "a bien été changé"
 thanksForUse: "Merci d’utiliser"
@@ -86,13 +86,13 @@ yourInscriptionAt: "Votre inscription au service"
 wellTakenIntoAccount: "est bien prise en compte"
 clickHereToConfirm: "Veuillez cliquer sur ce lien pour confirmer votre email"
 orUseTheValidationCode: "Ou utilisez le code de validation directement sur le site"
-urlEmailValidation: 'utilisateur/inscription/validation/'
+urlEmailValidation: '/utilisateur/inscription/validation/'
 
 # USER_UPDATED_SELF
 
 theModificationIsConfirmed: "La modification suivante de votre profil est confirmée"
 
-urlMailBox: 'utilisateur/messages'
+urlMailBox: '/utilisateur/messages'
 CheckoutForAnyURLMisspellingOr: 'messages'
 
 
@@ -163,6 +163,14 @@ newCarpoolAd: "Nouvelle(s) annonce(s) de covoiturage"
 
 newAd: "Nouvelle(s) annonce(s) sur "
 
+# AD_DELETED
+
+askLinkedAdDeleted: "Une annonce à laquelle vous aviez postulé a été supprimée"
+driverAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez conducteur a été supprimée"
+driverAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez conducteur a été supprimée"
+passengerAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez passagé a été supprimée"
+passengerAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez passagé a été supprimée"
+
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
 contactYou: "vous contacte"
@@ -179,3 +187,7 @@ yourInscription: "Votre inscription"
 # USER_UPDATED_SELF
 
 updatedSefl: "Modification de votre profil"
+
+# USER_GENERATE_PHONE_TOKEN_ASKED 
+
+yourValidationToken: "Votre code de validation"

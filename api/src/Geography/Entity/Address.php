@@ -34,6 +34,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use App\Carpool\Entity\WayPoint;
 use App\User\Entity\User;
+use App\Image\Entity\Icon;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
 use App\Geography\Controller\AddressSearch;
 use App\RelayPoint\Entity\RelayPoint;
@@ -300,6 +301,13 @@ class Address
      */
     private $updatedDate;
 
+    /**
+     * @var string|null Icon fileName.
+     *
+     * @Groups({"read"})
+     */
+    private $icon;
+
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -307,6 +315,12 @@ class Address
             $this->id = $id;
         }
         $this->displayLabel = new ArrayCollection();
+    }
+
+    public function __clone()
+    {
+        // when we clone an Address we exclude the id
+        $this->id = null;
     }
 
     public function getId(): ?int
@@ -575,6 +589,16 @@ class Address
         $this->updatedDate = $updatedDate;
 
         return $this;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?string $icon)
+    {
+        $this->icon = $icon;
     }
 
     // DOCTRINE EVENTS

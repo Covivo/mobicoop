@@ -32,7 +32,7 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Direction;
 /**
  * Carpooling : criteria (restriction for an offer / selection for a request).
  */
-class Criteria
+class Criteria implements \JsonSerializable
 {
     const FREQUENCY_PUNCTUAL = 1;
     const FREQUENCY_REGULAR = 2;
@@ -48,6 +48,7 @@ class Criteria
     
     /**
      * @var int The id of this criteria.
+     * @Groups({"put"})
      */
     private $id;
     
@@ -79,12 +80,22 @@ class Criteria
     private $frequency;
 
     /**
-     * @var int The number of available seats.
-     * @Assert\NotBlank
+     * @var int The number of available seats for a driver.
      *
+     * @Assert\NotBlank
+     * @ORM\Column(type="integer")
      * @Groups({"post","put"})
      */
-    private $seats;
+    private $seatsDriver;
+
+    /**
+     * @var int The number of requested seats for a passenger.
+     *
+     * @Assert\NotBlank
+     * @ORM\Column(type="integer")
+     * @Groups({"post","put"})
+     */
+    private $seatsPassenger;
 
     /**
      * @var \DateTimeInterface The starting date (= proposal date if punctual).
@@ -293,10 +304,32 @@ class Criteria
     private $priceKm;
 
     /**
-    * @var float|null The price for the whole journey (usually, the rounded (priceKm * distance)).
+    * @var float|null The total price selected by the user :
+    * - as a driver if driver and passenger
+    * - as a passenger only if passenger
     * @Groups({"post","put"})
     */
     private $price;
+
+    /**
+    * @var float|null The total price rounded using the rounding rules.
+    * @Groups({"post","put"})
+    */
+    private $roundedPrice;
+
+    /**
+    * @var float|null The total price computed by the system, using the user price per km, not rounded :
+    * - as a driver if driver and passenger
+    * - as a passenger only if passenger
+    * @Groups({"post","put"})
+    */
+    private $computedPrice;
+
+    /**
+    * @var float|null The computed price rounded using the rounding rules.
+    * @Groups({"post","put"})
+    */
+    private $computedRoundedPrice;
 
     /**
      * @var boolean|null Big luggage accepted / asked.
@@ -417,15 +450,27 @@ class Criteria
         return $this;
     }
     
-    public function getSeats(): ?int
+    public function getSeatsDriver(): ?int
     {
-        return $this->seats;
+        return $this->seatsDriver;
     }
-    
-    public function setSeats(int $seats): self
+
+    public function setSeatsDriver(int $seatsDriver): self
     {
-        $this->seats = $seats;
-        
+        $this->seatsDriver = $seatsDriver;
+
+        return $this;
+    }
+
+    public function getSeatsPassenger(): ?int
+    {
+        return $this->seatsPassenger;
+    }
+
+    public function setSeatsPassenger(int $seatsPassenger): self
+    {
+        $this->seatsPassenger = $seatsPassenger;
+
         return $this;
     }
     
@@ -809,6 +854,36 @@ class Criteria
         $this->price = $price;
     }
 
+    public function getRoundedPrice(): ?string
+    {
+        return $this->roundedPrice;
+    }
+    
+    public function setRoundedPrice(?string $roundedPrice)
+    {
+        $this->roundedPrice = $roundedPrice;
+    }
+
+    public function getComputedPrice(): ?string
+    {
+        return $this->computedPrice;
+    }
+    
+    public function setComputedPrice(?string $computedPrice)
+    {
+        $this->computedPrice = $computedPrice;
+    }
+
+    public function getComputedRoundedPrice(): ?string
+    {
+        return $this->computedRoundedPrice;
+    }
+    
+    public function setComputedRoundedPrice(?string $computedRoundedPrice)
+    {
+        $this->computedRoundedPrice = $computedRoundedPrice;
+    }
+
     public function hasLuggage(): ?bool
     {
         return $this->luggage;
@@ -939,5 +1014,24 @@ class Criteria
         $this->ptjourney = $ptjourney;
         
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+         [
+             "id"               => $this->getId(),
+             "seats"            => $this->getSeats(),
+             "rounded_price"    => $this->getRoundedPrice(),
+             "fromDate"         => $this->getFromDate(),
+             "fromTime"         => $this->getFromTime(),
+             "monCheck"         => $this->getMonCheck(),
+             "tueCheck"         => $this->getTueCheck(),
+             "wedCheck"         => $this->getWedCheck(),
+             "thuCheck"         => $this->getThuCheck(),
+             "friCheck"         => $this->getFriCheck(),
+             "satCheck"         => $this->getSatCheck(),
+             "sunCheck"         => $this->getSunCheck()
+         ];
     }
 }

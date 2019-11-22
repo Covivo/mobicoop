@@ -23,6 +23,7 @@
 
 namespace App\Event\Service;
 
+use App\Event\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -35,14 +36,27 @@ use Doctrine\ORM\EntityManagerInterface;
 class EventManager
 {
     private $entityManager;
+    private $eventRepository;
     
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, EventRepository $eventRepository)
     {
         $this->entityManager = $entityManager;
+        $this->eventRepository = $eventRepository;
+    }
+
+    /**
+     * Get an event by its id
+     *
+     * @param integer $eventId
+     * @return Event|null
+     */
+    public function getEvent(int $eventId)
+    {
+        return $this->eventRepository->find($eventId);
     }
 }

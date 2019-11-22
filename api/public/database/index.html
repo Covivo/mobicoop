@@ -141,6 +141,9 @@
 1 = chat</td></tr>
 <tr><td>chatFavorites</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Chat favorite subjects</td></tr>
 <tr><td>newsSubscription</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>News subscription</td></tr>
+<tr><td>phoneToken</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Phone token validation</td></tr>
+<tr><td>iosAppId</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>iOS App ID</td></tr>
+<tr><td>androidAppId</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>iOS Android ID</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="proposal"></a><table style="width:100%"><caption>Table: proposal </caption>
 <tr><td>Table Comments</td><td colspan="6">Proposal table :
@@ -185,10 +188,12 @@ The proposal is linked with offer or request criteria.
 1 : one way trip
 2 : outward of a round trip
 3 : return of a round trip</td></tr>
+<tr><td>private</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Private proposal. A private proposal can't be the found in the result of a search.</td></tr>
+<tr><td>paused</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Paused proposal. A paused proposal can't be the found in the result of a search, and can be unpaused at any moment. </td></tr>
 <tr><td>comment</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td>Comment</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>A comment about the proposal</td></tr>
-<tr><td>iduserDelegate</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>User that create the proposal for another user</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>iduserDelegate</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>User that create the proposal for another user</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="ask"></a><table style="width:100%"><caption>Table: ask </caption>
 <tr><td>Table Comments</td><td colspan="6">An ask made by a user (as a driver or passenger) after matching between an offer and a request.
@@ -241,6 +246,8 @@ Matching may be partial (only between certain points)</td></tr>
 <tr><td>idcriteria</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Criteria used for the matching (may be a combination of offer and request criteria)</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date of the matching</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>idmatchingLinked</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Linked matching for return trip</td></tr>
+<tr><td>idmatchingRoleUndecided</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Linked matching used when creating an ask without defined role at initialization.</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="waypoint"></a><table style="width:100%"><caption>Table: waypoint </caption>
 <tr><td>Table Comments</td><td colspan="6">Table of waypoints for a route.
@@ -335,9 +342,12 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>anyRouteAsPassenger</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td>1</td><td>The user accepts any route as a passenger from its origin to the destination</td></tr>
 <tr><td>multiTransportMode</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The user accepts other transportation modes</td></tr>
 <tr><td>priceKm</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Price per km</td></tr>
-<tr><td>price</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Total rounded price selected by the user</td></tr>
-<tr><td>luggage</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Big luggage accepted / asked.</td></tr>
+<tr><td>price</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Total price selected by the user</td></tr>
+<tr><td>roundedPrice</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Total price selected by the user, rounded using the rounding rules</td></tr>
+<tr><td>computedPrice</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Total price computed by the system, using the user price per km, not rounded</td></tr>
+<tr><td>computedRoundedPrice</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Total price computed by the system, using the user price per km, rounded usong the rounding rules</td></tr>
 <tr><td>bike</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Bike accepted / asked.</td></tr>
+<tr><td>luggage</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Big luggage accepted / asked.</td></tr>
 <tr><td>backSeats</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>2 passengers max on the back seats</td></tr>
 <tr><td>solidary</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Solidary request (from a solidary user or via an admin)</td></tr>
 <tr><td>solidaryExclusive</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Solidary exclusive (usually from a driver who wants to make the travel for solidary requests only)</td></tr>
@@ -692,6 +702,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>idcommunity</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Community</td></tr>
 <tr><td>idrelayPoint</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Relay point</td></tr>
 <tr><td>idrelayPointType</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Relay point type</td></tr>
+<tr><td>iduser</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="zone"></a><table style="width:100%"><caption>Table: zone </caption>
 <tr><td>Table Comments</td><td colspan="6">Geographic zone (in the representation of the world in a grid)</td></tr>

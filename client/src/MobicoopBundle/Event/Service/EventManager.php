@@ -79,10 +79,10 @@ class EventManager
         $address->setDisplayLabel($communityAddress['displayLabel']);
 
         // Set Datetime from data
-        $from = $data->get('outwardTime') != null ? new \DateTime($data->get('outwardDate').'.'.$data->get('outwardTime'))  : new \DateTime($data->get('outwardDate'));
-        $to = $data->get('returnTime') != null ? new \DateTime($data->get('returnDate').'.'.$data->get('returnTime'))  : new \DateTime($data->get('returnDate'));
+        $from = $data->get('startTime') != null ? new \DateTime($data->get('startDate').'.'.$data->get('startTime'))  : new \DateTime($data->get('startDate'));
+        $to = $data->get('endTime') != null ? new \DateTime($data->get('endDate').'.'.$data->get('endTime'))  : new \DateTime($data->get('endDate'));
         //Set use time = 1, if user set time
-        $flagTime = ($data->get('returnTime') == null && $data->get('outwardTime') == null) ?  0 : 1;
+        $flagTime = ($data->get('endTime') == null && $data->get('startTime') == null) ?  0 : 1;
         $event->setUseTime($flagTime);
         $event->setStatus(1);
 
@@ -185,7 +185,8 @@ class EventManager
      * Undocumented function
      *
      * @param integer $id
-     * @return void
+     * @return array|object
+     * @throws \ReflectionException
      */
     public function getProposals(int $id)
     {
@@ -193,5 +194,4 @@ class EventManager
         $proposals = $this->dataProvider->getSubCollection($id, "proposal", "proposals");
         return $proposals->getValue();
     }
-
 }

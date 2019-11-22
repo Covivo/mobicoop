@@ -72,6 +72,11 @@ class ProposalRepository
      * It is a pre-filter, the idea is to limit the next step : the route calculations (that cannot be done directly in the model).
      * The fine time matching will be done during the route calculation process.
      *
+     * TODO : find the matching also in existing matchings !
+     * => an accepted carpool ask can be considered as a new proposal, with a new direction consisting in driver and passenger waypoints
+     * => the original proposals shouldn't be used as proposals (excluded for new searches and ad posts, recomputed for existing matchings)
+     * => the driver seats should be reduced by the number of passengers in the new matchingProposal->criteria object
+     *
      * @param Proposal $proposal        The proposal to match
      * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
@@ -105,6 +110,9 @@ class ProposalRepository
 
         // exclude private proposals
         $query->andWhere('(p.private IS NULL or p.private = 0)');
+
+        // exclude paused proposals
+        $query->andWhere('(p.paused IS NULL or p.paused = 0)');
 
         // SOLIDARY
         if ($proposal->getCriteria()->isSolidaryExclusive()) {
@@ -779,5 +787,10 @@ class ProposalRepository
             return $thinnesses[$i];
         }
         return array_pop($thinnesses);
+    }
+
+    public function find(int $id): ?Proposal
+    {
+        return $this->repository->find($id);
     }
 }

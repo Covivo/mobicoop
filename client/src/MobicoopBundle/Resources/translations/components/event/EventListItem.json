@@ -8,7 +8,7 @@
   },
   "en": {
     "routes": {
-        "community": "/event/{id}"
+        "event": "/event/{id}"
       }
     },
     "eventDetails":"Evennt details",

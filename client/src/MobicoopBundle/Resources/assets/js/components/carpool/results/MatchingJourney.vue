@@ -69,7 +69,23 @@
                 cols="4"
                 class="title text-center"
               >
-                {{ lResult.price ? lResult.price +'€' : '' }}
+                {{ lResult.roundedPrice ? lResult.roundedPrice +'€' : '' }}
+                <v-tooltip
+                  slot="append"
+                  right
+                  color="info"
+                  :max-width="'35%'"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                      justify="left"
+                      v-on="on"
+                    >
+                      mdi-help-circle-outline
+                    </v-icon>
+                  </template>
+                  <span>{{ $t('priceTooltip') }}</span>
+                </v-tooltip>
               </v-col>
             </v-row>
 
@@ -138,12 +154,12 @@
                         {{ age }}
                       </v-col>
                       <v-col
+                        v-if="user && lResult.carpooler.phoneDisplay == 2"
                         cols="12"
                         class="text-center"
                       >
                         {{ lResult.carpooler.telephone }}
                       </v-col>
-                      
                       <v-col  
                         cols="12"
                         class="text-center"
@@ -254,6 +270,13 @@
 
           <regular-ask 
             :type="1"
+            :mon-check-default="monCheckDefault"
+            :tue-check-default="tueCheckDefault"
+            :wed-check-default="wedCheckDefault"
+            :thu-check-default="thuCheckDefault"
+            :fri-check-default="friCheckDefault"
+            :sat-check-default="satCheckDefault"
+            :sun-check-default="sunCheckDefault"
             :mon-time="outwardMonTime"
             :tue-time="outwardTueTime"
             :wed-time="outwardWedTime"
@@ -275,6 +298,13 @@
         <v-stepper-content step="3">
           <regular-ask
             :type="2"
+            :mon-check-default="monCheckDefault"
+            :tue-check-default="tueCheckDefault"
+            :wed-check-default="wedCheckDefault"
+            :thu-check-default="thuCheckDefault"
+            :fri-check-default="friCheckDefault"
+            :sat-check-default="satCheckDefault"
+            :sun-check-default="sunCheckDefault"
             :mon-time="returnMonTime"
             :tue-time="returnTueTime"
             :wed-time="returnWedTime"
@@ -305,9 +335,9 @@
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
-        @click="lResult.frequency == 1 ? carpool(0) : step = 2"
+        @click="lResult.frequency == 1 ? (driver ? carpool(1) : carpool(2)) : step = 2"
       >
-        {{ $t('outward') }}
+        {{ lResult.frequency == 1 ? $t('carpool') : $t('outward') }}
       </v-btn>
 
       <!-- Carpool (driver) --> 
@@ -396,6 +426,82 @@ export default {
       type: Object,
       default: null
     },
+    defaultStep: {
+      type: Number,
+      default: 1
+    },
+    defaultOutwardTrip: {
+      type: Array,
+      default: function(){return []}
+    },
+    defaultReturnTrip: {
+      type: Array,
+      default: function(){return []}
+    },
+    defaultOutwardMonTime: {
+      type: String,
+      default: null
+    },
+    defaultOutwardTueTime: {
+      type: String,
+      default: null
+    },
+    defaultOutwardWedTime: {
+      type: String,
+      default: null
+    },
+    defaultOutwardThuTime: {
+      type: String,
+      default: null
+    },
+    defaultOutwardFriTime: {
+      type: String,
+      default: null
+    },
+    defaultOutwardSatTime: {
+      type: String,
+      default: null
+    },
+    defaultOutwardSunTime: {
+      type: String,
+      default: null
+    },
+    defaultReturnMonTime: {
+      type: String,
+      default: null
+    },
+    defaultReturnTueTime: {
+      type: String,
+      default: null
+    },
+    defaultReturnWedTime: {
+      type: String,
+      default: null
+    },
+    defaultReturnThuTime: {
+      type: String,
+      default: null
+    },
+    defaultReturnFriTime: {
+      type: String,
+      default: null
+    },
+    defaultReturnSatTime: {
+      type: String,
+      default: null
+    },
+    defaultReturnSunTime: {
+      type: String,
+      default: null
+    },
+    defaultRole:{
+      type: String,
+      default:null
+    },
+    user: {
+      type: Object,
+      default: null
+    },
   },
   data : function() {
     return {
@@ -405,29 +511,29 @@ export default {
       carpoolLoading: false,
       contactDisabled: false,
       carpoolDisabled: false,
-      step:1,
+      step:this.defaultStep,
       fromDate: this.result.startDate ? this.result.startDate : null,
       menuFromDate: false,
       maxDate: this.result.startDate ? this.result.startDate : null,
       menuMaxDate: false,
       toDate: this.result.toDate ? this.result.toDate : null,
       range: 0,
-      outwardMonTime: null,
-      outwardTueTime: null,
-      outwardWedTime: null,
-      outwardThuTime: null,
-      outwardFriTime: null,
-      outwardSatTime: null,
-      outwardSunTime: null,
-      returnMonTime: null,
-      returnTueTime: null,
-      returnWedTime: null,
-      returnThuTime: null,
-      returnFriTime: null,
-      returnSatTime: null,
-      returnSunTime: null,
-      outwardTrip: [],
-      returnTrip: []
+      outwardMonTime: this.defaultOutwardMonTime,
+      outwardTueTime: this.defaultOutwardTueTime,
+      outwardWedTime: this.defaultOutwardWedTime,
+      outwardThuTime: this.defaultOutwardThuTime,
+      outwardFriTime: this.defaultOutwardFriTime,
+      outwardSatTime: this.defaultOutwardSatTime,
+      outwardSunTime: this.defaultOutwardSunTime,
+      returnMonTime: this.defaultReturnMonTime,
+      returnTueTime: this.defaultReturnTueTime,
+      returnWedTime: this.defaultReturnWedTime,
+      returnThuTime: this.defaultReturnThuTime,
+      returnFriTime: this.defaultReturnFriTime,
+      returnSatTime: this.defaultReturnSatTime,
+      returnSunTime: this.defaultReturnSunTime,
+      outwardTrip: this.defaultOutwardTrip,
+      returnTrip: this.defaultReturnTrip
     }
   },
   computed: {
@@ -435,10 +541,20 @@ export default {
       return moment().toISOString();
     },
     driver() {
-      return this.lResult && this.lResult.resultDriver ? true : false;
+      if(this.defaultRole){
+        return (this.defaultRole=="driver") ? true : false;
+      }
+      else{
+        return this.lResult && this.lResult.resultDriver ? true : false;
+      }
     },
     passenger() {
-      return this.lResult && this.lResult.resultPassenger ? true : false;
+      if(this.defaultRole){
+        return (this.defaultRole=="passenger") ? true : false;
+      }
+      else{
+        return this.lResult && this.lResult.resultPassenger ? true : false;
+      }
     },
     regular() {
       return this.lResult && this.lResult.frequency == 2;
@@ -468,6 +584,27 @@ export default {
     },
     waypoints() {
       return this.lResult.resultPassenger ? this.lResult.resultPassenger.outward.waypoints : this.lResult.resultDriver.outward.waypoints;
+    },
+    monCheckDefault(){
+      return this.checkDay("mon");
+    },
+    tueCheckDefault(){
+      return this.checkDay("tue");
+    },
+    wedCheckDefault(){
+      return this.checkDay("wed");
+    },
+    thuCheckDefault(){
+      return this.checkDay("thu");
+    },
+    friCheckDefault(){
+      return this.checkDay("fri");
+    },
+    satCheckDefault(){
+      return this.checkDay("sat");
+    },
+    sunCheckDefault(){
+      return this.checkDay("sun");
     }
   },
   watch: {
@@ -540,34 +677,41 @@ export default {
         "passenger": this.lResult.resultPassenger ? true : false,
         "regular" : this.lResult.frequency == 2
       };
-      // if the requester can be passenger, we take the informations from the resultPassenger outward item
-      if (this.lResult.resultPassenger) {
-        params.proposalId = this.lResult.resultPassenger.outward.proposalId;
-        params.origin = this.lResult.resultPassenger.outward.origin;
-        params.destination = this.lResult.resultPassenger.outward.destination;
-        params.date = this.lResult.resultPassenger.outward.date;
-        params.time = this.lResult.resultPassenger.outward.time;
-        params.priceKm = this.lResult.resultPassenger.outward.priceKm;
-      }
+      let resultChoice = null;
+      if (this.lResult.resultDriver) {
+        resultChoice = this.lResult.resultDriver;
+      } else {
+        resultChoice = this.lResult.resultPassenger;
+      }      
+      // proposal and matching results
+      params.adId = resultChoice.outward.proposalId;
+      params.matchingId = resultChoice.outward.matchingId;
+      params.date = resultChoice.outward.date;
+      params.time = resultChoice.outward.time;      
       this.$emit('contact', params);
     },
     carpool(role) {
       this.carpoolLoading = true;
       this.contactDisabled = true;
       let params = {
-        "driver": this.lResult.resultDriver && role<2 ? true : false,
-        "passenger": this.lResult.resultPassenger && role != 1 ? true : false,
-        "regular" : this.lResult.frequency == 2
+        "driver": role==1,
+        "passenger": role==2,
+        "regular": this.lResult.frequency == 2
       };
-      // if the requester can be passenger, we take the informations from the resultPassenger outward item
-      if (this.lResult.resultPassenger) {
-        params.proposalId = this.lResult.resultPassenger.outward.proposalId;
-        params.origin = this.lResult.resultPassenger.outward.origin;
-        params.destination = this.lResult.resultPassenger.outward.destination;
-        params.date = this.lResult.resultPassenger.outward.date;
-        params.time = this.lResult.resultPassenger.outward.time;
-        params.priceKm = this.lResult.resultPassenger.outward.priceKm;
-      }
+      let resultChoice = this.lResult.resultDriver;
+      if (role == 2) resultChoice = this.lResult.resultPassenger;
+      if (this.lResult.frequency == 2) {
+        params.outwardSchedule = this.getDays(this.outwardTrip);
+        params.returnSchedule = this.getDays(this.returnTrip);
+        params.fromDate = this.fromDate ? moment(this.fromDate).format(this.$t('i18n.date.format.computeDate')) : null;
+        params.toDate = this.maxDate ? moment(this.maxDate).format(this.$t('i18n.date.format.computeDate')) : null;
+      } else {
+        params.date = resultChoice.outward.date;
+        params.time = resultChoice.outward.time;
+      }        
+      // proposal and matching results
+      params.adId = resultChoice.outward.proposalId;
+      params.matchingId = resultChoice.outward.matchingId;
       this.$emit('carpool', params);
     },
     change() {
@@ -579,6 +723,39 @@ export default {
     changeReturn(params) {
       this.returnTrip = params;
     },
+    getDays(trip) {
+      
+      if(trip.length==0) return null;
+      
+      let days = {
+        "monTime": null,
+        "tueTime": null,
+        "wedTime": null,
+        "thuTime": null,
+        "friTime": null,
+        "satTime": null,
+        "sunTime": null
+      };
+      for (var i = 0; i < trip.length; i++) {
+        if (trip[i].day == "mon") days.monTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
+        if (trip[i].day == "tue") days.tueTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
+        if (trip[i].day == "wed") days.wedTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
+        if (trip[i].day == "thu") days.thuTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
+        if (trip[i].day == "fri") days.friTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
+        if (trip[i].day == "sat") days.satTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
+        if (trip[i].day == "sun") days.sunTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
+      }
+      return days;
+    },
+    checkDay(day){
+      let found = false;
+      this.outwardTrip.forEach((currentDay, index) => {
+        if(currentDay.day==day){
+          found = true;
+        }
+      });      
+      return found;
+    }
   }
 };
 </script>
