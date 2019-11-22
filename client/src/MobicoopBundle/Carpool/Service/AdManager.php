@@ -90,7 +90,7 @@ class AdManager
         $outwardsWaypoints[] = $data['origin'];
         foreach ($data['waypoints'] as $waypoint) {
             if ($waypoint['visible']) {
-                $outwardsWaypoints[] = $waypoint;
+                $outwardsWaypoints[] = $waypoint['address'];
             }
         }
         $outwardsWaypoints[] = $data['destination'];
