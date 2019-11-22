@@ -90,7 +90,7 @@ export default {
       // return this.date
       //   ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
       //   : null;
-      return moment(date).format(this.$t("DD/MM/YYYY hh:mm"));
+      return moment(date).format(this.$t("DD/MM/YYYY HH:mm"));
     }
   },
 }
