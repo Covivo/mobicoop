@@ -136,6 +136,7 @@ export default {
       const form = document.createElement('form');
       form.method = method;
       form.action = window.location.origin+'/'+path;
+      form.target= "_blank";
 
       for (const key in params) {
         if (params.hasOwnProperty(key)) {

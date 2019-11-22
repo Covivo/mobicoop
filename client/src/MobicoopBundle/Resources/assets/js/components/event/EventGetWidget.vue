@@ -30,7 +30,7 @@
           <iframe
             :src="`/evenement-widget/${event.id}`"
             width="100%"
-            height="1440px"
+            height="440px"
             frameborder="0"
             scrolling="no"
           />
@@ -211,7 +211,7 @@ export default {
       }
     },
     getUrl() {
-      return window.location.protocol + window.location.host + window.location.pathname;
+      return window.location.protocol +"//"+ window.location.host + "/evenement-widget/" + this.event.id;
     },
     // publish() {
     //   let lParams = {
