@@ -20,5 +20,6 @@
         :init-destination = "{{ destination is defined ? destination|json_encode : 'null' }}"
         {{ searchRegular ? 'regular' : '' }}
         {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
+        :points="{{ points|json_encode }}"
     ></event>
 {% endblock %}
