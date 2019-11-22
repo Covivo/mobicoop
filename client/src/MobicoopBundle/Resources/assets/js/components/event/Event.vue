@@ -196,23 +196,16 @@ export default {
       type: Object,
       default: null
     },
+    points: {
+      type: Array,
+      default: null
+    },
   },
   data () {
     return {
       destination: '',
       origin: this.initOrigin,
       search: '',
-      headers: [
-        {
-          text: 'Id',
-          align: 'left',
-          sortable: false,
-          value: 'id',
-        },
-        { text: 'Nom', value: 'familyName' },
-        { text: 'Prenom', value: 'givenName' },
-        { text: 'Telephone', value: 'telephone' },
-      ],
       pointsToMap:[],
       directionWay:[],
       loading: false,
@@ -220,14 +213,7 @@ export default {
       // textSnackOk: this.$t("snackbar.joinCommunity.textOk"),
       // textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
-      isAccepted: false,
-      askToJoin: false,
-      checkValidation: false,
-      isLogged: false,
       loadingMap: false,
-      domain: true,
-      refreshMemberList: false,
-      refreshLastUsers: false,
       params: { 'eventId' : this.event.id },
 
     }
@@ -237,10 +223,7 @@ export default {
     this.destination = this.initDestination;
   },
   mounted() {
-    // this.getCommunityUser();
-    // this.checkIfUserLogged();
-    this.getEventProposals();
-    this.checkDomain();
+    this.showPoints()
   },
   methods:{
     searchChanged: function (search) {
@@ -265,53 +248,6 @@ export default {
       }
       document.body.appendChild(form);
       form.submit();
-    },
-    getCommunityUser() {
-      if(this.user){
-        this.checkValidation = true;
-        axios
-          .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
-          .then(res => {
-            if (res.data.length > 0) {
-              this.isAccepted = res.data[0].status == 1;
-              this.askToJoin = true
-            }
-            this.checkValidation = false;
-
-          });
-      }
-    },
-    joinCommunity() {
-      this.loading = true;
-      axios
-        .post(this.$t('buttons.join.route',{id:this.community.id}),
-          {
-            headers:{
-              'content-type': 'application/json'
-            }
-          })
-        .then(res => {
-          this.errorUpdate = res.data.state;
-          this.askToJoin = true;
-          this.snackbar = true;
-          this.refreshMemberList = true;
-          this.refreshLastUsers = true;
-          this.getCommunityUser();
-          this.loading = false;
-        });
-    },
-    checkIfUserLogged() {
-      if (this.user !== null) {
-        this.isLogged = true;
-      }
-    },
-    checkDomain() {
-      if (this.event.validationType == 2) {
-        let mailDomain = (this.user.email.split("@"))[1];
-        if (!(this.event.domain.includes(mailDomain))) {
-          return this.domain = false;
-        }
-      }
     },
     publish() {
       let lParams = {
@@ -353,6 +289,20 @@ export default {
         });
     },
 
+    showPoints () {
+      this.pointsToMap.length = 0;
+      // add the event address to display on the map
+      if (this.event.address) {
+        this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name));
+      }
+
+      // add all the waypoints of the event to display on the map :
+      this.points.forEach((waypoint, index) => {
+        this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+      });
+      this.loadingMap = false;
+      setTimeout(this.$refs.mmap.redrawMap(),600);
+    },
     buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
       let point = {
         title:title,
@@ -369,38 +319,7 @@ export default {
       }
 
       return point;
-    },
-    contact: function(data){
-      const form = document.createElement('form');
-      form.method = 'post';
-      form.action = this.$t("buttons.contact.route");
-
-      const params = {
-        carpool:0,
-        idRecipient:data.id,
-        familyName:data.familyName,
-        givenName:data.givenName
-      }
-
-      for (const key in params) {
-        if (params.hasOwnProperty(key)) {
-          const hiddenField = document.createElement('input');
-          hiddenField.type = 'hidden';
-          hiddenField.name = key;
-          hiddenField.value = params[key];
-          form.appendChild(hiddenField);
-        }
-      }
-      document.body.appendChild(form);
-      form.submit();
-    },
-    membersListRefreshed(){
-      this.refreshMemberList = false;
-    },
-    lastUsersRefreshed(){
-      this.refreshLastUsers = false;
     }
-
   }
 }
 </script>
