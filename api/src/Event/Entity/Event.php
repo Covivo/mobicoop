@@ -170,6 +170,7 @@ class Event
      *
      * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Proposal", mappedBy="event")
      * @Groups({"read","write"})
+     * @ApiSubresource(maxDepth=1)
      * @MaxDepth(1)
      */
     private $proposals;
