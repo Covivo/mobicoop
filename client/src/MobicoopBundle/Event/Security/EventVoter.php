@@ -32,6 +32,7 @@ use Mobicoop\Bundle\MobicoopBundle\Permission\Service\PermissionManager;
 class EventVoter extends Voter
 {
     const CREATE = 'create';
+    const SHOW = 'show';
     
     private $permissionManager;
 
@@ -44,7 +45,8 @@ class EventVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::CREATE
+            self::CREATE,
+            self::SHOW
             ])) {
             return false;
         }
@@ -67,6 +69,8 @@ class EventVoter extends Voter
         switch ($attribute) {
             case self::CREATE:
                 return $this->canCreate($user);
+            case self::SHOW:
+                return $this->canShow($user);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -76,5 +80,11 @@ class EventVoter extends Voter
     private function canCreate(?User $user=null)
     {
         return $this->permissionManager->checkPermission('event_create', $user);
+    }
+
+    private function canShow(?User $user=null)
+    {
+        // Anyone can see an event
+        return true;
     }
 }
