@@ -212,6 +212,11 @@ class AdManager
         if (isset($data['eventId'])) {
             $ad->setEventId($data['eventId']);
         }
+
+        // filters
+        if (isset($data['filters'])) {
+            $ad->setFilters($data['filters']);
+        }
         
         // creation of the ad
         $response = $this->dataProvider->post($ad);

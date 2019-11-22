@@ -22,6 +22,7 @@
           color="success"
           rounded
           :disabled="computedRequestsCount <= 0"
+          :href="$t('urlResult',{id:id})"
         >
           {{ computedRequestsCount }}&nbsp;{{ computedRequestsCount > 1 ? $t('potentialCarpooler.plural') : $t('potentialCarpooler.singular') }}
         </v-btn>
@@ -41,6 +42,10 @@ export default {
     messages: TranslationsMerged
   },
   props: {
+    id: {
+      type: Number,
+      default: null
+    },
     seats: {
       type: Number,
       default: null

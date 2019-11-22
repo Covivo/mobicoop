@@ -349,6 +349,13 @@ class Ad
      */
     private $matchingId;
 
+    /**
+     * @var array|null The filters to apply to the results.
+     *
+     * @Groups("write")
+     */
+    private $filters;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -357,6 +364,7 @@ class Ad
         $this->schedule = [];
         $this->communities = [];
         $this->results = [];
+        $this->filters = [];
     }
     
     public function getId(): ?int
@@ -814,6 +822,18 @@ class Ad
     public function setMatchingId(?int $matchingId): self
     {
         $this->matchingId = $matchingId;
+
+        return $this;
+    }
+
+    public function getFilters(): ?array
+    {
+        return $this->filters;
+    }
+
+    public function setFilters(?array $filters)
+    {
+        $this->filters = $filters;
 
         return $this;
     }
