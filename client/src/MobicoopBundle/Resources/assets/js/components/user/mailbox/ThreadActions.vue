@@ -8,7 +8,7 @@
         <img :src="infosComplete.carpooler.avatars[0]">
       </v-avatar>
       <v-card-text
-        v-if="!loading"
+        v-if="!loading && infosComplete.carpooler"
         class="font-weight-bold headline"
       >
         {{ infosComplete.carpooler.givenName+' '+infosComplete.carpooler.shortFamilyName }}
