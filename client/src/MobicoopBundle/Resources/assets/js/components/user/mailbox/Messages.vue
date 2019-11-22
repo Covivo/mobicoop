@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <div>
     <v-container
       text-xs-center
       grid-list-md
@@ -123,7 +123,7 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-content>
+  </div>
 </template>
 <script>
 import axios from "axios";
