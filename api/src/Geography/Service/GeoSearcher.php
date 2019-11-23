@@ -120,6 +120,7 @@ class GeoSearcher
             $address = $event->getAddress();
             $address->setEvent($event);
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+            $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_EVENT)->getFileName());
             $result[] = $address;
         }
 
