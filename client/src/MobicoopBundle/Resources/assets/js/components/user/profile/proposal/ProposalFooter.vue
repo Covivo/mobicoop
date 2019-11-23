@@ -12,13 +12,6 @@
         align="right"
       >
         <v-btn
-          icon
-        >
-          <v-icon class="primary--text">
-            mdi-email
-          </v-icon>
-        </v-btn>
-        <v-btn
           color="success"
           rounded
           :disabled="computedRequestsCount <= 0"
