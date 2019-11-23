@@ -48,6 +48,7 @@ class Result
     /**
      * @var int The id of this result.
      * @ApiProperty(identifier=true)
+     * @Groups("results")
      */
     private $id;
 
@@ -249,6 +250,12 @@ class Result
      */
     private $return;
 
+    /**
+     * @var array|null The communities for this result
+     * @Groups("results")
+     */
+    private $communities;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -257,6 +264,13 @@ class Result
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getResultDriver(): ?ResultRole
@@ -647,6 +661,18 @@ class Result
     public function setReturn(bool $hasReturn): self
     {
         $this->return = $hasReturn;
+        
+        return $this;
+    }
+
+    public function getCommunities(): ?array
+    {
+        return $this->communities;
+    }
+    
+    public function setCommunities(?array $communities): self
+    {
+        $this->communities = $communities;
         
         return $this;
     }

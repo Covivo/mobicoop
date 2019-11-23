@@ -7,7 +7,7 @@
       <!-- Date and time -->
       <v-col
         v-if="date"
-        cols="3"
+        cols="2"
       >
         <v-list-item two-line>
           <v-list-item-content>
@@ -36,13 +36,14 @@
       <!-- Seats -->
       <v-col
         cols="2"
+        class="text-center"
       >
         {{ $tc('places', seats, { seats: seats }) }}
       </v-col>
       <!-- Price -->
       <v-col
         cols="2"
-        class="title"
+        class="title text-right"
       >
         {{ price ? price +'€' : '' }}
         <v-tooltip
