@@ -21,7 +21,10 @@
           />
 
           <!-- Matching filter -->
-          <matching-filter @updateFilters="updateFilters" />
+          <matching-filter 
+            :communities="communities"
+            @updateFilters="updateFilters" 
+          />
 
           <!-- Number of matchings -->
           <v-row 
@@ -188,6 +191,20 @@ export default {
   computed: {
     numberOfResults() {
       return this.results ? Object.keys(this.results).length : 0 // ES5+
+    },
+    communities() {
+      if (!this.results) return null;
+      let communities = [];
+      this.results.forEach((result,key) => {
+        if (result.communities) {
+          for (let key in result.communities) {  
+            if (communities.indexOf(result.communities[key]) == -1) {
+              communities.push({text:result.communities[key],value:key});    
+            }
+          }            
+        }
+      });
+      return communities;
     }
   },
   created() {

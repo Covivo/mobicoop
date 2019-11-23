@@ -1642,6 +1642,7 @@ class ResultManager
                     $result->setReturn(true);
                 }
             }
+
             $finalResults[] = $result;
         }
         return $finalResults;
@@ -1687,7 +1688,8 @@ class ResultManager
         $result->setId($proposal->getId());
         $resultDriver = new ResultRole();
         $resultPassenger = new ResultRole();
-
+        $communities = [];
+            
         /************/
         /*  REQUEST */
         /************/
@@ -1704,6 +1706,11 @@ class ResultManager
             }
             if (is_null($result->getComment()) && !is_null($matching['request']->getProposalRequest()->getComment())) {
                 $result->setComment($matching['request']->getProposalRequest()->getComment());
+            }
+
+            // communities
+            foreach ($matching['request']->getProposalRequest()->getCommunities() as $community) {
+                $communities[$community->getId()] = $community->getName();
             }
             
             // outward
@@ -2035,6 +2042,11 @@ class ResultManager
             if (is_null($result->getComment()) && !is_null($matching['offer']->getProposalOffer()->getComment())) {
                 $result->setComment($matching['offer']->getProposalOffer()->getComment());
             }
+
+            // communities
+            foreach ($matching['offer']->getProposalOffer()->getCommunities() as $community) {
+                $communities[$community->getId()] = $community->getName();
+            }
             
             // outward
             $item = new ResultItem();
@@ -2352,6 +2364,8 @@ class ResultManager
             $result->setResultPassenger($resultPassenger);
         }
 
+        $result->setCommunities($communities);
+
         return $result;
     }
 
@@ -2415,6 +2429,10 @@ class ResultManager
                         case "gender":
                             $return = $a->getCarpooler()->getGender() == $value;
                             break;
+                        // Filter on a Community
+                        case "community":
+                            $return = array_key_exists($value, $a->getCommunities());
+                            break;
                     }
                     return $return;
                 });
@@ -2434,8 +2452,8 @@ class ResultManager
     private static function filterByRole(Result $result, int $role)
     {
         switch ($role) {
-            case Ad::ROLE_DRIVER: return !is_null($result->getResultPassenger());
-            case Ad::ROLE_PASSENGER: return !is_null($result->getResultDriver());
+            case Ad::ROLE_DRIVER: return !is_null($result->getResultPassenger()) && is_null($result->getResultDriver());
+            case Ad::ROLE_PASSENGER: return !is_null($result->getResultDriver()) && is_null($result->getResultPassenger());
             case Ad::ROLE_DRIVER_OR_PASSENGER: return !is_null($result->getResultDriver()) && !is_null($result->getResultPassenger());
         }
         return false;

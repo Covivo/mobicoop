@@ -57,7 +57,7 @@ class AdGet
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
         }
-        $data = $this->adManager->getAd($this->request->get("id"), $this->request->query->get('filters'));
+        $data = $this->adManager->getAd($this->request->get("id"), $this->request->query->get('filters'), $this->request->query->get('order'));
         return $data;
     }
 }

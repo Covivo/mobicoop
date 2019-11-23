@@ -39,6 +39,9 @@
             "label":"Autre",
             "value":"3"
           }
+        },
+        "community": {
+          "label":"Communauté"
         }
       },
       "hour":{
@@ -69,6 +72,9 @@
           "2":"Madame",
           "3":"Autre"
         }
+      },
+      "community": {
+        "label":"Communauté"
       }
     }
   },

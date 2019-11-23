@@ -85,6 +85,22 @@
                   />
                 </v-col>
               </v-row>
+              <v-row
+                v-if="communities && communities.length>0"
+              >
+                <v-col cols="3">
+                  <v-select
+                    v-model="filters.filters.community"
+                    :items="communities"
+                    :label="$t('select.filter.community.label')"
+                    outlined
+                    dense
+                    flat
+                    :disabled="!filterEnabled.community"
+                    @change="updateFilterCommunity"
+                  />
+                </v-col>
+              </v-row>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -104,7 +120,10 @@ export default {
     messages: TranslationsMerged,
   },
   props: {
-
+    communities: {
+      type: Array,
+      default: null
+    }
   },
   data : function() {
     return {
@@ -113,7 +132,8 @@ export default {
         "time":true,
         "order":true,
         "role":true,
-        "gender":true
+        "gender":true,
+        "community":true
       },
       itemsOrder: [
         {text:this.$t('select.order.date.increasing'),value:{criteria:'date',value:'ASC'}},
@@ -136,7 +156,8 @@ export default {
           // You can add here other filters
           time:null,
           role:null,
-          gender:null
+          gender:null,
+          community:null
         }
       }
     };
@@ -172,6 +193,16 @@ export default {
     updateFilterGender(data){
       this.filterEnabled.gender = false;
       this.chips.push({id:"gender",text:this.$t('chips.gender.value.'+data),value:data});
+      this.closePanel();
+      this.$emit("updateFilters",this.filters);
+    },
+    updateFilterCommunity(data){
+      var name="";
+      this.communities.forEach((result,key) => {
+        if (result.value==data) name=result.text;
+      });
+      this.filterEnabled.community = false;
+      this.chips.push({id:"community",text:this.$t('chips.community.label')+' : '+name,value:data});
       this.closePanel();
       this.$emit("updateFilters",this.filters);
     },
