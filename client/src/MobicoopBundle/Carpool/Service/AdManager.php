@@ -208,9 +208,10 @@ class AdManager
             $ad->setCommunities($data['communities']);
         }
 
-        // event
-        if (isset($data['eventId'])) {
-            $ad->setEventId($data['eventId']);
+        //Gestion events : If an event is set as destination or arrival, we set the event in proposal
+        if ($data['origin']['event'] != null || $data['destination']['event'] != null) {
+            $event = $data['origin']['event']  != null ? $data['origin']['event'] : $data['destination']['event'];
+            $ad->setEventId($event['id']);
         }
 
         // filters

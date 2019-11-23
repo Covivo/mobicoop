@@ -482,3 +482,41 @@ solidary_ask:
         fr: /solidarite/demande
         en: /solidary/ask
     controller: Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\SolidaryController:solidaryCreate
+
+
+####################
+# community routes #
+####################
+
+# display events
+event_list:
+    path:
+        fr: /evenements
+        en: /events
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventList
+
+# create event
+event_create:
+    path:
+        fr: /evenement/creer
+        en: /event/create
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventCreate
+
+# display one community
+event_show:
+    path:
+        fr: /evenement/{id}
+        en: /event/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventShow
+    requirements:
+        id: '\d+'
+
+# get all event proposals (AJAX)
+event_proposals:
+    path:
+        fr: /event-proposals/{id}
+        en: /event-proposals/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventProposals
+    requirements:
+        id: '\d+'
+

@@ -34,6 +34,11 @@ import UpdateProfile from '@components/user/profile/UpdateProfile'
 // SOLIDARITY
 import Solidary from '@components/solidary/Solidary'
 
+// EVENT
+import EventList from "@components/event/EventList";
+import EventCreate from "@components/event/EventCreate";
+import Event from "@components/event/Event";
+
 export default {
   MHeader,
   MFooter,
@@ -55,4 +60,7 @@ export default {
   SignupValidation,
   UpdateProfile,
   Solidary,
+  EventList,
+  EventCreate,
+  Event
 }

@@ -23,6 +23,8 @@
 
 namespace App\Geography\Service;
 
+use App\Event\Entity\Event;
+use App\Event\Repository\EventRepository;
 use App\Geography\Entity\Address;
 use App\Community\Entity\CommunityUser;
 use Geocoder\Plugin\PluginProvider;
@@ -47,7 +49,7 @@ class GeoSearcher
     const ICON_EVENT = 4;
     const ICON_VENUE = 23;
 
-    
+
     private $geocoder;
     private $geoTools;
     private $userRepository;
@@ -56,11 +58,12 @@ class GeoSearcher
     private $iconRepository;
     private $iconPath;
     private $dataPath;
+    private $eventRepository;
 
     /**
      * Constructor.
      */
-    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, IconRepository $iconRepository, string $iconPath, string $dataPath)
+    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, IconRepository $iconRepository, string $iconPath, string $dataPath)
     {
         $this->geocoder = $geocoder;
         $this->geoTools = $geoTools;
@@ -70,6 +73,7 @@ class GeoSearcher
         $this->iconRepository = $iconRepository;
         $this->iconPath = $iconPath;
         $this->dataPath = $dataPath;
+        $this->eventRepository = $eventRepository;
     }
 
     /**
@@ -108,7 +112,16 @@ class GeoSearcher
                 }
             }
         }
-        
+
+        // 2 - Events points
+        $events = $this->eventRepository->findByNameAndStatus($input, Event::STATUS_ACTIVE);
+        // exclude the private relay points
+        foreach ($events as $event) {
+            $address = $event->getAddress();
+            $address->setEvent($event);
+            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+            $result[] = $address;
+        }
 
         // 3 - relay points
         $relayPoints = $this->relayPointRepository->findByNameAndStatus($input, RelayPoint::STATUS_ACTIVE);
@@ -140,7 +153,7 @@ class GeoSearcher
                 $result[] = $address;
             }
         }
-                
+
         // 4 - sig addresses
         $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input))->all();
         // var_dump($geoResults);exit;
@@ -198,6 +211,7 @@ class GeoSearcher
 
             $result[] = $address;
         }
+
         return $result;
     }
 

@@ -15,6 +15,7 @@
             :geo-search-url="geoSearchUrl"
             :user="user"
             :init-regular="dataRegular"
+            :init-destination="destination"
             :punctual-date-optional="punctualDateOptional"
             @change="searchChanged"
           />
@@ -90,7 +91,11 @@ export default {
     params: {
       type: Object,
       default: null
-    }
+    },
+    initDestination: {
+      type: Object,
+      default: null
+    },
   },
   data() {
     return {
@@ -101,7 +106,7 @@ export default {
       date: null,
       time: null,
       origin: null,
-      destination: null,
+      destination: this.initDestination,
       locale: this.$i18n.locale
     };
   },
