@@ -1662,6 +1662,10 @@ class ResultManager
         $matchings = [];
         // we search the matchings as an offer
         foreach ($proposal->getMatchingRequests() as $request) {
+            // we exclude the private proposals
+            if ($request->getProposalRequest()->isPrivate()) {
+                continue;
+            }
             if (is_null($request->getFilters())) {
                 $request->setFilters($this->proposalMatcher->getMatchingFilters($request));
             }
@@ -1669,6 +1673,10 @@ class ResultManager
         }
         // we search the matchings as a request
         foreach ($proposal->getMatchingOffers() as $offer) {
+            // we exclude the private proposals
+            if ($offer->getProposalOffer()->isPrivate()) {
+                continue;
+            }
             if (is_null($offer->getFilters())) {
                 $offer->setFilters($this->proposalMatcher->getMatchingFilters($offer));
             }
