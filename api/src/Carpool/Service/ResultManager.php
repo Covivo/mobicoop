@@ -23,6 +23,7 @@
 
 namespace App\Carpool\Service;
 
+use App\Carpool\Entity\Ad;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
@@ -1683,6 +1684,7 @@ class ResultManager
     private function createMatchingResult(Proposal $proposal, int $matchingProposalId, array $matching, bool $return)
     {
         $result = new Result();
+        $result->setId($proposal->getId());
         $resultDriver = new ResultRole();
         $resultPassenger = new ResultRole();
 
@@ -2404,7 +2406,15 @@ class ResultManager
                         case "time":
                             $value = new \DateTime(str_replace("h", ":", $value));
                             $return = $a->getTime()->format("H") === $value->format("H");
-                        break;
+                            break;
+                        // Filter on Role (driver, passenger, both)
+                        case "role":
+                            $return = self::filterByRole($a, $value);
+                            break;
+                        // Filter on Gender
+                        case "gender":
+                            $return = $a->getCarpooler()->getGender() == $value;
+                            break;
                     }
                     return $return;
                 });
@@ -2412,5 +2422,22 @@ class ResultManager
         }
 
         return $results;
+    }
+
+    /**
+     * Check if the given result complies with the given role
+     *
+     * @param Result $result    The result to test
+     * @param integer $role     The role
+     * @return bool
+     */
+    private static function filterByRole(Result $result, int $role)
+    {
+        switch ($role) {
+            case Ad::ROLE_DRIVER: return !is_null($result->getResultPassenger());
+            case Ad::ROLE_PASSENGER: return !is_null($result->getResultDriver());
+            case Ad::ROLE_DRIVER_OR_PASSENGER: return !is_null($result->getResultDriver()) && !is_null($result->getResultPassenger());
+        }
+        return false;
     }
 }

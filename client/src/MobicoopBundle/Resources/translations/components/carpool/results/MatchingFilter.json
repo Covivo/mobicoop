@@ -5,8 +5,40 @@
       "order":{
         "label":"Ordre",
         "date":{
-          "increasing":"Par Date Croissante",
-          "decreasing":"Par Date Decroissante"
+          "increasing":"Par date croissante",
+          "decreasing":"Par date décroissante"
+        }
+      },
+      "filter":{
+        "role": {
+          "label":"Type d'annonce",
+          "driver":{
+            "label":"Conducteur",
+            "value":"1"
+          },
+          "passenger":{
+            "label":"Passager",
+            "value":"2"
+          },
+          "both":{
+            "label":"Conducteur et passager",
+            "value":"3"
+          }
+        },
+        "gender": {
+          "label":"Civilité",
+          "male":{
+            "label":"Monsieur",
+            "value":"1"
+          },
+          "female":{
+            "label":"Madame",
+            "value":"2"
+          },
+          "other":{
+            "label":"Autre",
+            "value":"3"
+          }
         }
       },
       "hour":{
@@ -14,13 +46,31 @@
       }
     },
     "chips":{
-      "date":"Date",
+      "date":{
+        "label":"Date",
+        "value":{
+          "ASC":"croissante",
+          "DESC":"décroissante"
+        }
+      },
       "hour":"Heure",
-      "value":{
-        "ASC":"Croissante",
-        "DESC":"Decroissant"
+      "role":{
+        "label":"Type",
+        "value":{
+          "1":"Conducteur",
+          "2":"Passager",
+          "3":"Conducteur et passager"
+        }
+      },
+      "gender":{
+        "label":"Civilité",
+        "value":{
+          "1":"Monsieur",
+          "2":"Madame",
+          "3":"Autre"
+        }
       }
-  }
+    }
   },
   "en":{
 

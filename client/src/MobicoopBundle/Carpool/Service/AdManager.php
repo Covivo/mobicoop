@@ -49,12 +49,13 @@ class AdManager
     /**
      * Get an ad and its results
      *
-     * @param int $id The ad id
+     * @param int $id       The ad id
+     * @param array|null    The filters to apply to the results
      * @return void
      */
-    public function getAd(int $id)
+    public function getAd(int $id, ?array $filters = null)
     {
-        if ($data = $this->dataProvider->getItem($id)) {
+        if ($data = $this->dataProvider->getItem($id, $filters)) {
             return $data->getValue();
         }
         return null;

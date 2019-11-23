@@ -12,7 +12,7 @@
         >
           <!-- Matching header -->
           <matching-header
-            v-if="!proposalId"
+            v-if="!lProposalId"
             :origin="origin"
             :destination="destination"
             :date="date"
@@ -181,6 +181,7 @@ export default {
       results: null,
       lOrigin: null,
       lDestination: null,
+      lProposalId: this.proposalId,
       filters: null
     };
   },
@@ -200,9 +201,17 @@ export default {
     },
     search(){
     // if a proposalId is provided, we load the proposal results
-      if (this.proposalId) {
+      if (this.lProposalId) {
         this.loading = true;
-        axios.get(this.$t("proposalUrl",{id: Number(this.proposalId)}))
+        let postParams = {
+          "filters": this.filters
+        };
+        axios.post(this.$t("proposalUrl",{id: Number(this.lProposalId)}),postParams,
+          {
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
           .then((response) => {
             this.loading = false;
             this.results = response.data;
@@ -232,6 +241,9 @@ export default {
           .then((response) => {
             this.loading = false;
             this.results = response.data;
+            if (this.results[0].id) {
+              this.lProposalId = this.results[0].id;
+            }
           })
           .catch((error) => {
             console.log(error);

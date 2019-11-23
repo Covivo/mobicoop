@@ -78,7 +78,7 @@ class Ad
      * @var int The id of this ad.
      *
      * @ApiProperty(identifier=true)
-     * @Groups("read")
+     * @Groups({"read","write"})
      */
     private $id;
 
@@ -378,7 +378,6 @@ class Ad
 
         return $this;
     }
-
 
     public function isSearch(): ?bool
     {

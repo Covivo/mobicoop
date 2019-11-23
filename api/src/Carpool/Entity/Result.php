@@ -48,6 +48,7 @@ class Result
     /**
      * @var int The id of this result.
      * @ApiProperty(identifier=true)
+     * @Groups("results")
      */
     private $id;
 
@@ -257,6 +258,13 @@ class Result
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getResultDriver(): ?ResultRole

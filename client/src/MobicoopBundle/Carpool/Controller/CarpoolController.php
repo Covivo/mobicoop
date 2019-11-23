@@ -174,10 +174,10 @@ class CarpoolController extends AbstractController
      * Ad results.
      * (POST)
      */
-    public function carpoolAdResults($id, ProposalManager $proposalManager)
+    public function carpoolAdResults($id, AdManager $adManager)
     {
-        $proposal = $proposalManager->getProposal($id);
-        $this->denyAccessUnlessGranted('results', $proposal);
+        $ad = $adManager->getAd($id);
+        $this->denyAccessUnlessGranted('results_ad', $ad);
 
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             'proposalId' => $id
@@ -188,12 +188,18 @@ class CarpoolController extends AbstractController
      * Ad result detail data.
      * (AJAX)
      */
-    public function carpoolAdDetail($id, ProposalManager $proposalManager, AdManager $adManager)
+    public function carpoolAdDetail($id, AdManager $adManager, Request $request)
     {
-        $proposal = $proposalManager->getProposal($id);
-        $this->denyAccessUnlessGranted('results', $proposal);
-        if ($results = $adManager->getAd($id)) {
-            return $this->json($results->getResults());
+        $filters = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if (isset($data['filters'])) {
+                $filters = $data['filters'];
+            }
+        }
+        if ($ad = $adManager->getAd($id, $filters)) {
+            $this->denyAccessUnlessGranted('results_ad', $ad);
+            return $this->json($ad->getResults());
         }
         return $this->json([]);
     }

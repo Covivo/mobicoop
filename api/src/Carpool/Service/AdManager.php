@@ -577,10 +577,11 @@ class AdManager
      * Get an ad.
      * Returns the ad, with its outward and return results.
      *
-     * @param int $id            The ad id to get
+     * @param int $id       The ad id to get
+     * @param array|null    The filters to apply to the results
      * @return Ad
      */
-    public function getAd(int $id)
+    public function getAd(int $id, ?array $filters = null)
     {
         $ad = new Ad();
         $proposal = $this->proposalManager->get($id);
@@ -589,6 +590,10 @@ class AdManager
         $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
         $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
         $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
+        $ad->setUserId($proposal->getUser()->getId());
+        if (!is_null($filters)) {
+            $ad->setFilters(['filters'=>$filters]);
+        }
         $ad->setResults(
             $this->resultManager->orderResults(
                 $this->resultManager->filterResults(
