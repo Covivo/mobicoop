@@ -285,10 +285,17 @@ You can do it using an app like Postman with the following settings :
 - Body: 
   ```
   {
-    "username":"your username",
-	  "password":"your password"
+    "username":"front",
+    "password":"mobicoop"
   }
+  
+
   ```
+  To access others routes, you need to add this token in postman :
+  
+      - Go to Authorization
+      - Select Bearer token in type, then set your token in the token input
+
 
 The swagger documentation can be found after install to see all route @ [http://localhost:8080/doc](http://localhost:8080/doc)
 
