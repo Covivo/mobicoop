@@ -145,8 +145,8 @@ export default {
             this.address.displayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
             if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
           } else if (this.address.event){
-            this.address.displayedLabel = 'Evénement - '+`${this.address.event.name} - ${this.address.displayLabel[0]}`;
-            if (this.displayNameInSelected) this.address.selectedDisplayedLabel = 'Evénement - '+`${this.address.event.name}`;
+            this.address.displayedLabel = `${this.address.event.name} - ${this.address.displayLabel[0]}`;
+            if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.event.name}`;
           } else if (this.address.name) {
             this.address.displayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
             if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
@@ -190,7 +190,7 @@ export default {
               if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel[0]}`;
             }else if (address.event){
               addresses[addressKey].displayedLabel = `${address.event.name} - ${address.displayLabel[0]}`;
-              if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = 'Evénement - '+ `${address.event.name}`;
+              if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.event.name}`;
             } else if (address.name) {
               addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel[0]}`;
               if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel[0]}`;
