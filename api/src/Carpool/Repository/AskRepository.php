@@ -35,6 +35,11 @@ class AskRepository
     {
         $this->repository = $entityManager->getRepository(Ask::class);
     }
+
+    public function find(int $id): ?Ask
+    {
+        return $this->repository->find($id);
+    }
     
     public function findAskByUser(User $user)
     {

@@ -34,6 +34,7 @@ use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Matching;
+use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
@@ -48,6 +49,7 @@ class AskManager
     private $eventDispatcher;
     private $entityManager;
     private $matchingRepository;
+    private $askRepository;
     private $logger;
 
     /**
@@ -55,11 +57,12 @@ class AskManager
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager, MatchingRepository $matchingRepository, LoggerInterface $logger)
+    public function __construct(EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager, MatchingRepository $matchingRepository, AskRepository $askRepository, LoggerInterface $logger)
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->entityManager = $entityManager;
         $this->matchingRepository = $matchingRepository;
+        $this->askRepository = $askRepository;
         $this->logger = $logger;
     }
     
@@ -503,7 +506,177 @@ class AskManager
         return $ad;
     }
 
-    
+    /**
+     * Get an ask from an ad
+
+     * @param int $askId    The ask id
+     * @param int $userId   The user id of the user making the request
+     * @return Ad       The ad for the ask with the computed results
+     */
+    public function getAskFromAd(int $askId, int $userId)
+    {
+        $ask = $this->askRepository->find($askId);
+        $ad = new Ad();
+        $ad->setUserId($userId);
+        $ad->setAskStatus($ask->getStatus());
+        switch ($ask->getStatus()) {
+            case Ask::STATUS_INITIATED:
+                if ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId) {
+                    $ad->setRole(Ad::ROLE_DRIVER);
+                } else {
+                    $ad->setRole(Ad::ROLE_PASSENGER);
+                }
+                break;
+            case Ask::STATUS_PENDING_AS_DRIVER:
+            case Ask::STATUS_ACCEPTED_AS_DRIVER:
+            case Ask::STATUS_DECLINED_AS_DRIVER:
+                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_DRIVER : Ad::ROLE_PASSENGER);
+                break;
+            case Ask::STATUS_PENDING_AS_PASSENGER:
+            case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+            case Ask::STATUS_DECLINED_AS_PASSENGER:
+                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_PASSENGER : Ad::ROLE_DRIVER);
+                break;
+        }
+        return $ad;
+    }
+
+    /**
+     * Update an ask from an ad
+     *
+     * @param Ad $ad        The ad to use
+     * @param int $userId   The user id of the user making the update
+     * @return Ad       The ad updated from the updated ask
+     */
+    public function updateAskFromAd(Ad $ad, int $userId)
+    {
+        $ask = $this->askRepository->find($ad->getId());
+        
+        // the ask posted is the master ask, we have to update all the asks linked :
+        // - the related ask for return trip
+        // - the opposite and return opposite if the role wasn't chosen
+        switch ($ad->getAskStatus()) {
+            case Ask::STATUS_PENDING_AS_DRIVER:
+                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_DRIVER : Ad::ROLE_PASSENGER);
+                $ask->setStatus($ask->getUser()->getId() == $userId ? Ask::STATUS_PENDING_AS_DRIVER : Ask::STATUS_PENDING_AS_PASSENGER);
+                break;
+            case Ask::STATUS_PENDING_AS_PASSENGER:
+                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_PASSENGER : Ad::ROLE_DRIVER);
+                $ask->setStatus($ask->getUser()->getId() == $userId ? Ask::STATUS_PENDING_AS_PASSENGER : Ask::STATUS_PENDING_AS_DRIVER);
+                break;
+            case Ask::STATUS_ACCEPTED_AS_DRIVER:
+                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_DRIVER : Ad::ROLE_PASSENGER);
+                $ask->setStatus($ask->getUser()->getId() == $userId ? Ask::STATUS_ACCEPTED_AS_DRIVER : Ask::STATUS_ACCEPTED_AS_PASSENGER);
+                break;
+            case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_PASSENGER : Ad::ROLE_DRIVER);
+                $ask->setStatus($ask->getUser()->getId() == $userId ? Ask::STATUS_ACCEPTED_AS_PASSENGER : Ask::STATUS_ACCEPTED_AS_DRIVER);
+                break;
+            case Ask::STATUS_DECLINED_AS_DRIVER:
+                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_DRIVER : Ad::ROLE_PASSENGER);
+                $ask->setStatus($ask->getUser()->getId() == $userId ? Ask::STATUS_DECLINED_AS_DRIVER : Ask::STATUS_DECLINED_AS_PASSENGER);
+                break;
+            case Ask::STATUS_DECLINED_AS_PASSENGER:
+                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_PASSENGER : Ad::ROLE_DRIVER);
+                $ask->setStatus($ask->getUser()->getId() == $userId ? Ask::STATUS_DECLINED_AS_PASSENGER : Ask::STATUS_DECLINED_AS_DRIVER);
+                break;
+        }
+        if ($ask->getAskLinked()) {
+            $ask->getAskLinked()->setStatus($ad->getAskStatus());
+        }
+        if ($ask->getAskOpposite()) {
+            $ask->getAskOpposite()->setStatus(
+                $ad->getAskStatus() == Ask::STATUS_PENDING_AS_DRIVER ? Ask::STATUS_PENDING_AS_PASSENGER : (
+                    $ad->getAskStatus() == Ask::STATUS_PENDING_AS_PASSENGER ? Ask::STATUS_PENDING_AS_DRIVER : (
+                        $ad->getAskStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER ? Ask::STATUS_ACCEPTED_AS_PASSENGER :(
+                        $ad->getAskStatus() == Ask::STATUS_DECLINED_AS_DRIVER ? Ask::STATUS_DECLINED_AS_PASSENGER : Ask::STATUS_DECLINED_AS_DRIVER
+                    )
+                    )
+                )
+            );
+            if ($ask->getAskOpposite()->getAskLinked()) {
+                $ask->getAskOpposite()->getAskLinked()->setStatus($ask->getAskOpposite()->getStatus());
+            }
+        }
+        if ($ad->getOutwardDate() && $ad->getOutwardLimitDate() && count($ad->getSchedule())>0) {
+            // regular
+            // we update the criteria of the master ask
+            $ask->getCriteria()->setFromDate($ad->getOutwardDate());
+            $ask->getCriteria()->setToDate($ad->getOutwardLimitDate());
+            // we init the original schedule
+            $ask->getCriteria()->setMonCheck(false);
+            $ask->getCriteria()->setTueCheck(false);
+            $ask->getCriteria()->setWedCheck(false);
+            $ask->getCriteria()->setThuCheck(false);
+            $ask->getCriteria()->setFriCheck(false);
+            $ask->getCriteria()->setSatCheck(false);
+            $ask->getCriteria()->setSunCheck(false);
+            if ($ask->getAskLinked()) {
+                $ask->getAskLinked()->getCriteria()->setMonCheck(false);
+                $ask->getAskLinked()->getCriteria()->setTueCheck(false);
+                $ask->getAskLinked()->getCriteria()->setWedCheck(false);
+                $ask->getAskLinked()->getCriteria()->setThuCheck(false);
+                $ask->getAskLinked()->getCriteria()->setFriCheck(false);
+                $ask->getAskLinked()->getCriteria()->setSatCheck(false);
+                $ask->getAskLinked()->getCriteria()->setSunCheck(false);
+                $ask->getAskLinked()->getCriteria()->setFromDate($ad->getOutwardDate());
+                $ask->getAskLinked()->getCriteria()->setToDate($ad->getOutwardLimitDate());
+            }
+            foreach ($ad->getSchedule() as $schedule) {
+                if ($schedule['outwardTime'] != '') {
+                    if (isset($schedule['mon']) && $schedule['mon']) {
+                        $ask->getCriteria()->setMonCheck(true);
+                    }
+                    if (isset($schedule['tue']) && $schedule['tue']) {
+                        $ask->getCriteria()->setTueCheck(true);
+                    }
+                    if (isset($schedule['wed']) && $schedule['wed']) {
+                        $ask->getCriteria()->setWedCheck(true);
+                    }
+                    if (isset($schedule['thu']) && $schedule['thu']) {
+                        $ask->getCriteria()->setThuCheck(true);
+                    }
+                    if (isset($schedule['fri']) && $schedule['fri']) {
+                        $ask->getCriteria()->setFriCheck(true);
+                    }
+                    if (isset($schedule['sat']) && $schedule['sat']) {
+                        $ask->getCriteria()->setSatCheck(true);
+                    }
+                    if (isset($schedule['sun']) && $schedule['sun']) {
+                        $ask->getCriteria()->setSunCheck(true);
+                    }
+                }
+                if ($ask->getAskLinked() && $schedule['returnTime'] != '') {
+                    if (isset($schedule['mon']) && $schedule['mon']) {
+                        $ask->getAskLinked()->getCriteria()->setMonCheck(true);
+                    }
+                    if (isset($schedule['tue']) && $schedule['tue']) {
+                        $ask->getAskLinked()->getCriteria()->setTueCheck(true);
+                    }
+                    if (isset($schedule['wed']) && $schedule['wed']) {
+                        $ask->getAskLinked()->getCriteria()->setWedCheck(true);
+                    }
+                    if (isset($schedule['thu']) && $schedule['thu']) {
+                        $ask->getAskLinked()->getCriteria()->setThuCheck(true);
+                    }
+                    if (isset($schedule['fri']) && $schedule['fri']) {
+                        $ask->getAskLinked()->getCriteria()->setFriCheck(true);
+                    }
+                    if (isset($schedule['sat']) && $schedule['sat']) {
+                        $ask->getAskLinked()->getCriteria()->setSatCheck(true);
+                    }
+                    if (isset($schedule['sun']) && $schedule['sun']) {
+                        $ask->getAskLinked()->getCriteria()->setSunCheck(true);
+                    }
+                }
+            }
+        }
+        $this->entityManager->persist($ask);
+        $this->entityManager->flush();
+
+        return $ad;
+    }
+
     public function getAsksFromProposal(Proposal $proposal)
     {
         $asks = [];

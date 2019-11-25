@@ -26,39 +26,38 @@ namespace App\Carpool\Controller;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Service\AskManager;
 use App\TranslatorTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Controller class for ad ask : creation of a ask for a given ad.
+ * Controller class for ad ask : update an ask for a given ad.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-class AdAsk
+class AdAskPut
 {
     use TranslatorTrait;
     
+    private $request;
     private $askManager;
-
-    const TYPE_ASK = "ask";
-    const TYPE_CONTACT = "contact";
     
-    public function __construct(AskManager $askManager)
+    public function __construct(RequestStack $requestStack, AskManager $askManager)
     {
+        $this->request = $requestStack->getCurrentRequest();
         $this->askManager = $askManager;
     }
 
     /**
-     * This method is invoked when a new ad ask is posted.
+     * This method is invoked when a ad ask is updated.
      *
      * @param Ad $data      The ad used to create the ask
-     * @param string $type  The type of ask (formal ask or contact)
      * @return Ad
      */
-    public function __invoke(Ad $data, string $type): Ad
+    public function __invoke(Ad $data): Ad
     {
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
         }
-        $data = $this->askManager->createAskFromAd($data, $type == self::TYPE_ASK);
+        $data = $this->askManager->updateAskFromAd($data, $this->request->get("userId"));
         return $data;
     }
 }
