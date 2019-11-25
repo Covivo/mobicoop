@@ -52,7 +52,7 @@
                 <span
                   v-if="criteria.frequency==1"
                   class="font-italic"
-                >{{ formateFromDate }} {{ $t("ui.infos.misc.at") }} {{ formateFromTime }}</span>
+                >{{ formateFromDate }} <span v-if="formateFromTime">{{ $t("ui.infos.misc.at") }} {{ formateFromTime }}</span></span>
                 <span
                   v-else
                   class="font-italic"
@@ -144,7 +144,7 @@ export default {
     },
     formateFromTime(){
       moment.locale(this.locale);
-      return moment(this.criteria.fromTime).format("HH")+"h"+moment(this.criteria.fromTime).format("mm");
+      return (this.criteria.fromTime) ? moment(this.criteria.fromTime).format("HH")+"h"+moment(this.criteria.fromTime).format("mm") : null;
     },
     regularCarpoolDays(){
       let carpoolDays = [];
