@@ -71,11 +71,15 @@ export default {
     hidden: {
       type: Boolean,
       default: false
+    },
+    givenLastUsers: {
+      type: Array,
+      default: null
     }
   },
   data () {
     return { 
-      lastUsers: null,
+      lastUsers: this.givenLastUsers ? this.givenLastUsers : null,
       loading: false
     }
   },
@@ -83,9 +87,6 @@ export default {
     refresh(){
       (this.refresh) ? this.getCommunityLastUsers() : ''
     }
-  },
-  mounted() {
-    this.getCommunityLastUsers();
   },
   methods:{
     getCommunityLastUsers() {
@@ -101,7 +102,7 @@ export default {
           this.loading = false;
           this.$emit("refreshed");
         });
-    },
+    }
   }
 }
 </script>
