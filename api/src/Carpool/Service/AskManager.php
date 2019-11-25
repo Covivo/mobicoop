@@ -214,6 +214,14 @@ class AskManager
             $criteria->setFriCheck(false);
             $criteria->setSatCheck(false);
             $criteria->setSunCheck(false);
+            // we use the driver times (the passenger times will be computed using these times and the chosen days)
+            $criteria->setMonTime($matching->getProposalOffer()->getCriteria()->getMonTime());
+            $criteria->setTueTime($matching->getProposalOffer()->getCriteria()->getTueTime());
+            $criteria->setWedTime($matching->getProposalOffer()->getCriteria()->getWedTime());
+            $criteria->setThuTime($matching->getProposalOffer()->getCriteria()->getThuTime());
+            $criteria->setFriTime($matching->getProposalOffer()->getCriteria()->getFriTime());
+            $criteria->setSatTime($matching->getProposalOffer()->getCriteria()->getSatTime());
+            $criteria->setSunTime($matching->getProposalOffer()->getCriteria()->getSunTime());
             if ($ad->getRole() != Ad::ROLE_DRIVER_OR_PASSENGER) {
                 // we fill the selected days if a role has been set
                 foreach ($ad->getSchedule() as $schedule) {
@@ -294,6 +302,14 @@ class AskManager
                 $criteriaOpposite->setFriCheck(false);
                 $criteriaOpposite->setSatCheck(false);
                 $criteriaOpposite->setSunCheck(false);
+                // we use the driver times (the passenger times will be computed using these times and the chosen days)
+                $criteriaOpposite->setMonTime($matching->getMatchingOpposite()->getProposalOffer()->getCriteria()->getMonTime());
+                $criteriaOpposite->setTueTime($matching->getMatchingOpposite()->getProposalOffer()->getCriteria()->getTueTime());
+                $criteriaOpposite->setWedTime($matching->getMatchingOpposite()->getProposalOffer()->getCriteria()->getWedTime());
+                $criteriaOpposite->setThuTime($matching->getMatchingOpposite()->getProposalOffer()->getCriteria()->getThuTime());
+                $criteriaOpposite->setFriTime($matching->getMatchingOpposite()->getProposalOffer()->getCriteria()->getFriTime());
+                $criteriaOpposite->setSatTime($matching->getMatchingOpposite()->getProposalOffer()->getCriteria()->getSatTime());
+                $criteriaOpposite->setSunTime($matching->getMatchingOpposite()->getProposalOffer()->getCriteria()->getSunTime());
             }
 
             $askOpposite->setCriteria($criteriaOpposite);
@@ -368,6 +384,14 @@ class AskManager
                 $criteriaReturn->setFriCheck(false);
                 $criteriaReturn->setSatCheck(false);
                 $criteriaReturn->setSunCheck(false);
+                // we use the driver times (the passenger times will be computed using these times and the chosen days)
+                $criteriaReturn->setMonTime($matching->getMatchingLinked()->getProposalOffer()->getCriteria()->getMonTime());
+                $criteriaReturn->setTueTime($matching->getMatchingLinked()->getProposalOffer()->getCriteria()->getTueTime());
+                $criteriaReturn->setWedTime($matching->getMatchingLinked()->getProposalOffer()->getCriteria()->getWedTime());
+                $criteriaReturn->setThuTime($matching->getMatchingLinked()->getProposalOffer()->getCriteria()->getThuTime());
+                $criteriaReturn->setFriTime($matching->getMatchingLinked()->getProposalOffer()->getCriteria()->getFriTime());
+                $criteriaReturn->setSatTime($matching->getMatchingLinked()->getProposalOffer()->getCriteria()->getSatTime());
+                $criteriaReturn->setSunTime($matching->getMatchingLinked()->getProposalOffer()->getCriteria()->getSunTime());
             
                 // we fill the selected days
                 if ($ad->getRole() != Ad::ROLE_DRIVER_OR_PASSENGER) {
@@ -442,6 +466,14 @@ class AskManager
                     $criteriaReturnOpposite->setFriCheck(false);
                     $criteriaReturnOpposite->setSatCheck(false);
                     $criteriaReturnOpposite->setSunCheck(false);
+                    // we use the driver times (the passenger times will be computed using these times and the chosen days)
+                    $criteriaReturnOpposite->setMonTime($matching->getMatchingLinked()->getMatchingOpposite()->getProposalOffer()->getCriteria()->getMonTime());
+                    $criteriaReturnOpposite->setTueTime($matching->getMatchingLinked()->getMatchingOpposite()->getProposalOffer()->getCriteria()->getTueTime());
+                    $criteriaReturnOpposite->setWedTime($matching->getMatchingLinked()->getMatchingOpposite()->getProposalOffer()->getCriteria()->getWedTime());
+                    $criteriaReturnOpposite->setThuTime($matching->getMatchingLinked()->getMatchingOpposite()->getProposalOffer()->getCriteria()->getThuTime());
+                    $criteriaReturnOpposite->setFriTime($matching->getMatchingLinked()->getMatchingOpposite()->getProposalOffer()->getCriteria()->getFriTime());
+                    $criteriaReturnOpposite->setSatTime($matching->getMatchingLinked()->getMatchingOpposite()->getProposalOffer()->getCriteria()->getSatTime());
+                    $criteriaReturnOpposite->setSunTime($matching->getMatchingLinked()->getMatchingOpposite()->getProposalOffer()->getCriteria()->getSunTime());
 
                     $askReturnOpposite->setCriteria($criteriaReturnOpposite);
 

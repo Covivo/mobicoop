@@ -52,7 +52,7 @@ use App\Carpool\Controller\AdAsk;
  *          },
  *          "contact"={
  *              "method"="POST",
- *              "path"="/ads/ask",
+ *              "path"="/ads/contact",
  *              "controller"=AdAsk::class,
  *              "defaults"={"type"="contact"}
  *          }
