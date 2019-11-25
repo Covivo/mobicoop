@@ -78,8 +78,12 @@ services:
         shared: false
 
     # Event
+    Mobicoop\Bundle\MobicoopBundle\Event\Controller\:
+        resource: '@MobicoopBundle/Event/Controller/*'
     Mobicoop\Bundle\MobicoopBundle\Event\Service\:
         resource: '@MobicoopBundle/Event/Service/*'
+    Mobicoop\Bundle\MobicoopBundle\Event\Security\:
+        resource: '@MobicoopBundle/Event/Security/*'
 
     # External journey
     Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\:

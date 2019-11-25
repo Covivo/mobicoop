@@ -13,7 +13,7 @@
             "text":"Trouver des covoitureurs allant au même événement.",
             "button": {
                 "label": "Voir les événements",
-                "route": "#"
+                "route": "/evenements"
             }
         },
         "solidary":{

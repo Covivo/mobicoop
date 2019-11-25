@@ -23,6 +23,7 @@
 
 namespace App\Carpool\Service;
 
+use App\Carpool\Entity\Ad;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
@@ -1641,6 +1642,7 @@ class ResultManager
                     $result->setReturn(true);
                 }
             }
+
             $finalResults[] = $result;
         }
         return $finalResults;
@@ -1660,6 +1662,10 @@ class ResultManager
         $matchings = [];
         // we search the matchings as an offer
         foreach ($proposal->getMatchingRequests() as $request) {
+            // we exclude the private proposals
+            if ($request->getProposalRequest()->isPrivate()) {
+                continue;
+            }
             if (is_null($request->getFilters())) {
                 $request->setFilters($this->proposalMatcher->getMatchingFilters($request));
             }
@@ -1667,6 +1673,10 @@ class ResultManager
         }
         // we search the matchings as a request
         foreach ($proposal->getMatchingOffers() as $offer) {
+            // we exclude the private proposals
+            if ($offer->getProposalOffer()->isPrivate()) {
+                continue;
+            }
             if (is_null($offer->getFilters())) {
                 $offer->setFilters($this->proposalMatcher->getMatchingFilters($offer));
             }
@@ -1683,9 +1693,11 @@ class ResultManager
     private function createMatchingResult(Proposal $proposal, int $matchingProposalId, array $matching, bool $return)
     {
         $result = new Result();
+        $result->setId($proposal->getId());
         $resultDriver = new ResultRole();
         $resultPassenger = new ResultRole();
-
+        $communities = [];
+            
         /************/
         /*  REQUEST */
         /************/
@@ -1702,6 +1714,11 @@ class ResultManager
             }
             if (is_null($result->getComment()) && !is_null($matching['request']->getProposalRequest()->getComment())) {
                 $result->setComment($matching['request']->getProposalRequest()->getComment());
+            }
+
+            // communities
+            foreach ($matching['request']->getProposalRequest()->getCommunities() as $community) {
+                $communities[$community->getId()] = $community->getName();
             }
             
             // outward
@@ -2033,6 +2050,11 @@ class ResultManager
             if (is_null($result->getComment()) && !is_null($matching['offer']->getProposalOffer()->getComment())) {
                 $result->setComment($matching['offer']->getProposalOffer()->getComment());
             }
+
+            // communities
+            foreach ($matching['offer']->getProposalOffer()->getCommunities() as $community) {
+                $communities[$community->getId()] = $community->getName();
+            }
             
             // outward
             $item = new ResultItem();
@@ -2350,6 +2372,98 @@ class ResultManager
             $result->setResultPassenger($resultPassenger);
         }
 
+        $result->setCommunities($communities);
+
         return $result;
+    }
+
+    /**
+     * Order the results
+     *
+     * @param array $results    The array of results to order
+     * @param array|null $order The order criteria
+     * @return array    The results ordered
+     */
+    public function orderResults(array $results, ?array $order=null)
+    {
+        $criteria = null;
+        $value = null;
+        if (is_array($order) && isset($order['order']) && is_array($order['order']) && isset($order['order']['criteria'])) {
+            $criteria = $order['order']['criteria'];
+        }
+        if (is_array($order) && isset($order['order']) && is_array($order['order']) && isset($order['order']['value'])) {
+            $value = $order['order']['value'];
+        }
+        usort($results, function ($a, $b) use ($criteria,$value) {
+            $return = -1;
+            switch ($criteria) {
+                case "date":
+                    ($value=="ASC") ? $return = $a->getDate() <=> $b->getDate() : $return = $b->getDate() <=> $a->getDate();
+                break;
+            }
+            return $return;
+        });
+
+        return $results;
+    }
+
+    /**
+     * Filter the results
+     *
+     * @param array $results        The array of results to filter
+     * @param array|null $filters   The array of filters to apply (applied successively in the order of the array)
+     * @return array    The results filtered
+     */
+    public function filterResults(array $results, ?array $filters=null)
+    {
+        if ($filters !== null && isset($filters['filters']) && $filters['filters']!==null) {
+            foreach ($filters['filters'] as $field => $value) {
+                if (is_null($value)) {
+                    continue;
+                }
+                $results = array_filter($results, function ($a) use ($field,$value) {
+                    $return = true;
+                    switch ($field) {
+                        // Filter on Time (the hour)
+                        case "time":
+                            $value = new \DateTime(str_replace("h", ":", $value));
+                            $return = $a->getTime()->format("H") === $value->format("H");
+                            break;
+                        // Filter on Role (driver, passenger, both)
+                        case "role":
+                            $return = self::filterByRole($a, $value);
+                            break;
+                        // Filter on Gender
+                        case "gender":
+                            $return = $a->getCarpooler()->getGender() == $value;
+                            break;
+                        // Filter on a Community
+                        case "community":
+                            $return = array_key_exists($value, $a->getCommunities());
+                            break;
+                    }
+                    return $return;
+                });
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Check if the given result complies with the given role
+     *
+     * @param Result $result    The result to test
+     * @param integer $role     The role
+     * @return bool
+     */
+    private static function filterByRole(Result $result, int $role)
+    {
+        switch ($role) {
+            case Ad::ROLE_DRIVER: return !is_null($result->getResultPassenger()) && is_null($result->getResultDriver());
+            case Ad::ROLE_PASSENGER: return !is_null($result->getResultDriver()) && is_null($result->getResultPassenger());
+            case Ad::ROLE_DRIVER_OR_PASSENGER: return !is_null($result->getResultDriver()) && !is_null($result->getResultPassenger());
+        }
+        return false;
     }
 }

@@ -23,6 +23,7 @@
       
     <v-card-actions class="py-0">
       <proposal-footer
+        :id="proposal.outward.id"
         :seats="proposal.outward.criteria.seats"
         :price="proposal.outward.criteria.price"
         :is-driver="isDriver"

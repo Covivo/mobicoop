@@ -23,6 +23,7 @@
           color="success"
           rounded
           :disabled="computedRequestsCount <= 0"
+          :href="$t('urlResult',{id:id})"
         >
           {{ computedRequestsCount }}&nbsp;{{ computedRequestsCount > 1 ? $t('potentialCarpooler.plural') : $t('potentialCarpooler.singular') }}
         </v-btn>
@@ -33,7 +34,6 @@
 
 <script>
 import { merge, find } from "lodash";
-import axios from "axios";
 import Translations from "@translations/components/user/profile/proposal/ProposalFooter.js";
 import TranslationsClient from "@clientTranslations/components/user/profile/proposal/ProposalFooter.js";
 
@@ -43,6 +43,10 @@ export default {
     messages: TranslationsMerged
   },
   props: {
+    id: {
+      type: Number,
+      default: null
+    },
     seats: {
       type: Number,
       default: null
