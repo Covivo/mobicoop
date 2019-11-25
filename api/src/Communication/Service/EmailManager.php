@@ -27,6 +27,8 @@ use App\Communication\Entity\Email;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+use function GuzzleHttp\json_decode;
+
 /**
  * Email sending service via Swift_Mailer
  *
@@ -95,9 +97,7 @@ class EmailManager
         $this->translator->setLocale($lang);
         $message = (new \Swift_Message($mail->getObject()))
             ->setFrom($senderEmail)
-            // ->setTo($mail->getRecipientEmail())
-                       ->setTo("remi.wortemann@gmail.com")
- 
+            ->setTo($mail->getRecipientEmail())
             ->setReplyTo($replyToEmail)
             ->setBody(
                 $this->templating->render(
@@ -109,9 +109,19 @@ class EmailManager
                 ),
                 'text/html'
             );
-        $message->getHeaders()->addTextHeader("X-JEMH-assignee", $senderEmail);
-        // $message->getHeaders()->addTextHeader($mail->getHeaders()['senderEmailName'], $mail->getHeaders()['senderEmailData']);
-        // $message->getHeaders()->addTextHeader($mail->getHeaders()['senderNameName'], $mail->getHeaders()['senderNameData']);
+        if ($this->emailAdditionalHeaders) {
+            $headers = json_decode($this->emailAdditionalHeaders, true);
+            foreach ($headers as $key => $value) {
+                if ($this->translator->trans($value) == "senderEmail") {
+                    $data = $mail->getSenderEmail();
+                } elseif ($this->translator->trans($value) == "senderName") {
+                    $data = $mail->getSenderName()." ".$mail->getSenderFirstName();
+                } else {
+                    $data = $this->translator->trans($value);
+                }
+                $message->getHeaders()->addTextHeader($this->translator->trans($key), $data);
+            }
+        }
         $this->translator->setLocale($sessionLocale);
 
         $failures = $this->mailer->send($message, $failures);
