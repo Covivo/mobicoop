@@ -102,14 +102,6 @@ export default {
       type: Object,
       default: null
     },
-    fromDate: {
-      type: String,
-      default: null
-    },
-    fromTime: {
-      type: String,
-      default: null
-    },
     idMessage: {
       type: Number,
       default: null
