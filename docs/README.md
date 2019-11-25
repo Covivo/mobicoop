@@ -285,12 +285,18 @@ You can do it using an app like Postman with the following settings :
 - Body: 
   ```
   {
-    "username":"front",
-    "password":"mobicoop"
+    "username":"your username"",
+    "password":"your password"
   }
   
-
+  Default credentials are :
+    {
+      "username":"front",
+      "password":"mobicoop"
+    }
   ```
+  
+  
   To access others routes, you need to add this token in postman :
   
       - Go to Authorization
