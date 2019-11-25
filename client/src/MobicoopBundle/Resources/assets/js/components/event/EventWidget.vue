@@ -28,17 +28,12 @@
           align="center"
         >
           <!-- Event : avatar, title and description -->
-          <v-row
-            align="center"
-            justify="center"
-          >
-            <event-infos
-              :event="event"
-              :url-alt-avatar="urlAltAvatar"
-              :avatar-version="avatarVersion"
-              :display-description="false"
-            />
-          </v-row>
+          <event-infos
+            :event="event"
+            :url-alt-avatar="urlAltAvatar"
+            :avatar-version="avatarVersion"
+            :display-description="false"
+          />
         </v-col>
       </v-row>
       <!-- search journey -->

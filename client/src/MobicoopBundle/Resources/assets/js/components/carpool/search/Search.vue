@@ -8,7 +8,7 @@
         justify="center"
       >
         <v-col
-          cols="12"
+          cols="6"
         >
           <!--SearchJourney-->
           <search-journey
@@ -17,7 +17,7 @@
             :init-regular="dataRegular"
             :init-destination="destination"
             :punctual-date-optional="punctualDateOptional"
-            :show-destination="false"
+            :show-destination="true"
             @change="searchChanged"
           />
         </v-col>
