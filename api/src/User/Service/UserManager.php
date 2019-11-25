@@ -544,4 +544,66 @@ class UserManager
         $this->entityManager->flush();
         return $user;
     }
+
+
+    /**
+     * Generate a validation token
+     * (Ajax)
+     *
+     */
+    public function anonymiseUser(User $user)
+    {
+        // L'utilisateur à posté des annonces de covoiturages -> on les supprimes
+        //TODO vérifier si il y à des réservations dessus
+        foreach ( $user->getProposals() as $proposal){
+            $this->entityManager->remove($proposal);
+        }
+
+        //TODO vérifier si il y à messages
+
+
+        $datenow = new DateTime();
+        //Replace all mandatory value by default value or token
+        $user->setEmail(uniqid().'@'.uniqid().'.fr');
+        $user->setGender(3);
+        $user->setStatus(3);
+        $user->setCreatedDate($datenow);
+        $user->setValidatedDate($datenow);
+        $user->setPhoneDisplay(1);
+
+        //Replace all value nullable by null
+        $user->setGivenName(null);
+        $user->setFamilyName(null);
+        $user->setPassword(null);
+        $user->setGivenName(null);
+        $user->setNationality(null);
+        $user->setBirthDate(null);
+        $user->setTelephone(null);
+        $user->setAnyRouteAsPassenger(null);
+        $user->setMultiTransportMode(null);
+        $user->setMaxDetourDistance(null);
+        $user->setMaxDetourDuration(null);
+        $user->setPwdToken(null);
+        $user->setGeoToken(null);
+        $user->setLanguage(null);
+        $user->setPwdToken(null);
+        $user->setValidatedDateToken(null);
+        $user->setFacebookId(null);
+        $user->setSmoke(null);
+        $user->setMusic(null);
+        $user->setMusicFavorites(null);
+        $user->setChat(null);
+        $user->setChatFavorites(null);
+        $user->setNewsSubscription(null);
+        $user->setPhoneToken(null);
+        $user->setIosAppId(null);
+        $user->setAndroidAppId(null);
+        $user->setPhoneValidatedDate(null);
+
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $user;
+    }
 }
