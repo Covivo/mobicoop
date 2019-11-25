@@ -48,7 +48,7 @@ export default {
       type:Object,
       default:null
     },
-    idMessageToSelect:{
+    idAskToSelect:{
       type: Number,
       default: null
     },
@@ -68,8 +68,8 @@ export default {
     }
   },
   watch: {
-    idMessageToSelect(){
-      (this.idMessageToSelect) ? this.refreshSelected(this.idMessageToSelect) : '';
+    idAskToSelect(){
+      (this.idAskToSelect) ? this.refreshSelected(this.idAskToSelect) : '';
     },
     refreshThreads(){
       (this.refreshThreads) ? this.getThreads(this.idMessageToSelect) : '';
@@ -85,9 +85,9 @@ export default {
     emitToggle(data){
       this.$emit("toggleSelected",data);
     },
-    refreshSelected(idMessage){
+    refreshSelected(idAsk){
       this.messages.forEach((item, index) => {
-        if(item.idMessage == idMessage){
+        if(item.idAsk == idAsk){
           this.$set(item, 'selected', true);
         }
         else{

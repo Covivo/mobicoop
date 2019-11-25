@@ -59,7 +59,7 @@
               <threads-carpool
                 :new-thread="newThreadCarpool"
                 :id-thread-default="idThreadDefault"
-                :id-message-to-select="idMessage"
+                :id-ask-to-select="currentIdAsk"
                 :refresh-threads="refreshThreadsCarpool"
                 @idMessageForTimeLine="updateDetails"
                 @toggleSelected="refreshSelected"
@@ -217,7 +217,7 @@ export default {
         this.refreshDetails = true;
         this.newThreadDirect = null;
         this.newThreadCarpool = null;
-        this.refreshSelected({'idMessage':this.idMessage});
+        (this.idAsk) ? this.refreshSelected({'idAsk':this.idAsk}) : this.refreshSelected({'idMessage':this.idMessage});
       });
     },
     updateStatusAskHistory(data){
@@ -276,7 +276,7 @@ export default {
     },
     refreshSelected(data){
       this.loadingDetails = true;
-      this.idMessage = data.idMessage;
+      (data.idAsk) ? this.currentIdAsk  = data.idAsk : this.idMessage = data.idMessage;
     },
     refreshDetailsCompleted(){
       this.refreshActions = true;

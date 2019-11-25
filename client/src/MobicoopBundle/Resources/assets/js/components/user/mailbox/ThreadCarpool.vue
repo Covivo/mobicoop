@@ -3,7 +3,7 @@
     <v-container class="window-scroll px-0">
       <v-card
         class="mx-0 mt-2 pt-1 pb-1"
-        :class="selected ? 'primary' : ''"
+        :class="selected ? 'primary lighten-4' : ''"
         outlined
         tile
         style="border-style:none;"
@@ -166,7 +166,7 @@ export default {
       this.selected = !this.selected;
     },
     emit(){
-      this.$emit("toggleSelected",{idMessage:this.idMessage});
+      this.$emit("toggleSelected",{idAsk:this.idAsk});
       this.$emit("idMessageForTimeLine",
         {
           type:"Carpool",
