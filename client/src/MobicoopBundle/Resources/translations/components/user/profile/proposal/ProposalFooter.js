@@ -7,7 +7,8 @@ export default {
     potentialCarpooler: {
       singular: "covoitureur potentiel",
       plural: "covoitureurs potentiels"
-    }
+    },
+    urlResult:"/covoiturage/annonce/{id}/resultats"
   },
   en: {
     seat: {
@@ -17,6 +18,7 @@ export default {
     potentialCarpooler: {
       singular: "potential carpooler",
       plural: "potentials carpoolers"
-    }
+    },
+    urlResult:"/carpool/ad/{id}/results"
   }
 }

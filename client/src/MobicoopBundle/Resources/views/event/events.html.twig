@@ -1,0 +1,41 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}Les Événements
+{% endblock %}
+{% block stylesheets %}
+
+{% endblock %}
+{% block main %}
+    <section class="hero firstSection">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    Les Événements
+                </h1>
+            </div>
+        </div>
+    </section>
+    <br/><br/>
+    <div class="layout justify-center"
+         outlined
+         tile>
+        <div class="flex xs10">
+            {# <community-help></community-help> #}
+            <br/><br/>
+            <event-list
+                    :paths="{{ {'event_create':path('event_create')}|json_encode }}"
+                    :eventscoming="{{ eventComing |json_encode }}"
+                    :eventspassed="{{ eventPassed |json_encode }}"
+                    :points-coming="{{ pointComing|json_encode }}"
+                    :map-provider="{{ mapProvider|json_encode }}"
+                    :url-tiles="{{ urlTiles|json_encode }}"
+                    :attribution-copyright="{{ attributionCopyright|json_encode }}"
+            ></event-list>
+            <br/><br/>
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+
+{% endblock %}

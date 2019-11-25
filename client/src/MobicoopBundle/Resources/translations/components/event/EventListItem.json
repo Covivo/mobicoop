@@ -1,0 +1,16 @@
+{
+  "fr": {
+    "routes": {
+      "event": "/evenement/{id}"
+    },
+    "eventDetails":"Détails de l'événement",
+    "join":"Rejoindre l'événement"
+  },
+  "en": {
+    "routes": {
+        "event": "/event/{id}"
+      }
+    },
+    "eventDetails":"Evennt details",
+    "join":"Join the event"
+}

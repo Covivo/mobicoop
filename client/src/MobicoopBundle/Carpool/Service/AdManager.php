@@ -49,12 +49,13 @@ class AdManager
     /**
      * Get an ad and its results
      *
-     * @param int $id The ad id
+     * @param int $id       The ad id
+     * @param array|null    The filters to apply to the results
      * @return void
      */
-    public function getAd(int $id)
+    public function getAd(int $id, ?array $filters = null)
     {
-        if ($data = $this->dataProvider->getItem($id)) {
+        if ($data = $this->dataProvider->getItem($id, $filters)) {
             return $data->getValue();
         }
         return null;
@@ -208,9 +209,15 @@ class AdManager
             $ad->setCommunities($data['communities']);
         }
 
-        // event
-        if (isset($data['eventId'])) {
-            $ad->setEventId($data['eventId']);
+        //Gestion events : If an event is set as destination or arrival, we set the event in proposal
+        if ($data['origin']['event'] != null || $data['destination']['event'] != null) {
+            $event = $data['origin']['event']  != null ? $data['origin']['event'] : $data['destination']['event'];
+            $ad->setEventId($event['id']);
+        }
+
+        // filters
+        if (isset($data['filters'])) {
+            $ad->setFilters($data['filters']);
         }
         
         // creation of the ad

@@ -555,7 +555,25 @@ class AdManager
 
         // we compute the results
         $this->logger->info('Ad creation | Start creation results  ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        $ad->setResults($this->resultManager->createAdResults($outwardProposal));
+
+        // default order
+        $ad->setFilters([
+                'order'=>[
+                    'criteria'=>'date',
+                    'value'=>'ASC'
+                ]
+            
+        ]);
+
+        $ad->setResults(
+            $this->resultManager->orderResults(
+                $this->resultManager->filterResults(
+                    $this->resultManager->createAdResults($outwardProposal),
+                    $ad->getFilters()
+                ),
+                $ad->getFilters()
+            )
+        );
         $this->logger->info('Ad creation | End creation results  ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         // we set the ad id to the outward proposal id
@@ -568,10 +586,12 @@ class AdManager
      * Get an ad.
      * Returns the ad, with its outward and return results.
      *
-     * @param int $id            The ad id to get
+     * @param int $id       The ad id to get
+     * @param array|null    The filters to apply to the results
+     * @param array|null    The order to apply to the results
      * @return Ad
      */
-    public function getAd(int $id)
+    public function getAd(int $id, ?array $filters = null, ?array $order = null)
     {
         $ad = new Ad();
         $proposal = $this->proposalManager->get($id);
@@ -580,7 +600,24 @@ class AdManager
         $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
         $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
         $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
-        $ad->setResults($this->resultManager->createAdResults($proposal));
+        $ad->setUserId($proposal->getUser()->getId());
+        $aFilters = [];
+        if (!is_null($filters)) {
+            $aFilters['filters']=$filters;
+        }
+        if (!is_null($order)) {
+            $aFilters['order']=$order;
+        }
+        $ad->setFilters($aFilters);
+        $ad->setResults(
+            $this->resultManager->orderResults(
+                $this->resultManager->filterResults(
+                    $this->resultManager->createAdResults($proposal),
+                    $ad->getFilters()
+                ),
+                $ad->getFilters()
+            )
+        );
         return $ad;
     }
 }
