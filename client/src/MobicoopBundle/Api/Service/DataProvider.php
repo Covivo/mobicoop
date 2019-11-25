@@ -226,7 +226,9 @@ class DataProvider
                 $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
                 $value = (string) $clientResponse->getBody();
             } else {
+                dump($this->resource."/".$id.'/'.$operation, ['query'=>$params]);
                 $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params]);
+            dump($clientResponse);
                 $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
             }
             if ($clientResponse->getStatusCode() == 200) {

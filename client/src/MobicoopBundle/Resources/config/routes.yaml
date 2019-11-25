@@ -52,6 +52,13 @@ user_profile_update:
         fr: /utilisateur/profil/modifier/{tabDefault?}
         en: /user/profile/update/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
+
+# Delete user by anonymise
+user_delete:
+    path:
+        fr: /utilisateur/profil/supprimer
+        en: /user/profil/delete
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::deleteUser
     
 # phone validation
 user_phone_validation:

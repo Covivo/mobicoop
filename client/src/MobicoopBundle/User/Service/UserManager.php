@@ -315,15 +315,16 @@ class UserManager
      *
      * @return boolean The result of the deletion.
      */
-    public function deleteUser(int $id)
+    public function deleteUser(User $user)
     {
-        $response = $this->dataProvider->delete($id);
-        if ($response->getCode() == 204) {
-            return true;
-            $this->logger->info('User Deleta | Start');
+        //$response = $this->dataProvider->getSpecialItem($user->getId(), "anonymise_user");
+        $response = $this->dataProvider->putSpecial($user, null, "anonymise_user");
+        //L'user est anonymiser
+        if ($response->getCode() == 200) {
+            return $response->getValue();
         }
-        $this->logger->info('User Delete | FaiL');
-        return false;
+
+        return $response;
     }
 
     /**

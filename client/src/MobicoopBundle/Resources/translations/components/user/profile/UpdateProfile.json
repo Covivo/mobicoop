@@ -2,7 +2,8 @@
     "fr":{
         "titles": {
             "personnalInfos":"Informations personnelles",
-            "password":"Mot de passe"
+            "password":"Mot de passe",
+            "deleteAccount" : "Supprimer mon compte"
         },
         "snackBar": {
             "profileUpdated":"Votre profil a bien été mis à jour!",
@@ -22,7 +23,8 @@
                 }
         },
         "route": {
-            "update": "/utilisateur/profil/modifier"
+            "update": "/utilisateur/profil/modifier",
+            "supprimer": "/utilisateur/profil/supprimer"
         },
         "news": {
             "label": "Actualités du service {platform}  (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)",
@@ -60,12 +62,24 @@
                 "inputError": "Le code de validation est composé de 4 chiffres."
             }   
            
+        },
+        "dialog" : {
+            "titles": {
+                "deleteAccount":"Suppréssion de votre compte"
+            },
+            "content": {
+                "deleteAccount":"Êtes-vous sûr de vouloir supprimer votre compte ?<br/> Cette action est irréversible.<br/> Elle aura pour conséquences de :<br/> - supprimer l’intégralité de vos données personnelles<br/>- supprimer tous vos messages échangés avec d’autres usagers<br/>- vous anonymiser dans les archives de covoiturages d’autres covoitureurs<br/>- supprimer toutes les annonces de covoiturage encore actives que vous auriez<br/>- rejeter toutes les demandes de covoiturage reçues en cours<br/>- annuler tous les covoiturages planifiés<br/><br/>Confirmez-vous ?"
+            },
+            "buttons" :{
+                "confirmDelete":"Je confirme la suppression"
+            }
         }
     },
     "en":{
         "titles": {
             "personnalInfos":"Personnal Informations",
-            "password":"Password"
+            "password":"Password",
+            "deleteAccount" : "Delete my account"
         },
         "snackBar": {
             "profileUpdated":"Your profile has been updated",
