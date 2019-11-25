@@ -60,7 +60,8 @@ export default {
   data () {
     return {
       hasAtLeastOneAsk: false,
-      hasAtLeastOneAcceptedAsk: false
+      hasAtLeastOneAcceptedAsk: false,
+      lastMessageId: null
     }
   },
   computed: {
@@ -84,12 +85,19 @@ export default {
     checkAsks () {
       let hasAtLeastOneAsk = false;
       let hasAtLeastOneAcceptedAsk = false;
+      let lastMessageId = -1;
+
       // check offers of outward
       if (this.proposal.outward && this.proposal.outward.matchingOffers) {
         this.proposal.outward.matchingOffers.forEach(offer => {
-          if (offer.asks.length > 0) {
+          let asks = offer.asks;
+          let asksLength = asks.length;
+          if (asksLength > 0) {
             hasAtLeastOneAsk = true;
-            offer.asks.forEach(ask => {
+            asks.forEach(ask => {
+              let askHistories = ask.askHistories;
+              let askHistoriesLength = askHistories.length;
+              lastMessageId = askHistories[askHistoriesLength - 1].message > lastMessageId ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
               // todo: passer le statut a 4 après merge de l'update
               if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
             })
@@ -97,11 +105,16 @@ export default {
         })
       }
       // check requests of outward
-      if (!hasAtLeastOneAsk && !hasAtLeastOneAcceptedAsk && this.proposal.outward && this.proposal.outward.matchingRequests) {
+      if (this.proposal.outward && this.proposal.outward.matchingRequests) {
         this.proposal.outward.matchingRequests.forEach(request => {
-          if (request.asks.length > 0) {
+          let asks = request.asks;
+          let asksLength = asks.length;
+          if (asksLength > 0) {
             hasAtLeastOneAsk = true;
             request.asks.forEach(ask => {
+              let askHistories = ask.askHistories;
+              let askHistoriesLength = askHistories.length;
+              lastMessageId = askHistories[askHistoriesLength - 1].message > lastMessageId ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
               // todo: passer le statut a 4 après merge de l'update
               if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
             })
@@ -109,31 +122,46 @@ export default {
         })
       }
       // check offers of return
-      if (!hasAtLeastOneAsk && !hasAtLeastOneAcceptedAsk && this.proposal.return && this.proposal.return.matchingOffers) {
+      if (this.proposal.return && this.proposal.return.matchingOffers) {
         this.proposal.return.matchingOffers.forEach(offer => {
           if (offer.asks.length > 0) {
-            hasAtLeastOneAsk = true;
-            offer.asks.forEach(ask => {
-              // todo: passer le statut a 4 après merge de l'update
-              if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
-            })
+            let asks = offer.asks;
+            let asksLength = asks.length;
+            if (asksLength > 0) {
+              hasAtLeastOneAsk = true;
+              asks.forEach(ask => {
+                let askHistories = ask.askHistories;
+                let askHistoriesLength = askHistories.length;
+                lastMessageId = askHistories[askHistoriesLength - 1].message > lastMessageId ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
+                // todo: passer le statut a 4 après merge de l'update
+                if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
+              })
+            }
           }
         })
       }
       // check requests of outward
-      if (!hasAtLeastOneAsk && !hasAtLeastOneAcceptedAsk && this.proposal.return && this.proposal.return.matchingRequests) {
+      if (this.proposal.return && this.proposal.return.matchingRequests) {
         this.proposal.return.matchingRequests.forEach(request => {
           if (request.asks.length > 0) {
-            hasAtLeastOneAsk = true;
-            request.asks.forEach(ask => {
-              // todo: passer le statut a 4 après merge de l'update
-              if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
-            })
+            let asks = request.asks;
+            let asksLength = asks.length;
+            if (asksLength > 0) {
+              hasAtLeastOneAsk = true;
+              asks.forEach(ask => {
+                let askHistories = ask.askHistories;
+                let askHistoriesLength = askHistories.length;
+                lastMessageId = askHistories[askHistoriesLength - 1].message > lastMessageId ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
+                // todo: passer le statut a 4 après merge de l'update
+                if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
+              })
+            }
           }
         })
       }
       this.hasAtLeastOneAsk = hasAtLeastOneAsk;
       this.hasAtLeastOneAcceptedAsk = hasAtLeastOneAcceptedAsk;
+      this.lastMessageId = lastMessageId;
     },
     proposalDeleted(id) {
       this.$emit('proposal-deleted', id)

@@ -13,6 +13,7 @@
       >
         <v-btn
           icon
+          @click="openMailBox()"
         >
           <v-icon class="primary--text">
             mdi-email
@@ -32,6 +33,7 @@
 
 <script>
 import { merge, find } from "lodash";
+import axios from "axios";
 import Translations from "@translations/components/user/profile/proposal/ProposalFooter.js";
 import TranslationsClient from "@clientTranslations/components/user/profile/proposal/ProposalFooter.js";
 
@@ -88,6 +90,31 @@ export default {
       } else {
         return 0;
       }
+    }
+  },
+  methods: {
+    post: function (path, params, method='post') {
+      const form = document.createElement('form');
+      form.method = method;
+      form.action = window.location.origin+'/'+path;
+
+      for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+          const hiddenField = document.createElement('input');
+          hiddenField.type = 'hidden';
+          hiddenField.name = key;
+          hiddenField.value = params[key];
+          form.appendChild(hiddenField);
+        }
+      }
+      document.body.appendChild(form);
+      form.submit();
+    },
+    openMailBox () {
+      let lParams = {
+        idMessage: 4
+      };
+      this.post(`${this.$t("utilisateur/messages")}`, lParams);
     }
   }
 }
