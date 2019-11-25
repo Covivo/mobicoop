@@ -236,12 +236,8 @@ export default {
     this.destination = this.initDestination;
   },
   mounted() {
-    // this.getCommunityUser();
-    // this.checkIfUserLogged();
     this.showPoints();
-    this.getEventProposals();
-    this.checkDomain();
-    // this.getCommunityUser();
+    // this.getEventProposals();
   },
   methods:{
     searchChanged: function (search) {
