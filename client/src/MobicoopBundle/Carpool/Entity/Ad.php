@@ -315,10 +315,12 @@ class Ad implements ResourceInterface
     /**
      * @var boolean|null If the current user can make a formal Ask from this Ad
      */
-    private $canMakeAsk;
+    private $canUpdateAsk;
 
     /**
      * @var int|null Status of the Ask related to this Ad
+     *
+     * @Groups({"post","put"})
      */
     private $statusAsk;
 
@@ -803,14 +805,14 @@ class Ad implements ResourceInterface
         return $this;
     }
 
-    public function canMakeAsk(): ?bool
+    public function getCanUpdateAsk(): ?bool
     {
-        return $this->canMakeAsk;
+        return $this->canUpdateAsk;
     }
     
-    public function setCanMakeAsk(?bool $canMakeAsk): self
+    public function setCanUpdateAsk(?bool $canUpdateAsk): self
     {
-        $this->canMakeAsk = $canMakeAsk;
+        $this->canUpdateAsk = $canUpdateAsk;
         
         return $this;
     }

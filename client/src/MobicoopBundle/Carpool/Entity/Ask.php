@@ -36,9 +36,12 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 class Ask implements ResourceInterface
 {
     const STATUS_INITIATED = 1;
-    const STATUS_PENDING = 2;
-    const STATUS_ACCEPTED = 3;
-    const STATUS_DECLINED = 4;
+    const STATUS_PENDING_AS_DRIVER = 2;
+    const STATUS_PENDING_AS_PASSENGER = 3;
+    const STATUS_ACCEPTED_AS_DRIVER = 4;
+    const STATUS_ACCEPTED_AS_PASSENGER = 5;
+    const STATUS_DECLINED_AS_DRIVER = 6;
+    const STATUS_DECLINED_AS_PASSENGER = 7;
     
     /**
      * @var int The id of this ask.

@@ -48,6 +48,7 @@ use Symfony\Component\HttpFoundation\Response;
 use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
@@ -1616,78 +1617,72 @@ class UserController extends AbstractController
      * Update and ask
      * Ajax Request
      */
-    public function userMessageUpdateAsk(Request $request, AskManager $askManager, AskHistoryManager $askHistoryManager)
+    public function userMessageUpdateAsk(Request $request, AdManager $adManager, UserManager $userManager)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
+            $user = $userManager->getLoggedUser();
             $idAsk = $data['idAsk'];
             $status = $data['status'];
-            $criteria = ($data['criteria']) ? $data['criteria'] : null;
+            $role = $data['role'];
+            $outwardDate = $data['outwardDate'];
+            $outwardLimitDate = $data['outwardLimitDate'];
+            $outwardSchedule = ($data['outwardSchedule']) ? $data['outwardSchedule'] : null;
+            $returnSchedule = ($data['returnSchedule']) ? $data['returnSchedule'] : null;
 
-            // Get the Ask
-            $ask = $askManager->getAsk($idAsk);
+            if (!is_null($outwardSchedule) || !is_null($returnSchedule)) {
 
-            // Get the Ask of the return
-            $askReturn = $ask->getAskLinked();
+                // It's a regular journey I need to build the schedule of this journey (structure of an Ad)
 
-            $reponseofmanager= $this->handleManagerReturnValue($ask);
-            if (!empty($reponseofmanager)) {
-                return $reponseofmanager;
-            }
-            
-            // Change the status
-            if ($status!==null && is_numeric($status)) {
-                $ask->setStatus($status);
-            }
-            
-            // If we need to, we update the criteria
-            if ($criteria!==null) {
+                $days = ["mon","tue","wed","thu","fri","sat","sun"];
+                $schedule = [];
+                foreach ($days as $day) {
+                    $currentOutwardTime = (!is_null($returnSchedule)) ? $outwardSchedule[$day."Time"] : null;
+                    $currentReturnTime = (!is_null($returnSchedule)) ? $returnSchedule[$day."Time"] : null;
 
-                /** TO DO : Get the criteria of the return */
+                    // I need to know if there is already a section of the schedule with these times
+                    $alreadyExists = false;
+                    if (count($schedule)>0) {
+                        foreach ($schedule as $key => $section) {
+                            (isset($section['outwardTime']) && !is_null($section['outwardTime'])) ? $sectionOutwardTime = $section['outwardTime'] : $sectionOutwardTime = null;
+                            (isset($section['returnTime']) && !is_null($section['returnTime'])) ? $sectionReturnTime = $section['returnTime'] : $sectionReturnTime = null;
 
-                $ask->getCriteria()->setFromDate(new \DateTime($criteria['fromDate']));
-                $ask->getCriteria()->setToDate(new \DateTime($criteria['toDate']));
-                if ($askReturn!=null) {
-                    $askReturn->getCriteria()->setFromDate(new \DateTime($criteria['fromDate']));
-                    $askReturn->getCriteria()->setToDate(new \DateTime($criteria['toDate']));
-                }
+                            if ($sectionOutwardTime===$currentOutwardTime && $sectionReturnTime===$currentReturnTime) {
+                                $alreadyExists = true;
+                                // It's exists so i update the current day on this section
+                                $schedule[$key][$day] = 1;
+                            }
+                        }
+                    }
 
-                if (isset($criteria['outwardSchedule'])) {
-                    $ask->getCriteria()->setMonCheck(($criteria['outwardSchedule']['monTime']) ? true : false);
-                    $ask->getCriteria()->setTueCheck(($criteria['outwardSchedule']['tueTime']) ? true : false);
-                    $ask->getCriteria()->setWedCheck(($criteria['outwardSchedule']['wedTime']) ? true : false);
-                    $ask->getCriteria()->setThuCheck(($criteria['outwardSchedule']['thuTime']) ? true : false);
-                    $ask->getCriteria()->setFriCheck(($criteria['outwardSchedule']['friTime']) ? true : false);
-                    $ask->getCriteria()->setSatCheck(($criteria['outwardSchedule']['satTime']) ? true : false);
-                    $ask->getCriteria()->setSunCheck(($criteria['outwardSchedule']['sunTime']) ? true : false);
-                }
-
-
-                if ($askReturn!==null && isset($criteria['returnSchedule'])) {
-                    $askReturn->getCriteria()->setMonCheck(($criteria['returnSchedule']['monTime']) ? true : false);
-                    $askReturn->getCriteria()->setTueCheck(($criteria['returnSchedule']['tueTime']) ? true : false);
-                    $askReturn->getCriteria()->setWedCheck(($criteria['returnSchedule']['wedTime']) ? true : false);
-                    $askReturn->getCriteria()->setThuCheck(($criteria['returnSchedule']['thuTime']) ? true : false);
-                    $askReturn->getCriteria()->setFriCheck(($criteria['returnSchedule']['friTime']) ? true : false);
-                    $askReturn->getCriteria()->setSatCheck(($criteria['returnSchedule']['satTime']) ? true : false);
-                    $askReturn->getCriteria()->setSunCheck(($criteria['returnSchedule']['sunTime']) ? true : false);
+                    // It's a new section i need tu push it with the good day at 1
+                    if (!$alreadyExists && (!is_null($currentOutwardTime) || !is_null($currentReturnTime))) {
+                        $schedule[] = [
+                            "outwardTime" => $currentOutwardTime,
+                            "returnTime" => $currentReturnTime,
+                            "mon" => ($day=="mon") ? 1 : 0,
+                            "tue" => ($day=="tue") ? 1 : 0,
+                            "wed" => ($day=="wed") ? 1 : 0,
+                            "thu" => ($day=="thu") ? 1 : 0,
+                            "fri" => ($day=="fri") ? 1 : 0,
+                            "sat" => ($day=="sat") ? 1 : 0,
+                            "sun" => ($day=="sun") ? 1 : 0
+                        ];
+                    }
                 }
             }
 
-            // Update the Ask via API
-            $ask = $askManager->updateAsk($ask);
+            // I build the Ad for the put
+            $adToPost = new Ad($idAsk);
+            $adToPost->setStatusAsk($status);
+            $adToPost->setOutwardDate(new \DateTime($outwardDate));
+            $adToPost->setOutwardLimitDate(new \DateTime($outwardLimitDate));
+            if (count($schedule)>0) {
+                $adToPost->setSchedule($schedule);
+            } // Only regular
 
-            // Update the return Ask
-            if ($askReturn!=null) {
-                $askReturn = $askManager->updateAsk($askReturn);
-            }
-
-            $return = [
-                "id"=>$ask->getId(),
-                "status"=>$ask->getStatus(),
-                "return" => ($askReturn!=null) ? ["id"=>$askReturn->getId(),"status"=>$askReturn->getStatus()] : null
-            ];
+            $return = $adManager->updateAdAsk($adToPost, $user->getId());
 
             return new JsonResponse($return);
         }

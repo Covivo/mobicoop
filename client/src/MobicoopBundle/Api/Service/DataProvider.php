@@ -454,14 +454,15 @@ class DataProvider
      *
      * @return Response The response of the operation.
      */
-    public function putSpecial(ResourceInterface $object, ?array $groups=null, ?string $operation): Response
+    public function putSpecial(ResourceInterface $object, ?array $groups=null, ?string $operation, ?array $params=null): Response
     {
         if (is_null($groups)) {
             $groups = ['put'];
         }
         try {
             $clientResponse = $this->client->put($this->resource."/".$object->getId()."/$operation", [
-                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true)
+                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true),
+                    'query' => $params
             ]);
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));

@@ -350,4 +350,19 @@ class AdManager
         }
         return null;
     }
+
+    /**
+     * Update an Ask via the Ad
+     *
+     * @param int $ad   The ad to update
+     * @param int $userId  The user that make the request
+     * @return Ad|null
+     */
+    public function updateAdAsk(Ad $ad, int $userId)
+    {
+        if ($data = $this->dataProvider->putSpecial($ad, null, "ask", ["userId"=>$userId])) {
+            return $data->getValue();
+        }
+        return null;
+    }
 }
