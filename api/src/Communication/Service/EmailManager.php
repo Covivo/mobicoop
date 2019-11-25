@@ -41,6 +41,7 @@ class EmailManager
     private $templatePath;
     private $logger;
     private $translator;
+    private $emailAdditionalHeaders;
  
     /**
        * EmailManager constructor.
@@ -51,8 +52,9 @@ class EmailManager
        * @param string $emailSender
        * @param string $emailReplyTo
        * @param string $templatePath
+       * @param string $emailAdditionalHeaders
        */
-    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailReplyTo, string $templatePath)
+    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailReplyTo, string $templatePath, string $emailAdditionalHeaders)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
@@ -60,7 +62,8 @@ class EmailManager
         $this->emailReplyToDefault = $emailReplyTo;
         $this->templatePath = $templatePath;
         $this->logger = $logger;
-        $this->translator= $translator;
+        $this->translator = $translator;
+        $this->emailAdditionalHeaders = $emailAdditionalHeaders;
     }
 
     /**
@@ -92,7 +95,9 @@ class EmailManager
         $this->translator->setLocale($lang);
         $message = (new \Swift_Message($mail->getObject()))
             ->setFrom($senderEmail)
-            ->setTo($mail->getRecipientEmail())
+            // ->setTo($mail->getRecipientEmail())
+                       ->setTo("remi.wortemann@gmail.com")
+ 
             ->setReplyTo($replyToEmail)
             ->setBody(
                 $this->templating->render(
@@ -104,6 +109,9 @@ class EmailManager
                 ),
                 'text/html'
             );
+        $message->getHeaders()->addTextHeader("X-JEMH-assignee", $senderEmail);
+        // $message->getHeaders()->addTextHeader($mail->getHeaders()['senderEmailName'], $mail->getHeaders()['senderEmailData']);
+        // $message->getHeaders()->addTextHeader($mail->getHeaders()['senderNameName'], $mail->getHeaders()['senderNameData']);
         $this->translator->setLocale($sessionLocale);
 
         $failures = $this->mailer->send($message, $failures);
