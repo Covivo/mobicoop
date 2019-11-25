@@ -28,6 +28,7 @@
         :price="proposal.outward.criteria.price"
         :is-driver="isDriver"
         :is-passenger="isPassenger"
+        :id-message="lastMessageId"
         :carpool-requests="proposal.outward.matchingRequests"
         :carpool-offers="proposal.outward.matchingOffers"
       />
@@ -98,7 +99,7 @@ export default {
             asks.forEach(ask => {
               let askHistories = ask.askHistories;
               let askHistoriesLength = askHistories.length;
-              lastMessageId = askHistories[askHistoriesLength - 1].message > lastMessageId ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
+              lastMessageId = askHistories[askHistoriesLength - 1].message && (askHistories[askHistoriesLength - 1].message.id > lastMessageId) ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
               // todo: passer le statut a 4 après merge de l'update
               if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
             })
@@ -115,7 +116,7 @@ export default {
             request.asks.forEach(ask => {
               let askHistories = ask.askHistories;
               let askHistoriesLength = askHistories.length;
-              lastMessageId = askHistories[askHistoriesLength - 1].message > lastMessageId ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
+              lastMessageId = askHistories[askHistoriesLength - 1].message && (askHistories[askHistoriesLength - 1].message.id > lastMessageId) ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
               // todo: passer le statut a 4 après merge de l'update
               if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
             })
@@ -133,7 +134,7 @@ export default {
               asks.forEach(ask => {
                 let askHistories = ask.askHistories;
                 let askHistoriesLength = askHistories.length;
-                lastMessageId = askHistories[askHistoriesLength - 1].message > lastMessageId ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
+                lastMessageId = askHistories[askHistoriesLength - 1].message && (askHistories[askHistoriesLength - 1].message.id > lastMessageId) ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
                 // todo: passer le statut a 4 après merge de l'update
                 if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
               })
@@ -152,7 +153,7 @@ export default {
               asks.forEach(ask => {
                 let askHistories = ask.askHistories;
                 let askHistoriesLength = askHistories.length;
-                lastMessageId = askHistories[askHistoriesLength - 1].message > lastMessageId ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
+                lastMessageId = askHistories[askHistoriesLength - 1].message && (askHistories[askHistoriesLength - 1].message.id > lastMessageId) ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
                 // todo: passer le statut a 4 après merge de l'update
                 if (ask.status === 3) hasAtLeastOneAcceptedAsk = true;
               })

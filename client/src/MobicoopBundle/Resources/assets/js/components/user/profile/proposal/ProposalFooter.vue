@@ -13,6 +13,7 @@
       >
         <v-btn
           icon
+          :disabled="idMessage === -1"
           @click="openMailBox()"
         >
           <v-icon class="primary--text">
@@ -62,6 +63,10 @@ export default {
     isPassenger: {
       type: Boolean,
       default: false
+    },
+    idMessage: {
+      type: Number,
+      default: -1
     },
     // passengers
     carpoolRequests: {
@@ -116,7 +121,7 @@ export default {
     },
     openMailBox () {
       let lParams = {
-        idMessage: 4
+        idMessage: this.idMessage
       };
       this.post(`${this.$t("utilisateur/messages")}`, lParams);
     }

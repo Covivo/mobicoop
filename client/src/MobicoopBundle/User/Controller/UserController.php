@@ -576,7 +576,7 @@ class UserController extends AbstractController
             if ($data->has("idMessage")) {
                 /** @var Message $message */
                 $message = $messageManager->getMessage($data->get("idMessage"));
-                $idMessage = $idThreadDefault = $message->getId();
+                $idMessage = $idThreadDefault = !empty($message->getMessage()) ? $message->getMessage()->getId() : $message->getMessage();
                 $idRecipient = $message->getRecipients()[0]->getId();
                 $idAsk = $message->getAskHistory()["ask"]["id"];
             } else {
