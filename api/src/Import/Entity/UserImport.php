@@ -31,7 +31,7 @@ use App\User\Entity\User;
 
 /**
  * A user imported from an external system.
- * 
+ *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
@@ -50,7 +50,7 @@ use App\User\Entity\User;
  *      itemOperations={
  *      }
  * )
- * 
+ *
  */
 class UserImport
 {
@@ -265,5 +265,4 @@ class UserImport
     {
         $this->setUpdatedDate(new \Datetime());
     }
-
 }
