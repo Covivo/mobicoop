@@ -254,7 +254,7 @@ export default {
         idAsk:this.idAsk,
         idRecipient:this.idRecipient
       }
-      axios.post(this.$t("urlGetAskHistory"),params)
+      axios.post(this.$t("urlGetAdAsk"),params)
         .then(response => {
           //console.error(response.data);
           this.infosComplete = response.data;

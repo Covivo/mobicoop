@@ -51,6 +51,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -622,13 +623,19 @@ class UserController extends AbstractController
      * Get informations for Action Panel of the mailbox
      * AJAX
      */
-    public function userMessagesActionsInfos(Request $request, AskManager $askManager, AskHistoryManager $askHistoryManager, UserManager $userManager)
+    public function userMessagesActionsInfos(Request $request, AdManager $adManager, UserManager $userManager)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             $user = $userManager->getLoggedUser();
             if ($data['idAsk']) {
                 // Carpool
+
+                // Get the related Ad of this Ask
+                $adManager->getAdAsk($data['idAsk'], $user->getId());
+
+
+
 
                 /**** Begining data */
                 /** To Do : Retreive data from API */

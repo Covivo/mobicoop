@@ -51,7 +51,7 @@ class AdManager
      *
      * @param int $id       The ad id
      * @param array|null    The filters to apply to the results
-     * @return void
+     * @return Ad|null
      */
     public function getAd(int $id, ?array $filters = null)
     {
@@ -334,5 +334,20 @@ class AdManager
         }
 
         return $response->getValue();
+    }
+
+    /**
+     * Get an ad and its results by its related Ask
+     *
+     * @param int $askId   Id of the related Ask
+     * @param int $userId  The user that make the request
+     * @return Ad|null
+     */
+    public function getAdAsk(int $askId, int $userId)
+    {
+        if ($data = $this->dataProvider->getSpecialItem($askId, "ask", ["userId"=>$userId])) {
+            return $data->getValue();
+        }
+        return null;
     }
 }

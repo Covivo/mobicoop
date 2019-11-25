@@ -312,6 +312,16 @@ class Ad implements ResourceInterface
      */
     private $filters;
     
+    /**
+     * @var boolean|null If the current user can make a formal Ask from this Ad
+     */
+    private $canMakeAsk;
+
+    /**
+     * @var int|null Status of the Ask related to this Ad
+     */
+    private $statusAsk;
+
     public function __construct()
     {
         $this->outwardWaypoints = [];
@@ -789,6 +799,30 @@ class Ad implements ResourceInterface
     public function setFilters(?array $filters)
     {
         $this->filters = $filters;
+
+        return $this;
+    }
+
+    public function canMakeAsk(): ?bool
+    {
+        return $this->canMakeAsk;
+    }
+    
+    public function setCanMakeAsk(?bool $canMakeAsk): self
+    {
+        $this->canMakeAsk = $canMakeAsk;
+        
+        return $this;
+    }
+
+    public function getStatusAsk(): ?int
+    {
+        return $this->statusAsk;
+    }
+
+    public function setStatusAsk(?int $statusAsk): self
+    {
+        $this->statusAsk = $statusAsk;
 
         return $this;
     }
