@@ -32,7 +32,7 @@
           <v-card
             v-if="item.divider===false"
             class="elevation-2 font-weight-bold"
-            :class="(item.origin==='own')?'primary':''"
+            :class="(item.origin==='own')?'primary lighten-4':''"
           >
             <v-card-text>{{ item.text }}</v-card-text>
           </v-card>
