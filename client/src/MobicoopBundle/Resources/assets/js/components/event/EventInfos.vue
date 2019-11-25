@@ -3,7 +3,11 @@
     align="center"
     justify="center"
   >
-    <v-col cols="4">
+    <v-col
+      cols="4"
+      md="4"
+      sm="10"
+    >
       <v-avatar
         color="grey lighten-3"
         size="225"
@@ -23,19 +27,27 @@
       
     <v-col
       cols="8"
+      md="4"
+      sm="10"
     >
       <v-card
         flat
-        height="25vh"
+        max-height="25vh"
       >
         <v-card-text>
           <h3 class="headline">
             {{ event.name }}
           </h3>
-          <p class="body-1">
+          <p
+            v-if="displayDescription"
+            class="body-1"
+          >
             {{ event.description }}
           </p>
-          <p class="body-2">
+          <p
+            v-if="displayDescription"
+            class="body-2"
+          >
             {{ event.fullDescription }}
           </p>
           <v-row>
@@ -73,7 +85,11 @@ export default {
     avatarVersion: {
       type: String,
       default: null
-    }
+    },
+    displayDescription: {
+      type: Boolean,
+      default: true
+    },
   },
   i18n: {
     messages: TranslationsMerged,

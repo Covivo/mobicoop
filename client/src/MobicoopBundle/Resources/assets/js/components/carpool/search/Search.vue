@@ -17,6 +17,8 @@
             :init-regular="dataRegular"
             :init-destination="destination"
             :punctual-date-optional="punctualDateOptional"
+            :show-destination="showDestination"
+            :iswidget="isWidget"
             @change="searchChanged"
           />
         </v-col>
@@ -28,9 +30,9 @@
       >
         <v-col
           cols="6"
-          class="text-right"
         >
           <v-btn
+            v-if="!hidePublish"
             outlined
             :disabled="searchUnavailable || !logged"
             rounded
@@ -40,7 +42,7 @@
             {{ $t('buttons.publish.label') }}
           </v-btn>
           <v-btn
-            :disabled="searchUnavailable"
+            :disabled="searchUnavailable || disableSearch"
             :loading="loadingSearch"
             color="secondary"
             rounded
@@ -92,9 +94,25 @@ export default {
       type: Object,
       default: null
     },
-    initDestination: {
+    defaultDestination: {
       type: Object,
       default: null
+    },
+    disableSearch: {
+      type: Boolean,
+      default: false
+    },
+    hidePublish: {
+      type: Boolean,
+      default: false
+    },
+    showDestination: {
+      type: Boolean,
+      default: true
+    },
+    isWidget: {
+      type: Boolean,
+      default: false
     },
   },
   data() {
@@ -106,8 +124,8 @@ export default {
       date: null,
       time: null,
       origin: null,
-      destination: this.initDestination,
-      locale: this.$i18n.locale
+      destination: this.defaultDestination,
+      locale: this.$i18n.locale,
     };
   },
   computed: {
@@ -126,6 +144,7 @@ export default {
       const form = document.createElement('form');
       form.method = method;
       form.action = window.location.origin+'/'+path;
+      // this.isWidget  ? form.target ="_blank" : '';
 
       for (const key in params) {
         if (params.hasOwnProperty(key)) {
@@ -169,6 +188,6 @@ export default {
       };
       this.post(`${this.$t("buttons.publish.route")}`, lParams);
     },
-  }
+  },
 };
 </script>

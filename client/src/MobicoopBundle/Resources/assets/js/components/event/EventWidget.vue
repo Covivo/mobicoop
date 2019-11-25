@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-content>
     <!--SnackBar-->
     <v-snackbar
       v-model="snackbar"
@@ -17,91 +17,30 @@
     </v-snackbar>
 
     <v-container>
-      <!-- event buttons and map -->
+      <!-- eventWidget buttons and map -->
       <v-row
         justify="center"
       >
         <v-col
-          cols="12"
+          cols="8"
           md="8"
-          xl="6"
+          xl="8"
           align="center"
         >
-          <!-- event : avatar, title and description -->
+          <!-- Event : avatar, title and description -->
           <event-infos
             :event="event"
             :url-alt-avatar="urlAltAvatar"
             :avatar-version="avatarVersion"
+            :display-description="false"
           />
-          <!-- event buttons and map -->
-          <v-row
-            align="center"
-          >
-            <v-col
-              cols="4"
-              class="text-center"
-            >
-              <!-- button  -->
-              <div>
-                <v-btn
-                  color="secondary"
-                  rounded
-                  @click="publish"
-                >
-                  {{ $t('buttons.publish.label') }}
-                </v-btn>
-                <v-btn
-                  color="secondary"
-                  rounded
-                  :href="$t('buttons.widget.route') + event.id"
-                >
-                  {{ $t('buttons.widget.label') }}
-                </v-btn>
-              </div>
-            </v-col>
-            <!-- map -->
-            <v-col
-              cols="8"
-            >
-              <v-card
-                v-show="loadingMap"
-                flat
-                align="center"
-                height="500"
-                color="backSpiner"
-              >
-                <v-progress-circular
-                  size="250"
-                  indeterminate
-                  color="tertiary"
-                />
-              </v-card>
-              <m-map
-                v-show="!loadingMap"
-                ref="mmap"
-                :points="pointsToMap"
-                :provider="mapProvider"
-                :url-tiles="urlTiles"
-                :attribution-copyright="attributionCopyright"
-              />
-            </v-col>
-          </v-row>
         </v-col>
       </v-row>
       <!-- search journey -->
-      <v-row
-        justify="center"
-        align="center"
-      >
-        <v-col
-          cols="6"
-          class="mt-6"
-        >
-          <p class="headline">
-            {{ $t('title.searchCarpool') }}
-          </p>
-        </v-col>
-      </v-row>
+      <p class="">
+        {{ $t('title.searchCarpool') }}
+      </p>
+      <!-- event buttons and map -->
       <v-row
         align="center"
         justify="center"
@@ -112,14 +51,15 @@
           :params="params"
           :punctual-date-optional="punctualDateOptional"
           :regular="regular"
-          :init-destination="destination"
-          :hide-publish="true"
           :default-destination="defaultDestination"
+          :hide-publish="true"
           :disable-search="disableSearch"
+          :show-destination="false"
+          :is-widget="true"
         />
       </v-row>
     </v-container>
-  </div>
+  </v-content>
 </template>
 <script>
 
@@ -129,7 +69,7 @@ import Translations from "@translations/components/event/Event.json";
 import TranslationsClient from "@clientTranslations/components/event/Event.json";
 import EventInfos from "@components/event/EventInfos";
 import Search from "@components/carpool/search/Search";
-import MMap from "@components/utilities/MMap"
+// import MMap from "@components/utilities/MMap"
 import L from "leaflet";
 import moment from "moment";
 
@@ -137,7 +77,7 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    EventInfos, Search, MMap
+    EventInfos, Search,
   },
   i18n: {
     messages: TranslationsMerged,
@@ -191,33 +131,34 @@ export default {
       type: String,
       default: ""
     },
-    initDestination: {
-      type: Object,
-      default: null
-    },
-    initOrigin: {
-      type: Object,
-      default: null
-    },
-    points: {
-      type: Array,
-      default: null
-    },
   },
   data () {
     return {
-      destination: '',
-      origin: this.initOrigin,
       search: '',
+      headers: [
+        {
+          text: 'Id',
+          align: 'left',
+          sortable: false,
+          value: 'id',
+        },
+        { text: 'Nom', value: 'familyName' },
+        { text: 'Prenom', value: 'givenName' },
+        { text: 'Telephone', value: 'telephone' },
+      ],
       pointsToMap:[],
       directionWay:[],
       loading: false,
       snackbar: false,
-      // textSnackOk: this.$t("snackbar.joinCommunity.textOk"),
-      // textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
+      isAccepted: false,
+      askToJoin: false,
+      checkValidation: false,
       isLogged: false,
       loadingMap: false,
+      domain: true,
+      refreshMemberList: false,
+      refreshLastUsers: false,
       params: { 'eventId' : this.event.id },
       defaultDestination: this.event.address,
     }
@@ -230,22 +171,12 @@ export default {
       else
         return false;
     }
-  // Link the event in the adresse
-  },created: function () {
-    this.$set(this.initDestination, 'event', this.event);
-    this.destination = this.initDestination;
   },
   mounted() {
-    this.showPoints();
-    // this.getEventProposals();
+    this.getEventProposals();
+    this.checkDomain();
   },
   methods:{
-    searchChanged: function (search) {
-      this.origin = search.origin;
-      this.destination = search.destination;
-      this.dataRegular = search.regular;
-      this.date = search.date;
-    },
     post: function (path, params, method='post') {
       const form = document.createElement('form');
       form.method = method;
@@ -276,32 +207,33 @@ export default {
         }
       }
     },
-    publish() {
-      let lParams = {
-        origin: null,
-        destination: JSON.stringify(this.destination),
-        regular: null,
-        date: null,
-        time: null,
-        ...this.params
-      };
-      this.post(`${this.$t("buttons.publish.route")}`, lParams);
+    getEventProposals () {
+      this.loadingMap = true;
+      axios
+        .get('/event-proposals/'+this.event.id,
+          {
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
+        .then(res => {
+          this.errorUpdate = res.data.state;
+          this.pointsToMap.length = 0;
+          // add the event address to display on the map
+          if (this.event.address) {
+            this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name));
+          }
+
+          // add all the waypoints of the event to display on the map :
+          res.data.forEach((waypoint, index) => {
+            this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+          });
+          this.loadingMap = false;
+          // setTimeout(this.$refs.mmap.redrawMap(),600);
+
+        });
     },
 
-    showPoints () {
-      this.pointsToMap.length = 0;
-      // add the event address to display on the map
-      if (this.event.address) {
-        this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name));
-      }
-
-      // add all the waypoints of the event to display on the map :
-      this.points.forEach((waypoint, index) => {
-        this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
-      });
-      this.loadingMap = false;
-      setTimeout(this.$refs.mmap.redrawMap(),600);
-    },
     buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
       let point = {
         title:title,
@@ -318,7 +250,38 @@ export default {
       }
 
       return point;
+    },
+    contact: function(data){
+      const form = document.createElement('form');
+      form.method = 'post';
+      form.action = this.$t("buttons.contact.route");
+
+      const params = {
+        carpool:0,
+        idRecipient:data.id,
+        familyName:data.familyName,
+        givenName:data.givenName
+      }
+
+      for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+          const hiddenField = document.createElement('input');
+          hiddenField.type = 'hidden';
+          hiddenField.name = key;
+          hiddenField.value = params[key];
+          form.appendChild(hiddenField);
+        }
+      }
+      document.body.appendChild(form);
+      form.submit();
+    },
+    membersListRefreshed(){
+      this.refreshMemberList = false;
+    },
+    lastUsersRefreshed(){
+      this.refreshLastUsers = false;
     }
+
   }
 }
 </script>
