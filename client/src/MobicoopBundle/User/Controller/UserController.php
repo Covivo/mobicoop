@@ -528,11 +528,10 @@ class UserController extends AbstractController
      */
     public function deleteUser(UserManager $userManager)
     {
-
         $user = $userManager->getLoggedUser();
-         $userManager->deleteUser($user);
+        $userManager->deleteUser($user);
 
-        return $this->redirectToRoute('user_logout',array('logout' => 'logout'));
+        return $this->redirectToRoute('user_logout', array('logout' => 'logout'));
     }
 
 
