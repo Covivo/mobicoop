@@ -30,7 +30,7 @@
           <iframe
             :src="`/evenement-widget/${event.id}`"
             width="100%"
-            height="440px"
+            height="1440px"
             frameborder="0"
             scrolling="no"
           />

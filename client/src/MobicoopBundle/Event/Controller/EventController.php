@@ -204,5 +204,4 @@ class EventController extends AbstractController
             'error' => (isset($error)) ? $error : false
         ]);
     }
-
 }

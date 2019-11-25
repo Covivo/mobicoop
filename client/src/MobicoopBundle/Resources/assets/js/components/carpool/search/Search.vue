@@ -17,7 +17,8 @@
             :init-regular="dataRegular"
             :init-destination="destination"
             :punctual-date-optional="punctualDateOptional"
-            :show-destination="true"
+            :show-destination="showDestination"
+            :iswidget="isWidget"
             @change="searchChanged"
           />
         </v-col>
@@ -29,7 +30,6 @@
       >
         <v-col
           cols="6"
-          class="text-right"
         >
           <v-btn
             v-if="!hidePublish"
@@ -106,6 +106,14 @@ export default {
       type: Boolean,
       default: false
     },
+    showDestination: {
+      type: Boolean,
+      default: true
+    },
+    isWidget: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -117,7 +125,7 @@ export default {
       time: null,
       origin: null,
       destination: this.defaultDestination,
-      locale: this.$i18n.locale
+      locale: this.$i18n.locale,
     };
   },
   computed: {
@@ -136,7 +144,7 @@ export default {
       const form = document.createElement('form');
       form.method = method;
       form.action = window.location.origin+'/'+path;
-      // form.target= "_blank";
+      // this.isWidget  ? form.target ="_blank" : '';
 
       for (const key in params) {
         if (params.hasOwnProperty(key)) {
@@ -180,6 +188,6 @@ export default {
       };
       this.post(`${this.$t("buttons.publish.route")}`, lParams);
     },
-  }
+  },
 };
 </script>

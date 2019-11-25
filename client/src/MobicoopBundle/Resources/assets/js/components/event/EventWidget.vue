@@ -37,7 +37,7 @@
         </v-col>
       </v-row>
       <!-- search journey -->
-      <p class="headline">
+      <p class="">
         {{ $t('title.searchCarpool') }}
       </p>
       <!-- event buttons and map -->
@@ -54,6 +54,8 @@
           :default-destination="defaultDestination"
           :hide-publish="true"
           :disable-search="disableSearch"
+          :show-destination="false"
+          :is-widget="true"
         />
       </v-row>
     </v-container>
