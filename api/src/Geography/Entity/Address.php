@@ -278,7 +278,7 @@ class Address
     private $relayPoint;
 
     /**
-     * @var User|null The event of the adresse.
+     * @var User|null The event of the address.
      *
      * @ORM\OneToOne(targetEntity="App\Event\Entity\Event", mappedBy="address")
      * @Groups({"read","pt"})
@@ -634,11 +634,6 @@ class Address
         if (!is_null($this->getLatitude()) && !is_null($this->getLongitude())) {
             $this->setGeoJson(new Point($this->getLongitude(), $this->getLatitude()));
         }
-    }
-
-    public function getHome(): ?bool
-    {
-        return $this->home;
     }
 
     public function getEvent(): ?Event

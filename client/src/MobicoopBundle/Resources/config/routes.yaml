@@ -254,6 +254,17 @@ carpool_ad_results:
 
 # ad result detail
 carpool_ad_detail:
+    methods: [GET]
+    path:
+        fr: /covoiturage/annonce/{id}/detail
+        en: /carpool/ad/{id}/detail
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDetail
+    requirements:
+        id: '\d+'
+
+# ad result detail (with filters : POST)
+carpool_ad_detail_filtered:
+    methods: [POST]
     path:
         fr: /covoiturage/annonce/{id}/detail
         en: /carpool/ad/{id}/detail

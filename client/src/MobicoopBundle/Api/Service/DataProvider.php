@@ -169,11 +169,12 @@ class DataProvider
     /**
      * Get item operation
      *
-     * @param int       $id         The id of the item
+     * @param int           $id         The id of the item
+     * @param array|null    $params     An array of parameters
      *
      * @return Response The response of the operation.
      */
-    public function getItem(int $id): Response
+    public function getItem(int $id, array $params = null): Response
     {
         /*
          * deserialization of nested array of objects doesn't work...
@@ -186,13 +187,13 @@ class DataProvider
 
         try {
             if ($this->format == self::RETURN_ARRAY) {
-                $clientResponse = $this->client->get($this->resource."/".$id);
+                $clientResponse = $this->client->get($this->resource."/".$id, ['query'=>$params]);
                 $value = json_decode((string) $clientResponse->getBody(), true);
             } elseif ($this->format == self::RETURN_JSON) {
-                $clientResponse = $this->client->get($this->resource."/".$id, ['headers' => ['accept' => 'application/json']]);
+                $clientResponse = $this->client->get($this->resource."/".$id, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
                 $value = (string) $clientResponse->getBody();
             } else {
-                $clientResponse = $this->client->get($this->resource."/".$id);
+                $clientResponse = $this->client->get($this->resource."/".$id, ['query'=>$params]);
                 $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
             }
             if ($clientResponse->getStatusCode() == 200) {
@@ -335,6 +336,7 @@ class DataProvider
      */
     public function post(ResourceInterface $object, ?string $operation = null): Response
     {
+        //var_dump($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]));exit;
         $op = '';
         if (!is_null($operation)) {
             $op = '/'.$operation;
@@ -480,7 +482,7 @@ class DataProvider
      * @param array|null $data
      * @return Response The response of the operation.
      */
-    public function delete(int $id, ?array $data): Response
+    public function delete(int $id, ?array $data=null): Response
     {
         try {
             $clientResponse = $this->client->delete($this->resource."/".$id, ['json' => $data]);

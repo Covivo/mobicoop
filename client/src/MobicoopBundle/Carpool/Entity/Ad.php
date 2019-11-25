@@ -304,6 +304,13 @@ class Ad implements ResourceInterface
      * @Groups({"post","put"})
      */
     private $matchingId;
+
+    /**
+     * @var array|null The filters to apply to the results.
+     *
+     * @Groups({"post","put"})
+     */
+    private $filters;
     
     public function __construct()
     {
@@ -312,6 +319,7 @@ class Ad implements ResourceInterface
         $this->schedule = [];
         $this->communities = [];
         $this->results = [];
+        $this->filters = [];
     }
     
     public function getId(): ?int
@@ -769,6 +777,18 @@ class Ad implements ResourceInterface
     public function setMatchingId(?int $matchingId): self
     {
         $this->matchingId = $matchingId;
+
+        return $this;
+    }
+
+    public function getFilters(): ?array
+    {
+        return $this->filters;
+    }
+
+    public function setFilters(?array $filters)
+    {
+        $this->filters = $filters;
 
         return $this;
     }
