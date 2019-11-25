@@ -48,7 +48,6 @@
               Vous pouvez modifier les éléments en gras afin de personnaliser votre widget.
             </p>
             <p>
-              <!--              &lt;iframe src="{{ `https://localhost:8081/evenement-get-widget/${event.id} ` }}" width="<strong>100%</strong>" height="<strong>440px</strong>" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;-->
               &lt;iframe src="{{ getUrl() }}" width="<strong>100%</strong>" height="<strong>440px</strong>" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;
             </p>
             <p><strong>Attention</strong> : Certains outils de publication comme Wordpress nécessitent l'ajout de plugins spécifiques pour pouvoir utiliser une iFrame.</p>
