@@ -22,7 +22,7 @@
         justify="center"
       >
         <v-col
-          cols="5"
+          cols="4"
           align="center"
         >
           <iframe
@@ -34,7 +34,7 @@
           />
         </v-col>
         <v-col
-          cols="7"
+          cols="8"
           class="mt-12"
         >
           <v-row class="mt-12">
@@ -208,44 +208,6 @@ export default {
     getUrl() {
       return window.location.protocol +"//"+ window.location.host + "/evenement-widget/" + this.event.id;
     },
-    // publish() {
-    //   let lParams = {
-    //     origin: null,
-    //     destination: null,
-    //     regular: null,
-    //     date: null,
-    //     time: null,
-    //     ...this.params
-    //   };
-    //   this.post(`${this.$t("buttons.publish.route")}`, lParams);
-    // },
-    // getEventProposals () {
-    //   this.loadingMap = true;
-    //   axios
-    //     .get('/event-proposals/'+this.event.id,
-    //       {
-    //         headers:{
-    //           'content-type': 'application/json'
-    //         }
-    //       })
-    //     .then(res => {
-    //       this.errorUpdate = res.data.state;
-    //       this.pointsToMap.length = 0;
-    //       // add the event address to display on the map
-    //       if (this.event.address) {
-    //         this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name));
-    //       }
-    //
-    //       // add all the waypoints of the event to display on the map :
-    //       res.data.forEach((waypoint, index) => {
-    //         this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
-    //       });
-    //       // this.loadingMap = false;
-    //       // setTimeout(this.$refs.mmap.redrawMap(),600);
-    //
-    //     });
-    // },
-
     buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
       let point = {
         title:title,

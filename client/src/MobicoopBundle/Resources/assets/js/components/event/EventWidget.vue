@@ -35,7 +35,10 @@
         </v-col>
       </v-row>
       <!-- search journey -->
-      <p class="mb-0">
+      <p
+        class="font-weight-bold"
+        align="center"
+      >
         {{ $t('title.searchCarpool') }}
       </p>
       <!-- event buttons and map -->
@@ -290,6 +293,15 @@ export default {
 
 <style>
   div {
+    padding: 0px 3px !important;
+  }
+  div.row {
+    display: block !important;
+
+  }
+  div.row p.body-2 {
+    font-size: 0.75rem !important;
+    line-height: 1rem !important;
     padding: 0px 3px !important;
   }
  </style>
