@@ -182,7 +182,7 @@ class UserManager
         if (is_null($user)) {
             return [];
         }
-        if ($communities = $this->communityRepository->findByUser($user, true, null, CommunityUser::STATUS_ACCEPTED)) {
+        if ($communities = $this->communityRepository->findByUser($user, true, null, CommunityUser::STATUS_ACCEPTED_AS_MEMBER)) {
             return $communities;
         }
         return [];
