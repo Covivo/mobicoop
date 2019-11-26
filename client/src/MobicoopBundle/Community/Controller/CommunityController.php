@@ -50,7 +50,7 @@ class CommunityController extends AbstractController
 
     /**
      * Constructor
-     * @param UserPasswordEncoderInterface $encoder
+     * @param string $createFromFront
      */
     public function __construct($createFromFront)
     {
