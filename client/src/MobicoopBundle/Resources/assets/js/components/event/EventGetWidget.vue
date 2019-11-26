@@ -22,23 +22,19 @@
         justify="center"
       >
         <v-col
-          cols="7"
-          md="7"
-          xl="7"
+          cols="5"
           align="center"
         >
           <iframe
             :src="`/evenement-widget/${event.id}`"
             width="100%"
-            height="1440px"
+            height="640px"
             frameborder="0"
             scrolling="no"
           />
         </v-col>
         <v-col
-          cols="5"
-          md="5"
-          xl="5"
+          cols="7"
           class="mt-12"
         >
           <v-row class="mt-12">
