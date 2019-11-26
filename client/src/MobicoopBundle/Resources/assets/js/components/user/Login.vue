@@ -1,7 +1,6 @@
 <template>
-  <v-content>
-    <v-container fluid />
-    <v-row 
+  <v-container fluid>
+    <v-row
       justify="center"
     >
       <v-col
@@ -83,7 +82,7 @@
         />
       </v-col>
     </v-row>
-  </v-content>
+  </v-container>
 </template>
 <script>
 import { merge } from "lodash";
