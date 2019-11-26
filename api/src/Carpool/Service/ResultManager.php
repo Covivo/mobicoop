@@ -24,6 +24,7 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\Ad;
+use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
@@ -1690,6 +1691,15 @@ class ResultManager
         return $results;
     }
 
+    /**
+     * Create results for a given matching of a proposal
+     *
+     * @param Proposal $proposal            The proposal
+     * @param integer $matchingProposalId   The proposal that matches
+     * @param array $matching               The array of the matchings of the proposal (an array with the matching proposal as offer and/or request)
+     * @param boolean $return               The matching concerns a return (=false if it's the outward)
+     * @return Result                       The result object
+     */
     private function createMatchingResult(Proposal $proposal, int $matchingProposalId, array $matching, bool $return)
     {
         $result = new Result();
@@ -2465,5 +2475,18 @@ class ResultManager
             case Ad::ROLE_DRIVER_OR_PASSENGER: return !is_null($result->getResultDriver()) && !is_null($result->getResultPassenger());
         }
         return false;
+    }
+
+    /**
+     * Create "user-friendly" results for the asks of an ad
+     * An Ad can have multiple asks, all linked (as a driver, as a passenger, each for outward and return)
+     * The results are different if they are computed for the driver or the passenger
+     *
+     * @param Ask $ask      The master ask
+     * @param int $userId   The id of the user that makes the request
+     * @return array        The array of results
+     */
+    public function createAskResults(Ask $ask, int $userId)
+    {
     }
 }

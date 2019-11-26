@@ -68,8 +68,9 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 class CommunityUser
 {
     const STATUS_PENDING = 0;
-    const STATUS_ACCEPTED = 1;
-    const STATUS_REFUSED = 2;
+    const STATUS_ACCEPTED_AS_MEMBER = 1;
+    const STATUS_ACCEPTED_AS_MODERATOR = 2;
+    const STATUS_REFUSED = 3;
 
     /**
      * @var int The id of this community user.
@@ -335,9 +336,9 @@ class CommunityUser
     public function setAutoStatus()
     {
         if ($this->getUser()->getId() == $this->getCommunity()->getUser()->getId()) {
-            $this->setStatus(self::STATUS_ACCEPTED);
+            $this->setStatus(self::STATUS_ACCEPTED_AS_MODERATOR);
         } elseif ($this->getCommunity()->getValidationType() == Community::AUTO_VALIDATION) {
-            $this->setStatus(self::STATUS_ACCEPTED);
+            $this->setStatus(self::STATUS_ACCEPTED_AS_MEMBER);
         } else {
             $this->setStatus(self::STATUS_PENDING);
         }
@@ -351,7 +352,7 @@ class CommunityUser
      */
     public function setAutoAcceptedOrRefusedDate()
     {
-        if ($this->status == self::STATUS_ACCEPTED && is_null($this->acceptedDate)) {
+        if ($this->status == self::STATUS_ACCEPTED_AS_MEMBER && is_null($this->acceptedDate)) {
             $this->setAcceptedDate(new \Datetime());
         } elseif ($this->status == self::STATUS_REFUSED && is_null($this->refusedDate)) {
             $this->setRefusedDate(new \Datetime());

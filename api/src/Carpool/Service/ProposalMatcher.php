@@ -425,6 +425,14 @@ class ProposalMatcher
             $matchingCriteria->setSeatsPassenger(1);
 
             // pickup times
+            if (!isset($matching->getFilters()['pickup']) && $matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                // no pickup times, we use the offer criteria if set, the request passenger if set
+                // it can be the case for simple search leading to asks
+                $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getMinTime() ? $matching->getProposalOffer()->getCriteria()->getMinTime() : $matching->getProposalRequest()->getCriteria()->getMinTime());
+                $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getMaxTime() ? $matching->getProposalOffer()->getCriteria()->getMaxTime() : $matching->getProposalRequest()->getCriteria()->getMaxTime());
+                $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getMarginDuration() ? $matching->getProposalOffer()->getCriteria()->getMarginDuration() : $matching->getProposalRequest()->getCriteria()->getMarginDuration());
+                $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getFromTime() ? $matching->getProposalOffer()->getCriteria()->getFromTime() : $matching->getProposalRequest()->getCriteria()->getFromTime());
+            }
             if (isset($matching->getFilters()['pickup']['minPickupTime']) && isset($matching->getFilters()['pickup']['maxPickupTime'])) {
                 if ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                     $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getMinTime());

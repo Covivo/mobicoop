@@ -44,7 +44,7 @@
         </v-col>
       </v-row>
       <search
-        :geo-search-url="geoSearchUrl" 
+        :geo-search-url="geoSearchUrl"
         :user="user"
         :regular="regular"
         :punctual-date-optional="punctualDateOptional"
@@ -60,7 +60,7 @@
           lg="9"
           md="12"
         >
-          <home-content 
+          <home-content
             :community-display="communityDisplay"
             :event-display="eventDisplay"
             :solidary-display="solidaryDisplay"
@@ -99,11 +99,11 @@ export default {
     user: {
       type: Object,
       default: null
-    }, 
+    },
     regular: {
       type: Boolean,
       default: false
-    }, 
+    },
     punctualDateOptional: {
       type: Boolean,
       default: false

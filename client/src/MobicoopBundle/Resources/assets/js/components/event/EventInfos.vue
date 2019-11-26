@@ -3,10 +3,14 @@
     align="center"
     justify="center"
   >
-    <v-col cols="4">
+    <v-col
+      cols="12"
+      md="4"
+    >
       <v-avatar
         color="grey lighten-3"
         size="225"
+        max-height="20vh"
       >
         <img
           v-if="event.images[0]"
@@ -22,20 +26,30 @@
     </v-col>
       
     <v-col
-      cols="8"
+      cols="12"
+      md="4"
     >
       <v-card
         flat
-        height="25vh"
+        max-height="25vh"
+        justify="center"
       >
         <v-card-text>
           <h3 class="headline">
             {{ event.name }}
           </h3>
-          <p class="body-1">
+          <p
+            v-if="displayDescription"
+            class="body-1"
+            md="6"
+          >
             {{ event.description }}
           </p>
-          <p class="body-2">
+          <p
+            v-if="displayDescription"
+            class="body-2"
+            md="6"
+          >
             {{ event.fullDescription }}
           </p>
           <v-row>
@@ -73,7 +87,11 @@ export default {
     avatarVersion: {
       type: String,
       default: null
-    }
+    },
+    displayDescription: {
+      type: Boolean,
+      default: true
+    },
   },
   i18n: {
     messages: TranslationsMerged,
