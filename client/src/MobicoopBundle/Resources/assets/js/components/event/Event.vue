@@ -51,6 +51,7 @@
                   {{ $t('buttons.publish.label') }}
                 </v-btn>
                 <v-btn
+                  class="mt-1"
                   color="secondary"
                   rounded
                   :href="$t('buttons.widget.route') + event.id"
