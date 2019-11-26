@@ -182,11 +182,7 @@ class UserManager
         if (is_null($user)) {
             return [];
         }
-        // todo : create only one request by accepting multiple statuses
-        if ($communities = $this->communityRepository->findByUser($user, true, null, CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)) {
-            return $communities;
-        }
-        if ($communities = $this->communityRepository->findByUser($user, true, null, CommunityUser::STATUS_ACCEPTED_AS_MEMBER)) {
+        if ($communities = $this->communityRepository->findByUser($user, true, null, [CommunityUser::STATUS_ACCEPTED_AS_MODERATOR,CommunityUser::STATUS_ACCEPTED_AS_MEMBER])) {
             return $communities;
         }
         return [];
