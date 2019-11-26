@@ -82,7 +82,7 @@ class CommunityController extends AbstractController
                 $communityUser->setUser($user);
                 
                 // set community address
-                $communityAddress=json_decode($data->get('address'), true);
+                $communityAddress = json_decode($data->get('address'), true);
                 $address->setAddressCountry($communityAddress['addressCountry']);
                 $address->setAddressLocality($communityAddress['addressLocality']);
                 $address->setCountryCode($communityAddress['countryCode']);
@@ -130,6 +130,7 @@ class CommunityController extends AbstractController
             // return error because name already exists
             return new Response(json_encode('error.community.name'));
         }
+
         return $this->render('@Mobicoop/community/createCommunity.html.twig', [
         ]);
     }
@@ -202,9 +203,9 @@ class CommunityController extends AbstractController
             $communityUser->setLogin($request->request->get("credential1"));
             $communityUser->setPassword($request->request->get("credential2"));
             $communityUser = $communityManager->joinCommunity($communityUser);
-            ($communityUser===null) ? $error = true : $error = false;
+            (null === $communityUser) ? $error = true : $error = false;
         } else {
-            ($user!==null) ? $communityUser = $communityManager->getCommunityUser($id, $user->getId()) : $communityUser = null;
+            (null !== $user) ? $communityUser = $communityManager->getCommunityUser($id, $user->getId()) : $communityUser = null;
         }
 
         // todo : move inside service ?
@@ -275,7 +276,7 @@ class CommunityController extends AbstractController
         $this->denyAccessUnlessGranted('join', $community);
 
         $user = $userManager->getLoggedUser();
-        $reponseofmanager= $this->handleManagerReturnValue($user);
+        $reponseofmanager = $this->handleManagerReturnValue($user);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
@@ -285,7 +286,7 @@ class CommunityController extends AbstractController
             array_push($communityUsersId, $communityUser->getUser()->getId());
         }
         //test if the user logged is not already a member of the community
-        if ($user && $user !=='' && !in_array($user->getId(), $communityUsersId)) {
+        if ($user && '' !== $user && !in_array($user->getId(), $communityUsersId)) {
             $communityUser = new CommunityUser();
             $communityUser->setCommunity($community);
             $communityUser->setUser($user);
@@ -394,7 +395,7 @@ class CommunityController extends AbstractController
     {
         // retrive community;
         $community = $communityManager->getCommunity($id);
-        $reponseofmanager= $this->handleManagerReturnValue($community);
+        $reponseofmanager = $this->handleManagerReturnValue($community);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
@@ -428,7 +429,7 @@ class CommunityController extends AbstractController
 
         $proposals = $communityManager->getProposals($id);
         $ways = [];
-        if ($proposals!==null) {
+        if (null !== $proposals) {
             foreach ($proposals as $proposal) {
                 $currentProposal = [
                     "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
@@ -445,6 +446,7 @@ class CommunityController extends AbstractController
                 $ways[] = $currentProposal;
             }
         }
+
         return new Response(json_encode($ways));
     }
 
@@ -460,8 +462,9 @@ class CommunityController extends AbstractController
     {
         if ($user = $userManager->getUser($userId)) {
             $communities = $communityManager->getAvailableUserCommunities($user)->getMember();
+
             return new Response(json_encode($communities));
-        };
+        }
 
         return new Response();
     }

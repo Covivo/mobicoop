@@ -587,12 +587,10 @@ export default {
       moment.locale(this.locale);
 
       this.threadsDM.forEach((thread, index) => {
-        this.threadsDM[index].selected =
-        thread.idThreadMessage === parseInt(idMessage) ? true : false;
+        this.threadsDM[index].selected = (thread.idThreadMessage === parseInt(idMessage));
       });
       this.threadsCM.forEach((thread, index) => {
-        this.threadsCM[index].selected =
-        thread.idThreadMessage === parseInt(idMessage) ? true : false;
+        this.threadsCM[index].selected = (thread.idThreadMessage === parseInt(idMessage));
         if(thread.dayChecked){
           thread.dayChecked.forEach((day, index)=>{
             // You need the translation only on the page loading. After that... you can't translate what's already translated

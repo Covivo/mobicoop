@@ -256,7 +256,7 @@ class Proposal implements ResourceInterface, \JsonSerializable
 
     public function isPrivate(): bool
     {
-        return $this->private ? true : false;
+        return $this->private;
     }
 
     public function setPrivate(?bool $private): self
@@ -268,7 +268,7 @@ class Proposal implements ResourceInterface, \JsonSerializable
 
     public function isPaused(): bool
     {
-        return $this->paused ? true : false;
+        return $this->paused;
     }
 
     public function setPaused(?bool $paused): self
@@ -543,7 +543,7 @@ class Proposal implements ResourceInterface, \JsonSerializable
 
     public function hasFormalAsk(): bool
     {
-        return $this->formalAsk ? true : false;
+        return $this->formalAsk;
     }
 
     public function setFormalAsk(?bool $formalAsk): self
