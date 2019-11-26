@@ -61,6 +61,7 @@
       <v-card-title>
         <v-row>
           <v-col
+            v-if="canCreate"
             cols="6"
           >
             <a :href="paths.community_create">
@@ -74,7 +75,7 @@
             </a>
           </v-col>
           <v-col
-            cols="6"
+            :cols="(canCreate) ? 6 : 12"
           >
             <div class="flex-grow-1" />
             <v-card
@@ -148,6 +149,10 @@ export default {
     },
     paths: {
       type: Object,
+      default: null
+    },
+    canCreate: {
+      type: Boolean,
       default: null
     }
   },

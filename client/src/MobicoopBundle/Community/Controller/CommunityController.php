@@ -46,6 +46,17 @@ class CommunityController extends AbstractController
 {
     use HydraControllerTrait;
 
+    private $createFromFront;
+
+    /**
+     * Constructor
+     * @param UserPasswordEncoderInterface $encoder
+     */
+    public function __construct($createFromFront)
+    {
+        $this->createFromFront = $createFromFront;
+    }
+    
     /**
      * Create a community
      */
@@ -157,6 +168,7 @@ class CommunityController extends AbstractController
         return $this->render('@Mobicoop/community/communities.html.twig', [
             'communities' => $communities,
             'communitiesUser' => $communitiesUser,
+            'canCreate' => $this->createFromFront
         ]);
     }
 
