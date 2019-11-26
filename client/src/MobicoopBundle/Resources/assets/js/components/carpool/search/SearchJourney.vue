@@ -185,6 +185,7 @@
               color="secondary"
               :locale="locale"
               no-title
+              first-day-of-week="1"
               :min="nowDate"
               @input="menu=false"
               @change="dateChanged"

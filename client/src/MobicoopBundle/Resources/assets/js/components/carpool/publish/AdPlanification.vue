@@ -42,6 +42,7 @@
               :locale="locale"
               no-title
               :min="nowDate"
+              first-day-of-week="1"
               @input="menuOutwardDate = false"
               @change="change,blockTime(),blockDate()"
             />
@@ -153,6 +154,7 @@
               v-model="returnDate"
               :locale="locale"
               no-title
+              first-day-of-week="1"
               :min="maxDateFromOutward"
               @input="menuReturnDate = false"
               @change="checkDateReturn($event),change(),blockTime()"
