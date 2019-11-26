@@ -283,7 +283,7 @@
           />
           <v-checkbox
             v-model="form.validation"
-            class="check"
+            class="check mt-12"
             color="primary"
             :rules="form.checkboxRules"
             required
@@ -293,7 +293,7 @@
               v-slot:label
               v-slot:activator="{ on }"
             >
-              <p>
+              <div>
                 {{ $t('ui.pages.signup.chart.text') }}
                 <a
                   class="secondary--text"
@@ -302,7 +302,7 @@
                   @click.stop
                 >{{ $t('ui.pages.signup.chart.link') }}
                 </a>
-              </p>
+              </div>
             </template>
           </v-checkbox>
           <v-btn
@@ -505,32 +505,30 @@ export default {
       this.$refs.menu.save(date)
     },
     validate: function (e) {
-      if (this.refs.form.validate()) {
-        this.loading = true;
-        axios.post(this.$t('urlSignUp'),
-          {
-            email:this.form.email,
-            telephone:this.form.telephone,
-            password:this.form.password,
-            givenName:this.form.givenName,
-            familyName:this.form.familyName,
-            gender:this.form.gender,
-            birthDay:this.form.date,
-            address:this.form.homeAddress,
-            idFacebook:this.form.idFacebook
-          },{
-            headers:{
-              'content-type': 'application/json'
-            }
-          })
-          .then(response=>{
-            window.location.href = this.$t('urlRedirectAfterSignUp');
-            //console.log(response);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      }
+      this.loading = true;
+      axios.post(this.$t('urlSignUp'),
+        {
+          email:this.form.email,
+          telephone:this.form.telephone,
+          password:this.form.password,
+          givenName:this.form.givenName,
+          familyName:this.form.familyName,
+          gender:this.form.gender,
+          birthDay:this.form.date,
+          address:this.form.homeAddress,
+          idFacebook:this.form.idFacebook
+        },{
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then(response=>{
+          window.location.href = this.$t('urlRedirectAfterSignUp');
+          //console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
     isNumber: function(evt) {
       evt = (evt) ? evt : window.event;
