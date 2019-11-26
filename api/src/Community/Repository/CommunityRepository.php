@@ -93,10 +93,10 @@ class CommunityRepository
      * @param User $user
      * @param boolean|null $proposalsHidden
      * @param boolean|null $membersHidden
-     * @param integer|null $memberStatus
+     * @param array|null $memberStatuses
      * @return void
      */
-    public function findByUser(User $user, ?bool $proposalsHidden=null, ?bool $membersHidden=null, ?int $memberStatus=null)
+    public function findByUser(User $user, ?bool $proposalsHidden=null, ?bool $membersHidden=null, ?array $memberStatuses=null)
     {
         $query = $this->repository->createQueryBuilder('c')
         ->join('c.communityUsers', 'cu')
@@ -110,9 +110,8 @@ class CommunityRepository
             $query->andWhere('c.membersHidden = :membersHidden')
             ->setParameter('membersHidden', $membersHidden);
         }
-        if (!is_null($memberStatus)) {
-            $query->andWhere('cu.status = :memberStatus')
-            ->setParameter('memberStatus', $memberStatus);
+        if (!is_null($memberStatuses) && is_array($memberStatuses)) {
+            $query->andWhere('cu.status in (' . implode(',', $memberStatuses) . ')');
         }
         return $query->getQuery()->getResult();
     }
