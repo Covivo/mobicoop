@@ -75,4 +75,4 @@
 /client/public/google*.html
 /client/public/robots.txt
 /admin/.env
-/admin/build/robots.txt
+/admin/public/robots.txt
