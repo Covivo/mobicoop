@@ -400,6 +400,8 @@
                     persistent-hint
                     :color="colorPricePerKm"
                     :class="colorPricePerKm + '--text'"
+                    @blur="roundPrice(price, regular ? 2 : 1)"
+                    @change="disableNextButton = true"
                   />
                 </v-col>
 
@@ -529,7 +531,20 @@
       </v-btn>
 
       <v-btn
-        v-if="((step < 7 && driver)|| (step < 5 && !driver))"
+        v-if="(step === 5 && driver)"
+        :disabled="disableNextButton || price <= 0"
+        :loading="loadingPrice"
+        rounded
+        color="primary"
+        align-center
+        style="margin-left: 30px;"
+        @click="step++"
+      >
+        {{ $t('stepper.buttons.next') }}
+      </v-btn>
+
+      <v-btn
+        v-if="((step < 7 && driver && step !== 5)|| (step < 5 && !driver))"
         :disabled="!validNext"
         rounded
         color="primary"
@@ -685,6 +700,8 @@ export default {
       message: null,
       baseUrl: window.location.origin,
       loading: false,
+      loadingPrice: false,
+      disableNextButton: false,
       userDelegated: null, // if user delegation
       selectedCommunities: null,
       pointsToMap:[],
@@ -789,9 +806,7 @@ export default {
     },
     distance() {
       let price = Math.round(this.distance * this.pricePerKm * 100)/100;
-      if (price > 0 && this.regular !== null) {
-        this.roundPrice(price, this.regular ? 2 : 1);
-      }
+      this.roundPrice(price, this.regular ? 2 : 1);
     },
     route(){
       this.buildPointsToMap();
@@ -938,15 +953,21 @@ export default {
         });
     },
     roundPrice (price, frequency) {
-      axios.post('/prix/arrondir', {
-        value: price,
-        frequency: frequency
-      }).then(resp => {
-        this.price = resp.data.value;
-      }).catch(error => {
-        // if and error occurred we set the original price
-        this.price = price;
-      })
+      if (price > 0 && frequency > 0) {
+        this.loadingPrice = true;
+        axios.post('/prix/arrondir', {
+          value: price,
+          frequency: frequency
+        }).then(resp => {
+          this.price = resp.data.value;
+        }).catch(error => {
+          // if and error occurred we set the original price
+          this.price = price;
+        }).finally(() => {
+          this.loadingPrice = false;
+          this.disableNextButton = false;
+        })
+      }
     }
   }
 };
