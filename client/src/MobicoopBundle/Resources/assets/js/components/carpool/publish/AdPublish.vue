@@ -1,5 +1,20 @@
 <template>
   <v-container fluid>
+    <v-snackbar
+      v-model="snackbar"
+      color="success"
+      top
+    >
+      {{ alert }}
+      <v-btn
+        color="white"
+        text
+        @click="snackbar = false"
+      >
+        <v-icon>mdi-close-circle-outline</v-icon>
+      </v-btn>
+    </v-snackbar>
+
     <!-- Title and subtitle -->
     <v-row 
       justify="center"
@@ -400,7 +415,7 @@
                     persistent-hint
                     :color="colorPricePerKm"
                     :class="colorPricePerKm + '--text'"
-                    @blur="roundPrice(price, regular ? 2 : 1)"
+                    @blur="roundPrice(price, regular ? 2 : 1, true)"
                     @change="disableNextButton = true"
                   />
                 </v-col>
@@ -715,7 +730,9 @@ export default {
       anyRouteAsPassenger: null, // not used yet
       solidaryExclusive: this.solidaryExclusiveAd,
       numberSeats : [ 1,2,3,4],
-      seats : 3
+      seats : 3,
+      snackbar: false,
+      alert: this.$t('messageRoundedPrice')
     }
   },
   computed: {
@@ -954,14 +971,17 @@ export default {
           self.loading = false;
         });
     },
-    roundPrice (price, frequency) {
+    roundPrice (price, frequency, doneByUser = false) {
       if (price > 0 && frequency > 0) {
         this.loadingPrice = true;
-        axios.post('/prix/arrondir', {
+        axios.post(this.$t('route.roundPrice'), {
           value: price,
           frequency: frequency
         }).then(resp => {
           this.price = resp.data.value;
+          if (doneByUser === true) {
+            this.snackbar = true;
+          }
         }).catch(error => {
           // if and error occurred we set the original price
           this.price = price;
