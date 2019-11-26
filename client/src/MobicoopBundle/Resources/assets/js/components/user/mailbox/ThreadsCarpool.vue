@@ -68,18 +68,15 @@ export default {
     }
   },
   watch: {
-    idAskToSelect: {
-      immediate: true,
-      handler(newVal, oldVal) {
-        this.idAskToSelect ? this.refreshSelected(this.idAskToSelect) : '';
-      }
+    idAskToSelect() {
+      this.idAskToSelect ? this.refreshSelected(this.idAskToSelect) : '';
     },
     refreshThreads(){
       (this.refreshThreads) ? this.getThreads(this.idMessageToSelect) : '';
     }
   },
   mounted(){
-    this.getThreads(this.idThreadDefault);
+    this.getThreads(this.idAskToSelect);
   },
   methods:{
     emit(data){
