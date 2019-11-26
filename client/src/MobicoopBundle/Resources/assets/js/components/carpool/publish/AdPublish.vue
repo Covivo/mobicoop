@@ -788,7 +788,10 @@ export default {
       this.pricePerKm = (this.distance>0 ? Math.round(parseFloat(this.price) / this.distance * 100)/100 : this.defaultPriceKm);
     },
     distance() {
-      this.price = Math.round(this.distance * this.pricePerKm * 100)/100;
+      let price = Math.round(this.distance * this.pricePerKm * 100)/100;
+      if (price > 0 && this.regular !== null) {
+        this.roundPrice(price, this.regular ? 2 : 1);
+      }
     },
     route(){
       this.buildPointsToMap();
@@ -933,8 +936,18 @@ export default {
         .finally(function () {
           self.loading = false;
         });
+    },
+    roundPrice (price, frequency) {
+      axios.post('/prix/arrondir', {
+        value: price,
+        frequency: frequency
+      }).then(resp => {
+        this.price = resp.data.value;
+      }).catch(error => {
+        // if and error occurred we set the original price
+        this.price = price;
+      })
     }
-
   }
 };
 </script>

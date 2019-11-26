@@ -72,6 +72,7 @@ use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStop;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
+use Mobicoop\Bundle\MobicoopBundle\Price\Entity\Price;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\UserNotification;
 
 /**
@@ -178,6 +179,8 @@ class Deserializer
             case Structure::class:
                 return self::deserializeStructure($data);
                 break;
+            case Price::class:
+                return self::deserializePrice($data);
             default:
                 break;
         }
@@ -868,6 +871,14 @@ class Deserializer
         $contact = self::autoSet($contact, $data);
 
         return $contact;
+    }
+
+    private function deserializePrice(array $data) : ?Price
+    {
+        $price = new Price();
+        $price = self::autoSet($price, $data);
+
+        return $price;
     }
     
     private function autoSet($object, $data)
