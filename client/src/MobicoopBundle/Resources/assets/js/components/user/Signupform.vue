@@ -283,7 +283,7 @@
           />
           <v-checkbox
             v-model="form.validation"
-            class="check"
+            class="check mt-12"
             color="primary"
             :rules="form.checkboxRules"
             required
@@ -293,7 +293,7 @@
               v-slot:label
               v-slot:activator="{ on }"
             >
-              <p>
+              <div>
                 {{ $t('ui.pages.signup.chart.text') }}
                 <a
                   class="secondary--text"
@@ -302,7 +302,7 @@
                   @click.stop
                 >{{ $t('ui.pages.signup.chart.link') }}
                 </a>
-              </p>
+              </div>
             </template>
           </v-checkbox>
           <v-btn
