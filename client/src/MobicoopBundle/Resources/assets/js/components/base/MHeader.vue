@@ -15,7 +15,10 @@
       </v-toolbar-title>
       <v-spacer />
       <!--<accessibility />-->
-      <div v-if="user">
+      <v-toolbar-items
+        v-if="user"
+        class="hidden-sm-and-down"
+      >
         <v-btn
           text
           rounded
@@ -28,8 +31,40 @@
           :avatar="user.avatars[0]"
           :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
         />
-      </div>
-      <div v-else>
+      </v-toolbar-items>
+      <v-menu
+        v-if="user"
+        class="hidden-md-and-up"
+      >
+        <v-toolbar-side-icon slot="activator" />
+        <v-list>
+          <v-list-tile
+            v-for="item in menu"
+            :key="item.icon"
+          >
+            <v-list-tile-content>
+              <v-list-tile-title>
+                <v-btn
+                  text
+                  rounded
+                  :href="$t('buttons.messages.route')"
+                >
+                  {{ $t('buttons.messages.label') }}
+                </v-btn>
+                <MHeaderCommunities :user-id="user.id" />
+                <MHeaderProfile
+                  :avatar="user.avatars[0]"
+                  :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
+                />
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+      </v-menu>
+      <v-toolbar-items
+        v-else
+        class="hidden-sm-and-down"
+      >
         <v-btn
           rounded
           text
@@ -44,7 +79,7 @@
         >
           {{ $t('buttons.logIn.label') }}
         </v-btn>
-      </div>
+      </v-toolbar-items>
       <v-btn
         rounded
         :disabled="!user"
