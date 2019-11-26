@@ -721,7 +721,9 @@ export default {
   computed: {
    
     hintPricePerKm() {
-      return this.pricePerKm+'€/km';
+      let pricePerKm = this.pricePerKm;
+      if (isNaN(this.pricePerKm)) pricePerKm = 0;
+      return pricePerKm+'€/km';
     },
     validWaypoints() {
       if (this.route && this.route.waypoints) {
