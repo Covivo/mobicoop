@@ -2488,5 +2488,7 @@ class ResultManager
      */
     public function createAskResults(Ask $ask, int $userId)
     {
+        $result = new Result();
+        $result->setId($ask->getId());
     }
 }
