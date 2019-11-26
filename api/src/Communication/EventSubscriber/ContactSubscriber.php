@@ -87,6 +87,8 @@ class ContactSubscriber implements EventSubscriberInterface
         $email->setRecipientEmail($this->contactEmailAddress);
         $email->setSenderEmail($contact->getEmail());
         $email->setReturnEmail($contact->getEmail());
+        $email->setSenderFirstName($contact->getGivenName());
+        $email->setSenderName($contact->getFamilyName());
         $email->setObject("Nouvelle demande de contact");
 
         $this->emailManager->send($email, $this->emailTemplatePath . 'contact_email_posted', ['contact' => $contact]);
