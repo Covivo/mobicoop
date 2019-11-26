@@ -19,76 +19,74 @@
 <!--**************************-->
 
 <template>
-  <v-content>
-    <v-container
-      id="scroll-target"
-      style="max-height: 500px"
-      class="overflow-y-auto"
-      fluid
+  <v-container
+    id="scroll-target"
+    style="max-height: 500px"
+    class="overflow-y-auto"
+    fluid
+  >
+    <v-row
+      justify="center"
     >
-      <v-row
-        justify="center"
-      >
-        <v-col
-          cols="12"
-          md="8"
-          xl="6"
-          align="center"
-        >
-          <h1>{{ $t('title') }}</h1>
-        </v-col>
-      </v-row>
-      <v-row
-        justify="center"
-      >
-        <v-col class="col-4">
-          <v-alert type="info">
-            <p>{{ $t("almostDone") }}</p>
-            <p>{{ $t("validationMailSend") }}</p>
-            <p v-html="$t('canValid')" />
-          </v-alert>
-        </v-col>
-      </v-row>
-      <v-row
-        justify="center"
+      <v-col
+        cols="12"
+        md="8"
+        xl="6"
         align="center"
       >
-        <v-col class="col-4 text-center">
-          <v-alert
-            v-if="error!==''"
-            type="error"
+        <h1>{{ $t('title') }}</h1>
+      </v-col>
+    </v-row>
+    <v-row
+      justify="center"
+    >
+      <v-col class="col-4">
+        <v-alert type="info">
+          <p>{{ $t("almostDone") }}</p>
+          <p>{{ $t("validationMailSend") }}</p>
+          <p v-html="$t('canValid')" />
+        </v-alert>
+      </v-col>
+    </v-row>
+    <v-row
+      justify="center"
+      align="center"
+    >
+      <v-col class="col-4 text-center">
+        <v-alert
+          v-if="error!==''"
+          type="error"
+        >
+          {{ $t(error) }}
+        </v-alert>
+        <v-form
+          id="formLoginValidation"
+          ref="form"
+          v-model="valid"
+          lazy-validation
+          :action="$t('urlPost')+(token)"
+          method="POST"
+        >
+          <v-text-field
+            v-model="token"
+            :rules="tokenRules"
+            :label="$t('token')"
+            name="token"
+            required
+          />
+          <v-btn
+            :disabled="!valid"
+            color="primary"
+            type="submit"
+            rounded
+            @click="validate"
           >
-            {{ $t(error) }}
-          </v-alert>
-          <v-form
-            id="formLoginValidation"
-            ref="form"
-            v-model="valid"
-            lazy-validation
-            :action="$t('urlPost')+(token)"
-            method="POST"
-          >
-            <v-text-field
-              v-model="token"
-              :rules="tokenRules"
-              :label="$t('token')"
-              name="token"
-              required
-            />
-            <v-btn
-              :disabled="!valid"
-              color="primary"
-              type="submit"
-              rounded
-              @click="validate"
-            >
-              {{ $t('validate') }}
-            </v-btn>
-          </v-form>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-content>
+            {{ $t('validate') }}
+          </v-btn>
+        </v-form>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
