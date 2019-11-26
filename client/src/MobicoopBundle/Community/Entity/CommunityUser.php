@@ -33,8 +33,9 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 class CommunityUser implements ResourceInterface, \JsonSerializable
 {
     const STATUS_PENDING = 0;
-    const STATUS_ACCEPTED = 1;
-    const STATUS_REFUSED = 2;
+    const STATUS_ACCEPTED_AS_MEMBER = 1;
+    const STATUS_ACCEPTED_AS_MODERATOR = 2;
+    const STATUS_REFUSED = 3;
 
     /**
      * @var int The id of this community user.
