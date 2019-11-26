@@ -220,7 +220,7 @@
                 v-model="form.date"
                 :label="$t('models.user.birthDay.placeholder')+` *`"
                 readonly
-                :rules="[ form.birthdayRules.checkIfAdult ]"
+                :rules="[ form.birthdayRules.checkIfAdult, form.birthdayRules.required ]"
                 required
                 :disabled="!step3"
                 v-on="on"
@@ -309,7 +309,7 @@
             color="primary"
             rounded
             class="mr-4 mb-100 mt-12"
-            :disabled="!step5 || loading || isDisable"
+            :disabled="!step5 || !step4 || !step3 || !step2 || !step1 || loading || isDisable"
             :loading="loading"
             @click="validate"
           >
@@ -446,6 +446,7 @@ export default {
           },
         },
         birthdayRules : {
+          required:  v => !!v || this.$t("models.user.birthDay.errors.required"),
           checkIfAdult : value =>{
             var d1 = new Date();
             var d2 = new Date(value);
@@ -504,30 +505,32 @@ export default {
       this.$refs.menu.save(date)
     },
     validate: function (e) {
-      this.loading = true;
-      axios.post(this.$t('urlSignUp'),
-        {
-          email:this.form.email,
-          telephone:this.form.telephone,
-          password:this.form.password,
-          givenName:this.form.givenName,
-          familyName:this.form.familyName,
-          gender:this.form.gender,
-          birthDay:this.form.date,
-          address:this.form.homeAddress,
-          idFacebook:this.form.idFacebook
-        },{
-          headers:{
-            'content-type': 'application/json'
-          }
-        })
-        .then(response=>{
-          window.location.href = this.$t('urlRedirectAfterSignUp');
-          //console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      if (this.refs.form.validate()) {
+        this.loading = true;
+        axios.post(this.$t('urlSignUp'),
+          {
+            email:this.form.email,
+            telephone:this.form.telephone,
+            password:this.form.password,
+            givenName:this.form.givenName,
+            familyName:this.form.familyName,
+            gender:this.form.gender,
+            birthDay:this.form.date,
+            address:this.form.homeAddress,
+            idFacebook:this.form.idFacebook
+          },{
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
+          .then(response=>{
+            window.location.href = this.$t('urlRedirectAfterSignUp');
+            //console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
     },
     isNumber: function(evt) {
       evt = (evt) ? evt : window.event;
