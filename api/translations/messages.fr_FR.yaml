@@ -191,3 +191,11 @@ updatedSefl: "Modification de votre profil"
 # USER_GENERATE_PHONE_TOKEN_ASKED 
 
 yourValidationToken: "Votre code de validation"
+
+# EMAIL ADDITIONAL HEADERS (ouestgo)
+header1Name: "X-JEMH-assignee"
+header1Data: "jira-ouestgo"
+header2Name: "X-JEMH-Adresse mail interlocuteur"
+header2Data: "senderEmail"
+header3Name: "X-JEMH-Nom et prenom interlocuteur"
+header3Data: "senderName"

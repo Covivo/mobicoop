@@ -56,6 +56,7 @@
           cols="5"
         >
           <GeoComplete
+            v-show="showOrigin"
             :url="geoSearchUrl"
             :label="labelOrigin"
             :token="user ? user.geoToken : ''"
@@ -71,6 +72,7 @@
           class="text-center"
         >
           <v-tooltip 
+            v-if="showOrigin && showDestination"
             color="info"
             right
           >
@@ -90,6 +92,7 @@
           cols="5"
         >
           <GeoComplete
+            v-show="showDestination"
             :url="geoSearchUrl"
             :label="labelDestination"
             :token="user ? user.geoToken : ''"
@@ -250,6 +253,14 @@ export default {
     showRequired: {
       type: Boolean,
       default: false
+    },
+    showDestination: {
+      type: Boolean,
+      default: true
+    },
+    showOrigin: {
+      type: Boolean,
+      default: true
     }
   },
   data() {

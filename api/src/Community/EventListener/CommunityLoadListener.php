@@ -49,7 +49,7 @@ class CommunityLoadListener
                 $communityUsers = $community->getCommunityUsers();
                 foreach ($communityUsers as $communityUser) {
                     if ($request->get("userId") == $communityUser->getUser()->getId() &&
-                        $communityUser->getStatus() == CommunityUser::STATUS_ACCEPTED
+                        $communityUser->getStatus() == CommunityUser::STATUS_ACCEPTED_AS_MEMBER || CommunityUser::STATUS_ACCEPTED_AS_MODERATOR
                     ) {
                         $community->setMember(true);
                         break;

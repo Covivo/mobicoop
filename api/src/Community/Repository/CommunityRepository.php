@@ -77,7 +77,7 @@ class CommunityRepository
             ->leftJoin('c.communitySecurities', 'cs')
             ->where("cs.id is null OR (cu.user = :user AND cu.status = :status)")
             ->setParameter('user', $user)
-            ->setParameter('status', CommunityUser::STATUS_ACCEPTED)
+            ->setParameter('status', CommunityUser::STATUS_ACCEPTED_AS_MEMBER or CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)
             ->getQuery()->getResult();
         }
         return $this->repository->createQueryBuilder('c')

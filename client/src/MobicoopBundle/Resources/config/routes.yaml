@@ -52,7 +52,7 @@ user_profile_update:
         fr: /utilisateur/profil/modifier/{tabDefault?}
         en: /user/profile/update/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
-    
+
 # phone validation
 user_phone_validation:
     path:
@@ -65,7 +65,7 @@ user_phone_token:
     path:
         fr: /utilisateur/telephone/token
         en: /user/phone/token
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::generatePhoneToken    
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::generatePhoneToken
 
 # delete avatar
 user_profile_image_delete:
@@ -234,7 +234,7 @@ carpool_solidary_exclusive_ad_post:
     path:
         fr: /covoiturage/annonce/poster/solidaire
         en: /carpool/ad/post/solidary
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryExclusiveAdPost    
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryExclusiveAdPost
 
 # post an ad from a search
 carpool_ad_post_search:
@@ -531,3 +531,20 @@ event_proposals:
     requirements:
         id: '\d+'
 
+# display one widget
+event_widget:
+    path:
+        fr: /evenement-widget/{id}
+        en: /event-widget/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventWidget
+    requirements:
+        id: '\d+'
+
+# display one widget
+event_get_widget:
+    path:
+        fr: /evenement-get-widget/{id}
+        en: /event-get-widget/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventGetWidget
+    requirements:
+        id: '\d+'
