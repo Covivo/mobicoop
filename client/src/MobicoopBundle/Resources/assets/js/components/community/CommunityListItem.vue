@@ -21,7 +21,10 @@
           max-height="150"
         />
       </v-col>
-      <v-col cols="6">
+      <v-col  
+        xl="6"
+        md="5"
+      >
         <v-card-title>
           <div>
             <h4>
@@ -39,7 +42,6 @@
         </v-list>
       </v-col>
       <v-col
-        cols="3"
         class="text-center"
       >
         <div
