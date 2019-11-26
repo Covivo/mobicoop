@@ -103,7 +103,8 @@
 
           <!--Telephone-->
           <v-row 
-            justify="center" 
+            justify="start" 
+            
           >
             <v-col>
               <v-text-field
@@ -150,7 +151,7 @@
                   <span>{{$t('phone.tooltips.notVerified')}}</span>
               </v-tooltip>
             </v-col>
-            <v-col cols="3"  v-if="diplayVerification && telephone && phoneVerified == false">
+            <v-col cols="3" xl="3" sm="8"  v-if="diplayVerification && telephone && phoneVerified == false">
               <v-btn 
                 rounded color="secondary" 
                 @click="generateToken" class="mt-4" 
@@ -161,6 +162,8 @@
             </v-col>
             <v-col 
               cols="3" 
+              xl="3"
+              sm="5"
               v-if="phoneToken != null && telephone && phoneVerified == false"
             >
               <v-text-field
@@ -171,7 +174,7 @@
                   />
             </v-col>
             <v-col 
-              cols="2" 
+              cols="2" xl="2" sm="6" class="justify-center" 
               v-if="phoneToken != null && telephone && phoneVerified == false"
             >
               <v-btn 
