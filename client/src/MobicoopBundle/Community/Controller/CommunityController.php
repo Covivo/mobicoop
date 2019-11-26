@@ -289,12 +289,50 @@ class CommunityController extends AbstractController
             $communityUser = new CommunityUser();
             $communityUser->setCommunity($community);
             $communityUser->setUser($user);
-            $data=$communityManager->joinCommunity($communityUser);
-            $reponseofmanager= $this->handleManagerReturnValue($data);
+            $data = $communityManager->joinCommunity($communityUser);
+            $reponseofmanager = $this->handleManagerReturnValue($data);
             if (!empty($reponseofmanager)) {
                 return $reponseofmanager;
             }
         }
+
+        return new Response();
+    }
+
+    /**
+     * Leave a community.
+     */
+    public function communityLeave($id, CommunityManager $communityManager, UserManager $userManager)
+    {
+        $community = $communityManager->getCommunity($id);
+
+        $this->denyAccessUnlessGranted('leave', $community);
+
+        $user = $userManager->getLoggedUser();
+        $reponseofmanager = $this->handleManagerReturnValue($user);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+
+        // TEST IF USER IS LOGGED
+        if (null !== $user) {
+            $communityUserToDelete = null;
+            foreach ($community->getCommunityUsers() as $communityUser) {
+                if ($communityUser->getUser()->getId() == $user->getId()) {
+                    $communityUserToDelete = $communityUser;
+                    break;
+                }
+            }
+
+            if ($communityUserToDelete) {
+                $data = $communityManager->leaveCommunity($communityUserToDelete);
+                $reponseofmanager = $this->handleManagerReturnValue($data);
+                if (!empty($reponseofmanager)) {
+                    return $reponseofmanager;
+                }
+            }
+        }
+
         return new Response();
     }
 

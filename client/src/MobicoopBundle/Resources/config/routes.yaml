@@ -368,6 +368,15 @@ community_join:
     requirements:
         id: '\d+'
 
+# leave a community (AJAX)
+community_leave:
+    path:
+        fr: /communaute/{id}/quitter
+        en: /community/{id}/leave
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityLeave
+    requirements:
+        id: '\d+'
+
 # check if a user is an accepted member of a community (AJAX)
 community_user_is_member:
     methods: [POST]

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :key="rerenderKey">
     <v-row
       v-if="communitiesUser.length>0"
     >
@@ -34,7 +34,10 @@
                   outlined
                   tile
                 >
-                  <CommunityListItem :item="item" />
+                  <CommunityListItem
+                    :item="item"
+                    :can-leave="true"
+                  />
                 </v-col>
               </v-row>
             </template>
@@ -117,7 +120,7 @@
             </v-col>
           </v-row>
         </template>
-      </v-data-iterator>      
+      </v-data-iterator>
     </v-card>
   </div>
 </template>
@@ -158,6 +161,7 @@ export default {
   },
   data () {
     return {
+      rerenderKey: 0,
       search: '',
       itemsPerPageOptions: [10, 20, 50, 100, -1],
       itemsPerPage: 10,
@@ -174,6 +178,27 @@ export default {
       ]
     }
   },
+  created() {
+    console.log(this.communities);
+    console.log(this.communitiesUser);
+  },
+  methods: {
+    leaveCommunity(community) {
+      var self = this, i = null;
+      this.communitiesUser.forEach(function(item, index) {
+        if(item.id === community.id){
+          self.communities.push(community); // ADD TO AVAILABLE COMMUNITIES
+          i = index;
+          return;
+        }
+      });
+      this.communitiesUser.splice(i, 1); // REMOVE FROM MY COMMUNITIES
+      this.refreshComponent();
+    },
+    refreshComponent() {
+      this.rerenderKey++;
+    }
+  }
 }
 </script>
 
