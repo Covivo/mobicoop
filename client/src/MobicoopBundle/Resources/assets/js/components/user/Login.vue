@@ -1,5 +1,8 @@
 <template>
-  <v-container fluid>
+  <v-container
+    fluid
+    style="height: 100%"
+  >
     <v-row
       justify="center"
     >
@@ -14,7 +17,9 @@
     </v-row>
     <v-row
       justify="center"
+      align="center"
       class="text-center"
+      style="height: 80%"
     >
       <v-col class="col-4">
         <v-alert
