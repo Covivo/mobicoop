@@ -62,6 +62,7 @@
         <v-form
           ref="step 1"
           v-model="step1"
+          class="py-12"
         >
           <v-text-field
             id="email"
@@ -106,6 +107,7 @@
           id="step2"
           ref="step 2"
           v-model="step2"
+          class="py-12"
         >
           <v-text-field
             v-model="form.givenName"
@@ -156,6 +158,7 @@
           id="step3"
           ref="step 3"
           v-model="step3"
+          class="py-12"
           :hidden="!step1"
         >
           <v-select
@@ -201,6 +204,7 @@
           id="step4"
           ref="step 4"
           v-model="step4"
+          class="py-12"
           :hidden="!step2"
         >
           <v-menu
@@ -264,6 +268,7 @@
           id="step5"
           ref="form"
           v-model="step5"
+          class="py-12"
           :hidden="!step3"
         >
           <GeoComplete
@@ -288,14 +293,16 @@
               v-slot:label
               v-slot:activator="{ on }"
             >
-              {{ $t('ui.pages.signup.chart.text') }}
-              <a
-                class="secondary--text"
-                target="_blank"
-                :href="$t('ui.pages.signup.chart.route')"
-                @click.stop
-              >{{ $t('ui.pages.signup.chart.link') }}
-              </a>
+              <p>
+                {{ $t('ui.pages.signup.chart.text') }}
+                <a
+                  class="secondary--text"
+                  target="_blank"
+                  :href="$t('ui.pages.signup.chart.route')"
+                  @click.stop
+                >{{ $t('ui.pages.signup.chart.link') }}
+                </a>
+              </p>
             </template>
           </v-checkbox>
           <v-btn
@@ -315,7 +322,6 @@
 </template>
 
 <script>
-import moment from "moment";
 import axios from "axios";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 
