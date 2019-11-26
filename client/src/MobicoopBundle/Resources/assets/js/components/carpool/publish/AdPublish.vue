@@ -11,12 +11,8 @@
         align="center"
       >
         <h1>{{ $t('title') }}</h1>
-        <h3 v-if="step==1">
-          {{ $t('subtitle') }}
-        </h3>
-        <!-- todo : remove this awful trick !! -->
-        <h3 v-else>
-            &nbsp;
+        <h3 style="height: 30px">
+          {{ step === 1 ? $t('subtitle') : "" }}
         </h3>
       </v-col>
     </v-row>
