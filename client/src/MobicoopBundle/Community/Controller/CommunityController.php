@@ -62,6 +62,11 @@ class CommunityController extends AbstractController
      */
     public function communityCreate(CommunityManager $communityManager, UserManager $userManager, Request $request, ImageManager $imageManager)
     {
+        // Deny the creation of a community if the .env say so
+        if ($this->createFromFront==="false") {
+            return $this->redirectToRoute('home');
+        }
+        
         $community = new Community();
         $this->denyAccessUnlessGranted('create', $community);
         $user = new User($userManager->getLoggedUser()->getId());
