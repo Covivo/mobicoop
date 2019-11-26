@@ -678,10 +678,10 @@ export default {
         "regular" : this.lResult.frequency == 2
       };
       let resultChoice = null;
-      if (this.lResult.resultDriver) {
-        resultChoice = this.lResult.resultDriver;
-      } else {
+      if (this.lResult.resultPassenger) {
         resultChoice = this.lResult.resultPassenger;
+      } else {
+        resultChoice = this.lResult.resultDriver;
       }      
       // proposal and matching results
       params.adId = resultChoice.outward.proposalId;
