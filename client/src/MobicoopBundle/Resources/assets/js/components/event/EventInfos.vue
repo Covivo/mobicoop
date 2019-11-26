@@ -4,13 +4,13 @@
     justify="center"
   >
     <v-col
-      cols="4"
+      cols="12"
       md="4"
-      sm="10"
     >
       <v-avatar
         color="grey lighten-3"
         size="225"
+        max-height="20vh"
       >
         <img
           v-if="event.images[0]"
@@ -26,13 +26,13 @@
     </v-col>
       
     <v-col
-      cols="8"
+      cols="12"
       md="4"
-      sm="10"
     >
       <v-card
         flat
         max-height="25vh"
+        justify="center"
       >
         <v-card-text>
           <h3 class="headline">
@@ -41,12 +41,14 @@
           <p
             v-if="displayDescription"
             class="body-1"
+            md="6"
           >
             {{ event.description }}
           </p>
           <p
             v-if="displayDescription"
             class="body-2"
+            md="6"
           >
             {{ event.fullDescription }}
           </p>
