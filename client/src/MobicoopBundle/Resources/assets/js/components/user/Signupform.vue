@@ -231,6 +231,7 @@
               v-model="form.date"
               :max="new Date().toISOString().substr(0, 10)"
               :locale="locale"
+              first-day-of-week="1"
               @change="save"
             />
           </v-menu>
