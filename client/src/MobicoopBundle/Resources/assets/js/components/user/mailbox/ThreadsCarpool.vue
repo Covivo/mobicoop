@@ -68,8 +68,11 @@ export default {
     }
   },
   watch: {
-    idAskToSelect(){
-      (this.idAskToSelect) ? this.refreshSelected(this.idAskToSelect) : '';
+    idAskToSelect: {
+      immediate: true,
+      handler(newVal, oldVal) {
+        this.idAskToSelect ? this.refreshSelected(this.idAskToSelect) : '';
+      }
     },
     refreshThreads(){
       (this.refreshThreads) ? this.getThreads(this.idMessageToSelect) : '';
@@ -87,7 +90,7 @@ export default {
     },
     refreshSelected(idAsk){
       this.messages.forEach((item, index) => {
-        if(item.idAsk == idAsk){
+        if(item.idAsk === idAsk){
           this.$set(item, 'selected', true);
         }
         else{

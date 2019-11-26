@@ -97,8 +97,11 @@ export default {
     }
   },
   watch:{
-    idMessage(){
-      this.getCompleteThread();
+    idMessage: {
+      immediate: true,
+      handler(newVal, oldVal) {
+        this.getCompleteThread();
+      }
     },
     refresh(){
       (this.refresh) ? this.getCompleteThread() : '';

@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 
 use Herrera\Json\Exception\Exception;
 use Http\Client\Exception\HttpException;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -560,28 +561,48 @@ class UserController extends AbstractController
     /**
      * User mailbox
      */
-    public function mailBox(UserManager $userManager, Request $request)
+    public function mailBox(UserManager $userManager, Request $request, InternalMessageManager $messageManager)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
+        $data = $request->request;
 
         $newThread = null;
         $idThreadDefault = null;
+        $idMessage = null;
+        $idRecipient = null;
+        $idAsk= null;
 
         if ($request->isMethod('POST')) {
-            $newThread = [
-                "carpool" => (int)$request->request->get('carpool'),
-                "idRecipient" => (int)$request->request->get('idRecipient'),
-                "familyName" => $request->request->get('familyName'),
-                "givenName" => $request->request->get('givenName'),
-                "avatar" => $request->request->get('avatar')
-            ];
-            $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
+            // if we ask for a specific thread then we return it
+            if ($data->has("idMessage")) {
+                /** @var Message $message */
+                $message = $messageManager->getMessage($data->get("idMessage"));
+                $reponseofmanager = $this->handleManagerReturnValue($message);
+                if (!empty($reponseofmanager)) {
+                    return $reponseofmanager;
+                }
+                $idMessage = $idThreadDefault = !empty($message->getMessage()) ? $message->getMessage()->getId() : $message->getMessage();
+                $idRecipient = $message->getRecipients()[0]->getId();
+                $idAsk = $message->getAskHistory()["ask"]["id"];
+            } else {
+                $newThread = [
+                    "carpool" => (int)$request->request->get('carpool'),
+                    "idRecipient" => (int)$request->request->get('idRecipient'),
+                    "familyName" => $request->request->get('familyName'),
+                    "givenName" => $request->request->get('givenName'),
+                    "avatar" => $request->request->get('avatar')
+                ];
+                $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
+            }
         }
 
         return $this->render('@Mobicoop/user/messages.html.twig', [
             "idUser"=>$user->getId(),
             "idThreadDefault"=>$idThreadDefault,
+            "idMessage" => $idMessage,
+            "idRecipient" => $idRecipient,
+            "idAsk" => $idAsk,
             "newThread" => $newThread
         ]);
     }
