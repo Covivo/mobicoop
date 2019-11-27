@@ -73,6 +73,9 @@
             "buttons" :{
                 "confirmDelete":"Je confirme la suppression"
             }
+        },
+        "buttons" : {
+            "supprimerAccount" : "Supprimer mon compte"
         }
     },
     "en":{

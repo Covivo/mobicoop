@@ -330,7 +330,7 @@
                   type="button"
                   :value="$t('ui.button.save')"
           >
-            {{ $t('ui.button.save') }}
+            {{ $t('buttons.supprimerAccount') }}
           </v-btn>
         </template>
 
