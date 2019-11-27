@@ -69,8 +69,10 @@ class Ask
     const STATUS_INITIATED = 1;
     const STATUS_PENDING_AS_DRIVER = 2;
     const STATUS_PENDING_AS_PASSENGER = 3;
-    const STATUS_ACCEPTED = 4;
-    const STATUS_DECLINED = 5;
+    const STATUS_ACCEPTED_AS_DRIVER = 4;
+    const STATUS_ACCEPTED_AS_PASSENGER = 5;
+    const STATUS_DECLINED_AS_DRIVER = 6;
+    const STATUS_DECLINED_AS_PASSENGER = 7; // asked by remi
     
     /**
      * @var int The id of this ask.
@@ -83,7 +85,7 @@ class Ask
     private $id;
 
     /**
-     * @var int Ask status (1 = initiated; 2 = pending as driver, 3 = pending as passenger, 4 = accepted; 5 = declined).
+     * @var int Ask status (1 = initiated; 2 = pending as driver, 3 = pending as passenger, 4 = accepted as driver; 5 = accepted as passenger, 6 = declined as driver, 7 = declined as passenger).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -233,6 +235,12 @@ class Ask
      * @Groups("write")
      */
     private $matchingOpposite;
+
+    /**
+     * @var array The filters returned to the user. The user can then filter and sort the results.
+     * @Groups({"read","write"})
+     */
+    private $filters;
     
     public function __construct()
     {
@@ -484,6 +492,18 @@ class Ask
     {
         $this->matchingOpposite = $matchingOpposite;
         
+        return $this;
+    }
+
+    public function getFilters(): ?array
+    {
+        return $this->filters;
+    }
+
+    public function setFilters(array $filters): self
+    {
+        $this->filters = $filters;
+
         return $this;
     }
     
