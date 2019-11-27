@@ -486,6 +486,8 @@ class AskManager
         $ad = new Ad();
         $ad->setUserId($userId);
         $ad->setAskStatus($ask->getStatus());
+
+        // first pass for role
         switch ($ask->getStatus()) {
             case Ask::STATUS_INITIATED:
                 if ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId) {
@@ -503,6 +505,28 @@ class AskManager
             case Ask::STATUS_ACCEPTED_AS_PASSENGER:
             case Ask::STATUS_DECLINED_AS_PASSENGER:
                 $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_PASSENGER : Ad::ROLE_DRIVER);
+                break;
+        }
+
+        // second pass for 'update-able'
+        switch ($ask->getStatus()) {
+            case Ask::STATUS_INITIATED:
+                if ($ask->getUser()->getId() == $userId) {
+                    $ad->setCanUpdateAsk(true);
+                } else {
+                    $ad->setCanUpdateAsk(false);
+                }
+                break;
+            case Ask::STATUS_PENDING_AS_DRIVER:
+            case Ask::STATUS_PENDING_AS_PASSENGER:
+                if ($ask->getUser()->getId() == $userId) {
+                    $ad->setCanUpdateAsk(false);
+                } else {
+                    $ad->setCanUpdateAsk(true);
+                }
+                break;
+            default:
+                $ad->setCanUpdateAsk(false);
                 break;
         }
         
