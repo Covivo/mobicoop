@@ -2499,8 +2499,8 @@ class ResultManager
         $result = new Result();
         $result->setId($ask->getId());
 
-        $resultDriver = new ResultRole();
-        $resultPassenger = new ResultRole();
+        $resultDriver = null;
+        $resultPassenger = null;
 
         $role = Ad::ROLE_DRIVER;
 
@@ -2572,8 +2572,8 @@ class ResultManager
         $resultRole->setSeatsDriver($ask->getCriteria()->getSeatsDriver());
         $resultRole->setSeatsPassenger($ask->getCriteria()->getSeatsPassenger());
 
-        $outward = new ResultItem();
-        $return = new ResultItem();
+        $outward = null;
+        $return = null;
 
         // we create the results for the outward
         $outward = $this->createAskResultItem($ask, $role);
