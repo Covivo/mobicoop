@@ -88,14 +88,14 @@
                 </v-tooltip>                
               </td>
               <td class="text-left font-weight-bold">
-                {{ infosComplete.roundedPrice }} €
+                {{ infos.roundedPrice }} €
               </td>
             </tr>
           </tbody>
         </v-simple-table>
         <threads-actions-buttons
-          :can-ask="infosComplete.canAsk"
-          :status="infosComplete.status"
+          :can-ask="infosComplete.canUpdateAsk"
+          :status="infosComplete.askStatus"
           :regular="infosComplete.frequency==2"
           :loading-btn="dataLoadingBtn"
           :driver="driver"
@@ -256,24 +256,24 @@ export default {
       }
       axios.post(this.$t("urlGetAdAsk"),params)
         .then(response => {
-          console.error(response.data);
+          //console.error(response.data);
           this.infosComplete = response.data;
 
           // If the user can be driver and passenger, we display driver infos by default
-          if(this.infosComplete.resultDriver !== undefined && this.infosComplete.resultPassenger !== undefined){
-            this.infos = this.infosComplete.resultDriver;
-            this.driver = this.passenger = true;
-          }
-          else if(this.infosComplete.resultPassenger !== undefined){
-            this.infos = this.infosComplete.resultPassenger;
-            this.driver = false;
-            this.passenger = true;
-          }
-          else{
-            this.infos = this.infosComplete.resultDriver;
-            this.driver = true;
-            this.passenger = false;
-          }
+          // if(this.infosComplete.resultDriver !== undefined && this.infosComplete.resultPassenger !== undefined){
+          //   this.infos = this.infosComplete.resultDriver;
+          //   this.driver = this.passenger = true;
+          // }
+          // else if(this.infosComplete.resultPassenger !== undefined){
+          this.infos = this.infosComplete.resultPassenger;
+          this.driver = false;
+          this.passenger = true;
+          // }
+          // else{
+          //   this.infos = this.infosComplete.resultDriver;
+          //   this.driver = true;
+          //   this.passenger = false;
+          // }
         })
         .catch(function (error) {
           console.log(error);
@@ -349,7 +349,7 @@ export default {
 
     },
     updateStatus(data){
-      if(this.infosComplete.status==1 && this.infosComplete.frequency==2){
+      if(this.infosComplete.askStatus==1 && this.infosComplete.frequency==2){
         // If the Ask is only initiated and that the carpool is regular
 
         let results = null;

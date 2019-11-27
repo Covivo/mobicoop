@@ -657,6 +657,8 @@ class UserController extends AbstractController
                 $response = $adManager->getAdAsk($data['idAsk'], $user->getId());
 
                 $results = $response->getResults()[0];
+                $results["canUpdateAsk"] = $response->getCanUpdateAsk(); // Because it's not in result
+                $results["askStatus"] = $response->getAskStatus(); // Because it's not in result
 
                 return new JsonResponse($results);
             } else {

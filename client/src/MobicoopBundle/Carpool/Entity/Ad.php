@@ -322,7 +322,7 @@ class Ad implements ResourceInterface
      *
      * @Groups({"post","put"})
      */
-    private $statusAsk;
+    private $askStatus;
 
     public function __construct()
     {
@@ -817,14 +817,14 @@ class Ad implements ResourceInterface
         return $this;
     }
 
-    public function getStatusAsk(): ?int
+    public function getAskStatus(): ?int
     {
-        return $this->statusAsk;
+        return $this->askStatus;
     }
 
-    public function setStatusAsk(?int $statusAsk): self
+    public function setAskStatus(?int $askStatus): self
     {
-        $this->statusAsk = $statusAsk;
+        $this->askStatus = $askStatus;
 
         return $this;
     }
