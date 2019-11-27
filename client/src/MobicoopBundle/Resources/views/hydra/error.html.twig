@@ -47,7 +47,8 @@
                                         <li>
                                             <ul>
                                                 <li><span>{{ "Type"|trans }}: </span><span>{{ arg[0] }}</span></li>
-                                                <li><span>{{ "Valeur"|trans }}: </span><span>{{ arg[1] }}</span></li>
+                                                {#todo : updgrade to handle array in arg[1]#}
+                                                <li><span>{{ "Valeur"|trans }}: </span><span>{% if arg[1] is not iterable %} {{ arg[1] }} {% endif %}</span></li>
                                             </ul>
                                         </li>
                                     {% endfor %}
