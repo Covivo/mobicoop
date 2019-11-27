@@ -143,7 +143,7 @@
             <!-- Step 6 : message -->
             <v-stepper-step
               editable
-              :step="driver ? 6 : 4"
+              :step="driver ? (solidaryExclusive ? 5 : 6) : 4"
               color="primary"
             >
               {{ $t('stepper.header.message') }}
@@ -154,7 +154,7 @@
             <v-stepper-step
               color="primary"
               editable
-              :step="driver ? 7 : 5"
+              :step="driver ? (solidaryExclusive ? 6 : 7) : 5"
             >
               {{ $t('stepper.header.summary') }}
             </v-stepper-step>
@@ -441,7 +441,7 @@
 
             <!-- Step 6 : message -->
             <v-stepper-content
-              :step="driver ? 6 : 4"
+              :step="driver ? (solidaryExclusive ? 5 : 6) : 4"
             >
               <v-row
                 dense
@@ -470,7 +470,7 @@
 
             <!-- Step 7 : summary -->
             <v-stepper-content
-              :step="driver ? 7 : 5"
+              :step="driver ? (solidaryExclusive ? 6 : 7) : 5"
             >
               <v-container>
                 <v-row>
