@@ -128,15 +128,15 @@ export default {
   computed: {
     formateDate(){
       moment.locale(this.locale);
-      return moment(this.date).format("ddd DD MMM YYYY");
+      return moment.utc(this.date).format("ddd DD MMM YYYY");
     },
     formateFromDate(){
       moment.locale(this.locale);
-      return moment(this.criteria.fromDate).format("ddd DD MMM YYYY");
+      return moment.utc(this.criteria.fromDate).format("ddd DD MMM YYYY");
     },
     formateFromTime(){
       moment.locale(this.locale);
-      return (this.criteria.fromTime) ? moment(this.criteria.fromTime).format("HH")+"h"+moment(this.criteria.fromTime).format("mm") : null;
+      return (this.criteria.fromTime) ? moment.utc(this.criteria.fromTime).format("HH")+"h"+moment.utc(this.criteria.fromTime).format("mm") : null;
     },
     regularCarpoolDays(){
       let carpoolDays = [];
