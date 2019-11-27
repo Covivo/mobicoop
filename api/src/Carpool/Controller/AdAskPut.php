@@ -57,7 +57,7 @@ class AdAskPut
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
         }
-        $data = $this->askManager->updateAskFromAd($data, $this->request->get("userId"));
+        $data = $this->askManager->updateAskFromAd($data,$this->request->get("id"),$this->request->get("userId"));
         return $data;
     }
 }

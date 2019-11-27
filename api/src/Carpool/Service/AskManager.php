@@ -539,13 +539,14 @@ class AskManager
     /**
      * Update an ask from an ad
      *
-     * @param Ad $ad        The ad to use
+     * @param Ad $ad        The body of the ad to use
+     * @param int $adId     The id of the ad to use (not initialized in the body)
      * @param int $userId   The user id of the user making the update
      * @return Ad       The ad updated from the updated ask
      */
-    public function updateAskFromAd(Ad $ad, int $userId)
+    public function updateAskFromAd(Ad $ad,int $adId,int $userId)
     {
-        $ask = $this->askRepository->find($ad->getId());
+        $ask = $this->askRepository->find($adId);
         
         // the ask posted is the master ask, we have to update all the asks linked :
         // - the related ask for return trip
@@ -666,6 +667,13 @@ class AskManager
                 }
             }
         }
+
+        // Ask History
+        $askHistory = new AskHistory();
+        $askHistory->setStatus($ask->getStatus());
+        $askHistory->setType($ask->getType());
+        $ask->addAskHistory($askHistory);
+
         $this->entityManager->persist($ask);
         $this->entityManager->flush();
 
