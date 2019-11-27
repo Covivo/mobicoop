@@ -408,15 +408,45 @@
                 cols="12"
               >
                 <v-card
-
                   outlined
                   class="mx-auto"
                 >
-                  <v-card-title v-if="user != null">
-                    {{ user.givenName }} {{ user.familyName }}
-                  </v-card-title>
+                  <img
+                    v-if="user.avatars[0]"
+                    :src="user['avatars'][0]"
+                    alt="avatar"
+                  >
+                  <img
+                    v-else
+                    :src="urlAltAvatar"
+                    alt="avatar"
+                  >
+
+                  <v-card-text
+                    v-if="user != null"
+                    class="title"
+                  >
+                    {{ user.givenName }} {{ user.shortFamilyName }}
+                    <v-card-text>
+                      {{ (new Date()).getFullYear() - user.birthYear }} ans
+                    </v-card-text>
+                  </v-card-text>
+                  <v-divider />
                   <v-card-text v-if="user != null">
                     {{ user.telephone }}
+                  </v-card-text>
+                  <v-card-text v-if="user != null">
+                    {{ user.email }}
+                  </v-card-text>
+                  <v-divider />
+                  <v-card-text v-if="user != null">
+                    {{ user.smoke == 0 ? 'Non fumeur' : 'Fumeur' }}
+                  </v-card-text>
+                  <v-card-text v-if="user != null">
+                    {{ user.music == 0 ? "Je préfère rouler sans fond sonore": "J’écoute la radio ou de la musique" }}
+                  </v-card-text>
+                  <v-card-text v-if="user != null">
+                    {{ user.chat == 0 ? "Je ne suis pas bavard" : "Je discute" }}
                   </v-card-text>
                 </v-card>
               </v-col>            
