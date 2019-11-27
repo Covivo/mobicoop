@@ -503,7 +503,7 @@ class AdManager
      */
     public function getAdAsk(int $askId, int $userId)
     {
-        if ($data = $this->dataProvider->getSpecialItem($askId, "ask", ["userId"=>$userId])) {
+        if ($data = $this->dataProvider->getSpecialItem($askId, "ask", ["userId"=>$userId], true)) {
             return $data->getValue();
         }
         return null;

@@ -256,7 +256,7 @@ export default {
       }
       axios.post(this.$t("urlGetAdAsk"),params)
         .then(response => {
-          //console.error(response.data);
+          console.error(response.data);
           this.infosComplete = response.data;
 
           // If the user can be driver and passenger, we display driver infos by default

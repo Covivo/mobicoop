@@ -216,7 +216,7 @@ class DataProvider
      *
      * @return Response The response of the operation.
      */
-    public function getSpecialItem(int $id, string $operation, array $params=null): Response
+    public function getSpecialItem(int $id, string $operation, array $params=null, bool $reverseOperationId=false): Response
     {
         try {
             if ($this->format == self::RETURN_ARRAY) {
@@ -226,7 +226,11 @@ class DataProvider
                 $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
                 $value = (string) $clientResponse->getBody();
             } else {
-                $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params]);
+                if (!$reverseOperationId) {
+                    $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params]);
+                } else {
+                    $clientResponse = $this->client->get($this->resource."/".$operation."/".$id, ['query'=>$params]);
+                }
                 $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
             }
             if ($clientResponse->getStatusCode() == 200) {
