@@ -57,17 +57,18 @@ use App\Carpool\Controller\AdAskGet;
  *              "path"="/ads/contact",
  *              "controller"=AdAskPost::class,
  *              "defaults"={"type"="contact"}
- *          },
- *          "put_ask"={
- *              "method"="PUT",
- *              "path"="/ads/ask",
- *              "controller"=AdAskPut::class
- *          },
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
  *              "method"="GET",
  *              "controller"=AdGet::class,
+ *              "read"=false
+ *          },
+ *          "put_ask"={
+ *              "method"="PUT",
+ *              "path"="/ads/ask/{id}",
+ *              "controller"=AdAskPut::class,
  *              "read"=false
  *          },
  *          "get_ask"={

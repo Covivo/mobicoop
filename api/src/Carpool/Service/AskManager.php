@@ -539,58 +539,27 @@ class AskManager
     /**
      * Update an ask from an ad
      *
-     * @param Ad $ad        The ad to use
+     * @param Ad $ad        The body of the ad to use
+     * @param int $adId     The id of the ad to use (not initialized in the body)
      * @param int $userId   The user id of the user making the update
      * @return Ad       The ad updated from the updated ask
      */
-    public function updateAskFromAd(Ad $ad, int $userId)
+    public function updateAskFromAd(Ad $ad, int $adId, int $userId)
     {
-        $ask = $this->askRepository->find($ad->getId());
+        $ask = $this->askRepository->find($adId);
         
         // the ask posted is the master ask, we have to update all the asks linked :
         // - the related ask for return trip
         // - the opposite and return opposite if the role wasn't chosen
-        switch ($ad->getAskStatus()) {
-            case Ask::STATUS_PENDING_AS_DRIVER:
-                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_DRIVER : Ad::ROLE_PASSENGER);
-                $ask->setStatus($ask->getUser()->getId() == $userId ? Ask::STATUS_PENDING_AS_DRIVER : Ask::STATUS_PENDING_AS_PASSENGER);
-                break;
-            case Ask::STATUS_PENDING_AS_PASSENGER:
-                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_PASSENGER : Ad::ROLE_DRIVER);
-                $ask->setStatus($ask->getUser()->getId() == $userId ? Ask::STATUS_PENDING_AS_PASSENGER : Ask::STATUS_PENDING_AS_DRIVER);
-                break;
-            case Ask::STATUS_ACCEPTED_AS_DRIVER:
-                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_DRIVER : Ad::ROLE_PASSENGER);
-                $ask->setStatus($ask->getUser()->getId() == $userId ? Ask::STATUS_ACCEPTED_AS_DRIVER : Ask::STATUS_ACCEPTED_AS_PASSENGER);
-                break;
-            case Ask::STATUS_ACCEPTED_AS_PASSENGER:
-                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_PASSENGER : Ad::ROLE_DRIVER);
-                $ask->setStatus($ask->getUser()->getId() == $userId ? Ask::STATUS_ACCEPTED_AS_PASSENGER : Ask::STATUS_ACCEPTED_AS_DRIVER);
-                break;
-            case Ask::STATUS_DECLINED_AS_DRIVER:
-                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_DRIVER : Ad::ROLE_PASSENGER);
-                $ask->setStatus($ask->getUser()->getId() == $userId ? Ask::STATUS_DECLINED_AS_DRIVER : Ask::STATUS_DECLINED_AS_PASSENGER);
-                break;
-            case Ask::STATUS_DECLINED_AS_PASSENGER:
-                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_PASSENGER : Ad::ROLE_DRIVER);
-                $ask->setStatus($ask->getUser()->getId() == $userId ? Ask::STATUS_DECLINED_AS_PASSENGER : Ask::STATUS_DECLINED_AS_DRIVER);
-                break;
-        }
+        $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_DRIVER : Ad::ROLE_PASSENGER);
+        $ask->setStatus($ad->getAskStatus());
         if ($ask->getAskLinked()) {
             $ask->getAskLinked()->setStatus($ad->getAskStatus());
         }
         if ($ask->getAskOpposite()) {
-            $ask->getAskOpposite()->setStatus(
-                $ad->getAskStatus() == Ask::STATUS_PENDING_AS_DRIVER ? Ask::STATUS_PENDING_AS_PASSENGER : (
-                    $ad->getAskStatus() == Ask::STATUS_PENDING_AS_PASSENGER ? Ask::STATUS_PENDING_AS_DRIVER : (
-                        $ad->getAskStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER ? Ask::STATUS_ACCEPTED_AS_PASSENGER :(
-                            $ad->getAskStatus() == Ask::STATUS_DECLINED_AS_DRIVER ? Ask::STATUS_DECLINED_AS_PASSENGER : Ask::STATUS_DECLINED_AS_DRIVER
-                        )
-                    )
-                )
-            );
+            $ask->getAskOpposite()->setStatus($ad->getAskStatus());
             if ($ask->getAskOpposite()->getAskLinked()) {
-                $ask->getAskOpposite()->getAskLinked()->setStatus($ask->getAskOpposite()->getStatus());
+                $ask->getAskOpposite()->getAskLinked()->setStatus($ad->getAskStatus());
             }
         }
         if ($ad->getOutwardDate() && $ad->getOutwardLimitDate() && count($ad->getSchedule())>0) {
@@ -666,6 +635,13 @@ class AskManager
                 }
             }
         }
+
+        // Ask History
+        $askHistory = new AskHistory();
+        $askHistory->setStatus($ask->getStatus());
+        $askHistory->setType($ask->getType());
+        $ask->addAskHistory($askHistory);
+
         $this->entityManager->persist($ask);
         $this->entityManager->flush();
 
