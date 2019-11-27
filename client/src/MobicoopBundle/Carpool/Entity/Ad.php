@@ -324,7 +324,7 @@ class Ad implements ResourceInterface
      */
     private $askStatus;
 
-    public function __construct()
+    public function __construct($id=null)
     {
         $this->outwardWaypoints = [];
         $this->returnWaypoints = [];
@@ -332,6 +332,9 @@ class Ad implements ResourceInterface
         $this->communities = [];
         $this->results = [];
         $this->filters = [];
+        if (!is_null($id)) {
+            $this->id = $id;
+        }
     }
     
     public function getId(): ?int

@@ -724,17 +724,17 @@ class UserController extends AbstractController
             $user = $userManager->getLoggedUser();
             $idAsk = $data['idAsk'];
             $status = $data['status'];
-            $outwardDate = $data['outwardDate'];
-            $outwardLimitDate = $data['outwardLimitDate'];
-            $outwardSchedule = ($data['outwardSchedule']) ? $data['outwardSchedule'] : null;
-            $returnSchedule = ($data['returnSchedule']) ? $data['returnSchedule'] : null;
+            $outwardDate = (isset($data['outwardDate'])) ? $data['outwardDate'] : null;
+            $outwardLimitDate = (isset($data['outwardLimitDate'])) ? $data['outwardLimitDate'] : null;
+            $outwardSchedule = (isset($data['outwardSchedule'])) ? $data['outwardSchedule'] : null;
+            $returnSchedule = (isset($data['returnSchedule'])) ? $data['returnSchedule'] : null;
 
+            $schedule = [];
             if (!is_null($outwardSchedule) || !is_null($returnSchedule)) {
 
                 // It's a regular journey I need to build the schedule of this journey (structure of an Ad)
 
                 $days = ["mon","tue","wed","thu","fri","sat","sun"];
-                $schedule = [];
                 foreach ($days as $day) {
                     $currentOutwardTime = (!is_null($returnSchedule)) ? $outwardSchedule[$day."Time"] : null;
                     $currentReturnTime = (!is_null($returnSchedule)) ? $returnSchedule[$day."Time"] : null;
@@ -774,8 +774,12 @@ class UserController extends AbstractController
             // I build the Ad for the put
             $adToPost = new Ad($idAsk);
             $adToPost->setAskStatus($status);
-            $adToPost->setOutwardDate(new \DateTime($outwardDate));
-            $adToPost->setOutwardLimitDate(new \DateTime($outwardLimitDate));
+            if (!is_null($outwardDate)) {
+                $adToPost->setOutwardDate(new \DateTime($outwardDate));
+            }
+            if (!is_null($outwardLimitDate)) {
+                $adToPost->setOutwardLimitDate(new \DateTime($outwardLimitDate));
+            }
             if (count($schedule)>0) {
                 $adToPost->setSchedule($schedule);
             } // Only regular

@@ -233,7 +233,7 @@ export default {
       });
     },
     updateStatusAskHistory(data){
-      //this.loadingBtnAction = true;
+      this.loadingBtnAction = true;
       let params = {
         idAsk:this.currentIdAsk
       }
@@ -250,15 +250,23 @@ export default {
         statusUpdate = data.status
       }
 
-      params = {
-        "idAsk":this.currentIdAsk,
-        "outwardDate":data.fromDate,
-        "outwardLimitDate":data.toDate,
-        "outwardSchedule" : data.outwardSchedule,
-        "returnSchedule" : data.returnSchedule,
-        "status" : statusUpdate
+      // If it's already a formal ask, we don't need everything
+      if(statusUpdate>3){
+        params = {
+          "idAsk":this.currentIdAsk,
+          "status" : statusUpdate
+        }
       }
-      
+      else{
+        params = {
+          "idAsk":this.currentIdAsk,
+          "outwardDate":data.fromDate,
+          "outwardLimitDate":data.toDate,
+          "outwardSchedule" : data.outwardSchedule,
+          "returnSchedule" : data.returnSchedule,
+          "status" : statusUpdate
+        }
+      }      
       console.error(data);
       console.error(params);
       axios.post(this.$t("urlUpdateAsk"),params)

@@ -2605,6 +2605,7 @@ class ResultManager
 
         $item = new ResultItem();
 
+        $driverFromTime = null;
         if ($ask->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
             // the ask is punctual; for now the time are the same
             // todo : use the real requester time if it has only been copied from the carpooler time
@@ -2620,7 +2621,6 @@ class ResultManager
             $item->setSatCheck($ask->getCriteria()->isSatCheck());
             $item->setSunCheck($ask->getCriteria()->isSunCheck());
             $hasTime = false;
-            $driverFromTime = null;
             if ($ask->getCriteria()->getMonTime()) {
                 $item->setMonTime($ask->getCriteria()->getMonTime());
                 $item->setTime($item->getMonTime());

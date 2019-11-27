@@ -58,7 +58,7 @@
 
     <!-- The Ask is pending -->
     <!-- If you are the ask user you cannot accept or delined -->
-    <div v-if="(status==2 || status==3) && !canUpdateAsk">
+    <div v-if="(status==2 || status==3) && canUpdateAsk">
       <v-tooltip
         bottom
         color="success"
@@ -71,7 +71,7 @@
             dark
             depressed
             v-on="on"
-            @click="updateStatus(3)"
+            @click="updateStatus((status==2) ? 4 : 5)"
           >
             <v-icon class="display-2">
               mdi-check
@@ -92,7 +92,7 @@
             dark
             depressed
             v-on="on"
-            @click="updateStatus(4)"
+            @click="updateStatus((status==2) ? 6 : 7)"
           >
             <v-icon class="display-2">
               mdi-close
@@ -115,7 +115,7 @@
 
 
     <!-- The Ask is accepted -->
-    <div v-if="status==4">
+    <div v-if="status==4 || status==5">
       <v-card
         color="success"
         class="white--text"
@@ -125,7 +125,7 @@
       </v-card>
     </div>
     <!-- The Ask is refused -->
-    <div v-if="status==5">
+    <div v-if="status==6 || status==7">
       <v-card
         color="error"
         class="white--text"
