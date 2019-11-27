@@ -32,35 +32,6 @@
           :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
         />
       </v-toolbar-items>
-      <v-menu
-        v-if="user"
-        class="hidden-md-and-up"
-      >
-        <v-toolbar-side-icon slot="activator" />
-        <v-list>
-          <v-list-tile
-            v-for="item in menu"
-            :key="item.icon"
-          >
-            <v-list-tile-content>
-              <v-list-tile-title>
-                <v-btn
-                  text
-                  rounded
-                  :href="$t('buttons.messages.route')"
-                >
-                  {{ $t('buttons.messages.label') }}
-                </v-btn>
-                <MHeaderCommunities :user-id="user.id" />
-                <MHeaderProfile
-                  :avatar="user.avatars[0]"
-                  :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
-                />
-              </v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-        </v-list>
-      </v-menu>
       <v-toolbar-items
         v-else
         class="hidden-sm-and-down"
@@ -84,9 +55,135 @@
         rounded
         :disabled="!user"
         :href="$t('buttons.shareAnAd.route')"
+        class="hidden-sm-and-down"
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
+
+
+      <!--Display menu when user is connected-->
+      <v-menu
+        v-if="user"
+        bottom
+        left
+        z-index="9"
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn
+            icon
+            class="hidden-md-and-up"
+            v-on="on"
+          >
+            <v-icon>mdi-menu</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item>
+            <v-list-item-title>
+              <MHeaderProfile
+                :avatar="user.avatars[0]"
+                :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
+              />
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <MHeaderCommunities :user-id="user.id" />
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <v-btn
+                text
+                rounded
+                :disabled="!user"
+                :href="$t('buttons.shareAnAd.route')"
+              >
+                {{ $t('buttons.shareAnAd.label') }}
+              </v-btn>
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <v-btn
+                text
+                rounded
+                :href="$t('buttons.messages.route')"
+              >
+                {{ $t('buttons.messages.label') }}
+              </v-btn>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
+
+      <!--Display menu when there is no connected user-->
+      <v-menu
+        v-else
+        bottom
+        left
+        z-index="9"
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn
+            icon
+            class="hidden-md-and-up"
+            v-on="on"
+          >
+            <v-icon>mdi-menu</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item>
+            <v-list-item-title>
+              <v-btn
+                text
+                rounded
+                :href="$t('buttons.messages.route')"
+              >
+                {{ $t('buttons.messages.label') }}
+              </v-btn>
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <v-btn
+                rounded
+                text
+                :href="$t('buttons.signup.route')"
+              >
+                {{ $t('buttons.signup.label') }}
+              </v-btn>
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <v-btn
+                rounded
+                text
+                :href="$t('buttons.logIn.route')"
+              >
+                {{ $t('buttons.logIn.label') }}
+              </v-btn>
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <v-btn
+                text
+                rounded
+                :disabled="!user"
+                :href="$t('buttons.shareAnAd.route')"
+              >
+                {{ $t('buttons.shareAnAd.label') }}
+              </v-btn>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-toolbar>
   </div>
 </template>
