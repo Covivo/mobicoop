@@ -293,3 +293,8 @@ services:
     App\Solidary\Controller\:
         resource: '../src/Solidary/Controller'
         tags: ['controller.service_arguments']
+
+    # Price
+    App\Price\Controller\:
+        resource: '../src/Price/Controller'
+        tags: ['controller.service_arguments']
