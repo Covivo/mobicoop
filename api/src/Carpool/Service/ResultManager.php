@@ -2802,7 +2802,7 @@ class ResultManager
                     }
                 }
             }
-            $item->setMultipleTimes();
+            $item->setMultipleTimes($hasTime);
             if ($item->hasMultipleTimes()) {
                 $item->setTime(null);
                 $driverFromTime = null;
