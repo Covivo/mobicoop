@@ -41,7 +41,7 @@ class Ask implements ResourceInterface
     const STATUS_ACCEPTED_AS_DRIVER = 4;
     const STATUS_ACCEPTED_AS_PASSENGER = 5;
     const STATUS_DECLINED_AS_DRIVER = 6;
-    const STATUS_DECLINED_AS_PASSENGER = 7;
+    const STATUS_DECLINED_AS_PASSENGER = 7; // asked by remi
     
     /**
      * @var int The id of this ask.

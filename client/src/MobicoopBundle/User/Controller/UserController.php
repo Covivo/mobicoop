@@ -724,7 +724,6 @@ class UserController extends AbstractController
             $user = $userManager->getLoggedUser();
             $idAsk = $data['idAsk'];
             $status = $data['status'];
-            $role = $data['role'];
             $outwardDate = $data['outwardDate'];
             $outwardLimitDate = $data['outwardLimitDate'];
             $outwardSchedule = ($data['outwardSchedule']) ? $data['outwardSchedule'] : null;
@@ -774,7 +773,7 @@ class UserController extends AbstractController
 
             // I build the Ad for the put
             $adToPost = new Ad($idAsk);
-            $adToPost->setStatusAsk($status);
+            $adToPost->setAskStatus($status);
             $adToPost->setOutwardDate(new \DateTime($outwardDate));
             $adToPost->setOutwardLimitDate(new \DateTime($outwardLimitDate));
             if (count($schedule)>0) {

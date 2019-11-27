@@ -359,7 +359,7 @@ class Ad implements ResourceInterface
         return $this;
     }
     
-    public function getRole(): int
+    public function getRole(): ?int
     {
         return $this->role;
     }

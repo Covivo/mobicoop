@@ -238,15 +238,25 @@ export default {
         idAsk:this.currentIdAsk
       }
 
-      // We need to give new criteria to update the Ask Criteria
+      // Compute the right status for the update
+      let statusUpdate = 1;
+      if(data.status==1 && data.driver){
+        statusUpdate = 2
+      }
+      else if(data.status==1 && !data.driver){
+        statusUpdate = 3
+      }
+      else{
+        statusUpdate = data.status
+      }
+
       params = {
         "idAsk":this.currentIdAsk,
         "outwardDate":data.fromDate,
         "outwardLimitDate":data.toDate,
-        "role": (data.driver) ? 1 : 2,
         "outwardSchedule" : data.outwardSchedule,
         "returnSchedule" : data.returnSchedule,
-        "status" : (data.status) ? data.status : (data.driver) ? 2 : 3
+        "status" : statusUpdate
       }
       
       console.error(data);

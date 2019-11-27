@@ -696,7 +696,8 @@ export default {
       let params = {
         "driver": role==1,
         "passenger": role==2,
-        "regular": this.lResult.frequency == 2
+        "regular": this.lResult.frequency == 2,
+        "status" : this.lResult.askStatus
       };
       let resultChoice = this.lResult.resultDriver;
       if (role == 2) resultChoice = this.lResult.resultPassenger;

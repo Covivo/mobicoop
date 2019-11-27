@@ -46,7 +46,7 @@
 
         <v-journey
           :waypoints="infos.outward.waypoints"
-          :time="true"
+          :time="!infos.outward.multipleTimes"
           :role="driver ? 'driver' : 'passenger'"
         />
         <v-simple-table>
@@ -64,7 +64,7 @@
                 {{ $t('seatsAvailable') }}
               </td>
               <td class="text-left">
-                {{ infos.seats }}
+                {{ infosComplete.seats }}
               </td>
             </tr>
             <tr>
@@ -88,13 +88,13 @@
                 </v-tooltip>                
               </td>
               <td class="text-left font-weight-bold">
-                {{ infos.roundedPrice }} €
+                {{ infosComplete.roundedPrice }} €
               </td>
             </tr>
           </tbody>
         </v-simple-table>
         <threads-actions-buttons
-          :can-ask="infosComplete.canUpdateAsk"
+          :can-update-ask="infosComplete.canUpdateAsk"
           :status="infosComplete.askStatus"
           :regular="infosComplete.frequency==2"
           :loading-btn="dataLoadingBtn"
@@ -260,20 +260,20 @@ export default {
           this.infosComplete = response.data;
 
           // If the user can be driver and passenger, we display driver infos by default
-          // if(this.infosComplete.resultDriver !== undefined && this.infosComplete.resultPassenger !== undefined){
-          //   this.infos = this.infosComplete.resultDriver;
-          //   this.driver = this.passenger = true;
-          // }
-          // else if(this.infosComplete.resultPassenger !== undefined){
-          this.infos = this.infosComplete.resultPassenger;
-          this.driver = false;
-          this.passenger = true;
-          // }
-          // else{
-          //   this.infos = this.infosComplete.resultDriver;
-          //   this.driver = true;
-          //   this.passenger = false;
-          // }
+          if(this.infosComplete.resultDriver !== null && this.infosComplete.resultPassenger !== null){
+            this.infos = this.infosComplete.resultDriver;
+            this.driver = this.passenger = true;
+          }
+          else if(this.infosComplete.resultPassenger !== null){
+            this.infos = this.infosComplete.resultPassenger;
+            this.driver = false;
+            this.passenger = true;
+          }
+          else{
+            this.infos = this.infosComplete.resultDriver;
+            this.driver = true;
+            this.passenger = false;
+          }
         })
         .catch(function (error) {
           console.log(error);
