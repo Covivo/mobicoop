@@ -518,7 +518,7 @@ class AdManager
      */
     public function updateAdAsk(Ad $ad, int $userId)
     {
-        if ($data = $this->dataProvider->putSpecial($ad, null, "ask", ["userId"=>$userId])) {
+        if ($data = $this->dataProvider->putSpecial($ad, null, "ask", ["userId"=>$userId], true)) {
             return $data->getValue();
         }
         return null;

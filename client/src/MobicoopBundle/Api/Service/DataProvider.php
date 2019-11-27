@@ -464,12 +464,11 @@ class DataProvider
             $groups = ['put'];
         }
         try {
-            if(!$reverseOperationId){
+            if (!$reverseOperationId) {
                 $uri = $this->resource."/".$object->getId()."/".$operation;
-            }
-            else{
+            } else {
                 $uri = $this->resource."/".$operation."/".$object->getId();
-            }            
+            }
             $clientResponse = $this->client->put($uri, [
                     RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true),
                     'query' => $params
