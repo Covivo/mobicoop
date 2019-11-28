@@ -353,7 +353,8 @@ export default {
           .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
           .then(res => {
             if (res.data.length > 0) {
-              this.isAccepted = res.data[0].status == 1;
+              //accepted as user or moderator
+              this.isAccepted = (res.data[0].status == 1 || res.data[0].status == 2);
               this.askToJoin = true
             }
             this.checkValidation = false;

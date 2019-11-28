@@ -374,6 +374,21 @@ class DataProvider
         return new Response();
     }
 
+    public function simplePost(string $url, array $parameters = []): Response {
+        try {
+            $clientResponse = $this->client->post($url, [
+                RequestOptions::JSON => $parameters,
+            ]);
+            $value = (string) $clientResponse->getBody();
+
+            return new Response($clientResponse->getStatusCode(), $value);
+        } catch (ServerException $e) {
+            return new Response($e->getCode(), $e->getMessage());
+        } catch (ClientException $e) {
+            return new Response($e->getCode(), $e->getMessage());
+        }
+    }
+
     /**
      * Post collection operation with multipart/form-data
      *

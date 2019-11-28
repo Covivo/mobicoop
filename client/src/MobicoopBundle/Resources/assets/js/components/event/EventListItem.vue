@@ -53,17 +53,29 @@
             {{ $t('eventDetails') }}
           </v-btn>
         </div>
+        <div
+          class="mt-5"
+        >
+          <EventReport
+            :event="item"
+          />
+        </div>
       </v-col>
     </v-row>
   </v-card>
 </template>
 <script>
+
 import { merge } from "lodash";
+import EventReport from "@components/event/EventReport";
 import Translations from "@translations/components/event/EventListItem.json";
 import TranslationsClient from "@clientTranslations/components/event/EventListItem.json";
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
+  components:{
+    EventReport
+  },
   i18n: {
     messages: TranslationsMerged,
   },

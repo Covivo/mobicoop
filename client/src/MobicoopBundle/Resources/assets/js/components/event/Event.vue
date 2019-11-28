@@ -58,6 +58,10 @@
                 >
                   {{ $t('buttons.widget.label') }}
                 </v-btn>
+                <EventReport
+                  class="mt-1"
+                  :event="event"
+                />
               </div>
             </v-col>
             <!-- map -->
@@ -129,6 +133,7 @@ import { merge } from "lodash";
 import Translations from "@translations/components/event/Event.json";
 import TranslationsClient from "@clientTranslations/components/event/Event.json";
 import EventInfos from "@components/event/EventInfos";
+import EventReport from "@components/event/EventReport";
 import Search from "@components/carpool/search/Search";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
@@ -138,7 +143,7 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    EventInfos, Search, MMap
+    EventReport, EventInfos, Search, MMap
   },
   i18n: {
     messages: TranslationsMerged,

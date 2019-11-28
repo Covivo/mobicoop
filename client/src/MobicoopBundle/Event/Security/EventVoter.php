@@ -23,17 +23,18 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Event\Security;
 
+use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
+use Mobicoop\Bundle\MobicoopBundle\Permission\Service\PermissionManager;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Permission\Service\PermissionManager;
 
 class EventVoter extends Voter
 {
     const CREATE = 'create';
     const SHOW = 'show';
-    
+    const REPORT = 'report';
+
     private $permissionManager;
 
     public function __construct(PermissionManager $permissionManager)
@@ -46,7 +47,8 @@ class EventVoter extends Voter
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
             self::CREATE,
-            self::SHOW
+            self::SHOW,
+            self::REPORT,
             ])) {
             return false;
         }
@@ -71,20 +73,27 @@ class EventVoter extends Voter
                 return $this->canCreate($user);
             case self::SHOW:
                 return $this->canShow($user);
+            case self::REPORT:
+                return $this->canReport($user);
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-
-    private function canCreate(?User $user=null)
+    private function canCreate(?User $user = null)
     {
         return $this->permissionManager->checkPermission('event_create', $user);
     }
 
-    private function canShow(?User $user=null)
+    private function canShow(?User $user = null)
     {
         // Anyone can see an event
+        return true;
+    }
+
+    private function canReport(?User $user = null)
+    {
+        // Anyone can report an event
         return true;
     }
 }
