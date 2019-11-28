@@ -23,6 +23,7 @@
 
 namespace App\Event\Service;
 
+use App\Event\Entity\Event;
 use App\Event\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -58,5 +59,11 @@ class EventManager
     public function getEvent(int $eventId)
     {
         return $this->eventRepository->find($eventId);
+    }
+
+    public function canReport()
+    {
+        // EVERYONE CAN REPORT EVENT
+        return true;
     }
 }

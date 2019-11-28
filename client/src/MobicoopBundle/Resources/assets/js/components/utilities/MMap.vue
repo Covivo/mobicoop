@@ -6,7 +6,7 @@
         ref="mmap"
         :zoom="zoom"
         :center="center"
-        style="height:500px;"
+        style="z-index:1; height:500px;"
       >
         <l-tile-layer
           :url="url"
