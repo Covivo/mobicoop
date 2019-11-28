@@ -181,7 +181,7 @@
             <!-- Return if not regular and has return -->
             <v-divider class="my-3" />
             <v-row
-              v-if="hasReturn"
+              v-if="hasReturn && !regular"
               align="center"
             >
               <v-row>
@@ -209,12 +209,13 @@
                     <p
                       v-if="driver && displayInfo"
                     >
-                      {{ seats }} {{ $tc('places',seats) }}
+                      {{ seats }} {{ $tc('places',seats) }} a
                     </p>
                   </v-col>
                 </v-row>
-                <br>
-                <v-col cols="12">
+                <v-col
+                  cols="12"
+                >
                   <v-row
                     align="center"
                     dense
@@ -229,7 +230,9 @@
               </v-row>
 
               <v-row>
-                <v-col cols="8">
+                <v-col
+                  cols="8"
+                >
                   <v-timeline
                     dense
                     class="py-0"
@@ -302,7 +305,7 @@
 
             <!-- Days if regular and there is more than one schedule -->
             <v-row
-              v-if="regular && schedules!==null && schedules.length > 1"
+              v-if="regular && schedules!==null && schedules.length >= 1"
               align="center"
               class="mt-2"
             >
