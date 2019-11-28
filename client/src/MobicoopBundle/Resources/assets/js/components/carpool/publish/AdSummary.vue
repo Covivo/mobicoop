@@ -478,7 +478,7 @@
       <!--      Display price and informations of the user-->
       <v-col
         cols="8"
-        class="col-lg-3"
+        class="col-lg-4 pt-0"
       >
         <!-- price -->
         <v-col
@@ -486,7 +486,9 @@
           cols="12"
           align="right"
         >
-          <v-row>
+          <v-row
+            class="mb-8"
+          >
             <h2>{{ price }} €</h2>
           </v-row>
           <v-row>
