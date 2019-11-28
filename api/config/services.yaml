@@ -202,7 +202,7 @@ services:
 
     App\Event\Controller\ReportAction:
         arguments:
-            $adminEmail: '%env(resolve:ADMIN_EMAIL)%'
+            $supportEmail: '%env(resolve:MAILER_SUPPORT)%'
             $senderEmail: '%env(resolve:MAILER_SENDER)%'
             $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
         tags: ['controller.service_arguments']

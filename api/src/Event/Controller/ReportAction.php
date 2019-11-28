@@ -56,14 +56,14 @@ final class ReportAction
      */
     private $emailConfiguration;
 
-    public function __construct(EventManager $eventManager, EmailManager $emailManager, string $adminEmail, string $senderEmail, string $emailTemplatePath)
+    public function __construct(EventManager $eventManager, EmailManager $emailManager, string $supportEmail, string $senderEmail, string $emailTemplatePath)
     {
         $this->eventManager = $eventManager;
         $this->emailManager = $emailManager;
         $this->emailTemplatePath = $emailTemplatePath;
 
         $this->emailConfiguration = new Email();
-        $this->emailConfiguration->setRecipientEmail($adminEmail);
+        $this->emailConfiguration->setRecipientEmail($supportEmail);
         $this->emailConfiguration->setSenderEmail($senderEmail);
         $this->emailConfiguration->setObject("Signalement d'un événement");
     }
