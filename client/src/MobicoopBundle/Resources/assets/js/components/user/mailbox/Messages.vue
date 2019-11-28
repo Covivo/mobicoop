@@ -281,6 +281,7 @@ export default {
       
     },
     refreshSelected(data){
+      console.error(data);
       this.loadingDetails = true;
       (data.idAsk) ? this.currentIdAsk  = data.idAsk : this.idMessage = data.idMessage;
       this.refreshActions = true;

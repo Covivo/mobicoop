@@ -278,7 +278,7 @@ class UserManager
                 // The message id : the one linked to the current askHistory or we try to find the last existing one
                 $idMessage = -99;
                 if ($message !== null) {
-                    ($idMessage = $message->getMessage()!==null) ? $idMessage = $message->getMessage()->getId() : $message->getId();
+                    ($message->getMessage()!==null) ? $idMessage = $message->getMessage()->getId() :  $idMessage = $message->getId();
                 } else {
                     $formerAskHistory = $this->askHistoryRepository->findLastAskHistoryWithMessage($ask);
                     if (count($formerAskHistory)>0 && $formerAskHistory[0]->getMessage()) {
