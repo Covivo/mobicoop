@@ -267,11 +267,11 @@ export default {
           "status" : statusUpdate
         }
       }      
-      console.error(data);
-      console.error(params);
+      // console.error(data);
+      // console.error(params);
       axios.post(this.$t("urlUpdateAsk"),params)
         .then(response => {
-          console.error(response.data);
+          //console.error(response.data);
           this.refreshActions = true;
           this.loadingBtnAction = false;
         })
@@ -283,9 +283,10 @@ export default {
     refreshSelected(data){
       this.loadingDetails = true;
       (data.idAsk) ? this.currentIdAsk  = data.idAsk : this.idMessage = data.idMessage;
+      this.refreshActions = true;
     },
     refreshDetailsCompleted(){
-      this.refreshActions = true;
+      //this.refreshActions = true;
       this.refreshDetails = false;
     },
     refreshThreadsDirectCompleted(){
