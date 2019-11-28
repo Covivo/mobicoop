@@ -12,6 +12,15 @@
         align="right"
       >
         <v-btn
+          icon
+          :disabled="idMessage === -1"
+          @click="openMailBox()"
+        >
+          <v-icon class="primary--text">
+            mdi-email
+          </v-icon>
+        </v-btn>
+        <v-btn
           color="success"
           rounded
           :disabled="computedRequestsCount <= 0"
@@ -55,6 +64,10 @@ export default {
       type: Boolean,
       default: false
     },
+    idMessage: {
+      type: Number,
+      default: -1
+    },
     // passengers
     carpoolRequests: {
       type: Array,
@@ -86,6 +99,31 @@ export default {
       } else {
         return 0;
       }
+    }
+  },
+  methods: {
+    post: function (path, params, method='post') {
+      const form = document.createElement('form');
+      form.method = method;
+      form.action = window.location.origin+'/'+path;
+
+      for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+          const hiddenField = document.createElement('input');
+          hiddenField.type = 'hidden';
+          hiddenField.name = key;
+          hiddenField.value = params[key];
+          form.appendChild(hiddenField);
+        }
+      }
+      document.body.appendChild(form);
+      form.submit();
+    },
+    openMailBox () {
+      let lParams = {
+        idMessage: this.idMessage
+      };
+      this.post(`${this.$t("utilisateur/messages")}`, lParams);
     }
   }
 }

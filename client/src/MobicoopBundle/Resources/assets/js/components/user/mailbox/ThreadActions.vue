@@ -8,7 +8,7 @@
         <img :src="infosComplete.carpooler.avatars[0]">
       </v-avatar>
       <v-card-text
-        v-if="!loading"
+        v-if="!loading && infosComplete.carpooler"
         class="font-weight-bold headline"
       >
         {{ infosComplete.carpooler.givenName+' '+infosComplete.carpooler.shortFamilyName }}
@@ -46,7 +46,7 @@
 
         <v-journey
           :waypoints="infos.outward.waypoints"
-          :time="true"
+          :time="!infos.outward.multipleTimes"
           :role="driver ? 'driver' : 'passenger'"
         />
         <v-simple-table>
@@ -64,7 +64,7 @@
                 {{ $t('seatsAvailable') }}
               </td>
               <td class="text-left">
-                {{ infos.seats }}
+                {{ infosComplete.seats }}
               </td>
             </tr>
             <tr>
@@ -94,8 +94,8 @@
           </tbody>
         </v-simple-table>
         <threads-actions-buttons
-          :can-ask="infosComplete.canAsk"
-          :status="infosComplete.status"
+          :can-update-ask="infosComplete.canUpdateAsk"
+          :status="infosComplete.askStatus"
           :regular="infosComplete.frequency==2"
           :loading-btn="dataLoadingBtn"
           :driver="driver"
@@ -254,17 +254,17 @@ export default {
         idAsk:this.idAsk,
         idRecipient:this.idRecipient
       }
-      axios.post(this.$t("urlGetAskHistory"),params)
+      axios.post(this.$t("urlGetAdAsk"),params)
         .then(response => {
           //console.error(response.data);
           this.infosComplete = response.data;
 
           // If the user can be driver and passenger, we display driver infos by default
-          if(this.infosComplete.resultDriver !== undefined && this.infosComplete.resultPassenger !== undefined){
+          if(this.infosComplete.resultDriver !== null && this.infosComplete.resultPassenger !== null){
             this.infos = this.infosComplete.resultDriver;
             this.driver = this.passenger = true;
           }
-          else if(this.infosComplete.resultPassenger !== undefined){
+          else if(this.infosComplete.resultPassenger !== null){
             this.infos = this.infosComplete.resultPassenger;
             this.driver = false;
             this.passenger = true;
@@ -349,7 +349,7 @@ export default {
 
     },
     updateStatus(data){
-      if(this.infosComplete.status==1 && this.infosComplete.frequency==2){
+      if(this.infosComplete.askStatus==1 && this.infosComplete.frequency==2){
         // If the Ask is only initiated and that the carpool is regular
 
         let results = null;

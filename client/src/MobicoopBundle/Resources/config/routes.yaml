@@ -548,3 +548,10 @@ event_get_widget:
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventGetWidget
     requirements:
         id: '\d+'
+
+# round price
+round_price:
+    path:
+        fr: /prix/arrondir
+        en: /price/round
+    controller: Mobicoop\Bundle\MobicoopBundle\Price\Controller\PriceController::roundPrice

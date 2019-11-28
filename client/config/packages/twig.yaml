@@ -33,3 +33,4 @@ twig:
         eventPosterSize : '%env(resolve:EVENT_POSTER_SIZE)%'
         matomoUrl: '%env(resolve:MATOMO_URL)%'
         matomoSiteId: '%env(resolve:MATOMO_SITE_ID)%'
+        urlMobile: '%env(resolve:URL_MOBILE)%'

@@ -141,3 +141,10 @@ services:
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\Solidary\Service\:
         resource: '@MobicoopBundle/Solidary/Service/*'
+
+    # Price
+    Mobicoop\Bundle\MobicoopBundle\Price\Controller\:
+        resource: '@MobicoopBundle/Price/Controller/*'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\Price\Service\:
+        resource: '@MobicoopBundle/Price/Service/*'

@@ -22,9 +22,7 @@
         justify="center"
       >
         <v-col
-          cols="8"
-          md="8"
-          xl="8"
+          cols="12"
           align="center"
         >
           <!-- Event : avatar, title and description -->
@@ -37,7 +35,10 @@
         </v-col>
       </v-row>
       <!-- search journey -->
-      <p class="">
+      <p
+        class="font-weight-bold"
+        align="center"
+      >
         {{ $t('title.searchCarpool') }}
       </p>
       <!-- event buttons and map -->
@@ -45,18 +46,22 @@
         align="center"
         justify="center"
       >
-        <search
-          :geo-search-url="geodata.geocompleteuri"
-          :user="user"
-          :params="params"
-          :punctual-date-optional="punctualDateOptional"
-          :regular="regular"
-          :default-destination="defaultDestination"
-          :hide-publish="true"
-          :disable-search="disableSearch"
-          :show-destination="false"
-          :is-widget="true"
-        />
+        <v-col
+          col="12"
+        >
+          <search
+            :geo-search-url="geodata.geocompleteuri"
+            :user="user"
+            :params="params"
+            :punctual-date-optional="punctualDateOptional"
+            :regular="regular"
+            :default-destination="defaultDestination"
+            :hide-publish="true"
+            :disable-search="disableSearch"
+            :show-destination="false"
+            :is-widget="true"
+          />
+        </v-col>
       </v-row>
     </v-container>
   </v-content>
@@ -285,3 +290,18 @@ export default {
   }
 }
 </script>
+
+<style>
+  div {
+    padding: 0px 3px !important;
+  }
+  div.row {
+    display: block !important;
+
+  }
+  div.row p.body-2 {
+    font-size: 0.75rem !important;
+    line-height: 1rem !important;
+    padding: 0px 3px !important;
+  }
+ </style>

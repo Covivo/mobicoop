@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,33 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Repository;
+namespace Mobicoop\Bundle\MobicoopBundle\Price\Service;
 
-use Doctrine\ORM\EntityManagerInterface;
-use App\Carpool\Entity\Ask;
-use App\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Price\Entity\Price;
 
-class AskRepository
+/**
+ * Price management service.
+ */
+class PriceManager
 {
-    private $repository;
-    
-    public function __construct(EntityManagerInterface $entityManager)
+    private $dataProvider;
+
+    /**
+     * ContactManager constructor.
+     * @param DataProvider $dataProvider
+     * @throws \ReflectionException
+     */
+    public function __construct(DataProvider $dataProvider)
     {
-        $this->repository = $entityManager->getRepository(Ask::class);
+        $this->dataProvider = $dataProvider;
+        $this->dataProvider->setClass(Price::class);
     }
 
-    public function find(int $id): ?Ask
+    public function roundPrice(Price $price)
     {
-        return $this->repository->find($id);
-    }
-    
-    public function findAskByUser(User $user)
-    {
-        $query = $this->repository->createQueryBuilder('a')
-        ->where('(a.user = :user or a.userRelated = :user)')
-        ->setParameter('user', $user)
-        ->orderBy('a.updatedDate', 'DESC');
-        
-        return $query->getQuery()->getResult();
+        $response = $this->dataProvider->post($price, "round");
+        if ($response->getCode() == 201) {
+            return $response->getValue();
+        }
+        return null;
     }
 }

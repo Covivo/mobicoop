@@ -1,7 +1,5 @@
 <template>
-  <v-container
-    fluid
-  >
+  <div fluid>
     <v-form
       ref="form"
       v-model="valid"
@@ -53,7 +51,8 @@
         dense
       >
         <v-col
-          cols="5"
+          cols="12"
+          md="5"
         >
           <GeoComplete
             v-show="showOrigin"
@@ -68,10 +67,11 @@
           />
         </v-col>
         <v-col
-          cols="2"
+          cols="12"
+          md="2"
           class="text-center"
         >
-          <v-tooltip 
+          <v-tooltip
             v-if="showOrigin && showDestination"
             color="info"
             right
@@ -88,8 +88,9 @@
             <span>{{ $t('swap.help') }}</span>
           </v-tooltip>
         </v-col>
-        <v-col 
-          cols="5"
+        <v-col
+          cols="12"
+          md="5"
         >
           <GeoComplete
             v-show="showDestination"
@@ -107,6 +108,7 @@
 
       <!-- Frequency switch -->
       <v-row
+        v-if="showOrigin && showDestination"
         align="center"
         no-gutters
       >
@@ -151,7 +153,8 @@
         align="center"
       >
         <v-col
-          cols="5"
+          cols="12"
+          md="5"
         >
           <v-menu
             v-model="menu"
@@ -160,7 +163,7 @@
             offset-y
             min-width="290px"
           >
-            <!-- Here we use a little trick to display error message, 
+            <!-- Here we use a little trick to display error message,
               as validation rules on a readonly component works only after update of the value...
               If we just click in and out the error message does not appear.
               We use a combination of error, error-messages and blur -->
@@ -194,7 +197,7 @@
         </v-col>
       </v-row>
     </v-form>
-  </v-container>
+  </div>
 </template>
 
 <script>
