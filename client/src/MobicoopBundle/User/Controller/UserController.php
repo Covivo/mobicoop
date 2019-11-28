@@ -689,7 +689,9 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            $idThreadMessage = ($data['idThreadMessage']==-1) ? null : $data['idThreadMessage'];
+            // -1 : It's a false id for no direct message
+            // -99 : It's a false id for no carpool message
+            $idThreadMessage = ($data['idThreadMessage']==-1 || $data['idThreadMessage']==-99) ? null : $data['idThreadMessage'];
             $idAsk = (isset($data['idAsk']) && !is_null($data['idAsk'])) ? $data['idAsk'] : null;
             $text = $data['text'];
             $idRecipient = $data['idRecipient'];
@@ -705,7 +707,6 @@ class UserController extends AbstractController
             if ($idAsk!==null) {
                 $messageToSend->setIdAsk($idAsk);
             }
-            
             return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
         }
         return new Response(json_encode("Not a post"));

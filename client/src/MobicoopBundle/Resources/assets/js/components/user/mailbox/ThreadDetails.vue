@@ -100,7 +100,7 @@ export default {
     idMessage: {
       immediate: true,
       handler(newVal, oldVal) {
-        this.getCompleteThread();
+        if(this.idMessage!==null) this.getCompleteThread();
       }
     },
     refresh(){
@@ -112,7 +112,7 @@ export default {
       this.items = [];
 
       // if idMessage = -1 it means that is a "virtuel" thread. When you initiate a contact without previous message
-      if(this.idMessage>-1){
+      if(this.idMessage>-1 && this.idMessage != null){
         this.loading = true;
         axios.get(this.$t("urlCompleteThread",{idMessage:this.idMessage}))
           .then(response => {
