@@ -477,19 +477,28 @@
 
       <!--      Display price and informations of the user-->
       <v-col
-        cols="8"
+        cols="12"
         class="col-lg-4 pt-0"
       >
         <!-- price -->
         <v-col
           v-if="displayInfo && !solidaryExclusive"
           cols="12"
-          align="right"
         >
           <v-row
             class="mb-8"
           >
-            <h2>{{ price }} €</h2>
+            <v-col
+              cols="12"
+              class="pt-0"
+            >
+              <h2
+                class="text-right mr-6"
+                align="right"
+              >
+                {{ price }} €
+              </h2>
+            </v-col>
           </v-row>
           <v-row>
             <!-- User -->
