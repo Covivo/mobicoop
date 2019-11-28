@@ -51,7 +51,7 @@ class AdManager
      *
      * @param int $id       The ad id
      * @param array|null    The filters to apply to the results
-     * @return void
+     * @return Ad|null
      */
     public function getAd(int $id, ?array $filters = null)
     {
@@ -115,8 +115,8 @@ class AdManager
             $ad->setOutwardTime(isset($data['outwardTime']) ? $data['outwardTime'] : null);
             if (isset($data['returnDate']) && isset($data['returnTime'])) {
                 $ad->setOneWay(false);
-                $ad->setOutwardDate($data['returnDate']);
-                $ad->setOutwardTime($data['returnTime']);
+                $ad->setReturnDate($data['returnDate']);
+                $ad->setReturnTime($data['returnTime']);
             }
         }
 
@@ -313,7 +313,7 @@ class AdManager
         $ad = new Ad();
 
         // role
-        $ad->setRole($params['driver'] ? ($params['passenger'] ? Ad::ROLE_DRIVER_OR_PASSENGER : ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
+        $ad->setRole($params['driver'] ? ($params['passenger'] ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
 
         // ad
         $ad->setAdId($params['adId']);
@@ -321,18 +321,206 @@ class AdManager
         // matching
         $ad->setMatchingId($params['matchingId']);
 
-        if ($params['regular']) {
-            // regular ask
+        if ($params['regular'] && $formal) {
+            // formal regular ask, we have to transform the outward and return schedule to a unique schedule array
+            if (!isset($params['outwardSchedule']) && !isset($params['returnSchedule'])) {
+                return null;
+            }
+            $schedule  = [];
+            if (isset($params['outwardSchedule']['monTime']) && !is_null($params['outwardSchedule']['monTime'])) {
+                if (isset($params['returnSchedule']['monTime']) && !is_null($params['returnSchedule']['monTime'])) {
+                    $schedule[] = [
+                        'outwardTime' => $params['outwardSchedule']['monTime'],
+                        'returnTime' => $params['returnSchedule']['tueTime'],
+                        'mon' => true
+                    ];
+                } else {
+                    $schedule[] = [
+                        'outwardTime' => $params['outwardSchedule']['monTime'],
+                        'returnTime' => '',
+                        'mon' => true
+                    ];
+                }
+            } elseif (isset($params['returnSchedule']['monTime']) && !is_null($params['returnSchedule']['monTime'])) {
+                $schedule[] = [
+                    'outwardTime' => '',
+                    'returnTime' => $params['returnSchedule']['monTime'],
+                    'mon' => true
+                ];
+            }
+            if (isset($params['outwardSchedule']['tueTime']) && !is_null($params['outwardSchedule']['tueTime'])) {
+                if (isset($params['returnSchedule']['tueTime']) && !is_null($params['returnSchedule']['tueTime'])) {
+                    $schedule[] = [
+                        'outwardTime' => $params['outwardSchedule']['tueTime'],
+                        'returnTime' => $params['returnSchedule']['tueTime'],
+                        'tue' => true
+                    ];
+                } else {
+                    $schedule[] = [
+                        'outwardTime' => $params['outwardSchedule']['tueTime'],
+                        'returnTime' => '',
+                        'tue' => true
+                    ];
+                }
+            } elseif (isset($params['returnSchedule']['tueTime']) && !is_null($params['returnSchedule']['tueTime'])) {
+                $schedule[] = [
+                    'outwardTime' => '',
+                    'returnTime' => $params['returnSchedule']['tueTime'],
+                    'tue' => true
+                ];
+            }
+            if (isset($params['outwardSchedule']['wedTime']) && !is_null($params['outwardSchedule']['wedTime'])) {
+                if (isset($params['returnSchedule']['wedTime']) && !is_null($params['returnSchedule']['wedTime'])) {
+                    $schedule[] = [
+                        'outwardTime' => $params['outwardSchedule']['wedTime'],
+                        'returnTime' => $params['returnSchedule']['tueTime'],
+                        'wed' => true
+                    ];
+                } else {
+                    $schedule[] = [
+                        'outwardTime' => $params['outwardSchedule']['wedTime'],
+                        'returnTime' => '',
+                        'wed' => true
+                    ];
+                }
+            } elseif (isset($params['returnSchedule']['wedTime']) && !is_null($params['returnSchedule']['wedTime'])) {
+                $schedule[] = [
+                    'outwardTime' => '',
+                    'returnTime' => $params['returnSchedule']['wedTime'],
+                    'wed' => true
+                ];
+            }
+            if (isset($params['outwardSchedule']['thuTime']) && !is_null($params['outwardSchedule']['thuTime'])) {
+                if (isset($params['returnSchedule']['thuTime']) && !is_null($params['returnSchedule']['thuTime'])) {
+                    $schedule[] = [
+                        'outwardTime' => $params['outwardSchedule']['thuTime'],
+                        'returnTime' => $params['returnSchedule']['tueTime'],
+                        'thu' => true
+                    ];
+                } else {
+                    $schedule[] = [
+                        'outwardTime' => $params['outwardSchedule']['thuTime'],
+                        'returnTime' => '',
+                        'thu' => true
+                    ];
+                }
+            } elseif (isset($params['returnSchedule']['thuTime']) && !is_null($params['returnSchedule']['thuTime'])) {
+                $schedule[] = [
+                    'outwardTime' => '',
+                    'returnTime' => $params['returnSchedule']['thuTime'],
+                    'thu' => true
+                ];
+            }
+            if (isset($params['outwardSchedule']['friTime']) && !is_null($params['outwardSchedule']['friTime'])) {
+                if (isset($params['returnSchedule']['friTime']) && !is_null($params['returnSchedule']['friTime'])) {
+                    $schedule[] = [
+                        'outwardTime' => $params['outwardSchedule']['friTime'],
+                        'returnTime' => $params['returnSchedule']['tueTime'],
+                        'fri' => true
+                    ];
+                } else {
+                    $schedule[] = [
+                        'outwardTime' => $params['outwardSchedule']['friTime'],
+                        'returnTime' => '',
+                        'fri' => true
+                    ];
+                }
+            } elseif (isset($params['returnSchedule']['friTime']) && !is_null($params['returnSchedule']['friTime'])) {
+                $schedule[] = [
+                    'outwardTime' => '',
+                    'returnTime' => $params['returnSchedule']['friTime'],
+                    'fri' => true
+                ];
+            }
+            if (isset($params['outwardSchedule']['satTime']) && !is_null($params['outwardSchedule']['satTime'])) {
+                if (isset($params['returnSchedule']['satTime']) && !is_null($params['returnSchedule']['satTime'])) {
+                    $schedule[] = [
+                        'outwardTime' => $params['outwardSchedule']['satTime'],
+                        'returnTime' => $params['returnSchedule']['tueTime'],
+                        'sat' => true
+                    ];
+                } else {
+                    $schedule[] = [
+                        'outwardTime' => $params['outwardSchedule']['satTime'],
+                        'returnTime' => '',
+                        'sat' => true
+                    ];
+                }
+            } elseif (isset($params['returnSchedule']['satTime']) && !is_null($params['returnSchedule']['satTime'])) {
+                $schedule[] = [
+                    'outwardTime' => '',
+                    'returnTime' => $params['returnSchedule']['satTime'],
+                    'sat' => true
+                ];
+            }
+            if (isset($params['outwardSchedule']['sunTime']) && !is_null($params['outwardSchedule']['sunTime'])) {
+                if (isset($params['returnSchedule']['sunTime']) && !is_null($params['returnSchedule']['sunTime'])) {
+                    $schedule[] = [
+                        'outwardTime' => $params['outwardSchedule']['sunTime'],
+                        'returnTime' => $params['returnSchedule']['tueTime'],
+                        'sun' => true
+                    ];
+                } else {
+                    $schedule[] = [
+                        'outwardTime' => $params['outwardSchedule']['sunTime'],
+                        'returnTime' => '',
+                        'sun' => true
+                    ];
+                }
+            } elseif (isset($params['returnSchedule']['sunTime']) && !is_null($params['returnSchedule']['sunTime'])) {
+                $schedule[] = [
+                    'outwardTime' => '',
+                    'returnTime' => $params['returnSchedule']['sunTime'],
+                    'sun' => true
+                ];
+            }
+            $ad->setSchedule($schedule);
+            $ad->setOutwardDate(\DateTime::createFromFormat('Y-m-d', $params['fromDate']));
+            $ad->setOutwardLimitdate(\DateTime::createFromFormat('Y-m-d', $params['toDate']));
         } else {
-            // punctual ask
+            // punctual or contact ask
         }
 
         // creation of the ad ask
-        $response = $this->dataProvider->post($ad, 'ask');
+        if ($formal) {
+            $response = $this->dataProvider->post($ad, 'ask');
+        } else {
+            $response = $this->dataProvider->post($ad, 'contact');
+        }
         if ($response->getCode() != 201) {
             return $response->getValue();
         }
 
         return $response->getValue();
+    }
+
+    /**
+     * Get an ad and its results by its related Ask
+     *
+     * @param int $askId   Id of the related Ask
+     * @param int $userId  The user that make the request
+     * @return Ad|null
+     */
+    public function getAdAsk(int $askId, int $userId)
+    {
+        if ($data = $this->dataProvider->getSpecialItem($askId, "ask", ["userId"=>$userId], true)) {
+            return $data->getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Update an Ask via the Ad
+     *
+     * @param int $ad   The ad to update
+     * @param int $userId  The user that make the request
+     * @return Ad|null
+     */
+    public function updateAdAsk(Ad $ad, int $userId)
+    {
+        if ($data = $this->dataProvider->putSpecial($ad, null, "ask", ["userId"=>$userId], true)) {
+            return $data->getValue();
+        }
+        return null;
     }
 }

@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 
 use Herrera\Json\Exception\Exception;
 use Http\Client\Exception\HttpException;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -48,9 +49,11 @@ use Symfony\Component\HttpFoundation\Response;
 use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -569,28 +572,48 @@ class UserController extends AbstractController
     /**
      * User mailbox
      */
-    public function mailBox(UserManager $userManager, Request $request)
+    public function mailBox(UserManager $userManager, Request $request, InternalMessageManager $messageManager)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
+        $data = $request->request;
 
         $newThread = null;
         $idThreadDefault = null;
+        $idMessage = null;
+        $idRecipient = null;
+        $idAsk= null;
 
         if ($request->isMethod('POST')) {
-            $newThread = [
-                "carpool" => (int)$request->request->get('carpool'),
-                "idRecipient" => (int)$request->request->get('idRecipient'),
-                "familyName" => $request->request->get('familyName'),
-                "givenName" => $request->request->get('givenName'),
-                "avatar" => $request->request->get('avatar')
-            ];
-            $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
+            // if we ask for a specific thread then we return it
+            if ($data->has("idMessage")) {
+                /** @var Message $message */
+                $message = $messageManager->getMessage($data->get("idMessage"));
+                $reponseofmanager = $this->handleManagerReturnValue($message);
+                if (!empty($reponseofmanager)) {
+                    return $reponseofmanager;
+                }
+                $idMessage = $idThreadDefault = !empty($message->getMessage()) ? $message->getMessage()->getId() : $message->getMessage();
+                $idRecipient = $message->getRecipients()[0]->getId();
+                $idAsk = $message->getAskHistory()["ask"]["id"];
+            } else {
+                $newThread = [
+                    "carpool" => (int)$request->request->get('carpool'),
+                    "idRecipient" => (int)$request->request->get('idRecipient'),
+                    "familyName" => $request->request->get('familyName'),
+                    "givenName" => $request->request->get('givenName'),
+                    "avatar" => $request->request->get('avatar')
+                ];
+                $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
+            }
         }
 
         return $this->render('@Mobicoop/user/messages.html.twig', [
             "idUser"=>$user->getId(),
             "idThreadDefault"=>$idThreadDefault,
+            "idMessage" => $idMessage,
+            "idRecipient" => $idRecipient,
+            "idAsk" => $idAsk,
             "newThread" => $newThread
         ]);
     }
@@ -633,7 +656,7 @@ class UserController extends AbstractController
      * Get informations for Action Panel of the mailbox
      * AJAX
      */
-    public function userMessagesActionsInfos(Request $request, AskManager $askManager, AskHistoryManager $askHistoryManager, UserManager $userManager)
+    public function userMessagesActionsInfos(Request $request, AdManager $adManager, UserManager $userManager)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
@@ -641,930 +664,14 @@ class UserController extends AbstractController
             if ($data['idAsk']) {
                 // Carpool
 
-                /**** Begining data */
-                /** To Do : Retreive data from API */
-                
-                $response = '{
-                    "@id": "/results/999999999999",
-                    "@type": "Result",
-                    "canAsk": true,
-                    "status": 1,
-                    "resultDriver": {
-                        "@id": "/result_roles/999999999999",
-                        "@type": "ResultRole",
-                        "outward": {
-                            "@id": "/result_items/999999999999",
-                            "@type": "ResultItem",
-                            "proposalId": 5,
-                            "matchingId": null,
-                            "date": null,
-                            "time": "2019-11-16T08:00:00+00:00",
-                            "fromDate": "2019-11-16T15:04:00+00:00",
-                            "toDate": "2119-11-16T00:00:00+00:00",
-                            "origin": {
-                                "@id": "/addresses/28",
-                                "@type": "Address",
-                                "houseNumber": null,
-                                "street": null,
-                                "streetAddress": "",
-                                "postalCode": null,
-                                "subLocality": null,
-                                "addressLocality": "Lunéville",
-                                "localAdmin": "Lunéville",
-                                "county": "Lunéville",
-                                "macroCounty": "arrondissement de Lunéville",
-                                "region": "Meurthe-et-Moselle",
-                                "macroRegion": "Grand Est",
-                                "addressCountry": "France",
-                                "countryCode": "FRA",
-                                "latitude": "48.589904",
-                                "longitude": "6.500118",
-                                "elevation": null,
-                                "name": null,
-                                "venue": null,
-                                "home": null,
-                                "displayLabel": [
-                                    "Lunéville",
-                                    "Grand Est, France"
-                                ]
-                            },
-                            "destination": {
-                                "@id": "/addresses/29",
-                                "@type": "Address",
-                                "houseNumber": null,
-                                "street": null,
-                                "streetAddress": "",
-                                "postalCode": null,
-                                "subLocality": null,
-                                "addressLocality": "Nancy",
-                                "localAdmin": "Nancy",
-                                "county": "Nancy",
-                                "macroCounty": "arrondissement de Nancy",
-                                "region": "Meurthe-et-Moselle",
-                                "macroRegion": "Grand Est",
-                                "addressCountry": "France",
-                                "countryCode": "FRA",
-                                "latitude": "48.690303",
-                                "longitude": "6.178289",
-                                "elevation": null,
-                                "name": null,
-                                "venue": null,
-                                "home": null,
-                                "displayLabel": [
-                                    "Nancy",
-                                    "Grand Est, France"
-                                ]
-                            },
-                            "originDriver": {
-                                "@id": "/addresses/999999999999",
-                                "@type": "Address",
-                                "houseNumber": null,
-                                "street": null,
-                                "streetAddress": null,
-                                "postalCode": null,
-                                "subLocality": null,
-                                "addressLocality": "Lunéville",
-                                "localAdmin": "Lunéville",
-                                "county": "Lunéville",
-                                "macroCounty": "arrondissement de Lunéville",
-                                "region": "Meurthe-et-Moselle",
-                                "macroRegion": "Grand Est",
-                                "addressCountry": "France",
-                                "countryCode": "FRA",
-                                "latitude": "48.589904",
-                                "longitude": "6.500118",
-                                "elevation": null,
-                                "name": null,
-                                "venue": null,
-                                "home": null,
-                                "displayLabel": [
-                                    "Lunéville",
-                                    "Grand Est, France"
-                                ]
-                            },
-                            "destinationDriver": {
-                                "@id": "/addresses/999999999999",
-                                "@type": "Address",
-                                "houseNumber": null,
-                                "street": null,
-                                "streetAddress": null,
-                                "postalCode": null,
-                                "subLocality": null,
-                                "addressLocality": "Nancy",
-                                "localAdmin": "Nancy",
-                                "county": "Nancy",
-                                "macroCounty": "arrondissement de Nancy",
-                                "region": "Meurthe-et-Moselle",
-                                "macroRegion": "Grand Est",
-                                "addressCountry": "France",
-                                "countryCode": "FRA",
-                                "latitude": "48.690303",
-                                "longitude": "6.178289",
-                                "elevation": null,
-                                "name": null,
-                                "venue": null,
-                                "home": null,
-                                "displayLabel": [
-                                    "Nancy",
-                                    "Grand Est, France"
-                                ]
-                            },
-                            "originPassenger": {
-                                "@id": "/addresses/28",
-                                "@type": "Address",
-                                "houseNumber": null,
-                                "street": null,
-                                "streetAddress": "",
-                                "postalCode": null,
-                                "subLocality": null,
-                                "addressLocality": "Lunéville",
-                                "localAdmin": "Lunéville",
-                                "county": "Lunéville",
-                                "macroCounty": "arrondissement de Lunéville",
-                                "region": "Meurthe-et-Moselle",
-                                "macroRegion": "Grand Est",
-                                "addressCountry": "France",
-                                "countryCode": "FRA",
-                                "latitude": "48.589904",
-                                "longitude": "6.500118",
-                                "elevation": null,
-                                "name": null,
-                                "venue": null,
-                                "home": null,
-                                "displayLabel": [
-                                    "Lunéville",
-                                    "Grand Est, France"
-                                ]
-                            },
-                            "destinationPassenger": {
-                                "@id": "/addresses/29",
-                                "@type": "Address",
-                                "houseNumber": null,
-                                "street": null,
-                                "streetAddress": "",
-                                "postalCode": null,
-                                "subLocality": null,
-                                "addressLocality": "Nancy",
-                                "localAdmin": "Nancy",
-                                "county": "Nancy",
-                                "macroCounty": "arrondissement de Nancy",
-                                "region": "Meurthe-et-Moselle",
-                                "macroRegion": "Grand Est",
-                                "addressCountry": "France",
-                                "countryCode": "FRA",
-                                "latitude": "48.690303",
-                                "longitude": "6.178289",
-                                "elevation": null,
-                                "name": null,
-                                "venue": null,
-                                "home": null,
-                                "displayLabel": [
-                                    "Nancy",
-                                    "Grand Est, France"
-                                ]
-                            },
-                            "waypoints": [
-                                {
-                                    "id": 0,
-                                    "person": "requester",
-                                    "role": "driver",
-                                    "time": "2019-11-16T08:00:00+00:00",
-                                    "address": {
-                                        "@id": "/addresses/999999999999",
-                                        "@type": "Address",
-                                        "houseNumber": null,
-                                        "street": null,
-                                        "streetAddress": null,
-                                        "postalCode": null,
-                                        "subLocality": null,
-                                        "addressLocality": "Lunéville",
-                                        "localAdmin": "Lunéville",
-                                        "county": "Lunéville",
-                                        "macroCounty": "arrondissement de Lunéville",
-                                        "region": "Meurthe-et-Moselle",
-                                        "macroRegion": "Grand Est",
-                                        "addressCountry": "France",
-                                        "countryCode": "FRA",
-                                        "latitude": "48.589904",
-                                        "longitude": "6.500118",
-                                        "elevation": null,
-                                        "name": null,
-                                        "venue": null,
-                                        "home": null,
-                                        "displayLabel": [
-                                            "Lunéville",
-                                            "Grand Est, France"
-                                        ]
-                                    },
-                                    "type": "origin"
-                                },
-                                {
-                                    "id": 1,
-                                    "person": "carpooler",
-                                    "role": "passenger",
-                                    "time": "2019-11-16T08:00:00+00:00",
-                                    "address": {
-                                        "@id": "/addresses/28",
-                                        "@type": "Address",
-                                        "houseNumber": null,
-                                        "street": null,
-                                        "streetAddress": "",
-                                        "postalCode": null,
-                                        "subLocality": null,
-                                        "addressLocality": "Lunéville",
-                                        "localAdmin": "Lunéville",
-                                        "county": "Lunéville",
-                                        "macroCounty": "arrondissement de Lunéville",
-                                        "region": "Meurthe-et-Moselle",
-                                        "macroRegion": "Grand Est",
-                                        "addressCountry": "France",
-                                        "countryCode": "FRA",
-                                        "latitude": "48.589904",
-                                        "longitude": "6.500118",
-                                        "elevation": null,
-                                        "name": null,
-                                        "venue": null,
-                                        "home": null,
-                                        "displayLabel": [
-                                            "Lunéville",
-                                            "Grand Est, France"
-                                        ]
-                                    },
-                                    "type": "origin"
-                                },
-                                {
-                                    "id": 2,
-                                    "person": "carpooler",
-                                    "role": "passenger",
-                                    "time": "2019-11-16T08:26:24+00:00",
-                                    "address": {
-                                        "@id": "/addresses/29",
-                                        "@type": "Address",
-                                        "houseNumber": null,
-                                        "street": null,
-                                        "streetAddress": "",
-                                        "postalCode": null,
-                                        "subLocality": null,
-                                        "addressLocality": "Nancy",
-                                        "localAdmin": "Nancy",
-                                        "county": "Nancy",
-                                        "macroCounty": "arrondissement de Nancy",
-                                        "region": "Meurthe-et-Moselle",
-                                        "macroRegion": "Grand Est",
-                                        "addressCountry": "France",
-                                        "countryCode": "FRA",
-                                        "latitude": "48.690303",
-                                        "longitude": "6.178289",
-                                        "elevation": null,
-                                        "name": null,
-                                        "venue": null,
-                                        "home": null,
-                                        "displayLabel": [
-                                            "Nancy",
-                                            "Grand Est, France"
-                                        ]
-                                    },
-                                    "type": "destination"
-                                },
-                                {
-                                    "id": 3,
-                                    "person": "requester",
-                                    "role": "driver",
-                                    "time": "2019-11-16T08:26:24+00:00",
-                                    "address": {
-                                        "@id": "/addresses/999999999999",
-                                        "@type": "Address",
-                                        "houseNumber": null,
-                                        "street": null,
-                                        "streetAddress": null,
-                                        "postalCode": null,
-                                        "subLocality": null,
-                                        "addressLocality": "Nancy",
-                                        "localAdmin": "Nancy",
-                                        "county": "Nancy",
-                                        "macroCounty": "arrondissement de Nancy",
-                                        "region": "Meurthe-et-Moselle",
-                                        "macroRegion": "Grand Est",
-                                        "addressCountry": "France",
-                                        "countryCode": "FRA",
-                                        "latitude": "48.690303",
-                                        "longitude": "6.178289",
-                                        "elevation": null,
-                                        "name": null,
-                                        "venue": null,
-                                        "home": null,
-                                        "displayLabel": [
-                                            "Nancy",
-                                            "Grand Est, France"
-                                        ]
-                                    },
-                                    "type": "destination"
-                                }
-                            ],
-                            "monCheck": true,
-                            "tueCheck": null,
-                            "wedCheck": null,
-                            "thuCheck": true,
-                            "friCheck": true,
-                            "satCheck": null,
-                            "sunCheck": null,
-                            "monTime": "2019-11-16T08:00:00+00:00",
-                            "tueTime": null,
-                            "wedTime": null,
-                            "thuTime": "2019-11-16T08:00:00+00:00",
-                            "friTime": "2019-11-16T08:00:00+00:00",
-                            "satTime": null,
-                            "sunTime": null,
-                            "multipleTimes": false,
-                            "driverPriceKm": "0.06",
-                            "passengerPriceKm": "0.06",
-                            "driverOriginalPrice": "2.1171",
-                            "passengerOriginalPrice": "2.12",
-                            "driverOriginalRoundedPrice": "2.1",
-                            "passengerOriginalRoundedPrice": "2.10",
-                            "computedPrice": "2.1171",
-                            "computedRoundedPrice": "2.1",
-                            "originalDistance": 35285,
-                            "acceptedDetourDistance": 11644,
-                            "newDistance": 35285,
-                            "detourDistance": 0,
-                            "detourDistancePercent": 0,
-                            "originalDuration": 1584,
-                            "acceptedDetourDuration": 522,
-                            "newDuration": 1584,
-                            "detourDuration": 0,
-                            "detourDurationPercent": 0,
-                            "commonDistance": 35285
-                        },
-                        "return": null,
-                        "seats": 1
-                    },
-                    "resultPassenger": {
-                        "@id": "/result_roles/999999999999",
-                        "@type": "ResultRole",
-                        "outward": {
-                            "@id": "/result_items/999999999999",
-                            "@type": "ResultItem",
-                            "proposalId": 5,
-                            "matchingId": null,
-                            "date": null,
-                            "time": "2019-11-16T08:00:00+00:00",
-                            "fromDate": "2019-11-16T15:04:00+00:00",
-                            "toDate": "2119-11-16T00:00:00+00:00",
-                            "origin": {
-                                "@id": "/addresses/28",
-                                "@type": "Address",
-                                "houseNumber": null,
-                                "street": null,
-                                "streetAddress": "",
-                                "postalCode": null,
-                                "subLocality": null,
-                                "addressLocality": "Lunéville",
-                                "localAdmin": "Lunéville",
-                                "county": "Lunéville",
-                                "macroCounty": "arrondissement de Lunéville",
-                                "region": "Meurthe-et-Moselle",
-                                "macroRegion": "Grand Est",
-                                "addressCountry": "France",
-                                "countryCode": "FRA",
-                                "latitude": "48.589904",
-                                "longitude": "6.500118",
-                                "elevation": null,
-                                "name": null,
-                                "venue": null,
-                                "home": null,
-                                "displayLabel": [
-                                    "Lunéville",
-                                    "Grand Est, France"
-                                ]
-                            },
-                            "destination": {
-                                "@id": "/addresses/29",
-                                "@type": "Address",
-                                "houseNumber": null,
-                                "street": null,
-                                "streetAddress": "",
-                                "postalCode": null,
-                                "subLocality": null,
-                                "addressLocality": "Nancy",
-                                "localAdmin": "Nancy",
-                                "county": "Nancy",
-                                "macroCounty": "arrondissement de Nancy",
-                                "region": "Meurthe-et-Moselle",
-                                "macroRegion": "Grand Est",
-                                "addressCountry": "France",
-                                "countryCode": "FRA",
-                                "latitude": "48.690303",
-                                "longitude": "6.178289",
-                                "elevation": null,
-                                "name": null,
-                                "venue": null,
-                                "home": null,
-                                "displayLabel": [
-                                    "Nancy",
-                                    "Grand Est, France"
-                                ]
-                            },
-                            "originDriver": {
-                                "@id": "/addresses/28",
-                                "@type": "Address",
-                                "houseNumber": null,
-                                "street": null,
-                                "streetAddress": "",
-                                "postalCode": null,
-                                "subLocality": null,
-                                "addressLocality": "Lunéville",
-                                "localAdmin": "Lunéville",
-                                "county": "Lunéville",
-                                "macroCounty": "arrondissement de Lunéville",
-                                "region": "Meurthe-et-Moselle",
-                                "macroRegion": "Grand Est",
-                                "addressCountry": "France",
-                                "countryCode": "FRA",
-                                "latitude": "48.589904",
-                                "longitude": "6.500118",
-                                "elevation": null,
-                                "name": null,
-                                "venue": null,
-                                "home": null,
-                                "displayLabel": [
-                                    "Lunéville",
-                                    "Grand Est, France"
-                                ]
-                            },
-                            "destinationDriver": {
-                                "@id": "/addresses/29",
-                                "@type": "Address",
-                                "houseNumber": null,
-                                "street": null,
-                                "streetAddress": "",
-                                "postalCode": null,
-                                "subLocality": null,
-                                "addressLocality": "Nancy",
-                                "localAdmin": "Nancy",
-                                "county": "Nancy",
-                                "macroCounty": "arrondissement de Nancy",
-                                "region": "Meurthe-et-Moselle",
-                                "macroRegion": "Grand Est",
-                                "addressCountry": "France",
-                                "countryCode": "FRA",
-                                "latitude": "48.690303",
-                                "longitude": "6.178289",
-                                "elevation": null,
-                                "name": null,
-                                "venue": null,
-                                "home": null,
-                                "displayLabel": [
-                                    "Nancy",
-                                    "Grand Est, France"
-                                ]
-                            },
-                            "originPassenger": {
-                                "@id": "/addresses/999999999999",
-                                "@type": "Address",
-                                "houseNumber": null,
-                                "street": null,
-                                "streetAddress": null,
-                                "postalCode": null,
-                                "subLocality": null,
-                                "addressLocality": "Lunéville",
-                                "localAdmin": "Lunéville",
-                                "county": "Lunéville",
-                                "macroCounty": "arrondissement de Lunéville",
-                                "region": "Meurthe-et-Moselle",
-                                "macroRegion": "Grand Est",
-                                "addressCountry": "France",
-                                "countryCode": "FRA",
-                                "latitude": "48.589904",
-                                "longitude": "6.500118",
-                                "elevation": null,
-                                "name": null,
-                                "venue": null,
-                                "home": null,
-                                "displayLabel": [
-                                    "Lunéville",
-                                    "Grand Est, France"
-                                ]
-                            },
-                            "destinationPassenger": {
-                                "@id": "/addresses/999999999999",
-                                "@type": "Address",
-                                "houseNumber": null,
-                                "street": null,
-                                "streetAddress": null,
-                                "postalCode": null,
-                                "subLocality": null,
-                                "addressLocality": "Nancy",
-                                "localAdmin": "Nancy",
-                                "county": "Nancy",
-                                "macroCounty": "arrondissement de Nancy",
-                                "region": "Meurthe-et-Moselle",
-                                "macroRegion": "Grand Est",
-                                "addressCountry": "France",
-                                "countryCode": "FRA",
-                                "latitude": "48.690303",
-                                "longitude": "6.178289",
-                                "elevation": null,
-                                "name": null,
-                                "venue": null,
-                                "home": null,
-                                "displayLabel": [
-                                    "Nancy",
-                                    "Grand Est, France"
-                                ]
-                            },
-                            "waypoints": [
-                                {
-                                    "id": 0,
-                                    "person": "carpooler",
-                                    "role": "driver",
-                                    "time": "2019-11-16T08:00:00+00:00",
-                                    "address": {
-                                        "@id": "/addresses/28",
-                                        "@type": "Address",
-                                        "houseNumber": null,
-                                        "street": null,
-                                        "streetAddress": "",
-                                        "postalCode": null,
-                                        "subLocality": null,
-                                        "addressLocality": "Lunéville",
-                                        "localAdmin": "Lunéville",
-                                        "county": "Lunéville",
-                                        "macroCounty": "arrondissement de Lunéville",
-                                        "region": "Meurthe-et-Moselle",
-                                        "macroRegion": "Grand Est",
-                                        "addressCountry": "France",
-                                        "countryCode": "FRA",
-                                        "latitude": "48.589904",
-                                        "longitude": "6.500118",
-                                        "elevation": null,
-                                        "name": null,
-                                        "venue": null,
-                                        "home": null,
-                                        "displayLabel": [
-                                            "Lunéville",
-                                            "Grand Est, France"
-                                        ]
-                                    },
-                                    "type": "origin"
-                                },
-                                {
-                                    "id": 1,
-                                    "person": "requester",
-                                    "role": "passenger",
-                                    "time": "2019-11-16T08:00:00+00:00",
-                                    "address": {
-                                        "@id": "/addresses/999999999999",
-                                        "@type": "Address",
-                                        "houseNumber": null,
-                                        "street": null,
-                                        "streetAddress": null,
-                                        "postalCode": null,
-                                        "subLocality": null,
-                                        "addressLocality": "Lunéville",
-                                        "localAdmin": "Lunéville",
-                                        "county": "Lunéville",
-                                        "macroCounty": "arrondissement de Lunéville",
-                                        "region": "Meurthe-et-Moselle",
-                                        "macroRegion": "Grand Est",
-                                        "addressCountry": "France",
-                                        "countryCode": "FRA",
-                                        "latitude": "48.589904",
-                                        "longitude": "6.500118",
-                                        "elevation": null,
-                                        "name": null,
-                                        "venue": null,
-                                        "home": null,
-                                        "displayLabel": [
-                                            "Lunéville",
-                                            "Grand Est, France"
-                                        ]
-                                    },
-                                    "type": "origin"
-                                },
-                                {
-                                    "id": 2,
-                                    "person": "requester",
-                                    "role": "passenger",
-                                    "time": "2019-11-16T08:26:24+00:00",
-                                    "address": {
-                                        "@id": "/addresses/999999999999",
-                                        "@type": "Address",
-                                        "houseNumber": null,
-                                        "street": null,
-                                        "streetAddress": null,
-                                        "postalCode": null,
-                                        "subLocality": null,
-                                        "addressLocality": "Nancy",
-                                        "localAdmin": "Nancy",
-                                        "county": "Nancy",
-                                        "macroCounty": "arrondissement de Nancy",
-                                        "region": "Meurthe-et-Moselle",
-                                        "macroRegion": "Grand Est",
-                                        "addressCountry": "France",
-                                        "countryCode": "FRA",
-                                        "latitude": "48.690303",
-                                        "longitude": "6.178289",
-                                        "elevation": null,
-                                        "name": null,
-                                        "venue": null,
-                                        "home": null,
-                                        "displayLabel": [
-                                            "Nancy",
-                                            "Grand Est, France"
-                                        ]
-                                    },
-                                    "type": "destination"
-                                },
-                                {
-                                    "id": 3,
-                                    "person": "carpooler",
-                                    "role": "driver",
-                                    "time": "2019-11-16T08:26:24+00:00",
-                                    "address": {
-                                        "@id": "/addresses/29",
-                                        "@type": "Address",
-                                        "houseNumber": null,
-                                        "street": null,
-                                        "streetAddress": "",
-                                        "postalCode": null,
-                                        "subLocality": null,
-                                        "addressLocality": "Nancy",
-                                        "localAdmin": "Nancy",
-                                        "county": "Nancy",
-                                        "macroCounty": "arrondissement de Nancy",
-                                        "region": "Meurthe-et-Moselle",
-                                        "macroRegion": "Grand Est",
-                                        "addressCountry": "France",
-                                        "countryCode": "FRA",
-                                        "latitude": "48.690303",
-                                        "longitude": "6.178289",
-                                        "elevation": null,
-                                        "name": null,
-                                        "venue": null,
-                                        "home": null,
-                                        "displayLabel": [
-                                            "Nancy",
-                                            "Grand Est, France"
-                                        ]
-                                    },
-                                    "type": "destination"
-                                }
-                            ],
-                            "monCheck": true,
-                            "tueCheck": null,
-                            "wedCheck": null,
-                            "thuCheck": true,
-                            "friCheck": true,
-                            "satCheck": null,
-                            "sunCheck": null,
-                            "monTime": "2019-11-16T08:00:00+00:00",
-                            "tueTime": null,
-                            "wedTime": null,
-                            "thuTime": "2019-11-16T08:00:00+00:00",
-                            "friTime": "2019-11-16T08:00:00+00:00",
-                            "satTime": null,
-                            "sunTime": null,
-                            "multipleTimes": false,
-                            "driverPriceKm": "0.06",
-                            "passengerPriceKm": "0.06",
-                            "driverOriginalPrice": "2.12",
-                            "passengerOriginalPrice": "2.1171",
-                            "driverOriginalRoundedPrice": "2.1",
-                            "passengerOriginalRoundedPrice": "2.1",
-                            "computedPrice": "2.1171",
-                            "computedRoundedPrice": "2.1",
-                            "originalDistance": 35285,
-                            "acceptedDetourDistance": 11644,
-                            "newDistance": 35285,
-                            "detourDistance": 0,
-                            "detourDistancePercent": 0,
-                            "originalDuration": 1584,
-                            "acceptedDetourDuration": 522,
-                            "newDuration": 1584,
-                            "detourDuration": 0,
-                            "detourDurationPercent": 0,
-                            "commonDistance": 35285
-                        },
-                        "return": null,
-                        "seats": 3
-                    },
-                    "carpooler": {
-                        "@id": "/users/5",
-                        "@type": "User",
-                        "id": 5,
-                        "givenName": "Tak",
-                        "familyName": "Tik",
-                        "shortFamilyName": "T.",
-                        "email": "tak.tik@yopmail.com",
-                        "birthDate": "1998-01-01T00:00:00+00:00",
-                        "telephone": "0908070808",
-                        "images": [
-                            {
-                                "@id": "/images/9",
-                                "@type": "Image",
-                                "fileName": "7026f5a959f8489dcabd0eb2eb7d72-1.png",
-                                "userId": null,
-                                "versions": {
-                                    "max": "http://localhost:8080/upload/users/images/versions/7026f5a959f8489dcabd0eb2eb7d72-1.png",
-                                    "square_800": "http://localhost:8080/upload/users/images/versions/800-7026f5a959f8489dcabd0eb2eb7d72-1.png",
-                                    "square_250": "http://localhost:8080/upload/users/images/versions/250-7026f5a959f8489dcabd0eb2eb7d72-1.png",
-                                    "square_100": "http://localhost:8080/upload/users/images/versions/100-7026f5a959f8489dcabd0eb2eb7d72-1.png"
-                                }
-                            }
-                        ],
-                        "avatars": [
-                            "http://localhost:8080/upload/users/images/versions/100-7026f5a959f8489dcabd0eb2eb7d72-1.png",
-                            "http://localhost:8080/upload/users/images/versions/250-7026f5a959f8489dcabd0eb2eb7d72-1.png"
-                        ]
-                    },
-                    "frequency": 2,
-                    "frequencyResult": 2,
-                    "origin": {
-                        "@id": "/addresses/999999999999",
-                        "@type": "Address",
-                        "houseNumber": null,
-                        "street": null,
-                        "streetAddress": null,
-                        "postalCode": null,
-                        "subLocality": null,
-                        "addressLocality": "Lunéville",
-                        "localAdmin": "Lunéville",
-                        "county": "Lunéville",
-                        "macroCounty": "arrondissement de Lunéville",
-                        "region": "Meurthe-et-Moselle",
-                        "macroRegion": "Grand Est",
-                        "addressCountry": "France",
-                        "countryCode": "FRA",
-                        "latitude": "48.589904",
-                        "longitude": "6.500118",
-                        "elevation": null,
-                        "name": null,
-                        "venue": null,
-                        "home": null,
-                        "displayLabel": [
-                            "Lunéville",
-                            "Grand Est, France"
-                        ]
-                    },
-                    "originFirst": true,
-                    "destination": {
-                        "@id": "/addresses/999999999999",
-                        "@type": "Address",
-                        "houseNumber": null,
-                        "street": null,
-                        "streetAddress": null,
-                        "postalCode": null,
-                        "subLocality": null,
-                        "addressLocality": "Nancy",
-                        "localAdmin": "Nancy",
-                        "county": "Nancy",
-                        "macroCounty": "arrondissement de Nancy",
-                        "region": "Meurthe-et-Moselle",
-                        "macroRegion": "Grand Est",
-                        "addressCountry": "France",
-                        "countryCode": "FRA",
-                        "latitude": "48.690303",
-                        "longitude": "6.178289",
-                        "elevation": null,
-                        "name": null,
-                        "venue": null,
-                        "home": null,
-                        "displayLabel": [
-                            "Nancy",
-                            "Grand Est, France"
-                        ]
-                    },
-                    "destinationLast": true,
-                    "originDriver": {
-                        "@id": "/addresses/28",
-                        "@type": "Address",
-                        "houseNumber": null,
-                        "street": null,
-                        "streetAddress": "",
-                        "postalCode": null,
-                        "subLocality": null,
-                        "addressLocality": "Lunéville",
-                        "localAdmin": "Lunéville",
-                        "county": "Lunéville",
-                        "macroCounty": "arrondissement de Lunéville",
-                        "region": "Meurthe-et-Moselle",
-                        "macroRegion": "Grand Est",
-                        "addressCountry": "France",
-                        "countryCode": "FRA",
-                        "latitude": "48.589904",
-                        "longitude": "6.500118",
-                        "elevation": null,
-                        "name": null,
-                        "venue": null,
-                        "home": null,
-                        "displayLabel": [
-                            "Lunéville",
-                            "Grand Est, France"
-                        ]
-                    },
-                    "destinationDriver": {
-                        "@id": "/addresses/29",
-                        "@type": "Address",
-                        "houseNumber": null,
-                        "street": null,
-                        "streetAddress": "",
-                        "postalCode": null,
-                        "subLocality": null,
-                        "addressLocality": "Nancy",
-                        "localAdmin": "Nancy",
-                        "county": "Nancy",
-                        "macroCounty": "arrondissement de Nancy",
-                        "region": "Meurthe-et-Moselle",
-                        "macroRegion": "Grand Est",
-                        "addressCountry": "France",
-                        "countryCode": "FRA",
-                        "latitude": "48.690303",
-                        "longitude": "6.178289",
-                        "elevation": null,
-                        "name": null,
-                        "venue": null,
-                        "home": null,
-                        "displayLabel": [
-                            "Nancy",
-                            "Grand Est, France"
-                        ]
-                    },
-                    "originPassenger": {
-                        "@id": "/addresses/999999999999",
-                        "@type": "Address",
-                        "houseNumber": null,
-                        "street": null,
-                        "streetAddress": null,
-                        "postalCode": null,
-                        "subLocality": null,
-                        "addressLocality": "Lunéville",
-                        "localAdmin": "Lunéville",
-                        "county": "Lunéville",
-                        "macroCounty": "arrondissement de Lunéville",
-                        "region": "Meurthe-et-Moselle",
-                        "macroRegion": "Grand Est",
-                        "addressCountry": "France",
-                        "countryCode": "FRA",
-                        "latitude": "48.589904",
-                        "longitude": "6.500118",
-                        "elevation": null,
-                        "name": null,
-                        "venue": null,
-                        "home": null,
-                        "displayLabel": [
-                            "Lunéville",
-                            "Grand Est, France"
-                        ]
-                    },
-                    "destinationPassenger": {
-                        "@id": "/addresses/999999999999",
-                        "@type": "Address",
-                        "houseNumber": null,
-                        "street": null,
-                        "streetAddress": null,
-                        "postalCode": null,
-                        "subLocality": null,
-                        "addressLocality": "Nancy",
-                        "localAdmin": "Nancy",
-                        "county": "Nancy",
-                        "macroCounty": "arrondissement de Nancy",
-                        "region": "Meurthe-et-Moselle",
-                        "macroRegion": "Grand Est",
-                        "addressCountry": "France",
-                        "countryCode": "FRA",
-                        "latitude": "48.690303",
-                        "longitude": "6.178289",
-                        "elevation": null,
-                        "name": null,
-                        "venue": null,
-                        "home": null,
-                        "displayLabel": [
-                            "Nancy",
-                            "Grand Est, France"
-                        ]
-                    },
-                    "date": null,
-                    "time": null,
-                    "startDate": "2019-11-16T15:04:00+00:00",
-                    "toDate": "2119-11-16T00:00:00+00:00",
-                    "seats": 3,
-                    "price": "2.1171",
-                    "roundedPrice": "2.1",
-                    "comment": null,
-                    "monCheck": true,
-                    "tueCheck": false,
-                    "wedCheck": false,
-                    "thuCheck": true,
-                    "friCheck": true,
-                    "satCheck": false,
-                    "sunCheck": false,
-                    "outwardTime": "2019-11-16T08:00:00+00:00",
-                    "returnTime": null,
-                    "return": false
-                }';
-    
-                return new Response($response);
+                // Get the related Ad of this Ask
+                $response = $adManager->getAdAsk($data['idAsk'], $user->getId());
+
+                $results = $response->getResults()[0];
+                $results["canUpdateAsk"] = $response->getCanUpdateAsk(); // Because it's not in result
+                $results["askStatus"] = $response->getAskStatus(); // Because it's not in result
+
+                return new JsonResponse($results);
             } else {
                 // Direct
                 $recipient = $userManager->getUser($data['idRecipient']);
@@ -1593,7 +700,9 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            $idThreadMessage = ($data['idThreadMessage']==-1) ? null : $data['idThreadMessage'];
+            // -1 : It's a false id for no direct message
+            // -99 : It's a false id for no carpool message
+            $idThreadMessage = ($data['idThreadMessage']==-1 || $data['idThreadMessage']==-99) ? null : $data['idThreadMessage'];
             $idAsk = (isset($data['idAsk']) && !is_null($data['idAsk'])) ? $data['idAsk'] : null;
             $text = $data['text'];
             $idRecipient = $data['idRecipient'];
@@ -1609,7 +718,6 @@ class UserController extends AbstractController
             if ($idAsk!==null) {
                 $messageToSend->setIdAsk($idAsk);
             }
-            
             return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
         }
         return new Response(json_encode("Not a post"));
@@ -1620,78 +728,75 @@ class UserController extends AbstractController
      * Update and ask
      * Ajax Request
      */
-    public function userMessageUpdateAsk(Request $request, AskManager $askManager, AskHistoryManager $askHistoryManager)
+    public function userMessageUpdateAsk(Request $request, AdManager $adManager, UserManager $userManager)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
+            $user = $userManager->getLoggedUser();
             $idAsk = $data['idAsk'];
             $status = $data['status'];
-            $criteria = ($data['criteria']) ? $data['criteria'] : null;
+            $outwardDate = (isset($data['outwardDate'])) ? $data['outwardDate'] : null;
+            $outwardLimitDate = (isset($data['outwardLimitDate'])) ? $data['outwardLimitDate'] : null;
+            $outwardSchedule = (isset($data['outwardSchedule'])) ? $data['outwardSchedule'] : null;
+            $returnSchedule = (isset($data['returnSchedule'])) ? $data['returnSchedule'] : null;
 
-            // Get the Ask
-            $ask = $askManager->getAsk($idAsk);
+            $schedule = [];
+            if (!is_null($outwardSchedule) || !is_null($returnSchedule)) {
 
-            // Get the Ask of the return
-            $askReturn = $ask->getAskLinked();
+                // It's a regular journey I need to build the schedule of this journey (structure of an Ad)
 
-            $reponseofmanager= $this->handleManagerReturnValue($ask);
-            if (!empty($reponseofmanager)) {
-                return $reponseofmanager;
-            }
-            
-            // Change the status
-            if ($status!==null && is_numeric($status)) {
-                $ask->setStatus($status);
-            }
-            
-            // If we need to, we update the criteria
-            if ($criteria!==null) {
+                $days = ["mon","tue","wed","thu","fri","sat","sun"];
+                foreach ($days as $day) {
+                    $currentOutwardTime = (!is_null($returnSchedule)) ? $outwardSchedule[$day."Time"] : null;
+                    $currentReturnTime = (!is_null($returnSchedule)) ? $returnSchedule[$day."Time"] : null;
 
-                /** TO DO : Get the criteria of the return */
+                    // I need to know if there is already a section of the schedule with these times
+                    $alreadyExists = false;
+                    if (count($schedule)>0) {
+                        foreach ($schedule as $key => $section) {
+                            (isset($section['outwardTime']) && !is_null($section['outwardTime'])) ? $sectionOutwardTime = $section['outwardTime'] : $sectionOutwardTime = null;
+                            (isset($section['returnTime']) && !is_null($section['returnTime'])) ? $sectionReturnTime = $section['returnTime'] : $sectionReturnTime = null;
 
-                $ask->getCriteria()->setFromDate(new \DateTime($criteria['fromDate']));
-                $ask->getCriteria()->setToDate(new \DateTime($criteria['toDate']));
-                if ($askReturn!=null) {
-                    $askReturn->getCriteria()->setFromDate(new \DateTime($criteria['fromDate']));
-                    $askReturn->getCriteria()->setToDate(new \DateTime($criteria['toDate']));
-                }
+                            if ($sectionOutwardTime===$currentOutwardTime && $sectionReturnTime===$currentReturnTime) {
+                                $alreadyExists = true;
+                                // It's exists so i update the current day on this section
+                                $schedule[$key][$day] = 1;
+                            }
+                        }
+                    }
 
-                if (isset($criteria['outwardSchedule'])) {
-                    $ask->getCriteria()->setMonCheck(($criteria['outwardSchedule']['monTime']) ? true : false);
-                    $ask->getCriteria()->setTueCheck(($criteria['outwardSchedule']['tueTime']) ? true : false);
-                    $ask->getCriteria()->setWedCheck(($criteria['outwardSchedule']['wedTime']) ? true : false);
-                    $ask->getCriteria()->setThuCheck(($criteria['outwardSchedule']['thuTime']) ? true : false);
-                    $ask->getCriteria()->setFriCheck(($criteria['outwardSchedule']['friTime']) ? true : false);
-                    $ask->getCriteria()->setSatCheck(($criteria['outwardSchedule']['satTime']) ? true : false);
-                    $ask->getCriteria()->setSunCheck(($criteria['outwardSchedule']['sunTime']) ? true : false);
-                }
-
-
-                if ($askReturn!==null && isset($criteria['returnSchedule'])) {
-                    $askReturn->getCriteria()->setMonCheck(($criteria['returnSchedule']['monTime']) ? true : false);
-                    $askReturn->getCriteria()->setTueCheck(($criteria['returnSchedule']['tueTime']) ? true : false);
-                    $askReturn->getCriteria()->setWedCheck(($criteria['returnSchedule']['wedTime']) ? true : false);
-                    $askReturn->getCriteria()->setThuCheck(($criteria['returnSchedule']['thuTime']) ? true : false);
-                    $askReturn->getCriteria()->setFriCheck(($criteria['returnSchedule']['friTime']) ? true : false);
-                    $askReturn->getCriteria()->setSatCheck(($criteria['returnSchedule']['satTime']) ? true : false);
-                    $askReturn->getCriteria()->setSunCheck(($criteria['returnSchedule']['sunTime']) ? true : false);
+                    // It's a new section i need tu push it with the good day at 1
+                    if (!$alreadyExists && (!is_null($currentOutwardTime) || !is_null($currentReturnTime))) {
+                        $schedule[] = [
+                            "outwardTime" => $currentOutwardTime,
+                            "returnTime" => $currentReturnTime,
+                            "mon" => ($day=="mon") ? 1 : 0,
+                            "tue" => ($day=="tue") ? 1 : 0,
+                            "wed" => ($day=="wed") ? 1 : 0,
+                            "thu" => ($day=="thu") ? 1 : 0,
+                            "fri" => ($day=="fri") ? 1 : 0,
+                            "sat" => ($day=="sat") ? 1 : 0,
+                            "sun" => ($day=="sun") ? 1 : 0
+                        ];
+                    }
                 }
             }
 
-            // Update the Ask via API
-            $ask = $askManager->updateAsk($ask);
-
-            // Update the return Ask
-            if ($askReturn!=null) {
-                $askReturn = $askManager->updateAsk($askReturn);
+            // I build the Ad for the put
+            $adToPost = new Ad($idAsk);
+            $adToPost->setAskStatus($status);
+            if (!is_null($outwardDate)) {
+                $adToPost->setOutwardDate(new \DateTime($outwardDate));
             }
+            if (!is_null($outwardLimitDate)) {
+                $adToPost->setOutwardLimitDate(new \DateTime($outwardLimitDate));
+            }
+            if (count($schedule)>0) {
+                $adToPost->setSchedule($schedule);
+            } // Only regular
 
-            $return = [
-                "id"=>$ask->getId(),
-                "status"=>$ask->getStatus(),
-                "return" => ($askReturn!=null) ? ["id"=>$askReturn->getId(),"status"=>$askReturn->getStatus()] : null
-            ];
+            $return = $adManager->updateAdAsk($adToPost, $user->getId());
 
             return new JsonResponse($return);
         }

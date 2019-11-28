@@ -32,7 +32,7 @@ use App\TranslatorTrait;
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-class AdAsk
+class AdAskPost
 {
     use TranslatorTrait;
     

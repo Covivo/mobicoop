@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <div>
     <v-container
       text-xs-center
       grid-list-md
@@ -59,7 +59,7 @@
               <threads-carpool
                 :new-thread="newThreadCarpool"
                 :id-thread-default="idThreadDefault"
-                :id-message-to-select="idMessage"
+                :id-ask-to-select="currentIdAsk"
                 :refresh-threads="refreshThreadsCarpool"
                 @idMessageForTimeLine="updateDetails"
                 @toggleSelected="refreshSelected"
@@ -123,7 +123,7 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-content>
+  </div>
 </template>
 <script>
 import axios from "axios";
@@ -160,13 +160,25 @@ export default {
       type:Object,
       default:null
     },
+    givenIdAsk: {
+      type: Number,
+      default: null
+    },
+    givenIdMessage: {
+      type: Number,
+      default: null
+    },
+    givenIdRecipient: {
+      type: Number,
+      default: null
+    }
   },
   data() {
     return {
       modelTabs:"tab-cm",
-      idMessage:null,
-      idRecipient:null,
-      currentIdAsk:null,
+      idMessage: this.givenIdMessage ? this.givenIdMessage : null,
+      idRecipient: this.givenIdRecipient ? this.givenIdRecipient : null,
+      currentIdAsk: this.givenIdAsk ? this.givenIdAsk : null,
       recipientName:"",
       newThreadDirect:null,
       newThreadCarpool:null,
@@ -217,69 +229,65 @@ export default {
         this.refreshDetails = true;
         this.newThreadDirect = null;
         this.newThreadCarpool = null;
-        this.refreshSelected({'idMessage':this.idMessage});
+        (this.idAsk) ? this.refreshSelected({'idAsk':this.idAsk}) : this.refreshSelected({'idMessage':this.idMessage});
       });
     },
     updateStatusAskHistory(data){
-      //this.loadingBtnAction = true;
+      this.loadingBtnAction = true;
       let params = {
         idAsk:this.currentIdAsk
       }
 
-      if(data.status){
-        params.status = data.status;
+      // Compute the right status for the update
+      let statusUpdate = 1;
+      if(data.status==1 && data.driver){
+        statusUpdate = 2
+      }
+      else if(data.status==1 && !data.driver){
+        statusUpdate = 3
       }
       else{
-        // This is a regular journey. We come from MatchingJourney
-        (data.driver) ? params.status = 2 : params.status = 3
-
-        // We need to give new criteria to update the Ask Criteria
-        params.criteria = {
-          "fromDate":data.fromDate,
-          "toDate":data.toDate,
-        }
-        if(data.outwardSchedule){
-          params.criteria.outwardSchedule = {
-            "monTime":data.outwardSchedule.monTime,
-            "tueTime":data.outwardSchedule.tueTime,
-            "wedTime":data.outwardSchedule.wedTime,
-            "thuTime":data.outwardSchedule.thuTime,
-            "friTime":data.outwardSchedule.friTime,
-            "satTime":data.outwardSchedule.satTime,
-            "sunTime":data.outwardSchedule.sunTime
-          }
-        }
-        if(data.returnSchedule){
-          params.criteria.returnSchedule = {
-            "monTime":data.returnSchedule.monTime,
-            "tueTime":data.returnSchedule.tueTime,
-            "wedTime":data.returnSchedule.wedTime,
-            "thuTime":data.returnSchedule.thuTime,
-            "friTime":data.returnSchedule.friTime,
-            "satTime":data.returnSchedule.satTime,
-            "sunTime":data.returnSchedule.sunTime
-          }
-        }
+        statusUpdate = data.status
       }
 
-      console.error(data);
-      console.error(params);
+      // If it's already a formal ask, we don't need everything
+      if(statusUpdate>3){
+        params = {
+          "idAsk":this.currentIdAsk,
+          "status" : statusUpdate
+        }
+      }
+      else{
+        params = {
+          "idAsk":this.currentIdAsk,
+          "outwardDate":data.fromDate,
+          "outwardLimitDate":data.toDate,
+          "outwardSchedule" : data.outwardSchedule,
+          "returnSchedule" : data.returnSchedule,
+          "status" : statusUpdate
+        }
+      }      
+      // console.error(data);
+      // console.error(params);
       axios.post(this.$t("urlUpdateAsk"),params)
         .then(response => {
-          console.error(response.data);
+          //console.error(response.data);
           this.refreshActions = true;
           this.loadingBtnAction = false;
         })
         .catch(function (error) {
           console.error(error);
         });
+      
     },
     refreshSelected(data){
+      console.error(data);
       this.loadingDetails = true;
-      this.idMessage = data.idMessage;
+      (data.idAsk) ? this.currentIdAsk  = data.idAsk : this.idMessage = data.idMessage;
+      this.refreshActions = true;
     },
     refreshDetailsCompleted(){
-      this.refreshActions = true;
+      //this.refreshActions = true;
       this.refreshDetails = false;
     },
     refreshThreadsDirectCompleted(){

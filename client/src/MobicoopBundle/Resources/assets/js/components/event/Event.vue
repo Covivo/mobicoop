@@ -17,7 +17,7 @@
     </v-snackbar>
 
     <v-container>
-      <!-- community buttons and map -->
+      <!-- event buttons and map -->
       <v-row
         justify="center"
       >
@@ -27,7 +27,7 @@
           xl="6"
           align="center"
         >
-          <!-- Community : avatar, title and description -->
+          <!-- event : avatar, title and description -->
           <event-infos
             :event="event"
             :url-alt-avatar="urlAltAvatar"
@@ -50,13 +50,14 @@
                 >
                   {{ $t('buttons.publish.label') }}
                 </v-btn>
-                <!--                <v-btn-->
-                <!--                  color="secondary"-->
-                <!--                  rounded-->
-                <!--                  @click="publish"-->
-                <!--                >-->
-                <!--                  {{ $t('buttons.widget.label') }}-->
-                <!--                </v-btn>-->
+                <v-btn
+                  class="mt-1"
+                  color="secondary"
+                  rounded
+                  :href="$t('buttons.widget.route') + event.id"
+                >
+                  {{ $t('buttons.widget.label') }}
+                </v-btn>
               </div>
             </v-col>
             <!-- map -->
@@ -113,6 +114,9 @@
           :punctual-date-optional="punctualDateOptional"
           :regular="regular"
           :init-destination="destination"
+          :hide-publish="true"
+          :default-destination="defaultDestination"
+          :disable-search="disableSearch"
         />
       </v-row>
     </v-container>
@@ -128,6 +132,7 @@ import EventInfos from "@components/event/EventInfos";
 import Search from "@components/carpool/search/Search";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
+import moment from "moment";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -212,9 +217,19 @@ export default {
       // textSnackOk: this.$t("snackbar.joinCommunity.textOk"),
       // textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
+      isLogged: false,
       loadingMap: false,
       params: { 'eventId' : this.event.id },
-
+      defaultDestination: this.event.address,
+    }
+  },
+  computed: {
+    disableSearch() {
+      let now = moment();
+      if (now > moment(this.event.toDate.date))
+        return true;
+      else
+        return false;
     }
   // Link the event in the adresse
   },created: function () {
@@ -222,7 +237,8 @@ export default {
     this.destination = this.initDestination;
   },
   mounted() {
-    this.showPoints()
+    this.showPoints();
+    // this.getEventProposals();
   },
   methods:{
     searchChanged: function (search) {
@@ -247,6 +263,19 @@ export default {
       }
       document.body.appendChild(form);
       form.submit();
+    },
+    checkIfUserLogged() {
+      if (this.user !== null) {
+        this.isLogged = true;
+      }
+    },
+    checkDomain() {
+      if (this.event.validationType == 2) {
+        let mailDomain = (this.user.email.split("@"))[1];
+        if (!(this.event.domain.includes(mailDomain))) {
+          return this.domain = false;
+        }
+      }
     },
     publish() {
       let lParams = {

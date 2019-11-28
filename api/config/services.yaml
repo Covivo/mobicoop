@@ -152,6 +152,7 @@ services:
             $emailSender: '%env(resolve:MAILER_SENDER)%'
             $emailReplyTo: '%env(resolve:MAILER_REPLYTO)%'
             $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%'
+            $emailAdditionalHeaders: '%env(resolve:MAILER_ADDITIONAL_HEADERS)%'
         tags:
             - { name: monolog.logger, channel: communication }
 
@@ -291,4 +292,9 @@ services:
     # Solidary
     App\Solidary\Controller\:
         resource: '../src/Solidary/Controller'
+        tags: ['controller.service_arguments']
+
+    # Price
+    App\Price\Controller\:
+        resource: '../src/Price/Controller'
         tags: ['controller.service_arguments']
