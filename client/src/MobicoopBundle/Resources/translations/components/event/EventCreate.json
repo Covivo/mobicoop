@@ -17,9 +17,9 @@
         "required": "La description détaillée de l'événement est requise"
       },
       "avatar": {
-        "label": "Avatar de l'événement*",
-        "required": "L'avatar de l'événement est requis",
-        "size": "Vous avez dépassé a taille maximale de l'avatar"
+        "label": "Image de l'événement*",
+        "required": "L'image de l'événement est requis",
+        "size": "Vous avez dépassé a taille maximale de l'image"
       },
       "address": {
         "label": "Adresse de l'événement*",
