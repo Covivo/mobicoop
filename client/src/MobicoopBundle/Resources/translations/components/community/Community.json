@@ -24,8 +24,9 @@
     },
     "snackbar": {
       "joinCommunity": {
-        "textOk": "Votre demande d'adhésion est bien envoyée au référent. Vous serez informé par email.",
-        "textError": "Une erreur est survenue veillez essayer à nouveau"
+        "textOkManualValidation" : "Votre demande d'adhésion est bien envoyée au référent. Vous serez informé par email.",
+        "textOkAutoValidation": "Votre demande d'adhésion est validée.",
+        "textError": "Une erreur est survenue veillez essayer à nouveau."
       }
     },
     "title": {
