@@ -104,7 +104,7 @@ export default {
   },
   methods: {
     computedDateFormat(date) {
-      return moment(date).format(this.$t("ui.i18n.date.format.shortCompleteDate") + " " + this.$t("ui.i18n.time.format.hourMinute"));
+      return moment(date).format(this.$t("ui.i18n.date.format.shortCompleteDate") + (this.event.useTime ? (" " + this.$t("ui.i18n.time.format.hourMinute")) : ""));
     }
   },
 }
