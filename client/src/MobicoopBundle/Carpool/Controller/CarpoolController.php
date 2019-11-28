@@ -124,7 +124,7 @@ class CarpoolController extends AbstractController
                 'communityIds'=>$request->request->get('communityId') ? [(int)$request->request->get('communityId')] : null,
                 'origin'=>$request->request->get('origin'),
                 'destination'=>$request->request->get('destination'),
-                'regular'=>$request->request->get('regular'),
+                'regular'=>json_decode($request->request->get('regular')),
                 'date'=>$request->request->get('date'),
                 'time'=>$request->request->get('time')
             ]

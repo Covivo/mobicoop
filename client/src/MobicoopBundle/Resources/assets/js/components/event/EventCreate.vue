@@ -107,6 +107,7 @@
                   :locale="locale"
                   no-title
                   first-day-of-week="1"
+                  :min="nowDate"
                   :max="startDatePickerMaxDate"
                   @input="menuOutwardDate = false"
                   @change="updateEndDatePickerMinDate()"
@@ -389,7 +390,8 @@ export default {
       ],
       dialog: false,
       endDatePickerMinDate: null,
-      startDatePickerMaxDate: null
+      startDatePickerMaxDate: null,
+      nowDate : new Date().toISOString().slice(0,10)
     }
   },
   computed :{

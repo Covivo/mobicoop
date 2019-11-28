@@ -48,7 +48,8 @@
           mdi-delete-outline
         </v-icon>
       </v-btn>
-      <v-btn
+      <!-- todo reactivate button when it will be possible to edit an ad -->
+      <!-- <v-btn
         v-if="!isArchived"
         class="secondary ma-1"
         icon
@@ -67,7 +68,7 @@
         <v-icon class="white--text">
           mdi-pause
         </v-icon>
-      </v-btn>
+      </v-btn> -->
     </v-row>
 
     <!--DIALOG-->
