@@ -4,7 +4,7 @@
 
     <v-snackbar
       v-model="snackbar"
-      :color="(errorUpdate)?'error':'warning'"
+      :color="(errorUpdate)?'error': (community.validationType == 1 ? 'warning' : 'success')"
       top
     >
       {{ (errorUpdate)?textSnackError:textSnackOk }}
@@ -307,7 +307,7 @@ export default {
       directionWay:[],
       loading: false,
       snackbar: false,
-      textSnackOk: this.$t("snackbar.joinCommunity.textOk"),
+      textSnackOk: this.community.validationType == 1 ? this.$t("snackbar.joinCommunity.textOkManualValidation") : this.$t("snackbar.joinCommunity.textOkAutoValidation"),
       textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
       isAccepted: false,
