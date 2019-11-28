@@ -556,7 +556,8 @@ class UserManager
         // L'utilisateur à posté des annonces de covoiturages -> on les supprimes
         //TODO vérifier si il y à des réservations dessus
         foreach ($user->getProposals() as $proposal) {
-            $this->entityManager->remove($proposal);
+            var_dump($proposal->getId());
+           // $this->entityManager->remove($proposal);
         }
 
         //TODO vérifier si il y à messages
@@ -601,8 +602,8 @@ class UserManager
         $user->setPhoneValidatedDate(null);
 
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        //$this->entityManager->persist($user);
+       // $this->entityManager->flush();
 
         return $user;
     }
