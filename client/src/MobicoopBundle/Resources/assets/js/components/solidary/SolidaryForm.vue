@@ -190,6 +190,7 @@
                   v-model="form.yearOfBirth"
                   no-title
                   reactive
+                  first-day-of-week="1"
                   :max="years.max"
                   :min="years.min"
                   @input="save"

@@ -15,6 +15,7 @@
             {{ $t('snackbar') }}
             <v-btn
               color="info"
+              elevation="0"
               @click="snackbar = false"
             >
               <v-icon

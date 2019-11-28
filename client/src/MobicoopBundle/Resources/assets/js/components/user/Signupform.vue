@@ -19,276 +19,282 @@
 <!--**************************-->
 
 <template>
-  <v-content>
-    <v-container
-      id="scroll-target"
-      style="max-height: 500px"
-      class="overflow-y-auto"
-      fluid
+  <v-container
+    id="scroll-target"
+    style="max-height: 500px"
+    class="overflow-y-auto"
+    fluid
+  >
+    <v-row
+      justify="center"
     >
-      <v-row
-        justify="center"
-      >
-        <v-col
-          cols="12"
-          md="8"
-          xl="6"
-          align="center"
-        >
-          <h1>{{ $t('title') }}</h1>
-        </v-col>
-      </v-row>
-      <v-row
-        v-if="showFacebookSignUp"
-        justify="center"
-        class="text-center"
-      >
-        <v-col class="col-4">
-          <m-facebook-auth
-            :app-id="facebookLoginAppId"
-            :sign-up="true"
-            @fillForm="fillForm"
-          />
-        </v-col>
-      </v-row>
-      <v-row
-        justify="center"
+      <v-col
+        cols="12"
+        md="8"
+        xl="6"
         align="center"
       >
-        <v-col
-          cols="4"
-          align="center"
+        <h1>{{ $t('title') }}</h1>
+      </v-col>
+    </v-row>
+    <v-row
+      v-if="showFacebookSignUp"
+      justify="center"
+      class="text-center"
+    >
+      <v-col class="col-4">
+        <m-facebook-auth
+          :app-id="facebookLoginAppId"
+          :sign-up="true"
+          @fillForm="fillForm"
+        />
+      </v-col>
+    </v-row>
+    <v-row
+      justify="center"
+      align="center"
+    >
+      <v-col
+        cols="4"
+        align="center"
+      >
+        <!--STEP 1 User identification-->
+        <v-form
+          ref="step 1"
+          v-model="step1"
+          class="py-12"
         >
-          <!--STEP 1 User identification-->
-          <v-form
-            ref="step 1"
-            v-model="step1"
+          <v-text-field
+            id="email"
+            v-model="form.email"
+            :rules="form.emailRules"
+            :label="$t('models.user.email.placeholder')+` *`"
+            name="email"
+            required
+          />
+          <v-text-field
+            v-model="form.telephone"
+            :label="$t('models.user.phone.placeholder')+` *`"
+            required
+            :rules="form.telephoneRules"
+            name="telephone"
+            @keypress="isNumber(event)"
+          />
+          <v-text-field
+            v-model="form.password"
+            :append-icon="form.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+            :rules="[form.passWordRules.required,form.passWordRules.min, form.passWordRules.checkUpper,form.passWordRules.checkLower,form.passWordRules.checkNumber]"
+            :type="form.showPassword ? 'text' : 'password'"
+            name="password"
+            :label="$t('models.user.password.placeholder')+` *`"
+            required
+            @click:append="form.showPassword = !form.showPassword"
+          />
+          <v-btn
+            ref="button"
+            rounded
+            class="my-13"
+            color="primary"
+            :disabled="!step1"
+            @click="$vuetify.goTo('#step2', options)"
           >
-            <v-text-field
-              id="email"
-              v-model="form.email"
-              :rules="form.emailRules"
-              :label="$t('models.user.email.placeholder')+` *`"
-              name="email"
-              required
-            />
-            <v-text-field
-              v-model="form.telephone"
-              :label="$t('models.user.phone.placeholder')+` *`"
-              required
-              :rules="form.telephoneRules"
-              name="telephone"
-              @keypress="isNumber(event)"
-            />
-            <v-text-field
-              v-model="form.password"
-              :append-icon="form.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-              :rules="[form.passWordRules.required,form.passWordRules.min, form.passWordRules.checkUpper,form.passWordRules.checkLower,form.passWordRules.checkNumber]"
-              :type="form.showPassword ? 'text' : 'password'"
-              name="password"
-              :label="$t('models.user.password.placeholder')+` *`"
-              required
-              @click:append="form.showPassword = !form.showPassword"
-            />
+            {{ $t('ui.button.next') }}
+          </v-btn>
+        </v-form>
+
+        <!--STEP 2 Name-->
+        <v-form
+          id="step2"
+          ref="step 2"
+          v-model="step2"
+          class="py-12"
+        >
+          <v-text-field
+            v-model="form.givenName"
+            :rules="form.givenNameRules"
+            :label="$t('models.user.givenName.placeholder')+` *`"
+            class="givenName"
+            required
+            :disabled="!step1"
+          />
+          <v-text-field
+            v-model="form.familyName"
+            :rules="form.familyNameRules"
+            :label="$t('models.user.familyName.placeholder')+` *`"
+            class="familyName"
+            required
+            :disabled="!step1"
+          />
+          <v-row
+            justify="center"
+            align="center"
+            class="mb-25"
+          >
+            <v-btn
+              ref="button"
+              rounded
+              class="my-13 mr-12"
+              color="primary"
+              :disabled="!step1"
+              @click="$vuetify.goTo('#step2', options)"
+            >
+              {{ $t('ui.button.previous') }}
+            </v-btn>
             <v-btn
               ref="button"
               rounded
               class="my-13"
               color="primary"
-              :disabled="!step1"
-              @click="$vuetify.goTo('#step2', options)"
+              :disabled="!step2"
+              @click="$vuetify.goTo('#step3', options)"
             >
               {{ $t('ui.button.next') }}
             </v-btn>
-          </v-form>
+          </v-row>
+        </v-form>
 
-          <!--STEP 2 Name-->
-          <v-form
-            id="step2"
-            ref="step 2"
-            v-model="step2"
+        <!--STEP 3 gender-->
+        <v-form
+          id="step3"
+          ref="step 3"
+          v-model="step3"
+          class="py-12"
+          :hidden="!step1"
+        >
+          <v-select
+            v-model="form.gender"
+            :items="form.genderItems"
+            item-text="genderItem"
+            item-value="genderValue"
+            :rules="form.genderRules"
+            :label="$t('models.user.gender.placeholder')+` *`"
+            required
+            :disabled="!step2"
+          />
+          <v-row
+            justify="center"
+            align="center"
+            class="mb-40"
           >
-            <v-text-field
-              v-model="form.givenName"
-              :rules="form.givenNameRules"
-              :label="$t('models.user.givenName.placeholder')+` *`"
-              class="givenName"
-              required
-              :disabled="!step1"
-            />
-            <v-text-field
-              v-model="form.familyName"
-              :rules="form.familyNameRules"
-              :label="$t('models.user.familyName.placeholder')+` *`"
-              class="familyName"
-              required
-              :disabled="!step1"
-            />
-            <v-row
-              justify="center"
-              align="center"
-              class="mb-25"
-            >
-              <v-btn
-                ref="button"
-                rounded
-                class="my-13 mr-12"
-                color="primary"
-                :disabled="!step1"
-                @click="$vuetify.goTo('#step2', options)"
-              >
-                {{ $t('ui.button.previous') }}
-              </v-btn>
-              <v-btn
-                ref="button"
-                rounded
-                class="my-13"
-                color="primary"
-                :disabled="!step2"
-                @click="$vuetify.goTo('#step3', options)"
-              >
-                {{ $t('ui.button.next') }}
-              </v-btn>
-            </v-row>
-          </v-form>
-
-          <!--STEP 3 gender-->
-          <v-form
-            id="step3"
-            ref="step 3"
-            v-model="step3"
-            :hidden="!step1"
-          >
-            <v-select
-              v-model="form.gender"
-              :items="form.genderItems"
-              item-text="genderItem"
-              item-value="genderValue"
-              :rules="form.genderRules"
-              :label="$t('models.user.gender.placeholder')+` *`"
-              required
-              :disabled="!step2"
-            />
-            <v-row
-              justify="center"
-              align="center"
-              class="mb-40"
-            >
-              <v-btn
-                ref="button"
-                rounded
-                class="my-13 mr-12"
-                color="primary"
-                :disabled="!step2"
-                @click="$vuetify.goTo('#step3', options)"
-              >
-                {{ $t('ui.button.previous') }}
-              </v-btn>
-              <v-btn
-                ref="button"
-                rounded
-                class="my-13"
-                color="primary"
-                :disabled="!step3"
-                @click="$vuetify.goTo('#step4', options)"
-              >
-                {{ $t('ui.button.next') }}
-              </v-btn>
-            </v-row>
-          </v-form>
-
-          <!--STEP 4 birthyear-->
-          <v-form
-            id="step4"
-            ref="step 4"
-            v-model="step4"
-            :hidden="!step2"
-          >
-            <v-menu
-              ref="menu"
-              v-model="menu"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              offset-y
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="form.date"
-                  :label="$t('models.user.birthDay.placeholder')+` *`"
-                  readonly
-                  :rules="[ form.birthdayRules.checkIfAdult ]"
-                  required
-                  :disabled="!step3"
-                  v-on="on"
-                />
-              </template>
-              <v-date-picker
-                ref="picker"
-                v-model="form.date"
-                :max="new Date().toISOString().substr(0, 10)"
-                :locale="locale"
-                @change="save"
-              />
-            </v-menu>
-
-            <v-row
-              justify="center"
-              align="center"
-              class="mb-40"
-            >
-              <v-btn
-                ref="button"
-                rounded
-                class="my-13 mr-12"
-                color="primary"
-                :disabled="!step3"
-                @click="$vuetify.goTo('#step4', options)"
-              >
-                {{ $t('ui.button.previous') }}
-              </v-btn>
-              <v-btn
-                ref="button"
-                rounded
-                class="my-13"
-                color="primary"
-                :disabled="!step4"
-                @click="$vuetify.goTo('#step5', options)"
-              >
-                {{ $t('ui.button.next') }}
-              </v-btn>
-            </v-row>
-          </v-form>
-
-          <!--STEP 5 hometown-->
-          <v-form
-            id="step5"
-            ref="form"
-            v-model="step5"
-            :hidden="!step3"
-          >
-            <GeoComplete
-              name="homeAddress"
-              :label="$t('models.user.homeTown.placeholder')"
-              :url="geoSearchUrl"
-              :hint="requiredHomeAddress ? $t('models.user.homeTown.required.hint') : $t('models.user.homeTown.hint')"
-              persistent-hint
-              :disabled="!step4"
-              :required="requiredHomeAddress"
-              @address-selected="selectedGeo"
-            />
-            <v-checkbox
-              v-model="form.validation"
-              class="check"
+            <v-btn
+              ref="button"
+              rounded
+              class="my-13 mr-12"
               color="primary"
-              :rules="form.checkboxRules"
-              required
-              :disabled="!step4"
+              :disabled="!step2"
+              @click="$vuetify.goTo('#step3', options)"
             >
-              <template
-                v-slot:label
-                v-slot:activator="{ on }"
-              >
+              {{ $t('ui.button.previous') }}
+            </v-btn>
+            <v-btn
+              ref="button"
+              rounded
+              class="my-13"
+              color="primary"
+              :disabled="!step3"
+              @click="$vuetify.goTo('#step4', options)"
+            >
+              {{ $t('ui.button.next') }}
+            </v-btn>
+          </v-row>
+        </v-form>
+
+        <!--STEP 4 birthyear-->
+        <v-form
+          id="step4"
+          ref="step 4"
+          v-model="step4"
+          class="py-12"
+          :hidden="!step2"
+        >
+          <v-menu
+            ref="menu"
+            v-model="menu"
+            :close-on-content-click="false"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+          >
+            <template v-slot:activator="{ on }">
+              <v-text-field
+                v-model="form.date"
+                :label="$t('models.user.birthDay.placeholder')+` *`"
+                readonly
+                :rules="[ form.birthdayRules.checkIfAdult, form.birthdayRules.required ]"
+                required
+                :disabled="!step3"
+                v-on="on"
+              />
+            </template>
+            <v-date-picker
+              ref="picker"
+              v-model="form.date"
+              :max="new Date().toISOString().substr(0, 10)"
+              :locale="locale"
+              first-day-of-week="1"
+              @change="save"
+            />
+          </v-menu>
+
+          <v-row
+            justify="center"
+            align="center"
+            class="mb-40"
+          >
+            <v-btn
+              ref="button"
+              rounded
+              class="my-13 mr-12"
+              color="primary"
+              :disabled="!step3"
+              @click="$vuetify.goTo('#step4', options)"
+            >
+              {{ $t('ui.button.previous') }}
+            </v-btn>
+            <v-btn
+              ref="button"
+              rounded
+              class="my-13"
+              color="primary"
+              :disabled="!step4"
+              @click="$vuetify.goTo('#step5', options)"
+            >
+              {{ $t('ui.button.next') }}
+            </v-btn>
+          </v-row>
+        </v-form>
+
+        <!--STEP 5 hometown-->
+        <v-form
+          id="step5"
+          ref="form"
+          v-model="step5"
+          class="py-12"
+          :hidden="!step3"
+        >
+          <GeoComplete
+            name="homeAddress"
+            :label="$t('models.user.homeTown.placeholder')"
+            :url="geoSearchUrl"
+            :hint="requiredHomeAddress ? $t('models.user.homeTown.required.hint') : $t('models.user.homeTown.hint')"
+            persistent-hint
+            :disabled="!step4"
+            :required="requiredHomeAddress"
+            @address-selected="selectedGeo"
+          />
+          <v-checkbox
+            v-model="form.validation"
+            class="check mt-12"
+            color="primary"
+            :rules="form.checkboxRules"
+            required
+            :disabled="!step4"
+          >
+            <template
+              v-slot:label
+              v-slot:activator="{ on }"
+            >
+              <div>
                 {{ $t('ui.pages.signup.chart.text') }}
                 <a
                   class="secondary--text"
@@ -297,27 +303,26 @@
                   @click.stop
                 >{{ $t('ui.pages.signup.chart.link') }}
                 </a>
-              </template>
-            </v-checkbox>
-            <v-btn
-              color="primary"
-              rounded
-              class="mr-4 mb-100 mt-12"
-              :disabled="!step5 || loading || isDisable"
-              :loading="loading"
-              @click="validate"
-            >
-              {{ $t('ui.button.register') }}
-            </v-btn>
-          </v-form>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-content>
+              </div>
+            </template>
+          </v-checkbox>
+          <v-btn
+            color="primary"
+            rounded
+            class="mr-4 mb-100 mt-12"
+            :disabled="!step5 || !step4 || !step3 || !step2 || !step1 || loading || isDisable"
+            :loading="loading"
+            @click="validate"
+          >
+            {{ $t('ui.button.register') }}
+          </v-btn>
+        </v-form>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import moment from "moment";
 import axios from "axios";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 
@@ -442,6 +447,7 @@ export default {
           },
         },
         birthdayRules : {
+          required:  v => !!v || this.$t("models.user.birthDay.errors.required"),
           checkIfAdult : value =>{
             var d1 = new Date();
             var d2 = new Date(value);

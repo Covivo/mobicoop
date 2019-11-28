@@ -106,6 +106,7 @@
                   v-model="startDate"
                   :locale="locale"
                   no-title
+                  first-day-of-week="1"
                   :max="startDatePickerMaxDate"
                   @input="menuOutwardDate = false"
                   @change="updateEndDatePickerMinDate()"
@@ -143,6 +144,7 @@
                   v-model="endDate"
                   :locale="locale"
                   no-title
+                  first-day-of-week="1"
                   :min="endDatePickerMinDate"
                   @input="menuReturnDate = false"
                   @change="updateStartDatePickerMaxDate()"
