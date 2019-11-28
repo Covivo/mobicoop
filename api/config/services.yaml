@@ -249,6 +249,11 @@ services:
         arguments:
             $types: '%images%'
 
+    # Import
+    App\Import\Controller\:
+        resource: '../src/Import/Controller'
+        tags: ['controller.service_arguments']
+
     # Match
     App\Match\Controller\:
         resource: '../src/Match/Controller'
@@ -274,6 +279,11 @@ services:
     App\Right\Controller\:
         resource: '../src/Right/Controller'
         tags: ['controller.service_arguments']
+    
+    # Solidary
+    App\Solidary\Controller\:
+        resource: '../src/Solidary/Controller'
+        tags: ['controller.service_arguments']
 
     # User
     App\User\Controller\:
@@ -287,8 +297,3 @@ services:
     'App\User\Filter\HomeAddressTerritoryFilter':
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
-
-    # Solidary
-    App\Solidary\Controller\:
-        resource: '../src/Solidary/Controller'
-        tags: ['controller.service_arguments']

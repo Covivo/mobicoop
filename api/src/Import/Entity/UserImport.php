@@ -26,6 +26,7 @@ namespace App\Import\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use App\User\Entity\User;
 
@@ -44,16 +45,19 @@ use App\User\Entity\User;
  *          "treat"={
  *              "method"="GET",
  *              "path"="/user_imports/treat",
- *              "normalization_context"={"groups"={"write"}},
+ *              "normalization_context"={"groups"={"read"}},
  *          }
  *      },
  *      itemOperations={
+ *          "get"
  *      }
  * )
  *
  */
 class UserImport
 {
+    const DEFAULT_ID = 999999999999;
+
     const STATUS_IMPORTED = 0;  // the external user has been imported, no treatment has been made yet
     const STATUS_PENDING = 1;   // a treatment is pending
     const STATUS_TREATED = 2;   // the treatment has been made successfully
@@ -114,7 +118,7 @@ class UserImport
     /**
      * @var \DateTimeInterface Update date of the user import.
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
      */
     private $updatedDate;
@@ -122,7 +126,7 @@ class UserImport
     /**
      * @var \DateTimeInterface Start date of the treatment.
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
      */
     private $treatmentStartDate;
@@ -130,13 +134,17 @@ class UserImport
     /**
      * @var \DateTimeInterface End date of the treatment.
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
      */
     private $treatmentEndDate;
 
-    public function __construct($status = null)
+    public function __construct($id = null, $status = null)
     {
+        $this->id = self::DEFAULT_ID;
+        if ($id) {
+            $this->id = $id;
+        }
         if (is_null($status)) {
             $status = self::STATUS_IMPORTED;
         }

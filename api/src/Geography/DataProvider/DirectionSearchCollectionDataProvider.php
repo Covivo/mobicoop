@@ -45,7 +45,6 @@ final class DirectionSearchCollectionDataProvider implements CollectionDataProvi
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->geoRouter = $geoRouter;
-        $this->geoRouter->setPointsOnly(true);
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -55,6 +54,7 @@ final class DirectionSearchCollectionDataProvider implements CollectionDataProvi
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
+        $this->geoRouter->setPointsOnly(true);
         $addresses = [];
         foreach ($this->request->get('points') as $key => $point) {
             $waypoint = new Address();

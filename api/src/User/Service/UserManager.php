@@ -172,6 +172,36 @@ class UserManager
     }
 
     /**
+     * Treat a user : set default parameters.
+     * Used for example for imports.
+     *
+     * @param User $user    The user to treat
+     * @return User         The user treated
+     */
+    public function treatUser(User $user)
+    {
+        // we treat the role
+        if (count($user->getUserRoles()) == 0) {
+            // we have to add a role
+            $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL);
+            $userRole = new UserRole();
+            $userRole->setRole($role);
+            $user->addUserRole($userRole);
+        }
+
+        // we treat the notifications
+        if (count($user->getUserNotifications()) == 0) {
+            // we have to create the default user notifications
+            $user = $this->createAlerts($user);
+        }
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $user;
+    }
+
+    /**
      * Get the private communities of the given user.
      *
      * @param User $user

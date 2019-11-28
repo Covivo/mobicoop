@@ -23,7 +23,11 @@
 
 namespace App\Import\Service;
 
+use App\Carpool\Service\ProposalManager;
 use App\Import\Entity\UserImport;
+use App\Import\Repository\UserImportRepository;
+use App\User\Service\UserManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Import manager service.
@@ -33,9 +37,62 @@ use App\Import\Entity\UserImport;
  */
 class ImportManager
 {
+    private $entityManager;
+    private $userImportRepository;
+    private $proposalManager;
+    private $userManager;
+   
+    /**
+     * Constructor.
+     *
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, UserManager $userManager)
+    {
+        $this->entityManager = $entityManager;
+        $this->userImportRepository = $userImportRepository;
+        $this->proposalManager = $proposalManager;
+        $this->userManager = $userManager;
+    }
+
+    /**
+     * Treat imported users
+     *
+     * @return array    The users imported
+     */
     public function treatUserImport()
     {
-        $userImport = new UserImport();
-        return $userImport;
+        set_time_limit(600);
+        $pool = 0;
+        $batch = 50;
+        // we have to treat all the users that have just been imported
+        $importedUsers = $this->userImportRepository->findBy(['status'=>UserImport::STATUS_IMPORTED]);
+        foreach ($importedUsers as $import) {
+            $import->setStatus(UserImport::STATUS_PENDING);
+            $import->setTreatmentStartDate(new \DateTime());
+            $this->entityManager->persist($import);
+
+            // we treat the user
+            //$this->userManager->treatUser($import->getUser());
+
+            // we treat the proposals
+            foreach ($import->getUser()->getProposals() as $proposal) {
+                $proposal = $this->proposalManager->prepareProposal($proposal);
+                // todo : treat the return, create the links as in ad
+            }
+            $import->setTreatmentEndDate(new \DateTime());
+            $import->setStatus(UserImport::STATUS_TREATED);
+
+            $this->entityManager->persist($import);
+            
+            // batch
+            $pool++;
+            if ($pool>=$batch) {
+                $this->entityManager->flush();
+                $pool = 0;
+            }
+        }
+        $this->entityManager->flush();
+        return $importedUsers;
     }
 }

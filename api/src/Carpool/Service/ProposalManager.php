@@ -50,7 +50,6 @@ use App\Geography\Service\ZoneManager;
 use App\Service\FormatDataManager;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use PhpOffice\PhpSpreadsheet\Calculation\DateTime;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -122,19 +121,6 @@ class ProposalManager
     public function get(int $id)
     {
         return $this->proposalRepository->find($id);
-    }
-
-    /**
-     * Return the proposal with its formatted results.
-     *
-     * @param Proposal $proposal
-     * @return void
-     */
-    public function getResults(Proposal $proposal)
-    {
-        // we treat the matchings to return the results
-        $proposal->setResults($this->resultManager->createResults($proposal));
-        return $proposal;
     }
 
     /**
@@ -266,7 +252,7 @@ class ProposalManager
         }
 
         // Get the matchings for the given proposal.
-        return $this->createProposal($proposal, false, true);
+        return $this->treatProposal($proposal, false, true);
     }
 
     /**
@@ -292,7 +278,7 @@ class ProposalManager
                 $proposal->getCriteria()->setStrictPunctual($this->params['defaultStrictPunctual']);
             }
             if (is_null($proposal->getCriteria()->getMarginDuration())) {
-                $proposal->setMarginDuration($this->params['defaultMarginTime']);
+                $proposal->getCriteria()->setMarginDuration($this->params['defaultMarginTime']);
             }
         } else {
             if (is_null($proposal->getCriteria()->isStrictRegular())) {
@@ -327,18 +313,18 @@ class ProposalManager
                 $proposal->getCriteria()->setToDate($toDate);
             }
         }
-        return $this->createProposal($proposal);
+        return $this->treatProposal($proposal);
     }
 
     /**
-     * Create a proposal.
+     * Treat a proposal.
      *
-     * @param Proposal  $proposal               The proposal to create
+     * @param Proposal  $proposal               The proposal to treat
      * @param boolean   $persist                If we persist the proposal in the database (false for a simple search)
      * @param bool      $excludeProposalUser    Exclude the matching proposals made by the proposal user
-     * @return Proposal The created proposal
+     * @return Proposal The treated proposal
      */
-    public function createProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true)
+    public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true)
     {
         $date = new \DateTime("UTC");
         $this->logger->info('Proposal creation | Start ' . $date->format("Ymd H:i:s.u"));
@@ -445,39 +431,7 @@ class ProposalManager
         while (($item = array_shift($matchingOffers)) !== null && array_push($matchings, $item));
         while (($item = array_shift($matchingRequests)) !== null && array_push($matchings, $item));
         if ($persist) {
-            // array used to keep already linked matching for return trips (must be one to one)
             foreach ($matchings as $matching) {
-                if (!is_null($proposal->getMatchingProposal())) {
-                    // if there is a matched proposal we need to find the right matching and create the Ask
-                    if (is_null($proposal->getMatchingLinked())) {
-                        // it's a one way trip or an outward
-                        if ($proposal->getMatchingProposal()->getId() === $matching->getProposalOffer()->getId() ||
-                            $proposal->getMatchingProposal()->getId() === $matching->getProposalRequest()->getId()
-                        ) {
-                            // we create the ask
-                            $newAsk = $this->askManager->createAskFromMatchedProposal($proposal, $matching, $proposal->hasFormalAsk());
-                            // we set the ask linked of the matching if we need to create a forced reverse matching (can be the case for regular return trips)
-                            $proposal->setAskLinked($newAsk);
-                            // if there's an opposite matching we create the related ask
-                            if ($matching->getMatchingOpposite()) {
-                                $this->askManager->createAskFromMatchedProposal($proposal, $matching->getMatchingOpposite(), $proposal->hasFormalAsk(), $newAsk);
-                            }
-                            // we set the matching linked if we need to create a forced reverse matching (can be the case for regular return trips)
-                            $proposal->setMatchingLinked($matching);
-                        }
-                    } else {
-                        // it's a return trip, or the link as already been treated in a previous loop
-                        if (
-                            !$proposal->getMatchingLinked()->getMatchingOpposite() &&
-                            ($proposal->getMatchingProposal()->getProposalLinked()->getId() === $matching->getProposalOffer()->getId() ||
-                            $proposal->getMatchingProposal()->getProposalLinked()->getId() === $matching->getProposalRequest()->getId())
-                        ) {
-                            // we create the ask
-                            $newAsk = $this->askManager->createAskFromMatchedProposal($proposal, $matching, $proposal->hasFormalAsk());
-                        }
-                    }
-                }
-
                 // dispatch en event
                 // maybe send a unique event for all matchings ?
                 $event = new MatchingNewEvent($matching, $proposal->getUser());
@@ -488,9 +442,6 @@ class ProposalManager
             $event = new ProposalPostedEvent($proposal);
             $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
         }
-
-        // we treat the matchings to return the results
-        //$proposal->setResults($this->resultManager->createResults($proposal));
 
         return $proposal;
     }
@@ -556,46 +507,6 @@ class ProposalManager
             }
         }
         return $proposal;
-    }
-
-
-    /**
-     * Updates directions without zones (so by extension, updates the related proposals, that's why it's in this file...)
-     * Used for testing purpose, shouldn't be useful as zones are added when proposals/directions are posted.
-     *
-     * @return void
-     */
-    public function updateZones()
-    {
-        if ($directions = $this->directionRepository->findAllWithoutZones()) {
-            foreach ($directions as $direction) {
-                if (is_null($direction->getPoints())) {
-                    // we use the GeoRouterProvider as a service
-                    $georouter = new GeoRouterProvider(null, false);
-                    $direction->setPoints($georouter->deserializePoints($direction->getDetail(), true, filter_var($georouter::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
-                }
-                // creation of the crossed zones
-                $zones = [];
-                foreach (self::THINNESSES as $thinness) {
-                    // $zones[$thinness] would be simpler and better... but we can't use a float as a key with php (transformed to string)
-                    // so we use an inner value for thinness
-                    $zones[] = [
-                        'thinness' => $thinness,
-                        'crossed' => $this->zoneManager->getZonesForAddresses($direction->getPoints(), $thinness, 0)
-                    ];
-                }
-                foreach ($zones as $crossed) {
-                    foreach ($crossed['crossed'] as $zoneCrossed) {
-                        $zone = new Zone();
-                        $zone->setZoneid($zoneCrossed);
-                        $zone->setThinness($crossed['thinness']);
-                        $direction->addZone($zone);
-                    }
-                }
-                $this->entityManager->persist($direction);
-            }
-            $this->entityManager->flush();
-        }
     }
 
     /**
@@ -793,64 +704,5 @@ class ProposalManager
             $minTime,
             $maxTime
         ];
-    }
-    
-    /**
-     * Order the results of a Proposal
-    */
-    public function orderResultsBy(Proposal $proposal, $filters=null)
-    {
-        $field=""; // Default value
-        $order=""; // Default value
-
-        if ($filters!==null && isset($filters['order']) && $filters['order'] !==null) {
-            $field = $filters['order']['criteria'];
-            $order = $filters['order']['value'];
-        }
-        
-
-        $results = $proposal->getResults();
-        usort($results, function ($a, $b) use ($field,$order) {
-            $return = -1;
-            switch ($field) {
-                case "date":
-                    ($order=="ASC") ? $return = $a->getDate() <=> $b->getDate() : $return = $b->getDate() <=> $a->getDate();
-                break;
-            }
-
-            return $return;
-        });
-
-        $proposal->setResults($results);
-
-        return $proposal;
-    }
-
-    /**
-     * Order the results of a Proposal
-    */
-    public function filterResultsBy(Proposal $proposal, $filters=null)
-    {
-        $results = $proposal->getResults();
-
-        if ($filters !== null && isset($filters['filters']) && $filters['filters']!==null) {
-            foreach ($filters['filters'] as $field => $value) {
-                $results = array_filter($results, function ($a) use ($field,$value) {
-                    $return = true;
-                    switch ($field) {
-                        // Filter on Time (the hour)
-                        case "time":
-                            $value = new \DateTime(str_replace("h", ":", $value));
-                            $return = $a->getTime()->format("H:i") === $value->format("H:i");
-                        break;
-                    }
-                    return $return;
-                });
-            }
-        }
-
-        $proposal->setResults($results);
-
-        return $proposal;
     }
 }

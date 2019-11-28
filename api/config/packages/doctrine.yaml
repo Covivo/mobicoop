@@ -91,6 +91,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Image/Entity'
                 prefix: 'App\Image\Entity'
                 alias: Image
+            Import:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Import/Entity'
+                prefix: 'App\Import\Entity'
+                alias: Import
             Match:
                 is_bundle: false
                 type: annotation
