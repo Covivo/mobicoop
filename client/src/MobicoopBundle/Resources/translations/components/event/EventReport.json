@@ -1,0 +1,62 @@
+{
+  "fr": {
+    "button": "",
+    "snackbar": {
+      "thankyou": "",
+      "error": ""
+    },
+    "popup": {
+      "title": "",
+      "content": "",
+      "form": {
+        "email": {
+          "label": "",
+          "errors": {
+            "required": "",
+            "valid": ""
+          }
+        },
+        "description": {
+          "label": "",
+          "errors": {
+            "required": ""
+          }
+        }
+      },
+      "button": {
+        "report": "",
+        "cancel": ""
+      }
+    }
+  },
+  "en": {
+    "button": "",
+    "snackbar": {
+      "thankyou": "",
+      "error": ""
+    },
+    "popup": {
+      "title": "",
+      "content": "",
+      "form": {
+        "email": {
+          "label": "",
+          "errors": {
+            "required": "",
+            "valid": ""
+          }
+        },
+        "description": {
+          "label": "",
+          "errors": {
+            "required": ""
+          }
+        }
+      },
+      "button": {
+        "report": "",
+        "cancel": ""
+      }
+    }
+  }
+}

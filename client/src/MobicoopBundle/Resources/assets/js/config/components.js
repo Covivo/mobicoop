@@ -40,6 +40,7 @@ import EventCreate from "@components/event/EventCreate";
 import Event from "@components/event/Event";
 import EventWidget from "@components/event/EventWidget";
 import EventGetWidget from "@components/event/EventGetWidget";
+import EventReport from "@components/event/EventReport";
 
 export default {
   MHeader,
@@ -66,5 +67,6 @@ export default {
   EventCreate,
   Event,
   EventWidget,
-  EventGetWidget
+  EventGetWidget,
+  EventReport
 }
