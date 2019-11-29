@@ -28,7 +28,7 @@
             mdi-car
           </v-icon>
         </template>
-        <span> {{ $t('proposals.driver') }} </span>
+        <span> {{ $t('proposals.tooltips.driver') }} </span>
       </v-tooltip>
       <v-tooltip
         v-if="isPassenger && isDriver"
@@ -50,7 +50,7 @@
             mdi-car
           </v-icon>
         </template>
-        <span>{{ $t('proposals.diverOrPassenger') }}</span>
+        <span>{{ $t('proposals.tooltips.diverOrPassenger') }}</span>
       </v-tooltip>
       <v-divider
         v-if="isDriver && isPassenger"
@@ -66,7 +66,7 @@
             mdi-walk
           </v-icon>
         </template>
-        <span>{{ $t('proposals.passenger') }}</span>
+        <span>{{ $t('proposals.tooltips.passenger') }}</span>
       </v-tooltip>
       <v-spacer />
       <v-btn
