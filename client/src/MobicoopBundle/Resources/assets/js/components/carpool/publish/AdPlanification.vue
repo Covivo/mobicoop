@@ -549,12 +549,10 @@ export default {
     checkIfCurrentScheduleOk(){
       for (var s in this.activeSchedules){
         var i = this.activeSchedules[s];
-
         if ( !i.mon && !i.tue && !i.wed && !i.thu && !i.fri && !i.sat && !i.sun ) {
           return false;
         }
         if ( i.outwardTime == null && i.returnTime == null) return false;
-
       }
       return true;
     },
@@ -591,7 +589,7 @@ export default {
         returnDate: this.returnDate,
         returnTime: this.returnTime,
         returnTrip: this.returnTrip,
-        schedules: validSchedules
+        schedules: this.activeSchedules
       });
     },
     checkDateReturn(e){

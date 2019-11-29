@@ -305,7 +305,7 @@
 
             <!-- Days if regular and there is more than one schedule -->
             <v-row
-              v-if="regular && schedules!==null && schedules.length >= 1"
+              v-if="regular && schedules!==null && schedules.length > 0"
               align="center"
               class="mt-2"
             >
@@ -366,6 +366,7 @@
 
                   <!-- Outward -->
                   <v-col
+                    v-if="schedule.outwardTime"
                     cols="12"
                   >
                     <v-row
