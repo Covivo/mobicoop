@@ -116,6 +116,9 @@ export default {
         this.loading = true;
         axios.get(this.$t("urlCompleteThread",{idMessage:this.idMessage}))
           .then(response => {
+
+            response = this.checkIfMessageIsDelete(response);
+
             this.loading = false;
             this.items.length = 0;
 
@@ -158,6 +161,15 @@ export default {
       else{
         this.emit();
       }
+    },
+    checkIfMessageIsDelete(messages){
+      let tradMessageDelete = this.$t("messageDelete");
+      messages.data.forEach(function (message) {
+        if (message.text == '@mobicoop2020Message_supprimer') message.text = tradMessageDelete;
+      });
+      return messages;
+
+
     },
     createdTime(date){
       return moment(date).format("HH:mm");

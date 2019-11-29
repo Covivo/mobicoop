@@ -579,13 +579,17 @@ class UserManager
             $proposal->setPrivate(1);
         }
 
-        //Anonymise content of message
+        //Anonymise content of message with a key
         foreach ($user->getMessages() as $message) {
-            $message->setText('mobicoop');
+            $message->setText('@mobicoop2020Message_supprimer');
         }
 
+        return $this->setUserAtNull($user);
+    }
 
-        /* $datenow = new DateTime();
+    private function setUserAtNull(User $user){
+
+         $datenow = new DateTime();
          //Replace all mandatory value by default value or token
          $user->setEmail(uniqid().'@'.uniqid().'.fr');
          $user->setGender(3);
@@ -626,8 +630,8 @@ class UserManager
 
          $this->entityManager->persist($user);
          $this->entityManager->flush();
-*/
-        $user->setPassword($user->getPassword());
-        return $user;
+
+         return $user;
+
     }
 }
