@@ -447,7 +447,9 @@
                   outlined
                   class="mx-auto"
                 >
-                  <v-card-text class="pre-formatted">
+                  <v-card-text
+                    style="white-space: pre-line"
+                  >
                     {{ message }}
                   </v-card-text>
                 </v-card>
@@ -471,7 +473,9 @@
               outlined
               class="mx-auto"
             >
-              <v-card-text class="pre-formatted">
+              <v-card-text
+                style="white-space: pre-line"
+              >
                 {{ message }}
               </v-card-text>
             </v-card>
@@ -755,9 +759,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.pre-formatted {
-  white-space: pre;
-}
-</style>
