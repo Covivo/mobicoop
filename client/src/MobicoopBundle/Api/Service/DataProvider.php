@@ -374,7 +374,8 @@ class DataProvider
         return new Response();
     }
 
-    public function simplePost(string $url, array $parameters = []): Response {
+    public function simplePost(string $url, array $parameters = []): Response
+    {
         try {
             $clientResponse = $this->client->post($url, [
                 RequestOptions::JSON => $parameters,

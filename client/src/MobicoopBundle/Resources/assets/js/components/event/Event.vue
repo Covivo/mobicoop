@@ -177,10 +177,6 @@ export default {
       type: String,
       default: null
     },
-    regular: {
-      type: Boolean,
-      default: false
-    },
     punctualDateOptional: {
       type: Boolean,
       default: false
@@ -226,6 +222,7 @@ export default {
       loadingMap: false,
       params: { 'eventId' : this.event.id },
       defaultDestination: this.event.address,
+      regular: false,
     }
   },
   computed: {
