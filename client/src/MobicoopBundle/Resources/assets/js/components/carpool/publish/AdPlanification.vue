@@ -330,7 +330,7 @@
                     header-color="secondary"
                     :disabled="item.outwardDisabled"
                     @click:minute="closeOutwardTime(item.id)"
-                    @change="change,blockTimeRegular($event,item.id)"
+                    @change="change(),blockTimeRegular($event,item.id)"
                   />
                 </v-menu>
               </v-col>
@@ -572,9 +572,10 @@ export default {
   methods: {
     change() {
       let validSchedules = JSON.parse(JSON.stringify(this.activeSchedules)); // little tweak to deep copy :)
+
       for (var i=0;i<validSchedules.length;i++) {
 
-        if (!((validSchedules[i].mon || validSchedules[i].tue || validSchedules[i].wed || validSchedules[i].thu || validSchedules[i].fri || validSchedules[i].sat || validSchedules[i].sun) && validSchedules[i].outwardTime)) {
+        if (!((validSchedules[i].mon || validSchedules[i].tue || validSchedules[i].wed || validSchedules[i].thu || validSchedules[i].fri || validSchedules[i].sat || validSchedules[i].sun) && (validSchedules[i].outwardTime || validSchedules[i].returnTime))) {
           validSchedules.splice(i);
         } else {
           delete validSchedules[i].id;
