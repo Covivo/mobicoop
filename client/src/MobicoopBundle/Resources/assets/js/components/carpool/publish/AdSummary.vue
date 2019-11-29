@@ -118,7 +118,7 @@
               >
                 <v-timeline-item
                   color="primary"
-                  small
+                  medium
                   class="mb-3"
                 >
                   <v-row dense>
@@ -160,7 +160,7 @@
 
                 <v-timeline-item
                   color="primary"
-                  small
+                  medium
                   class="mt-3 pb-0"
                 >
                   <v-row dense>
@@ -209,7 +209,7 @@
                     <p
                       v-if="driver && displayInfo"
                     >
-                      {{ seats }} {{ $tc('places',seats) }} a
+                      {{ seats }} {{ $tc('places',seats) }}
                     </p>
                   </v-col>
                 </v-row>
@@ -239,7 +239,7 @@
                   >
                     <v-timeline-item
                       color="primary"
-                      small
+                      medium
                     >
                       <v-row dense>
                         <v-col
@@ -282,7 +282,7 @@
 
                     <v-timeline-item
                       color="primary"
-                      small
+                      medium
                       class="mt-3 pb-0"
                     >
                       <v-row dense>
