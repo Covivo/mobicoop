@@ -28,6 +28,7 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Service\AskManager;
 use App\Communication\Entity\Medium;
 use App\User\Entity\User;
+use App\User\Event\UserDeleteAccountWasDriverEvent;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
 use DateTime;
@@ -559,12 +560,27 @@ class UserManager
             var_dump('proposal :'.$proposal->getId());
             foreach ($proposal->getMatchingRequests() as $oneRequest) {
                 var_dump('request :'.$oneRequest->getId());
+                //Check if there is ask on a proposal -> event for notifications
+                foreach ($oneRequest->getAsks() as $ask)    {
+                    $event = new UserDeleteAccountWasDriverEvent($ask);
+                    $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
+                }
+
             }
             //There is offers on the proposal -> we delete proposal + send email to passengers
             foreach ($proposal->getMatchingOffers() as $oneRequest) {
-                var_dump('offres :'.$oneRequest->getProposalOffer()->getId());
+                var_dump('offresid :'.$oneRequest->getProposalOffer()->getId());
+
+
+
+              //  var_dump('offres :'.$oneRequest->getProposalOffer()->getAsks());
                 $userProposal = $oneRequest->getProposalOffer()->getUser();
-                $this->sendeEmailPassenger($userProposal);
+
+
+                /*dump($oneRequest->getProposalOffer())
+                $event = new UserDeleteAccountWasDriverEvent($userProposal);
+                $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);*/
+
             }
             // $this->entityManager->remove($proposal);
         }
@@ -619,18 +635,4 @@ class UserManager
     }
 
 
-    //Send an email t
-    private function sendeEmailPassenger(User $user)
-    {
-        $email = new Email();
-
-        $email->setRecipientEmail($this->contactEmailAddress);
-        $email->setSenderEmail($contact->getEmail());
-        $email->setReturnEmail($contact->getEmail());
-        $email->setSenderFirstName($contact->getGivenName());
-        $email->setSenderName($contact->getFamilyName());
-        $email->setObject("Nouvelle demande de contact");
-
-        $this->emailManager->send($email, $this->emailTemplatePath . 'contact_email_posted', ['contact' => $contact]);
-    }
 }
