@@ -62,29 +62,27 @@ class ImportManager
      */
     public function treatUserImport()
     {
-        set_time_limit(600);
+        set_time_limit(3600);
         $pool = 0;
-        $batch = 50;
+
+        // batch for users
+        $batch = 5000;
+        
         // we have to treat all the users that have just been imported
+        // first pass : user related treatment
         $importedUsers = $this->userImportRepository->findBy(['status'=>UserImport::STATUS_IMPORTED]);
         foreach ($importedUsers as $import) {
             $import->setStatus(UserImport::STATUS_PENDING);
-            $import->setTreatmentStartDate(new \DateTime());
+            $import->setTreatmentUserStartDate(new \DateTime());
             $this->entityManager->persist($import);
 
             // we treat the user
-            //$this->userManager->treatUser($import->getUser());
+            $this->userManager->treatUser($import->getUser());
 
-            // we treat the proposals
-            foreach ($import->getUser()->getProposals() as $proposal) {
-                $proposal = $this->proposalManager->prepareProposal($proposal);
-                // todo : treat the return, create the links as in ad
-            }
-            $import->setTreatmentEndDate(new \DateTime());
-            $import->setStatus(UserImport::STATUS_TREATED);
-
+            $import->setStatus(UserImport::STATUS_USER_TREATED);
+            $import->setTreatmentUserEndDate(new \DateTime());
             $this->entityManager->persist($import);
-            
+
             // batch
             $pool++;
             if ($pool>=$batch) {
@@ -92,7 +90,53 @@ class ImportManager
                 $pool = 0;
             }
         }
+        // final flush for pending persists
         $this->entityManager->flush();
+        
+        // new batch for proposals
+        $batch = 500;
+        
+        // reinit the pool
+        $pool = 0;
+
+        // second pass : journey related treatment
+        // in this pass we just compute the directions of the proposals, to get the zones and limit the future matching
+        $importedUsers = $this->userImportRepository->findBy(['status'=>UserImport::STATUS_USER_TREATED]);
+
+        // we create an array of all proposals to treat
+        $proposals = [];
+        foreach ($importedUsers as $import) {
+            // $import->setStatus(UserImport::STATUS_PENDING);
+            // $import->setTreatmentUserStartDate(new \DateTime());
+            // $this->entityManager->persist($import);
+            foreach ($import->getUser()->getProposals() as $proposal) {
+                $proposals[] = $proposal;
+            }
+            // batch
+            // $pool++;
+            // if ($pool>=$batch) {
+            //     $this->entityManager->flush();
+            //     $pool = 0;
+            // }
+        }
+        // final flush for pending persists
+        // $this->entityManager->flush();
+
+        // reinit the pool
+        $pool = 0;
+
+        // creation of the directions
+        $proposals = $this->proposalManager->setDirectionsForProposals($proposals, $batch);
+
+        // creation of the defaults
+        $proposals = $this->proposalManager->setDefaultsForProposals($proposals, $batch);
+
+        // creation of the matchings
+        //$proposals = $this->proposalManager->createMatchingsForProposals($proposals);
+
+        // treat the return and opposite
+        //$proposals = $this->proposalManager->createLinkedAndOppositesForProposals($proposals);
+
         return $importedUsers;
     }
 }

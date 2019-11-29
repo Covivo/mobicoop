@@ -173,25 +173,30 @@ class GeoRouterProvider implements ProviderInterface
                     // treat the response
                     $response = \JsonMachine\JsonMachine::fromFile($filename);
                     foreach ($response as $key=>$paths) {
-                        $this->logger->debug('Multiple Async | Treating path #'.$key);
+                        //$this->logger->debug('Multiple Async | Treating path #'.$key);
                         // we search the first and last elements for the bearing
                         reset($params['arrayPoints'][$key][0]);
                         $first_key = key($params['arrayPoints'][$key][0]);
                         end($params['arrayPoints'][$key][0]);
                         $last_key = key($params['arrayPoints'][$key][0]);
                         foreach ($paths as $path) {
-                            // we return an array instead of an object
-                            $this->collection[$requestsOwner[$key]][] = [
-                                'distance' => isset($path["distance"]) ? $path["distance"] : null,
-                                'duration' => isset($path["time"]) ? $path["time"]/1000 : null,
-                                'bbox' => isset($path["bbox"]) ? [$path["bbox"][0],$path["bbox"][1],$path["bbox"][2],$path["bbox"][3]] : null,
-                                'bearing' => $this->geoTools->getRhumbLineBearing(
-                                    $params['arrayPoints'][$key][0][$first_key]->getLatitude(),
-                                    $params['arrayPoints'][$key][0][$first_key]->getLongitude(),
-                                    $params['arrayPoints'][$key][0][$last_key]->getLatitude(),
-                                    $params['arrayPoints'][$key][0][$last_key]->getLongitude()
-                                )
-                            ];
+                            if (isset($params['asObject'])) {
+                                // usual behaviour
+                                $this->collection[$requestsOwner[$key]][] = self::deserialize($class, $path);
+                            } else {
+                                // we return an array instead of an object, eg. mass matching where we don't need everything
+                                $this->collection[$requestsOwner[$key]][] = [
+                                    'distance' => isset($path["distance"]) ? $path["distance"] : null,
+                                    'duration' => isset($path["time"]) ? $path["time"]/1000 : null,
+                                    'bbox' => isset($path["bbox"]) ? [$path["bbox"][0],$path["bbox"][1],$path["bbox"][2],$path["bbox"][3]] : null,
+                                    'bearing' => $this->geoTools->getRhumbLineBearing(
+                                        $params['arrayPoints'][$key][0][$first_key]->getLatitude(),
+                                        $params['arrayPoints'][$key][0][$first_key]->getLongitude(),
+                                        $params['arrayPoints'][$key][0][$last_key]->getLatitude(),
+                                        $params['arrayPoints'][$key][0][$last_key]->getLongitude()
+                                    )
+                                ];
+                            }
                         }
                     }
                     $this->logger->debug('Multiple Async | Exchange file deletion');

@@ -91,9 +91,10 @@ class FakeUserController extends AbstractController
             $user->setGivenName($this->getFakeFirstName());
             $user->setFamilyName($this->getFakeLastName());
             $email = $this->normalize(strtolower($user->getGivenName())) . "." . $this->normalize(strtolower($user->getFamilyName())) . "@" . self::DOMAIN;
+            // skip if user already exists
             if (in_array($email, $emails)) {
                 continue;
-            } // skip if user already exists
+            }
             $user->setEmail($email);
             $emails[] = $email;
             $user->setPassword(self::PASSWORD);

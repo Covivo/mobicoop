@@ -264,6 +264,17 @@ class ProposalManager
      */
     public function prepareProposal(Proposal $proposal): Proposal
     {
+        return $this->treatProposal($this->setDefaults($proposal));
+    }
+
+    /**
+     * Set default parameters for a proposal
+     *
+     * @param Proposal $proposal    The proposal
+     * @return Proposal             The proposal treated
+     */
+    private function setDefaults(Proposal $proposal)
+    {
         if (is_null($proposal->getCriteria()->getAnyRouteAsPassenger())) {
             $proposal->getCriteria()->setAnyRouteAsPassenger($this->params['defaultAnyRouteAsPassenger']);
         }
@@ -313,7 +324,7 @@ class ProposalManager
                 $proposal->getCriteria()->setToDate($toDate);
             }
         }
-        return $this->treatProposal($proposal);
+        return $proposal;
     }
 
     /**
@@ -329,8 +340,59 @@ class ProposalManager
         $date = new \DateTime("UTC");
         $this->logger->info('Proposal creation | Start ' . $date->format("Ymd H:i:s.u"));
         
-        // calculation of the min and max times
-        // we calculate the min and max times only if the time is set (it could be not set for a simple search)
+        // set min and max times
+        $proposal = $this->setMinMax($proposal);
+        
+        // set the directions
+        $proposal = $this->setDirections($proposal);
+
+        // we have the directions, we can compute the lacking prices
+        $proposal = $this->setPrices($proposal);
+        
+        // matching analyze
+        $this->logger->info('Proposal creation | Start matching ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
+        $this->logger->info('Proposal creation | End matching ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        
+        if ($persist) {
+            // TODO : here we should remove the previously matched proposal if they already exist
+            $this->entityManager->persist($proposal);
+            $this->logger->info('Proposal creation | End persist ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        }
+        
+        $end = new \DateTime("UTC");
+        $this->logger->info('Proposal creation | Total duration ' . ($end->diff($date))->format("%s.%f seconds"));
+        
+        $matchingOffers = $proposal->getMatchingOffers();
+        $matchingRequests = $proposal->getMatchingRequests();
+        $matchings=[];
+        while (($item = array_shift($matchingOffers)) !== null && array_push($matchings, $item));
+        while (($item = array_shift($matchingRequests)) !== null && array_push($matchings, $item));
+        if ($persist) {
+            foreach ($matchings as $matching) {
+                // dispatch en event
+                // maybe send a unique event for all matchings ?
+                $event = new MatchingNewEvent($matching, $proposal->getUser());
+                $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
+            }
+
+            // dispatch en event
+            $event = new ProposalPostedEvent($proposal);
+            $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
+        }
+
+        return $proposal;
+    }
+
+    /**
+     * Calculation of min and max times.
+     * We calculate the min and max times only if the time is set (it could be not set for a simple search)
+     *
+     * @param Proposal $proposal    The proposal
+     * @return Proposal             The proposal treated
+     */
+    private function setMinMax(Proposal $proposal)
+    {
         if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $proposal->getCriteria()->getFromTime()) {
             list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFromTime(), $proposal->getCriteria()->getMarginDuration());
             $proposal->getCriteria()->setMinTime($minTime);
@@ -372,8 +434,17 @@ class ProposalManager
                 $proposal->getCriteria()->setSunMaxTime($maxTime);
             }
         }
-        
-        // creation of the directions
+        return $proposal;
+    }
+
+    /**
+     * Set the directions for a proposal
+     *
+     * @param Proposal $proposal    The proposal
+     * @return Proposal             The proposal treated
+     */
+    private function setDirections(Proposal $proposal)
+    {
         $addresses = [];
         foreach ($proposal->getWaypoints() as $waypoint) {
             $addresses[] = $waypoint->getAddress();
@@ -400,8 +471,17 @@ class ProposalManager
                 $proposal->getCriteria()->setDirectionPassenger($direction);
             }
         }
+        return $proposal;
+    }
 
-        // we have the directions, we can compute the lacking prices
+    /**
+     * Set the prices for a proposal
+     *
+     * @param Proposal $proposal    The proposal
+     * @return Proposal             The proposal treated
+     */
+    private function setPrices(Proposal $proposal)
+    {
         if ($proposal->getCriteria()->getDirectionDriver()) {
             $proposal->getCriteria()->setDriverComputedPrice((string)((int)$proposal->getCriteria()->getDirectionDriver()->getDistance()*(float)$proposal->getCriteria()->getPriceKm()/1000));
             $proposal->getCriteria()->setDriverComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$proposal->getCriteria()->getDriverComputedPrice(), $proposal->getCriteria()->getFrequency()));
@@ -410,39 +490,6 @@ class ProposalManager
             $proposal->getCriteria()->setPassengerComputedPrice((string)((int)$proposal->getCriteria()->getDirectionPassenger()->getDistance()*(float)$proposal->getCriteria()->getPriceKm()/1000));
             $proposal->getCriteria()->setPassengerComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$proposal->getCriteria()->getPassengerComputedPrice(), $proposal->getCriteria()->getFrequency()));
         }
-        
-        // matching analyze
-        $this->logger->info('Proposal creation | Start matching ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
-        $this->logger->info('Proposal creation | End matching ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        
-        if ($persist) {
-            // TODO : here we should remove the previously matched proposal if they already exist
-            $this->entityManager->persist($proposal);
-            $this->logger->info('Proposal creation | End persist ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        }
-        
-        $end = new \DateTime("UTC");
-        $this->logger->info('Proposal creation | Total duration ' . ($end->diff($date))->format("%s.%f seconds"));
-        
-        $matchingOffers = $proposal->getMatchingOffers();
-        $matchingRequests = $proposal->getMatchingRequests();
-        $matchings=[];
-        while (($item = array_shift($matchingOffers)) !== null && array_push($matchings, $item));
-        while (($item = array_shift($matchingRequests)) !== null && array_push($matchings, $item));
-        if ($persist) {
-            foreach ($matchings as $matching) {
-                // dispatch en event
-                // maybe send a unique event for all matchings ?
-                $event = new MatchingNewEvent($matching, $proposal->getUser());
-                $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
-            }
-
-            // dispatch en event
-            $event = new ProposalPostedEvent($proposal);
-            $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
-        }
-
         return $proposal;
     }
 
@@ -508,6 +555,195 @@ class ProposalManager
         }
         return $proposal;
     }
+
+
+
+    /************
+    *   MASS    *
+    *************/
+
+    /**
+     * Compute directions for multiple proposals at once
+     *
+     * @param array $proposals  The proposals we want the directions
+     * @param int $batch        The batch size
+     * @return array            The proposals treated
+     */
+    public function setDirectionsForProposals(array $proposals, int $batch)
+    {
+        // we will have to get the directions by batch, as we may have to compute thousands of directions
+        // we create a pool of addresses for driver and passenger directions
+        // we also create 2 arrays of owners, to keep the relation between computed directions and proposals (as driver and passenger)
+        $addressesForRoutes = [];
+        $routesDriverOwner = [];
+        $routesPassengerOwner = [];
+        $i=0;
+        $this->logger->info('setDirectionsForProposals | Start creating arrays for calculation at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        foreach ($proposals as $proposal) {
+            $addressesDriver = [];
+            $addressesPassenger = [];
+            foreach ($proposal->getWaypoints() as $waypoint) {
+                if ($proposal->getCriteria()->isDriver()) {
+                    $addressesDriver[] = $waypoint->getAddress();
+                }
+                if ($proposal->getCriteria()->isPassenger() && ($waypoint->getPosition() == 0 || $waypoint->isDestination())) {
+                    $addressesPassenger[] = $waypoint->getAddress();
+                }
+            }
+            if ($proposal->getCriteria()->isDriver()) {
+                $addressesForRoutes[$i][] = $addressesDriver;
+                $routesDriverOwner[$i] = $proposal;
+                $i++;
+            }
+            if ($proposal->getCriteria()->isPassenger()) {
+                $addressesForRoutes[$i][] = $addressesPassenger;
+                $routesPassengerOwner[$i] = $proposal;
+                $i++;
+            }
+        }
+
+        $this->logger->info('setDirectionsForProposals | Start georouter multiple calculation at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, true);
+        
+        $pool = 0;
+        $this->logger->info('setDirectionsForProposals | Start treating driver routes at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        foreach ($routesDriverOwner as $key => $proposal) {
+            if (isset($ownerRoutes[$key])) {
+                $direction = $ownerRoutes[$key][0];
+                // creation of the crossed zones
+                // $this->logger->info('setDirectionsForProposals | Start calculate zones for direction driver ' . $key . ' at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                $direction = $this->zoneManager->createZonesForDirection($direction);
+                // $this->logger->info('setDirectionsForProposals | End calculate zones for direction driver ' . $key . ' at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                $proposal->getCriteria()->setDirectionDriver($direction);
+                $proposal->getCriteria()->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
+                $proposal->getCriteria()->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
+                $this->entityManager->persist($proposal);
+                // batch
+                $pool++;
+                if ($pool>=$batch) {
+                    $this->logger->info('setDirectionsForProposals | Start Flush at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                    $this->entityManager->flush();
+                    $this->logger->info('setDirectionsForProposals | End Flush at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                    $pool = 0;
+                }
+            }
+        }
+        $this->logger->info('setDirectionsForProposals | Start treating passenger routes at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        foreach ($routesPassengerOwner as $key => $proposal) {
+            if (isset($ownerRoutes[$key])) {
+                $direction = $ownerRoutes[$key][0];
+                // creation of the crossed zones
+                // $this->logger->info('setDirectionsForProposals | Start calculate zones for direction passenger ' . $key . ' at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                $direction = $this->zoneManager->createZonesForDirection($direction);
+                // $this->logger->info('setDirectionsForProposals | End calculate zones for direction passenger ' . $key . ' at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                $proposal->getCriteria()->setDirectionPassenger($direction);
+                $this->entityManager->persist($proposal);
+                // batch
+                $pool++;
+                if ($pool>=$batch) {
+                    $this->logger->info('setDirectionsForProposals | Start Flush at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                    $this->entityManager->flush();
+                    $this->logger->info('setDirectionsForProposals | End Flush at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                    $pool = 0;
+                }
+            }
+        }
+        // final flush for pending persists
+        $this->logger->info('setDirectionsForProposals | Start Flush at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->entityManager->flush();
+        $this->logger->info('setDirectionsForProposals | End Flush at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        $this->logger->info('setDirectionsForProposals | End at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        return $proposals;
+    }
+
+    /**
+     * Set default parameters for multiple proposals at once :
+     * - default values
+     * - min and max times
+     * - prices (so use this method after direction calculation)
+     *
+     * @param array $proposals  The proposals we want to treat
+     * @param int $batch        The batch size
+     * @return array            The proposals treated
+     */
+    public function setDefaultsForProposals(array $proposals, int $batch)
+    {
+        $pool = 0;
+        $this->logger->info('setDefaultsForProposals | Start at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        foreach ($proposals as $proposal) {
+            $proposal = $this->setDefaults($proposal);
+            $proposal = $this->setMinMax($proposal);
+            $proposal = $this->setPrices($proposal);
+            $this->entityManager->persist($proposal);
+            // batch
+            $pool++;
+            if ($pool>=$batch) {
+                $this->entityManager->flush();
+                $pool = 0;
+            }
+        }
+        // final flush for pending persists
+        $this->entityManager->flush();
+        
+        $this->logger->info('setDefaultsForProposals | End at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        
+        return $proposals;
+    }
+
+    /**
+     * Create matchings for multiple proposals at once
+     *
+     * @param array $proposals  The proposals to treat
+     * @return array            The proposals treated
+     */
+    public function createMatchingsForProposals(array $proposals)
+    {
+        foreach ($proposals as $proposal) {
+            // matching analyze
+            $this->logger->info('Multi Proposal matching | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, true);
+            $this->logger->info('Multi Proposal matching | End ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->entityManager->persist($proposal);
+        }
+        $this->entityManager->flush();
+        return $proposals;
+    }
+
+    /**
+     * Create linked and opposite matchings for multiple proposals at once
+     *
+     * @param array $proposals  The proposals to treat
+     * @return array            The proposals treated
+     */
+    public function createLinkedAndOppositesForProposals(array $proposals)
+    {
+        foreach ($proposals as $proposal) {
+            // if the proposal is a round trip, we want to link the potential matching results
+            if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
+                $proposal = $this->linkRelatedMatchings($proposal);
+                $this->entityManager->persist($proposal);
+            }
+            // if the requester can be driver and passenger, we want to link the potential opposite matching results
+            if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                // linking for the outward
+                $proposal = $this->linkOppositeMatchings($proposal);
+                $this->entityManager->persist($proposal);
+                if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
+                    // linking for the return
+                    $return = $this->linkOppositeMatchings($proposal->getProposalLinked());
+                    $this->entityManager->persist($return);
+                }
+            }
+        }
+        $this->entityManager->flush();
+        return $proposals;
+    }
+
+    /************
+    *   RDEX    *
+    *************/
 
     /**
      * Returns all proposals matching the parameters.

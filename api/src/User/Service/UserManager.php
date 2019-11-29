@@ -191,12 +191,11 @@ class UserManager
 
         // we treat the notifications
         if (count($user->getUserNotifications()) == 0) {
-            // we have to create the default user notifications
-            $user = $this->createAlerts($user);
+            // we have to create the default user notifications, we don't persist immediately
+            $user = $this->createAlerts($user, false);
         }
 
         $this->entityManager->persist($user);
-        $this->entityManager->flush();
 
         return $user;
     }
@@ -469,10 +468,11 @@ class UserManager
     /**
      * Create user alerts
      *
-     * @param User $user
+     * @param User $user        The user to treat
+     * @param boolean $perist   Persist immediately (false for mass import)
      * @return User
      */
-    public function createAlerts(User $user)
+    public function createAlerts(User $user, $persist=true)
     {
         $notifications = $this->notificationRepository->findUserEditable();
         foreach ($notifications as $notification) {
@@ -489,7 +489,9 @@ class UserManager
             $user->addUserNotification($userNotification);
         }
         $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        if ($persist) {
+            $this->entityManager->flush();
+        }
         return $user;
     }
 

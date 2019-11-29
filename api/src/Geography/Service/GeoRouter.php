@@ -113,9 +113,10 @@ class GeoRouter
      *
      * @param array $addresses[]        The array of addresses, indexed by owner id (representing all the routes to send by the async request)
      * @param boolean $detailDuration   Set to true to get the duration between 2 points
+     * @param boolean $asObject         Set to true to return an object, false to return an array (eg. mass matching)
      * @return array                    The routes found
      */
-    public function getMultipleAsyncRoutes(array $addresses, bool $detailDuration=false): ?array
+    public function getMultipleAsyncRoutes(array $addresses, bool $detailDuration=false, bool $asObject = false): ?array
     {
         $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->pointsOnly, $this->avoidMotorway, $this->geoTools, $this->logger);
         $params = [];
@@ -123,6 +124,9 @@ class GeoRouter
         $params['multipleAsync'] = true;
         $params['batchScriptPath'] = $this->batchScriptPath;
         $params['batchTemp'] = $this->batchTemp;
+        if ($asObject) {
+            $params['asObject'] = true;
+        }
         $routes = $georouter->getCollection(Direction::class, '', $params);
         return $routes;
     }

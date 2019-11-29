@@ -58,10 +58,12 @@ class UserImport
 {
     const DEFAULT_ID = 999999999999;
 
-    const STATUS_IMPORTED = 0;  // the external user has been imported, no treatment has been made yet
-    const STATUS_PENDING = 1;   // a treatment is pending
-    const STATUS_TREATED = 2;   // the treatment has been made successfully
-    const STATUS_ERROR = 3;     // the treatment has failed
+    const STATUS_IMPORTED = 0;          // the external user has been imported, no treatment has been made yet
+    const STATUS_PENDING = 1;           // a treatment is pending
+    const STATUS_USER_TREATED = 2;      // the user treatment has been made successfully
+    const STATUS_USER_ERROR = 3;        // the user treatment has failed
+    const STATUS_JOURNEY_TREATED = 4;   // the journey treatment has been made successfully
+    const STATUS_JOURNEY_ERROR = 5;     // the journey treatment has failed
 
     /**
      * @var int The id of this imported user.
@@ -124,20 +126,36 @@ class UserImport
     private $updatedDate;
 
     /**
-     * @var \DateTimeInterface Start date of the treatment.
+     * @var \DateTimeInterface Start date of the user treatment.
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
      */
-    private $treatmentStartDate;
+    private $treatmentUserStartDate;
 
     /**
-     * @var \DateTimeInterface End date of the treatment.
+     * @var \DateTimeInterface End date of the user treatment.
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
      */
-    private $treatmentEndDate;
+    private $treatmentUserEndDate;
+
+    /**
+     * @var \DateTimeInterface Start date of the journey treatment.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $treatmentJourneyStartDate;
+
+    /**
+     * @var \DateTimeInterface End date of the journey treatment.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $treatmentJourneyEndDate;
 
     public function __construct($id = null, $status = null)
     {
@@ -228,26 +246,50 @@ class UserImport
         return $this;
     }
 
-    public function getTreatmentStartDate(): ?\DateTimeInterface
+    public function getTreatmentUserStartDate(): ?\DateTimeInterface
     {
-        return $this->treatmentStartDate;
+        return $this->treatmentUserStartDate;
     }
 
-    public function setTreatmentStartDate(\DateTimeInterface $treatmentStartDate): self
+    public function setTreatmentUserStartDate(\DateTimeInterface $treatmentUserStartDate): self
     {
-        $this->treatmentStartDate = $treatmentStartDate;
+        $this->treatmentUserStartDate = $treatmentUserStartDate;
 
         return $this;
     }
 
-    public function getTreatmentEndDate(): ?\DateTimeInterface
+    public function getTreatmentUserEndDate(): ?\DateTimeInterface
     {
-        return $this->treatmentEndDate;
+        return $this->treatmentUserEndDate;
     }
 
-    public function setTreatmentEndDate(\DateTimeInterface $treatmentEndDate): self
+    public function setTreatmentUserEndDate(\DateTimeInterface $treatmentUserEndDate): self
     {
-        $this->treatmentEndDate = $treatmentEndDate;
+        $this->treatmentUserEndDate = $treatmentUserEndDate;
+
+        return $this;
+    }
+
+    public function getTreatmentJourneyStartDate(): ?\DateTimeInterface
+    {
+        return $this->treatmentJourneyStartDate;
+    }
+
+    public function setTreatmentJourneyStartDate(\DateTimeInterface $treatmentJourneyStartDate): self
+    {
+        $this->treatmentJourneyStartDate = $treatmentJourneyStartDate;
+
+        return $this;
+    }
+
+    public function getTreatmentJourneyEndDate(): ?\DateTimeInterface
+    {
+        return $this->treatmentJourneyEndDate;
+    }
+
+    public function setTreatmentJourneyEndDate(\DateTimeInterface $treatmentJourneyEndDate): self
+    {
+        $this->treatmentJourneyEndDate = $treatmentJourneyEndDate;
 
         return $this;
     }
