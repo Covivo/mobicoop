@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <div>
     <!--SnackBar-->
 
     <v-snackbar
@@ -133,21 +133,7 @@
             <v-col
               cols="8"
             >
-              <v-card
-                v-show="loadingMap"
-                flat
-                align="center"
-                height="500"
-                color="backSpiner"
-              >
-                <v-progress-circular
-                  size="250"
-                  indeterminate
-                  color="tertiary"
-                />
-              </v-card>
               <m-map
-                v-show="!loadingMap"
                 ref="mmap"
                 type-map="community"
                 :points="pointsToMap"
@@ -170,6 +156,7 @@
               <community-member-list
                 :community="community"
                 :refresh="refreshMemberList"
+                :given-users="users"
                 :hidden="(!isAccepted && community.membersHidden)"
                 @contact="contact"
                 @refreshed="membersListRefreshed"
@@ -182,6 +169,7 @@
               <community-last-users
                 :refresh="refreshLastUsers"
                 :community="community"
+                :given-last-users="lastUsers"
                 :hidden="(!isAccepted && community.membersHidden)"
                 @refreshed="lastUsersRefreshed"
               />
@@ -216,7 +204,7 @@
         />
       </v-row>
     </v-container>
-  </v-content>
+  </div>
 </template>
 <script>
 
@@ -289,6 +277,10 @@ export default {
       type: String,
       default: ""
     },
+    points: {
+      type: Array,
+      default: null
+    }
   },
   data () {
     return {
@@ -314,7 +306,6 @@ export default {
       askToJoin: false,
       checkValidation: false,
       isLogged: false,
-      loadingMap: false,
       domain: true,
       refreshMemberList: false,
       refreshLastUsers: false,
@@ -325,7 +316,7 @@ export default {
   mounted() {
     this.getCommunityUser();
     this.checkIfUserLogged();
-    this.getCommunityProposals();
+    this.showCommunityProposals();
     this.checkDomain();
   },
   methods:{
@@ -405,77 +396,63 @@ export default {
       };
       this.post(`${this.$t("buttons.publish.route")}`, lParams);
     },
-    getCommunityProposals () {
-      this.loadingMap = true;
-      axios 
-       
-        .get('/community-proposals/'+this.community.id,
-          {
-            headers:{
-              'content-type': 'application/json'
-            }
-          })
-        .then(res => {
-          this.errorUpdate = res.data.state;
-          this.pointsToMap.length = 0;
-          // add the community address to display on the map
-          if (this.community.address) {
-            this.pointsToMap.push(this.buildPoint(this.community.address.latitude,this.community.address.longitude,this.community.name));
-          }
+    showCommunityProposals () {
+      this.pointsToMap.length = 0;
+      // add the community address to display on the map
+      if (this.community.address) {
+        this.pointsToMap.push(this.buildPoint(this.community.address.latitude,this.community.address.longitude,this.community.name));
+      }
           
-          // add all the waypoints of the community to display on the map
-          // We draw straight lines between those points
-          // if the user is already accepted or if the doesn't hide members or proposals to non members.
-          if(this.isAccepted || (!this.community.membersHidden && !this.community.proposalsHidden) ){
-            res.data.forEach((proposal, index) => {
-              let currentProposal = {latLngs:[]};
-              let infosForPopUp = {
-                origin:'',
-                destination:'',
-                originLat:null,
-                originLon:null,
-                destinationLat:null,
-                destinationLon:null,
-              };
+      // add all the waypoints of the community to display on the map
+      // We draw straight lines between those points
+      // if the user is already accepted or if the doesn't hide members or proposals to non members.
+      if(this.isAccepted || (!this.community.membersHidden && !this.community.proposalsHidden) ){
+        this.points.forEach((proposal, index) => {
+          let currentProposal = {latLngs:[]};
+          let infosForPopUp = {
+            origin:'',
+            destination:'',
+            originLat:null,
+            originLon:null,
+            destinationLat:null,
+            destinationLon:null,
+          };
 
-              if(proposal.type !== 'return'){ // We show only outward or one way proposals
-                proposal.waypoints.forEach((waypoint, index) => {
-                  this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
-                  currentProposal.latLngs.push(waypoint.latLng);
-                  if(index==0){
-                    infosForPopUp.origin = waypoint.title;
-                    infosForPopUp.originLat = waypoint.latLng.lat;
-                    infosForPopUp.originLon = waypoint.latLng.lon;
-                  }
-                  else if(waypoint.destination){
-                    infosForPopUp.destination = waypoint.title;
-                    infosForPopUp.destinationLat = waypoint.latLng.lat;
-                    infosForPopUp.destinationLon = waypoint.latLng.lon;
-                  }
-                });
-
-                // We build the content of the popup
-                currentProposal.desc = "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
-                currentProposal.desc += "<strong>"+this.$t('map.destination')+"</strong> : "+infosForPopUp.destination+"<br />";
-                if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em>";
-                // And now the content of a tooltip (same as popup but without the button)
-                currentProposal.title = currentProposal.desc;
-                
-                // We add the button to the popup (To Do: Button isn't functionnal. Find a good way to launch a research)
-                //currentProposal.desc += "<br /><button type='button' class='v-btn v-btn--contained v-btn--rounded theme--light v-size--small secondary overline'>"+this.$t('map.findMatchings')+"</button>";
-
-                // We are closing the two p
-                currentProposal.title += "</p>";
-                currentProposal.desc += "</p>";
-                this.directionWay.push(currentProposal);
-
+          if(proposal.type !== 'return'){ // We show only outward or one way proposals
+            proposal.waypoints.forEach((waypoint, index) => {
+              this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+              currentProposal.latLngs.push(waypoint.latLng);
+              if(index==0){
+                infosForPopUp.origin = waypoint.title;
+                infosForPopUp.originLat = waypoint.latLng.lat;
+                infosForPopUp.originLon = waypoint.latLng.lon;
+              }
+              else if(waypoint.destination){
+                infosForPopUp.destination = waypoint.title;
+                infosForPopUp.destinationLat = waypoint.latLng.lat;
+                infosForPopUp.destinationLon = waypoint.latLng.lon;
               }
             });
+
+            // We build the content of the popup
+            currentProposal.desc = "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
+            currentProposal.desc += "<strong>"+this.$t('map.destination')+"</strong> : "+infosForPopUp.destination+"<br />";
+            if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em>";
+            // And now the content of a tooltip (same as popup but without the button)
+            currentProposal.title = currentProposal.desc;
+                
+            // We add the button to the popup (To Do: Button isn't functionnal. Find a good way to launch a research)
+            //currentProposal.desc += "<br /><button type='button' class='v-btn v-btn--contained v-btn--rounded theme--light v-size--small secondary overline'>"+this.$t('map.findMatchings')+"</button>";
+
+            // We are closing the two p
+            currentProposal.title += "</p>";
+            currentProposal.desc += "</p>";
+            this.directionWay.push(currentProposal);
+
           }
-          this.loadingMap = false;
-          setTimeout(this.$refs.mmap.redrawMap(),600);
-          
         });
+      }
+      this.$refs.mmap.redrawMap();
     },
    
     buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
