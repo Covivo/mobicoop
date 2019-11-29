@@ -554,38 +554,35 @@ class UserManager
      */
     public function anonymiseUser(User $user)
     {
+
         // L'utilisateur à posté des annonces de covoiturages -> on les supprimes
         // User create ad : we delete them
         foreach ($user->getProposals() as $proposal) {
-            var_dump('proposal :'.$proposal->getId());
-            foreach ($proposal->getMatchingRequests() as $oneRequest) {
-                var_dump('request :'.$oneRequest->getId());
+            foreach ($proposal->getMatchingRequests() as $matching) {
                 //Check if there is ask on a proposal -> event for notifications
-                foreach ($oneRequest->getAsks() as $ask)    {
+                foreach ($matching->getAsks() as $ask) {
                     $event = new UserDeleteAccountWasDriverEvent($ask);
                     $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
                 }
-
             }
             //There is offers on the proposal -> we delete proposal + send email to passengers
-            foreach ($proposal->getMatchingOffers() as $oneRequest) {
-                var_dump('offresid :'.$oneRequest->getProposalOffer()->getId());
+            foreach ($proposal->getMatchingOffers() as $matching) {
+                //TODO libérer les places sur les annonces réservées
+                foreach ($matching->getAsks() as $ask) {
+                    $event = new UserDeleteAccountWasDriverEvent($ask);
+                    $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
 
-
-
-              //  var_dump('offres :'.$oneRequest->getProposalOffer()->getAsks());
-                $userProposal = $oneRequest->getProposalOffer()->getUser();
-
-
-                /*dump($oneRequest->getProposalOffer())
-                $event = new UserDeleteAccountWasDriverEvent($userProposal);
-                $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);*/
-
+                }
             }
-            // $this->entityManager->remove($proposal);
+            //Set user at null and private on the proposal : we keep info for message, proposal cant be found
+            $proposal->setUser(null);
+            $proposal->setPrivate(1);
         }
 
-        //TODO vérifier si il y à messages
+        //Anonymise content of message
+        foreach ($user->getMessages() as $message) {
+            $message->setText('mobicoop');
+        }
 
 
         /* $datenow = new DateTime();
@@ -633,6 +630,4 @@ class UserManager
         $user->setPassword($user->getPassword());
         return $user;
     }
-
-
 }

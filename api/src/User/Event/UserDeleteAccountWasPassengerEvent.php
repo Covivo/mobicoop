@@ -23,7 +23,7 @@
 
 namespace App\User\Event;
 
-use App\User\Entity\User;
+use App\Carpool\Entity\Ask;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -35,13 +35,13 @@ class UserDeleteAccountWasPassengerEvent extends Event
 
     protected $user;
 
-    public function __construct(User $user)
+    public function __construct(Ask $ask)
     {
-        $this->user = $user;
+        $this->ask = $ask;
     }
 
-    public function getUser()
+    public function getAsk()
     {
-        return $this->user;
+        return $this->ask;
     }
 }

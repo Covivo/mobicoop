@@ -24,6 +24,7 @@
 namespace App\Communication\EventSubscriber;
 
 use App\User\Event\UserDeleteAccountWasDriverEvent;
+use App\User\Event\UserDeleteAccountWasPassengerEvent;
 use App\User\Event\UserRegisteredEvent;
 use App\User\Event\UserUpdatedSelfEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -49,7 +50,8 @@ class UserSubscriber implements EventSubscriberInterface
             UserPasswordChangeAskedEvent::NAME => 'onUserPasswordChangeAsked',
             UserPasswordChangedEvent::NAME => 'onUserPasswordChanged',
             UserGeneratePhoneTokenAskedEvent::NAME => 'onUserGeneratePhoneTokenAskedEvent',
-            UserDeleteAccountWasDriverEvent::NAME => 'onUserDeleteAccountWasDriverEvent'
+            UserDeleteAccountWasDriverEvent::NAME => 'onUserDeleteAccountWasDriverEvent',
+            UserDeleteAccountWasPassengerEvent::NAME => 'onUserDeleteAccountWasPassengerEvent'
         ];
     }
 
@@ -80,6 +82,11 @@ class UserSubscriber implements EventSubscriberInterface
 
     public function onUserDeleteAccountWasDriverEvent(UserDeleteAccountWasDriverEvent $event)
     {
-        $this->notificationManager->notifies(UserDeleteAccountWasDriverEvent::NAME, $event->getAsk()->getUser(),$event->getAsk()->getMatching());
+        $this->notificationManager->notifies(UserDeleteAccountWasDriverEvent::NAME, $event->getAsk()->getUser(), $event->getAsk()->getMatching());
+    }
+
+    public function onUserDeleteAccountWasPassengerEvent(UserDeleteAccountWasPassengerEvent $event)
+    {
+        $this->notificationManager->notifies(UserDeleteAccountWasPassengerEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk()->getMatching());
     }
 }
