@@ -207,12 +207,59 @@ class CommunityController extends AbstractController
             ($user!==null) ? $communityUser = $communityManager->getCommunityUser($id, $user->getId()) : $communityUser = null;
         }
 
+        // todo : move inside service ?
+        // get the last 3 users and formate them to be used with vue
+        $lastUsers = $communityManager->getLastUsers($id);
+        $lastUsersFormated = [];
+        foreach ($lastUsers as $key => $commUser) {
+            $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".ucfirst($commUser->getUser()->getFamilyName());
+            $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');
+        }
+
+        // todo : move inside service ?
+        // Get the proposals and waypoints
+        $proposals = $communityManager->getProposals($community->getId());
+        $ways = [];
+        if ($proposals!==null) {
+            foreach ($proposals as $proposal) {
+                $currentProposal = [
+                    "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
+                    "frequency"=>($proposal["criteria"]["frequency"]==Criteria::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
+                    "waypoints"=>[]
+                ];
+                foreach ($proposal["waypoints"] as $waypoint) {
+                    $currentProposal["waypoints"][] = [
+                        "title"=>(is_array($waypoint["address"]["displayLabel"])) ? implode(", ", $waypoint["address"]["displayLabel"]) : $waypoint["address"]["displayLabel"],
+                        "destination"=>$waypoint['destination'],
+                        "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
+                    ];
+                }
+                $ways[] = $currentProposal;
+            }
+        }
+
+        // todo : move inside service ?
+        // Get the community users
+        $users = [];
+        //test if the community has members
+        if (count($community->getCommunityUsers()) > 0) {
+            foreach ($community->getCommunityUsers() as $communityUser) {
+                if ($communityUser->getStatus() == 1 || $communityUser->getStatus() == 2) {
+                    // get all community Users
+                    array_push($users, $communityUser->getUser());
+                }
+            }
+        }
+
         return $this->render('@Mobicoop/community/community.html.twig', [
             'community' => $community,
             'user' => $user,
             'communityUser' => (isset($communityUser) && $communityUser!==null)?$communityUser:null,
             'searchRoute' => "covoiturage/recherche",
-            'error' => (isset($error)) ? $error : false
+            'error' => (isset($error)) ? $error : false,
+            'points' => $ways,
+            'lastUsers' => $lastUsersFormated,
+            'users' => $users
         ]);
     }
 
