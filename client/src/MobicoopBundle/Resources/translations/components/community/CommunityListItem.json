@@ -3,7 +3,7 @@
     "routes": {
       "community": "/communaute/{id}"
     },
-    "communityDetails":"Détails de la communauté",
+    "communityDetails":"Voir communauté",
     "join":"Rejoindre la communauté",
     "protected": "Cette communauté n'est visible que par ses membres"
   },

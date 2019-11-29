@@ -12,5 +12,8 @@
         :id-user="{{ idUser }}"
         :id-thread-default="{{ (idThreadDefault) ? idThreadDefault : 'null' }}"
         :new-thread="{{ newThread|json_encode }}"
+        :given-id-message="{{ idMessage ? idMessage : 'null' }}"
+        :given-id-recipient="{{ idRecipient ? idRecipient : 'null' }}"
+        :given-id-ask="{{ idAsk ? idAsk : 'null' }}"
       />
 {% endblock %}

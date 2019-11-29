@@ -32,7 +32,7 @@
           <v-card
             v-if="item.divider===false"
             class="elevation-2 font-weight-bold"
-            :class="(item.origin==='own')?'primary':''"
+            :class="(item.origin==='own')?'primary lighten-4':''"
           >
             <v-card-text>{{ item.text }}</v-card-text>
           </v-card>
@@ -97,8 +97,11 @@ export default {
     }
   },
   watch:{
-    idMessage(){
-      this.getCompleteThread();
+    idMessage: {
+      immediate: true,
+      handler(newVal, oldVal) {
+        if(this.idMessage!==null) this.getCompleteThread();
+      }
     },
     refresh(){
       (this.refresh) ? this.getCompleteThread() : '';
@@ -109,7 +112,7 @@ export default {
       this.items = [];
 
       // if idMessage = -1 it means that is a "virtuel" thread. When you initiate a contact without previous message
-      if(this.idMessage>-1){
+      if(this.idMessage>-1 && this.idMessage != null){
         this.loading = true;
         axios.get(this.$t("urlCompleteThread",{idMessage:this.idMessage}))
           .then(response => {

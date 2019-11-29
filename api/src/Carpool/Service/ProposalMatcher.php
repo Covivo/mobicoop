@@ -23,6 +23,7 @@
 
 namespace App\Carpool\Service;
 
+use App\Carpool\Entity\Ask;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Matching;
@@ -138,6 +139,62 @@ class ProposalMatcher
         $candidatePassenger->setId(!is_null($matching->getProposalRequest()->getUser()) ? $matching->getProposalRequest()->getUser()->getId() : User::DEFAULT_ID);
         $addressesCandidate = [];
         foreach ($matching->getProposalRequest()->getWaypoints() as $waypoint) {
+            $addressesCandidate[] = $waypoint->getAddress();
+        }
+        $candidatePassenger->setAddresses($addressesCandidate);
+        if ($routes = $this->geoRouter->getRoutes([$addressesCandidate[0],$addressesCandidate[count($addressesCandidate)-1]])) {
+            $candidatePassenger->setDirection($routes[0]);
+        }
+        if ($matches = $this->geoMatcher->forceMatch($candidateDriver, $candidatePassenger)) {
+            // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
+            if (is_array($matches) && count($matches)>0) {
+                switch (self::MULTI_MATCHES_FOR_SAME_CANDIDATES) {
+                    case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                        usort($matches, self::build_sorter('newDuration'));
+                        $filters = $matches[0];
+                        break;
+                    case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST:
+                        usort($matches, self::build_sorter('newDistance'));
+                        $filters = $matches[0];
+                        break;
+                    default:
+                        $filters = $matches[0];
+                        break;
+                }
+            }
+        }
+          
+        return $filters;
+    }
+
+    /**
+     * Get the return ask filters.
+     *
+     * @param Ask  $ask   The ask
+     * @return array The ask return filters
+     */
+    public function getAskFilters(Ask $ask)
+    {
+        $filters = [];
+        $candidateDriver = new Candidate();
+        $candidateDriver->setId($ask->getMatching()->getProposalOffer()->getUser()->getId());
+        $addresses = [];
+        foreach ($ask->getMatching()->getProposalOffer()->getWaypoints() as $waypoint) {
+            $addresses[] = $waypoint->getAddress();
+        }
+        $candidateDriver->setAddresses($addresses);
+        // we compute the driver's direction
+        if ($routes = $this->geoRouter->getRoutes($addresses)) {
+            $direction = $routes[0];
+            $candidateDriver->setDirection($direction);
+            $candidateDriver->setMaxDetourDistance($direction->getDistance()*self::MAX_DETOUR_DISTANCE_PERCENT/100);
+            $candidateDriver->setMaxDetourDuration($direction->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100);
+        }
+
+        $candidatePassenger = new Candidate();
+        $candidatePassenger->setId($ask->getMatching()->getProposalRequest()->getUser()->getId());
+        $addressesCandidate = [];
+        foreach ($ask->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
             $addressesCandidate[] = $waypoint->getAddress();
         }
         $candidatePassenger->setAddresses($addressesCandidate);

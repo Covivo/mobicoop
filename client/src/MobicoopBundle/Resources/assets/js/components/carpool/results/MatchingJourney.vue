@@ -213,7 +213,8 @@
                   :locale="locale"
                   :min="today"
                   :max="toDate ? toDate : null"
-                  no-title
+                  no-title.
+                  first-day-of-week="1"
                   @input="menuFromDate = false"
                   @change="change"
                 />
@@ -261,6 +262,7 @@
                   :min="fromDate"
                   :max="toDate ? toDate : null"
                   no-title
+                  first-day-of-week="1"
                   @input="menuMaxDate = false"
                   @change="change"
                 />
@@ -696,7 +698,8 @@ export default {
       let params = {
         "driver": role==1,
         "passenger": role==2,
-        "regular": this.lResult.frequency == 2
+        "regular": this.lResult.frequency == 2,
+        "status" : this.lResult.askStatus
       };
       let resultChoice = this.lResult.resultDriver;
       if (role == 2) resultChoice = this.lResult.resultPassenger;

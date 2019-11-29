@@ -19,7 +19,7 @@
           <v-tab-item value="myProposals">
             <MyProposals :proposals="proposals" />
           </v-tab-item>
-          <v-tab
+          <!-- <v-tab
             class="text-left justify-start ml-2 mr-5 title"
             href="#carpoolsAccepted"
           >
@@ -32,7 +32,7 @@
             >
               En cours de développement
             </v-alert>
-          </v-tab-item>
+          </v-tab-item> -->
           <v-tab
             class="text-left justify-start ml-2 mr-5 title"
             href="#myProfile"

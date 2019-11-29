@@ -2,7 +2,7 @@
   <v-content>
     <!-- The Ask is just Initiated -->
     <!-- Only the Ask User can make a formal request of carpool -->
-    <div v-if="status==1 && canAsk">
+    <div v-if="status==1 && canUpdateAsk">
       <v-tooltip
         v-if="driver"
         bottom
@@ -50,7 +50,7 @@
         <span>{{ $t('button.askCarpoolAsPassenger') }}</span>
       </v-tooltip>     
     </div>
-    <div v-if="status==1 && !canAsk">
+    <div v-if="status==1 && !canUpdateAsk">
       <v-card-text>{{ $t('onlyAskUser') }}</v-card-text>
     </div>
     <!-- end ask just Initiated -->
@@ -58,7 +58,7 @@
 
     <!-- The Ask is pending -->
     <!-- If you are the ask user you cannot accept or delined -->
-    <div v-if="(status==2 || status==3) && !canAsk">
+    <div v-if="(status==2 || status==3) && canUpdateAsk">
       <v-tooltip
         bottom
         color="success"
@@ -71,7 +71,7 @@
             dark
             depressed
             v-on="on"
-            @click="updateStatus(3)"
+            @click="updateStatus((status==2) ? 4 : 5)"
           >
             <v-icon class="display-2">
               mdi-check
@@ -92,7 +92,7 @@
             dark
             depressed
             v-on="on"
-            @click="updateStatus(4)"
+            @click="updateStatus((status==2) ? 6 : 7)"
           >
             <v-icon class="display-2">
               mdi-close
@@ -115,7 +115,7 @@
 
 
     <!-- The Ask is accepted -->
-    <div v-if="status==4">
+    <div v-if="status==4 || status==5">
       <v-card
         color="success"
         class="white--text"
@@ -125,7 +125,7 @@
       </v-card>
     </div>
     <!-- The Ask is refused -->
-    <div v-if="status==5">
+    <div v-if="status==6 || status==7">
       <v-card
         color="error"
         class="white--text"
@@ -147,7 +147,7 @@ export default {
       type:Number,
       default:1
     },
-    canAsk:{
+    canUpdateAsk:{
       type:Boolean,
       default:false
     },

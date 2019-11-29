@@ -86,7 +86,7 @@ user_carpool_settings_update:
         fr: /utilisateur/preferences-covoiturage/modifier
         en: /user/carpool-settings/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCarpoolSettingsUpdate
-        
+
 # password forgotten : ask for a new password
 user_password_forgot:
     path:
@@ -210,7 +210,7 @@ user_communities:
         en: /user/communities
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCommunities
 
-    
+
 ##################
 # carpool routes #
 ##################
@@ -227,7 +227,7 @@ carpool_first_ad_post:
     path:
         fr: /covoiturage/annonce/poster/premiere
         en: /carpool/ad/post/first
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolFirstAdPost       
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolFirstAdPost
 
 # post a solidary exclusive ad
 carpool_solidary_exclusive_ad_post:
@@ -548,3 +548,19 @@ event_get_widget:
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventGetWidget
     requirements:
         id: '\d+'
+
+# report event
+event_report:
+    path:
+        fr: /evenement/{id}/signaler
+        en: /event/{id}/report
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventReport
+    requirements:
+        id: '\d+'
+
+# round price
+round_price:
+    path:
+        fr: /prix/arrondir
+        en: /price/round
+    controller: Mobicoop\Bundle\MobicoopBundle\Price\Controller\PriceController::roundPrice

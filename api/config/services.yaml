@@ -195,6 +195,18 @@ services:
         tags:
             - { name: monolog.logger, channel: georouter }
 
+    # Event
+    App\Event\Controller\:
+        resource: '../src/Event/Controller'
+        tags: ['controller.service_arguments']
+
+    App\Event\Controller\ReportAction:
+        arguments:
+            $supportEmail: '%env(resolve:MAILER_SUPPORT)%'
+            $senderEmail: '%env(resolve:MAILER_SENDER)%'
+            $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
+        tags: ['controller.service_arguments']
+
     # External Journey
     App\ExternalJourney\Service\ExternalJourneyManager:
         arguments:
@@ -292,4 +304,9 @@ services:
     # Solidary
     App\Solidary\Controller\:
         resource: '../src/Solidary/Controller'
+        tags: ['controller.service_arguments']
+
+    # Price
+    App\Price\Controller\:
+        resource: '../src/Price/Controller'
         tags: ['controller.service_arguments']

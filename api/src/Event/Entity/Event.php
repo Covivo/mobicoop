@@ -39,6 +39,7 @@ use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Event\Controller\ReportAction;
 
 /**
  * An event : a social occasion or activity.
@@ -52,8 +53,40 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "denormalization_context"={"groups"={"write"}},
  *          "pagination_client_items_per_page"=true
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *          "get",
+ *          "post",
+ *          "report"={
+ *              "method"="POST",
+ *              "path"="/events/{id}/report",
+ *              "requirements"={"id"="\d+"},
+ *              "controller"=ReportAction::class,
+ *              "swagger_context" = {
+ *                  "summary" = "Report an Event",
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "email",
+ *                          "in" = "body",
+ *                          "type" = "string",
+ *                          "required" = "true",
+ *                          "description" = "Reporter's email"
+ *                      },
+ *                      {
+ *                          "name" = "description",
+ *                          "in" = "body",
+ *                          "type" = "string",
+ *                          "required" = "true",
+ *                          "description" = "Description"
+ *                      }
+ *                  }
+ *              }
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "fromDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(DateFilter::class, properties={"toDate"})

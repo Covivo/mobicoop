@@ -210,13 +210,14 @@ class DataProvider
     /**
      * Get special item operation
      *
-     * @param int           $id             The id of the item
-     * @param string        $operation      The name of the special operation
-     * @param array|null    $params         An array of parameters
+     * @param int           $id                 The id of the item
+     * @param string        $operation          The name of the special operation
+     * @param array|null    $params             An array of parameters
+     * @param bool          $reverseOperationId if true Generate an alternate uri /resource/operation/id
      *
      * @return Response The response of the operation.
      */
-    public function getSpecialItem(int $id, string $operation, array $params=null): Response
+    public function getSpecialItem(int $id, string $operation, array $params=null, bool $reverseOperationId=false): Response
     {
         try {
             if ($this->format == self::RETURN_ARRAY) {
@@ -226,7 +227,11 @@ class DataProvider
                 $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
                 $value = (string) $clientResponse->getBody();
             } else {
-                $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params]);
+                if (!$reverseOperationId) {
+                    $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params]);
+                } else {
+                    $clientResponse = $this->client->get($this->resource."/".$operation."/".$id, ['query'=>$params]);
+                }
                 $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
             }
             if ($clientResponse->getStatusCode() == 200) {
@@ -369,6 +374,21 @@ class DataProvider
         return new Response();
     }
 
+    public function simplePost(string $url, array $parameters = []): Response {
+        try {
+            $clientResponse = $this->client->post($url, [
+                RequestOptions::JSON => $parameters,
+            ]);
+            $value = (string) $clientResponse->getBody();
+
+            return new Response($clientResponse->getStatusCode(), $value);
+        } catch (ServerException $e) {
+            return new Response($e->getCode(), $e->getMessage());
+        } catch (ClientException $e) {
+            return new Response($e->getCode(), $e->getMessage());
+        }
+    }
+
     /**
      * Post collection operation with multipart/form-data
      *
@@ -453,14 +473,20 @@ class DataProvider
      *
      * @return Response The response of the operation.
      */
-    public function putSpecial(ResourceInterface $object, ?array $groups=null, ?string $operation): Response
+    public function putSpecial(ResourceInterface $object, ?array $groups=null, ?string $operation, ?array $params=null, bool $reverseOperationId=false): Response
     {
         if (is_null($groups)) {
             $groups = ['put'];
         }
         try {
-            $clientResponse = $this->client->put($this->resource."/".$object->getId()."/$operation", [
-                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true)
+            if (!$reverseOperationId) {
+                $uri = $this->resource."/".$object->getId()."/".$operation;
+            } else {
+                $uri = $this->resource."/".$operation."/".$object->getId();
+            }
+            $clientResponse = $this->client->put($uri, [
+                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true),
+                    'query' => $params
             ]);
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));

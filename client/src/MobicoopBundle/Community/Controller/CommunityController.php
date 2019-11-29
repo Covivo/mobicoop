@@ -46,11 +46,27 @@ class CommunityController extends AbstractController
 {
     use HydraControllerTrait;
 
+    private $createFromFront;
+
+    /**
+     * Constructor
+     * @param string $createFromFront
+     */
+    public function __construct($createFromFront)
+    {
+        $this->createFromFront = $createFromFront;
+    }
+    
     /**
      * Create a community
      */
     public function communityCreate(CommunityManager $communityManager, UserManager $userManager, Request $request, ImageManager $imageManager)
     {
+        // Deny the creation of a community if the .env say so
+        if ($this->createFromFront==="false") {
+            return $this->redirectToRoute('home');
+        }
+        
         $community = new Community();
         $this->denyAccessUnlessGranted('create', $community);
         $user = new User($userManager->getLoggedUser()->getId());
@@ -157,6 +173,7 @@ class CommunityController extends AbstractController
         return $this->render('@Mobicoop/community/communities.html.twig', [
             'communities' => $communities,
             'communitiesUser' => $communitiesUser,
+            'canCreate' => $this->createFromFront
         ]);
     }
 
@@ -347,13 +364,48 @@ class CommunityController extends AbstractController
         //test if the community has members
         if (count($community->getCommunityUsers()) > 0) {
             foreach ($community->getCommunityUsers() as $communityUser) {
-                if ($communityUser->getStatus() == 1) {
-                    // get all community Users
+                if ($communityUser->getStatus() == 1 || $communityUser->getStatus() == 2) {
+                    // get all community Users accepted_as_member or accepted_as_moderator
                     array_push($users, $communityUser->getUser());
                 }
             }
         }
         return new Response(json_encode($users));
+    }
+
+    /**
+     * Get all proposals of a community
+     * Ajax
+     *
+     * @param integer $id
+     * @param CommunityManager $communityManager
+     * @return void
+     */
+    public function communityProposals(int $id, CommunityManager $communityManager)
+    {
+        $community = $communityManager->getCommunity($id);
+        $this->denyAccessUnlessGranted('show', $community);
+
+        $proposals = $communityManager->getProposals($id);
+        $ways = [];
+        if ($proposals!==null) {
+            foreach ($proposals as $proposal) {
+                $currentProposal = [
+                    "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
+                    "frequency"=>($proposal["criteria"]["frequency"]==Criteria::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
+                    "waypoints"=>[]
+                ];
+                foreach ($proposal["waypoints"] as $waypoint) {
+                    $currentProposal["waypoints"][] = [
+                        "title"=>(is_array($waypoint["address"]["displayLabel"])) ? $waypoint["address"]["displayLabel"][0] : $waypoint["address"]["displayLabel"],
+                        "destination"=>$waypoint['destination'],
+                        "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
+                    ];
+                }
+                $ways[] = $currentProposal;
+            }
+        }
+        return new Response(json_encode($ways));
     }
 
     /**

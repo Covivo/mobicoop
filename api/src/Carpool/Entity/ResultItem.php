@@ -680,28 +680,28 @@ class ResultItem
         return $this->multipleTimes;
     }
 
-    public function setMultipleTimes(): self
+    public function setMultipleTimes(bool $hasTime = true): self
     {
         $time = [];
-        if ($this->isMonCheck() && $this->getMonTime()) {
+        if (($this->isMonCheck() || !$hasTime) && $this->getMonTime()) {
             $time[$this->getMonTime()->format('His')] = 1;
         }
-        if ($this->isTueCheck() && $this->getTueTime()) {
+        if (($this->isTueCheck() || !$hasTime) && $this->getTueTime()) {
             $time[$this->getTueTime()->format('His')] = 1;
         }
-        if ($this->isWedCheck() && $this->getWedTime()) {
+        if (($this->isWedCheck() || !$hasTime) && $this->getWedTime()) {
             $time[$this->getWedTime()->format('His')] = 1;
         }
-        if ($this->isThuCheck() && $this->getThuTime()) {
+        if (($this->isThuCheck() || !$hasTime) && $this->getThuTime()) {
             $time[$this->getThuTime()->format('His')] = 1;
         }
-        if ($this->isFriCheck() && $this->getFriTime()) {
+        if (($this->isFriCheck() || !$hasTime) && $this->getFriTime()) {
             $time[$this->getFriTime()->format('His')] = 1;
         }
-        if ($this->isSatCheck() && $this->getSatTime()) {
+        if (($this->isSatCheck() || !$hasTime) && $this->getSatTime()) {
             $time[$this->getSatTime()->format('His')] = 1;
         }
-        if ($this->isSunCheck() && $this->getSunTime()) {
+        if (($this->isSunCheck() || !$hasTime) && $this->getSunTime()) {
             $time[$this->getSunTime()->format('His')] = 1;
         }
         $this->multipleTimes = (count($time) > 1);

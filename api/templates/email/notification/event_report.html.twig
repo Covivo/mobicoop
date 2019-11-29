@@ -1,0 +1,6 @@
+{% extends '/email/notification/base.html.twig' %}
+
+{% block body %}
+    <p>L'utilisateur <b>{{ context.email }}</b> à signaler l'événement <b>{{ context.eventName }}</b></p>
+    <p>Explication du signalement : {{ context.description }}</p>
+{% endblock %}
