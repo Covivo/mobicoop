@@ -554,16 +554,26 @@ class UserManager
     public function anonymiseUser(User $user)
     {
         // L'utilisateur à posté des annonces de covoiturages -> on les supprimes
-        //TODO vérifier si il y à des réservations dessus
+        // User create ad : we delete them
         foreach ($user->getProposals() as $proposal) {
-            var_dump($proposal->getId());
+            var_dump('proposal :'.$proposal->getId());
+            foreach ($proposal->getMatchingRequests() as $oneRequest) {
+                var_dump('request :'.$oneRequest->getId());
+            }
+            //There is offers on the proposal -> we delete proposal + send email to passengers
+            foreach ($proposal->getMatchingOffers() as $oneRequest) {
+                var_dump('offres :'.$oneRequest->getProposalOffer()->getId());
+                $userProposal = $oneRequest->getProposalOffer()->getUser();
+                $this->sendeEmailPassenger($userProposal);
+
+            }
            // $this->entityManager->remove($proposal);
         }
 
         //TODO vérifier si il y à messages
 
 
-        $datenow = new DateTime();
+       /* $datenow = new DateTime();
         //Replace all mandatory value by default value or token
         $user->setEmail(uniqid().'@'.uniqid().'.fr');
         $user->setGender(3);
@@ -602,9 +612,27 @@ class UserManager
         $user->setPhoneValidatedDate(null);
 
 
-        //$this->entityManager->persist($user);
-       // $this->entityManager->flush();
-
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+*/
+        $user->setPassword($user->getPassword());
         return $user;
+    }
+
+
+    //Send an email t
+    private function sendeEmailPassenger(User $user){
+
+
+        $email = new Email();
+
+        $email->setRecipientEmail($this->contactEmailAddress);
+        $email->setSenderEmail($contact->getEmail());
+        $email->setReturnEmail($contact->getEmail());
+        $email->setSenderFirstName($contact->getGivenName());
+        $email->setSenderName($contact->getFamilyName());
+        $email->setObject("Nouvelle demande de contact");
+
+        $this->emailManager->send($email, $this->emailTemplatePath . 'contact_email_posted', ['contact' => $contact]);
     }
 }
