@@ -1,42 +1,45 @@
 {
   "fr": {
-    "button": "",
+    "button": "Signaler l'événement",
     "snackbar": {
-      "thankyou": "",
-      "error": ""
+      "thankyou": "Merci d'avoir signaler cet événement",
+      "error": "Une erreur s'est produite durant le signalement de l'événement"
     },
     "popup": {
-      "title": "",
-      "content": "",
+      "title": "Signalement d'événement",
+      "content": "Vous avez constaté du contenu inapproprié sur l'événement '<b>{eventName}</b>' ?<br/>Signalez-le à l'équipe ouestgo qui prendra les mesures nécessaires.<br/><br/>Merci de préciser ce qui vous paraît inapproprié :",
       "form": {
         "email": {
-          "label": "",
+          "label": "Merci de renseigner votre email",
           "errors": {
-            "required": "",
-            "valid": ""
+            "required": "L'adresse email est requise",
+            "valid": "L'adresse email doit être valide."
           }
         },
         "description": {
-          "label": "",
+          "label": "Explication",
           "errors": {
-            "required": ""
+            "required": "Une explication est nécessaire"
           }
         }
       },
       "button": {
-        "report": "",
-        "cancel": ""
+        "report": "Signaler",
+        "cancel": "Annuler"
       }
+    },
+    "routes": {
+      "report": "/evenement/{id}/signaler"
     }
   },
   "en": {
-    "button": "",
+    "button": "Report event",
     "snackbar": {
       "thankyou": "",
       "error": ""
     },
     "popup": {
-      "title": "",
+      "title": "Report event",
       "content": "",
       "form": {
         "email": {
@@ -54,9 +57,12 @@
         }
       },
       "button": {
-        "report": "",
-        "cancel": ""
+        "report": "Report",
+        "cancel": "Cancel"
       }
+    },
+    "routes": {
+      "report": "/event/{id}/report"
     }
   }
 }
