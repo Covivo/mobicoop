@@ -571,7 +571,6 @@ class UserManager
                 foreach ($matching->getAsks() as $ask) {
                     $event = new UserDeleteAccountWasDriverEvent($ask);
                     $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
-
                 }
             }
             //Set user at null and private on the proposal : we keep info for message, proposal cant be found
@@ -587,51 +586,50 @@ class UserManager
         return $this->setUserAtNull($user);
     }
 
-    private function setUserAtNull(User $user){
+    private function setUserAtNull(User $user)
+    {
+        $datenow = new DateTime();
+        //Replace all mandatory value by default value or token
+        $user->setEmail(uniqid().'@'.uniqid().'.fr');
+        $user->setGender(3);
+        $user->setStatus(3);
+        $user->setCreatedDate($datenow);
+        $user->setValidatedDate($datenow);
+        $user->setPhoneDisplay(1);
 
-         $datenow = new DateTime();
-         //Replace all mandatory value by default value or token
-         $user->setEmail(uniqid().'@'.uniqid().'.fr');
-         $user->setGender(3);
-         $user->setStatus(3);
-         $user->setCreatedDate($datenow);
-         $user->setValidatedDate($datenow);
-         $user->setPhoneDisplay(1);
-
-         //Replace all value nullable by null
-         $user->setGivenName(null);
-         $user->setFamilyName(null);
-         $user->setPassword(null);
-         $user->setGivenName(null);
-         $user->setNationality(null);
-         $user->setBirthDate(null);
-         $user->setTelephone(null);
-         $user->setAnyRouteAsPassenger(null);
-         $user->setMultiTransportMode(null);
-         $user->setMaxDetourDistance(null);
-         $user->setMaxDetourDuration(null);
-         $user->setPwdToken(null);
-         $user->setGeoToken(null);
-         $user->setLanguage(null);
-         $user->setPwdToken(null);
-         $user->setValidatedDateToken(null);
-         $user->setFacebookId(null);
-         $user->setSmoke(null);
-         $user->setMusic(null);
-         $user->setMusicFavorites(null);
-         $user->setChat(null);
-         $user->setChatFavorites(null);
-         $user->setNewsSubscription(null);
-         $user->setPhoneToken(null);
-         $user->setIosAppId(null);
-         $user->setAndroidAppId(null);
-         $user->setPhoneValidatedDate(null);
+        //Replace all value nullable by null
+        $user->setGivenName(null);
+        $user->setFamilyName(null);
+        $user->setPassword(null);
+        $user->setGivenName(null);
+        $user->setNationality(null);
+        $user->setBirthDate(null);
+        $user->setTelephone(null);
+        $user->setAnyRouteAsPassenger(null);
+        $user->setMultiTransportMode(null);
+        $user->setMaxDetourDistance(null);
+        $user->setMaxDetourDuration(null);
+        $user->setPwdToken(null);
+        $user->setGeoToken(null);
+        $user->setLanguage(null);
+        $user->setPwdToken(null);
+        $user->setValidatedDateToken(null);
+        $user->setFacebookId(null);
+        $user->setSmoke(null);
+        $user->setMusic(null);
+        $user->setMusicFavorites(null);
+        $user->setChat(null);
+        $user->setChatFavorites(null);
+        $user->setNewsSubscription(null);
+        $user->setPhoneToken(null);
+        $user->setIosAppId(null);
+        $user->setAndroidAppId(null);
+        $user->setPhoneValidatedDate(null);
 
 
-         $this->entityManager->persist($user);
-         $this->entityManager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
-         return $user;
-
+        return $user;
     }
 }
