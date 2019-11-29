@@ -244,7 +244,7 @@ class CommunityController extends AbstractController
         //test if the community has members
         if (count($community->getCommunityUsers()) > 0) {
             foreach ($community->getCommunityUsers() as $communityUser) {
-                if ($communityUser->getStatus() == 1) {
+                if ($communityUser->getStatus() == 1 || $communityUser->getStatus() == 2) {
                     // get all community Users
                     array_push($users, $communityUser->getUser());
                 }
