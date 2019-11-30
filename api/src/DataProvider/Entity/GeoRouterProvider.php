@@ -73,7 +73,7 @@ class GeoRouterProvider implements ProviderInterface
     public function __construct(string $uri=null, bool $detailDuration=false, bool $pointsOnly=false, bool $avoidMotorway=false, GeoTools $geoTools, LoggerInterface $logger)
     {
         $this->uri = $uri;
-        $this->bearing = 0;
+        $this->bearing = null;
         $this->detailDuration = $detailDuration;
         $this->avoidMotorway = $avoidMotorway;
         $this->pointsOnly = $pointsOnly;
@@ -138,10 +138,10 @@ class GeoRouterProvider implements ProviderInterface
                     // so after the requests we will be able to know who is the owner
                     $requestsOwner = [];
                     $i = 0;
-                    foreach ($params['arrayPoints'] as $ownerId => $addresses) {
-                        foreach ($addresses as $points) {
+                    foreach ($params['arrayPoints'] as $ownerId => $directionVariants) {
+                        foreach ($directionVariants as $addresses) {
                             $rparams = $this->uri ."/" . self::COLLECTION_RESOURCE . "/?";
-                            foreach ($points as $address) {
+                            foreach ($addresses as $address) {
                                 $rparams .= "point=" . $address->getLatitude() . "," . $address->getLongitude() . "&";
                             }
                             $rparams .= "locale=" . self::GR_LOCALE .
@@ -164,6 +164,7 @@ class GeoRouterProvider implements ProviderInterface
                     $fp = fopen($filename, 'w');
                     fwrite($fp, json_encode($urls, JSON_FORCE_OBJECT));
                     fclose($fp);
+
                     $this->logger->debug('Multiple Async | Creation of the exchange file end');
 
                     // call external script
@@ -172,13 +173,14 @@ class GeoRouterProvider implements ProviderInterface
                     $this->logger->debug('Multiple Async | Call external script end');
                     // treat the response
                     $response = \JsonMachine\JsonMachine::fromFile($filename);
+
                     foreach ($response as $key=>$paths) {
                         //$this->logger->debug('Multiple Async | Treating path #'.$key);
                         // we search the first and last elements for the bearing
-                        reset($params['arrayPoints'][$key][0]);
-                        $first_key = key($params['arrayPoints'][$key][0]);
-                        end($params['arrayPoints'][$key][0]);
-                        $last_key = key($params['arrayPoints'][$key][0]);
+                        reset($params['arrayPoints'][$requestsOwner[$key]][0]);
+                        $first_key = key($params['arrayPoints'][$requestsOwner[$key]][0]);
+                        end($params['arrayPoints'][$requestsOwner[$key]][0]);
+                        $last_key = key($params['arrayPoints'][$requestsOwner[$key]][0]);
                         foreach ($paths as $path) {
                             if (isset($params['asObject'])) {
                                 // usual behaviour
@@ -190,10 +192,10 @@ class GeoRouterProvider implements ProviderInterface
                                     'duration' => isset($path["time"]) ? $path["time"]/1000 : null,
                                     'bbox' => isset($path["bbox"]) ? [$path["bbox"][0],$path["bbox"][1],$path["bbox"][2],$path["bbox"][3]] : null,
                                     'bearing' => $this->geoTools->getRhumbLineBearing(
-                                        $params['arrayPoints'][$key][0][$first_key]->getLatitude(),
-                                        $params['arrayPoints'][$key][0][$first_key]->getLongitude(),
-                                        $params['arrayPoints'][$key][0][$last_key]->getLatitude(),
-                                        $params['arrayPoints'][$key][0][$last_key]->getLongitude()
+                                        $params['arrayPoints'][$requestsOwner[$key]][0][$first_key]->getLatitude(),
+                                        $params['arrayPoints'][$requestsOwner[$key]][0][$first_key]->getLongitude(),
+                                        $params['arrayPoints'][$requestsOwner[$key]][0][$last_key]->getLatitude(),
+                                        $params['arrayPoints'][$requestsOwner[$key]][0][$last_key]->getLongitude()
                                     )
                                 ];
                             }
@@ -300,7 +302,11 @@ class GeoRouterProvider implements ProviderInterface
             $direction->setSnappedWaypoints($this->deserializePoints($data['snapped_waypoints'], true, false));
         }
         $direction->setFormat('graphhopper');
-        $direction->setBearing($this->bearing); // already calculated
+        if (!is_null($this->bearing)) {
+            $direction->setBearing($this->bearing); // already calculated
+        } else {
+            $direction->setBearing($this->geoTools->getRhumbLineBearing($direction->getPoints()[0]->getLatitude(), $direction->getPoints()[0]->getLongitude(), $direction->getPoints()[count($direction->getPoints())-1]->getLatitude(), $direction->getPoints()[count($direction->getPoints())-1]->getLongitude()));
+        }
 
         if ($this->detailDuration && isset($data["details"]["time"])) {
             // if we get the detail of duration between points, we can get the duration between the waypoints

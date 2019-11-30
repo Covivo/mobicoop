@@ -85,26 +85,40 @@ class GeoMatcher
         } else {
             // ASYNC
             $this->logger->debug('Single Match | Async');
+
             // we create the points for the routes alternatives for each candidate
             $addressesForRoutes = [];
             $candidatesById = [];
+            $variants = [];
+            $i = 0;
             foreach ($candidates as $candidateToMatch) {
-                if ($master && $pointsArray = $this->generatePointsArray($candidate, $candidateToMatch)) {
-                    $candidatesById[$candidateToMatch->getId()] = $candidateToMatch;
-                    $addressesForRoutes[$candidateToMatch->getId()] = $pointsArray;
-                } elseif (!$master && $pointsArray = $this->generatePointsArray($candidateToMatch, $candidate)) {
-                    $candidatesById[$candidateToMatch->getId()] = $candidateToMatch;
-                    $addressesForRoutes[$candidateToMatch->getId()] = $pointsArray;
+                if ($master) {
+                    $pointsArray = $this->generatePointsArray($candidate, $candidateToMatch);
+                } else {
+                    $pointsArray = $this->generatePointsArray($candidateToMatch, $candidate);
                 }
+                foreach ($pointsArray as $key=>$variant) {
+                    $variants[$i] = [
+                        'candidate' => $candidateToMatch->getId(),
+                        'variantPoints' => $variant
+                    ];
+                    $addressesForRoutes[$i][] = $variant;
+                    $i++;
+                }
+                $candidatesById[$candidateToMatch->getId()] = $candidateToMatch;
             }
             // we get the routes for all candidates
-            $ownerRoutes = $this->geoRouter->getAsyncRoutes($addressesForRoutes, true);
+            $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, true, true);
+
             // we treat the routes to check if they match
             foreach ($ownerRoutes as $ownerId=>$routes) {
-                if ($matches = $this->checkMatch($candidate, $candidatesById[$ownerId], $routes, $addressesForRoutes[$ownerId])) {
-                    foreach ($matches as $match) {
-                        $matchesReturned[] = $match;
-                    }
+                if ($match = $this->checkMatch(
+                    $candidate,
+                    $candidatesById[$variants[$ownerId]['candidate']],
+                    $routes,
+                    $variants[$ownerId]['variantPoints']
+                )) {
+                    $matchesReturned[] = $match;
                 }
             }
         }

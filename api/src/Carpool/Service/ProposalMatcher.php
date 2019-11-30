@@ -181,7 +181,7 @@ class ProposalMatcher
         if (!$proposalsFound = $this->proposalRepository->findMatchingProposals($proposal, $excludeProposalUser)) {
             return [];
         }
-        $this->logger->info('Proposal matcher | End find matching proposals | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->logger->info('Proposal matcher | End find matching proposals | Found ' . count($proposalsFound) . ' potential matchings | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
         $matchings = [];
 
@@ -197,11 +197,13 @@ class ProposalMatcher
             $addresses[] = $waypoint->getAddress();
         }
         $candidateProposal->setAddresses($addresses);
+
         $this->logger->info('Proposal matcher | Start geomatcher as driver | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         if ($proposal->getCriteria()->isDriver()) {
             $candidateProposal->setMaxDetourDistance($proposal->getCriteria()->getMaxDetourDistance() ? $proposal->getCriteria()->getMaxDetourDistance() : ($proposal->getCriteria()->getDirectionDriver()->getDistance()*self::MAX_DETOUR_DISTANCE_PERCENT/100));
             $candidateProposal->setMaxDetourDuration($proposal->getCriteria()->getMaxDetourDuration() ? $proposal->getCriteria()->getMaxDetourDuration() : ($proposal->getCriteria()->getDirectionDriver()->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100));
             $candidateProposal->setDirection($proposal->getCriteria()->getDirectionDriver());
+            $candidatesPassenger = [];
             foreach ($proposalsFound as $proposalToMatch) {
                 $this->logger->info('Proposal matcher | trying Proposal ' . $proposalToMatch->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
@@ -220,36 +222,39 @@ class ProposalMatcher
                 // the 2 following are not taken in account right now as only the driver detour matters
                 $candidate->setMaxDetourDistance($proposalToMatch->getCriteria()->getMaxDetourDistance() ? $proposalToMatch->getCriteria()->getMaxDetourDistance() : ($proposalToMatch->getCriteria()->getDirectionPassenger()->getDistance()*self::MAX_DETOUR_DISTANCE_PERCENT/100));
                 $candidate->setMaxDetourDuration($proposalToMatch->getCriteria()->getMaxDetourDuration() ? $proposalToMatch->getCriteria()->getMaxDetourDuration() : ($proposalToMatch->getCriteria()->getDirectionPassenger()->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100));
-                if ($matches = $this->geoMatcher->singleMatch($candidateProposal, [$candidate], true)) {
-                    // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
-                    if (is_array($matches) && count($matches)>0) {
-                        switch (self::MULTI_MATCHES_FOR_SAME_CANDIDATES) {
-                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
-                                usort($matches, self::build_sorter('newDuration'));
+                $candidatesPassenger[] = $candidate;
+            }
+                
+            $this->logger->info('Proposal matcher | Launch georouter | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            if ($matches = $this->geoMatcher->singleMatch($candidateProposal, $candidatesPassenger, true, true)) {
+                // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
+                if (is_array($matches) && count($matches)>0) {
+                    switch (self::MULTI_MATCHES_FOR_SAME_CANDIDATES) {
+                        case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                            usort($matches, self::build_sorter('newDuration'));
+                            $matching = new Matching();
+                            $matching->setProposalOffer($proposal);
+                            $matching->setProposalRequest($proposalToMatch);
+                            $matching->setFilters($matches[0]);
+                            $matchings[] = $matching;
+                            break;
+                        case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST:
+                            usort($matches, self::build_sorter('newDistance'));
+                            $matching = new Matching();
+                            $matching->setProposalOffer($proposal);
+                            $matching->setProposalRequest($proposalToMatch);
+                            $matching->setFilters($matches[0]);
+                            $matchings[] = $matching;
+                            break;
+                        default:
+                            foreach ($matches as $match) {
                                 $matching = new Matching();
                                 $matching->setProposalOffer($proposal);
                                 $matching->setProposalRequest($proposalToMatch);
-                                $matching->setFilters($matches[0]);
+                                $matching->setFilters($match);
                                 $matchings[] = $matching;
-                                break;
-                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST:
-                                usort($matches, self::build_sorter('newDistance'));
-                                $matching = new Matching();
-                                $matching->setProposalOffer($proposal);
-                                $matching->setProposalRequest($proposalToMatch);
-                                $matching->setFilters($matches[0]);
-                                $matchings[] = $matching;
-                                break;
-                            default:
-                                foreach ($matches as $match) {
-                                    $matching = new Matching();
-                                    $matching->setProposalOffer($proposal);
-                                    $matching->setProposalRequest($proposalToMatch);
-                                    $matching->setFilters($match);
-                                    $matchings[] = $matching;
-                                }
-                                break;
-                        }
+                            }
+                            break;
                     }
                 }
             }
@@ -261,6 +266,7 @@ class ProposalMatcher
             // the 2 following are not taken in account right now as only the driver detour matters
             $candidateProposal->setMaxDetourDistance($proposal->getCriteria()->getMaxDetourDistance() ? $proposal->getCriteria()->getMaxDetourDistance() : ($proposal->getCriteria()->getDirectionPassenger()->getDistance()*self::MAX_DETOUR_DISTANCE_PERCENT/100));
             $candidateProposal->setMaxDetourDuration($proposal->getCriteria()->getMaxDetourDuration() ? $proposal->getCriteria()->getMaxDetourDuration() : ($proposal->getCriteria()->getDirectionPassenger()->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100));
+            $candidatesDriver = [];
             foreach ($proposalsFound as $proposalToMatch) {
                 $this->logger->info('Proposal matcher | trying Proposal ' . $proposalToMatch->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 // if the candidate is not driver we skip (the 2 candidates could be driver AND passenger, and the second one match only as a passenger)
@@ -277,37 +283,39 @@ class ProposalMatcher
                 $candidate->setDirection($proposalToMatch->getCriteria()->getDirectionDriver());
                 $candidate->setMaxDetourDistance($proposalToMatch->getCriteria()->getMaxDetourDistance() ? $proposalToMatch->getCriteria()->getMaxDetourDistance() : ($proposalToMatch->getCriteria()->getDirectionDriver()->getDistance()*self::MAX_DETOUR_DISTANCE_PERCENT/100));
                 $candidate->setMaxDetourDuration($proposalToMatch->getCriteria()->getMaxDetourDuration() ? $proposalToMatch->getCriteria()->getMaxDetourDuration() : ($proposalToMatch->getCriteria()->getDirectionDriver()->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100));
-                //echo $proposalToMatch->getCriteria()->getDirectionDriver()->getDistance() . "/" . $candidate->getMaxDetourDistance() . " " . $proposalToMatch->getCriteria()->getDirectionDriver()->getDuration() . "/" . $candidate->getMaxDetourDuration() . "\n";
-                if ($matches = $this->geoMatcher->singleMatch($candidateProposal, [$candidate], false)) {
-                    // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
-                    if (is_array($matches) && count($matches)>0) {
-                        switch (self::MULTI_MATCHES_FOR_SAME_CANDIDATES) {
-                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
-                                usort($matches, self::build_sorter('newDuration'));
+                $candidatesDriver[] = $candidate;
+            }
+
+            $this->logger->info('Proposal matcher | Launch georouter | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            if ($matches = $this->geoMatcher->singleMatch($candidateProposal, $candidatesDriver, false, true)) {
+                // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
+                if (is_array($matches) && count($matches)>0) {
+                    switch (self::MULTI_MATCHES_FOR_SAME_CANDIDATES) {
+                        case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                            usort($matches, self::build_sorter('newDuration'));
+                            $matching = new Matching();
+                            $matching->setProposalOffer($proposalToMatch);
+                            $matching->setProposalRequest($proposal);
+                            $matching->setFilters($matches[0]);
+                            $matchings[] = $matching;
+                            break;
+                        case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST:
+                            usort($matches, self::build_sorter('newDistance'));
+                            $matching = new Matching();
+                            $matching->setProposalOffer($proposalToMatch);
+                            $matching->setProposalRequest($proposal);
+                            $matching->setFilters($matches[0]);
+                            $matchings[] = $matching;
+                            break;
+                        default:
+                            foreach ($matches as $match) {
                                 $matching = new Matching();
                                 $matching->setProposalOffer($proposalToMatch);
                                 $matching->setProposalRequest($proposal);
-                                $matching->setFilters($matches[0]);
+                                $matching->setFilters($match);
                                 $matchings[] = $matching;
-                                break;
-                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST:
-                                usort($matches, self::build_sorter('newDistance'));
-                                $matching = new Matching();
-                                $matching->setProposalOffer($proposalToMatch);
-                                $matching->setProposalRequest($proposal);
-                                $matching->setFilters($matches[0]);
-                                $matchings[] = $matching;
-                                break;
-                            default:
-                                foreach ($matches as $match) {
-                                    $matching = new Matching();
-                                    $matching->setProposalOffer($proposalToMatch);
-                                    $matching->setProposalRequest($proposal);
-                                    $matching->setFilters($match);
-                                    $matchings[] = $matching;
-                                }
-                                break;
-                        }
+                            }
+                            break;
                     }
                 }
             }

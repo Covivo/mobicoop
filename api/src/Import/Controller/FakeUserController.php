@@ -43,7 +43,7 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class FakeUserController extends AbstractController
 {
-    const BATCH = 500;
+    const BATCH = 50;
     const MIN_BIRTHDATE = "1930-01-01";
     const MAX_BIRTHDATE = "2001-01-01";
     const MIN_DATE = "2019-11-28";
@@ -79,8 +79,11 @@ class FakeUserController extends AbstractController
         $emails = []; // used to avoid duplicates
         $users = [];
       
+        echo "Start generating fake addresses at " . (new \DateTime("UTC"))->format("Ymd H:i:s.u") . "<br />";
         $this->generateFakeAddresses($number_addresses, $min_lat, $min_lon, $max_lat, $max_lon, $geoSearcher);
-        
+        echo "End generating fake addresses at " . (new \DateTime("UTC"))->format("Ymd H:i:s.u") . "<br />";
+
+        echo "Start generating users at " . (new \DateTime("UTC"))->format("Ymd H:i:s.u") . "<br />";
         while ($generated < $number_users) {
 
             // create the user
@@ -122,6 +125,7 @@ class FakeUserController extends AbstractController
             if ($criteria->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                 $criteria->setFromDate($this->getRandomDate(self::MIN_DATE, self::MAX_DATE));
                 $criteria->setFromTime($this->getRandomTime(self::MIN_TIME, self::MAX_TIME));
+                $criteria->setStrictDate(true);
             } else {
                 $criteria->setFromDate(\Datetime::createFromFormat('Y-m-d', self::MIN_DATE));
                 $criteria->setToDate(\Datetime::createFromFormat('Y-m-d', self::MAX_DATE));
@@ -149,7 +153,10 @@ class FakeUserController extends AbstractController
             $destination = new Waypoint();
             $destination->setPosition(1);
             $destination->setDestination(true);
-            $destination->setAddress(clone $this->getFakeAddress());
+            // get sure origin <> destination
+            do {
+                $destination->setAddress(clone $this->getFakeAddress());
+            } while ($destination->getAddress()->getLongitude() == $origin->getAddress()->getLongitude() && $destination->getAddress()->getLatitude() == $origin->getAddress()->getLatitude());
 
             $proposal->addWaypoint($origin);
             $proposal->addWaypoint($destination);
@@ -213,17 +220,21 @@ class FakeUserController extends AbstractController
             $pool++;
             if ($pool>=self::BATCH) {
                 $entityManager->flush();
+                $entityManager->clear();
                 $pool = 0;
             }
         }
         
         $entityManager->flush();
+        $entityManager->clear();
 
-        echo "<ul>";
-        foreach ($users as $user) {
-            echo "<li>" . $user->getGivenName() . " " . $user->getFamilyName() . " - " . $user->getEmail() . " - " . $user->getBirthdate()->format('d/m/Y') . " added</li>";
-        }
-        echo "</ul>";
+        echo "End generating users at " . (new \DateTime("UTC"))->format("Ymd H:i:s.u") . "<br />";
+
+        // echo "<ul>";
+        // foreach ($users as $user) {
+        //     echo "<li>" . $user->getGivenName() . " " . $user->getFamilyName() . " - " . $user->getEmail() . " - " . $user->getBirthdate()->format('d/m/Y') . " added</li>";
+        // }
+        // echo "</ul>";
         //return $geoSearcher->geoCode($this->request->get("input"));
         return new Response();
     }

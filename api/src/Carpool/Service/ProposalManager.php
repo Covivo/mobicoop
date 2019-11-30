@@ -53,6 +53,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use App\Import\Entity\UserImport;
+
 /**
  * Proposal manager service.
  *
@@ -563,133 +565,179 @@ class ProposalManager
     *************/
 
     /**
-     * Compute directions for multiple proposals at once
+     * Set the directions and default values for imported users proposals and criterias
      *
-     * @param array $proposals  The proposals we want the directions
-     * @param int $batch        The batch size
-     * @return array            The proposals treated
+     * @param integer $batch    The batch size
+     * @return void
      */
-    public function setDirectionsForProposals(array $proposals, int $batch)
+    public function setDirectionsAndDefaultsForImport(int $batch)
     {
-        // we will have to get the directions by batch, as we may have to compute thousands of directions
-        // we create a pool of addresses for driver and passenger directions
-        // we also create 2 arrays of owners, to keep the relation between computed directions and proposals (as driver and passenger)
-        $addressesForRoutes = [];
-        $routesDriverOwner = [];
-        $routesPassengerOwner = [];
-        $i=0;
+        $qCriteria = $this->entityManager->createQuery('SELECT c from App\Carpool\Entity\Criteria c JOIN c.proposal p JOIN p.user u JOIN u.import i WHERE i.status='.UserImport::STATUS_USER_TREATED);
+
+        $addressesForRoutesDriver = [];
+        $addressesForRoutesPassenger = [];
+
         $this->logger->info('setDirectionsForProposals | Start creating arrays for calculation at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        foreach ($proposals as $proposal) {
+
+        $iterableResult = $qCriteria->iterate();
+        foreach ($iterableResult as $row) {
+            $criteria = $row[0];
             $addressesDriver = [];
             $addressesPassenger = [];
-            foreach ($proposal->getWaypoints() as $waypoint) {
-                if ($proposal->getCriteria()->isDriver()) {
+            foreach ($criteria->getProposal()->getWaypoints() as $waypoint) {
+                if ($criteria->isDriver()) {
                     $addressesDriver[] = $waypoint->getAddress();
                 }
-                if ($proposal->getCriteria()->isPassenger() && ($waypoint->getPosition() == 0 || $waypoint->isDestination())) {
+                if ($criteria->isPassenger() && ($waypoint->getPosition() == 0 || $waypoint->isDestination())) {
                     $addressesPassenger[] = $waypoint->getAddress();
                 }
             }
-            if ($proposal->getCriteria()->isDriver()) {
-                $addressesForRoutes[$i][] = $addressesDriver;
-                $routesDriverOwner[$i] = $proposal;
-                $i++;
+            if (count($addressesDriver)>0) {
+                $addressesForRoutesDriver[$criteria->getId()][] = $addressesDriver;
             }
-            if ($proposal->getCriteria()->isPassenger()) {
-                $addressesForRoutes[$i][] = $addressesPassenger;
-                $routesPassengerOwner[$i] = $proposal;
-                $i++;
+            if (count($addressesPassenger)>0) {
+                $addressesForRoutesPassenger[$criteria->getId()][] = $addressesPassenger;
             }
         }
 
-        $this->logger->info('setDirectionsForProposals | Start georouter multiple calculation at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, true);
-        
+        $this->logger->info('setDirectionsForProposals | Start georouter multiple calculation for driver at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $ownerDriverRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutesDriver, false, true);
+        $this->logger->info('setDirectionsForProposals | Start georouter multiple calculation for passenger at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $ownerPassengerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutesPassenger, false, true);
+
+        $qCriteria = $this->entityManager->createQuery('SELECT c from App\Carpool\Entity\Criteria c JOIN c.proposal p JOIN p.user u JOIN u.import i WHERE i.status='.UserImport::STATUS_USER_TREATED);
+
         $pool = 0;
-        $this->logger->info('setDirectionsForProposals | Start treating driver routes at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        foreach ($routesDriverOwner as $key => $proposal) {
-            if (isset($ownerRoutes[$key])) {
-                $direction = $ownerRoutes[$key][0];
-                // creation of the crossed zones
-                // $this->logger->info('setDirectionsForProposals | Start calculate zones for direction driver ' . $key . ' at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $iterableResult = $qCriteria->iterate();
+        foreach ($iterableResult as $row) {
+            $criteria = $row[0];
+            if (isset($ownerDriverRoutes[$criteria->getId()])) {
+                $direction = $ownerDriverRoutes[$criteria->getId()][0];
                 $direction = $this->zoneManager->createZonesForDirection($direction);
-                // $this->logger->info('setDirectionsForProposals | End calculate zones for direction driver ' . $key . ' at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                $proposal->getCriteria()->setDirectionDriver($direction);
-                $proposal->getCriteria()->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
-                $proposal->getCriteria()->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
-                $this->entityManager->persist($proposal);
-                // batch
-                $pool++;
-                if ($pool>=$batch) {
-                    $this->logger->info('setDirectionsForProposals | Start Flush at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                    $this->entityManager->flush();
-                    $this->logger->info('setDirectionsForProposals | End Flush at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                    $pool = 0;
+                $this->entityManager->persist($direction);
+                $criteria->setDirectionDriver($direction);
+                $criteria->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
+                $criteria->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
+            }
+            if (isset($ownerPassengerRoutes[$criteria->getId()])) {
+                $direction = $ownerPassengerRoutes[$criteria->getId()][0];
+                $direction = $this->zoneManager->createZonesForDirection($direction);
+                $this->entityManager->persist($direction);
+                $criteria->setDirectionPassenger($direction);
+            }
+
+            if (is_null($criteria->getAnyRouteAsPassenger())) {
+                $criteria->setAnyRouteAsPassenger($this->params['defaultAnyRouteAsPassenger']);
+            }
+            if (is_null($criteria->isStrictDate())) {
+                $criteria->setStrictDate($this->params['defaultStrictDate']);
+            }
+            if (is_null($criteria->getPriceKm())) {
+                $criteria->setPriceKm($this->params['defaultPriceKm']);
+            }
+            if ($criteria->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                if (is_null($criteria->isStrictPunctual())) {
+                    $criteria->setStrictPunctual($this->params['defaultStrictPunctual']);
+                }
+                if (is_null($criteria->getMarginDuration())) {
+                    $criteria->setMarginDuration($this->params['defaultMarginTime']);
+                }
+            } else {
+                if (is_null($criteria->isStrictRegular())) {
+                    $criteria->setStrictRegular($this->params['defaultStrictRegular']);
+                }
+                if (is_null($criteria->getMonMarginDuration())) {
+                    $criteria->setMonMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (is_null($criteria->getTueMarginDuration())) {
+                    $criteria->setTueMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (is_null($criteria->getWedMarginDuration())) {
+                    $criteria->setWedMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (is_null($criteria->getThuMarginDuration())) {
+                    $criteria->setThuMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (is_null($criteria->getFriMarginDuration())) {
+                    $criteria->setFriMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (is_null($criteria->getSatMarginDuration())) {
+                    $criteria->setSatMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (is_null($criteria->getSunMarginDuration())) {
+                    $criteria->setSunMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (is_null($criteria->getToDate())) {
+                    // end date is usually null, except when creating a proposal after a matching search
+                    $endDate = clone $criteria->getFromDate();
+                    // the date can be immutable
+                    $toDate = $endDate->add(new \DateInterval('P' . $this->params['defaultRegularLifeTime'] . 'Y'));
+                    $criteria->setToDate($toDate);
                 }
             }
-        }
-        $this->logger->info('setDirectionsForProposals | Start treating passenger routes at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        foreach ($routesPassengerOwner as $key => $proposal) {
-            if (isset($ownerRoutes[$key])) {
-                $direction = $ownerRoutes[$key][0];
-                // creation of the crossed zones
-                // $this->logger->info('setDirectionsForProposals | Start calculate zones for direction passenger ' . $key . ' at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                $direction = $this->zoneManager->createZonesForDirection($direction);
-                // $this->logger->info('setDirectionsForProposals | End calculate zones for direction passenger ' . $key . ' at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                $proposal->getCriteria()->setDirectionPassenger($direction);
-                $this->entityManager->persist($proposal);
-                // batch
-                $pool++;
-                if ($pool>=$batch) {
-                    $this->logger->info('setDirectionsForProposals | Start Flush at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                    $this->entityManager->flush();
-                    $this->logger->info('setDirectionsForProposals | End Flush at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                    $pool = 0;
+
+            if ($criteria->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $criteria->getFromTime()) {
+                list($minTime, $maxTime) = self::getMinMaxTime($criteria->getFromTime(), $criteria->getMarginDuration());
+                $criteria->setMinTime($minTime);
+                $criteria->setMaxTime($maxTime);
+            } else {
+                if ($criteria->isMonCheck() && $criteria->getMonTime()) {
+                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getMonTime(), $criteria->getMonMarginDuration());
+                    $criteria->setMonMinTime($minTime);
+                    $criteria->setMonMaxTime($maxTime);
+                }
+                if ($criteria->isTueCheck() && $criteria->getTueTime()) {
+                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getTueTime(), $criteria->getTueMarginDuration());
+                    $criteria->setTueMinTime($minTime);
+                    $criteria->setTueMaxTime($maxTime);
+                }
+                if ($criteria->isWedCheck() && $criteria->getWedTime()) {
+                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getWedTime(), $criteria->getWedMarginDuration());
+                    $criteria->setWedMinTime($minTime);
+                    $criteria->setWedMaxTime($maxTime);
+                }
+                if ($criteria->isThuCheck() && $criteria->getThuTime()) {
+                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getThuTime(), $criteria->getThuMarginDuration());
+                    $criteria->setThuMinTime($minTime);
+                    $criteria->setThuMaxTime($maxTime);
+                }
+                if ($criteria->isFriCheck() && $criteria->getFriTime()) {
+                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getFriTime(), $criteria->getFriMarginDuration());
+                    $criteria->setFriMinTime($minTime);
+                    $criteria->setFriMaxTime($maxTime);
+                }
+                if ($criteria->isSatCheck() && $criteria->getSatTime()) {
+                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getSatTime(), $criteria->getSatMarginDuration());
+                    $criteria->setSatMinTime($minTime);
+                    $criteria->setSatMaxTime($maxTime);
+                }
+                if ($criteria->isSunCheck() && $criteria->getSunTime()) {
+                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getSunTime(), $criteria->getSunMarginDuration());
+                    $criteria->setSunMinTime($minTime);
+                    $criteria->setSunMaxTime($maxTime);
                 }
             }
-        }
-        // final flush for pending persists
-        $this->logger->info('setDirectionsForProposals | Start Flush at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        $this->entityManager->flush();
-        $this->logger->info('setDirectionsForProposals | End Flush at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        $this->logger->info('setDirectionsForProposals | End at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            if ($criteria->getDirectionDriver()) {
+                $criteria->setDriverComputedPrice((string)((int)$criteria->getDirectionDriver()->getDistance()*(float)$criteria->getPriceKm()/1000));
+                $criteria->setDriverComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$criteria->getDriverComputedPrice(), $criteria->getFrequency()));
+            }
+            if ($criteria->getDirectionPassenger()) {
+                $criteria->setPassengerComputedPrice((string)((int)$criteria->getDirectionPassenger()->getDistance()*(float)$criteria->getPriceKm()/1000));
+                $criteria->setPassengerComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$criteria->getPassengerComputedPrice(), $criteria->getFrequency()));
+            }
+            $this->entityManager->persist($criteria);
 
-        return $proposals;
-    }
-
-    /**
-     * Set default parameters for multiple proposals at once :
-     * - default values
-     * - min and max times
-     * - prices (so use this method after direction calculation)
-     *
-     * @param array $proposals  The proposals we want to treat
-     * @param int $batch        The batch size
-     * @return array            The proposals treated
-     */
-    public function setDefaultsForProposals(array $proposals, int $batch)
-    {
-        $pool = 0;
-        $this->logger->info('setDefaultsForProposals | Start at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        foreach ($proposals as $proposal) {
-            $proposal = $this->setDefaults($proposal);
-            $proposal = $this->setMinMax($proposal);
-            $proposal = $this->setPrices($proposal);
-            $this->entityManager->persist($proposal);
             // batch
             $pool++;
             if ($pool>=$batch) {
                 $this->entityManager->flush();
+                $this->entityManager->clear();
                 $pool = 0;
             }
         }
-        // final flush for pending persists
         $this->entityManager->flush();
-        
-        $this->logger->info('setDefaultsForProposals | End at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        
-        return $proposals;
+        $this->entityManager->clear();
     }
 
     /**
@@ -700,6 +748,31 @@ class ProposalManager
      */
     public function createMatchingsForProposals(array $proposals)
     {
+
+        // 1 - make an array of all potential matching proposals for each proposal
+        
+        // findMatchingProposalsForProposals :
+        // $potentialProposals = [
+        //     'proposalID' => [
+        //         'proposal1',
+        //         'proposal2',
+        //         ...
+        //     ]
+        // ];
+
+        // 2 - make an array of candidates as driver and passenger
+        // $candidatesProposals = [
+        //     'proposalID' => [
+        //         'candidateDrivers' => [
+        //         ],
+        //         'candidatePassengers' => [
+        //         ]
+        //     ]
+        // ];
+
+        // 3 - make an array of all routes for single pass mass georouting
+        // => multimatch
+
         foreach ($proposals as $proposal) {
             // matching analyze
             $this->logger->info('Multi Proposal matching | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));

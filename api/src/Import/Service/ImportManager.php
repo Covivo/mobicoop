@@ -66,7 +66,7 @@ class ImportManager
         $pool = 0;
 
         // batch for users
-        $batch = 5000;
+        $batch = 50;
         
         // we have to treat all the users that have just been imported
         // first pass : user related treatment
@@ -87,55 +87,32 @@ class ImportManager
             $pool++;
             if ($pool>=$batch) {
                 $this->entityManager->flush();
+                //$this->entityManager->clear();
                 $pool = 0;
             }
         }
         // final flush for pending persists
         $this->entityManager->flush();
-        
-        // new batch for proposals
-        $batch = 500;
-        
-        // reinit the pool
-        $pool = 0;
+        $this->entityManager->clear();
 
-        // second pass : journey related treatment
-        // in this pass we just compute the directions of the proposals, to get the zones and limit the future matching
-        $importedUsers = $this->userImportRepository->findBy(['status'=>UserImport::STATUS_USER_TREATED]);
+        // batch for criterias / direction
+        $batch = 100;
 
+        $this->proposalManager->setDirectionsAndDefaultsForImport($batch);
+
+        // creation of the matchings
         // we create an array of all proposals to treat
+        $importedUsers = $this->userImportRepository->findBy(['status'=>UserImport::STATUS_USER_TREATED]);
         $proposals = [];
         foreach ($importedUsers as $import) {
-            // $import->setStatus(UserImport::STATUS_PENDING);
-            // $import->setTreatmentUserStartDate(new \DateTime());
-            // $this->entityManager->persist($import);
             foreach ($import->getUser()->getProposals() as $proposal) {
                 $proposals[] = $proposal;
             }
-            // batch
-            // $pool++;
-            // if ($pool>=$batch) {
-            //     $this->entityManager->flush();
-            //     $pool = 0;
-            // }
         }
-        // final flush for pending persists
-        // $this->entityManager->flush();
-
-        // reinit the pool
-        $pool = 0;
-
-        // creation of the directions
-        $proposals = $this->proposalManager->setDirectionsForProposals($proposals, $batch);
-
-        // creation of the defaults
-        $proposals = $this->proposalManager->setDefaultsForProposals($proposals, $batch);
-
-        // creation of the matchings
-        //$proposals = $this->proposalManager->createMatchingsForProposals($proposals);
+        $this->proposalManager->createMatchingsForProposals($proposals);
 
         // treat the return and opposite
-        //$proposals = $this->proposalManager->createLinkedAndOppositesForProposals($proposals);
+        $proposals = $this->proposalManager->createLinkedAndOppositesForProposals($proposals);
 
         return $importedUsers;
     }
