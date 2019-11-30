@@ -707,36 +707,30 @@ class ProposalManager
     {
         $asks = $this->askManager->getAsksFromProposal($proposal);
 
-        $this->entityManager->remove($proposal);
-
         if (count($asks) > 0) {
             /** @var Ask $ask */
             foreach ($asks as $ask) {
-                if ($body["deletionMessage"]) {
-                    // creates a new thread, todo: adapt after "carpoolMessagesFromAskHistories" branch merge to avoid that
-                    $askHistory = new AskHistory();
-                    $message = $this->internalMessageManager->createMessage($proposal->getUser(), [$ask->getUser()], $body["deletionMessage"], null, null);
-                    $askHistory->setMessage($message);
-                    $askHistory->setAsk($ask);
-                    $askHistory->setStatus($ask->getStatus());
-                    $askHistory->setType($ask->getType());
+                $deleter = ($body['deleterId'] == $ask->getUser()->getId()) ? $ask->getUser() : $ask->getUserRelated();
+                $recipient = ($body['deleterId'] == $ask->getUser()->getId()) ? $ask->getUserRelated() : $ask->getUser();
 
-                    $this->entityManager->persist($askHistory);
+                if (isset($body["deletionMessage"]) && $body["deletionMessage"] != "") {
+                    $message = $this->internalMessageManager->createMessage($deleter, [$recipient], $body["deletionMessage"], null, null);
+
+                    $this->entityManager->persist($message);
                 }
 
                 $now = new \DateTime();
 
-                // todo: change status after update
-                // Accepted
-                if ($ask->getStatus() === 3) {
+                // Ask user is driver
+                if ($this->askManager->isAskUserDriver($ask) && $ask->getUser()->getId() == $deleter->getId()) {
+                    /** @var Criteria $criteria */
+                    $criteria = $ask->getMatching()->getProposalOffer()->getCriteria()->getFromDate();
+                    $askDateTime = $criteria->getFromTime() ?
+                        new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
+                        new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
 
-                    // Ask user is driver
-                    if ($this->askManager->isAskUserDriver($ask)) {
-                        /** @var Criteria $criteria */
-                        $criteria = $ask->getMatching()->getProposalOffer()->getCriteria()->getFromDate();
-                        $askDateTime = $criteria->getFromTime() ?
-                            new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
-                            new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
+                    // Accepted
+                    if ($ask->getStatus() === (Ask::STATUS_ACCEPTED_AS_DRIVER or Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
 
                         // If ad is in more than 24h
                         if (strtotime($now) - strtotime($askDateTime) > 24*60*60) {
@@ -746,15 +740,22 @@ class ProposalManager
                             $event = new DriverAskAdDeletedUrgentEvent($ask);
                             $this->eventDispatcher->dispatch(DriverAskAdDeletedUrgentEvent::NAME, $event);
                         }
+                    } elseif ($ask->getStatus() === (Ask::STATUS_PENDING_AS_DRIVER or Ask::STATUS_PENDING_AS_PASSENGER)) {
+                        $event = new AskAdDeletedEvent($ask);
+                        $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
+                    }
 
-                        // Ask user is passenger
-                    } elseif ($this->askManager->isAskUserPassenger($ask)) {
+                    // Ask user is passenger
+                } elseif ($this->askManager->isAskUserPassenger($ask) && $ask->getUser()->getId() == $deleter->getId()) {
 
-                        /** @var Criteria $criteria */
-                        $criteria = $ask->getMatching()->getProposalRequest()->getCriteria();
-                        $askDateTime = $criteria->getFromTime() ?
-                            new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
-                            new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
+                    /** @var Criteria $criteria */
+                    $criteria = $ask->getMatching()->getProposalRequest()->getCriteria();
+                    $askDateTime = $criteria->getFromTime() ?
+                        new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
+                        new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
+                    
+                    // Accepted
+                    if ($ask->getStatus() === (Ask::STATUS_ACCEPTED_AS_DRIVER or Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
 
                         // If ad is in more than 24h
                         if ($askDateTime->getTimestamp() - $now->getTimestamp() < 24*60*60) {
@@ -764,16 +765,15 @@ class ProposalManager
                             $event = new PassengerAskAdDeletedUrgentEvent($ask);
                             $this->eventDispatcher->dispatch(PassengerAskAdDeletedUrgentEvent::NAME, $event);
                         }
+                    } elseif ($ask->getStatus() === (Ask::STATUS_PENDING_AS_DRIVER or Ask::STATUS_PENDING_AS_PASSENGER)) {
+                        $event = new AskAdDeletedEvent($ask);
+                        $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
                     }
-                }
-                // Pending
-                elseif ($ask->getStatus() === 2) {
-                    $event = new AskAdDeletedEvent($ask);
-                    $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
                 }
             }
         }
 
+        $this->entityManager->remove($proposal);
         $this->entityManager->flush();
 
         return new Response(204, "Deleted with success");

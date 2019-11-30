@@ -137,7 +137,7 @@ class CarpoolController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    public function carpoolAdDelete(ProposalManager $proposalManager, Request $request)
+    public function carpoolAdDelete(ProposalManager $proposalManager, Request $request, UserManager $userManager)
     {
         if ($request->isMethod('DELETE')) {
             $data = json_decode($request->getContent(), true);
@@ -147,11 +147,10 @@ class CarpoolController extends AbstractController
                     'message' => 'error'
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
-
             $proposal = $proposalManager->getProposal($data['proposalId']);
-
+           
             $this->denyAccessUnlessGranted('delete_ad', $proposal);
-
+            $data['deleterId'] = $userManager->getLoggedUser()->getId();
             if ($response = $proposalManager->deleteProposal($data['proposalId'], $data)) {
                 return new JsonResponse(
                     ["message" => "delete.success"],

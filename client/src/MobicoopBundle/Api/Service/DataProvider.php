@@ -511,7 +511,7 @@ class DataProvider
     public function delete(int $id, ?array $data=null): Response
     {
         try {
-            $clientResponse = $this->client->delete($this->resource."/".$id, ['json' => $data]);
+            $clientResponse = $this->client->delete($this->resource."/".$id, ['json' => json_encode($data)]);
             if ($clientResponse->getStatusCode() == 204) {
                 return new Response($clientResponse->getStatusCode());
             }
