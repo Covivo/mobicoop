@@ -35,6 +35,13 @@ class ContactController extends AbstractController
 {
     use HydraControllerTrait;
 
+    private $contactTypes;
+
+    public function __construct(string $contactTypes)
+    {
+        $this->contactTypes = json_decode($contactTypes, true);
+    }
+
     /**
      * Show the contact page
      */
@@ -89,6 +96,13 @@ class ContactController extends AbstractController
             $contact->setGivenName($data['givenName']);
             $contact->setFamilyName($data['familyName']);
             $contact->setDatetime(new DateTime());
+
+            // We set the right type of contact
+            if (isset($this->contactTypes[$data['demand']])) {
+                (isset(Contact::TYPES[$this->contactTypes[$data['demand']]])) ? $contact->setType(Contact::TYPES[$this->contactTypes[$data['demand']]]) : $contact->setType(Contact::TYPES['contact']);
+            } else {
+                $contact->setType(Contact::TYPES['contact']);
+            }
 
             if (count($errors) > 0) {
                 return new JsonResponse(

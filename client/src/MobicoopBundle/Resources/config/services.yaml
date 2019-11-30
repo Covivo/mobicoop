@@ -131,6 +131,8 @@ services:
     # Communication
     Mobicoop\Bundle\MobicoopBundle\Communication\Controller\:
         resource: '@MobicoopBundle/Communication/Controller/*'
+        arguments:
+            $contactTypes: '%env(resolve:CONTACT_TYPES)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\Communication\Service\:
         resource: '@MobicoopBundle/Communication/Service/*'
