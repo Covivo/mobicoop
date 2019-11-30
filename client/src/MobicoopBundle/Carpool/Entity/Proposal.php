@@ -408,13 +408,6 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return $this->matchingRequests;
     }
     
-    public function setMatchingRequests(array $matchingRequests): self
-    {
-        $this->matchingRequests = $matchingRequests;
-
-        return $this;
-    }
-
     public function addMatchingRequest(Matching $matchingRequest): self
     {
         if (!$this->matchingRequests->contains($matchingRequest)) {
@@ -446,12 +439,6 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return $this->matchingOffers;
     }
     
-    public function setMatchingOffers(array $matchingOffers): self
-    {
-        $this->matchingOffers = $matchingOffers;
-
-        return $this;
-    }
     public function addMatchingOffer(Matching $matchingOffer): self
     {
         if (!$this->matchingOffers->contains($matchingOffer)) {
