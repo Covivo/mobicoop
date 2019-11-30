@@ -2,7 +2,12 @@ export default {
   fr: {
     proposals: {
       ongoing: "Annonces en cours",
-      archived: "Annonces archivées"
+      archived: "Annonces archivées",
+      tooltips: {
+        driver: "Je serai conducteur",
+        passenger:"Je serai passager",
+        diverOrPassenger:"Peu importe: je serai conducteur ou passager"
+      },
     },
     delete: {
       route: "/covoiturage/annonce/supprimer",
