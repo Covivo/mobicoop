@@ -68,7 +68,9 @@ ask: "Demande"
 message: "Message"
 thankYou: "Merci"
 notMentioned: "Non renseigné"
-
+infos: "Informations"
+technicalIssues: "Problèmes techniques"
+partership: "Demande de partenariat"
 
 # USER_PASSWORD_CHANGED
 

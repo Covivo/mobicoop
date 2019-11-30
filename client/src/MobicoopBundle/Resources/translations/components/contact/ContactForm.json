@@ -19,11 +19,11 @@
     "demand": {
       "label": "Votre demande",
       "placeholder": "Votre demande",
-      "items": [
-        "Renseignement",
-        "Problème technique",
-        "Partenariat"
-      ]
+      "items": {
+        "infos":"Renseignement",
+        "technicalIssues":"Problème technique",
+        "partership":"Partenariat"
+      }
     },
     "message": {
       "label": "Votre message",
@@ -74,11 +74,11 @@
     "demand": {
       "label": "Your demand",
       "placeholder": "Your demand",
-      "items": [
-        "Information",
-        "Technical issue",
-        "Partnership"
-      ]
+      "items": {
+        "infos":"Information",
+        "technicalIssues":"Technical issue",
+        "partership":"Partnership"
+      }
     },
     "message": {
       "label": "Your message",
