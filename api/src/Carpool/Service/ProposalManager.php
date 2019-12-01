@@ -750,8 +750,7 @@ class ProposalManager
     {
 
         // 1 - make an array of all potential matching proposals for each proposal
-        
-        // findMatchingProposalsForProposals :
+        // findPotentialMatchingsForProposals :
         // $potentialProposals = [
         //     'proposalID' => [
         //         'proposal1',
@@ -769,6 +768,9 @@ class ProposalManager
         //         ]
         //     ]
         // ];
+
+        // todo : make only as drivers as passengers will be obviously tested !!
+        $candidatesProposals = $this->proposalMatcher->findPotentialMatchingsForProposals($proposals);
 
         // 3 - make an array of all routes for single pass mass georouting
         // => multimatch
