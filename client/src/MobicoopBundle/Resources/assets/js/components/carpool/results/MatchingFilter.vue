@@ -36,6 +36,19 @@
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-row>
+                <!-- <v-col cols="3">
+                  <v-select
+                    v-model="filters.order"
+                    :items="itemsOrder"
+                    :label="$t('select.order.label')"
+                    outlined
+                    dense
+                    flat
+                    :disabled="!filterEnabled.order"
+                    @change="updateFilterDate"
+                  />
+                </v-col>
+                <v-col cols="3"> -->
                 <v-col cols="4">
                   <v-select
                     v-model="filters.filters.time"
@@ -118,10 +131,15 @@ export default {
       chips:[],
       filterEnabled:{
         "time":true,
+        // "order":true,
         "role":true,
         "gender":true,
         "community":true
       },
+      // itemsOrder: [
+      //   {text:this.$t('select.order.date.increasing'),value:{criteria:'date',value:'ASC'}},
+      //   {text:this.$t('select.order.date.decreasing'),value:{criteria:'date',value:'DESC'}}
+      // ],
       itemsRole: [
         {text:this.$t('select.filter.role.driver.label'),value:this.$t('select.filter.role.driver.value')},
         {text:this.$t('select.filter.role.passenger.label'),value:this.$t('select.filter.role.passenger.value')},
@@ -134,6 +152,7 @@ export default {
       ],
       panel:null,
       filters:{
+        // order:null,
         filters:{
           // You can add here other filters
           time:null,
@@ -154,6 +173,13 @@ export default {
     }
   },
   methods :{
+    //   updateFilterDate(data){
+    //   this.filterEnabled.order = false;
+    //   this.chips.push({id:"order",text:this.$t('chips.date.label')+' : '+this.$t('chips.date.value.'+data.value),value:data.value});
+    //   this.closePanel();
+    //   this.$emit("updateFilters",this.filters);
+    // },
+
     updateFilterTime(data){
       this.filterEnabled.time = false;
       this.chips.push({id:"time",text:data,value:data});
@@ -184,6 +210,7 @@ export default {
     },
     removeFilter(item){
       this.filterEnabled[item.id] = true;
+      // (item.id=="order") ? this.filters[item.id] = null : this.filters.filters[item.id] = null;
       this.chips.splice(this.chips.indexOf(item), 1);
       this.$emit("updateFilters",this.filters);
     },
