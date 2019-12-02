@@ -416,6 +416,8 @@ export default {
             originLon:null,
             destinationLat:null,
             destinationLon:null,
+            carpoolerFirstName:"",
+            carpoolerLastName:""
           };
 
           if(proposal.type !== 'return'){ // We show only outward or one way proposals
@@ -433,11 +435,15 @@ export default {
                 infosForPopUp.destinationLon = waypoint.latLng.lon;
               }
             });
+            infosForPopUp.carpoolerFirstName = proposal.carpoolerFirstName;
+            infosForPopUp.carpoolerLastName = proposal.carpoolerLastName;
 
             // We build the content of the popup
-            currentProposal.desc = "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
+            currentProposal.desc = "<p><strong>"+infosForPopUp.carpoolerFirstName+" "+infosForPopUp.carpoolerLastName+"</strong></p>"
+            currentProposal.desc += "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
             currentProposal.desc += "<strong>"+this.$t('map.destination')+"</strong> : "+infosForPopUp.destination+"<br />";
             if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em>";
+
             // And now the content of a tooltip (same as popup but without the button)
             currentProposal.title = currentProposal.desc;
                 
