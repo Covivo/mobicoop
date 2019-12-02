@@ -21,8 +21,7 @@
     >
       <v-col
         cols="12"
-        md="8"
-        xl="6"
+        xl="10"
         align="center"
       >
         <h1>{{ $t('title') }}</h1>
@@ -37,8 +36,7 @@
     >
       <v-col
         cols="12"
-        md="8"
-        xl="6"
+        xl="10"
       >
         <v-alert type="info">
           <p>{{ $t("messageSolidaryExclusiveAd.message") }}</p>
@@ -51,8 +49,7 @@
     >
       <v-col
         cols="12"
-        md="8"
-        xl="6"
+        xl="10"
         class="d-flex justify-center"
       >
         <v-switch
@@ -69,8 +66,7 @@
     >
       <v-col
         cols="12"
-        md="8"
-        xl="6"
+        xl="10"
       >
         <v-alert type="info">
           <p>{{ $t("messageFirstAd.signUpDone", {'givenName':user.givenName}) }}.</p>
@@ -84,8 +80,7 @@
     >
       <v-col
         cols="12"
-        md="8"
-        xl="6"
+        xl="10"
         align="center"
       >
         <v-stepper
@@ -431,7 +426,7 @@
                 v-if="pricePerKm >= 0.12"
                 justify="center"
               >
-                <v-col cols="8">
+                <v-col cols="10">
                   <v-card>
                     <v-card-text>
                       <p
