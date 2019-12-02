@@ -228,7 +228,7 @@
         justify="center"
       >
         <v-col
-          cols="8"
+          cols="10"
         >
           <!-- Schedule -->
           <v-card>
@@ -452,7 +452,7 @@
         dense
       >
         <v-col
-          cols="8"
+          cols="10"
         >
           <v-btn
             text
