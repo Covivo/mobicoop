@@ -12,7 +12,12 @@
             color="info"
             vertical
           >
-            {{ $t('snackbar') }}
+            <div>
+              {{ $t('snackbar') }}
+              <a :href="$t('profilLink')">
+                "{{ $t('myProfil') }}".
+              </a>
+            </div>
             <v-btn
               color="info"
               elevation="0"
