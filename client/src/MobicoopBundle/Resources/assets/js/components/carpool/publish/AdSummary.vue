@@ -231,7 +231,7 @@
 
               <v-row>
                 <v-col
-                  cols="8"
+                  cols="10"
                 >
                   <v-timeline
                     dense

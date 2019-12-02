@@ -21,7 +21,7 @@
       </template>    
       <v-row dense>
         <v-col 
-          v-if="time"
+          v-if="time && waypoint.time"
           cols="3"
           class="text-left"
         >
@@ -89,7 +89,7 @@ export default {
       }
     },
     formatTime(time) {
-      return moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute")); 
+      if(time) return moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute")); 
     }
   }
 };

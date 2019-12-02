@@ -521,7 +521,7 @@ class AdManager
             }
 
             $returnProposal->setCriteria($returnCriteria);
-            $returnProposal = $this->proposalManager->prepareProposal($returnProposal);
+            $returnProposal = $this->proposalManager->prepareProposal($returnProposal, false);
             $this->entityManager->persist($returnProposal);
         }
 

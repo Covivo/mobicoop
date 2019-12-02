@@ -34,6 +34,8 @@ use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Matching;
+use App\Carpool\Event\AskAcceptedEvent;
+use App\Carpool\Event\AskRefusedEvent;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Communication\Entity\Message;
@@ -467,8 +469,8 @@ class AskManager
         $this->entityManager->flush($ask);
         
         // dispatch en event
-        // $event = new AskPostedEvent($ask);
-        // $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
+        $event = new AskPostedEvent($ask);
+        $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
 
         return $ad;
     }
@@ -644,11 +646,14 @@ class AskManager
 
         $this->entityManager->persist($ask);
         $this->entityManager->flush();
-
         // dispatch en event
-        // $event = new AskUpdatedEvent($ask);
-        // $this->eventDispatcher->dispatch(AskUpdatedEvent::NAME, $event);
-
+        if (($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
+            $event = new AskAcceptedEvent($ask);
+            $this->eventDispatcher->dispatch(AskAcceptedEvent::NAME, $event);
+        } elseif (($ask->getStatus() == Ask::STATUS_DECLINED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_DECLINED_AS_PASSENGER)) {
+            $event = new AskRefusedEvent($ask);
+            $this->eventDispatcher->dispatch(AskRefusedEvent::NAME, $event);
+        }
         return $ad;
     }
 

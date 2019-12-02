@@ -274,9 +274,10 @@ class ProposalManager
      * Used when posting a proposal to populate default values like proposal validity.
      *
      * @param Proposal $proposal
+     * @param Boolean $sendEvent
      * @return void
      */
-    public function prepareProposal(Proposal $proposal): Proposal
+    public function prepareProposal(Proposal $proposal, bool $sendEvent=true): Proposal
     {
         if (is_null($proposal->getCriteria()->getAnyRouteAsPassenger())) {
             $proposal->getCriteria()->setAnyRouteAsPassenger($this->params['defaultAnyRouteAsPassenger']);
@@ -327,7 +328,7 @@ class ProposalManager
                 $proposal->getCriteria()->setToDate($toDate);
             }
         }
-        return $this->createProposal($proposal);
+        return $this->createProposal($proposal, $sendEvent);
     }
 
     /**
@@ -336,9 +337,10 @@ class ProposalManager
      * @param Proposal  $proposal               The proposal to create
      * @param boolean   $persist                If we persist the proposal in the database (false for a simple search)
      * @param bool      $excludeProposalUser    Exclude the matching proposals made by the proposal user
+     * @param bool      $sendEvent              Send new matching event
      * @return Proposal The created proposal
      */
-    public function createProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true)
+    public function createProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true, bool $sendEvent = true)
     {
         $date = new \DateTime("UTC");
         $this->logger->info('Proposal creation | Start ' . $date->format("Ymd H:i:s.u"));
@@ -446,7 +448,9 @@ class ProposalManager
         while (($item = array_shift($matchingRequests)) !== null && array_push($matchings, $item));
         if ($persist) {
             // array used to keep already linked matching for return trips (must be one to one)
+            $matchingForEvent = null;
             foreach ($matchings as $matching) {
+                $matchingForEvent = $matching; // TO DO : Choose the right matching for the event
                 if (!is_null($proposal->getMatchingProposal())) {
                     // if there is a matched proposal we need to find the right matching and create the Ask
                     if (is_null($proposal->getMatchingLinked())) {
@@ -477,16 +481,17 @@ class ProposalManager
                         }
                     }
                 }
-
-                // dispatch en event
-                // maybe send a unique event for all matchings ?
-                $event = new MatchingNewEvent($matching, $proposal->getUser());
-                $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
             }
 
             // dispatch en event
-            $event = new ProposalPostedEvent($proposal);
-            $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
+            // todo determine the right matching to send
+            if ($sendEvent && !is_null($matchingForEvent)) {
+                $event = new MatchingNewEvent($matchingForEvent, $proposal->getUser());
+                $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
+            }
+            // dispatch en event who is not sent
+            // $event = new ProposalPostedEvent($proposal);
+            // $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
         }
 
         // we treat the matchings to return the results

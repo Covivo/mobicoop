@@ -73,6 +73,7 @@
             :label="$t('token')"
             name="token"
             required
+            @change="token = token.replace(/\s/g, '')"
           />
           <v-btn
             :disabled="!valid"
