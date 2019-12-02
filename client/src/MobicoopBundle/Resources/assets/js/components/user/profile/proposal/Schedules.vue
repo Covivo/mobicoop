@@ -141,7 +141,7 @@ export default {
       }
       // start to 1 because we don't compare index 0 with index 0
       for (let i = 1; i < days; i++) {
-        isSame = moment(times[0]).isSame(times[i]);
+        isSame = moment.utc(times[0]).isSame(times[i]);
         if (!isSame) {
           break;
         }
@@ -158,7 +158,7 @@ export default {
       }
       // start to 1 because we don't compare index 0 with index 0
       for (let i = 1; i < days; i++) {
-        isSame = moment(times[0]).isSame(times[i]);
+        isSame = moment.utc(times[0]).isSame(times[i]);
         if (!isSame) {
           break;
         }
@@ -169,7 +169,7 @@ export default {
   methods: {
     formatTime(time) {
       moment.locale(this.locale);
-      return moment(time).format(this.$t(this.dateTimeFormat));
+      return moment.utc(time).format(this.$t(this.dateTimeFormat));
     }
   }
 }
