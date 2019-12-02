@@ -74,29 +74,29 @@
         >
           <div v-if="user && carpooler.phoneDisplay == 2">
             <v-btn
-              color="secondary"
-              small
-              dark
-              depressed
-              rounded
-              :hidden="!phoneButtonToggled"
-              height="40px"
-              @click="toggleButton"
-            >
-              <v-icon>mdi-phone</v-icon>
-              {{ carpooler.telephone }}
-            </v-btn>
-            <v-btn
+              v-show="!phoneButtonToggled"
               color="secondary"
               small
               depressed
               fab
-              :hidden="phoneButtonToggled"
               @click="toggleButton"
             >
               <v-icon>
                 mdi-phone
               </v-icon>
+            </v-btn>
+            <v-btn
+              v-show="phoneButtonToggled"
+              color="secondary"
+              small
+              dark
+              depressed
+              rounded
+              height="40px"
+              @click="toggleButton"
+            >
+              <v-icon>mdi-phone</v-icon>
+              {{ carpooler.telephone }}
             </v-btn>
           </div>
           <div>
