@@ -4,6 +4,7 @@ import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import colorTheme from '@themes/theme.js'
 import CommonTranslations from "@translations/translations.js"
+import fr from 'vuetify/es5/locale/fr'
 import '@mdi/font/scss/materialdesignicons.scss'
 import {LMap, LTileLayer, LMarker, LTooltip, LPopup, LIcon, LPolyline} from 'vue2-leaflet'
 
@@ -67,8 +68,12 @@ const vuetify = new Vuetify({
   icons: {
     iconfont: 'mdi', // default - only for display purposes (https://materialdesignicons.com/)
   },
-  theme: colorTheme
-})
+  theme: colorTheme,
+  lang: {
+    locales: {fr},
+    current: 'fr',
+  },
+});
 
 export {
   Vue,

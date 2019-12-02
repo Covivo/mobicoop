@@ -18,7 +18,6 @@
         avatar-version="{{ communityAvatarVersion }}"
         :init-origin = "{{ origin is defined ? origin : 'null' }}"
         :init-destination = "{{ destination is defined ? destination|json_encode : 'null' }}"
-        {{ searchRegular ? 'regular' : '' }}
         {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
         :points="{{ points|json_encode }}"
     ></event>

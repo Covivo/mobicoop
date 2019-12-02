@@ -195,7 +195,7 @@ export default {
   },
   methods: {
     formatTime(time) {
-      return moment(time).format(this.$t("ui.i18n.time.format.hourMinute"));
+      return moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute"));
     }
   }
 };
