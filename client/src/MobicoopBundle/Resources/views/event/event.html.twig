@@ -1,8 +1,7 @@
 {# @var community \Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community #}
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}Evénement
-{% endblock %}
+{% block title %}{% trans from 'ui' %}events.event.title{% endtrans %} - {{ app_name }}{% endblock %}
 {% block stylesheets %}
     {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}community/community") }}#}
 {% endblock %}
