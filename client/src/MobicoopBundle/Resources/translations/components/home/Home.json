@@ -2,6 +2,8 @@
     "fr": {
         "title": "Mobicoop",
         "subtitle": "Un service de covoiturage de proximité, convivial et solidaire.<br />Trouvez dès à présent votre covoiturage ou proposez votre trajet.",
-        "snackbar": "Vous avez renseigné un numéro de téléphone, rassurez vos covoitureurs en le vérifiant. Envoyez un code de vérification depuis la page 'Profil'"
+        "snackbar": "Vous avez renseigné un numéro de téléphone, rassurez vos covoitureurs en le vérifiant. Envoyez un code de vérification depuis la page",
+        "profileLink": "/utilisateur/profil/modifier/myProfile",
+        "myProfile": "profil"
     }
 }
