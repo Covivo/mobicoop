@@ -2,6 +2,7 @@
 button:
     submit: 'Submit'
     delete: 'Delete'
+    connexion: 'Login'
 
 # menus
 menu:
@@ -10,7 +11,7 @@ menu:
     account: 'My account'
     profile: 'My profile'
     messages: 'Messages'
-    ad_create: 'Post an ad'
+    ad_create: 'Post a carpool ad'
     logout: 'Logout'
 
 # pages
@@ -48,7 +49,29 @@ user:
         title: 'Password recovery'
 carpool:
     ad_create:
-        title: 'Post an ad'
+        title: 'Post a carpool ad'
         h1: 'Post an ad'
+    results:
+        title: 'Carpool results'
 contact:
     title: "Contact us"
+
+solidary:
+    title: "Post a solidary carpool ad"
+
+communities:
+    community:
+        title: "Community"
+    communities:
+        title: "Communities"
+    create:
+        title: "Create a community"
+
+events:
+    events:
+        title: "Events"
+        h1: "Events"
+    event:
+        title: "Event"
+    create:
+        title: "Create an event"

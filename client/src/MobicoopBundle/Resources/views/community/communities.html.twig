@@ -1,7 +1,6 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}Les Communautés
-{% endblock %}
+{% block title %}{% trans from 'ui' %}communities.communities.title{% endtrans %} - {{ app_name }}{% endblock %}
 {% block stylesheets %}
     {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}community/communities") }}#}
 
