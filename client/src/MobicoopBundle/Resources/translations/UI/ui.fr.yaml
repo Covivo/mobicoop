@@ -11,7 +11,7 @@ menu:
     account: 'Mon compte'
     profile: 'Mon profil'
     messages: 'Messages'
-    ad_create: 'Publier une annonce'
+    ad_create: 'Publier une annonce de covoiturage'
     logout: 'Déconnexion'
 
 # pages
@@ -49,10 +49,29 @@ user:
         title: 'Récupération du mot de passe'
 carpool:
     ad_create:
-        title: 'Publier une annonce'
+        title: 'Publier une annonce de covoiturage'
         h1: 'Publier une annonce'
+    results:
+        title: 'Résultats de covoiturage'
 contact:
     title: "Nous contacter"
 
 solidary:
-    title: "Faire une demande solidaire"
+    title: "Faire une demande de covoiturage solidaire"
+
+communities:
+    community:
+        title: "Communauté"
+    communities:
+        title: "Les Communautés"
+    create:
+        title: "Créer une communauté"
+
+events:
+    events:
+        title: "Les événements"
+        h1: "Les événements"
+    event:
+        title: "Evénement"
+    create:
+        title: "Créer un événement"
