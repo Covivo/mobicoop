@@ -721,32 +721,39 @@ class ProposalManager
 
                 $now = new \DateTime();
 
+                
+                $this->logger->info($ask->getStatus());
                 // Ask user is driver
-                if ($this->askManager->isAskUserDriver($ask) && $ask->getUser()->getId() == $deleter->getId()) {
+                if ($this->askManager->isAskUserDriver($ask) && ($ask->getUser()->getId() == $deleter->getId())) {
+                    $this->logger->info("deleter is driver");
+
                     /** @var Criteria $criteria */
-                    $criteria = $ask->getMatching()->getProposalOffer()->getCriteria()->getFromDate();
+                    $criteria = $ask->getMatching()->getProposalOffer()->getCriteria();
                     $askDateTime = $criteria->getFromTime() ?
                         new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
                         new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
-
                     // Accepted
-                    if ($ask->getStatus() === (Ask::STATUS_ACCEPTED_AS_DRIVER or Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
+                    if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER or $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                        $this->logger->info("status 4 ou 5");
 
                         // If ad is in more than 24h
-                        if (strtotime($now) - strtotime($askDateTime) > 24*60*60) {
-                            $event = new DriverAskAdDeletedEvent($ask);
-                            $this->eventDispatcher->dispatch(DriverAskAdDeletedEvent::NAME, $event);
-                        } else {
-                            $event = new DriverAskAdDeletedUrgentEvent($ask);
-                            $this->eventDispatcher->dispatch(DriverAskAdDeletedUrgentEvent::NAME, $event);
-                        }
-                    } elseif ($ask->getStatus() === (Ask::STATUS_PENDING_AS_DRIVER or Ask::STATUS_PENDING_AS_PASSENGER)) {
+                        // if (strtotime($now) - strtotime($askDateTime) > 24*60*60) {
+                        $event = new DriverAskAdDeletedEvent($ask);
+                        $this->eventDispatcher->dispatch(DriverAskAdDeletedEvent::NAME, $event);
+                    // } else {
+                        //     $event = new DriverAskAdDeletedUrgentEvent($ask);
+                        //     $this->eventDispatcher->dispatch(DriverAskAdDeletedUrgentEvent::NAME, $event);
+                        // }
+                    } elseif ($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER or $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
+                        $this->logger->info("status 2 ou 3");
+
                         $event = new AskAdDeletedEvent($ask);
                         $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
                     }
 
                     // Ask user is passenger
-                } elseif ($this->askManager->isAskUserPassenger($ask) && $ask->getUser()->getId() == $deleter->getId()) {
+                } elseif ($this->askManager->isAskUserPassenger($ask) && ($ask->getUser()->getId() == $deleter->getId())) {
+                    $this->logger->info("deleter is passenger");
 
                     /** @var Criteria $criteria */
                     $criteria = $ask->getMatching()->getProposalRequest()->getCriteria();
@@ -755,8 +762,8 @@ class ProposalManager
                         new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
                     
                     // Accepted
-                    if ($ask->getStatus() === (Ask::STATUS_ACCEPTED_AS_DRIVER or Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
-
+                    if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER or $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                        $this->logger->info("status 4 ou 5");
                         // If ad is in more than 24h
                         if ($askDateTime->getTimestamp() - $now->getTimestamp() < 24*60*60) {
                             $event = new PassengerAskAdDeletedEvent($ask);
@@ -765,14 +772,15 @@ class ProposalManager
                             $event = new PassengerAskAdDeletedUrgentEvent($ask);
                             $this->eventDispatcher->dispatch(PassengerAskAdDeletedUrgentEvent::NAME, $event);
                         }
-                    } elseif ($ask->getStatus() === (Ask::STATUS_PENDING_AS_DRIVER or Ask::STATUS_PENDING_AS_PASSENGER)) {
+                    } elseif ($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER or $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
+                        $this->logger->info("status 2 ou 3");
                         $event = new AskAdDeletedEvent($ask);
                         $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
                     }
                 }
             }
         }
-
+        $this->logger->info("suppression!!!!");
         $this->entityManager->remove($proposal);
         $this->entityManager->flush();
 

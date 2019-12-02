@@ -57,6 +57,7 @@ class ProposalDelete
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad proposal id is provided"));
         }
+        
         $data = $this->proposalManager->deleteProposal($data, json_decode($this->request->getContent(), true));
         return $data;
     }

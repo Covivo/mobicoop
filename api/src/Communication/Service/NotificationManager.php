@@ -38,6 +38,7 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Matching;
 use App\Communication\Entity\Recipient;
 use App\Carpool\Entity\AskHistory;
+use App\Carpool\Entity\Ask;
 
 /**
  * Notification manager
@@ -88,10 +89,12 @@ class NotificationManager
         if (!$this->enabled) {
             return;
         }
-        
+        $this->logger->info("Notification");
+
         $notifications = null;
         // we check the user notifications
         $userNotifications = $this->userNotificationRepository->findActiveByAction($action, $recipient->getId());
+       
         if (count($userNotifications)>0) {
             // the user should have notifications...
             $notifications = [];
@@ -150,6 +153,7 @@ class NotificationManager
         $titleContext = [];
         $bodyContext = [];
         if ($object) {
+            $this->logger->info(get_class($object));
             switch (get_class($object)) {
                 case Proposal::class:
                     $titleContext = [];
@@ -179,13 +183,14 @@ class NotificationManager
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
         }
-        
+        $this->logger->info($this->emailTitleTemplatePath);
         $email->setObject($this->templating->render(
             $notification->getTemplateTitle() ? $this->emailTitleTemplatePath . $notification->getTemplateTitle() : $this->emailTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
             [
                 'context' => $titleContext
             ]
         ));
+        $this->logger->info("voilààààà email");
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $recipient->getLanguage());
     }

@@ -202,7 +202,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     {
         // todo: passer directement la ask pour pouvoir mieux vérifier qui est à l'origine de l'annonce
         // pas réussi, array vide depuis le template en passant la ask
-        $this->notificationManager->notifies(AskAdDeletedEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+        $this->notificationManager->notifies(AskAdDeletedEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
     }
 
     /**

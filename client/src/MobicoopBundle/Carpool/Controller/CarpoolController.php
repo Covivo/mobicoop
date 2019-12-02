@@ -148,8 +148,9 @@ class CarpoolController extends AbstractController
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
             $proposal = $proposalManager->getProposal($data['proposalId']);
-           
+            
             $this->denyAccessUnlessGranted('delete_ad', $proposal);
+            // add the id of the deleter
             $data['deleterId'] = $userManager->getLoggedUser()->getId();
             if ($response = $proposalManager->deleteProposal($data['proposalId'], $data)) {
                 return new JsonResponse(

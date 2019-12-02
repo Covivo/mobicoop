@@ -50,6 +50,8 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\JwtManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Strategy\Auth\JsonAuthStrategy;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use function GuzzleHttp\json_encode;
+
 /**
  * Data provider service.
  * Uses an API to retrieve/send data.
@@ -511,7 +513,7 @@ class DataProvider
     public function delete(int $id, ?array $data=null): Response
     {
         try {
-            $clientResponse = $this->client->delete($this->resource."/".$id, ['json' => json_encode($data)]);
+            $clientResponse = $this->client->delete($this->resource."/".$id, ['json' => $data]);
             if ($clientResponse->getStatusCode() == 204) {
                 return new Response($clientResponse->getStatusCode());
             }
