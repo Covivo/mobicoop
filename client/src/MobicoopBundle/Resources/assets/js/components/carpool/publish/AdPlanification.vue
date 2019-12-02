@@ -609,7 +609,12 @@ export default {
       if ( this.outwardDate > this.returnDate )  this.returnDate = this.outwardDate;
     },
     blockTimeRegular(e,id){
-      this.schedules[id].maxTimeFromOutwardRegular = e;
+      // test to allow return time to be set before outward time for regular work
+      if(id !=0 && this.schedules[id-1]['returnTime'] === null) {
+        // console.error("");
+      }else {
+        this.schedules[id].maxTimeFromOutwardRegular = e;
+      }
     },
     checkReturnDesactivate(e){
       if (!e) {
