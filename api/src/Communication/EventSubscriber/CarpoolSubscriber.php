@@ -214,7 +214,12 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onPassengerAskAdDeleted(PassengerAskAdDeletedEvent $event)
     {
         // todo : idem
-        $this->notificationManager->notifies(PassengerAskAdDeletedEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
+        $this->logger->info("c'est lid du deleter: ".$event->getDeleterId());
+        if ($event->getAsk()->getUser()->getId() == $event->getDeleterId()) {
+            $this->notificationManager->notifies(PassengerAskAdDeletedEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
+        } else {
+            $this->notificationManager->notifies(PassengerAskAdDeletedEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+        }
     }
 
     /**
@@ -225,7 +230,18 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onPassengerAskAdDeletedUrgent(PassengerAskAdDeletedUrgentEvent $event)
     {
         // todo : idem
-        $this->notificationManager->notifies(PassengerAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
+
+        $this->logger->info("c'est lid du deleter: ".$event->getDeleterId());
+        if ($event->getAsk()->getUser()->getId() == $event->getDeleterId()) {
+            $this->logger->info("ca passe PAS ici");
+
+            $this->notificationManager->notifies(PassengerAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
+        } else {
+            $this->logger->info("ca passe par ici");
+
+            $this->notificationManager->notifies(PassengerAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+        }
+        $this->logger->info("yahoooooooooooooooo");
     }
 
     /**

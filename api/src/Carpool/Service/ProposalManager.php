@@ -721,10 +721,14 @@ class ProposalManager
 
                 $now = new \DateTime();
 
-                
-                $this->logger->info($ask->getStatus());
+                $this->logger->info("ask status: ".$ask->getStatus());
+                $this->logger->info("createur de la ask is driver: ".$this->askManager->isAskUserDriver($ask));
+                $this->logger->info("user ask id: ".$ask->getUser()->getId());
+                $this->logger->info("userRelated ask id: ".$ask->getUserRelated()->getId());
+                $this->logger->info("deleter id: ".$deleter->getId());
+
                 // Ask user is driver
-                if ($this->askManager->isAskUserDriver($ask) && ($ask->getUser()->getId() == $deleter->getId())) {
+                if (($this->askManager->isAskUserDriver($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserPassenger($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
                     $this->logger->info("deleter is driver");
 
                     /** @var Criteria $criteria */
@@ -737,13 +741,13 @@ class ProposalManager
                         $this->logger->info("status 4 ou 5");
 
                         // If ad is in more than 24h
-                        // if (strtotime($now) - strtotime($askDateTime) > 24*60*60) {
-                        $event = new DriverAskAdDeletedEvent($ask);
-                        $this->eventDispatcher->dispatch(DriverAskAdDeletedEvent::NAME, $event);
-                    // } else {
-                        //     $event = new DriverAskAdDeletedUrgentEvent($ask);
-                        //     $this->eventDispatcher->dispatch(DriverAskAdDeletedUrgentEvent::NAME, $event);
-                        // }
+                        if (strtotime($now) - strtotime($askDateTime) > 24*60*60) {
+                            $event = new DriverAskAdDeletedEvent($ask);
+                            $this->eventDispatcher->dispatch(DriverAskAdDeletedEvent::NAME, $event);
+                        } else {
+                            $event = new DriverAskAdDeletedUrgentEvent($ask);
+                            $this->eventDispatcher->dispatch(DriverAskAdDeletedUrgentEvent::NAME, $event);
+                        }
                     } elseif ($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER or $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
                         $this->logger->info("status 2 ou 3");
 
@@ -752,7 +756,7 @@ class ProposalManager
                     }
 
                     // Ask user is passenger
-                } elseif ($this->askManager->isAskUserPassenger($ask) && ($ask->getUser()->getId() == $deleter->getId())) {
+                } elseif (($this->askManager->isAskUserPassenger($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserDriver($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
                     $this->logger->info("deleter is passenger");
 
                     /** @var Criteria $criteria */
@@ -766,10 +770,10 @@ class ProposalManager
                         $this->logger->info("status 4 ou 5");
                         // If ad is in more than 24h
                         if ($askDateTime->getTimestamp() - $now->getTimestamp() < 24*60*60) {
-                            $event = new PassengerAskAdDeletedEvent($ask);
+                            $event = new PassengerAskAdDeletedEvent($ask, $deleter->getId());
                             $this->eventDispatcher->dispatch(PassengerAskAdDeletedEvent::NAME, $event);
                         } else {
-                            $event = new PassengerAskAdDeletedUrgentEvent($ask);
+                            $event = new PassengerAskAdDeletedUrgentEvent($ask, $deleter->getId());
                             $this->eventDispatcher->dispatch(PassengerAskAdDeletedUrgentEvent::NAME, $event);
                         }
                     } elseif ($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER or $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
@@ -781,6 +785,7 @@ class ProposalManager
             }
         }
         $this->logger->info("suppression!!!!");
+        die;
         $this->entityManager->remove($proposal);
         $this->entityManager->flush();
 

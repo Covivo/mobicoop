@@ -164,12 +164,15 @@ class NotificationManager
                     $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'matching'=> $object];
                     break;
                 case AskHistory::class:
+                    
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'askHistory'=>$object];
                     break;
                 case Ask::class:
+                    $this->logger->info("passe ici dans ASK");
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'ask'=>$object];
+                    $this->logger->info("set recipient and object");
                 break;
                 case Recipient::class:
                     $titleContext = [];
@@ -183,16 +186,17 @@ class NotificationManager
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
         }
-        $this->logger->info($this->emailTitleTemplatePath);
+        $this->logger->info("emailTemplateTitlePath: ".$this->emailTitleTemplatePath);
         $email->setObject($this->templating->render(
             $notification->getTemplateTitle() ? $this->emailTitleTemplatePath . $notification->getTemplateTitle() : $this->emailTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
             [
                 'context' => $titleContext
             ]
         ));
-        $this->logger->info("voilààààà email");
+        $this->logger->info('emailTemplatePath: '. $this->emailTemplatePath);
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $recipient->getLanguage());
+        $this->logger->info("voilààààà email envoyé!!!!");
     }
 
     /**
