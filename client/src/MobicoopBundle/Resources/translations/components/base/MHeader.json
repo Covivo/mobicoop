@@ -25,6 +25,9 @@
                 "label": "Déconnexion",
                 "route": "/user/logout"
             }
+        },
+        "snackbar": {
+            "needConnection":"Veuillez vous connecter ou vous inscrire pour publier une annonce"
         }
     },
     "en": {

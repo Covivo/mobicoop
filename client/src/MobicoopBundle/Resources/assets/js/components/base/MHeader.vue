@@ -52,13 +52,44 @@
         </v-btn>
       </v-toolbar-items>
       <v-btn
+        v-if="user"
         rounded
-        :disabled="!user"
         :href="$t('buttons.shareAnAd.route')"
         class="hidden-sm-and-down"
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
+      <div
+        @click="snackbar = true"
+      >
+        <v-btn
+          v-if="!user"
+          rounded
+          disabled
+          class="hidden-sm-and-down"
+        >
+          {{ $t('buttons.shareAnAd.label') }}
+        </v-btn>
+
+        <v-snackbar
+          v-if="!user"
+          v-model="snackbar"
+          color="info"
+        >
+          {{ $t('snackbar.needConnection') }}
+          <v-btn
+            color="info"
+            elevation="0"
+            @click="snackbar = false"
+          >
+            <v-icon
+              color="primary"
+            >
+              mdi-close
+            </v-icon>
+          </v-btn>
+        </v-snackbar>
+      </div>
 
 
       <!--Display menu when user is connected-->
@@ -216,6 +247,11 @@ export default {
       type: String,
       default: null
     },
+  },
+  data () {
+    return {
+      snackbar: false
+    }
   },
   mounted() {
     if (this.urlMobile && (screen.width <= 960 || navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i))) 
