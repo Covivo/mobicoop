@@ -308,6 +308,67 @@
     <v-row>
       <ChangePassword />
     </v-row>
+
+    <!-- Delete account -->
+    <v-row class="text-left title font-weight-bold">
+      <v-col>{{ $t('titles.deleteAccount') }}</v-col>
+    </v-row>
+
+    <v-row>
+
+
+      <v-dialog
+              v-model="dialogDelete"
+              width="500"
+      >
+        <template v-slot:activator="{ on }">
+          <!--Delete button -->
+          <v-btn
+                  class="button"
+                  v-on="on"
+                  color="secondary"
+                  rounded
+                  :disabled="!valid"
+                  :loading="loading"
+                  type="button"
+                  :value="$t('ui.button.save')"
+          >
+            {{ $t('buttons.supprimerAccount') }}
+          </v-btn>
+        </template>
+
+        <v-card>
+          <v-card-title
+                  class="headline"
+                  primary-title
+          >
+            {{ $t('dialog.titles.deleteAccount') }}
+          </v-card-title>
+
+          <v-card-text>
+            <p v-html="$t('dialog.content.deleteAccount')"></p>
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary darken-1" text @click="dialog=false; newsSubscription=true">{{ $t('ui.common.no') }}</v-btn>
+            <v-btn
+                    color="primary"
+                    text
+                    :href="$t('route.supprimer')"
+                    @click="dialog = false"
+            >
+              {{ $t('dialog.buttons.confirmDelete') }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+
+    </v-row>
+
   </v-container>
 </template>
 
@@ -358,6 +419,7 @@ export default {
   data() {
     return {
       dialog: false,
+      dialogDelete: false,
       snackbar: false,
       textSnackOk: this.$t('snackBar.profileUpdated'),
       textSnackError: this.$t("snackBar.passwordUpdateError"),
@@ -417,6 +479,13 @@ export default {
     this.checkVerifiedPhone();
   },
   methods: {
+      deleteAccount (){
+          axios
+            .post(this.$t('route.supprimer'))
+            .then(res => {
+
+            });
+      },
     homeAddressSelected(address){
       this.homeAddress = address;
     },

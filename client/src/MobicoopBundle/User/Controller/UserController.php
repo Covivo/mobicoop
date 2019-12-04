@@ -276,9 +276,6 @@ class UserController extends AbstractController
         return new Response(json_encode($phoneError));
     }
 
- 
-  
-
     /**
      * User profile update.
      */
@@ -522,6 +519,20 @@ class UserController extends AbstractController
         }
 
         return new Response();
+    }
+
+    /**
+     * Delete the user by anonymise
+     *
+     * @param UserManager $userManager
+     * @return void
+     */
+    public function deleteUser(UserManager $userManager)
+    {
+        $user = $userManager->getLoggedUser();
+        $userManager->deleteUser($user);
+
+        return $this->redirectToRoute('user_logout');
     }
 
 
