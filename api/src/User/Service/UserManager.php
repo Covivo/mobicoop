@@ -631,6 +631,6 @@ class UserManager
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        return $user;
+        return array();
     }
 }

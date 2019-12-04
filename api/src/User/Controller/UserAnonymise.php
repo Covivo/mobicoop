@@ -57,10 +57,9 @@ class UserAnonymise
      * @param string $data
      * @return User
      */
-    public function __invoke(User $data): User
+    public function __invoke(User $data)
     {
-        var_dump('dzkdzkd');
-        var_dump($data->getId());
+
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
         }

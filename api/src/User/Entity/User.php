@@ -177,7 +177,7 @@ use App\User\EntityListener\UserListener;
  *              "controller"=UserUpdate::class
  *          },
  *          "anonymise_user"={
- *              "method"="GET",
+ *              "method"="PUT",
  *              "path"="/users/{id}/anonymise_user",
  *              "controller"=UserAnonymise::class
  *          },
