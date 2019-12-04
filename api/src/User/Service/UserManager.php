@@ -29,6 +29,7 @@ use App\Carpool\Service\AskManager;
 use App\Communication\Entity\Medium;
 use App\User\Entity\User;
 use App\User\Event\UserDeleteAccountWasDriverEvent;
+use App\User\Event\UserDeleteAccountWasPassengerEvent;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
 use DateTime;
@@ -569,7 +570,7 @@ class UserManager
             foreach ($proposal->getMatchingOffers() as $matching) {
                 //TODO libérer les places sur les annonces réservées
                 foreach ($matching->getAsks() as $ask) {
-                    $event = new UserDeleteAccountWasDriverEvent($ask);
+                    $event = new UserDeleteAccountWasPassengerEvent($ask);
                     $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
                 }
             }
