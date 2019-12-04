@@ -100,12 +100,15 @@ CheckoutForAnyURLMisspellingOr: 'messages'
 
 # DRIVER_CARPOOL_LINKED_AD_DELETED
 
-yourCarpoolBetween: 'Votre covoiturage entre'
-withThePassenger: 'avec le passager'
-isCanceledBecause: 'a été annulé, car'
-hasDeletedTheAssociateAd: 'a supprimé son annonce associée.'
-clickOnLinkToSearchAgain: 'Cliquez sur ce lien pour relancer votre recherche'
-noPenaltyApplied: 'Il n’y a pas de pénalité pour l’annulation de ce covoiturage. Cependant afin de garantir la fiabilité des annonces et protéger les covoitureurs d'annulations trop répétées, nous nous réservons le droit de suspendre les possibilités de publier des annonces si un covoitureur annule trop souvent.'
+yourCarpoolBetween: "Votre covoiturage entre"
+yourAskCarpoolBetween: "Votre demande de covoiturage entre"
+withThePassenger: "avec le.la passager.ère"
+withTheDriver: "avec le.la conducteur.rice"
+with: "avec"
+isCanceledBecause: "a été annulé, car"
+hasDeletedTheAssociateAd: "a supprimé son annonce associée."
+clickOnLinkToSearchAgain: "Cliquez sur ce lien pour relancer votre recherche"
+noPenaltyApplied: "Il n'y a pas de pénalité pour l'annulation de ce covoiturage. Cependant afin de garantir la fiabilité des annonces et protéger les covoitureurs d'annulations trop répétées, nous nous réservons le droit de suspendre les possibilités de publier des annonces si un covoitureur annule trop souvent."
 
 ######      SMS      ######
 

@@ -1,17 +1,6 @@
 {% extends '/email/notification/linked_ad_deleted.html.twig' %}
 {% block body %}
-annonce supprimée
-    {# <p>
-        Attention !
-
-        Votre covoiturage pour {{ (matching.waypoints|first).address.county }}
-        => {{ (matching.waypoints|last).address.county }}
-        avec le conducteur {{ carpooler }} a été annulé, car {{ carpooler }} a supprimé son annonce associée.
-
-        Cliquez sur ce lien pour relancer votre recherche {{ (matching.waypoints|first).address.county }}
-        => {{ (matching.waypoints|last).address.county }} .
-
-        Il n’y a pas de pénalité pour l’annulation de ce covoiturage. Cependant afin de garantir la fiabilité des annonces et protéger les covoitureurs d'annulations trop répétées,
-        nous nous réservons le droit de suspendre les possibilités de publier des annonces si un covoitureur annule trop souvent.
-    </p> #}
-{% endblock %}
+    <p>{{ "yourCarpoolBetween"|trans }} {{ (ask.matching.waypoints|first).address.addressLocality }} {{ "and"|trans }} {{ (ask.matching.waypoints|last).address.addressLocality }} {{ "withTheDriver"|trans }} {{ deleterGivenName|capitalize ~ " " ~ deleterFamilyName|capitalize }} {{ "isCanceledBecause"|trans }} {{ deleterGivenName|capitalize ~ " " ~ deleterFamilyName|capitalize}} {{ "hasDeletedTheAssociateAd"|trans }}</p>
+    <p>{{ "clickOnLinkToSearchAgain"|trans }} {{ (ask.matching.waypoints|first).address.addressLocality }} {{ "and"|trans }} {{ (ask.matching.waypoints|last).address.addressLocality }}. </p>
+    <p>{{ "noPenaltyApplied"|trans }}</p>
+{% endblock %}}

@@ -713,21 +713,14 @@ class ProposalManager
                 $deleter = ($body['deleterId'] == $ask->getUser()->getId()) ? $ask->getUser() : $ask->getUserRelated();
                 $recipient = ($body['deleterId'] == $ask->getUser()->getId()) ? $ask->getUserRelated() : $ask->getUser();
 
-                $this->logger->info('le message: '.$body["deletionMessage"]);
                 if (isset($body["deletionMessage"]) && $body["deletionMessage"] != "") {
-                    $this->logger->info('le message: '.$body["deletionMessage"]);
                     $message = $this->internalMessageManager->createMessage($deleter, [$recipient], $body["deletionMessage"], null, null);
-
                     $this->entityManager->persist($message);
-                    $this->logger->info('le message: '.$body["deletionMessage"]);
                 }
-
-                $this->logger->info('status de la ask: '.$ask->getStatus());
 
                 $now = new \DateTime();
                 // Ask user is driver
                 if (($this->askManager->isAskUserDriver($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserPassenger($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
-                    $this->logger->info('ici ');
                     // TO DO check if the deletion is just before 24h and in that case send an other email
                     // /** @var Criteria $criteria */
                     $criteria = $ask->getMatching()->getProposalOffer()->getCriteria();
@@ -738,12 +731,9 @@ class ProposalManager
                     // Accepted
                     if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER or $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
                         if ($askDateTime->getTimestamp() - $now->getTimestamp() > 24*60*60) {
-                            $this->logger->info('+ de 24h');
                             $event = new DriverAskAdDeletedEvent($ask, $deleter->getId());
                             $this->eventDispatcher->dispatch(DriverAskAdDeletedEvent::NAME, $event);
-                            $this->logger->info("mail envoyé");
                         } else {
-                            $this->logger->info('moins de 24h URGENT!!');
                             $event = new DriverAskAdDeletedUrgentEvent($ask, $deleter->getId());
                             $this->eventDispatcher->dispatch(DriverAskAdDeletedUrgentEvent::NAME, $event);
                         }
@@ -764,6 +754,7 @@ class ProposalManager
                     
                     // Accepted
                     if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER or $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                       
                         // If ad is in more than 24h
                         if ($askDateTime->getTimestamp() - $now->getTimestamp() > 24*60*60) {
                             $event = new PassengerAskAdDeletedEvent($ask, $deleter->getId());
