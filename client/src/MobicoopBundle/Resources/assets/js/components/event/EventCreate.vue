@@ -272,7 +272,7 @@
                   <template v-slot:activator="{ on }">
                     <v-btn
                       rounded
-                      color="primary"
+                      color="secondary"
                       :loading="loading"
                       v-on="on"
                     >
@@ -296,14 +296,14 @@
                     <v-card-actions>
                       <v-spacer />
                       <v-btn
-                        color="primary"
+                        color="secondary"
                         text
                         @click="createEvent"
                       >
                         {{ $t('popUp.validation') }}
                       </v-btn>
                       <v-btn
-                        color="primary"
+                        color="secondary"
                         text
                         @click="dialog = false"
                       >

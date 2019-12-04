@@ -18,7 +18,7 @@
 
     <div v-if="!isSent">
       <v-btn
-        color="primary"
+        color="error"
         rounded
         :loading="isLoading"
         @click="isDialogOpened=true"
@@ -60,14 +60,14 @@
           <v-card-actions>
             <v-spacer />
             <v-btn
-              color="primary darken-1"
+              color="secondary darken-1"
               text
               @click="isDialogOpened=false"
             >
               {{ $t('popup.button.cancel') }}
             </v-btn>
             <v-btn
-              color="secondary darken-1"
+              color="error darken-1"
               text
               @click="isDialogOpened=false; report()"
             >

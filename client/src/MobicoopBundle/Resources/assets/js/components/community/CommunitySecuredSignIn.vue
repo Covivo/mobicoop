@@ -57,7 +57,7 @@
               >
                 <v-btn
                   :disabled="!valid || userId === null"
-                  color="primary"
+                  color="secondary"
                   type="submit"
                   rounded
                   @click="validate"
