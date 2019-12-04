@@ -91,7 +91,7 @@ class NotificationManager
         
         $notifications = null;
         // we check the user notifications
-        $userNotifications = $this->userNotificationRepository->findActiveByAction($action);
+        $userNotifications = $this->userNotificationRepository->findActiveByAction($action, $recipient->getId());
         if (count($userNotifications)>0) {
             // the user should have notifications...
             $notifications = [];
@@ -102,7 +102,6 @@ class NotificationManager
             // if the user have no notifications, we use the default notifications
             $notifications = $this->notificationRepository->findActiveByAction($action);
         }
-        
         if ($notifications && is_array($notifications)) {
             foreach ($notifications as $notification) {
                 switch ($notification->getMedium()->getId()) {
@@ -164,6 +163,10 @@ class NotificationManager
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'askHistory'=>$object];
                     break;
+                case Ask::class:
+                    $titleContext = [];
+                    $bodyContext = ['user'=>$recipient, 'ask'=>$object];
+                break;
                 case Recipient::class:
                     $titleContext = [];
                     $bodyContext = [];
@@ -212,6 +215,9 @@ class NotificationManager
                 case AskHistory::class:
                     $bodyContext = ['user'=>$recipient];
                     break;
+                case Ask::class:
+                    $bodyContext = ['user'=>$recipient, 'ask'=>$object];
+                break;
                 case Recipient::class:
                     $bodyContext = [];
                     break;

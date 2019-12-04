@@ -178,6 +178,9 @@ services:
         arguments:
             $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $contactEmailAddress: '%env(resolve:MAILER_CONTACT)%'
+            $contactEmailObject: '%env(resolve:MAILER_CONTACT_OBJECT)%'
+            $supportEmailAddress: '%env(resolve:MAILER_SUPPORT)%'
+            $supportEmailObject: '%env(resolve:MAILER_SUPPORT_OBJECT)%'
 
     # Community
     App\Community\Controller\:
@@ -194,6 +197,18 @@ services:
     App\DataProvider\Entity\GeoRouterProvider:
         tags:
             - { name: monolog.logger, channel: georouter }
+
+    # Event
+    App\Event\Controller\:
+        resource: '../src/Event/Controller'
+        tags: ['controller.service_arguments']
+
+    App\Event\Controller\ReportAction:
+        arguments:
+            $supportEmail: '%env(resolve:MAILER_SUPPORT)%'
+            $senderEmail: '%env(resolve:MAILER_SENDER)%'
+            $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
+        tags: ['controller.service_arguments']
 
     # External Journey
     App\ExternalJourney\Service\ExternalJourneyManager:

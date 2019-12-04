@@ -55,6 +55,9 @@ class Contact
 {
     const DEFAULT_ID = 999999999999;
 
+    const SUPPORT_CONTACT = 0;
+    const SIMPLE_CONTACT = 1;
+
     /**
      * @var int The id of this contact.
      * @ApiProperty(identifier=true)
@@ -102,6 +105,12 @@ class Contact
      * @Groups({"write"})
      */
     private $datetime;
+
+    /**
+     * @var int|null The type of contact
+     * @Groups({"write"})
+     */
+    private $type;
 
     public function __construct($id = null)
     {
@@ -226,6 +235,24 @@ class Contact
     public function setDatetime(\DateTime $datetime): Contact
     {
         $this->datetime = $datetime;
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param int|null $type
+     * @return Contact
+     */
+    public function setType(?int $type): self
+    {
+        $this->type = $type;
         return $this;
     }
 }

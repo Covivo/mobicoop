@@ -171,6 +171,7 @@ class CommunityManager
      */
     public function getProposals(int $id)
     {
+        $this->dataProvider->setClass(Community::class);
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $proposals = $this->dataProvider->getSubCollection($id, "proposal", "proposals");
         return $proposals->getValue();

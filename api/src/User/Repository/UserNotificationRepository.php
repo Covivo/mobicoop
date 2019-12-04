@@ -52,15 +52,18 @@ class UserNotificationRepository
     /**
      * Find active notifications for a given action
      *
-     * @param string $action
+     * @param string $action    Name of the action
+     * @param int $userId       Id of the recipient
      */
-    public function findActiveByAction(string $action)
+    public function findActiveByAction(string $action, int $userId)
     {
         $query = $this->repository->createQueryBuilder('un')
         ->join('un.notification', 'n')
         ->join('n.action', 'a')
-        ->where('a.name = :action and n.active=1')
+        ->join('un.user', 'u')
+        ->where('a.name = :action and n.active=1 and un.active=1 and u.id=:userId')
         ->setParameter('action', $action)
+        ->setParameter('userId', $userId)
         ;
         return $query->getQuery()->getResult();
     }

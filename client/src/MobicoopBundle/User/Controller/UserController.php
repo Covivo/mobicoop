@@ -343,7 +343,7 @@ class UserController extends AbstractController
             $user->setPhoneDisplay($data->get('phoneDisplay'));
             $user->setGivenName($data->get('givenName'));
             $user->setFamilyName($data->get('familyName'));
-            $user->setGender($data->get('gender'));
+            $user->setGender((int)($data->get('gender')));
             $user->setBirthYear($data->get('birthYear'));
             // cause we use FormData to post data
             $user->setNewsSubscription($data->get('newsSubscription') === "true" ? true : false);
@@ -364,8 +364,6 @@ class UserController extends AbstractController
                 }
             }
         }
-        
-        $userManager->getProposals($user);
         
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,

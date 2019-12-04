@@ -134,7 +134,7 @@ class GeoSearcher
                 if ($user) {
                     // todo : maybe find a quicker way than a foreach :)
                     foreach ($relayPoint->getCommunity()->getCommunityUsers() as $communityUser) {
-                        if ($communityUser->getUser()->getId() == $user->getId() && $communityUser->getStatus() == CommunityUser::STATUS_ACCEPTED) {
+                        if ($communityUser->getUser()->getId() == $user->getId() && $communityUser->getStatus() == (CommunityUser::STATUS_ACCEPTED_AS_MEMBER or CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)) {
                             $exclude = false;
                             break;
                         }

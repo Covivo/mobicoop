@@ -428,9 +428,7 @@ export default {
       errors: [],
       loading: false,
       loadingDelete: false,
-      gender: {
-        value: this.user.gender
-      },
+      gender: this.user.gender,
       email: this.user.email,
       telephone: this.user.telephone,
       givenName: this.user.givenName,
@@ -502,7 +500,7 @@ export default {
       let updateUser = new FormData();
       updateUser.append("email", this.email);
       updateUser.append("familyName", this.familyName);
-      updateUser.append("gender", this.gender.value);
+      updateUser.append("gender", this.gender);
       updateUser.append("givenName", this.givenName);
       updateUser.append("homeAddress", JSON.stringify(this.user.homeAddress));
       updateUser.append("telephone", this.telephone);

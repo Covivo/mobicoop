@@ -228,7 +228,7 @@
         justify="center"
       >
         <v-col
-          cols="8"
+          cols="10"
         >
           <!-- Schedule -->
           <v-card>
@@ -330,7 +330,7 @@
                     header-color="secondary"
                     :disabled="item.outwardDisabled"
                     @click:minute="closeOutwardTime(item.id)"
-                    @change="change,blockTimeRegular($event,item.id)"
+                    @change="change(),blockTimeRegular($event,item.id)"
                   />
                 </v-menu>
               </v-col>
@@ -452,7 +452,7 @@
         dense
       >
         <v-col
-          cols="8"
+          cols="10"
         >
           <v-btn
             text
@@ -572,9 +572,10 @@ export default {
   methods: {
     change() {
       let validSchedules = JSON.parse(JSON.stringify(this.activeSchedules)); // little tweak to deep copy :)
+
       for (var i=0;i<validSchedules.length;i++) {
 
-        if (!((validSchedules[i].mon || validSchedules[i].tue || validSchedules[i].wed || validSchedules[i].thu || validSchedules[i].fri || validSchedules[i].sat || validSchedules[i].sun) && validSchedules[i].outwardTime)) {
+        if (!((validSchedules[i].mon || validSchedules[i].tue || validSchedules[i].wed || validSchedules[i].thu || validSchedules[i].fri || validSchedules[i].sat || validSchedules[i].sun) && (validSchedules[i].outwardTime || validSchedules[i].returnTime))) {
           validSchedules.splice(i);
         } else {
           delete validSchedules[i].id;
@@ -608,7 +609,12 @@ export default {
       if ( this.outwardDate > this.returnDate )  this.returnDate = this.outwardDate;
     },
     blockTimeRegular(e,id){
-      this.schedules[id].maxTimeFromOutwardRegular = e;
+      // test to allow return time to be set before outward time for regular work
+      if(id !=0 && this.schedules[id-1]['returnTime'] === null) {
+        // console.error("");
+      }else {
+        this.schedules[id].maxTimeFromOutwardRegular = e;
+      }
     },
     checkReturnDesactivate(e){
       if (!e) {

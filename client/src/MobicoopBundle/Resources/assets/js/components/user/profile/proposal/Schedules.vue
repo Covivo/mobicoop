@@ -125,6 +125,11 @@ export default {
       default: "ui.i18n.time.format.hourMinute"
     } 
   },
+  data() {
+    return {
+      locale: this.$i18n.locale,
+    };
+  },
   computed: {
     hasSameOutwardTimes () {
       moment.locale(this.locale);

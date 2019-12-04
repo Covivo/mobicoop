@@ -18,22 +18,56 @@
     <v-row
       class="primary darken-2"
     >
-      <v-icon
-        v-if="isDriver"
-        class="accent darken-2 pa-1 px-3 white--text"
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-icon
+            v-if="isDriver && !(isDriver && isPassenger)"
+            class="accent darken-2 pa-1 px-3 white--text"
+            v-on="on"
+          >
+            mdi-car
+          </v-icon>
+        </template>
+        <span> {{ $t('proposals.tooltips.driver') }} </span>
+      </v-tooltip>
+      <v-tooltip
+        v-if="isPassenger && isDriver"
+        bottom
       >
-        mdi-car
-      </v-icon>
+        <template v-slot:activator="{ on }">
+          <v-icon
+            v-if="isPassenger"
+            class="secondary darken-2 pa-1 px-3 white--text"
+            v-on="on"
+          >
+            mdi-walk
+          </v-icon>
+          <v-icon
+            v-if="isDriver"
+            class="accent darken-2 pa-1 px-3 white--text"
+            v-on="on"
+          >
+            mdi-car
+          </v-icon>
+        </template>
+        <span>{{ $t('proposals.tooltips.diverOrPassenger') }}</span>
+      </v-tooltip>
       <v-divider
         v-if="isDriver && isPassenger"
         vertical
       />
-      <v-icon
-        v-if="isPassenger"
-        class="secondary darken-2 pa-1 px-3 white--text"
-      >
-        mdi-walk
-      </v-icon>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-icon
+            v-if="isPassenger && !(isDriver && isPassenger)"
+            class="secondary darken-2 pa-1 px-3 white--text"
+            v-on="on"
+          >
+            mdi-walk
+          </v-icon>
+        </template>
+        <span>{{ $t('proposals.tooltips.passenger') }}</span>
+      </v-tooltip>
       <v-spacer />
       <v-btn
         class="secondary my-1"
@@ -48,7 +82,8 @@
           mdi-delete-outline
         </v-icon>
       </v-btn>
-      <v-btn
+      <!-- todo reactivate button when it will be possible to edit an ad -->
+      <!-- <v-btn
         v-if="!isArchived"
         class="secondary ma-1"
         icon
@@ -67,7 +102,7 @@
         <v-icon class="white--text">
           mdi-pause
         </v-icon>
-      </v-btn>
+      </v-btn> -->
     </v-row>
 
     <!--DIALOG-->
