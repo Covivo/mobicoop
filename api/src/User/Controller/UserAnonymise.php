@@ -59,7 +59,6 @@ class UserAnonymise
      */
     public function __invoke(User $data)
     {
-
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
         }
