@@ -127,15 +127,12 @@ export default {
   },
   computed: {
     formateDate(){
-      moment.locale(this.locale);
       return moment.utc(this.date).format("ddd DD MMM YYYY");
     },
     formateFromDate(){
-      moment.locale(this.locale);
       return moment.utc(this.criteria.fromDate).format("ddd DD MMM YYYY");
     },
     formateFromTime(){
-      moment.locale(this.locale);
       return (this.criteria.fromTime) ? moment.utc(this.criteria.fromTime).format("HH")+"h"+moment.utc(this.criteria.fromTime).format("mm") : null;
     },
     regularCarpoolDays(){
@@ -157,6 +154,9 @@ export default {
     selectedDefault(){
       this.selected = this.selectedDefault;
     }
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     click(){

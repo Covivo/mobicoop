@@ -300,6 +300,7 @@ export default {
   },
   data () {
     return {
+      locale: this.$i18n.locale,
       search: '',
       searchPassed : '',
       itemsPerPageOptions: [10, 20, 50, 100, -1],
@@ -322,6 +323,9 @@ export default {
   },
   mounted() {
     this.createMapComing();
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods:{
     searchChanged: function (search) {

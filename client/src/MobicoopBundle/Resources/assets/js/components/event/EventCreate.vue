@@ -396,17 +396,18 @@ export default {
   },
   computed :{
     computedOutwardDateFormat() {
-      moment.locale(this.locale);
       return this.startDate
         ? moment(this.startDate).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
     },
     computedReturnDateFormat() {
-      moment.locale(this.locale);
       return this.endDate
         ? moment(this.endDate).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
     },
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     addressSelected: function(address) {

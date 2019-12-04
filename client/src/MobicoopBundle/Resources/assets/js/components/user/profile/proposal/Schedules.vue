@@ -132,7 +132,6 @@ export default {
   },
   computed: {
     hasSameOutwardTimes () {
-      moment.locale(this.locale);
       let isSame = true;
       const times = this.outwardTimes;
       const days = times.length;
@@ -149,7 +148,6 @@ export default {
       return isSame;
     },
     hasSameReturnTimes () {
-      moment.locale(this.locale);
       let isSame = true;
       const times = this.returnTimes;
       const days = times.length;
@@ -166,9 +164,11 @@ export default {
       return isSame;
     }
   },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
+  },
   methods: {
     formatTime(time) {
-      moment.locale(this.locale);
       return moment.utc(time).format(this.$t(this.dateTimeFormat));
     }
   }

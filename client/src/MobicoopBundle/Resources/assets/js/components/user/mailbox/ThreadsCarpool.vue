@@ -59,6 +59,7 @@ export default {
   },
   data(){
     return{
+      locale: this.$i18n.locale,
       messages:[],
       boilerplate: false,
       tile: false,
@@ -77,6 +78,9 @@ export default {
   },
   mounted(){
     this.getThreads(this.idAskToSelect);
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods:{
     emit(data){

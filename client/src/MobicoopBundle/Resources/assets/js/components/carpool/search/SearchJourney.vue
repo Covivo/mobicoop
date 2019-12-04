@@ -292,7 +292,6 @@ export default {
   },
   computed: {
     computedDateFormat() {
-      moment.locale(this.locale);
       return this.date
         ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
         : null;
@@ -316,6 +315,9 @@ export default {
       this.customInitDestination = this.initDestination;
       this.destination = this.initDestination;
     }
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     originSelected: function(address) {

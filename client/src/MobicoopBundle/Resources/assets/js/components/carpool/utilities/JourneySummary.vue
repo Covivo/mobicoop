@@ -135,6 +135,9 @@ export default {
       return null;
     }
   },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
+  },
   methods: {
   }
 };
