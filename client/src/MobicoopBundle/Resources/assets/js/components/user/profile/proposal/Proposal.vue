@@ -19,7 +19,7 @@
       <proposal-content-punctual :proposal="proposal" />
     </v-card-text>
 
-    <v-divider />
+    <v-divider class="primary lighten-5" />
       
     <v-card-actions class="py-0">
       <proposal-footer

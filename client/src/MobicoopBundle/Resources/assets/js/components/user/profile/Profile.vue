@@ -6,8 +6,8 @@
       <v-col cols="11">
         <v-tabs
           v-model="modelTabs"
-          slider-color="secondary"
-          color="secondary"
+          slider-color="primary"
+          color="primary"
           vertical
         >
           <v-tab
@@ -39,7 +39,11 @@
           >
             {{ $t("tabs.myProfile") }}
           </v-tab>
-          <v-tab-item value="myProfile">
+          <v-tab-item
+            value="myProfile"
+            primary
+            lighten-5
+          >
             <v-tabs grow>
               <v-tab class="subtitle-1">
                 {{ $t("tabs.myAccount") }}

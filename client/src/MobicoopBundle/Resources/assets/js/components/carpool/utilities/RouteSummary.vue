@@ -137,7 +137,7 @@ export default {
     },
     iconColor: {
       type: String,
-      default: "yellow darken-2"
+      default: "accent"
     },
     time: {
       type: String,

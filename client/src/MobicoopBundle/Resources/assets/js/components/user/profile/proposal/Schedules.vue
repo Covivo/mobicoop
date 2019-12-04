@@ -35,21 +35,21 @@
               class="py-0"
               :align="isRegular ? 'right' : 'left'"
             >
-              <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('outward') }}</span>
+              <span class="accent--text text--accent font-weight-bold body-1">{{ $t('outward') }}</span>
 
-              <v-icon class="accent--text text--darken-2 font-weight-bold">
+              <v-icon class="accent--text text--accent font-weight-bold">
                 mdi-arrow-right
               </v-icon>
 
               <span
                 v-if="hasSameOutwardTimes"
-                class="primary--text text--darken-3 body-1"
+                class="primary--text text--darken-2 body-1"
               >
                 {{ formatTime(outwardTimes[0]) }}
               </span>
               <span
                 v-else
-                class="primary--text text--darken-3 body-1"
+                class="primary--text text--darken-2 body-1"
               >
                 {{ $t('multipleTimesSlots') }}
               </span>
@@ -61,21 +61,21 @@
               class="py-0"
               :align="isRegular ? 'right' : 'left'"
             >
-              <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('return') }}</span>
+              <span class="accent--text  font-weight-bold body-1">{{ $t('return') }}</span>
 
-              <v-icon class="accent--text text--darken-2 font-weight-bold">
+              <v-icon class="accent--text font-weight-bold">
                 mdi-arrow-left
               </v-icon>
 
               <span
                 v-if="hasSameReturnTimes"
-                class="primary--text text--darken-3 body-1"
+                class="primary--text text--darken-2 body-1"
               >
                 {{ formatTime(returnTimes[0]) }}
               </span>
               <span
                 v-else
-                class="primary--text text--darken-3 body-1"
+                class="primary--text text--darken-2 body-1"
               >
                 {{ $t('multipleTimesSlots') }}
               </span>
