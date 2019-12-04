@@ -15,14 +15,12 @@
       </v-btn>
     </v-snackbar>
 
-    <v-row
-      class="primary darken-2"
-    >
+    <v-row>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-icon
             v-if="isDriver && !(isDriver && isPassenger)"
-            class="accent darken-2 pa-1 px-3 white--text"
+            class="accent pa-1 px-3 white--text"
             v-on="on"
           >
             mdi-car
@@ -37,14 +35,14 @@
         <template v-slot:activator="{ on }">
           <v-icon
             v-if="isPassenger"
-            class="secondary darken-2 pa-1 px-3 white--text"
+            class="secondary pa-1 px-3 white--text"
             v-on="on"
           >
             mdi-walk
           </v-icon>
           <v-icon
             v-if="isDriver"
-            class="accent darken-2 pa-1 px-3 white--text"
+            class="accent pa-1 px-3 white--text"
             v-on="on"
           >
             mdi-car
@@ -60,7 +58,7 @@
         <template v-slot:activator="{ on }">
           <v-icon
             v-if="isPassenger && !(isDriver && isPassenger)"
-            class="secondary darken-2 pa-1 px-3 white--text"
+            class="secondary pa-1 px-3 white--text"
             v-on="on"
           >
             mdi-walk
@@ -69,19 +67,21 @@
         <span>{{ $t('proposals.tooltips.passenger') }}</span>
       </v-tooltip>
       <v-spacer />
-      <v-btn
-        class="secondary my-1"
-        :class="isArchived ? 'mr-1' : ''"
-        icon
-        :loading="loading"
-        @click="hasAcceptedAsk ? activeAcceptedAskDialog() : hasAsk ? activeAskDialog() : activeBaseDialog()"
-      >
-        <v-icon
-          class="white--text"
+      <v-col cols="1">
+        <v-btn
+          class="secondary my-1"
+          :class="isArchived ? 'mr-1' : ''"
+          icon
+          :loading="loading"
+          @click="hasAcceptedAsk ? activeAcceptedAskDialog() : hasAsk ? activeAskDialog() : activeBaseDialog()"
         >
-          mdi-delete-outline
-        </v-icon>
-      </v-btn>
+          <v-icon
+            class="white--text"
+          >
+            mdi-delete-outline
+          </v-icon>
+        </v-btn>
+      </v-col>
       <!-- todo reactivate button when it will be possible to edit an ad -->
       <!-- <v-btn
         v-if="!isArchived"
