@@ -43,7 +43,20 @@
    </v-row>
 
    -->
-
+    <!-- Title and subtitle -->
+    <v-row 
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        xl="10"
+        align="center"
+      >
+        <h1>
+          {{ $t('events') }}
+        </h1>
+      </v-col>
+    </v-row>
     <v-row>
       <v-col
         cols="12"
