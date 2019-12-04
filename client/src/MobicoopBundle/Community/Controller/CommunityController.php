@@ -222,7 +222,6 @@ class CommunityController extends AbstractController
         $ways = [];
         if ($proposals!==null) {
             foreach ($proposals as $proposal) {
-                
                 $currentProposal = [
                     "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
                     "frequency"=>($proposal["criteria"]["frequency"]==Criteria::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
