@@ -9,7 +9,8 @@
       >
         <v-col
           cols="12"
-          md="6"
+          md="10"
+          sm="10"
         >
           <!--SearchJourney-->
           <search-journey
