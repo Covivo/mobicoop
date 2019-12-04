@@ -475,7 +475,7 @@ class UserManager
         // we set the private param to false to get only published ad, not proposals posted after a search
         $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class, null, ['private'=>false]);
         $proposals = $response->getValue();
-//        dump($proposals);die;
+        
         $proposalsSanitized = [
             "ongoing" => [],
             "archived" => []
@@ -509,6 +509,11 @@ class UserManager
 
             $key = $date < $now ? 'archived' : 'ongoing';
 
+            // We do not keep the matchingOffers or matchingRequest where proposals are private
+            // TO DO : The api should return the array without all these
+            $proposal = $this->cleanPrivateMatchings($proposal, 'Offers');
+            $proposal = $this->cleanPrivateMatchings($proposal, 'Requests');
+
             // proposal is an outward
             if ($proposal["type"] === Proposal::TYPE_OUTWARD && !is_null($proposal["proposalLinked"])) {
                 $proposalsSanitized[$key][$proposal["id"]] = [
@@ -530,6 +535,31 @@ class UserManager
         }
 
         return $proposalsSanitized;
+    }
+
+    /**
+     * Cleaning the Matchings related to private Proposals
+     */
+    private function cleanPrivateMatchings($proposal, $type='Offers')
+    {
+        if (is_array($proposal['matching'.$type]) && count($proposal['matching'.$type])>0) {
+            foreach ($proposal['matching'.$type] as $keyMatching => $matching) {
+                if (is_array($matching['proposalOffer']) && count($matching['proposalOffer'])>0) {
+                    $proposalOffer = $matching['proposalOffer'];
+                    if (is_array($proposalOffer) && $proposalOffer['private']) {
+                        unset($proposal['matchingOffers'][$keyMatching]);
+                    }
+                }
+                if (is_array($matching['proposalRequest']) && count($matching['proposalRequest'])>0) {
+                    $proposalRequest = $matching['proposalRequest'];
+                    if (is_array($proposalRequest) && $proposalRequest['private']) {
+                        unset($proposal['matching'.$type][$keyMatching]);
+                    }
+                }
+            }
+            $proposal['matching'.$type] = array_values($proposal['matching'.$type]);
+        }
+        return $proposal;
     }
 
     /**

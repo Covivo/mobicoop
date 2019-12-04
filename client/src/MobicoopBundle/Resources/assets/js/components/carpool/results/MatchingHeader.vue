@@ -17,7 +17,7 @@
       </v-col>
 
       <!-- Modify icon -->
-      <v-col
+      <!-- <v-col
         cols="2"
         class="text-right"
       >
@@ -33,7 +33,7 @@
             mdi-lead-pencil
           </v-icon>
         </v-btn>
-      </v-col>
+      </v-col> -->
     </v-row>
 
     <!-- date row-->

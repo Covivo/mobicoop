@@ -8,8 +8,8 @@
       no-gutters
     >
       <v-col
-        cols="6"
-        offset="3"
+        cols="10"
+        offset="1"
       >
         <GeoComplete
           name="origin"
@@ -29,8 +29,8 @@
       no-gutters
     >
       <v-col
-        cols="6"
-        offset="3"
+        cols="10"
+        offset="1"
         align="left"
       >
         <v-btn
@@ -54,8 +54,8 @@
       no-gutters
     >
       <v-col
-        cols="6"
-        offset="3"
+        cols="10"
+        offset="1"
       >
         <GeoComplete
           name="etape1"
@@ -87,8 +87,8 @@
       no-gutters
     >
       <v-col
-        cols="6"
-        offset="3"
+        cols="10"
+        offset="1"
       >
         <GeoComplete
           name="etape2"
@@ -120,8 +120,8 @@
       no-gutters
     >
       <v-col
-        cols="6"
-        offset="3"
+        cols="10"
+        offset="1"
       >
         <GeoComplete
           name="etape3"
@@ -153,8 +153,8 @@
       no-gutters
     >
       <v-col
-        cols="6"
-        offset="3"
+        cols="10"
+        offset="1"
       >
         <GeoComplete
           name="etape4"
@@ -185,8 +185,8 @@
       no-gutters
     >
       <v-col
-        cols="6"
-        offset="3"
+        cols="10"
+        offset="1"
       >
         <GeoComplete
           name="destination"
@@ -228,7 +228,7 @@
       class="mt-2"
     >
       <v-col
-        cols="6"
+        cols="10"
       >
         <v-autocomplete
           v-model="selectedCommunities"
@@ -275,7 +275,7 @@
       justify="center"
     >
       <v-col
-        cols="6"
+        cols="10"
       >
         <!-- Route detail -->
         <v-card>

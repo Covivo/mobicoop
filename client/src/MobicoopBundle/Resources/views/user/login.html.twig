@@ -1,7 +1,7 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}
-  {% trans from 'ui' %}user.login.title{% endtrans %}
+  {% trans from 'ui' %}user.login.title{% endtrans %} - {{ app_name }}
 {% endblock %}
 {% block stylesheets %}
   {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/login") }}#}

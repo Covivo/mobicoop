@@ -93,6 +93,7 @@ class FormatDataManager
     // rounds to the nearest subdivision
     private static function roundNearest($num, $nearest = .5)
     {
-        return round($num / $nearest) * $nearest;
+        //return round($num / $nearest) * $nearest;
+        return round((round($num / $nearest) * $nearest), 1);
     }
 }

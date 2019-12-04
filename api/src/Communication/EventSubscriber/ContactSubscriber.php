@@ -24,6 +24,7 @@
 namespace App\Communication\EventSubscriber;
 
 use App\Communication\Entity\Email;
+use App\Communication\Entity\Contact;
 use App\Communication\Event\ContactEmailEvent;
 use App\Communication\Service\EmailManager;
 use App\Communication\Service\NotificationManager;
@@ -57,13 +58,28 @@ class ContactSubscriber implements EventSubscriberInterface
      * @var string
      */
     private $contactEmailAddress;
+    /**
+     * @var string
+     */
+    private $contactEmailObject;
+    /**
+     * @var string
+     */
+    private $supportEmailAddress;
+    /**
+     * @var string
+     */
+    private $supportEmailObject;
 
-    public function __construct(NotificationManager $notificationManager, EmailManager $emailManager, string $emailTemplatePath, string $contactEmailAddress)
+    public function __construct(NotificationManager $notificationManager, EmailManager $emailManager, string $emailTemplatePath, string $contactEmailAddress, string $supportEmailAddress, string $contactEmailObject, string $supportEmailObject)
     {
         $this->notificationManager = $notificationManager;
         $this->emailManager = $emailManager;
         $this->emailTemplatePath = $emailTemplatePath;
         $this->contactEmailAddress = $contactEmailAddress;
+        $this->contactEmailObject = $contactEmailObject;
+        $this->supportEmailAddress = $supportEmailAddress;
+        $this->supportEmailObject = $supportEmailObject;
     }
 
     public static function getSubscribedEvents()
@@ -84,12 +100,28 @@ class ContactSubscriber implements EventSubscriberInterface
 
         $email = new Email();
 
-        $email->setRecipientEmail($this->contactEmailAddress);
+        // We set the recipient mail according the type
+        $type = $contact->getType();
+        
+        // Determine the right email according the type
+        if (is_null($type)) {
+            $email->setRecipientEmail($this->contactEmailAddress);
+            $email->setObject($this->contactEmailObject);
+        } elseif ($type===0) {
+            $email->setRecipientEmail($this->supportEmailAddress);
+            $email->setObject($this->supportEmailObject);
+        } elseif ($type===1) {
+            $email->setRecipientEmail($this->contactEmailAddress);
+            $email->setObject($this->contactEmailObject);
+        } else {
+            $email->setRecipientEmail($this->contactEmailAddress);
+            $email->setObject($this->contactEmailObject);
+        }
+
         $email->setSenderEmail($contact->getEmail());
         $email->setReturnEmail($contact->getEmail());
         $email->setSenderFirstName($contact->getGivenName());
         $email->setSenderName($contact->getFamilyName());
-        $email->setObject("Nouvelle demande de contact");
 
         $this->emailManager->send($email, $this->emailTemplatePath . 'contact_email_posted', ['contact' => $contact]);
     }
