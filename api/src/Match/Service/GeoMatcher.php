@@ -68,7 +68,6 @@ class GeoMatcher
         $matchesReturned = [];
         if (!$async) {
             // SYNC
-            $this->logger->debug('Single Match | Sync');
             foreach ($candidates as $candidateToMatch) {
                 if ($master && $matches = $this->match($candidate, $candidateToMatch)) {
                     // if we stream, we should return the result here !
@@ -84,8 +83,6 @@ class GeoMatcher
             }
         } else {
             // ASYNC
-            $this->logger->debug('Single Match | Async');
-
             // we create the points for the routes alternatives for each candidate
             $addressesForRoutes = [];
             $candidatesById = [];
@@ -122,7 +119,6 @@ class GeoMatcher
                 }
             }
         }
-        $this->logger->debug('Single Match | End');
         return $matchesReturned;
     }
 
@@ -141,11 +137,11 @@ class GeoMatcher
      *      ],
      *      ...
      * ]
+     * @param bool $forMass     The multimatch is for mass matching
      * @return array|null               The array of results
      */
-    public function multiMatch(array $candidates): ?array
+    public function multiMatch(array $candidates, $forMass = false): ?array
     {
-        $this->logger->debug('Multi Match');
             
         $matchesReturned = [];
 
@@ -153,7 +149,6 @@ class GeoMatcher
         $addressesForRoutes = [];
         $routesOwner = [];
         
-        $this->logger->debug('Multi Match | Generate points start');
         $i=0;
         foreach ($candidates as $keyActors=>$actors) {
             foreach ($actors['passengers'] as $keyPassenger=>$candidateToMatch) {
@@ -167,30 +162,45 @@ class GeoMatcher
                 }
             }
         }
-        $this->logger->debug('Multi Match | Generate points end');
 
-        $this->logger->debug('Multi Match | Get routes start');
-        $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes);
-        $this->logger->debug('Multi Match | Get routes end');
-
-        // we treat the routes to check if they match
-        $this->logger->debug('Multi Match | Check matches start');
-        foreach ($ownerRoutes as $ownerId=>$routes) {
-            $this->logger->debug('Multi Match | Check matches for id #'.$ownerId);
-            if ($matches = $this->checkMultiMatch(
-                $candidates[$routesOwner[$ownerId]['actors']]['driver'],
-                $candidates[$routesOwner[$ownerId]['actors']]['passengers'][$routesOwner[$ownerId]['passenger']],
-                $routes,
-                $addressesForRoutes[$ownerId]
-            )) {
-                $matchesReturned[] = [
-                        'driver' => $candidates[$routesOwner[$ownerId]['actors']]['driver'],
-                        'passenger' => $candidates[$routesOwner[$ownerId]['actors']]['passengers'][$routesOwner[$ownerId]['passenger']],
-                        'matches' => $matches
-                    ];
+        if (!$forMass) {
+            $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes,false,true);
+    
+            // we treat the routes to check if they match
+            foreach ($ownerRoutes as $ownerId=>$routes) {
+                //$this->logger->debug('Multi Match | Check matches for id #'.$ownerId);
+                if ($matches = $this->checkMultiMatch(
+                    $candidates[$routesOwner[$ownerId]['actors']]['driver'],
+                    $candidates[$routesOwner[$ownerId]['actors']]['passengers'][$routesOwner[$ownerId]['passenger']],
+                    $routes,
+                    $addressesForRoutes[$ownerId]
+                )) {
+                    $matchesReturned[] = [
+                            'driver' => $candidates[$routesOwner[$ownerId]['actors']]['driver'],
+                            'passenger' => $candidates[$routesOwner[$ownerId]['actors']]['passengers'][$routesOwner[$ownerId]['passenger']],
+                            'matches' => $matches
+                        ];
+                }
             }
+        } else {
+            $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes);
+    
+            // we treat the routes to check if they match
+            foreach ($ownerRoutes as $ownerId=>$routes) {
+                if ($matches = $this->checkMassMultiMatch(
+                    $candidates[$routesOwner[$ownerId]['actors']]['driver'],
+                    $candidates[$routesOwner[$ownerId]['actors']]['passengers'][$routesOwner[$ownerId]['passenger']],
+                    $routes,
+                    $addressesForRoutes[$ownerId]
+                )) {
+                    $matchesReturned[] = [
+                            'driver' => $candidates[$routesOwner[$ownerId]['actors']]['driver'],
+                            'passenger' => $candidates[$routesOwner[$ownerId]['actors']]['passengers'][$routesOwner[$ownerId]['passenger']],
+                            'matches' => $matches
+                        ];
+                }
+            } 
         }
-        $this->logger->debug('Multi Match | Check matches end');
         
         return $matchesReturned;
     }
@@ -242,7 +252,6 @@ class GeoMatcher
             }
         }
         return $result;
-        $this->logger->debug('Match | Check - between 2 candidates ');
     }
 
     private function checkMatch(Candidate $candidate1, Candidate $candidate2, array $routes, ?array $points): ?array
@@ -258,13 +267,11 @@ class GeoMatcher
             // in meters
             if ($routes[0]->getDistance()<=($candidate1->getDirection()->getDistance()+$candidate1->getMaxDetourDistance())) {
                 $detourDistance = true;
-                $this->logger->debug('Detour Distance | Check - in meters ');
             }
         } elseif ($candidate1->getMaxDetourDistancePercent()) {
             // in percentage
             if ($routes[0]->getDistance()<=(($candidate1->getDirection()->getDistance()*($candidate1->getMaxDetourDistancePercent()/100))+$candidate1->getDirection()->getDistance())) {
                 $detourDistance = true;
-                $this->logger->debug('Detour Distance | Check - in percentage ');
             }
         }
         // we check the detour duration
@@ -272,26 +279,23 @@ class GeoMatcher
             // in seconds
             if ($routes[0]->getDuration()<=($candidate1->getDirection()->getDuration()+$candidate1->getMaxDetourDuration())) {
                 $detourDuration = true;
-                $this->logger->debug('Detour Duration | Check in seconds ');
             }
         } elseif ($candidate1->getMaxDetourDurationPercent()) {
             // in percentage
             if ($routes[0]->getDuration()<=(($candidate1->getDirection()->getDuration()*($candidate1->getMaxDetourDurationPercent()/100))+$candidate1->getDirection()->getDuration())) {
                 $detourDuration = true;
-                $this->logger->debug('Detour Duration | Check in percentage ');
             }
         }
         // we check the common distance
         if (($candidate1->getDirection()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
             (($candidate2->getDirection()->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
             $commonDistance = true;
-            $this->logger->debug('Common Distance | Check ');
         }
         
         // if the detour is acceptable we keep the candidate
         if ($detourDistance && $detourDuration && $commonDistance) {
             // we add the zones to the direction
-            $direction = $this->zoneManager->createZonesForDirection($routes[0]);
+            $direction = $this->zoneManager->createZonesForDirection($routes[0]); // ??
             $result = [
                 'route' => is_array($points) ? $this->generateRoute($points, $routes[0]->getDurations()) : null,
                 'originalDistance' => $candidate1->getDirection()->getDistance(),
@@ -308,9 +312,7 @@ class GeoMatcher
                 'direction' => $direction,
                 'id' => $candidate2->getId()
             ];
-            $this->logger->debug('Detour | detour is acceptable ');
         }
-        $this->logger->debug('Detour | No match ');
         return $result;
     }
 
@@ -325,15 +327,73 @@ class GeoMatcher
         // we check the detour distance
         if ($candidate1->getMaxDetourDistance()) {
             // in meters
+            if ($routes[0]->getDistance()<=($candidate1->getDirection()->getDistance()+$candidate1->getMaxDetourDistance())) {
+                $detourDistance = true;
+            }
+        } elseif ($candidate1->getMaxDetourDistancePercent()) {
+            // in percentage
+            if ($routes[0]->getDistance()<=(($candidate1->getDirection()->getDistance()*($candidate1->getMaxDetourDistancePercent()/100))+$candidate1->getDirection()->getDistance())) {
+                $detourDistance = true;
+            }
+        }
+        // we check the detour duration
+        if ($candidate1->getMaxDetourDuration()) {
+            // in seconds
+            if ($routes[0]->getDuration()<=($candidate1->getDirection()->getDuration()+$candidate1->getMaxDetourDuration())) {
+                $detourDuration = true;
+            }
+        } elseif ($candidate1->getMaxDetourDurationPercent()) {
+            // in percentage
+            if ($routes[0]->getDuration()<=(($candidate1->getDirection()->getDuration()*($candidate1->getMaxDetourDurationPercent()/100))+$candidate1->getDirection()->getDuration())) {
+                $detourDuration = true;
+            }
+        }
+        // we check the common distance
+        if (($candidate1->getDirection()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
+            (($candidate2->getDirection()->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
+            $commonDistance = true;
+        }
+        
+        // if the detour is acceptable we keep the candidate
+        if ($detourDistance && $detourDuration && $commonDistance) {
+            $result[] = [
+                'route' => is_array($points[0]) ? $this->generateRoute($points[0], null) : null,
+                'originalDistance' => $candidate1->getDirection()->getDistance(),
+                'acceptedDetourDistance' => $candidate1->getMaxDetourDistance(),
+                'newDistance' => $routes[0]->getDistance(),
+                'detourDistance' => ($routes[0]->getDistance()-$candidate1->getDirection()->getDistance()),
+                'detourDistancePercent' => round($routes[0]->getDistance()*100/$candidate1->getDirection()->getDistance()-100, 2),
+                'originalDuration' => $candidate1->getDirection()->getDuration(),
+                'acceptedDetourDuration' => $candidate1->getMaxDetourDuration(),
+                'newDuration' => $routes[0]->getDuration(),
+                'detourDuration' => ($routes[0]->getDuration()-$candidate1->getDirection()->getDuration()),
+                'detourDurationPercent' => round($routes[0]->getDuration()*100/$candidate1->getDirection()->getDuration()-100, 2),
+                'commonDistance' => $candidate2->getDirection()->getDistance(),
+                'direction' => $routes[0],
+                'id' => $candidate2->getId()
+            ];
+        }
+        return $result;
+    }
+
+    private function checkMassMultiMatch(Candidate $candidate1, Candidate $candidate2, array $routes, ?array $points): ?array
+    {
+        $result = null;
+
+        $detourDistance = false;
+        $detourDuration = false;
+        $commonDistance = false;
+
+        // we check the detour distance
+        if ($candidate1->getMaxDetourDistance()) {
+            // in meters
             if ($routes[0]['distance']<=($candidate1->getMassPerson()->getDistance()+$candidate1->getMaxDetourDistance())) {
                 $detourDistance = true;
-                $this->logger->debug('Detour Distance | Check - in meters ');
             }
         } elseif ($candidate1->getMaxDetourDistancePercent()) {
             // in percentage
             if ($routes[0]['distance']<=(($candidate1->getMassPerson()->getDistance()*($candidate1->getMaxDetourDistancePercent()/100))+$candidate1->getMassPerson()->getDistance())) {
                 $detourDistance = true;
-                $this->logger->debug('Detour Distance | Check - in percentage ');
             }
         }
         // we check the detour duration
@@ -341,20 +401,17 @@ class GeoMatcher
             // in seconds
             if ($routes[0]['duration']<=($candidate1->getMassPerson()->getDuration()+$candidate1->getMaxDetourDuration())) {
                 $detourDuration = true;
-                $this->logger->debug('Detour Duration | Check in seconds ');
             }
         } elseif ($candidate1->getMaxDetourDurationPercent()) {
             // in percentage
             if ($routes[0]['duration']<=(($candidate1->getMassPerson()->getDuration()*($candidate1->getMaxDetourDurationPercent()/100))+$candidate1->getMassPerson()->getDuration())) {
                 $detourDuration = true;
-                $this->logger->debug('Detour Duration | Check in percentage ');
             }
         }
         // we check the common distance
         if (($candidate1->getMassPerson()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
             (($candidate2->getMassPerson()->getDistance()*100/$candidate1->getMassPerson()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
             $commonDistance = true;
-            $this->logger->debug('Common Distance | Check ');
         }
         
         // if the detour is acceptable we keep the candidate
@@ -374,9 +431,7 @@ class GeoMatcher
                 'commonDistance' => $candidate2->getMassPerson()->getDistance(),
                 'id' => $candidate2->getId()
             ];
-            $this->logger->debug('Detour | detour is acceptable ');
         }
-        $this->logger->debug('Detour | No match ');
         return $result;
     }
 

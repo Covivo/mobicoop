@@ -73,7 +73,7 @@ class FakeUserController extends AbstractController
      */
     public function faker($number_users, $number_addresses, $min_lat, $min_lon, $max_lat, $max_lon, GeoSearcher $geoSearcher, EntityManagerInterface $entityManager)
     {
-        set_time_limit(120);
+        set_time_limit(360);
         $generated = 0;
         $pool = 0;
         $emails = []; // used to avoid duplicates

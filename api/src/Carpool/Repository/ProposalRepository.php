@@ -79,9 +79,10 @@ class ProposalRepository
      *
      * @param Proposal $proposal        The proposal to match
      * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
+     * @param bool $driversOnly         Exclude the matching proposals as passenger
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
      */
-    public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true)
+    public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true, bool $driversOnly = false)
     {
         // the "master" proposal is simply called the "proposal"
         // the potential matching proposals are called the "candidates"
@@ -95,12 +96,15 @@ class ProposalRepository
         // we will need the user informations
         ->join('p.user', 'u')
         // we need the directions and the geographical zones
-        ->leftJoin('c.directionDriver', 'dd')->leftJoin('dd.zones', 'zd')
         ->leftJoin('c.directionPassenger', 'dp')->leftJoin('dp.zones', 'zp')
         // we need the matchings and asks to check the available seats
         //->leftJoin('p.matchingOffers', 'm')->leftjoin('m.asks', 'a')->leftJoin('a.criteria', 'ac')->addGroupBy('proposalId')
         //we need the communities
         ->leftJoin('p.communities', 'co');
+
+        if (!$driversOnly) {
+            $query->leftJoin('c.directionDriver', 'dd')->leftJoin('dd.zones', 'zd');
+        }
 
         // do we exclude the user itself if the proposal isn't anonymous ?
         if ($excludeProposalUser && $proposal->getUser()) {
@@ -161,7 +165,7 @@ class ProposalRepository
             $zonePassengerWhere = 'zp.thinness = :thinnessPassenger and zp.zoneid IN(' . implode(',', $zones) . ')';
             $query->setParameter('thinnessPassenger', $this->getPrecision($proposal->getCriteria()->getDirectionDriver()));
         }
-        if ($proposal->getCriteria()->isPassenger()) {
+        if (!$driversOnly && $proposal->getCriteria()->isPassenger()) {
             $zonesAsPassenger = $proposal->getCriteria()->getDirectionPassenger()->getZones();
             $zones = [];
             foreach ($zonesAsPassenger as $zone) {
@@ -178,7 +182,7 @@ class ProposalRepository
         // }
 
         // we search if the user can be passenger and/or driver
-        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
             // $query->andWhere('((c.driver = 1 and ' . $zoneDriverWhere . ' and ' . $seatsDriverWhere . ') OR (c.passenger = 1 and ' . $zonePassengerWhere . '))');
             $query->andWhere('((c.driver = 1 and ' . $zoneDriverWhere . ') OR (c.passenger = 1 and ' . $zonePassengerWhere . '))');
         } elseif ($proposal->getCriteria()->isDriver()) {
@@ -232,7 +236,7 @@ class ProposalRepository
                 }
                 // if we use times
                 if ($proposal->getCriteria()->getFromTime()) {
-                    if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                    if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                         $punctualAndWhere .= ' and (
                             (c.passenger = 1 and c.maxTime >= :minTime) or 
                             (c.driver = 1 and c.minTime <= :maxTime)
@@ -259,7 +263,7 @@ class ProposalRepository
                         case 0:     // sunday
                                     $regularDay = ' and c.sunCheck = 1';
                                     if ($proposal->getCriteria()->getFromTime()) {
-                                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                                             $regularTime = ' and (
                                                 (c.passenger = 1 and c.sunMaxTime >= :minTime) or 
                                                 (c.driver = 1 and c.sunMinTime <= :maxTime)
@@ -278,7 +282,7 @@ class ProposalRepository
                         case 1:     // monday
                                     $regularDay = ' and c.monCheck = 1';
                                     if ($proposal->getCriteria()->getFromTime()) {
-                                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                                             $regularTime = ' and (
                                                 (c.passenger = 1 and c.monMaxTime >= :minTime) or 
                                                 (c.driver = 1 and c.monMinTime <= :maxTime)
@@ -297,7 +301,7 @@ class ProposalRepository
                         case 2:     // tuesday
                                     $regularDay = ' and c.tueCheck = 1';
                                     if ($proposal->getCriteria()->getFromTime()) {
-                                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                                             $regularTime = ' and (
                                                 (c.passenger = 1 and c.tueMaxTime >= :minTime) or 
                                                 (c.driver = 1 and c.tueMinTime <= :maxTime)
@@ -316,7 +320,7 @@ class ProposalRepository
                         case 3:     // wednesday
                                     $regularDay = ' and c.wedCheck = 1';
                                     if ($proposal->getCriteria()->getFromTime()) {
-                                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                                             $regularTime = ' and (
                                                 (c.passenger = 1 and c.wedMaxTime >= :minTime) or 
                                                 (c.driver = 1 and c.wedMinTime <= :maxTime)
@@ -335,7 +339,7 @@ class ProposalRepository
                         case 4:     // thursday
                                     $regularDay = ' and c.thuCheck = 1';
                                     if ($proposal->getCriteria()->getFromTime()) {
-                                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                                             $regularTime = ' and (
                                                 (c.passenger = 1 and c.thuMaxTime >= :minTime) or 
                                                 (c.driver = 1 and c.thuMinTime <= :maxTime)
@@ -354,7 +358,7 @@ class ProposalRepository
                         case 5:     //friday
                                     $regularDay = ' and c.friCheck = 1';
                                     if ($proposal->getCriteria()->getFromTime()) {
-                                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                                             $regularTime = ' and (
                                                 (c.passenger = 1 and c.friMaxTime >= :minTime) or 
                                                 (c.driver = 1 and c.friMinTime <= :maxTime)
@@ -373,7 +377,7 @@ class ProposalRepository
                         case 6:     // saturday
                                     $regularDay = ' and c.satCheck = 1';
                                     if ($proposal->getCriteria()->getFromTime()) {
-                                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                                             $regularTime = ' and (
                                                 (c.passenger = 1 and c.satMaxTime >= :minTime) or 
                                                 (c.driver = 1 and c.satMinTime <= :maxTime)
@@ -454,7 +458,7 @@ class ProposalRepository
                     $regularSunDay = 'c.sunCheck = 1';
                     $days .= "1,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getSunTime()) {
-                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularSunDay .= ' and (
                                 (c.passenger = 1 and c.sunMaxTime >= :sunMinTime) or 
                                 (c.driver = 1 and c.sunMinTime <= :sunMaxTime)
@@ -479,7 +483,7 @@ class ProposalRepository
                     $regularMonDay = 'c.monCheck = 1';
                     $days .= "2,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getMonTime()) {
-                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularMonDay .= ' and (
                                 (c.passenger = 1 and c.monMaxTime >= :monMinTime) or 
                                 (c.driver = 1 and c.monMinTime <= :monMaxTime)
@@ -504,7 +508,7 @@ class ProposalRepository
                     $regularTueDay = 'c.tueCheck = 1';
                     $days .= "3,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getTueTime()) {
-                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularTueDay .= ' and (
                                 (c.passenger = 1 and c.tueMaxTime >= :tueMinTime) or 
                                 (c.driver = 1 and c.tueMinTime <= :tueMaxTime)
@@ -529,7 +533,7 @@ class ProposalRepository
                     $regularWedDay = 'c.wedCheck = 1';
                     $days .= "4,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getWedTime()) {
-                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularWedDay .= ' and (
                                 (c.passenger = 1 and c.wedMaxTime >= :wedMinTime) or 
                                 (c.driver = 1 and c.wedMinTime <= :wedMaxTime)
@@ -554,7 +558,7 @@ class ProposalRepository
                     $regularThuDay = 'c.thuCheck = 1';
                     $days .= "5,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getThuTime()) {
-                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularThuDay .= ' and (
                                 (c.passenger = 1 and c.thuMaxTime >= :thuMinTime) or 
                                 (c.driver = 1 and c.thuMinTime <= :thuMaxTime)
@@ -579,7 +583,7 @@ class ProposalRepository
                     $regularFriDay = 'c.friCheck = 1';
                     $days .= "6,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getFriTime()) {
-                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularFriDay .= ' and (
                                 (c.passenger = 1 and c.friMaxTime >= :friMinTime) or 
                                 (c.driver = 1 and c.friMinTime <= :friMaxTime)
@@ -604,7 +608,7 @@ class ProposalRepository
                     $regularSatDay = 'c.satCheck = 1';
                     $days .= "7,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getSatTime()) {
-                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularSatDay .= ' and (
                                 (c.passenger = 1 and c.satMaxTime >= :satMinTime) or 
                                 (c.driver = 1 and c.satMinTime <= :satMaxTime)
@@ -646,7 +650,7 @@ class ProposalRepository
                     // if the proposal is not strictly regualr, we include the punctual proposals
                     $punctualAndWhere = '(';
                     $punctualAndWhere .= 'c.frequency=' . Criteria::FREQUENCY_PUNCTUAL . ' and c.fromDate >= :fromDate and c.fromDate <= :toDate and DAYOFWEEK(c.fromDate) IN (' . $days . ')';
-                    if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                    if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                         $punctualAndWhere .= ' and (
                             (c.passenger = 1' . ($minTime != "" ? ' and ' . $minTime : '') . ') or 
                             (c.driver = 1' . ($maxTime != "" ? ' and ' . $maxTime : '') . ')

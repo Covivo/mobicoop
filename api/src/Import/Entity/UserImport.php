@@ -59,11 +59,18 @@ class UserImport
     const DEFAULT_ID = 999999999999;
 
     const STATUS_IMPORTED = 0;          // the external user has been imported, no treatment has been made yet
-    const STATUS_PENDING = 1;           // a treatment is pending
+    const STATUS_USER_PENDING = 1;      // the user treatment is pending
     const STATUS_USER_TREATED = 2;      // the user treatment has been made successfully
     const STATUS_USER_ERROR = 3;        // the user treatment has failed
-    const STATUS_JOURNEY_TREATED = 4;   // the journey treatment has been made successfully
-    const STATUS_JOURNEY_ERROR = 5;     // the journey treatment has failed
+    const STATUS_DIRECTION_PENDING = 5; // the direction treatment is pending
+    const STATUS_DIRECTION_TREATED = 6; // the direction treatment has been made successfully
+    const STATUS_DIRECTION_ERROR = 7;   // the direction treatment failed
+    const STATUS_DEFAULTS_PENDING = 8;  // the defaults treatment is pending
+    const STATUS_DEFAULTS_TREATED = 9;  // the defaults treatment has been made successfully
+    const STATUS_DEFAULTS_ERROR = 10;   // the defaults treatment has failed
+    const STATUS_MATCHING_PENDING = 11; // the matching treatment is pending
+    const STATUS_MATCHING_TREATED = 12; // the matching treatment has been made successfully
+    const STATUS_MATCHING_ERROR = 13;   // the matching treatment has failed
 
     /**
      * @var int The id of this imported user.

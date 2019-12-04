@@ -170,6 +170,11 @@ class GeoRouterProvider implements ProviderInterface
                     // call external script
                     $this->logger->debug('Multiple Async | Call external script start');
                     $return = exec($params['batchScriptPath'].' -f ' . $filename . ' --nb 20 2>&1', $out, $err);
+                    // $filenameReturn = $filename . ".log";
+                    // $fpr = fopen($filenameReturn, 'w');
+                    // fwrite($fpr, print_r($out,true));
+                    // fwrite($fpr, 'status : ' . $err);
+                    // fclose($fpr);
                     $this->logger->debug('Multiple Async | Call external script end');
                     // treat the response
                     $response = \JsonMachine\JsonMachine::fromFile($filename);

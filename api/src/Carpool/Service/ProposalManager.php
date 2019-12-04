@@ -571,173 +571,221 @@ class ProposalManager
      * @return void
      */
     public function setDirectionsAndDefaultsForImport(int $batch)
-    {
-        $qCriteria = $this->entityManager->createQuery('SELECT c from App\Carpool\Entity\Criteria c JOIN c.proposal p JOIN p.user u JOIN u.import i WHERE i.status='.UserImport::STATUS_USER_TREATED);
+    {        
+        $treatedCriterias = []; // used to avoid excluding a linked proposal if the proposal is the last to be processed in a batch
+        $loop = 0;
+        while (true) {
 
-        $addressesForRoutesDriver = [];
-        $addressesForRoutesPassenger = [];
+            $this->logger->info('setDirectionsForProposals | Start creating arrays for calculation, loop #' . $loop . ' at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        $this->logger->info('setDirectionsForProposals | Start creating arrays for calculation at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            // we treat the user still at status "user treated"
+            $qCriteria = $this->entityManager->createQuery('SELECT c from App\Carpool\Entity\Criteria c JOIN c.proposal p JOIN p.user u JOIN u.import i WHERE i.status='.UserImport::STATUS_USER_TREATED);
+            
+            $addressesForRoutesDriver = [];
+            $addressesForRoutesPassenger = [];
+            $imports = [];
 
-        $iterableResult = $qCriteria->iterate();
-        foreach ($iterableResult as $row) {
-            $criteria = $row[0];
-            $addressesDriver = [];
-            $addressesPassenger = [];
-            foreach ($criteria->getProposal()->getWaypoints() as $waypoint) {
-                if ($criteria->isDriver()) {
-                    $addressesDriver[] = $waypoint->getAddress();
+            $i=0;
+            $iterableResult = $qCriteria->iterate();
+            foreach ($iterableResult as $row) {
+                $criteria = $row[0];
+                $addressesDriver = [];
+                $addressesPassenger = [];
+                foreach ($criteria->getProposal()->getWaypoints() as $waypoint) {
+                    // waypoints are already retrieved ordered by position, no need to check the position here
+                    if ($criteria->isDriver()) {
+                        $addressesDriver[] = $waypoint->getAddress();                        
+                    }
+                    if ($criteria->isPassenger() && ($waypoint->getPosition() == 0 || $waypoint->isDestination())) {
+                        $addressesPassenger[] = $waypoint->getAddress();
+                    }
                 }
-                if ($criteria->isPassenger() && ($waypoint->getPosition() == 0 || $waypoint->isDestination())) {
-                    $addressesPassenger[] = $waypoint->getAddress();
+                $isDriver = false;
+                $isPassenger = false;
+                if (count($addressesDriver)>0) {
+                    $isDriver = true;
+                    $i++;
+                    $addressesForRoutesDriver[$criteria->getId()][] = $addressesDriver;
                 }
-            }
-            if (count($addressesDriver)>0) {
-                $addressesForRoutesDriver[$criteria->getId()][] = $addressesDriver;
-            }
-            if (count($addressesPassenger)>0) {
-                $addressesForRoutesPassenger[$criteria->getId()][] = $addressesPassenger;
-            }
-        }
-
-        $this->logger->info('setDirectionsForProposals | Start georouter multiple calculation for driver at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        $ownerDriverRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutesDriver, false, true);
-        $this->logger->info('setDirectionsForProposals | Start georouter multiple calculation for passenger at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        $ownerPassengerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutesPassenger, false, true);
-
-        $qCriteria = $this->entityManager->createQuery('SELECT c from App\Carpool\Entity\Criteria c JOIN c.proposal p JOIN p.user u JOIN u.import i WHERE i.status='.UserImport::STATUS_USER_TREATED);
-
-        $pool = 0;
-        $iterableResult = $qCriteria->iterate();
-        foreach ($iterableResult as $row) {
-            $criteria = $row[0];
-            if (isset($ownerDriverRoutes[$criteria->getId()])) {
-                $direction = $ownerDriverRoutes[$criteria->getId()][0];
-                $direction = $this->zoneManager->createZonesForDirection($direction);
-                $this->entityManager->persist($direction);
-                $criteria->setDirectionDriver($direction);
-                $criteria->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
-                $criteria->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
-            }
-            if (isset($ownerPassengerRoutes[$criteria->getId()])) {
-                $direction = $ownerPassengerRoutes[$criteria->getId()][0];
-                $direction = $this->zoneManager->createZonesForDirection($direction);
-                $this->entityManager->persist($direction);
-                $criteria->setDirectionPassenger($direction);
-            }
-
-            if (is_null($criteria->getAnyRouteAsPassenger())) {
-                $criteria->setAnyRouteAsPassenger($this->params['defaultAnyRouteAsPassenger']);
-            }
-            if (is_null($criteria->isStrictDate())) {
-                $criteria->setStrictDate($this->params['defaultStrictDate']);
-            }
-            if (is_null($criteria->getPriceKm())) {
-                $criteria->setPriceKm($this->params['defaultPriceKm']);
-            }
-            if ($criteria->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-                if (is_null($criteria->isStrictPunctual())) {
-                    $criteria->setStrictPunctual($this->params['defaultStrictPunctual']);
+                if (count($addressesPassenger)>0) {
+                    $isPassenger = true;
+                    $i++;
+                    $addressesForRoutesPassenger[$criteria->getId()][] = $addressesPassenger;
+                }   
+                if ($isDriver || $isPassenger) {
+                    $imports[] = $criteria->getProposal()->getUser()->getImport()->getId();
                 }
-                if (is_null($criteria->getMarginDuration())) {
-                    $criteria->setMarginDuration($this->params['defaultMarginTime']);
+                if ($i>=$batch && 
+                    ($criteria->getProposal()->getType() == Proposal::TYPE_ONE_WAY || in_array($criteria->getId(),$treatedCriterias))) {
+                    break;
                 }
+                $treatedCriterias[] = $criteria->getId();
+            }
+
+            $imports = array_unique($imports);
+
+            if (count($imports)>0) {
+                $q = $this->entityManager
+                ->createQuery('UPDATE App\import\Entity\UserImport u set u.status = :status WHERE u.id in(' . implode(',',$imports) . ')')
+                ->setParameters([
+                    'status'=>UserImport::STATUS_DIRECTION_PENDING
+                ]);
+                $q->execute();        
             } else {
-                if (is_null($criteria->isStrictRegular())) {
-                    $criteria->setStrictRegular($this->params['defaultStrictRegular']);
-                }
-                if (is_null($criteria->getMonMarginDuration())) {
-                    $criteria->setMonMarginDuration($this->params['defaultMarginTime']);
-                }
-                if (is_null($criteria->getTueMarginDuration())) {
-                    $criteria->setTueMarginDuration($this->params['defaultMarginTime']);
-                }
-                if (is_null($criteria->getWedMarginDuration())) {
-                    $criteria->setWedMarginDuration($this->params['defaultMarginTime']);
-                }
-                if (is_null($criteria->getThuMarginDuration())) {
-                    $criteria->setThuMarginDuration($this->params['defaultMarginTime']);
-                }
-                if (is_null($criteria->getFriMarginDuration())) {
-                    $criteria->setFriMarginDuration($this->params['defaultMarginTime']);
-                }
-                if (is_null($criteria->getSatMarginDuration())) {
-                    $criteria->setSatMarginDuration($this->params['defaultMarginTime']);
-                }
-                if (is_null($criteria->getSunMarginDuration())) {
-                    $criteria->setSunMarginDuration($this->params['defaultMarginTime']);
-                }
-                if (is_null($criteria->getToDate())) {
-                    // end date is usually null, except when creating a proposal after a matching search
-                    $endDate = clone $criteria->getFromDate();
-                    // the date can be immutable
-                    $toDate = $endDate->add(new \DateInterval('P' . $this->params['defaultRegularLifeTime'] . 'Y'));
-                    $criteria->setToDate($toDate);
-                }
+                // no imports to treat => we reached the end
+                break;
             }
+            $loop++;
 
-            if ($criteria->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $criteria->getFromTime()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($criteria->getFromTime(), $criteria->getMarginDuration());
-                $criteria->setMinTime($minTime);
-                $criteria->setMaxTime($maxTime);
-            } else {
-                if ($criteria->isMonCheck() && $criteria->getMonTime()) {
-                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getMonTime(), $criteria->getMonMarginDuration());
-                    $criteria->setMonMinTime($minTime);
-                    $criteria->setMonMaxTime($maxTime);
-                }
-                if ($criteria->isTueCheck() && $criteria->getTueTime()) {
-                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getTueTime(), $criteria->getTueMarginDuration());
-                    $criteria->setTueMinTime($minTime);
-                    $criteria->setTueMaxTime($maxTime);
-                }
-                if ($criteria->isWedCheck() && $criteria->getWedTime()) {
-                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getWedTime(), $criteria->getWedMarginDuration());
-                    $criteria->setWedMinTime($minTime);
-                    $criteria->setWedMaxTime($maxTime);
-                }
-                if ($criteria->isThuCheck() && $criteria->getThuTime()) {
-                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getThuTime(), $criteria->getThuMarginDuration());
-                    $criteria->setThuMinTime($minTime);
-                    $criteria->setThuMaxTime($maxTime);
-                }
-                if ($criteria->isFriCheck() && $criteria->getFriTime()) {
-                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getFriTime(), $criteria->getFriMarginDuration());
-                    $criteria->setFriMinTime($minTime);
-                    $criteria->setFriMaxTime($maxTime);
-                }
-                if ($criteria->isSatCheck() && $criteria->getSatTime()) {
-                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getSatTime(), $criteria->getSatMarginDuration());
-                    $criteria->setSatMinTime($minTime);
-                    $criteria->setSatMaxTime($maxTime);
-                }
-                if ($criteria->isSunCheck() && $criteria->getSunTime()) {
-                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getSunTime(), $criteria->getSunMarginDuration());
-                    $criteria->setSunMinTime($minTime);
-                    $criteria->setSunMaxTime($maxTime);
-                }
-            }
+            $ownerDriverRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutesDriver, false, true);
+            $ownerPassengerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutesPassenger, false, true);
 
-            if ($criteria->getDirectionDriver()) {
-                $criteria->setDriverComputedPrice((string)((int)$criteria->getDirectionDriver()->getDistance()*(float)$criteria->getPriceKm()/1000));
-                $criteria->setDriverComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$criteria->getDriverComputedPrice(), $criteria->getFrequency()));
-            }
-            if ($criteria->getDirectionPassenger()) {
-                $criteria->setPassengerComputedPrice((string)((int)$criteria->getDirectionPassenger()->getDistance()*(float)$criteria->getPriceKm()/1000));
-                $criteria->setPassengerComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$criteria->getPassengerComputedPrice(), $criteria->getFrequency()));
-            }
-            $this->entityManager->persist($criteria);
+            $ids = array_unique(array_merge(array_keys($ownerDriverRoutes),array_keys($ownerPassengerRoutes)));
+            
+            $qCriteria = $this->entityManager->createQuery('SELECT c from App\Carpool\Entity\Criteria c WHERE c.id IN (' . implode(',',$ids) . ')');
+                
+            $batchD = 50;
+            $pool = 0;
+            $iterableResult = $qCriteria->iterate();
+            foreach ($iterableResult as $row) {
+                $criteria = $row[0];
+                if (array_key_exists($criteria->getId(),$ownerDriverRoutes)) {
+                    $direction = $ownerDriverRoutes[$criteria->getId()][0];
+                    $direction = $this->zoneManager->createZonesForDirection($direction);
+                    $this->entityManager->persist($direction);
+                    $criteria->setDirectionDriver($direction);
+                    $criteria->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
+                    $criteria->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
+                }
+                if (array_key_exists($criteria->getId(),$ownerPassengerRoutes)) {
+                    $direction = $ownerPassengerRoutes[$criteria->getId()][0];
+                    $direction = $this->zoneManager->createZonesForDirection($direction);
+                    $this->entityManager->persist($direction);
+                    $criteria->setDirectionPassenger($direction);
+                }
+                    
+                if (is_null($criteria->getAnyRouteAsPassenger())) {
+                    $criteria->setAnyRouteAsPassenger($this->params['defaultAnyRouteAsPassenger']);
+                }
+                if (is_null($criteria->isStrictDate())) {
+                    $criteria->setStrictDate($this->params['defaultStrictDate']);
+                }
+                if (is_null($criteria->getPriceKm())) {
+                    $criteria->setPriceKm($this->params['defaultPriceKm']);
+                }
+                if ($criteria->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                    if (is_null($criteria->isStrictPunctual())) {
+                        $criteria->setStrictPunctual($this->params['defaultStrictPunctual']);
+                    }
+                    if (is_null($criteria->getMarginDuration())) {
+                        $criteria->setMarginDuration($this->params['defaultMarginTime']);
+                    }
+                } else {
+                    if (is_null($criteria->isStrictRegular())) {
+                        $criteria->setStrictRegular($this->params['defaultStrictRegular']);
+                    }
+                    if (is_null($criteria->getMonMarginDuration())) {
+                        $criteria->setMonMarginDuration($this->params['defaultMarginTime']);
+                    }
+                    if (is_null($criteria->getTueMarginDuration())) {
+                        $criteria->setTueMarginDuration($this->params['defaultMarginTime']);
+                    }
+                    if (is_null($criteria->getWedMarginDuration())) {
+                        $criteria->setWedMarginDuration($this->params['defaultMarginTime']);
+                    }
+                    if (is_null($criteria->getThuMarginDuration())) {
+                        $criteria->setThuMarginDuration($this->params['defaultMarginTime']);
+                    }
+                    if (is_null($criteria->getFriMarginDuration())) {
+                        $criteria->setFriMarginDuration($this->params['defaultMarginTime']);
+                    }
+                    if (is_null($criteria->getSatMarginDuration())) {
+                        $criteria->setSatMarginDuration($this->params['defaultMarginTime']);
+                    }
+                    if (is_null($criteria->getSunMarginDuration())) {
+                        $criteria->setSunMarginDuration($this->params['defaultMarginTime']);
+                    }
+                    if (is_null($criteria->getToDate())) {
+                        // end date is usually null, except when creating a proposal after a matching search
+                        $endDate = clone $criteria->getFromDate();
+                        // the date can be immutable
+                        $toDate = $endDate->add(new \DateInterval('P' . $this->params['defaultRegularLifeTime'] . 'Y'));
+                        $criteria->setToDate($toDate);
+                    }
+                }
 
-            // batch
-            $pool++;
-            if ($pool>=$batch) {
-                $this->entityManager->flush();
-                $this->entityManager->clear();
-                $pool = 0;
+                if ($criteria->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $criteria->getFromTime()) {
+                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getFromTime(), $criteria->getMarginDuration());
+                    $criteria->setMinTime($minTime);
+                    $criteria->setMaxTime($maxTime);
+                } else {
+                    if ($criteria->isMonCheck() && $criteria->getMonTime()) {
+                        list($minTime, $maxTime) = self::getMinMaxTime($criteria->getMonTime(), $criteria->getMonMarginDuration());
+                        $criteria->setMonMinTime($minTime);
+                        $criteria->setMonMaxTime($maxTime);
+                    }
+                    if ($criteria->isTueCheck() && $criteria->getTueTime()) {
+                        list($minTime, $maxTime) = self::getMinMaxTime($criteria->getTueTime(), $criteria->getTueMarginDuration());
+                        $criteria->setTueMinTime($minTime);
+                        $criteria->setTueMaxTime($maxTime);
+                    }
+                    if ($criteria->isWedCheck() && $criteria->getWedTime()) {
+                        list($minTime, $maxTime) = self::getMinMaxTime($criteria->getWedTime(), $criteria->getWedMarginDuration());
+                        $criteria->setWedMinTime($minTime);
+                        $criteria->setWedMaxTime($maxTime);
+                    }
+                    if ($criteria->isThuCheck() && $criteria->getThuTime()) {
+                        list($minTime, $maxTime) = self::getMinMaxTime($criteria->getThuTime(), $criteria->getThuMarginDuration());
+                        $criteria->setThuMinTime($minTime);
+                        $criteria->setThuMaxTime($maxTime);
+                    }
+                    if ($criteria->isFriCheck() && $criteria->getFriTime()) {
+                        list($minTime, $maxTime) = self::getMinMaxTime($criteria->getFriTime(), $criteria->getFriMarginDuration());
+                        $criteria->setFriMinTime($minTime);
+                        $criteria->setFriMaxTime($maxTime);
+                    }
+                    if ($criteria->isSatCheck() && $criteria->getSatTime()) {
+                        list($minTime, $maxTime) = self::getMinMaxTime($criteria->getSatTime(), $criteria->getSatMarginDuration());
+                        $criteria->setSatMinTime($minTime);
+                        $criteria->setSatMaxTime($maxTime);
+                    }
+                    if ($criteria->isSunCheck() && $criteria->getSunTime()) {
+                        list($minTime, $maxTime) = self::getMinMaxTime($criteria->getSunTime(), $criteria->getSunMarginDuration());
+                        $criteria->setSunMinTime($minTime);
+                        $criteria->setSunMaxTime($maxTime);
+                    }
+                    if ($criteria->getDirectionDriver()) {
+                        $criteria->setDriverComputedPrice((string)((int)$criteria->getDirectionDriver()->getDistance()*(float)$criteria->getPriceKm()/1000));
+                        $criteria->setDriverComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$criteria->getDriverComputedPrice(), $criteria->getFrequency()));
+                    }
+                    if ($criteria->getDirectionPassenger()) {
+                        $criteria->setPassengerComputedPrice((string)((int)$criteria->getDirectionPassenger()->getDistance()*(float)$criteria->getPriceKm()/1000));
+                        $criteria->setPassengerComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$criteria->getPassengerComputedPrice(), $criteria->getFrequency()));
+                    }
+                }
+                // batch
+                $pool++;
+                if ($pool>=$batchD) {
+                    $this->entityManager->flush();
+                    $this->entityManager->clear();
+                    $pool = 0;
+                }
             }
+            unset($ownerDriverRoutes);
+            unset($ownerPassengerRoutes);
+            // final flush for pending persists
+            $this->entityManager->flush();
+            $this->entityManager->clear();
+
+            $q = $this->entityManager
+            ->createQuery('UPDATE App\import\Entity\UserImport u set u.status = :status WHERE u.id in(' . implode(',',$imports) . ')')
+            ->setParameters([
+                'status'=>UserImport::STATUS_DIRECTION_TREATED
+            ]);
+            $q->execute();
+
+            unset($imports);
         }
-        $this->entityManager->flush();
-        $this->entityManager->clear();
     }
 
     /**
@@ -769,20 +817,10 @@ class ProposalManager
         //     ]
         // ];
 
-        // todo : make only as drivers as passengers will be obviously tested !!
-        $candidatesProposals = $this->proposalMatcher->findPotentialMatchingsForProposals($proposals);
-
-        // 3 - make an array of all routes for single pass mass georouting
-        // => multimatch
-
-        foreach ($proposals as $proposal) {
-            // matching analyze
-            $this->logger->info('Multi Proposal matching | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, true);
-            $this->logger->info('Multi Proposal matching | End ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            $this->entityManager->persist($proposal);
-        }
-        $this->entityManager->flush();
+        $this->logger->info('Start creating candidates | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->proposalMatcher->findPotentialMatchingsForProposals($proposals);
+        $this->logger->info('End creating candidates | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        
         return $proposals;
     }
 
