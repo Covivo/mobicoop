@@ -193,6 +193,9 @@ export default {
       return null;
     }
   },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
+  },
   methods: {
     formatTime(time) {
       return moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute"));

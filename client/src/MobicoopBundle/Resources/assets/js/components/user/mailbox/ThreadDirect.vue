@@ -72,7 +72,8 @@ export default {
   },
   data() {
     return {
-      selected: this.selectedDefault
+      selected: this.selectedDefault,
+      locale: this.$i18n.locale
     }
   },
   computed: {
@@ -87,6 +88,9 @@ export default {
     selectedDefault(){
       this.selected = this.selectedDefault;
     }
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     click(){

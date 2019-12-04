@@ -204,6 +204,7 @@ export default {
   },
   data(){
     return{
+      locale: this.$i18n.locale,
       loading:this.loadingInit,
       recipientName:"",
       dataLoadingBtn:this.loadingBtn,
@@ -246,6 +247,9 @@ export default {
     loadingBtn(){
       this.dataLoadingBtn = this.loadingBtn;
     }
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods:{
     refreshInfos(){

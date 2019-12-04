@@ -139,6 +139,7 @@ export default {
   },
   data () {
     return {
+      locale: this.$i18n.locale,
       search: '',
       headers: [
         {
@@ -180,6 +181,9 @@ export default {
   mounted() {
     this.getEventProposals();
     this.checkDomain();
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods:{
     post: function (path, params, method='post') {

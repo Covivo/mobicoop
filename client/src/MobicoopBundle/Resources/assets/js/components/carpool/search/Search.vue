@@ -174,11 +174,13 @@ export default {
       return (!this.origin || !this.destination || (!this.dataRegular && !this.date && !this.punctualDateOptional))
     },
     dateFormated() {
-      moment.locale(this.locale);
       return this.date
         ? moment(this.date).format(this.$t("ui.i18n.date.format.urlDate"))
         : null;
     },
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     post: function (path, params, method='post') {

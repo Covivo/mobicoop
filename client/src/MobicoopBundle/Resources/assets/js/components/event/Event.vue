@@ -208,6 +208,7 @@ export default {
   },
   data () {
     return {
+      locale: this.$i18n.locale,
       destination: '',
       origin: this.initOrigin,
       search: '',
@@ -234,7 +235,9 @@ export default {
         return false;
     }
   // Link the event in the adresse
-  },created: function () {
+  },
+  created: function () {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
     this.$set(this.initDestination, 'event', this.event);
     this.destination = this.initDestination;
   },

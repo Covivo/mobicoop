@@ -103,11 +103,13 @@ export default {
   },
   computed: {
     formattedDateEndOfValidity () {
-      moment.locale(this.locale);
       return this.dateEndOfValidity
         ? moment(this.dateEndOfValidity).format(this.$t("ui.i18n.date.format.shortCompleteDate"))
         : "";
     }
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   }
 };
 </script>

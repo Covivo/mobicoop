@@ -667,38 +667,32 @@ export default {
   },
   computed: {
     computedOutwardDateFormat() {
-      moment.locale(this.locale);
       return this.outwardDate
         ? moment(this.outwardDate).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
     },
     computedReturnDateFormat() {
-      moment.locale(this.locale);
       return this.returnDate
         ? moment(this.returnDate).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
     },
     computedOutwardTimeFormat() {
-      moment.locale(this.locale);
       return (this.outwardDate && this.outwardTime)
         ? moment(this.outwardDate+' '+this.outwardTime).format(this.$t("ui.i18n.time.format.hourMinute"))
         : null;
     },
     computedDestinationTime() {
-      moment.locale(this.locale);
       if (this.route && this.route.direction && this.outwardDate && this.outwardTime) {
         return moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"));
       }
       return null;
     },
     computedReturnOutwardTimeFormat() {
-      moment.locale(this.locale);
       return (this.hasReturn)
         ? moment(this.returnDate+' '+this.returnTime).format(this.$t("ui.i18n.time.format.hourMinute"))
         : null;
     },
     computedReturnDestinationTime() {
-      moment.locale(this.locale);
       if (this.route && this.route.direction && this.hasReturn) {
         return moment(this.returnDate+' '+this.returnTime).add(this.route.direction.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"));
       }
@@ -747,9 +741,11 @@ export default {
       return this.returnDate !== null && this.returnTime !== null;
     }
   },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
+  },
   methods: {
     formatTime(time) {
-      moment.locale(this.locale);
       return moment(moment(new Date()).format('Y-MM-DD')+' '+time).format(this.$t("ui.i18n.time.format.hourMinute"));
     },
     reversedArray(array) {
