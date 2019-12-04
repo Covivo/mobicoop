@@ -36,7 +36,7 @@ class PassengerAskAdDeletedUrgentEvent extends Event
     private $ask;
     private $deleterId;
 
-    public function __construct(Ask $ask, ?Int $deleterId)
+    public function __construct(Ask $ask, Int $deleterId)
     {
         $this->ask = $ask;
         $this->deleterId = $deleterId;

@@ -78,7 +78,6 @@ class EmailManager
     public function send(Email $mail, $template, $context=[], $lang='fr_FR')
     {
         $failures = "";
-        $this->logger->info("senderName: ".$mail->getSenderName());
         // sender
         if (is_null($mail->getSenderEmail()) || trim($mail->getSenderEmail()) === "") {
             $senderEmail = $this->emailSenderDefault;

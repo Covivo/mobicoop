@@ -1,6 +1,7 @@
 {% extends '/email/notification/linked_ad_deleted.html.twig' %}
 {% block body %}
-    <p>
+annonce supprimée
+    {# <p>
         Votre covoiturage pour {{ (matching.waypoints|first).address.county }}
         => {{ (matching.waypoints|last).address.county }}
         avec le conducteur {{ carpooler }} a été annulé, car {{ carpooler }} a supprimé son annonce associée.
@@ -10,5 +11,5 @@
 
         Il n’y a pas de pénalité pour l’annulation de ce covoiturage. Cependant afin de garantir la fiabilité des annonces et protéger les covoitureurs d'annulations trop répétées,
         nous nous réservons le droit de suspendre les possibilités de publier des annonces si un covoitureur annule trop souvent.
-    </p>
+    </p> #}
 {% endblock %}

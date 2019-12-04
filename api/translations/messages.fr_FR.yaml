@@ -74,6 +74,7 @@ partership: "Demande de partenariat"
 
 # USER_PASSWORD_CHANGED
 
+askNewPasswordTitle: "Nouveau mot de passe"
 askNewPassword: "Vous avez demandé un nouveau mot de passe"
 clickHereToChangePassword: "Veuillez cliquer sur ce lien pour changer votre mot de passe"
 linkChangePassword: "Lien de changement de mot de passe"
@@ -97,6 +98,14 @@ theModificationIsConfirmed: "La modification suivante de votre profil est confir
 urlMailBox: '/utilisateur/messages'
 CheckoutForAnyURLMisspellingOr: 'messages'
 
+# DRIVER_CARPOOL_LINKED_AD_DELETED
+
+yourCarpoolBetween: 'Votre covoiturage entre'
+withThePassenger: 'avec le passager'
+isCanceledBecause: 'a été annulé, car'
+hasDeletedTheAssociateAd: 'a supprimé son annonce associée.'
+clickOnLinkToSearchAgain: 'Cliquez sur ce lien pour relancer votre recherche'
+noPenaltyApplied: 'Il n’y a pas de pénalité pour l’annulation de ce covoiturage. Cependant afin de garantir la fiabilité des annonces et protéger les covoitureurs d'annulations trop répétées, nous nous réservons le droit de suspendre les possibilités de publier des annonces si un covoitureur annule trop souvent.'
 
 ######      SMS      ######
 
