@@ -99,7 +99,7 @@
               {{ carpooler.telephone }}
             </v-btn>
           </div>
-          <div>
+          <!-- <div>
             <v-btn
               color="secondary"
               small
@@ -113,7 +113,7 @@
                 mdi-email
               </v-icon>
             </v-btn>
-          </div>
+          </div> -->
         </v-row>
       </v-col>
 
