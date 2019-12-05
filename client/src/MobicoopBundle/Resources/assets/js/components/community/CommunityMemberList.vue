@@ -7,9 +7,9 @@
     >
       <v-row>
         <v-col cols="12">
-          <p headline>
+          <h3 class="headline text-justify font-weight-bold">
             {{ $t('title') }}
-          </p>
+          </h3>
         </v-col>
         <v-col cols="12">
           <div class="flex-grow-1" />

@@ -24,7 +24,8 @@
       >
         <v-col
           cols="12"
-          md="8"
+          lg="9"
+          md="10"
           xl="6"
           align="center"
         >
@@ -142,6 +143,7 @@
                 :url-tiles="urlTiles"
                 :attribution-copyright="attributionCopyright"
                 :markers-draggable="false"
+                class="pa-4 mt-5"
               />
             </v-col>
           </v-row>
@@ -180,15 +182,19 @@
       <!-- search journey -->
       <v-row
         justify="center"
-        align="center"
+        align="left"
       >
         <v-col
-          cols="6"
+          cols="12"
+          lg="9"
+          md="10"
+          xl="6"
+          align="center"
           class="mt-6"
         >
-          <p class="headline">
+          <h3 class="headline text-justify font-weight-bold">
             {{ $t('title.searchCarpool') }}
-          </p>
+          </h3>
         </v-col>
       </v-row>
       <v-row
@@ -515,3 +521,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.multiline {
+  padding:20px;
+  white-space: normal;
+}
+</style>

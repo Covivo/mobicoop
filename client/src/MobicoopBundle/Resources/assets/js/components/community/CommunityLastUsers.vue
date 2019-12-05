@@ -1,7 +1,7 @@
 <template>
   <div>
     <p
-      class="headline justify-center mt-6"
+      class="headline text-justify text-no-wrap font-weight-bold mt-6"
     >
       {{ $t('title') }}
     </p>
