@@ -24,6 +24,7 @@
 namespace App\Communication\Service;
 
 use App\Communication\Entity\MessagerInterface;
+use App\Event\Entity\Event;
 use Psr\Log\LoggerInterface;
 use App\Communication\Repository\NotificationRepository;
 use App\User\Repository\UserNotificationRepository;
@@ -86,6 +87,7 @@ class NotificationManager
      */
     public function notifies(string $action, User $recipient, ?object $object = null)
     {
+
         if (!$this->enabled) {
             return;
         }
@@ -104,6 +106,7 @@ class NotificationManager
             // if the user have no notifications, we use the default notifications
             $notifications = $this->notificationRepository->findActiveByAction($action);
         }
+
         if ($notifications && is_array($notifications)) {
             foreach ($notifications as $notification) {
                 switch ($notification->getMedium()->getId()) {
@@ -177,6 +180,10 @@ class NotificationManager
                 case User::class:
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient];
+                    break;
+                case Event::class:
+                    $titleContext = [];
+                    $bodyContext = ['user'=>$recipient, 'event' => $object];
                     break;
             }
         } else {

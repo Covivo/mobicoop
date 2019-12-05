@@ -36,6 +36,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use App\Geography\Entity\Address;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
+use App\Event\Controller\ValidateCreateEventController;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -80,7 +81,13 @@ use App\Event\Controller\ReportAction;
  *                      }
  *                  }
  *              }
- *          }
+ *          },"valide_create_event"={
+ *              "method"="POST",
+ *              "path"="/events/{id}/valide_create_event",
+*               "requirements"={"id"="\d+"},
+ *              "controller"=ValidateCreateEventController::class,
+ *
+ *          },
  *      },
  *      itemOperations={
  *          "get",

@@ -454,6 +454,7 @@ class DataProvider
         if (is_null($groups)) {
             $groups = ['put'];
         }
+
         try {
             $clientResponse = $this->client->put($this->resource."/".$object->getId(), [
                     RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true)
@@ -481,6 +482,7 @@ class DataProvider
         if (is_null($groups)) {
             $groups = ['put'];
         }
+
         try {
             if (!$reverseOperationId) {
                 $uri = $this->resource."/".$object->getId()."/".$operation;
