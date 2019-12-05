@@ -963,7 +963,7 @@ export default {
           console.log(error);
         })
         .finally(function () {
-          self.loading = false;
+          // self.loading = false;
         });
     },
     roundPrice (price, frequency, doneByUser = false) {
