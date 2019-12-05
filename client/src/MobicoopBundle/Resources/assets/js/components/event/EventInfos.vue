@@ -4,13 +4,12 @@
     justify="center"
   >
     <v-col
-      cols="12"
+      cols="4"
       md="4"
     >
       <v-avatar
         color="grey lighten-3"
         size="225"
-        max-height="20vh"
       >
         <img
           v-if="event.images[0]"
@@ -26,8 +25,8 @@
     </v-col>
       
     <v-col
-      cols="12"
-      md="4"
+      cols="8"
+      md="8"
     >
       <v-card
         flat
@@ -35,29 +34,29 @@
         justify="center"
       >
         <v-card-text>
-          <h3 class="headline">
+          <h3 class="headline text-justify font-weight-bold">
             {{ event.name }}
           </h3>
           <p
             v-if="displayDescription"
-            class="body-1"
+            class="body-1 pa-3"
             md="6"
           >
             {{ event.description }}
           </p>
           <p
             v-if="displayDescription"
-            class="body-2"
+            class="body-2 pa-3"
             md="6"
           >
             {{ event.fullDescription }}
           </p>
           <v-row>
-            <p class="body-2">
+            <p class="body-2 pa-3">
               <span class="font-weight-black"> {{ $t('startEvent.label') }} :</span> {{ computedDateFormat(event.fromDate.date) }}
             </p>
             <v-spacer />
-            <p class="body-2">
+            <p class="body-2 pa-3">
               <span class="font-weight-black"> {{ $t('endEvent.label') }} :  </span>{{ computedDateFormat(event.toDate.date) }}
             </p>
           </v-row>

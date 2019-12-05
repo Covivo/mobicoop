@@ -34,7 +34,10 @@
         v-if="carpoolerRate"
         cols="1"
       >
-        <v-tooltip bottom>
+        <v-tooltip
+          bottom
+          color="info"
+        >
           <template v-slot:activator="{ on }">
             <v-container
               class="pt-0 pb-0 pl-0 pr-0"
@@ -59,7 +62,7 @@
               </v-row>
             </v-container>
           </template>
-          <span> {{ inDev }} </span>
+          <span> {{ $t('inDev') }} </span>
         </v-tooltip>
       </v-col>
 
@@ -99,7 +102,7 @@
               {{ carpooler.telephone }}
             </v-btn>
           </div>
-          <div>
+          <!-- <div>
             <v-btn
               color="secondary"
               small
@@ -113,7 +116,7 @@
                 mdi-email
               </v-icon>
             </v-btn>
-          </div>
+          </div> -->
         </v-row>
       </v-col>
 
@@ -122,16 +125,28 @@
         cols="3"
         class="text-right"
       >
-        <v-btn
-          rounded
-          color="secondary"
-          large
-          @click="emitEvent"
+        <v-tooltip
+          :disabled="!disabled"
+          bottom
+          color="info"
         >
-          <span>
-            {{ $t('carpool') }}
-          </span>
-        </v-btn>
+          <template v-slot:activator="{ on }">
+            <div v-on="on">
+              <v-btn
+                rounded
+                color="secondary"
+                large
+                :disabled="disabled"
+                @click="emitEvent"
+              >
+                <span>
+                  {{ $t('carpool') }}
+                </span>
+              </v-btn>
+            </div>
+          </template>
+          <span> {{ $t('needTobeConnected') }} </span>
+        </v-tooltip>
       </v-col>
     </v-row>
   </div>
@@ -170,7 +185,7 @@ export default {
     return {
       locale: this.$i18n.locale,
       phoneButtonToggled: false,
-      inDev: "En cours de développement"
+      disabled: this.user ? false : true
     };
   },
   computed: {

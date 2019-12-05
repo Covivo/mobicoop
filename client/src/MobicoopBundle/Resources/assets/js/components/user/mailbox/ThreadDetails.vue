@@ -42,7 +42,7 @@
           >{{ item.createdDate }}</span>
         </v-timeline-item>
       </v-timeline>
-      <v-card v-else-if="!loading">
+      <v-card v-else-if="!loading && !hideNoThreadSelected">
         <v-card-text
           class="font-italic subtitle-1"
         >
@@ -79,6 +79,10 @@ export default {
       default:null
     },
     refresh:{
+      type: Boolean,
+      default:false
+    },
+    hideNoThreadSelected:{
       type: Boolean,
       default:false
     }

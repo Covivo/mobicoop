@@ -1,0 +1,13 @@
+{% extends '/email/notification/base.html.twig' %}
+
+{% block body %}
+    <p> Bonjour,<br/>
+        Votre événement {{ context.event.name }} a bien été enregistré.</p>
+
+    <p>Voici les détails de votre événements :</p>
+    <ul>
+        <li>Nom : {{ context.event.name }} </li>
+        <li>Ville : {{ context.event.address.addressLocality }} </li>
+        <li>Description : {{ context.event.description }} </li>
+    </ul>
+{% endblock %}

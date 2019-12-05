@@ -3,7 +3,7 @@
     <v-toolbar
       color="primary"
     >
-      <v-toolbar-title>
+      <v-toolbar-title class="toolbar">
         {{ $t('detailTitle') }}
       </v-toolbar-title>
       
@@ -763,5 +763,8 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="scss" scoped>
+.toolbar{
+    color: #fff;
+}
 </style>

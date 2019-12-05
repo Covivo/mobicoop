@@ -11,7 +11,7 @@
           cols="12"
           xl="6"
           lg="9"
-          md="12"
+          md="10"
         >
           <!--SearchJourney-->
           <search-journey

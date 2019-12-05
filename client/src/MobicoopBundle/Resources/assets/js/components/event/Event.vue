@@ -23,7 +23,8 @@
       >
         <v-col
           cols="12"
-          md="8"
+          lg="9"
+          md="10"
           xl="6"
           align="center"
         >
@@ -46,12 +47,14 @@
                 <v-btn
                   color="secondary"
                   rounded
+                
                   @click="publish"
                 >
                   {{ $t('buttons.publish.label') }}
                 </v-btn>
                 <v-btn
-                  class="mt-1"
+                  class="mt-3"
+
                   color="secondary"
                   rounded
                   :href="$t('buttons.widget.route') + event.id"
@@ -59,7 +62,7 @@
                   {{ $t('buttons.widget.label') }}
                 </v-btn>
                 <EventReport
-                  class="mt-1"
+                  class="mt-3"
                   :event="event"
                 />
               </div>
@@ -96,15 +99,19 @@
       <!-- search journey -->
       <v-row
         justify="center"
-        align="center"
+        align="left"
       >
         <v-col
-          cols="6"
+          cols="12"
+          lg="9"
+          md="10"
+          xl="6"
+          align="center"
           class="mt-6"
         >
-          <p class="headline">
+          <h3 class="headline text-justify font-weight-bold">
             {{ $t('title.searchCarpool') }}
-          </p>
+          </h3>
         </v-col>
       </v-row>
       <v-row

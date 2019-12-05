@@ -59,9 +59,7 @@
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
-      <div
-        @click="snackbar = true"
-      >
+      <div @click="snackbar = true">
         <v-btn
           v-if="!user"
           rounded
@@ -70,26 +68,26 @@
         >
           {{ $t('buttons.shareAnAd.label') }}
         </v-btn>
-
-        <v-snackbar
-          v-if="!user"
-          v-model="snackbar"
-          color="info"
-        >
-          {{ $t('snackbar.needConnection') }}
-          <v-btn
-            color="info"
-            elevation="0"
-            @click="snackbar = false"
-          >
-            <v-icon
-              color="primary"
-            >
-              mdi-close
-            </v-icon>
-          </v-btn>
-        </v-snackbar>
       </div>
+      <v-snackbar
+        v-if="!user"
+        v-model="snackbar"
+        color="info"
+      >
+        {{ $t('snackbar.needConnection') }}
+        <v-btn
+          color="info"
+          icon
+          elevation="0"
+          @click="snackbar = false"
+        >
+          <v-icon
+            color="primary"
+          >
+            mdi-close
+          </v-icon>
+        </v-btn>
+      </v-snackbar>
 
 
       <!--Display menu when user is connected-->

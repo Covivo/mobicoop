@@ -17,7 +17,7 @@
         cols="6"
         align="right"
       >
-        <v-btn
+        <!-- <v-btn
           icon
           :disabled="idMessage === -1"
           outlined 
@@ -28,7 +28,7 @@
           <v-icon>
             mdi-email
           </v-icon>
-        </v-btn>
+        </v-btn> -->
         <v-btn
           color="secondary"
           rounded

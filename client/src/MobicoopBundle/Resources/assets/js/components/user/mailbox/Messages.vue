@@ -71,7 +71,7 @@
                 :new-thread="newThreadDirect"
                 :id-thread-default="idThreadDefault"
                 :id-message-to-select="idMessage"
-                :refresh-threads="refreshThreadsCarpool"
+                :refresh-threads="refreshThreadsDirect"
                 @idMessageForTimeLine="updateDetails"
                 @toggleSelected="refreshSelected"
                 @refreshThreadsDirectCompleted="refreshThreadsDirectCompleted"
@@ -88,13 +88,14 @@
                 :id-message="idMessage"
                 :id-user="idUser"
                 :refresh="refreshDetails"
+                :hide-no-thread-selected="(idRecipient!==null)"
                 @refreshCompleted="refreshDetailsCompleted"
               />
             </v-col>
           </v-row>
           <v-row>
             <v-col
-              v-if="idMessage"
+              v-if="idMessage || newThread"
               cols="12"
             >
               <type-text
@@ -197,10 +198,12 @@ export default {
       if(this.newThread.carpool){
         this.newThreadCarpool = this.newThread
         this.modelTabs="tab-cm";
+        this.idRecipient = this.newThread.idRecipient;
       }
       else{
         this.newThreadDirect = this.newThread;
         this.modelTabs="tab-dm";
+        this.idRecipient = this.newThread.idRecipient;
       }
       
     }
@@ -221,15 +224,15 @@ export default {
         idAsk: this.currentIdAsk
       };
       axios.post(this.$t("urlSend"), messageToSend).then(res => {
-        this.idMessage = (data.idThreadMessage!==-1) ? data.idThreadMessage : res.data.id ;
+        this.idMessage = (res.data.message !== null) ? res.data.message.id : res.data.id;
         this.loadingTypeText = false;
         // Update the threads list
-        (this.currentIdAskHistory) ? this.refreshThreadsCarpool = true : this.refreshThreadsDirect = true;
+        (this.currentIdAsk) ? this.refreshThreadsCarpool = true : this.refreshThreadsDirect = true;
         // We need to delete new thread data or we'll have two identical entries
         this.refreshDetails = true;
         this.newThreadDirect = null;
         this.newThreadCarpool = null;
-        (this.idAsk) ? this.refreshSelected({'idAsk':this.idAsk}) : this.refreshSelected({'idMessage':this.idMessage});
+        (this.currentIdAsk) ? this.refreshSelected({'idAsk':this.currentIdAsk}) : this.refreshSelected({'idMessage':this.idMessage});
       });
     },
     updateStatusAskHistory(data){
@@ -281,7 +284,6 @@ export default {
       
     },
     refreshSelected(data){
-      console.error(data);
       this.loadingDetails = true;
       (data.idAsk) ? this.currentIdAsk  = data.idAsk : this.idMessage = data.idMessage;
       this.refreshActions = true;
