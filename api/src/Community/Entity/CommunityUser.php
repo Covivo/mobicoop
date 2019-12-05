@@ -295,13 +295,13 @@ class CommunityUser
 
     public function isCreator(): ?bool
     {
-        return $this->creator ? true : false;
+        return $this->creator;
     }
     
     public function setCreator(?bool $isCreator): self
     {
-        $this->creator = $isCreator ? true : false;
-        
+        $this->creator = boolval($isCreator);
+
         return $this;
     }
 

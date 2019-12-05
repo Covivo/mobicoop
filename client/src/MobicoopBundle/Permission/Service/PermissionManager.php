@@ -56,8 +56,8 @@ class PermissionManager
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_ARRAY);
         $response = $this->dataProvider->getCollection([
-            'action'=>$action,
-            'user'=> $user ? $user->getId() : null
+            'action' => $action,
+            'user' => $user ? $user->getId() : null
         ]);
         if ($response->getCode() == 200) {
             $permission = $response->getValue();

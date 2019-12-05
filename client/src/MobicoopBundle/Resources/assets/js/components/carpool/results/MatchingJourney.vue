@@ -544,18 +544,18 @@ export default {
     },
     driver() {
       if(this.defaultRole){
-        return (this.defaultRole=="driver") ? true : false;
+        return (this.defaultRole == "driver");
       }
       else{
-        return this.lResult && this.lResult.resultDriver ? true : false;
+        return (this.lResult && this.lResult.resultDriver);
       }
     },
     passenger() {
       if(this.defaultRole){
-        return (this.defaultRole=="passenger") ? true : false;
+        return (this.defaultRole=="passenger");
       }
       else{
-        return this.lResult && this.lResult.resultPassenger ? true : false;
+        return (this.lResult && this.lResult.resultPassenger);
       }
     },
     regular() {

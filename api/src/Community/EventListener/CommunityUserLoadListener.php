@@ -25,17 +25,38 @@ namespace App\Community\EventListener;
 
 use App\Community\Entity\CommunityUser;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * CommunityUser Event listener
+ * CommunityUser Event listener.
  */
 class CommunityUserLoadListener
 {
+    /**
+     * @var RequestStack
+     */
+    private $requestStack;
+
+    /**
+     * CommunityUserLoadListener constructor.
+     */
+    public function __construct(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
+    }
+
     public function postLoad(LifecycleEventArgs $args)
     {
         $communityUser = $args->getEntity();
         if ($communityUser instanceof CommunityUser) {
-            $communityUser->setCreator($communityUser->getCommunity()->getUser()->getId() ===  $communityUser->getUser()->getId());
+            $communityUser->setCreator($communityUser->getCommunity()->getUser()->getId() === $communityUser->getUser()->getId());
+
+            $request = $this->requestStack->getCurrentRequest();
+            $userId = intval($request->get('userId') ?: $request->get('user')); //TODO Homogénéiser les appels
+            if ($userId > 0) {
+                $isMember = ($communityUser->getUser()->getId() === $userId) && (CommunityUser::STATUS_ACCEPTED_AS_MEMBER === $communityUser->getStatus() || CommunityUser::STATUS_ACCEPTED_AS_MODERATOR === $communityUser->getStatus());
+                $communityUser->getCommunity()->setMember($isMember);
+            }
         }
     }
 }

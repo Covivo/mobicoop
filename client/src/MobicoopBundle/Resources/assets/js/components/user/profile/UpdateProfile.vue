@@ -592,8 +592,8 @@ export default {
             this.textSnackError = this.$t(res.data.message);
             this.snackbar = true;
           }
-          this.phoneVerified = !res.data.state ? true : false;
-          this.loadingValidatePhone = false; 
+          this.phoneVerified = !res.data.state;
+          this.loadingValidatePhone = false;
         })
         // Todo create "emit" event to refresh the alerts
     }
