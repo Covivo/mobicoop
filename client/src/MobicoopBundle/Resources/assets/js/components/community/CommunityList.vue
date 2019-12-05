@@ -178,10 +178,6 @@ export default {
       ]
     }
   },
-  created() {
-    console.log(this.communities);
-    console.log(this.communitiesUser);
-  },
   methods: {
     leaveCommunity(community) {
       var self = this, i = null;

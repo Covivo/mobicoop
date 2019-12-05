@@ -81,7 +81,7 @@
                   rounded
                   :loading="loading"
                   :disabled="!isLogged"
-                  @click="leaveCommunity"
+                  @click="leaveCommunityDialog = true"
                 >
                   {{ $t('leaveCommunity.button') }}
                 </v-btn>
@@ -113,7 +113,7 @@
                       rounded
                       :loading="loading"
                       :disabled="!isLogged"
-                      @click="leaveCommunity"
+                      @click="leaveCommunityDialog = true"
                     >
                       {{ $t('leaveCommunity.button') }}
                     </v-btn>
@@ -442,9 +442,6 @@ export default {
         }
       }
     },
-    checkIfUserHasProposal() {
-      return true; //TODO
-    },
     publish() {
       let lParams = {
         origin: null,
@@ -455,13 +452,6 @@ export default {
         ...this.params
       };
       this.post(`${this.$t("buttons.publish.route")}`, lParams);
-    },
-    leaveCommunity() {
-      if(this.checkIfUserHasProposal()) {
-        this.leaveCommunityDialog = true; // Display popup to confirm
-      } else {
-        this.postLeavingRequest(); // Leave community
-      }
     },
     postLeavingRequest() {
       this.loading = true;

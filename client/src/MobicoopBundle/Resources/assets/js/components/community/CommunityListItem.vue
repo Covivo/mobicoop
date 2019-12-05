@@ -79,7 +79,7 @@
             color="primary"
             rounded
             :loading="loading"
-            @click="leaveCommunity(item)"
+            @click="leaveCommunityDialog = true"
           >
             {{ $t('leaveCommunity.button') }}
           </v-btn>
@@ -156,16 +156,6 @@ export default {
   methods:{
     linkToCommunityShow: function (item) {
       return this.$t('routes.community', {id:item.id});
-    },
-    checkIfUserHasProposal() {
-      return true; // TODO
-    },
-    leaveCommunity(item) {
-      if(this.checkIfUserHasProposal()) {
-        this.leaveCommunityDialog = true; // Display popup to confirm
-      } else {
-        this.postLeavingRequest(); // Leave community
-      }
     },
     postLeavingRequest() {
       this.loading = true;
