@@ -211,6 +211,7 @@ export default {
     removeFilter(item){
       this.filterEnabled[item.id] = true;
       // (item.id=="order") ? this.filters[item.id] = null : this.filters.filters[item.id] = null;
+      this.filters.filters[item.id] = null;
       this.chips.splice(this.chips.indexOf(item), 1);
       this.$emit("updateFilters",this.filters);
     },

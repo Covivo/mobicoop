@@ -198,7 +198,7 @@ class CarpoolController extends AbstractController
             }
         }
         if ($ad = $adManager->getAd($id, $filters)) {
-            $this->denyAccessUnlessGranted('results_ad', $ad);
+            //$this->denyAccessUnlessGranted('results_ad', $ad);
             return $this->json($ad->getResults());
         }
         return $this->json([]);
