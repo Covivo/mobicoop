@@ -50,6 +50,8 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\JwtManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Strategy\Auth\JsonAuthStrategy;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use function GuzzleHttp\json_encode;
+
 /**
  * Data provider service.
  * Uses an API to retrieve/send data.

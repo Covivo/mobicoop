@@ -38,6 +38,7 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Matching;
 use App\Communication\Entity\Recipient;
 use App\Carpool\Entity\AskHistory;
+use App\Carpool\Entity\Ask;
 
 /**
  * Notification manager
@@ -88,10 +89,11 @@ class NotificationManager
         if (!$this->enabled) {
             return;
         }
-        
+
         $notifications = null;
         // we check the user notifications
         $userNotifications = $this->userNotificationRepository->findActiveByAction($action, $recipient->getId());
+       
         if (count($userNotifications)>0) {
             // the user should have notifications...
             $notifications = [];
@@ -160,6 +162,7 @@ class NotificationManager
                     $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'matching'=> $object];
                     break;
                 case AskHistory::class:
+                    
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'askHistory'=>$object];
                     break;
@@ -179,7 +182,6 @@ class NotificationManager
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
         }
-        
         $email->setObject($this->templating->render(
             $notification->getTemplateTitle() ? $this->emailTitleTemplatePath . $notification->getTemplateTitle() : $this->emailTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
             [
