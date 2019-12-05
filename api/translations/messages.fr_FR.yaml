@@ -85,7 +85,7 @@ askNewPasswordTitle: "Nouveau mot de passe"
 askNewPassword: "Vous avez demandé un nouveau mot de passe"
 clickHereToChangePassword: "Veuillez cliquer sur ce lien pour changer votre mot de passe"
 linkChangePassword: "Lien de changement de mot de passe"
-urlUpdatePassword: "utilisateur/mot-de-passe/reset/update/"
+urlUpdatePassword: "utilisateur/mot-de-passe/reset/"
 yourPassword: "Votre mot de passe"
 successfullyChanged: "a bien été changé"
 thanksForUse: "Merci d’utiliser"
@@ -204,7 +204,7 @@ contactYou: "vous contacte"
 
 # USER_PASSWORD_CHANGED
 
-askPassoword: "Demande de re-initialisation de mot de passe"
+askPassword: "Demande de re-initialisation de mot de passe"
 passwordChanged: "Confirmation de re-initialisation de mot de passe"
 
 # USER_REGISTERED
