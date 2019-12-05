@@ -7,7 +7,7 @@
       :color="(errorUpdate)?'error': (community.validationType == 1 ? 'warning' : 'success')"
       top
     >
-      {{ (errorUpdate)?textSnackError:textSnackOk }}
+      {{ textSnackbar }}
       <v-btn
         color="white"
         text
@@ -71,13 +71,24 @@
                 <v-btn
                   color="secondary"
                   rounded
+                  :loading="loading"
                   @click="publish"
                 >
                   {{ $t('buttons.publish.label') }}
                 </v-btn>
+                <v-btn
+                  class="mt-5"
+                  color="primary"
+                  rounded
+                  :loading="loading"
+                  :disabled="!isLogged"
+                  @click="leaveCommunityDialog = true"
+                >
+                  {{ $t('leaveCommunity.button') }}
+                </v-btn>
               </div>
               <!-- button if user ask to join community but is not accepted yet -->
-              <div v-else-if="askToJoin == true">
+              <div v-else-if="askToJoin === true">
                 <v-tooltip
                   top
                   color="info"
@@ -92,10 +103,21 @@
                         color="secondary"
                         rounded
                         disabled
+                        :loading="loading"
                       >
                         {{ $t('buttons.publish.label') }}
                       </v-btn>
                     </a>
+                    <v-btn
+                      class="mt-5"
+                      color="primary"
+                      rounded
+                      :loading="loading"
+                      :disabled="!isLogged"
+                      @click="leaveCommunityDialog = true"
+                    >
+                      {{ $t('leaveCommunity.button') }}
+                    </v-btn>
                   </template>
                   <span>{{ $t('tooltips.validation') }}</span>
                 </v-tooltip>
@@ -210,6 +232,39 @@
           :regular="regular"
         />
       </v-row>
+
+      <!--Confirmation Popup-->
+      <v-dialog
+        v-model="leaveCommunityDialog"
+        persistent
+        max-width="500"
+      >
+        <v-card>
+          <v-card-title class="headline">
+            {{ $t('leaveCommunity.popup.title') }}
+          </v-card-title>
+          <v-card-text
+            v-html="(community.proposalsHidden) ? $t('leaveCommunity.popup.content.isProposalsHidden') : $t('leaveCommunity.popup.content.isNotProposalsHidden')"
+          />
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="primary darken-1"
+              text
+              @click="leaveCommunityDialog=false"
+            >
+              {{ $t('ui.common.no') }}
+            </v-btn>
+            <v-btn
+              color="secondary darken-1"
+              text
+              @click="leaveCommunityDialog=false; postLeavingRequest()"
+            >
+              {{ $t('ui.common.yes') }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-container>
   </div>
 </template>
@@ -267,7 +322,7 @@ export default {
     regular: {
       type: Boolean,
       default: false
-    }, 
+    },
     punctualDateOptional: {
       type: Boolean,
       default: false
@@ -304,8 +359,10 @@ export default {
       ],
       pointsToMap:[],
       directionWay:[],
+      leaveCommunityDialog: false,
       loading: false,
       snackbar: false,
+      textSnackbar: null,
       textSnackOk: this.community.validationType == 1 ? this.$t("snackbar.joinCommunity.textOkManualValidation") : this.$t("snackbar.joinCommunity.textOkAutoValidation"),
       textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
@@ -317,7 +374,6 @@ export default {
       refreshMemberList: false,
       refreshLastUsers: false,
       params: { 'communityId' : this.community.id },
-
     }
   },
   mounted() {
@@ -347,7 +403,7 @@ export default {
     getCommunityUser() {
       if(this.user){
         this.checkValidation = true;
-        axios 
+        axios
           .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
           .then(res => {
             if (res.data.length > 0) {
@@ -356,23 +412,24 @@ export default {
               this.askToJoin = true
             }
             this.checkValidation = false;
-            
           });
       }
     },
     joinCommunity() {
       this.loading = true;
-      axios 
+      axios
         .post(this.$t('buttons.join.route',{id:this.community.id}),
           {
-            headers:{
+            headers: {
               'content-type': 'application/json'
             }
           })
         .then(res => {
           this.errorUpdate = res.data.state;
           this.askToJoin = true;
+          this.isAccepted = false;
           this.snackbar = true;
+          this.textSnackbar = (this.errorUpdate) ? this.$t("snackbar.joinCommunity.textError") : this.$t("snackbar.joinCommunity.textOk");
           this.refreshMemberList = true;
           this.refreshLastUsers = true;
           this.getCommunityUser();
@@ -389,7 +446,7 @@ export default {
         let mailDomain = (this.user.email.split("@"))[1];
         if (!(this.community.domain.includes(mailDomain))) {
           return this.domain = false;
-        }   
+        }
       }
     },
     publish() {
@@ -402,6 +459,27 @@ export default {
         ...this.params
       };
       this.post(`${this.$t("buttons.publish.route")}`, lParams);
+    },
+    postLeavingRequest() {
+      this.loading = true;
+      axios
+        .post(this.$t('leaveCommunity.route',{id:this.community.id}),
+          {
+            headers: {
+              'content-type': 'application/json'
+            }
+          })
+        .then(res => {
+          this.errorUpdate = res.data.state;
+          this.askToJoin = false;
+          this.isAccepted = false;
+          this.textSnackbar = (this.errorUpdate) ? this.$t("snackbar.leaveCommunity.textError") : this.$t("snackbar.leaveCommunity.textOk");
+          this.snackbar = true;
+          this.refreshMemberList = true;
+          this.refreshLastUsers = true;
+          this.getCommunityUser();
+          this.loading = false;
+        });
     },
     showCommunityProposals () {
       this.pointsToMap.length = 0;
@@ -467,13 +545,12 @@ export default {
       }
       this.$refs.mmap.redrawMap();
     },
-   
     buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
       let point = {
         title:title,
         latLng:L.latLng(lat, lng),
         icon: {}
-      }
+      };
 
       if(pictoUrl!==""){
         point.icon = {
@@ -482,14 +559,14 @@ export default {
           anchor:anchor
         }
       }
-        
-      return point;      
+
+      return point;
     },
     contact: function(data){
       const form = document.createElement('form');
       form.method = 'post';
       form.action = this.$t("buttons.contact.route");
-      
+
       const params = {
         carpool:0,
         idRecipient:data.id,
@@ -497,7 +574,7 @@ export default {
         givenName:data.givenName,
         avatar:data.avatars[0]
       }
-      
+
       for (const key in params) {
         if (params.hasOwnProperty(key)) {
           const hiddenField = document.createElement('input');
@@ -508,7 +585,7 @@ export default {
         }
       }
       document.body.appendChild(form);
-      form.submit();      
+      form.submit();
     },
     membersListRefreshed(){
       this.refreshMemberList = false;
@@ -528,4 +605,8 @@ export default {
   padding:20px;
   white-space: normal;
 }
+.vue2leaflet-map {
+    z-index: 1;
+}
+
 </style>

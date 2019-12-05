@@ -35,6 +35,7 @@ class CommunityVoter extends Voter
     const CREATE = 'create';
     const SHOW = 'show';
     const JOIN = 'join';
+    const LEAVE = 'leave';
 
     
     private $permissionManager;
@@ -52,6 +53,7 @@ class CommunityVoter extends Voter
             self::CREATE,
             self::SHOW,
             self::JOIN,
+            self::LEAVE,
             ])) {
             return false;
         }
@@ -82,6 +84,8 @@ class CommunityVoter extends Voter
                 return $this->canShow($user);
             case self::JOIN:
                 return $this->canJoin($user);
+            case self::LEAVE:
+                return $this->canLeave($user);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -105,5 +109,10 @@ class CommunityVoter extends Voter
     private function canJoin(?User $user=null)
     {
         return $this->permissionManager->checkPermission('community_join', $user);
+    }
+
+    private function canLeave(?User $user=null)
+    {
+        return $this->permissionManager->checkPermission('community_leave', $user);
     }
 }

@@ -70,7 +70,7 @@ class AdManager
     public function createAd(array $data)
     {
         $ad = new Ad();
-
+        
         // the ad is a search ?
         if (isset($data['search']) && $data['search']) {
             $ad->setSearch(true);
@@ -80,9 +80,7 @@ class AdManager
         $ad->setRole($data['driver'] ? ($data['passenger'] ? Ad::ROLE_DRIVER_OR_PASSENGER : ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
 
         // oneway ?
-        if (isset($data['oneway']) && $data['oneway']) {
-            $ad->setOneWay(true);
-        }
+        (isset($data['oneway']) && $data['oneway']) ? $ad->setOneWay(true) : $ad->setOneWay(false);
 
         // frequency
         $ad->setFrequency($data['regular'] ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL);

@@ -46,6 +46,7 @@ class CommunityLoadListener
         if ($request->get("userId")) {
             $community = $args->getEntity();
             if ($community instanceof Community) {
+                /** @var CommunityUser[] $communityUsers */
                 $communityUsers = $community->getCommunityUsers();
                 foreach ($communityUsers as $communityUser) {
                     if ($request->get("userId") == $communityUser->getUser()->getId() &&

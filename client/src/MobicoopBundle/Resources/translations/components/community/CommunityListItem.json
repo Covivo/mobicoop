@@ -1,5 +1,22 @@
 {
   "fr": {
+    "leaveCommunity": {
+      "button": "Quitter la communauté",
+      "route": "/communaute/{id}/quitter",
+      "popup": {
+        "title": "Demande de confirmation",
+        "content": {
+          "isProposalsHidden": "Si vous avez encore des annonces valides associées à cette communauté privée. En la quittant, ces annonces seront supprimées.<br>Confirmez-vous ?",
+          "isNotProposalsHidden": "Si vous avez encore des annonces valides associées à cette communauté. En la quittant, ces annonces ne seront plus marquées comme étant liées à la communauté.<br>Confirmez-vous ?"
+        }
+      }
+    },
+    "snackbar": {
+      "leaveCommunity": {
+        "textOk": "Vous ne faites désormais plus partie de cette communauté",
+        "textError": "Une erreur est survenue veuillez essayer à nouveau"
+      }
+    },
     "routes": {
       "community": "/communaute/{id}"
     },
@@ -8,6 +25,16 @@
     "protected": "Cette communauté n'est visible que par ses membres"
   },
   "en": {
+    "leaveCommunity": {
+      "button": "Leave community",
+      "route": "/community/{id}/leave"
+    },
+    "snackbar": {
+      "leaveCommunity": {
+        "textOk": "",
+        "textError": ""
+      }
+    },
     "routes": {
         "community": "/communaute/{id}"
       }

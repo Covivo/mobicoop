@@ -82,10 +82,10 @@ class CarpoolController extends AbstractController
 
             // one-way for regular
             if ($data['regular']) {
-                $data['oneway'] = false;
+                $data['oneway'] = true;
                 foreach ($data['schedules'] as $schedule) {
-                    if (isset($schedule['returnTime']) && $schedule['returnTime'] !== '') {
-                        $data['oneway'] = true;
+                    if (isset($schedule['returnTime']) && !is_null($schedule['returnTime'])) {
+                        $data['oneway'] = false;
                     }
                 }
             }
