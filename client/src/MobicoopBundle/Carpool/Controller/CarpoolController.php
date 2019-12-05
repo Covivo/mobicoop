@@ -75,7 +75,21 @@ class CarpoolController extends AbstractController
             }
             if (isset($data['returnDate']) && $data['returnDate'] != '') {
                 $data['returnDate'] = \DateTime::createFromFormat('Y-m-d', $data['returnDate']);
+                $data['oneway'] = true; // only for punctual journey
+            } else {
+                $data['oneway'] = false; // only for punctual journey
             }
+
+            // one-way for regular
+            if ($data['regular']) {
+                $data['oneway'] = false;
+                foreach ($data['schedules'] as $schedule) {
+                    if (isset($schedule['returnTime']) && $schedule['returnTime'] !== '') {
+                        $data['oneway'] = true;
+                    }
+                }
+            }
+
             return $this->json(['result'=>$adManager->createAd($data)]);
         }
 
