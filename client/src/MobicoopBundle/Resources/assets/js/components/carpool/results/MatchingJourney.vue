@@ -562,7 +562,7 @@ export default {
       return this.lResult && this.lResult.frequency == 2;
     },
     computedTime() {
-      if (this.lResult && this.lResult.time) return moment.utc(this.lResult.time).format(this.$t("i18n.time.format.hourMinute"));      
+      if (this.lResult && this.lResult.time) return moment.utc(this.lResult.time).format(this.$t("i18n.time.format.hourMinute"));
       return null;
     },
     computedDate() {
@@ -570,13 +570,11 @@ export default {
       return null;
     },
     computedFromDate() {
-      moment.locale(this.locale);
       return this.fromDate
         ? moment(this.fromDate).format(this.$t("i18n.date.format.shortDate"))
         : "";
     },
     computedMaxDate() {
-      moment.locale(this.locale);
       return this.maxDate
         ? moment(this.maxDate).format(this.$t("i18n.date.format.shortDate"))
         : "";
@@ -619,6 +617,9 @@ export default {
   },
   mounted() {
     this.computeTimes();
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     computeMaxDate() {

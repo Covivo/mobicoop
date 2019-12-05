@@ -306,6 +306,7 @@ export default {
   },
   data () {
     return {
+      locale: this.$i18n.locale,
       loading: false,
       valid: false,
       alert: {
@@ -390,6 +391,9 @@ export default {
     pickerActive(val) {
       val && this.$nextTick(() => (this.$refs.picker.activePicker = 'YEAR'))
     },
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     save (date) {

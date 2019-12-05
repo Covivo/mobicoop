@@ -178,6 +178,9 @@ export default {
       return moment().diff(moment([this.carpooler.birthDate]),'years')+' '+this.$t("birthYears")
     }
   },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
+  },
   methods: {
     toggleButton: function(){
       this.phoneButtonToggled = !this.phoneButtonToggled;

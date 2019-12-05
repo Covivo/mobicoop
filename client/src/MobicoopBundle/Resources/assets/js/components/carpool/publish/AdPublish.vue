@@ -411,7 +411,7 @@
                     :color="colorPricePerKm"
                     :class="colorPricePerKm + '--text'"
                     @blur="roundPrice(price, regular ? 2 : 1, true)"
-                    @change="disableNextButton = true"
+                    @change="disableNextButton = true;price = Math.abs(price)"
                   />
                 </v-col>
 
@@ -533,7 +533,7 @@
         v-if="step > 1"
         rounded
         outlined
-        color="primary" 
+        color="secondary" 
         align-center
         @click="--step"
       >
@@ -545,7 +545,7 @@
         :disabled="disableNextButton || price <= 0"
         :loading="loadingPrice"
         rounded
-        color="primary"
+        color="secondary"
         align-center
         style="margin-left: 30px;"
         @click="step++"
@@ -557,7 +557,7 @@
         v-if="((step < 7 && driver && step !== 5)|| (step < 5 && !driver))"
         :disabled="!validNext"
         rounded
-        color="primary"
+        color="secondary"
         align-center
         style="margin-left: 30px;"
         @click="step++"

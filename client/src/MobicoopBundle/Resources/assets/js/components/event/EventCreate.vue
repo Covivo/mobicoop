@@ -90,6 +90,7 @@
                 <template v-slot:activator="{ on }">
                   <v-text-field
                     :value="computedOutwardDateFormat"
+                    :rules="startDateRules"
                     :label="$t('startDate.label')"
                     readonly
                     clearable
@@ -129,6 +130,7 @@
                 <template v-slot:activator="{ on }">
                   <v-text-field
                     :value="computedReturnDateFormat"
+                    :rules="endDateRules"
                     :label="$t('endDate.label')"
                     prepend-icon=""
                     readonly
@@ -272,7 +274,7 @@
                   <template v-slot:activator="{ on }">
                     <v-btn
                       rounded
-                      color="primary"
+                      color="secondary"
                       :loading="loading"
                       v-on="on"
                     >
@@ -296,14 +298,14 @@
                     <v-card-actions>
                       <v-spacer />
                       <v-btn
-                        color="primary"
+                        color="secondary"
                         text
                         @click="createEvent"
                       >
                         {{ $t('popUp.validation') }}
                       </v-btn>
                       <v-btn
-                        color="primary"
+                        color="secondary"
                         text
                         @click="dialog = false"
                       >
@@ -380,6 +382,12 @@ export default {
       fullDescriptionRules: [
         v => !!v || this.$t("form.fullDescription.required"),
       ],
+      startDateRules: [
+        v => !!v || this.$t("startDate.error"),
+      ],
+      endDateRules: [
+        v => !!v || this.$t("endDate.error"),
+      ],
       avatar: null,
       loading: false,
       snackError: null,
@@ -396,26 +404,27 @@ export default {
   },
   computed :{
     computedOutwardDateFormat() {
-      moment.locale(this.locale);
       return this.startDate
         ? moment(this.startDate).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
     },
     computedReturnDateFormat() {
-      moment.locale(this.locale);
       return this.endDate
         ? moment(this.endDate).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
     },
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     addressSelected: function(address) {
       this.eventAddress = address;
     },
     createEvent() {
-      this.loading = true;
       this.dialog = false;
-      if (this.name  && this.fullDescription && this.avatar && this.eventAddress) {
+      this.loading = true;
+      if (this.name  && this.fullDescription && this.avatar && this.eventAddress && this.startDate && this.endDate) {
         let newEvent = new FormData();
         newEvent.append("name", this.name);
         newEvent.append("fullDescription", this.fullDescription);

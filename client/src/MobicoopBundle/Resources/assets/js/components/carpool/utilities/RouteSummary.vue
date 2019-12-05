@@ -137,7 +137,7 @@ export default {
     },
     iconColor: {
       type: String,
-      default: "yellow darken-2"
+      default: "accent"
     },
     time: {
       type: String,
@@ -192,6 +192,9 @@ export default {
       }
       return null;
     }
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     formatTime(time) {

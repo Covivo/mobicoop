@@ -75,7 +75,9 @@ export default {
     };
   },
   //icon:
-        
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
+  },
   methods: {
     getIcon(type,role) {
       if (role == 'driver') {

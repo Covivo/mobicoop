@@ -34,14 +34,21 @@ class PassengerAskAdDeletedEvent extends Event
     public const NAME = 'passenger_carpool_linked_ad_deleted';
 
     private $ask;
+    private $deleterId;
 
-    public function __construct(Ask $ask)
+    public function __construct(Ask $ask, Int $deleterId)
     {
         $this->ask = $ask;
+        $this->deleterId = $deleterId;
     }
 
     public function getAsk()
     {
         return $this->ask;
+    }
+
+    public function getDeleterId()
+    {
+        return $this->deleterId;
     }
 }

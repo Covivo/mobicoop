@@ -94,7 +94,7 @@
             ref="button"
             rounded
             class="my-13"
-            color="primary"
+            color="secondary"
             :disabled="!step1"
             @click="$vuetify.goTo('#step2', options)"
           >
@@ -134,7 +134,7 @@
               ref="button"
               rounded
               class="my-13 mr-12"
-              color="primary"
+              color="secondary"
               :disabled="!step1"
               @click="$vuetify.goTo('#step2', options)"
             >
@@ -144,7 +144,7 @@
               ref="button"
               rounded
               class="my-13"
-              color="primary"
+              color="secondary"
               :disabled="!step2"
               @click="$vuetify.goTo('#step3', options)"
             >
@@ -180,7 +180,7 @@
               ref="button"
               rounded
               class="my-13 mr-12"
-              color="primary"
+              color="secondary"
               :disabled="!step2"
               @click="$vuetify.goTo('#step3', options)"
             >
@@ -190,7 +190,7 @@
               ref="button"
               rounded
               class="my-13"
-              color="primary"
+              color="secondary"
               :disabled="!step3"
               @click="$vuetify.goTo('#step4', options)"
             >
@@ -245,7 +245,7 @@
               ref="button"
               rounded
               class="my-13 mr-12"
-              color="primary"
+              color="secondary"
               :disabled="!step3"
               @click="$vuetify.goTo('#step4', options)"
             >
@@ -255,7 +255,7 @@
               ref="button"
               rounded
               class="my-13"
-              color="primary"
+              color="secondary"
               :disabled="!step4"
               @click="$vuetify.goTo('#step5', options)"
             >
@@ -297,7 +297,7 @@
               <div>
                 {{ $t('ui.pages.signup.chart.text') }}
                 <a
-                  class="secondary--text"
+                  class="primary--text"
                   target="_blank"
                   :href="$t('ui.pages.signup.chart.route')"
                   @click.stop
@@ -307,7 +307,7 @@
             </template>
           </v-checkbox>
           <v-btn
-            color="primary"
+            color="secondary"
             rounded
             class="mr-4 mb-100 mt-12"
             :disabled="!step5 || !step4 || !step3 || !step2 || !step1 || loading || isDisable"

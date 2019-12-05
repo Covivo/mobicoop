@@ -43,11 +43,12 @@
       "image": "L'image n'a pas été enregistrée"
     },
     "startDate": {
-      "label": "Date de début",
+      "label": "Date de début*",
       "error": "Obligatoire"
     },
     "endDate" : {
-      "label": "Date de fin"
+      "label": "Date de fin*",
+      "error": "Obligatoire"
     },
     "startTime": {
       "label": "Heure de début"

@@ -6,7 +6,9 @@
         :outward-times="[proposal.outward.criteria.fromDate]"
       />
     </v-row>
-    <v-row v-if="hasOutward">
+    <v-row
+      v-if="hasOutward"
+    >
       <v-col
         cols="6"
         class="pa-0"
@@ -16,7 +18,7 @@
           :destination="destination"
           :type="frequency"
           :time="proposal.outward.criteria.fromTime"
-          text-color-class="primary--text text--darken-3"
+          text-color-class="primary--text"
           icon-color="accent"
         />
       </v-col>
@@ -39,7 +41,7 @@
           :destination="origin"
           :type="frequency"
           :time="proposal.return.criteria.fromTime"
-          text-color-class="primary--text text--darken-3"
+          text-color-class="primary--text"
           icon-color="accent"
         />
       </v-col>

@@ -3,7 +3,7 @@
     <v-container class="window-scroll px-0">
       <v-card
         class="mx-0 mt-2 pt-1 pb-1"
-        :class="selected ? 'primary lighten-4' : ''"
+        :class="selected ? 'primary lighten-5' : ''"
         outlined
         tile
         style="border-style:none;"
@@ -127,15 +127,12 @@ export default {
   },
   computed: {
     formateDate(){
-      moment.locale(this.locale);
       return moment.utc(this.date).format("ddd DD MMM YYYY");
     },
     formateFromDate(){
-      moment.locale(this.locale);
       return moment.utc(this.criteria.fromDate).format("ddd DD MMM YYYY");
     },
     formateFromTime(){
-      moment.locale(this.locale);
       return (this.criteria.fromTime) ? moment.utc(this.criteria.fromTime).format("HH")+"h"+moment.utc(this.criteria.fromTime).format("mm") : null;
     },
     regularCarpoolDays(){
@@ -157,6 +154,9 @@ export default {
     selectedDefault(){
       this.selected = this.selectedDefault;
     }
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     click(){

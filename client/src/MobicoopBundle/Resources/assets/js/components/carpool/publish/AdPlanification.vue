@@ -527,13 +527,11 @@ export default {
   },
   computed: {
     computedOutwardDateFormat() {
-      moment.locale(this.locale);
       return this.outwardDate
         ? moment(this.outwardDate).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
     },
     computedReturnDateFormat() {
-      moment.locale(this.locale);
       return this.returnDate
         ? moment(this.returnDate).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
@@ -566,6 +564,7 @@ export default {
     }
   },
   created:function(){
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
     this.setData();
   },
 

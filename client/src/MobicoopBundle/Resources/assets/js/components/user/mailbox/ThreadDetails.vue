@@ -107,6 +107,9 @@ export default {
       (this.refresh) ? this.getCompleteThread() : '';
     }
   },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
+  },
   methods: {
     getCompleteThread(){
       this.items = [];
@@ -122,7 +125,6 @@ export default {
             this.loading = false;
             this.items.length = 0;
 
-            moment.locale(this.locale);
             let firstItem = {
               divider: true,
               createdDate: moment(response.data[0].createdDate).format("ddd DD MMM YYYY")

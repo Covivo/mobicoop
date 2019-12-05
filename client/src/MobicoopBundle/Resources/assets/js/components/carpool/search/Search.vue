@@ -9,7 +9,9 @@
       >
         <v-col
           cols="12"
-          md="6"
+          xl="6"
+          lg="9"
+          md="12"
         >
           <!--SearchJourney-->
           <search-journey
@@ -32,25 +34,64 @@
         <v-col
           cols="6"
         >
-          <v-btn
-            v-if="!hidePublish"
-            outlined
-            :disabled="searchUnavailable || !logged"
-            rounded
-            :loading="loadingPublish"
-            @click="publish"
-          >
-            {{ $t('buttons.publish.label') }}
-          </v-btn>
-          <v-btn
-            :disabled="searchUnavailable || disableSearch"
-            :loading="loadingSearch"
-            color="secondary"
-            rounded
-            @click="search"
-          >
-            {{ $t('buttons.search.label') }}
-          </v-btn>
+          <v-row>
+            <v-tooltip
+            
+              bottom
+              color="info"
+            >
+              <template v-slot:activator="{ on }">
+                <v-col
+                  v-if="!logged"
+                  cols="6"
+                  align="left"
+                  v-on="on"
+                >
+                  <v-btn
+                    v-if="!hidePublish"
+                    outlined
+                    :disabled="searchUnavailable || !logged"
+                    rounded
+                    :loading="loadingPublish"
+                    @click="publish"
+                  >
+                    {{ $t('buttons.publish.label') }}
+                  </v-btn>
+                </v-col>
+                <v-col
+                  v-if="logged"
+                  cols="6"
+                  align="left"
+                >
+                  <v-btn
+                    v-if="!hidePublish"
+                    outlined
+                    :disabled="searchUnavailable || !logged"
+                    rounded
+                    :loading="loadingPublish"
+                    @click="publish"
+                  >
+                    {{ $t('buttons.publish.label') }}
+                  </v-btn>
+                </v-col>
+              </template>
+              <span> {{ $t('tooltips.needConnection') }}</span>
+            </v-tooltip>
+            <v-col
+              align="left"
+              cols="6"
+            >
+              <v-btn
+                :disabled="searchUnavailable || disableSearch"
+                :loading="loadingSearch"
+                color="secondary"
+                rounded
+                @click="search"
+              >
+                {{ $t('buttons.search.label') }}
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </v-container>
@@ -134,11 +175,13 @@ export default {
       return (!this.origin || !this.destination || (!this.dataRegular && !this.date && !this.punctualDateOptional))
     },
     dateFormated() {
-      moment.locale(this.locale);
       return this.date
         ? moment(this.date).format(this.$t("ui.i18n.date.format.urlDate"))
         : null;
     },
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     post: function (path, params, method='post') {

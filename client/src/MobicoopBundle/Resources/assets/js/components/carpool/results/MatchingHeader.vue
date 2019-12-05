@@ -95,7 +95,6 @@ export default {
   },
   computed: {
     computedDateFormat() {
-      moment.locale(this.locale);
       return this.date
         ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
@@ -112,6 +111,9 @@ export default {
         addressLocality: this.destination.addressLocality
       }
     },
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     buttonAlert(msg, e) {

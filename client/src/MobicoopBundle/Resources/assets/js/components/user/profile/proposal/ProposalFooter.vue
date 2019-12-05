@@ -1,10 +1,16 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-col cols="3">
+      <v-col
+        cols="3"
+        class="primary--text"
+      >
         <span v-if="seats && seats > 0">{{ seats }}&nbsp;{{ seats > 1 ? $t('seat.plural') : $t('seat.singular') }}</span>
       </v-col>
-      <v-col cols="3">
+      <v-col
+        cols="3"
+        class="primary--text"
+      >
         <span v-if="price && price > '0'">{{ price }} €</span>
       </v-col>
       <v-col
@@ -14,14 +20,17 @@
         <v-btn
           icon
           :disabled="idMessage === -1"
+          outlined 
+          fab 
+          color="primary lighten-4"
           @click="openMailBox()"
         >
-          <v-icon class="primary--text">
+          <v-icon>
             mdi-email
           </v-icon>
         </v-btn>
         <v-btn
-          color="success"
+          color="secondary"
           rounded
           :disabled="computedRequestsCount <= 0"
           :href="$t('urlResult',{id:id})"

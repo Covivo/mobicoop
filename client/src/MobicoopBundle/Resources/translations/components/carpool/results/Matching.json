@@ -1,5 +1,6 @@
 {
   "fr":{
+    "title": "Résultats de covoiturage",
     "proposalUrl": "/covoiturage/annonce/{id}/detail",
     "matchingUrl": "/covoiturage/recherche/matching",
     "carpoolUrl": "/covoiturage/demande",
@@ -13,6 +14,7 @@
     }
   },
   "en":{
+    "title": "Carpool results",
     "proposalUrl": "/carpool/ad/{id}/detail",
     "matchingUrl": "/carpool/search/matching",
     "carpoolUrl": "/carpool/ask",

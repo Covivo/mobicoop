@@ -15,7 +15,7 @@
             <div>
               {{ $t('snackbar') }}
               <a :href="$t('profileLink')">
-                "{{ $t('myProfile') }}".
+                " {{ $t('myProfile') }} "
               </a>
             </div>
             <v-btn
