@@ -6,7 +6,7 @@
         ref="mmap"
         :zoom="zoom"
         :center="center"
-        style="height:500px;"
+        style="z-index:1; height:500px;"
       >
         <l-tile-layer
           :url="url"
@@ -30,6 +30,17 @@
           >
             <p v-html="point.title" />
           </l-tooltip>
+
+          <l-popup v-if="point.popup">
+            <h3>{{ point.popup.titre }}</h3>
+            <img
+              v-if="point.popup.images[0]"
+              :src="point.popup.images[0]['versions']['square_100']"
+              alt="avatar"
+            >
+            <p>{{ point.popup.description }}</p>
+            <p>{{ point.popup.date_begin }}<br> {{ point.popup.date_end }}</p>
+          </l-popup>
         </l-marker>
         <l-polyline
           v-for="(way, i) in ways"

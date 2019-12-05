@@ -21,7 +21,7 @@
       </template>    
       <v-row dense>
         <v-col 
-          v-if="time"
+          v-if="time && waypoint.time"
           cols="3"
           class="text-left"
         >
@@ -75,7 +75,9 @@ export default {
     };
   },
   //icon:
-        
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
+  },
   methods: {
     getIcon(type,role) {
       if (role == 'driver') {
@@ -89,7 +91,7 @@ export default {
       }
     },
     formatTime(time) {
-      return moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute")); 
+      if(time) return moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute")); 
     }
   }
 };

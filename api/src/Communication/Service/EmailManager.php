@@ -27,6 +27,8 @@ use App\Communication\Entity\Email;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+use function GuzzleHttp\json_decode;
+
 /**
  * Email sending service via Swift_Mailer
  *
@@ -41,6 +43,7 @@ class EmailManager
     private $templatePath;
     private $logger;
     private $translator;
+    private $emailAdditionalHeaders;
  
     /**
        * EmailManager constructor.
@@ -51,8 +54,9 @@ class EmailManager
        * @param string $emailSender
        * @param string $emailReplyTo
        * @param string $templatePath
+       * @param string $emailAdditionalHeaders
        */
-    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailReplyTo, string $templatePath)
+    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailReplyTo, string $templatePath, string $emailAdditionalHeaders)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
@@ -60,7 +64,8 @@ class EmailManager
         $this->emailReplyToDefault = $emailReplyTo;
         $this->templatePath = $templatePath;
         $this->logger = $logger;
-        $this->translator= $translator;
+        $this->translator = $translator;
+        $this->emailAdditionalHeaders = $emailAdditionalHeaders;
     }
 
     /**
@@ -73,7 +78,6 @@ class EmailManager
     public function send(Email $mail, $template, $context=[], $lang='fr_FR')
     {
         $failures = "";
-
         // sender
         if (is_null($mail->getSenderEmail()) || trim($mail->getSenderEmail()) === "") {
             $senderEmail = $this->emailSenderDefault;
@@ -104,6 +108,19 @@ class EmailManager
                 ),
                 'text/html'
             );
+        if ($this->emailAdditionalHeaders) {
+            $headers = json_decode($this->emailAdditionalHeaders, true);
+            foreach ($headers as $key => $value) {
+                if ($this->translator->trans($value) == "senderEmail") {
+                    $data = $mail->getSenderEmail();
+                } elseif ($this->translator->trans($value) == "senderName") {
+                    $data = $mail->getSenderName()." ".$mail->getSenderFirstName();
+                } else {
+                    $data = $this->translator->trans($value);
+                }
+                $message->getHeaders()->addTextHeader($this->translator->trans($key), $data);
+            }
+        }
         $this->translator->setLocale($sessionLocale);
 
         $failures = $this->mailer->send($message, $failures);

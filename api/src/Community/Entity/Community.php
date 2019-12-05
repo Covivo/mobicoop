@@ -123,7 +123,7 @@ class Community
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read","results"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -133,7 +133,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","results"})
      */
     private $name;
 
@@ -301,25 +301,25 @@ class Community
 
     public function isMembersHidden(): ?bool
     {
-        return $this->membersHidden ? true : false;
+        return $this->membersHidden;
     }
     
     public function setMembersHidden(?bool $isMembersHidden): self
     {
-        $this->membersHidden = $isMembersHidden ? true : false;
-        
+        $this->membersHidden = $isMembersHidden;
+
         return $this;
     }
 
     public function isProposalsHidden(): ?bool
     {
-        return $this->proposalsHidden ? true : false;
+        return $this->proposalsHidden;
     }
     
     public function setProposalsHidden(?bool $isProposalsHidden): self
     {
-        $this->proposalsHidden = $isProposalsHidden ? true : false;
-        
+        $this->proposalsHidden = boolval($isProposalsHidden);
+
         return $this;
     }
 
@@ -520,13 +520,13 @@ class Community
     
     public function isMember(): ?bool
     {
-        return $this->member ? true : false;
+        return $this->member;
     }
     
     public function setMember(?bool $member): self
     {
-        $this->member = $member ? true : false;
-        
+        $this->member = $member;
+
         return $this;
     }
     

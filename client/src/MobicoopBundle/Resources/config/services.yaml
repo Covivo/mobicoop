@@ -62,6 +62,8 @@ services:
     # Community
     Mobicoop\Bundle\MobicoopBundle\Community\Controller\:
         resource: '@MobicoopBundle/Community/Controller/*'
+        arguments:
+            $createFromFront: '%env(resolve:COMMUNITIES_CREATE_FROM_FRONT)%'
     Mobicoop\Bundle\MobicoopBundle\Community\Service\:
         resource: '@MobicoopBundle/Community/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Community\Security\:
@@ -78,8 +80,12 @@ services:
         shared: false
 
     # Event
+    Mobicoop\Bundle\MobicoopBundle\Event\Controller\:
+        resource: '@MobicoopBundle/Event/Controller/*'
     Mobicoop\Bundle\MobicoopBundle\Event\Service\:
         resource: '@MobicoopBundle/Event/Service/*'
+    Mobicoop\Bundle\MobicoopBundle\Event\Security\:
+        resource: '@MobicoopBundle/Event/Security/*'
 
     # External journey
     Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\:
@@ -125,6 +131,8 @@ services:
     # Communication
     Mobicoop\Bundle\MobicoopBundle\Communication\Controller\:
         resource: '@MobicoopBundle/Communication/Controller/*'
+        arguments:
+            $contactTypes: '%env(resolve:CONTACT_TYPES)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\Communication\Service\:
         resource: '@MobicoopBundle/Communication/Service/*'
@@ -135,3 +143,10 @@ services:
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\Solidary\Service\:
         resource: '@MobicoopBundle/Solidary/Service/*'
+
+    # Price
+    Mobicoop\Bundle\MobicoopBundle\Price\Controller\:
+        resource: '@MobicoopBundle/Price/Controller/*'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\Price\Service\:
+        resource: '@MobicoopBundle/Price/Service/*'

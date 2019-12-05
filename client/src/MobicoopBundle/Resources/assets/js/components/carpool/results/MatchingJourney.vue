@@ -3,7 +3,7 @@
     <v-toolbar
       color="primary"
     >
-      <v-toolbar-title>
+      <v-toolbar-title class="toolbar">
         {{ $t('detailTitle') }}
       </v-toolbar-title>
       
@@ -213,7 +213,8 @@
                   :locale="locale"
                   :min="today"
                   :max="toDate ? toDate : null"
-                  no-title
+                  no-title.
+                  first-day-of-week="1"
                   @input="menuFromDate = false"
                   @change="change"
                 />
@@ -261,6 +262,7 @@
                   :min="fromDate"
                   :max="toDate ? toDate : null"
                   no-title
+                  first-day-of-week="1"
                   @input="menuMaxDate = false"
                   @change="change"
                 />
@@ -542,25 +544,25 @@ export default {
     },
     driver() {
       if(this.defaultRole){
-        return (this.defaultRole=="driver") ? true : false;
+        return (this.defaultRole == "driver");
       }
       else{
-        return this.lResult && this.lResult.resultDriver ? true : false;
+        return (this.lResult && this.lResult.resultDriver);
       }
     },
     passenger() {
       if(this.defaultRole){
-        return (this.defaultRole=="passenger") ? true : false;
+        return (this.defaultRole=="passenger");
       }
       else{
-        return this.lResult && this.lResult.resultPassenger ? true : false;
+        return (this.lResult && this.lResult.resultPassenger);
       }
     },
     regular() {
       return this.lResult && this.lResult.frequency == 2;
     },
     computedTime() {
-      if (this.lResult && this.lResult.time) return moment.utc(this.lResult.time).format(this.$t("i18n.time.format.hourMinute"));      
+      if (this.lResult && this.lResult.time) return moment.utc(this.lResult.time).format(this.$t("i18n.time.format.hourMinute"));
       return null;
     },
     computedDate() {
@@ -568,13 +570,11 @@ export default {
       return null;
     },
     computedFromDate() {
-      moment.locale(this.locale);
       return this.fromDate
         ? moment(this.fromDate).format(this.$t("i18n.date.format.shortDate"))
         : "";
     },
     computedMaxDate() {
-      moment.locale(this.locale);
       return this.maxDate
         ? moment(this.maxDate).format(this.$t("i18n.date.format.shortDate"))
         : "";
@@ -617,6 +617,9 @@ export default {
   },
   mounted() {
     this.computeTimes();
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     computeMaxDate() {
@@ -678,10 +681,10 @@ export default {
         "regular" : this.lResult.frequency == 2
       };
       let resultChoice = null;
-      if (this.lResult.resultDriver) {
-        resultChoice = this.lResult.resultDriver;
-      } else {
+      if (this.lResult.resultPassenger) {
         resultChoice = this.lResult.resultPassenger;
+      } else {
+        resultChoice = this.lResult.resultDriver;
       }      
       // proposal and matching results
       params.adId = resultChoice.outward.proposalId;
@@ -696,7 +699,8 @@ export default {
       let params = {
         "driver": role==1,
         "passenger": role==2,
-        "regular": this.lResult.frequency == 2
+        "regular": this.lResult.frequency == 2,
+        "status" : this.lResult.askStatus
       };
       let resultChoice = this.lResult.resultDriver;
       if (role == 2) resultChoice = this.lResult.resultPassenger;
@@ -759,5 +763,8 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="scss" scoped>
+.toolbar{
+    color: #fff;
+}
 </style>

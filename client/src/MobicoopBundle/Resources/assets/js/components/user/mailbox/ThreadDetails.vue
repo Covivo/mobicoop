@@ -32,7 +32,7 @@
           <v-card
             v-if="item.divider===false"
             class="elevation-2 font-weight-bold"
-            :class="(item.origin==='own')?'primary':''"
+            :class="(item.origin==='own')?'primary lighten-4':''"
           >
             <v-card-text>{{ item.text }}</v-card-text>
           </v-card>
@@ -42,7 +42,7 @@
           >{{ item.createdDate }}</span>
         </v-timeline-item>
       </v-timeline>
-      <v-card v-else-if="!loading">
+      <v-card v-else-if="!loading && !hideNoThreadSelected">
         <v-card-text
           class="font-italic subtitle-1"
         >
@@ -81,6 +81,10 @@ export default {
     refresh:{
       type: Boolean,
       default:false
+    },
+    hideNoThreadSelected:{
+      type: Boolean,
+      default:false
     }
   },
   data(){
@@ -97,26 +101,34 @@ export default {
     }
   },
   watch:{
-    idMessage(){
-      this.getCompleteThread();
+    idMessage: {
+      immediate: true,
+      handler(newVal, oldVal) {
+        if(this.idMessage!==null) this.getCompleteThread();
+      }
     },
     refresh(){
       (this.refresh) ? this.getCompleteThread() : '';
     }
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     getCompleteThread(){
       this.items = [];
 
       // if idMessage = -1 it means that is a "virtuel" thread. When you initiate a contact without previous message
-      if(this.idMessage>-1){
+      if(this.idMessage>-1 && this.idMessage != null){
         this.loading = true;
         axios.get(this.$t("urlCompleteThread",{idMessage:this.idMessage}))
           .then(response => {
+
+            response = this.checkIfMessageIsDelete(response);
+
             this.loading = false;
             this.items.length = 0;
 
-            moment.locale(this.locale);
             let firstItem = {
               divider: true,
               createdDate: moment(response.data[0].createdDate).format("ddd DD MMM YYYY")
@@ -155,6 +167,15 @@ export default {
       else{
         this.emit();
       }
+    },
+    checkIfMessageIsDelete(messages){
+      let tradMessageDelete = this.$t("messageDelete");
+      messages.data.forEach(function (message) {
+        if (message.text == '@mobicoop2020Message_supprimer') message.text = tradMessageDelete;
+      });
+      return messages;
+
+
     },
     createdTime(date){
       return moment(date).format("HH:mm");

@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <div>
     <v-alert
       v-model="showInfos"
       type="info"
@@ -16,7 +16,7 @@
       @logout="onLogOut"
       @sdk-loaded="sdkLoaded"
     />
-  </v-content>
+  </div>
 </template>
 <script>
 import axios from "axios";

@@ -55,6 +55,7 @@ export default {
   },
   data(){
     return{
+      locale: this.$i18n.locale,
       messages:[],
       boilerplate: false,
       tile: false,
@@ -70,6 +71,9 @@ export default {
     refreshThreads(){
       (this.refreshThreads) ? this.getThreads(this.idMessageToSelect) : '';
     }
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   mounted(){
     this.getThreads(this.idThreadDefault);

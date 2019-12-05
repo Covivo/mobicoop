@@ -103,7 +103,8 @@
 
           <!--Telephone-->
           <v-row 
-            justify="center" 
+            justify="start" 
+            
           >
             <v-col>
               <v-text-field
@@ -150,7 +151,7 @@
                   <span>{{$t('phone.tooltips.notVerified')}}</span>
               </v-tooltip>
             </v-col>
-            <v-col cols="3"  v-if="diplayVerification && telephone && phoneVerified == false">
+            <v-col cols="3" xl="3" sm="8"  v-if="diplayVerification && telephone && phoneVerified == false">
               <v-btn 
                 rounded color="secondary" 
                 @click="generateToken" class="mt-4" 
@@ -161,6 +162,8 @@
             </v-col>
             <v-col 
               cols="3" 
+              xl="3"
+              sm="5"
               v-if="phoneToken != null && telephone && phoneVerified == false"
             >
               <v-text-field
@@ -171,7 +174,7 @@
                   />
             </v-col>
             <v-col 
-              cols="2" 
+              cols="2" xl="2" sm="6" class="justify-center" 
               v-if="phoneToken != null && telephone && phoneVerified == false"
             >
               <v-btn 
@@ -305,6 +308,67 @@
     <v-row>
       <ChangePassword />
     </v-row>
+
+    <!-- Delete account -->
+    <v-row class="text-left title font-weight-bold">
+      <v-col>{{ $t('titles.deleteAccount') }}</v-col>
+    </v-row>
+
+    <v-row>
+
+
+      <v-dialog
+              v-model="dialogDelete"
+              width="500"
+      >
+        <template v-slot:activator="{ on }">
+          <!--Delete button -->
+          <v-btn
+                  class="button"
+                  v-on="on"
+                  color="secondary"
+                  rounded
+                  :disabled="!valid"
+                  :loading="loading"
+                  type="button"
+                  :value="$t('ui.button.save')"
+          >
+            {{ $t('buttons.supprimerAccount') }}
+          </v-btn>
+        </template>
+
+        <v-card>
+          <v-card-title
+                  class="headline"
+                  primary-title
+          >
+            {{ $t('dialog.titles.deleteAccount') }}
+          </v-card-title>
+
+          <v-card-text>
+            <p v-html="$t('dialog.content.deleteAccount')"></p>
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary darken-1" text @click="dialog=false; newsSubscription=true">{{ $t('ui.common.no') }}</v-btn>
+            <v-btn
+                    color="primary"
+                    text
+                    :href="$t('route.supprimer')"
+                    @click="dialog = false"
+            >
+              {{ $t('dialog.buttons.confirmDelete') }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+
+    </v-row>
+
   </v-container>
 </template>
 
@@ -355,6 +419,7 @@ export default {
   data() {
     return {
       dialog: false,
+      dialogDelete: false,
       snackbar: false,
       textSnackOk: this.$t('snackBar.profileUpdated'),
       textSnackError: this.$t("snackBar.passwordUpdateError"),
@@ -363,9 +428,7 @@ export default {
       errors: [],
       loading: false,
       loadingDelete: false,
-      gender: {
-        value: this.user.gender
-      },
+      gender: this.user.gender,
       email: this.user.email,
       telephone: this.user.telephone,
       givenName: this.user.givenName,
@@ -416,6 +479,13 @@ export default {
     this.checkVerifiedPhone();
   },
   methods: {
+      deleteAccount (){
+          axios
+            .post(this.$t('route.supprimer'))
+            .then(res => {
+
+            });
+      },
     homeAddressSelected(address){
       this.homeAddress = address;
     },
@@ -430,7 +500,7 @@ export default {
       let updateUser = new FormData();
       updateUser.append("email", this.email);
       updateUser.append("familyName", this.familyName);
-      updateUser.append("gender", this.gender.value);
+      updateUser.append("gender", this.gender);
       updateUser.append("givenName", this.givenName);
       updateUser.append("homeAddress", JSON.stringify(this.user.homeAddress));
       updateUser.append("telephone", this.telephone);
@@ -522,8 +592,8 @@ export default {
             this.textSnackError = this.$t(res.data.message);
             this.snackbar = true;
           }
-          this.phoneVerified = !res.data.state ? true : false;
-          this.loadingValidatePhone = false; 
+          this.phoneVerified = !res.data.state;
+          this.loadingValidatePhone = false;
         })
         // Todo create "emit" event to refresh the alerts
     }

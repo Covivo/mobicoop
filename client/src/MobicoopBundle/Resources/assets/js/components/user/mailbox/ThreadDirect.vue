@@ -72,12 +72,13 @@ export default {
   },
   data() {
     return {
-      selected: this.selectedDefault
+      selected: this.selectedDefault,
+      locale: this.$i18n.locale
     }
   },
   computed: {
     formateDate(){
-      return moment(this.date).format("ddd DD MMM YYYY");
+      return moment.utc(this.date).format("ddd DD MMM YYYY");
     },
     name() {
       return this.givenName + " " + this.familyName.substr(0, 1).toUpperCase() + ".";
@@ -87,6 +88,9 @@ export default {
     selectedDefault(){
       this.selected = this.selectedDefault;
     }
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     click(){

@@ -113,13 +113,13 @@ class AdManager
         }
 
         // the proposal is private if it's a search only ad
-        $outwardProposal->setPrivate($ad->isSearch());
+        $outwardProposal->setPrivate($ad->isSearch() ? true : false);
 
         // we check if it's a round trip
         if ($ad->isOneWay()) {
             // the ad has explicitly been set to one way
             $outwardProposal->setType(Proposal::TYPE_ONE_WAY);
-        } else {
+        } elseif (is_null($ad->isOneWay())) {
             // the ad type has not been set, we assume it's a round trip for a regular trip and a one way for a punctual trip
             if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                 $ad->setOneWay(false);
@@ -128,6 +128,8 @@ class AdManager
                 $ad->setOneWay(true);
                 $outwardProposal->setType(Proposal::TYPE_ONE_WAY);
             }
+        } else {
+            $outwardProposal->setType(Proposal::TYPE_OUTWARD);
         }
 
         // comment
@@ -519,7 +521,7 @@ class AdManager
             }
 
             $returnProposal->setCriteria($returnCriteria);
-            $returnProposal = $this->proposalManager->prepareProposal($returnProposal);
+            $returnProposal = $this->proposalManager->prepareProposal($returnProposal, false);
             $this->entityManager->persist($returnProposal);
         }
 
@@ -553,7 +555,25 @@ class AdManager
 
         // we compute the results
         $this->logger->info('Ad creation | Start creation results  ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        $ad->setResults($this->resultManager->createAdResults($outwardProposal));
+
+        // default order
+        $ad->setFilters([
+                'order'=>[
+                    'criteria'=>'date',
+                    'value'=>'ASC'
+                ]
+            
+        ]);
+
+        $ad->setResults(
+            $this->resultManager->orderResults(
+                $this->resultManager->filterResults(
+                    $this->resultManager->createAdResults($outwardProposal),
+                    $ad->getFilters()
+                ),
+                $ad->getFilters()
+            )
+        );
         $this->logger->info('Ad creation | End creation results  ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         // we set the ad id to the outward proposal id
@@ -566,10 +586,12 @@ class AdManager
      * Get an ad.
      * Returns the ad, with its outward and return results.
      *
-     * @param int $id            The ad id to get
+     * @param int $id       The ad id to get
+     * @param array|null    The filters to apply to the results
+     * @param array|null    The order to apply to the results
      * @return Ad
      */
-    public function getAd(int $id)
+    public function getAd(int $id, ?array $filters = null, ?array $order = null)
     {
         $ad = new Ad();
         $proposal = $this->proposalManager->get($id);
@@ -578,7 +600,26 @@ class AdManager
         $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
         $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
         $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
-        $ad->setResults($this->resultManager->createAdResults($proposal));
+        if (!is_null($proposal->getUser())) {
+            $ad->setUserId($proposal->getUser()->getId());
+        }
+        $aFilters = [];
+        if (!is_null($filters)) {
+            $aFilters['filters']=$filters;
+        }
+        if (!is_null($order)) {
+            $aFilters['order']=$order;
+        }
+        $ad->setFilters($aFilters);
+        $ad->setResults(
+            $this->resultManager->orderResults(
+                $this->resultManager->filterResults(
+                    $this->resultManager->createAdResults($proposal),
+                    $ad->getFilters()
+                ),
+                $ad->getFilters()
+            )
+        );
         return $ad;
     }
 }

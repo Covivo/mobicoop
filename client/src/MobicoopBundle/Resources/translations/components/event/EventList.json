@@ -1,0 +1,32 @@
+{
+  "fr": {
+    "events":"Les événements",
+    "eventsAvailable":"Événements disponibles",
+    "eventsPassed":"Événements passés",
+    "createEvent" : "Créer un événement",
+    "search":"Rechercher",
+    "all":"Tous",
+    "linePerPage":"Nombre de lignes par page",
+    "seeAds":"Voir les annonces",
+    "all":"Tous",
+    "startEvent" : "Début",
+    "endEvent" : "Fin",
+
+    "routes": {
+      "event": "/evenement/{id}"
+    }
+  },
+  "en": {
+    "eventsAvailable":"Events available",
+    "eventsPassed":"Passed events",
+    "createEvent" : "Create an event",
+    "search":"Search",
+    "all":"All",
+    "linePerPage":"Nomber of line per page",
+    "seeAds":"See the ads",
+
+    "routes": {
+      "event": "/event/{id}"
+    }
+  }
+}

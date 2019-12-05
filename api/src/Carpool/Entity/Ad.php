@@ -28,7 +28,9 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Carpool\Controller\AdPost;
 use App\Carpool\Controller\AdGet;
-use App\Carpool\Controller\AdAsk;
+use App\Carpool\Controller\AdAskPost;
+use App\Carpool\Controller\AdAskPut;
+use App\Carpool\Controller\AdAskGet;
 
 /**
  * Carpooling : an ad.
@@ -44,16 +46,16 @@ use App\Carpool\Controller\AdAsk;
  *              "method"="POST",
  *              "controller"=AdPost::class,
  *          },
- *          "ask"={
+ *          "post_ask"={
  *              "method"="POST",
  *              "path"="/ads/ask",
- *              "controller"=AdAsk::class,
+ *              "controller"=AdAskPost::class,
  *              "defaults"={"type"="ask"}
  *          },
- *          "contact"={
+ *          "post_contact"={
  *              "method"="POST",
- *              "path"="/ads/ask",
- *              "controller"=AdAsk::class,
+ *              "path"="/ads/contact",
+ *              "controller"=AdAskPost::class,
  *              "defaults"={"type"="contact"}
  *          }
  *      },
@@ -61,7 +63,19 @@ use App\Carpool\Controller\AdAsk;
  *          "get"={
  *              "method"="GET",
  *              "controller"=AdGet::class,
- *              "read"=false,
+ *              "read"=false
+ *          },
+ *          "put_ask"={
+ *              "method"="PUT",
+ *              "path"="/ads/ask/{id}",
+ *              "controller"=AdAskPut::class,
+ *              "read"=false
+ *          },
+ *          "get_ask"={
+ *              "method"="GET",
+ *              "path"="/ads/ask/{id}",
+ *              "controller"=AdAskGet::class,
+ *              "read"=false
  *          }
  *      }
  * )
@@ -78,7 +92,7 @@ class Ad
      * @var int The id of this ad.
      *
      * @ApiProperty(identifier=true)
-     * @Groups("read")
+     * @Groups({"read","write"})
      */
     private $id;
 
@@ -349,6 +363,27 @@ class Ad
      */
     private $matchingId;
 
+    /**
+     * @var int The ask status if the ad concerns a given ask.
+     *
+     * @Groups({"read","write"})
+     */
+    private $askStatus;
+
+    /**
+     * @var boolean|null The given user can update the ask if the ad concerns a given ask.
+     *
+     * @Groups({"read","write"})
+     */
+    private $canUpdateAsk;
+
+    /**
+     * @var array|null The filters to apply to the results.
+     *
+     * @Groups("write")
+     */
+    private $filters;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -357,6 +392,7 @@ class Ad
         $this->schedule = [];
         $this->communities = [];
         $this->results = [];
+        $this->filters = [];
     }
     
     public function getId(): ?int
@@ -370,7 +406,6 @@ class Ad
 
         return $this;
     }
-
 
     public function isSearch(): ?bool
     {
@@ -814,6 +849,42 @@ class Ad
     public function setMatchingId(?int $matchingId): self
     {
         $this->matchingId = $matchingId;
+
+        return $this;
+    }
+
+    public function getAskStatus(): ?int
+    {
+        return $this->askStatus;
+    }
+
+    public function setAskStatus(int $askStatus): self
+    {
+        $this->askStatus = $askStatus;
+
+        return $this;
+    }
+
+    public function getCanUpdateAsk(): ?bool
+    {
+        return $this->canUpdateAsk;
+    }
+    
+    public function setCanUpdateAsk(?bool $canUpdateAsk): self
+    {
+        $this->canUpdateAsk = $canUpdateAsk;
+        
+        return $this;
+    }
+
+    public function getFilters(): ?array
+    {
+        return $this->filters;
+    }
+
+    public function setFilters(?array $filters)
+    {
+        $this->filters = $filters;
 
         return $this;
     }

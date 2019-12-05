@@ -10,9 +10,11 @@
           xl="6"
           align="center"
         >
+          <h1>{{ $t('title') }}</h1>
+
           <!-- Matching header -->
           <matching-header
-            v-if="!proposalId"
+            v-if="!lProposalId"
             :origin="origin"
             :destination="destination"
             :date="date"
@@ -21,7 +23,10 @@
           />
 
           <!-- Matching filter -->
-          <matching-filter @updateFilters="updateFilters" />
+          <matching-filter 
+            :communities="communities"
+            @updateFilters="updateFilters" 
+          />
 
           <!-- Number of matchings -->
           <v-row 
@@ -181,12 +186,27 @@ export default {
       results: null,
       lOrigin: null,
       lDestination: null,
+      lProposalId: this.proposalId,
       filters: null
     };
   },
   computed: {
     numberOfResults() {
       return this.results ? Object.keys(this.results).length : 0 // ES5+
+    },
+    communities() {
+      if (!this.results) return null;
+      let communities = [];
+      this.results.forEach((result,key) => {
+        if (result.communities) {
+          for (let key in result.communities) {  
+            if (communities.indexOf(result.communities[key]) == -1) {
+              communities.push({text:result.communities[key],value:key});    
+            }
+          }            
+        }
+      });
+      return communities;
     }
   },
   created() {
@@ -200,12 +220,20 @@ export default {
     },
     search(){
     // if a proposalId is provided, we load the proposal results
-      if (this.proposalId) {
+      if (this.lProposalId) {
         this.loading = true;
-        axios.get(this.$t("proposalUrl",{id: Number(this.proposalId)}))
+        let postParams = {
+          "filters": this.filters
+        };
+        axios.post(this.$t("proposalUrl",{id: Number(this.lProposalId)}),postParams,
+          {
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
           .then((response) => {
             this.loading = false;
-            this.proposal = response.data;
+            this.results = response.data;
           })
           .catch((error) => {
             console.log(error);
@@ -232,6 +260,9 @@ export default {
           .then((response) => {
             this.loading = false;
             this.results = response.data;
+            if (this.results[0].id) {
+              this.lProposalId = this.results[0].id;
+            }
           })
           .catch((error) => {
             console.log(error);

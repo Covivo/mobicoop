@@ -7,9 +7,9 @@
     >
       <v-row>
         <v-col cols="12">
-          <p headline>
+          <h3 class="headline text-justify font-weight-bold">
             {{ $t('title') }}
-          </p>
+          </h3>
         </v-col>
         <v-col cols="12">
           <div class="flex-grow-1" />
@@ -80,6 +80,10 @@ export default {
     hidden: {
       type: Boolean,
       default: false
+    },
+    givenUsers: {
+      type: Array,
+      default: null
     }
   },
   data () {
@@ -91,7 +95,7 @@ export default {
         { text: this.$t('table.colTitle.givenName'), value: 'givenName' },
         { text: this.$t('table.colTitle.actions'), value: 'action', sortable: false },
       ],
-      users: [],
+      users: this.givenUsers ? this.givenUsers : [],
     }
   },
   watch: {
@@ -99,11 +103,7 @@ export default {
       (this.refresh) ? this.getCommunityMemberList() : ''
     }
   },
-  mounted() {
-    this.getCommunityMemberList();
-  },
   methods: {
-   
     getCommunityMemberList () {
       axios 
         .get('/community-member-list/'+this.community.id, {

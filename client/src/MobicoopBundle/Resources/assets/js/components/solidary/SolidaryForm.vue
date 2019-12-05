@@ -190,6 +190,7 @@
                   v-model="form.yearOfBirth"
                   no-title
                   reactive
+                  first-day-of-week="1"
                   :max="years.max"
                   :min="years.min"
                   @input="save"
@@ -197,14 +198,14 @@
                   <v-spacer />
                   <v-btn
                     text
-                    color="primary"
+                    color="error"
                     @click="menu = false"
                   >
                     {{ $t('ui.buttons.cancel.label') }}
                   </v-btn>
                   <v-btn
                     text
-                    color="primary"
+                    color="secondary"
                     @click="$refs.menu.save(form.yearOfBirth)"
                   >
                     {{ $t('ui.buttons.validate.label') }}
@@ -248,7 +249,7 @@
           <v-btn
             :disabled="!isValid"
             :loading="loading"
-            color="success"
+            color="secondary"
             rounded
             @click="validate"
           >
@@ -305,6 +306,7 @@ export default {
   },
   data () {
     return {
+      locale: this.$i18n.locale,
       loading: false,
       valid: false,
       alert: {
@@ -389,6 +391,9 @@ export default {
     pickerActive(val) {
       val && this.$nextTick(() => (this.$refs.picker.activePicker = 'YEAR'))
     },
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     save (date) {

@@ -69,7 +69,7 @@
                 >
                   <v-select
                     v-model="form.demand"
-                    :items="form.demandItems"
+                    :items="demandItems"
                     :label="$t('demand.placeholder')"
                     name="demand"
                   />
@@ -180,7 +180,6 @@ export default {
         ],
         familyName: this.user && this.user.familyName ? this.user.familyName : null,
         givenName: this.user && this.user.givenName ? this.user.givenName : null,
-        demandItems: this.$t("demand.items"),
         demand: null,
         message: null,
         messageRules: [
@@ -192,6 +191,13 @@ export default {
         ],
         website: "", // honey pot data
       },
+      // You need to use values corrresponding to your potential .env settings in CONTACT_TYPES 
+      // By default, contact type is used
+      demandItems: [
+        {text:this.$t('demand.items.infos'), value:'infos'},
+        {text:this.$t('demand.items.technicalIssues'), value:'technicalIssues'},
+        {text:this.$t('demand.items.partership'), value:'partership'}
+      ],      
       alert: {
         type: "success",
         message: ""

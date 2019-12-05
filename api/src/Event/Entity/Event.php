@@ -23,6 +23,7 @@
 
 namespace App\Event\Entity;
 
+use App\Carpool\Entity\Proposal;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -35,9 +36,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use App\Geography\Entity\Address;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
+use App\Event\Controller\ValidateCreateEventController;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Event\Controller\ReportAction;
 
 /**
  * An event : a social occasion or activity.
@@ -51,14 +54,55 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "denormalization_context"={"groups"={"write"}},
  *          "pagination_client_items_per_page"=true
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *          "get",
+ *          "post",
+ *          "report"={
+ *              "method"="POST",
+ *              "path"="/events/{id}/report",
+ *              "requirements"={"id"="\d+"},
+ *              "controller"=ReportAction::class,
+ *              "swagger_context" = {
+ *                  "summary" = "Report an Event",
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "email",
+ *                          "in" = "body",
+ *                          "type" = "string",
+ *                          "required" = "true",
+ *                          "description" = "Reporter's email"
+ *                      },
+ *                      {
+ *                          "name" = "description",
+ *                          "in" = "body",
+ *                          "type" = "string",
+ *                          "required" = "true",
+ *                          "description" = "Description"
+ *                      }
+ *                  }
+ *              }
+ *          },"valide_create_event"={
+ *              "method"="POST",
+ *              "path"="/events/{id}/valide_create_event",
+*               "requirements"={"id"="\d+"},
+ *              "controller"=ValidateCreateEventController::class,
+ *
+ *          },
+ *      },
+ *      itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "fromDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(DateFilter::class, properties={"toDate"})
  */
 class Event
 {
+    const STATUS_PENDING = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 2;
     /**
      * @var int The id of this event.
      *
@@ -160,12 +204,22 @@ class Event
      * @MaxDepth(1)
      */
     private $user;
+
+    /**
+     * @var Event Event related for the proposal
+     *
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Proposal", mappedBy="event")
+     * @Groups({"read","write"})
+     * @ApiSubresource(maxDepth=1)
+     * @MaxDepth(1)
+     */
+    private $proposals;
     
     /**
      * @var Address The address of the event.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="event", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -187,6 +241,7 @@ class Event
     {
         $this->id = $id;
         $this->images = new ArrayCollection();
+        $this->proposals = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -320,16 +375,17 @@ class Event
         
         return $this;
     }
-    
+
     public function getAddress(): Address
     {
         return $this->address;
     }
-    
+
     public function setAddress(Address $address): self
     {
         $this->address = $address;
-        
+        $address->setEvent($this);
+
         return $this;
     }
     
@@ -381,5 +437,36 @@ class Event
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \Datetime());
+    }
+
+    /**
+     * @return Collection|Proposal[]
+     */
+    public function getProposals(): Collection
+    {
+        return $this->proposals;
+    }
+
+    public function addProposal(Proposal $proposal): self
+    {
+        if (!$this->proposals->contains($proposal)) {
+            $this->proposals[] = $proposal;
+            $proposal->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProposal(Proposal $proposal): self
+    {
+        if ($this->proposals->contains($proposal)) {
+            $this->proposals->removeElement($proposal);
+            // set the owning side to null (unless already changed)
+            if ($proposal->getEvent() === $this) {
+                $proposal->setEvent(null);
+            }
+        }
+
+        return $this;
     }
 }

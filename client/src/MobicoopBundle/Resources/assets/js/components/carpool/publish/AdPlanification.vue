@@ -42,6 +42,7 @@
               :locale="locale"
               no-title
               :min="nowDate"
+              first-day-of-week="1"
               @input="menuOutwardDate = false"
               @change="change,blockTime(),blockDate()"
             />
@@ -153,6 +154,7 @@
               v-model="returnDate"
               :locale="locale"
               no-title
+              first-day-of-week="1"
               :min="maxDateFromOutward"
               @input="menuReturnDate = false"
               @change="checkDateReturn($event),change(),blockTime()"
@@ -226,7 +228,7 @@
         justify="center"
       >
         <v-col
-          cols="8"
+          cols="10"
         >
           <!-- Schedule -->
           <v-card>
@@ -328,7 +330,7 @@
                     header-color="secondary"
                     :disabled="item.outwardDisabled"
                     @click:minute="closeOutwardTime(item.id)"
-                    @change="change,blockTimeRegular($event,item.id)"
+                    @change="change(),blockTimeRegular($event,item.id)"
                   />
                 </v-menu>
               </v-col>
@@ -450,7 +452,7 @@
         dense
       >
         <v-col
-          cols="8"
+          cols="10"
         >
           <v-btn
             text
@@ -525,13 +527,11 @@ export default {
   },
   computed: {
     computedOutwardDateFormat() {
-      moment.locale(this.locale);
       return this.outwardDate
         ? moment(this.outwardDate).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
     },
     computedReturnDateFormat() {
-      moment.locale(this.locale);
       return this.returnDate
         ? moment(this.returnDate).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
@@ -564,15 +564,17 @@ export default {
     }
   },
   created:function(){
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
     this.setData();
   },
 
   methods: {
     change() {
       let validSchedules = JSON.parse(JSON.stringify(this.activeSchedules)); // little tweak to deep copy :)
+
       for (var i=0;i<validSchedules.length;i++) {
 
-        if (!((validSchedules[i].mon || validSchedules[i].tue || validSchedules[i].wed || validSchedules[i].thu || validSchedules[i].fri || validSchedules[i].sat || validSchedules[i].sun) && validSchedules[i].outwardTime)) {
+        if (!((validSchedules[i].mon || validSchedules[i].tue || validSchedules[i].wed || validSchedules[i].thu || validSchedules[i].fri || validSchedules[i].sat || validSchedules[i].sun) && (validSchedules[i].outwardTime || validSchedules[i].returnTime))) {
           validSchedules.splice(i);
         } else {
           delete validSchedules[i].id;
@@ -606,7 +608,12 @@ export default {
       if ( this.outwardDate > this.returnDate )  this.returnDate = this.outwardDate;
     },
     blockTimeRegular(e,id){
-      this.schedules[id].maxTimeFromOutwardRegular = e;
+      // test to allow return time to be set before outward time for regular work
+      if(id !=0 && this.schedules[id-1]['returnTime'] === null) {
+        // console.error("");
+      }else {
+        this.schedules[id].maxTimeFromOutwardRegular = e;
+      }
     },
     checkReturnDesactivate(e){
       if (!e) {

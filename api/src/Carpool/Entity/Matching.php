@@ -161,7 +161,7 @@ class Matching
     /**
      * @var ArrayCollection|null The notifications sent for the matching.
      *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="matching", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="matching")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */

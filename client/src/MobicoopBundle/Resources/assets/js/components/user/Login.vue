@@ -1,7 +1,9 @@
 <template>
-  <v-content>
-    <v-container fluid />
-    <v-row 
+  <v-container
+    fluid
+    style="height: 100%"
+  >
+    <v-row
       justify="center"
     >
       <v-col
@@ -15,7 +17,9 @@
     </v-row>
     <v-row
       justify="center"
+      align="center"
       class="text-center"
+      style="height: 80%"
     >
       <v-col class="col-4">
         <v-alert
@@ -54,7 +58,7 @@
           <v-btn
             :disabled="!valid"
             :loading="loading"
-            color="primary"
+            color="secondary"
             type="submit"
             rounded
             @click="validate"
@@ -83,7 +87,7 @@
         />
       </v-col>
     </v-row>
-  </v-content>
+  </v-container>
 </template>
 <script>
 import { merge } from "lodash";

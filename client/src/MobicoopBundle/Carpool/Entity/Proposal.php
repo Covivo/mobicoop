@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
@@ -178,6 +179,12 @@ class Proposal implements ResourceInterface, \JsonSerializable
      */
     private $results;
 
+    /**
+     * @var Event related for the proposal
+     * @Groups({"post","put"})
+     */
+    private $event;
+
     public function __construct($id=null)
     {
         if ($id) {
@@ -249,7 +256,7 @@ class Proposal implements ResourceInterface, \JsonSerializable
 
     public function isPrivate(): bool
     {
-        return $this->private ? true : false;
+        return $this->private;
     }
 
     public function setPrivate(?bool $private): self
@@ -261,7 +268,7 @@ class Proposal implements ResourceInterface, \JsonSerializable
 
     public function isPaused(): bool
     {
-        return $this->paused ? true : false;
+        return $this->paused;
     }
 
     public function setPaused(?bool $paused): self
@@ -536,7 +543,7 @@ class Proposal implements ResourceInterface, \JsonSerializable
 
     public function hasFormalAsk(): bool
     {
-        return $this->formalAsk ? true : false;
+        return $this->formalAsk;
     }
 
     public function setFormalAsk(?bool $formalAsk): self
@@ -558,6 +565,17 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
+
+        return $this;
+    }
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {

@@ -304,14 +304,37 @@ class Ad implements ResourceInterface
      * @Groups({"post","put"})
      */
     private $matchingId;
+
+    /**
+     * @var array|null The filters to apply to the results.
+     *
+     * @Groups({"post","put"})
+     */
+    private $filters;
     
-    public function __construct()
+    /**
+     * @var boolean|null If the current user can make a formal Ask from this Ad
+     */
+    private $canUpdateAsk;
+
+    /**
+     * @var int|null Status of the Ask related to this Ad
+     *
+     * @Groups({"post","put"})
+     */
+    private $askStatus;
+
+    public function __construct($id=null)
     {
         $this->outwardWaypoints = [];
         $this->returnWaypoints = [];
         $this->schedule = [];
         $this->communities = [];
         $this->results = [];
+        $this->filters = [];
+        if (!is_null($id)) {
+            $this->id = $id;
+        }
     }
     
     public function getId(): ?int
@@ -339,7 +362,7 @@ class Ad implements ResourceInterface
         return $this;
     }
     
-    public function getRole(): int
+    public function getRole(): ?int
     {
         return $this->role;
     }
@@ -769,6 +792,42 @@ class Ad implements ResourceInterface
     public function setMatchingId(?int $matchingId): self
     {
         $this->matchingId = $matchingId;
+
+        return $this;
+    }
+
+    public function getFilters(): ?array
+    {
+        return $this->filters;
+    }
+
+    public function setFilters(?array $filters)
+    {
+        $this->filters = $filters;
+
+        return $this;
+    }
+
+    public function getCanUpdateAsk(): ?bool
+    {
+        return $this->canUpdateAsk;
+    }
+    
+    public function setCanUpdateAsk(?bool $canUpdateAsk): self
+    {
+        $this->canUpdateAsk = $canUpdateAsk;
+        
+        return $this;
+    }
+
+    public function getAskStatus(): ?int
+    {
+        return $this->askStatus;
+    }
+
+    public function setAskStatus(?int $askStatus): self
+    {
+        $this->askStatus = $askStatus;
 
         return $this;
     }

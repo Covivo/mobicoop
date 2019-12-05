@@ -122,6 +122,25 @@ class CommunityManager
     }
 
     /**
+     * Leave a community
+     *
+     * @param CommunityUser $communityUser
+     *
+     * @return array|object|null
+     *
+     * @throws \ReflectionException
+     */
+    public function leaveCommunity(CommunityUser $communityUser)
+    {
+        $this->dataProvider->setClass(CommunityUser::class);
+        $response = $this->dataProvider->delete($communityUser->getId(), []);
+        if ($response->getCode() == 201) {
+            return $response->getValue();
+        }
+        return null;
+    }
+
+    /**
      * Get last accepted community users
      * @param community.id          $communityId                 Id of the community
      * @return array|null The events found or null if not found.
@@ -171,6 +190,7 @@ class CommunityManager
      */
     public function getProposals(int $id)
     {
+        $this->dataProvider->setClass(Community::class);
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $proposals = $this->dataProvider->getSubCollection($id, "proposal", "proposals");
         return $proposals->getValue();

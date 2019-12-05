@@ -28,6 +28,8 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Service\AskManager;
 use App\Communication\Entity\Medium;
 use App\User\Entity\User;
+use App\User\Event\UserDeleteAccountWasDriverEvent;
+use App\User\Event\UserDeleteAccountWasPassengerEvent;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
 use DateTime;
@@ -182,7 +184,7 @@ class UserManager
         if (is_null($user)) {
             return [];
         }
-        if ($communities = $this->communityRepository->findByUser($user, true, null, CommunityUser::STATUS_ACCEPTED)) {
+        if ($communities = $this->communityRepository->findByUser($user, true, null, [CommunityUser::STATUS_ACCEPTED_AS_MODERATOR,CommunityUser::STATUS_ACCEPTED_AS_MEMBER])) {
             return $communities;
         }
         return [];
@@ -278,7 +280,7 @@ class UserManager
                 // The message id : the one linked to the current askHistory or we try to find the last existing one
                 $idMessage = -99;
                 if ($message !== null) {
-                    ($idMessage = $message->getMessage()!==null) ? $idMessage = $message->getMessage()->getId() : $message->getId();
+                    ($message->getMessage()!==null) ? $idMessage = $message->getMessage()->getId() :  $idMessage = $message->getId();
                 } else {
                     $formerAskHistory = $this->askHistoryRepository->findLastAskHistoryWithMessage($ask);
                     if (count($formerAskHistory)>0 && $formerAskHistory[0]->getMessage()) {
@@ -543,5 +545,92 @@ class UserManager
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         return $user;
+    }
+
+
+    /**
+     * Generate a validation token
+     * (Ajax)
+     *
+     */
+    public function anonymiseUser(User $user)
+    {
+
+        // L'utilisateur à posté des annonces de covoiturages -> on les supprimes
+        // User create ad : we delete them
+        foreach ($user->getProposals() as $proposal) {
+            foreach ($proposal->getMatchingRequests() as $matching) {
+                //Check if there is ask on a proposal -> event for notifications
+                foreach ($matching->getAsks() as $ask) {
+                    $event = new UserDeleteAccountWasDriverEvent($ask);
+                    $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
+                }
+            }
+            //There is offers on the proposal -> we delete proposal + send email to passengers
+            foreach ($proposal->getMatchingOffers() as $matching) {
+                //TODO libérer les places sur les annonces réservées
+                foreach ($matching->getAsks() as $ask) {
+                    $event = new UserDeleteAccountWasPassengerEvent($ask);
+                    $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
+                }
+            }
+            //Set user at null and private on the proposal : we keep info for message, proposal cant be found
+            $proposal->setUser(null);
+            $proposal->setPrivate(1);
+        }
+
+        //Anonymise content of message with a key
+        foreach ($user->getMessages() as $message) {
+            $message->setText('@mobicoop2020Message_supprimer');
+        }
+
+        return $this->setUserAtNull($user);
+    }
+
+    private function setUserAtNull(User $user)
+    {
+        $datenow = new DateTime();
+        //Replace all mandatory value by default value or token
+        $user->setEmail(uniqid().'@'.uniqid().'.fr');
+        $user->setGender(3);
+        $user->setStatus(3);
+        $user->setCreatedDate($datenow);
+        $user->setValidatedDate($datenow);
+        $user->setPhoneDisplay(1);
+
+        //Replace all value nullable by null
+        $user->setGivenName(null);
+        $user->setFamilyName(null);
+        $user->setPassword(null);
+        $user->setGivenName(null);
+        $user->setNationality(null);
+        $user->setBirthDate(null);
+        $user->setTelephone(null);
+        $user->setAnyRouteAsPassenger(null);
+        $user->setMultiTransportMode(null);
+        $user->setMaxDetourDistance(null);
+        $user->setMaxDetourDuration(null);
+        $user->setPwdToken(null);
+        $user->setGeoToken(null);
+        $user->setLanguage(null);
+        $user->setPwdToken(null);
+        $user->setValidatedDateToken(null);
+        $user->setFacebookId(null);
+        $user->setSmoke(null);
+        $user->setMusic(null);
+        $user->setMusicFavorites(null);
+        $user->setChat(null);
+        $user->setChatFavorites(null);
+        $user->setNewsSubscription(null);
+        $user->setPhoneToken(null);
+        $user->setIosAppId(null);
+        $user->setAndroidAppId(null);
+        $user->setPhoneValidatedDate(null);
+
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return array();
     }
 }

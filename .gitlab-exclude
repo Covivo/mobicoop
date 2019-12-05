@@ -8,12 +8,55 @@
 /api/config/jwt/
 /api/var/log/
 /api/public/robots.txt
++ /api/public/upload/icons/address-any.svg
++ /api/public/upload/icons/address-personal.svg
++ /api/public/upload/icons/community.svg
++ /api/public/upload/icons/event.svg
++ /api/public/upload/icons/icons.txt
++ /api/public/upload/icons/private-relaypoint-bus.svg
++ /api/public/upload/icons/private-relaypoint-carpool-area.svg
++ /api/public/upload/icons/private-relaypoint-carpool-company.svg
++ /api/public/upload/icons/private-relaypoint-carpool-stop.svg
++ /api/public/upload/icons/private-relaypoint-drop-off-area.svg
++ /api/public/upload/icons/private-relaypoint-park-and-ride.svg
++ /api/public/upload/icons/private-relaypoint-parking.svg
++ /api/public/upload/icons/private-relaypoint-taxi.svg
++ /api/public/upload/icons/private-relaypoint-train.svg
++ /api/public/upload/icons/relaypoint-bus.svg
++ /api/public/upload/icons/relaypoint-carpool-area.svg
++ /api/public/upload/icons/relaypoint-carpool-stop.svg
++ /api/public/upload/icons/relaypoint-company.svg
++ /api/public/upload/icons/relaypoint-drop-off-area.svg
++ /api/public/upload/icons/relaypoint-park-and-ride.svg
++ /api/public/upload/icons/relaypoint-parking.svg
++ /api/public/upload/icons/relaypoint-taxi.svg
++ /api/public/upload/icons/relaypoint-train.svg
++ /api/public/upload/icons/venue.svg
+- /api/public/upload/icons/*.svg
 /api/public/upload/events/images/*.jpg
 /api/public/upload/events/images/*.jpeg
 /api/public/upload/events/images/*.png
 /api/public/upload/events/images/versions/*.jpg
 /api/public/upload/events/images/versions/*.jpeg
 /api/public/upload/events/images/versions/*.png
+/api/public/upload/relaypoints/images/*.jpg
+/api/public/upload/relaypoints/images/*.jpeg
+/api/public/upload/relaypoints/images/*.png
+/api/public/upload/relaypoints/images/versions/*.jpg
+/api/public/upload/relaypoints/images/versions/*.jpeg
+/api/public/upload/relaypoints/images/versions/*.png
+/api/public/upload/relaypointtypes/images/*.jpg
+/api/public/upload/relaypointtypes/images/*.jpeg
+/api/public/upload/relaypointtypes/images/*.png
+/api/public/upload/relaypointtypes/images/versions/*.jpg
+/api/public/upload/relaypointtypes/images/versions/*.jpeg
+/api/public/upload/relaypointtypes/images/versions/*.png
+/api/public/upload/users/images/*.jpg
+/api/public/upload/users/images/*.jpeg
+/api/public/upload/users/images/*.png
+/api/public/upload/users/images/versions/*.jpg
+/api/public/upload/users/images/versions/*.jpeg
+/api/public/upload/users/images/versions/*.png
 /api/public/upload/communities/security/*
 /api/public/upload/communities/images/*.jpg
 /api/public/upload/communities/images/*.jpeg
@@ -32,4 +75,4 @@
 /client/public/google*.html
 /client/public/robots.txt
 /admin/.env
-/admin/build/robots.txt
+/admin/public/robots.txt

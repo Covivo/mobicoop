@@ -35,21 +35,21 @@
               class="py-0"
               :align="isRegular ? 'right' : 'left'"
             >
-              <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('outward') }}</span>
+              <span class="accent--text text--accent font-weight-bold body-1">{{ $t('outward') }}</span>
 
-              <v-icon class="accent--text text--darken-2 font-weight-bold">
+              <v-icon class="accent--text text--accent font-weight-bold">
                 mdi-arrow-right
               </v-icon>
 
               <span
                 v-if="hasSameOutwardTimes"
-                class="primary--text text--darken-3 body-1"
+                class="primary--text text--darken-2 body-1"
               >
                 {{ formatTime(outwardTimes[0]) }}
               </span>
               <span
                 v-else
-                class="primary--text text--darken-3 body-1"
+                class="primary--text text--darken-2 body-1"
               >
                 {{ $t('multipleTimesSlots') }}
               </span>
@@ -61,21 +61,21 @@
               class="py-0"
               :align="isRegular ? 'right' : 'left'"
             >
-              <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('return') }}</span>
+              <span class="accent--text  font-weight-bold body-1">{{ $t('return') }}</span>
 
-              <v-icon class="accent--text text--darken-2 font-weight-bold">
+              <v-icon class="accent--text font-weight-bold">
                 mdi-arrow-left
               </v-icon>
 
               <span
                 v-if="hasSameReturnTimes"
-                class="primary--text text--darken-3 body-1"
+                class="primary--text text--darken-2 body-1"
               >
                 {{ formatTime(returnTimes[0]) }}
               </span>
               <span
                 v-else
-                class="primary--text text--darken-3 body-1"
+                class="primary--text text--darken-2 body-1"
               >
                 {{ $t('multipleTimesSlots') }}
               </span>
@@ -125,9 +125,13 @@ export default {
       default: "ui.i18n.time.format.hourMinute"
     } 
   },
+  data() {
+    return {
+      locale: this.$i18n.locale,
+    };
+  },
   computed: {
     hasSameOutwardTimes () {
-      moment.locale(this.locale);
       let isSame = true;
       const times = this.outwardTimes;
       const days = times.length;
@@ -136,7 +140,7 @@ export default {
       }
       // start to 1 because we don't compare index 0 with index 0
       for (let i = 1; i < days; i++) {
-        isSame = moment(times[0]).isSame(times[i]);
+        isSame = moment.utc(times[0]).isSame(times[i]);
         if (!isSame) {
           break;
         }
@@ -144,7 +148,6 @@ export default {
       return isSame;
     },
     hasSameReturnTimes () {
-      moment.locale(this.locale);
       let isSame = true;
       const times = this.returnTimes;
       const days = times.length;
@@ -153,7 +156,7 @@ export default {
       }
       // start to 1 because we don't compare index 0 with index 0
       for (let i = 1; i < days; i++) {
-        isSame = moment(times[0]).isSame(times[i]);
+        isSame = moment.utc(times[0]).isSame(times[i]);
         if (!isSame) {
           break;
         }
@@ -161,10 +164,12 @@ export default {
       return isSame;
     }
   },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
+  },
   methods: {
     formatTime(time) {
-      moment.locale(this.locale);
-      return moment(time).format(this.$t(this.dateTimeFormat));
+      return moment.utc(time).format(this.$t(this.dateTimeFormat));
     }
   }
 }

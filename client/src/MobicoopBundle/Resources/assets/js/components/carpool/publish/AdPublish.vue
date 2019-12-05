@@ -1,22 +1,32 @@
 <template>
   <v-container fluid>
+    <v-snackbar
+      v-model="snackbar"
+      color="success"
+      top
+    >
+      {{ alert }}
+      <v-btn
+        color="white"
+        text
+        @click="snackbar = false"
+      >
+        <v-icon>mdi-close-circle-outline</v-icon>
+      </v-btn>
+    </v-snackbar>
+
     <!-- Title and subtitle -->
     <v-row 
       justify="center"
     >
       <v-col
         cols="12"
-        md="8"
-        xl="6"
+        xl="10"
         align="center"
       >
         <h1>{{ $t('title') }}</h1>
-        <h3 v-if="step==1">
-          {{ $t('subtitle') }}
-        </h3>
-        <!-- todo : remove this awful trick !! -->
-        <h3 v-else>
-            &nbsp;
+        <h3 style="height: 30px">
+          {{ step === 1 ? $t('subtitle') : "" }}
         </h3>
       </v-col>
     </v-row>
@@ -26,8 +36,7 @@
     >
       <v-col
         cols="12"
-        md="8"
-        xl="6"
+        xl="10"
       >
         <v-alert type="info">
           <p>{{ $t("messageSolidaryExclusiveAd.message") }}</p>
@@ -40,8 +49,7 @@
     >
       <v-col
         cols="12"
-        md="8"
-        xl="6"
+        xl="10"
         class="d-flex justify-center"
       >
         <v-switch
@@ -58,8 +66,7 @@
     >
       <v-col
         cols="12"
-        md="8"
-        xl="6"
+        xl="10"
       >
         <v-alert type="info">
           <p>{{ $t("messageFirstAd.signUpDone", {'givenName':user.givenName}) }}.</p>
@@ -73,8 +80,7 @@
     >
       <v-col
         cols="12"
-        md="8"
-        xl="6"
+        xl="10"
         align="center"
       >
         <v-stepper
@@ -143,7 +149,7 @@
             <!-- Step 6 : message -->
             <v-stepper-step
               editable
-              :step="driver ? 6 : 4"
+              :step="driver ? (solidaryExclusive ? 5 : 6) : 4"
               color="primary"
             >
               {{ $t('stepper.header.message') }}
@@ -154,7 +160,7 @@
             <v-stepper-step
               color="primary"
               editable
-              :step="driver ? 7 : 5"
+              :step="driver ? (solidaryExclusive ? 6 : 7) : 5"
             >
               {{ $t('stepper.header.summary') }}
             </v-stepper-step>
@@ -404,6 +410,8 @@
                     persistent-hint
                     :color="colorPricePerKm"
                     :class="colorPricePerKm + '--text'"
+                    @blur="roundPrice(price, regular ? 2 : 1, true)"
+                    @change="disableNextButton = true;price = Math.abs(price)"
                   />
                 </v-col>
 
@@ -418,7 +426,7 @@
                 v-if="pricePerKm >= 0.12"
                 justify="center"
               >
-                <v-col cols="8">
+                <v-col cols="10">
                   <v-card>
                     <v-card-text>
                       <p
@@ -441,7 +449,7 @@
 
             <!-- Step 6 : message -->
             <v-stepper-content
-              :step="driver ? 6 : 4"
+              :step="driver ? (solidaryExclusive ? 5 : 6) : 4"
             >
               <v-row
                 dense
@@ -470,7 +478,7 @@
 
             <!-- Step 7 : summary -->
             <v-stepper-content
-              :step="driver ? 7 : 5"
+              :step="driver ? (solidaryExclusive ? 6 : 7) : 5"
             >
               <v-container>
                 <v-row>
@@ -525,7 +533,7 @@
         v-if="step > 1"
         rounded
         outlined
-        color="primary" 
+        color="secondary" 
         align-center
         @click="--step"
       >
@@ -533,10 +541,23 @@
       </v-btn>
 
       <v-btn
-        v-if="((step < 7 && driver)|| (step < 5 && !driver))"
+        v-if="(step === 5 && driver)"
+        :disabled="disableNextButton || price <= 0"
+        :loading="loadingPrice"
+        rounded
+        color="secondary"
+        align-center
+        style="margin-left: 30px;"
+        @click="step++"
+      >
+        {{ $t('stepper.buttons.next') }}
+      </v-btn>
+
+      <v-btn
+        v-if="((step < 7 && driver && step !== 5)|| (step < 5 && !driver))"
         :disabled="!validNext"
         rounded
-        color="primary"
+        color="secondary"
         align-center
         style="margin-left: 30px;"
         @click="step++"
@@ -689,6 +710,8 @@ export default {
       message: null,
       baseUrl: window.location.origin,
       loading: false,
+      loadingPrice: false,
+      disableNextButton: false,
       userDelegated: null, // if user delegation
       selectedCommunities: null,
       pointsToMap:[],
@@ -702,13 +725,17 @@ export default {
       anyRouteAsPassenger: null, // not used yet
       solidaryExclusive: this.solidaryExclusiveAd,
       numberSeats : [ 1,2,3,4],
-      seats : 3
+      seats : 3,
+      snackbar: false,
+      alert: this.$t('messageRoundedPrice')
     }
   },
   computed: {
    
     hintPricePerKm() {
-      return this.pricePerKm+'€/km';
+      let pricePerKm = this.pricePerKm;
+      if (isNaN(this.pricePerKm)) pricePerKm = 0;
+      return pricePerKm+'€/km';
     },
     validWaypoints() {
       if (this.route && this.route.waypoints) {
@@ -792,7 +819,8 @@ export default {
       this.pricePerKm = (this.distance>0 ? Math.round(parseFloat(this.price) / this.distance * 100)/100 : this.defaultPriceKm);
     },
     distance() {
-      this.price = Math.round(this.distance * this.pricePerKm * 100)/100;
+      let price = Math.round(this.distance * this.pricePerKm * 100)/100;
+      this.roundPrice(price, this.regular ? 2 : 1);
     },
     route(){
       this.buildPointsToMap();
@@ -927,7 +955,7 @@ export default {
           if (response.data && response.data.result && response.data.result.id) {
             // uncomment when results page activated
             //var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
-            window.location.href = `${self.baseUrl}/`+self.$t("route.results",{id: Number(response.data.result.id)});
+            window.location.href = "/utilisateur/profil/modifier/myProposals";
           }
           //console.log(response);
         })
@@ -935,10 +963,29 @@ export default {
           console.log(error);
         })
         .finally(function () {
-          self.loading = false;
+          // self.loading = false;
         });
+    },
+    roundPrice (price, frequency, doneByUser = false) {
+      if (price > 0 && frequency > 0) {
+        this.loadingPrice = true;
+        axios.post(this.$t('route.roundPrice'), {
+          value: price,
+          frequency: frequency
+        }).then(resp => {
+          this.price = resp.data.value;
+          if (doneByUser === true) {
+            this.snackbar = true;
+          }
+        }).catch(error => {
+          // if and error occurred we set the original price
+          this.price = price;
+        }).finally(() => {
+          this.loadingPrice = false;
+          this.disableNextButton = false;
+        })
+      }
     }
-
   }
 };
 </script>

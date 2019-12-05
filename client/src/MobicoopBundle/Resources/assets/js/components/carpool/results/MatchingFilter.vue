@@ -36,7 +36,7 @@
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-row>
-                <v-col cols="3">
+                <!-- <v-col cols="3">
                   <v-select
                     v-model="filters.order"
                     :items="itemsOrder"
@@ -48,7 +48,8 @@
                     @change="updateFilterDate"
                   />
                 </v-col>
-                <v-col cols="3">
+                <v-col cols="3"> -->
+                <v-col cols="4">
                   <v-select
                     v-model="filters.filters.time"
                     :items="itemsTime"
@@ -58,6 +59,46 @@
                     flat
                     :disabled="!filterEnabled.time"
                     @change="updateFilterTime"
+                  />
+                </v-col>
+                <v-col cols="4">
+                  <v-select
+                    v-model="filters.filters.role"
+                    :items="itemsRole"
+                    :label="$t('select.filter.role.label')"
+                    outlined
+                    dense
+                    flat
+                    :disabled="!filterEnabled.role"
+                    @change="updateFilterRole"
+                  />
+                </v-col>
+                <v-col cols="4">
+                  <v-select
+                    v-model="filters.filters.gender"
+                    :items="itemsGender"
+                    :label="$t('select.filter.gender.label')"
+                    outlined
+                    dense
+                    flat
+                    :disabled="!filterEnabled.gender"
+                    @change="updateFilterGender"
+                  />
+                </v-col>
+              </v-row>
+              <v-row
+                v-if="communities && communities.length>0"
+              >
+                <v-col cols="3">
+                  <v-select
+                    v-model="filters.filters.community"
+                    :items="communities"
+                    :label="$t('select.filter.community.label')"
+                    outlined
+                    dense
+                    flat
+                    :disabled="!filterEnabled.community"
+                    @change="updateFilterCommunity"
                   />
                 </v-col>
               </v-row>
@@ -80,25 +121,44 @@ export default {
     messages: TranslationsMerged,
   },
   props: {
-
+    communities: {
+      type: Array,
+      default: null
+    }
   },
   data : function() {
     return {
       chips:[],
       filterEnabled:{
         "time":true,
-        "order":true
+        // "order":true,
+        "role":true,
+        "gender":true,
+        "community":true
       },
-      itemsOrder: [
-        {text:this.$t('select.order.date.increasing'),value:{criteria:'date',value:'ASC'}},
-        {text:this.$t('select.order.date.decreasing'),value:{criteria:'date',value:'DESC'}}
+      // itemsOrder: [
+      //   {text:this.$t('select.order.date.increasing'),value:{criteria:'date',value:'ASC'}},
+      //   {text:this.$t('select.order.date.decreasing'),value:{criteria:'date',value:'DESC'}}
+      // ],
+      itemsRole: [
+        {text:this.$t('select.filter.role.driver.label'),value:this.$t('select.filter.role.driver.value')},
+        {text:this.$t('select.filter.role.passenger.label'),value:this.$t('select.filter.role.passenger.value')},
+        {text:this.$t('select.filter.role.both.label'),value:this.$t('select.filter.role.both.value')}
+      ],
+      itemsGender: [
+        {text:this.$t('select.filter.gender.female.label'),value:this.$t('select.filter.gender.female.value')},
+        {text:this.$t('select.filter.gender.male.label'),value:this.$t('select.filter.gender.male.value')},
+        {text:this.$t('select.filter.gender.other.label'),value:this.$t('select.filter.gender.other.value')}
       ],
       panel:null,
       filters:{
-        order:null,
+        // order:null,
         filters:{
           // You can add here other filters
-          time:null
+          time:null,
+          role:null,
+          gender:null,
+          community:null
         }
       }
     };
@@ -106,29 +166,52 @@ export default {
   computed:{
     itemsTime(){
       let hours = [];
-      for (let i = 1; i < 24; i++) {
+      for (let i = 0; i < 24; i++) {
         hours.push({text:i+'h00',value:i+'h00'});
       }
       return hours;
     }
   },
   methods :{
-    updateFilterDate(data){
-      this.filterEnabled.order = false;
-      this.chips.push({id:"order",text:this.$t('chips.date')+' : '+this.$t('chips.value.'+data.value),value:data.value});
+    //   updateFilterDate(data){
+    //   this.filterEnabled.order = false;
+    //   this.chips.push({id:"order",text:this.$t('chips.date.label')+' : '+this.$t('chips.date.value.'+data.value),value:data.value});
+    //   this.closePanel();
+    //   this.$emit("updateFilters",this.filters);
+    // },
+
+    updateFilterTime(data){
+      this.filterEnabled.time = false;
+      this.chips.push({id:"time",text:data,value:data});
       this.closePanel();
       this.$emit("updateFilters",this.filters);
     },
-    updateFilterTime(data){
-      this.filterEnabled.time = false;
-      this.chips.push({id:"time",text:this.$t('chips.hour')+' : '+data,value:data});
+    updateFilterRole(data){
+      this.filterEnabled.role = false;
+      this.chips.push({id:"role",text:this.$t('chips.role.value.'+data),value:data});
+      this.closePanel();
+      this.$emit("updateFilters",this.filters);
+    },
+    updateFilterGender(data){
+      this.filterEnabled.gender = false;
+      this.chips.push({id:"gender",text:this.$t('chips.gender.value.'+data),value:data});
+      this.closePanel();
+      this.$emit("updateFilters",this.filters);
+    },
+    updateFilterCommunity(data){
+      var name="";
+      this.communities.forEach((result,key) => {
+        if (result.value==data) name=result.text;
+      });
+      this.filterEnabled.community = false;
+      this.chips.push({id:"community",text:this.$t('chips.community.label')+' : '+name,value:data});
       this.closePanel();
       this.$emit("updateFilters",this.filters);
     },
     removeFilter(item){
-      console.error(item);
       this.filterEnabled[item.id] = true;
-      (item.id=="order") ? this.filters[item.id] = null : this.filters.filters[item.id] = null;
+      // (item.id=="order") ? this.filters[item.id] = null : this.filters.filters[item.id] = null;
+      this.filters.filters[item.id] = null;
       this.chips.splice(this.chips.indexOf(item), 1);
       this.$emit("updateFilters",this.filters);
     },
