@@ -90,6 +90,7 @@
                 <template v-slot:activator="{ on }">
                   <v-text-field
                     :value="computedOutwardDateFormat"
+                    :rules="startDateRules"
                     :label="$t('startDate.label')"
                     readonly
                     clearable
@@ -129,6 +130,7 @@
                 <template v-slot:activator="{ on }">
                   <v-text-field
                     :value="computedReturnDateFormat"
+                    :rules="endDateRules"
                     :label="$t('endDate.label')"
                     prepend-icon=""
                     readonly
@@ -380,6 +382,12 @@ export default {
       fullDescriptionRules: [
         v => !!v || this.$t("form.fullDescription.required"),
       ],
+      startDateRules: [
+        v => !!v || this.$t("startDate.error"),
+      ],
+      endDateRules: [
+        v => !!v || this.$t("endDate.error"),
+      ],
       avatar: null,
       loading: false,
       snackError: null,
@@ -414,9 +422,9 @@ export default {
       this.eventAddress = address;
     },
     createEvent() {
-      this.loading = true;
       this.dialog = false;
-      if (this.name  && this.fullDescription && this.avatar && this.eventAddress) {
+      this.loading = true;
+      if (this.name  && this.fullDescription && this.avatar && this.eventAddress && this.startDate && this.endDate) {
         let newEvent = new FormData();
         newEvent.append("name", this.name);
         newEvent.append("fullDescription", this.fullDescription);
