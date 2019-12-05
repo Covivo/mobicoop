@@ -142,7 +142,6 @@ class GeoMatcher
      */
     public function multiMatch(array $candidates, $forMass = false): ?array
     {
-            
         $matchesReturned = [];
 
         // we create the points for the routes alternatives for each candidate
@@ -164,7 +163,7 @@ class GeoMatcher
         }
 
         if (!$forMass) {
-            $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes,false,true);
+            $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, true);
     
             // we treat the routes to check if they match
             foreach ($ownerRoutes as $ownerId=>$routes) {
@@ -199,7 +198,8 @@ class GeoMatcher
                             'matches' => $matches
                         ];
                 }
-            } 
+            }
+            unset($ownerRoutes);
         }
         
         return $matchesReturned;
@@ -287,15 +287,22 @@ class GeoMatcher
             }
         }
         // we check the common distance
-        if (($candidate1->getDirection()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
-            (($candidate2->getDirection()->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
-            $commonDistance = true;
+        if ($candidate2->getDirection()) {
+            if (($candidate1->getDirection()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
+                (($candidate2->getDirection()->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
+                $commonDistance = true;
+            }
+        } else {
+            if (($candidate1->getDirection()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
+                (($candidate2->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
+                $commonDistance = true;
+            }
         }
-        
+                
         // if the detour is acceptable we keep the candidate
         if ($detourDistance && $detourDuration && $commonDistance) {
             // we add the zones to the direction
-            $direction = $this->zoneManager->createZonesForDirection($routes[0]); // ??
+            $direction = $this->zoneManager->createZonesForDirection($routes[0]); // permet de créer l'object direction ?
             $result = [
                 'route' => is_array($points) ? $this->generateRoute($points, $routes[0]->getDurations()) : null,
                 'originalDistance' => $candidate1->getDirection()->getDistance(),
@@ -308,7 +315,7 @@ class GeoMatcher
                 'newDuration' => $routes[0]->getDuration(),
                 'detourDuration' => ($routes[0]->getDuration()-$candidate1->getDirection()->getDuration()),
                 'detourDurationPercent' => round($routes[0]->getDuration()*100/$candidate1->getDirection()->getDuration()-100, 2),
-                'commonDistance' => $candidate2->getDirection()->getDistance(),
+                'commonDistance' => $candidate2->getDirection() ? $candidate2->getDirection()->getDistance() : $candidate2->getDistance(),
                 'direction' => $direction,
                 'id' => $candidate2->getId()
             ];
@@ -349,9 +356,16 @@ class GeoMatcher
             }
         }
         // we check the common distance
-        if (($candidate1->getDirection()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
-            (($candidate2->getDirection()->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
-            $commonDistance = true;
+        if ($candidate2->getDirection()) {
+            if (($candidate1->getDirection()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
+                (($candidate2->getDirection()->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
+                $commonDistance = true;
+            }
+        } else {
+            if (($candidate1->getDirection()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
+                (($candidate2->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
+                $commonDistance = true;
+            }
         }
         
         // if the detour is acceptable we keep the candidate
@@ -368,7 +382,7 @@ class GeoMatcher
                 'newDuration' => $routes[0]->getDuration(),
                 'detourDuration' => ($routes[0]->getDuration()-$candidate1->getDirection()->getDuration()),
                 'detourDurationPercent' => round($routes[0]->getDuration()*100/$candidate1->getDirection()->getDuration()-100, 2),
-                'commonDistance' => $candidate2->getDirection()->getDistance(),
+                'commonDistance' => $candidate2->getDirection() ? $candidate2->getDirection()->getDistance() : $candidate2->getDistance(),
                 'direction' => $routes[0],
                 'id' => $candidate2->getId()
             ];

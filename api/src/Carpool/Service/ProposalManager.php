@@ -459,6 +459,7 @@ class ProposalManager
             $direction = $routes[0];
             // creation of the crossed zones
             $direction = $this->zoneManager->createZonesForDirection($direction);
+            $direction->setAutoGeoJsonDetail();
             if ($proposal->getCriteria()->isDriver()) {
                 $proposal->getCriteria()->setDirectionDriver($direction);
                 $proposal->getCriteria()->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
@@ -571,11 +572,10 @@ class ProposalManager
      * @return void
      */
     public function setDirectionsAndDefaultsForImport(int $batch)
-    {        
+    {
         $treatedCriterias = []; // used to avoid excluding a linked proposal if the proposal is the last to be processed in a batch
         $loop = 0;
         while (true) {
-
             $this->logger->info('setDirectionsForProposals | Start creating arrays for calculation, loop #' . $loop . ' at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
             // we treat the user still at status "user treated"
@@ -594,7 +594,7 @@ class ProposalManager
                 foreach ($criteria->getProposal()->getWaypoints() as $waypoint) {
                     // waypoints are already retrieved ordered by position, no need to check the position here
                     if ($criteria->isDriver()) {
-                        $addressesDriver[] = $waypoint->getAddress();                        
+                        $addressesDriver[] = $waypoint->getAddress();
                     }
                     if ($criteria->isPassenger() && ($waypoint->getPosition() == 0 || $waypoint->isDestination())) {
                         $addressesPassenger[] = $waypoint->getAddress();
@@ -611,12 +611,12 @@ class ProposalManager
                     $isPassenger = true;
                     $i++;
                     $addressesForRoutesPassenger[$criteria->getId()][] = $addressesPassenger;
-                }   
+                }
                 if ($isDriver || $isPassenger) {
                     $imports[] = $criteria->getProposal()->getUser()->getImport()->getId();
                 }
-                if ($i>=$batch && 
-                    ($criteria->getProposal()->getType() == Proposal::TYPE_ONE_WAY || in_array($criteria->getId(),$treatedCriterias))) {
+                if ($i>=$batch &&
+                    ($criteria->getProposal()->getType() == Proposal::TYPE_ONE_WAY || in_array($criteria->getId(), $treatedCriterias))) {
                     break;
                 }
                 $treatedCriterias[] = $criteria->getId();
@@ -626,11 +626,11 @@ class ProposalManager
 
             if (count($imports)>0) {
                 $q = $this->entityManager
-                ->createQuery('UPDATE App\import\Entity\UserImport u set u.status = :status WHERE u.id in(' . implode(',',$imports) . ')')
+                ->createQuery('UPDATE App\import\Entity\UserImport u set u.status = :status WHERE u.id in(' . implode(',', $imports) . ')')
                 ->setParameters([
                     'status'=>UserImport::STATUS_DIRECTION_PENDING
                 ]);
-                $q->execute();        
+                $q->execute();
             } else {
                 // no imports to treat => we reached the end
                 break;
@@ -639,17 +639,18 @@ class ProposalManager
 
             $ownerDriverRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutesDriver, false, true);
             $ownerPassengerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutesPassenger, false, true);
+            unset($addressesForRoutesDriver);
+            unset($addressesForRoutesPassenger);
 
-            $ids = array_unique(array_merge(array_keys($ownerDriverRoutes),array_keys($ownerPassengerRoutes)));
-            
-            $qCriteria = $this->entityManager->createQuery('SELECT c from App\Carpool\Entity\Criteria c WHERE c.id IN (' . implode(',',$ids) . ')');
+            $ids = array_unique(array_merge(array_keys($ownerDriverRoutes), array_keys($ownerPassengerRoutes)));
+            $qCriteria = $this->entityManager->createQuery('SELECT c from App\Carpool\Entity\Criteria c WHERE c.id IN (' . implode(',', $ids) . ')');
                 
             $batchD = 50;
             $pool = 0;
             $iterableResult = $qCriteria->iterate();
             foreach ($iterableResult as $row) {
                 $criteria = $row[0];
-                if (array_key_exists($criteria->getId(),$ownerDriverRoutes)) {
+                if (array_key_exists($criteria->getId(), $ownerDriverRoutes)) {
                     $direction = $ownerDriverRoutes[$criteria->getId()][0];
                     $direction = $this->zoneManager->createZonesForDirection($direction);
                     $this->entityManager->persist($direction);
@@ -657,7 +658,7 @@ class ProposalManager
                     $criteria->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
                     $criteria->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
                 }
-                if (array_key_exists($criteria->getId(),$ownerPassengerRoutes)) {
+                if (array_key_exists($criteria->getId(), $ownerPassengerRoutes)) {
                     $direction = $ownerPassengerRoutes[$criteria->getId()][0];
                     $direction = $this->zoneManager->createZonesForDirection($direction);
                     $this->entityManager->persist($direction);
@@ -768,6 +769,12 @@ class ProposalManager
                 if ($pool>=$batchD) {
                     $this->entityManager->flush();
                     $this->entityManager->clear();
+                    if (isset($direction)) {
+                        unset($direction);
+                    }
+                    if (isset($criteria)) {
+                        unset($criteria);
+                    }
                     $pool = 0;
                 }
             }
@@ -778,13 +785,14 @@ class ProposalManager
             $this->entityManager->clear();
 
             $q = $this->entityManager
-            ->createQuery('UPDATE App\import\Entity\UserImport u set u.status = :status WHERE u.id in(' . implode(',',$imports) . ')')
+            ->createQuery('UPDATE App\import\Entity\UserImport u set u.status = :status WHERE u.id in(' . implode(',', $imports) . ')')
             ->setParameters([
                 'status'=>UserImport::STATUS_DIRECTION_TREATED
             ]);
             $q->execute();
 
             unset($imports);
+            unset($treatedCriterias);
         }
     }
 

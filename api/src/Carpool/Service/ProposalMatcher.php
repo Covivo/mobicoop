@@ -31,6 +31,7 @@ use App\Carpool\Repository\ProposalRepository;
 use App\Match\Service\GeoMatcher;
 use App\Match\Entity\Candidate;
 use App\Carpool\Entity\Waypoint;
+use App\Geography\Entity\Address;
 use App\Geography\Service\GeoRouter;
 use App\User\Entity\User;
 use Psr\Log\LoggerInterface;
@@ -92,12 +93,13 @@ class ProposalMatcher
      */
     public function createMatchingsForProposal(Proposal $proposal, bool $excludeProposalUser=true)
     {
-        set_time_limit(3600);
+        set_time_limit(360);
         $date = new \DateTime("UTC");
         $this->logger->info('Proposal matcher | Start create matchings for proposal ' . $proposal->getId() . ' | ' . $date->format("Ymd H:i:s.u"));
 
         // we search the matchings
-        $matchings = $this->findMatchingProposals($proposal, $excludeProposalUser);
+        $matchings = $this->findMatchingProposalsWithArray($proposal, $excludeProposalUser);
+        //$matchings = $this->findMatchingProposals($proposal, $excludeProposalUser);
         
         // we assign the matchings to the proposal
         foreach ($matchings as $matching) {
@@ -183,7 +185,6 @@ class ProposalMatcher
             return [];
         }
         $this->logger->info('Proposal matcher | End find matching proposals | Found ' . count($proposalsFound) . ' potential matchings | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        
         $matchings = [];
 
         // we filter with geomatcher
@@ -198,14 +199,14 @@ class ProposalMatcher
             $addresses[] = $waypoint->getAddress();
         }
         $candidateProposal->setAddresses($addresses);
-
+        
         $this->logger->info('Proposal matcher | Start geomatcher as driver | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         if ($proposal->getCriteria()->isDriver()) {
             $candidateProposal->setMaxDetourDistance($proposal->getCriteria()->getMaxDetourDistance() ? $proposal->getCriteria()->getMaxDetourDistance() : ($proposal->getCriteria()->getDirectionDriver()->getDistance()*self::MAX_DETOUR_DISTANCE_PERCENT/100));
             $candidateProposal->setMaxDetourDuration($proposal->getCriteria()->getMaxDetourDuration() ? $proposal->getCriteria()->getMaxDetourDuration() : ($proposal->getCriteria()->getDirectionDriver()->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100));
             $candidateProposal->setDirection($proposal->getCriteria()->getDirectionDriver());
             $candidatesPassenger = [];
-            foreach ($proposalsFound as $proposalToMatch) {        
+            foreach ($proposalsFound as $proposalToMatch) {
                 // if the candidate is not passenger we skip (the 2 candidates could be driver AND passenger, and the second one match only as a driver)
                 if (!$proposalToMatch->getCriteria()->isPassenger()) {
                     continue;
@@ -1017,27 +1018,62 @@ class ProposalMatcher
     public function findPotentialMatchingsForProposals(array $proposals)
     {
         // we create chunks of proposals to avoid freezing
-        $chunk = 20;
-        $proposalsChunked = array_chunk($proposals,$chunk,true);
+        $chunk = 50;
+        $proposalsChunked = array_chunk($proposals, $chunk, true);
 
         foreach ($proposalsChunked as $proposalChunk) {
-
             $potentialProposals = [];
             $this->logger->info('Start searching potentials | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             foreach ($proposalChunk as $proposal) {
                 if (!$proposal->getCriteria()->isPassenger() && $proposal->getCriteria()->isDriver()) {
-                    if ($proposalsFoundForProposal = $this->proposalRepository->findMatchingProposals($proposal,true,true)) {
+                    if ($proposalsFoundForProposal = $this->proposalRepository->findMatchingProposalsWithArray($proposal, true, true)) {
+                        $aproposals= [];
+                        foreach ($proposalsFoundForProposal as $key=>$proposalFound) {
+                            if (!array_key_exists($proposalFound['pid'], $aproposals)) {
+                                $aproposals[$proposalFound['pid']] = [
+                                    'pid'=>$proposalFound['pid'],
+                                    'uid'=>$proposalFound['uid'],
+                                    'driver'=>$proposalFound['driver'],
+                                    'passenger'=>$proposalFound['passenger'],
+                                    'maxDetourDuration'=>$proposalFound['maxDetourDuration'],
+                                    'maxDetourDistance'=>$proposalFound['maxDetourDistance'],
+                                    'dpduration'=>$proposalFound['dpduration'],
+                                    'dpdistance'=>$proposalFound['dpdistance'],
+                                    'addresses'=>[
+                                        [
+                                            'position'=>$proposalFound['position'],
+                                            'destination'=>$proposalFound['destination'],
+                                            'latitude'=>$proposalFound['latitude'],
+                                            'longitude'=>$proposalFound['longitude'],
+                                        ]
+                                    ]
+                                ];
+                            } else {
+                                $element = [
+                                    'position'=>$proposalFound['position'],
+                                    'destination'=>$proposalFound['destination'],
+                                    'latitude'=>$proposalFound['latitude'],
+                                    'longitude'=>$proposalFound['longitude'],
+                                ];
+                                if (!in_array($element, $aproposals[$proposalFound['pid']]['addresses'])) {
+                                    $aproposals[$proposalFound['pid']]['addresses'][] = $element;
+                                }
+                            }
+                        }
+                        ksort($aproposals);
                         $potentialProposals[$proposal->getId()] = [
                             'proposal'=>$proposal,
-                            'potentials'=>$proposalsFoundForProposal
+                            'potentials'=>$aproposals
                         ];
                     }
                 }
             }
+            
             $this->logger->info('End searching potentials | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             
             // we create the candidates array
             $candidates = $this->createCandidates($potentialProposals);
+            unset($potentialProposals);
     
             // create the array for multimatch
             $this->logger->info('Start creating multimatch array | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -1051,16 +1087,17 @@ class ProposalMatcher
             $this->logger->info('End creating multimatch array, size : ' . count($multimatch) . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     
             // create a batch
-            $batchSize = 2;        
-            $batches = array_chunk($multimatch,$batchSize);
+            $batchSize = 10;
+            $batches = array_chunk($multimatch, $batchSize);
     
             $potentialMatchings = []; // indexed by driver proposal id
     
+            $matchings = [];
             foreach ($batches as $key=>$batch) {
                 $this->logger->info('Start multimatch batch #' . $key . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 foreach ($batch as $key2=>$match) {
                     $this->logger->info('Match # ' . $key2 . ', Passengers : ' . count($match['passengers']) . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                }            
+                }
                 if ($matches = $this->geoMatcher->multiMatch($batch)) {
                     if (is_array($matches) && count($matches)>0) {
                         foreach ($matches as $match) {
@@ -1094,9 +1131,9 @@ class ProposalMatcher
                         }
                     }
                 }
+                unset($matches);
             }
     
-            $matchings = [];
             foreach ($potentialMatchings as $proposalOfferId => $potentials) {
                 $proposal = $proposals[$proposalOfferId];
                 // if we use times, we check if the pickup times match
@@ -1113,11 +1150,11 @@ class ProposalMatcher
                     )))
                 ) {
                     $this->logger->info('Proposal matcher | Check pickup start | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                    $matchings = array_merge($matchings,$this->checkPickUp($potentials));
+                    $matchings = array_merge($matchings, $this->checkPickUp($potentials));
                     $this->logger->info('Proposal matcher | Check pickup end | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 }
             }
-            
+            unset($potentialMatchings);
     
             // we complete the matchings with the waypoints and criteria
             $nb = 1;
@@ -1287,9 +1324,7 @@ class ProposalMatcher
             $this->logger->info('Start flushing multimatch | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $this->entityManager->flush();
             $this->logger->info('End flushing multimatch | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
         }
-
     }
 
     /**
@@ -1317,20 +1352,28 @@ class ProposalMatcher
             $candidateProposal->setDirection($proposal->getCriteria()->getDirectionDriver());
             foreach ($proposalsFound as $proposalToMatch) {
                 // if the candidate is not passenger we skip (the 2 candidates could be driver AND passenger, and the second one match only as a driver)
-                if (!$proposalToMatch->getCriteria()->isPassenger()) {
+                if (!$proposalToMatch["passenger"]) {
                     continue;
                 }
                 $candidate = new Candidate();
-                $candidate->setId($proposalToMatch->getId());
+                $candidate->setId($proposalToMatch['pid']);
                 $addressesCandidate = [];
-                foreach ($proposalToMatch->getWaypoints() as $waypoint) {
-                    $addressesCandidate[] = $waypoint->getAddress();
+                usort($proposalToMatch['addresses'], function ($a, $b) {
+                    return $a['position'] <=> $b['position'];
+                });
+                foreach ($proposalToMatch['addresses'] as $waypoint) {
+                    $address = new Address();
+                    $address->setLatitude($waypoint['latitude']);
+                    $address->setLongitude($waypoint['longitude']);
+                    $addressesCandidate[] = $address;
                 }
                 $candidate->setAddresses($addressesCandidate);
-                $candidate->setDirection($proposalToMatch->getCriteria()->getDirectionPassenger());
+                $candidate->setDuration($proposalToMatch["dpduration"]);
+                $candidate->setDistance($proposalToMatch["dpdistance"]);
+                
                 // the 2 following are not taken in account right now as only the driver detour matters
-                $candidate->setMaxDetourDistance($proposalToMatch->getCriteria()->getMaxDetourDistance() ? $proposalToMatch->getCriteria()->getMaxDetourDistance() : ($proposalToMatch->getCriteria()->getDirectionPassenger()->getDistance()*self::MAX_DETOUR_DISTANCE_PERCENT/100));
-                $candidate->setMaxDetourDuration($proposalToMatch->getCriteria()->getMaxDetourDuration() ? $proposalToMatch->getCriteria()->getMaxDetourDuration() : ($proposalToMatch->getCriteria()->getDirectionPassenger()->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100));
+                $candidate->setMaxDetourDistance($proposalToMatch["maxDetourDistance"] ? $proposalToMatch["maxDetourDistance"] : ($proposalToMatch["dpdistance"]*self::MAX_DETOUR_DISTANCE_PERCENT/100));
+                $candidate->setMaxDetourDuration($proposalToMatch["maxDetourDuration"] ? $proposalToMatch["maxDetourDuration"] : ($proposalToMatch["dpduration"]*self::MAX_DETOUR_DURATION_PERCENT/100));
                 $candidatesPassenger[] = $candidate;
             }
 
@@ -1343,5 +1386,399 @@ class ProposalMatcher
         }
 
         return $candidates;
+    }
+
+
+
+    /**************
+     * EXPERIMENT
+     **************/
+
+    /**
+     * Find matching proposals for a proposal, array style !
+     * Returns an array of Matching objects.
+     *
+     * @param Proposal $proposal
+     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
+     * @return array|NULL
+     */
+    public function findMatchingProposalsWithArray(Proposal $proposal, bool $excludeProposalUser=true)
+    {
+        // we search matching proposals in the database
+        // if no proposals are found we return an empty array
+        $this->logger->info('Proposal matcher | Start find matching proposals | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        if (!$proposalsFound = $this->proposalRepository->findMatchingProposalsWithArray($proposal, $excludeProposalUser)) {
+            return [];
+        }
+        $proposals= [];
+        foreach ($proposalsFound as $key=>$proposalFound) {
+            if (!array_key_exists($proposalFound['pid'], $proposals)) {
+                $proposals[$proposalFound['pid']] = [
+                    'pid'=>$proposalFound['pid'],
+                    'uid'=>$proposalFound['uid'],
+                    'driver'=>$proposalFound['driver'],
+                    'passenger'=>$proposalFound['passenger'],
+                    'maxDetourDuration'=>$proposalFound['maxDetourDuration'],
+                    'maxDetourDistance'=>$proposalFound['maxDetourDistance'],
+                    'dpduration'=>$proposalFound['dpduration'],
+                    'dpdistance'=>$proposalFound['dpdistance'],
+                    'ddduration'=>$proposalFound['ddduration'],
+                    'dddistance'=>$proposalFound['dddistance'],
+                    'addresses'=>[
+                        [
+                            'position'=>$proposalFound['position'],
+                            'destination'=>$proposalFound['destination'],
+                            'latitude'=>$proposalFound['latitude'],
+                            'longitude'=>$proposalFound['longitude'],
+                        ]
+                    ]
+                ];
+            } else {
+                $element = [
+                    'position'=>$proposalFound['position'],
+                    'destination'=>$proposalFound['destination'],
+                    'latitude'=>$proposalFound['latitude'],
+                    'longitude'=>$proposalFound['longitude'],
+                ];
+                if (!in_array($element, $proposals[$proposalFound['pid']]['addresses'])) {
+                    $proposals[$proposalFound['pid']]['addresses'][] = $element;
+                }
+            }
+        }
+        ksort($proposals);
+        $this->logger->info('Proposal matcher | End find matching proposals | Found ' . count($proposalsFound) . ' potential matchings | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $matchings = [];
+
+        // we filter with geomatcher
+        $candidateProposal = new Candidate();
+        if ($proposal->getUser()) {
+            $candidateProposal->setId($proposal->getUser()->getId());
+        } else {
+            $candidateProposal->setId(User::DEFAULT_ID);
+        }
+        $addresses = [];
+        foreach ($proposal->getWaypoints() as $waypoint) {
+            $addresses[] = $waypoint->getAddress();
+        }
+        $candidateProposal->setAddresses($addresses);
+        
+        $this->logger->info('Proposal matcher | Start geomatcher as driver | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        if ($proposal->getCriteria()->isDriver()) {
+            $candidateProposal->setMaxDetourDistance($proposal->getCriteria()->getMaxDetourDistance() ? $proposal->getCriteria()->getMaxDetourDistance() : ($proposal->getCriteria()->getDirectionDriver()->getDistance()*self::MAX_DETOUR_DISTANCE_PERCENT/100));
+            $candidateProposal->setMaxDetourDuration($proposal->getCriteria()->getMaxDetourDuration() ? $proposal->getCriteria()->getMaxDetourDuration() : ($proposal->getCriteria()->getDirectionDriver()->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100));
+            $candidateProposal->setDirection($proposal->getCriteria()->getDirectionDriver());
+            $candidatesPassenger = [];
+            foreach ($proposals as $proposalToMatch) {
+                // if the candidate is not passenger we skip (the 2 candidates could be driver AND passenger, and the second one match only as a driver)
+                if (!$proposalToMatch['passenger']) {
+                    continue;
+                }
+                $candidate = new Candidate();
+                $candidate->setId($proposalToMatch['uid']);
+                $addressesCandidate = [];
+                usort($proposalToMatch['addresses'], function ($a, $b) {
+                    return $a['position'] <=> $b['position'];
+                });
+                foreach ($proposalToMatch['addresses'] as $waypoint) {
+                    $address = new Address();
+                    $address->setLatitude($waypoint['latitude']);
+                    $address->setLongitude($waypoint['longitude']);
+                    $addressesCandidate[] = $address;
+                }
+                $candidate->setAddresses($addressesCandidate);
+                $candidate->setDuration($proposalToMatch["dpduration"]);
+                $candidate->setDistance($proposalToMatch["dpdistance"]);
+                
+                // the 2 following are not taken in account right now as only the driver detour matters
+                $candidate->setMaxDetourDistance($proposalToMatch["maxDetourDistance"] ? $proposalToMatch["maxDetourDistance"] : ($proposalToMatch["dpdistance"]*self::MAX_DETOUR_DISTANCE_PERCENT/100));
+                $candidate->setMaxDetourDuration($proposalToMatch["maxDetourDuration"] ? $proposalToMatch["maxDetourDuration"] : ($proposalToMatch["dpduration"]*self::MAX_DETOUR_DURATION_PERCENT/100));
+                $candidatesPassenger[] = $candidate;
+            }
+                
+            $this->logger->info('Proposal matcher | Launch georouter | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            if ($matches = $this->geoMatcher->singleMatch($candidateProposal, $candidatesPassenger, true, true)) {
+                // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
+                if (is_array($matches) && count($matches)>0) {
+                    switch (self::MULTI_MATCHES_FOR_SAME_CANDIDATES) {
+                        case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                            usort($matches, self::build_sorter('newDuration'));
+                            $matching = new Matching();
+                            $matching->setProposalOffer($proposal);
+                            $matching->setProposalRequest($this->proposalRepository->find($proposalToMatch['pid']));
+                            $matching->setFilters($matches[0]);
+                            $matchings[] = $matching;
+                            break;
+                        case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST:
+                            usort($matches, self::build_sorter('newDistance'));
+                            $matching = new Matching();
+                            $matching->setProposalOffer($proposal);
+                            $matching->setProposalRequest($this->proposalRepository->find($proposalToMatch['pid']));
+                            $matching->setFilters($matches[0]);
+                            $matchings[] = $matching;
+                            break;
+                        default:
+                            foreach ($matches as $match) {
+                                $matching = new Matching();
+                                $matching->setProposalOffer($proposal);
+                                $matching->setProposalRequest($this->proposalRepository->find($proposalToMatch['pid']));
+                                $matching->setFilters($match);
+                                $matchings[] = $matching;
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
+        $this->logger->info('Proposal matcher | Start geomatcher as passenger | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        if ($proposal->getCriteria()->isPassenger()) {
+            $candidateProposal->setDirection($proposal->getCriteria()->getDirectionPassenger());
+            // the 2 following are not taken in account right now as only the driver detour matters
+            $candidateProposal->setMaxDetourDistance($proposal->getCriteria()->getMaxDetourDistance() ? $proposal->getCriteria()->getMaxDetourDistance() : ($proposal->getCriteria()->getDirectionPassenger()->getDistance()*self::MAX_DETOUR_DISTANCE_PERCENT/100));
+            $candidateProposal->setMaxDetourDuration($proposal->getCriteria()->getMaxDetourDuration() ? $proposal->getCriteria()->getMaxDetourDuration() : ($proposal->getCriteria()->getDirectionPassenger()->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100));
+            $candidatesDriver = [];
+            foreach ($proposals as $proposalToMatch) {
+                // if the candidate is not driver we skip (the 2 candidates could be driver AND passenger, and the second one match only as a passenger)
+                if (!$proposalToMatch["driver"]) {
+                    continue;
+                }
+                $candidate = new Candidate();
+                $candidate->setId($proposalToMatch['uid']);
+                $addressesCandidate = [];
+                usort($proposalToMatch['addresses'], function ($a, $b) {
+                    return $a['position'] <=> $b['position'];
+                });
+                foreach ($proposalToMatch['addresses'] as $waypoint) {
+                    $address = new Address();
+                    $address->setLatitude($waypoint['latitude']);
+                    $address->setLongitude($waypoint['longitude']);
+                    $addressesCandidate[] = $address;
+                }
+                $candidate->setAddresses($addressesCandidate);
+                $candidate->setDuration($proposalToMatch["ddduration"]);
+                $candidate->setDistance($proposalToMatch["dddistance"]);
+                $candidate->setMaxDetourDistance($proposalToMatch["maxDetourDistance"] ? $proposalToMatch["maxDetourDistance"] : ($proposalToMatch["dddistance"]*self::MAX_DETOUR_DISTANCE_PERCENT/100));
+                $candidate->setMaxDetourDuration($proposalToMatch["maxDetourDuration"] ? $proposalToMatch["maxDetourDuration"] : ($proposalToMatch["ddduration"]*self::MAX_DETOUR_DURATION_PERCENT/100));
+                $candidatesDriver[] = $candidate;
+            }
+
+            $this->logger->info('Proposal matcher | Launch georouter | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+            if ($matches = $this->geoMatcher->singleMatch($candidateProposal, $candidatesDriver, false, true)) {
+                // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
+                if (is_array($matches) && count($matches)>0) {
+                    switch (self::MULTI_MATCHES_FOR_SAME_CANDIDATES) {
+                        case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                            usort($matches, self::build_sorter('newDuration'));
+                            $matching = new Matching();
+                            $matching->setProposalOffer($this->proposalRepository->find($proposalToMatch['pid']));
+                            $matching->setProposalRequest($proposal);
+                            $matching->setFilters($matches[0]);
+                            $matchings[] = $matching;
+                            break;
+                        case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST:
+                            usort($matches, self::build_sorter('newDistance'));
+                            $matching = new Matching();
+                            $matching->setProposalOffer($this->proposalRepository->find($proposalToMatch['pid']));
+                            $matching->setProposalRequest($proposal);
+                            $matching->setFilters($matches[0]);
+                            $matchings[] = $matching;
+                            break;
+                        default:
+                            foreach ($matches as $match) {
+                                $matching = new Matching();
+                                $matching->setProposalOffer($this->proposalRepository->find($proposalToMatch['pid']));
+                                $matching->setProposalRequest($proposal);
+                                $matching->setFilters($match);
+                                $matchings[] = $matching;
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+        
+        // if we use times, we check if the pickup times match
+        if (
+            (($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $proposal->getCriteria()->getFromTime()) ||
+            ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && (
+                ($proposal->getCriteria()->isMonCheck() && $proposal->getCriteria()->getMonTime()) ||
+                ($proposal->getCriteria()->isTueCheck() && $proposal->getCriteria()->getTueTime()) ||
+                ($proposal->getCriteria()->isWedCheck() && $proposal->getCriteria()->getWedTime()) ||
+                ($proposal->getCriteria()->isThuCheck() && $proposal->getCriteria()->getThuTime()) ||
+                ($proposal->getCriteria()->isFriCheck() && $proposal->getCriteria()->getFriTime()) ||
+                ($proposal->getCriteria()->isSatCheck() && $proposal->getCriteria()->getSatTime()) ||
+                ($proposal->getCriteria()->isSunCheck() && $proposal->getCriteria()->getSunTime())
+            )))
+        ) {
+            $this->logger->info('Proposal matcher | Check pickup start | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $matchings = $this->checkPickUp($matchings);
+            $this->logger->info('Proposal matcher | Check pickup end | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        }
+        
+
+        // we complete the matchings with the waypoints and criteria
+        $nb = 1;
+        foreach ($matchings as $matching) {
+            $this->logger->info('Proposal matcher | Complete matching ' . $nb . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $nb++;
+            
+            // waypoints
+            foreach ($matching->getFilters()['route'] as $key=>$point) {
+                $waypoint = new Waypoint();
+                $waypoint->setPosition($key);
+                $waypoint->setDestination(false);
+                if ($key == (count($matching->getFilters()['route'])-1)) {
+                    $waypoint->setDestination(true);
+                }
+                $waypoint->setAddress(clone $point['address']);
+                $matching->addWaypoint($waypoint);
+            }
+
+            // criteria
+            $matchingCriteria = new Criteria();
+            $matchingCriteria->setDriver(true);
+            $matchingCriteria->setDirectionDriver($matching->getFilters()['direction']);
+            $matchingCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+            $matchingCriteria->setStrictDate($matching->getProposalOffer()->getCriteria()->isStrictDate());
+            $matchingCriteria->setAnyRouteAsPassenger(true);
+            
+            // prices
+            // we use the driver's priceKm
+            $matchingCriteria->setPriceKm($matching->getProposalOffer()->getCriteria()->getPriceKm());
+            
+            // we use the passenger's computed prices
+            $matchingCriteria->setDriverComputedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedPrice());
+            $matchingCriteria->setDriverComputedRoundedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedRoundedPrice());
+            $matchingCriteria->setPassengerComputedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedPrice());
+            $matchingCriteria->setPassengerComputedRoundedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedRoundedPrice());
+            
+            // frequency, fromDate and toDate
+            if ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching->getProposalRequest()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                $matchingCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
+                $matchingCriteria->setFromDate(max($matching->getProposalOffer()->getCriteria()->getFromDate(), $matching->getProposalRequest()->getCriteria()->getFromDate()));
+                $matchingCriteria->setToDate(min($matching->getProposalOffer()->getCriteria()->getToDate(), $matching->getProposalRequest()->getCriteria()->getToDate()));
+            } elseif ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                $matchingCriteria->setFromDate($matching->getProposalOffer()->getCriteria()->getFromDate());
+            } else {
+                $matchingCriteria->setFromDate($matching->getProposalRequest()->getCriteria()->getFromDate());
+            }
+
+            // seats (set to 1 for now)
+            $matchingCriteria->setSeatsDriver(1);
+            $matchingCriteria->setSeatsPassenger(1);
+
+            // pickup times
+            if (isset($matching->getFilters()['pickup']['minPickupTime']) && isset($matching->getFilters()['pickup']['maxPickupTime'])) {
+                if ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                    $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getMinTime());
+                    $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getMaxTime());
+                    $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getMarginDuration());
+                    $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getFromTime());
+                } else {
+                    switch ($matchingCriteria->getFromDate()->format('w')) {
+                        case 0:
+                            $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getSunMinTime());
+                            $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getSunMaxTime());
+                            $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getSunMarginDuration());
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getSunTime());
+                            break;
+                        case 1:
+                            $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getMonMinTime());
+                            $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getMonMaxTime());
+                            $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getMonMarginDuration());
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getMonTime());
+                            break;
+                        case 2:
+                            $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getTueMinTime());
+                            $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getTueMaxTime());
+                            $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getTueMarginDuration());
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getTueTime());
+                            break;
+                        case 3:
+                            $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getWedMinTime());
+                            $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getWedMaxTime());
+                            $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getWedMarginDuration());
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getWedTime());
+                            break;
+                        case 4:
+                            $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getThuMinTime());
+                            $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getThuMaxTime());
+                            $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getThuMarginDuration());
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getThuTime());
+                            break;
+                        case 5:
+                            $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getFriMinTime());
+                            $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getFriMaxTime());
+                            $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getFriMarginDuration());
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getFriTime());
+                            break;
+                        case 6:
+                            $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getSatMinTime());
+                            $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getSatMaxTime());
+                            $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getSatMarginDuration());
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getSatTime());
+                            break;
+                    }
+                }
+            }
+            if (isset($matching->getFilters()['pickup']['monMinPickupTime']) && isset($matching->getFilters()['pickup']['monMaxPickupTime'])) {
+                $matchingCriteria->setMonCheck(true);
+                $matchingCriteria->setMonMinTime($matching->getProposalOffer()->getCriteria()->getMonMinTime());
+                $matchingCriteria->setMonMaxTime($matching->getProposalOffer()->getCriteria()->getMonMaxTime());
+                $matchingCriteria->setMonMarginDuration($matching->getProposalOffer()->getCriteria()->getMonMarginDuration());
+                $matchingCriteria->setMonTime($matching->getProposalOffer()->getCriteria()->getMonTime());
+            }
+            if (isset($matching->getFilters()['pickup']['tueMinPickupTime']) && isset($matching->getFilters()['pickup']['tueMaxPickupTime'])) {
+                $matchingCriteria->setTueCheck(true);
+                $matchingCriteria->setTueMinTime($matching->getProposalOffer()->getCriteria()->getTueMinTime());
+                $matchingCriteria->setTueMaxTime($matching->getProposalOffer()->getCriteria()->getTueMaxTime());
+                $matchingCriteria->setTueMarginDuration($matching->getProposalOffer()->getCriteria()->getTueMarginDuration());
+                $matchingCriteria->setTueTime($matching->getProposalOffer()->getCriteria()->getTueTime());
+            }
+            if (isset($matching->getFilters()['pickup']['wedMinPickupTime']) && isset($matching->getFilters()['pickup']['wedMaxPickupTime'])) {
+                $matchingCriteria->setWedCheck(true);
+                $matchingCriteria->setWedMinTime($matching->getProposalOffer()->getCriteria()->getWedMinTime());
+                $matchingCriteria->setWedMaxTime($matching->getProposalOffer()->getCriteria()->getWedMaxTime());
+                $matchingCriteria->setWedMarginDuration($matching->getProposalOffer()->getCriteria()->getWedMarginDuration());
+                $matchingCriteria->setWedTime($matching->getProposalOffer()->getCriteria()->getWedTime());
+            }
+            if (isset($matching->getFilters()['pickup']['thuMinPickupTime']) && isset($matching->getFilters()['pickup']['thuMaxPickupTime'])) {
+                $matchingCriteria->setThuCheck(true);
+                $matchingCriteria->setThuMinTime($matching->getProposalOffer()->getCriteria()->getThuMinTime());
+                $matchingCriteria->setThuMaxTime($matching->getProposalOffer()->getCriteria()->getThuMaxTime());
+                $matchingCriteria->setThuMarginDuration($matching->getProposalOffer()->getCriteria()->getThuMarginDuration());
+                $matchingCriteria->setThuTime($matching->getProposalOffer()->getCriteria()->getThuTime());
+            }
+            if (isset($matching->getFilters()['pickup']['friMinPickupTime']) && isset($matching->getFilters()['pickup']['friMaxPickupTime'])) {
+                $matchingCriteria->setFriCheck(true);
+                $matchingCriteria->setFriMinTime($matching->getProposalOffer()->getCriteria()->getFriMinTime());
+                $matchingCriteria->setFriMaxTime($matching->getProposalOffer()->getCriteria()->getFriMaxTime());
+                $matchingCriteria->setFriMarginDuration($matching->getProposalOffer()->getCriteria()->getFriMarginDuration());
+                $matchingCriteria->setFriTime($matching->getProposalOffer()->getCriteria()->getFriTime());
+            }
+            if (isset($matching->getFilters()['pickup']['satMinPickupTime']) && isset($matching->getFilters()['pickup']['satMaxPickupTime'])) {
+                $matchingCriteria->setSatCheck(true);
+                $matchingCriteria->setSatMinTime($matching->getProposalOffer()->getCriteria()->getSatMinTime());
+                $matchingCriteria->setSatMaxTime($matching->getProposalOffer()->getCriteria()->getSatMaxTime());
+                $matchingCriteria->setSatMarginDuration($matching->getProposalOffer()->getCriteria()->getSatMarginDuration());
+                $matchingCriteria->setSatTime($matching->getProposalOffer()->getCriteria()->getSatTime());
+            }
+            if (isset($matching->getFilters()['pickup']['sunMinPickupTime']) && isset($matching->getFilters()['pickup']['sunMaxPickupTime'])) {
+                $matchingCriteria->setSunCheck(true);
+                $matchingCriteria->setSunMinTime($matching->getProposalOffer()->getCriteria()->getSunMinTime());
+                $matchingCriteria->setSunMaxTime($matching->getProposalOffer()->getCriteria()->getSunMaxTime());
+                $matchingCriteria->setSunMarginDuration($matching->getProposalOffer()->getCriteria()->getSunMarginDuration());
+                $matchingCriteria->setSunTime($matching->getProposalOffer()->getCriteria()->getSunTime());
+            }
+            $matching->setCriteria($matchingCriteria);
+            
+            // we remove the direction from the filter to reduce the size of the returned object
+            // (it is already affected to the driver direction)
+            $filters = $matching->getFilters();
+            unset($filters['direction']);
+            $matching->setFilters($filters);
+        }
+        return $matchings;
     }
 }

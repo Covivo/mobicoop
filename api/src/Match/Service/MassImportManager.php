@@ -472,7 +472,7 @@ class MassImportManager
 
         // we try to match with the candidates
         $this->logger->info('Mass match | Creating matches records start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        if ($matches = $this->geoMatcher->multiMatch($candidates,true)) {
+        if ($matches = $this->geoMatcher->multiMatch($candidates, true)) {
             if (is_array($matches) && count($matches)>0) {
                 foreach ($matches as $match) {
                     foreach ($match['matches'] as $matched) {

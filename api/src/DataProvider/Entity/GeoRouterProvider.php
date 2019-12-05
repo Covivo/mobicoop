@@ -138,6 +138,7 @@ class GeoRouterProvider implements ProviderInterface
                     // so after the requests we will be able to know who is the owner
                     $requestsOwner = [];
                     $i = 0;
+                    self::print_mem(1);
                     foreach ($params['arrayPoints'] as $ownerId => $directionVariants) {
                         foreach ($directionVariants as $addresses) {
                             $rparams = $this->uri ."/" . self::COLLECTION_RESOURCE . "/?";
@@ -157,19 +158,23 @@ class GeoRouterProvider implements ProviderInterface
                             $i++;
                         }
                     }
+                    self::print_mem(2);
 
                     // creation of the file that represent all the routes to get
-                    $this->logger->debug('Multiple Async | Creation of the exchange file start');
+                    $this->logger->debug('Multiple Async | Creation of the exchange file start for ' . $i . ' routes');
                     $filename = $params['batchTemp'] . self::EXT_FILENAME . (new \DateTime("UTC"))->format("YmdHisu") . ".json";
                     $fp = fopen($filename, 'w');
                     fwrite($fp, json_encode($urls, JSON_FORCE_OBJECT));
                     fclose($fp);
+                    unset($urls);
+                    unset($fp);
+                    self::print_mem(3);
 
                     $this->logger->debug('Multiple Async | Creation of the exchange file end');
 
                     // call external script
                     $this->logger->debug('Multiple Async | Call external script start');
-                    $return = exec($params['batchScriptPath'].' -f ' . $filename . ' --nb 20 2>&1', $out, $err);
+                    $return = exec($params['batchScriptPath'].' -f ' . $filename . ' --nb 100 2>&1', $out, $err);
                     // $filenameReturn = $filename . ".log";
                     // $fpr = fopen($filenameReturn, 'w');
                     // fwrite($fpr, print_r($out,true));
@@ -177,15 +182,20 @@ class GeoRouterProvider implements ProviderInterface
                     // fclose($fpr);
                     $this->logger->debug('Multiple Async | Call external script end');
                     // treat the response
+                    self::print_mem(4);
+
                     $response = \JsonMachine\JsonMachine::fromFile($filename);
+                    self::print_mem(5);
 
                     foreach ($response as $key=>$paths) {
                         //$this->logger->debug('Multiple Async | Treating path #'.$key);
                         // we search the first and last elements for the bearing
-                        reset($params['arrayPoints'][$requestsOwner[$key]][0]);
-                        $first_key = key($params['arrayPoints'][$requestsOwner[$key]][0]);
-                        end($params['arrayPoints'][$requestsOwner[$key]][0]);
-                        $last_key = key($params['arrayPoints'][$requestsOwner[$key]][0]);
+                        if (!isset($params['asObject'])) {
+                            reset($params['arrayPoints'][$requestsOwner[$key]][0]);
+                            $first_key = key($params['arrayPoints'][$requestsOwner[$key]][0]);
+                            end($params['arrayPoints'][$requestsOwner[$key]][0]);
+                            $last_key = key($params['arrayPoints'][$requestsOwner[$key]][0]);
+                        }
                         foreach ($paths as $path) {
                             if (isset($params['asObject'])) {
                                 // usual behaviour
@@ -206,6 +216,9 @@ class GeoRouterProvider implements ProviderInterface
                             }
                         }
                     }
+                    self::print_mem(6);
+                    unset($response);
+                    self::print_mem(7);
                     $this->logger->debug('Multiple Async | Exchange file deletion');
                     unlink($filename);
                     return $this->collection;
@@ -550,5 +563,16 @@ class GeoRouterProvider implements ProviderInterface
             }
         }
         return $address;
+    }
+
+    public function print_mem($id)
+    {
+        /* Currently used memory */
+        $mem_usage = memory_get_usage();
+        
+        /* Peak memory usage */
+        $mem_peak = memory_get_peak_usage();
+        $this->logger->debug($id . ' The script is now using: ' . round($mem_usage / 1024) . 'KB of memory.<br>');
+        $this->logger->debug($id . ' Peak usage: ' . round($mem_peak / 1024) . 'KB of memory.<br><br>');
     }
 }

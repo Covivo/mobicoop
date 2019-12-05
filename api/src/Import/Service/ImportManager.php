@@ -73,7 +73,7 @@ class ImportManager
      */
     public function treatUserImport()
     {
-        set_time_limit(36000);
+        set_time_limit(3600);
         
         // we have to treat all the users that have just been imported
         // first pass : update status before treatment
