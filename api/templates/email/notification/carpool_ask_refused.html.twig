@@ -1,9 +1,23 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-{# <p>@PrenomOuPseudoPassager {{ "notBeAbleToCarpoolWithYou"|trans }} @AdresseDepose {{ "followingDays"|trans }} : @Jours {{ "from"|trans }} @DateDebut {{ "to"|trans }} @DateFin.</p>
-{% if  Driver occasionnal || Passenger occasionnal %}
-<p>@PrenomOuPseudoPassager {{ "notBeAbleToCarpoolWithYouFor"|trans }} @DateVoyage {{ "towards"|trans }} @AdresseDepose.</p>
-{% endif %}
-<p>{{ "hisMessage"|trans}} : @Commentaires.</p> #}
-<p> Un utilisateur décline un covoiturage que vous avez demandé.</p>
+
+{% set ask = context.ask %}
+{% set recipient = context.user %}
+
+<br></br>
+{# Ask user is driver #}
+{% set carpooler = ask.userRelated %}
+    {% if ask.criteria.frequency == 1 %}
+        <p>{{ carpooler.givenName|capitalize ~ " " ~ carpooler.familyName|capitalize  }} {{ "notBeAbleToCarpoolWithYouFor"|trans }} {{ ask.criteria.fromDate|date("d/m/Y") }} {{ "towards"|trans }}  {{ (ask.matching.waypoints|last).address.addressLocality }}.</p>
+    {% else %}
+        <p>{{ carpooler.givenName|capitalize ~ " " ~ carpooler.familyName|capitalize  }} {{ "notBeAbleToCarpoolWithYou"|trans }} {{ (ask.matching.waypoints|last).address.addressLocality }}.</p>
+        <p> {{ "followingDays"|trans }} : 
+                {% if ask.criteria.monCheck %}{{ "monday" |trans}} {% endif %} 
+                {% if ask.criteria.tueCheck %}{{ "tuesday" |trans}} {% endif %} 
+                {% if ask.criteria.wedCheck %}{{ "wednesday" |trans}} {% endif %}
+                {% if ask.criteria.thuCheck %}{{ "thusday" |trans}} {% endif %}
+                {% if ask.criteria.friCheck %}{{ "friday" |trans}} {% endif %}
+                {% if ask.criteria.satCheck %}{{ "saturday" |trans}} {% endif %}
+                {% if ask.criteria.sunCheck %}{{ "sunday" |trans}}{% endif %}. {{ "from"|trans }} {{ ask.criteria.fromDate|date("d/m/Y") }} {{ "to"|trans }} {{ ask.criteria.toDate|date("d/m/Y") }}.</p>
+    {% endif %}        
 {% endblock %}
