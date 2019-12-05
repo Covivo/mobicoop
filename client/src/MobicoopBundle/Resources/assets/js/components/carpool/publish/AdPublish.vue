@@ -411,7 +411,7 @@
                     :color="colorPricePerKm"
                     :class="colorPricePerKm + '--text'"
                     @blur="roundPrice(price, regular ? 2 : 1, true)"
-                    @change="disableNextButton = true"
+                    @change="disableNextButton = true;price = Math.abs(price)"
                   />
                 </v-col>
 
