@@ -147,7 +147,7 @@ export default {
       return carpoolDays.join(", ");
     },
     name() {
-      return this.givenName + " " + this.familyName.substr(0, 1).toUpperCase() + ".";
+      return (this.givenName != null && this.familyName != null ) ? this.givenName + " " + this.familyName.substr(0, 1).toUpperCase() + "." : (this.$t("userDelete"));
     },
   },
   watch: {
