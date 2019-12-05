@@ -203,9 +203,17 @@ class GeoSearcher
             // add venue if handled by the provider
             if (method_exists($geoResult, 'getVenue')) {
                 $address->setVenue($geoResult->getVenue());
-                if ($address->getVenue()) {
-                    $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_VENUE)->getFileName());
-                }
+            }
+            if ((method_exists($geoResult, 'getEstablishment')) && ($geoResult->getEstablishment() != null)) {
+                $address->setVenue($geoResult->getEstablishment());
+            }
+
+            if ((method_exists($geoResult, 'getPointOfInterest')) && ($geoResult->getPointOfInterest() != null)) {
+                $address->setVenue($geoResult->getPointOfInterest());
+            }
+
+            if ($address->getVenue()) {
+                $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_VENUE)->getFileName());
             }
             
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
