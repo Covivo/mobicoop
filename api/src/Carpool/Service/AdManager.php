@@ -600,7 +600,9 @@ class AdManager
         $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
         $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
         $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
-        $ad->setUserId($proposal->getUser()->getId());
+        if (!is_null($proposal->getUser())) {
+            $ad->setUserId($proposal->getUser()->getId());
+        }
         $aFilters = [];
         if (!is_null($filters)) {
             $aFilters['filters']=$filters;

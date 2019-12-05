@@ -198,14 +198,14 @@
                   <v-spacer />
                   <v-btn
                     text
-                    color="primary"
+                    color="error"
                     @click="menu = false"
                   >
                     {{ $t('ui.buttons.cancel.label') }}
                   </v-btn>
                   <v-btn
                     text
-                    color="primary"
+                    color="secondary"
                     @click="$refs.menu.save(form.yearOfBirth)"
                   >
                     {{ $t('ui.buttons.validate.label') }}
@@ -249,7 +249,7 @@
           <v-btn
             :disabled="!isValid"
             :loading="loading"
-            color="success"
+            color="secondary"
             rounded
             @click="validate"
           >

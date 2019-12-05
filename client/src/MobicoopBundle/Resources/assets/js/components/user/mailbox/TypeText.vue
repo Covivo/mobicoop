@@ -22,7 +22,7 @@
               class="mx-2 black--text font-weight-bold"
               fab
               rounded
-              color="primary"
+              color="secondary"
               :disabled="textToSend===''"
               :loading="loading"
               @click="emit()"

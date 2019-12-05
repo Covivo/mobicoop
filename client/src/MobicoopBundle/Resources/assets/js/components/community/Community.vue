@@ -147,7 +147,8 @@
           </v-row>
 
           <!-- community members list + last 3 users -->
-          <v-row 
+          <v-row
+            v-if="isLogged && isAccepted"
             align="start"
           >
             <v-col
