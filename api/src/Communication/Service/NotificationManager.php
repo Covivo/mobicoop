@@ -87,7 +87,6 @@ class NotificationManager
      */
     public function notifies(string $action, User $recipient, ?object $object = null)
     {
-
         if (!$this->enabled) {
             return;
         }
