@@ -63,6 +63,7 @@ services:
     # Community User Load Listener
     mobicoop.community_user.community_user_load_listener:
         class: App\Community\EventListener\CommunityUserLoadListener
+        arguments: ['@request_stack']
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
@@ -141,7 +142,7 @@ services:
     App\Communication\Service\NotificationManager:
         arguments:
             $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
-            $emailTitleTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%/%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
+            $emailTitleTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
             $smsTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_SMS_PATH)%'
             $enabled: '%env(bool:resolve:NOTIFICATION_ENABLED)%'
         tags:
@@ -152,6 +153,7 @@ services:
             $emailSender: '%env(resolve:MAILER_SENDER)%'
             $emailReplyTo: '%env(resolve:MAILER_REPLYTO)%'
             $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%'
+            $emailAdditionalHeaders: '%env(resolve:MAILER_ADDITIONAL_HEADERS)%'
         tags:
             - { name: monolog.logger, channel: communication }
 
@@ -177,6 +179,9 @@ services:
         arguments:
             $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $contactEmailAddress: '%env(resolve:MAILER_CONTACT)%'
+            $contactEmailObject: '%env(resolve:MAILER_CONTACT_OBJECT)%'
+            $supportEmailAddress: '%env(resolve:MAILER_SUPPORT)%'
+            $supportEmailObject: '%env(resolve:MAILER_SUPPORT_OBJECT)%'
 
     # Community
     App\Community\Controller\:
@@ -189,10 +194,17 @@ services:
         tags:
             - { name: monolog.logger, channel: community }
 
-    # Data Provider
-    App\DataProvider\Entity\GeoRouterProvider:
-        tags:
-            - { name: monolog.logger, channel: georouter }
+    # Event
+    App\Event\Controller\:
+        resource: '../src/Event/Controller'
+        tags: ['controller.service_arguments']
+
+    App\Event\Controller\ReportAction:
+        arguments:
+            $supportEmail: '%env(resolve:MAILER_SUPPORT)%'
+            $senderEmail: '%env(resolve:MAILER_SENDER)%'
+            $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
+        tags: ['controller.service_arguments']
 
     # External Journey
     App\ExternalJourney\Service\ExternalJourneyManager:
@@ -212,6 +224,7 @@ services:
     App\Geography\Service\GeoRouter:
         arguments:
             $uri: '%env(resolve:SIG_GEOROUTER_URI)%'
+            $type: '%env(resolve:SIG_GEOROUTER_TYPE)%'
             $batchScriptPath: '%env(resolve:MOBIMATCH_BATCH_SCRIPT_PATH)%'
             $batchTemp: '%env(resolve:MOBIMATCH_BATCH_TEMP)%'
         tags:
@@ -269,6 +282,11 @@ services:
             $emailTemplatePath: '%env(resolve:MOBIMATCH_EMAIL_TEMPLATE_PATH)%'
         tags:
             - { name: monolog.logger, channel: mass }
+
+    # Price
+    App\Price\Controller\:
+        resource: '../src/Price/Controller'
+        tags: ['controller.service_arguments']
 
     # Rdex
     App\Rdex\Controller\:

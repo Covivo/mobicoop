@@ -43,7 +43,20 @@
    </v-row>
 
    -->
-
+    <!-- Title and subtitle -->
+    <v-row 
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        xl="10"
+        align="center"
+      >
+        <h1>
+          {{ $t('events') }}
+        </h1>
+      </v-col>
+    </v-row>
     <v-row>
       <v-col
         cols="12"
@@ -287,6 +300,7 @@ export default {
   },
   data () {
     return {
+      locale: this.$i18n.locale,
       search: '',
       searchPassed : '',
       itemsPerPageOptions: [10, 20, 50, 100, -1],
@@ -309,6 +323,9 @@ export default {
   },
   mounted() {
     this.createMapComing();
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods:{
     searchChanged: function (search) {

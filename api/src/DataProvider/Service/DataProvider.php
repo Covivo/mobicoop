@@ -49,15 +49,24 @@ class DataProvider
      * @param string        $uri
      * @param string        $resource   Resource name for normal resource
      */
-    public function __construct(string $uri, string $resource)
+    public function __construct(?string $uri = null, ?string $resource = null)
     {
-        $this->client = new Client([
+        if (!is_null($this->uri)) {
+            $this->client = new Client([
                 'base_uri' => $uri
-        ]);
+            ]);
+        }
         $this->resource = $resource;
     }
 
-    public function setResource($resource)
+    public function setUri(string $uri)
+    {
+        $this->client = new Client([
+            'base_uri' => $uri
+        ]);
+    }
+
+    public function setResource(?string $resource)
     {
         $this->resource = $resource;
     }

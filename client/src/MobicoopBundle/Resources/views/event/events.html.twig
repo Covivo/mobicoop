@@ -1,20 +1,10 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}Les Événements
-{% endblock %}
+{% block title %}{% trans from 'ui' %}events.events.title{% endtrans %} - {{ app_name }}{% endblock %}
 {% block stylesheets %}
 
 {% endblock %}
 {% block main %}
-    <section class="hero firstSection">
-        <div class="hero-body">
-            <div class="container">
-                <h1 class="title">
-                    Les Événements
-                </h1>
-            </div>
-        </div>
-    </section>
     <br/><br/>
     <div class="layout justify-center"
          outlined

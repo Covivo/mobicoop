@@ -1,30 +1,58 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    {# <p>{{ askHistory.ask.user.givenName }} {{ "yourAsk"|trans }}.</p>
-    <p>{{ "replyViaEMail"|trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere"|trans}} @URLdelapagedemessageriecorrespondante.</p>
-    {% if Driver regular ||  Passenger regular %}
-    <p>{{ "carpoolDistance"|trans}} @DistancePassager km.</p>
-    {% elseif Driver occasionnal || Passenger occasionnal %}
-    <p>{{ "occassionalCarpoolDistancee"|trans}} @DistancePassager km.</p>
-    {% endif %}
-    <p>{{ "driverDetour" |trans}}  @TempsDetourMinutes  /  @DistanceDetour  km.</p>
-    <p>{{ "supported"|trans }} @AdressePEC.</p>
-    {% if Driver occasionnal || Passenger occasionnal %}
-    <p>{{ "the"|trans}} @DateDebut {{ "hour"|trans}} @DateDebut.</p>
-    {% endif %}
-    <p>{{ "depositedAt" |trans }} @AdresseDepose.</p>
-    {% if Driver regular || Passenger regular %}
-    <p>{{ "appointmentHour" |trans}} {{ "monday" |trans}} {{ "tuesday" |trans}} {{ "wednesday" |trans}} {{ "thusday" |trans}} {{ "friday" |trans}} {{ "saturday" |trans}} {{ "sunday" |trans}}.</p>
-    <p>{{ "the" |trans}}  @DateDebut  {{ "from" |trans}}  @DateDebut  {{ "to" |trans}} @DateFin.</p>
-    {% endif %}
-    {% if Driver %}
-    <p>{{ "passengerComment" |trans}} :  @CommentairesDemande.</p>
-    {% elseif Passenger %}
-    <p>{{ "driverComment"|trans}} : @CommentairesDemande.</p>
-    {% endif %}
-    <p>{{ "reservedPlaces" |trans}} @NbPassagers.</p>
-    <p>{{ "indicativePrice" |trans}}  @GainConducteur @Monnaie.</p> #}
+{% set ask = context.ask %}
+{% set recipient = context.user %}
 
-    <p> Un utilisateur {{ "yourAsk"|trans }}.</p>
-    <p> {{ "replyViaEMail"|trans }} {{ api_env('EMAILS_PLATFORM_NAME') }}.</p>
-{% endblock %}
+{# Ask user is passenger #}
+{% if ask.matching.proposalOffer.user.id == recipient.id %}
+        {% set passenger = ask.user %}
+
+        <p>{{ passenger.givenName|capitalize ~ " " ~ passenger.familyName|capitalize  }} {{ "yourAsk"|trans }}.</p>
+        <br></br>
+        {% if ask.criteria.frequency == 1 %}
+                <p>{{ "occasionnalCarpool"|trans }} {{"the"|trans}} {{ ask.criteria.fromDate|date("d/m/Y") }}</p>
+        {% else %}
+                <p>{{ "regularCarpool"|trans }} {{ "from"|trans }} {{ ask.criteria.fromDate|date("d/m/Y") }} {{ "to"|trans }} {{ ask.criteria.toDate|date("d/m/Y") }}.</p>
+                <p>{{ "concernedDays"|trans }} {% if ask.criteria.monCheck %}{{ "monday" |trans}} {% endif %}
+                {% if ask.criteria.tueCheck %}{{ "tuesday" |trans}} {% endif %}
+                {% if ask.criteria.wedCheck %}{{ "wednesday" |trans}} {% endif %}
+                {% if ask.criteria.thuCheck %}{{ "thusday" |trans}} {% endif %}
+                {% if ask.criteria.friCheck %}{{ "friday" |trans}} {% endif %}
+                {% if ask.criteria.satCheck %}{{ "saturday" |trans}} {% endif %}
+                {% if ask.criteria.sunCheck %}{{ "sunday" |trans}}{% endif %}.</p>
+        {% endif %}        
+        <p>{{ "supported"|trans }}:  {{ (ask.matching.waypoints|first).address.addressLocality }}.</p>
+        <p>{{ "depositedAt"|trans }}: {{ (ask.matching.waypoints|last).address.addressLocality }}.</p> 
+        <br></br>
+        {% if ask.matching.proposalRequest.comment %}
+        <p>{{ "passengerComment"|trans }} {{ ask.matching.proposalRequest.comment }}</p>
+        {% endif %}
+        <p>{{ "reservedPlaces"|trans }}: {{ ask. criteria.seatsPassenger }}.</p>
+        <p>{{ "indicativePrice"|trans }}: {{ ask.criteria.passengerComputedRoundedPrice }} {{ "currency"|trans}}.</p>
+        {# Ask user is driver #}
+ {% else %}
+        {% set driver = ask.user %}
+        <p>{{ driver.givenName|capitalize ~ " " ~ driver.familyName|capitalize  }} {{ "yourAsk"|trans }}.</p>
+        <br></br>
+        {% if ask.criteria.frequency == 1 %}
+                <p>{{ "occasionnalCarpool"|trans }} {{ "the"|trans }} {{ ask.criteria.fromDate|date("d/m/Y") }}</p>
+        {% else %}
+                <p>{{ "regularCarpool"|trans }} {{ "from"|trans }} {{ ask.criteria.fromDate|date("d/m/Y") }} {{ "to"|trans }} {{ ask.criteria.toDate|date("d/m/Y") }}.</p>
+                <p>{{ "concernedDays"|trans }} {% if ask.criteria.monCheck %}{{ "monday" |trans}}{% endif %}
+                {% if ask.criteria.tueCheck %}{{ "tuesday" |trans}} {% endif %}
+                {% if ask.criteria.wedCheck %}{{ "wednesday" |trans}} {% endif %}
+                {% if ask.criteria.thuCheck %}{{ "thusday" |trans}} {% endif %}
+                {% if ask.criteria.friCheck %}{{ "friday" |trans}} {% endif %}
+                {% if ask.criteria.satCheck %}{{ "saturday" |trans}} {% endif %}
+                {% if ask.criteria.sunCheck %}{{ "sunday" |trans}}{% endif %}. </p> 
+        {% endif %}        
+        <p>{{ "supported"|trans }}  {{ (ask.matching.waypoints|first).address.addressLocality }}.</p>
+        <p>{{ "depositedAt"|trans }} {{ (ask.matching.waypoints|last).address.addressLocality }}.</p> 
+        <br></br>
+        {% if ask.matching.proposalOffer.comment %}
+        <p>{{ "passengerComment"|trans}} {{ ask.matching.proposalOffer.comment }}</p>
+        {% endif %}
+        <p>{{ "indicativePrice"|trans}}  {{ ask.criteria.passengerComputedRoundedPrice }} {{ "currency"|trans}}.</p> 
+{% endif %}  
+<p>{{ "replyViaEMail"|trans }} {{ api_env('EMAILS_PLATFORM_NAME') }}.</p>
+{% endblock %}   

@@ -1,5 +1,6 @@
 {
   "fr": {
+    "events":"Les événements",
     "eventsAvailable":"Événements disponibles",
     "eventsPassed":"Événements passés",
     "createEvent" : "Créer un événement",

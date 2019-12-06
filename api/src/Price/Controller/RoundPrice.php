@@ -21,44 +21,45 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Controller;
+namespace App\Price\Controller;
 
-use App\Carpool\Entity\Ad;
-use App\Carpool\Service\AskManager;
+use App\Price\Entity\Price;
+use App\Service\FormatDataManager;
 use App\TranslatorTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
 
-/**
- * Controller class for ad ask : creation of a ask for a given ad.
- *
- * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- */
-class AdAsk
+class RoundPrice
 {
     use TranslatorTrait;
-    
-    private $askManager;
 
-    const TYPE_ASK = "ask";
-    const TYPE_CONTACT = "contact";
-    
-    public function __construct(AskManager $askManager)
+    /**
+     * @var FormatDataManager
+     */
+    private $formatDataManager;
+
+    private $request;
+
+    public function __construct(FormatDataManager $formatDataManager, RequestStack $requestStack)
     {
-        $this->askManager = $askManager;
+        $this->formatDataManager = $formatDataManager;
+        $this->request = $requestStack->getCurrentRequest();
     }
 
     /**
-     * This method is invoked when a new ad ask is posted.
+     * This method is invoked when a new contact is posted.
      *
-     * @param Ad $data      The ad used to create the ask
-     * @param string $type  The type of ask (formal ask or contact)
-     * @return Ad
+     * @param Price $data
+     * @return Price
      */
-    public function __invoke(Ad $data, string $type): Ad
+    public function __invoke(Price $data): Price
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans("bad price"));
         }
-        $data = $this->askManager->createAskFromAd($data, $type == self::TYPE_ASK);
+
+        $rounded = $this->formatDataManager->roundPrice($data->getValue(), $data->getFrequency());
+        $data->setValue($rounded);
+
         return $data;
     }
 }

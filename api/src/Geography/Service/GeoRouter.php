@@ -23,8 +23,8 @@
 
 namespace App\Geography\Service;
 
-use App\DataProvider\Entity\GeoRouterProvider;
-use App\Geography\Entity\Direction;
+use App\Geography\Interfaces\GeorouterInterface;
+use App\Geography\RouterProvider\GraphhopperProvider;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -36,41 +36,26 @@ use Psr\Log\LoggerInterface;
  */
 class GeoRouter
 {
-    private $uri;
-    private $batchScriptPath;
-    private $batchTemp;
-    private $geoTools;
-    private $logger;
-    // to limit the return to points, not full addresses
-    // used if we only need latitudes/longitudes
-    private $pointsOnly;
-    private $avoidMotorway;
+
+    /**
+     * Georouter provider
+     *
+     * @var GeorouterInterface
+     */
+    private $georouter;
 
     /**
      * Constructor.
      *
      * @param string $uri
      */
-    public function __construct(string $uri, string $batchScriptPath, string $batchTemp, GeoTools $geoTools, LoggerInterface $logger)
+    public function __construct(string $uri, string $type, string $batchScriptPath, string $batchScriptArgs, string $batchTemp, LoggerInterface $logger)
     {
-        $this->uri = $uri;
-        $this->collection = [];
-        $this->batchScriptPath = $batchScriptPath;
-        $this->batchTemp = $batchTemp;
-        $this->geoTools = $geoTools;
-        $this->logger = $logger;
-        $this->pointsOnly = false;
-        $this->avoidMotorway = false;
-    }
-
-    public function setPointsOnly(bool $pointsOnly)
-    {
-        $this->pointsOnly = $pointsOnly;
-    }
-
-    public function setAvoidMotorway(bool $avoidMotorway)
-    {
-        $this->avoidMotorway = $avoidMotorway;
+        switch ($type) {
+            case 'graphhopper':
+                $this->georouter = new GraphhopperProvider($uri, $batchScriptPath, $batchScriptArgs, $batchTemp, $logger);
+                break;
+        }
     }
 
     /**
@@ -82,11 +67,8 @@ class GeoRouter
      */
     public function getRoutes(array $addresses, bool $detailDuration=false): ?array
     {
-        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->pointsOnly, $this->avoidMotorway, $this->geoTools, $this->logger);
-        $params = [];
-        $params['points'] = $addresses;
-        $routes = $georouter->getCollection(Direction::class, '', $params);
-        return $routes;
+        $this->georouter->setDetailDuration($detailDuration);
+        return $this->georouter->getDirections($addresses, GeorouterInterface::MODE_SYNC);
     }
     
     /**
@@ -98,12 +80,8 @@ class GeoRouter
      */
     public function getAsyncRoutes(array $addresses, bool $detailDuration=false): ?array
     {
-        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->pointsOnly, $this->avoidMotorway, $this->geoTools, $this->logger);
-        $params = [];
-        $params['arrayPoints'] = $addresses;
-        $params['async'] = true;
-        $routes = $georouter->getCollection(Direction::class, '', $params);
-        return $routes;
+        $this->georouter->setDetailDuration($detailDuration);
+        return $this->georouter->getDirections($addresses, GeorouterInterface::MODE_ASYNC);
     }
 
     /**
@@ -113,21 +91,15 @@ class GeoRouter
      *
      * @param array $addresses          The array of addresses, indexed by owner id (representing all the routes to send by the async request)
      * @param boolean $detailDuration   Set to true to get the duration between 2 points
-     * @param boolean $asObject         Set to true to return an object, false to return an array (eg. mass matching)
+     * @param boolean|null $returnType  Set the return type
      * @return array                    The routes found
      */
-    public function getMultipleAsyncRoutes(array $addresses, bool $detailDuration=false, bool $asObject = false): ?array
+    public function getMultipleAsyncRoutes(array $addresses, bool $detailDuration=false, ?int $returnType = null): ?array
     {
-        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->pointsOnly, $this->avoidMotorway, $this->geoTools, $this->logger);
-        $params = [];
-        $params['arrayPoints'] = $addresses;
-        $params['multipleAsync'] = true;
-        $params['batchScriptPath'] = $this->batchScriptPath;
-        $params['batchTemp'] = $this->batchTemp;
-        if ($asObject) {
-            $params['asObject'] = true;
+        $this->georouter->setDetailDuration($detailDuration);
+        if (!is_null($returnType)) {
+            $this->georouter->setReturnType($returnType);
         }
-        $routes = $georouter->getCollection(Direction::class, '', $params);
-        return $routes;
+        return $this->georouter->getMultipleDirections($addresses, GeorouterInterface::MODE_MULTIPLE_ASYNC);
     }
 }

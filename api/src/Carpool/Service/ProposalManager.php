@@ -262,11 +262,12 @@ class ProposalManager
      * Used when posting a proposal to populate default values like proposal validity.
      *
      * @param Proposal $proposal
+     * @param Boolean $sendEvent
      * @return void
      */
-    public function prepareProposal(Proposal $proposal): Proposal
+    public function prepareProposal(Proposal $proposal, bool $sendEvent=true): Proposal
     {
-        return $this->treatProposal($this->setDefaults($proposal));
+        return $this->treatProposal($this->setDefaults($proposal), true, true, $sendEvent);
     }
 
     /**
@@ -335,9 +336,10 @@ class ProposalManager
      * @param Proposal  $proposal               The proposal to treat
      * @param boolean   $persist                If we persist the proposal in the database (false for a simple search)
      * @param bool      $excludeProposalUser    Exclude the matching proposals made by the proposal user
+     * @param bool      $sendEvent              Send new matching event
      * @return Proposal The treated proposal
      */
-    public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true)
+    public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true, bool $sendEvent = true)
     {
         $date = new \DateTime("UTC");
         $this->logger->info('Proposal creation | Start ' . $date->format("Ymd H:i:s.u"));
@@ -364,24 +366,38 @@ class ProposalManager
         
         $end = new \DateTime("UTC");
         $this->logger->info('Proposal creation | Total duration ' . ($end->diff($date))->format("%s.%f seconds"));
-        
-        $matchingOffers = $proposal->getMatchingOffers();
-        $matchingRequests = $proposal->getMatchingRequests();
-        $matchings=[];
-        while (($item = array_shift($matchingOffers)) !== null && array_push($matchings, $item));
-        while (($item = array_shift($matchingRequests)) !== null && array_push($matchings, $item));
-        if ($persist) {
-            foreach ($matchings as $matching) {
-                // dispatch en event
-                // maybe send a unique event for all matchings ?
-                $event = new MatchingNewEvent($matching, $proposal->getUser());
-                $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
-            }
 
-            // dispatch en event
-            $event = new ProposalPostedEvent($proposal);
-            $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
-        }
+        // TODO : see which events send !!!
+
+        // $matchingOffers = $proposal->getMatchingOffers();
+        // $matchingRequests = $proposal->getMatchingRequests();
+        // $matchings=[];
+        // while (($item = array_shift($matchingOffers)) !== null && array_push($matchings, $item));
+        // while (($item = array_shift($matchingRequests)) !== null && array_push($matchings, $item));
+        // if ($persist) {
+        //     $matchingForEvent = null;
+        //     foreach ($matchings as $matching) {
+        //         $matchingForEvent = $matching; // TO DO : Choose the right matching for the event
+        //         // dispatch en event
+        //         // maybe send a unique event for all matchings ?
+        //         $event = new MatchingNewEvent($matching, $proposal->getUser());
+        //         $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
+        //     }
+
+        //     // dispatch en event
+        //     $event = new ProposalPostedEvent($proposal);
+        //     $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
+
+        //     // dispatch en event
+        //     // todo determine the right matching to send
+        //     if ($sendEvent && !is_null($matchingForEvent)) {
+        //         $event = new MatchingNewEvent($matchingForEvent, $proposal->getUser());
+        //         $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
+        //     }
+        //     // dispatch en event who is not sent
+        //     // $event = new ProposalPostedEvent($proposal);
+        //     // $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
+        // }
 
         return $proposal;
     }
@@ -573,6 +589,7 @@ class ProposalManager
      */
     public function setDirectionsAndDefaultsForImport(int $batch)
     {
+        gc_enable();
         $treatedCriterias = []; // used to avoid excluding a linked proposal if the proposal is the last to be processed in a batch
         $loop = 0;
         while (true) {
@@ -639,6 +656,9 @@ class ProposalManager
 
             $ownerDriverRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutesDriver, false, true);
             $ownerPassengerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutesPassenger, false, true);
+
+            $addressesForRoutesDriver = null;
+            $addressesForRoutesPassenger = null;
             unset($addressesForRoutesDriver);
             unset($addressesForRoutesPassenger);
 
@@ -769,15 +789,11 @@ class ProposalManager
                 if ($pool>=$batchD) {
                     $this->entityManager->flush();
                     $this->entityManager->clear();
-                    if (isset($direction)) {
-                        unset($direction);
-                    }
-                    if (isset($criteria)) {
-                        unset($criteria);
-                    }
                     $pool = 0;
                 }
             }
+            $ownerDriverRoutes = null;
+            $ownerPassengerRoutes = null;
             unset($ownerDriverRoutes);
             unset($ownerPassengerRoutes);
             // final flush for pending persists
@@ -791,8 +807,11 @@ class ProposalManager
             ]);
             $q->execute();
 
+            $imports = null;
+            $treatedCriterias = null;
             unset($imports);
             unset($treatedCriterias);
+            gc_collect_cycles();
         }
     }
 
@@ -970,73 +989,70 @@ class ProposalManager
     {
         $asks = $this->askManager->getAsksFromProposal($proposal);
 
-        $this->entityManager->remove($proposal);
-
         if (count($asks) > 0) {
             /** @var Ask $ask */
             foreach ($asks as $ask) {
-                if ($body["deletionMessage"]) {
-                    // creates a new thread, todo: adapt after "carpoolMessagesFromAskHistories" branch merge to avoid that
-                    $askHistory = new AskHistory();
-                    $message = $this->internalMessageManager->createMessage($proposal->getUser(), [$ask->getUser()], $body["deletionMessage"], null, null);
-                    $askHistory->setMessage($message);
-                    $askHistory->setAsk($ask);
-                    $askHistory->setStatus($ask->getStatus());
-                    $askHistory->setType($ask->getType());
+                $deleter = ($body['deleterId'] == $ask->getUser()->getId()) ? $ask->getUser() : $ask->getUserRelated();
+                $recipient = ($body['deleterId'] == $ask->getUser()->getId()) ? $ask->getUserRelated() : $ask->getUser();
 
-                    $this->entityManager->persist($askHistory);
+                if (isset($body["deletionMessage"]) && $body["deletionMessage"] != "") {
+                    $message = $this->internalMessageManager->createMessage($deleter, [$recipient], $body["deletionMessage"], null, null);
+                    $this->entityManager->persist($message);
                 }
 
                 $now = new \DateTime();
+                // Ask user is driver
+                if (($this->askManager->isAskUserDriver($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserPassenger($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
+                    // TO DO check if the deletion is just before 24h and in that case send an other email
+                    // /** @var Criteria $criteria */
+                    $criteria = $ask->getMatching()->getProposalOffer()->getCriteria();
+                    $askDateTime = $criteria->getFromTime() ?
+                        new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
+                        new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
 
-                // todo: change status after update
-                // Accepted
-                if ($ask->getStatus() === 3) {
-
-                    // Ask user is driver
-                    if ($this->askManager->isAskUserDriver($ask)) {
-                        /** @var Criteria $criteria */
-                        $criteria = $ask->getMatching()->getProposalOffer()->getCriteria()->getFromDate();
-                        $askDateTime = $criteria->getFromTime() ?
-                            new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
-                            new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
-
-                        // If ad is in more than 24h
-                        if (strtotime($now) - strtotime($askDateTime) > 24*60*60) {
-                            $event = new DriverAskAdDeletedEvent($ask);
+                    // Accepted
+                    if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER or $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                        if ($askDateTime->getTimestamp() - $now->getTimestamp() > 24*60*60) {
+                            $event = new DriverAskAdDeletedEvent($ask, $deleter->getId());
                             $this->eventDispatcher->dispatch(DriverAskAdDeletedEvent::NAME, $event);
                         } else {
-                            $event = new DriverAskAdDeletedUrgentEvent($ask);
+                            $event = new DriverAskAdDeletedUrgentEvent($ask, $deleter->getId());
                             $this->eventDispatcher->dispatch(DriverAskAdDeletedUrgentEvent::NAME, $event);
                         }
+                    } elseif ($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER or $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
+                        $event = new AskAdDeletedEvent($ask, $deleter->getId());
+                        $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
+                    }
 
-                        // Ask user is passenger
-                    } elseif ($this->askManager->isAskUserPassenger($ask)) {
+                    // Ask user is passenger
+                } elseif (($this->askManager->isAskUserPassenger($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserDriver($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
 
-                        /** @var Criteria $criteria */
-                        $criteria = $ask->getMatching()->getProposalRequest()->getCriteria();
-                        $askDateTime = $criteria->getFromTime() ?
-                            new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
-                            new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
-
+                    // TO DO check if the deletion is just before 24h and in that case send an other email
+                    // /** @var Criteria $criteria */
+                    $criteria = $ask->getMatching()->getProposalRequest()->getCriteria();
+                    $askDateTime = $criteria->getFromTime() ?
+                        new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
+                        new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
+                    
+                    // Accepted
+                    if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER or $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                       
                         // If ad is in more than 24h
-                        if ($askDateTime->getTimestamp() - $now->getTimestamp() < 24*60*60) {
-                            $event = new PassengerAskAdDeletedEvent($ask);
+                        if ($askDateTime->getTimestamp() - $now->getTimestamp() > 24*60*60) {
+                            $event = new PassengerAskAdDeletedEvent($ask, $deleter->getId());
                             $this->eventDispatcher->dispatch(PassengerAskAdDeletedEvent::NAME, $event);
                         } else {
-                            $event = new PassengerAskAdDeletedUrgentEvent($ask);
+                            $event = new PassengerAskAdDeletedUrgentEvent($ask, $deleter->getId());
                             $this->eventDispatcher->dispatch(PassengerAskAdDeletedUrgentEvent::NAME, $event);
                         }
+                    } elseif ($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER or $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
+                        $event = new AskAdDeletedEvent($ask, $deleter->getId());
+                        $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
                     }
-                }
-                // Pending
-                elseif ($ask->getStatus() === 2) {
-                    $event = new AskAdDeletedEvent($ask);
-                    $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
                 }
             }
         }
-
+        $this->entityManager->remove($proposal);
         $this->entityManager->flush();
 
         return new Response(204, "Deleted with success");

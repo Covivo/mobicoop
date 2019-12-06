@@ -15,6 +15,8 @@ doctrine:
             charset: utf8mb4
             collate: utf8mb4_unicode_ci
         url: '%env(resolve:DATABASE_URL)%'
+        logging: false
+        profiling: false
         types:
             geometry:   CrEOF\Spatial\DBAL\Types\GeometryType
             point:      CrEOF\Spatial\DBAL\Types\Geometry\PointType

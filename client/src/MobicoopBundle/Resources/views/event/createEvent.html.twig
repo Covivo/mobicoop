@@ -1,6 +1,6 @@
 {% extends '@Mobicoop/base.html.twig' %}
 {# @var form \Symfony\Component\Form\FormView #}
-{% block title %}{% trans from 'ui' %}Evénements{% endtrans %}{% endblock %}
+{% block title %}{% trans from 'ui' %}events.create.title{% endtrans %} - {{ app_name }}{% endblock %}
 
 {% block stylesheets %}
     {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}community/createCommunity") }}#}
@@ -12,7 +12,7 @@
     <event-create
 			:user="{{ app.user|json_encode }}"
             geo-search-url="{{ geoCompleteUri }}" 
-            avatar-size="{{ eventPosterSize }}">
+            avatar-size="{{ eventImageSize }}">
     </event-create>
    
 {% endblock %}

@@ -3,7 +3,10 @@
     align="center"
     justify="center"
   >
-    <v-col cols="4">
+    <v-col
+      cols="4"
+      md="4"
+    >
       <v-avatar
         color="grey lighten-3"
         size="225"
@@ -23,27 +26,37 @@
       
     <v-col
       cols="8"
+      md="8"
     >
       <v-card
         flat
-        height="25vh"
+        max-height="25vh"
+        justify="center"
       >
         <v-card-text>
-          <h3 class="headline">
+          <h3 class="headline text-justify font-weight-bold">
             {{ event.name }}
           </h3>
-          <p class="body-1">
+          <p
+            v-if="displayDescription"
+            class="body-1 pa-3"
+            md="6"
+          >
             {{ event.description }}
           </p>
-          <p class="body-2">
+          <p
+            v-if="displayDescription"
+            class="body-2 pa-3"
+            md="6"
+          >
             {{ event.fullDescription }}
           </p>
           <v-row>
-            <p class="body-2">
+            <p class="body-2 pa-3">
               <span class="font-weight-black"> {{ $t('startEvent.label') }} :</span> {{ computedDateFormat(event.fromDate.date) }}
             </p>
             <v-spacer />
-            <p class="body-2">
+            <p class="body-2 pa-3">
               <span class="font-weight-black"> {{ $t('endEvent.label') }} :  </span>{{ computedDateFormat(event.toDate.date) }}
             </p>
           </v-row>
@@ -73,7 +86,11 @@ export default {
     avatarVersion: {
       type: String,
       default: null
-    }
+    },
+    displayDescription: {
+      type: Boolean,
+      default: true
+    },
   },
   i18n: {
     messages: TranslationsMerged,
@@ -84,9 +101,12 @@ export default {
       origin: this.initOrigin,
     };
   },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
+  },
   methods: {
     computedDateFormat(date) {
-      return moment(date).format(this.$t("ui.i18n.date.format.shortCompleteDate") + " " + this.$t("ui.i18n.time.format.hourMinute"));
+      return moment(date).format(this.$t("ui.i18n.date.format.shortCompleteDate") + (this.event.useTime ? (" " + this.$t("ui.i18n.time.format.hourMinute")) : ""));
     }
   },
 }

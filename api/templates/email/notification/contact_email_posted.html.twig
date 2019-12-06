@@ -5,13 +5,11 @@
     </p>
 
     <ul>
-        <li>{{ "name"|trans }} :{{ context.contact.familyName ? context.contact.familyName : "notMentioned"|trans }}</li>
-        <li>{{ "firstname"|trans }} :{{ context.contact.givenName ? context.contact.givenName : "notMentioned"|trans }}</li>
-        <li>{{ "email"|trans }} :{{ context.contact.email }}</li>
-        <li>{{ "ask"|trans }} :{{ context.contact.demand ? context.contact.demand : "notMentioned"|trans }}</li>
-        <li>{{ "message"|trans }} :{{ context.contact.message }}</li>
+        <li>{{ "name"|trans }} : {{ context.contact.familyName ? context.contact.familyName : "notMentioned"|trans }}</li>
+        <li>{{ "firstname"|trans }} : {{ context.contact.givenName ? context.contact.givenName : "notMentioned"|trans }}</li>
+        <li>{{ "email"|trans }} : {{ context.contact.email }}</li>
+        <li>{{ "ask"|trans }} : {{ context.contact.demand ? context.contact.demand|trans : "notMentioned"|trans }}</li>
     </ul>
-
-    {{ "thankYou"|trans }} !
+    <p>{{ context.contact.message|nl2br }}</p>
 
 {% endblock %}

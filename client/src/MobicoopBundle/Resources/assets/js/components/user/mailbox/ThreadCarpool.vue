@@ -3,7 +3,7 @@
     <v-container class="window-scroll px-0">
       <v-card
         class="mx-0 mt-2 pt-1 pb-1"
-        :class="selected ? 'primary' : ''"
+        :class="selected ? 'primary lighten-5' : ''"
         outlined
         tile
         style="border-style:none;"
@@ -52,7 +52,7 @@
                 <span
                   v-if="criteria.frequency==1"
                   class="font-italic"
-                >{{ formateFromDate }} {{ $t("ui.infos.misc.at") }} {{ formateFromTime }}</span>
+                >{{ formateFromDate }} <span v-if="formateFromTime">{{ $t("ui.infos.misc.at") }} {{ formateFromTime }}</span></span>
                 <span
                   v-else
                   class="font-italic"
@@ -102,14 +102,6 @@ export default {
       type: Object,
       default: null
     },
-    fromDate: {
-      type: String,
-      default: null
-    },
-    fromTime: {
-      type: String,
-      default: null
-    },
     idMessage: {
       type: Number,
       default: null
@@ -135,16 +127,13 @@ export default {
   },
   computed: {
     formateDate(){
-      moment.locale(this.locale);
-      return moment(this.date).format("ddd DD MMM YYYY");
+      return moment.utc(this.date).format("ddd DD MMM YYYY");
     },
     formateFromDate(){
-      moment.locale(this.locale);
-      return moment(this.criteria.fromDate).format("ddd DD MMM YYYY");
+      return moment.utc(this.criteria.fromDate).format("ddd DD MMM YYYY");
     },
     formateFromTime(){
-      moment.locale(this.locale);
-      return moment(this.criteria.fromTime).format("HH")+"h"+moment(this.criteria.fromTime).format("mm");
+      return (this.criteria.fromTime) ? moment.utc(this.criteria.fromTime).format("HH")+"h"+moment.utc(this.criteria.fromTime).format("mm") : null;
     },
     regularCarpoolDays(){
       let carpoolDays = [];
@@ -158,13 +147,16 @@ export default {
       return carpoolDays.join(", ");
     },
     name() {
-      return this.givenName + " " + this.familyName.substr(0, 1).toUpperCase() + ".";
+      return (this.givenName != null && this.familyName != null ) ? this.givenName + " " + this.familyName.substr(0, 1).toUpperCase() + "." : (this.$t("userDelete"));
     },
   },
   watch: {
     selectedDefault(){
       this.selected = this.selectedDefault;
     }
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     click(){
@@ -174,7 +166,7 @@ export default {
       this.selected = !this.selected;
     },
     emit(){
-      this.$emit("toggleSelected",{idMessage:this.idMessage});
+      this.$emit("toggleSelected",{idAsk:this.idAsk});
       this.$emit("idMessageForTimeLine",
         {
           type:"Carpool",

@@ -74,7 +74,10 @@ class ImportManager
     public function treatUserImport()
     {
         set_time_limit(3600);
+        gc_enable();
         
+        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+
         // we have to treat all the users that have just been imported
         // first pass : update status before treatment
         $q = $this->entityManager
@@ -85,6 +88,8 @@ class ImportManager
             'oldStatus'=>UserImport::STATUS_IMPORTED
         ]);
         $q->execute();
+
+        gc_collect_cycles();
 
         // second pass : user related treatment
         $batch = 50;    // batch for users
@@ -128,12 +133,14 @@ class ImportManager
             if ($pool>=$batch) {
                 $this->entityManager->flush();
                 $this->entityManager->clear();
+                gc_collect_cycles();
                 $pool = 0;
             }
         }
         // final flush for pending persists
         $this->entityManager->flush();
         $this->entityManager->clear();
+        gc_collect_cycles();
 
         $q = $this->entityManager
         ->createQuery('UPDATE App\import\Entity\UserImport u set u.status = :status WHERE u.status=:oldStatus')
@@ -147,6 +154,10 @@ class ImportManager
         $batch = 500;
 
         $this->proposalManager->setDirectionsAndDefaultsForImport($batch);
+
+        gc_collect_cycles();
+
+        // exit;
 
         // creation of the matchings
         // we create an array of all proposals to treat

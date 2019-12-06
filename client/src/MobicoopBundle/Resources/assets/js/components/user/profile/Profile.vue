@@ -3,11 +3,11 @@
     <v-row
       justify="center"
     >
-      <v-col cols="11">
+      <v-col cols="8">
         <v-tabs
           v-model="modelTabs"
-          slider-color="secondary"
-          color="secondary"
+          slider-color="primary"
+          color="primary"
           vertical
         >
           <v-tab
@@ -19,7 +19,7 @@
           <v-tab-item value="myProposals">
             <MyProposals :proposals="proposals" />
           </v-tab-item>
-          <v-tab
+          <!-- <v-tab
             class="text-left justify-start ml-2 mr-5 title"
             href="#carpoolsAccepted"
           >
@@ -32,14 +32,18 @@
             >
               En cours de développement
             </v-alert>
-          </v-tab-item>
+          </v-tab-item> -->
           <v-tab
             class="text-left justify-start ml-2 mr-5 title"
             href="#myProfile"
           >
             {{ $t("tabs.myProfile") }}
           </v-tab>
-          <v-tab-item value="myProfile">
+          <v-tab-item
+            value="myProfile"
+            primary
+            lighten-5
+          >
             <v-tabs grow>
               <v-tab class="subtitle-1">
                 {{ $t("tabs.myAccount") }}

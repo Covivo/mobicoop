@@ -1,22 +1,11 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}Les Communautés
-{% endblock %}
+{% block title %}{% trans from 'ui' %}communities.communities.title{% endtrans %} - {{ app_name }}{% endblock %}
 {% block stylesheets %}
     {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}community/communities") }}#}
 
 {% endblock %}
 {% block main %}
-    <section class="hero firstSection">
-        <div class="hero-body">
-            <div class="container">
-                <h1 class="title">
-                    Les communautés
-                </h1>
-            </div>
-        </div>
-    </section>
-    <br/><br/>
     <div class="layout justify-center"
          outlined
          tile>
@@ -27,6 +16,7 @@
                     :paths="{{ {'community_create':path('community_create'), 'community_ad_post':path('carpool_ad_post')}|json_encode }}"
                     :communities="{{ communities|json_encode }}"
                     :communities-user="{{ communitiesUser|json_encode }}"
+                    :can-create="{{ canCreate }}"
             ></community-list>
             <br/><br/>
         </div>

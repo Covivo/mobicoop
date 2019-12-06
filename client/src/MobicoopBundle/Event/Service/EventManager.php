@@ -95,10 +95,17 @@ class EventManager
         $event->setFromDate($from);
         $event->setToDate($to);
 
+
         $response = $this->dataProvider->post($event);
+
+        //Event is created : we send the email to the owner
         if ($response->getCode() == 201) {
+            $this->dataProvider->simplePost('events/' . $response->getValue()->getId() . '/valide_create_event');
+
             return $response->getValue();
         }
+
+
         return null;
     }
     

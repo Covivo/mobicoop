@@ -31,7 +31,7 @@
         cols="12"
         class="py-0"
       >
-        <v-container class="primary darken-4">
+        <v-container class="primary lighten-5">
           <v-row>
             <v-col
               cols="6"
@@ -42,7 +42,7 @@
                 :destination="proposal.outward.waypoints[proposal.outward.waypoints.length - 1].address"
                 :type="proposal.outward.criteria.frequency"
                 :regular="isRegular"
-                text-color-class="white--text"
+                text-color-class="primary--text text--darken-2"
                 icon-color="accent"
               />
             </v-col>

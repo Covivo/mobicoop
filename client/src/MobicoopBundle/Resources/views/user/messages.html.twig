@@ -1,7 +1,7 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}
-  {% trans from 'ui' %}user.messages.title{% endtrans %}
+  {% trans from 'ui' %}user.messages.title{% endtrans %} - {{ app_name }}
 {% endblock %}
 {% block stylesheets %}
   {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/messages") }}#}
@@ -12,5 +12,8 @@
         :id-user="{{ idUser }}"
         :id-thread-default="{{ (idThreadDefault) ? idThreadDefault : 'null' }}"
         :new-thread="{{ newThread|json_encode }}"
+        :given-id-message="{{ idMessage ? idMessage : 'null' }}"
+        :given-id-recipient="{{ idRecipient ? idRecipient : 'null' }}"
+        :given-id-ask="{{ idAsk ? idAsk : 'null' }}"
       />
 {% endblock %}

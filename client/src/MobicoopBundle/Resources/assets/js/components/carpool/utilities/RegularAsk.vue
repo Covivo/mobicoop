@@ -436,7 +436,6 @@ export default {
   },
   computed: {
     computedStartDateFormat() {
-      moment.locale(this.locale);
       return this.startDate
         ? moment(this.startDate).format(this.$t("i18n.date.format.fullDate"))
         : "";
@@ -561,6 +560,9 @@ export default {
     maxDate() {
       this.change();
     }
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     nextDay(weekday) {

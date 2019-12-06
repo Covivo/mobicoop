@@ -45,7 +45,8 @@ api_platform:
             '%kernel.project_dir%/src/Travel/Entity',
             '%kernel.project_dir%/src/User/Entity',
             '%kernel.project_dir%/src/Rdex/Entity',
-            '%kernel.project_dir%/src/Right/Entity']
+            '%kernel.project_dir%/src/Right/Entity',
+            '%kernel.project_dir%/src/Price/Entity']
             
     resource_class_directories:
         - '%kernel.project_dir%/src/Entity'
@@ -68,6 +69,7 @@ api_platform:
         - '%kernel.project_dir%/src/Solidary/Entity'
         - '%kernel.project_dir%/src/Travel/Entity'
         - '%kernel.project_dir%/src/User/Entity'
+        - '%kernel.project_dir%/src/Price/Entity'
         
     formats:
         jsonld:   ['application/ld+json']

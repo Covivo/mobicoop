@@ -1,7 +1,9 @@
 {
     "fr": {
         "birthYears": "ans",
-        "carpool": "Covoiturer"
+        "carpool": "Covoiturer",
+        "needTobeConnected": "Vous devez être connecté pour effectuer cette action.",
+        "inDev": "En cours de développement."
     },
     "en": {
         "birthYears": "years",

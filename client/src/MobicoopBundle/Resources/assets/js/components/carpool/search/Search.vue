@@ -8,7 +8,10 @@
         justify="center"
       >
         <v-col
-          cols="6"
+          cols="12"
+          xl="6"
+          lg="9"
+          md="10"
         >
           <!--SearchJourney-->
           <search-journey
@@ -17,6 +20,8 @@
             :init-regular="dataRegular"
             :init-destination="destination"
             :punctual-date-optional="punctualDateOptional"
+            :show-destination="showDestination"
+            :iswidget="isWidget"
             @change="searchChanged"
           />
         </v-col>
@@ -28,26 +33,65 @@
       >
         <v-col
           cols="6"
-          class="text-right"
         >
-          <v-btn
-            outlined
-            :disabled="searchUnavailable || !logged"
-            rounded
-            :loading="loadingPublish"
-            @click="publish"
-          >
-            {{ $t('buttons.publish.label') }}
-          </v-btn>
-          <v-btn
-            :disabled="searchUnavailable"
-            :loading="loadingSearch"
-            color="secondary"
-            rounded
-            @click="search"
-          >
-            {{ $t('buttons.search.label') }}
-          </v-btn>
+          <v-row>
+            <v-tooltip
+            
+              bottom
+              color="info"
+            >
+              <template v-slot:activator="{ on }">
+                <v-col
+                  v-if="!logged"
+                  cols="6"
+                  align="left"
+                  v-on="on"
+                >
+                  <v-btn
+                    v-if="!hidePublish"
+                    outlined
+                    :disabled="searchUnavailable || !logged"
+                    rounded
+                    :loading="loadingPublish"
+                    @click="publish"
+                  >
+                    {{ $t('buttons.publish.label') }}
+                  </v-btn>
+                </v-col>
+                <v-col
+                  v-if="logged"
+                  cols="6"
+                  align="left"
+                >
+                  <v-btn
+                    v-if="!hidePublish"
+                    outlined
+                    :disabled="searchUnavailable || !logged"
+                    rounded
+                    :loading="loadingPublish"
+                    @click="publish"
+                  >
+                    {{ $t('buttons.publish.label') }}
+                  </v-btn>
+                </v-col>
+              </template>
+              <span> {{ $t('tooltips.needConnection') }}</span>
+            </v-tooltip>
+            <v-col
+              align="left"
+              cols="6"
+            >
+              <v-btn
+                :disabled="searchUnavailable || disableSearch"
+                :loading="loadingSearch"
+                color="secondary"
+                rounded
+                @click="search"
+              >
+                {{ $t('buttons.search.label') }}
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </v-container>
@@ -92,9 +136,25 @@ export default {
       type: Object,
       default: null
     },
-    initDestination: {
+    defaultDestination: {
       type: Object,
       default: null
+    },
+    disableSearch: {
+      type: Boolean,
+      default: false
+    },
+    hidePublish: {
+      type: Boolean,
+      default: false
+    },
+    showDestination: {
+      type: Boolean,
+      default: true
+    },
+    isWidget: {
+      type: Boolean,
+      default: false
     },
   },
   data() {
@@ -106,8 +166,8 @@ export default {
       date: null,
       time: null,
       origin: null,
-      destination: this.initDestination,
-      locale: this.$i18n.locale
+      destination: this.defaultDestination,
+      locale: this.$i18n.locale,
     };
   },
   computed: {
@@ -115,17 +175,20 @@ export default {
       return (!this.origin || !this.destination || (!this.dataRegular && !this.date && !this.punctualDateOptional))
     },
     dateFormated() {
-      moment.locale(this.locale);
       return this.date
         ? moment(this.date).format(this.$t("ui.i18n.date.format.urlDate"))
         : null;
     },
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     post: function (path, params, method='post') {
       const form = document.createElement('form');
       form.method = method;
       form.action = window.location.origin+'/'+path;
+      // this.isWidget  ? form.target ="_blank" : '';
 
       for (const key in params) {
         if (params.hasOwnProperty(key)) {
@@ -169,6 +232,6 @@ export default {
       };
       this.post(`${this.$t("buttons.publish.route")}`, lParams);
     },
-  }
+  },
 };
 </script>

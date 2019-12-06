@@ -119,7 +119,7 @@ class CommunityManager
             $communityUser = new CommunityUser();
             $communityUser->setUser($user);
             $communityUser->setCommunity($community);
-            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED);
+            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
             $this->entityManager->persist($communityUser);
             $this->entityManager->flush();
         }

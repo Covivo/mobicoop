@@ -196,9 +196,11 @@ export default {
       locale: this.$i18n.locale,
     };
   },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
+  },
   methods: {
     formatTime(time) {
-      moment.locale(this.locale);
       return moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute"));
     }
   }

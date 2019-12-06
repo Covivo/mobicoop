@@ -17,17 +17,18 @@
     </v-snackbar>
 
     <v-container>
-      <!-- community buttons and map -->
+      <!-- event buttons and map -->
       <v-row
         justify="center"
       >
         <v-col
           cols="12"
-          md="8"
+          lg="9"
+          md="10"
           xl="6"
           align="center"
         >
-          <!-- Community : avatar, title and description -->
+          <!-- event : avatar, title and description -->
           <event-infos
             :event="event"
             :url-alt-avatar="urlAltAvatar"
@@ -46,17 +47,24 @@
                 <v-btn
                   color="secondary"
                   rounded
+                
                   @click="publish"
                 >
                   {{ $t('buttons.publish.label') }}
                 </v-btn>
-                <!--                <v-btn-->
-                <!--                  color="secondary"-->
-                <!--                  rounded-->
-                <!--                  @click="publish"-->
-                <!--                >-->
-                <!--                  {{ $t('buttons.widget.label') }}-->
-                <!--                </v-btn>-->
+                <v-btn
+                  class="mt-3"
+
+                  color="secondary"
+                  rounded
+                  :href="$t('buttons.widget.route') + event.id"
+                >
+                  {{ $t('buttons.widget.label') }}
+                </v-btn>
+                <EventReport
+                  class="mt-3"
+                  :event="event"
+                />
               </div>
             </v-col>
             <!-- map -->
@@ -91,15 +99,19 @@
       <!-- search journey -->
       <v-row
         justify="center"
-        align="center"
+        align="left"
       >
         <v-col
-          cols="6"
+          cols="12"
+          lg="9"
+          md="10"
+          xl="6"
+          align="center"
           class="mt-6"
         >
-          <p class="headline">
+          <h3 class="headline text-justify font-weight-bold">
             {{ $t('title.searchCarpool') }}
-          </p>
+          </h3>
         </v-col>
       </v-row>
       <v-row
@@ -113,6 +125,9 @@
           :punctual-date-optional="punctualDateOptional"
           :regular="regular"
           :init-destination="destination"
+          :hide-publish="true"
+          :default-destination="defaultDestination"
+          :disable-search="disableSearch"
         />
       </v-row>
     </v-container>
@@ -125,15 +140,17 @@ import { merge } from "lodash";
 import Translations from "@translations/components/event/Event.json";
 import TranslationsClient from "@clientTranslations/components/event/Event.json";
 import EventInfos from "@components/event/EventInfos";
+import EventReport from "@components/event/EventReport";
 import Search from "@components/carpool/search/Search";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
+import moment from "moment";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    EventInfos, Search, MMap
+    EventReport, EventInfos, Search, MMap
   },
   i18n: {
     messages: TranslationsMerged,
@@ -167,10 +184,6 @@ export default {
       type: String,
       default: null
     },
-    regular: {
-      type: Boolean,
-      default: false
-    },
     punctualDateOptional: {
       type: Boolean,
       default: false
@@ -202,6 +215,7 @@ export default {
   },
   data () {
     return {
+      locale: this.$i18n.locale,
       destination: '',
       origin: this.initOrigin,
       search: '',
@@ -212,17 +226,31 @@ export default {
       // textSnackOk: this.$t("snackbar.joinCommunity.textOk"),
       // textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
+      isLogged: false,
       loadingMap: false,
       params: { 'eventId' : this.event.id },
-
+      defaultDestination: this.event.address,
+      regular: false,
+    }
+  },
+  computed: {
+    disableSearch() {
+      let now = moment();
+      if (now > moment(this.event.toDate.date))
+        return true;
+      else
+        return false;
     }
   // Link the event in the adresse
-  },created: function () {
+  },
+  created: function () {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
     this.$set(this.initDestination, 'event', this.event);
     this.destination = this.initDestination;
   },
   mounted() {
-    this.showPoints()
+    this.showPoints();
+    // this.getEventProposals();
   },
   methods:{
     searchChanged: function (search) {
@@ -247,6 +275,19 @@ export default {
       }
       document.body.appendChild(form);
       form.submit();
+    },
+    checkIfUserLogged() {
+      if (this.user !== null) {
+        this.isLogged = true;
+      }
+    },
+    checkDomain() {
+      if (this.event.validationType == 2) {
+        let mailDomain = (this.user.email.split("@"))[1];
+        if (!(this.event.domain.includes(mailDomain))) {
+          return this.domain = false;
+        }
+      }
     },
     publish() {
       let lParams = {

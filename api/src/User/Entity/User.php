@@ -60,6 +60,7 @@ use App\User\Controller\UserThreadsCarpoolMessages;
 use App\User\Controller\UserUpdatePassword;
 use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserUpdate;
+use App\User\Controller\UserAnonymise;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\HomeAddressDirectionTerritoryFilter;
@@ -176,7 +177,11 @@ use App\User\EntityListener\UserListener;
  *              "path"="/users/{id}",
  *              "controller"=UserUpdate::class
  *          },
- *          "delete"
+ *          "anonymise_user"={
+ *              "method"="PUT",
+ *              "path"="/users/{id}/anonymise_user",
+ *              "controller"=UserAnonymise::class
+ *          },
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})

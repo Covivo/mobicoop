@@ -1,6 +1,6 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}Résultats{% endblock %}
+{% block title %}{% trans from 'ui' %}carpool.results.title{% endtrans %} - {{ app_name }}{% endblock %}
 {% block stylesheets %}
     {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/results") }}#}
 {% endblock %}

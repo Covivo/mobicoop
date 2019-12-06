@@ -10,6 +10,8 @@
           xl="6"
           align="center"
         >
+          <h1>{{ $t('title') }}</h1>
+
           <!-- Matching header -->
           <matching-header
             v-if="!lProposalId"

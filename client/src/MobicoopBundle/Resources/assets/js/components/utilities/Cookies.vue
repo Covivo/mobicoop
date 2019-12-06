@@ -31,7 +31,7 @@ export default {
  <style lang="scss" >
    .Cookie--custom-theme {
      .Cookie__button {
-     background: #f045ab;
+     background: #666;
      padding: 8px;
      color: #fff;
      border-width: 2px 4px;

@@ -75,7 +75,21 @@ class CarpoolController extends AbstractController
             }
             if (isset($data['returnDate']) && $data['returnDate'] != '') {
                 $data['returnDate'] = \DateTime::createFromFormat('Y-m-d', $data['returnDate']);
+                $data['oneway'] = true; // only for punctual journey
+            } else {
+                $data['oneway'] = false; // only for punctual journey
             }
+
+            // one-way for regular
+            if ($data['regular']) {
+                $data['oneway'] = true;
+                foreach ($data['schedules'] as $schedule) {
+                    if (isset($schedule['returnTime']) && !is_null($schedule['returnTime'])) {
+                        $data['oneway'] = false;
+                    }
+                }
+            }
+
             return $this->json(['result'=>$adManager->createAd($data)]);
         }
 
@@ -124,7 +138,7 @@ class CarpoolController extends AbstractController
                 'communityIds'=>$request->request->get('communityId') ? [(int)$request->request->get('communityId')] : null,
                 'origin'=>$request->request->get('origin'),
                 'destination'=>$request->request->get('destination'),
-                'regular'=>$request->request->get('regular'),
+                'regular'=>json_decode($request->request->get('regular')),
                 'date'=>$request->request->get('date'),
                 'time'=>$request->request->get('time')
             ]
@@ -137,7 +151,7 @@ class CarpoolController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    public function carpoolAdDelete(ProposalManager $proposalManager, Request $request)
+    public function carpoolAdDelete(ProposalManager $proposalManager, Request $request, UserManager $userManager)
     {
         if ($request->isMethod('DELETE')) {
             $data = json_decode($request->getContent(), true);
@@ -147,11 +161,11 @@ class CarpoolController extends AbstractController
                     'message' => 'error'
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
-
             $proposal = $proposalManager->getProposal($data['proposalId']);
-
+            
             $this->denyAccessUnlessGranted('delete_ad', $proposal);
-
+            // add the id of the deleter
+            $data['deleterId'] = $userManager->getLoggedUser()->getId();
             if ($response = $proposalManager->deleteProposal($data['proposalId'], $data)) {
                 return new JsonResponse(
                     ["message" => "delete.success"],
@@ -198,7 +212,7 @@ class CarpoolController extends AbstractController
             }
         }
         if ($ad = $adManager->getAd($id, $filters)) {
-            $this->denyAccessUnlessGranted('results_ad', $ad);
+            //$this->denyAccessUnlessGranted('results_ad', $ad);
             return $this->json($ad->getResults());
         }
         return $this->json([]);

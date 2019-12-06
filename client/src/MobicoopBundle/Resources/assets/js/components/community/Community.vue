@@ -1,13 +1,13 @@
 <template>
-  <v-content>
+  <div>
     <!--SnackBar-->
 
     <v-snackbar
       v-model="snackbar"
-      :color="(errorUpdate)?'error':'warning'"
+      :color="(errorUpdate)?'error': (community.validationType == 1 ? 'warning' : 'success')"
       top
     >
-      {{ (errorUpdate)?textSnackError:textSnackOk }}
+      {{ textSnackbar }}
       <v-btn
         color="white"
         text
@@ -24,7 +24,8 @@
       >
         <v-col
           cols="12"
-          md="8"
+          lg="9"
+          md="10"
           xl="6"
           align="center"
         >
@@ -70,13 +71,24 @@
                 <v-btn
                   color="secondary"
                   rounded
+                  :loading="loading"
                   @click="publish"
                 >
                   {{ $t('buttons.publish.label') }}
                 </v-btn>
+                <v-btn
+                  class="mt-5"
+                  color="primary"
+                  rounded
+                  :loading="loading"
+                  :disabled="!isLogged"
+                  @click="leaveCommunityDialog = true"
+                >
+                  {{ $t('leaveCommunity.button') }}
+                </v-btn>
               </div>
               <!-- button if user ask to join community but is not accepted yet -->
-              <div v-else-if="askToJoin == true">
+              <div v-else-if="askToJoin === true">
                 <v-tooltip
                   top
                   color="info"
@@ -91,10 +103,21 @@
                         color="secondary"
                         rounded
                         disabled
+                        :loading="loading"
                       >
                         {{ $t('buttons.publish.label') }}
                       </v-btn>
                     </a>
+                    <v-btn
+                      class="mt-5"
+                      color="primary"
+                      rounded
+                      :loading="loading"
+                      :disabled="!isLogged"
+                      @click="leaveCommunityDialog = true"
+                    >
+                      {{ $t('leaveCommunity.button') }}
+                    </v-btn>
                   </template>
                   <span>{{ $t('tooltips.validation') }}</span>
                 </v-tooltip>
@@ -133,21 +156,7 @@
             <v-col
               cols="8"
             >
-              <v-card
-                v-show="loadingMap"
-                flat
-                align="center"
-                height="500"
-                color="backSpiner"
-              >
-                <v-progress-circular
-                  size="250"
-                  indeterminate
-                  color="tertiary"
-                />
-              </v-card>
               <m-map
-                v-show="!loadingMap"
                 ref="mmap"
                 type-map="community"
                 :points="pointsToMap"
@@ -156,12 +165,14 @@
                 :url-tiles="urlTiles"
                 :attribution-copyright="attributionCopyright"
                 :markers-draggable="false"
+                class="pa-4 mt-5"
               />
             </v-col>
           </v-row>
 
           <!-- community members list + last 3 users -->
-          <v-row 
+          <v-row
+            v-if="isLogged && isAccepted"
             align="start"
           >
             <v-col
@@ -170,6 +181,7 @@
               <community-member-list
                 :community="community"
                 :refresh="refreshMemberList"
+                :given-users="users"
                 :hidden="(!isAccepted && community.membersHidden)"
                 @contact="contact"
                 @refreshed="membersListRefreshed"
@@ -182,6 +194,7 @@
               <community-last-users
                 :refresh="refreshLastUsers"
                 :community="community"
+                :given-last-users="lastUsers"
                 :hidden="(!isAccepted && community.membersHidden)"
                 @refreshed="lastUsersRefreshed"
               />
@@ -192,15 +205,19 @@
       <!-- search journey -->
       <v-row
         justify="center"
-        align="center"
+        align="left"
       >
         <v-col
-          cols="6"
+          cols="12"
+          lg="9"
+          md="10"
+          xl="6"
+          align="center"
           class="mt-6"
         >
-          <p class="headline">
+          <h3 class="headline text-justify font-weight-bold">
             {{ $t('title.searchCarpool') }}
-          </p>
+          </h3>
         </v-col>
       </v-row>
       <v-row
@@ -215,8 +232,41 @@
           :regular="regular"
         />
       </v-row>
+
+      <!--Confirmation Popup-->
+      <v-dialog
+        v-model="leaveCommunityDialog"
+        persistent
+        max-width="500"
+      >
+        <v-card>
+          <v-card-title class="headline">
+            {{ $t('leaveCommunity.popup.title') }}
+          </v-card-title>
+          <v-card-text
+            v-html="(community.proposalsHidden) ? $t('leaveCommunity.popup.content.isProposalsHidden') : $t('leaveCommunity.popup.content.isNotProposalsHidden')"
+          />
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="primary darken-1"
+              text
+              @click="leaveCommunityDialog=false"
+            >
+              {{ $t('ui.common.no') }}
+            </v-btn>
+            <v-btn
+              color="secondary darken-1"
+              text
+              @click="leaveCommunityDialog=false; postLeavingRequest()"
+            >
+              {{ $t('ui.common.yes') }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-container>
-  </v-content>
+  </div>
 </template>
 <script>
 
@@ -272,7 +322,7 @@ export default {
     regular: {
       type: Boolean,
       default: false
-    }, 
+    },
     punctualDateOptional: {
       type: Boolean,
       default: false
@@ -289,6 +339,10 @@ export default {
       type: String,
       default: ""
     },
+    points: {
+      type: Array,
+      default: null
+    }
   },
   data () {
     return {
@@ -305,27 +359,27 @@ export default {
       ],
       pointsToMap:[],
       directionWay:[],
+      leaveCommunityDialog: false,
       loading: false,
       snackbar: false,
-      textSnackOk: this.$t("snackbar.joinCommunity.textOk"),
+      textSnackbar: null,
+      textSnackOk: this.community.validationType == 1 ? this.$t("snackbar.joinCommunity.textOkManualValidation") : this.$t("snackbar.joinCommunity.textOkAutoValidation"),
       textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
       isAccepted: false,
       askToJoin: false,
       checkValidation: false,
       isLogged: false,
-      loadingMap: false,
       domain: true,
       refreshMemberList: false,
       refreshLastUsers: false,
       params: { 'communityId' : this.community.id },
-
     }
   },
   mounted() {
     this.getCommunityUser();
     this.checkIfUserLogged();
-    this.getCommunityProposals();
+    this.showCommunityProposals();
     this.checkDomain();
   },
   methods:{
@@ -349,31 +403,33 @@ export default {
     getCommunityUser() {
       if(this.user){
         this.checkValidation = true;
-        axios 
+        axios
           .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
           .then(res => {
             if (res.data.length > 0) {
-              this.isAccepted = res.data[0].status == 1;
+              //accepted as user or moderator
+              this.isAccepted = (res.data[0].status == 1 || res.data[0].status == 2);
               this.askToJoin = true
             }
             this.checkValidation = false;
-            
           });
       }
     },
     joinCommunity() {
       this.loading = true;
-      axios 
+      axios
         .post(this.$t('buttons.join.route',{id:this.community.id}),
           {
-            headers:{
+            headers: {
               'content-type': 'application/json'
             }
           })
         .then(res => {
           this.errorUpdate = res.data.state;
           this.askToJoin = true;
+          this.isAccepted = false;
           this.snackbar = true;
+          this.textSnackbar = (this.errorUpdate) ? this.$t("snackbar.joinCommunity.textError") : this.$t("snackbar.joinCommunity.textOk");
           this.refreshMemberList = true;
           this.refreshLastUsers = true;
           this.getCommunityUser();
@@ -390,7 +446,7 @@ export default {
         let mailDomain = (this.user.email.split("@"))[1];
         if (!(this.community.domain.includes(mailDomain))) {
           return this.domain = false;
-        }   
+        }
       }
     },
     publish() {
@@ -404,85 +460,97 @@ export default {
       };
       this.post(`${this.$t("buttons.publish.route")}`, lParams);
     },
-    getCommunityProposals () {
-      this.loadingMap = true;
-      axios 
-       
-        .get('/community-proposals/'+this.community.id,
+    postLeavingRequest() {
+      this.loading = true;
+      axios
+        .post(this.$t('leaveCommunity.route',{id:this.community.id}),
           {
-            headers:{
+            headers: {
               'content-type': 'application/json'
             }
           })
         .then(res => {
           this.errorUpdate = res.data.state;
-          this.pointsToMap.length = 0;
-          // add the community address to display on the map
-          if (this.community.address) {
-            this.pointsToMap.push(this.buildPoint(this.community.address.latitude,this.community.address.longitude,this.community.name));
-          }
-          
-          // add all the waypoints of the community to display on the map
-          // We draw straight lines between those points
-          // if the user is already accepted or if the doesn't hide members or proposals to non members.
-          if(this.isAccepted || (!this.community.membersHidden && !this.community.proposalsHidden) ){
-            res.data.forEach((proposal, index) => {
-              let currentProposal = {latLngs:[]};
-              let infosForPopUp = {
-                origin:'',
-                destination:'',
-                originLat:null,
-                originLon:null,
-                destinationLat:null,
-                destinationLon:null,
-              };
-
-              if(proposal.type !== 'return'){ // We show only outward or one way proposals
-                proposal.waypoints.forEach((waypoint, index) => {
-                  this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
-                  currentProposal.latLngs.push(waypoint.latLng);
-                  if(index==0){
-                    infosForPopUp.origin = waypoint.title;
-                    infosForPopUp.originLat = waypoint.latLng.lat;
-                    infosForPopUp.originLon = waypoint.latLng.lon;
-                  }
-                  else if(waypoint.destination){
-                    infosForPopUp.destination = waypoint.title;
-                    infosForPopUp.destinationLat = waypoint.latLng.lat;
-                    infosForPopUp.destinationLon = waypoint.latLng.lon;
-                  }
-                });
-
-                // We build the content of the popup
-                currentProposal.desc = "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
-                currentProposal.desc += "<strong>"+this.$t('map.destination')+"</strong> : "+infosForPopUp.destination+"<br />";
-                if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em>";
-                // And now the content of a tooltip (same as popup but without the button)
-                currentProposal.title = currentProposal.desc;
-                
-                // We add the button to the popup (To Do: Button isn't functionnal. Find a good way to launch a research)
-                //currentProposal.desc += "<br /><button type='button' class='v-btn v-btn--contained v-btn--rounded theme--light v-size--small secondary overline'>"+this.$t('map.findMatchings')+"</button>";
-
-                // We are closing the two p
-                currentProposal.title += "</p>";
-                currentProposal.desc += "</p>";
-                this.directionWay.push(currentProposal);
-
-              }
-            });
-          }
-          this.loadingMap = false;
-          setTimeout(this.$refs.mmap.redrawMap(),600);
-          
+          this.askToJoin = false;
+          this.isAccepted = false;
+          this.textSnackbar = (this.errorUpdate) ? this.$t("snackbar.leaveCommunity.textError") : this.$t("snackbar.leaveCommunity.textOk");
+          this.snackbar = true;
+          this.refreshMemberList = true;
+          this.refreshLastUsers = true;
+          this.getCommunityUser();
+          this.loading = false;
         });
     },
-   
+    showCommunityProposals () {
+      this.pointsToMap.length = 0;
+      // add the community address to display on the map
+      if (this.community.address) {
+        this.pointsToMap.push(this.buildPoint(this.community.address.latitude,this.community.address.longitude,this.community.name));
+      }
+          
+      // add all the waypoints of the community to display on the map
+      // We draw straight lines between those points
+      // if the user is already accepted or if the doesn't hide members or proposals to non members.
+      if(this.isAccepted || (!this.community.membersHidden && !this.community.proposalsHidden) ){
+        this.points.forEach((proposal, index) => {
+          let currentProposal = {latLngs:[]};
+          let infosForPopUp = {
+            origin:'',
+            destination:'',
+            originLat:null,
+            originLon:null,
+            destinationLat:null,
+            destinationLon:null,
+            carpoolerFirstName:"",
+            carpoolerLastName:""
+          };
+
+          if(proposal.type !== 'return'){ // We show only outward or one way proposals
+            proposal.waypoints.forEach((waypoint, index) => {
+              this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+              currentProposal.latLngs.push(waypoint.latLng);
+              if(index==0){
+                infosForPopUp.origin = waypoint.title;
+                infosForPopUp.originLat = waypoint.latLng.lat;
+                infosForPopUp.originLon = waypoint.latLng.lon;
+              }
+              else if(waypoint.destination){
+                infosForPopUp.destination = waypoint.title;
+                infosForPopUp.destinationLat = waypoint.latLng.lat;
+                infosForPopUp.destinationLon = waypoint.latLng.lon;
+              }
+            });
+            infosForPopUp.carpoolerFirstName = proposal.carpoolerFirstName;
+            infosForPopUp.carpoolerLastName = proposal.carpoolerLastName;
+
+            // We build the content of the popup
+            currentProposal.desc = "<p><strong>"+infosForPopUp.carpoolerFirstName+" "+infosForPopUp.carpoolerLastName+"</strong></p>"
+            currentProposal.desc += "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
+            currentProposal.desc += "<strong>"+this.$t('map.destination')+"</strong> : "+infosForPopUp.destination+"<br />";
+            if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em>";
+
+            // And now the content of a tooltip (same as popup but without the button)
+            currentProposal.title = currentProposal.desc;
+                
+            // We add the button to the popup (To Do: Button isn't functionnal. Find a good way to launch a research)
+            //currentProposal.desc += "<br /><button type='button' class='v-btn v-btn--contained v-btn--rounded theme--light v-size--small secondary overline'>"+this.$t('map.findMatchings')+"</button>";
+
+            // We are closing the two p
+            currentProposal.title += "</p>";
+            currentProposal.desc += "</p>";
+            this.directionWay.push(currentProposal);
+
+          }
+        });
+      }
+      this.$refs.mmap.redrawMap();
+    },
     buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
       let point = {
         title:title,
         latLng:L.latLng(lat, lng),
         icon: {}
-      }
+      };
 
       if(pictoUrl!==""){
         point.icon = {
@@ -491,14 +559,14 @@ export default {
           anchor:anchor
         }
       }
-        
-      return point;      
+
+      return point;
     },
     contact: function(data){
       const form = document.createElement('form');
       form.method = 'post';
       form.action = this.$t("buttons.contact.route");
-      
+
       const params = {
         carpool:0,
         idRecipient:data.id,
@@ -506,7 +574,7 @@ export default {
         givenName:data.givenName,
         avatar:data.avatars[0]
       }
-      
+
       for (const key in params) {
         if (params.hasOwnProperty(key)) {
           const hiddenField = document.createElement('input');
@@ -517,7 +585,7 @@ export default {
         }
       }
       document.body.appendChild(form);
-      form.submit();      
+      form.submit();
     },
     membersListRefreshed(){
       this.refreshMemberList = false;
@@ -531,3 +599,14 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.multiline {
+  padding:20px;
+  white-space: normal;
+}
+.vue2leaflet-map {
+    z-index: 1;
+}
+
+</style>

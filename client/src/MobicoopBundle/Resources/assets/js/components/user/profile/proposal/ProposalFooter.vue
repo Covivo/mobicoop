@@ -1,18 +1,36 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-col cols="3">
+      <v-col
+        cols="3"
+        class="primary--text"
+      >
         <span v-if="seats && seats > 0">{{ seats }}&nbsp;{{ seats > 1 ? $t('seat.plural') : $t('seat.singular') }}</span>
       </v-col>
-      <v-col cols="3">
+      <v-col
+        cols="3"
+        class="primary--text"
+      >
         <span v-if="price && price > '0'">{{ price }} €</span>
       </v-col>
       <v-col
         cols="6"
         align="right"
       >
+        <!-- <v-btn
+          icon
+          :disabled="idMessage === -1"
+          outlined 
+          fab 
+          color="primary lighten-4"
+          @click="openMailBox()"
+        >
+          <v-icon>
+            mdi-email
+          </v-icon>
+        </v-btn> -->
         <v-btn
-          color="success"
+          color="secondary"
           rounded
           :disabled="computedRequestsCount <= 0"
           :href="$t('urlResult',{id:id})"
@@ -55,6 +73,10 @@ export default {
       type: Boolean,
       default: false
     },
+    idMessage: {
+      type: Number,
+      default: -1
+    },
     // passengers
     carpoolRequests: {
       type: Array,
@@ -86,6 +108,31 @@ export default {
       } else {
         return 0;
       }
+    }
+  },
+  methods: {
+    post: function (path, params, method='post') {
+      const form = document.createElement('form');
+      form.method = method;
+      form.action = window.location.origin+'/'+path;
+
+      for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+          const hiddenField = document.createElement('input');
+          hiddenField.type = 'hidden';
+          hiddenField.name = key;
+          hiddenField.value = params[key];
+          form.appendChild(hiddenField);
+        }
+      }
+      document.body.appendChild(form);
+      form.submit();
+    },
+    openMailBox () {
+      let lParams = {
+        idMessage: this.idMessage
+      };
+      this.post(`${this.$t("utilisateur/messages")}`, lParams);
     }
   }
 }

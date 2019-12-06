@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :key="rerenderKey">
     <v-row
       v-if="communitiesUser.length>0"
     >
@@ -34,7 +34,10 @@
                   outlined
                   tile
                 >
-                  <CommunityListItem :item="item" />
+                  <CommunityListItem
+                    :item="item"
+                    :can-leave="true"
+                  />
                 </v-col>
               </v-row>
             </template>
@@ -61,6 +64,7 @@
       <v-card-title>
         <v-row>
           <v-col
+            v-if="canCreate"
             cols="6"
           >
             <a :href="paths.community_create">
@@ -74,7 +78,7 @@
             </a>
           </v-col>
           <v-col
-            cols="6"
+            :cols="(canCreate) ? 6 : 12"
           >
             <div class="flex-grow-1" />
             <v-card
@@ -116,7 +120,7 @@
             </v-col>
           </v-row>
         </template>
-      </v-data-iterator>      
+      </v-data-iterator>
     </v-card>
   </div>
 </template>
@@ -149,10 +153,15 @@ export default {
     paths: {
       type: Object,
       default: null
+    },
+    canCreate: {
+      type: Boolean,
+      default: null
     }
   },
   data () {
     return {
+      rerenderKey: 0,
       search: '',
       itemsPerPageOptions: [10, 20, 50, 100, -1],
       itemsPerPage: 10,
@@ -169,6 +178,23 @@ export default {
       ]
     }
   },
+  methods: {
+    leaveCommunity(community) {
+      var self = this, i = null;
+      this.communitiesUser.forEach(function(item, index) {
+        if(item.id === community.id){
+          self.communities.push(community); // ADD TO AVAILABLE COMMUNITIES
+          i = index;
+          return;
+        }
+      });
+      this.communitiesUser.splice(i, 1); // REMOVE FROM MY COMMUNITIES
+      this.refreshComponent();
+    },
+    refreshComponent() {
+      this.rerenderKey++;
+    }
+  }
 }
 </script>
 

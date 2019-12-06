@@ -218,25 +218,25 @@ class Community implements ResourceInterface, \JsonSerializable
 
     public function isMembersHidden(): ?bool
     {
-        return $this->membersHidden ? true : false;
+        return $this->membersHidden;
     }
     
     public function setMembersHidden(?bool $isMembersHidden): self
     {
-        $this->membersHidden = $isMembersHidden ? true : false;
-        
+        $this->membersHidden = boolval($isMembersHidden);
+
         return $this;
     }
 
     public function isProposalsHidden(): ?bool
     {
-        return $this->proposalsHidden ? true : false;
+        return $this->proposalsHidden;
     }
     
     public function setProposalsHidden(?bool $isProposalsHidden): self
     {
-        $this->proposalsHidden = $isProposalsHidden ? true : false;
-        
+        $this->proposalsHidden = boolval($isProposalsHidden);
+
         return $this;
     }
 
@@ -450,13 +450,13 @@ class Community implements ResourceInterface, \JsonSerializable
 
     public function isMember(): ?bool
     {
-        return $this->member ? true : false;
+        return $this->member;
     }
     
     public function setMember(?bool $member): self
     {
-        $this->member = $member ? true : false;
-        
+        $this->member = boolval($member);
+
         return $this;
     }
 

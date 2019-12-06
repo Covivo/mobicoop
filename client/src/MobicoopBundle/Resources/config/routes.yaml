@@ -52,7 +52,14 @@ user_profile_update:
         fr: /utilisateur/profil/modifier/{tabDefault?}
         en: /user/profile/update/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
-    
+
+# Delete user by anonymise
+user_delete:
+    path:
+        fr: /utilisateur/profil/supprimer
+        en: /user/profil/delete
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::deleteUser
+
 # phone validation
 user_phone_validation:
     path:
@@ -65,7 +72,7 @@ user_phone_token:
     path:
         fr: /utilisateur/telephone/token
         en: /user/phone/token
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::generatePhoneToken    
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::generatePhoneToken
 
 # delete avatar
 user_profile_image_delete:
@@ -86,7 +93,7 @@ user_carpool_settings_update:
         fr: /utilisateur/preferences-covoiturage/modifier
         en: /user/carpool-settings/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCarpoolSettingsUpdate
-        
+
 # password forgotten : ask for a new password
 user_password_forgot:
     path:
@@ -210,7 +217,7 @@ user_communities:
         en: /user/communities
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCommunities
 
-    
+
 ##################
 # carpool routes #
 ##################
@@ -227,14 +234,14 @@ carpool_first_ad_post:
     path:
         fr: /covoiturage/annonce/poster/premiere
         en: /carpool/ad/post/first
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolFirstAdPost       
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolFirstAdPost
 
 # post a solidary exclusive ad
 carpool_solidary_exclusive_ad_post:
     path:
         fr: /covoiturage/annonce/poster/solidaire
         en: /carpool/ad/post/solidary
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryExclusiveAdPost    
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryExclusiveAdPost
 
 # post an ad from a search
 carpool_ad_post_search:
@@ -358,6 +365,15 @@ community_join:
         fr: /communaute/{id}/rejoindre
         en: /community/{id}/join
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityJoin
+    requirements:
+        id: '\d+'
+
+# leave a community (AJAX)
+community_leave:
+    path:
+        fr: /communaute/{id}/quitter
+        en: /community/{id}/leave
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityLeave
     requirements:
         id: '\d+'
 
@@ -531,3 +547,36 @@ event_proposals:
     requirements:
         id: '\d+'
 
+# display one widget
+event_widget:
+    path:
+        fr: /evenement-widget/{id}
+        en: /event-widget/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventWidget
+    requirements:
+        id: '\d+'
+
+# display one widget
+event_get_widget:
+    path:
+        fr: /evenement-get-widget/{id}
+        en: /event-get-widget/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventGetWidget
+    requirements:
+        id: '\d+'
+
+# report event
+event_report:
+    path:
+        fr: /evenement/{id}/signaler
+        en: /event/{id}/report
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventReport
+    requirements:
+        id: '\d+'
+
+# round price
+round_price:
+    path:
+        fr: /prix/arrondir
+        en: /price/round
+    controller: Mobicoop\Bundle\MobicoopBundle\Price\Controller\PriceController::roundPrice

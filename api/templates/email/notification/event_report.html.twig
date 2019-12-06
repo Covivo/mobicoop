@@ -1,0 +1,6 @@
+{% extends '/email/notification/base.html.twig' %}
+
+{% block body %}
+    <p>{{ "theUser"|trans }} <b>{{ context.email }}</b> {{ "reportThatEvent"|trans }} <b>{{ context.eventName }}</b></p>
+    <p>{{ "explanationOfTheReport"|trans }} : {{ context.description }}</p>
+{% endblock %}

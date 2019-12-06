@@ -24,6 +24,7 @@
 namespace App\Communication\Service;
 
 use App\Communication\Entity\MessagerInterface;
+use App\Event\Entity\Event;
 use Psr\Log\LoggerInterface;
 use App\Communication\Repository\NotificationRepository;
 use App\User\Repository\UserNotificationRepository;
@@ -38,6 +39,7 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Matching;
 use App\Communication\Entity\Recipient;
 use App\Carpool\Entity\AskHistory;
+use App\Carpool\Entity\Ask;
 
 /**
  * Notification manager
@@ -88,10 +90,11 @@ class NotificationManager
         if (!$this->enabled) {
             return;
         }
-        
+
         $notifications = null;
         // we check the user notifications
-        $userNotifications = $this->userNotificationRepository->findActiveByAction($action);
+        $userNotifications = $this->userNotificationRepository->findActiveByAction($action, $recipient->getId());
+       
         if (count($userNotifications)>0) {
             // the user should have notifications...
             $notifications = [];
@@ -102,7 +105,7 @@ class NotificationManager
             // if the user have no notifications, we use the default notifications
             $notifications = $this->notificationRepository->findActiveByAction($action);
         }
-        
+
         if ($notifications && is_array($notifications)) {
             foreach ($notifications as $notification) {
                 switch ($notification->getMedium()->getId()) {
@@ -161,9 +164,14 @@ class NotificationManager
                     $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'matching'=> $object];
                     break;
                 case AskHistory::class:
+                    
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'askHistory'=>$object];
                     break;
+                case Ask::class:
+                    $titleContext = [];
+                    $bodyContext = ['user'=>$recipient, 'ask'=>$object];
+                break;
                 case Recipient::class:
                     $titleContext = [];
                     $bodyContext = [];
@@ -172,11 +180,14 @@ class NotificationManager
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient];
                     break;
+                case Event::class:
+                    $titleContext = [];
+                    $bodyContext = ['user'=>$recipient, 'event' => $object];
+                    break;
             }
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
         }
-        
         $email->setObject($this->templating->render(
             $notification->getTemplateTitle() ? $this->emailTitleTemplatePath . $notification->getTemplateTitle() : $this->emailTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
             [
@@ -212,6 +223,9 @@ class NotificationManager
                 case AskHistory::class:
                     $bodyContext = ['user'=>$recipient];
                     break;
+                case Ask::class:
+                    $bodyContext = ['user'=>$recipient, 'ask'=>$object];
+                break;
                 case Recipient::class:
                     $bodyContext = [];
                     break;

@@ -1,6 +1,6 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-<p> Vous avez reçu un message :</p>
-    <p>{{  "canAnswerViaEmailFrom" |trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere" |trans }} {{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlMailBox"|trans }}.</p>
+    <p> {{ "youHaveAMessage"|trans }}</p>
+    <p>{{  "canAnswerViaEmailFrom" |trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere" |trans }} {{ api_env('EMAILS_PLATFORM_URL') }} {{ "urlMailBox"|trans }}.</p>
     <p>{{ "getProblem" |trans }}.</p>
 {% endblock %}
