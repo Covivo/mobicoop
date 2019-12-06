@@ -278,7 +278,7 @@ class Address
     private $relayPoint;
 
     /**
-     * @var User|null The event of the address.
+     * @var Event|null The event of the address.
      *
      * @ORM\OneToOne(targetEntity="App\Event\Entity\Event", mappedBy="address")
      * @Groups({"read","pt"})
