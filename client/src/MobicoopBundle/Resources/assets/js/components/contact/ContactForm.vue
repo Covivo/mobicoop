@@ -196,7 +196,7 @@ export default {
       demandItems: [
         {text:this.$t('demand.items.infos'), value:'infos'},
         {text:this.$t('demand.items.technicalIssues'), value:'technicalIssues'},
-        {text:this.$t('demand.items.partership'), value:'partership'}
+        {text:this.$t('demand.items.partnership'), value:'partnership'}
       ],      
       alert: {
         type: "success",
