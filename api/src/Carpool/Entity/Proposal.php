@@ -771,7 +771,7 @@ class Proposal
         return $this;
     }
     
-    public function hasFormalAsk(): bool
+    public function hasFormalAsk(): ?bool
     {
         return $this->formalAsk;
     }
