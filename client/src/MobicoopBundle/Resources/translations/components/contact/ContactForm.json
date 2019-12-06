@@ -22,7 +22,7 @@
       "items": {
         "infos":"Renseignement",
         "technicalIssues":"Problème technique",
-        "partership":"Partenariat"
+        "partnership":"Partenariat"
       }
     },
     "message": {
@@ -77,7 +77,7 @@
       "items": {
         "infos":"Information",
         "technicalIssues":"Technical issue",
-        "partership":"Partnership"
+        "partnership":"Partnership"
       }
     },
     "message": {

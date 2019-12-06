@@ -55,28 +55,30 @@
             </v-tab>
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
-            <v-tab-item value="tab-cm">
-              <threads-carpool
-                :new-thread="newThreadCarpool"
-                :id-thread-default="idThreadDefault"
-                :id-ask-to-select="currentIdAsk"
-                :refresh-threads="refreshThreadsCarpool"
-                @idMessageForTimeLine="updateDetails"
-                @toggleSelected="refreshSelected"
-                @refreshThreadsCarpoolCompleted="refreshThreadsCarpoolCompleted"
-              />
-            </v-tab-item>
-            <v-tab-item value="tab-dm">
-              <threads-direct
-                :new-thread="newThreadDirect"
-                :id-thread-default="idThreadDefault"
-                :id-message-to-select="idMessage"
-                :refresh-threads="refreshThreadsDirect"
-                @idMessageForTimeLine="updateDetails"
-                @toggleSelected="refreshSelected"
-                @refreshThreadsDirectCompleted="refreshThreadsDirectCompleted"
-              />
-            </v-tab-item>
+            <v-container class="window-scroll">
+              <v-tab-item value="tab-cm">
+                <threads-carpool
+                  :new-thread="newThreadCarpool"
+                  :id-thread-default="idThreadDefault"
+                  :id-ask-to-select="currentIdAsk"
+                  :refresh-threads="refreshThreadsCarpool"
+                  @idMessageForTimeLine="updateDetails"
+                  @toggleSelected="refreshSelected"
+                  @refreshThreadsCarpoolCompleted="refreshThreadsCarpoolCompleted"
+                />
+              </v-tab-item>
+              <v-tab-item value="tab-dm">
+                <threads-direct
+                  :new-thread="newThreadDirect"
+                  :id-thread-default="idThreadDefault"
+                  :id-message-to-select="idMessage"
+                  :refresh-threads="refreshThreadsDirect"
+                  @idMessageForTimeLine="updateDetails"
+                  @toggleSelected="refreshSelected"
+                  @refreshThreadsDirectCompleted="refreshThreadsDirectCompleted"
+                />
+              </v-tab-item>
+            </v-container>
           </v-tabs-items>
         </v-col>
         <v-col
@@ -311,6 +313,10 @@ export default {
     .col{
       border-left: 2px solid white !important;
     }
+  }
+  .window-scroll{
+    max-height:600px;
+    overflow:auto;
   }
 }
 </style>

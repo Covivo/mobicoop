@@ -111,6 +111,7 @@
                 v-model="telephone"
                 :label="$t('models.user.phone.label')"
                 class="telephone"
+                :rules="telephoneRules"
               />
             </v-col>
           <!-- phone number verified -->
@@ -450,13 +451,15 @@ export default {
         { value: 1, label: this.$t('phoneDisplay.label.restricted')},
         { value: 2, label: this.$t('phoneDisplay.label.all')}
       ],
-
       avatar: null,
       avatarRules: [
         v => !v || v.size < this.avatarSize || this.$t("avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
       ],
       tokenRules: [
          v => (/^\d{4}$/).test(v) || this.$t("phone.token.inputError")
+      ],
+      telephoneRules: [
+          v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("models.user.phone.errors.valid")
       ],
       newsSubscription: this.user && this.user.newsSubscription !== null ? this.user.newsSubscription : null,
       urlAvatar: this.user.avatars[this.user.avatars.length-1],

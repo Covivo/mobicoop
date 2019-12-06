@@ -128,7 +128,7 @@ class EventController extends AbstractController
                 }
             }
         }
-
+        
         // retreive logged user
         $user = $userManager->getLoggedUser();
 

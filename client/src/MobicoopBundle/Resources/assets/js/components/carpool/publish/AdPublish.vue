@@ -973,9 +973,11 @@ export default {
           value: price,
           frequency: frequency
         }).then(resp => {
-          this.price = resp.data.value;
-          if (doneByUser === true) {
-            this.snackbar = true;
+          if(this.price !== resp.data.value) {
+            this.price = resp.data.value;
+            if (doneByUser === true) {
+              this.snackbar = true;
+            }
           }
         }).catch(error => {
           // if and error occurred we set the original price
