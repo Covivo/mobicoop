@@ -165,6 +165,7 @@
                         class="text-center"
                       >
                         <v-btn
+                          v-if="!hideContact"
                           color="primary"
                           :disabled="contactDisabled"
                           :loading="contactLoading"
@@ -504,6 +505,10 @@ export default {
       type: Object,
       default: null
     },
+    hideContact: {
+      type: Boolean,
+      default: false
+    }
   },
   data : function() {
     return {
