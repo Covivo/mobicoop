@@ -128,7 +128,8 @@ class EventController extends AbstractController
                 }
             }
         }
-
+        // $eventAddress = $event->getAddress();
+        // $eventAddress->setEvent();
         // retreive logged user
         $user = $userManager->getLoggedUser();
 

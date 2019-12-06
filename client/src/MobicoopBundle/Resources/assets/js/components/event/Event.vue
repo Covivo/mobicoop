@@ -124,7 +124,6 @@
           :params="params"
           :punctual-date-optional="punctualDateOptional"
           :regular="regular"
-          :init-destination="destination"
           :hide-publish="true"
           :default-destination="defaultDestination"
           :disable-search="disableSearch"
@@ -229,7 +228,7 @@ export default {
       isLogged: false,
       loadingMap: false,
       params: { 'eventId' : this.event.id },
-      defaultDestination: this.event.address,
+      defaultDestination: this.initDestination,
       regular: false,
     }
   },
@@ -289,6 +288,7 @@ export default {
         }
       }
     },
+    
     publish() {
       let lParams = {
         origin: null,

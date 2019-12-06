@@ -28,6 +28,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 
 /**
  * A postal address.
@@ -194,6 +195,12 @@ class Address implements ResourceInterface, \JsonSerializable
      *
      */
     private $icon;
+
+    /**
+     * @var Event|null The event of the address.
+     *
+     */
+    private $event;
 
     public function __construct()
     {
@@ -444,6 +451,18 @@ class Address implements ResourceInterface, \JsonSerializable
         $this->icon = $icon;
     }
 
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -469,7 +488,8 @@ class Address implements ResourceInterface, \JsonSerializable
              'displayLabel'         => $this->getDisplayLabel(),
              'home'                 => $this->isHome(),
              'icon'                 => $this->getIcon(),
-             'venue'                => $this->getVenue()
+             'venue'                => $this->getVenue(),
+             'event'                => $this->getEvent()
          ];
     }
 }
