@@ -60,8 +60,7 @@
             "token": {
                 "route": "/utilisateur/telephone/token",
                 "inputError": "Le code de validation est composé de 4 chiffres."
-            }   
-           
+            }
         },
         "dialog" : {
             "titles": {
