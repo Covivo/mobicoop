@@ -366,8 +366,12 @@ class UserController extends AbstractController
         }
 
         //TODO - fix : Change this when use router vue
-        if ($tabDefault == 'mes-annonces') $tabDefault = 'myProposals';
-        if ($tabDefault == 'mon-profil') $tabDefault = 'myProfile';
+        if ($tabDefault == 'mes-annonces') {
+            $tabDefault = 'myProposals';
+        }
+        if ($tabDefault == 'mon-profil') {
+            $tabDefault = 'myProfile';
+        }
 
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
