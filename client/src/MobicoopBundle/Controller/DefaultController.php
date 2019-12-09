@@ -40,9 +40,23 @@ class DefaultController extends AbstractController
         return $this->render(
             '@Mobicoop/default/index.html.twig',
             [
-                'logout' => 'logout',
                 'baseUri' => $_ENV['API_URI'],
                 'metaDescription' => 'Mobicoop'
+            ]
+        );
+    }
+
+    /**
+     * HomePage, coming from an delete account
+     */
+    public function indexLogout()
+    {
+        return $this->render(
+            '@Mobicoop/default/index.html.twig',
+            [
+                'baseUri' => $_ENV['API_URI'],
+                'metaDescription' => 'Mobicoop',
+                'logout' => 1,
             ]
         );
     }
