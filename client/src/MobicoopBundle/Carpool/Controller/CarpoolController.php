@@ -121,7 +121,13 @@ class CarpoolController extends AbstractController
     {
         $proposal = new Proposal();
         $this->denyAccessUnlessGranted('create_ad', $proposal);
-        return $this->render('@Mobicoop/carpool/publish.html.twig');
+        return $this->render('@Mobicoop/carpool/publish.html.twig', [
+            "pricesRange" => [
+                "mid" => $this->midPrice,
+                "high" => $this->highPrice,
+                "forbidden" => $this->forbiddenPrice
+            ]
+        ]);
     }
         
     /**
@@ -135,6 +141,11 @@ class CarpoolController extends AbstractController
             '@Mobicoop/carpool/publish.html.twig',
             [
                 'solidaryExclusiveAd'=>true,
+                "pricesRange" => [
+                    "mid" => $this->midPrice,
+                    "high" => $this->highPrice,
+                    "forbidden" => $this->forbiddenPrice
+                ]
             ]
         );
     }
@@ -157,7 +168,12 @@ class CarpoolController extends AbstractController
                 'destination'=>$request->request->get('destination'),
                 'regular'=>json_decode($request->request->get('regular')),
                 'date'=>$request->request->get('date'),
-                'time'=>$request->request->get('time')
+                'time'=>$request->request->get('time'),
+                "pricesRange" => [
+                    "mid" => $this->midPrice,
+                    "high" => $this->highPrice,
+                    "forbidden" => $this->forbiddenPrice
+                ]
             ]
         );
     }
