@@ -955,7 +955,7 @@ export default {
           if (response.data && response.data.result && response.data.result.id) {
             // uncomment when results page activated
             //var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
-            window.location.href = "/utilisateur/profil/modifier/myProposals";
+            window.location.href = "/utilisateur/profil/modifier/mes-annonces";
           }
           //console.log(response);
         })
