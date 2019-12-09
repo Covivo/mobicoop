@@ -84,7 +84,6 @@
                 :close-on-content-click="false"
                 transition="scale-transition"
                 offset-y
-                full-width
                 min-width="290px"
               >
                 <template v-slot:activator="{ on }">
@@ -124,7 +123,6 @@
                 :close-on-content-click="false"
                 transition="scale-transition"
                 offset-y
-                full-width
                 min-width="290px"
               >
                 <template v-slot:activator="{ on }">
@@ -174,7 +172,6 @@
                 :return-value.sync="startTime"
                 transition="scale-transition"
                 offset-y
-                full-width
                 max-width="290px"
                 min-width="290px"
               >
@@ -207,7 +204,6 @@
                 :return-value.sync="endTime"
                 transition="scale-transition"
                 offset-y
-                full-width
                 max-width="290px"
                 min-width="290px"
               >

@@ -22,7 +22,8 @@
     init-time = "{{ time is defined ? time : '' }}"
     :init-regular = "{{ regular is defined ? (regular ? 'true' : 'false') : 'false' }}"
     :first-ad = "{{ firstAd is defined ? (firstAd ? 'true' : 'false') : 'false' }}"
-    :solidary-exclusive-ad = "{{ solidaryExclusiveAd is defined ? (solidaryExclusiveAd ? 'true' : 'false') : 'false' }}"    
+    :solidary-exclusive-ad = "{{ solidaryExclusiveAd is defined ? (solidaryExclusiveAd ? 'true' : 'false') : 'false' }}"
+    :default-prices-ranges = "{{ pricesRange|json_encode }}"    
   />
 
 {% endblock %}

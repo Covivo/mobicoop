@@ -50,6 +50,17 @@ class CarpoolController extends AbstractController
 {
     use HydraControllerTrait;
 
+    private $midPrice;
+    private $highPrice;
+    private $forbiddenPrice;
+
+    public function __construct($midPrice, $highPrice, $forbiddenPrice)
+    {
+        $this->midPrice = $midPrice;
+        $this->highPrice = $highPrice;
+        $this->forbiddenPrice = $forbiddenPrice;
+    }
+    
     /**
      * Create a carpooling ad.
      */
@@ -94,7 +105,13 @@ class CarpoolController extends AbstractController
         }
 
         $this->denyAccessUnlessGranted('create_ad', $proposal);
-        return $this->render('@Mobicoop/carpool/publish.html.twig');
+        return $this->render('@Mobicoop/carpool/publish.html.twig', [
+            "pricesRange" => [
+                "mid" => $this->midPrice,
+                "high" => $this->highPrice,
+                "forbidden" => $this->forbiddenPrice
+            ]
+        ]);
     }
 
     /**
