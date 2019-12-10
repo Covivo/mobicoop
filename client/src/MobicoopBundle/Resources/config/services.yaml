@@ -51,6 +51,10 @@ services:
     Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\:
         resource: '@MobicoopBundle/Carpool/Controller/*'
         tags: ['controller.service_arguments']
+        arguments:
+            $midPrice: '%env(resolve:MID_PRICE)%'
+            $highPrice: '%env(resolve:HIGH_PRICE)%'
+            $forbiddenPrice: '%env(resolve:FORBIDDEN_PRICE)%'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
         resource: '@MobicoopBundle/Carpool/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager:

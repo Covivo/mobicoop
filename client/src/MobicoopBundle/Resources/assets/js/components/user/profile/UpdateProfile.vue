@@ -317,17 +317,18 @@
 
     <v-row>
 
-
+      <v-container>
+        <v-col class="text-center">
       <v-dialog
               v-model="dialogDelete"
               width="500"
       >
-        <template v-slot:activator="{ on }">
+        <template v-slot:activator="{ on }" >
           <!--Delete button -->
           <v-btn
                   class="button"
                   v-on="on"
-                  color="secondary"
+                  color="error"
                   rounded
                   :disabled="!valid"
                   :loading="loading"
@@ -372,8 +373,9 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+        </v-col>
 
-
+      </v-container>
     </v-row>
 
   </v-container>

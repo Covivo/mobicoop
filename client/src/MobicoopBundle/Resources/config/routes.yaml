@@ -15,7 +15,11 @@ home:
         en: /
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::index
 
-
+home_logout:
+    path:
+        fr: /utilisateur/compte-supprimer
+        en: /user/account-delete
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::indexLogout
 ###############
 # user routes #
 ###############
