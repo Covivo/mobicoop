@@ -55,7 +55,7 @@ use App\User\Repository\UserRepository;
 /**
  * User manager service.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 class UserManager
 {
@@ -71,6 +71,11 @@ class UserManager
     private $logger;
     private $eventDispatcher;
     private $encoder;
+
+    // Default carpool settings
+    private $chat;
+    private $music;
+    private $smoke;
  
     /**
         * Constructor.
@@ -78,7 +83,7 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -92,6 +97,9 @@ class UserManager
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
         $this->userRepository = $userRepository;
+        $this->chat = $chat;
+        $this->music = $music;
+        $this->smoke = $smoke;
     }
 
     /**
@@ -125,6 +133,10 @@ class UserManager
         $time = $datetime->getTimestamp();
         $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         $user->setGeoToken($geoToken);
+        // Default carpool settings
+        $user->setChat($this->chat);
+        $user->setMusic($this->music);
+        $user->setSmoke($this->smoke);
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
