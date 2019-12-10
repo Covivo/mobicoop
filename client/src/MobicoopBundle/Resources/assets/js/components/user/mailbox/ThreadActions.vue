@@ -150,6 +150,7 @@
           :default-outward-trip="outwardTrip"
           :default-return-trip="returnTrip"
           :default-role="chosenRole"
+          :hide-contact="true"
           @close="dialogRegular=false"
           @carpool="carpoolFromMatchingJourney"
         />

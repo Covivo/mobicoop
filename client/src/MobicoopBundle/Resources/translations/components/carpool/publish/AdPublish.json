@@ -67,12 +67,13 @@
         },
         "participation": {
             "mid": "Le prix de votre trajet est supérieur à la moyenne, et vos chances d'être contacté seront donc réduites.",
-            "high": "Le prix de votre trajet, très haut, est au-delà du barème fiscale moyen (0,30€/km) : vos chances d'être contacté seront donc très réduites, il est par ailleurs interdit de proposer des prestations rémunérées de transport qui sortent du cadre du partage de frais en covoiturage."
+            "high": "Le prix de votre trajet, très haut, est au-delà du barème fiscale moyen (0,30€/km) : vos chances d'être contacté seront donc très réduites, il est par ailleurs interdit de proposer des prestations rémunérées de transport qui sortent du cadre du partage de frais en covoiturage.",
+            "forbidden": "Le prix de votre trajet, dépasse le seuil maximum fixé par notre plateforme (0,50€/km). Votre trajet ne pourra pas être publié."
         },
         "messageRoundedPrice": "Nous avons arrondi le tarif de votre annonce afin d'améliorer votre expérience et celle des autres usagers. Merci de votre compréhension.",
         "route": {
             "publish": "covoiturage/annonce/poster",
-            "myAds": "/utilisateur/profil/modifier/myProposals",
+            "myAds": "/utilisateur/profil/modifier/mes-annonces",
             "roundPrice": "/prix/arrondir"
         }
     }

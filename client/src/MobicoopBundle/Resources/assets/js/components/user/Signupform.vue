@@ -553,7 +553,7 @@ export default {
       var diff =(d1.getTime() - d2.getTime()) / 1000;
       diff /= (60 * 60 * 24);
 
-      var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
+      //var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
     },
 
   }

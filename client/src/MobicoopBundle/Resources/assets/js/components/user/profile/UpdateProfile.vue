@@ -111,6 +111,7 @@
                 v-model="telephone"
                 :label="$t('models.user.phone.label')"
                 class="telephone"
+                :rules="telephoneRules"
               />
             </v-col>
           <!-- phone number verified -->
@@ -316,17 +317,18 @@
 
     <v-row>
 
-
+      <v-container>
+        <v-col class="text-center">
       <v-dialog
               v-model="dialogDelete"
               width="500"
       >
-        <template v-slot:activator="{ on }">
+        <template v-slot:activator="{ on }" >
           <!--Delete button -->
           <v-btn
                   class="button"
                   v-on="on"
-                  color="secondary"
+                  color="error"
                   rounded
                   :disabled="!valid"
                   :loading="loading"
@@ -353,20 +355,27 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary darken-1" text @click="dialog=false; newsSubscription=true">{{ $t('ui.common.no') }}</v-btn>
             <v-btn
-                    color="primary"
-                    text
-                    :href="$t('route.supprimer')"
-                    @click="dialog = false"
+              color="primary darken-1"
+              text
+              @click="dialogDelete = false; newsSubscription = true"
+            >
+              {{ $t('ui.common.no') }}
+            </v-btn>
+            <v-btn
+              color="primary"
+              text
+              :href="$t('route.supprimer')"
+              @click="dialogDelete = false"
             >
               {{ $t('dialog.buttons.confirmDelete') }}
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
+        </v-col>
 
-
+      </v-container>
     </v-row>
 
   </v-container>
@@ -450,13 +459,15 @@ export default {
         { value: 1, label: this.$t('phoneDisplay.label.restricted')},
         { value: 2, label: this.$t('phoneDisplay.label.all')}
       ],
-
       avatar: null,
       avatarRules: [
         v => !v || v.size < this.avatarSize || this.$t("avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
       ],
       tokenRules: [
          v => (/^\d{4}$/).test(v) || this.$t("phone.token.inputError")
+      ],
+      telephoneRules: [
+          v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("models.user.phone.errors.valid")
       ],
       newsSubscription: this.user && this.user.newsSubscription !== null ? this.user.newsSubscription : null,
       urlAvatar: this.user.avatars[this.user.avatars.length-1],
@@ -479,17 +490,9 @@ export default {
     this.checkVerifiedPhone();
   },
   methods: {
-      deleteAccount (){
-          axios
-            .post(this.$t('route.supprimer'))
-            .then(res => {
-
-            });
-      },
     homeAddressSelected(address){
       this.homeAddress = address;
     },
-
     validate () {
       if (this.$refs.form.validate()) {
         this.checkForm();

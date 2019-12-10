@@ -47,11 +47,12 @@ towards: "en direction de"
 
 # CARPOOL_MATCHING_NEW
 
-newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet"
+newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet entre"
 seeYouIn: "Rendez-vous dans" 
 myAds: "Mes annonces"
+linkMyAds: "/utilisateur/profil/modifier/mes-annonces"
 toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact"
-justPublished : "vient d'être publiée"
+justPublished : "elle vient d'être publiée"
 
 # CARPOOL_PROPOSAL_POSTED
 
@@ -77,7 +78,7 @@ thankYou: "Merci"
 notMentioned: "Non renseigné"
 infos: "Informations"
 technicalIssues: "Problèmes techniques"
-partership: "Demande de partenariat"
+partnership: "Demande de partenariat"
 
 # USER_PASSWORD_CHANGED
 
@@ -85,7 +86,7 @@ askNewPasswordTitle: "Nouveau mot de passe"
 askNewPassword: "Vous avez demandé un nouveau mot de passe"
 clickHereToChangePassword: "Veuillez cliquer sur ce lien pour changer votre mot de passe"
 linkChangePassword: "Lien de changement de mot de passe"
-urlUpdatePassword: "utilisateur/mot-de-passe/reset/"
+urlUpdatePassword: "/utilisateur/mot-de-passe/reset/"
 yourPassword: "Votre mot de passe"
 successfullyChanged: "a bien été changé"
 thanksForUse: "Merci d’utiliser"
@@ -96,7 +97,7 @@ yourInscriptionAt: "Votre inscription au service"
 wellTakenIntoAccount: "est bien prise en compte"
 clickHereToConfirm: "Veuillez cliquer sur ce lien pour confirmer votre email"
 orUseTheValidationCode: "Ou utilisez le code de validation directement sur le site"
-urlEmailValidation: "utilisateur/inscription/validation/"
+urlEmailValidation: "/utilisateur/inscription/validation/"
 
 # USER_UPDATED_SELF
 

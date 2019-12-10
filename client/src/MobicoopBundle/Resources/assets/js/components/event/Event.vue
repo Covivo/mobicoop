@@ -124,7 +124,6 @@
           :params="params"
           :punctual-date-optional="punctualDateOptional"
           :regular="regular"
-          :init-destination="destination"
           :hide-publish="true"
           :default-destination="defaultDestination"
           :disable-search="disableSearch"
@@ -135,7 +134,6 @@
 </template>
 <script>
 
-import axios from "axios";
 import { merge } from "lodash";
 import Translations from "@translations/components/event/Event.json";
 import TranslationsClient from "@clientTranslations/components/event/Event.json";
@@ -229,7 +227,7 @@ export default {
       isLogged: false,
       loadingMap: false,
       params: { 'eventId' : this.event.id },
-      defaultDestination: this.event.address,
+      defaultDestination: this.initDestination,
       regular: false,
     }
   },
@@ -289,6 +287,7 @@ export default {
         }
       }
     },
+    
     publish() {
       let lParams = {
         origin: null,

@@ -18,7 +18,6 @@
             :close-on-content-click="false"
             transition="scale-transition"
             offset-y
-            full-width
             min-width="290px"
           >
             <template v-slot:activator="{ on }">
@@ -60,7 +59,6 @@
             :return-value.sync="outwardTime"
             transition="scale-transition"
             offset-y
-            full-width
             max-width="290px"
             min-width="290px"
           >
@@ -132,7 +130,6 @@
             :close-on-content-click="false"
             transition="scale-transition"
             offset-y
-            full-width
             min-width="290px"
           >
             <template v-slot:activator="{ on }">
@@ -173,7 +170,6 @@
             :return-value.sync="returnTime"
             transition="scale-transition"
             offset-y
-            full-width
             max-width="290px"
             min-width="290px"
           >
@@ -298,7 +294,6 @@
                   :close-on-content-click="false"
                   transition="scale-transition"
                   offset-y
-                  full-width
                   max-width="290px"
                   min-width="290px"
                 >
@@ -362,7 +357,6 @@
                   :close-on-content-click="false"
                   transition="scale-transition"
                   offset-y
-                  full-width
                   max-width="290px"
                   min-width="290px"
                 >

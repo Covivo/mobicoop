@@ -2,7 +2,7 @@
     "fr": {
             "myAds": {
                 "label": "Mes annonces",
-                "route": "/utilisateur/profil/modifier/myProposals"
+                "route": "/utilisateur/profil/modifier/mes-annonces"
             },
             "myAcceptedCarpools": {
                 "label": "Covoiturages acceptés",
@@ -10,7 +10,7 @@
             },
             "myProfile": {
                 "label": "Profil",
-                "route": "/utilisateur/profil/modifier/myProfile"
+                "route": "/utilisateur/profil/modifier/mon-profil"
             },
             "logOut": {
                 "label": "Déconnexion",
@@ -20,7 +20,7 @@
     "en": {
             "myAds": {
                 "label": "My proposals",
-                "route": "#"
+                "route": "/user/profil/update/my-proposals"
             },
             "myAcceptedCarpools": {
                 "label": "Accepted carpools",

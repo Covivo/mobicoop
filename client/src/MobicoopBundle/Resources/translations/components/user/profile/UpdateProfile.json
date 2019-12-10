@@ -60,12 +60,11 @@
             "token": {
                 "route": "/utilisateur/telephone/token",
                 "inputError": "Le code de validation est composé de 4 chiffres."
-            }   
-           
+            }
         },
         "dialog" : {
             "titles": {
-                "deleteAccount":"Suppréssion de votre compte"
+                "deleteAccount":"Suppression de votre compte"
             },
             "content": {
                 "deleteAccount":"Êtes-vous sûr de vouloir supprimer votre compte ?<br/> Cette action est irréversible.<br/> Elle aura pour conséquences de :<br/> - supprimer l’intégralité de vos données personnelles<br/>- supprimer tous vos messages échangés avec d’autres usagers<br/>- vous anonymiser dans les archives de covoiturages d’autres covoitureurs<br/>- supprimer toutes les annonces de covoiturage encore actives que vous auriez<br/>- rejeter toutes les demandes de covoiturage reçues en cours<br/>- annuler tous les covoiturages planifiés<br/><br/>Confirmez-vous ?"
