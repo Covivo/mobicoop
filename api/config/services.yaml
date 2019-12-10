@@ -305,6 +305,12 @@ services:
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
 
+    App\User\Service\UserManager:
+        arguments:
+            $chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
+            $music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
+            $smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'
+
     # Solidary
     App\Solidary\Controller\:
         resource: '../src/Solidary/Controller'
