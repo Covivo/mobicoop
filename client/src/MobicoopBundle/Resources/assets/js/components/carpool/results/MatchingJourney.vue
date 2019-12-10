@@ -621,6 +621,7 @@ export default {
     }
   },
   mounted() {
+    this.computeMaxDate();
     this.computeTimes();
   },
   created() {
@@ -628,7 +629,10 @@ export default {
   },
   methods: {
     computeMaxDate() {
-      if (this.range == 1) {
+      if (this.range == 0) {
+        this.maxDate = moment(this.fromDate).add(1, 'W').toISOString();
+      }
+      else if (this.range == 1) {
         this.maxDate = moment(this.fromDate).add(1, 'M').toISOString();
       } else if (this.range == 2) {
         this.maxDate = moment(this.fromDate).add(3, 'M').toISOString();
