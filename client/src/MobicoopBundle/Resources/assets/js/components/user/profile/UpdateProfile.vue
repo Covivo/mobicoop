@@ -354,12 +354,18 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary darken-1" text @click="dialog=false; newsSubscription=true">{{ $t('ui.common.no') }}</v-btn>
             <v-btn
-                    color="primary"
-                    text
-                    :href="$t('route.supprimer')"
-                    @click="dialog = false"
+              color="primary darken-1"
+              text
+              @click="dialogDelete = false; newsSubscription = true"
+            >
+              {{ $t('ui.common.no') }}
+            </v-btn>
+            <v-btn
+              color="primary"
+              text
+              :href="$t('route.supprimer')"
+              @click="dialogDelete = false"
             >
               {{ $t('dialog.buttons.confirmDelete') }}
             </v-btn>
@@ -482,17 +488,9 @@ export default {
     this.checkVerifiedPhone();
   },
   methods: {
-      deleteAccount (){
-          axios
-            .post(this.$t('route.supprimer'))
-            .then(res => {
-
-            });
-      },
     homeAddressSelected(address){
       this.homeAddress = address;
     },
-
     validate () {
       if (this.$refs.form.validate()) {
         this.checkForm();
