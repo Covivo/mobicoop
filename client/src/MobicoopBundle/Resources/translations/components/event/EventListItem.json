@@ -4,7 +4,13 @@
       "event": "/evenement/{id}"
     },
     "eventDetails":"Détails de l'événement",
-    "join":"Rejoindre l'événement"
+    "join":"Rejoindre l'événement",
+    "date": {
+      "from":"Du",
+      "to":"Au",
+      "at":"à",
+      "the":"Le"
+    }
   },
   "en": {
     "routes": {
@@ -12,5 +18,11 @@
       }
     },
     "eventDetails":"Evennt details",
-    "join":"Join the event"
+    "join":"Join the event",
+    "date": {
+      "from":"From",
+      "to":"To",
+      "at":"at",
+      "the":"The"
+    }
 }
