@@ -629,7 +629,7 @@ class ResultManager
             // waypoints of the item
             $waypoints = [];
             $time = $item->getTime() ? clone $item->getTime() : null;
-            // we will have to compute the number of steps fo reach candidate
+            // we will have to compute the number of steps for each candidate
             $steps = [
                 'requester' => 0,
                 'carpooler' => 0

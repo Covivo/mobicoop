@@ -225,8 +225,9 @@ services:
         arguments:
             $uri: '%env(resolve:SIG_GEOROUTER_URI)%'
             $type: '%env(resolve:SIG_GEOROUTER_TYPE)%'
-            $batchScriptPath: '%env(resolve:MOBIMATCH_BATCH_SCRIPT_PATH)%'
-            $batchTemp: '%env(resolve:MOBIMATCH_BATCH_TEMP)%'
+            $batchScriptPath: '%env(resolve:SIG_GEOROUTER_BATCH_SCRIPT_PATH)%'
+            $batchScriptArgs: '%env(resolve:SIG_GEOROUTER_BATCH_SCRIPT_ARGS)%'
+            $batchTemp: '%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%'
         tags:
             - { name: monolog.logger, channel: georouter }
 

@@ -527,7 +527,7 @@ class AdManager
 
         // we persist the proposals
         $this->entityManager->flush();
-
+        
         $this->logger->info('Ad creation | End ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         // if the ad is a round trip, we want to link the potential matching results

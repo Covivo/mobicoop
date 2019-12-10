@@ -77,10 +77,12 @@ class AdManager
         }
 
         // role
-        $ad->setRole($data['driver'] ? ($data['passenger'] ? Ad::ROLE_DRIVER_OR_PASSENGER : ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
+        $ad->setRole($data['driver'] ? ($data['passenger'] ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
 
         // oneway ?
-        (isset($data['oneway']) && $data['oneway']) ? $ad->setOneWay(true) : $ad->setOneWay(false);
+        if (isset($data['oneway']) && $data['oneway']) {
+            $ad->setOneWay(true);
+        }
 
         // frequency
         $ad->setFrequency($data['regular'] ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL);

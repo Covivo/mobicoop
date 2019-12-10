@@ -62,10 +62,9 @@ class GraphhopperProvider implements GeorouterInterface
     private $batchScriptArgs;   // batch script args for multiple async treatments
     private $batchTemp;         // batch temp directory
 
-    private $directions;        // the directions to manage
     private $bearing;           // bearing can be common when computing route variants, so it can be calculated once and shared
 
-    private $returntype;        // return type, default : object
+    private $returnType;        // return type, default : object
 
 
     /**
@@ -83,9 +82,9 @@ class GraphhopperProvider implements GeorouterInterface
      */
     public function __construct(string $uri, string $batchScriptPath, string $batchScriptArgs, string $batchTemp, LoggerInterface $logger, bool $detailDuration=false, bool $pointsOnly=false, bool $avoidMotorway=false, bool $avoidToll=false)
     {
+        $this->uri = $uri;
         $this->dataProvider = new DataProvider($this->uri);
         $this->geoTools = new GeoTools();
-        $this->uri = $uri;
         $this->directionResource = self::DIRECTION_RESOURCE;
         $this->detailDuration = $detailDuration;
         $this->pointsOnly = $pointsOnly;
@@ -96,7 +95,7 @@ class GraphhopperProvider implements GeorouterInterface
         $this->batchScriptArgs = $batchScriptArgs;
         $this->batchTemp = $batchTemp;
         $this->setBearing(null);
-        $this->returntype = self::RETURN_TYPE_OBJECT;
+        $this->returnType = self::RETURN_TYPE_OBJECT;
     }
 
     /**
@@ -157,7 +156,7 @@ class GraphhopperProvider implements GeorouterInterface
      */
     public function setReturnType(int $returnType)
     {
-        $this->returntype = $returnType;
+        $this->returnType = $returnType;
     }
 
     /**
@@ -165,14 +164,15 @@ class GraphhopperProvider implements GeorouterInterface
      */
     public function getMultipleDirections(array $multiPoints, int $mode)
     {
+        $routes = [];
         $this->dataProvider->setResource(self::DIRECTION_RESOURCE);
         switch ($mode) {
-
             case self::MODE_SYNC:
                 // unsupported
                 break;
             
             case self::MODE_ASYNC:
+            {
                 $getParams = [];
                 // we have to send multiple requests to the georouter, we need to know the 'owner' of each request to give him the result
                 // but the owner is not sent with the request, so we need to keep it in a dedicated array => each key of the request will be associated to its owner
@@ -202,22 +202,23 @@ class GraphhopperProvider implements GeorouterInterface
                 foreach ($response->getValue() as $key=>$value) {
                     $data = json_decode($value, true);
                     foreach ($data["paths"] as $path) {
-                        switch ($this->returntype) {
+                        switch ($this->returnType) {
                             case self::RETURN_TYPE_OBJECT:
-                                $this->directions[$requestsOwner[$key]][] = $this->deserializeDirection($path);
+                                $routes[$requestsOwner[$key]][] = $this->deserializeDirection($path);
                                 break;
                             case self::RETURN_TYPE_ARRAY:
                                 // unsupported !
                                 break;
                             case self::RETURN_TYPE_RAW:
-                                $this->directions[$requestsOwner[$key]][] = $path;
+                                $routes[$requestsOwner[$key]][] = $path;
                                 break;
                         }
                     }
                 }
                 break;
-
+            }
             case self::MODE_MULTIPLE_ASYNC:
+            {
                 // MULTIPLE ASYNC : we will use an external script instead of the usual dataProvider
                 $this->logger->debug('Multiple Async');
 
@@ -277,18 +278,26 @@ class GraphhopperProvider implements GeorouterInterface
                 self::print_mem(4);
 
                 $response = \JsonMachine\JsonMachine::fromFile($filename);
+
                 self::print_mem(5);
 
-                foreach ($response as $key=>$paths) {
-                    switch ($this->returntype) {
-                        case self::RETURN_TYPE_OBJECT:
+                switch ($this->returnType) {
+                    case self::RETURN_TYPE_OBJECT:
+                    {
+                        $this->logger->debug('Multiple Async | Start deserialize routes');
+                        foreach ($response as $key=>$paths) {
                             if (is_array($paths)) {
                                 foreach ($paths as $path) {
-                                    $this->directions[$requestsOwner[$key]][] = $this->deserializeDirection($path);
+                                    $routes[$requestsOwner[$key]][] = $this->deserializeDirection($path);
                                 }
                             }
-                            break;
-                        case self::RETURN_TYPE_ARRAY:
+                        }
+                        $this->logger->debug('Multiple Async | End deserialize routes');
+                        break;
+                    }
+                    case self::RETURN_TYPE_ARRAY:
+                    {
+                        foreach ($response as $key=>$paths) {
                             // we search the first and last elements for the bearing
                             reset($multiPoints[$requestsOwner[$key]][0]);
                             $first_key = key($multiPoints[$requestsOwner[$key]][0]);
@@ -296,9 +305,12 @@ class GraphhopperProvider implements GeorouterInterface
                             $last_key = key($multiPoints[$requestsOwner[$key]][0]);
                             if (is_array($paths)) {
                                 foreach ($paths as $path) {
-                                    $this->directions[$requestsOwner[$key]][] = [
+                                    $routes[$requestsOwner[$key]][] = [
                                         'distance' => isset($path["distance"]) ? $path["distance"] : null,
                                         'duration' => isset($path["time"]) ? $path["time"]/1000 : null,
+                                        'details' => isset($path["details"]["time"]) ? ['time'=>$path["details"]["time"]] : null,
+                                        'points' => isset($path["points"]) ? $path["points"] : null,
+                                        'snapped_waypoints' => isset($path["snapped_waypoints"]) ? $path["snapped_waypoints"] : null,
                                         'bbox' => isset($path["bbox"]) ? [$path["bbox"][0],$path["bbox"][1],$path["bbox"][2],$path["bbox"][3]] : null,
                                         'bearing' => $this->geoTools->getRhumbLineBearing(
                                             $multiPoints[$requestsOwner[$key]][0][$first_key]->getLatitude(),
@@ -309,12 +321,18 @@ class GraphhopperProvider implements GeorouterInterface
                                     ];
                                 }
                             }
-                            break;
-                        case self::RETURN_TYPE_RAW:
-                            $this->directions[$requestsOwner[$key]][] = $path;
-                            break;
+                        }
+                        break;
+                    }
+                    case self::RETURN_TYPE_RAW:
+                    {
+                        foreach ($response as $key=>$paths) {
+                            $routes[$requestsOwner[$key]][] = $path;
+                        }
+                        break;
                     }
                 }
+                
                 self::print_mem(6);
                 $response = null;
                 unset($response);
@@ -323,8 +341,9 @@ class GraphhopperProvider implements GeorouterInterface
                 $this->logger->debug('Multiple Async | Exchange file deletion');
                 unlink($filename);
                 break;
+            }
         }
-        return $this->directions;
+        return $routes;
     }
 
     /**
@@ -332,6 +351,7 @@ class GraphhopperProvider implements GeorouterInterface
      */
     public function getDirections(array $points, int $mode)
     {
+        $routes = [];
         $this->dataProvider->setResource(self::DIRECTION_RESOURCE);
         $response = null;
         switch ($mode) {
@@ -353,15 +373,15 @@ class GraphhopperProvider implements GeorouterInterface
                 if ($response instanceof Response && $response->getCode() == 200) {
                     $data = json_decode($response->getValue(), true);
                     foreach ($data["paths"] as $path) {
-                        switch ($this->returntype) {
+                        switch ($this->returnType) {
                             case self::RETURN_TYPE_OBJECT:
-                                $this->directions[] = $this->deserializeDirection($path);
+                                $routes[] = $this->deserializeDirection($path);
                                 break;
                             case self::RETURN_TYPE_ARRAY:
                                 // unsupported !
                                 break;
                             case self::RETURN_TYPE_RAW:
-                                $this->directions[] = $path;
+                                $routes[] = $path;
                                 break;
                         }
                     }
@@ -374,15 +394,12 @@ class GraphhopperProvider implements GeorouterInterface
                 // unsupported
                 break;
         }
-        return $this->directions;
+        return $routes;
     }
    
     /**
-     * Deserializes the data returned by the provider to a Direction object.
-     *
-     * @param array $data       The data to deserialize.
+     * {@inheritdoc}
      */
-
     public function deserializeDirection(array $data)
     {
         $direction = new Direction();
@@ -392,6 +409,9 @@ class GraphhopperProvider implements GeorouterInterface
         if (isset($data["time"])) {
             // time is in milliseconds, we transform in seconds
             $direction->setDuration($data["time"]/1000);
+        } elseif (isset($data["duration"])) {
+            // maybe we already treated the time to create the duration, can be the case if we returned an array
+            $direction->setDuration($data["duration"]);
         }
         if (isset($data["ascend"])) {
             $direction->setAscend($data["ascend"]);

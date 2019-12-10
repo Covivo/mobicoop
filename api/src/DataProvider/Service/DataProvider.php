@@ -51,10 +51,8 @@ class DataProvider
      */
     public function __construct(?string $uri = null, ?string $resource = null)
     {
-        if (!is_null($this->uri)) {
-            $this->client = new Client([
-                'base_uri' => $uri
-            ]);
+        if (!is_null($uri)) {
+            $this->setUri($uri);
         }
         $this->resource = $resource;
     }

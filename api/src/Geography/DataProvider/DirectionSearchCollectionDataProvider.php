@@ -54,14 +54,13 @@ final class DirectionSearchCollectionDataProvider implements CollectionDataProvi
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        $this->geoRouter->setPointsOnly(true);
         $addresses = [];
-        foreach ($this->request->get('points') as $key => $point) {
+        foreach ($this->request->get('points') as $point) {
             $waypoint = new Address();
             $waypoint->setLatitude($point['latitude']);
             $waypoint->setLongitude($point['longitude']);
             $addresses[] = $waypoint;
         }
-        return $this->geoRouter->getRoutes($addresses);
+        return $this->geoRouter->getRoutes($addresses, false, true);
     }
 }

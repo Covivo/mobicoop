@@ -39,10 +39,10 @@ use App\Carpool\Repository\ProposalRepository;
 use App\Communication\Entity\Message;
 use App\Communication\Service\InternalMessageManager;
 use App\Community\Service\CommunityManager;
-use App\DataProvider\Entity\GeoRouterProvider;
 use App\DataProvider\Entity\Response;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Zone;
+use App\Geography\Interfaces\GeorouterInterface;
 use App\Geography\Repository\DirectionRepository;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\TerritoryManager;
@@ -123,138 +123,6 @@ class ProposalManager
     public function get(int $id)
     {
         return $this->proposalRepository->find($id);
-    }
-
-    /**
-     * Create a proposal for a simple search.
-     *
-     * @param Address $origin                   The origin
-     * @param Address $destination              The destination
-     * @param integer $frequency                The frequency of the trip (1=punctual, 2=regular)
-     * @param \Datetime|null $date              The date and time of the trip
-     * @param boolean|null $useTime             True to use the time part of the date, false to ignore the time part
-     * @param boolean|null $strictDate          True to limit the search to the date, false to search even in the next days (only for punctual trip)
-     * @param boolean|null $strictPunctual      True to search only in punctual trips for punctual search, false to search also in regular trips
-     * @param boolean|null $strictRegular       True to search only in regular trips for regular search, false to search also in punctual trips
-     * @param integer|null $marginTime          The margin time in seconds
-     * @param integer|null $regularLifeTime     The lifetime of a regular proposal in years
-     * @param integer|null $userId              The id of the user that makes the query
-     * @param integer|null $role                The role of the user that makes the query (1=driver, 2=passenger, 3=both)
-     * @param integer|null $type                The type of the trip (1=one way, 2=return trip)
-     * @param boolean|null $anyRouteAsPassenger True if the passenger accepts any route (not implemented yet)
-     * @param integer|null $communityId         The id of the community to search in
-     * @return void
-     */
-    public function searchMatchings(
-        Address $origin,
-        Address $destination,
-        int $frequency,
-        ?\Datetime $date = null,
-        ?bool $useTime = null,
-        ?bool $strictDate = null,
-        ?bool $strictPunctual = null,
-        ?bool $strictRegular = null,
-        ?int $marginTime = null,
-        ?int $regularLifeTime = null,
-        ?int $userId = null,
-        ?int $role = null,
-        ?int $type = null,
-        ?bool $anyRouteAsPassenger = null,
-        ?int $communityId = null
-    ) {
-        // initialisation of the parameters
-        $useTime = !is_null($useTime) ? $useTime : $this->params['defaultUseTime'];
-        $strictDate = !is_null($strictDate) ? $strictDate : $this->params['defaultStrictDate'];
-        $strictPunctual = !is_null($strictPunctual) ? $strictPunctual : $this->params['defaultStrictPunctual'];
-        $strictRegular = !is_null($strictRegular) ? $strictRegular : $this->params['defaultStrictRegular'];
-        $marginTime = !is_null($marginTime) ? $marginTime : $this->params['defaultMarginTime'];
-        $regularLifeTime = !is_null($regularLifeTime) ? $regularLifeTime : $this->params['defaultRegularLifeTime'];
-        $role = !is_null($role) ? $role : $this->params['defaultRole'];
-        $type = !is_null($type) ? $type : $this->params['defaultType'];
-        $anyRouteAsPassenger = !is_null($anyRouteAsPassenger) ? $anyRouteAsPassenger : $this->params['defaultAnyRouteAsPassenger'];
-        
-        // we create a new Proposal object with its Criteria and Waypoints
-        $proposal = new Proposal();
-        // we set the type, but for now we only treat the outward
-        $proposal->setType($type == Proposal::TYPE_ONE_WAY ? Proposal::TYPE_ONE_WAY : Proposal::TYPE_OUTWARD);
-        $criteria = new Criteria();
-        $criteria->setDriver($role == self::ROLE_DRIVER || $role == self::ROLE_BOTH);
-        $criteria->setPassenger($role == self::ROLE_PASSENGER || $role == self::ROLE_BOTH);
-        if ($date) {
-            $criteria->setFromDate($date);
-            if ($useTime) {
-                $criteria->setFromTime($date);
-            }
-        }
-        $criteria->setMarginDuration($marginTime);
-        $criteria->setFrequency($frequency);
-        $criteria->setAnyRouteAsPassenger($anyRouteAsPassenger);
-        if ($frequency == Criteria::FREQUENCY_REGULAR) {
-            // for regular proposal we set every day as a possible carpooling day
-            $criteria->setMonCheck(true);
-            $criteria->setTueCheck(true);
-            $criteria->setWedCheck(true);
-            $criteria->setThuCheck(true);
-            $criteria->setFriCheck(true);
-            $criteria->setSatCheck(true);
-            $criteria->setSunCheck(true);
-            $criteria->setMonMarginDuration($marginTime);
-            $criteria->setTueMarginDuration($marginTime);
-            $criteria->setWedMarginDuration($marginTime);
-            $criteria->setThuMarginDuration($marginTime);
-            $criteria->setFriMarginDuration($marginTime);
-            $criteria->setSatMarginDuration($marginTime);
-            $criteria->setSunMarginDuration($marginTime);
-            if ($useTime) {
-                $criteria->setMonTime($date);
-                $criteria->setTueTime($date);
-                $criteria->setWedTime($date);
-                $criteria->setThuTime($date);
-                $criteria->setFriTime($date);
-                $criteria->setSatTime($date);
-                $criteria->setSunTime($date);
-            }
-            // we set the end date
-            $endDate = clone $date;
-            $endDate->add(new \DateInterval('P' . $regularLifeTime . 'Y'));
-            $criteria->setToDate($endDate);
-        }
-        $criteria->setStrictDate($strictDate);
-        $criteria->setStrictPunctual($strictPunctual);
-        $criteria->setStrictRegular($strictRegular);
-        $proposal->setCriteria($criteria);
-        
-        if (!is_null($userId)) {
-            if ($user = $this->userRepository->find($userId)) {
-                $proposal->setUser($user);
-            }
-        }
-        
-        $waypointOrigin = new Waypoint();
-        $waypointOrigin->setAddress($origin);
-        $waypointOrigin->setPosition(0);
-        $waypointOrigin->setDestination(false);
-        
-        $waypointDestination = new Waypoint();
-        $waypointDestination->setAddress($destination);
-        $waypointDestination->setPosition(1);
-        $waypointDestination->setDestination(true);
-        
-        $proposal->addWaypoint($waypointOrigin);
-        $proposal->addWaypoint($waypointDestination);
-
-        // community
-        if ($communityId && $userId) {
-            // we check if the user is member of the community
-            if ($this->communityManager->isRegistered($communityId, $userId)) {
-                if ($community = $this->communityManager->getCommunity($communityId)) {
-                    $proposal->addCommunity($community);
-                }
-            }
-        }
-
-        // Get the matchings for the given proposal.
-        return $this->treatProposal($proposal, false, true);
     }
 
     /**
@@ -467,7 +335,7 @@ class ProposalManager
         foreach ($proposal->getWaypoints() as $waypoint) {
             $addresses[] = $waypoint->getAddress();
         }
-        if ($routes = $this->geoRouter->getRoutes($addresses)) {
+        if ($routes = $this->geoRouter->getRoutes($addresses, false, false, GeorouterInterface::RETURN_TYPE_OBJECT)) {
             // for now we only keep the first route !
             // if we ever want alternative routes we should pass the route as parameter of this method
             // (problem : the route has no id, we should pass the whole route to check which route is chosen by the user...
@@ -483,7 +351,7 @@ class ProposalManager
             }
             if ($proposal->getCriteria()->isPassenger()) {
                 // if the user is passenger we keep only the first and last points
-                $routes = $this->geoRouter->getRoutes([$addresses[0],$addresses[count($addresses)-1]]);
+                $routes = $this->geoRouter->getRoutes([$addresses[0],$addresses[count($addresses)-1]], false, false, GeorouterInterface::RETURN_TYPE_OBJECT);
                 $direction = $routes[0];
                 // creation of the crossed zones
                 $direction = $this->zoneManager->createZonesForDirection($direction);
@@ -654,8 +522,8 @@ class ProposalManager
             }
             $loop++;
 
-            $ownerDriverRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutesDriver, false, true);
-            $ownerPassengerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutesPassenger, false, true);
+            $ownerDriverRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutesDriver, false, false, GeorouterInterface::RETURN_TYPE_OBJECT);
+            $ownerPassengerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutesPassenger, false, false, GeorouterInterface::RETURN_TYPE_OBJECT);
 
             $addressesForRoutesDriver = null;
             $addressesForRoutesPassenger = null;

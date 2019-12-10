@@ -129,4 +129,12 @@ interface GeorouterInterface
      * @return void
      */
     public function setReturnType(int $returnType);
+
+    /**
+     * Deserializes the data returned by the provider to a Direction object.
+     *
+     * @param array $data       The data to deserialize.
+     * @return Direction        The resulting direction.
+     */
+    public function deserializeDirection(array $data);
 }

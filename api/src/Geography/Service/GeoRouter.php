@@ -42,7 +42,12 @@ class GeoRouter
      *
      * @var GeorouterInterface
      */
-    private $georouter;
+    private $router;
+
+    public function getRouter()
+    {
+        return $this->router;
+    }
 
     /**
      * Constructor.
@@ -53,7 +58,7 @@ class GeoRouter
     {
         switch ($type) {
             case 'graphhopper':
-                $this->georouter = new GraphhopperProvider($uri, $batchScriptPath, $batchScriptArgs, $batchTemp, $logger);
+                $this->router = new GraphhopperProvider($uri, $batchScriptPath, $batchScriptArgs, $batchTemp, $logger);
                 break;
         }
     }
@@ -63,12 +68,18 @@ class GeoRouter
      *
      * @param array $addresses[]        The array of addresses (representing one route)
      * @param boolean $detailDuration   Set to true to get the duration between 2 points
+     * @param boolean $pointsOnly       Set to true to get the points only
+     * @param boolean|null $returnType  Set the return type
      * @return array                    The routes found
      */
-    public function getRoutes(array $addresses, bool $detailDuration=false): ?array
+    public function getRoutes(array $addresses, bool $detailDuration=false, bool $pointsOnly = false, ?int $returnType = null): ?array
     {
-        $this->georouter->setDetailDuration($detailDuration);
-        return $this->georouter->getDirections($addresses, GeorouterInterface::MODE_SYNC);
+        $this->router->setDetailDuration($detailDuration);
+        $this->router->setPointsOnly($pointsOnly);
+        if (!is_null($returnType)) {
+            $this->router->setReturnType($returnType);
+        }
+        return $this->router->getDirections($addresses, GeorouterInterface::MODE_SYNC);
     }
     
     /**
@@ -76,12 +87,18 @@ class GeoRouter
      *
      * @param array $addresses[]        The array of addresses, indexed by owner id (representing all the routes to send by the async request)
      * @param boolean $detailDuration   Set to true to get the duration between 2 points
+     * @param boolean $pointsOnly       Set to true to get the points only
+     * @param boolean|null $returnType  Set the return type
      * @return array                    The routes found
      */
-    public function getAsyncRoutes(array $addresses, bool $detailDuration=false): ?array
+    public function getAsyncRoutes(array $addresses, bool $detailDuration=false, bool $pointsOnly = false, ?int $returnType = null): ?array
     {
-        $this->georouter->setDetailDuration($detailDuration);
-        return $this->georouter->getDirections($addresses, GeorouterInterface::MODE_ASYNC);
+        $this->router->setDetailDuration($detailDuration);
+        $this->router->setPointsOnly($pointsOnly);
+        if (!is_null($returnType)) {
+            $this->router->setReturnType($returnType);
+        }
+        return $this->router->getDirections($addresses, GeorouterInterface::MODE_ASYNC);
     }
 
     /**
@@ -91,15 +108,17 @@ class GeoRouter
      *
      * @param array $addresses          The array of addresses, indexed by owner id (representing all the routes to send by the async request)
      * @param boolean $detailDuration   Set to true to get the duration between 2 points
+     * @param boolean $pointsOnly       Set to true to get the points only
      * @param boolean|null $returnType  Set the return type
      * @return array                    The routes found
      */
-    public function getMultipleAsyncRoutes(array $addresses, bool $detailDuration=false, ?int $returnType = null): ?array
+    public function getMultipleAsyncRoutes(array $addresses, bool $detailDuration=false, bool $pointsOnly = false, ?int $returnType = null): ?array
     {
-        $this->georouter->setDetailDuration($detailDuration);
+        $this->router->setDetailDuration($detailDuration);
+        $this->router->setPointsOnly($pointsOnly);
         if (!is_null($returnType)) {
-            $this->georouter->setReturnType($returnType);
+            $this->router->setReturnType($returnType);
         }
-        return $this->georouter->getMultipleDirections($addresses, GeorouterInterface::MODE_MULTIPLE_ASYNC);
+        return $this->router->getMultipleDirections($addresses, GeorouterInterface::MODE_MULTIPLE_ASYNC);
     }
 }
