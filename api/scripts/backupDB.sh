@@ -2,7 +2,7 @@
 # Date and time
 DATE=$(date +"%Y%m%d%H%M%S")
 
-# Backup dir
+# Backup dir destination
 BACKUP_DIR="/backup/mariadb"
 
 # MySQL username/password
