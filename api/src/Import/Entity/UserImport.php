@@ -46,6 +46,11 @@ use App\User\Entity\User;
  *              "method"="GET",
  *              "path"="/user_imports/treat",
  *              "normalization_context"={"groups"={"read"}},
+ *          },
+ *          "match"={
+ *              "method"="GET",
+ *              "path"="/user_imports/match",
+ *              "normalization_context"={"groups"={"read"}},
  *          }
  *      },
  *      itemOperations={

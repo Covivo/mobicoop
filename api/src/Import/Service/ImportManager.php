@@ -157,7 +157,20 @@ class ImportManager
 
         gc_collect_cycles();
 
-        // exit;
+        return [];
+    }
+
+    /**
+     * Match imported users
+     *
+     * @return array    The users imported
+     */
+    public function matchUserImport()
+    {
+        set_time_limit(3600);
+        gc_enable();
+        
+        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
 
         // creation of the matchings
         // we create an array of all proposals to treat

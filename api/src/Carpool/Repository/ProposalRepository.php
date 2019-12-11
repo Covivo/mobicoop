@@ -31,6 +31,7 @@ use App\Geography\Service\ZoneManager;
 use App\Geography\Entity\Direction;
 use App\User\Service\UserManager;
 use App\Community\Entity\Community;
+use App\Geography\Service\GeoTools;
 
 /**
  * @method Proposal|null find($id, $lockMode = null, $lockVersion = null)
@@ -41,16 +42,22 @@ use App\Community\Entity\Community;
 class ProposalRepository
 {
     const METERS_BY_DEGREE = 111319;
+    const BEARING_RANGE = 10;
+
+    const USE_BEARING = true;
+    const USE_BBOX = true;
     
     private $repository;
     private $zoneManager;
     private $userManager;
+    private $geoTools;
     
-    public function __construct(EntityManagerInterface $entityManager, ZoneManager $zoneManager, UserManager $userManager)
+    public function __construct(EntityManagerInterface $entityManager, ZoneManager $zoneManager, UserManager $userManager, GeoTools $geoTools)
     {
         $this->repository = $entityManager->getRepository(Proposal::class);
         $this->zoneManager = $zoneManager;
         $this->userManager = $userManager;
+        $this->geoTools = $geoTools;
     }
     
     /**
@@ -233,6 +240,33 @@ class ProposalRepository
             }
             $zonePassengerWhere = 'zp.thinness = :thinnessPassenger and zp.zoneid IN(' . implode(',', $zones) . ')';
             $query->setParameter('thinnessPassenger', $precision);
+
+            // bearing => we exclude the proposals if their direction is outside the authorize range (opposite bearing +/- BEARING_RANGE degrees)
+            if (self::USE_BEARING) {
+                $range = $this->geoTools->getOppositeBearing($proposal->getCriteria()->getDirectionDriver()->getBearing(), self::BEARING_RANGE);
+                if ($range['min']<=$range['max']) {
+                    // usual case, eg. 140 to 160
+                    $zonePassengerWhere .= ' and (dp.bearing <= :minDriverRange or dp.bearing >= :maxDriverRange)';
+                    $query->setParameter('minDriverRange',$range['min']);
+                    $query->setParameter('maxDriverRange',$range['max']);
+                } elseif ($range['min']>$range['max']) {
+                    // the range is like between 350 and 10
+                    $zonePassengerWhere .= ' and (dp.bearing >= :maxDriverRange and dp.bearing <= :minDriverRange)';
+                    $query->setParameter('minDriverRange',$range['min']);
+                    $query->setParameter('maxDriverRange',$range['max']);
+                }
+            }
+
+            // bounding box
+            if (self::USE_BBOX) {
+                $zonePassengerWhere .= ' and (ST_INTERSECTS(dp.geoJsonDetail,' . 
+                    $this->getGeoJsonPolygon(
+                        $proposal->getCriteria()->getDirectionDriver()->getBboxMinLon(),
+                        $proposal->getCriteria()->getDirectionDriver()->getBboxMinLat(),
+                        $proposal->getCriteria()->getDirectionDriver()->getBboxMaxLon(),
+                        $proposal->getCriteria()->getDirectionDriver()->getBboxMaxLon()
+                    ) . ')=1)';
+            }
             //$query->andWhere(sprintf('(ST_INTERSECTS(dp.geoJsonDetail,\'%s\')=1)', $proposal->getCriteria()->getDirectionDriver()->getGeoJsonDetail()));
         }
         if (!$driversOnly && $proposal->getCriteria()->isPassenger()) {
@@ -246,6 +280,33 @@ class ProposalRepository
             }
             $zoneDriverWhere = 'zd.thinness = :thinnessDriver and zd.zoneid IN(' . implode(',', $zones) . ')';
             $query->setParameter('thinnessDriver', $precision);
+
+            // bearing => we exclude the proposals if their direction is outside the authorize range (opposite bearing +/- BEARING_RANGE degrees)
+            if (self::USE_BEARING) {
+                $range = $this->geoTools->getOppositeBearing($proposal->getCriteria()->getDirectionPassenger()->getBearing(), self::BEARING_RANGE);
+                if ($range['min']<=$range['max']) {
+                    // usual case, eg. 140 to 160
+                    $zoneDriverWhere .= ' and (dd.bearing <= :minPassengerRange or dd.bearing >= :maxPassengerRange)';
+                    $query->setParameter('minPassengerRange',$range['min']);
+                    $query->setParameter('maxPassengerRange',$range['max']);
+                } elseif ($range['min']>$range['max']) {
+                    // the range is like between 350 and 10
+                    $zoneDriverWhere .= ' and (dd.bearing >= :maxPassengerRange and dd.bearing <= :minPassengerRange)';
+                    $query->setParameter('minPassengerRange',$range['min']);
+                    $query->setParameter('maxPassengerRange',$range['max']);
+                }
+            }
+
+            // bounding box
+            if (self::USE_BBOX) {
+                $zoneDriverWhere .= ' and (ST_INTERSECTS(dd.geoJsonDetail,' . 
+                    $this->getGeoJsonPolygon(
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLon(),
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLat(),
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLon(),
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLon()
+                    ) . ')=1)';
+            }
             //120$query->andWhere(sprintf('(ST_INTERSECTS(dd.geoJsonDetail,\'%s\')=1)', $proposal->getCriteria()->getDirectionPassenger()->getGeoJsonDetail()));
         }
 
@@ -865,6 +926,28 @@ class ProposalRepository
             return $thinnesses[$i];
         }
         return array_pop($thinnesses);
+    }
+
+    /**
+     * Return the geoJson string representation of a bounding box polygon
+     *
+     * @param float $minLon
+     * @param float $minLat
+     * @param float $maxLon
+     * @param float $maxLat
+     * @return void
+     */
+    private function getGeoJsonPolygon(float $minLon,float $minLat,float $maxLon,float $maxLat) 
+    {
+        return '{
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [ [' . $minLon . ', ' . $minLat . '], [' . $minLon . ', ' . $maxLat . '], [' . $maxLon . ', ' . $maxLat . '], [' . $maxLon . ', ' . $minLat . '], [' . $minLon . ', ' . $minLat . '] ]
+                ]
+            }
+        }';
     }
 
     public function find(int $id): ?Proposal

@@ -1177,7 +1177,7 @@ class ProposalMatcher
     {
         gc_enable();
         // we create chunks of proposals to avoid freezing
-        $chunk = 50;
+        $chunk = 20;
         $proposalsChunked = array_chunk($proposals, $chunk, true);
 
         foreach ($proposalsChunked as $proposalChunk) {
@@ -1248,7 +1248,7 @@ class ProposalMatcher
             $this->logger->info('End creating multimatch array, size : ' . count($multimatch) . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     
             // create a batch
-            $batchSize = 10;
+            $batchSize = 2;
             $batches = array_chunk($multimatch, $batchSize);
     
             $potentialMatchings = []; // indexed by driver proposal id

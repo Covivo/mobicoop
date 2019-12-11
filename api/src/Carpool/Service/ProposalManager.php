@@ -448,7 +448,7 @@ class ProposalManager
      */
     public function setDirectionsAndDefaultsForImport(int $batch)
     {
-        gc_enable();
+        //gc_enable();
         $treatedCriterias = []; // used to avoid excluding a linked proposal if the proposal is the last to be processed in a batch
         $loop = 0;
         while (true) {
@@ -524,15 +524,15 @@ class ProposalManager
             $ids = array_unique(array_merge(array_keys($ownerDriverRoutes), array_keys($ownerPassengerRoutes)));
             $qCriteria = $this->entityManager->createQuery('SELECT c from App\Carpool\Entity\Criteria c WHERE c.id IN (' . implode(',', $ids) . ')');
                 
-            $batchD = 50;
+            $batchD = 20;
             $pool = 0;
             $iterableResult = $qCriteria->iterate();
+            $this->logger->info('Start treat rows ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             foreach ($iterableResult as $row) {
                 $criteria = $row[0];
                 if (array_key_exists($criteria->getId(), $ownerDriverRoutes)) {
                     $direction = $ownerDriverRoutes[$criteria->getId()][0];
                     $direction = $this->zoneManager->createZonesForDirection($direction);
-                    $this->entityManager->persist($direction);
                     $criteria->setDirectionDriver($direction);
                     $criteria->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
                     $criteria->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
@@ -540,7 +540,6 @@ class ProposalManager
                 if (array_key_exists($criteria->getId(), $ownerPassengerRoutes)) {
                     $direction = $ownerPassengerRoutes[$criteria->getId()][0];
                     $direction = $this->zoneManager->createZonesForDirection($direction);
-                    $this->entityManager->persist($direction);
                     $criteria->setDirectionPassenger($direction);
                 }
                     
@@ -646,19 +645,27 @@ class ProposalManager
                 // batch
                 $pool++;
                 if ($pool>=$batchD) {
+                    $this->logger->info('Batch ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                     $this->entityManager->flush();
                     $this->entityManager->clear();
                     $pool = 0;
                 }
             }
+            $this->logger->info('Stop treat rows ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            // final flush for pending persists
+            if ($pool>0) {
+                $this->logger->info('Start final flush ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                $this->entityManager->flush();
+                $this->logger->info('Start clear ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                $this->entityManager->clear();
+                $this->logger->info('End flush clear ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            }
+            
             $ownerDriverRoutes = null;
             $ownerPassengerRoutes = null;
             unset($ownerDriverRoutes);
             unset($ownerPassengerRoutes);
-            // final flush for pending persists
-            $this->entityManager->flush();
-            $this->entityManager->clear();
-
+            
             $q = $this->entityManager
             ->createQuery('UPDATE App\import\Entity\UserImport u set u.status = :status WHERE u.id in(' . implode(',', $imports) . ')')
             ->setParameters([
@@ -666,11 +673,13 @@ class ProposalManager
             ]);
             $q->execute();
 
+            $this->logger->info('End update status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
             $imports = null;
             $treatedCriterias = null;
             unset($imports);
             unset($treatedCriterias);
-            gc_collect_cycles();
+            //gc_collect_cycles();
         }
     }
 
