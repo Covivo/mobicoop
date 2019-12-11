@@ -299,7 +299,7 @@ class MassImportManager
             $routesOwner[$i] = $massPerson;
             $i++;
         }
-        $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_OBJECT);
+        $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_ARRAY);
 
         foreach ($routesOwner as $key => $massPerson) {
             if (isset($ownerRoutes[$key])) {

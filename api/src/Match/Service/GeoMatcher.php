@@ -56,7 +56,7 @@ class GeoMatcher
     }
 
     /**
-     * Search for matchings between a candidate and an array of candidates
+     * Search for matchings between a candidate and multiple candidates
      *
      * @param array $candidates     An associative array representing the matches to test :
      *                          [

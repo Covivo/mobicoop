@@ -209,9 +209,6 @@ class ProposalManager
      */
     public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true, bool $sendEvent = true)
     {
-        $date = new \DateTime("UTC");
-        $this->logger->info('Proposal creation | Start ' . $date->format("Ymd H:i:s.u"));
-        
         // set min and max times
         $proposal = $this->setMinMax($proposal);
         
@@ -222,19 +219,13 @@ class ProposalManager
         $proposal = $this->setPrices($proposal);
         
         // matching analyze
-        $this->logger->info('Proposal creation | Start matching ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
-        $this->logger->info('Proposal creation | End matching ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
         if ($persist) {
             // TODO : here we should remove the previously matched proposal if they already exist
             $this->entityManager->persist($proposal);
-            $this->logger->info('Proposal creation | End persist ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
         
-        $end = new \DateTime("UTC");
-        $this->logger->info('Proposal creation | Total duration ' . ($end->diff($date))->format("%s.%f seconds"));
-
         // TODO : see which events send !!!
 
         // $matchingOffers = $proposal->getMatchingOffers();
@@ -781,71 +772,71 @@ class ProposalManager
      * @param string $outward_sunday_mintime
      * @param string $outward_sunday_maxtime
      */
-    public function getProposalsForRdex(
-        bool $offer,
-        bool $request,
-        float $from_longitude,
-        float $from_latitude,
-        float $to_longitude,
-        float $to_latitude,
-        string $frequency = null,
-        \DateTime $outward_mindate = null,
-        \DateTime $outward_maxdate = null,
-        string $outward_monday_mintime = null,
-        string $outward_monday_maxtime = null,
-        string $outward_tuesday_mintime = null,
-        string $outward_tuesday_maxtime = null,
-        string $outward_wednesday_mintime = null,
-        string $outward_wednesday_maxtime = null,
-        string $outward_thursday_mintime = null,
-        string $outward_thursday_maxtime = null,
-        string $outward_friday_mintime = null,
-        string $outward_friday_maxtime = null,
-        string $outward_saturday_mintime = null,
-        string $outward_saturday_maxtime = null,
-        string $outward_sunday_mintime = null,
-        string $outward_sunday_maxtime = null
-    ) {
-        // test : we return all proposals
-        // we create a proposal with the parameters
-        $proposal = new Proposal();
-        $proposal->setType(Proposal::TYPE_ONE_WAY);
-        $addressFrom = new Address();
-        $addressFrom->setLongitude((string)$from_longitude);
-        $addressFrom->setLatitude((string)$from_latitude);
-        // for now we don't search with coordinates, we force the localities for testing purpose
-        // @todo delete the locality search only
-        $addressFrom->setAddressLocality("Nancy");
-        $addressTo = new Address();
-        $addressTo->setLongitude((string)$to_longitude);
-        $addressTo->setLatitude((string)$to_latitude);
-        $addressTo->setAddressLocality("Metz");
-        $waypointFrom = new Waypoint();
-        $waypointFrom->setAddress($addressFrom);
-        $waypointFrom->setPosition(0);
-        $waypointFrom->setDestination(false);
-        $waypointTo = new Waypoint();
-        $waypointTo->setAddress($addressTo);
-        $waypointTo->setPosition(1);
-        $waypointTo->setDestination(true);
-        $criteria = new Criteria();
-        $criteria->setDriver(!$offer);
-        $criteria->setPassenger(!$request);
-        if (!is_null($outward_mindate)) {
-            $criteria->setFromDate($outward_mindate);
-        } else {
-            $criteria->setFromDate(new \DateTime());
-        }
-        if (!is_null($outward_maxdate)) {
-            $criteria->setToDate($outward_maxdate);
-        }
-        $proposal->setCriteria($criteria);
-        $proposal->addWaypoint($waypointFrom);
-        $proposal->addWaypoint($waypointTo);
-        // for now we don't use the time parameters
-        // @todo add the time parameters
-        return $this->proposalRepository->findMatchingProposals($proposal, false);
-    }
+    // public function getProposalsForRdex(
+    //     bool $offer,
+    //     bool $request,
+    //     float $from_longitude,
+    //     float $from_latitude,
+    //     float $to_longitude,
+    //     float $to_latitude,
+    //     string $frequency = null,
+    //     \DateTime $outward_mindate = null,
+    //     \DateTime $outward_maxdate = null,
+    //     string $outward_monday_mintime = null,
+    //     string $outward_monday_maxtime = null,
+    //     string $outward_tuesday_mintime = null,
+    //     string $outward_tuesday_maxtime = null,
+    //     string $outward_wednesday_mintime = null,
+    //     string $outward_wednesday_maxtime = null,
+    //     string $outward_thursday_mintime = null,
+    //     string $outward_thursday_maxtime = null,
+    //     string $outward_friday_mintime = null,
+    //     string $outward_friday_maxtime = null,
+    //     string $outward_saturday_mintime = null,
+    //     string $outward_saturday_maxtime = null,
+    //     string $outward_sunday_mintime = null,
+    //     string $outward_sunday_maxtime = null
+    // ) {
+    //     // test : we return all proposals
+    //     // we create a proposal with the parameters
+    //     $proposal = new Proposal();
+    //     $proposal->setType(Proposal::TYPE_ONE_WAY);
+    //     $addressFrom = new Address();
+    //     $addressFrom->setLongitude((string)$from_longitude);
+    //     $addressFrom->setLatitude((string)$from_latitude);
+    //     // for now we don't search with coordinates, we force the localities for testing purpose
+    //     // @todo delete the locality search only
+    //     $addressFrom->setAddressLocality("Nancy");
+    //     $addressTo = new Address();
+    //     $addressTo->setLongitude((string)$to_longitude);
+    //     $addressTo->setLatitude((string)$to_latitude);
+    //     $addressTo->setAddressLocality("Metz");
+    //     $waypointFrom = new Waypoint();
+    //     $waypointFrom->setAddress($addressFrom);
+    //     $waypointFrom->setPosition(0);
+    //     $waypointFrom->setDestination(false);
+    //     $waypointTo = new Waypoint();
+    //     $waypointTo->setAddress($addressTo);
+    //     $waypointTo->setPosition(1);
+    //     $waypointTo->setDestination(true);
+    //     $criteria = new Criteria();
+    //     $criteria->setDriver(!$offer);
+    //     $criteria->setPassenger(!$request);
+    //     if (!is_null($outward_mindate)) {
+    //         $criteria->setFromDate($outward_mindate);
+    //     } else {
+    //         $criteria->setFromDate(new \DateTime());
+    //     }
+    //     if (!is_null($outward_maxdate)) {
+    //         $criteria->setToDate($outward_maxdate);
+    //     }
+    //     $proposal->setCriteria($criteria);
+    //     $proposal->addWaypoint($waypointFrom);
+    //     $proposal->addWaypoint($waypointTo);
+    //     // for now we don't use the time parameters
+    //     // @todo add the time parameters
+    //     return $this->proposalRepository->findMatchingProposals($proposal, false);
+    // }
 
     /**
      * @param Proposal $proposal
