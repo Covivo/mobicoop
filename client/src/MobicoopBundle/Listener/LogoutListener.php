@@ -31,24 +31,22 @@ use Symfony\Component\Routing\Router;
 use Symfony\Component\Security\Core\Authentication\Token\Storage;
 use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
 
-class LogoutListener implements LogoutSuccessHandlerInterface {
-
+class LogoutListener implements LogoutSuccessHandlerInterface
+{
     protected $router;
     protected $tokenStorage;
 
-    public function __construct(Router $router,Storage\TokenStorage $tokenStorage)
+    public function __construct(Router $router, Storage\TokenStorage $tokenStorage)
     {
         $this->router = $router;
         $this->tokenStorage = $tokenStorage;
     }
 
-    public function onLogoutSuccess(Request $request )
+    public function onLogoutSuccess(Request $request)
     {
         $routeToCall = $this->tokenStorage->getToken()->getUser() == 'anon.' ?
-            $this->router->generate(  'home_logout',[],UrlGenerator::ABSOLUTE_PATH) :
-            $this->router->generate('home', [], UrlGenerator::ABSOLUTE_PATH );
-        return new RedirectResponse($routeToCall );
+            $this->router->generate('home_logout', [], UrlGenerator::ABSOLUTE_PATH) :
+            $this->router->generate('home', [], UrlGenerator::ABSOLUTE_PATH);
+        return new RedirectResponse($routeToCall);
     }
-    
-
 }
