@@ -35,6 +35,7 @@ use App\Match\Entity\MassData;
 use App\Match\Entity\MassPerson;
 use App\Match\Entity\Candidate;
 use App\Geography\Entity\Address;
+use App\Geography\Interfaces\GeorouterInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Geography\Service\GeoSearcher;
@@ -298,7 +299,7 @@ class MassImportManager
             $routesOwner[$i] = $massPerson;
             $i++;
         }
-        $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes);
+        $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_ARRAY);
 
         foreach ($routesOwner as $key => $massPerson) {
             if (isset($ownerRoutes[$key])) {
@@ -472,7 +473,7 @@ class MassImportManager
 
         // we try to match with the candidates
         $this->logger->info('Mass match | Creating matches records start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        if ($matches = $this->geoMatcher->multiMatch($candidates)) {
+        if ($matches = $this->geoMatcher->multiMatch($candidates, true)) {
             if (is_array($matches) && count($matches)>0) {
                 foreach ($matches as $match) {
                     foreach ($match['matches'] as $matched) {

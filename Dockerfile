@@ -167,6 +167,10 @@ RUN command -v npm
 
 RUN npm install -g wait-on 
 RUN npm install -g yarn
+
+# Request-dispatcher
+RUN npm install -g request-dispatcher
+
 # Cleanup
 RUN apt-get -qq clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

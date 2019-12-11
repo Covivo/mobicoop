@@ -229,21 +229,53 @@ class GeoSearcher
      *
      * @param float $lat     The latitude
      * @param float $lon     The longitude
-     * @return array            The results
+     * @return Address            The results
      */
     public function reverseGeoCode(float $lat, float $lon)
     {
         if ($geoResults = $this->geocoder->reverseQuery(ReverseQuery::fromCoordinates($lat, $lon))) {
             foreach ($geoResults as $geoResult) {
-                if (
-                    ($geoResult->getStreetNumber() <> "") &&
-                    ($geoResult->getStreetName() <> "") &&
-                    ($geoResult->getPostalCode() <> "") &&
-                    ($geoResult->getLocality() <> "") &&
-                    ($geoResult->getStreetNumber() < 500)
-                ) {
-                    return $geoResult->getStreetNumber() . ";" . $geoResult->getStreetName() . ";" . $geoResult->getPostalCode() . ";" . $geoResult->getLocality();
+                $address = new Address();
+                if ($geoResult->getCoordinates() && $geoResult->getCoordinates()->getLatitude()) {
+                    $address->setLatitude((string)$geoResult->getCoordinates()->getLatitude());
                 }
+                if ($geoResult->getCoordinates() && $geoResult->getCoordinates()->getLongitude()) {
+                    $address->setLongitude((string)$geoResult->getCoordinates()->getLongitude());
+                }
+                $address->setHouseNumber($geoResult->getStreetNumber());
+                $address->setStreet($geoResult->getStreetName());
+                $address->setStreetAddress($geoResult->getStreetName() ? trim(($geoResult->getStreetNumber() ? $geoResult->getStreetNumber() : '') . ' ' . $geoResult->getStreetName()) : null);
+                $address->setSubLocality($geoResult->getSubLocality());
+                $address->setAddressLocality($geoResult->getLocality());
+                foreach ($geoResult->getAdminLevels() as $level) {
+                    switch ($level->getLevel()) {
+                        case 1:
+                            $address->setLocalAdmin($level->getName());
+                            break;
+                        case 2:
+                            $address->setCounty($level->getName());
+                            break;
+                        case 3:
+                            $address->setMacroCounty($level->getName());
+                            break;
+                        case 4:
+                            $address->setRegion($level->getName());
+                            break;
+                        case 5:
+                            $address->setMacroRegion($level->getName());
+                            break;
+                    }
+                }
+                $address->setPostalCode($geoResult->getPostalCode());
+                if ($geoResult->getCountry() && $geoResult->getCountry()->getName()) {
+                    $address->setAddressCountry($geoResult->getCountry()->getName());
+                }
+                if ($geoResult->getCountry() && $geoResult->getCountry()->getCode()) {
+                    $address->setCountryCode($geoResult->getCountry()->getCode());
+                }
+                $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+
+                return $address;
             }
         }
         return false;

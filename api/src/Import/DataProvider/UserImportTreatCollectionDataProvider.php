@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,46 +21,38 @@
  *    LICENSE
  **************************/
 
-namespace App\Geography\DataProvider;
+namespace App\Import\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Geography\Entity\Address;
+use App\Import\Entity\UserImport;
 use Symfony\Component\HttpFoundation\RequestStack;
-use App\Geography\Service\GeoRouter;
-use App\Geography\Entity\Direction;
+use App\Import\Service\ImportManager;
 
 /**
- * Collection data provider for Direction search (route calculation).
+ * Collection data provider for User import treatment.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  */
-final class DirectionSearchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class UserImportTreatCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
-    protected $geoRouter;
+    protected $importManager;
     
-    public function __construct(RequestStack $requestStack, GeoRouter $geoRouter)
+    public function __construct(RequestStack $requestStack, ImportManager $importManager)
     {
         $this->request = $requestStack->getCurrentRequest();
-        $this->geoRouter = $geoRouter;
+        $this->importManager = $importManager;
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Direction::class === $resourceClass && $operationName === "search";
+        return UserImport::class === $resourceClass && $operationName === "treat";
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        $addresses = [];
-        foreach ($this->request->get('points') as $point) {
-            $waypoint = new Address();
-            $waypoint->setLatitude($point['latitude']);
-            $waypoint->setLongitude($point['longitude']);
-            $addresses[] = $waypoint;
-        }
-        return $this->geoRouter->getRoutes($addresses, false, true);
+        return [$this->importManager->treatUserImport()];
     }
 }

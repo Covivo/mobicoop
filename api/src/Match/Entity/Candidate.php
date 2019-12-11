@@ -46,6 +46,16 @@ class Candidate
     private $direction;
 
     /**
+     * @var int The direction time (in seconds).
+     */
+    private $duration;
+    
+    /**
+     * @var int The direction distance (in metres).
+     */
+    private $distance;
+
+    /**
      * @var int The maximum detour time (in seconds) accepted to match.
      */
     private $maxDetourDuration;
@@ -106,6 +116,30 @@ class Candidate
     public function setDirection(?Direction $direction): self
     {
         $this->direction = $direction;
+        
+        return $this;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+    
+    public function setDuration(int $duration): self
+    {
+        $this->duration = $duration;
+        
+        return $this;
+    }
+
+    public function getDistance(): ?int
+    {
+        return $this->distance;
+    }
+    
+    public function setDistance(int $distance): self
+    {
+        $this->distance = $distance;
         
         return $this;
     }
