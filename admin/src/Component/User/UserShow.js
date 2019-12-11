@@ -7,8 +7,9 @@ import {
     Show,
     TabbedShowLayout, Tab,
     TextField, EmailField, DateField, 
-    EditButton, FunctionField, Labeled,
-    ReferenceArrayField, BooleanField, Datagrid
+    FunctionField, Labeled,
+    ReferenceArrayField, BooleanField, Datagrid,
+    ReferenceField, ReferenceManyField
 } from 'react-admin';
 
 
@@ -43,6 +44,17 @@ const renderChat = (chat) => {
     return text;
 }
 
+const renderCommunityUserStatus = (status) => {
+    let text = "";
+    switch(status){
+        case 0: text="En attente";break;
+        case 1: text="Membre";break;
+        case 2: text="Modérateur";break;
+        case 3: text="Refusé";break;
+        default: text="Inconnu";
+    }
+    return text;
+}
 
 const ConditionalMusicFavoritesField = ({ record, ...rest }) =>
 record && record.musicFavorites
@@ -72,7 +84,7 @@ export const UserShow = (props) => (
                 <ConditionalChatFavoritesField />
             </Tab>
             <Tab label="Adresses">
-            <ReferenceArrayField source="addresses" reference="addresses" addLabel={false}>
+                <ReferenceArrayField source="addresses" reference="addresses" addLabel={false}>
                     <Datagrid>
                         <BooleanField source="home" label="Domicile" />
                         <TextField source="name" label="Nom" />
@@ -82,6 +94,18 @@ export const UserShow = (props) => (
                         <TextField source="addressCountry" label="Pays" />
                     </Datagrid>
                 </ReferenceArrayField>
+            </Tab>
+            <Tab label="Communautés">
+                <ReferenceManyField reference="community_users" target="user.id" source="originId" addLabel={false}>
+                    <Datagrid>
+                        <ReferenceField reference="communities" source="community" label="Nom">
+                                <TextField source="name" label="Nom" />
+                        </ReferenceField>
+                        <FunctionField render={record=>renderCommunityUserStatus(record.status)} label="Status"/>
+                        <DateField source="acceptedDate" label="Date d'acceptation"/>
+                        <DateField source="updatedDate" label="Date de mise à jour"/>
+                    </Datagrid>
+                </ReferenceManyField>
             </Tab>
             {isAuthorized("permission_manage") && 
             <Tab label="Droits">

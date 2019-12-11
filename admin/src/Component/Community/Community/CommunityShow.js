@@ -10,7 +10,7 @@ import {
 
 const statusChoices = [
     { id: 0, name: 'En attente' },
-    { id: 1, name: 'Membres' },
+    { id: 1, name: 'Membre' },
     { id: 2, name: 'Modérateur' },
     { id: 3, name: 'Refusé' },
 ];
