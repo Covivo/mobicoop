@@ -3,4 +3,4 @@
     <p>{{ "yourCarpoolBetween"|trans }} {{ (ask.matching.waypoints|first).address.addressLocality }} {{ "and"|trans }} {{ (ask.matching.waypoints|last).address.addressLocality }} {{ "withTheDriver"|trans }} {{ deleterGivenName|capitalize ~ " " ~ deleterFamilyName|capitalize }} {{ "isCanceledBecause"|trans }} {{ deleterGivenName|capitalize ~ " " ~ deleterFamilyName|capitalize}} {{ "hasDeletedTheAssociateAd"|trans }}</p>
     <p>{{ "clickOnLinkToSearchAgain"|trans }} {{ (ask.matching.waypoints|first).address.addressLocality }} {{ "and"|trans }} {{ (ask.matching.waypoints|last).address.addressLocality }}. </p>
     <p>{{ "noPenaltyApplied"|trans }}</p>
-{% endblock %}}
+{% endblock %}

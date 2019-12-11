@@ -113,7 +113,7 @@ class AskHistory implements MessagerInterface
     /**
      * @var Message|null The message linked the ask history item.
      *
-     * @ORM\OneToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="askHistory")
+     * @ORM\OneToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="askHistory", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
