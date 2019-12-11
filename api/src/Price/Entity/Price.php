@@ -44,7 +44,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "path"="/prices/round",
  *              "controller"=RoundPrice::class,
  *          }
- *      }
+ *      },
+ *      itemOperations={"get"}
  * )
  */
 class Price

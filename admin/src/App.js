@@ -127,6 +127,7 @@ export default class extends Component {
                   isAuthorized("permission_manage")   ? <Resource name={'rights'} {...rights} /> : null,
                   isAuthorized("territory_manage")    ? <Resource name={'territories'} {...territories} /> : null,
                   <Resource name="geo_search" />,
+                  <Resource name="community_users" />,
                   <Resource name="addresses" edit={ AddressEdit} title="Adresses" options={{ label: 'Adresses' }} icon={MapIcon} />,
                 ];
             }
