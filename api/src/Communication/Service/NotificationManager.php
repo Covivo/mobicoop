@@ -40,6 +40,7 @@ use App\Carpool\Entity\Matching;
 use App\Communication\Entity\Recipient;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Ask;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Notification manager
@@ -60,8 +61,9 @@ class NotificationManager
     private $notificationRepository;
     private $userNotificationRepository;
     private $enabled;
+    private $translator;
 
-    public function __construct(EntityManagerInterface $entityManager, \Twig_Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, SmsManager $smsManager, LoggerInterface $logger, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled)
+    public function __construct(EntityManagerInterface $entityManager, \Twig_Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, SmsManager $smsManager, LoggerInterface $logger, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled, TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -75,6 +77,7 @@ class NotificationManager
         $this->smsTemplatePath = $smsTemplatePath;
         $this->templating = $templating;
         $this->enabled = $enabled;
+        $this->translator = $translator;
     }
 
     /**
@@ -119,7 +122,8 @@ class NotificationManager
                         $this->createNotified($notification, $recipient, $object);
                         break;
                     case Medium::MEDIUM_EMAIL:
-                        $this->notifyByEmail($notification, $recipient, $object);
+                        $lang=$recipient->getLanguage();
+                        $this->notifyByEmail($notification, $recipient, $object, $lang);
                         $this->createNotified($notification, $recipient, $object);
                         $this->logger->info("Email notification for $action / " . $recipient->getEmail());
                         break;
@@ -147,7 +151,7 @@ class NotificationManager
      * @param object|null   $object
      * @return void
      */
-    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null)
+    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null, $lang='fr_FR')
     {
         $email = new Email();
         $email->setRecipientEmail($recipient->getEmail());
@@ -188,12 +192,15 @@ class NotificationManager
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
         }
+       
+        $this->translator->setLocale($lang);
         $email->setObject($this->templating->render(
             $notification->getTemplateTitle() ? $this->emailTitleTemplatePath . $notification->getTemplateTitle() : $this->emailTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
             [
                 'context' => $titleContext
             ]
         ));
+
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $recipient->getLanguage());
     }
