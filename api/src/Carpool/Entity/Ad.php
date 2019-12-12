@@ -42,6 +42,7 @@ use App\Carpool\Controller\AdAskGet;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
+ *          "get",
  *          "post"={
  *              "method"="POST",
  *              "controller"=AdPost::class,

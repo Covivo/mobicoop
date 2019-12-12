@@ -145,10 +145,12 @@ class GeoSearcher
                 $address = $relayPoint->getAddress();
                 $address->setRelayPoint($relayPoint);
                 // set address icon
-                if ($relayPoint->getRelayPointType()->getIcon()->getPrivateIconLinked()) {
-                    $address->setIcon($this->dataPath.$this->iconPath.$relayPoint->getRelayPointType()->getIcon()->getPrivateIconLinked()->getFileName());
-                } else {
-                    $address->setIcon($this->dataPath.$this->iconPath.$relayPoint->getRelayPointType()->getIcon()->getFileName());
+                if (count($relayPoint->getRelayPointTypes())>0) {
+                    if ($relayPoint->getRelayPointTypes()[0]->getIcon()->getPrivateIconLinked()) {
+                        $address->setIcon($this->dataPath.$this->iconPath.$relayPoint->getRelayPointTypes()[0]->getIcon()->getPrivateIconLinked()->getFileName());
+                    } else {
+                        $address->setIcon($this->dataPath.$this->iconPath.$relayPoint->getRelayPointTypes()[0]->getIcon()->getFileName());
+                    }
                 }
                 $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
                 $result[] = $address;

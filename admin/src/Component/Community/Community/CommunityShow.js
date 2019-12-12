@@ -10,8 +10,9 @@ import {
 
 const statusChoices = [
     { id: 0, name: 'En attente' },
-    { id: 1, name: 'Accepté' },
-    { id: 2, name: 'Refusé' },
+    { id: 1, name: 'Membre' },
+    { id: 2, name: 'Modérateur' },
+    { id: 3, name: 'Refusé' },
 ];
 const validationChoices = [
     { id: 0, name: 'Validation automatique' },
@@ -51,7 +52,7 @@ export const CommunityShow = (props) => (
                 <DateField source="createdDate" label="Date de création"/>
                 <EditButton />
             </Tab>
-            <Tab label="Membres" path="members">
+            <Tab label="Membres et Modérateurs" path="members">
                 <ReferenceArrayField source="communityUsers" reference="community_users" addLabel={false}>
                     <Datagrid>
                         <ReferenceField source="user" label="Prénom" reference="users" linkType="">

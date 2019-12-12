@@ -238,10 +238,10 @@ export default {
           }
         })
         .finally(function () {
-          self.loading = false;
           if (self.alert.message.length > 0) {
             self.snackbar = true;
           }
+          if (self.alert.type == 'error') self.loading = false;
         })
     },
     resetAlert() {

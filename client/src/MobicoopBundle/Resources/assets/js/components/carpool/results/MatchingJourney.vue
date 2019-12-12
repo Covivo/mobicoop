@@ -552,7 +552,7 @@ export default {
         return (this.defaultRole == "driver");
       }
       else{
-        return (this.lResult && this.lResult.resultDriver);
+        return (this.lResult != null && this.lResult.resultDriver != null);
       }
     },
     passenger() {
@@ -560,7 +560,7 @@ export default {
         return (this.defaultRole=="passenger");
       }
       else{
-        return (this.lResult && this.lResult.resultPassenger);
+        return (this.lResult != null && this.lResult.resultPassenger != null);
       }
     },
     regular() {

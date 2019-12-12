@@ -48,7 +48,7 @@
         >
           <!--Upload Avatar-->
           <v-row justify="center">
-            <v-col cols="3">
+            <v-col >
               <v-avatar
                 color="grey lighten-3"
                 size="225px"
@@ -62,7 +62,8 @@
           </v-row>
 
           <v-row justify="center">
-            <v-col cols="3" justify-self="center" align-self="center" v-if="!displayFileUpload">
+            <v-col cols="3"  xl="3"
+              sm="8" justify-self="center" align-self="center" v-if="!displayFileUpload">
 
             <v-btn
               :loading="loadingDelete"
@@ -78,7 +79,7 @@
 
             </v-col>
 
-            <v-col cols="5" class="text-center" v-else>
+            <v-col cols="5" class="text-center" justify-self="center" align-self="center" v-else>
               <v-file-input
                 v-model="avatar"
                 :rules="avatarRules"
@@ -152,7 +153,7 @@
                   <span>{{$t('phone.tooltips.notVerified')}}</span>
               </v-tooltip>
             </v-col>
-            <v-col cols="3" xl="3" sm="8"  v-if="diplayVerification && telephone && phoneVerified == false">
+            <v-col cols="4" xl="4" sm="8"  v-if="diplayVerification && telephone && phoneVerified == false">
               <v-btn 
                 rounded color="secondary" 
                 @click="generateToken" class="mt-4" 
