@@ -186,6 +186,35 @@ class UserManager
     }
 
     /**
+     * Treat a user : set default parameters.
+     * Used for example for imports.
+     *
+     * @param User $user    The user to treat
+     * @return User         The user treated
+     */
+    public function treatUser(User $user)
+    {
+        // we treat the role
+        if (count($user->getUserRoles()) == 0) {
+            // we have to add a role
+            $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL);
+            $userRole = new UserRole();
+            $userRole->setRole($role);
+            $user->addUserRole($userRole);
+        }
+
+        // we treat the notifications
+        if (count($user->getUserNotifications()) == 0) {
+            // we have to create the default user notifications, we don't persist immediately
+            $user = $this->createAlerts($user, false);
+        }
+
+        $this->entityManager->persist($user);
+
+        return $user;
+    }
+
+    /**
      * Get the private communities of the given user.
      *
      * @param User $user
@@ -453,10 +482,11 @@ class UserManager
     /**
      * Create user alerts
      *
-     * @param User $user
+     * @param User $user        The user to treat
+     * @param boolean $perist   Persist immediately (false for mass import)
      * @return User
      */
-    public function createAlerts(User $user)
+    public function createAlerts(User $user, $persist=true)
     {
         $notifications = $this->notificationRepository->findUserEditable();
         foreach ($notifications as $notification) {
@@ -473,7 +503,9 @@ class UserManager
             $user->addUserNotification($userNotification);
         }
         $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        if ($persist) {
+            $this->entityManager->flush();
+        }
         return $user;
     }
 

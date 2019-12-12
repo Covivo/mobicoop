@@ -138,6 +138,14 @@ class Community
     private $name;
 
     /**
+     * @var int Community status.
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $status;
+
+    /**
      * @var boolean|null Members are only visible by the members of the community.
      *
      * @ORM\Column(type="boolean", nullable=true)
@@ -297,6 +305,18 @@ class Community
     public function setName(string $name)
     {
         $this->name = $name;
+    }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?int $status): self
+    {
+        $this->status = $status;
+
+        return $this;
     }
 
     public function isMembersHidden(): ?bool

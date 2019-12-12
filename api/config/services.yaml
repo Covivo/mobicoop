@@ -194,11 +194,6 @@ services:
         tags:
             - { name: monolog.logger, channel: community }
 
-    # Data Provider
-    App\DataProvider\Entity\GeoRouterProvider:
-        tags:
-            - { name: monolog.logger, channel: georouter }
-
     # Event
     App\Event\Controller\:
         resource: '../src/Event/Controller'
@@ -229,8 +224,10 @@ services:
     App\Geography\Service\GeoRouter:
         arguments:
             $uri: '%env(resolve:SIG_GEOROUTER_URI)%'
-            $batchScriptPath: '%env(resolve:MOBIMATCH_BATCH_SCRIPT_PATH)%'
-            $batchTemp: '%env(resolve:MOBIMATCH_BATCH_TEMP)%'
+            $type: '%env(resolve:SIG_GEOROUTER_TYPE)%'
+            $batchScriptPath: '%env(resolve:SIG_GEOROUTER_BATCH_SCRIPT_PATH)%'
+            $batchScriptArgs: '%env(resolve:SIG_GEOROUTER_BATCH_SCRIPT_ARGS)%'
+            $batchTemp: '%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%'
         tags:
             - { name: monolog.logger, channel: georouter }
 
@@ -266,6 +263,11 @@ services:
         arguments:
             $types: '%images%'
 
+    # Import
+    App\Import\Controller\:
+        resource: '../src/Import/Controller'
+        tags: ['controller.service_arguments']
+
     # Match
     App\Match\Controller\:
         resource: '../src/Match/Controller'
@@ -282,6 +284,11 @@ services:
         tags:
             - { name: monolog.logger, channel: mass }
 
+    # Price
+    App\Price\Controller\:
+        resource: '../src/Price/Controller'
+        tags: ['controller.service_arguments']
+
     # Rdex
     App\Rdex\Controller\:
         resource: '../src/Rdex/Controller'
@@ -290,6 +297,11 @@ services:
     # Right
     App\Right\Controller\:
         resource: '../src/Right/Controller'
+        tags: ['controller.service_arguments']
+    
+    # Solidary
+    App\Solidary\Controller\:
+        resource: '../src/Solidary/Controller'
         tags: ['controller.service_arguments']
 
     # User
@@ -310,13 +322,3 @@ services:
             $chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
             $music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
             $smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'
-
-    # Solidary
-    App\Solidary\Controller\:
-        resource: '../src/Solidary/Controller'
-        tags: ['controller.service_arguments']
-
-    # Price
-    App\Price\Controller\:
-        resource: '../src/Price/Controller'
-        tags: ['controller.service_arguments']

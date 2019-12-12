@@ -37,7 +37,7 @@ class GeoTools
     /**
      * Constructor.
      */
-    public function __construct(array $params)
+    public function __construct(?array $params=null)
     {
         $this->params = $params;
     }

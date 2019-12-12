@@ -82,8 +82,6 @@ class AdManager
      */
     public function createAd(Ad $ad)
     {
-        $this->logger->info('Ad creation | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
         $outwardProposal = new Proposal();
         $outwardCriteria = new Criteria();
 
@@ -527,35 +525,28 @@ class AdManager
 
         // we persist the proposals
         $this->entityManager->flush();
-
-        $this->logger->info('Ad creation | End ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
+        
         // if the ad is a round trip, we want to link the potential matching results
         if (!$ad->isOneWay()) {
             $outwardProposal = $this->proposalManager->linkRelatedMatchings($outwardProposal);
             $this->entityManager->persist($outwardProposal);
             $this->entityManager->flush();
-            $this->logger->info('Ad creation | End flushing linking related ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
         // if the requester can be driver and passenger, we want to link the potential opposite matching results
         if ($ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER) {
             // linking for the outward
             $outwardProposal = $this->proposalManager->linkOppositeMatchings($outwardProposal);
             $this->entityManager->persist($outwardProposal);
-            $this->logger->info('Ad creation | End linking opposite outward ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             if (!$ad->isOneWay()) {
                 // linking for the return
                 $returnProposal = $this->proposalManager->linkOppositeMatchings($returnProposal);
                 $this->entityManager->persist($returnProposal);
-                $this->logger->info('Ad creation | End linking opposite return ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             }
             $this->entityManager->flush();
-            $this->logger->info('Ad creation | End flushing linking opposite ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
 
         // we compute the results
-        $this->logger->info('Ad creation | Start creation results  ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
+        
         // default order
         $ad->setFilters([
                 'order'=>[
@@ -574,8 +565,7 @@ class AdManager
                 $ad->getFilters()
             )
         );
-        $this->logger->info('Ad creation | End creation results  ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
+        
         // we set the ad id to the outward proposal id
         $ad->setId($outwardProposal->getId());
 

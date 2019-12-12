@@ -74,6 +74,7 @@ use App\User\Filter\SolidaryFilter;
 use App\User\Filter\ValidatedDateTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
+use App\Import\Entity\UserImport;
 use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 
@@ -690,6 +691,15 @@ class User implements UserInterface, EquatableInterface
     * @ORM\OneToMany(targetEntity="\App\User\Entity\UserNotification", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
     */
     private $userNotifications;
+
+    /**
+     * @var UserImport|null The user import data.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Import\Entity\UserImport", mappedBy="user")
+     * @Groups({"read"})
+     * @MaxDepth(1)
+     */
+    private $import;
 
     /**
      * @var array|null The avatars of the user
@@ -1659,6 +1669,18 @@ class User implements UserInterface, EquatableInterface
                 $userNotification->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getImport(): ?UserImport
+    {
+        return $this->import;
+    }
+
+    public function setImport(?UserImport $import): self
+    {
+        $this->import = $import;
 
         return $this;
     }

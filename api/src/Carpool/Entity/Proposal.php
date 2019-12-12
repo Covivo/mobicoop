@@ -39,7 +39,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\ProposalPost;
-use App\Carpool\Controller\ProposalResults;
 use App\Carpool\Controller\ProposalDelete;
 use App\Travel\Entity\TravelMode;
 use App\Community\Entity\Community;
@@ -65,129 +64,8 @@ use App\Communication\Entity\Notified;
  *              "path"="/proposals",
  *              "controller"=ProposalPost::class,
  *          },
- *          "simple_search"={
- *              "method"="GET",
- *              "path"="/proposals/search",
- *              "normalization_context"={"groups"={"results"}},
- *              "swagger_context" = {
- *                  "parameters" = {
- *                      {
- *                          "name" = "origin_latitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The latitude of the origin point"
- *                      },
- *                      {
- *                          "name" = "origin_longitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The longitude of the origin point"
- *                      },
- *                      {
- *                          "name" = "destination_latitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The latitude of the destination point"
- *                      },
- *                      {
- *                          "name" = "destination_longitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The longitude of the destination point"
- *                      },
- *                      {
- *                          "name" = "frequency",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "integer",
- *                          "description" = "The frequency of the trip (1=punctual, 2=regular; for regular trips)"
- *                      },
- *                      {
- *                          "name" = "date",
- *                          "in" = "query",
- *                          "type" = "string",
- *                          "format" = "date-time",
- *                          "description" = "The date and time of the trip for a punctual trip, the start date for regular trips (on RFC3339 format)"
- *                      },
- *                      {
- *                          "name" = "useTime",
- *                          "in" = "query",
- *                          "type" = "boolean",
- *                          "description" = "True to use the time part of the date, false to ignore the time part"
- *                      },
- *                      {
- *                          "name" = "strictDate",
- *                          "in" = "query",
- *                          "type" = "boolean",
- *                          "description" = "True to limit the search to the date, false to search even in the next days (only for punctual trip)"
- *                      },
- *                      {
- *                          "name" = "strictPunctual",
- *                          "in" = "query",
- *                          "type" = "boolean",
- *                          "description" = "True to search only in punctual trips for punctual search, false to search also in regular trips"
- *                      },
- *                      {
- *                          "name" = "strictRegular",
- *                          "in" = "query",
- *                          "type" = "boolean",
- *                          "description" = "True to search only in regular trips for regular search, false to search also in punctual trips"
- *                      },
- *                      {
- *                          "name" = "marginTime",
- *                          "in" = "query",
- *                          "type" = "integer",
- *                          "description" = "The margin time in seconds"
- *                      },
- *                      {
- *                          "name" = "regularLifeTime",
- *                          "in" = "query",
- *                          "type" = "integer",
- *                          "description" = "The lifetime of a regular proposal in years (default defined in env variable)"
- *                      },
- *                      {
- *                          "name" = "userId",
- *                          "in" = "query",
- *                          "type" = "integer",
- *                          "description" = "The id of the user that makes the query"
- *                      },
- *                      {
- *                          "name" = "role",
- *                          "in" = "query",
- *                          "type" = "integer",
- *                          "description" = "The role of the user that makes the query (1=driver, 2=passenger, 3=both; default defined in env variable)"
- *                      },
- *                      {
- *                          "name" = "type",
- *                          "in" = "query",
- *                          "type" = "integer",
- *                          "description" = "The type of the trip (1=one way, 2=return trip; default defined in env variable)"
- *                      },
- *                      {
- *                          "name" = "anyRouteAsPassenger",
- *                          "in" = "query",
- *                          "type" = "boolean",
- *                          "description" = "True if the passenger accepts any route (not implemented yet; default defined in env variable)"
- *                      }
- *                  }
- *              }
- *          }
  *      },
  *      itemOperations={
- *          "results"={
- *              "method"="GET",
- *              "path"="/proposals/{id}/results",
- *              "normalization_context"={"groups"={"results"}},
- *              "controller"=ProposalResults::class,
- *          },
  *          "get",
  *          "put",
  *          "delete"={
