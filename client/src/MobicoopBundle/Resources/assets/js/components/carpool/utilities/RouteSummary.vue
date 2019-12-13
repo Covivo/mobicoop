@@ -18,8 +18,9 @@
       </v-col>
       <!-- Origin -->
       <v-col
-        :cols="5"
+        cols="5"
         class="text-right"
+        :class="type==1 ? 'text-right' : regular ? 'text-right' : 'text-right  mr-n4'"
       >
         <v-list-item
           two-line
@@ -61,8 +62,8 @@
 
       <!-- Destination -->
       <v-col
-        :cols="5"
-        class="text-left"
+        cols="5"
+        :class="type==1 ? 'text-left' : regular ? 'text-left ml-4' : 'text-right  ml-8'"
       >
         <v-list-item
           two-line

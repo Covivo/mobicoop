@@ -36,7 +36,7 @@
       <!-- Seats -->
       <v-col
         cols="2"
-        class="text-center"
+        class="text-right"
       >
         {{ $tc('places', seats, { seats: seats }) }}
       </v-col>
