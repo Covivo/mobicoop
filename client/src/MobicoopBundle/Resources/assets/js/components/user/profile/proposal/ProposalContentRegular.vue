@@ -34,7 +34,6 @@
         <v-container class="primary lighten-5">
           <v-row>
             <v-col
-              cols="6"
               class="py-0"
             >
               <route-summary
