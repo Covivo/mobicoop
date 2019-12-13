@@ -7,7 +7,7 @@
     >
       <v-col
         v-if="time"
-        col="2"
+        cols="1"
       >
         <span
           class="body-1 font-weight-bold"
@@ -18,8 +18,8 @@
       </v-col>
       <!-- Origin -->
       <v-col
-        :cols="time ? 4 : 5"
-        align="left"
+        :cols="5"
+        class="text-right"
       >
         <v-list-item
           two-line
@@ -49,7 +49,7 @@
 
       <!-- Icon -->
       <v-col
-        cols="2"
+        cols="1"
       >
         <v-icon
           :color="iconColor"
@@ -61,9 +61,8 @@
 
       <!-- Destination -->
       <v-col
-        :cols="time ? 4 : 5"
-        class="title font-weight-bold mt-0"
-        align="left"
+        :cols="5"
+        class="text-left"
       >
         <v-list-item
           two-line
