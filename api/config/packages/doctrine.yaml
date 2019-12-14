@@ -15,7 +15,7 @@ doctrine:
             charset: utf8mb4
             collate: utf8mb4_unicode_ci
         url: '%env(resolve:DATABASE_URL)%'
-        logging: false
+        logging: true
         profiling: false
         types:
             geometry:   CrEOF\Spatial\DBAL\Types\GeometryType
@@ -31,9 +31,11 @@ doctrine:
             datetime_functions:
                 dayofweek: DoctrineExtensions\Query\Mysql\DayOfWeek
             numeric_functions:
-                st_contains:        CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STContains
                 contains:           CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Contains
+                st_contains:        CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STContains
+                st_distance:        CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STDistance
                 st_area:            CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Area
+                linestringfromwkb:  CrEOF\Spatial\ORM\Query\AST\Functions\MySql\LineStringFromWKB
                 st_geomfromtext:    CrEOF\Spatial\ORM\Query\AST\Functions\MySql\GeomFromText
                 st_intersects:      CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STIntersects
                 st_buffer:          CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STBuffer

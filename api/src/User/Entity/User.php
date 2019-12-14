@@ -1673,7 +1673,7 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getImport(): UserImport
+    public function getImport(): ?UserImport
     {
         return $this->import;
     }

@@ -23,6 +23,7 @@
 
 namespace App\Import\Service;
 
+use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Service\ProposalManager;
 use App\Communication\Entity\Medium;
 use App\Communication\Repository\NotificationRepository;
@@ -50,13 +51,14 @@ class ImportManager
     private $userManager;
     private $roleRepository;
     private $notificationRepository;
+    private $proposalRepository;
    
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, UserManager $userManager, RoleRepository $roleRepository, NotificationRepository $notificationRepository)
+    public function __construct(EntityManagerInterface $entityManager, UserImportRepository $userImportRepository, ProposalRepository $proposalRepository, ProposalManager $proposalManager, UserManager $userManager, RoleRepository $roleRepository, NotificationRepository $notificationRepository)
     {
         $this->entityManager = $entityManager;
         $this->userImportRepository = $userImportRepository;
@@ -64,6 +66,7 @@ class ImportManager
         $this->userManager = $userManager;
         $this->roleRepository = $roleRepository;
         $this->notificationRepository = $notificationRepository;
+        $this->proposalRepository = $proposalRepository;
     }
 
     /**
@@ -74,7 +77,7 @@ class ImportManager
     public function treatUserImport()
     {
         set_time_limit(3600);
-        gc_enable();
+        //gc_enable();
         
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
 
@@ -89,7 +92,7 @@ class ImportManager
         ]);
         $q->execute();
 
-        gc_collect_cycles();
+        //gc_collect_cycles();
 
         // second pass : user related treatment
         $batch = 50;    // batch for users
@@ -133,14 +136,14 @@ class ImportManager
             if ($pool>=$batch) {
                 $this->entityManager->flush();
                 $this->entityManager->clear();
-                gc_collect_cycles();
+                //gc_collect_cycles();
                 $pool = 0;
             }
         }
         // final flush for pending persists
         $this->entityManager->flush();
         $this->entityManager->clear();
-        gc_collect_cycles();
+        //gc_collect_cycles();
 
         $q = $this->entityManager
         ->createQuery('UPDATE App\import\Entity\UserImport u set u.status = :status WHERE u.status=:oldStatus')
@@ -151,11 +154,19 @@ class ImportManager
         $q->execute();
 
         // batch for criterias / direction
-        $batch = 500;
-
+        $batch = 50;
         $this->proposalManager->setDirectionsAndDefaultsForImport($batch);
 
-        gc_collect_cycles();
+        $q = $this->entityManager
+        ->createQuery('UPDATE App\import\Entity\UserImport u set u.status = :status, u.treatmentUserStartDate=:treatmentDate WHERE u.status=:oldStatus')
+        ->setParameters([
+            'status'=>UserImport::STATUS_DIRECTION_TREATED,
+            'treatmentDate'=>new \DateTime(),
+            'oldStatus'=>UserImport::STATUS_USER_TREATED
+        ]);
+        $q->execute();
+
+        //gc_collect_cycles();
 
         return [];
     }
@@ -167,27 +178,18 @@ class ImportManager
      */
     public function matchUserImport()
     {
-        set_time_limit(3600);
-        gc_enable();
+        set_time_limit(50000);
         
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
 
         // creation of the matchings
         // we create an array of all proposals to treat
-        $importedUsers = $this->userImportRepository->findBy(['status'=>UserImport::STATUS_DIRECTION_TREATED]);
-        $proposals = [];
-        foreach ($importedUsers as $import) {
-            foreach ($import->getUser()->getProposals() as $proposal) {
-                // we exclude the proposals that have no directions... can happen if no routes are found !
-                if (!is_null($proposal->getCriteria()->getDirectionDriver()) || !is_null($proposal->getCriteria()->getDirectionPassenger())) {
-                    $proposals[$proposal->getId()] = $proposal;
-                }
-            }
-        }
-        $this->proposalManager->createMatchingsForProposals($proposals);
+        $proposalIds = $this->proposalRepository->findImportedProposals(UserImport::STATUS_DIRECTION_TREATED);
+
+        $this->proposalManager->createMatchingsForProposals($proposalIds);
 
         // treat the return and opposite
-        $proposals = $this->proposalManager->createLinkedAndOppositesForProposals($proposals);
+        $proposals = $this->proposalManager->createLinkedAndOppositesForProposals($proposalIds);
 
         $q = $this->entityManager
         ->createQuery('UPDATE App\import\Entity\UserImport u set u.status = :status WHERE u.status=:oldStatus')

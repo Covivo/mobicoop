@@ -128,11 +128,11 @@ class GeoMatcher
      * @param array $candidates  The array of candidates to match in the form :
      * [
      *      0 => [
-     *          'driver'      => [$driver],
+     *          'driver'      => $driver,
      *          'passengers'  => [$passenger1,$passenger2...]
      *      ],
      *      1 => [
-     *          'driver'      => [$driver],
+     *          'driver'      => $driver,
      *          'passengers'  => [$passenger1,$passenger2...]
      *      ],
      *      ...
@@ -146,40 +146,60 @@ class GeoMatcher
 
         // we create the points for the routes alternatives for each candidate
         $addressesForRoutes = [];
+        $variants = [];
         $routesOwner = [];
-        
         $i=0;
+
         foreach ($candidates as $keyActors=>$actors) {
             foreach ($actors['passengers'] as $keyPassenger=>$candidateToMatch) {
                 if ($pointsArray = $this->generatePointsArray($actors['driver'], $candidateToMatch)) {
-                    $addressesForRoutes[$i] = $pointsArray;
-                    $routesOwner[$i] = [
-                        'actors' => $keyActors,
-                        'passenger' => $keyPassenger
-                    ];
-                    $i++;
+                    foreach ($pointsArray as $variant) {
+                        $variants[$i] = [
+                            'candidate' => $actors['driver'],
+                            'candidateToMatch' => $candidateToMatch,
+                            'variantPoints' => $variant
+                        ];
+                        $addressesForRoutes[$i][] = $variant;
+                        $i++;
+                    }
+                    // $addressesForRoutes[$i] = $pointsArray;
+                    // $routesOwner[$i] = [
+                    //     'actors' => $keyActors,
+                    //     'passenger' => $keyPassenger
+                    // ];
+                    // $i++;
                 }
             }
         }
 
         if (!$forMass) {
-            $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_OBJECT);
+            $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_ARRAY);
     
             // we treat the routes to check if they match
             foreach ($ownerRoutes as $ownerId=>$routes) {
-                //$this->logger->debug('Multi Match | Check matches for id #'.$ownerId);
-                if ($matches = $this->checkMultiMatch(
-                    $candidates[$routesOwner[$ownerId]['actors']]['driver'],
-                    $candidates[$routesOwner[$ownerId]['actors']]['passengers'][$routesOwner[$ownerId]['passenger']],
+                if ($match = $this->checkMatch(
+                    $variants[$ownerId]['candidate'],
+                    $variants[$ownerId]['candidateToMatch'],
                     $routes,
-                    $addressesForRoutes[$ownerId]
+                    $variants[$ownerId]['variantPoints']
                 )) {
-                    $matchesReturned[] = [
-                            'driver' => $candidates[$routesOwner[$ownerId]['actors']]['driver'],
-                            'passenger' => $candidates[$routesOwner[$ownerId]['actors']]['passengers'][$routesOwner[$ownerId]['passenger']],
-                            'matches' => $matches
-                        ];
+                    // the following means : $matchesReturned[driverId][passengerId][] = $match;
+                    $matchesReturned[$variants[$ownerId]['candidate']->getId()][$variants[$ownerId]['candidateToMatch']->getId()][] = $match;
                 }
+
+                //$this->logger->debug('Multi Match | Check matches for id #'.$ownerId);
+                // if ($match = $this->checkMatch(
+                //     $candidates[$routesOwner[$ownerId]['actors']]['driver'],
+                //     $candidates[$routesOwner[$ownerId]['actors']]['passengers'][$routesOwner[$ownerId]['passenger']],
+                //     $routes,
+                //     $addressesForRoutes[$ownerId]
+                // )) {
+                //     $matchesReturned[] = [
+                //             'driver' => $candidates[$routesOwner[$ownerId]['actors']]['driver'],
+                //             'passenger' => $candidates[$routesOwner[$ownerId]['actors']]['passengers'][$routesOwner[$ownerId]['passenger']],
+                //             'match' => $match
+                //         ];
+                // }
             }
         } else {
             $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_ARRAY);

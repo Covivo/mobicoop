@@ -327,7 +327,11 @@ class GraphhopperProvider implements GeorouterInterface
                     case self::RETURN_TYPE_RAW:
                     {
                         foreach ($response as $key=>$paths) {
-                            $routes[$requestsOwner[$key]][] = $path;
+                            if (is_array($paths)) {
+                                foreach ($paths as $path) {
+                                    $routes[$requestsOwner[$key]][] = $path;
+                                }
+                            }
                         }
                         break;
                     }

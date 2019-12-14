@@ -56,7 +56,7 @@ class FakeUserController extends AbstractController
     const MAX_TIME_RETURN = "22:00";
     const DOMAIN = "mobicoop-import.org";
     const PASSWORD = "$2y$10$1n.jspEsnNz7ch4ZgjtT6O2WKXRqEpaL/9QrY5TqafqBtTiM2Xndu"; // "password" bcrypted
-    const ORIGIN = "mobicoop_v1";
+    const ORIGIN = "ouestgo";
     const PUNCTUAL_FREQ = 0.2;
     const ONEWAY_FREQ = 0.3;
     const DRIVER_FREQ = 0.3;
@@ -64,6 +64,8 @@ class FakeUserController extends AbstractController
     const NB_FREQ = 0.8;
 
     private $addresses;
+
+    // INSERT INTO user_import (user_id, user_external_id,origin,status,created_date) SELECT id as userid, id as extuserid, "ouestgo",0,"2019-12-13" FROM user
 
     /**
      * Fake user generator

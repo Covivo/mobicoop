@@ -82,6 +82,8 @@ class AdManager
      */
     public function createAd(Ad $ad)
     {
+        $this->logger->info("AdManager : start " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
         $outwardProposal = new Proposal();
         $outwardCriteria = new Criteria();
 

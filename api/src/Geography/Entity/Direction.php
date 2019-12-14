@@ -28,8 +28,8 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use CrEOF\Spatial\PHP\Types\Geometry\Polygon;
+use CrEOF\Spatial\PHP\Types\Geometry\LineString;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
-use CrEOF\Spatial\PHP\Types\Geography\LineString;
 
 /**
  * A direction : the route to follow between 2 or more addresses using an individual transport mode.

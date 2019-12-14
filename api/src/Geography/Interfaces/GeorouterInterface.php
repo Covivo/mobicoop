@@ -23,6 +23,8 @@
 
 namespace App\Geography\Interfaces;
 
+use App\Geography\Entity\Direction;
+
 /**
  * Geographic router interface.
  *

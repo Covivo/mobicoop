@@ -32,6 +32,8 @@ use App\Geography\Entity\Address;
  */
 class GeoTools
 {
+    const METERS_BY_DEGREE = 111319;
+
     private $params;
 
     /**
@@ -134,6 +136,33 @@ class GeoTools
     {
         //return round(((($distance)/1000) * 7 * 0.0232), $round);
         return round($distance/1000 * 213, $round);
+    }
+
+    /**
+     * Get the new latitude of a given point after moving it from a given distance.
+     * Only the latitude is needed.
+     *
+     * @param float $lat    The initial latitude of the point
+     * @param int $dlat     The delta latitude in metres
+     * @return float
+     */
+    public function moveGeoLat(float $lat, int $dlat)
+    {
+        return $lat+((1/self::METERS_BY_DEGREE)*$dlat);
+    }
+
+    /**
+     * Get the new longitude of a given point after moving it from a given distance.
+     * Longitude AND latitude are needed.
+     *
+     * @param float $lon    The initial longitude of the point
+     * @param float $lat    The initial latitude of the point
+     * @param int $dlon     The delta longitude in metres
+     * @return float
+     */
+    public function moveGeoLon(float $lon, float $lat, int $dlon)
+    {
+        return $lon + (((1/self::METERS_BY_DEGREE)*$dlon)/cos($lat*0.018)); // pi / 180 = 0.018
     }
 
     /**

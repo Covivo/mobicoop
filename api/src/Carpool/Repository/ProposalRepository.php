@@ -23,7 +23,6 @@
 
 namespace App\Carpool\Repository;
 
-use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
@@ -42,11 +41,17 @@ use App\Geography\Service\GeoTools;
 class ProposalRepository
 {
     const METERS_BY_DEGREE = 111319;
-    const BEARING_RANGE = 10;
+    const BEARING_RANGE = 10;           // if used, only accept proposal where the bearing direction (cape) is not at the opposite, more or less the range degrees
+                                        // for example, if the bearing is 0 (S->N), the proposals where the bearing is between 170 and 190 (~ N->S) are excluded
+    const PASSENGER_PROPORTION = 0.2;   // minimum passenger distance relative to the driver distance, eg passenger distance should be at least 20% of the driver distance
 
-    const USE_BEARING = true;
-    const USE_BBOX = true;
-    
+    const DISTANCE = 20000;             // max distance (in metres) between driver and passenger directions
+    const DISTANCE_RATIO = 100000;
+
+    const USE_BEARING = true;               // use the bearing check
+    const USE_BBOX = true;                 // use the bbox check (check if the bounding box of the proposals intersect)
+    const USE_PASSENGER_PROPORTION = false;  // use the passenger distance proportion
+
     private $repository;
     private $zoneManager;
     private $userManager;
@@ -97,68 +102,40 @@ class ProposalRepository
         // we search the matchings in the proposal entity
         $query = $this->repository->createQueryBuilder('p');
 
+        $selection = [
+            'p.id as pid',
+            'u.id as uid',
+            'c.driver',
+            'c.passenger',
+            'c.maxDetourDuration',
+            'c.maxDetourDistance',
+            'dp.duration as dpduration',
+            'dp.distance as dpdistance',
+            'w.position',
+            'w.destination',
+            'a.longitude',
+            'a.latitude',
+            'a.streetAddress',
+            'a.postalCode',
+            'a.addressLocality',
+            'a.addressCountry',
+            'a.elevation',
+            'a.houseNumber',
+            'a.street',
+            'a.subLocality',
+            'a.localAdmin',
+            'a.county',
+            'a.macroCounty',
+            'a.region',
+            'a.macroRegion',
+            'a.countryCode'
+        ];
         if (!$driversOnly) {
-            $query->select([
-                'p.id as pid',
-                'u.id as uid',
-                'c.driver',
-                'c.passenger',
-                'c.maxDetourDuration',
-                'c.maxDetourDistance',
-                'dp.duration as dpduration',
-                'dp.distance as dpdistance',
-                'dd.duration as ddduration',
-                'dd.distance as dddistance',
-                'w.position',
-                'w.destination',
-                'a.longitude',
-                'a.latitude',
-                'a.streetAddress',
-                'a.postalCode',
-                'a.addressLocality',
-                'a.addressCountry',
-                'a.elevation',
-                'a.houseNumber',
-                'a.street',
-                'a.subLocality',
-                'a.localAdmin',
-                'a.county',
-                'a.macroCounty',
-                'a.region',
-                'a.macroRegion',
-                'a.countryCode'
-            ]);
-        } else {
-            $query->select([
-                'p.id as pid',
-                'u.id as uid',
-                'c.driver',
-                'c.passenger',
-                'c.maxDetourDuration',
-                'c.maxDetourDistance',
-                'dp.duration as dpduration',
-                'dp.distance as dpdistance',
-                'w.position',
-                'w.destination',
-                'a.longitude',
-                'a.latitude',
-                'a.streetAddress',
-                'a.postalCode',
-                'a.addressLocality',
-                'a.addressCountry',
-                'a.elevation',
-                'a.houseNumber',
-                'a.street',
-                'a.subLocality',
-                'a.localAdmin',
-                'a.county',
-                'a.macroCounty',
-                'a.region',
-                'a.macroRegion',
-                'a.countryCode'
-            ]);
+            $selection[] = 'dd.duration as ddduration';
+            $selection[] = 'dd.distance as dddistance';
         }
-        //->select(['p','u'])
+        
+        $query->select($selection);
         
         //->select(['p','u','p.id as proposalId','SUM(ac.seats) as nbSeats'])
         // we need the criteria (for the dates, number of seats...)
@@ -247,27 +224,45 @@ class ProposalRepository
                 if ($range['min']<=$range['max']) {
                     // usual case, eg. 140 to 160
                     $zonePassengerWhere .= ' and (dp.bearing <= :minDriverRange or dp.bearing >= :maxDriverRange)';
-                    $query->setParameter('minDriverRange',$range['min']);
-                    $query->setParameter('maxDriverRange',$range['max']);
+                    $query->setParameter('minDriverRange', $range['min']);
+                    $query->setParameter('maxDriverRange', $range['max']);
                 } elseif ($range['min']>$range['max']) {
                     // the range is like between 350 and 10
                     $zonePassengerWhere .= ' and (dp.bearing >= :maxDriverRange and dp.bearing <= :minDriverRange)';
-                    $query->setParameter('minDriverRange',$range['min']);
-                    $query->setParameter('maxDriverRange',$range['max']);
+                    $query->setParameter('minDriverRange', $range['min']);
+                    $query->setParameter('maxDriverRange', $range['max']);
                 }
             }
 
             // bounding box
             if (self::USE_BBOX) {
-                $zonePassengerWhere .= ' and (ST_INTERSECTS(dp.geoJsonDetail,' . 
-                    $this->getGeoJsonPolygon(
-                        $proposal->getCriteria()->getDirectionDriver()->getBboxMinLon(),
-                        $proposal->getCriteria()->getDirectionDriver()->getBboxMinLat(),
-                        $proposal->getCriteria()->getDirectionDriver()->getBboxMaxLon(),
-                        $proposal->getCriteria()->getDirectionDriver()->getBboxMaxLon()
-                    ) . ')=1)';
+                $zonePassengerWhere .= ' and (ST_INTERSECTS(dp.geoJsonBbox,ST_GeomFromText(\'' .
+                    $this->getGeoPolygon(
+                        $this->geoTools->moveGeoLon(
+                            $proposal->getCriteria()->getDirectionDriver()->getBboxMinLon(),
+                            $proposal->getCriteria()->getDirectionDriver()->getBboxMinLat(),
+                            -($this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance()))
+                        ),
+                        $this->geoTools->moveGeoLat(
+                            $proposal->getCriteria()->getDirectionDriver()->getBboxMinLat(),
+                            -($this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance()))
+                        ),
+                        $this->geoTools->moveGeoLon(
+                            $proposal->getCriteria()->getDirectionDriver()->getBboxMaxLon(),
+                            $proposal->getCriteria()->getDirectionDriver()->getBboxMaxLat(),
+                            $this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance())
+                        ),
+                        $this->geoTools->moveGeoLat(
+                            $proposal->getCriteria()->getDirectionDriver()->getBboxMaxLat(),
+                            $this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance())
+                        )
+                    ) . '\'))=1)';
             }
-            //$query->andWhere(sprintf('(ST_INTERSECTS(dp.geoJsonDetail,\'%s\')=1)', $proposal->getCriteria()->getDirectionDriver()->getGeoJsonDetail()));
+
+            // passenger proportion
+            if (self::USE_PASSENGER_PROPORTION) {
+                $zonePassengerWhere .= ' and (dp.distance >= ' . $proposal->getCriteria()->getDirectionDriver()->getDistance()*self::PASSENGER_PROPORTION . ')';
+            }
         }
         if (!$driversOnly && $proposal->getCriteria()->isPassenger()) {
             $precision = $this->getPrecision($proposal->getCriteria()->getDirectionDriver());
@@ -287,27 +282,45 @@ class ProposalRepository
                 if ($range['min']<=$range['max']) {
                     // usual case, eg. 140 to 160
                     $zoneDriverWhere .= ' and (dd.bearing <= :minPassengerRange or dd.bearing >= :maxPassengerRange)';
-                    $query->setParameter('minPassengerRange',$range['min']);
-                    $query->setParameter('maxPassengerRange',$range['max']);
+                    $query->setParameter('minPassengerRange', $range['min']);
+                    $query->setParameter('maxPassengerRange', $range['max']);
                 } elseif ($range['min']>$range['max']) {
                     // the range is like between 350 and 10
                     $zoneDriverWhere .= ' and (dd.bearing >= :maxPassengerRange and dd.bearing <= :minPassengerRange)';
-                    $query->setParameter('minPassengerRange',$range['min']);
-                    $query->setParameter('maxPassengerRange',$range['max']);
+                    $query->setParameter('minPassengerRange', $range['min']);
+                    $query->setParameter('maxPassengerRange', $range['max']);
                 }
             }
 
             // bounding box
             if (self::USE_BBOX) {
-                $zoneDriverWhere .= ' and (ST_INTERSECTS(dd.geoJsonDetail,' . 
-                    $this->getGeoJsonPolygon(
+                $zoneDriverWhere .= ' and (ST_INTERSECTS(dd.geoJsonBbox,ST_GeomFromText(\'' .
+                $this->getGeoPolygon(
+                    $this->geoTools->moveGeoLon(
                         $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLon(),
                         $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLat(),
+                        -($this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance()))
+                    ),
+                    $this->geoTools->moveGeoLat(
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLat(),
+                        -($this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance()))
+                    ),
+                    $this->geoTools->moveGeoLon(
                         $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLon(),
-                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLon()
-                    ) . ')=1)';
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLat(),
+                        $this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance())
+                    ),
+                    $this->geoTools->moveGeoLat(
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLat(),
+                        $this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance())
+                    )
+                ) . '\'))=1)';
             }
-            //120$query->andWhere(sprintf('(ST_INTERSECTS(dd.geoJsonDetail,\'%s\')=1)', $proposal->getCriteria()->getDirectionPassenger()->getGeoJsonDetail()));
+
+            // passenger proportion
+            if (self::USE_PASSENGER_PROPORTION) {
+                $zoneDriverWhere .= ' and (dd.distance >= ' . $proposal->getCriteria()->getDirectionPassenger()->getDistance()*(1-self::PASSENGER_PROPORTION) . ')';
+            }
         }
 
         // SEATS AVAILABLE
@@ -888,10 +901,9 @@ class ProposalRepository
         if ($setToDate) {
             $query->setParameter('toDate', $proposal->getCriteria()->getToDate()->format('Y-m-d'));
         }
-
         // var_dump($punctualAndWhere);
         // var_dump($regularAndWhere);
-        // var_dump($query->getQuery()->getSql());
+        //var_dump($query->getQuery()->getSql());exit;
         // foreach ($query->getQuery()->getParameters() as $parameter) {
         //     echo $parameter->getName();
         // }
@@ -899,6 +911,46 @@ class ProposalRepository
         //var_dump(count($query->getQuery()->getParameters()));exit;
 
         // we launch the request and return the result
+        return $query->getQuery()->getResult();
+    }
+
+    public function filterByDistance(Proposal $proposal, $proposals, $driversOnly=false)
+    {
+        $query = $this->repository->createQueryBuilder('p')
+        ->select('p.id')
+        ->distinct()
+        ->join('p.criteria', 'c')
+        ->leftJoin('c.directionPassenger', 'dp')
+        ->leftJoin('c.directionDriver', 'dd')
+        ->where('p.id IN (:proposalsId)')
+        ->setParameter('proposalsId', array_keys($proposals));
+
+        $wherePassenger = '';
+        if ($proposal->getCriteria()->isDriver()) {
+            $query
+            ->join('\App\Geography\Entity\Direction', 'dirDri')
+            ->andWhere('dirDri.id = :dirDriId');
+            $wherePassenger = "ST_Distance(dirDri.geoJsonDetail,dp.geoJsonDetail)<=".(self::DISTANCE/self::DISTANCE_RATIO);
+            $query->setParameter('dirDriId', $proposal->getCriteria()->getDirectionDriver()->getId());
+        }
+        $whereDriver = '';
+        if (!$driversOnly && $proposal->getCriteria()->isPassenger()) {
+            $query
+            ->join('\App\Geography\Entity\Direction', 'dirPas')
+            ->andWhere('dirPas.id = :dirPasId');
+            $whereDriver = "ST_Distance(dirPas.geoJsonDetail,dd.geoJsonDetail)<=".(self::DISTANCE/self::DISTANCE_RATIO);
+            $query->setParameter('dirPasId', $proposal->getCriteria()->getDirectionPassenger()->getId());
+        }
+
+        // we search if the user can be passenger and/or driver
+        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+            $query->andWhere('((c.driver = 1 and ' . $whereDriver . ') OR (c.passenger = 1 and ' . $wherePassenger . '))');
+        } elseif ($proposal->getCriteria()->isDriver()) {
+            $query->andWhere('(c.passenger = 1 and ' . $wherePassenger . ')');
+        } elseif ($proposal->getCriteria()->isPassenger()) {
+            $query->andWhere('(c.driver = 1 and ' . $whereDriver . ')');
+        }
+
         return $query->getQuery()->getResult();
     }
     
@@ -916,7 +968,7 @@ class ProposalRepository
         $i = 0;
         $found = false;
         while (!$found && $i < count($thinnesses)) {
-            if (($direction->getDistance()/4)<($thinnesses[$i]*self::METERS_BY_DEGREE)) {
+            if (($direction->getDistance()/80)<($thinnesses[$i]*self::METERS_BY_DEGREE)) {
                 $found = true;
             } else {
                 $i++;
@@ -937,17 +989,38 @@ class ProposalRepository
      * @param float $maxLat
      * @return void
      */
-    private function getGeoJsonPolygon(float $minLon,float $minLat,float $maxLon,float $maxLat) 
+    private function getGeoPolygon(float $minLon, float $minLat, float $maxLon, float $maxLat)
     {
-        return '{
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [ [' . $minLon . ', ' . $minLat . '], [' . $minLon . ', ' . $maxLat . '], [' . $maxLon . ', ' . $maxLat . '], [' . $maxLon . ', ' . $minLat . '], [' . $minLon . ', ' . $minLat . '] ]
-                ]
+        return 'POLYGON((' . $minLon . ' ' . $minLat . ',' . $minLon . ' ' . $maxLat . ',' . $maxLon . ' ' . $maxLat . ',' . $maxLon . ' ' . $minLat . ',' . $minLon . ' ' . $minLat . '))';
+    }
+
+    private function getGeoLineString($lineString)
+    {
+        $return = 'LINESTRING(';
+        $i=0;
+        foreach ($lineString->toArray() as $point) {
+            if ($i%2==0) {
+                $return .= implode(' ', $point) . ',';
             }
-        }';
+            $i++;
+        }
+        $return = substr($return, 0, -1) . ')';
+        return $return;
+    }
+
+    private function getBBoxExtension($distance)
+    {
+        if ($distance<20000) {
+            return 3000;
+        } elseif ($distance<30000) {
+            return 5000;
+        } elseif ($distance<50000) {
+            return 8000;
+        } elseif ($distance<100000) {
+            return 10000;
+        } else {
+            return 20000;
+        }
     }
 
     public function find(int $id): ?Proposal
@@ -958,5 +1031,23 @@ class ProposalRepository
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    /**
+     * Find proposals linked to imported users
+     *
+     * @param integer $status
+     * @return array
+     */
+    public function findImportedProposals(int $status)
+    {
+        $query = $this->repository->createQueryBuilder('p')
+        ->select('p.id')
+        ->join('p.criteria', 'c')
+        ->join('p.user', 'u')
+        ->join('u.import', 'i')
+        ->where('i.status = :status and c.directionDriver is not null')
+        ->setParameter('status', $status);
+        return $query->getQuery()->getResult();
     }
 }
