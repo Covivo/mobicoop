@@ -429,7 +429,7 @@ export default {
           this.askToJoin = true;
           this.isAccepted = false;
           this.snackbar = true;
-          this.textSnackbar = (this.errorUpdate) ? this.$t("snackbar.joinCommunity.textError") : this.$t("snackbar.joinCommunity.textOk");
+          this.textSnackbar = (this.errorUpdate) ? this.$t("snackbar.joinCommunity.textError") : this.textSnackOk;
           this.refreshMemberList = true;
           this.refreshLastUsers = true;
           this.getCommunityUser();

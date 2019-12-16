@@ -110,7 +110,7 @@
       <v-dialog
         v-model="dialogActive"
         persistent
-        max-width="500"
+        max-width="495"
       >
         <v-card>
           <v-card-title class="headline">
