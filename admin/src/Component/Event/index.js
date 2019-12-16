@@ -1,7 +1,7 @@
 import EventIcon from '@material-ui/icons/Event';
 
 import { EventList } from './EventList';
-// import { TerritoryShow } from './TerritoryShow';
+import { EventShow } from './EventShow';
 // import { TerritoryCreate } from './TerritoryCreate';
 // import { TerritoryEdit } from './TerritoryEdit';
 
@@ -10,7 +10,7 @@ export default {
         label: 'Evénements'
     },
     list: EventList,
-    // show: TerritoryShow,
+    show: EventShow,
     // create: TerritoryCreate,
     // edit: TerritoryEdit, 
     icon: EventIcon
