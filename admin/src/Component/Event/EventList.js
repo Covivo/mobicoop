@@ -15,7 +15,7 @@ const EventPanel = ({ id, record, resource }) => (
 
 export const EventList = (props) => (
     <List {...props} title="Evénement > liste" perPage={ 25 } >
-        <Datagrid expand={<EventPanel />}>
+        <Datagrid expand={<EventPanel />} rowClick="show">
             <ReferenceField reference="images" source="images[0]" label="Image">
                 <ImageField source="versions.square_100"/>
             </ReferenceField>
@@ -23,7 +23,6 @@ export const EventList = (props) => (
             <TextField source="name" label="Nom"/>
             <DateField source="fromDate" label="Début" showTime/>
             <DateField source="toDate" label="Fin" showTime/>
-            <ShowButton />
             {isAuthorized("event_update") && 
                 <EditButton />
             }
