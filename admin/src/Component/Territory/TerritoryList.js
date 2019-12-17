@@ -3,7 +3,7 @@ import {
     List,
     Datagrid,
     TextField, 
-    ShowButton, EditButton
+    EditButton
 } from 'react-admin';
 
 export const TerritoryList = (props) => (

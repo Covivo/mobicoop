@@ -1,14 +1,12 @@
 import React from 'react';
-import isAuthorized from '../Utilities/authorization';
 
 
 import { 
     Show,
     SimpleShowLayout, Labeled,
-    TextField, RichTextField, ReferenceField,
+    TextField, ReferenceField,
     ImageField, DateField, FunctionField, UrlField
 } from 'react-admin';
-
 
 export const EventShow = (props) => (
     <Show { ...props } title="Evénement > afficher">
@@ -22,8 +20,8 @@ export const EventShow = (props) => (
                 </Labeled>
             </ReferenceField>
             <TextField source="name" label="Nom"/>
-            <TextField source="description" label="Description"/>
-            <RichTextField source="fullDescription" label="Description complète"/>
+            <TextField component="pre" source="description" label="Description"/>
+            <TextField component="pre" source="fullDescription" label="Description complète"/>
             <DateField source="fromDate" label="Date de début" showTime/>
             <DateField source="toDate" label="Date de fin" showTime/>
             <UrlField source="url" />

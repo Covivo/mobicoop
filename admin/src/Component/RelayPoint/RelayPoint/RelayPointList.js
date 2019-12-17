@@ -5,7 +5,7 @@ import {
     TextInput, SelectInput,
     TextField, SelectField, ReferenceField, FunctionField,
     Filter,
-    ShowButton, EditButton,
+    EditButton,
 } from 'react-admin';
 
 const statusChoices = [

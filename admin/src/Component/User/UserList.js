@@ -8,7 +8,7 @@ import {
     Datagrid,
     TextInput, SelectInput, ReferenceInput, BooleanInput,
     TextField, EmailField, DateField, 
-    ShowButton, EditButton,
+    EditButton,
     Filter
 } from 'react-admin';
 

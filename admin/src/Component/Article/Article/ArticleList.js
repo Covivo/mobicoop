@@ -2,7 +2,7 @@ import React from 'react';
 import { 
     List,
     Datagrid,
-    ShowButton, EditButton,
+    EditButton,
     TextField, ReferenceManyField, ChipField, SingleFieldList, SelectField
 } from 'react-admin';
 

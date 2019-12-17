@@ -5,7 +5,7 @@ import {
     List,
     Datagrid,
     TextField, DateField, ImageField,
-    ReferenceManyField, ReferenceField, ShowButton, EditButton
+    ReferenceField, EditButton
 } from 'react-admin';
 const EventPanel = ({ id, record, resource }) => (
     <div dangerouslySetInnerHTML={{ __html: record.fullDescription }} />
