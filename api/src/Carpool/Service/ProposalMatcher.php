@@ -35,6 +35,7 @@ use App\Carpool\Entity\Waypoint;
 use App\Geography\Entity\Address;
 use App\Geography\Interfaces\GeorouterInterface;
 use App\Geography\Service\GeoRouter;
+use App\Import\Entity\UserImport;
 use App\User\Entity\User;
 use Psr\Log\LoggerInterface;
 
@@ -243,8 +244,8 @@ class ProposalMatcher
     {
         $this->logger->info("ProposalMatcher : findMatchingProposals " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        // $this->entityManager->persist($proposal);
-        // $this->entityManager->flush();
+        $this->entityManager->persist($proposal);
+        $this->entityManager->flush();
 
         // we search matching proposals in the database
         // if no proposals are found we return an empty array
@@ -319,9 +320,9 @@ class ProposalMatcher
         }
         ksort($proposals);
         
-        $this->logger->info("ProposalMatcher : created proposals : " . count($proposals) . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        // $this->logger->info("ProposalMatcher : created proposals : " . count($proposals) . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        // $proposalsIds = $this->proposalRepository->filterByDistance($proposal,$proposals);
+        // $proposalsIds = $this->proposalRepository->filterByPassengerOriginDeltaDistance($proposal,$proposals);
         // $ids = [];
         // foreach ($proposalsIds as $id) {
         //     $ids[] = $id['id'];
@@ -332,7 +333,7 @@ class ProposalMatcher
         //     }
         // }
 
-        // $this->logger->info("ProposalMatcher : created proposals : " . count($proposals) . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->logger->info("ProposalMatcher : created proposals : " . count($proposals) . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         $matchings = [];
 
@@ -468,6 +469,7 @@ class ProposalMatcher
         
         if ($matches = $this->geoMatcher->singleMatch($pears)) {
             if (isset($matches['driver']) && is_array($matches['driver']) && count($matches['driver'])>0) {
+                $this->logger->info("ProposalMatcher : single Match treat drivers " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 // there are matches as driver
                 foreach ($matches['driver'] as $candidateId => $matchesDriver) {
                     // we sort each possible matches as many matches can be found for 2 candidates : if multiple routes satisfy the criteria
@@ -494,6 +496,7 @@ class ProposalMatcher
                 }
             }
             if (isset($matches['passenger']) && is_array($matches['passenger']) && count($matches['passenger'])>0) {
+                $this->logger->info("ProposalMatcher : single Match treat passengers " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 // there are matches as passenger
                 foreach ($matches['passenger'] as $candidateId => $matchesPassenger) {
                     // we sort each possible matches as many matches can be found for 2 candidates : if multiple routes satisfy the criteria
@@ -543,9 +546,7 @@ class ProposalMatcher
         $this->logger->info("ProposalMatcher : completeMatchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
         // we complete the matchings with the waypoints and criteria
-        $nb = 1;
         foreach ($matchings as $matching) {
-            $nb++;
 
             // waypoints
             foreach ($matching->getFilters()['route'] as $key=>$point) {
@@ -703,6 +704,8 @@ class ProposalMatcher
             unset($filters['direction']);
             $matching->setFilters($filters);
         }
+        $this->logger->info("ProposalMatcher : end completeMatchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        
         return $matchings;
     }
     
@@ -1219,16 +1222,31 @@ class ProposalMatcher
      */
     public function findPotentialMatchingsForProposals(array $proposalIds)
     {
+        self::print_mem(1);
+
         gc_enable();
         // we create chunks of proposals to avoid freezing
-        $chunk = 20;
+        $chunk = 50;
         $proposalsChunked = array_chunk($proposalIds, $chunk, true);
+
+        self::print_mem(2);
 
         foreach ($proposalsChunked as $proposalChunk) {
             $ids=[];
             foreach ($proposalChunk as $key=>$proposalId) {
                 $ids[] = $proposalId['id'];
             }
+
+            // update status to pending
+            $q = $this->entityManager
+            ->createQuery('UPDATE App\Import\Entity\UserImport i set i.status = :status WHERE i.id IN (SELECT ui.id FROM App\Import\Entity\UserImport ui JOIN ui.user u JOIN u.proposals p WHERE p.id IN (' . implode(',',$ids) . '))')
+            ->setParameters([
+                'status'=>UserImport::STATUS_MATCHING_PENDING
+            ]);
+            $q->execute();
+
+            self::print_mem(3);
+
             $proposals = $this->proposalRepository->findBy(['id'=>$ids]);
             $potentialProposals = [];
             $this->logger->info('Start searching potentials | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -1268,23 +1286,56 @@ class ProposalMatcher
                                     $aproposals[$proposalFound['pid']]['addresses'][] = $element;
                                 }
                             }
+                            $proposalFound = null;
+                            unset($proposalFound);
                         }
                         ksort($aproposals);
+
+                        // $proposalsIds = $this->proposalRepository->filterByPassengerOriginDeltaDistance($proposal,$aproposals);
+                        // $ids = [];
+                        // foreach ($proposalsIds as $id) {
+                        //     $ids[] = $id['id'];
+                        // }
+                        // foreach ($proposals as $key=>$prop) {
+                        //     if (!in_array($key,$ids)) {
+                        //         unset($aproposals[$key]);
+                        //     }
+                        // }
+
                         $potentialProposals[$proposal->getId()] = [
                             'proposal'=>$proposal,
                             'potentials'=>$aproposals
                         ];
                     }
+                    $proposalsFoundForProposal = null;
+                    unset($proposalsFoundForProposal);
                 }
             }
+            foreach ($proposals as $proposal) {
+                $proposal = null;
+                unset($proposal);
+            }
+            $proposals = null;
+            unset($proposals);
+            gc_collect_cycles();
             $this->logger->info('End searching potentials | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             
+            self::print_mem(4);
+
             // we create the candidates array
             $candidates = $this->createCandidates($potentialProposals);
+            
+            // clean
+            foreach ($potentialProposals as $potential) {
+                $potential = null;
+                unset($potential);
+            }
             $potentialProposals = null;
             unset($potentialProposals);
             gc_collect_cycles();
-    
+ 
+            self::print_mem(5);
+
             // create the array for multimatch
             $this->logger->info('Start creating multimatch array | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $multimatch = [];
@@ -1295,14 +1346,14 @@ class ProposalMatcher
                 ];
             }
             $this->logger->info('End creating multimatch array, size : ' . count($multimatch) . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+            self::print_mem(6);
     
             // create a batch
-            $batchSize = 5;
+            $batchSize = 10;
             $batches = array_chunk($multimatch, $batchSize);
     
             $potentialMatchings = []; // indexed by driver proposal id
-    
-            $matchings = [];
             foreach ($batches as $key=>$batch) {
                 $this->logger->info('Start multimatch batch #' . $key . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 foreach ($batch as $key2=>$match) {
@@ -1310,36 +1361,68 @@ class ProposalMatcher
                 }
                 if ($matches = $this->geoMatcher->multiMatch($batch)) {
                     foreach ($matches as $candidateDriverId => $candidatePassengers) {
-                        foreach ($candidatePassengers as $candidatePassengerId => $matches) {
+                        foreach ($candidatePassengers as $candidatePassengerId => $cmatches) {
                             // we sort each possible matches as many matches can be found for 2 candidates : if multiple routes satisfy the criteria
                             switch (self::MULTI_MATCHES_FOR_SAME_CANDIDATES) {
                                 case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
-                                    usort($matches, self::build_sorter('newDuration'));
+                                    usort($cmatches, self::build_sorter('newDuration'));
                                     $matching = new Matching();
                                     $matching->setProposalOffer($this->proposalRepository->find($candidateDriverId));
                                     $matching->setProposalRequest($this->proposalRepository->find($candidatePassengerId));
-                                    $matching->setFilters($matches[0]);
+                                    $matching->setFilters($cmatches[0]);
                                     $potentialMatchings[$candidateDriverId][] = $matching;
                                     break;
                                 case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST:
-                                    usort($matches, self::build_sorter('newDistance'));
+                                    usort($cmatches, self::build_sorter('newDistance'));
                                     $matching = new Matching();
                                     $matching->setProposalOffer($this->proposalRepository->find($candidateDriverId));
                                     $matching->setProposalRequest($this->proposalRepository->find($candidatePassengerId));
-                                    $matching->setFilters($matches[0]);
+                                    $matching->setFilters($cmatches[0]);
                                     $potentialMatchings[$candidateDriverId][] = $matching;
                                     break;
                                 default:
                                     break;
                             }
                         }
+                        foreach ($cmatches as $match) {
+                            $match = null;
+                            unset($match);
+                        }
+                        $cmatches = null;
+                        unset($cmatches);
                     }
+                    $candidatePassengers = null;
+                    unset($candidatePassengers);
                 }
                 $matches = null;
                 unset($matches);
                 gc_collect_cycles();
             }
+
+            self::print_mem(7);
+
+            // clean
+            foreach ($candidates as $item) {
+                $item = null;
+                unset($item);
+            }
+            foreach ($multimatch as $item) {
+                $item = null;
+                unset($item);
+            }
+            $multimatch = null;
+            $candidates = null;
+            $batch = null;
+            $batches= null;
+            unset($multimatch);
+            unset($candidates);
+            unset($batch);
+            unset($batches);
+            gc_collect_cycles();
+
+            self::print_mem(8);
     
+            $matchings = [];
             foreach ($potentialMatchings as $proposalOfferId => $potentials) {
                 //$proposal = $proposals[$proposalOfferId];
                 $proposal = $this->proposalRepository->find($proposalOfferId);
@@ -1360,10 +1443,17 @@ class ProposalMatcher
                     $matchings = array_merge($matchings, $this->checkPickUp($potentials));
                     $this->logger->info('Proposal matcher | Check pickup end | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 }
+                $potentials = null;
+                unset($potentials);
+                $proposal = null;
+                unset($proposal);
+                gc_collect_cycles();
             }
             $potentialMatchings = null;
             unset($potentialMatchings);
             gc_collect_cycles();
+
+            self::print_mem(9);
     
             // we complete the matchings with the waypoints and criteria
             $nb = 1;
@@ -1533,10 +1623,32 @@ class ProposalMatcher
     
             $this->logger->info('Start flushing multimatch | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $this->entityManager->flush();
+            $this->entityManager->clear();
             $this->logger->info('End flushing multimatch | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            $matching = null;
+
+            self::print_mem(10);
+
+            // clean
+            foreach ($matchings as $matching) {
+                $matching = null;
+                unset($matching);
+            }
+            $matchings = null;
             unset($matchings);
             gc_collect_cycles();
+
+            // update status to treated
+            // update status to pending
+            $q = $this->entityManager
+            ->createQuery('UPDATE App\Import\Entity\UserImport i set i.status = :status WHERE i.id IN (SELECT ui.id FROM App\Import\Entity\UserImport ui JOIN ui.user u JOIN u.proposals p WHERE p.id IN (' . implode(',',$ids) . '))')
+            ->setParameters([
+                'status'=>UserImport::STATUS_MATCHING_TREATED
+            ]);
+            $q->execute();
+
+            $ids = null;
+            unset($ids);
+            self::print_mem(11);
         }
     }
 
@@ -1597,5 +1709,16 @@ class ProposalMatcher
         }
 
         return $candidates;
+    }
+
+    private function print_mem($id)
+    {
+        /* Currently used memory */
+        $mem_usage = memory_get_usage();
+        
+        /* Peak memory usage */
+        $mem_peak = memory_get_peak_usage();
+        $this->logger->debug($id . ' The script is now using: ' . round($mem_usage / 1024) . 'KB of memory.<br>');
+        $this->logger->debug($id . ' Peak usage: ' . round($mem_peak / 1024) . 'KB of memory.<br><br>');
     }
 }

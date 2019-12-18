@@ -26,6 +26,7 @@ namespace App\Geography\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Geography\Service\GeoTools;
 use Symfony\Component\Serializer\Annotation\Groups;
 use CrEOF\Spatial\PHP\Types\Geometry\Polygon;
 use CrEOF\Spatial\PHP\Types\Geometry\LineString;
@@ -163,6 +164,14 @@ class Direction
      * @Groups({"read","write"})
      */
     private $geoJsonDetail;
+
+    /**
+     * @var string The simplified geoJson linestring detail of the direction.
+     * Created using the Ramer-Douglas-Peucker algorithm.
+     * @ORM\Column(type="linestring", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $geoJsonSimplified;
 
     /**
      * @var string The textual encoded snapped waypoints of the direction.
@@ -390,6 +399,18 @@ class Direction
         return $this;
     }
 
+    public function getGeoJsonSimplified()
+    {
+        return $this->geoJsonSimplified;
+    }
+    
+    public function setGeoJsonSimplified($geoJsonSimplified): self
+    {
+        $this->geoJsonSimplified = $geoJsonSimplified;
+        
+        return $this;
+    }
+
     public function getSnapped(): string
     {
         return $this->snapped;
@@ -551,8 +572,8 @@ class Direction
     /**
      * GeoJson representation of the bounding box.
      *
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
+     * ORM\PrePersist
+     * ORM\PreUpdate
      */
     public function setAutoGeoJsonBbox()
     {
@@ -573,8 +594,8 @@ class Direction
     /**
      * GeoJson representation of the detail.
      *
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
+     * ORM\PrePersist
+     * ORM\PreUpdate
      */
     public function setAutoGeoJsonDetail()
     {
@@ -587,6 +608,15 @@ class Direction
                 $arrayPoints[] = new Point($address->getLongitude(), $address->getLatitude());
             }
             $this->setGeoJsonDetail(new LineString($arrayPoints));
+            $arrayPoints = [];
+            $geoTools = new GeoTools();
+            $simplifiedPoints = $geoTools->getSimplifiedPoints($this->getPoints());
+            //var_dump($this->getPoints());
+            //var_dump($simplifiedPoints);exit;
+            foreach ($simplifiedPoints as $point) {
+                $arrayPoints[] = new Point($point[0], $point[1]);
+            }
+            $this->setGeoJsonSimplified(new LineString($arrayPoints));
         }
     }
 }

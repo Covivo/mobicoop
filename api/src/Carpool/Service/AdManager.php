@@ -332,7 +332,11 @@ class AdManager
         $outwardProposal->setCriteria($outwardCriteria);
         $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal);
 
-        $this->entityManager->persist($outwardProposal);
+        $this->logger->info("AdManager : end creating outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        //$this->entityManager->persist($outwardProposal);
+
+        $this->logger->info("AdManager : end persisting outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         // return trip ?
         if (!$ad->isOneWay()) {
@@ -526,7 +530,9 @@ class AdManager
         }
 
         // we persist the proposals
+        $this->logger->info("AdManager : start flush proposal " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $this->entityManager->flush();
+        $this->logger->info("AdManager : end flush proposal " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
         // if the ad is a round trip, we want to link the potential matching results
         if (!$ad->isOneWay()) {
@@ -558,6 +564,7 @@ class AdManager
             
         ]);
 
+        $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $ad->setResults(
             $this->resultManager->orderResults(
                 $this->resultManager->filterResults(
@@ -567,6 +574,7 @@ class AdManager
                 $ad->getFilters()
             )
         );
+        $this->logger->info("AdManager : end set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
         // we set the ad id to the outward proposal id
         $ad->setId($outwardProposal->getId());

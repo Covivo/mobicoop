@@ -235,6 +235,8 @@ class GraphhopperProvider implements GeorouterInterface
                         $rparams = $this->uri ."/" . self::DIRECTION_RESOURCE . "/?";
                         foreach ($addresses as $address) {
                             $rparams .= "point=" . $address->getLatitude() . "," . $address->getLongitude() . "&";
+                            $address = null;
+                            unset($address);
                         }
                         $rparams .= "locale=" . self::LOCALE .
                             "&vehicle=" . self::MODE_CAR .
@@ -247,6 +249,8 @@ class GraphhopperProvider implements GeorouterInterface
                         $urls[$i] = $rparams;
                         $requestsOwner[$i] = $ownerId;
                         $i++;
+                        $addresses = null;
+                        unset($addresses);
                     }
                 }
                 self::print_mem(2);
@@ -319,9 +323,13 @@ class GraphhopperProvider implements GeorouterInterface
                                             $multiPoints[$requestsOwner[$key]][0][$last_key]->getLongitude()
                                         )
                                     ];
+                                    $path=null;
+                                    unset($path);
                                 }
                             }
                         }
+                        $paths = null;
+                        unset($paths);
                         break;
                     }
                     case self::RETURN_TYPE_RAW:
@@ -338,6 +346,18 @@ class GraphhopperProvider implements GeorouterInterface
                 }
                 
                 self::print_mem(6);
+                foreach ($requestsOwner as $owner) {
+                    $owner = null;
+                    unset($owner);
+                }
+                $requestsOwner = null;
+                unset($requestsOwner);
+                foreach ($multiPoints as $point) {
+                    $point = null;
+                    unset($point);
+                }
+                $multiPoints = null;
+                unset($multiPoints);
                 $response = null;
                 unset($response);
                 gc_collect_cycles();

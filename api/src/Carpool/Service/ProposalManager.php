@@ -229,8 +229,11 @@ class ProposalManager
         $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
         
         if ($persist) {
+            $this->logger->info("ProposalManager : start persist " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             // TODO : here we should remove the previously matched proposal if they already exist
             $this->entityManager->persist($proposal);
+            $this->entityManager->flush();
+            $this->logger->info("ProposalManager : end persist " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
         
         // TODO : see which events send !!!
@@ -498,6 +501,7 @@ class ProposalManager
 
 
         $qCriteria = $this->entityManager->createQuery('SELECT c from App\Carpool\Entity\Criteria c WHERE c.id IN (' . implode(',', $ids) . ')');
+
         $iterableResult = $qCriteria->iterate();
         $this->logger->info('Start treat rows ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $pool = 0;
@@ -686,7 +690,8 @@ class ProposalManager
      */
     public function createLinkedAndOppositesForProposals(array $proposals)
     {
-        foreach ($proposals as $proposal) {
+        foreach ($proposals as $proposalId) {
+            $proposal = $this->proposalRepository->find($proposalId);
             // if the proposal is a round trip, we want to link the potential matching results
             if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
                 $proposal = $this->linkRelatedMatchings($proposal);
