@@ -31,7 +31,6 @@ use App\Geography\Entity\Address;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Geography\Entity\Direction;
 
 /**
  * Carpooling : travel point for a journey.
