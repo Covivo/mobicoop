@@ -468,6 +468,7 @@ class AskManager
         $this->entityManager->persist($ask);
         $this->entityManager->flush($ask);
         
+        $ad->setAskId($ask->getId());
         // dispatch en event
         $event = new AskPostedEvent($ask);
         $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
