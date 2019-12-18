@@ -41,7 +41,7 @@
                         "driver": "Mon message aux passagers",
                         "passenger": "Mon message aux conducteurs"
                     },
-                    "label": "Laissez un petit message"
+                    "label": "Laissez un message visible par tous dans votre annonce"
                 },
                 "summary": "Récapitulatif",
                 "map":{
