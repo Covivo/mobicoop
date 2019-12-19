@@ -17,7 +17,7 @@
       <!--<accessibility />-->
       <v-toolbar-items
         v-if="user"
-        class="hidden-sm-and-down"
+        class="hidden-md-and-down"
       >
         <v-btn
           text
@@ -34,7 +34,7 @@
       </v-toolbar-items>
       <v-toolbar-items
         v-else
-        class="hidden-sm-and-down"
+        class="hidden-md-and-down"
       >
         <v-btn
           rounded
@@ -55,7 +55,7 @@
         v-if="user"
         rounded
         :href="$t('buttons.shareAnAd.route')"
-        class="hidden-sm-and-down"
+        class="hidden-md-and-down"
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
@@ -64,7 +64,7 @@
           v-if="!user"
           rounded
           disabled
-          class="hidden-sm-and-down"
+          class="hidden-md-and-down"
         >
           {{ $t('buttons.shareAnAd.label') }}
         </v-btn>
@@ -100,7 +100,7 @@
         <template v-slot:activator="{ on }">
           <v-btn
             icon
-            class="hidden-md-and-up"
+            class="hidden-lg-and-up"
             v-on="on"
           >
             <v-icon>mdi-menu</v-icon>
@@ -158,7 +158,7 @@
         <template v-slot:activator="{ on }">
           <v-btn
             icon
-            class="hidden-md-and-up"
+            class="hidden-lg-and-up"
             v-on="on"
           >
             <v-icon>mdi-menu</v-icon>
@@ -248,14 +248,30 @@ export default {
   },
   data () {
     return {
-      snackbar: false
+      snackbar: false,
+      width: 0,
     }
+  },
+  created() {
+    window.addEventListener('resize', this.handleResize)
+    this.handleResize();
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.handleResize)
   },
   mounted() {
     if (this.urlMobile && (screen.width <= 960 || navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i))) 
     {
       window.location.href = this.urlMobile;
     } 
+  },
+  methods: {
+    handleResize() {
+      this.width = window.innerWidth;
+      if (this.urlMobile && ( this.width <= 960)) {
+        window.location.href = this.urlMobile;
+      }
+    }
   }
 };
 </script>

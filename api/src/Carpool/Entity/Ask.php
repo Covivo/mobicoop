@@ -155,7 +155,7 @@ class Ask
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="asks")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      * @Groups({"read","write","threads","thread"})
      * @MaxDepth(1)
      */
@@ -174,6 +174,7 @@ class Ask
      * @var Ask|null The linked ask for return trips.
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","threads","thread"})
      * @MaxDepth(1)
      */
@@ -205,6 +206,7 @@ class Ask
      * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write","threads","thread"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
@@ -378,7 +380,7 @@ class Ask
 
         // set (or unset) the owning side of the relation if necessary
         $newAskLinked = $askLinked === null ? null : $this;
-        if ($newAskLinked !== $askLinked->getAskLinked()) {
+        if (!is_null($askLinked) && $newAskLinked !== $askLinked->getAskLinked()) {
             $askLinked->setAskLinked($newAskLinked);
         }
 

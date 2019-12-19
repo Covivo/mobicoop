@@ -21,7 +21,7 @@
     >
       <v-col
         cols="12"
-        xl="10"
+        xl="8"
         align="center"
       >
         <h1>{{ $t('title') }}</h1>
@@ -36,7 +36,7 @@
     >
       <v-col
         cols="12"
-        xl="10"
+        xl="8"
       >
         <v-alert type="info">
           <p>{{ $t("messageSolidaryExclusiveAd.message") }}</p>
@@ -49,7 +49,7 @@
     >
       <v-col
         cols="12"
-        xl="10"
+        xl="8"
         class="d-flex justify-center"
       >
         <v-switch
@@ -66,7 +66,7 @@
     >
       <v-col
         cols="12"
-        xl="10"
+        xl="8"
       >
         <v-alert type="info">
           <p>{{ $t("messageFirstAd.signUpDone", {'givenName':user.givenName}) }}.</p>
@@ -80,7 +80,7 @@
     >
       <v-col
         cols="12"
-        xl="10"
+        xl="8"
         align="center"
       >
         <v-stepper

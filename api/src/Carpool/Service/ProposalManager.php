@@ -847,7 +847,6 @@ class ProposalManager
     public function deleteProposal(Proposal $proposal, ?array $body)
     {
         $asks = $this->askManager->getAsksFromProposal($proposal);
-
         if (count($asks) > 0) {
             /** @var Ask $ask */
             foreach ($asks as $ask) {
