@@ -3,6 +3,16 @@
     <v-card
       class="pa-2 text-center"
     >
+      <threads-actions-buttons
+        :can-update-ask="infosComplete.canUpdateAsk"
+        :status="infosComplete.askStatus"
+        :regular="infosComplete.frequency==2"
+        :loading-btn="dataLoadingBtn"
+        :driver="driver"
+        :passenger="passenger"
+        @updateStatus="updateStatus"
+      />
+      
       <!-- Always visible (carpool or not) -->
       <v-avatar v-if="infosComplete.carpooler && infosComplete.carpooler.avatars && !loading">
         <img :src="infosComplete.carpooler.avatars[0]">
@@ -93,15 +103,6 @@
             </tr>
           </tbody>
         </v-simple-table>
-        <threads-actions-buttons
-          :can-update-ask="infosComplete.canUpdateAsk"
-          :status="infosComplete.askStatus"
-          :regular="infosComplete.frequency==2"
-          :loading-btn="dataLoadingBtn"
-          :driver="driver"
-          :passenger="passenger"
-          @updateStatus="updateStatus"
-        />
       </v-card>
       <v-card v-else-if="!loading">
         <v-card-text>

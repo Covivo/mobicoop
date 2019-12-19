@@ -46,16 +46,14 @@
         <template v-slot:activator="{ on }">
           <v-btn
             color="success"
-            fab
-            large
+            rounded
+            small
             dark
             depressed
             v-on="on"
             @click="updateStatus((status==2) ? 4 : 5)"
           >
-            <v-icon class="display-2">
-              mdi-check
-            </v-icon>
+            Ajouter covoiturage
           </v-btn> 
         </template>
         <span>{{ $t('button.accept') }}</span>
@@ -67,16 +65,14 @@
         <template v-slot:activator="{ on }">
           <v-btn
             color="error"
-            fab
-            large
+            rounded
+            small
             dark
             depressed
             v-on="on"
             @click="updateStatus((status==2) ? 6 : 7)"
           >
-            <v-icon class="display-2">
-              mdi-close
-            </v-icon>
+            Refuser covoiturage
           </v-btn>      
         </template>
         <span>{{ $t('button.refuse') }}</span>
