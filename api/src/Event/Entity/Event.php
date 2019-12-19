@@ -200,7 +200,7 @@ class Event
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups("write")
+     * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $user;

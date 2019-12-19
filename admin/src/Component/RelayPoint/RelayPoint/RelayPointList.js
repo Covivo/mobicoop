@@ -5,7 +5,7 @@ import {
     TextInput, SelectInput,
     TextField, SelectField, ReferenceField, FunctionField,
     Filter,
-    ShowButton, EditButton,
+    EditButton,
 } from 'react-admin';
 
 const statusChoices = [
@@ -27,7 +27,7 @@ const RelayPointPanel = ({ id, record, resource }) => (
 );
 export const RelayPointList = (props) => (
     <List {...props} title="Points relais > liste" perPage={ 25 } filters={<RelayPointFilter />} sort={{ field: 'originId', order: 'ASC' }}>
-        <Datagrid expand={<RelayPointPanel />}>
+        <Datagrid expand={<RelayPointPanel />} rowClick="show">
             <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="name" label="Nom"/>
             <ReferenceField source="address" label="Adresse" reference="addresses" linkType="">
@@ -35,7 +35,6 @@ export const RelayPointList = (props) => (
             </ReferenceField>
             <SelectField source="status" label="Status" choices={statusChoices} sortable={false} />
             <TextField source="description" label="Description"/>
-            <ShowButton />
             <EditButton />
         </Datagrid>
     </List>
