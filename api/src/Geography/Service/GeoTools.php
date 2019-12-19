@@ -25,7 +25,9 @@ namespace App\Geography\Service;
 
 use App\Geography\Entity\Address;
 
-class InvalidParameterException extends \Exception { }
+class InvalidParameterException extends \Exception
+{
+}
 
 /**
  * Geographical tools.
@@ -35,7 +37,7 @@ class InvalidParameterException extends \Exception { }
 class GeoTools
 {
     const METERS_BY_DEGREE = 111319;
-    CONST RDP_EPSILON = 0.01;             // Ramer-Douglas-Peucker Epsilon : maximum perpendicular distance for any point from the line between two adjacent points.
+    const RDP_EPSILON = 0.01;             // Ramer-Douglas-Peucker Epsilon : maximum perpendicular distance for any point from the line between two adjacent points.
 
     private $params;
 
@@ -283,7 +285,7 @@ class GeoTools
                 $address->getLatitude()
             ];
         }
-        return $this->RamerDouglasPeucker2d($line,SELF::RDP_EPSILON);
+        return $this->RamerDouglasPeucker2d($line, SELF::RDP_EPSILON);
     }
 
     /**
@@ -338,18 +340,20 @@ class GeoTools
      *
      * @return float The distance from the point to the line.
      */
-    protected static function perpendicularDistance2d($ptX, $ptY,
-                                                      $l1x, $l1y, $l2x, $l2y)
-    {
+    protected static function perpendicularDistance2d(
+        $ptX,
+        $ptY,
+        $l1x,
+        $l1y,
+        $l2x,
+        $l2y
+    ) {
         $result = 0;
-        if ($l2x == $l1x)
-        {
+        if ($l2x == $l1x) {
             //vertical lines - treat this case specially to avoid dividing
             //by zero
             $result = abs($ptX - $l2x);
-        }
-        else
-        {
+        } else {
             $slope = (($l2y-$l1y) / ($l2x-$l1x));
             $passThroughY = (0-$l1x)*$slope + $l1y;
             $result = (abs(($slope * $ptX) - $ptY + $passThroughY)) /
@@ -375,54 +379,59 @@ class GeoTools
      */
     public static function RamerDouglasPeucker2d($pointList, $epsilon)
     {
-        if ($epsilon <= 0)
-        {
+        if ($epsilon <= 0) {
             throw new InvalidParameterException('Non-positive epsilon.');
         }
-        if (count($pointList) < 2)
-        {
+        if (count($pointList) < 2) {
             return $pointList;
         }
         // Find the point with the maximum distance
         $dmax = 0;
         $index = 0;
         $totalPoints = count($pointList);
-        for ($i = 1; $i < ($totalPoints - 1); $i++)
-        {
+        for ($i = 1; $i < ($totalPoints - 1); $i++) {
             $d = self::perpendicularDistance2d(
-                        $pointList[$i][0], $pointList[$i][1],
-                        $pointList[0][0], $pointList[0][1],
-                        $pointList[$totalPoints-1][0],
-                        $pointList[$totalPoints-1][1]);
-            if ($d > $dmax)
-            {
+                $pointList[$i][0],
+                $pointList[$i][1],
+                $pointList[0][0],
+                $pointList[0][1],
+                $pointList[$totalPoints-1][0],
+                $pointList[$totalPoints-1][1]
+            );
+            if ($d > $dmax) {
                 $index = $i;
                 $dmax = $d;
             }
         }
         $resultList = array();
         // If max distance is greater than epsilon, recursively simplify
-        if ($dmax >= $epsilon)
-        {
+        if ($dmax >= $epsilon) {
             // Recursive call on each 'half' of the polyline
             $recResults1 = self::RamerDouglasPeucker2d(
-                       array_slice($pointList, 0, $index + 1),
-                                $epsilon);
+                array_slice($pointList, 0, $index + 1),
+                $epsilon
+            );
             $recResults2 = self::RamerDouglasPeucker2d(
-                       array_slice($pointList, $index, $totalPoints - $index),
-                                $epsilon);
+                array_slice($pointList, $index, $totalPoints - $index),
+                $epsilon
+            );
             // Build the result list
-            $resultList = array_merge(array_slice($recResults1, 0,
-                                                  count($recResults1) - 1),
-                                      array_slice($recResults2, 0,
-                                                  count($recResults2)));
-        }
-        else
-        {
+            $resultList = array_merge(
+                array_slice(
+                    $recResults1,
+                    0,
+                    count($recResults1) - 1
+                ),
+                array_slice(
+                    $recResults2,
+                    0,
+                    count($recResults2)
+                )
+            );
+        } else {
             $resultList = array($pointList[0], $pointList[$totalPoints-1]);
         }
         // Return the result
         return $resultList;
     }
-
-    }
+}

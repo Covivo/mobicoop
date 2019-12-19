@@ -290,21 +290,20 @@ class ProposalRepository
                 if ($zonePassengerWhere != "") {
                     $zonePassengerWhere .= " and ";
                 }
-                $maxDistance = $proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL ? 
+                $maxDistance = $proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL ?
                     ($proposal->getCriteria()->getDirectionDriver()->getDistance() * self::MAX_DISTANCE_PUNCTUAL / self::DISTANCE_RATIO) :
                     ($proposal->getCriteria()->getDirectionDriver()->getDistance() * self::MAX_DISTANCE_REGULAR / self::DISTANCE_RATIO);
                 $query
                 ->join('p.waypoints', 'w2')
                 ->join('p.waypoints', 'w3')
-                ->join('w2.address','a2')
-                ->join('w3.address','a3')
+                ->join('w2.address', 'a2')
+                ->join('w3.address', 'a3')
                 ->join('\App\Geography\Entity\Direction', 'dirDri')
                 ->andWhere('w2.position = 0 and w3.destination = 1')
                 ->andWhere('dirDri.id = :dirDriId');
                 $zonePassengerWhere .= "ST_Distance(dirDri.geoJsonSimplified,a2.geoJson)<=".$maxDistance." and ST_Distance(dirDri.geoJsonSimplified,a3.geoJson)<=".$maxDistance;
                 $query->setParameter('dirDriId', $proposal->getCriteria()->getDirectionDriver()->getId());
             }
-
         }
         if (!$driversOnly && $proposal->getCriteria()->isPassenger()) {
             $zoneDriverWhere = "";
@@ -385,7 +384,7 @@ class ProposalRepository
                         $origin = "Point('" . $waypoint->getAddress()->getLongitude() . "','" . $waypoint->getAddress()->getLatitude() . "')";
                     } elseif ($waypoint->isDestination() == 1) {
                         $destination = "Point('" . $waypoint->getAddress()->getLongitude() . "','" . $waypoint->getAddress()->getLatitude() . "')";
-                    }  
+                    }
                 }
                 if ($zoneDriverWhere != "") {
                     $zoneDriverWhere .= " and ";
@@ -401,7 +400,7 @@ class ProposalRepository
                 $zoneDriverWhere .= ") and ";
                 $zoneDriverWhere .= "((c.frequency=" . Criteria::FREQUENCY_PUNCTUAL . " and ST_Distance(dd.geoJsonSimplified," . $destination . ")<=(dd.distance*".self::MAX_DISTANCE_PUNCTUAL."/".self::DISTANCE_RATIO.")) OR ";
                 $zoneDriverWhere .= "(c.frequency=" . Criteria::FREQUENCY_REGULAR . " and ST_Distance(dd.geoJsonSimplified," . $destination . ")<=(dd.distance*".self::MAX_DISTANCE_REGULAR."/".self::DISTANCE_RATIO."))";
-                $zoneDriverWhere .= ")";  
+                $zoneDriverWhere .= ")";
             }
         }
 

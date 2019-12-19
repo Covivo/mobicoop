@@ -97,7 +97,9 @@ class GeoMatcher
         }
         
         // we get the routes for all candidates
+        $this->logger->info("GeoMatcher : start multipleAsync " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, true, false, GeorouterInterface::RETURN_TYPE_ARRAY);
+        $this->logger->info("GeoMatcher : end multipleAsync " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
         // we treat the routes to check if they match
         foreach ($ownerRoutes as $ownerId=>$routes) {
@@ -119,6 +121,7 @@ class GeoMatcher
                 $matchesReturned['passenger'][$variants[$ownerId]['candidateToMatch']->getId()][] = $match;
             }
         }
+        $this->logger->info("GeoMatcher : return matches " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         return $matchesReturned;
     }
 
@@ -383,11 +386,12 @@ class GeoMatcher
             // we deserialize the direction if needed
             $direction = $routes[0];
             if (is_array($routes[0])) {
+                $this->logger->info("GeoMatcher : deserialize direction " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 $direction = $this->geoRouter->getRouter()->deserializeDirection($routes[0]);
             }
             
             // we add the zones to the direction
-            $direction = $this->zoneManager->createZonesForDirection($direction); // permet de créer l'object direction ?
+            $direction = $this->zoneManager->createZonesForDirection($direction);
             $result = [
                 'route' => is_array($points) ? $this->generateRoute($points, $direction->getDurations()) : null,
                 'originalDistance' => $candidate1->getDirection() ? $candidate1->getDirection()->getDistance() : $candidate1->getDistance(),

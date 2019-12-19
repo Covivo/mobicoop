@@ -301,6 +301,7 @@ class GraphhopperProvider implements GeorouterInterface
                     }
                     case self::RETURN_TYPE_ARRAY:
                     {
+                        $this->logger->debug('Multiple Async | Start treat array routes');
                         foreach ($response as $key=>$paths) {
                             // we search the first and last elements for the bearing
                             reset($multiPoints[$requestsOwner[$key]][0]);
@@ -328,6 +329,7 @@ class GraphhopperProvider implements GeorouterInterface
                                 }
                             }
                         }
+                        $this->logger->debug('Multiple Async | End treat array routes');
                         $paths = null;
                         unset($paths);
                         break;

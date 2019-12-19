@@ -242,12 +242,19 @@ class Direction
      * @Groups({"read"})
      */
     private $updatedDate;
+
+    /**
+     * @var boolean Save the geoJson with the direction.
+     * Used to avoid slow insert/updates for realtime operations.
+     */
+    private $saveGeoJson;
     
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
         $this->zones = new ArrayCollection();
         $this->territories = new ArrayCollection();
+        $this->saveGeoJson = true;
     }
 
     public function getId(): ?int
@@ -547,6 +554,18 @@ class Direction
         return $this;
     }
 
+    public function hasSaveGeoJson(): ?bool
+    {
+        return $this->saveGeoJson;
+    }
+
+    public function setSaveGeoJson(bool $saveGeoJson): self
+    {
+        $this->saveGeoJson = $saveGeoJson;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
     
     /**
@@ -572,8 +591,8 @@ class Direction
     /**
      * GeoJson representation of the bounding box.
      *
-     * ORM\PrePersist
-     * ORM\PreUpdate
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
      */
     public function setAutoGeoJsonBbox()
     {
@@ -594,11 +613,14 @@ class Direction
     /**
      * GeoJson representation of the detail.
      *
-     * ORM\PrePersist
-     * ORM\PreUpdate
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
      */
     public function setAutoGeoJsonDetail()
     {
+        if (!$this->hasSaveGeoJson()) {
+            return;
+        }
         if (!is_null($this->getGeoJsonDetail())) {
             return;
         }

@@ -611,6 +611,7 @@ class AdManager
             $aFilters['order']=$order;
         }
         $ad->setFilters($aFilters);
+        $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $ad->setResults(
             $this->resultManager->orderResults(
                 $this->resultManager->filterResults(
@@ -620,6 +621,7 @@ class AdManager
                 $ad->getFilters()
             )
         );
+        $this->logger->info("AdManager : end set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         return $ad;
     }
 }

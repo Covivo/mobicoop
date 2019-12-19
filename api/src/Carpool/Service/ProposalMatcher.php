@@ -48,8 +48,8 @@ class ProposalMatcher
 {
     // max default detour distance
     // TODO : should depend on the total distance : total distance => max detour allowed
-    public const MAX_DETOUR_DISTANCE_PERCENT = 25;
-    public const MAX_DETOUR_DURATION_PERCENT = 25;
+    public const MAX_DETOUR_DISTANCE_PERCENT = 33;
+    public const MAX_DETOUR_DURATION_PERCENT = 33;
 
     // minimum distance to check the common distance
     public const MIN_COMMON_DISTANCE_CHECK = 50;
@@ -64,10 +64,6 @@ class ProposalMatcher
     public const MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST = 1;
     public const MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST = 2;
     public const MULTI_MATCHES_FOR_SAME_CANDIDATES_ALL = 3;
-
-    const ZONE_MODE = 1;    // zone exclusion mode :
-    // 1 = at least one zone of the passenger direction equals a zone of the driver direction
-    // 2 = all the zones of the passenger direction must included in the zones of the driver direction and its next zones
 
     private $entityManager;
     private $proposalRepository;
@@ -320,19 +316,6 @@ class ProposalMatcher
         }
         ksort($proposals);
         
-        // $this->logger->info("ProposalMatcher : created proposals : " . count($proposals) . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
-        // $proposalsIds = $this->proposalRepository->filterByPassengerOriginDeltaDistance($proposal,$proposals);
-        // $ids = [];
-        // foreach ($proposalsIds as $id) {
-        //     $ids[] = $id['id'];
-        // }
-        // foreach ($proposals as $key=>$prop) {
-        //     if (!in_array($key,$ids)) {
-        //         unset($proposals[$key]);
-        //     }
-        // }
-
         $this->logger->info("ProposalMatcher : created proposals : " . count($proposals) . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         $matchings = [];
@@ -364,10 +347,6 @@ class ProposalMatcher
                 // if the candidate is not passenger we skip (the 2 candidates could be driver AND passenger, and the second one match only as a driver)
                 if (!$proposalToMatch['passenger']) {
                     continue;
-                }
-                if (self::ZONE_MODE == 2) {
-                    // we limit the proposals to the ones where the passenger zones are into the driver zones and its next zones
-                    //foreach ()
                 }
                 $candidate = new Candidate();
                 $candidate->setId($proposalToMatch['pid']);
@@ -469,7 +448,7 @@ class ProposalMatcher
         
         if ($matches = $this->geoMatcher->singleMatch($pears)) {
             if (isset($matches['driver']) && is_array($matches['driver']) && count($matches['driver'])>0) {
-                $this->logger->info("ProposalMatcher : single Match treat drivers " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                $this->logger->info("ProposalMatcher : single Match treat passengers " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 // there are matches as driver
                 foreach ($matches['driver'] as $candidateId => $matchesDriver) {
                     // we sort each possible matches as many matches can be found for 2 candidates : if multiple routes satisfy the criteria
@@ -496,7 +475,7 @@ class ProposalMatcher
                 }
             }
             if (isset($matches['passenger']) && is_array($matches['passenger']) && count($matches['passenger'])>0) {
-                $this->logger->info("ProposalMatcher : single Match treat passengers " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                $this->logger->info("ProposalMatcher : single Match treat drivers " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 // there are matches as passenger
                 foreach ($matches['passenger'] as $candidateId => $matchesPassenger) {
                     // we sort each possible matches as many matches can be found for 2 candidates : if multiple routes satisfy the criteria
@@ -563,6 +542,8 @@ class ProposalMatcher
             // criteria
             $matchingCriteria = new Criteria();
             $matchingCriteria->setDriver(true);
+            $direction = $matching->getFilters()['direction'];
+            $direction->setSaveGeoJson(false);
             $matchingCriteria->setDirectionDriver($matching->getFilters()['direction']);
             $matchingCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
             $matchingCriteria->setStrictDate($matching->getProposalOffer()->getCriteria()->isStrictDate());
@@ -1239,7 +1220,7 @@ class ProposalMatcher
 
             // update status to pending
             $q = $this->entityManager
-            ->createQuery('UPDATE App\Import\Entity\UserImport i set i.status = :status WHERE i.id IN (SELECT ui.id FROM App\Import\Entity\UserImport ui JOIN ui.user u JOIN u.proposals p WHERE p.id IN (' . implode(',',$ids) . '))')
+            ->createQuery('UPDATE App\Import\Entity\UserImport i set i.status = :status WHERE i.id IN (SELECT ui.id FROM App\Import\Entity\UserImport ui JOIN ui.user u JOIN u.proposals p WHERE p.id IN (' . implode(',', $ids) . '))')
             ->setParameters([
                 'status'=>UserImport::STATUS_MATCHING_PENDING
             ]);
@@ -1640,7 +1621,7 @@ class ProposalMatcher
             // update status to treated
             // update status to pending
             $q = $this->entityManager
-            ->createQuery('UPDATE App\Import\Entity\UserImport i set i.status = :status WHERE i.id IN (SELECT ui.id FROM App\Import\Entity\UserImport ui JOIN ui.user u JOIN u.proposals p WHERE p.id IN (' . implode(',',$ids) . '))')
+            ->createQuery('UPDATE App\Import\Entity\UserImport i set i.status = :status WHERE i.id IN (SELECT ui.id FROM App\Import\Entity\UserImport ui JOIN ui.user u JOIN u.proposals p WHERE p.id IN (' . implode(',', $ids) . '))')
             ->setParameters([
                 'status'=>UserImport::STATUS_MATCHING_TREATED
             ]);

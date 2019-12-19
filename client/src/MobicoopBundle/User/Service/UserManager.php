@@ -484,7 +484,6 @@ class UserManager
         
         /** @var \App\Carpool\Entity\Proposal $proposal */
         foreach ($proposals as $proposal) {
-
             $isAlreadyInArray = false;
             
             if (isset($proposalsSanitized["ongoing"][$proposal["id"]]) || isset($proposalsSanitized["ongoing"][$proposal["proposalLinked"]["id"]]) ||
