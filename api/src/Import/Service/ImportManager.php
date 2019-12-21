@@ -88,7 +88,6 @@ class ImportManager
         $this->communityImportRepository = $communityImportRepository;
         $this->eventImportRepository = $eventImportRepository;
         $this->relayPointImportRepository = $relayPointImportRepository;
-
     }
 
     /**

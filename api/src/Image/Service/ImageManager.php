@@ -80,7 +80,7 @@ class ImageManager
      * @param LoggerInterface $logger
      * @param array $types
      */
-    public function __construct(EntityManagerInterface $entityManager, RelayPointRepository $relayPointRepository,EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository, ImageRepository $imageRepository, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types)
+    public function __construct(EntityManagerInterface $entityManager, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository, ImageRepository $imageRepository, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types)
     {
         $this->entityManager = $entityManager;
         $this->eventRepository = $eventRepository;
@@ -121,8 +121,7 @@ class ImageManager
         } elseif (!is_null($image->getUser())) {
             // the image is an image for a user
             return $this->userRepository->find($image->getUser()->getId());
-        }
-        elseif (!is_null($image->getRelayPoint())) {
+        } elseif (!is_null($image->getRelayPoint())) {
             // the image is an image for a user
             return $this->relayPointRepository->find($image->getRelayPoint()->getId());
         }
