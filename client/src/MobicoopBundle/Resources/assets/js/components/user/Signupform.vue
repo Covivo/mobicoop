@@ -229,7 +229,7 @@
             <v-date-picker
               ref="picker"
               v-model="form.date"
-              :max="new Date().toISOString().substr(0, 10)"
+              :max="maxDate()"
               :locale="locale"
               first-day-of-week="1"
               @change="save"
@@ -496,6 +496,11 @@ export default {
     this.container = document.getElementById ( "scroll-target" )
   },
   methods: {
+    maxDate() {
+      let maxDate = new Date();
+      maxDate.setFullYear (maxDate.getFullYear() - 18);
+      return maxDate.toISOString().substr(0, 10);
+    },
     selectedGeo(address) {
       this.form.homeAddress = address;
       if (this.requiredHomeAddress) {
