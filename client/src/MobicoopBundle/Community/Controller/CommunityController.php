@@ -197,7 +197,7 @@ class CommunityController extends AbstractController
             $communityUser = new CommunityUser();
             $communityUser->setUser($user);
             $communityUser->setCommunity($community);
-            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED);
+            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
 
             // the credentials
             $communityUser->setLogin($request->request->get("credential1"));
