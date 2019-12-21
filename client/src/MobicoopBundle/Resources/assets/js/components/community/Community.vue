@@ -506,8 +506,15 @@ export default {
           };
 
           if(proposal.type !== 'return'){ // We show only outward or one way proposals
+
+            infosForPopUp.carpoolerFirstName = proposal.carpoolerFirstName;
+            infosForPopUp.carpoolerLastName = proposal.carpoolerLastName;
+
+            // We build the content of the popup
+            currentProposal.desc = "<p style='text-align:center;'><strong>"+infosForPopUp.carpoolerFirstName+" "+infosForPopUp.carpoolerLastName+"</strong></p>"
+
+
             proposal.waypoints.forEach((waypoint, index) => {
-              this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
               currentProposal.latLngs.push(waypoint.latLng);
               if(index==0){
                 infosForPopUp.origin = waypoint.title;
@@ -519,12 +526,10 @@ export default {
                 infosForPopUp.destinationLat = waypoint.latLng.lat;
                 infosForPopUp.destinationLon = waypoint.latLng.lon;
               }
+              this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,currentProposal.desc,"",[],[],"<p>"+waypoint.title+"</p>"));
             });
-            infosForPopUp.carpoolerFirstName = proposal.carpoolerFirstName;
-            infosForPopUp.carpoolerLastName = proposal.carpoolerLastName;
 
-            // We build the content of the popup
-            currentProposal.desc = "<p><strong>"+infosForPopUp.carpoolerFirstName+" "+infosForPopUp.carpoolerLastName+"</strong></p>"
+
             currentProposal.desc += "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
             currentProposal.desc += "<strong>"+this.$t('map.destination')+"</strong> : "+infosForPopUp.destination+"<br />";
             if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em>";
@@ -545,11 +550,11 @@ export default {
       }
       this.$refs.mmap.redrawMap();
     },
-    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
+    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[],popupDesc=""){
       let point = {
         title:title,
         latLng:L.latLng(lat, lng),
-        icon: {}
+        icon: {},
       };
 
       if(pictoUrl!==""){
@@ -560,6 +565,12 @@ export default {
         }
       }
 
+      if(popupDesc!==""){
+        point.popup = {
+          title:title,
+          description:popupDesc
+        }
+      }
       return point;
     },
     contact: function(data){

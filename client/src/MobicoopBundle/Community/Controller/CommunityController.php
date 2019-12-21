@@ -231,8 +231,10 @@ class CommunityController extends AbstractController
                     "waypoints"=>[]
                 ];
                 foreach ($proposal["waypoints"] as $waypoint) {
+                    dump($waypoint);
                     $currentProposal["waypoints"][] = [
-                        "title"=>(is_array($waypoint["address"]["displayLabel"])) ? implode(", ", $waypoint["address"]["displayLabel"]) : $waypoint["address"]["displayLabel"],
+                        // "title"=>(is_array($waypoint["address"]["displayLabel"])) ? implode(", ", $waypoint["address"]["displayLabel"]) : $waypoint["address"]["displayLabel"],
+                        "title"=>$waypoint["address"]["addressLocality"],
                         "destination"=>$waypoint['destination'],
                         "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
                     ];
