@@ -332,7 +332,7 @@ class AdManager
                 if (isset($params['returnSchedule']['monTime']) && !is_null($params['returnSchedule']['monTime'])) {
                     $schedule[] = [
                         'outwardTime' => $params['outwardSchedule']['monTime'],
-                        'returnTime' => $params['returnSchedule']['tueTime'],
+                        'returnTime' => $params['returnSchedule']['monTime'],
                         'mon' => true
                     ];
                 } else {
@@ -374,7 +374,7 @@ class AdManager
                 if (isset($params['returnSchedule']['wedTime']) && !is_null($params['returnSchedule']['wedTime'])) {
                     $schedule[] = [
                         'outwardTime' => $params['outwardSchedule']['wedTime'],
-                        'returnTime' => $params['returnSchedule']['tueTime'],
+                        'returnTime' => $params['returnSchedule']['wedTime'],
                         'wed' => true
                     ];
                 } else {
@@ -395,7 +395,7 @@ class AdManager
                 if (isset($params['returnSchedule']['thuTime']) && !is_null($params['returnSchedule']['thuTime'])) {
                     $schedule[] = [
                         'outwardTime' => $params['outwardSchedule']['thuTime'],
-                        'returnTime' => $params['returnSchedule']['tueTime'],
+                        'returnTime' => $params['returnSchedule']['thuTime'],
                         'thu' => true
                     ];
                 } else {
@@ -416,7 +416,7 @@ class AdManager
                 if (isset($params['returnSchedule']['friTime']) && !is_null($params['returnSchedule']['friTime'])) {
                     $schedule[] = [
                         'outwardTime' => $params['outwardSchedule']['friTime'],
-                        'returnTime' => $params['returnSchedule']['tueTime'],
+                        'returnTime' => $params['returnSchedule']['friTime'],
                         'fri' => true
                     ];
                 } else {
@@ -437,7 +437,7 @@ class AdManager
                 if (isset($params['returnSchedule']['satTime']) && !is_null($params['returnSchedule']['satTime'])) {
                     $schedule[] = [
                         'outwardTime' => $params['outwardSchedule']['satTime'],
-                        'returnTime' => $params['returnSchedule']['tueTime'],
+                        'returnTime' => $params['returnSchedule']['satTime'],
                         'sat' => true
                     ];
                 } else {
@@ -458,7 +458,7 @@ class AdManager
                 if (isset($params['returnSchedule']['sunTime']) && !is_null($params['returnSchedule']['sunTime'])) {
                     $schedule[] = [
                         'outwardTime' => $params['outwardSchedule']['sunTime'],
-                        'returnTime' => $params['returnSchedule']['tueTime'],
+                        'returnTime' => $params['returnSchedule']['sunTime'],
                         'sun' => true
                     ];
                 } else {

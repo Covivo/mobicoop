@@ -32,7 +32,7 @@ export default {
           chart: {
             text: "J'accepte la charte de la plateforme et sa ",
             link: "politique de protection des données",
-            route: "/protection-donnees",
+            route: "/cgu",
             errors: {
               required: "La validation de la charte est requise"
             }
