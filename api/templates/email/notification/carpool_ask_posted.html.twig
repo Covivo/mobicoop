@@ -21,8 +21,8 @@
                 {% if ask.criteria.satCheck %}{{ "saturday" |trans}} {% endif %}
                 {% if ask.criteria.sunCheck %}{{ "sunday" |trans}}{% endif %}.</p>
         {% endif %}        
-        <p>{{ "supported"|trans }}:  {{ (ask.matching.waypoints|first).address.addressLocality }}.</p>
-        <p>{{ "depositedAt"|trans }}: {{ (ask.matching.waypoints|last).address.addressLocality }}.</p> 
+        <p>{{ "supported"|trans }}:  {{ context.origin.address.addressLocality }}.</p>
+        <p>{{ "depositedAt"|trans }}: {{ context.destination.address.addressLocality }}.</p> 
         <br></br>
         {% if ask.matching.proposalRequest.comment %}
         <p>{{ "passengerComment"|trans }} {{ ask.matching.proposalRequest.comment }}</p>
@@ -46,8 +46,8 @@
                 {% if ask.criteria.satCheck %}{{ "saturday" |trans}} {% endif %}
                 {% if ask.criteria.sunCheck %}{{ "sunday" |trans}}{% endif %}. </p> 
         {% endif %}        
-        <p>{{ "supported"|trans }}  {{ (ask.matching.waypoints|first).address.addressLocality }}.</p>
-        <p>{{ "depositedAt"|trans }} {{ (ask.matching.waypoints|last).address.addressLocality }}.</p> 
+        <p>{{ "supported"|trans }}  {{ context.origin.address.addressLocality }}.</p>
+        <p>{{ "depositedAt"|trans }} {{ context.destination.address.addressLocality }}.</p> 
         <br></br>
         {% if ask.matching.proposalOffer.comment %}
         <p>{{ "passengerComment"|trans}} {{ ask.matching.proposalOffer.comment }}</p>

@@ -8,9 +8,9 @@
 {# Ask user is driver #}
 {% set carpooler = ask.userRelated %}
     {% if ask.criteria.frequency == 1 %}
-        <p>{{ carpooler.givenName|capitalize ~ " " ~ carpooler.familyName|capitalize  }} {{ "notBeAbleToCarpoolWithYouFor"|trans }} {{ ask.criteria.fromDate|date("d/m/Y") }} {{ "towards"|trans }}  {{ (ask.matching.waypoints|last).address.addressLocality }}.</p>
+        <p>{{ carpooler.givenName|capitalize ~ " " ~ carpooler.familyName|capitalize  }} {{ "notBeAbleToCarpoolWithYouFor"|trans }} {{ ask.criteria.fromDate|date("d/m/Y") }} {{ "towards"|trans }}  {{ context.destination.address.addressLocality }}.</p>
     {% else %}
-        <p>{{ carpooler.givenName|capitalize ~ " " ~ carpooler.familyName|capitalize  }} {{ "notBeAbleToCarpoolWithYou"|trans }} {{ (ask.matching.waypoints|last).address.addressLocality }}.</p>
+        <p>{{ carpooler.givenName|capitalize ~ " " ~ carpooler.familyName|capitalize  }} {{ "notBeAbleToCarpoolWithYou"|trans }} {{ context.destination.address.addressLocality }}.</p>
         <p> {{ "followingDays"|trans }} : 
                 {% if ask.criteria.monCheck %}{{ "monday" |trans}} {% endif %} 
                 {% if ask.criteria.tueCheck %}{{ "tuesday" |trans}} {% endif %} 
