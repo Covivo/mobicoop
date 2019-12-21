@@ -1,6 +1,6 @@
 {% extends '/email/notification/linked_ad_deleted.html.twig' %}
 {% block body %}
-    <p>{{ "yourAskCarpoolBetween"|trans }} {{ (ask.matching.waypoints|first).address.addressLocality }} {{ "and"|trans }} {{ (ask.matching.waypoints|last).address.addressLocality }} {{ "with"|trans }} {{ deleterGivenName|capitalize ~ " " ~ deleterFamilyName|capitalize }} {{ "isCanceledBecause"|trans }} {{ deleterGivenName|capitalize ~ " " ~ deleterFamilyName|capitalize}} {{ "hasDeletedTheAssociateAd"|trans }}</p>
+    <p>{{ "yourAskCarpoolBetween"|trans }} {{ context.origin.address.addressLocality }} {{ "and"|trans }} {{ context.destination.address.addressLocality }} {{ "with"|trans }} {{ deleterGivenName|capitalize ~ " " ~ deleterFamilyName|capitalize }} {{ "isCanceledBecause"|trans }} {{ deleterGivenName|capitalize ~ " " ~ deleterFamilyName|capitalize}} {{ "hasDeletedTheAssociateAd"|trans }}</p>
 
     <p>{{ "noPenaltyApplied"|trans }} </p>
 {% endblock %}
