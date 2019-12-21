@@ -236,7 +236,7 @@ class ProposalRepository
             //$query->andWhere(sprintf('(ST_INTERSECTS(dp.geoJsonDetail,\'%s\')=1)', $proposal->getCriteria()->getDirectionDriver()->getGeoJsonDetail()));
         }
         if (!$driversOnly && $proposal->getCriteria()->isPassenger()) {
-            $precision = $this->getPrecision($proposal->getCriteria()->getDirectionDriver());
+            $precision = $this->getPrecision($proposal->getCriteria()->getDirectionPassenger());
             $zonesAsPassenger = $proposal->getCriteria()->getDirectionPassenger()->getZones();
             $zones = [];
             foreach ($zonesAsPassenger as $zone) {
