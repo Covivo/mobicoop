@@ -25,8 +25,11 @@ namespace App\Image\Service;
 
 use App\Image\Entity\Image;
 use App\Event\Entity\Event;
+use App\RelayPoint\Entity\RelayPoint;
+use App\RelayPoint\Repository\RelayPointRepository;
 use App\User\Entity\User;
 use App\Community\Entity\Community;
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\FileManager;
 use Psr\Log\LoggerInterface;
@@ -40,6 +43,7 @@ use App\Image\Exception\OwnerNotFoundException;
 use App\Image\Exception\ImageException;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use ProxyManager\Exception\FileNotWritableException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Image manager.
@@ -54,13 +58,16 @@ class ImageManager
     private $communityRepository;
     private $userRepository;
     private $imageRepository;
+    private $relayPointRepository;
+
     private $fileManager;
     private $types;
-    
     private $filterManager;
     private $dataManager;
     private $logger;
-    
+    private $entityManager;
+
+
     /**
      * Constructor.
      *
@@ -73,12 +80,15 @@ class ImageManager
      * @param LoggerInterface $logger
      * @param array $types
      */
-    public function __construct(EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository, ImageRepository $imageRepository, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types)
+    public function __construct(EntityManagerInterface $entityManager, RelayPointRepository $relayPointRepository,EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository, ImageRepository $imageRepository, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types)
     {
+        $this->entityManager = $entityManager;
         $this->eventRepository = $eventRepository;
         $this->communityRepository = $communityRepository;
         $this->userRepository = $userRepository;
         $this->imageRepository = $imageRepository;
+        $this->relayPointRepository = $relayPointRepository;
+
         $this->fileManager = $fileManager;
         $this->types = $types;
         $this->filterManager = $container->get('liip_imagine.filter.manager');
@@ -112,6 +122,10 @@ class ImageManager
             // the image is an image for a user
             return $this->userRepository->find($image->getUser()->getId());
         }
+        elseif (!is_null($image->getRelayPoint())) {
+            // the image is an image for a user
+            return $this->relayPointRepository->find($image->getRelayPoint()->getId());
+        }
         throw new OwnerNotFoundException('The owner of this image cannot be found');
     }
     
@@ -135,7 +149,8 @@ class ImageManager
     {
         // note : the file extension will be added later (usually automatically) so we don't need to treat it now
         $owner = $this->getOwner($image);
-        switch (get_class($owner)) {
+        $getRealClass =  ClassUtils::getClass($owner);
+        switch ($getRealClass) {
             case Event::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
@@ -145,6 +160,13 @@ class ImageManager
                 break;
             
             case Community::class:
+                // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
+                // for now, for a community, the filename will be the sanitized name of the community and the position of the image in the set
+                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
+                    return $fileName;
+                }
+                break;
+            case RelayPoint::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for a community, the filename will be the sanitized name of the community and the position of the image in the set
                 if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
@@ -311,7 +333,10 @@ class ImageManager
     
         return $randomName;
     }
-    
+
+
+   
+
     /** TODO : create methods to :
      * - modify the position and filename of images of a set if positions change (switch between images)
      * - modify the position and filename of images of a set if an image of the set is deleted
