@@ -464,16 +464,16 @@ class GraphhopperProvider implements GeorouterInterface
             // the decoded points are not stored in the database
             $direction->setDetail($data["points"]);
             if (!$this->pointsOnly) {
-                $direction->setPoints($this->deserializePoints($data['points'], true, filter_var(self::ELEVATION, FILTER_VALIDATE_BOOLEAN)));
+                $direction->setPoints($this->deserializePoints($data['points']));
             } else {
-                $direction->setDirectPoints($this->deserializePoints($data['points'], true, filter_var(self::ELEVATION, FILTER_VALIDATE_BOOLEAN)));
+                $direction->setDirectPoints($this->deserializePoints($data['points']));
             }
         }
         if (isset($data['snapped_waypoints'])) {
             // we keep the encoded AND the decoded snapped waypoints (all the waypoints used to define the direction : start point, intermediate points, end point)
             // the decoded snapped waypoints are not stored in the database
             $direction->setSnapped($data["snapped_waypoints"]);
-            $direction->setSnappedWaypoints($this->deserializePoints($data['snapped_waypoints'], true, false));
+            $direction->setSnappedWaypoints($this->deserializePoints($data['snapped_waypoints']));
         }
         $direction->setFormat(self::NAME);
         if (!is_null($this->getBearing())) {
@@ -588,20 +588,28 @@ class GraphhopperProvider implements GeorouterInterface
         // use the following code if the points are not encoded
         /*if (isset($data['points'])) {
             if (isset($data['points_encoded']) && $data['points_encoded'] === false) {
-                $direction->setPoints($this->deserializePoints($data['points'], false, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
+                $direction->setPoints($this->deserializePoints($data['points']));
             } else {
-                $direction->setPoints($this->deserializePoints($data['points'], true, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
+                $direction->setPoints($this->deserializePoints($data['points']));
             }
         }
         if (isset($data['snapped_waypoints'])) {
             if (isset($data['points_encoded']) && $data['points_encoded'] === false) {
-                $direction->setSnappedWaypoints($this->deserializePoints($data['snapped_waypoints'], false, false));
+                $direction->setSnappedWaypoints($this->deserializePoints($data['snapped_waypoints']));
             } else {
-                $direction->setSnappedWaypoints($this->deserializePoints($data['snapped_waypoints'], true, false));
+                $direction->setSnappedWaypoints($this->deserializePoints($data['snapped_waypoints']));
             }
         }*/
 
         return $direction;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deserializePoints(string $data)
+    {
+        return $this->deserializeGHPoints($data, true, filter_var(self::ELEVATION, FILTER_VALIDATE_BOOLEAN));
     }
 
     /**
@@ -612,7 +620,7 @@ class GraphhopperProvider implements GeorouterInterface
      * @param bool $is3D        Data has elevation information
      * @return Address[]        The deserialized Addresses
      */
-    private function deserializePoints(string $data, bool $encoded, bool $is3D)
+    private function deserializeGHPoints(string $data, bool $encoded, bool $is3D)
     {
         $addresses = [];
         if ($encoded) {

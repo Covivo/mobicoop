@@ -1686,6 +1686,82 @@ class Criteria
         return $this;
     }
 
+    public function getCriteriaString(?int $directionDriverId, ?int $directionPassengerId, string $delimiter=";")
+    {
+        return
+        $this->id . $delimiter .
+        ($this->driver ? '1' : '0') . $delimiter .
+        ($this->passenger ? '1' : '0') . $delimiter .
+        $this->frequency . $delimiter .
+        '99' . $delimiter .
+        $this->seatsPassenger . $delimiter;
+        // ($this->fromDate ? $this->fromDate->format('Y-m-d') : '') . $delimiter .
+        // ($this->fromTime ? $this->fromTime->format('H:i:s') : '') . $delimiter .
+        // ($this->minTime ? $this->minTime->format('H:i:s') : '') . $delimiter .
+        // ($this->maxTime ? $this->maxTime->format('H:i:s') : '') . $delimiter .
+        // $this->marginDuration . $delimiter .
+        // ($this->strictDate ? '1' : '0') . $delimiter .
+        // ($this->strictPunctual ? '1' : '0') . $delimiter .
+        // ($this->strictRegular ? '1' : '0') . $delimiter .
+        // ($this->toDate ? $this->toDate->format('Y-m-d') : '') . $delimiter .
+        // ($this->monCheck ? '1' : '0') . $delimiter .
+        // ($this->tueCheck ? '1' : '0') . $delimiter .
+        // ($this->wedCheck ? '1' : '0') . $delimiter .
+        // ($this->thuCheck ? '1' : '0') . $delimiter .
+        // ($this->friCheck ? '1' : '0') . $delimiter .
+        // ($this->satCheck ? '1' : '0') . $delimiter .
+        // ($this->sunCheck ? '1' : '0') . $delimiter .
+        // ($this->monTime ? $this->monTime->format('H:i:s') : '') . $delimiter .
+        // ($this->monMinTime ? $this->monMinTime->format('H:i:s') : '') . $delimiter .
+        // ($this->monMaxTime ? $this->monMaxTime->format('H:i:s') : '') . $delimiter .
+        // ($this->tueTime ? $this->tueTime->format('H:i:s') : '') . $delimiter .
+        // ($this->tueMinTime ? $this->tueMinTime->format('H:i:s') : '') . $delimiter .
+        // ($this->tueMaxTime ? $this->tueMaxTime->format('H:i:s') : '') . $delimiter .
+        // ($this->wedTime ? $this->wedTime->format('H:i:s') : '') . $delimiter .
+        // ($this->wedMinTime ? $this->wedMinTime->format('H:i:s') : '') . $delimiter .
+        // ($this->wedMaxTime ? $this->wedMaxTime->format('H:i:s') : '') . $delimiter .
+        // ($this->thuTime ? $this->thuTime->format('H:i:s') : '') . $delimiter .
+        // ($this->thuMinTime ? $this->thuMinTime->format('H:i:s') : '') . $delimiter .
+        // ($this->thuMaxTime ? $this->thuMaxTime->format('H:i:s') : '') . $delimiter .
+        // ($this->friTime ? $this->friTime->format('H:i:s') : '') . $delimiter .
+        // ($this->friMinTime ? $this->friMinTime->format('H:i:s') : '') . $delimiter .
+        // ($this->friMaxTime ? $this->friMaxTime->format('H:i:s') : '') . $delimiter .
+        // ($this->satTime ? $this->satTime->format('H:i:s') : '') . $delimiter .
+        // ($this->satMinTime ? $this->satMinTime->format('H:i:s') : '') . $delimiter .
+        // ($this->satMaxTime ? $this->satMaxTime->format('H:i:s') : '') . $delimiter .
+        // ($this->sunTime ? $this->sunTime->format('H:i:s') : '') . $delimiter .
+        // ($this->sunMinTime ? $this->sunMinTime->format('H:i:s') : '') . $delimiter .
+        // ($this->sunMaxTime ? $this->sunMaxTime->format('H:i:s') : '') . $delimiter .
+        // $this->monMarginDuration . $delimiter .
+        // $this->tueMarginDuration . $delimiter .
+        // $this->wedMarginDuration . $delimiter .
+        // $this->thuMarginDuration . $delimiter .
+        // $this->friMarginDuration . $delimiter .
+        // $this->satMarginDuration . $delimiter .
+        // $this->sunMarginDuration . $delimiter .
+        // $this->maxDetourDuration . $delimiter .
+        // $this->maxDetourDistance . $delimiter .
+        // ($this->anyRouteAsPassenger ? '1' : '0') . $delimiter .
+        // ($this->multiTransportMode ? '1' : '0') . $delimiter .
+        // $this->priceKm . $delimiter .
+        // $this->driverPrice . $delimiter .
+        // $this->driverComputedPrice . $delimiter .
+        // $this->driverComputedRoundedPrice . $delimiter .
+        // $this->passengerPrice . $delimiter .
+        // $this->passengerComputedPrice . $delimiter .
+        // $this->passengerComputedRoundedPrice . $delimiter .
+        // ($this->luggage ? '1' : '0') . $delimiter .
+        // ($this->bike ? '1' : '0') . $delimiter .
+        // ($this->backSeats ? '1' : '0') . $delimiter .
+        // ($this->solidary ? '1' : '0') . $delimiter .
+        // ($this->solidaryExclusive ? '1' : '0') . $delimiter .
+        // ($this->avoidMotorway ? '1' : '0') . $delimiter .
+        // ($this->avoidToll ? '1' : '0') . $delimiter .
+        // $directionDriverId . $delimiter .
+        // $directionPassengerId . $delimiter .
+        // ($this->createdDate ? $this->createdDate->format('Y-m-d H:i:s') : '') . $delimiter;
+    }
+
     // DOCTRINE EVENTS
     
     /**

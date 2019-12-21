@@ -308,7 +308,7 @@ class ProposalRepository
         if (!$driversOnly && $proposal->getCriteria()->isPassenger()) {
             $zoneDriverWhere = "";
             if (self::USE_ZONES) {
-                $precision = $this->getPrecision($proposal->getCriteria()->getDirectionDriver());
+                $precision = $this->getPrecision($proposal->getCriteria()->getDirectionPassenger());
                 $zonesAsPassenger = $proposal->getCriteria()->getDirectionPassenger()->getZones();
                 $zones = [];
                 foreach ($zonesAsPassenger as $zone) {
@@ -1174,6 +1174,7 @@ class ProposalRepository
         ->join('p.user', 'u')
         ->join('u.import', 'i')
         ->where('i.status = :status and c.directionDriver is not null')
+        ->andwhere('c.frequency = 1 or (c.monCheck = 1 or c.tueCheck = 1 or c.wedCheck = 1 or c.thuCheck = 1 or c.friCheck = 1 or c.satCheck = 1 or c.sunCheck = 1)')
         ->setParameter('status', $status);
         return $query->getQuery()->getResult();
     }

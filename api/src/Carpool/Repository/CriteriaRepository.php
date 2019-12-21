@@ -52,7 +52,7 @@ class CriteriaRepository
         ->join('c.proposal', 'p')
         ->join('p.user', 'u')
         ->join('u.import', 'i')
-        ->where('i.status = :status')
+        ->where('i.status = :status and i.id<1000')
         ->setParameter('status', $status);
         if (!is_null($date)) {
             $query->andWhere('((c.frequency = 1 and c.toDate>=":date") or (c.frequency=2 and c.todate>=":date")))')

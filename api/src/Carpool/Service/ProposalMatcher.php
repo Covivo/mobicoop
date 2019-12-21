@@ -1207,7 +1207,7 @@ class ProposalMatcher
 
         gc_enable();
         // we create chunks of proposals to avoid freezing
-        $chunk = 50;
+        $chunk = 200;
         $proposalsChunked = array_chunk($proposalIds, $chunk, true);
 
         self::print_mem(2);
@@ -1220,9 +1220,10 @@ class ProposalMatcher
 
             // update status to pending
             $q = $this->entityManager
-            ->createQuery('UPDATE App\Import\Entity\UserImport i set i.status = :status WHERE i.id IN (SELECT ui.id FROM App\Import\Entity\UserImport ui JOIN ui.user u JOIN u.proposals p WHERE p.id IN (' . implode(',', $ids) . '))')
+            ->createQuery('UPDATE App\Import\Entity\UserImport i set i.status = :status, i.treatmentJourneyStartDate=:treatmentDate WHERE i.id IN (SELECT ui.id FROM App\Import\Entity\UserImport ui JOIN ui.user u JOIN u.proposals p WHERE p.id IN (' . implode(',', $ids) . '))')
             ->setParameters([
-                'status'=>UserImport::STATUS_MATCHING_PENDING
+                'status'=>UserImport::STATUS_MATCHING_PENDING,
+                'treatmentDate'=>new \DateTime()
             ]);
             $q->execute();
 
@@ -1272,17 +1273,6 @@ class ProposalMatcher
                         }
                         ksort($aproposals);
 
-                        // $proposalsIds = $this->proposalRepository->filterByPassengerOriginDeltaDistance($proposal,$aproposals);
-                        // $ids = [];
-                        // foreach ($proposalsIds as $id) {
-                        //     $ids[] = $id['id'];
-                        // }
-                        // foreach ($proposals as $key=>$prop) {
-                        //     if (!in_array($key,$ids)) {
-                        //         unset($aproposals[$key]);
-                        //     }
-                        // }
-
                         $potentialProposals[$proposal->getId()] = [
                             'proposal'=>$proposal,
                             'potentials'=>$aproposals
@@ -1331,7 +1321,7 @@ class ProposalMatcher
             self::print_mem(6);
     
             // create a batch
-            $batchSize = 10;
+            $batchSize = 20;
             $batches = array_chunk($multimatch, $batchSize);
     
             $potentialMatchings = []; // indexed by driver proposal id
@@ -1616,14 +1606,15 @@ class ProposalMatcher
             }
             $matchings = null;
             unset($matchings);
-            gc_collect_cycles();
+            // gc_collect_cycles();
 
             // update status to treated
             // update status to pending
             $q = $this->entityManager
-            ->createQuery('UPDATE App\Import\Entity\UserImport i set i.status = :status WHERE i.id IN (SELECT ui.id FROM App\Import\Entity\UserImport ui JOIN ui.user u JOIN u.proposals p WHERE p.id IN (' . implode(',', $ids) . '))')
+            ->createQuery('UPDATE App\Import\Entity\UserImport i set i.status = :status, i.treatmentJourneyEndDate=:treatmentDate WHERE i.id IN (SELECT ui.id FROM App\Import\Entity\UserImport ui JOIN ui.user u JOIN u.proposals p WHERE p.id IN (' . implode(',', $ids) . '))')
             ->setParameters([
-                'status'=>UserImport::STATUS_MATCHING_TREATED
+                'status'=>UserImport::STATUS_MATCHING_TREATED,
+                'treatmentDate'=>new \DateTime()
             ]);
             $q->execute();
 

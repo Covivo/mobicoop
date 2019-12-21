@@ -98,14 +98,6 @@ class UserImport
     private $user;
 
     /**
-     * @var string|null The user id in the external system.
-     *
-     * @ORM\Column(type="string", length=255, nullable=false)
-     * @Groups({"read","write"})
-     */
-    private $userExternalId;
-
-    /**
      * @var string|null The identifier of the external system.
      *
      * @ORM\Column(type="string", length=255, nullable=false)
@@ -194,18 +186,6 @@ class UserImport
     public function setUser(?User $user): self
     {
         $this->user = $user;
-
-        return $this;
-    }
-
-    public function getUserExternalId(): string
-    {
-        return $this->userExternalId;
-    }
-
-    public function setUserExternalId(string $userExternalId): self
-    {
-        $this->userExternalId = $userExternalId;
 
         return $this;
     }

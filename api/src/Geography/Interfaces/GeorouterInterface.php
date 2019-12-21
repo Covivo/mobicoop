@@ -139,4 +139,11 @@ interface GeorouterInterface
      * @return Direction        The resulting direction.
      */
     public function deserializeDirection(array $data);
+
+    /**
+     * Deserializes geographical points to Addresses.
+     *
+     * @param string $data      The data to deserialize
+     */
+    public function deserializePoints(string $data);
 }

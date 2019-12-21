@@ -261,6 +261,13 @@ class Direction
     {
         return $this->id;
     }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        
+        return $this;
+    }
     
     public function getDistance(): int
     {
@@ -564,6 +571,29 @@ class Direction
         $this->saveGeoJson = $saveGeoJson;
 
         return $this;
+    }
+
+    public function getDirectionString(string $delimiter=";")
+    {
+        return
+            $this->getId() . $delimiter .
+            $this->getDistance() . $delimiter .
+            $this->getDuration() . $delimiter .
+            $this->getAscend() . $delimiter .
+            $this->getDescend() . $delimiter .
+            $this->getBboxMinLon() . $delimiter .
+            $this->getBboxMinLat() . $delimiter .
+            $this->getBboxMaxLon() . $delimiter .
+            $this->getBboxMaxLat() . $delimiter .
+            $this->getDetail() . "'" . $delimiter .
+            $this->getFormat() . "'" . $delimiter .
+            $this->getSnapped() . "'" . $delimiter .
+            $this->getBearing() . $delimiter .
+            "POLYGON(" . $this->getGeoJsonBbox() . ")" . $delimiter .
+            "LINESTRING(" . $this->getGeoJsonDetail() . ")" . $delimiter .
+            $this->getCreatedDate()->format('Y-m-d H:i:s') . $delimiter .
+            "0000-00-00'" . $delimiter .
+            "LINESTRING(" . $this->getGeoJsonSimplified() . ")" . $delimiter;
     }
 
     // DOCTRINE EVENTS

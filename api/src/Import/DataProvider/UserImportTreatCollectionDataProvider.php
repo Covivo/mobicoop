@@ -53,6 +53,6 @@ final class UserImportTreatCollectionDataProvider implements CollectionDataProvi
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return [$this->importManager->treatUserImport()];
+        return [$this->importManager->treatUserImport($this->request->get("origin"))];
     }
 }

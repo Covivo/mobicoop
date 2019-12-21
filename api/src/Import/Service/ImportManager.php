@@ -72,18 +72,19 @@ class ImportManager
     /**
      * Treat imported users
      *
+     * @param string $origin    The origin of the data
      * @return array    The users imported
      */
-    public function treatUserImport()
+    public function treatUserImport(string $origin)
     {
         set_time_limit(3600);
         //gc_enable();
         
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
 
-        // // create user_import rows
+        // create user_import rows
         $conn = $this->entityManager->getConnection();
-        $sql = "INSERT INTO user_import (user_id, user_external_id,origin,status,created_date) SELECT id as userid, id as extuserid, 'ouestgo', 0, '" . (new \DateTime())->format('Y-m-d') . "' FROM user";
+        $sql = "INSERT INTO user_import (user_id,origin,status,created_date) SELECT id, '" . $origin . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "' FROM user";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
 
@@ -129,56 +130,14 @@ class ImportManager
         ]);
         $q->execute();
 
-        // second pass : user related treatment
-        $batch = 200;    // batch for users
-        $pool = 0;
-        $qCriteria = $this->entityManager->createQuery('SELECT u FROM App\User\Entity\User u JOIN u.import i WHERE i.status='.UserImport::STATUS_USER_PENDING);
-        $iterableResult = $qCriteria->iterate();
-        foreach ($iterableResult as $row) {
-            $user = $row[0];
-
-            // we treat the role
-            if (count($user->getUserRoles()) == 0) {
-                // we have to add a role
-                $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL); // can't be defined outside the loop because of the flush/clear...
-                $userRole = new UserRole();
-                $userRole->setRole($role);
-                $user->addUserRole($userRole);
-            }
-
-            // we treat the notifications
-            if (count($user->getUserNotifications()) == 0) {
-                // we have to create the default user notifications, we don't persist immediately
-                $notifications = $this->notificationRepository->findUserEditable(); // can't be defined outside the loop because of the flush/clear...
-                foreach ($notifications as $notification) {
-                    $userNotification = new UserNotification();
-                    $userNotification->setNotification($notification);
-                    $userNotification->setActive($notification->isUserActiveDefault());
-                    if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
-                        // check telephone for sms
-                        $userNotification->setActive(false);
-                    } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
-                        // check apps for push
-                        $userNotification->setActive(false);
-                    }
-                    $user->addUserNotification($userNotification);
-                }
-            }
-            //$this->entityManager->persist($user);
-
-            // batch
-            $pool++;
-            if ($pool>=$batch) {
-                $this->entityManager->flush();
-                $this->entityManager->clear();
-                //gc_collect_cycles();
-                $pool = 0;
-            }
-        }
-        // final flush for pending persists
-        $this->entityManager->flush();
-        $this->entityManager->clear();
-        //gc_collect_cycles();
+        // create user_notification rows
+        $sql = "INSERT INTO user_notification (notification_id,user_id,active,created_date) 
+        SELECT n.id,u.id,IF (u.phone_validated_date IS NULL AND n.medium_id = " . Medium::MEDIUM_SMS . ",0,IF (u.ios_app_id IS NULL AND u.android_app_id IS NULL AND n.medium_id = " . Medium::MEDIUM_PUSH . ",0,n.user_active_default)),'" . (new \DateTime())->format('Y-m-d') . "' 
+        FROM user_import i LEFT JOIN user u ON u.id = i.user_id 
+        JOIN notification n
+        WHERE n.user_editable=1";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
 
         $q = $this->entityManager
         ->createQuery('UPDATE App\Import\Entity\UserImport u set u.status = :status WHERE u.status=:oldStatus')
@@ -199,7 +158,7 @@ class ImportManager
         $stmt->execute();
 
         $q = $this->entityManager
-        ->createQuery('UPDATE App\Import\Entity\UserImport u set u.status = :status, u.treatmentUserStartDate=:treatmentDate WHERE u.status=:oldStatus')
+        ->createQuery('UPDATE App\Import\Entity\UserImport u set u.status = :status, u.treatmentUserEndDate=:treatmentDate WHERE u.status=:oldStatus')
         ->setParameters([
             'status'=>UserImport::STATUS_DIRECTION_TREATED,
             'treatmentDate'=>new \DateTime(),

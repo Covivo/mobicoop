@@ -23,6 +23,8 @@ doctrine:
             polygon:    CrEOF\Spatial\DBAL\Types\Geometry\PolygonType
             multipolygon:    CrEOF\Spatial\DBAL\Types\Geometry\MultiPolygonType
             linestring: CrEOF\Spatial\DBAL\Types\Geometry\LineStringType
+        options:
+            1001: true
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
         naming_strategy: doctrine.orm.naming_strategy.underscore
