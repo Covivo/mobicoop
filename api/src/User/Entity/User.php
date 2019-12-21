@@ -733,6 +733,14 @@ class User implements UserInterface, EquatableInterface
      */
     private $facebookId;
 
+    /**
+     * @var string|null Custom origin of the user (i.e. from a migration)
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $origin;
+
     public function __construct($status = null)
     {
         $this->addresses = new ArrayCollection();
@@ -1852,6 +1860,18 @@ class User implements UserInterface, EquatableInterface
     public function setFacebookId(?string $facebookId): self
     {
         $this->facebookId = $facebookId;
+        return $this;
+    }
+
+    public function getOrigin(): ?string
+    {
+        return $this->origin;
+    }
+
+    public function setOrigin(?string $origin): self
+    {
+        $this->origin = $origin;
+
         return $this;
     }
 
