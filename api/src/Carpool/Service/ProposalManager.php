@@ -499,16 +499,12 @@ class ProposalManager
         $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_RAW);
         $this->logger->info('setDirectionsForProposals | End get routes status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
-        // create rows
-        $filenameDirections = "/var/www/api/public/upload/match/directions.txt";
-        // clear
-        $fpd = fopen($filenameDirections, 'w');
-        fclose($fpd);
-        $fpd = fopen($filenameDirections, 'a');
         $directions = [];
+        $directionString = "";
+        $directionStrings = [];
 
         // TODO : create SQL BATCHES
-        $update_criteria_sql = "
+        $insert_criteria_sql_begin = "
             INSERT INTO criteria (
                 id,
                 max_detour_distance,
@@ -518,7 +514,6 @@ class ProposalManager
                 any_route_as_passenger,
                 strict_date,
                 price_km,
-                frequency,
                 strict_punctual,
                 margin_duration,
                 strict_regular,
@@ -552,22 +547,108 @@ class ProposalManager
                 passenger_computed_rounded_price
             ) VALUES 
         ";
+
+        $insert_criteria_sql_end = " ON DUPLICATE KEY UPDATE 
+        max_detour_distance=VALUES(max_detour_distance),
+        max_detour_duration=VALUES(max_detour_duration),
+        direction_driver_id=VALUES(direction_driver_id),
+        direction_passenger_id=VALUES(direction_passenger_id),
+        any_route_as_passenger=VALUES(any_route_as_passenger),
+        strict_date=VALUES(strict_date),
+        price_km=VALUES(price_km),
+        strict_punctual=VALUES(strict_punctual),
+        margin_duration=VALUES(margin_duration),
+        strict_regular=VALUES(strict_regular),
+        mon_margin_duration=VALUES(mon_margin_duration),
+        tue_margin_duration=VALUES(tue_margin_duration),
+        wed_margin_duration=VALUES(wed_margin_duration),
+        thu_margin_duration=VALUES(thu_margin_duration),
+        fri_margin_duration=VALUES(fri_margin_duration),
+        sat_margin_duration=VALUES(sat_margin_duration),
+        sun_margin_duration=VALUES(sun_margin_duration),
+        to_date=VALUES(to_date),
+        min_time=VALUES(min_time),
+        max_time=VALUES(max_time),
+        mon_min_time=VALUES(mon_min_time),
+        mon_max_time=VALUES(mon_max_time),
+        tue_min_time=VALUES(tue_min_time),
+        tue_max_time=VALUES(tue_max_time),
+        wed_min_time=VALUES(wed_min_time),
+        wed_max_time=VALUES(wed_max_time),
+        thu_min_time=VALUES(thu_min_time),
+        thu_max_time=VALUES(thu_max_time),
+        fri_min_time=VALUES(fri_min_time),
+        fri_max_time=VALUES(fri_max_time),
+        sat_min_time=VALUES(sat_min_time),
+        sat_max_time=VALUES(sat_max_time),
+        sun_min_time=VALUES(sun_min_time),
+        sun_max_time=VALUES(sun_max_time),
+        driver_computed_price=VALUES(driver_computed_price),
+        driver_computed_rounded_price=VALUES(driver_computed_rounded_price),
+        passenger_computed_price=VALUES(passenger_computed_price),
+        passenger_computed_rounded_price=VALUES(passenger_computed_rounded_price),
+        frequency = frequency,
+        driver = driver,
+        passenger = passenger,
+        seats_driver = seats_driver,
+        seats_passenger = seats_passenger,
+        from_date = from_date,
+        from_time = from_time,
+        mon_check = mon_check,
+        tue_check = tue_check,
+        wed_check = wed_check,
+        thu_check = thu_check,
+        fri_check = fri_check,
+        sat_check = sat_check,
+        sun_check = sun_check,
+        mon_time = mon_time,
+        tue_time = tue_time,
+        wed_time = wed_time,
+        thu_time = thu_time,
+        fri_time = fri_time,
+        sat_time = sat_time,
+        sun_time = sun_time,
+        multi_transport_mode = multi_transport_mode,
+        driver_price = driver_price,
+        passenger_price = passenger_price,
+        luggage = luggage,
+        bike = bike,
+        back_seats = back_seats,
+        solidary = solidary,
+        solidary_exclusive = solidary_exclusive,
+        avoid_motorway = avoid_motorway,
+        avoid_toll = avoid_toll,
+        created_date = created_date
+        ;";
+
+        $update_criteria_sqls = [];
  
         $this->logger->info('Start treat rows ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $id=0; // set here the first direction id
+        $i=0;
+        $poolCriteria = 0;
+        $poolDirection = 0;
         foreach ($criterias as $criteria) {
+            //$this->logger->info('Treat row ' . $i . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            if ($poolCriteria == 0) {
+                $update_criteria_sql = $insert_criteria_sql_begin;
+            }
+            if ($poolDirection == 0) {
+                $directionString = "";
+            }
             $update_criteria_sql .= "(" . $criteria->getId() . ",";
             if (isset($owner[$criteria->getId()]['driver']) && isset($ownerRoutes[$owner[$criteria->getId()]['driver']])) {
                 $id++;
                 $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['driver']][0]);
-                $direction = $this->zoneManager->createZonesForDirection($direction);
+                //$direction = $this->zoneManager->createZonesForDirection($direction);
                 $direction->setId($id);
                 $direction->setSaveGeoJson(true);
                 $direction->setAutoGeoJsonBbox();
                 $direction->setAutoGeoJsonDetail();
                 $direction->setAutoCreatedDate();
                 $directions[$criteria->getId()]['driver'] = ['id'=>$id,'distance'=>$direction->getDistance()];
-                fwrite($fpd, $direction->getDirectionString() . "\r\n");
+                $directionString .= $direction->getDirectionString() . "\r\n";
+                //fwrite($fpd, $direction->getDirectionString() . "\r\n");
                 $update_criteria_sql .= $direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100 . "," . $direction->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100 . "," . $id . ",";
             } else {
                 $update_criteria_sql .= "null,null,null,";
@@ -575,14 +656,15 @@ class ProposalManager
             if (isset($owner[$criteria->getId()]['passenger']) && isset($ownerRoutes[$owner[$criteria->getId()]['passenger']])) {
                 $id++;
                 $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['passenger']][0]);
-                $direction = $this->zoneManager->createZonesForDirection($direction);
+                //$direction = $this->zoneManager->createZonesForDirection($direction);
                 $direction->setId($id);
                 $direction->setSaveGeoJson(true);
                 $direction->setAutoGeoJsonBbox();
                 $direction->setAutoGeoJsonDetail();
                 $direction->setAutoCreatedDate();
                 $directions[$criteria->getId()]['passenger'] = ['id'=>$id,'distance'=>$direction->getDistance()];
-                fwrite($fpd, $direction->getDirectionString() . "\r\n");
+                $directionString .= $direction->getDirectionString() . "\r\n";
+                //fwrite($fpd, $direction->getDirectionString() . "\r\n");
                 $update_criteria_sql .= $id . ",";
             } else {
                 $update_criteria_sql .= "null,";
@@ -666,56 +748,56 @@ class ProposalManager
                 $endDate = clone $criteria->getFromDate();
                 // the date can be immutable
                 $toDate = $endDate->add(new \DateInterval('P' . $this->params['defaultRegularLifeTime'] . 'Y'));
-                $update_criteria_sql .= $toDate->format('Y-m-d') . ",";
+                $update_criteria_sql .= "'" . $toDate->format('Y-m-d') . "',";
             } else {
-                $update_criteria_sql .= $criteria->getToDate()->format('Y-m-d') . ",";
+                $update_criteria_sql .= "'" . $criteria->getToDate()->format('Y-m-d') . "',";
             }
 
             if ($criteria->getFromTime()) {
                 list($minTime, $maxTime) = self::getMinMaxTime($criteria->getFromTime(), $criteria->getMarginDuration());
-                $update_criteria_sql .= $minTime->format('H:i:s') . "," . $maxTime->format('H:i:s') . ",";
+                $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
             } else {
                 $update_criteria_sql .= "null,null,";
             }
             if ($criteria->isMonCheck() && $criteria->getMonTime()) {
                 list($minTime, $maxTime) = self::getMinMaxTime($criteria->getMonTime(), $criteria->getMonMarginDuration());
-                $update_criteria_sql .= $minTime->format('H:i:s') . "," . $maxTime->format('H:i:s') . ",";
+                $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
             } else {
                 $update_criteria_sql .= "null,null,";
             }
             if ($criteria->isTueCheck() && $criteria->getTueTime()) {
                 list($minTime, $maxTime) = self::getMinMaxTime($criteria->getTueTime(), $criteria->getTueMarginDuration());
-                $update_criteria_sql .= $minTime->format('H:i:s') . "," . $maxTime->format('H:i:s') . ",";
+                $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
             } else {
                 $update_criteria_sql .= "null,null,";
             }
             if ($criteria->isWedCheck() && $criteria->getWedTime()) {
                 list($minTime, $maxTime) = self::getMinMaxTime($criteria->getWedTime(), $criteria->getWedMarginDuration());
-                $update_criteria_sql .= $minTime->format('H:i:s') . "," . $maxTime->format('H:i:s') . ",";
+                $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
             } else {
                 $update_criteria_sql .= "null,null,";
             }
             if ($criteria->isThuCheck() && $criteria->getThuTime()) {
                 list($minTime, $maxTime) = self::getMinMaxTime($criteria->getThuTime(), $criteria->getThuMarginDuration());
-                $update_criteria_sql .= $minTime->format('H:i:s') . "," . $maxTime->format('H:i:s') . ",";
+                $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
             } else {
                 $update_criteria_sql .= "null,null,";
             }
             if ($criteria->isFriCheck() && $criteria->getFriTime()) {
                 list($minTime, $maxTime) = self::getMinMaxTime($criteria->getFriTime(), $criteria->getFriMarginDuration());
-                $update_criteria_sql .= $minTime->format('H:i:s') . "," . $maxTime->format('H:i:s') . ",";
+                $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
             } else {
                 $update_criteria_sql .= "null,null,";
             }
             if ($criteria->isSatCheck() && $criteria->getSatTime()) {
                 list($minTime, $maxTime) = self::getMinMaxTime($criteria->getSatTime(), $criteria->getSatMarginDuration());
-                $update_criteria_sql .= $minTime->format('H:i:s') . "," . $maxTime->format('H:i:s') . ",";
+                $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
             } else {
                 $update_criteria_sql .= "null,null,";
             }
             if ($criteria->isSunCheck() && $criteria->getSunTime()) {
                 list($minTime, $maxTime) = self::getMinMaxTime($criteria->getSunTime(), $criteria->getSunMarginDuration());
-                $update_criteria_sql .= $minTime->format('H:i:s') . "," . $maxTime->format('H:i:s') . ",";
+                $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
             } else {
                 $update_criteria_sql .= "null,null,";
             }
@@ -733,116 +815,79 @@ class ProposalManager
             } else {
                 $update_criteria_sql .= "null,null),";
             }
+            $poolCriteria++;
+            if ($poolCriteria >= $batch) {
+                // delete last comma
+                $this->logger->info('Batch Criteria ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                $update_criteria_sql = substr($update_criteria_sql, 0, -1);
+                $update_criteria_sql .= $insert_criteria_sql_end;
+                $update_criteria_sqls[] = $update_criteria_sql;
+                $poolCriteria = 0;
+            }
+            $poolDirection++;
+            if ($poolDirection >= 1000) {
+                $this->logger->info('Batch Direction ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                $directionStrings[] = $directionString;
+                $poolDirection = 0;
+            }
+            $i++;
         }
 
-        // delete last comma
-        $update_criteria_sql = substr($update_criteria_sql, 0, -1);
+        // last batch
+        if ($poolCriteria>0) {
+            $this->logger->info('Batch Criteria ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            // delete last comma
+            $update_criteria_sql = substr($update_criteria_sql, 0, -1);
+            $update_criteria_sql .= $insert_criteria_sql_end;
+            $update_criteria_sqls[] = $update_criteria_sql;
+        }
+        if ($poolDirection>0) {
+            $this->logger->info('Batch Direction ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $directionStrings[] = $directionString;
+        }
 
         $conn = $this->entityManager->getConnection();
-        $sql = "
-            LOAD DATA LOCAL INFILE '" . $filenameDirections . "' IGNORE INTO TABLE direction FIELDS TERMINATED BY ';' LINES TERMINATED BY '\n'
-            (@id,@distance,@duration,@ascend,@descend,@bboxMinLon,@bboxMinLat,@bboxMaxLon,@bboxMaxLat,@detail,@format,@snapped,@bearing,@geoJsonBbox,@geoJsonDetail,@createdDate,@updatedDate,@geoJsonSimplified)
-            set 
-            `id` = @id,
-            `distance` = @distance,
-            `duration` = @duration,
-            `ascend` = @ascend,
-            `descend` = @descend,
-            `bbox_min_lon` = @bboxMinLon,
-            `bbox_min_lat` = @bboxMinLat,
-            `bbox_max_lon` = @bboxMaxLon,
-            `bbox_max_lat` = @bboxMaxLat,
-            `detail` = @detail,
-            `format` = @format,
-            `snapped` = @snapped,
-            `bearing` = @bearing,
-            `geo_json_bbox` = GeomFromText(@geoJsonBbox),
-            `geo_json_detail` = GeomFromText(@geoJsonDetail),
-            `created_date` = @createdDate,
-            `updated_date` = @updatedDate,
-            `geo_json_simplified` = GeomFromText(@geoJsonSimplified)
-            ;
-        ";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        // create rows
+        $filenameDirections = "/var/www/api/public/upload/match/directions.txt";
 
-        fclose($fpd);
+        foreach ($directionStrings as $directionString) {
+            $fpd = fopen($filenameDirections, 'w');
+            fwrite($fpd, $directionString);
+            fclose($fpd);
+            $sql = "
+                LOAD DATA LOCAL INFILE '" . $filenameDirections . "' IGNORE INTO TABLE direction FIELDS TERMINATED BY ';' LINES TERMINATED BY '\n'
+                (@id,@distance,@duration,@ascend,@descend,@bboxMinLon,@bboxMinLat,@bboxMaxLon,@bboxMaxLat,@detail,@format,@snapped,@bearing,@geoJsonBbox,@geoJsonDetail,@createdDate,@updatedDate,@geoJsonSimplified)
+                set 
+                `id` = @id,
+                `distance` = @distance,
+                `duration` = @duration,
+                `ascend` = @ascend,
+                `descend` = @descend,
+                `bbox_min_lon` = @bboxMinLon,
+                `bbox_min_lat` = @bboxMinLat,
+                `bbox_max_lon` = @bboxMaxLon,
+                `bbox_max_lat` = @bboxMaxLat,
+                `detail` = @detail,
+                `format` = @format,
+                `snapped` = @snapped,
+                `bearing` = @bearing,
+                `geo_json_bbox` = GeomFromText(@geoJsonBbox),
+                `geo_json_detail` = GeomFromText(@geoJsonDetail),
+                `created_date` = @createdDate,
+                `updated_date` = @updatedDate,
+                `geo_json_simplified` = GeomFromText(@geoJsonSimplified)
+                ;
+            ";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+        }
+
         unlink($filenameDirections);
        
-        $update_criteria_sql .= " ON DUPLICATE KEY UPDATE 
-        max_detour_distance=VALUES(max_detour_distance),
-        max_detour_duration=VALUES(max_detour_duration),
-        direction_driver_id=VALUES(direction_driver_id),
-        direction_passenger_id=VALUES(direction_passenger_id),
-        any_route_as_passenger=VALUES(any_route_as_passenger),
-        strict_date=VALUES(strict_date),
-        price_km=VALUES(price_km),
-        frequency=VALUES(frequency),
-        strict_punctual=VALUES(strict_punctual),
-        margin_duration=VALUES(margin_duration),
-        strict_regular=VALUES(strict_regular),
-        mon_margin_duration=VALUES(mon_margin_duration),
-        tue_margin_duration=VALUES(tue_margin_duration),
-        wed_margin_duration=VALUES(wed_margin_duration),
-        thu_margin_duration=VALUES(thu_margin_duration),
-        fri_margin_duration=VALUES(fri_margin_duration),
-        sat_margin_duration=VALUES(sat_margin_duration),
-        sun_margin_duration=VALUES(sun_margin_duration),
-        to_date=VALUES(to_date),
-        min_time=VALUES(min_time),
-        max_time=VALUES(max_time),
-        mon_min_time=VALUES(mon_min_time),
-        mon_max_time=VALUES(mon_max_time),
-        tue_min_time=VALUES(tue_min_time),
-        tue_max_time=VALUES(tue_max_time),
-        wed_min_time=VALUES(wed_min_time),
-        wed_max_time=VALUES(wed_max_time),
-        thu_min_time=VALUES(thu_min_time),
-        thu_max_time=VALUES(thu_max_time),
-        fri_min_time=VALUES(fri_min_time),
-        fri_max_time=VALUES(fri_max_time),
-        sat_min_time=VALUES(sat_min_time),
-        sat_max_time=VALUES(sat_max_time),
-        sun_min_time=VALUES(sun_min_time),
-        sun_max_time=VALUES(sun_max_time),
-        driver_computed_price=VALUES(driver_computed_price),
-        driver_computed_rounded_price=VALUES(driver_computed_rounded_price),
-        passenger_computed_price=VALUES(passenger_computed_price),
-        passenger_computed_rounded_price=VALUES(passenger_computed_rounded_price),
-        driver = driver,
-        passenger = passenger,
-        seats_driver = seats_driver,
-        seats_passenger = seats_passenger,
-        from_date = from_date,
-        from_time = from_time,
-        mon_check = mon_check,
-        tue_check = tue_check,
-        wed_check = wed_check,
-        thu_check = thu_check,
-        fri_check = fri_check,
-        sat_check = sat_check,
-        sun_check = sun_check,
-        mon_time = mon_time,
-        tue_time = tue_time,
-        wed_time = wed_time,
-        thu_time = thu_time,
-        fri_time = fri_time,
-        sat_time = sat_time,
-        sun_time = sun_time,
-        multi_transport_mode = multi_transport_mode,
-        driver_price = driver_price,
-        passenger_price = passenger_price,
-        luggage = luggage,
-        bike = bike,
-        back_seats = back_seats,
-        solidary = solidary,
-        solidary_exclusive = solidary_exclusive,
-        avoid_motorway = avoid_motorway,
-        avoid_toll = avoid_toll,
-        created_date = created_date
-        ;";
-        $stmt = $conn->prepare($update_criteria_sql);
-        $stmt->execute();
+        foreach ($update_criteria_sqls as $update) {
+            $stmt = $conn->prepare($update);
+            $stmt->execute();
+        }
         
         // $sql = "
         //     SET FOREIGN_KEY_CHECKS = 0;

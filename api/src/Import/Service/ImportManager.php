@@ -84,68 +84,68 @@ class ImportManager
 
         // create user_import rows
         $conn = $this->entityManager->getConnection();
-        $sql = "INSERT INTO user_import (user_id,origin,status,created_date) SELECT id, '" . $origin . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "' FROM user";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        // $sql = "INSERT INTO user_import (user_id,origin,status,created_date) SELECT id, '" . $origin . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "' FROM user";
+        // $stmt = $conn->prepare($sql);
+        // $stmt->execute();
 
 
-        // REPAIR
+        // // REPAIR
 
-        // update proposal : set private to 0 if initialized to null
-        $sql = "UPDATE proposal SET private = 0 WHERE private is null";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        // // update proposal : set private to 0 if initialized to null
+        // $sql = "UPDATE proposal SET private = 0 WHERE private is null";
+        // $stmt = $conn->prepare($sql);
+        // $stmt->execute();
 
-        // update criteria : set checks to null where time is not filled
-        $sql = "UPDATE criteria SET mon_check = null WHERE mon_check IS NOT NULL and mon_time is null";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $sql = "UPDATE criteria SET tue_check = null WHERE tue_check IS NOT NULL and tue_time is null";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $sql = "UPDATE criteria SET wed_check = null WHERE wed_check IS NOT NULL and wed_time is null";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $sql = "UPDATE criteria SET thu_check = null WHERE thu_check IS NOT NULL and thu_time is null";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $sql = "UPDATE criteria SET fri_check = null WHERE fri_check IS NOT NULL and fri_time is null";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $sql = "UPDATE criteria SET sat_check = null WHERE sat_check IS NOT NULL and sat_time is null";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $sql = "UPDATE criteria SET sun_check = null WHERE sun_check IS NOT NULL and sun_time is null";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        // // update criteria : set checks to null where time is not filled
+        // $sql = "UPDATE criteria SET mon_check = null WHERE mon_check IS NOT NULL and mon_time is null";
+        // $stmt = $conn->prepare($sql);
+        // $stmt->execute();
+        // $sql = "UPDATE criteria SET tue_check = null WHERE tue_check IS NOT NULL and tue_time is null";
+        // $stmt = $conn->prepare($sql);
+        // $stmt->execute();
+        // $sql = "UPDATE criteria SET wed_check = null WHERE wed_check IS NOT NULL and wed_time is null";
+        // $stmt = $conn->prepare($sql);
+        // $stmt->execute();
+        // $sql = "UPDATE criteria SET thu_check = null WHERE thu_check IS NOT NULL and thu_time is null";
+        // $stmt = $conn->prepare($sql);
+        // $stmt->execute();
+        // $sql = "UPDATE criteria SET fri_check = null WHERE fri_check IS NOT NULL and fri_time is null";
+        // $stmt = $conn->prepare($sql);
+        // $stmt->execute();
+        // $sql = "UPDATE criteria SET sat_check = null WHERE sat_check IS NOT NULL and sat_time is null";
+        // $stmt = $conn->prepare($sql);
+        // $stmt->execute();
+        // $sql = "UPDATE criteria SET sun_check = null WHERE sun_check IS NOT NULL and sun_time is null";
+        // $stmt = $conn->prepare($sql);
+        // $stmt->execute();
 
-        // we have to treat all the users that have just been imported
-        // first pass : update status before treatment
-        $q = $this->entityManager
-        ->createQuery('UPDATE App\Import\Entity\UserImport u set u.status = :status, u.treatmentUserStartDate=:treatmentDate WHERE u.status=:oldStatus')
-        ->setParameters([
-            'status'=>UserImport::STATUS_USER_PENDING,
-            'treatmentDate'=>new \DateTime(),
-            'oldStatus'=>UserImport::STATUS_IMPORTED
-        ]);
-        $q->execute();
+        // // we have to treat all the users that have just been imported
+        // // first pass : update status before treatment
+        // $q = $this->entityManager
+        // ->createQuery('UPDATE App\Import\Entity\UserImport u set u.status = :status, u.treatmentUserStartDate=:treatmentDate WHERE u.status=:oldStatus')
+        // ->setParameters([
+        //     'status'=>UserImport::STATUS_USER_PENDING,
+        //     'treatmentDate'=>new \DateTime(),
+        //     'oldStatus'=>UserImport::STATUS_IMPORTED
+        // ]);
+        // $q->execute();
 
-        // create user_notification rows
-        $sql = "INSERT INTO user_notification (notification_id,user_id,active,created_date) 
-        SELECT n.id,u.id,IF (u.phone_validated_date IS NULL AND n.medium_id = " . Medium::MEDIUM_SMS . ",0,IF (u.ios_app_id IS NULL AND u.android_app_id IS NULL AND n.medium_id = " . Medium::MEDIUM_PUSH . ",0,n.user_active_default)),'" . (new \DateTime())->format('Y-m-d') . "' 
-        FROM user_import i LEFT JOIN user u ON u.id = i.user_id 
-        JOIN notification n
-        WHERE n.user_editable=1";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        // // create user_notification rows
+        // $sql = "INSERT INTO user_notification (notification_id,user_id,active,created_date)
+        // SELECT n.id,u.id,IF (u.phone_validated_date IS NULL AND n.medium_id = " . Medium::MEDIUM_SMS . ",0,IF (u.ios_app_id IS NULL AND u.android_app_id IS NULL AND n.medium_id = " . Medium::MEDIUM_PUSH . ",0,n.user_active_default)),'" . (new \DateTime())->format('Y-m-d') . "'
+        // FROM user_import i LEFT JOIN user u ON u.id = i.user_id
+        // JOIN notification n
+        // WHERE n.user_editable=1";
+        // $stmt = $conn->prepare($sql);
+        // $stmt->execute();
 
-        $q = $this->entityManager
-        ->createQuery('UPDATE App\Import\Entity\UserImport u set u.status = :status WHERE u.status=:oldStatus')
-        ->setParameters([
-            'status'=>UserImport::STATUS_USER_TREATED,
-            'oldStatus'=>UserImport::STATUS_USER_PENDING
-        ]);
-        $q->execute();
+        // $q = $this->entityManager
+        // ->createQuery('UPDATE App\Import\Entity\UserImport u set u.status = :status WHERE u.status=:oldStatus')
+        // ->setParameters([
+        //     'status'=>UserImport::STATUS_USER_TREATED,
+        //     'oldStatus'=>UserImport::STATUS_USER_PENDING
+        // ]);
+        // $q->execute();
 
         // batch for criterias / direction
         $batch = 50;
