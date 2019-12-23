@@ -6,8 +6,8 @@
       "popup": {
         "title": "Demande de confirmation",
         "content": {
-          "isProposalsHidden": "Si vous avez encore des annonces valides associées à cette communauté privée. En la quittant, ces annonces seront supprimées.<br>Confirmez-vous ?",
-          "isNotProposalsHidden": "Si vous avez encore des annonces valides associées à cette communauté. En la quittant, ces annonces ne seront plus marquées comme étant liées à la communauté.<br>Confirmez-vous ?"
+          "isProposalsHidden": "Si vous avez encore des annonces valides associées à cette communauté privée, ces annonces seront supprimées.<br>Confirmez-vous ?",
+          "isNotProposalsHidden": "Si vous avez encore des annonces valides associées à cette communauté, ces annonces ne seront plus marquées comme étant liées à la communauté une fois que vous l'aurez quittée.<br>Confirmez-vous ?"
         }
       }
     },
