@@ -547,8 +547,8 @@
       </v-btn>
 
       <v-btn
-        v-if="(step === 5 && driver)"
-        :disabled="disableNextButton || price <= 0"
+        v-if="(step === 5 && driver && !solidaryExclusive)"
+        :disabled="disableNextButton || price < 0"
         :loading="loadingPrice"
         rounded
         color="secondary"
@@ -560,7 +560,7 @@
       </v-btn>
 
       <v-btn
-        v-if="((step < 6 && driver && step !== 5)|| (step < 5 && !driver))"
+        v-if="((step < 7 && driver && step !== 5 && !solidaryExclusive) || (step < 5 && !driver && !solidaryExclusive) || (solidaryExclusive && step < 6))"
         :disabled="!validNext"
         rounded
         color="secondary"
@@ -770,7 +770,12 @@ export default {
       // For the publish button
 
       // step validation
-      if ((this.driver && this.step <6) || (!this.driver && this.step != 5)) return false;
+      if(this.solidaryExclusive){
+        if(this.step<6) return false;
+      }
+      else{
+        if ((this.driver && this.step != 7) || (!this.driver && this.step != 5)) return false;
+      }
       // role validation
       if (this.driver === false && this.passenger === false) return false;
       // route validation
@@ -840,7 +845,6 @@ export default {
   watch: {
     price() {
       this.pricePerKm = (this.distance>0 ? Math.round(parseFloat(this.price) / this.distance * 100)/100 : this.defaultPriceKm);
-      console.error(this.pricesRanges.forbidden);
       (this.pricePerKm>this.pricesRanges.forbidden) ? this.priceForbidden = true : this.priceForbidden = false;
     },
     distance() {
@@ -992,7 +996,7 @@ export default {
         });
     },
     roundPrice (price, frequency, doneByUser = false) {
-      if (price > 0 && frequency > 0) {
+      if (price >= 0 && frequency > 0) {
         this.loadingPrice = true;
         axios.post(this.$t('route.roundPrice'), {
           value: price,
