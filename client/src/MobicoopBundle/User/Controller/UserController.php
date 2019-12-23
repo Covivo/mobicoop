@@ -749,12 +749,12 @@ class UserController extends AbstractController
 
             $schedule = [];
             if (!is_null($outwardSchedule) || !is_null($returnSchedule)) {
-
+               
                 // It's a regular journey I need to build the schedule of this journey (structure of an Ad)
 
                 $days = ["mon","tue","wed","thu","fri","sat","sun"];
                 foreach ($days as $day) {
-                    $currentOutwardTime = (!is_null($returnSchedule)) ? $outwardSchedule[$day."Time"] : null;
+                    $currentOutwardTime = (!is_null($outwardSchedule)) ? $outwardSchedule[$day."Time"] : null;
                     $currentReturnTime = (!is_null($returnSchedule)) ? $returnSchedule[$day."Time"] : null;
 
                     // I need to know if there is already a section of the schedule with these times
@@ -771,7 +771,7 @@ class UserController extends AbstractController
                             }
                         }
                     }
-
+                    
                     // It's a new section i need tu push it with the good day at 1
                     if (!$alreadyExists && (!is_null($currentOutwardTime) || !is_null($currentReturnTime))) {
                         $schedule[] = [
@@ -788,7 +788,7 @@ class UserController extends AbstractController
                     }
                 }
             }
-
+           
             // I build the Ad for the put
             $adToPost = new Ad($idAsk);
             $adToPost->setAskStatus($status);

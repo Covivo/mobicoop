@@ -174,7 +174,14 @@ class NotificationManager
                     break;
                 case Ask::class:
                     $titleContext = [];
-                    $bodyContext = ['user'=>$recipient, 'ask'=>$object];
+                    foreach ($object->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
+                        if ($waypoint->getPosition() == 0) {
+                            $passengerOriginWaipoint = $waypoint;
+                        } elseif ($waypoint->isDestination() == true) {
+                            $passengerDestinationWaypoint = $waypoint;
+                        }
+                    };
+                    $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaipoint, 'destination'=>$passengerDestinationWaypoint];
                 break;
                 case Recipient::class:
                     $titleContext = [];
@@ -231,7 +238,14 @@ class NotificationManager
                     $bodyContext = ['user'=>$recipient];
                     break;
                 case Ask::class:
-                    $bodyContext = ['user'=>$recipient, 'ask'=>$object];
+                    foreach ($object->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
+                        if ($waypoint->getPosition() == 0) {
+                            $passengerOriginWaipoint = $waypoint;
+                        } elseif ($waypoint->isDestination() == true) {
+                            $passengerDestinationWaypoint = $waypoint;
+                        }
+                    };
+                    $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaipoint, 'destination'=>$passengerDestinationWaypoint];
                 break;
                 case Recipient::class:
                     $bodyContext = [];

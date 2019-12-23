@@ -25,16 +25,16 @@
           cols="3"
           class="text-left"
         >
-          <span :class="role == waypoint.role ? 'font-weight-bold' : ''">{{ formatTime(waypoint.time) }}</span>
+          <span :class="'passenger' == waypoint.role ? 'font-weight-bold' : ''">{{ formatTime(waypoint.time) }}</span>
         </v-col>
         <v-col 
           :cols="time ? '9' : '12'"
           class="text-left"
         >
           <v-icon v-if="waypoint.avatar">
-            {{ getIcon(waypoint.type,waypoint.role) }}
+            {{ getIcon(waypoint.type,waypoint.role) }} 
           </v-icon>
-          <span :class="role == waypoint.role ? 'font-weight-bold' : ''">{{ waypoint.address.addressLocality }}</span> {{ waypoint.address.venue ? ' - ' + waypoint.address.venue : waypoint.address.streetAddress ? ' - ' + waypoint.address.streetAddress : null }}
+          <span :class="'passenger' == waypoint.role ? 'font-weight-bold' : ''">{{ waypoint.address.addressLocality }}</span> {{ waypoint.address.venue ? ' - ' + waypoint.address.venue : waypoint.address.streetAddress ? ' - ' + waypoint.address.streetAddress : null }}
         </v-col>
       </v-row>
     </v-timeline-item>

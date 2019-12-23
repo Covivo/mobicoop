@@ -29,17 +29,23 @@
             v-if="point.title!==''"
           >
             <p v-html="point.title" />
+            <p
+              v-if="point.popup"
+              v-html="point.popup.description"
+            />
           </l-tooltip>
 
           <l-popup v-if="point.popup">
-            <h3>{{ point.popup.titre }}</h3>
+            <h3 v-html="point.popup.title" />
             <img
-              v-if="point.popup.images[0]"
+              v-if="point.popup.images && point.popup.images[0]"
               :src="point.popup.images[0]['versions']['square_100']"
               alt="avatar"
             >
-            <p>{{ point.popup.description }}</p>
-            <p>{{ point.popup.date_begin }}<br> {{ point.popup.date_end }}</p>
+            <p v-html="point.popup.description" />
+            <p v-if="point.popup.date_begin && point.popup.date_end">
+              {{ point.popup.date_begin }}<br> {{ point.popup.date_end }}
+            </p>
           </l-popup>
         </l-marker>
         <l-polyline
