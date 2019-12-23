@@ -10,7 +10,6 @@
       v-if="hasOutward"
     >
       <v-col
-        cols="6"
         class="pa-0"
       >
         <route-summary
@@ -33,7 +32,6 @@
     </v-row>
     <v-row v-if="hasReturn">
       <v-col
-        cols="6"
         class="pa-0"
       >
         <route-summary

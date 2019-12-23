@@ -110,7 +110,7 @@
       <v-dialog
         v-model="dialogActive"
         persistent
-        max-width="500"
+        max-width="495"
       >
         <v-card>
           <v-card-title class="headline">
@@ -238,10 +238,10 @@ export default {
           }
         })
         .finally(function () {
-          self.loading = false;
           if (self.alert.message.length > 0) {
             self.snackbar = true;
           }
+          if (self.alert.type == 'error') self.loading = false;
         })
     },
     resetAlert() {

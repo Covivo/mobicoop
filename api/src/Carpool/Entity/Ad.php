@@ -42,6 +42,7 @@ use App\Carpool\Controller\AdAskGet;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
+ *          "get",
  *          "post"={
  *              "method"="POST",
  *              "controller"=AdPost::class,
@@ -369,6 +370,13 @@ class Ad
      * @Groups({"read","write"})
      */
     private $askStatus;
+
+    /**
+     * @var int The ask id if the ad concerns a given ask.
+     *
+     * @Groups({"read","write"})
+     */
+    private $askId;
 
     /**
      * @var boolean|null The given user can update the ask if the ad concerns a given ask.
@@ -861,6 +869,18 @@ class Ad
     public function setAskStatus(int $askStatus): self
     {
         $this->askStatus = $askStatus;
+
+        return $this;
+    }
+
+    public function getAskId(): ?int
+    {
+        return $this->askId;
+    }
+
+    public function setAskId(int $askId): self
+    {
+        $this->askId = $askId;
 
         return $this;
     }

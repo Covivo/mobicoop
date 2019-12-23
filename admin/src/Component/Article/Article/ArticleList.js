@@ -2,7 +2,7 @@ import React from 'react';
 import { 
     List,
     Datagrid,
-    ShowButton, EditButton,
+    EditButton,
     TextField, ReferenceManyField, ChipField, SingleFieldList, SelectField
 } from 'react-admin';
 
@@ -13,7 +13,7 @@ const statusChoices = [
 
 export const ArticleList = (props) => (
     <List {...props} title="Articles > liste" perPage={ 25 } sort={{ field: 'originId', order: 'ASC' }}>
-        <Datagrid>
+        <Datagrid rowClick="show">
             <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="title" label="Titre"/>
             <SelectField source="status" label="Status" choices={statusChoices} />
@@ -22,7 +22,6 @@ export const ArticleList = (props) => (
                     <ChipField source="title" />
                 </SingleFieldList>
             </ReferenceManyField>
-            <ShowButton />
             <EditButton />
         </Datagrid>
     </List>

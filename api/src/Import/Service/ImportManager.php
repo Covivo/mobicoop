@@ -27,13 +27,22 @@ use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Service\ProposalManager;
 use App\Communication\Entity\Medium;
 use App\Communication\Repository\NotificationRepository;
+use App\Community\Repository\CommunityRepository;
+use App\Event\Repository\EventRepository;
+use App\Image\Entity\Image;
+use App\Image\Service\ImageManager;
 use App\Import\Entity\UserImport;
+use App\Import\Repository\CommunityImportRepository;
+use App\Import\Repository\EventImportRepository;
+use App\Import\Repository\RelayPointImportRepository;
 use App\Import\Repository\UserImportRepository;
 use App\Right\Entity\Role;
 use App\Right\Entity\UserRole;
 use App\Right\Repository\RoleRepository;
 use App\User\Entity\UserNotification;
+use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use App\User\Entity\User;
 
@@ -53,12 +62,20 @@ class ImportManager
     private $notificationRepository;
     private $proposalRepository;
    
+    private $imageManager;
+    private $eventRepository;
+    private $communityRepository;
+    private $userRepository;
+    private $communityImportRepository;
+    private $eventImportRepository;
+    private $relayPointImportRepository;
+
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, UserImportRepository $userImportRepository, ProposalRepository $proposalRepository, ProposalManager $proposalManager, UserManager $userManager, RoleRepository $roleRepository, NotificationRepository $notificationRepository)
+    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, RelayPointImportRepository $relayPointImportRepository, EventImportRepository $eventImportRepository, CommunityImportRepository $communityImportRepository, ImageManager $imageManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, UserManager $userManager, RoleRepository $roleRepository, NotificationRepository $notificationRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository)
     {
         $this->entityManager = $entityManager;
         $this->userImportRepository = $userImportRepository;
@@ -67,6 +84,14 @@ class ImportManager
         $this->roleRepository = $roleRepository;
         $this->notificationRepository = $notificationRepository;
         $this->proposalRepository = $proposalRepository;
+        $this->imageManager = $imageManager;
+
+        $this->eventRepository = $eventRepository;
+        $this->communityRepository = $communityRepository;
+        $this->userRepository = $userRepository;
+        $this->communityImportRepository = $communityImportRepository;
+        $this->eventImportRepository = $eventImportRepository;
+        $this->relayPointImportRepository = $relayPointImportRepository;
     }
 
     /**
@@ -192,5 +217,198 @@ class ImportManager
         $proposals = $this->proposalManager->createLinkedAndOppositesForProposals($proposalIds);
 
         return [];
+    }
+
+
+    //Function for import community image from V1
+    public function importCommunityImage()
+    {
+        $dir = "../public/import/Community/";
+        $results = array('importer' => 0,'probleme-id-v1' => 0,'already-import' => 0);
+        if (is_dir($dir)) {
+            if ($dh = opendir($dir)) {
+                while (($file = readdir($dh)) !== false) {
+                    if ($file != '.' && $file != '..' && preg_match('#\.(jpe?g|gif|png)$#i', $file)) {
+                        $nameExp = explode('_', $file);
+                        if ($link = $this->communityImportRepository->findOneBy(array('communityExternalId' => $nameExp[0]))) {
+                            if ($link->getStatus() != 1) {
+                                $image = new Image();
+                                $image->setCommunity($link->getCommunity());
+                                $image->setOriginalName($file);
+
+                                $this->setInfosFile($image, $dir.$file);
+                                $this->setFilenamePositionAndCopy($image, $dir.$file, "../public/upload/communities/images/");
+
+                                $results['importer'] ++;
+
+                                //L'image de la relation est importer
+                                $link->setStatus(1);
+
+                                $this->entityManager->persist($image);
+                                $this->entityManager->persist($link);
+                                $this->entityManager->flush();
+
+                                $this->imageManager->generateVersions($image);
+                            } else {
+                                $results['already-import'] ++;
+                            }
+                        } else {
+                            $results['probleme-id-v1'] ++;
+                        }
+                    }
+                }
+                closedir($dh);
+            }
+        }
+        return $results;
+    }
+
+
+    public function importEventImage()
+    {
+        $dir = "../public/import/Event/";
+        $results = array('importer' => 0,'probleme-id-v1' => 0,'already-import' => 0);
+
+        if (is_dir($dir)) {
+            if ($dh = opendir($dir)) {
+                while (($file = readdir($dh)) !== false) {
+                    if ($file != '.' && $file != '..' && preg_match('#\.(jpe?g|gif|png)$#i', $file)) {
+                        $nameExp = explode('_', $file);
+                        if ($link = $this->eventImportRepository->findOneBy(array('eventExternalId' => $nameExp[0]))) {
+                            if ($link->getStatus() != 1) {
+                                $image = new Image();
+                                $image->setEvent($link->getEvent());
+                                $image->setOriginalName($file);
+
+                                $this->setInfosFile($image, $dir.$file);
+                                $this->setFilenamePositionAndCopy($image, $dir.$file, "../public/upload/events/images/");
+
+                                $results['importer'] ++;
+
+                                //L'image de la relation est importer
+                                $link->setStatus(1);
+
+                                $this->entityManager->persist($image);
+                                $this->entityManager->persist($link);
+                                $this->entityManager->flush();
+
+                                $this->imageManager->generateVersions($image);
+                            } else {
+                                $results['already-import'] ++;
+                            }
+                        } else {
+                            $results['probleme-id-v1'] ++;
+                        }
+                    }
+                }
+                closedir($dh);
+            }
+        }
+        return $results;
+    }
+
+    public function importUserImage()
+    {
+        $dir = "../public/import/Avatar/";
+        $results = array('importer' => 0,'probleme-id-v1' => 0,'probleme-id-v2' => 0);
+
+        if (is_dir($dir)) {
+            if ($dh = opendir($dir)) {
+                while (($file = readdir($dh)) !== false) {
+                    if ($file != '.' && $file != '..' && preg_match('#\.(jpe?g|gif|png)$#i', $file)) {
+                        $nameExp = explode('_', $file);
+                        if ($link = $this->userImportRepository->findOneBy(array('userExternalId' =>  explode('.', $nameExp[1])[0]))) {
+                            $image = new Image();
+                            $image->setUser($link->getUser());
+                            $image->setOriginalName($file);
+
+                            $this->setInfosFile($image, $dir.$file);
+                            $this->setFilenamePositionAndCopy($image, $dir.$file, "../public/upload/users/images/");
+
+                            $results['importer'] ++;
+
+                            $this->entityManager->persist($image);
+                            $this->entityManager->flush();
+
+                            $this->imageManager->generateVersions($image);
+                        } else {
+                            $results['probleme-id-v1'] ++;
+                        }
+                    }
+                }
+                closedir($dh);
+            }
+        }
+        return $results;
+    }
+
+    public function importRelayImage()
+    {
+        $dir = "../public/import/RelaisPoint/";
+        $results = array('importer' => 0,'probleme-id-v1' => 0,'already-import' => 0);
+
+        if (is_dir($dir)) {
+            if ($dh = opendir($dir)) {
+                while (($file = readdir($dh)) !== false) {
+                    if ($file != '.' && $file != '..' && preg_match('#\.(jpe?g|gif|png)$#i', $file)) {
+                        $nameExp = explode('_', $file);
+                        if ($link = $this->relayPointImportRepository->findOneBy(array('relayExternalId' => $nameExp[0]))) {
+                            if ($link->getStatus() != 1) {
+                                $image = new Image();
+                                $image->setRelayPoint($link->getRelay());
+                                $image->setOriginalName($file);
+
+                                $this->setInfosFile($image, $dir.$file);
+                                $this->setFilenamePositionAndCopy($image, $dir.$file, "../public/upload/relaypoints/images/");
+
+                                $results['importer'] ++;
+
+                                //L'image de la relation est importer
+                                $link->setStatus(1);
+
+                                $this->entityManager->persist($image);
+                                $this->entityManager->persist($link);
+                                $this->entityManager->flush();
+
+                                $this->imageManager->generateVersions($image);
+                            } else {
+                                $results['already-import'] ++;
+                            }
+                        } else {
+                            $results['probleme-id-v1'] ++;
+                        }
+                    }
+                }
+                closedir($dh);
+            }
+        }
+        return $results;
+    }
+
+
+
+    //Set the mandatory infos of a file for the image (width,height,mime type...)
+    private function setInfosFile(Image $image, $file)
+    {
+        $infos = getimagesize($file);
+
+        $image->setMimeType($infos['mime']);
+        $image->setWidth($infos[0]);
+        $image->setHeight($infos[1]);
+        $image->setSize(filesize($file));
+    }
+
+    //Copy the file in the good directory for the generates versions function
+    private function setFilenamePositionAndCopy(Image $image, $file, $directory)
+    {
+        $position = $this->imageManager->getNextPosition($image);
+        $filename = $this->imageManager->generateFilename($image);
+        $filenameExtension = $this->imageManager->generateFilename($image).".".pathinfo($file)['extension'];
+
+        $image->setPosition($position);
+        $image->setFileName($filenameExtension);
+        $image->setName($filename);
+
+        copy($file, $directory.$filenameExtension);
     }
 }

@@ -29,6 +29,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use App\User\Entity\User;
+use App\Import\Controller\ImportImageUserController;
 
 /**
  * A user imported from an external system.
@@ -51,7 +52,12 @@ use App\User\Entity\User;
  *              "method"="GET",
  *              "path"="/user_imports/match",
  *              "normalization_context"={"groups"={"read"}},
- *          }
+ *          },
+ *          "import-users-from-v1"={
+ *              "method"="GET",
+ *              "path"="/import/images-from-v1/users",
+ *              "controller"=ImportImageUserController::class,
+ *          },
  *      },
  *      itemOperations={
  *          "get"

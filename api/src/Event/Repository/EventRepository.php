@@ -46,6 +46,18 @@ class EventRepository
     }
 
     /**
+     * Find event by criteria
+     *
+     * @param array $criteria
+     * @return void
+     */
+    public function findBy(array $criteria)
+    {
+        return $this->repository->findBy($criteria);
+    }
+
+
+    /**
      * Return all events with the given name and status.
      *
      * @param string $name

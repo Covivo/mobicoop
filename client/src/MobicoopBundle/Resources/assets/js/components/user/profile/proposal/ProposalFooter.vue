@@ -97,11 +97,11 @@ export default {
       } else if (this.isDriver && this.isPassenger) {
         let data = [];
         this.carpoolRequests.forEach(request => {
-          data.push(request.proposalOffer)
+          data.push(request.proposalRequest)
         });
         this.carpoolOffers.forEach(offer => {
-          if (!find(data, {id: offer.proposalRequest.id})) {
-            data.push(offer.proposalRequest)
+          if (!find(data, {id: offer.proposalOffer.id})) {
+            data.push(offer.proposalOffer)
           }
         });
         return data.length;

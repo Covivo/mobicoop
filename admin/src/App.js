@@ -24,6 +24,7 @@ import relay_point_types from './Component/RelayPoint/RelayPointType/index';
 import roles from './Component/Right/Role/index';
 import rights from './Component/Right/Right/index';
 import territories from './Component/Territory/index';
+import events from './Component/Event/index';
 import { AddressEdit } from './Component/Address/addresses';
 
 import isAuthorized from './Component/Utilities/authorization';
@@ -126,8 +127,11 @@ export default class extends Component {
                   isAuthorized("permission_manage")   ? <Resource name={'roles'} {...roles} /> : null,
                   isAuthorized("permission_manage")   ? <Resource name={'rights'} {...rights} /> : null,
                   isAuthorized("territory_manage")    ? <Resource name={'territories'} {...territories} /> : null,
+                  isAuthorized("event_manage")        ? <Resource name={'events'} {...events} /> : null,
                   <Resource name="geo_search" />,
+                  <Resource name="community_users" />,
                   <Resource name="addresses" edit={ AddressEdit} title="Adresses" options={{ label: 'Adresses' }} icon={MapIcon} />,
+                  <Resource name="images" />
                 ];
             }
           }

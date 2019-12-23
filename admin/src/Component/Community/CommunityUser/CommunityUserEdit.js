@@ -10,8 +10,9 @@ const userOptionRenderer = choice => `${choice.givenName} ${choice.familyName}`;
 
 const choices = [
     { id: 0, name: 'En attente' },
-    { id: 1, name: 'Accepté' },
-    { id: 2, name: 'Refusé' },
+    { id: 1, name: 'Membre' },
+    { id: 2, name: 'Modérateur' },
+    { id: 3, name: 'Refusé' },
 ];
 export const CommunityUserEdit = (props) => {
     

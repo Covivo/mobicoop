@@ -12,8 +12,9 @@ const userId = `/users/${localStorage.getItem('id')}`;
 
 const choices = [
     { id: 0, name: 'En attente' },
-    { id: 1, name: 'Accepté' },
-    { id: 2, name: 'Refusé' },
+    { id: 1, name: 'Membre' },
+    { id: 2, name: 'Modérateur' },
+    { id: 3, name: 'Refusé' },
 ];
 
 export const CommunityUserCreate = (props) => {
@@ -22,7 +23,6 @@ export const CommunityUserCreate = (props) => {
     const community_uri = encodeURIComponent(community_string);
     const redirect = community_uri ? `/communities/${community_uri}/show/members` : 'show';
 
-    console.log(userId);
     
     return (
     <Create { ...props } title="Communautés > ajouter un membre">

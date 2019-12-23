@@ -3,52 +3,32 @@
     <!-- The Ask is just Initiated -->
     <!-- Only the Ask User can make a formal request of carpool -->
     <div v-if="status==1 && canUpdateAsk">
-      <v-tooltip
+      <v-btn
         v-if="driver"
-        bottom
+        class="mb-2"
         color="primary"
+        large
+        dark
+        rounded
+        depressed
+        :loading="loading"
+        @click="updateStatus(2,'driver')"
       >
-        <template v-slot:activator="{ on }">
-          <v-btn
-            color="primary"
-            fab
-            large
-            dark
-            depressed
-            :loading="loading"
-            v-on="on"
-            @click="updateStatus(2,'driver')"
-          >
-            <v-icon class="display-2">
-              mdi-car
-            </v-icon>
-          </v-btn> 
-        </template>
-        <span>{{ $t('button.askCarpoolAsDriver') }}</span>
-      </v-tooltip>     
-      <v-tooltip
+        {{ $t('button.askCarpoolAsDriver') }}
+      </v-btn> 
+       
+      <v-btn
         v-if="passenger"
-        bottom
         color="primary"
+        large
+        dark
+        rounded
+        depressed
+        :loading="loading"
+        @click="updateStatus(3,'passenger')"
       >
-        <template v-slot:activator="{ on }">
-          <v-btn
-            color="primary"
-            fab
-            large
-            dark
-            depressed
-            :loading="loading"
-            v-on="on"
-            @click="updateStatus(3,'passenger')"
-          >
-            <v-icon class="display-2">
-              mdi-walk
-            </v-icon>
-          </v-btn> 
-        </template>
-        <span>{{ $t('button.askCarpoolAsPassenger') }}</span>
-      </v-tooltip>     
+        {{ $t('button.askCarpoolAsPassenger') }}
+      </v-btn>
     </div>
     <div v-if="status==1 && !canUpdateAsk">
       <v-card-text>{{ $t('onlyAskUser') }}</v-card-text>

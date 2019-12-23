@@ -360,3 +360,11 @@ $RECYCLE.BIN/
 /config/rdex/operator.json
 /config/rdex/clients.json
 /config/rdex/providers.json
+
+
+/public/import/Avatar/*
+/public/import/Community/*
+/public/import/Event/*
+/public/upload/communities/*
+/public/upload/events/*
+/public/upload/users/*
