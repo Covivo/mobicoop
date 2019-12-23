@@ -146,8 +146,8 @@ use App\User\EntityListener\UserListener;
  *                          "name" = "validatedDateToken",
  *                          "type" = "string",
  *                          "required" = true,
- *                          "description" = "A token to be send to the user for email validation purpose
- *                      },
+ *                          "description" = "A token to be send to the user for email validation purpose"
+ *                      }
  *                  }
  *              }
  *          }
