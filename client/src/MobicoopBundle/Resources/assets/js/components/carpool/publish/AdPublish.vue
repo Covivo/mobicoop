@@ -560,7 +560,7 @@
       </v-btn>
 
       <v-btn
-        v-if="((step < 7 && driver && step !== 5)|| (step < 5 && !driver))"
+        v-if="((step < 6 && driver && step !== 5)|| (step < 5 && !driver))"
         :disabled="!validNext"
         rounded
         color="secondary"
@@ -770,7 +770,7 @@ export default {
       // For the publish button
 
       // step validation
-      if ((this.driver && this.step != 7) || (!this.driver && this.step != 5)) return false;
+      if ((this.driver && this.step <6) || (!this.driver && this.step != 5)) return false;
       // role validation
       if (this.driver === false && this.passenger === false) return false;
       // route validation

@@ -78,8 +78,5 @@ export default {
       default: false
     }
   },
-  // props: {
-
-  // }
 }
 </script>
