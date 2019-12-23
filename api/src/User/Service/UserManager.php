@@ -619,7 +619,6 @@ class UserManager
                 }
             }
             //Set user at null and private on the proposal : we keep info for message, proposal cant be found
-            $proposal->setUser(null);
             $proposal->setPrivate(1);
         }
 
