@@ -101,7 +101,56 @@ use App\User\EntityListener\UserListener;
  *              "method"="POST",
  *              "path"="/users",
  *              "controller"=UserRegistration::class,
- *          },
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "givenName",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's given name"
+ *                      },
+ *                      {
+ *                          "name" = "familyName",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's family name"
+ *                      },
+ *                      {
+ *                          "name" = "email",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's email"
+ *                      },
+ *                      {
+ *                          "name" = "password",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "Encoded version of the password (i.e. bcrypt)"
+ *                      },
+ *                      {
+ *                          "name" = "gender",
+ *                          "type" = "int",
+ *                          "enum" = {1,2,3},
+ *                          "required" = true,
+ *                          "description" = "User's gender (1 : female, 2 : male, 3 : other)"
+ *                      },
+ *                      {
+ *                          "name" = "birthDate",
+ *                          "type" = "string",
+ *                          "format" = "date",
+ *                          "required" = true,
+ *                          "example" = "1997-08-14T00:00:00+00:00",
+ *                          "description" = "User's birthdate"
+ *                      },
+ *                      {
+ *                          "name" = "validatedDateToken",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "A token to be send to the user for email validation purpose
+ *                      },
+ *                  }
+ *              }
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
