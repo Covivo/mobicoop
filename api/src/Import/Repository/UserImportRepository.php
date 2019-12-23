@@ -55,4 +55,9 @@ class UserImportRepository
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
+
+    public function findOneBy(array $criteria, array $orderBy = null): ?UserImport
+    {
+        return $this->repository->findOneBy($criteria);
+    }
 }
