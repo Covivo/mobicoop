@@ -33,6 +33,7 @@ use App\Event\Exception\EventNotFoundException;
 use App\Event\Service\EventManager;
 use App\Geography\Entity\Address;
 use App\Carpool\Exception\AdException;
+use App\Carpool\Repository\ProposalRepository;
 use App\User\Exception\UserNotFoundException;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -53,6 +54,7 @@ class AdManager
     private $resultManager;
     private $params;
     private $logger;
+    private $proposalRepository;
 
     /**
      * Constructor.
@@ -60,7 +62,7 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -70,6 +72,7 @@ class AdManager
         $this->resultManager = $resultManager;
         $this->logger = $logger;
         $this->params = $params;
+        $this->proposalRepository = $proposalRepository;
     }
     
     /**
@@ -611,5 +614,26 @@ class AdManager
             )
         );
         return $ad;
+    }
+
+    public function getAds(int $userId)
+    {
+        $ads = [];
+        $user = $this->userManager->getUser($userId);
+        $proposals = $this->proposalRepository->findBy(['user'=>$user, 'private'=>false]);
+        foreach ($proposals as $proposal) {
+            $ad = new Ad();
+            $ad->setId($proposal->getId());
+            $ad->setFrequency($proposal->getCriteria()->getFrequency());
+            $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
+            $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
+            $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
+            $ad->setUserId($userId);
+            $ad->setResults(
+                $this->resultManager->createAdResults($proposal)
+            );
+            $ads[] =$ad;
+        }
+        return $ads;
     }
 }
