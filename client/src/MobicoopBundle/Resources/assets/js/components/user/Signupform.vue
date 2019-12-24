@@ -456,7 +456,7 @@ export default {
             diff /= (60 * 60 * 24);
 
             var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
-            return diffYears >= 18 || this.$t("models.user.birthDay.errors.notadult")
+            return diffYears >= 16 || this.$t("models.user.birthDay.errors.notadult")
           }
         },
         homeAddress:null,
@@ -498,7 +498,7 @@ export default {
   methods: {
     maxDate() {
       let maxDate = new Date();
-      maxDate.setFullYear (maxDate.getFullYear() - 18);
+      maxDate.setFullYear (maxDate.getFullYear() - 16);
       return maxDate.toISOString().substr(0, 10);
     },
     selectedGeo(address) {

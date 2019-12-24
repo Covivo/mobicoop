@@ -9,7 +9,8 @@
         "distance":"Distance",
         "seatsAvailable":"Places disponibles",
         "price":"Prix",
-        "priceTooltip":"Tarif indicatif"
+        "priceTooltip":"Tarif indicatif",
+        "userDelete" : "Utilisateur désinscrit"
 
      },
     "en": {
