@@ -78,7 +78,7 @@ class ImportManager
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager,RelayPointRepository $relayPointRepository, RelayPointImportRepository $relayPointImportRepository, EventImportRepository $eventImportRepository, CommunityImportRepository $communityImportRepository, ImageManager $imageManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, UserManager $userManager, RoleRepository $roleRepository, NotificationRepository $notificationRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository)
+    public function __construct(EntityManagerInterface $entityManager, RelayPointRepository $relayPointRepository, RelayPointImportRepository $relayPointImportRepository, EventImportRepository $eventImportRepository, CommunityImportRepository $communityImportRepository, ImageManager $imageManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, UserManager $userManager, RoleRepository $roleRepository, NotificationRepository $notificationRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository)
     {
         $this->entityManager = $entityManager;
         $this->userImportRepository = $userImportRepository;
@@ -222,7 +222,7 @@ class ImportManager
     //Function for import community image from V1
     public function importCommunityImage()
     {
-        if( $this->communityImportRepository->findOneBy(array('id' => 1)) == null){
+        if ($this->communityImportRepository->findOneBy(array('id' => 1)) == null) {
             $this->importCommunityIfNotMigrate();
         }
 
@@ -269,7 +269,7 @@ class ImportManager
 
     public function importEventImage()
     {
-        if( $this->eventImportRepository->findBy(array('id' => 1)) == null){
+        if ($this->eventImportRepository->findBy(array('id' => 1)) == null) {
             $this->importEventIfNotMigrate();
         }
         $dir = "../public/import/Event/";
@@ -315,7 +315,7 @@ class ImportManager
 
     public function importUserImage()
     {
-        if( $this->userImportRepository->findBy(array('id' => 1)) == null){
+        if ($this->userImportRepository->findBy(array('id' => 1)) == null) {
             $this->importUserIfNotMigrate();
         }
         $dir = "../public/import/Avatar/";
@@ -353,7 +353,7 @@ class ImportManager
 
     public function importRelayImage()
     {
-        if( $this->relayPointImportRepository->findBy(array('id' => 1)) == null){
+        if ($this->relayPointImportRepository->findBy(array('id' => 1)) == null) {
             $this->importRelayIfNotMigrate();
         }
         $dir = "../public/import/RelaisPoint/";
@@ -429,8 +429,8 @@ class ImportManager
     // 1 = community V1
     private function importCommunityIfNotMigrate()
     {
-        if (($handle = fopen("../public/import/csv/community_id_corresp.csv", "r")) !== FALSE) {
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        if (($handle = fopen("../public/import/csv/community_id_corresp.csv", "r")) !== false) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== false) {
                 $importCommunity = new CommunityImport();
 
                 $importCommunity->setCommunity($this->communityRepository->find($data[0]));
@@ -438,7 +438,6 @@ class ImportManager
                 $importCommunity->setStatus(0);
 
                 $this->entityManager->persist($importCommunity);
-
             }
             fclose($handle);
             $this->entityManager->flush();
@@ -450,8 +449,8 @@ class ImportManager
     // 1 = Event V1
     private function importEventIfNotMigrate()
     {
-        if (($handle = fopen("../public/import/csv/event_id_corresp.csv", "r")) !== FALSE) {
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        if (($handle = fopen("../public/import/csv/event_id_corresp.csv", "r")) !== false) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== false) {
                 $importEvent = new EventImport();
 
                 $importEvent->setEvent($this->eventRepository->find($data[0]));
@@ -459,7 +458,6 @@ class ImportManager
                 $importEvent->setStatus(0);
 
                 $this->entityManager->persist($importEvent);
-
             }
             fclose($handle);
             $this->entityManager->flush();
@@ -470,8 +468,8 @@ class ImportManager
     // 1 = Relay point  V1
     private function importRelayIfNotMigrate()
     {
-        if (($handle = fopen("../public/import/csv/relay_point_id_corresp.csv", "r")) !== FALSE) {
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        if (($handle = fopen("../public/import/csv/relay_point_id_corresp.csv", "r")) !== false) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== false) {
                 $importRelay = new RelayPointImport();
 
                 $importRelay->setRelay($this->relayPointRepository->find($data[0]));
@@ -479,7 +477,6 @@ class ImportManager
                 $importRelay->setStatus(0);
 
                 $this->entityManager->persist($importRelay);
-
             }
             fclose($handle);
             $this->entityManager->flush();
@@ -492,8 +489,8 @@ class ImportManager
     private function importUserIfNotMigrate()
     {
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
-        if (($handle = fopen("../public/import/csv/user_id_corresp.csv", "r")) !== FALSE) {
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        if (($handle = fopen("../public/import/csv/user_id_corresp.csv", "r")) !== false) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== false) {
                 $importUser = new UserImport();
 
                 $importUser->setUser($this->userRepository->find($data[0]));
@@ -503,12 +500,9 @@ class ImportManager
                 $importUser->setCreatedDate(new \DateTime());
 
                 $this->entityManager->persist($importUser);
-
             }
             fclose($handle);
             $this->entityManager->flush();
         }
-
     }
-
 }
