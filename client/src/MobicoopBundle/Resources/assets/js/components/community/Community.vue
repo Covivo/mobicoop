@@ -67,10 +67,13 @@
                 </v-tooltip>
               </div>
               <!-- button if member is accepted -->
-              <div v-else-if="isAccepted">
+              <div
+                v-else-if="isAccepted"
+              >
                 <v-btn
                   color="secondary"
                   rounded
+                  :width="250"
                   :loading="loading"
                   @click="publish"
                 >
@@ -80,6 +83,7 @@
                   class="mt-5"
                   color="primary"
                   rounded
+                  :width="250"
                   :loading="loading"
                   :disabled="!isLogged"
                   @click="leaveCommunityDialog = true"
