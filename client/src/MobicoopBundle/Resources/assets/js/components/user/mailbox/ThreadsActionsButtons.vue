@@ -35,48 +35,33 @@
     </div>
     <!-- end ask just Initiated -->
 
-
     <!-- The Ask is pending -->
     <!-- If you are the ask user you cannot accept or delined -->
     <div v-if="(status==2 || status==3) && canUpdateAsk">
-      <v-tooltip
-        bottom
+      <v-btn
+        class="mr-12"
+        width="30%"
         color="success"
+        rounded                 
+        small
+        dark
+        depressed
+        @click="updateStatus((status==2) ? 4 : 5)"
       >
-        <template v-slot:activator="{ on }">
-          <v-btn
-            color="success"
-            rounded
-            small
-            dark
-            depressed
-            v-on="on"
-            @click="updateStatus((status==2) ? 4 : 5)"
-          >
-            Ajouter covoiturage
-          </v-btn> 
-        </template>
-        <span>{{ $t('button.accept') }}</span>
-      </v-tooltip>     
-      <v-tooltip
-        bottom
+        {{ $t('button.accept') }}
+      </v-btn> 
+      <v-btn
+        class="ml-12"
+        width="30%"
         color="error"
+        rounded
+        small
+        dark
+        depressed
+        @click="updateStatus((status==2) ? 6 : 7)"
       >
-        <template v-slot:activator="{ on }">
-          <v-btn
-            color="error"
-            rounded
-            small
-            dark
-            depressed
-            v-on="on"
-            @click="updateStatus((status==2) ? 6 : 7)"
-          >
-            Refuser covoiturage
-          </v-btn>      
-        </template>
-        <span>{{ $t('button.refuse') }}</span>
-      </v-tooltip>     
+        {{ $t('button.refuse') }}
+      </v-btn>       
     </div>
     <div v-else-if="(status==2 || status==3)">
       <v-card
