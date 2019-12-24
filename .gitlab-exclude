@@ -68,6 +68,7 @@
 /api/public/upload/mass/files/*.xml
 /api/public/upload/mass/files/*.zip
 /api/public/upload/mass/files/*.json
+/api/public/import
 /client/.env.dev.local
 /client/.env.test.local
 /client/.env.prod.local
