@@ -30,11 +30,16 @@ use App\Community\Repository\CommunityRepository;
 use App\Event\Repository\EventRepository;
 use App\Image\Entity\Image;
 use App\Image\Service\ImageManager;
+use App\Import\Entity\CommunityImport;
+use App\Import\Entity\EventImport;
+use App\Import\Entity\RelayPointImport;
 use App\Import\Entity\UserImport;
 use App\Import\Repository\CommunityImportRepository;
 use App\Import\Repository\EventImportRepository;
 use App\Import\Repository\RelayPointImportRepository;
 use App\Import\Repository\UserImportRepository;
+use App\RelayPoint\Entity\RelayPoint;
+use App\RelayPoint\Repository\RelayPointRepository;
 use App\Right\Entity\Role;
 use App\Right\Entity\UserRole;
 use App\Right\Repository\RoleRepository;
@@ -66,13 +71,14 @@ class ImportManager
     private $communityImportRepository;
     private $eventImportRepository;
     private $relayPointImportRepository;
+    private $relayPointRepository;
 
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, RelayPointImportRepository $relayPointImportRepository, EventImportRepository $eventImportRepository, CommunityImportRepository $communityImportRepository, ImageManager $imageManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, UserManager $userManager, RoleRepository $roleRepository, NotificationRepository $notificationRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository)
+    public function __construct(EntityManagerInterface $entityManager,RelayPointRepository $relayPointRepository, RelayPointImportRepository $relayPointImportRepository, EventImportRepository $eventImportRepository, CommunityImportRepository $communityImportRepository, ImageManager $imageManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, UserManager $userManager, RoleRepository $roleRepository, NotificationRepository $notificationRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository)
     {
         $this->entityManager = $entityManager;
         $this->userImportRepository = $userImportRepository;
@@ -81,6 +87,7 @@ class ImportManager
         $this->roleRepository = $roleRepository;
         $this->notificationRepository = $notificationRepository;
         $this->imageManager = $imageManager;
+        $this->relayPointRepository = $relayPointRepository;
 
         $this->eventRepository = $eventRepository;
         $this->communityRepository = $communityRepository;
@@ -215,6 +222,10 @@ class ImportManager
     //Function for import community image from V1
     public function importCommunityImage()
     {
+        if( $this->communityImportRepository->findOneBy(array('id' => 1)) == null){
+            $this->importCommunityIfNotMigrate();
+        }
+
         $dir = "../public/import/Community/";
         $results = array('importer' => 0,'probleme-id-v1' => 0,'already-import' => 0);
         if (is_dir($dir)) {
@@ -258,6 +269,9 @@ class ImportManager
 
     public function importEventImage()
     {
+        if( $this->eventImportRepository->findBy(array('id' => 1)) == null){
+            $this->importEventIfNotMigrate();
+        }
         $dir = "../public/import/Event/";
         $results = array('importer' => 0,'probleme-id-v1' => 0,'already-import' => 0);
 
@@ -301,6 +315,9 @@ class ImportManager
 
     public function importUserImage()
     {
+        if( $this->userImportRepository->findBy(array('id' => 1)) == null){
+            $this->importUserIfNotMigrate();
+        }
         $dir = "../public/import/Avatar/";
         $results = array('importer' => 0,'probleme-id-v1' => 0,'probleme-id-v2' => 0);
 
@@ -336,6 +353,9 @@ class ImportManager
 
     public function importRelayImage()
     {
+        if( $this->relayPointImportRepository->findBy(array('id' => 1)) == null){
+            $this->importRelayIfNotMigrate();
+        }
         $dir = "../public/import/RelaisPoint/";
         $results = array('importer' => 0,'probleme-id-v1' => 0,'already-import' => 0);
 
@@ -403,4 +423,92 @@ class ImportManager
 
         copy($file, $directory.$filenameExtension);
     }
+
+    //If the databases for import is empty, import data community from csv in pulic/importcsv
+    // 0 = community V2
+    // 1 = community V1
+    private function importCommunityIfNotMigrate()
+    {
+        if (($handle = fopen("../public/import/csv/community_id_corresp.csv", "r")) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                $importCommunity = new CommunityImport();
+
+                $importCommunity->setCommunity($this->communityRepository->find($data[0]));
+                $importCommunity->setCommunityExternalId($data[1]);
+                $importCommunity->setStatus(0);
+
+                $this->entityManager->persist($importCommunity);
+
+            }
+            fclose($handle);
+            $this->entityManager->flush();
+        }
+    }
+
+    //If the databases for import is empty, import data Event from csv in pulic/importcsv
+    // 0 = Event V2
+    // 1 = Event V1
+    private function importEventIfNotMigrate()
+    {
+        if (($handle = fopen("../public/import/csv/event_id_corresp.csv", "r")) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                $importEvent = new EventImport();
+
+                $importEvent->setEvent($this->eventRepository->find($data[0]));
+                $importEvent->setEventExternalId($data[1]);
+                $importEvent->setStatus(0);
+
+                $this->entityManager->persist($importEvent);
+
+            }
+            fclose($handle);
+            $this->entityManager->flush();
+        }
+    }
+    //If the databases for import is empty, import data  Relay point from csv in pulic/importcsv
+    // 0 = Relay point V2
+    // 1 = Relay point  V1
+    private function importRelayIfNotMigrate()
+    {
+        if (($handle = fopen("../public/import/csv/relay_point_id_corresp.csv", "r")) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                $importRelay = new RelayPointImport();
+
+                $importRelay->setRelay($this->relayPointRepository->find($data[0]));
+                $importRelay->setRelayExternalId($data[1]);
+                $importRelay->setStatus(0);
+
+                $this->entityManager->persist($importRelay);
+
+            }
+            fclose($handle);
+            $this->entityManager->flush();
+        }
+    }
+
+    //If the databases for import is empty, import Users data from csv in pulic/importcsv
+    // 0 = User V2
+    // 1 = User V1
+    private function importUserIfNotMigrate()
+    {
+        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+        if (($handle = fopen("../public/import/csv/user_id_corresp.csv", "r")) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                $importUser = new UserImport();
+
+                $importUser->setUser($this->userRepository->find($data[0]));
+                $importUser->setUserExternalId($data[1]);
+                $importUser->setStatus(0);
+                $importUser->setOrigin('import-csv');
+                $importUser->setCreatedDate(new \DateTime());
+
+                $this->entityManager->persist($importUser);
+
+            }
+            fclose($handle);
+            $this->entityManager->flush();
+        }
+
+    }
+
 }
