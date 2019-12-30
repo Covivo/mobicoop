@@ -1207,7 +1207,7 @@ class ProposalMatcher
 
         gc_enable();
         // we create chunks of proposals to avoid freezing
-        $chunk = 200;
+        $chunk = 50;
         $proposalsChunked = array_chunk($proposalIds, $chunk, true);
 
         self::print_mem(2);
@@ -1321,7 +1321,7 @@ class ProposalMatcher
             self::print_mem(6);
     
             // create a batch
-            $batchSize = 20;
+            $batchSize = 25;
             $batches = array_chunk($multimatch, $batchSize);
     
             $potentialMatchings = []; // indexed by driver proposal id
@@ -1609,7 +1609,6 @@ class ProposalMatcher
             // gc_collect_cycles();
 
             // update status to treated
-            // update status to pending
             $q = $this->entityManager
             ->createQuery('UPDATE App\Import\Entity\UserImport i set i.status = :status, i.treatmentJourneyEndDate=:treatmentDate WHERE i.id IN (SELECT ui.id FROM App\Import\Entity\UserImport ui JOIN ui.user u JOIN u.proposals p WHERE p.id IN (' . implode(',', $ids) . '))')
             ->setParameters([
