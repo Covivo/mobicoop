@@ -8,12 +8,17 @@
         <img :src="infosComplete.carpooler.avatars[0]">
       </v-avatar>
       <v-card-text
-        v-if="!loading && infosComplete.carpooler"
+        v-if="!loading && infosComplete.carpooler && infosComplete.carpooler.status != 3"
         class="font-weight-bold headline"
       >
         {{ infosComplete.carpooler.givenName+' '+infosComplete.carpooler.shortFamilyName }}
       </v-card-text>
-
+      <v-card-text
+        v-if="infosComplete.carpooler.status == 3"
+        class="font-weight-bold headline"
+      >
+        {{ $t("userDelete") }}
+      </v-card-text>
       <!-- Only visible for carpool -->
       <v-card
         v-if="idAsk && !loading"
@@ -49,7 +54,7 @@
           :time="!infos.outward.multipleTimes"
           :role="driver ? 'driver' : 'passenger'"
         />
-        <v-simple-table>
+        <v-simple-table v-if="infosComplete.carpooler.status != 3">
           <tbody>
             <tr>
               <td class="text-left">
@@ -94,6 +99,7 @@
           </tbody>
         </v-simple-table>
         <threads-actions-buttons
+          v-if="infosComplete.carpooler.status != 3"
           :can-update-ask="infosComplete.canUpdateAsk"
           :status="infosComplete.askStatus"
           :regular="infosComplete.frequency==2"
@@ -354,6 +360,8 @@ export default {
 
     },
     updateStatus(data){
+      console.info(this.infosComplete)
+      console.info(this.infosComplete.carpooler)
       if(this.infosComplete.askStatus==1 && this.infosComplete.frequency==2){
         // If the Ask is only initiated and that the carpool is regular
 

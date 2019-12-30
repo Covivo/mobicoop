@@ -28,19 +28,25 @@
         >
           <v-list-item-content>
             <v-list-item-title 
-              :class="(regular && type==2) ? 'title' : 'title font-weight-bold'"
+              :class="(regular && type==2 || !regular && type==1) ? 'subtitle-1' : 'subtitle-1 font-weight-bold'"
             >
               <span :class="textColorClass">{{ originFirstLine }}</span>
             </v-list-item-title>
             <v-list-item-title
               v-if="type==1 && regular"
-              :class="'title font-weight-bold'"
+              :class="'subtitle-1 font-weight-bold'"
             >
               <span :class="textColorClass">{{ originSecondLine }}</span>
             </v-list-item-title>
             <v-list-item-subtitle
               v-if="type==2"
-              :class="(regular && type==2) ? 'subtitle-1 font-weight-bold' : ((regular) ? 'title font-weight-bold' : 'subtitle-1')"
+              :class="(regular && type==2) ? 'subtitle-1 font-weight-bold' : ((regular) ? 'subtitle-1 font-weight-bold' : 'subtitle-1')"
+            >
+              <span :class="textColorClass">{{ originSecondLine }}</span>
+            </v-list-item-subtitle>
+            <v-list-item-subtitle
+              v-if="!regular && type==1"
+              class="subtitle-1 font-weight-bold"
             >
               <span :class="textColorClass">{{ originSecondLine }}</span>
             </v-list-item-subtitle>
@@ -71,19 +77,25 @@
         >
           <v-list-item-content>
             <v-list-item-title 
-              :class="(regular && type==2) ? 'title' : 'title font-weight-bold'"
+              :class="(regular && type==2 || !regular && type==1) ? 'subtitle-1' : 'subtitle-1 font-weight-bold'"
             >
               <span :class="textColorClass">{{ destinationFirstLine }}</span>
             </v-list-item-title>
             <v-list-item-title
               v-if="type==1 && regular"
-              :class="'title font-weight-bold'"
+              :class="'subtitle-1 font-weight-bold'"
             >
               <span :class="textColorClass">{{ destinationSecondLine }}</span>
             </v-list-item-title>
             <v-list-item-subtitle
               v-if="type==2"
-              :class="(regular && type==2) ? 'subtitle-1 font-weight-bold' : ((regular) ? 'title font-weight-bold' : 'subtitle-1')"
+              :class="(regular && type==2) ? 'subtitle-1 font-weight-bold' : ((regular) ? 'subtitle-1 font-weight-bold' : 'subtitle-1')"
+            >
+              <span :class="textColorClass">{{ destinationSecondLine }}</span>
+            </v-list-item-subtitle>
+            <v-list-item-subtitle
+              v-if="!regular && type==1"
+              class="subtitle-1 font-weight-bold"
             >
               <span :class="textColorClass">{{ destinationSecondLine }}</span>
             </v-list-item-subtitle>
@@ -152,7 +164,9 @@ export default {
   computed: {
     originFirstLine() {
       if (this.type == 1 && !this.regular) {
-        return (this.origin.streetAddress ? this.origin.streetAddress+', ' : '')+this.origin.addressLocality
+        // return (this.origin.streetAddress ? this.origin.streetAddress+', ' : '')+this.origin.addressLocality
+        return (this.origin.streetAddress) ? this.origin.streetAddress : this.origin.addressLocality
+
       } else if (this.type == 1 && this.regular) {
         return this.origin.streetAddress
       } else if (this.type == 2 && !this.regular) {
@@ -163,7 +177,8 @@ export default {
     },
     destinationFirstLine() {
       if (this.type == 1 && !this.regular) {
-        return (this.destination.streetAddress ? this.destination.streetAddress+', ' : '')+this.destination.addressLocality
+        //        return (this.destination.streetAddress ? this.destination.streetAddress+', ' : '')+this.destination.addressLocality
+        return (this.destination.streetAddress) ? this.destination.streetAddress : this.destination.addressLocality
       } else if (this.type == 1 && this.regular) {
         return this.destination.streetAddress
       } else if (this.type == 2 && !this.regular) {
@@ -175,6 +190,8 @@ export default {
     originSecondLine() {
       if (this.type == 1 && this.regular) {
         return this.origin.addressLocality
+      } else if(this.type == 1 && !this.regular){
+        return (this.origin.streetAddress) ? this.origin.addressLocality : ''
       } else if (this.type == 2 && !this.regular) {
         return this.origin.streetAddress
       } else if (this.type == 2 && this.regular) {
@@ -185,6 +202,8 @@ export default {
     destinationSecondLine() {
       if (this.type == 1 && this.regular) {
         return this.destination.addressLocality
+      } else if(this.type == 1 && !this.regular){
+        return (this.destination.streetAddress) ? this.destination.addressLocality : ''
       } else if (this.type == 2 && !this.regular) {
         return this.destination.streetAddress
       } else if (this.type == 2 && this.regular) {
