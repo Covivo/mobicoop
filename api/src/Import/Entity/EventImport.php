@@ -5,16 +5,11 @@ namespace App\Import\Entity;
 use App\Event\Entity\Event;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
-use App\Import\Controller\ImportImageEventController;
-
-use App\User\Entity\User;
-
 /**
- * A user imported from an external system.
+ * An event imported from an external system.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -47,7 +42,7 @@ class EventImport
     private $id;
 
     /**
-     * @var User|null User imported in the platform.
+     * @var event|null Event imported in the platform.
      *
      * @ORM\OneToOne(targetEntity="\App\Event\Entity\Event", cascade={"persist", "remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
@@ -56,7 +51,7 @@ class EventImport
     private $event;
 
     /**
-     * @var string|null The user id in the external system.
+     * @var string|null The event id in the external system.
      *
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Groups({"read","write"})

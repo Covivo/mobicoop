@@ -36,15 +36,10 @@ use App\Import\Repository\CommunityImportRepository;
 use App\Import\Repository\EventImportRepository;
 use App\Import\Repository\RelayPointImportRepository;
 use App\Import\Repository\UserImportRepository;
-use App\Right\Entity\Role;
-use App\Right\Entity\UserRole;
 use App\Right\Repository\RoleRepository;
-use App\User\Entity\UserNotification;
 use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use App\User\Entity\User;
 
 /**
  * Import manager service.

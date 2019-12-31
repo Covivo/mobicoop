@@ -459,6 +459,17 @@ class ProposalMatcher
                             $matching->setProposalOffer($proposal);
                             $matching->setProposalRequest($this->proposalRepository->find($candidateId));
                             $matching->setFilters($matchesDriver[0]);
+                            $matching->setOriginalDistance($matchesDriver[0]['originalDistance']);
+                            $matching->setAcceptedDetourDistance($matchesDriver[0]['acceptedDetourDistance']);
+                            $matching->setNewDistance($matchesDriver[0]['newDistance']);
+                            $matching->setDetourDistance($matchesDriver[0]['detourDistance']);
+                            $matching->setDetourDistancePercent($matchesDriver[0]['detourDistancePercent']);
+                            $matching->setOriginalDuration($matchesDriver[0]['originalDuration']);
+                            $matching->setAcceptedDetourDuration($matchesDriver[0]['acceptedDetourDuration']);
+                            $matching->setNewDuration($matchesDriver[0]['newDuration']);
+                            $matching->setDetourDuration($matchesDriver[0]['detourDuration']);
+                            $matching->setDetourDurationPercent($matchesDriver[0]['detourDurationPercent']);
+                            $matching->setCommonDistance($matchesDriver[0]['commonDistance']);
                             $matchings[] = $matching;
                             break;
                         case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST:
@@ -467,6 +478,17 @@ class ProposalMatcher
                             $matching->setProposalOffer($proposal);
                             $matching->setProposalRequest($this->proposalRepository->find($candidateId));
                             $matching->setFilters($matchesDriver[0]);
+                            $matching->setOriginalDistance($matchesDriver[0]['originalDistance']);
+                            $matching->setAcceptedDetourDistance($matchesDriver[0]['acceptedDetourDistance']);
+                            $matching->setNewDistance($matchesDriver[0]['newDistance']);
+                            $matching->setDetourDistance($matchesDriver[0]['detourDistance']);
+                            $matching->setDetourDistancePercent($matchesDriver[0]['detourDistancePercent']);
+                            $matching->setOriginalDuration($matchesDriver[0]['originalDuration']);
+                            $matching->setAcceptedDetourDuration($matchesDriver[0]['acceptedDetourDuration']);
+                            $matching->setNewDuration($matchesDriver[0]['newDuration']);
+                            $matching->setDetourDuration($matchesDriver[0]['detourDuration']);
+                            $matching->setDetourDurationPercent($matchesDriver[0]['detourDurationPercent']);
+                            $matching->setCommonDistance($matchesDriver[0]['commonDistance']);
                             $matchings[] = $matching;
                             break;
                         default:
@@ -486,6 +508,17 @@ class ProposalMatcher
                             $matching->setProposalOffer($this->proposalRepository->find($candidateId));
                             $matching->setProposalRequest($proposal);
                             $matching->setFilters($matchesPassenger[0]);
+                            $matching->setOriginalDistance($matchesPassenger[0]['originalDistance']);
+                            $matching->setAcceptedDetourDistance($matchesPassenger[0]['acceptedDetourDistance']);
+                            $matching->setNewDistance($matchesPassenger[0]['newDistance']);
+                            $matching->setDetourDistance($matchesPassenger[0]['detourDistance']);
+                            $matching->setDetourDistancePercent($matchesPassenger[0]['detourDistancePercent']);
+                            $matching->setOriginalDuration($matchesPassenger[0]['originalDuration']);
+                            $matching->setAcceptedDetourDuration($matchesPassenger[0]['acceptedDetourDuration']);
+                            $matching->setNewDuration($matchesPassenger[0]['newDuration']);
+                            $matching->setDetourDuration($matchesPassenger[0]['detourDuration']);
+                            $matching->setDetourDurationPercent($matchesPassenger[0]['detourDurationPercent']);
+                            $matching->setCommonDistance($matchesPassenger[0]['commonDistance']);
                             $matchings[] = $matching;
                             break;
                         case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST:
@@ -494,6 +527,17 @@ class ProposalMatcher
                             $matching->setProposalOffer($this->proposalRepository->find($candidateId));
                             $matching->setProposalRequest($proposal);
                             $matching->setFilters($matchesPassenger[0]);
+                            $matching->setOriginalDistance($matchesPassenger[0]['originalDistance']);
+                            $matching->setAcceptedDetourDistance($matchesPassenger[0]['acceptedDetourDistance']);
+                            $matching->setNewDistance($matchesPassenger[0]['newDistance']);
+                            $matching->setDetourDistance($matchesPassenger[0]['detourDistance']);
+                            $matching->setDetourDistancePercent($matchesPassenger[0]['detourDistancePercent']);
+                            $matching->setOriginalDuration($matchesPassenger[0]['originalDuration']);
+                            $matching->setAcceptedDetourDuration($matchesPassenger[0]['acceptedDetourDuration']);
+                            $matching->setNewDuration($matchesPassenger[0]['newDuration']);
+                            $matching->setDetourDuration($matchesPassenger[0]['detourDuration']);
+                            $matching->setDetourDurationPercent($matchesPassenger[0]['detourDurationPercent']);
+                            $matching->setCommonDistance($matchesPassenger[0]['commonDistance']);
                             $matchings[] = $matching;
                             break;
                         default:
@@ -684,6 +728,12 @@ class ProposalMatcher
             $filters = $matching->getFilters();
             unset($filters['direction']);
             $matching->setFilters($filters);
+
+            // we complete the pickup and dropoff
+            if (list($pickUp, $dropOff) = $this->getPickUpDropOffDurations($filters['route'])) {
+                $matching->setPickUpDuration($pickUp);
+                $matching->setDropOffDuration($dropOff);
+            }
         }
         $this->logger->info("ProposalMatcher : end completeMatchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
@@ -1191,6 +1241,31 @@ class ProposalMatcher
         return $return;
     }
 
+    /**
+     * Return the pick up and drop off of a passenger in a route.
+     *
+     * @param array $route
+     * @return array The pick up and drop off
+     */
+    private function getPickUpDropOffDurations(array $route)
+    {
+        $pickUp = 0;
+        $dropOff = 0;
+        $position = 0;
+        foreach ($route as $point) {
+            if ($point['candidate'] == 1) {
+                continue;
+            }
+            if ($point['position'] == 0) {
+                $pickUp = $point['duration'];
+            } elseif ($point['position']>$position) {
+                $position = $point['position'];
+                $dropOff = $point['duration'];
+            }
+        }
+        return [$pickUp,$dropOff];
+    }
+
 
 
     /************
@@ -1207,7 +1282,7 @@ class ProposalMatcher
 
         gc_enable();
         // we create chunks of proposals to avoid freezing
-        $chunk = 50;
+        $chunk = 8;
         $proposalsChunked = array_chunk($proposalIds, $chunk, true);
 
         self::print_mem(2);
@@ -1321,7 +1396,7 @@ class ProposalMatcher
             self::print_mem(6);
     
             // create a batch
-            $batchSize = 25;
+            $batchSize = 50;
             $batches = array_chunk($multimatch, $batchSize);
     
             $potentialMatchings = []; // indexed by driver proposal id
@@ -1341,6 +1416,17 @@ class ProposalMatcher
                                     $matching->setProposalOffer($this->proposalRepository->find($candidateDriverId));
                                     $matching->setProposalRequest($this->proposalRepository->find($candidatePassengerId));
                                     $matching->setFilters($cmatches[0]);
+                                    $matching->setOriginalDistance($cmatches[0]['originalDistance']);
+                                    $matching->setAcceptedDetourDistance($cmatches[0]['acceptedDetourDistance']);
+                                    $matching->setNewDistance($cmatches[0]['newDistance']);
+                                    $matching->setDetourDistance($cmatches[0]['detourDistance']);
+                                    $matching->setDetourDistancePercent($cmatches[0]['detourDistancePercent']);
+                                    $matching->setOriginalDuration($cmatches[0]['originalDuration']);
+                                    $matching->setAcceptedDetourDuration($cmatches[0]['acceptedDetourDuration']);
+                                    $matching->setNewDuration($cmatches[0]['newDuration']);
+                                    $matching->setDetourDuration($cmatches[0]['detourDuration']);
+                                    $matching->setDetourDurationPercent($cmatches[0]['detourDurationPercent']);
+                                    $matching->setCommonDistance($cmatches[0]['commonDistance']);
                                     $potentialMatchings[$candidateDriverId][] = $matching;
                                     break;
                                 case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST:
@@ -1349,6 +1435,17 @@ class ProposalMatcher
                                     $matching->setProposalOffer($this->proposalRepository->find($candidateDriverId));
                                     $matching->setProposalRequest($this->proposalRepository->find($candidatePassengerId));
                                     $matching->setFilters($cmatches[0]);
+                                    $matching->setOriginalDistance($cmatches[0]['originalDistance']);
+                                    $matching->setAcceptedDetourDistance($cmatches[0]['acceptedDetourDistance']);
+                                    $matching->setNewDistance($cmatches[0]['newDistance']);
+                                    $matching->setDetourDistance($cmatches[0]['detourDistance']);
+                                    $matching->setDetourDistancePercent($cmatches[0]['detourDistancePercent']);
+                                    $matching->setOriginalDuration($cmatches[0]['originalDuration']);
+                                    $matching->setAcceptedDetourDuration($cmatches[0]['acceptedDetourDuration']);
+                                    $matching->setNewDuration($cmatches[0]['newDuration']);
+                                    $matching->setDetourDuration($cmatches[0]['detourDuration']);
+                                    $matching->setDetourDurationPercent($cmatches[0]['detourDurationPercent']);
+                                    $matching->setCommonDistance($cmatches[0]['commonDistance']);
                                     $potentialMatchings[$candidateDriverId][] = $matching;
                                     break;
                                 default:
@@ -1585,6 +1682,11 @@ class ProposalMatcher
                 // we remove the direction from the filter to reduce the size of the returned object
                 // (it is already affected to the driver direction)
                 $filters = $matching->getFilters();
+                // we complete the pickup and dropoff
+                if (list($pickUp, $dropOff) = $this->getPickUpDropOffDurations($filters['route'])) {
+                    $matching->setPickUpDuration($pickUp);
+                    $matching->setDropOffDuration($dropOff);
+                }
                 $filters['direction'] = null;
                 unset($filters['direction']);
                 $matching->setFilters($filters);

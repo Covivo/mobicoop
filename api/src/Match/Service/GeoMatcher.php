@@ -386,7 +386,7 @@ class GeoMatcher
             // we deserialize the direction if needed
             $direction = $routes[0];
             if (is_array($routes[0])) {
-                $this->logger->info("GeoMatcher : deserialize direction " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                //$this->logger->info("GeoMatcher : deserialize direction " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 $direction = $this->geoRouter->getRouter()->deserializeDirection($routes[0]);
             }
             
