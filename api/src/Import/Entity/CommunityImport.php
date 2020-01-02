@@ -5,16 +5,11 @@ namespace App\Import\Entity;
 use App\Community\Entity\Community;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
-use App\Import\Controller\ImportImageCommunityController;
-
-use App\User\Entity\User;
-
 /**
- * A user imported from an external system.
+ * A community imported from an external system.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -47,7 +42,7 @@ class CommunityImport
     private $id;
 
     /**
-     * @var User|null User imported in the platform.
+     * @var Community|null Community imported in the platform.
      *
      * @ORM\OneToOne(targetEntity="\App\Community\Entity\Community", cascade={"persist", "remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
@@ -56,7 +51,7 @@ class CommunityImport
     private $community;
 
     /**
-     * @var string|null The user id in the external system.
+     * @var string|null The community id in the external system.
      *
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Groups({"read","write"})

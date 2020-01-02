@@ -241,7 +241,7 @@ class AdManager
      * @param boolean|null $strictDate      Strict date
      * @param boolean $strictPunctual       Strictly punctual
      * @param boolean $strictRegular        Strictly regular
-     * @param integer $role                 Role (driver and/or passenger)
+     * @param integer|null $role            Role (driver and/or passenger)
      * @param integer|null $userId          User id of the requester (to exclude its own results)
      * @param integer $communityId          Community id of the requester (to get only results from that community)
      * @param array|null $filters           Filters and order choices

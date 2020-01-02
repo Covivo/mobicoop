@@ -221,6 +221,10 @@ services:
         resource: '../src/Geography/Controller'
         tags: ['controller.service_arguments']
 
+    App\Geography\EventSubscriber\CarpoolSubscriber:
+        arguments:
+            $directory: '%env(resolve:ASYNC_GEO_TEMP)%'
+
     App\Geography\Service\GeoRouter:
         arguments:
             $uri: '%env(resolve:SIG_GEOROUTER_URI)%'

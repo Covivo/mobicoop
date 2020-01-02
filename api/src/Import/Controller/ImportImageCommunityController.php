@@ -26,7 +26,6 @@ namespace App\Import\Controller;
 use App\Import\Service\ImportManager;
 use App\TranslatorTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Image\Service\ImageManager;
 
 class ImportImageCommunityController extends AbstractController
 {
