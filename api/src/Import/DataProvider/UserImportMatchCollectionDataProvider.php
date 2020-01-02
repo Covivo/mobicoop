@@ -30,12 +30,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use App\Import\Service\ImportManager;
 
 /**
- * Collection data provider for User import treatment.
+ * Collection data provider for User import matching.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  */
-final class UserImportTreatCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class UserImportMatchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
     protected $importManager;
@@ -48,11 +48,11 @@ final class UserImportTreatCollectionDataProvider implements CollectionDataProvi
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return UserImport::class === $resourceClass && $operationName === "treat";
+        return UserImport::class === $resourceClass && $operationName === "match";
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return [$this->importManager->treatUserImport($this->request->get("origin"))];
+        return [$this->importManager->matchUserImport()];
     }
 }

@@ -26,10 +26,11 @@ namespace App\Geography\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Geography\Service\GeoTools;
 use Symfony\Component\Serializer\Annotation\Groups;
 use CrEOF\Spatial\PHP\Types\Geometry\Polygon;
+use CrEOF\Spatial\PHP\Types\Geometry\LineString;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
-use CrEOF\Spatial\PHP\Types\Geography\LineString;
 
 /**
  * A direction : the route to follow between 2 or more addresses using an individual transport mode.
@@ -165,6 +166,14 @@ class Direction
     private $geoJsonDetail;
 
     /**
+     * @var string The simplified geoJson linestring detail of the direction.
+     * Created using the Ramer-Douglas-Peucker algorithm.
+     * @ORM\Column(type="linestring", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $geoJsonSimplified;
+
+    /**
      * @var string The textual encoded snapped waypoints of the direction.
      * @ORM\Column(type="text")
      * @Groups({"read","write"})
@@ -233,17 +242,31 @@ class Direction
      * @Groups({"read"})
      */
     private $updatedDate;
+
+    /**
+     * @var boolean Save the geoJson with the direction.
+     * Used to avoid slow insert/updates for realtime operations.
+     */
+    private $saveGeoJson;
     
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
         $this->zones = new ArrayCollection();
         $this->territories = new ArrayCollection();
+        $this->saveGeoJson = true;
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        
+        return $this;
     }
     
     public function getDistance(): int
@@ -390,6 +413,18 @@ class Direction
         return $this;
     }
 
+    public function getGeoJsonSimplified()
+    {
+        return $this->geoJsonSimplified;
+    }
+    
+    public function setGeoJsonSimplified($geoJsonSimplified): self
+    {
+        $this->geoJsonSimplified = $geoJsonSimplified;
+        
+        return $this;
+    }
+
     public function getSnapped(): string
     {
         return $this->snapped;
@@ -526,6 +561,41 @@ class Direction
         return $this;
     }
 
+    public function hasSaveGeoJson(): ?bool
+    {
+        return $this->saveGeoJson;
+    }
+
+    public function setSaveGeoJson(bool $saveGeoJson): self
+    {
+        $this->saveGeoJson = $saveGeoJson;
+
+        return $this;
+    }
+
+    public function getDirectionString(string $delimiter=";")
+    {
+        return
+            $this->getId() . $delimiter .
+            $this->getDistance() . $delimiter .
+            $this->getDuration() . $delimiter .
+            $this->getAscend() . $delimiter .
+            $this->getDescend() . $delimiter .
+            $this->getBboxMinLon() . $delimiter .
+            $this->getBboxMinLat() . $delimiter .
+            $this->getBboxMaxLon() . $delimiter .
+            $this->getBboxMaxLat() . $delimiter .
+            $this->getDetail() . "'" . $delimiter .
+            $this->getFormat() . "'" . $delimiter .
+            $this->getSnapped() . "'" . $delimiter .
+            $this->getBearing() . $delimiter .
+            "POLYGON(" . $this->getGeoJsonBbox() . ")" . $delimiter .
+            "LINESTRING(" . $this->getGeoJsonDetail() . ")" . $delimiter .
+            $this->getCreatedDate()->format('Y-m-d H:i:s') . $delimiter .
+            "0000-00-00'" . $delimiter .
+            "LINESTRING(" . $this->getGeoJsonSimplified() . ")" . $delimiter;
+    }
+
     // DOCTRINE EVENTS
     
     /**
@@ -578,6 +648,9 @@ class Direction
      */
     public function setAutoGeoJsonDetail()
     {
+        if (!$this->hasSaveGeoJson()) {
+            return;
+        }
         if (!is_null($this->getGeoJsonDetail())) {
             return;
         }
@@ -587,6 +660,15 @@ class Direction
                 $arrayPoints[] = new Point($address->getLongitude(), $address->getLatitude());
             }
             $this->setGeoJsonDetail(new LineString($arrayPoints));
+            $arrayPoints = [];
+            $geoTools = new GeoTools();
+            $simplifiedPoints = $geoTools->getSimplifiedPoints($this->getPoints());
+            //var_dump($this->getPoints());
+            //var_dump($simplifiedPoints);exit;
+            foreach ($simplifiedPoints as $point) {
+                $arrayPoints[] = new Point($point[0], $point[1]);
+            }
+            $this->setGeoJsonSimplified(new LineString($arrayPoints));
         }
     }
 }

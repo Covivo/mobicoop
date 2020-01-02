@@ -48,7 +48,12 @@ use App\Import\Controller\ImportImageUserController;
  *              "path"="/user_imports/treat",
  *              "normalization_context"={"groups"={"read"}},
  *          },
- *        "import-users-from-v1"={
+ *          "match"={
+ *              "method"="GET",
+ *              "path"="/user_imports/match",
+ *              "normalization_context"={"groups"={"read"}},
+ *          },
+ *          "import-users-from-v1"={
  *              "method"="GET",
  *              "path"="/import/images-from-v1/users",
  *              "controller"=ImportImageUserController::class,
@@ -97,14 +102,6 @@ class UserImport
      * @MaxDepth(1)
      */
     private $user;
-
-    /**
-     * @var string|null The user id in the external system.
-     *
-     * @ORM\Column(type="string", length=255, nullable=false)
-     * @Groups({"read","write"})
-     */
-    private $userExternalId;
 
     /**
      * @var string|null The identifier of the external system.
@@ -195,18 +192,6 @@ class UserImport
     public function setUser(?User $user): self
     {
         $this->user = $user;
-
-        return $this;
-    }
-
-    public function getUserExternalId(): string
-    {
-        return $this->userExternalId;
-    }
-
-    public function setUserExternalId(string $userExternalId): self
-    {
-        $this->userExternalId = $userExternalId;
 
         return $this;
     }

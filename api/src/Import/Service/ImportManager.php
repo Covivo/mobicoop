@@ -23,6 +23,7 @@
 
 namespace App\Import\Service;
 
+use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Service\ProposalManager;
 use App\Communication\Entity\Medium;
 use App\Communication\Repository\NotificationRepository;
@@ -38,17 +39,10 @@ use App\Import\Repository\CommunityImportRepository;
 use App\Import\Repository\EventImportRepository;
 use App\Import\Repository\RelayPointImportRepository;
 use App\Import\Repository\UserImportRepository;
-use App\RelayPoint\Entity\RelayPoint;
-use App\RelayPoint\Repository\RelayPointRepository;
-use App\Right\Entity\Role;
-use App\Right\Entity\UserRole;
 use App\Right\Repository\RoleRepository;
-use App\User\Entity\UserNotification;
 use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use App\User\Entity\User;
 
 /**
  * Import manager service.
@@ -64,6 +58,8 @@ class ImportManager
     private $userManager;
     private $roleRepository;
     private $notificationRepository;
+    private $proposalRepository;
+   
     private $imageManager;
     private $eventRepository;
     private $communityRepository;
@@ -78,7 +74,7 @@ class ImportManager
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, RelayPointRepository $relayPointRepository, RelayPointImportRepository $relayPointImportRepository, EventImportRepository $eventImportRepository, CommunityImportRepository $communityImportRepository, ImageManager $imageManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, UserManager $userManager, RoleRepository $roleRepository, NotificationRepository $notificationRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository)
+    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, RelayPointImportRepository $relayPointImportRepository, EventImportRepository $eventImportRepository, CommunityImportRepository $communityImportRepository, ImageManager $imageManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, UserManager $userManager, RoleRepository $roleRepository, NotificationRepository $notificationRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository)
     {
         $this->entityManager = $entityManager;
         $this->userImportRepository = $userImportRepository;
@@ -86,6 +82,7 @@ class ImportManager
         $this->userManager = $userManager;
         $this->roleRepository = $roleRepository;
         $this->notificationRepository = $notificationRepository;
+        $this->proposalRepository = $proposalRepository;
         $this->imageManager = $imageManager;
         $this->relayPointRepository = $relayPointRepository;
 
@@ -100,19 +97,57 @@ class ImportManager
     /**
      * Treat imported users
      *
+     * @param string $origin    The origin of the data
      * @return array    The users imported
      */
-    public function treatUserImport()
+    public function treatUserImport(string $origin)
     {
         set_time_limit(3600);
-        gc_enable();
-
+        //gc_enable();
+        
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+
+        // create user_import rows
+        $conn = $this->entityManager->getConnection();
+        $sql = "INSERT INTO user_import (user_id,origin,status,created_date) SELECT id, '" . $origin . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "' FROM user";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+
+        // REPAIR
+
+        // update proposal : set private to 0 if initialized to null
+        $sql = "UPDATE proposal SET private = 0 WHERE private is null";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        // update criteria : set checks to null where time is not filled
+        $sql = "UPDATE criteria SET mon_check = null WHERE mon_check IS NOT NULL and mon_time is null";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $sql = "UPDATE criteria SET tue_check = null WHERE tue_check IS NOT NULL and tue_time is null";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $sql = "UPDATE criteria SET wed_check = null WHERE wed_check IS NOT NULL and wed_time is null";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $sql = "UPDATE criteria SET thu_check = null WHERE thu_check IS NOT NULL and thu_time is null";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $sql = "UPDATE criteria SET fri_check = null WHERE fri_check IS NOT NULL and fri_time is null";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $sql = "UPDATE criteria SET sat_check = null WHERE sat_check IS NOT NULL and sat_time is null";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $sql = "UPDATE criteria SET sun_check = null WHERE sun_check IS NOT NULL and sun_time is null";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
 
         // we have to treat all the users that have just been imported
         // first pass : update status before treatment
         $q = $this->entityManager
-        ->createQuery('UPDATE App\import\Entity\UserImport u set u.status = :status, u.treatmentUserStartDate=:treatmentDate WHERE u.status=:oldStatus')
+        ->createQuery('UPDATE App\Import\Entity\UserImport u set u.status = :status, u.treatmentUserStartDate=:treatmentDate WHERE u.status=:oldStatus')
         ->setParameters([
             'status'=>UserImport::STATUS_USER_PENDING,
             'treatmentDate'=>new \DateTime(),
@@ -120,61 +155,17 @@ class ImportManager
         ]);
         $q->execute();
 
-        gc_collect_cycles();
-
-        // second pass : user related treatment
-        $batch = 50;    // batch for users
-        $pool = 0;
-        $qCriteria = $this->entityManager->createQuery('SELECT u FROM App\User\Entity\User u JOIN u.import i WHERE i.status='.UserImport::STATUS_USER_PENDING);
-        $iterableResult = $qCriteria->iterate();
-        foreach ($iterableResult as $row) {
-            $user = $row[0];
-
-            // we treat the role
-            if (count($user->getUserRoles()) == 0) {
-                // we have to add a role
-                $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL); // can't be defined outside the loop because of the flush/clear...
-                $userRole = new UserRole();
-                $userRole->setRole($role);
-                $user->addUserRole($userRole);
-            }
-
-            // we treat the notifications
-            if (count($user->getUserNotifications()) == 0) {
-                // we have to create the default user notifications, we don't persist immediately
-                $notifications = $this->notificationRepository->findUserEditable(); // can't be defined outside the loop because of the flush/clear...
-                foreach ($notifications as $notification) {
-                    $userNotification = new UserNotification();
-                    $userNotification->setNotification($notification);
-                    $userNotification->setActive($notification->isUserActiveDefault());
-                    if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
-                        // check telephone for sms
-                        $userNotification->setActive(false);
-                    } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
-                        // check apps for push
-                        $userNotification->setActive(false);
-                    }
-                    $user->addUserNotification($userNotification);
-                }
-            }
-            //$this->entityManager->persist($user);
-
-            // batch
-            $pool++;
-            if ($pool>=$batch) {
-                $this->entityManager->flush();
-                $this->entityManager->clear();
-                gc_collect_cycles();
-                $pool = 0;
-            }
-        }
-        // final flush for pending persists
-        $this->entityManager->flush();
-        $this->entityManager->clear();
-        gc_collect_cycles();
+        // create user_notification rows
+        $sql = "INSERT INTO user_notification (notification_id,user_id,active,created_date)
+        SELECT n.id,u.id,IF (u.phone_validated_date IS NULL AND n.medium_id = " . Medium::MEDIUM_SMS . ",0,IF (u.ios_app_id IS NULL AND u.android_app_id IS NULL AND n.medium_id = " . Medium::MEDIUM_PUSH . ",0,n.user_active_default)),'" . (new \DateTime())->format('Y-m-d') . "'
+        FROM user_import i LEFT JOIN user u ON u.id = i.user_id
+        JOIN notification n
+        WHERE n.user_editable=1";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
 
         $q = $this->entityManager
-        ->createQuery('UPDATE App\import\Entity\UserImport u set u.status = :status WHERE u.status=:oldStatus')
+        ->createQuery('UPDATE App\Import\Entity\UserImport u set u.status = :status WHERE u.status=:oldStatus')
         ->setParameters([
             'status'=>UserImport::STATUS_USER_TREATED,
             'oldStatus'=>UserImport::STATUS_USER_PENDING
@@ -182,38 +173,48 @@ class ImportManager
         $q->execute();
 
         // batch for criterias / direction
-        $batch = 500;
-
+        $batch = 50;
         $this->proposalManager->setDirectionsAndDefaultsForImport($batch);
 
-        gc_collect_cycles();
-
-        // exit;
-
-        // creation of the matchings
-        // we create an array of all proposals to treat
-        $importedUsers = $this->userImportRepository->findBy(['status'=>UserImport::STATUS_DIRECTION_TREATED]);
-        $proposals = [];
-        foreach ($importedUsers as $import) {
-            foreach ($import->getUser()->getProposals() as $proposal) {
-                // we exclude the proposals that have no directions... can happen if no routes are found !
-                if (!is_null($proposal->getCriteria()->getDirectionDriver()) || !is_null($proposal->getCriteria()->getDirectionPassenger())) {
-                    $proposals[$proposal->getId()] = $proposal;
-                }
-            }
-        }
-        $this->proposalManager->createMatchingsForProposals($proposals);
-
-        // treat the return and opposite
-        $proposals = $this->proposalManager->createLinkedAndOppositesForProposals($proposals);
+        // update addresses with geojson point data
+        $conn = $this->entityManager->getConnection();
+        $sql = "UPDATE address SET geo_json = PointFromText(CONCAT('POINT(',longitude,' ',latitude,')'),1) WHERE geo_json IS NULL";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
 
         $q = $this->entityManager
-        ->createQuery('UPDATE App\import\Entity\UserImport u set u.status = :status WHERE u.status=:oldStatus')
+        ->createQuery('UPDATE App\Import\Entity\UserImport u set u.status = :status, u.treatmentUserEndDate=:treatmentDate WHERE u.status=:oldStatus')
         ->setParameters([
-            'status'=>UserImport::STATUS_MATCHING_TREATED,
-            'oldStatus'=>UserImport::STATUS_DIRECTION_TREATED
+            'status'=>UserImport::STATUS_DIRECTION_TREATED,
+            'treatmentDate'=>new \DateTime(),
+            'oldStatus'=>UserImport::STATUS_USER_TREATED
         ]);
         $q->execute();
+
+        //gc_collect_cycles();
+
+        return [];
+    }
+
+    /**
+     * Match imported users
+     *
+     * @return array    The users imported
+     */
+    public function matchUserImport()
+    {
+        set_time_limit(50000);
+        
+        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+                
+        // creation of the matchings
+        // we create an array of all proposals to treat
+        $proposalIds = $this->proposalRepository->findImportedProposals(UserImport::STATUS_DIRECTION_TREATED);
+
+        $this->proposalManager->createMatchingsForProposals($proposalIds);
+
+        // treat the return and opposite
+        $proposals = $this->proposalManager->createLinkedAndOppositesForProposals($proposalIds);
 
         return [];
     }

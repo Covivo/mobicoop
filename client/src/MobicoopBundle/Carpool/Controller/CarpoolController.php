@@ -53,12 +53,14 @@ class CarpoolController extends AbstractController
     private $midPrice;
     private $highPrice;
     private $forbiddenPrice;
+    private $defaultRole;
 
-    public function __construct($midPrice, $highPrice, $forbiddenPrice)
+    public function __construct($midPrice, $highPrice, $forbiddenPrice, $defaultRole)
     {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
         $this->forbiddenPrice = $forbiddenPrice;
+        $this->defaultRole = $defaultRole;
     }
     
     /**
@@ -288,7 +290,7 @@ class CarpoolController extends AbstractController
         $strictDate = isset($params['strictDate']) ? $params['strictDate'] : null;
         $strictPunctual = isset($params['strictPunctual']) ? $params['strictPunctual'] : null;
         $strictRegular = isset($params['strictRegular']) ? $params['strictRegular'] : null;
-        $role = isset($params['role']) ? $params['role'] : Criteria::ROLE_BOTH;
+        $role = isset($params['role']) ? $params['role'] : $this->defaultRole;
         $userId = isset($params['userId']) ? $params['userId'] : null;
         $communityId = isset($params['communityId']) ? $params['communityId'] : null;
 
