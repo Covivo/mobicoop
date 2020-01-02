@@ -176,7 +176,7 @@ class GeoMatcher
         }
 
         if (!$forMass) {
-            $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_ARRAY);
+            $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, true, false, GeorouterInterface::RETURN_TYPE_ARRAY);
     
             // we treat the routes to check if they match
             foreach ($ownerRoutes as $ownerId=>$routes) {

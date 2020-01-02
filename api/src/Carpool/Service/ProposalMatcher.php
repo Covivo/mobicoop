@@ -730,10 +730,9 @@ class ProposalMatcher
             $matching->setFilters($filters);
 
             // we complete the pickup and dropoff
-            if (list($pickUp, $dropOff) = $this->getPickUpDropOffDurations($filters['route'])) {
-                $matching->setPickUpDuration($pickUp);
-                $matching->setDropOffDuration($dropOff);
-            }
+            list($pickUp, $dropOff) = $this->getPickUpDropOffDurations($filters['route']);
+            $matching->setPickUpDuration($pickUp);
+            $matching->setDropOffDuration($dropOff);
         }
         $this->logger->info("ProposalMatcher : end completeMatchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
@@ -1683,10 +1682,9 @@ class ProposalMatcher
                 // (it is already affected to the driver direction)
                 $filters = $matching->getFilters();
                 // we complete the pickup and dropoff
-                if (list($pickUp, $dropOff) = $this->getPickUpDropOffDurations($filters['route'])) {
-                    $matching->setPickUpDuration($pickUp);
-                    $matching->setDropOffDuration($dropOff);
-                }
+                list($pickUp, $dropOff) = $this->getPickUpDropOffDurations($filters['route']);
+                $matching->setPickUpDuration($pickUp);
+                $matching->setDropOffDuration($dropOff);
                 $filters['direction'] = null;
                 unset($filters['direction']);
                 $matching->setFilters($filters);
