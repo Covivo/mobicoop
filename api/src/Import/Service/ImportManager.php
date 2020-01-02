@@ -39,6 +39,7 @@ use App\Import\Repository\CommunityImportRepository;
 use App\Import\Repository\EventImportRepository;
 use App\Import\Repository\RelayPointImportRepository;
 use App\Import\Repository\UserImportRepository;
+use App\RelayPoint\Repository\RelayPointRepository;
 use App\Right\Repository\RoleRepository;
 use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
@@ -74,7 +75,7 @@ class ImportManager
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, RelayPointImportRepository $relayPointImportRepository, EventImportRepository $eventImportRepository, CommunityImportRepository $communityImportRepository, ImageManager $imageManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, UserManager $userManager, RoleRepository $roleRepository, NotificationRepository $notificationRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository)
+    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, RelayPointImportRepository $relayPointImportRepository, EventImportRepository $eventImportRepository, CommunityImportRepository $communityImportRepository, ImageManager $imageManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, UserManager $userManager, RoleRepository $roleRepository, NotificationRepository $notificationRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository, RelayPointRepository $relayPointRepository)
     {
         $this->entityManager = $entityManager;
         $this->userImportRepository = $userImportRepository;
@@ -85,7 +86,6 @@ class ImportManager
         $this->proposalRepository = $proposalRepository;
         $this->imageManager = $imageManager;
         $this->relayPointRepository = $relayPointRepository;
-
         $this->eventRepository = $eventRepository;
         $this->communityRepository = $communityRepository;
         $this->userRepository = $userRepository;
