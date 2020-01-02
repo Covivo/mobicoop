@@ -34,6 +34,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 class AdManager
 {
     private $dataProvider;
+    const RESOURCE_NAME = "carpools";
     
     /**
      * Constructor.
@@ -43,7 +44,7 @@ class AdManager
     public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(Ad::class);
+        $this->dataProvider->setClass(Ad::class, self::RESOURCE_NAME);
     }
 
     /**

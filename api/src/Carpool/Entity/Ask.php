@@ -362,7 +362,7 @@ class Ask
 
         // set (or unset) the owning side of the relation if necessary
         $newAsk = $ask === null ? null : $this;
-        if ($newAsk !== $ask->getAskl()) {
+        if ($newAsk !== $ask->getAsk()) {
             $ask->setAsk($newAsk);
         }
 
