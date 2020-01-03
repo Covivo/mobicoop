@@ -316,9 +316,9 @@ class ImportManager
 
     public function importUserImage()
     {
-        if ($this->userImportRepository->findBy(array('id' => 1)) == null) {
-            $this->importUserIfNotMigrate();
-        }
+        //if ($this->userImportRepository->findBy(array('id' => 1)) == null) {
+        $this->importUserIfNotMigrate();
+        //}
         $dir = "../public/import/Avatar/";
         $results = array('importer' => 0,'probleme-id-v1' => 0,'probleme-id-v2' => 0);
 
@@ -492,7 +492,6 @@ class ImportManager
     // 1 = User V1
     private function importUserIfNotMigrate()
     {
-
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
         if (($handle = fopen("../public/import/csv/user_id_corresp.csv", "r")) !== false) {
             while (($data = fgetcsv($handle, 1000, ",")) !== false) {
@@ -500,11 +499,12 @@ class ImportManager
                 // Since the import avec avatars is only made after the migration of the accounts
                 // we need to get the actual UserImport created by the migration and link it by externalid
                 
-                $importUser = $this->userImportRepository->find($data[0]);
+                $user = $this->userRepository->find($data[0]);
+                $importUser = $this->userImportRepository->findOneBy(array('user' =>  $user));
                 if (!is_null($importUser)) {
                     //$importUser->setUser($this->userRepository->find($data[0]));
                     $importUser->setUserExternalId($data[1]);
-                    $importUser->setStatus(0);
+                    //$importUser->setStatus(0);
                     //$importUser->setOrigin('import-csv');
                     //$importUser->setCreatedDate(new \DateTime());
 
