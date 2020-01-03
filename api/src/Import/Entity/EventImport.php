@@ -78,7 +78,7 @@ class EventImport
         return $this->id;
     }
 
-    public function getEvent(): Event
+    public function getEvent()
     {
         return $this->event;
     }

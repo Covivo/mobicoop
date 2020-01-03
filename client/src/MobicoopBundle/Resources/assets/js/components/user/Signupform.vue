@@ -295,13 +295,13 @@
               v-slot:activator="{ on }"
             >
               <div>
-                {{ $t('ui.pages.signup.chart.text') }}
+                {{ $t('chart.text') }}
                 <a
                   class="primary--text"
                   target="_blank"
-                  :href="$t('ui.pages.signup.chart.route')"
+                  :href="$t('chart.route')"
                   @click.stop
-                >{{ $t('ui.pages.signup.chart.link') }}
+                >{{ $t('chart.link') }}
                 </a>
               </div>
             </template>

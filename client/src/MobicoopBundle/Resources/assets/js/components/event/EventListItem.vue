@@ -5,7 +5,6 @@
         <v-img
           v-if="item['images'][0]"
           :src="item['images'][0]['versions']['square_250']"
-          lazy-src="https://picsum.photos/id/11/10/6"
           aspect-ratio="1"
           class="grey lighten-2"
           max-width="200"
@@ -13,12 +12,11 @@
         />
         <v-img
           v-else
-          src="https://picsum.photos/id/11/500/300"
-          lazy-src="https://picsum.photos/id/11/10/6"
+          src="/images/avatarsDefault/avatar.svg"
           aspect-ratio="1"
           class="grey lighten-2"
           max-width="200"
-          max-height="150"
+          max-height="200"
         />
       </v-col>
       <v-col cols="6">

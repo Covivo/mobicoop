@@ -282,7 +282,7 @@ class ImportManager
                     if ($file != '.' && $file != '..' && preg_match('#\.(jpe?g|gif|png)$#i', $file)) {
                         $nameExp = explode('_', $file);
                         if ($link = $this->eventImportRepository->findOneBy(array('eventExternalId' => $nameExp[0]))) {
-                            if ($link->getStatus() != 1) {
+                            if ($link->getStatus() != 1 && $link->getEvent() != null) {
                                 $image = new Image();
                                 $image->setEvent($link->getEvent());
                                 $image->setOriginalName($file);
@@ -471,13 +471,16 @@ class ImportManager
     {
         if (($handle = fopen("../public/import/csv/relay_point_id_corresp.csv", "r")) !== false) {
             while (($data = fgetcsv($handle, 1000, ",")) !== false) {
-                $importRelay = new RelayPointImport();
+                $relais = $this->relayPointRepository->find(intval($data[0]));
+                if ($relais != null) {
+                    $importRelay = new RelayPointImport();
 
-                $importRelay->setRelay($this->relayPointRepository->find($data[0]));
-                $importRelay->setRelayExternalId($data[1]);
-                $importRelay->setStatus(0);
+                    $importRelay->setRelay($this->relayPointRepository->find(intval($data[0])));
+                    $importRelay->setRelayExternalId($data[1]);
+                    $importRelay->setStatus(0);
 
-                $this->entityManager->persist($importRelay);
+                    $this->entityManager->persist($importRelay);
+                }
             }
             fclose($handle);
             $this->entityManager->flush();
@@ -489,6 +492,7 @@ class ImportManager
     // 1 = User V1
     private function importUserIfNotMigrate()
     {
+
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
         if (($handle = fopen("../public/import/csv/user_id_corresp.csv", "r")) !== false) {
             while (($data = fgetcsv($handle, 1000, ",")) !== false) {

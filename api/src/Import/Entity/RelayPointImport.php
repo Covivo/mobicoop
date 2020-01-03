@@ -78,7 +78,7 @@ class RelayPointImport
         return $this->id;
     }
 
-    public function getRelay(): RelayPoint
+    public function getRelay()
     {
         return $this->relay;
     }
