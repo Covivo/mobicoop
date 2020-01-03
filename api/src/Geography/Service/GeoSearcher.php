@@ -48,8 +48,7 @@ class GeoSearcher
     const ICON_COMMUNITY = 3;
     const ICON_EVENT = 4;
     const ICON_VENUE = 23;
-
-
+    
     private $geocoder;
     private $geoTools;
     private $userRepository;
