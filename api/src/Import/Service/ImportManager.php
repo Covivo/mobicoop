@@ -492,15 +492,16 @@ class ImportManager
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
         if (($handle = fopen("../public/import/csv/user_id_corresp.csv", "r")) !== false) {
             while (($data = fgetcsv($handle, 1000, ",")) !== false) {
-                $importUser = new UserImport();
+                $importUser = $this->userImportRepository->find($data[0]);
+                if (!is_null($importUser)) {
+                    //$importUser->setUser($this->userRepository->find($data[0]));
+                    $importUser->setUserExternalId($data[1]);
+                    $importUser->setStatus(0);
+                    //$importUser->setOrigin('import-csv');
+                    //$importUser->setCreatedDate(new \DateTime());
 
-                $importUser->setUser($this->userRepository->find($data[0]));
-                $importUser->setUserExternalId($data[1]);
-                $importUser->setStatus(0);
-                $importUser->setOrigin('import-csv');
-                $importUser->setCreatedDate(new \DateTime());
-
-                $this->entityManager->persist($importUser);
+                    $this->entityManager->persist($importUser);
+                }
             }
             fclose($handle);
             $this->entityManager->flush();
