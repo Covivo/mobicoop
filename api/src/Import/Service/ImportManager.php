@@ -425,7 +425,7 @@ class ImportManager
         copy($file, $directory.$filenameExtension);
     }
 
-    //If the databases for import is empty, import data community from csv in pulic/importcsv
+    //If the databases for import is empty, import data community from csv in public/importcsv
     // 0 = community V2
     // 1 = community V1
     private function importCommunityIfNotMigrate()
@@ -445,7 +445,7 @@ class ImportManager
         }
     }
 
-    //If the databases for import is empty, import data Event from csv in pulic/importcsv
+    //If the databases for import is empty, import data Event from csv in public/importcsv
     // 0 = Event V2
     // 1 = Event V1
     private function importEventIfNotMigrate()
@@ -464,7 +464,7 @@ class ImportManager
             $this->entityManager->flush();
         }
     }
-    //If the databases for import is empty, import data  Relay point from csv in pulic/importcsv
+    //If the databases for import is empty, import data  Relay point from csv in public/importcsv
     // 0 = Relay point V2
     // 1 = Relay point  V1
     private function importRelayIfNotMigrate()
@@ -484,7 +484,7 @@ class ImportManager
         }
     }
 
-    //If the databases for import is empty, import Users data from csv in pulic/importcsv
+    //If the databases for import is empty, import Users data from csv in public/importcsv
     // 0 = User V2
     // 1 = User V1
     private function importUserIfNotMigrate()
@@ -492,6 +492,10 @@ class ImportManager
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
         if (($handle = fopen("../public/import/csv/user_id_corresp.csv", "r")) !== false) {
             while (($data = fgetcsv($handle, 1000, ",")) !== false) {
+
+                // Since the import avec avatars is only made after the migration of the accounts
+                // we need to get the actual UserImport created by the migration and link it by externalid
+                
                 $importUser = $this->userImportRepository->find($data[0]);
                 if (!is_null($importUser)) {
                     //$importUser->setUser($this->userRepository->find($data[0]));
