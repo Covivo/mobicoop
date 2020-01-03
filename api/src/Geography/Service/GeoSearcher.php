@@ -48,8 +48,7 @@ class GeoSearcher
     const ICON_COMMUNITY = 3;
     const ICON_EVENT = 4;
     const ICON_VENUE = 23;
-
-
+    
     private $geocoder;
     private $geoTools;
     private $userRepository;
@@ -100,68 +99,8 @@ class GeoSearcher
         if ($token) {
             $user = $this->userRepository->findOneBy(['geoToken'=>$token]);
         }
-        
-        // 1 - named addresses
-        if ($user) {
-            $namedAddresses = $this->addressRepository->findByName($input, $user->getId());
-            if (count($namedAddresses)>0) {
-                foreach ($namedAddresses as $address) {
-                    $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
-                    $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_ADDRESS_PERSONAL)->getFileName());
-                    $result[] = $address;
-                }
-            }
-        }
 
-        // 2 - Events points
-        $events = $this->eventRepository->findByNameAndStatus($input, Event::STATUS_ACTIVE);
-        // exclude the private relay points
-        foreach ($events as $event) {
-            $address = $event->getAddress();
-            $address->setEvent($event);
-            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
-            $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_EVENT)->getFileName());
-            $result[] = $address;
-        }
-
-        // 3 - relay points
-        $relayPoints = $this->relayPointRepository->findByNameAndStatus($input, RelayPoint::STATUS_ACTIVE);
-        // exclude the private relay points
-        foreach ($relayPoints as $relayPoint) {
-            $exclude = false;
-            if ($relayPoint->getCommunity() && $relayPoint->isPrivate()) {
-                $exclude = true;
-                if ($user) {
-                    // todo : maybe find a quicker way than a foreach :)
-                    foreach ($relayPoint->getCommunity()->getCommunityUsers() as $communityUser) {
-                        if ($communityUser->getUser()->getId() == $user->getId() && $communityUser->getStatus() == (CommunityUser::STATUS_ACCEPTED_AS_MEMBER or CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)) {
-                            $exclude = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            if (!$exclude) {
-                $address = $relayPoint->getAddress();
-                $address->setRelayPoint($relayPoint);
-                // set address icon
-                if (is_null($relayPoint->getRelayPointTypes()[0]->getIcon())) {
-                    $relayPoint->getRelayPointTypes()[0]->setIcon($this->iconRepository->find(1));
-                }
-                
-                if (count($relayPoint->getRelayPointTypes())>0 && !is_null($relayPoint->getRelayPointTypes()[0]->getIcon())) {
-                    if ($relayPoint->getRelayPointTypes()[0]->getIcon()->getPrivateIconLinked()) {
-                        $address->setIcon($this->dataPath.$this->iconPath.$relayPoint->getRelayPointTypes()[0]->getIcon()->getPrivateIconLinked()->getFileName());
-                    } else {
-                        $address->setIcon($this->dataPath.$this->iconPath.$relayPoint->getRelayPointTypes()[0]->getIcon()->getFileName());
-                    }
-                }
-                $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
-                $result[] = $address;
-            }
-        }
-
-        // 4 - sig addresses
+        // 1 - sig addresses
         $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input))->all();
         // var_dump($geoResults);exit;
         foreach ($geoResults as $geoResult) {
@@ -226,6 +165,68 @@ class GeoSearcher
 
             $result[] = $address;
         }
+        
+        // 2 - named addresses
+        if ($user) {
+            $namedAddresses = $this->addressRepository->findByName($input, $user->getId());
+            if (count($namedAddresses)>0) {
+                foreach ($namedAddresses as $address) {
+                    $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+                    $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_ADDRESS_PERSONAL)->getFileName());
+                    $result[] = $address;
+                }
+            }
+        }
+
+        // 3 - relay points
+        $relayPoints = $this->relayPointRepository->findByNameAndStatus($input, RelayPoint::STATUS_ACTIVE);
+        // exclude the private relay points
+        foreach ($relayPoints as $relayPoint) {
+            $exclude = false;
+            if ($relayPoint->getCommunity() && $relayPoint->isPrivate()) {
+                $exclude = true;
+                if ($user) {
+                    // todo : maybe find a quicker way than a foreach :)
+                    foreach ($relayPoint->getCommunity()->getCommunityUsers() as $communityUser) {
+                        if ($communityUser->getUser()->getId() == $user->getId() && $communityUser->getStatus() == (CommunityUser::STATUS_ACCEPTED_AS_MEMBER or CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)) {
+                            $exclude = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!$exclude) {
+                $address = $relayPoint->getAddress();
+                $address->setRelayPoint($relayPoint);
+                // set address icon
+                if (is_null($relayPoint->getRelayPointTypes()[0]->getIcon())) {
+                    $relayPoint->getRelayPointTypes()[0]->setIcon($this->iconRepository->find(1));
+                }
+                
+                if (count($relayPoint->getRelayPointTypes())>0 && !is_null($relayPoint->getRelayPointTypes()[0]->getIcon())) {
+                    if ($relayPoint->getRelayPointTypes()[0]->getIcon()->getPrivateIconLinked()) {
+                        $address->setIcon($this->dataPath.$this->iconPath.$relayPoint->getRelayPointTypes()[0]->getIcon()->getPrivateIconLinked()->getFileName());
+                    } else {
+                        $address->setIcon($this->dataPath.$this->iconPath.$relayPoint->getRelayPointTypes()[0]->getIcon()->getFileName());
+                    }
+                }
+                $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+                $result[] = $address;
+            }
+        }
+
+        // 4 - Events points
+        $events = $this->eventRepository->findByNameAndStatus($input, Event::STATUS_ACTIVE);
+        // exclude the private relay points
+        foreach ($events as $event) {
+            $address = $event->getAddress();
+            $address->setEvent($event);
+            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+            $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_EVENT)->getFileName());
+            $result[] = $address;
+        }
+
+        
 
         return $result;
     }
