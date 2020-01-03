@@ -32,7 +32,7 @@ export default {
           chart: {
             text: "J'accepte la charte de la plateforme et sa ",
             link: "politique de protection des données",
-            route: "/protection-donnees",
+            route: "/cgu",
             errors: {
               required: "La validation de la charte est requise"
             }
@@ -111,7 +111,7 @@ export default {
           placeholder: "Date de naissance",
           errors: {
             required: "La date de naissance est requise",
-            notadult: "Vous devez avoir 18 ans pour vous inscrire sur la plateforme"
+            notadult: "Vous devez avoir 16 ans pour vous inscrire sur la plateforme"
           }
         },
         email: {

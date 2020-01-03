@@ -4,6 +4,7 @@
     <!-- Only the Ask User can make a formal request of carpool -->
     <div v-if="status==1 && canUpdateAsk">
       <v-btn
+        v-if="driver"
         class="mb-2"
         color="primary"
         large
@@ -11,20 +12,19 @@
         rounded
         depressed
         :loading="loading"
-        v-on="on"
         @click="updateStatus(2,'driver')"
       >
         {{ $t('button.askCarpoolAsDriver') }}
       </v-btn> 
        
       <v-btn
+        v-if="passenger"
         color="primary"
         large
         dark
         rounded
         depressed
         :loading="loading"
-        v-on="on"
         @click="updateStatus(3,'passenger')"
       >
         {{ $t('button.askCarpoolAsPassenger') }}

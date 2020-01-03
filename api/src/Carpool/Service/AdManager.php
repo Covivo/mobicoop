@@ -33,6 +33,7 @@ use App\Event\Exception\EventNotFoundException;
 use App\Event\Service\EventManager;
 use App\Geography\Entity\Address;
 use App\Carpool\Exception\AdException;
+use App\Carpool\Repository\ProposalRepository;
 use App\User\Exception\UserNotFoundException;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -53,6 +54,7 @@ class AdManager
     private $resultManager;
     private $params;
     private $logger;
+    private $proposalRepository;
 
     /**
      * Constructor.
@@ -60,7 +62,7 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -70,6 +72,7 @@ class AdManager
         $this->resultManager = $resultManager;
         $this->logger = $logger;
         $this->params = $params;
+        $this->proposalRepository = $proposalRepository;
     }
     
     /**
@@ -82,6 +85,8 @@ class AdManager
      */
     public function createAd(Ad $ad)
     {
+        $this->logger->info("AdManager : start " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
         $outwardProposal = new Proposal();
         $outwardCriteria = new Criteria();
 
@@ -330,7 +335,11 @@ class AdManager
         $outwardProposal->setCriteria($outwardCriteria);
         $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal);
 
-        $this->entityManager->persist($outwardProposal);
+        $this->logger->info("AdManager : end creating outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        //$this->entityManager->persist($outwardProposal);
+
+        $this->logger->info("AdManager : end persisting outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         // return trip ?
         if (!$ad->isOneWay()) {
@@ -522,9 +531,10 @@ class AdManager
             $returnProposal = $this->proposalManager->prepareProposal($returnProposal, false);
             $this->entityManager->persist($returnProposal);
         }
-
         // we persist the proposals
+        $this->logger->info("AdManager : start flush proposal " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $this->entityManager->flush();
+        $this->logger->info("AdManager : end flush proposal " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
         // if the ad is a round trip, we want to link the potential matching results
         if (!$ad->isOneWay()) {
@@ -556,6 +566,7 @@ class AdManager
             
         ]);
 
+        $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $ad->setResults(
             $this->resultManager->orderResults(
                 $this->resultManager->filterResults(
@@ -565,10 +576,10 @@ class AdManager
                 $ad->getFilters()
             )
         );
+        $this->logger->info("AdManager : end set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
         // we set the ad id to the outward proposal id
         $ad->setId($outwardProposal->getId());
-
         return $ad;
     }
 
@@ -601,6 +612,7 @@ class AdManager
             $aFilters['order']=$order;
         }
         $ad->setFilters($aFilters);
+        $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $ad->setResults(
             $this->resultManager->orderResults(
                 $this->resultManager->filterResults(
@@ -609,6 +621,98 @@ class AdManager
                 ),
                 $ad->getFilters()
             )
+        );
+        $this->logger->info("AdManager : end set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        return $ad;
+    }
+
+    /**
+     * get all ads od a user
+     *
+     * @param integer $userId
+     * @return void
+     */
+    public function getAds(int $userId)
+    {
+        $ads = [];
+        $user = $this->userManager->getUser($userId);
+        $proposals = $this->proposalRepository->findBy(['user'=>$user, 'private'=>false]);
+        
+        $refIdProposals = [];
+        foreach ($proposals as $proposal) {
+            if (!in_array($proposal->getId(), $refIdProposals)) {
+                $ads[] = $this->makeAd($proposal, $userId);
+                if (!is_null($proposal->getProposalLinked())) {
+                    $refIdProposals[$proposal->getId()] = $proposal->getProposalLinked()->getId();
+                }
+            }
+        }
+        return $ads;
+    }
+
+    /**
+     * make an ad from a proposal
+     *
+     * @param Proposal $proposal
+     * @param integer $userId
+     * @return void
+     */
+    private function makeAd($proposal, $userId)
+    {
+        $ad = new Ad();
+                
+        $ad->setId($proposal->getId());
+        $ad->setFrequency($proposal->getCriteria()->getFrequency());
+        $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
+        $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
+        $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
+        $ad->setUserId($userId);
+        $ad->setOutwardWaypoints($proposal->getWaypoints());
+        $ad->setOutwardDate($proposal->getCriteria()->getFromDate());
+        $ad->setOutwardTime($proposal->getCriteria()->getFromTime() ? $proposal->getCriteria()->getFromTime()->format('H:i') : null);
+
+        // set return if twoWays ad
+        if ($proposal->getProposalLinked()) {
+            $ad->setReturnWaypoints($proposal->getProposalLinked()->getWaypoints());
+            $ad->setReturnDate($proposal->getProposalLinked()->getCriteria()->getFromDate());
+            $ad->setReturnTime($proposal->getProposalLinked()->getCriteria()->getFromTime() ? $proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i') : null);
+        }
+
+        // set schedule if regular
+        $schedule = [];
+        if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+            $schedule['mon'] = $proposal->getCriteria()->isMonCheck();
+            $schedule['monOutwardTime'] = $proposal->getCriteria()->getMonTime();
+            $schedule['monReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getMonTime() : null;
+            
+            $schedule['tue'] = $proposal->getCriteria()->isTueCheck();
+            $schedule['tueOutwardTime'] = $proposal->getCriteria()->getTueTime();
+            $schedule['tueReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getTueTime() : null;
+
+            $schedule['wed'] = $proposal->getCriteria()->isWedCheck();
+            $schedule['wedOutwardTime'] = $proposal->getCriteria()->getWedTime();
+            $schedule['wedReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getWedTime() : null;
+
+            $schedule['thu'] = $proposal->getCriteria()->isThuCheck();
+            $schedule['thuOutwardTime'] = $proposal->getCriteria()->getThuTime();
+            $schedule['thuReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getThuTime() : null;
+
+            $schedule['fri'] = $proposal->getCriteria()->isFriCheck();
+            $schedule['friOutwardTime'] = $proposal->getCriteria()->getFriTime();
+            $schedule['friReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getFriTime() : null;
+
+            $schedule['sat'] = $proposal->getCriteria()->isSatCheck();
+            $schedule['satOutwardTime'] = $proposal->getCriteria()->getSatTime();
+            $schedule['satReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getSatTime() : null;
+
+            $schedule['sun'] = $proposal->getCriteria()->isSunCheck();
+            $schedule['sunOutwardTime'] = $proposal->getCriteria()->getSunTime();
+            $schedule['sunReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getSunTime() : null;
+        }
+        $ad->setSchedule($schedule);
+
+        $ad->setResults(
+            $this->resultManager->createAdResults($proposal)
         );
         return $ad;
     }

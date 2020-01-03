@@ -38,6 +38,9 @@ use App\Community\Entity\Community;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Entity\RelayPointType;
 use App\Image\Controller\CreateImageAction;
+use App\Image\Controller\ImportImageCommunityController;
+use App\Image\Controller\ImportImageEventController;
+use App\Image\Controller\ImportImageUserController;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\User\Entity\User;
@@ -61,7 +64,7 @@ use App\User\Entity\User;
  *              "path"="/images",
  *              "controller"=CreateImageAction::class,
  *              "defaults"={"_api_receive"=false},
- *          }
+ *          },
  *      },
  *      itemOperations={"get","put","delete"}
  * )

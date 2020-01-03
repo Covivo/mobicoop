@@ -42,20 +42,24 @@ use App\Carpool\Controller\AdAskGet;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get",
+ *          "get"={
+ *              "method"="GET",
+ *              "path"="/carpools",
+ *          },
  *          "post"={
  *              "method"="POST",
+ *              "path"="/carpools",
  *              "controller"=AdPost::class,
  *          },
  *          "post_ask"={
  *              "method"="POST",
- *              "path"="/ads/ask",
+ *              "path"="/carpools/ask",
  *              "controller"=AdAskPost::class,
  *              "defaults"={"type"="ask"}
  *          },
  *          "post_contact"={
  *              "method"="POST",
- *              "path"="/ads/contact",
+ *              "path"="/carpools/contact",
  *              "controller"=AdAskPost::class,
  *              "defaults"={"type"="contact"}
  *          }
@@ -63,23 +67,25 @@ use App\Carpool\Controller\AdAskGet;
  *      itemOperations={
  *          "get"={
  *              "method"="GET",
+ *              "path"="/carpools/{id}",
  *              "controller"=AdGet::class,
  *              "read"=false
  *          },
  *          "put_ask"={
  *              "method"="PUT",
- *              "path"="/ads/ask/{id}",
+ *              "path"="/carpools/ask/{id}",
  *              "controller"=AdAskPut::class,
  *              "read"=false
  *          },
  *          "get_ask"={
  *              "method"="GET",
- *              "path"="/ads/ask/{id}",
+ *              "path"="/carpools/ask/{id}",
  *              "controller"=AdAskGet::class,
  *              "read"=false
  *          }
  *      }
  * )
+ *
  */
 class Ad
 {

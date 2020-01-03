@@ -2,7 +2,12 @@
     "fr":{
         "title":"Inscription",
         "urlSignUp":"/utilisateur/inscription",
-        "urlRedirectAfterSignUp":"/utilisateur/inscription/validation"
+        "urlRedirectAfterSignUp":"/utilisateur/inscription/validation",
+        "chart": {
+            "text": "J'accepte ",
+            "link": "la charte de la plateforme et sa politique de protection des données",
+            "route": "/cgu"
+        }
     },
     "en":{
         "title":"Sign Up",
