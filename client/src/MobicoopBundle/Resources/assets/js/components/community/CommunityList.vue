@@ -100,11 +100,13 @@
         :search="search"
         :items="communities"
         :items-per-page.sync="itemsPerPage"
+        :server-items-length="totalItems"
         :footer-props="{
           'items-per-page-options': itemsPerPageOptions,
           'items-per-page-all-text': $t('all'),
           'itemsPerPageText': $t('linePerPage')
         }"
+        @update:options="updateOptions"
       >
         <template>
           <v-row>
@@ -157,14 +159,22 @@ export default {
     canCreate: {
       type: Boolean,
       default: null
-    }
+    },
+    communitiesView:{
+      type: Object,
+      default: null
+    },
+    totalItems:{
+      type: Number,
+      default: null
+    },
   },
   data () {
     return {
       rerenderKey: 0,
       search: '',
-      itemsPerPageOptions: [10, 20, 50, 100, -1],
-      itemsPerPage: 10,
+      itemsPerPageOptions: [1, 10, 20, 50, 100, -1],
+      itemsPerPage: 1,
       headers: [
         {
           text: 'Id',
@@ -193,6 +203,10 @@ export default {
     },
     refreshComponent() {
       this.rerenderKey++;
+    },
+    updateOptions(value){
+      console.error("options !");
+      console.error(value);
     }
   }
 }

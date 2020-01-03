@@ -170,14 +170,21 @@ class CommunityController extends AbstractController
             $communitiesUser = [];
             $communities = $communityManager->getCommunities();
         }
-
+        dump($communities->getView());
         return $this->render('@Mobicoop/community/communities.html.twig', [
-            'communities' => $communities,
+            'communities' => $communities->getMember(),
             'communitiesUser' => $communitiesUser,
-            'canCreate' => $this->createFromFront
+            'canCreate' => $this->createFromFront,
+            'communitiesView' => $communities->getView(),
+            'totalItems' => $communities->getTotalItems()
         ]);
     }
 
+    public function getCommunityList()
+    {
+    }
+    
+    
     /**
      * Show a community
      */

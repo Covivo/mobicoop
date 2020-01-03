@@ -77,7 +77,7 @@ class CommunityManager
         }
         $response = $this->dataProvider->getCollection($params);
         if ($response->getCode() >=200 && $response->getCode() <= 300) {
-            return $response->getValue()->getMember();
+            return $response->getValue();
         }
         return $response->getValue();
     }
