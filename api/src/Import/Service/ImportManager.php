@@ -492,7 +492,6 @@ class ImportManager
     // 1 = User V1
     private function importUserIfNotMigrate()
     {
-
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
         if (($handle = fopen("../public/import/csv/user_id_corresp.csv", "r")) !== false) {
             while (($data = fgetcsv($handle, 1000, ",")) !== false) {
