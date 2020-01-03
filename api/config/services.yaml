@@ -252,6 +252,10 @@ services:
         arguments:
             $iconPath: '%env(resolve:GEOCOMPLETE_ICONS_PATH)%'
             $dataPath: '%env(resolve:DATA_URI)%'
+            $defaultSigResultNumber: '%env(resolve:GEOCOMPLETE_SIG_DEFAULT_RESULTS)%'
+            $defaultNamedResultNumber: '%env(resolve:GEOCOMPLETE_NAMED_DEFAULT_RESULTS)%'
+            $defaultRelayPointResultNumber: '%env(resolve:GEOCOMPLETE_RELAY_POINTS_DEFAULT_RESULTS)%'
+            $defaultEventResultNumber: '%env(resolve:GEOCOMPLETE_EVENTS_DEFAULT_RESULTS)%'
 
     # Image
     App\Image\Controller\:

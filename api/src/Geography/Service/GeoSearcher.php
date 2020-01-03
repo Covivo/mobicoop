@@ -58,11 +58,15 @@ class GeoSearcher
     private $iconPath;
     private $dataPath;
     private $eventRepository;
+    private $defaultSigResultNumber;
+    private $defaultNamedResultNumber;
+    private $defaultRelayPointResultNumber;
+    private $defaultEventResultNumber;
 
     /**
      * Constructor.
      */
-    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, IconRepository $iconRepository, string $iconPath, string $dataPath)
+    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, IconRepository $iconRepository, string $iconPath, string $dataPath, string $defaultSigResultNumber, string $defaultNamedResultNumber, string $defaultRelayPointResultNumber, string $defaultEventResultNumber)
     {
         $this->geocoder = $geocoder;
         $this->geoTools = $geoTools;
@@ -73,6 +77,10 @@ class GeoSearcher
         $this->iconPath = $iconPath;
         $this->dataPath = $dataPath;
         $this->eventRepository = $eventRepository;
+        $this->defaultSigResultNumber = $defaultSigResultNumber;
+        $this->defaultNamedResultNumber = $defaultNamedResultNumber;
+        $this->defaultRelayPointResultNumber = $defaultRelayPointResultNumber;
+        $this->defaultEventResultNumber = $defaultEventResultNumber;
     }
 
     /**
@@ -101,7 +109,7 @@ class GeoSearcher
         }
 
         // 1 - sig addresses
-        $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input))->all();
+        $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input)->withLimit($this->defaultSigResultNumber))->all();
         // var_dump($geoResults);exit;
         foreach ($geoResults as $geoResult) {
             // ?? todo : exclude all results that doesn't include any input word at all
@@ -170,10 +178,15 @@ class GeoSearcher
         if ($user) {
             $namedAddresses = $this->addressRepository->findByName($input, $user->getId());
             if (count($namedAddresses)>0) {
+                $i = 0;
                 foreach ($namedAddresses as $address) {
                     $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
                     $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_ADDRESS_PERSONAL)->getFileName());
                     $result[] = $address;
+                    $i++;
+                    if ($i>=$this->defaultNamedResultNumber) {
+                        break;
+                    }
                 }
             }
         }
@@ -181,6 +194,7 @@ class GeoSearcher
         // 3 - relay points
         $relayPoints = $this->relayPointRepository->findByNameAndStatus($input, RelayPoint::STATUS_ACTIVE);
         // exclude the private relay points
+        $i = 0;
         foreach ($relayPoints as $relayPoint) {
             $exclude = false;
             if ($relayPoint->getCommunity() && $relayPoint->isPrivate()) {
@@ -212,18 +226,27 @@ class GeoSearcher
                 }
                 $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
                 $result[] = $address;
+                $i++;
+                if ($i>=$this->defaultRelayPointResultNumber) {
+                    break;
+                }
             }
         }
 
         // 4 - Events points
         $events = $this->eventRepository->findByNameAndStatus($input, Event::STATUS_ACTIVE);
         // exclude the private relay points
+        $i = 0;
         foreach ($events as $event) {
             $address = $event->getAddress();
             $address->setEvent($event);
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
             $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_EVENT)->getFileName());
             $result[] = $address;
+            $i++;
+            if ($i>=$this->defaultEventResultNumber) {
+                break;
+            }
         }
 
         
