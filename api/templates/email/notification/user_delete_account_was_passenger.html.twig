@@ -1,6 +1,4 @@
-{% extends '/email/notification/linked_ad_deleted.html.twig' %}
+{% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    <p>{{ "yourCarpoolBetween"|trans }} {{ context.origin.address.addressLocality }} {{ "and"|trans }} {{ context.destination.address.addressLocality }} {{ "withTheDriver"|trans }} {{ deleterGivenName|capitalize ~ " " ~ deleterFamilyName|capitalize }} {{ "isCanceledBecause"|trans }} {{ deleterGivenName|capitalize ~ " " ~ deleterFamilyName|capitalize}} {{ "hasDeletedTheAssociateAd"|trans }}</p>
-    <p>{{ "clickOnLinkToSearchAgain"|trans }} {{ context.origin.address.addressLocality }} {{ "and"|trans }} {{ context.destination.address.addressLocality }}. </p>
-    <p>{{ "noPenaltyApplied"|trans }}</p>
+Attention un utilisateur avec qui vous aviez un covoiturage a supprimé son compte et a donc annulé ce covoiturage. Allez voir dans vos messages.
 {% endblock %}

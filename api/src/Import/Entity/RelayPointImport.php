@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
+use App\Import\Controller\ImportImageRelayController;
 
 /**
  * A relay point imported from an external system.
@@ -77,7 +78,7 @@ class RelayPointImport
         return $this->id;
     }
 
-    public function getRelay(): RelayPoint
+    public function getRelay()
     {
         return $this->relay;
     }

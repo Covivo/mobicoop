@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -25,34 +25,34 @@ namespace App\Import\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Import\Entity\UserImport;
+use App\Import\Entity\Redirect;
 use Symfony\Component\HttpFoundation\RequestStack;
-use App\Import\Service\ImportManager;
+use App\Import\Service\RedirectManager;
 
 /**
- * Collection data provider for User import matching.
+ * Collection data provider for redirect search.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  */
-final class UserImportMatchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class RedirectSearchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
-    protected $importManager;
+    protected $redirectManager;
     
-    public function __construct(RequestStack $requestStack, ImportManager $importManager)
+    public function __construct(RequestStack $requestStack, RedirectManager $redirectManager)
     {
         $this->request = $requestStack->getCurrentRequest();
-        $this->importManager = $importManager;
+        $this->redirectManager = $redirectManager;
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return UserImport::class === $resourceClass && $operationName === "match";
+        return Redirect::class === $resourceClass && $operationName === "get";
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return [$this->importManager->matchUserImport()];
+        return $this->redirectManager->getRedirect($this->request->get("originUri"));
     }
 }

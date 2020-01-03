@@ -167,6 +167,14 @@ class UserImport
      */
     private $treatmentJourneyEndDate;
 
+    /**
+     * @var string|null The user id in the external system.
+     *
+     * @ORM\Column(type="string", length=255, nullable=false)
+     * @Groups({"read","write"})
+     */
+    private $userExternalId;
+
     public function __construct($id = null, $status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -292,6 +300,18 @@ class UserImport
         return $this;
     }
 
+    public function getUserExternalId(): string
+    {
+        return $this->userExternalId;
+    }
+
+    public function setUserExternalId(string $userExternalId): self
+    {
+        $this->userExternalId = $userExternalId;
+
+        return $this;
+    }
+    
     // DOCTRINE EVENTS
 
     /**
