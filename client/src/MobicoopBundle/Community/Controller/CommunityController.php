@@ -141,7 +141,7 @@ class CommunityController extends AbstractController
     /**
      * Communities list controller
      */
-    public function communityList(CommunityManager $communityManager, UserManager $userManager)
+    public function communityList()
     {
         $this->denyAccessUnlessGranted('list', new Community());
 
@@ -162,11 +162,12 @@ class CommunityController extends AbstractController
 
             $perPage = (isset($data['perPage']) && !is_null($data['perPage'])) ? $data['perPage'] : null;
             $page = (isset($data['page']) && !is_null($data['page'])) ? $data['page'] : null;
+            $search = (isset($data['search']) && !is_null($data['search'])) ? $data['search'] : [];
 
             if ($user) {
 
                 // We get all the communities
-                $communities = $communityManager->getCommunities($user->getId(), $perPage, $page);
+                $communities = $communityManager->getCommunities($user->getId(), $perPage, $page, $search);
 
                 // We get de communities of the user
                 $communityUsers = $communityManager->getAllCommunityUser($user->getId());
@@ -187,7 +188,7 @@ class CommunityController extends AbstractController
                 $communities = $tempCommunities;
             } else {
                 $communitiesUser = [];
-                $communities = $communityManager->getCommunities(null, $perPage, $page);
+                $communities = $communityManager->getCommunities(null, $perPage, $page, $search);
             }
 
             return new JsonResponse([

@@ -23,6 +23,7 @@
               'items-per-page-all-text': $t('all'),
               'itemsPerPageText': $t('linePerPage')
             }"
+            loading
           >
             <template>
               <v-row v-if="loading">
@@ -30,16 +31,19 @@
                   ref="skeleton"
                   type="list-item-avatar-three-line"
                   class="mx-auto"
+                  width="100%"
                 />  
                 <v-skeleton-loader
                   ref="skeleton"
                   type="list-item-avatar-three-line"
                   class="mx-auto"
+                  width="100%"
                 />  
                 <v-skeleton-loader
                   ref="skeleton"
                   type="list-item-avatar-three-line"
                   class="mx-auto"
+                  width="100%"
                 />  
               </v-row>
               <v-row v-else>
@@ -108,6 +112,8 @@
                 hide-details
                 :label="$t('search')"
                 single-line
+                clearable
+                @input="updateSearch"
               />
             </v-card>
           </v-col>
@@ -123,6 +129,7 @@
           'items-per-page-all-text': $t('all'),
           'itemsPerPageText': $t('linePerPage')
         }"
+        loading
         @update:options="updateOptions"
       >
         <template>
@@ -131,17 +138,20 @@
               ref="skeleton"
               type="list-item-avatar-three-line"
               class="mx-auto"
-            />  
+              width="100%"
+            />
             <v-skeleton-loader
               ref="skeleton"
               type="list-item-avatar-three-line"
               class="mx-auto"
-            />  
+              width="100%"
+            />
             <v-skeleton-loader
               ref="skeleton"
               type="list-item-avatar-three-line"
               class="mx-auto"
-            />  
+              width="100%"
+            />
           </v-row>
           <v-row v-else>
             <v-col
@@ -163,6 +173,7 @@
 
 <script>
 import axios from "axios";
+import debounce from "lodash/debounce";
 import { merge } from "lodash";
 import Translations from "@translations/components/community/CommunityList.json";
 import TranslationsClient from "@clientTranslations/components/community/CommunityList.json";
@@ -215,6 +226,7 @@ export default {
   },
   mounted() {
     //this.getCommunities();
+    console.error(this.communities.length);
   },
   methods: {
     leaveCommunity(community) {
@@ -234,8 +246,20 @@ export default {
     },
     getCommunities(){
       this.loading = true;
+      
+      // this.cancelRequest(); // CANCEL PREVIOUS REQUEST
+      // this.cancelSource = axios.CancelToken.source();
+
+      let params = {
+        'perPage':this.itemsPerPage,
+        'page':this.page,
+        'search':{
+          'name':this.search
+        }
+      }
+
       axios
-        .post(this.$t('urlGetCommunities'),{'perPage':this.itemsPerPage,'page':this.page})
+        .post(this.$t('urlGetCommunities'),params)
         .then(response => {
           //console.error(response.data);
           this.communities = response.data.communities;
@@ -254,7 +278,10 @@ export default {
       this.itemsPerPage = value.itemsPerPage;
       this.page = value.page;
       this.getCommunities();
-    }
+    },
+    updateSearch: debounce(function(value) {
+      this.getCommunities();
+    }, 1000)
   }
 }
 </script>

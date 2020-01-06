@@ -222,6 +222,7 @@
                   'items-per-page-all-text': $t('all'),
                   'itemsPerPageText': $t('linePerPage')
                 }"
+                @update:options="updateOptions"
               >
                 <template>
                   <v-row>
@@ -269,14 +270,6 @@ export default {
     messages: TranslationsMerged,
   },
   props:{
-    eventscoming: {
-      type: Array,
-      default: null
-    },
-    eventspassed : {
-      type: Array,
-      default: null
-    },
     paths: {
       type: Object,
       default: null
@@ -292,11 +285,7 @@ export default {
     attributionCopyright:{
       type: String,
       default: ""
-    },
-    pointsComing: {
-      type: Array,
-      default: null
-    },
+    }
   },
   data () {
     return {
@@ -319,6 +308,10 @@ export default {
       loadingMap: false,
       errorUpdate: false,
       pointsComingMap : [],
+      eventscoming:[],
+      eventspassed:[],
+      pointsComing:[]
+
     }
   },
   mounted() {
@@ -407,6 +400,9 @@ export default {
       //   ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
       //   : null;
       return moment(date).format("DD/MM/YYYY hh:mm");
+    },
+    updateOptions(data){
+      console.error(data);
     }
 
   }

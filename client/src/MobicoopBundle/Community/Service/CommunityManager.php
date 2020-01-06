@@ -66,10 +66,13 @@ class CommunityManager
     /**
     * Get all communities
     * @param int|null $userId   The id of the user you want to know if he is already an accepted member of the community
+    * @param int|null $perPage  Number of items per page
+    * @param int|null $page     Current page
+    * @param int|null $search   Array of search criterias
     * @return array|null        The communities found or null if not found.
     *
     */
-    public function getCommunities(?int $userId=null, ?int $perPage=null, ?int $page=null)
+    public function getCommunities(?int $userId=null, ?int $perPage=null, ?int $page=null, array $search=[])
     {
         $params = null;
         if ($userId!==null) {
@@ -81,7 +84,11 @@ class CommunityManager
         if ($page!==null) {
             $params['page'] = $page;
         }
-        
+        if (count($search)>0) {
+            foreach ($search as $key => $value) {
+                $params[$key] = $value;
+            }
+        }
         $response = $this->dataProvider->getCollection($params);
         if ($response->getCode() >=200 && $response->getCode() <= 300) {
             return $response->getValue();

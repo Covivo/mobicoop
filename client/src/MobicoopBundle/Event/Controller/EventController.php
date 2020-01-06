@@ -44,9 +44,17 @@ class EventController extends AbstractController
     use HydraControllerTrait;
 
     /**
+     * Events list controller.
+     */
+    public function eventList()
+    {
+        return $this->render('@Mobicoop/event/events.html.twig');
+    }
+
+    /**
      * Get all events.
      */
-    public function eventList(EventManager $eventManager)
+    public function getEventsList(EventManager $eventManager, Request $request)
     {
         // We get all the events
         $eventComing = $eventManager->getEvents();
@@ -63,7 +71,7 @@ class EventController extends AbstractController
             }
         }
 
-        return $this->render('@Mobicoop/event/events.html.twig', [
+        return new JsonResponse([
             'eventComing' => $eventComing,
             'eventPassed' => $eventPassed,
             'pointComing' => $pointsComing,
