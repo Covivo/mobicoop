@@ -246,6 +246,8 @@ services:
                 displayStreetAddress: '%env(resolve:DISPLAY_STREETADDRESS)%'
                 displayVenue: '%env(resolve:DISPLAY_VENUE)%'
                 displayRelayPoint: '%env(resolve:DISPLAY_RELAY_POINT)%'
+                displayNamed: '%env(resolve:DISPLAY_NAMED)%'
+                displayEvent: '%env(resolve:DISPLAY_EVENT)%'
                 displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%'
     
     App\Geography\Service\GeoSearcher:

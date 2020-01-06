@@ -249,8 +249,6 @@ class GeoSearcher
             }
         }
 
-        
-
         return $result;
     }
 
