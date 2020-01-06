@@ -216,6 +216,22 @@ class GeoTools
             }
         }
 
+        // named address
+        if (isset($this->params['displayNamed']) && trim($this->params['displayNamed'])==="true") {
+            if (trim($address->getName())!=="") {
+                $displayLabelTab[0][] = $address->getName();
+            }
+        }
+
+        // event
+        if (isset($this->params['displayEvent']) && trim($this->params['displayEvent'])==="true") {
+            if ($event = $address->getEvent()) {
+                if (trim($event->getName())!=="") {
+                    $displayLabelTab[0][] = $event->getName();
+                }
+            }
+        }
+
         // street address
         if (isset($this->params['displayStreetAddress']) && trim($this->params['displayStreetAddress'])==="true") {
             if (trim($address->getStreetAddress())!=="") {
