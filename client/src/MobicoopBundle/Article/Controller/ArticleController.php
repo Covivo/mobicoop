@@ -39,6 +39,12 @@ class ArticleController extends AbstractController
     const NEWS = 2;
     const PROJECT = 3;
     const DATA_POLICY = 4;
+    const INSURANCE_POLICY = 5;
+    const HISTORY = 6;
+    const ACTORS = 7;
+    const SOLIDARY_CARPOOL = 8;
+    const BECOME_PARTNER = 9;
+    const FAQ = 10;
 
     /**
      * Display of the project page
@@ -98,6 +104,108 @@ class ArticleController extends AbstractController
     public function showDataPolicy(ArticleManager $articleManager)
     {
         $article = $articleManager->getArticle(self::DATA_POLICY);
+        $reponseofmanager= $this->handleManagerReturnValue($article);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+        $this->denyAccessUnlessGranted('show', $article);
+        return $this->render('@Mobicoop/article/article.html.twig', [
+            'article' => $article,
+        ]);
+    }
+
+    /**
+     * Display of the insurance policy page
+     *
+     */
+    public function showInsurancePolicy(ArticleManager $articleManager)
+    {
+        $article = $articleManager->getArticle(self::INSURANCE_POLICY);
+        $reponseofmanager= $this->handleManagerReturnValue($article);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+        $this->denyAccessUnlessGranted('show', $article);
+        return $this->render('@Mobicoop/article/article.html.twig', [
+            'article' => $article,
+        ]);
+    }
+
+    /**
+     * Display of the history page
+     *
+     */
+    public function showHistroy(ArticleManager $articleManager)
+    {
+        $article = $articleManager->getArticle(self::HISTORY);
+        $reponseofmanager= $this->handleManagerReturnValue($article);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+        $this->denyAccessUnlessGranted('show', $article);
+        return $this->render('@Mobicoop/article/article.html.twig', [
+            'article' => $article,
+        ]);
+    }
+
+    /**
+     * Display of the actors page
+     *
+     */
+    public function showActors(ArticleManager $articleManager)
+    {
+        $article = $articleManager->getArticle(self::ACTORS);
+        $reponseofmanager= $this->handleManagerReturnValue($article);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+        $this->denyAccessUnlessGranted('show', $article);
+        return $this->render('@Mobicoop/article/article.html.twig', [
+            'article' => $article,
+        ]);
+    }
+
+    /**
+     * Display of the solidary carpool page
+     *
+     */
+    public function showSolidaryCarpool(ArticleManager $articleManager)
+    {
+        $article = $articleManager->getArticle(self::SOLIDARY_CARPOOL);
+        $reponseofmanager= $this->handleManagerReturnValue($article);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+        $this->denyAccessUnlessGranted('show', $article);
+        return $this->render('@Mobicoop/article/article.html.twig', [
+            'article' => $article,
+        ]);
+    }
+
+    /**
+     * Display of the become a partner page
+     *
+     */
+    public function showBecomePartner(ArticleManager $articleManager)
+    {
+        $article = $articleManager->getArticle(self::BECOME_PARTNER);
+        $reponseofmanager= $this->handleManagerReturnValue($article);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+        $this->denyAccessUnlessGranted('show', $article);
+        return $this->render('@Mobicoop/article/article.html.twig', [
+            'article' => $article,
+        ]);
+    }
+
+    /**
+     * Display of the FAQ page
+     *
+     */
+    public function showFAQ(ArticleManager $articleManager)
+    {
+        $article = $articleManager->getArticle(self::FAQ);
         $reponseofmanager= $this->handleManagerReturnValue($article);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
