@@ -27,7 +27,10 @@
       </template>
       <!-- template for list items  -->
       <template v-slot:item="data">
-        <template>
+        <template v-if="typeof data.item !== 'object'">
+          <v-list-item-content v-text="data.item" />
+        </template>
+        <template v-else>
           <v-list>
             <v-list-item>
               <v-list-item-avatar v-if="displayIcon">
@@ -140,16 +143,14 @@ export default {
         if (this.address) {
           this.address.displayedLabel = `${this.address.displayLabel[0]}`;
           this.address.displayedSecondLabel = `${this.address.displayLabel[1]}`;
-          this.address.selectedDisplayedLabel = `${this.address.displayLabel[0]}`;
-          if (this.address.home) {
-            this.address.displayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
-            if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
-          } else if (this.address.event){
-            this.address.displayedLabel = `${this.address.event.name} - ${this.address.displayLabel[0]}`;
-            if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.event.name}`;
-          } else if (this.address.name) {
-            this.address.displayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
-            if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.name} - ${this.address.displayLabel[0]}`;
+          if (this.address.name) {
+            this.address.selectedDisplayedLabel = `${this.address.name}`;
+          } else if (this.address.relayPoint) {
+            this.address.selectedDisplayedLabel = `${this.address.relayPoint.name}`;
+          } else if (this.address.event) {
+            this.address.selectedDisplayedLabel = `${this.address.event.name}`;
+          } else {
+            this.address.selectedDisplayedLabel = `${this.address.displayLabel[0]}`;
           }
           this.entries.push(this.address);
         } 
@@ -174,6 +175,12 @@ export default {
           this.cancelSource = null;
           this.isLoading = false;
 
+          let results = [];
+          let resultsNamed = [];
+          let resultsSig = [];
+          let resultsRelayPoint = [];
+          let resultsEvent = [];
+
           // Modify property displayLabel to be shown into the autocomplete field after selection
           let addresses = res.data["hydra:member"];
           // No Adresses return, we stop here
@@ -184,16 +191,14 @@ export default {
           addresses.forEach((address, addressKey) => {
             addresses[addressKey].displayedLabel = `${address.displayLabel[0]}`;
             addresses[addressKey].displayedSecondLabel = `${address.displayLabel[1]}`;
-            addresses[addressKey].selectedDisplayedLabel = `${address.displayLabel[0]}`;
-            if (address.home) {
-              addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel[0]}`;
-              if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel[0]}`;
-            }else if (address.event){
-              addresses[addressKey].displayedLabel = `${address.event.name} - ${address.displayLabel[0]}`;
-              if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.event.name}`;
-            } else if (address.name) {
-              addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel[0]}`;
-              if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel[0]}`;
+            if (address.name) {
+              addresses[addressKey].selectedDisplayedLabel = `${address.name}`;
+            } else if (address.relayPoint) {
+              addresses[addressKey].selectedDisplayedLabel = `${address.relayPoint.name}`;
+            } else if (address.event) {
+              addresses[addressKey].selectedDisplayedLabel = `${address.event.name}`;
+            } else {
+              addresses[addressKey].selectedDisplayedLabel = `${address.displayLabel[0]}`;
             }
           });
 
@@ -204,12 +209,53 @@ export default {
             if (!addressLocality) {
               // No locality return, do not show them (region, department ..)
               addresses.splice(addressKey, 1);
+            } else if (address.name) {
+              resultsNamed.push(address);
+            } else if (address.relayPoint) {
+              resultsRelayPoint.push(address);
+            } else if (address.event) {
+              resultsEvent.push(address);
+            } else {
+              resultsSig.push(address);
             }
           });
 
+          if (resultsNamed.length>0) {
+            resultsNamed.forEach((address) => {
+              results.push(address);
+            });
+          }
+
+          if (resultsSig.length>0) {
+            resultsSig.forEach((address) => {
+              results.push(address);
+            });
+          }
+
+          if (resultsRelayPoint.length>0) {
+            if (results.length>0) {
+              results.push({'divider':'true'});
+              results.push({'header':this.$t('relayPoints')});
+            }
+            resultsRelayPoint.forEach((address) => {
+              results.push(address);
+            });
+          }
+
+          if (resultsEvent.length>0) {
+            if (results.length>0) {
+              results.push({'divider':'true'});
+              results.push({'header':this.$t('events')});
+            }
+            resultsEvent.forEach((address) => {
+              results.push(address);
+            });
+          }
           // Set Data & show them
           if (this.isLoading) return; // Another request is fetching, we do not show the previous one
-          this.entries = [...res.data["hydra:member"]];
+          this.entries = [...results];
+          console.log(this.entries);
+
         })
         .catch(err => {
           this.items = [];
