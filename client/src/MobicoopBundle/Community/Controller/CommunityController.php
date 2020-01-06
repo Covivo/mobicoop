@@ -37,6 +37,7 @@ use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Controller class for community related actions.
@@ -46,6 +47,8 @@ class CommunityController extends AbstractController
 {
     use HydraControllerTrait;
 
+    const NB_COMMUNITIES_PER_PAGE = 1; // Nb items per page by default
+
     private $createFromFront;
 
     /**
@@ -54,7 +57,7 @@ class CommunityController extends AbstractController
      */
     public function __construct($createFromFront)
     {
-        $this->createFromFront = $createFromFront;
+        $this->createFromFront = ($createFromFront === 'true') ? true : false;
     }
     
     /**
@@ -142,6 +145,14 @@ class CommunityController extends AbstractController
     {
         $this->denyAccessUnlessGranted('list', new Community());
 
+
+        return $this->render('@Mobicoop/community/communities.html.twig', [
+            'itemsPerPage' => self::NB_COMMUNITIES_PER_PAGE
+        ]);
+    }
+
+    public function getCommunityList(CommunityManager $communityManager, UserManager $userManager)
+    {
         $user = $userManager->getLoggedUser();
 
         if ($user) {
@@ -170,18 +181,14 @@ class CommunityController extends AbstractController
             $communitiesUser = [];
             $communities = $communityManager->getCommunities();
         }
-        dump($communities->getView());
-        return $this->render('@Mobicoop/community/communities.html.twig', [
+
+        return new JsonResponse([
             'communities' => $communities->getMember(),
             'communitiesUser' => $communitiesUser,
             'canCreate' => $this->createFromFront,
             'communitiesView' => $communities->getView(),
             'totalItems' => $communities->getTotalItems()
         ]);
-    }
-
-    public function getCommunityList()
-    {
     }
     
     

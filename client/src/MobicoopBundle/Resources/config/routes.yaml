@@ -354,6 +354,14 @@ community_list:
         en: /community
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityList
 
+# Get the communities (AJAX)
+community_get_list:
+    methods: [POST]
+    path:
+        fr: /community/getCommunityList
+        en: /community/getCommunityList
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityList
+
 # display one community
 community_show:
     path:

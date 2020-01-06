@@ -25,7 +25,24 @@
             }"
           >
             <template>
-              <v-row>
+              <v-row v-if="loading">
+                <v-skeleton-loader
+                  ref="skeleton"
+                  type="list-item-avatar-three-line"
+                  class="mx-auto"
+                />  
+                <v-skeleton-loader
+                  ref="skeleton"
+                  type="list-item-avatar-three-line"
+                  class="mx-auto"
+                />  
+                <v-skeleton-loader
+                  ref="skeleton"
+                  type="list-item-avatar-three-line"
+                  class="mx-auto"
+                />  
+              </v-row>
+              <v-row v-else>
                 <v-col
                   v-for="item in communitiesUser"
                   :key="item.index"
@@ -109,7 +126,24 @@
         @update:options="updateOptions"
       >
         <template>
-          <v-row>
+          <v-row v-if="loading">
+            <v-skeleton-loader
+              ref="skeleton"
+              type="list-item-avatar-three-line"
+              class="mx-auto"
+            />  
+            <v-skeleton-loader
+              ref="skeleton"
+              type="list-item-avatar-three-line"
+              class="mx-auto"
+            />  
+            <v-skeleton-loader
+              ref="skeleton"
+              type="list-item-avatar-three-line"
+              class="mx-auto"
+            />  
+          </v-row>
+          <v-row v-else>
             <v-col
               v-for="item in communities"
               :key="item.index"
@@ -128,7 +162,7 @@
 </template>
 
 <script>
-
+import axios from "axios";
 import { merge } from "lodash";
 import Translations from "@translations/components/community/CommunityList.json";
 import TranslationsClient from "@clientTranslations/components/community/CommunityList.json";
@@ -144,37 +178,20 @@ export default {
     messages: TranslationsMerged,
   },
   props:{
-    communities: {
-      type: Array,
-      default: null
-    },
-    communitiesUser:{
-      type: Array,
-      default: null
-    },
     paths: {
       type: Object,
       default: null
     },
-    canCreate: {
-      type: Boolean,
-      default: null
-    },
-    communitiesView:{
-      type: Object,
-      default: null
-    },
-    totalItems:{
+    itemsPerPage: {
       type: Number,
-      default: null
-    },
+      default: 1
+    }
   },
   data () {
     return {
       rerenderKey: 0,
       search: '',
       itemsPerPageOptions: [1, 10, 20, 50, 100, -1],
-      itemsPerPage: 1,
       headers: [
         {
           text: 'Id',
@@ -185,8 +202,17 @@ export default {
         { text: 'Nom', value: 'name' },
         { text: 'Description', value: 'description' },
         { text: 'Image', value: 'logos' }
-      ]
+      ],
+      communities:[],
+      communitiesUser:[],
+      canCreate:false,
+      communitiesView:null,
+      totalItems:0,
+      loading:false
     }
+  },
+  mounted() {
+    this.getCommunities();
   },
   methods: {
     leaveCommunity(community) {
@@ -203,6 +229,24 @@ export default {
     },
     refreshComponent() {
       this.rerenderKey++;
+    },
+    getCommunities(){
+      this.loading = true;
+      axios
+        .post(this.$t('urlGetCommunities'))
+        .then(response => {
+          console.error(response.data);
+          this.communities = response.data.communities;
+          this.communitiesUser = response.data.communitiesUser;
+          this.canCreate = response.data.canCreate;
+          this.communitiesView = response.data.communitiesView;
+          this.totalItems = response.data.totalItems;
+          this.loading = false;
+        })
+        .catch(function (error) {
+          console.error(error);
+        });          
+          
     },
     updateOptions(value){
       console.error("options !");

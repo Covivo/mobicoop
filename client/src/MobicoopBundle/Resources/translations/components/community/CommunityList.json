@@ -6,7 +6,8 @@
     "search":"Rechercher",
     "all":"Tous",
     "linePerPage":"Nombre de lignes par page",
-    "seeAds":"Voir les annonces"
+    "seeAds":"Voir les annonces",
+    "urlGetCommunities":"/community/getCommunityList"
   },
   "en": {
     "communitiesAvailable":"Communities available",
@@ -15,6 +16,7 @@
     "search":"Search",
     "all":"All",
     "linePerPage":"Nomber of line per page",
-    "seeAds":"See the ads"
+    "seeAds":"See the ads",
+    "urlGetCommunities":"/community/getCommunityList"
   }
 }
