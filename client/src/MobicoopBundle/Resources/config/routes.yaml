@@ -469,6 +469,48 @@ data_policy:
         en: /data-policy
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDataPolicy
 
+# display insurance policy page
+insurance_policy:
+    path:
+        fr: /assurance
+        en: /insurance
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showInsurancePolicy    
+
+# display history page
+history:
+    path:
+        fr: /historique
+        en: /history
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showHistroy    
+    
+# display actors page
+actors:
+    path:
+        fr: /Les-acteurs
+        en: /actors
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showActors
+
+# display solidary carpool page
+solidary_carpool:
+    path:
+        fr: /covoiturage-solidaire
+        en: /solidary-carpool
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showSolidaryCarpool    
+
+# display become a partner page
+become_partner:
+    path:
+        fr: /devenir-partenaire
+        en: /become-partner
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showBecomePartner    
+
+# display FAQ page
+FAQ:
+    path:
+        fr: /FAQ
+        en: /FAQ
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showFAQ    
+
 ####################
 # geography routes #
 ####################
