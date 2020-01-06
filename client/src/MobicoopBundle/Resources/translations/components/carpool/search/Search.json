@@ -10,7 +10,7 @@
         },
         "switch": {
             "label": "Trajet régulier",
-            "help": "Cochez cette case pour spécifier que votre trajet est régulier"
+            "help": "Cliquez sur ce commutateur pour spécifier que votre trajet est régulier"
         },
         "datePicker": {
             "label": "Date de départ"
