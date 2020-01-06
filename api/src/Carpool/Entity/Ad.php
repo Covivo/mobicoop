@@ -46,6 +46,10 @@ use App\Carpool\Controller\AdAskGet;
  *              "method"="GET",
  *              "path"="/carpools",
  *          },
+ *          "get"={
+ *              "method"="GET",
+ *              "path"="/ads",
+ *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/carpools",

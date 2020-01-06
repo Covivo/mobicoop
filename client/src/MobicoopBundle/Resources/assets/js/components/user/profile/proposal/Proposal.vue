@@ -7,7 +7,7 @@
       :is-archived="isArchived"
       :has-accepted-ask="hasAtLeastOneAcceptedAsk"
       :has-ask="hasAtLeastOneAsk"
-      :proposal-id="proposal.outward ? proposal.outward.id : proposal.return ? proposal.return.id : null"
+      :proposal-id="proposal.outward.id"
       @proposal-deleted="proposalDeleted()"
     />
     
@@ -23,9 +23,9 @@
       
     <v-card-actions class="py-0">
       <proposal-footer
-        :id="proposal.outward.id"
-        :seats="proposal.outward.criteria.seats"
-        :price="proposal.outward.criteria.price"
+        :id="proposal.id"
+        :seats="(isDriver) ? proposal.outward.seatsDriver : proposal.outward.seatsPassenger"
+        :price="(isDriver) ? proposal.outward.outwardDriverPrice : proposal.outward.outwardPassengerPrice"
         :is-driver="isDriver"
         :is-passenger="isPassenger"
         :id-message="lastMessageId"
@@ -68,16 +68,18 @@ export default {
   },
   computed: {
     isDriver () {
-      return !!this.proposal.outward.criteria.driver;
+      //      return !!this.proposal.outward.criteria.driver;
+      return this.proposal.outward.role === 1 || this.proposal.outward.role === 3
     },
     isPassenger () {
-      return !!this.proposal.outward.criteria.passenger;
+      //return !!this.proposal.outward.criteria.passenger;
+      return this.proposal.outward.role === 2 || this.proposal.outward.role === 3
     },
     isRegular () {
-      return this.proposal.outward.criteria.frequency === 2;
+      return this.proposal.outward.frequency === 2;
     },
     hasReturn () {
-      return this.proposal.return;
+      return !this.proposal.outward.oneWay;
     }
   },
   mounted () {

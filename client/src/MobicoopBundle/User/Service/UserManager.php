@@ -35,6 +35,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Psr\Log\LoggerInterface;
 use DateTime;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 
@@ -474,20 +475,21 @@ class UserManager
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         // we set the private param to false to get only published ad, not proposals posted after a search
-        $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class, null, ['private'=>false]);
-        $proposals = $response->getValue();
+        $this->dataProvider->setClass(Ad::class);
+        $response = $this->dataProvider->getCollection(["userId"=>$user->getId()]);
+        //dump($response);die;
+        $ads = $response->getValue();
 
-        $proposalsSanitized = [
+        $adsSanitized = [
             "ongoing" => [],
             "archived" => []
         ];
         
-        /** @var \App\Carpool\Entity\Proposal $proposal */
-        foreach ($proposals as $proposal) {
+        foreach ($ads as $ad) {
             $isAlreadyInArray = false;
             
-            if (isset($proposalsSanitized["ongoing"][$proposal["id"]]) || isset($proposalsSanitized["ongoing"][$proposal["proposalLinked"]["id"]]) ||
-                isset($proposalsSanitized["archived"][$proposal["id"]]) || isset($proposalsSanitized["archived"][$proposal["proposalLinked"]["id"]])) {
+            if (isset($adsSanitized["ongoing"][$ad["id"]]) ||
+                isset($adsSanitized["archived"][$ad["id"]])) {
                 $isAlreadyInArray = true;
             }
             
@@ -498,44 +500,51 @@ class UserManager
             $now = new DateTime();
             
             // Carpool regular
-            if ($proposal["criteria"]["frequency"] === Criteria::FREQUENCY_REGULAR) {
-                $date = new DateTime($proposal["criteria"]["toDate"]);
+            if ($ad["frequency"] === Criteria::FREQUENCY_REGULAR) {
+                $date = new DateTime($ad["outwardLimitDate"]);
             }
             // Carpool punctual
             else {
-                $fromDate = new DateTime($proposal["criteria"]["fromDate"]);
-                $linkedDate = isset($proposal["proposalLinked"]) ? new DateTime($proposal["proposalLinked"]["criteria"]["fromDate"]) : null;
-                $date = isset($linkedDate) && $linkedDate > $fromDate ? $linkedDate : $fromDate;
+                $fromDate = new DateTime($ad["outwardDate"]);
+                // $linkedDate = isset($proposal["proposalLinked"]) ? new DateTime($proposal["proposalLinked"]["criteria"]["fromDate"]) : null;
+                // $date = isset($linkedDate) && $linkedDate > $fromDate ? $linkedDate : $fromDate;
+                $date = $fromDate;
             }
 
             $key = $date < $now ? 'archived' : 'ongoing';
 
             // We do not keep the matchingOffers or matchingRequest where proposals are private
             // TO DO : The api should return the array without all these
-            $proposal = $this->cleanPrivateMatchings($proposal, 'Offers');
-            $proposal = $this->cleanPrivateMatchings($proposal, 'Requests');
+            // Not usefull anymore, Ad route does'nt return private proposals
+            // $proposal = $this->cleanPrivateMatchings($proposal, 'Offers');
+            // $proposal = $this->cleanPrivateMatchings($proposal, 'Requests');
 
             // proposal is an outward
-            if ($proposal["type"] === Proposal::TYPE_OUTWARD && !is_null($proposal["proposalLinked"])) {
-                $proposalsSanitized[$key][$proposal["id"]] = [
-                    'outward' => $proposal,
-                    'return' => $proposal["proposalLinked"]
-                ];
-            // proposal is a return
-            } elseif ($proposal["type"] === Proposal::TYPE_RETURN && !is_null($proposal["proposalLinked"])) {
-                $proposalsSanitized[$key][$proposal["id"]] = [
-                    'outward' => $proposal["proposalLinked"],
-                    'return' => $proposal
-                ];
-            // proposal is one way
-            } else {
-                $proposalsSanitized[$key][$proposal["id"]] = [
-                    'outward' => $proposal
-                ];
+            // if ($proposal["type"] === Proposal::TYPE_OUTWARD && !is_null($proposal["proposalLinked"])) {
+            //     $proposalsSanitized[$key][$proposal["id"]] = [
+            //         'outward' => $proposal,
+            //         'return' => $proposal["proposalLinked"]
+            //     ];
+            // // proposal is a return
+            // } elseif ($proposal["type"] === Proposal::TYPE_RETURN && !is_null($proposal["proposalLinked"])) {
+            //     $proposalsSanitized[$key][$proposal["id"]] = [
+            //         'outward' => $proposal["proposalLinked"],
+            //         'return' => $proposal
+            //     ];
+            // // proposal is one way
+            // } else {
+            //     $proposalsSanitized[$key][$proposal["id"]] = [
+            //         'outward' => $proposal
+            //     ];
+            // }
+
+            $adsSanitized[$key][$ad["id"]]['outward'] = $ad;
+            if (!$ad['oneWay']) {
+                $adsSanitized[$key][$ad["id"]]['return'] = $ad;
             }
         }
 
-        return $proposalsSanitized;
+        return $adsSanitized;
     }
 
     /**

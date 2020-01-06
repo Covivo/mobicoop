@@ -670,12 +670,16 @@ class AdManager
         $ad->setOutwardWaypoints($proposal->getWaypoints());
         $ad->setOutwardDate($proposal->getCriteria()->getFromDate());
         $ad->setOutwardTime($proposal->getCriteria()->getFromTime() ? $proposal->getCriteria()->getFromTime()->format('H:i') : null);
+        $ad->setOutwardLimitDate($proposal->getCriteria()->getToDate());
+        $ad->setOneWay(true);
 
         // set return if twoWays ad
         if ($proposal->getProposalLinked()) {
             $ad->setReturnWaypoints($proposal->getProposalLinked()->getWaypoints());
             $ad->setReturnDate($proposal->getProposalLinked()->getCriteria()->getFromDate());
             $ad->setReturnTime($proposal->getProposalLinked()->getCriteria()->getFromTime() ? $proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i') : null);
+            $ad->setReturnLimitDate($proposal->getProposalLinked()->getCriteria()->getToDate());
+            $ad->setOneWay(false);
         }
 
         // set schedule if regular
