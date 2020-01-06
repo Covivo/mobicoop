@@ -320,6 +320,12 @@ class ResultItem
      */
     private $commonDistance;
 
+    /**
+     * @var boolean If the ResultItem has a Ask
+     * @Groups("results")
+     */
+    private $hasAsk;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -897,6 +903,18 @@ class ResultItem
     public function setCommonDistance(int $commonDistance): self
     {
         $this->commonDistance = $commonDistance;
+
+        return $this;
+    }
+
+    public function hasAsk(): ?bool
+    {
+        return $this->hasAsk;
+    }
+
+    public function setHasAsk(?bool $hasAsk): self
+    {
+        $this->hasAsk = $hasAsk;
 
         return $this;
     }

@@ -669,7 +669,7 @@ class AdManager
         $ad->setUserId($userId);
         $ad->setOutwardWaypoints($proposal->getWaypoints());
         $ad->setOutwardDate($proposal->getCriteria()->getFromDate());
-        $ad->setOutwardTime($proposal->getCriteria()->getFromTime() ? $proposal->getCriteria()->getFromTime()->format('H:i') : null);
+        $ad->setOutwardTime($proposal->getCriteria()->getFromTime() ? $proposal->getCriteria()->getFromTime()->format('Y-m-d H:i:s') : null);
         $ad->setOutwardLimitDate($proposal->getCriteria()->getToDate());
         $ad->setOneWay(true);
 
@@ -677,7 +677,7 @@ class AdManager
         if ($proposal->getProposalLinked()) {
             $ad->setReturnWaypoints($proposal->getProposalLinked()->getWaypoints());
             $ad->setReturnDate($proposal->getProposalLinked()->getCriteria()->getFromDate());
-            $ad->setReturnTime($proposal->getProposalLinked()->getCriteria()->getFromTime() ? $proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i') : null);
+            $ad->setReturnTime($proposal->getProposalLinked()->getCriteria()->getFromTime() ? $proposal->getProposalLinked()->getCriteria()->getFromTime()->format('Y-m-d H:i:s') : null);
             $ad->setReturnLimitDate($proposal->getProposalLinked()->getCriteria()->getToDate());
             $ad->setOneWay(false);
         }

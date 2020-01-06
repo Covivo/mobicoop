@@ -23,7 +23,7 @@
       
     <v-card-actions class="py-0">
       <proposal-footer
-        :id="proposal.id"
+        :id="proposal.outward.id"
         :seats="(isDriver) ? proposal.outward.seatsDriver : proposal.outward.seatsPassenger"
         :price="(isDriver) ? proposal.outward.outwardDriverPrice : proposal.outward.outwardPassengerPrice"
         :is-driver="isDriver"
@@ -31,6 +31,7 @@
         :id-message="lastMessageId"
         :carpool-requests="proposal.outward.matchingRequests"
         :carpool-offers="proposal.outward.matchingOffers"
+        :nb-matchings="proposal.outward.results.length"
       />
     </v-card-actions>
   </v-card>
