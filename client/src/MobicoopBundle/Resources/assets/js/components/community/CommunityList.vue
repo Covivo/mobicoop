@@ -182,7 +182,7 @@ export default {
       type: Object,
       default: null
     },
-    itemsPerPage: {
+    itemsPerPageDefault: {
       type: Number,
       default: 1
     }
@@ -207,12 +207,14 @@ export default {
       communitiesUser:[],
       canCreate:false,
       communitiesView:null,
+      itemsPerPage:this.itemsPerPageDefault,
       totalItems:0,
+      page:1,
       loading:false
     }
   },
   mounted() {
-    this.getCommunities();
+    //this.getCommunities();
   },
   methods: {
     leaveCommunity(community) {
@@ -233,9 +235,9 @@ export default {
     getCommunities(){
       this.loading = true;
       axios
-        .post(this.$t('urlGetCommunities'))
+        .post(this.$t('urlGetCommunities'),{'perPage':this.itemsPerPage,'page':this.page})
         .then(response => {
-          console.error(response.data);
+          //console.error(response.data);
           this.communities = response.data.communities;
           this.communitiesUser = response.data.communitiesUser;
           this.canCreate = response.data.canCreate;
@@ -249,8 +251,9 @@ export default {
           
     },
     updateOptions(value){
-      console.error("options !");
-      console.error(value);
+      this.itemsPerPage = value.itemsPerPage;
+      this.page = value.page;
+      this.getCommunities();
     }
   }
 }

@@ -47,7 +47,7 @@ class CommunityController extends AbstractController
 {
     use HydraControllerTrait;
 
-    const NB_COMMUNITIES_PER_PAGE = 1; // Nb items per page by default
+    const DEFAULT_NB_COMMUNITIES_PER_PAGE = 10; // Nb items per page by default
 
     private $createFromFront;
 
@@ -139,7 +139,7 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Get all communities.
+     * Communities list controller
      */
     public function communityList(CommunityManager $communityManager, UserManager $userManager)
     {
@@ -147,48 +147,59 @@ class CommunityController extends AbstractController
 
 
         return $this->render('@Mobicoop/community/communities.html.twig', [
-            'itemsPerPage' => self::NB_COMMUNITIES_PER_PAGE
+            'defaultItemsPerPage' => self::DEFAULT_NB_COMMUNITIES_PER_PAGE
         ]);
     }
 
-    public function getCommunityList(CommunityManager $communityManager, UserManager $userManager)
+    /**
+     * Get all communities (AJAX)
+     */
+    public function getCommunityList(CommunityManager $communityManager, UserManager $userManager, Request $request)
     {
-        $user = $userManager->getLoggedUser();
+        if ($request->isMethod('POST')) {
+            $user = $userManager->getLoggedUser();
+            $data = json_decode($request->getContent(), true);
 
-        if ($user) {
-            
-            // We get all the communities
-            $communities = $communityManager->getCommunities($user->getId());
+            $perPage = (isset($data['perPage']) && !is_null($data['perPage'])) ? $data['perPage'] : null;
+            $page = (isset($data['page']) && !is_null($data['page'])) ? $data['page'] : null;
 
-            // We get de communities of the user
-            $communityUsers = $communityManager->getAllCommunityUser($user->getId());
-            $communitiesUser = [];
-            $idCommunitiesUser = [];
-            foreach ($communityUsers as $communityUser) {
-                $communitiesUser[] = $communityUser->getCommunity();
-                $idCommunitiesUser[] = $communityUser->getCommunity()->getId();
-            }
+            if ($user) {
 
-            // we delete those who the user is already in
-            $tempCommunities = [];
-            foreach ($communities as $key => $community) {
-                if (!in_array($community->getId(), $idCommunitiesUser)) {
-                    $tempCommunities[] = $communities[$key];
+                // We get all the communities
+                $communities = $communityManager->getCommunities($user->getId(), $perPage, $page);
+
+                // We get de communities of the user
+                $communityUsers = $communityManager->getAllCommunityUser($user->getId());
+                $communitiesUser = [];
+                $idCommunitiesUser = [];
+                foreach ($communityUsers as $communityUser) {
+                    $communitiesUser[] = $communityUser->getCommunity();
+                    $idCommunitiesUser[] = $communityUser->getCommunity()->getId();
                 }
-            }
-            $communities = $tempCommunities;
-        } else {
-            $communitiesUser = [];
-            $communities = $communityManager->getCommunities();
-        }
 
-        return new JsonResponse([
-            'communities' => $communities->getMember(),
-            'communitiesUser' => $communitiesUser,
-            'canCreate' => $this->createFromFront,
-            'communitiesView' => $communities->getView(),
-            'totalItems' => $communities->getTotalItems()
-        ]);
+                // we delete those who the user is already in
+                $tempCommunities = [];
+                foreach ($communities as $key => $community) {
+                    if (!in_array($community->getId(), $idCommunitiesUser)) {
+                        $tempCommunities[] = $communities[$key];
+                    }
+                }
+                $communities = $tempCommunities;
+            } else {
+                $communitiesUser = [];
+                $communities = $communityManager->getCommunities(null, $perPage, $page);
+            }
+
+            return new JsonResponse([
+                'communities' => $communities->getMember(),
+                'communitiesUser' => $communitiesUser,
+                'canCreate' => $this->createFromFront,
+                'communitiesView' => $communities->getView(),
+                'totalItems' => $communities->getTotalItems()
+            ]);
+        } else {
+            return new JsonResponse("bad method");
+        }
     }
     
     

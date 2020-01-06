@@ -69,12 +69,19 @@ class CommunityManager
     * @return array|null        The communities found or null if not found.
     *
     */
-    public function getCommunities(?int $userId=null)
+    public function getCommunities(?int $userId=null, ?int $perPage=null, ?int $page=null)
     {
         $params = null;
         if ($userId!==null) {
             $params['userId'] = $userId;
         }
+        if ($perPage!==null) {
+            $params['perPage'] = $perPage;
+        }
+        if ($page!==null) {
+            $params['page'] = $page;
+        }
+        
         $response = $this->dataProvider->getCollection($params);
         if ($response->getCode() >=200 && $response->getCode() <= 300) {
             return $response->getValue();
