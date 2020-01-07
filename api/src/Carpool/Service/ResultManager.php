@@ -726,6 +726,25 @@ class ResultManager
             // seats
             $resultDriver->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger() ? $proposal->getCriteria()->getSeatsPassenger() : 1);
             $result->setResultDriver($resultDriver);
+
+            // check if an ask exists
+            $item->setHasPendingAsk(false);
+            $item->setHasAcceptedAsk(false);
+            if (count($matching['request']->getAsks())) {
+                foreach ($matching['request']->getAsks() as $ask) {
+                    switch ($ask->getStatus()) {
+                        case Ask::STATUS_INITIATED:
+                        case Ask::STATUS_PENDING_AS_DRIVER:
+                        case Ask::STATUS_PENDING_AS_PASSENGER:
+                            $item->setHasPendingAsk(true);
+                            break;
+                        case Ask::STATUS_ACCEPTED_AS_DRIVER:
+                        case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+                            $item->setHasAcceptedAsk(true);
+                            break;
+                    }
+                }
+            }
         }
 
         /************/
@@ -1065,6 +1084,25 @@ class ResultManager
             // seats
             $resultPassenger->setSeatsDriver($matching['offer']->getProposalOffer()->getCriteria()->getSeatsDriver() ? $matching['offer']->getProposalOffer()->getCriteria()->getSeatsDriver() : 1);
             $result->setResultPassenger($resultPassenger);
+
+            // check if an ask exists
+            $item->setHasPendingAsk(false);
+            $item->setHasAcceptedAsk(false);
+            if (count($matching['offer']->getAsks())) {
+                foreach ($matching['offer']->getAsks() as $ask) {
+                    switch ($ask->getStatus()) {
+                        case Ask::STATUS_INITIATED:
+                        case Ask::STATUS_PENDING_AS_DRIVER:
+                        case Ask::STATUS_PENDING_AS_PASSENGER:
+                            $item->setHasPendingAsk(true);
+                            break;
+                        case Ask::STATUS_ACCEPTED_AS_DRIVER:
+                        case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+                            $item->setHasAcceptedAsk(true);
+                            break;
+                    }
+                }
+            }
         }
 
         $result->setCommunities($communities);

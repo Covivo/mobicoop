@@ -321,10 +321,16 @@ class ResultItem
     private $commonDistance;
 
     /**
-     * @var boolean If the ResultItem has a Ask
+     * @var boolean If the ResultItem has a pending Ask
      * @Groups("results")
      */
-    private $hasAsk;
+    private $hasPendingAsk;
+
+    /**
+     * @var boolean If the ResultItem has an accepted Ask
+     * @Groups("results")
+     */
+    private $hasAcceptedAsk;
 
     public function __construct()
     {
@@ -907,14 +913,26 @@ class ResultItem
         return $this;
     }
 
-    public function hasAsk(): ?bool
+    public function hasPendingAsk(): ?bool
     {
-        return $this->hasAsk;
+        return $this->hasPendingAsk;
     }
 
-    public function setHasAsk(?bool $hasAsk): self
+    public function setHasPendingAsk(?bool $hasPendingAsk): self
     {
-        $this->hasAsk = $hasAsk;
+        $this->hasPendingAsk = $hasPendingAsk;
+
+        return $this;
+    }
+
+    public function hasAcceptedAsk(): ?bool
+    {
+        return $this->hasAcceptedAsk;
+    }
+
+    public function setHasAcceptedAsk(?bool $hasAcceptedAsk): self
+    {
+        $this->hasAcceptedAsk = $hasAcceptedAsk;
 
         return $this;
     }
