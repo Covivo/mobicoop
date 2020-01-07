@@ -184,6 +184,7 @@ class Ask
      * @var Ask|null Related ask for opposite role : driver ask if the current ask is as passenger, passenger ask if the current ask is as driver.
      * Used when the ask is created with an undefined role.
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","threads","thread"})
      * @MaxDepth(1)
      */

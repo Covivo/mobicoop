@@ -176,13 +176,13 @@ class NotificationManager
                     $titleContext = [];
                     foreach ($object->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
                         if ($waypoint->getPosition() == 0) {
-                            $passengerOriginWaipoint = $waypoint;
+                            $passengerOriginWaypoint = $waypoint;
                         } elseif ($waypoint->isDestination() == true) {
                             $passengerDestinationWaypoint = $waypoint;
                         }
-                    };
-                    $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaipoint, 'destination'=>$passengerDestinationWaypoint];
-                break;
+                    }
+                    $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaypoint, 'destination'=>$passengerDestinationWaypoint];
+                    break;
                 case Recipient::class:
                     $titleContext = [];
                     $bodyContext = [];
@@ -211,7 +211,6 @@ class NotificationManager
                 'context' => $titleContext
             ]
         ));
-
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $lang);
     }
@@ -244,12 +243,12 @@ class NotificationManager
                 case Ask::class:
                     foreach ($object->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
                         if ($waypoint->getPosition() == 0) {
-                            $passengerOriginWaipoint = $waypoint;
+                            $passengerOriginWaypoint = $waypoint;
                         } elseif ($waypoint->isDestination() == true) {
                             $passengerDestinationWaypoint = $waypoint;
                         }
                     };
-                    $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaipoint, 'destination'=>$passengerDestinationWaypoint];
+                    $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaypoint, 'destination'=>$passengerDestinationWaypoint];
                 break;
                 case Recipient::class:
                     $bodyContext = [];
