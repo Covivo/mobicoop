@@ -331,6 +331,46 @@ class ResultManager
             }
         }
 
+        // pending or accepted ask linked ?
+        $result->setPendingAsk(false);
+        $result->setAcceptedAsk(false);
+        if ($result->getResultDriver()) {
+            if ($result->getResultDriver()->getOutward()) {
+                if ($result->getResultDriver()->getOutward()->hasPendingAsk()) {
+                    $result->setPendingAsk(true);
+                }
+                if ($result->getResultDriver()->getOutward()->hasAcceptedAsk()) {
+                    $result->setAcceptedAsk(true);
+                }
+            }
+            if ($result->getResultDriver()->getReturn()) {
+                if ($result->getResultDriver()->getReturn()->hasPendingAsk()) {
+                    $result->setPendingAsk(true);
+                }
+                if ($result->getResultDriver()->getReturn()->hasAcceptedAsk()) {
+                    $result->setAcceptedAsk(true);
+                }
+            }
+        }
+        if ($result->getResultPassenger()) {
+            if ($result->getResultPassenger()->getOutward()) {
+                if ($result->getResultPassenger()->getOutward()->hasPendingAsk()) {
+                    $result->setPendingAsk(true);
+                }
+                if ($result->getResultPassenger()->getOutward()->hasAcceptedAsk()) {
+                    $result->setAcceptedAsk(true);
+                }
+            }
+            if ($result->getResultPassenger()->getReturn()) {
+                if ($result->getResultPassenger()->getReturn()->hasPendingAsk()) {
+                    $result->setPendingAsk(true);
+                }
+                if ($result->getResultPassenger()->getReturn()->hasAcceptedAsk()) {
+                    $result->setAcceptedAsk(true);
+                }
+            }
+        }
+
         return $result;
     }
 

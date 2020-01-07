@@ -256,6 +256,18 @@ class Result
      */
     private $communities;
 
+    /**
+     * @var boolean If the Result has a pending Ask
+     * @Groups("results")
+     */
+    private $pendingAsk;
+
+    /**
+     * @var boolean If the Result has an accepted Ask
+     * @Groups("results")
+     */
+    private $acceptedAsk;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -674,6 +686,30 @@ class Result
     {
         $this->communities = $communities;
         
+        return $this;
+    }
+
+    public function hasPendingAsk(): ?bool
+    {
+        return $this->pendingAsk;
+    }
+
+    public function setPendingAsk(?bool $pendingAsk): self
+    {
+        $this->pendingAsk = $pendingAsk;
+
+        return $this;
+    }
+
+    public function hasAcceptedAsk(): ?bool
+    {
+        return $this->acceptedAsk;
+    }
+
+    public function setAcceptedAsk(?bool $acceptedAsk): self
+    {
+        $this->acceptedAsk = $acceptedAsk;
+
         return $this;
     }
 }
