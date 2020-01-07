@@ -1263,6 +1263,12 @@ class ProposalManager
         if (count($asks) > 0) {
             /** @var Ask $ask */
             foreach ($asks as $ask) {
+                
+                // todo : find why class of $ask can be a proxy of Ask class
+                if (get_class($ask) !== Ask::class) {
+                    continue;
+                }
+
                 $deleter = ($body['deleterId'] == $ask->getUser()->getId()) ? $ask->getUser() : $ask->getUserRelated();
                 $recipient = ($body['deleterId'] == $ask->getUser()->getId()) ? $ask->getUserRelated() : $ask->getUser();
                 if (isset($body["deletionMessage"]) && $body["deletionMessage"] != "") {

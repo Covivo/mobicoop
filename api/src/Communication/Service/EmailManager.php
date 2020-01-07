@@ -91,9 +91,10 @@ class EmailManager
         } else {
             $replyToEmail = $mail->getReturnEmail();
         }
-
+        
         $sessionLocale= $this->translator->getLocale();
         $this->translator->setLocale($lang);
+       
         $message = (new \Swift_Message($mail->getObject()))
             ->setFrom($senderEmail)
             ->setTo($mail->getRecipientEmail())
@@ -108,6 +109,7 @@ class EmailManager
                 ),
                 'text/html'
             );
+            
         if ($this->emailAdditionalHeaders) {
             $headers = json_decode($this->emailAdditionalHeaders, true);
             foreach ($headers as $key => $value) {
@@ -121,10 +123,10 @@ class EmailManager
                 $message->getHeaders()->addTextHeader($this->translator->trans($key), $data);
             }
         }
+       
         $this->translator->setLocale($sessionLocale);
-
         $failures = $this->mailer->send($message, $failures);
-
+        
         return $failures;
     }
 }
