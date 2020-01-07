@@ -88,83 +88,90 @@ export default {
   },
   methods: {
     checkAsks () {
-      let hasAtLeastOneAsk = false;
-      let hasAtLeastOneAcceptedAsk = false;
-      let lastMessageId = -1;
+      // let hasAtLeastOneAsk = false;
+      // let hasAtLeastOneAcceptedAsk = false;
+      // let lastMessageId = -1;
 
-      // check offers of outward
-      if (this.proposal.outward && this.proposal.outward.matchingOffers) {
-        this.proposal.outward.matchingOffers.forEach(offer => {
-          let asks = offer.asks;
-          let asksLength = asks.length;
-          if (asksLength > 0) {
-            hasAtLeastOneAsk = true;
-            asks.forEach(ask => {
-              let askHistories = ask.askHistories;
-              let askHistoriesLength = askHistories.length;
-              if (askHistories.length > 0) lastMessageId = askHistories[askHistoriesLength - 1].message && (askHistories[askHistoriesLength - 1].message.id > lastMessageId) ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
-              // todo: passer le statut a 4 après merge de l'update
-              if (ask.status === 4 || ask.status === 5) hasAtLeastOneAcceptedAsk = true;
-            })
-          }
-        })
-      }
-      // check requests of outward
-      if (this.proposal.outward && this.proposal.outward.matchingRequests) {
-        this.proposal.outward.matchingRequests.forEach(request => {
-          let asks = request.asks;
-          let asksLength = asks.length;
-          if (asksLength > 0) {
-            hasAtLeastOneAsk = true;
-            request.asks.forEach(ask => {
-              let askHistories = ask.askHistories;
-              let askHistoriesLength = askHistories.length;
-              if (askHistories.length > 0) lastMessageId = askHistories[askHistoriesLength - 1].message && (askHistories[askHistoriesLength - 1].message.id > lastMessageId) ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
-              if (ask.status === 4 || ask.status === 5) hasAtLeastOneAcceptedAsk = true;
-            })
-          }
-        })
-      }
-      // check offers of return
-      if (this.proposal.return && this.proposal.return.matchingOffers) {
-        this.proposal.return.matchingOffers.forEach(offer => {
-          if (offer.asks.length > 0) {
-            let asks = offer.asks;
-            let asksLength = asks.length;
-            if (asksLength > 0) {
-              hasAtLeastOneAsk = true;
-              asks.forEach(ask => {
-                let askHistories = ask.askHistories;
-                let askHistoriesLength = askHistories.length;
-                if (askHistories.length > 0) lastMessageId = askHistories[askHistoriesLength - 1].message && (askHistories[askHistoriesLength - 1].message.id > lastMessageId) ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
-                if (ask.status === 4 || ask.status === 5) hasAtLeastOneAcceptedAsk = true;
-              })
-            }
-          }
-        })
-      }
-      // check requests of outward
-      if (this.proposal.return && this.proposal.return.matchingRequests) {
-        this.proposal.return.matchingRequests.forEach(request => {
-          if (request.asks.length > 0) {
-            let asks = request.asks;
-            let asksLength = asks.length;
-            if (asksLength > 0) {
-              hasAtLeastOneAsk = true;
-              asks.forEach(ask => {
-                let askHistories = ask.askHistories;
-                let askHistoriesLength = askHistories.length;
-                if (askHistories.length > 0) lastMessageId = askHistories[askHistoriesLength - 1].message && (askHistories[askHistoriesLength - 1].message.id > lastMessageId) ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
-                if (ask.status === 4 || ask.status === 5) hasAtLeastOneAcceptedAsk = true;
-              })
-            }
-          }
-        })
-      }
-
-      this.hasAtLeastOneAsk = hasAtLeastOneAsk;
-      this.hasAtLeastOneAcceptedAsk = hasAtLeastOneAcceptedAsk;
-      this.lastMessageId = lastMessageId;
+      // // check offers of outward
+      // if (this.proposal.outward && this.proposal.outward.matchingOffers) {
+      //   this.proposal.outward.matchingOffers.forEach(offer => {
+      //     let asks = offer.asks;
+      //     let asksLength = asks.length;
+      //     if (asksLength > 0) {
+      //       hasAtLeastOneAsk = true;
+      //       asks.forEach(ask => {
+      //         let askHistories = ask.askHistories;
+      //         let askHistoriesLength = askHistories.length;
+      //         if (askHistories.length > 0) lastMessageId = askHistories[askHistoriesLength - 1].message && (askHistories[askHistoriesLength - 1].message.id > lastMessageId) ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
+      //         // todo: passer le statut a 4 après merge de l'update
+      //         if (ask.status === 4 || ask.status === 5) hasAtLeastOneAcceptedAsk = true;
+      //       })
+      //     }
+      //   })
+      // }
+      // // check requests of outward
+      // if (this.proposal.outward && this.proposal.outward.matchingRequests) {
+      //   this.proposal.outward.matchingRequests.forEach(request => {
+      //     let asks = request.asks;
+      //     let asksLength = asks.length;
+      //     if (asksLength > 0) {
+      //       hasAtLeastOneAsk = true;
+      //       request.asks.forEach(ask => {
+      //         let askHistories = ask.askHistories;
+      //         let askHistoriesLength = askHistories.length;
+      //         if (askHistories.length > 0) lastMessageId = askHistories[askHistoriesLength - 1].message && (askHistories[askHistoriesLength - 1].message.id > lastMessageId) ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
+      //         if (ask.status === 4 || ask.status === 5) hasAtLeastOneAcceptedAsk = true;
+      //       })
+      //     }
+      //   })
+      // }
+      // // check offers of return
+      // if (this.proposal.return && this.proposal.return.matchingOffers) {
+      //   this.proposal.return.matchingOffers.forEach(offer => {
+      //     if (offer.asks.length > 0) {
+      //       let asks = offer.asks;
+      //       let asksLength = asks.length;
+      //       if (asksLength > 0) {
+      //         hasAtLeastOneAsk = true;
+      //         asks.forEach(ask => {
+      //           let askHistories = ask.askHistories;
+      //           let askHistoriesLength = askHistories.length;
+      //           if (askHistories.length > 0) lastMessageId = askHistories[askHistoriesLength - 1].message && (askHistories[askHistoriesLength - 1].message.id > lastMessageId) ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
+      //           if (ask.status === 4 || ask.status === 5) hasAtLeastOneAcceptedAsk = true;
+      //         })
+      //       }
+      //     }
+      //   })
+      // }
+      // // check requests of outward
+      // if (this.proposal.return && this.proposal.return.matchingRequests) {
+      //   this.proposal.return.matchingRequests.forEach(request => {
+      //     if (request.asks.length > 0) {
+      //       let asks = request.asks;
+      //       let asksLength = asks.length;
+      //       if (asksLength > 0) {
+      //         hasAtLeastOneAsk = true;
+      //         asks.forEach(ask => {
+      //           let askHistories = ask.askHistories;
+      //           let askHistoriesLength = askHistories.length;
+      //           if (askHistories.length > 0) lastMessageId = askHistories[askHistoriesLength - 1].message && (askHistories[askHistoriesLength - 1].message.id > lastMessageId) ? askHistories[askHistoriesLength - 1].message.id : lastMessageId;
+      //           if (ask.status === 4 || ask.status === 5) hasAtLeastOneAcceptedAsk = true;
+      //         })
+      //       }
+      //     }
+      //   })
+      // }
+      this.proposal.outward.results.forEach(result => {
+        if (result.pendingAsk) {
+          this.hasAtLeastOneAsk = true;
+        }
+        if (result.acceptedAsk) {
+          this.hasAtLeastOneAcceptedAsk = true;
+        } 
+      });
+      // this.hasAtLeastOneAsk = hasAtLeastOneAsk;
+      // this.hasAtLeastOneAcceptedAsk = hasAtLeastOneAcceptedAsk;
+      // this.lastMessageId = lastMessageId;
     },
     proposalDeleted(id) {
       this.$emit('proposal-deleted', id)
