@@ -324,13 +324,13 @@ class ResultItem
      * @var boolean If the ResultItem has a pending Ask
      * @Groups("results")
      */
-    private $hasPendingAsk;
+    private $pendingAsk;
 
     /**
      * @var boolean If the ResultItem has an accepted Ask
      * @Groups("results")
      */
-    private $hasAcceptedAsk;
+    private $acceptedAsk;
 
     public function __construct()
     {
@@ -915,24 +915,24 @@ class ResultItem
 
     public function hasPendingAsk(): ?bool
     {
-        return $this->hasPendingAsk;
+        return $this->pendingAsk;
     }
 
-    public function setHasPendingAsk(?bool $hasPendingAsk): self
+    public function setPendingAsk(?bool $pendingAsk): self
     {
-        $this->hasPendingAsk = $hasPendingAsk;
+        $this->pendingAsk = $pendingAsk;
 
         return $this;
     }
 
     public function hasAcceptedAsk(): ?bool
     {
-        return $this->hasAcceptedAsk;
+        return $this->acceptedAsk;
     }
 
-    public function setHasAcceptedAsk(?bool $hasAcceptedAsk): self
+    public function setAcceptedAsk(?bool $acceptedAsk): self
     {
-        $this->hasAcceptedAsk = $hasAcceptedAsk;
+        $this->acceptedAsk = $acceptedAsk;
 
         return $this;
     }
