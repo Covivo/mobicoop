@@ -1265,7 +1265,6 @@ class ProposalManager
             foreach ($asks as $ask) {
                 $deleter = ($body['deleterId'] == $ask->getUser()->getId()) ? $ask->getUser() : $ask->getUserRelated();
                 $recipient = ($body['deleterId'] == $ask->getUser()->getId()) ? $ask->getUserRelated() : $ask->getUser();
-
                 if (isset($body["deletionMessage"]) && $body["deletionMessage"] != "") {
                     $message = $this->internalMessageManager->createMessage($deleter, [$recipient], $body["deletionMessage"], null, null);
                     $this->entityManager->persist($message);
@@ -1294,7 +1293,6 @@ class ProposalManager
                         $event = new AskAdDeletedEvent($ask, $deleter->getId());
                         $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
                     }
-
                     // Ask user is passenger
                 } elseif (($this->askManager->isAskUserPassenger($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserDriver($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
 
@@ -1304,10 +1302,9 @@ class ProposalManager
                     $askDateTime = $criteria->getFromTime() ?
                         new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
                         new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
-                    
+
                     // Accepted
                     if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER or $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
-                       
                         // If ad is in more than 24h
                         if ($askDateTime->getTimestamp() - $now->getTimestamp() > 24*60*60) {
                             $event = new PassengerAskAdDeletedEvent($ask, $deleter->getId());
@@ -1323,6 +1320,7 @@ class ProposalManager
                 }
             }
         }
+
         $this->entityManager->remove($proposal);
         $this->entityManager->flush();
 

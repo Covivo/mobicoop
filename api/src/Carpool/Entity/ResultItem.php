@@ -320,6 +320,18 @@ class ResultItem
      */
     private $commonDistance;
 
+    /**
+     * @var boolean If the ResultItem has a pending Ask
+     * @Groups("results")
+     */
+    private $pendingAsk;
+
+    /**
+     * @var boolean If the ResultItem has an accepted Ask
+     * @Groups("results")
+     */
+    private $acceptedAsk;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -897,6 +909,30 @@ class ResultItem
     public function setCommonDistance(int $commonDistance): self
     {
         $this->commonDistance = $commonDistance;
+
+        return $this;
+    }
+
+    public function hasPendingAsk(): ?bool
+    {
+        return $this->pendingAsk;
+    }
+
+    public function setPendingAsk(?bool $pendingAsk): self
+    {
+        $this->pendingAsk = $pendingAsk;
+
+        return $this;
+    }
+
+    public function hasAcceptedAsk(): ?bool
+    {
+        return $this->acceptedAsk;
+    }
+
+    public function setAcceptedAsk(?bool $acceptedAsk): self
+    {
+        $this->acceptedAsk = $acceptedAsk;
 
         return $this;
     }

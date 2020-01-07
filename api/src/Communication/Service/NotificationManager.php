@@ -62,6 +62,7 @@ class NotificationManager
     private $userNotificationRepository;
     private $enabled;
     private $translator;
+    const LANG = 'fr_FR';
 
     public function __construct(EntityManagerInterface $entityManager, \Twig_Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, SmsManager $smsManager, LoggerInterface $logger, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled, TranslatorInterface $translator)
     {
@@ -122,8 +123,7 @@ class NotificationManager
                         $this->createNotified($notification, $recipient, $object);
                         break;
                     case Medium::MEDIUM_EMAIL:
-                        $lang=$recipient->getLanguage();
-                        $this->notifyByEmail($notification, $recipient, $object, $lang);
+                        $this->notifyByEmail($notification, $recipient, $object);
                         $this->createNotified($notification, $recipient, $object);
                         $this->logger->info("Email notification for $action / " . $recipient->getEmail());
                         break;
@@ -199,7 +199,11 @@ class NotificationManager
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
         }
-       
+        
+        $lang = self::LANG;
+        if (!is_null($recipient->getLanguage())) {
+            $lang = $recipient->getLanguage();
+        }
         $this->translator->setLocale($lang);
         $email->setObject($this->templating->render(
             $notification->getTemplateTitle() ? $this->emailTitleTemplatePath . $notification->getTemplateTitle() : $this->emailTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
@@ -209,7 +213,7 @@ class NotificationManager
         ));
 
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $recipient->getLanguage());
+        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $lang);
     }
 
     /**

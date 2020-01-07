@@ -35,6 +35,7 @@ class Ad implements ResourceInterface
     const ROLE_DRIVER = 1;
     const ROLE_PASSENGER = 2;
     const ROLE_DRIVER_OR_PASSENGER = 3;
+    const RESOURCE_NAME = "carpools";
 
     /**
      * @var int The id of this ad.

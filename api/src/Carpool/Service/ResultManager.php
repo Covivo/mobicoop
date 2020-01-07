@@ -331,6 +331,46 @@ class ResultManager
             }
         }
 
+        // pending or accepted ask linked ?
+        $result->setPendingAsk(false);
+        $result->setAcceptedAsk(false);
+        if ($result->getResultDriver()) {
+            if ($result->getResultDriver()->getOutward()) {
+                if ($result->getResultDriver()->getOutward()->hasPendingAsk()) {
+                    $result->setPendingAsk(true);
+                }
+                if ($result->getResultDriver()->getOutward()->hasAcceptedAsk()) {
+                    $result->setAcceptedAsk(true);
+                }
+            }
+            if ($result->getResultDriver()->getReturn()) {
+                if ($result->getResultDriver()->getReturn()->hasPendingAsk()) {
+                    $result->setPendingAsk(true);
+                }
+                if ($result->getResultDriver()->getReturn()->hasAcceptedAsk()) {
+                    $result->setAcceptedAsk(true);
+                }
+            }
+        }
+        if ($result->getResultPassenger()) {
+            if ($result->getResultPassenger()->getOutward()) {
+                if ($result->getResultPassenger()->getOutward()->hasPendingAsk()) {
+                    $result->setPendingAsk(true);
+                }
+                if ($result->getResultPassenger()->getOutward()->hasAcceptedAsk()) {
+                    $result->setAcceptedAsk(true);
+                }
+            }
+            if ($result->getResultPassenger()->getReturn()) {
+                if ($result->getResultPassenger()->getReturn()->hasPendingAsk()) {
+                    $result->setPendingAsk(true);
+                }
+                if ($result->getResultPassenger()->getReturn()->hasAcceptedAsk()) {
+                    $result->setAcceptedAsk(true);
+                }
+            }
+        }
+
         return $result;
     }
 
@@ -717,6 +757,26 @@ class ResultManager
             // it's ((common distance + detour distance) * driver price by km)
             $item->setComputedPrice((string)(((int)$matching['request']->getFilters()['commonDistance']+(int)$matching['request']->getFilters()['detourDistance'])*(float)$item->getDriverPriceKm()/1000));
             $item->setComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$item->getComputedPrice(), $proposal->getCriteria()->getFrequency()));
+            
+            // check if an ask exists
+            $item->setPendingAsk(false);
+            $item->setAcceptedAsk(false);
+            if (count($matching['request']->getAsks())) {
+                foreach ($matching['request']->getAsks() as $ask) {
+                    switch ($ask->getStatus()) {
+                        case Ask::STATUS_INITIATED:
+                        case Ask::STATUS_PENDING_AS_DRIVER:
+                        case Ask::STATUS_PENDING_AS_PASSENGER:
+                            $item->setPendingAsk(true);
+                            break;
+                        case Ask::STATUS_ACCEPTED_AS_DRIVER:
+                        case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+                            $item->setAcceptedAsk(true);
+                            break;
+                    }
+                }
+            }
+            
             if (!$return) {
                 $resultDriver->setOutward($item);
             } else {
@@ -1056,6 +1116,26 @@ class ResultManager
             // it's ((common distance + detour distance) * driver price by km)
             $item->setComputedPrice((string)(((int)$matching['offer']->getFilters()['commonDistance']+(int)$matching['offer']->getFilters()['detourDistance'])*(float)$item->getDriverPriceKm()/1000));
             $item->setComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$item->getComputedPrice(), $proposal->getCriteria()->getFrequency()));
+            
+            // check if an ask exists
+            $item->setPendingAsk(false);
+            $item->setAcceptedAsk(false);
+            if (count($matching['offer']->getAsks())) {
+                foreach ($matching['offer']->getAsks() as $ask) {
+                    switch ($ask->getStatus()) {
+                        case Ask::STATUS_INITIATED:
+                        case Ask::STATUS_PENDING_AS_DRIVER:
+                        case Ask::STATUS_PENDING_AS_PASSENGER:
+                            $item->setPendingAsk(true);
+                            break;
+                        case Ask::STATUS_ACCEPTED_AS_DRIVER:
+                        case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+                            $item->setAcceptedAsk(true);
+                            break;
+                    }
+                }
+            }
+            
             if (!$return) {
                 $resultPassenger->setOutward($item);
             } else {
