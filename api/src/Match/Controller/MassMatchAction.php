@@ -46,8 +46,8 @@ final class MassMatchAction
             throw new \InvalidArgumentException($this->translator->trans("bad Mass id is provided"));
         }
         if ($data->getStatus() == Mass::STATUS_ANALYZED) {
-            $maxDetourDurationPercent = 40;
-            $maxDetourDistancePercent = 40;
+            $maxDetourDurationPercent = 20;
+            $maxDetourDistancePercent = 20;
             $minOverlapRatio = 0;
             $maxSuperiorDistanceRatio = 1000;
             $bearingCheck = true;
