@@ -153,29 +153,25 @@ class GeoMatcher
         $routesOwner = [];
         $i=0;
 
-        foreach ($candidates as $keyActors=>$actors) {
-            foreach ($actors['passengers'] as $keyPassenger=>$candidateToMatch) {
-                if ($pointsArray = $this->generatePointsArray($actors['driver'], $candidateToMatch)) {
-                    foreach ($pointsArray as $variant) {
-                        $variants[$i] = [
-                            'candidate' => $actors['driver'],
-                            'candidateToMatch' => $candidateToMatch,
-                            'variantPoints' => $variant
-                        ];
-                        $addressesForRoutes[$i][] = $variant;
-                        $i++;
-                    }
-                    // $addressesForRoutes[$i] = $pointsArray;
-                    // $routesOwner[$i] = [
-                    //     'actors' => $keyActors,
-                    //     'passenger' => $keyPassenger
-                    // ];
-                    // $i++;
-                }
-            }
-        }
+
 
         if (!$forMass) {
+            foreach ($candidates as $keyActors=>$actors) {
+                foreach ($actors['passengers'] as $keyPassenger=>$candidateToMatch) {
+                    if ($pointsArray = $this->generatePointsArray($actors['driver'], $candidateToMatch)) {
+                        foreach ($pointsArray as $variant) {
+                            $variants[$i] = [
+                                'candidate' => $actors['driver'],
+                                'candidateToMatch' => $candidateToMatch,
+                                'variantPoints' => $variant
+                            ];
+                            $addressesForRoutes[$i][] = $variant;
+                            $i++;
+                        }
+                    }
+                }
+            }
+
             $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, true, false, GeorouterInterface::RETURN_TYPE_ARRAY);
     
             // we treat the routes to check if they match
@@ -205,9 +201,24 @@ class GeoMatcher
                 // }
             }
         } else {
+            foreach ($candidates as $keyActors=>$actors) {
+                foreach ($actors['passengers'] as $keyPassenger=>$candidateToMatch) {
+                    if ($pointsArray = $this->generatePointsArray($actors['driver'], $candidateToMatch)) {
+                        $addressesForRoutes[$i] = $pointsArray;
+                        $routesOwner[$i] = [
+                            'actors' => $keyActors,
+                            'passenger' => $keyPassenger
+                        ];
+                        $i++;
+                    }
+                }
+            }
+
+
             $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_ARRAY);
     
             // we treat the routes to check if they match
+            //var_dump($ownerRoutes);die;
             foreach ($ownerRoutes as $ownerId=>$routes) {
                 if ($matches = $this->checkMassMultiMatch(
                     $candidates[$routesOwner[$ownerId]['actors']]['driver'],
