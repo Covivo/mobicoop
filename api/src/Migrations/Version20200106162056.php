@@ -12,7 +12,7 @@ use Doctrine\Migrations\AbstractMigration;
 final class Version20200106162056 extends AbstractMigration
 {
     public function up(Schema $schema): void
-    {   
+    {
         $this->addSql('UPDATE `notification` SET user_active_default=1, user_editable=0 WHERE ID=33;');
         $this->addSql('UPDATE `notification` SET user_active_default=1, user_editable=0 WHERE ID=34;');
         $this->addSql('UPDATE `notification` SET user_active_default=1, user_editable=0 WHERE ID=35;');
