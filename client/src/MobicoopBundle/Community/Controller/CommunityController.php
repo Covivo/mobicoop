@@ -181,13 +181,14 @@ class CommunityController extends AbstractController
                 }
 
                 // we delete those who the user is already in
-                $tempCommunities = [];
-                foreach ($communities as $key => $community) {
-                    if (!in_array($community->getId(), $idCommunitiesUser)) {
-                        $tempCommunities[] = $communities[$key];
-                    }
-                }
-                $communities = $tempCommunities;
+                // To Do : This code does'nt work anymore
+                // $tempCommunities = [];
+                // foreach ($communities as $key => $community) {
+                //     if (!in_array($community->getId(), $idCommunitiesUser)) {
+                //         $tempCommunities[] = $communities[$key];
+                //     }
+                // }
+                // $communities = $tempCommunities;
             } else {
                 $communitiesUser = [];
                 $communities = $communityManager->getCommunities(null, $perPage, $page, $search);
