@@ -155,6 +155,23 @@ class CommunityManager
     }
 
     /**
+     * Delete a community -> Use for delete community if an error occur with the image upload
+     *
+     * @param int $id The id of the community to delete
+     *
+     * @return boolean The result of the deletion.
+     */
+    public function deleteCommunity(int $id)
+    {
+        $this->dataProvider->setClass(Community::class);
+        $response = $this->dataProvider->delete($id);
+        if ($response->getCode() == 204) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Get last accepted community users
      * @param community.id          $communityId                 Id of the community
      * @return array|null The events found or null if not found.

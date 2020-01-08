@@ -102,6 +102,8 @@ class EventController extends AbstractController
                 if ($image = $imageManager->createImage($image)) {
                     return new Response();
                 }
+                //If an error occur on upload image, the event is already create, so we delete him
+                $eventManager->deleteEvent($event->getId());
                 // return error if image post didnt't work
                 return new Response(json_encode('error.image'));
             }
