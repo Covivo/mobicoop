@@ -50,8 +50,9 @@ class ResultManager
     /**
      * Constructor.
      *
-     * @param FormatDataManager $proposalMatcher
-     * @param array $params
+     * @param FormatDataManager $formatDataManager
+     * @param ProposalMatcher $proposalMatcher
+     * @param MatchingRepository $matchingRepository
      */
     public function __construct(FormatDataManager $formatDataManager, ProposalMatcher $proposalMatcher, MatchingRepository $matchingRepository)
     {
@@ -392,7 +393,8 @@ class ResultManager
             if ($request->getProposalRequest()->isPrivate()) {
                 continue;
             }
-            if (is_null($request->getFilters())) {
+            // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
+            if (is_null($request->getFilters() && is_null($request->getPickUpDuration()))) {
                 $request->setFilters($this->proposalMatcher->getMatchingFilters($request));
             }
             $matchings[$request->getProposalRequest()->getId()]['request'] = $request;
@@ -403,7 +405,8 @@ class ResultManager
             if ($offer->getProposalOffer()->isPrivate()) {
                 continue;
             }
-            if (is_null($offer->getFilters())) {
+            // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
+            if (is_null($offer->getFilters() && is_null($offer->getPickUpDuration()))) {
                 $offer->setFilters($this->proposalMatcher->getMatchingFilters($offer));
             }
             $matchings[$offer->getProposalOffer()->getId()]['offer'] = $offer;
@@ -519,12 +522,16 @@ class ResultManager
                         }
                     }
                     // we search the pickup duration
-                    $filters = $matching['request']->getFilters();
                     $pickupDuration = null;
-                    foreach ($filters['route'] as $value) {
-                        if ($value['candidate'] == 2 && $value['position'] == 0) {
-                            $pickupDuration = (int)round($value['duration']);
-                            break;
+                    if (!is_null($matching['request']->getPickUpDuration())) {
+                        $pickupDuration = $matching['request']->getPickUpDuration();
+                    } else {
+                        $filters = $matching['request']->getFilters();
+                        foreach ($filters['route'] as $value) {
+                            if ($value['candidate'] == 2 && $value['position'] == 0) {
+                                $pickupDuration = (int)round($value['duration']);
+                                break;
+                            }
                         }
                     }
                     if ($pickupDuration) {
@@ -589,12 +596,16 @@ class ResultManager
                     $item->setSunCheck($matching['request']->getProposalRequest()->getCriteria()->isSunCheck());
                     // we calculate the starting time so that the driver will get the carpooler on the carpooler time
                     // even if we don't use them, maybe we'll need them in the future
-                    $filters = $matching['request']->getFilters();
                     $pickupDuration = null;
-                    foreach ($filters['route'] as $value) {
-                        if ($value['candidate'] == 2 && $value['position'] == 0) {
-                            $pickupDuration = (int)round($value['duration']);
-                            break;
+                    if (!is_null($matching['request']->getPickUpDuration())) {
+                        $pickupDuration = $matching['request']->getPickUpDuration();
+                    } else {
+                        $filters = $matching['request']->getFilters();
+                        foreach ($filters['route'] as $value) {
+                            if ($value['candidate'] == 2 && $value['position'] == 0) {
+                                $pickupDuration = (int)round($value['duration']);
+                                break;
+                            }
                         }
                     }
                     // we init the time to the one of the carpooler
@@ -669,67 +680,145 @@ class ResultManager
             // waypoints of the item
             $waypoints = [];
             $time = $item->getTime() ? clone $item->getTime() : null;
+
+            // // we will have to compute the number of steps for each candidate
+            // $steps = [
+            //     'requester' => 0,
+            //     'carpooler' => 0
+            // ];
+            // // first pass to get the maximum position fo each candidate
+            // foreach ($matching['request']->getFilters()['route'] as $key=>$waypoint) {
+            //     if ($waypoint['candidate'] == 1 && (int)$waypoint['position']>$steps['requester']) {
+            //         $steps['requester'] = (int)$waypoint['position'];
+            //     } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position']>$steps['carpooler']) {
+            //         $steps['carpooler'] = (int)$waypoint['position'];
+            //     }
+            // }
+            // // second pass to fill the waypoints array
+            // foreach ($matching['request']->getFilters()['route'] as $key=>$waypoint) {
+            //     $curTime = null;
+            //     if ($time) {
+            //         $curTime = clone $time;
+            //     }
+            //     if ($curTime) {
+            //         $curTime->add(new \DateInterval('PT' . (int)round($waypoint['duration']) . 'S'));
+            //     }
+            //     $waypoints[$key] = [
+            //         'id' => $key,
+            //         'person' => $waypoint['candidate'] == 1 ? 'requester' : 'carpooler',
+            //         'role' => $waypoint['candidate'] == 1 ? 'driver' : 'passenger',
+            //         'time' =>  $curTime,
+            //         'address' => $waypoint['address'],
+            //         'type' => $waypoint['position'] == '0' ? 'origin' :
+            //             (
+            //                 ($waypoint['candidate'] == 1) ? ((int)$waypoint['position'] == $steps['requester'] ? 'destination' : 'step') :
+            //                 ((int)$waypoint['position'] == $steps['carpooler'] ? 'destination' : 'step')
+            //             )
+            //     ];
+            //     // origin and destination guess
+            //     if ($waypoint['candidate'] == 2 && $waypoint['position'] == '0') {
+            //         $item->setOrigin($waypoint['address']);
+            //         $item->setOriginPassenger($waypoint['address']);
+            //     } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position'] == $steps['carpooler']) {
+            //         $item->setDestination($waypoint['address']);
+            //         $item->setDestinationPassenger($waypoint['address']);
+            //     } elseif ($waypoint['candidate'] == 1 && $waypoint['position'] == '0') {
+            //         $item->setOriginDriver($waypoint['address']);
+            //     } elseif ($waypoint['candidate'] == 1 && (int)$waypoint['position'] == $steps['requester']) {
+            //         $item->setDestinationDriver($waypoint['address']);
+            //     }
+            // }
+
             // we will have to compute the number of steps for each candidate
-            $steps = [
+            $origins = [
+                'requester' => 9999,
+                'carpooler' => 9999
+            ];
+            $destinations = [
                 'requester' => 0,
                 'carpooler' => 0
             ];
-            // first pass to get the maximum position fo each candidate
-            foreach ($matching['request']->getFilters()['route'] as $key=>$waypoint) {
-                if ($waypoint['candidate'] == 1 && (int)$waypoint['position']>$steps['requester']) {
-                    $steps['requester'] = (int)$waypoint['position'];
-                } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position']>$steps['carpooler']) {
-                    $steps['carpooler'] = (int)$waypoint['position'];
+            // first pass to get the minimum and maximum position fo each candidate
+            foreach ($matching['request']->getWaypoints() as $waypoint) {
+                if ($waypoint->getRole() == 1 && $waypoint->getPosition()>$destinations['requester']) {
+                    $destinations['requester'] = $waypoint->getPosition();
+                }
+                if ($waypoint->getRole() == 1 && $waypoint->getPosition()<$origins['requester']) {
+                    $origins['requester'] = $waypoint->getPosition();
+                }
+                if ($waypoint->getRole() == 2 && $waypoint->getPosition()>$destinations['carpooler']) {
+                    $destinations['carpooler'] = $waypoint->getPosition();
+                }
+                if ($waypoint->getRole() == 2 && $waypoint->getPosition()<$origins['carpooler']) {
+                    $origins['carpooler'] = $waypoint->getPosition();
                 }
             }
-            // second pass to fill the waypoints array
-            foreach ($matching['request']->getFilters()['route'] as $key=>$waypoint) {
+
+            $i=0;
+            foreach ($matching['request']->getWaypoints() as $waypoint) {
                 $curTime = null;
                 if ($time) {
                     $curTime = clone $time;
                 }
                 if ($curTime) {
-                    $curTime->add(new \DateInterval('PT' . (int)round($waypoint['duration']) . 'S'));
+                    $curTime->add(new \DateInterval('PT' . $waypoint->getDuration() . 'S'));
                 }
-                $waypoints[$key] = [
-                    'id' => $key,
-                    'person' => $waypoint['candidate'] == 1 ? 'requester' : 'carpooler',
-                    'role' => $waypoint['candidate'] == 1 ? 'driver' : 'passenger',
-                    'time' =>  $curTime,
-                    'address' => $waypoint['address'],
-                    'type' => $waypoint['position'] == '0' ? 'origin' :
-                        (
-                            ($waypoint['candidate'] == 1) ? ((int)$waypoint['position'] == $steps['requester'] ? 'destination' : 'step') :
-                            ((int)$waypoint['position'] == $steps['carpooler'] ? 'destination' : 'step')
-                        )
-                ];
+                $type = 'step';
                 // origin and destination guess
-                if ($waypoint['candidate'] == 2 && $waypoint['position'] == '0') {
-                    $item->setOrigin($waypoint['address']);
-                    $item->setOriginPassenger($waypoint['address']);
-                } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position'] == $steps['carpooler']) {
-                    $item->setDestination($waypoint['address']);
-                    $item->setDestinationPassenger($waypoint['address']);
-                } elseif ($waypoint['candidate'] == 1 && $waypoint['position'] == '0') {
-                    $item->setOriginDriver($waypoint['address']);
-                } elseif ($waypoint['candidate'] == 1 && (int)$waypoint['position'] == $steps['requester']) {
-                    $item->setDestinationDriver($waypoint['address']);
+                if ($waypoint->getRole() == 2 && $waypoint->getPosition() == $origins['carpooler']) {
+                    $type = 'origin';
+                    $item->setOrigin($waypoint->getAddress());
+                    $item->setOriginPassenger($waypoint->getAddress());
+                } elseif ($waypoint->getRole() == 2 && $waypoint->getPosition() == $destinations['carpooler']) {
+                    $type = 'destination';
+                    $item->setDestination($waypoint->getAddress());
+                    $item->setDestinationPassenger($waypoint->getAddress());
+                } elseif ($waypoint->getRole() == 1 && $waypoint->getPosition() == $origins['requester']) {
+                    $type = 'origin';
+                    $item->setOriginDriver($waypoint->getAddress());
+                } elseif ($waypoint->getRole() == 1 && $waypoint->getPosition() == $destinations['requester']) {
+                    $type = 'destination';
+                    $item->setDestinationDriver($waypoint->getAddress());
                 }
+                $waypoints[$i] = [
+                    'id' => $i,
+                    'person' => $waypoint->getRole() == 1 ? 'requester' : 'carpooler',
+                    'role' => $waypoint->getRole() == 1 ? 'driver' : 'passenger',
+                    'time' =>  $curTime,
+                    'address' => $waypoint->getAddress(),
+                    'type' => $type
+                ];
+                $i++;
             }
             $item->setWaypoints($waypoints);
             
             // statistics
-            $item->setOriginalDistance($matching['request']->getFilters()['originalDistance']);
-            $item->setAcceptedDetourDistance($matching['request']->getFilters()['acceptedDetourDistance']);
-            $item->setNewDistance($matching['request']->getFilters()['newDistance']);
-            $item->setDetourDistance($matching['request']->getFilters()['detourDistance']);
-            $item->setDetourDistancePercent($matching['request']->getFilters()['detourDistancePercent']);
-            $item->setOriginalDuration($matching['request']->getFilters()['originalDuration']);
-            $item->setAcceptedDetourDuration($matching['request']->getFilters()['acceptedDetourDuration']);
-            $item->setNewDuration($matching['request']->getFilters()['newDuration']);
-            $item->setDetourDuration($matching['request']->getFilters()['detourDuration']);
-            $item->setDetourDurationPercent($matching['request']->getFilters()['detourDurationPercent']);
-            $item->setCommonDistance($matching['request']->getFilters()['commonDistance']);
+            if (!is_null($matching['request']->getPickUpDuration())) {
+                $item->setOriginalDistance($matching['request']->getOriginalDistance());
+                $item->setAcceptedDetourDistance($matching['request']->getAcceptedDetourDistance());
+                $item->setNewDistance($matching['request']->getNewDistance());
+                $item->setDetourDistance($matching['request']->getDetourDistance());
+                $item->setDetourDistancePercent($matching['request']->getDetourDistancePercent());
+                $item->setOriginalDuration($matching['request']->getOriginalDuration());
+                $item->setAcceptedDetourDuration($matching['request']->getAcceptedDetourDuration());
+                $item->setNewDuration($matching['request']->getNewDuration());
+                $item->setDetourDuration($matching['request']->getDetourDuration());
+                $item->setDetourDurationPercent($matching['request']->getDetourDurationPercent());
+                $item->setCommonDistance($matching['request']->getCommonDistance());
+            } else {
+                $item->setOriginalDistance($matching['request']->getFilters()['originalDistance']);
+                $item->setAcceptedDetourDistance($matching['request']->getFilters()['acceptedDetourDistance']);
+                $item->setNewDistance($matching['request']->getFilters()['newDistance']);
+                $item->setDetourDistance($matching['request']->getFilters()['detourDistance']);
+                $item->setDetourDistancePercent($matching['request']->getFilters()['detourDistancePercent']);
+                $item->setOriginalDuration($matching['request']->getFilters()['originalDuration']);
+                $item->setAcceptedDetourDuration($matching['request']->getFilters()['acceptedDetourDuration']);
+                $item->setNewDuration($matching['request']->getFilters()['newDuration']);
+                $item->setDetourDuration($matching['request']->getFilters()['detourDuration']);
+                $item->setDetourDurationPercent($matching['request']->getFilters()['detourDurationPercent']);
+                $item->setCommonDistance($matching['request']->getFilters()['commonDistance']);
+            }
+            
 
             // prices
 
@@ -746,7 +835,11 @@ class ResultManager
                 $item->setDriverOriginalPrice($proposal->getCriteria()->getDriverPrice());
             } else {
                 // otherwise we use the common price, rounded
-                $item->setDriverOriginalPrice((string)$this->formatDataManager->roundPrice((int)$matching['request']->getFilters()['originalDistance']*(float)$item->getDriverPriceKm()/1000, $proposal->getCriteria()->getFrequency()));
+                if (!is_null($matching['request']->getOriginalDistance())) {
+                    $item->setDriverOriginalPrice((string)$this->formatDataManager->roundPrice($matching['request']->getOriginalDistance()*(float)$item->getDriverPriceKm()/1000, $proposal->getCriteria()->getFrequency()));
+                } else {
+                    $item->setDriverOriginalPrice((string)$this->formatDataManager->roundPrice((int)$matching['request']->getFilters()['originalDistance']*(float)$item->getDriverPriceKm()/1000, $proposal->getCriteria()->getFrequency()));
+                }
             }
             
             // we set the prices of the passenger (the carpooler)
@@ -755,7 +848,11 @@ class ResultManager
             
             // the computed price is the price to be paid by the passenger
             // it's ((common distance + detour distance) * driver price by km)
-            $item->setComputedPrice((string)(((int)$matching['request']->getFilters()['commonDistance']+(int)$matching['request']->getFilters()['detourDistance'])*(float)$item->getDriverPriceKm()/1000));
+            if (!is_null($matching['request']->getCommonDistance())) {
+                $item->setComputedPrice((string)(((int)$matching['request']->getCommonDistance()+(int)$matching['request']->getDetourDistance())*(float)$item->getDriverPriceKm()/1000));
+            } else {
+                $item->setComputedPrice((string)(((int)$matching['request']->getFilters()['commonDistance']+(int)$matching['request']->getFilters()['detourDistance'])*(float)$item->getDriverPriceKm()/1000));
+            }
             $item->setComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$item->getComputedPrice(), $proposal->getCriteria()->getFrequency()));
             
             // check if an ask exists
@@ -871,12 +968,16 @@ class ResultManager
                     }
                 }
                 // we search the pickup duration
-                $filters = $matching['offer']->getFilters();
                 $pickupDuration = null;
-                foreach ($filters['route'] as $value) {
-                    if ($value['candidate'] == 2 && $value['position'] == 0) {
-                        $pickupDuration = (int)round($value['duration']);
-                        break;
+                if (!is_null($matching['offer']->getPickUpDuration())) {
+                    $pickupDuration = $matching['offer']->getPickUpDuration();
+                } else {
+                    $filters = $matching['offer']->getFilters();
+                    foreach ($filters['route'] as $value) {
+                        if ($value['candidate'] == 2 && $value['position'] == 0) {
+                            $pickupDuration = (int)round($value['duration']);
+                            break;
+                        }
                     }
                 }
                 $driverFromTime = clone $fromTime;
@@ -941,12 +1042,16 @@ class ResultManager
                     $item->setSunCheck($matching['offer']->getProposalOffer()->getCriteria()->isSunCheck());
                     // we calculate the starting time so that the driver will get the carpooler on the carpooler time
                     // even if we don't use them, maybe we'll need them in the future
-                    $filters = $matching['offer']->getFilters();
                     $pickupDuration = null;
-                    foreach ($filters['route'] as $value) {
-                        if ($value['candidate'] == 2 && $value['position'] == 0) {
-                            $pickupDuration = (int)round($value['duration']);
-                            break;
+                    if (!is_null($matching['offer']->getPickUpDuration())) {
+                        $pickupDuration = $matching['offer']->getPickUpDuration();
+                    } else {
+                        $filters = $matching['offer']->getFilters();
+                        foreach ($filters['route'] as $value) {
+                            if ($value['candidate'] == 2 && $value['position'] == 0) {
+                                $pickupDuration = (int)round($value['duration']);
+                                break;
+                            }
                         }
                     }
                     // we init the time to the one of the carpooler
@@ -1029,67 +1134,145 @@ class ResultManager
             // waypoints of the item
             $waypoints = [];
             $time = $driverFromTime ? clone $driverFromTime : null;
-            // we will have to compute the number of steps fo reach candidate
-            $steps = [
+
+            // // we will have to compute the number of steps for each candidate
+            // $steps = [
+            //     'requester' => 0,
+            //     'carpooler' => 0
+            // ];
+            // // first pass to get the maximum position for each candidate
+            // foreach ($matching['offer']->getFilters()['route'] as $key=>$waypoint) {
+            //     if ($waypoint['candidate'] == 2 && (int)$waypoint['position']>$steps['requester']) {
+            //         $steps['requester'] = (int)$waypoint['position'];
+            //     } elseif ($waypoint['candidate'] == 1 && (int)$waypoint['position']>$steps['carpooler']) {
+            //         $steps['carpooler'] = (int)$waypoint['position'];
+            //     }
+            // }
+            // // second pass to fill the waypoints array
+            // foreach ($matching['offer']->getFilters()['route'] as $key=>$waypoint) {
+            //     $curTime = null;
+            //     if ($time) {
+            //         $curTime = clone $time;
+            //     }
+            //     if ($curTime) {
+            //         $curTime->add(new \DateInterval('PT' . (int)round($waypoint['duration']) . 'S'));
+            //     }
+            //     $waypoints[$key] = [
+            //         'id' => $key,
+            //         'person' => $waypoint['candidate'] == 2 ? 'requester' : 'carpooler',
+            //         'role' => $waypoint['candidate'] == 1 ? 'driver' : 'passenger',
+            //         'time' =>  $curTime,
+            //         'address' => $waypoint['address'],
+            //         'type' => $waypoint['position'] == '0' ? 'origin' :
+            //             (
+            //                 ($waypoint['candidate'] == 2) ? ((int)$waypoint['position'] == $steps['requester'] ? 'destination' : 'step') :
+            //                 ((int)$waypoint['position'] == $steps['carpooler'] ? 'destination' : 'step')
+            //             )
+            //     ];
+            //     // origin and destination guess
+            //     if ($waypoint['candidate'] == 1 && $waypoint['position'] == '0') {
+            //         $item->setOrigin($waypoint['address']);
+            //         $item->setOriginDriver($waypoint['address']);
+            //     } elseif ($waypoint['candidate'] == 1 && (int)$waypoint['position'] == $steps['carpooler']) {
+            //         $item->setDestination($waypoint['address']);
+            //         $item->setDestinationDriver($waypoint['address']);
+            //     } elseif ($waypoint['candidate'] == 2 && $waypoint['position'] == '0') {
+            //         $item->setOriginPassenger($waypoint['address']);
+            //     } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position'] == $steps['requester']) {
+            //         $item->setDestinationPassenger($waypoint['address']);
+            //     }
+            // }
+
+            // we will have to compute the number of steps for each candidate
+            $origins = [
+                'requester' => 9999,
+                'carpooler' => 9999
+            ];
+            $destinations = [
                 'requester' => 0,
                 'carpooler' => 0
             ];
-            // first pass to get the maximum position fo each candidate
-            foreach ($matching['offer']->getFilters()['route'] as $key=>$waypoint) {
-                if ($waypoint['candidate'] == 2 && (int)$waypoint['position']>$steps['requester']) {
-                    $steps['requester'] = (int)$waypoint['position'];
-                } elseif ($waypoint['candidate'] == 1 && (int)$waypoint['position']>$steps['carpooler']) {
-                    $steps['carpooler'] = (int)$waypoint['position'];
+            // first pass to get the minimum and maximum position fo each candidate
+            foreach ($matching['offer']->getWaypoints() as $waypoint) {
+                if ($waypoint->getRole() == 2 && $waypoint->getPosition()>$destinations['requester']) {
+                    $destinations['requester'] = $waypoint->getPosition();
+                }
+                if ($waypoint->getRole() == 2 && $waypoint->getPosition()<$origins['requester']) {
+                    $origins['requester'] = $waypoint->getPosition();
+                }
+                if ($waypoint->getRole() == 1 && $waypoint->getPosition()>$destinations['carpooler']) {
+                    $destinations['carpooler'] = $waypoint->getPosition();
+                }
+                if ($waypoint->getRole() == 1 && $waypoint->getPosition()<$origins['carpooler']) {
+                    $origins['carpooler'] = $waypoint->getPosition();
                 }
             }
-            // second pass to fill the waypoints array
-            foreach ($matching['offer']->getFilters()['route'] as $key=>$waypoint) {
+
+            $i=0;
+            foreach ($matching['offer']->getWaypoints() as $waypoint) {
                 $curTime = null;
                 if ($time) {
                     $curTime = clone $time;
                 }
                 if ($curTime) {
-                    $curTime->add(new \DateInterval('PT' . (int)round($waypoint['duration']) . 'S'));
+                    $curTime->add(new \DateInterval('PT' . $waypoint->getDuration() . 'S'));
                 }
-                $waypoints[$key] = [
-                    'id' => $key,
-                    'person' => $waypoint['candidate'] == 2 ? 'requester' : 'carpooler',
-                    'role' => $waypoint['candidate'] == 1 ? 'driver' : 'passenger',
-                    'time' =>  $curTime,
-                    'address' => $waypoint['address'],
-                    'type' => $waypoint['position'] == '0' ? 'origin' :
-                        (
-                            ($waypoint['candidate'] == 2) ? ((int)$waypoint['position'] == $steps['requester'] ? 'destination' : 'step') :
-                            ((int)$waypoint['position'] == $steps['carpooler'] ? 'destination' : 'step')
-                        )
-                ];
+                $type = 'step';
                 // origin and destination guess
-                if ($waypoint['candidate'] == 1 && $waypoint['position'] == '0') {
-                    $item->setOrigin($waypoint['address']);
-                    $item->setOriginDriver($waypoint['address']);
-                } elseif ($waypoint['candidate'] == 1 && (int)$waypoint['position'] == $steps['carpooler']) {
-                    $item->setDestination($waypoint['address']);
-                    $item->setDestinationDriver($waypoint['address']);
-                } elseif ($waypoint['candidate'] == 2 && $waypoint['position'] == '0') {
-                    $item->setOriginPassenger($waypoint['address']);
-                } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position'] == $steps['requester']) {
-                    $item->setDestinationPassenger($waypoint['address']);
+                if ($waypoint->getRole() == 1 && $waypoint->getPosition() == $origins['carpooler']) {
+                    $type = 'origin';
+                    $item->setOrigin($waypoint->getAddress());
+                    $item->setOriginDriver($waypoint->getAddress());
+                } elseif ($waypoint->getRole() == 1 && $waypoint->getPosition() == $destinations['carpooler']) {
+                    $type = 'destination';
+                    $item->setDestination($waypoint->getAddress());
+                    $item->setDestinationDriver($waypoint->getAddress());
+                } elseif ($waypoint->getRole() == 2 && $waypoint->getPosition() == $origins['requester']) {
+                    $type = 'origin';
+                    $item->setOriginPassenger($waypoint->getAddress());
+                } elseif ($waypoint->getRole() == 2 && $waypoint->getPosition() == $destinations['requester']) {
+                    $type = 'destination';
+                    $item->setDestinationPassenger($waypoint->getAddress());
                 }
+                $waypoints[$i] = [
+                    'id' => $i,
+                    'person' => $waypoint->getRole() == 2 ? 'requester' : 'carpooler',
+                    'role' => $waypoint->getRole() == 1 ? 'driver' : 'passenger',
+                    'time' =>  $curTime,
+                    'address' => $waypoint->getAddress(),
+                    'type' => $type
+                ];
+                $i++;
             }
+
             $item->setWaypoints($waypoints);
             
             // statistics
-            $item->setOriginalDistance($matching['offer']->getFilters()['originalDistance']);
-            $item->setAcceptedDetourDistance($matching['offer']->getFilters()['acceptedDetourDistance']);
-            $item->setNewDistance($matching['offer']->getFilters()['newDistance']);
-            $item->setDetourDistance($matching['offer']->getFilters()['detourDistance']);
-            $item->setDetourDistancePercent($matching['offer']->getFilters()['detourDistancePercent']);
-            $item->setOriginalDuration($matching['offer']->getFilters()['originalDuration']);
-            $item->setAcceptedDetourDuration($matching['offer']->getFilters()['acceptedDetourDuration']);
-            $item->setNewDuration($matching['offer']->getFilters()['newDuration']);
-            $item->setDetourDuration($matching['offer']->getFilters()['detourDuration']);
-            $item->setDetourDurationPercent($matching['offer']->getFilters()['detourDurationPercent']);
-            $item->setCommonDistance($matching['offer']->getFilters()['commonDistance']);
+            if (!is_null($matching['offer']->getPickUpDuration())) {
+                $item->setOriginalDistance($matching['offer']->getOriginalDistance());
+                $item->setAcceptedDetourDistance($matching['offer']->getAcceptedDetourDistance());
+                $item->setNewDistance($matching['offer']->getNewDistance());
+                $item->setDetourDistance($matching['offer']->getDetourDistance());
+                $item->setDetourDistancePercent($matching['offer']->getDetourDistancePercent());
+                $item->setOriginalDuration($matching['offer']->getOriginalDuration());
+                $item->setAcceptedDetourDuration($matching['offer']->getAcceptedDetourDuration());
+                $item->setNewDuration($matching['offer']->getNewDuration());
+                $item->setDetourDuration($matching['offer']->getDetourDuration());
+                $item->setDetourDurationPercent($matching['offer']->getDetourDurationPercent());
+                $item->setCommonDistance($matching['offer']->getCommonDistance());
+            } else {
+                $item->setOriginalDistance($matching['offer']->getFilters()['originalDistance']);
+                $item->setAcceptedDetourDistance($matching['offer']->getFilters()['acceptedDetourDistance']);
+                $item->setNewDistance($matching['offer']->getFilters()['newDistance']);
+                $item->setDetourDistance($matching['offer']->getFilters()['detourDistance']);
+                $item->setDetourDistancePercent($matching['offer']->getFilters()['detourDistancePercent']);
+                $item->setOriginalDuration($matching['offer']->getFilters()['originalDuration']);
+                $item->setAcceptedDetourDuration($matching['offer']->getFilters()['acceptedDetourDuration']);
+                $item->setNewDuration($matching['offer']->getFilters()['newDuration']);
+                $item->setDetourDuration($matching['offer']->getFilters()['detourDuration']);
+                $item->setDetourDurationPercent($matching['offer']->getFilters()['detourDurationPercent']);
+                $item->setCommonDistance($matching['offer']->getFilters()['commonDistance']);
+            }
 
             // prices
 
@@ -1109,12 +1292,20 @@ class ResultManager
                 $item->setPassengerOriginalPrice($proposal->getCriteria()->getPassengerPrice());
             } else {
                 // otherwise we use the common price
-                $item->setPassengerOriginalPrice((string)$this->formatDataManager->roundPrice((int)$matching['offer']->getFilters()['commonDistance']*(float)$item->getPassengerPriceKm()/1000, $proposal->getCriteria()->getFrequency()));
+                if (!is_null($matching['offer']->getCommonDistance())) {
+                    $item->setPassengerOriginalPrice((string)$this->formatDataManager->roundPrice($matching['offer']->getCommonDistance()*(float)$item->getPassengerPriceKm()/1000, $proposal->getCriteria()->getFrequency()));
+                } else {
+                    $item->setPassengerOriginalPrice((string)$this->formatDataManager->roundPrice((int)$matching['offer']->getFilters()['commonDistance']*(float)$item->getPassengerPriceKm()/1000, $proposal->getCriteria()->getFrequency()));
+                }
             }
             
             // the computed price is the price to be paid by the passenger
             // it's ((common distance + detour distance) * driver price by km)
-            $item->setComputedPrice((string)(((int)$matching['offer']->getFilters()['commonDistance']+(int)$matching['offer']->getFilters()['detourDistance'])*(float)$item->getDriverPriceKm()/1000));
+            if (!is_null($matching['offer']->getCommonDistance())) {
+                $item->setComputedPrice((string)(($matching['offer']->getCommonDistance()+$matching['offer']->getDetourDistance())*(float)$item->getDriverPriceKm()/1000));
+            } else {
+                $item->setComputedPrice((string)(((int)$matching['offer']->getFilters()['commonDistance']+(int)$matching['offer']->getFilters()['detourDistance'])*(float)$item->getDriverPriceKm()/1000));
+            }
             $item->setComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$item->getComputedPrice(), $proposal->getCriteria()->getFrequency()));
             
             // check if an ask exists

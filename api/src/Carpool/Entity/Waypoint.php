@@ -125,6 +125,20 @@ class Waypoint
      * @Groups({"read"})
      */
     private $updatedDate;
+
+    /**
+     * @var int|null The duration to the waypoint.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read"})
+     */
+    private $duration;
+
+    /**
+     * @var int|null The role associated with the waypoint.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read"})
+     */
+    private $role;
     
     public function __construct()
     {
@@ -240,6 +254,30 @@ class Waypoint
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(int $duration): self
+    {
+        $this->duration = $duration;
+
+        return $this;
+    }
+
+    public function getRole(): ?int
+    {
+        return $this->role;
+    }
+
+    public function setRole(int $role): self
+    {
+        $this->role = $role;
 
         return $this;
     }
