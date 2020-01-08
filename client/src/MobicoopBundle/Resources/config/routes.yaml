@@ -576,6 +576,14 @@ event_list:
         en: /events
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventList
 
+# Get the communities (AJAX)
+event_get_list:
+    methods: [POST]
+    path:
+        fr: /evenements/getEventList
+        en: /events/getEventList
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::getEventList
+
 # create event
 event_create:
     path:

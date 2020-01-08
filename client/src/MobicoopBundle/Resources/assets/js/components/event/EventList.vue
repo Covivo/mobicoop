@@ -66,6 +66,7 @@
           background-color="primary"
           class="elevation-2"
           dark
+          @change="redrawMap()"
         >
           <v-tab
             :href="`#tab-current`"
@@ -101,13 +102,20 @@
                     />
                   </v-card>
                   <m-map
-                    v-show="!loadingMap"
+                    v-if="!loadingMap && !loading && pointsComingMap.length > 0"
                     ref="mmap"
                     :points="pointsComingMap"
                     :provider="mapProvider"
                     :url-tiles="urlTiles"
                     :attribution-copyright="attributionCopyright"
                   />
+                  <v-skeleton-loader
+                    v-else
+                    ref="skeleton"
+                    type="card"
+                    class="mx-auto"
+                    width="100%"
+                  /> 
                 </v-col>
               </v-row>
               <v-card-title>
@@ -139,6 +147,8 @@
                         hide-details
                         :label="$t('search')"
                         single-line
+                        clearable
+                        @input="updateSearch"
                       />
                     </v-card>
                   </v-col>
@@ -148,14 +158,27 @@
                 :search="search"
                 :items="eventscoming"
                 :items-per-page.sync="itemsPerPage"
+                :server-items-length="totalItems"
                 :footer-props="{
                   'items-per-page-options': itemsPerPageOptions,
                   'items-per-page-all-text': $t('all'),
                   'itemsPerPageText': $t('linePerPage')
                 }"
+                :loading="loading"
+                @update:options="updateOptions"
               >
                 <template>
-                  <v-row>
+                  <v-row v-if="loading">
+                    <v-skeleton-loader
+                      v-for="n in 3"
+                      :key="n"
+                      ref="skeleton"
+                      type="list-item-avatar-three-line"
+                      class="mx-auto"
+                      width="100%"
+                    />                      
+                  </v-row>
+                  <v-row v-else>
                     <v-col
                       v-for="item in eventscoming"
                       :key="item.index"
@@ -208,6 +231,8 @@
                         hide-details
                         :label="$t('search')"
                         single-line
+                        clearable
+                        @input="updateSearchPassed"
                       />
                     </v-card>
                   </v-col>
@@ -217,15 +242,27 @@
                 :search="searchPassed"
                 :items="eventspassed"
                 :items-per-page.sync="itemsPerPage"
+                :server-items-length="totalItemsPassed"
                 :footer-props="{
                   'items-per-page-options': itemsPerPageOptions,
                   'items-per-page-all-text': $t('all'),
                   'itemsPerPageText': $t('linePerPage')
                 }"
-                @update:options="updateOptions"
+                :loading="loading"
+                @update:options="updateOptionsPassed"
               >
                 <template>
-                  <v-row>
+                  <v-row v-if="loading">
+                    <v-skeleton-loader
+                      v-for="n in 3"
+                      :key="n"
+                      ref="skeleton"
+                      type="list-item-avatar-three-line"
+                      class="mx-auto"
+                      width="100%"
+                    />                      
+                  </v-row>
+                  <v-row v-else>
                     <v-col
                       v-for="item in eventspassed"
                       :key="item.index"
@@ -250,7 +287,8 @@
 </template>
 
 <script>
-
+import axios from "axios";
+import debounce from "lodash/debounce";
 import { merge } from "lodash";
 import moment from "moment";
 import Translations from "@translations/components/event/EventList.json";
@@ -285,6 +323,10 @@ export default {
     attributionCopyright:{
       type: String,
       default: ""
+    },
+    itemsPerPageDefault: {
+      type: Number,
+      default: 1
     }
   },
   data () {
@@ -292,8 +334,11 @@ export default {
       locale: this.$i18n.locale,
       search: '',
       searchPassed : '',
-      itemsPerPageOptions: [10, 20, 50, 100, -1],
-      itemsPerPage: 10,
+      itemsPerPageOptions: [1,10, 20, 50, 100, -1],
+      itemsPerPage: this.itemsPerPageDefault,
+      itemsPerPagePassed: this.itemsPerPageDefault,
+      page:1,
+      pagePassed:1,
       headers: [
         {
           text: 'Id',
@@ -305,17 +350,25 @@ export default {
         { text: 'Description', value: 'fulldescription' },
         { text: 'Image', value: 'logos' }
       ],
+      loading: false,
       loadingMap: false,
       errorUpdate: false,
       pointsComingMap : [],
       eventscoming:[],
       eventspassed:[],
-      pointsComing:[]
+      pointsComing:[],
+      totalItems:0,
+      totalItemsPassed:0
 
     }
   },
+  watch:{
+    pointsComing(){
+      this.createMapComing();
+    }
+  },
   mounted() {
-    this.createMapComing();
+    //this.createMapComing();
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
@@ -380,7 +433,6 @@ export default {
 
     },
     createMapComing () {
-      const self = this;
       this.errorUpdate =200;
       this.loadingMap = true;
       this.pointsComingMap.length = 0;
@@ -390,21 +442,64 @@ export default {
           this.pointsComingMap.push(this.buildPoint(waypoint.event,waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
         });
         this.loadingMap = false;
-        setTimeout(() => {
-          self.$refs.mmap.redrawMap()
-        },500);
+        this.redrawMap();
       }
     },computedDateFormat(date) {
-      // moment.locale(this.locale);
-      // return this.date
-      //   ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
-      //   : null;
       return moment(date).format("DD/MM/YYYY hh:mm");
     },
+    getEvents(coming){
+      this.loading = true;
+      let params = {
+        'coming':coming,
+        'perPage':(coming) ? this.itemsPerPage : this.itemsPerPagePassed,
+        'page': (coming) ? this.page : this.pagePassed,
+        'search':{
+          'name':this.search
+        },
+        'searchPassed':{
+          'name':this.searchPassed
+        }
+      }
+      axios
+        .post(this.$t('routes.getList'),params)
+        .then(response => {
+          //console.error(response.data);
+          if(response.data.eventComing){
+            this.eventscoming = response.data.eventComing;
+            this.pointsComing = response.data.points;
+            this.totalItems = response.data.totalItems;
+          }
+          if(response.data.eventPassed){
+            this.eventspassed = response.data.eventPassed;
+            this.totalItemsPassed = response.data.totalItems;
+          }
+          this.loading = false;
+        })
+        .catch(function (error) {
+          console.error(error);
+        });        
+    },
     updateOptions(data){
-      console.error(data);
-    }
-
+      this.itemsPerPage = data.itemsPerPage;
+      this.page = data.page;
+      this.getEvents(true);
+    },
+    updateOptionsPassed(data){
+      this.itemsPerPagePassed = data.itemsPerPage;
+      this.pagePassed = data.page;
+      this.getEvents(false);
+    },
+    redrawMap(){
+      setTimeout(() => {
+        if(this.$refs.mmap !== undefined){this.$refs.mmap.redrawMap()}
+      },500);
+    },
+    updateSearch: debounce(function(value) {
+      this.getEvents(true);
+    }, 1000),    
+    updateSearchPassed: debounce(function(value) {
+      this.getEvents(false);
+    }, 1000)    
   }
 }
 </script>

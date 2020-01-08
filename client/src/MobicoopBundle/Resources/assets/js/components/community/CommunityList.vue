@@ -17,18 +17,8 @@
         <v-card class="pa-6">
           <v-row v-if="loading">
             <v-skeleton-loader
-              ref="skeleton"
-              type="list-item-avatar-three-line"
-              class="mx-auto"
-              width="100%"
-            />  
-            <v-skeleton-loader
-              ref="skeleton"
-              type="list-item-avatar-three-line"
-              class="mx-auto"
-              width="100%"
-            />  
-            <v-skeleton-loader
+              v-for="n in 3"
+              :key="n"
               ref="skeleton"
               type="list-item-avatar-three-line"
               class="mx-auto"
