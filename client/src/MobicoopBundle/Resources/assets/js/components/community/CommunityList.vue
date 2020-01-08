@@ -15,54 +15,41 @@
           <v-toolbar-title> {{ $t('myCommunities') }}</v-toolbar-title>
         </v-toolbar>
         <v-card class="pa-6">
-          <v-data-iterator
-            :items="communitiesUser"
-            :items-per-page.sync="itemsPerPage"
-            :footer-props="{
-              'items-per-page-options': itemsPerPageOptions,
-              'items-per-page-all-text': $t('all'),
-              'itemsPerPageText': $t('linePerPage')
-            }"
-            loading
-          >
-            <template>
-              <v-row v-if="loading">
-                <v-skeleton-loader
-                  ref="skeleton"
-                  type="list-item-avatar-three-line"
-                  class="mx-auto"
-                  width="100%"
-                />  
-                <v-skeleton-loader
-                  ref="skeleton"
-                  type="list-item-avatar-three-line"
-                  class="mx-auto"
-                  width="100%"
-                />  
-                <v-skeleton-loader
-                  ref="skeleton"
-                  type="list-item-avatar-three-line"
-                  class="mx-auto"
-                  width="100%"
-                />  
-              </v-row>
-              <v-row v-else>
-                <v-col
-                  v-for="item in communitiesUser"
-                  :key="item.index"
-                  cols="12"
-                  class="ma-3 pa-6"
-                  outlined
-                  tile
-                >
-                  <CommunityListItem
-                    :item="item"
-                    :can-leave="true"
-                  />
-                </v-col>
-              </v-row>
-            </template>
-          </v-data-iterator>
+          <v-row v-if="loading">
+            <v-skeleton-loader
+              ref="skeleton"
+              type="list-item-avatar-three-line"
+              class="mx-auto"
+              width="100%"
+            />  
+            <v-skeleton-loader
+              ref="skeleton"
+              type="list-item-avatar-three-line"
+              class="mx-auto"
+              width="100%"
+            />  
+            <v-skeleton-loader
+              ref="skeleton"
+              type="list-item-avatar-three-line"
+              class="mx-auto"
+              width="100%"
+            />  
+          </v-row>
+          <v-row v-else>
+            <v-col
+              v-for="item in communitiesUser"
+              :key="item.index"
+              cols="12"
+              class="ma-3 pa-6"
+              outlined
+              tile
+            >
+              <CommunityListItem
+                :item="item"
+                :can-leave="true"
+              />
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
