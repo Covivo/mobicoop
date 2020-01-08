@@ -68,10 +68,10 @@ export default {
   },
   computed: {
     isDriver () {
-      return !!this.proposal.outward.criteria.driver;
+      return this.proposal.outward.criteria.driver;
     },
     isPassenger () {
-      return !!this.proposal.outward.criteria.passenger;
+      return (this.proposal.outward.criteria.passenger && this.proposal.outward.criteria.solidary != 1);
     },
     isRegular () {
       return this.proposal.outward.criteria.frequency === 2;
