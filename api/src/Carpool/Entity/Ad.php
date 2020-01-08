@@ -49,6 +49,7 @@ use App\Carpool\Controller\AdAskGet;
  *          "post"={
  *              "method"="POST",
  *              "path"="/carpools",
+ *              "normalization_context"={"groups"={"results"}},
  *              "controller"=AdPost::class,
  *          },
  *          "post_ask"={
@@ -352,7 +353,7 @@ class Ad
     /**
      * @var array|null The carpool results.
      *
-     * @Groups("read")
+     * @Groups("results")
      */
     private $results;
 

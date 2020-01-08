@@ -883,7 +883,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
     public function getBirthYear(): ?int
     {
-        return $this->birthDate ? (int)$this->birthDate->format('Y') : null;
+        return $this->birthYear;
     }
 
     public function setBirthYear(?int $birthYear)
