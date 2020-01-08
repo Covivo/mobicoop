@@ -580,6 +580,8 @@ class ProposalMatcher
                     $waypoint->setDestination(true);
                 }
                 $waypoint->setAddress(clone $point['address']);
+                $waypoint->setDuration($point['duration']);
+                $waypoint->setRole($point['candidate']);
                 $matching->addWaypoint($waypoint);
             }
 
