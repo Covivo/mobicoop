@@ -43,7 +43,7 @@
               :min="nowDate"
               first-day-of-week="1"
               @input="menuOutwardDate = false"
-              @change="change,blockTime(),blockDate()"
+              @change="change(),blockTime(),blockDate()"
             />
           </v-menu>
         </v-col>
@@ -239,43 +239,43 @@
                 label="L"
                 color="primary"
                 :disabled="false"
-                @change="change, getValueCheckbox($event,item,'mon')"
+                @change="change(), getValueCheckbox($event,item,'mon')"
               />
               <v-checkbox
                 v-model="item.tue"
                 label="Ma"
                 color="primary"
-                @change="change, getValueCheckbox($event,item,'tue')"
+                @change="change(), getValueCheckbox($event,item,'tue')"
               />
               <v-checkbox
                 v-model="item.wed"
                 label="Me"
                 color="primary"
-                @change="change, getValueCheckbox($event,item,'wed')"
+                @change="change(), getValueCheckbox($event,item,'wed')"
               />
               <v-checkbox
                 v-model="item.thu"
                 label="J"
                 color="primary"
-                @change="change, getValueCheckbox($event,item,'thu')"
+                @change="change(), getValueCheckbox($event,item,'thu')"
               />
               <v-checkbox
                 v-model="item.fri"
                 label="V"
                 color="primary"
-                @change="change, getValueCheckbox($event,item,'fri')"
+                @change="change(), getValueCheckbox($event,item,'fri')"
               />
               <v-checkbox
                 v-model="item.sat"
                 label="S"
                 color="primary"
-                @change="change, getValueCheckbox($event,item,'sat')"
+                @change="change(), getValueCheckbox($event,item,'sat')"
               />
               <v-checkbox
                 v-model="item.sun"
                 label="D"
                 color="primary"
-                @change="change, getValueCheckbox($event,item,'sun')"
+                @change="change(), getValueCheckbox($event,item,'sun')"
               />
             </v-row>
 
@@ -389,7 +389,7 @@
                     :disabled="item.returnDisabled"
                     :min="item.maxTimeFromOutwardRegular"
                     @click:minute="closeReturnTime(item.id)"
-                    @change="change"
+                    @change="change()"
                   />
                 </v-menu>
               </v-col>
