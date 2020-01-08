@@ -283,7 +283,7 @@
             align="center"
             justify="space-around"
           >
-            {{ $t('distance') }} : {{ direction.distance / 1000 }} km
+            {{ $t('distance') }} : {{ direction.distance }} km
           </v-row>
         </v-card>
       </v-col>
@@ -405,6 +405,7 @@ export default {
           .get(`${this.geoRouteUrl}${params}`)
           .then(res => {
             this.direction = res.data.member[0];
+            this.direction.distance = Math.ceil(this.direction.distance /1000)
             this.emitEvent();
           })
           .catch(err => {
