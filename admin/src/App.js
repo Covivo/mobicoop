@@ -59,13 +59,22 @@ const i18nProvider = locale => messages[locale];
 
 const entrypoint = process.env.REACT_APP_API;
 
-const fetchHeaders = {'Authorization': `Bearer ${localStorage.getItem('token')}`};
+// use this if the next code doesn't work... and remove the () after fetchHeaders on apiDocumentationParser declaration...
+// const fetchHeaders = {'Authorization': `Bearer ${localStorage.getItem('token')}`};
+// const fetchHydra = (url, options = {}) => baseFetchHydra(url, {
+//     ...options,
+//     headers: new Headers(fetchHeaders),
+// });
+
+const fetchHeaders = function () {
+  return {'Authorization': `Bearer ${localStorage.getItem('token')}`};
+};
 const fetchHydra = (url, options = {}) => baseFetchHydra(url, {
     ...options,
-    headers: new Headers(fetchHeaders),
+    headers: new Headers(fetchHeaders()),
 });
 
-const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint, { headers: new Headers(fetchHeaders) })
+const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint, { headers: new Headers(fetchHeaders()) })
     .then(
         ({ api }) => ({api}),
         (result) => {
@@ -88,6 +97,7 @@ const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint,
     );
 const dataProvider = baseDataProvider(entrypoint, fetchHydra, apiDocumentationParser);
 
+// todo : create a default resource that leads to the login page
 export default props => (
     <HydraAdmin
         apiDocumentationParser={ apiDocumentationParser }
@@ -100,7 +110,7 @@ export default props => (
     >
       {permissions => {
         return  [          
-          isAuthorized("user_manage")         ? <Resource name={'users'} {...users} /> : null,
+          <Resource name={'users'} {...users} />,
           isAuthorized("article_manage")      ? <Resource name={'articles'} {...articles} /> : null,
           isAuthorized("article_manage")      ? <Resource name={'sections'} {...sections} /> : null,
           isAuthorized("article_manage")      ? <Resource name={'paragraphs'} {...paragraphs} /> : null,
@@ -112,8 +122,6 @@ export default props => (
           isAuthorized("permission_manage")   ? <Resource name={'rights'} {...rights} /> : null,
           isAuthorized("territory_manage")    ? <Resource name={'territories'} {...territories} /> : null,
           isAuthorized("event_manage")        ? <Resource name={'events'} {...events} /> : null,
-          <Resource name="geo_search" />,
-          <Resource name="community_users" />,
           <Resource name="addresses" edit={ AddressEdit} title="Adresses" options={{ label: 'Adresses' }} icon={MapIcon} />,
           <Resource name="images" />
         ];
