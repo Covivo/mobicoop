@@ -274,7 +274,7 @@ class CarpoolController extends AbstractController
      * Matching Search
      * (AJAX POST)
      */
-    public function carpoolSearchMatching(Request $request, AdManager $adManager,UserManager $userManager)
+    public function carpoolSearchMatching(Request $request, AdManager $adManager, UserManager $userManager)
     {
         $params = json_decode($request->getContent(), true);
         if (isset($params['date']) && $params['date'] != '') {
@@ -316,8 +316,15 @@ class CarpoolController extends AbstractController
             $proposalAlreadyAsk = $userManager->getAsks($userManager->getLoggedUser());
             foreach ($result as $key => $oneResult) {
                 $result[$key]['alreadyask'] = 0;
-                $proposal =  $oneResult['resultPassenger'] != null ? $oneResult['resultPassenger']['outward']['proposalId'] :  $oneResult['resultDriver']['outward']['proposalId'];
-                if (in_array($proposal, $proposalAlreadyAsk))  $result[$key]['alreadyask'] = 1;
+                if ($oneResult['resultPassenger'] != null){
+                    $proposal = $oneResult['resultPassenger']['outward']['proposalId'];
+                    if (in_array($proposal, $proposalAlreadyAsk['offers'])) $result[$key]['alreadyask'] = 1;
+                }
+                if ($oneResult['resultDriver'] != null){
+                    $proposal = $oneResult['resultDriver']['outward']['proposalId'];
+                    if (in_array($proposal, $proposalAlreadyAsk['request'])) $result[$key]['alreadyask'] = 1;
+
+                }
             }
         }
 
