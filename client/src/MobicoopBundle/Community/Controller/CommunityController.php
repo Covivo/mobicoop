@@ -271,19 +271,6 @@ class CommunityController extends AbstractController
             }
         }
 
-        // todo : move inside service ?
-        // Get the community users
-        $users = [];
-        //test if the community has members
-        if (count($community->getCommunityUsers()) > 0) {
-            foreach ($community->getCommunityUsers() as $communityUser) {
-                if ($communityUser->getStatus() == 1 || $communityUser->getStatus() == 2) {
-                    // get all community Users
-                    array_push($users, $communityUser->getUser());
-                }
-            }
-        }
-
         return $this->render('@Mobicoop/community/community.html.twig', [
             'community' => $community,
             'user' => $user,
@@ -291,10 +278,32 @@ class CommunityController extends AbstractController
             'searchRoute' => "covoiturage/recherche",
             'error' => (isset($error)) ? $error : false,
             'points' => $ways,
-            'lastUsers' => $lastUsersFormated,
-            'users' => $users
+            'lastUsers' => $lastUsersFormated
+            
         ]);
     }
+
+    public function getCommunityUsers(Request $request){
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            // Get the community users
+            $users = [];
+            //test if the community has members
+            if (count($community->getCommunityUsers()) > 0) {
+                foreach ($community->getCommunityUsers() as $communityUser) {
+                    if ($communityUser->getStatus() == 1 || $communityUser->getStatus() == 2) {
+                        // get all community Users
+                        array_push($users, $communityUser->getUser());
+                    }
+                }
+            }
+
+            return new JsonResponse();
+        }
+        return new JsonResponse();
+    }
+
 
     /**
      * Join a community
