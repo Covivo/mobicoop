@@ -683,7 +683,7 @@ class UserManager
     {
         if ($asks = $this->askRepository->findAskByAsker($user)) {
             $arrayAsks = array();
-            foreach ($asks as $ask){
+            foreach ($asks as $ask) {
                 $arrayAsks[] = $ask->getMatching()->getProposalRequest()->getId();
             }
             return $arrayAsks;

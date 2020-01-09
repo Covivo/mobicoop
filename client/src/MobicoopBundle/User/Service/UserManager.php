@@ -580,4 +580,19 @@ class UserManager
         $this->logger->info('User PhoneToken Update | Fail');
         return null;
     }
+
+
+    /**
+     * Get the asks of a user
+     *
+     * @param User $user The user
+     *
+     * @return array Of asks or null
+     */
+    public function getAsks(User $user)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSubCollection($user->getId(), 'ask', 'asks');
+        return $response->getValue();
+    }
 }
