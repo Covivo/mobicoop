@@ -283,7 +283,8 @@ class CommunityController extends AbstractController
         ]);
     }
 
-    public function getCommunityUsers(Request $request){
+    public function getCommunityUsers(Request $request)
+    {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
