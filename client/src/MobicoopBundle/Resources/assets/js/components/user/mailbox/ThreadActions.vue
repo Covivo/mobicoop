@@ -2,6 +2,7 @@
   <v-content>
     <v-card
       class="pa-2 text-center"
+      :hidden="hideClickIcon"
     >
       <v-card
         class="mb-3"
@@ -241,7 +242,9 @@ export default {
       returnSunTime: null,
       outwardTrip:[],
       returnTrip:[],
-      chosenRole:null
+      chosenRole:null,
+      hideClickIcon : false
+
     }
   },
   computed:{
@@ -264,39 +267,44 @@ export default {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods:{
-    refreshInfos(){
-      this.loading = true;
-      let params = {
-        idAsk:this.idAsk,
-        idRecipient:this.idRecipient
-      }
-      axios.post(this.$t("urlGetAdAsk"),params)
-        .then(response => {
-          //console.error(response.data);
-          this.infosComplete = response.data;
+    refreshInfos() {
+      this.hideClickIcon = false;
+      if (this.idAsk != -2){
+        this.loading = true;
+        let params = {
+          idAsk: this.idAsk,
+          idRecipient: this.idRecipient
+        }
+        axios.post(this.$t("urlGetAdAsk"), params)
+          .then(response => {
+            //console.error(response.data);
+            this.infosComplete = response.data;
 
-          // If the user can be driver and passenger, we display driver infos by default
-          if(this.infosComplete.resultDriver !== null && this.infosComplete.resultPassenger !== null){
-            this.infos = this.infosComplete.resultDriver;
-            this.driver = this.passenger = true;
-          }
-          else if(this.infosComplete.resultPassenger !== null){
-            this.infos = this.infosComplete.resultPassenger;
-            this.driver = false;
-            this.passenger = true;
-          }
-          else{
-            this.infos = this.infosComplete.resultDriver;
-            this.driver = true;
-            this.passenger = false;
-          }
-        })
-        .catch(function (error) {
-          // console.log(error);
-        })
-        .finally(()=>{
-          this.$emit("refreshActionsCompleted");
-        });
+            // If the user can be driver and passenger, we display driver infos by default
+            if (this.infosComplete.resultDriver !== null && this.infosComplete.resultPassenger !== null) {
+              this.infos = this.infosComplete.resultDriver;
+              this.driver = this.passenger = true;
+            } else if (this.infosComplete.resultPassenger !== null) {
+              this.infos = this.infosComplete.resultPassenger;
+              this.driver = false;
+              this.passenger = true;
+            } else {
+              this.infos = this.infosComplete.resultDriver;
+              this.driver = true;
+              this.passenger = false;
+            }
+          })
+          .catch(function (error) {
+            // console.log(error);
+          })
+          .finally(() => {
+            this.$emit("refreshActionsCompleted");
+          });
+
+      }else{
+        this.hideClickIcon = true;
+        this.$emit("refreshActionsCompleted");
+      }
     },
     formatHour(date){
       return moment(date).format("HH")+'h'+moment(date).format("mm")
