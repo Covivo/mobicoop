@@ -334,7 +334,7 @@
       <v-spacer />
       <!-- Carpool (driver xor passenger) -->
       <v-btn
-        v-if="(driver ^ passenger) && step == 1"
+        v-if="(driver ^ passenger) && step == 1 && lResult.alreadyask == 0"
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
@@ -345,7 +345,7 @@
 
       <!-- Carpool (driver) --> 
       <v-btn
-        v-if="driver && passenger"
+        v-if="driver && passenger && lResult.alreadyask == 0"
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
@@ -356,7 +356,7 @@
 
       <!-- Carpool (passenger) --> 
       <v-btn
-        v-if="driver && passenger"
+        v-if="driver && passenger && lResult.alreadyask == 0"
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
@@ -364,6 +364,10 @@
       >
         {{ $t('carpoolAsPassenger') }}
       </v-btn>
+
+      <p v-if="lResult.alreadyask == 1">
+        {{ $t('alreadyAskCarpool') }}
+      </p>
 
       <!-- Step 2 or 3 (previous) --> 
       <v-btn
@@ -386,7 +390,7 @@
 
       <!-- Step 2 (regular outward, no return) --> 
       <v-btn
-        v-if="step == 2 && !lResult.return && outwardTrip.length>0"
+        v-if="step == 2 && !lResult.return && outwardTrip.length>0 && lResult.alreadyask == 0"
         color="secondary"
         @click="driver ? carpool(1) : carpool(2)"
       >
@@ -395,7 +399,7 @@
 
       <!-- Step 3 (regular return) --> 
       <v-btn
-        v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0)"
+        v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0) && lResult.alreadyask == 0"
         color="secondary"
         @click="driver ? carpool(1) : carpool(2)"
       >

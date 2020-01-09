@@ -676,4 +676,19 @@ class UserManager
 
         return array();
     }
+
+
+    //Get asks for an user -> use for check if a ask is already done on a proposal
+    public function getAsks(User $user): array
+    {
+        if ($asks = $this->askRepository->findAskByAsker($user)) {
+            $arrayAsks = array();
+            foreach ($asks as $ask) {
+                $arrayAsks['offers'][] = $ask->getMatching()->getProposalOffer()->getId();
+                $arrayAsks['request'][] = $ask->getMatching()->getProposalRequest()->getId();
+            }
+            return $arrayAsks;
+        }
+        return [];
+    }
 }

@@ -50,4 +50,14 @@ class AskRepository
         
         return $query->getQuery()->getResult();
     }
+
+    public function findAskByAsker(User $user)
+    {
+        $query = $this->repository->createQueryBuilder('a')
+            ->where('(a.user = :user)')
+            ->setParameter('user', $user)
+            ->orderBy('a.updatedDate', 'DESC');
+
+        return $query->getQuery()->getResult();
+    }
 }
