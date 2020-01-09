@@ -54,6 +54,7 @@ use App\User\Controller\UserPermissions;
 use App\User\Controller\UserAlerts;
 use App\User\Controller\UserAlertsUpdate;
 use App\User\Controller\UserLogin;
+use App\User\Controller\UserAsks;
 use App\User\Controller\UserThreads;
 use App\User\Controller\UserThreadsDirectMessages;
 use App\User\Controller\UserThreadsCarpoolMessages;
@@ -230,6 +231,11 @@ use App\User\EntityListener\UserListener;
  *              "method"="PUT",
  *              "path"="/users/{id}/anonymise_user",
  *              "controller"=UserAnonymise::class
+ *          },
+ *          "asks"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/asks",
+ *              "controller"=UserAsks::class
  *          },
  *      }
  * )

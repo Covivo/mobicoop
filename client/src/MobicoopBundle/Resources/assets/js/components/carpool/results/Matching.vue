@@ -297,6 +297,7 @@ export default {
             if (this.results[0].id) {
               this.lProposalId = this.results[0].id;
             }
+
           })
           .catch((error) => {
             console.log(error);
