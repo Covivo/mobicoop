@@ -1,17 +1,15 @@
-import React, { Component } from 'react';
-
-import { Admin, Login, Resource } from 'react-admin';
-import { Route, Redirect } from 'react-router-dom';
-import { hydraClient, fetchHydra as baseFetchHydra  } from '@api-platform/admin';
+import React from 'react';
+import { HydraAdmin } from '@api-platform/admin';
 import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/parseHydraDocumentation';
-
+import { dataProvider as baseDataProvider, fetchHydra as baseFetchHydra  } from '@api-platform/admin';
 import authProvider from './authProvider';
+import { Redirect } from 'react-router-dom';
+
+import { Login, Resource } from 'react-admin';
 
 import { createMuiTheme } from '@material-ui/core/styles';
-
-import MapIcon from '@material-ui/icons/Map';
-
 import frenchMessages from 'ra-language-french';
+import MapIcon from '@material-ui/icons/Map';
 
 import users from './Component/User/index';
 import articles from './Component/Article/Article/index';
@@ -61,6 +59,13 @@ const i18nProvider = locale => messages[locale];
 
 const entrypoint = process.env.REACT_APP_API;
 
+// use this if the next code doesn't work... and remove the () after fetchHeaders on apiDocumentationParser declaration...
+// const fetchHeaders = {'Authorization': `Bearer ${localStorage.getItem('token')}`};
+// const fetchHydra = (url, options = {}) => baseFetchHydra(url, {
+//     ...options,
+//     headers: new Headers(fetchHeaders),
+// });
+
 const fetchHeaders = function () {
   return {'Authorization': `Bearer ${localStorage.getItem('token')}`};
 };
@@ -68,74 +73,59 @@ const fetchHydra = (url, options = {}) => baseFetchHydra(url, {
     ...options,
     headers: new Headers(fetchHeaders()),
 });
-const dataProvider = api => hydraClient(api, fetchHydra);
-const apiDocumentationParser = entrypoint =>
-  parseHydraDocumentation(entrypoint, {
-    headers: new Headers(fetchHeaders()),
-  }).then(
-    ({ api }) => ({ api }),
-    result => {
-      const { api, status } = result;
 
-      if (status === 401) {      
-        return Promise.resolve({
-          api,
-          status,
-          customRoutes: [
-            <Route path="/" render={() => <Redirect to="/login" />} />,
-          ],
-        });
-      }
+const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint, { headers: new Headers(fetchHeaders()) })
+    .then(
+        ({ api }) => ({api}),
+        (result) => {
+            switch (result.status) {
+                case 401:
+                    return Promise.resolve({
+                        api: result.api,
+                        customRoutes: [{
+                            props: {
+                                path: '/',
+                                render: () => <Redirect to={`/login`}/>,
+                            },
+                        }],
+                    });
 
-      return Promise.reject(result);
-    }
-  );
-
-export default class extends Component {
-  state = { api: null };
-
-  componentDidMount() {
-    apiDocumentationParser(entrypoint).then(({ api }) => {
-      this.setState({ api });
-    }).catch((e) => {
-      console.log(e);
-    });
-  }
-
-  render() {
-      if (null === this.state.api) return <div>Loading...</div>;
-      return (
-          <Admin 
-                  loginPage={MyLoginPage}
-                  api={ this.state.api }
-                  locale="fr" i18nProvider={i18nProvider}
-                  apiDocumentationParser={ apiDocumentationParser }
-                  dataProvider= { dataProvider(this.state.api) }
-                  theme={ theme }
-                  authProvider={ authProvider }  
-          >      
-            {permissions => {
-                return  [          
-                  isAuthorized("user_manage")         ? <Resource name={'users'} {...users} /> : null,
-                  isAuthorized("article_manage")      ? <Resource name={'articles'} {...articles} /> : null,
-                  isAuthorized("article_manage")      ? <Resource name={'sections'} {...sections} /> : null,
-                  isAuthorized("article_manage")      ? <Resource name={'paragraphs'} {...paragraphs} /> : null,
-                  isAuthorized("community_manage")    ? <Resource name={'communities'} {...communities} /> : null,
-                  isAuthorized("community_manage")    ? <Resource name={'community_users'} {...community_users} /> : null,
-                  isAuthorized("relay_point_manage")  ? <Resource name={'relay_points'} {...relay_points} /> : null,
-                  isAuthorized("relay_point_manage")  ? <Resource name={'relay_point_types'} {...relay_point_types} /> : null,
-                  isAuthorized("permission_manage")   ? <Resource name={'roles'} {...roles} /> : null,
-                  isAuthorized("permission_manage")   ? <Resource name={'rights'} {...rights} /> : null,
-                  isAuthorized("territory_manage")    ? <Resource name={'territories'} {...territories} /> : null,
-                  isAuthorized("event_manage")        ? <Resource name={'events'} {...events} /> : null,
-                  <Resource name="geo_search" />,
-                  <Resource name="community_users" />,
-                  <Resource name="addresses" edit={ AddressEdit} title="Adresses" options={{ label: 'Adresses' }} icon={MapIcon} />,
-                  <Resource name="images" />
-                ];
+                default:
+                    return Promise.reject(result);
             }
-          }
-          </Admin>
-      )
-  }
-};
+        },
+    );
+const dataProvider = baseDataProvider(entrypoint, fetchHydra, apiDocumentationParser);
+
+// todo : create a default resource that leads to the login page
+export default props => (
+    <HydraAdmin
+        apiDocumentationParser={ apiDocumentationParser }
+        dataProvider={ dataProvider }
+        authProvider={ authProvider }
+        entrypoint={ entrypoint }
+        loginPage={ MyLoginPage }
+        locale="fr" i18nProvider={ i18nProvider }
+        theme={ theme }
+    >
+      {permissions => {
+        return  [          
+          <Resource name={'users'} {...users} />,
+          isAuthorized("article_manage")      ? <Resource name={'articles'} {...articles} /> : null,
+          isAuthorized("article_manage")      ? <Resource name={'sections'} {...sections} /> : null,
+          isAuthorized("article_manage")      ? <Resource name={'paragraphs'} {...paragraphs} /> : null,
+          isAuthorized("community_manage")    ? <Resource name={'communities'} {...communities} /> : null,
+          isAuthorized("community_manage")    ? <Resource name={'community_users'} {...community_users} /> : null,
+          isAuthorized("relay_point_manage")  ? <Resource name={'relay_points'} {...relay_points} /> : null,
+          isAuthorized("relay_point_manage")  ? <Resource name={'relay_point_types'} {...relay_point_types} /> : null,
+          isAuthorized("permission_manage")   ? <Resource name={'roles'} {...roles} /> : null,
+          isAuthorized("permission_manage")   ? <Resource name={'rights'} {...rights} /> : null,
+          isAuthorized("territory_manage")    ? <Resource name={'territories'} {...territories} /> : null,
+          isAuthorized("event_manage")        ? <Resource name={'events'} {...events} /> : null,
+          <Resource name="addresses" edit={ AddressEdit} title="Adresses" options={{ label: 'Adresses' }} icon={MapIcon} />,
+          <Resource name="images" />
+        ];
+    }
+      }
+    </HydraAdmin>
+);
