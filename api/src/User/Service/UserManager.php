@@ -681,10 +681,13 @@ class UserManager
     //Get asks for an user -> use for check if a ask is already done on a proposal
     public function getAsks(User $user): array
     {
-        if ($threads = $this->messageRepository->findThreads($user)) {
-            return $threads;
+        if ($asks = $this->askRepository->findAskByAsker($user)) {
+            $arrayAsks = array();
+            foreach ($asks as $ask){
+                $arrayAsks[] = $ask->getMatching()->getProposalRequest()->getId();
+            }
+            return $arrayAsks;
         }
         return [];
     }
-
 }

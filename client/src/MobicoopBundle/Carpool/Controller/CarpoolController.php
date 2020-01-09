@@ -312,15 +312,13 @@ class CarpoolController extends AbstractController
             $filters
         )) {
             $result = $ad->getResults();
-dump($result);
-            foreach ( $result as $oneResult){
-                if ($oneResult['resultPassenger'] != null ){
+            foreach ($result as $oneResult) {
+                if ($oneResult['resultPassenger'] != null) {
                     $proposal = $oneResult['resultPassenger']['outward']['proposalId'];
                 }
-                if ($oneResult['resultDriver'] != null ){
+                if ($oneResult['resultDriver'] != null) {
                     $proposal = $oneResult['resultDriver']['outward']['proposalId'];
                 }
-
             }
         }
 

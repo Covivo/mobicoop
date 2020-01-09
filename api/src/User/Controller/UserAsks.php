@@ -55,13 +55,13 @@ class UserAsks
      * @param User $data
      * @return Response
      */
-    public function __invoke(User $data): ?User
+    public function __invoke(User $data)
     {
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
         }
         // we search the messages
-        $this->userManager->getAsks($data);
-        return $data;
+        $asks = $this->userManager->getAsks($data);
+        return $asks;
     }
 }
