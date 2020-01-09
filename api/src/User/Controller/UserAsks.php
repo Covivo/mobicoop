@@ -35,7 +35,7 @@ use App\User\Entity\User;
 use App\User\Service\UserManager;
 
 /**
- * Controller class for user threads (list of messages as sender or recipient).
+ * Controller class for user asks
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
@@ -50,7 +50,7 @@ class UserAsks
     }
 
     /**
-     * This method is invoked when the list of messages is asked.
+     * This method is invoked when the list of asks of user is asked.
      *
      * @param User $data
      * @return Response
@@ -60,7 +60,7 @@ class UserAsks
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
         }
-        // we search the messages
+
         $asks = $this->userManager->getAsks($data);
         return $asks;
     }

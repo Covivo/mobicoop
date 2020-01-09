@@ -316,14 +316,17 @@ class CarpoolController extends AbstractController
             $proposalAlreadyAsk = $userManager->getAsks($userManager->getLoggedUser());
             foreach ($result as $key => $oneResult) {
                 $result[$key]['alreadyask'] = 0;
-                if ($oneResult['resultPassenger'] != null){
+                if ($oneResult['resultPassenger'] != null) {
                     $proposal = $oneResult['resultPassenger']['outward']['proposalId'];
-                    if (in_array($proposal, $proposalAlreadyAsk['offers'])) $result[$key]['alreadyask'] = 1;
+                    if (in_array($proposal, $proposalAlreadyAsk['offers'])) {
+                        $result[$key]['alreadyask'] = 1;
+                    }
                 }
-                if ($oneResult['resultDriver'] != null){
+                if ($oneResult['resultDriver'] != null) {
                     $proposal = $oneResult['resultDriver']['outward']['proposalId'];
-                    if (in_array($proposal, $proposalAlreadyAsk['request'])) $result[$key]['alreadyask'] = 1;
-
+                    if (in_array($proposal, $proposalAlreadyAsk['request'])) {
+                        $result[$key]['alreadyask'] = 1;
+                    }
                 }
             }
         }
