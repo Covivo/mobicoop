@@ -26,6 +26,7 @@ namespace App\Communication\Service;
 use App\Communication\Entity\Email;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 use function GuzzleHttp\json_decode;
 
@@ -48,7 +49,7 @@ class EmailManager
     /**
        * EmailManager constructor.
        * @param \Swift_Mailer $mailer
-       * @param \Twig_Environment $templating
+       * @param Environment $templating
        * @param LoggerInterface $logger
        * @param TranslatorInterface $translator
        * @param string $emailSender
@@ -56,7 +57,7 @@ class EmailManager
        * @param string $templatePath
        * @param string $emailAdditionalHeaders
        */
-    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailReplyTo, string $templatePath, string $emailAdditionalHeaders)
+    public function __construct(\Swift_Mailer $mailer, Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailReplyTo, string $templatePath, string $emailAdditionalHeaders)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
