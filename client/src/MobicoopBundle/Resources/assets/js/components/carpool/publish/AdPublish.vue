@@ -849,6 +849,7 @@ export default {
     },
     distance() {
       let price = Math.round(this.distance * this.pricePerKm * 100)/100;
+      console.error('lallal '+price);
       this.roundPrice(price, this.regular ? 2 : 1);
     },
     route(){
@@ -929,7 +930,7 @@ export default {
       this.route = route;
       this.origin = route.origin;
       this.destination = route.destination;
-      this.distance = route.direction ? route.direction.distance / 1000 : null;
+      this.distance = route.direction ? route.direction.distance : null;
       this.duration = route.direction ? route.direction.duration : null;
       this.selectedCommunities = route.communities ? route.communities : null;
     },
@@ -981,7 +982,7 @@ export default {
         }
       })
         .then(function (response) {
-          if (response.data && response.data.result && response.data.result.id) {
+          if (response.data) {
             // uncomment when results page activated
             //var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
             window.location.href = "/utilisateur/profil/modifier/mes-annonces";

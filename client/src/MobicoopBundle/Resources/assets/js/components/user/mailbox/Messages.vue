@@ -216,7 +216,7 @@ export default {
   },
   methods: {
     updateDetails(data){
-      console.info(this.currentIdAsk )
+      
       this.hideClickIcon = false;
       (data.type=="Carpool") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
       this.idMessage = data.idMessage;
