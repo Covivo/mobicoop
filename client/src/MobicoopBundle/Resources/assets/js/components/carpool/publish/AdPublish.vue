@@ -849,7 +849,6 @@ export default {
     },
     distance() {
       let price = Math.round(this.distance * this.pricePerKm * 100)/100;
-      console.error('lallal '+price);
       this.roundPrice(price, this.regular ? 2 : 1);
     },
     route(){
