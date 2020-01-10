@@ -589,7 +589,12 @@ export default {
         : "";
     },
     age() {
-      return this.lResult ? moment().diff(moment([this.lResult.carpooler.birthDate]),'years')+' '+this.$t("birthYears") : ''
+      if (this.lResult) {
+        if (this.lResult.carpooler.birthYear) {
+          return moment().diff(moment([this.lResult.carpooler.birthYear]),'years')+' '+this.$t("birthYears");
+        }
+      }
+      return null;
     },
     waypoints() {
       return this.lResult.resultPassenger ? this.lResult.resultPassenger.outward.waypoints : this.lResult.resultDriver.outward.waypoints;

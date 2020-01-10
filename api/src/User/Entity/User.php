@@ -316,7 +316,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","results","write", "threads", "thread"})
+     * @Groups({"read","write", "threads", "thread"})
      */
     private $familyName;
 
@@ -333,7 +333,7 @@ class User implements UserInterface, EquatableInterface
      * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=100, unique=true)
-     * @Groups({"read","results","write"})
+     * @Groups({"read","write"})
      */
     private $email;
 
@@ -349,7 +349,7 @@ class User implements UserInterface, EquatableInterface
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"read","results","write"})
      */
     private $gender;
 
@@ -365,7 +365,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface|null The birth date of the user.
      *
      * @ORM\Column(type="date", nullable=true)
-     * @Groups({"read","results","write"})
+     * @Groups({"read","write"})
      *
      * @ApiProperty(
      *     attributes={
@@ -376,10 +376,17 @@ class User implements UserInterface, EquatableInterface
     private $birthDate;
 
     /**
+     * @var \DateTimeInterface|null The birth year of the user.
+     *
+     * @Groups({"read","results"})
+     */
+    private $birthYear;
+
+    /**
      * @var string|null The telephone number of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","results","write"})
+     * @Groups({"read","write"})
      */
     private $telephone;
     
@@ -388,6 +395,12 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read", "write"})
      */
     private $oldTelephone;
+
+    /**
+     * @var string|null The telephone number of the user (for results).
+     * @Groups({"read","results"})
+     */
+    private $phone;
 
     /**
      * @var int phone display configuration (1 = restricted (default); 2 = all).
@@ -922,6 +935,11 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getBirthYear(): ?int
+    {
+        return ($this->birthDate ? $this->birthDate->format('Y') : null);
+    }
+
     public function getTelephone(): ?string
     {
         return $this->telephone;
@@ -932,6 +950,11 @@ class User implements UserInterface, EquatableInterface
         $this->telephone = $telephone;
 
         return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return ($this->phoneDisplay == self::PHONE_DISPLAY_ALL ? $this->telephone : null);
     }
 
     public function getPhoneDisplay(): ?int

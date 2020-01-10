@@ -896,12 +896,12 @@ class MassImportManager
             case Mass::STATUS_ANALYZED:
                 $email->setObject("[MobiMatch] Analyze du fichier n°".$mass->getId()." terminée");
                 $email->setMessage("L'analyse du fichier n°".$mass->getId()." a été effectuée");
-                $retour = $this->emailManager->send($email, $this->emailTemplatePath."mass.html.twig");
+                $retour = $this->emailManager->send($email, $this->emailTemplatePath."mass");
             break;
             case Mass::STATUS_MATCHED:
                 $email->setObject("[MobiMatch] Potentiel du fichier n°".$mass->getId()." terminée");
                 $email->setMessage("Le calcul du potentiel de covoiturage du fichier n°".$mass->getId()." a été effectué");
-                $retour = $this->emailManager->send($email, $this->emailTemplatePath."mass.html.twig");
+                $retour = $this->emailManager->send($email, $this->emailTemplatePath."mass");
             break;
         }
     }

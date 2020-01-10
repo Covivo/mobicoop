@@ -307,7 +307,7 @@ export default {
       }
     },
     formatHour(date){
-      return moment(date).format("HH")+'h'+moment(date).format("mm")
+      return moment.utc(date).format("HH")+'h'+moment.utc(date).format("mm")
     },
     formatArrayForRegular(results,direction){
       let currentTrip = null;

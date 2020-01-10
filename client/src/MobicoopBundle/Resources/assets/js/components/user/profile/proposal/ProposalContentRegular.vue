@@ -13,7 +13,7 @@
           :fri-active="hasFriday"
           :sat-active="hasSaturday"
           :sun-active="hasSunday"
-          :date-end-of-validity="proposal.outward.criteria.toDate"
+          :date-end-of-validity="proposal.outward.outwardLimitDate"
         />
       </v-col>
       
@@ -37,9 +37,9 @@
               class="py-0"
             >
               <route-summary
-                :origin="proposal.outward.waypoints[0].address"
-                :destination="proposal.outward.waypoints[proposal.outward.waypoints.length - 1].address"
-                :type="proposal.outward.criteria.frequency"
+                :origin="proposal.outward.outwardWaypoints[0].address"
+                :destination="proposal.outward.outwardWaypoints[proposal.outward.outwardWaypoints.length - 1].address"
+                :type="proposal.outward.frequency"
                 :regular="isRegular"
                 text-color-class="primary--text text--darken-2"
                 icon-color="accent"
@@ -74,59 +74,59 @@ export default {
   data () {
     return {
       outwardTimes: this.proposal.outward ? [
-        this.proposal.outward.criteria.monTime, 
-        this.proposal.outward.criteria.tueTime, 
-        this.proposal.outward.criteria.wedTime, 
-        this.proposal.outward.criteria.thuTime, 
-        this.proposal.outward.criteria.friTime, 
-        this.proposal.outward.criteria.satTime, 
-        this.proposal.outward.criteria.sunTime
+        this.proposal.outward.schedule.monOutwardTime, 
+        this.proposal.outward.schedule.tueOutwardTime, 
+        this.proposal.outward.schedule.wedOutwardTime, 
+        this.proposal.outward.schedule.thuOutwardTime, 
+        this.proposal.outward.schedule.friOutwardTime, 
+        this.proposal.outward.schedule.satOutwardTime, 
+        this.proposal.outward.schedule.sunOutwardTime
       ].filter(Boolean) : [],
       returnTimes: this.proposal.return ? [
-        this.proposal.return.criteria.monTime,
-        this.proposal.return.criteria.tueTime,
-        this.proposal.return.criteria.wedTime,
-        this.proposal.return.criteria.thuTime,
-        this.proposal.return.criteria.friTime,
-        this.proposal.return.criteria.satTime,
-        this.proposal.return.criteria.sunTime
+        this.proposal.return.schedule.monReturnTime,
+        this.proposal.return.schedule.tueReturnTime,
+        this.proposal.return.schedule.wedReturnTime,
+        this.proposal.return.schedule.thuReturnTime,
+        this.proposal.return.schedule.friReturnTime,
+        this.proposal.return.schedule.satReturnTime,
+        this.proposal.return.schedule.sunReturnTime
       ].filter(Boolean) : []
     }
   },
   computed: {
     hasReturn () {
-      return !isEmpty(this.proposal.return);
+      return !this.proposal.outward.oneWay;
     },
     isRegular () {
-      return this.proposal.outward.criteria.frequency === 2;
+      return this.proposal.outward.frequency === 2;
     },
     hasMonday () {
-      return (this.proposal.outward && this.proposal.outward.criteria.monCheck) || 
-        (this.proposal.return && this.proposal.return.criteria.monCheck);
+      return (this.proposal.outward && this.proposal.outward.schedule.mon) || 
+        (this.proposal.return && this.proposal.return.schedule.mon);
     },
     hasTuesday () {
-      return (this.proposal.outward && this.proposal.outward.criteria.tueCheck) || 
-        (this.proposal.return && this.proposal.return.criteria.tueCheck);
+      return (this.proposal.outward && this.proposal.outward.schedule.tue) || 
+        (this.proposal.return && this.proposal.return.schedule.tue);
     },
     hasWednesday () {
-      return (this.proposal.outward && this.proposal.outward.criteria.wedCheck) || 
-        (this.proposal.return && this.proposal.return.criteria.wedCheck);
+      return (this.proposal.outward && this.proposal.outward.schedule.wed) || 
+        (this.proposal.return && this.proposal.return.schedule.wed);
     },
     hasThursday () {
-      return (this.proposal.outward && this.proposal.outward.criteria.thuCheck) || 
-        (this.proposal.return && this.proposal.return.criteria.thuCheck);
+      return (this.proposal.outward && this.proposal.outward.schedule.thu) || 
+        (this.proposal.return && this.proposal.return.schedule.thu);
     },
     hasFriday () {
-      return (this.proposal.outward && this.proposal.outward.criteria.friCheck) || 
-        (this.proposal.return && this.proposal.return.criteria.friCheck);
+      return (this.proposal.outward && this.proposal.outward.schedule.fri) || 
+        (this.proposal.return && this.proposal.return.schedule.fri);
     },
     hasSaturday () {
-      return (this.proposal.outward && this.proposal.outward.criteria.satCheck) || 
-        (this.proposal.return && this.proposal.return.criteria.satCheck);
+      return (this.proposal.outward && this.proposal.outward.schedule.sat) || 
+        (this.proposal.return && this.proposal.return.schedule.sat);
     },
     hasSunday () {
-      return (this.proposal.outward && this.proposal.outward.criteria.sunCheck) || 
-        (this.proposal.return && this.proposal.return.criteria.sunCheck);
+      return (this.proposal.outward && this.proposal.outward.schedule.sun) || 
+        (this.proposal.return && this.proposal.return.schedule.sun);
     }
   }
 }

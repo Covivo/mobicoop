@@ -246,12 +246,18 @@ services:
                 displayStreetAddress: '%env(resolve:DISPLAY_STREETADDRESS)%'
                 displayVenue: '%env(resolve:DISPLAY_VENUE)%'
                 displayRelayPoint: '%env(resolve:DISPLAY_RELAY_POINT)%'
+                displayNamed: '%env(resolve:DISPLAY_NAMED)%'
+                displayEvent: '%env(resolve:DISPLAY_EVENT)%'
                 displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%'
     
     App\Geography\Service\GeoSearcher:
         arguments:
             $iconPath: '%env(resolve:GEOCOMPLETE_ICONS_PATH)%'
             $dataPath: '%env(resolve:DATA_URI)%'
+            $defaultSigResultNumber: '%env(resolve:GEOCOMPLETE_SIG_DEFAULT_RESULTS)%'
+            $defaultNamedResultNumber: '%env(resolve:GEOCOMPLETE_NAMED_DEFAULT_RESULTS)%'
+            $defaultRelayPointResultNumber: '%env(resolve:GEOCOMPLETE_RELAY_POINTS_DEFAULT_RESULTS)%'
+            $defaultEventResultNumber: '%env(resolve:GEOCOMPLETE_EVENTS_DEFAULT_RESULTS)%'
 
     # Image
     App\Image\Controller\:
