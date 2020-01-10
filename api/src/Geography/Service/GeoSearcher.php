@@ -48,6 +48,8 @@ class GeoSearcher
     const ICON_COMMUNITY = 3;
     const ICON_EVENT = 4;
     const ICON_VENUE = 23;
+
+    const MIN_RESULTS = 10; // minimum number of results to get SIG valuable results
     
     private $geocoder;
     private $geoTools;
@@ -109,7 +111,7 @@ class GeoSearcher
         }
 
         // 1 - sig addresses
-        $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input)->withLimit($this->defaultSigResultNumber))->all();
+        $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input)->withLimit(max($this->defaultSigResultNumber, self::MIN_RESULTS)))->all();
         // var_dump($geoResults);exit;
         foreach ($geoResults as $geoResult) {
             // ?? todo : exclude all results that doesn't include any input word at all
@@ -171,7 +173,26 @@ class GeoSearcher
             
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
 
-            $result[] = $address;
+            // special case : if locality equals the input, we put the result at the head of the array
+            if (strtolower(trim($address->getAddressLocality())) == strtolower(trim($input))) {
+                array_unshift($result, $address);
+            } else {
+                $result[] = $address;
+            }
+        }
+
+        // we limit the number of results
+        if (count($result)>$this->defaultSigResultNumber) {
+            $i = 0;
+            $finalResult = [];
+            foreach ($result as $res) {
+                $finalResult[] = $res;
+                $i++;
+                if ($i>=$this->defaultNamedResultNumber) {
+                    break;
+                }
+            }
+            $result = $finalResult;
         }
         
         // 2 - named addresses
@@ -250,6 +271,13 @@ class GeoSearcher
         }
 
         return $result;
+    }
+
+    private function build_sorter($key)
+    {
+        return function ($a, $b) use ($key) {
+            return strnatcmp($a[$key], $b[$key]);
+        };
     }
 
     /**
