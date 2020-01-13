@@ -103,6 +103,9 @@ export default {
       (this.refresh) ? this.getCommunityMemberList() : ''
     }
   },
+  created(){
+    this.getCommunityMemberList();
+  },
   methods: {
     getCommunityMemberList () {
       axios 
