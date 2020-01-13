@@ -85,8 +85,8 @@ export default {
     messages: TranslationsMerged,
   },
   props:{
-    community: {
-      type: Object,
+    communityId: {
+      type: Number,
       default: null
     },
     refresh: {
@@ -131,7 +131,7 @@ export default {
     getCommunityMemberList () {
       this.loading = true;
       let data = {
-        "id":this.community.id
+        "id":this.communityId
       }
       axios 
         .post(this.$t("urlMembersList"), data)

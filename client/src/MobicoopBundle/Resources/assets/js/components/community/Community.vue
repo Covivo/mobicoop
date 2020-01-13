@@ -180,7 +180,7 @@
               cols="8"
             >
               <community-member-list
-                :community="community"
+                :community-id="community.id"
                 :refresh="refreshMemberList"
                 :given-users="users"
                 :hidden="(!isAccepted && community.membersHidden)"
