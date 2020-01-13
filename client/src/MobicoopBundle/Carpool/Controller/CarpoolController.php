@@ -313,22 +313,25 @@ class CarpoolController extends AbstractController
         )) {
             $result = $ad->getResults();
             //We get the id of proposal the current user already asks (no matter the status)
-            $proposalAlreadyAsk = $userManager->getAsks($userManager->getLoggedUser());
-            foreach ($result as $key => $oneResult) {
-                $result[$key]['alreadyask'] = 0;
-                if ($oneResult['resultPassenger'] != null) {
-                    $proposal = $oneResult['resultPassenger']['outward']['proposalId'];
-                    if (in_array($proposal, $proposalAlreadyAsk['offers'])) {
-                        $result[$key]['alreadyask'] = 1;
+            if ($userManager->getLoggedUser() != null){
+                $proposalAlreadyAsk = $userManager->getAsks($userManager->getLoggedUser());
+                foreach ($result as $key => $oneResult) {
+                    $result[$key]['alreadyask'] = 0;
+                    if ($oneResult['resultPassenger'] != null) {
+                        $proposal = $oneResult['resultPassenger']['outward']['proposalId'];
+                        if (in_array($proposal, $proposalAlreadyAsk['offers'])) {
+                            $result[$key]['alreadyask'] = 1;
+                        }
                     }
-                }
-                if ($oneResult['resultDriver'] != null) {
-                    $proposal = $oneResult['resultDriver']['outward']['proposalId'];
-                    if (in_array($proposal, $proposalAlreadyAsk['request'])) {
-                        $result[$key]['alreadyask'] = 1;
+                    if ($oneResult['resultDriver'] != null) {
+                        $proposal = $oneResult['resultDriver']['outward']['proposalId'];
+                        if (in_array($proposal, $proposalAlreadyAsk['request'])) {
+                            $result[$key]['alreadyask'] = 1;
+                        }
                     }
                 }
             }
+
         }
 
         return $this->json($result);
