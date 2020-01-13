@@ -27,7 +27,7 @@
       </v-row>
     </v-card-title>
     <v-data-table
-      v-if="!hidden"
+      v-if="!hidden && !loading"
       :headers="headers"
       :items="users"
       :search="search"
@@ -50,7 +50,16 @@
       </template>
     </v-data-table>
     <v-card-text v-else>
-      {{ $t('hidden') }}
+      <div v-if="hidden">
+        {{ $t('hidden') }}
+      </div>
+      <div v-else>
+        <v-skeleton-loader
+          class="mx-auto"
+          width="100%"
+          type="list-item-three-line"
+        />        
+      </div>
     </v-card-text>
   </v-card>
 </template>
@@ -96,6 +105,7 @@ export default {
         { text: this.$t('table.colTitle.actions'), value: 'action', sortable: false },
       ],
       users: this.givenUsers ? this.givenUsers : [],
+      loading:true
     }
   },
   watch: {
@@ -116,6 +126,7 @@ export default {
         })
         .then(res => {
           this.users = res.data;
+          this.loading = false;
           this.$emit("refreshed");
         });
     },
