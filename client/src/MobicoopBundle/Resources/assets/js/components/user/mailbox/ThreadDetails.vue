@@ -166,7 +166,7 @@ export default {
           .catch(function (error) {
             console.log(error);
           });
-      }else if (this.idMessage = -2){
+      }else if (this.idMessage == -2){
         this.clearClickIcon = true
       }
       else{
