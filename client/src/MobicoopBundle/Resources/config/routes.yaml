@@ -420,9 +420,10 @@ community_last_users:
 
 # get community members list (AJAX)
 community_member_list:
+    methods: [POST]
     path:
-        fr: /community-member-list/{id}
-        en: /community-member-list/{id}
+        fr: /community/memberList
+        en: /community/memberList
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityMemberList
     requirements:
         id: '\d+'

@@ -409,27 +409,37 @@ class CommunityController extends AbstractController
      * @param CommunityManager $communityManager
      * @return void
      */
-    public function communityMemberList(int $id, CommunityManager $communityManager)
+    public function communityMemberList(Request $request, CommunityManager $communityManager)
     {
-        // retrive community;
-        $community = $communityManager->getCommunity($id);
-        $reponseofmanager = $this->handleManagerReturnValue($community);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $this->denyAccessUnlessGranted('show', $community);
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $community = $communityManager->getCommunity($data['id']);
+            $reponseofmanager = $this->handleManagerReturnValue($community);
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
+            }
+            $this->denyAccessUnlessGranted('show', $community);
 
-        $users = [];
-        //test if the community has members
-        if (count($community->getCommunityUsers()) > 0) {
-            foreach ($community->getCommunityUsers() as $communityUser) {
-                if ($communityUser->getStatus() == 1 || $communityUser->getStatus() == 2) {
-                    // get all community Users accepted_as_member or accepted_as_moderator
-                    array_push($users, $communityUser->getUser());
+            $users = [];
+            //test if the community has members
+            if (count($community->getCommunityUsers()) > 0) {
+                foreach ($community->getCommunityUsers() as $communityUser) {
+                    if ($communityUser->getStatus() == 1 || $communityUser->getStatus() == 2) {
+                        // get all community Users accepted_as_member or accepted_as_moderator
+                        array_push($users, $communityUser->getUser());
+                    }
                 }
             }
+            $totalItems = count($users);
+
+
+            return new JsonResponse([
+                "users"=>$users,
+                "totalItems"=>$totalItems
+            ]);
+        } else {
+            return new JsonResponse();
         }
-        return new Response(json_encode($users));
     }
 
     /**

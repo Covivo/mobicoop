@@ -11,7 +11,11 @@
             {{ $t('title') }}
           </h3>
         </v-col>
-        <v-col cols="12">
+        <!-- For now, the research is hidden. It's not functionnal -->
+        <v-col
+          cols="12"
+          hidden
+        >
           <div class="flex-grow-1" />
           <v-card
             flat
@@ -29,12 +33,15 @@
     <v-data-table
       v-if="!hidden && !loading"
       :headers="headers"
-      :items="users"
+      :items="usersShowned"
       :search="search"
       :footer-props="{
+        'items-per-page-options': itemsPerPageOptions,
         'items-per-page-all-text': $t('table.all'),
-        'itemsPerPageText': $t('table.lineNumber')
+        'itemsPerPageText': $t('table.lineNumber'),
       }"
+      :server-items-length="totalItems"
+      @update:options="updateOptions"
     >
       <template v-slot:item.action="{ item }">
         <v-tooltip top>
@@ -97,6 +104,7 @@ export default {
   },
   data () {
     return {
+      firstload:true,
       search: '',
       dialog: false,
       headers: [
@@ -104,8 +112,11 @@ export default {
         { text: this.$t('table.colTitle.givenName'), value: 'givenName' },
         { text: this.$t('table.colTitle.actions'), value: 'action', sortable: false },
       ],
+      itemsPerPageOptions: [1, 10, 20, 50, 100, -1],
       users: this.givenUsers ? this.givenUsers : [],
-      loading:true
+      usersShowned:[],
+      loading:true,
+      totalItems:0
     }
   },
   watch: {
@@ -118,20 +129,27 @@ export default {
   },
   methods: {
     getCommunityMemberList () {
+      this.loading = true;
+      let data = {
+        "id":this.community.id
+      }
       axios 
-        .get('/community-member-list/'+this.community.id, {
-          headers:{
-            'content-type': 'application/json'
-          }
-        })
+        .post(this.$t("urlMembersList"), data)
         .then(res => {
-          this.users = res.data;
+          this.users = res.data.users;
+          this.totalItems = res.data.totalItems;
           this.loading = false;
           this.$emit("refreshed");
         });
     },
     contactItem(item){
       this.$emit("contact",item);
+    },
+    updateOptions(data){
+      let page = 0+data.page;
+      let startItem = data.itemsPerPage*(page-1);
+      let endItem = startItem+data.itemsPerPage;
+      this.usersShowned = this.users.slice(startItem,endItem);
     }
   }
 }

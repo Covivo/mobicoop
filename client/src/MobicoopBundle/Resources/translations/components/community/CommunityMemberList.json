@@ -11,8 +11,8 @@
             "actions": "Actions"
         }
     },
-    "hidden": "La liste n'est visible que par les membres de la communauté"
-
+    "hidden": "La liste n'est visible que par les membres de la communauté",
+    "urlMembersList":"/community/memberList"
   },
   "en": { 
     "title": "Members list",
@@ -26,6 +26,7 @@
             "actions": "Actions"
         }
     },
-    "hidden": "The list is only visible for the community's members"
+    "hidden": "The list is only visible for the community's members",
+    "urlMembersList":"/community/memberList"
   }
 }
