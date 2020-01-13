@@ -131,7 +131,7 @@ export default {
       default: null
     },
     alerts: {
-      type: Array,
+      type: Object,
       default: null
     },
     platform: {
