@@ -419,10 +419,13 @@ export default {
               //accepted as user or moderator
               this.isAccepted = (res.data[0].status == 1 || res.data[0].status == 2);
               this.askToJoin = true
-              this.loading = false;
             }
             this.checkValidation = false;
+            this.loading = false;
           });
+      }
+      else{
+        this.loading = false;
       }
     },
     joinCommunity() {
