@@ -134,7 +134,7 @@ export default {
 
             let firstItem = {
               divider: true,
-              createdDate: moment(response.data[0].createdDate).format("ddd DD MMM YYYY")
+              createdDate: moment(response.data[0].createdDate).format("L")
             }
             this.items.push(firstItem);
 
@@ -146,7 +146,7 @@ export default {
               if (moment(item.createdDate).format("DDMMYYYY") !== currentDate) {
                 let divider = {
                   divider: true,
-                  createdDate: moment(item.createdDate).format("ddd DD MMM YYYY")
+                  createdDate: moment(item.createdDate).format("L")
                 };
                 currentDate = moment(item.createdDate).format("DDMMYYYY");
                 this.items.push(divider);
