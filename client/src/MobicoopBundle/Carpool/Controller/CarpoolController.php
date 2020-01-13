@@ -124,10 +124,11 @@ class CarpoolController extends AbstractController
         $proposal = new Proposal();
         $this->denyAccessUnlessGranted('create_ad', $proposal);
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
+            "firstAd" => true,
             "pricesRange" => [
                 "mid" => $this->midPrice,
                 "high" => $this->highPrice,
-                "forbidden" => $this->forbiddenPrice
+                "forbidden" => $this->forbiddenPrice,
             ]
         ]);
     }
@@ -313,7 +314,7 @@ class CarpoolController extends AbstractController
         )) {
             $result = $ad->getResults();
             //We get the id of proposal the current user already asks (no matter the status)
-            if ($userManager->getLoggedUser() != null){
+            if ($userManager->getLoggedUser() != null) {
                 $proposalAlreadyAsk = $userManager->getAsks($userManager->getLoggedUser());
                 foreach ($result as $key => $oneResult) {
                     $result[$key]['alreadyask'] = 0;
@@ -331,7 +332,6 @@ class CarpoolController extends AbstractController
                     }
                 }
             }
-
         }
 
         return $this->json($result);
