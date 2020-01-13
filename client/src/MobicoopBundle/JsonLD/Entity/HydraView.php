@@ -26,7 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity;
 /**
  * A hydra view from an hydra collection object.
  */
-class HydraView
+class HydraView implements \JsonSerializable
 {
     
     /**
@@ -54,6 +54,11 @@ class HydraView
      */
     private $next;
     
+    /**
+     * @var string The previous item of the view.
+     */
+    private $previous;
+
     public function getId()
     {
         return $this->id;
@@ -79,6 +84,11 @@ class HydraView
         return $this->next;
     }
 
+    public function getPrevious()
+    {
+        return $this->previous;
+    }
+
     public function setId($id)
     {
         $this->id = $id;
@@ -102,5 +112,23 @@ class HydraView
     public function setNext($next)
     {
         $this->next = $next;
+    }
+
+    public function setPrevious($previous)
+    {
+        $this->$previous = $previous;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'                => $this->getId(),
+            'type'                => $this->getType(),
+            'first'                => $this->getFirst(),
+            'last'                => $this->getLast(),
+            'next'                => $this->getNext(),
+            'previous'                => $this->getPrevious(),
+        ];
     }
 }

@@ -354,6 +354,14 @@ community_list:
         en: /community
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityList
 
+# Get the communities (AJAX)
+community_get_list:
+    methods: [POST]
+    path:
+        fr: /community/getCommunityList
+        en: /community/getCommunityList
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityList
+
 # display one community
 community_show:
     path:
@@ -567,6 +575,14 @@ event_list:
         fr: /evenements
         en: /events
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventList
+
+# Get the communities (AJAX)
+event_get_list:
+    methods: [POST]
+    path:
+        fr: /evenements/getEventList
+        en: /events/getEventList
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::getEventList
 
 # create event
 event_create:

@@ -115,9 +115,6 @@ export default {
       ]
     }
   },
-  created() {
-    console.log(this.event);
-  },
   methods:{
     report() {
       this.isLoading = true;

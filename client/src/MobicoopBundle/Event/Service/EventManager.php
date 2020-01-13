@@ -116,9 +116,11 @@ class EventManager
      * @param string                $orderBy            Property on which order the results (id or fromDate)
      * @param string                $order              Order type (asc or desc)
      * @param int                   $limit              The max number of results
+     * @param int                   $page               The hydra page
+     * @param int|null              $search             Array of search criterias
      * @return array|null The events found or null if not found.
      */
-    public function getEvents($flag = 1, ?\DateTimeInterface $endDateIsAfter = null, string $orderBy="fromDate", string $order="asc", int $limit=null)
+    public function getEvents($flag = 1, ?\DateTimeInterface $endDateIsAfter = null, string $orderBy="fromDate", string $order="asc", int $limit=null, int $page=1, $search=[])
     {
         $params=[];
 
@@ -138,10 +140,18 @@ class EventManager
         if ($limit) {
             $params['perPage'] = $limit;
         }
+        if ($page) {
+            $params['page'] = $page;
+        }
+        if (count($search)>0) {
+            foreach ($search as $key => $value) {
+                $params[$key] = $value;
+            }
+        }
 
         $response = $this->dataProvider->getCollection($params);
         if ($response->getCode() >=200 && $response->getCode() <= 300) {
-            return $response->getValue()->getMember();
+            return $response->getValue();
         }
         return $response->getValue();
     }
