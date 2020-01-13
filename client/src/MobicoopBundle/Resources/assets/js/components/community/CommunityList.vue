@@ -15,33 +15,31 @@
           <v-toolbar-title> {{ $t('myCommunities') }}</v-toolbar-title>
         </v-toolbar>
         <v-card class="pa-6">
-          <v-data-iterator
-            :items="communitiesUser"
-            :items-per-page.sync="itemsPerPage"
-            :footer-props="{
-              'items-per-page-options': itemsPerPageOptions,
-              'items-per-page-all-text': $t('all'),
-              'itemsPerPageText': $t('linePerPage')
-            }"
-          >
-            <template>
-              <v-row>
-                <v-col
-                  v-for="item in communitiesUser"
-                  :key="item.index"
-                  cols="12"
-                  class="ma-3 pa-6"
-                  outlined
-                  tile
-                >
-                  <CommunityListItem
-                    :item="item"
-                    :can-leave="true"
-                  />
-                </v-col>
-              </v-row>
-            </template>
-          </v-data-iterator>
+          <v-row v-if="loading">
+            <v-skeleton-loader
+              v-for="n in 3"
+              :key="n"
+              ref="skeleton"
+              type="list-item-avatar-three-line"
+              class="mx-auto"
+              width="100%"
+            />  
+          </v-row>
+          <v-row v-else>
+            <v-col
+              v-for="item in communitiesUser"
+              :key="item.index"
+              cols="12"
+              class="ma-3 pa-6"
+              outlined
+              tile
+            >
+              <CommunityListItem
+                :item="item"
+                :can-leave="true"
+              />
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
@@ -91,6 +89,8 @@
                 hide-details
                 :label="$t('search')"
                 single-line
+                clearable
+                @input="updateSearch"
               />
             </v-card>
           </v-col>
@@ -100,14 +100,37 @@
         :search="search"
         :items="communities"
         :items-per-page.sync="itemsPerPage"
+        :server-items-length="totalItems"
         :footer-props="{
           'items-per-page-options': itemsPerPageOptions,
           'items-per-page-all-text': $t('all'),
           'itemsPerPageText': $t('linePerPage')
         }"
+        loading
+        @update:options="updateOptions"
       >
         <template>
-          <v-row>
+          <v-row v-if="loading">
+            <v-skeleton-loader
+              ref="skeleton"
+              type="list-item-avatar-three-line"
+              class="mx-auto"
+              width="100%"
+            />
+            <v-skeleton-loader
+              ref="skeleton"
+              type="list-item-avatar-three-line"
+              class="mx-auto"
+              width="100%"
+            />
+            <v-skeleton-loader
+              ref="skeleton"
+              type="list-item-avatar-three-line"
+              class="mx-auto"
+              width="100%"
+            />
+          </v-row>
+          <v-row v-else>
             <v-col
               v-for="item in communities"
               :key="item.index"
@@ -126,7 +149,8 @@
 </template>
 
 <script>
-
+import axios from "axios";
+import debounce from "lodash/debounce";
 import { merge } from "lodash";
 import Translations from "@translations/components/community/CommunityList.json";
 import TranslationsClient from "@clientTranslations/components/community/CommunityList.json";
@@ -142,29 +166,20 @@ export default {
     messages: TranslationsMerged,
   },
   props:{
-    communities: {
-      type: Array,
-      default: null
-    },
-    communitiesUser:{
-      type: Array,
-      default: null
-    },
     paths: {
       type: Object,
       default: null
     },
-    canCreate: {
-      type: Boolean,
-      default: null
+    itemsPerPageDefault: {
+      type: Number,
+      default: 1
     }
   },
   data () {
     return {
       rerenderKey: 0,
       search: '',
-      itemsPerPageOptions: [10, 20, 50, 100, -1],
-      itemsPerPage: 10,
+      itemsPerPageOptions: [1, 10, 20, 50, 100, -1],
       headers: [
         {
           text: 'Id',
@@ -175,8 +190,20 @@ export default {
         { text: 'Nom', value: 'name' },
         { text: 'Description', value: 'description' },
         { text: 'Image', value: 'logos' }
-      ]
+      ],
+      communities:[],
+      communitiesUser:[],
+      canCreate:false,
+      communitiesView:null,
+      itemsPerPage:this.itemsPerPageDefault,
+      totalItems:0,
+      page:1,
+      loading:false
     }
+  },
+  mounted() {
+    //this.getCommunities();
+    console.error(this.communities.length);
   },
   methods: {
     leaveCommunity(community) {
@@ -193,7 +220,45 @@ export default {
     },
     refreshComponent() {
       this.rerenderKey++;
-    }
+    },
+    getCommunities(){
+      this.loading = true;
+      
+      // this.cancelRequest(); // CANCEL PREVIOUS REQUEST
+      // this.cancelSource = axios.CancelToken.source();
+
+      let params = {
+        'perPage':this.itemsPerPage,
+        'page':this.page,
+        'search':{
+          'name':this.search
+        }
+      }
+
+      axios
+        .post(this.$t('urlGetCommunities'),params)
+        .then(response => {
+          //console.error(response.data);
+          this.communities = response.data.communities;
+          this.communitiesUser = response.data.communitiesUser;
+          this.canCreate = response.data.canCreate;
+          this.communitiesView = response.data.communitiesView;
+          this.totalItems = response.data.totalItems;
+          this.loading = false;
+        })
+        .catch(function (error) {
+          console.error(error);
+        });          
+          
+    },
+    updateOptions(value){
+      this.itemsPerPage = value.itemsPerPage;
+      this.page = value.page;
+      this.getCommunities();
+    },
+    updateSearch: debounce(function(value) {
+      this.getCommunities();
+    }, 1000)
   }
 }
 </script>

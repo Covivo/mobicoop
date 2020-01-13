@@ -37,6 +37,7 @@ use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Controller class for community related actions.
@@ -46,6 +47,8 @@ class CommunityController extends AbstractController
 {
     use HydraControllerTrait;
 
+    const DEFAULT_NB_COMMUNITIES_PER_PAGE = 10; // Nb items per page by default
+
     private $createFromFront;
 
     /**
@@ -54,7 +57,7 @@ class CommunityController extends AbstractController
      */
     public function __construct($createFromFront)
     {
-        $this->createFromFront = $createFromFront;
+        $this->createFromFront = ($createFromFront === 'true') ? true : false;
     }
     
     /**
@@ -138,48 +141,72 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Get all communities.
+     * Communities list controller
      */
-    public function communityList(CommunityManager $communityManager, UserManager $userManager)
+    public function communityList()
     {
         $this->denyAccessUnlessGranted('list', new Community());
 
-        $user = $userManager->getLoggedUser();
-
-        if ($user) {
-            
-            // We get all the communities
-            $communities = $communityManager->getCommunities($user->getId());
-
-            // We get de communities of the user
-            $communityUsers = $communityManager->getAllCommunityUser($user->getId());
-            $communitiesUser = [];
-            $idCommunitiesUser = [];
-            foreach ($communityUsers as $communityUser) {
-                $communitiesUser[] = $communityUser->getCommunity();
-                $idCommunitiesUser[] = $communityUser->getCommunity()->getId();
-            }
-
-            // we delete those who the user is already in
-            $tempCommunities = [];
-            foreach ($communities as $key => $community) {
-                if (!in_array($community->getId(), $idCommunitiesUser)) {
-                    $tempCommunities[] = $communities[$key];
-                }
-            }
-            $communities = $tempCommunities;
-        } else {
-            $communitiesUser = [];
-            $communities = $communityManager->getCommunities();
-        }
 
         return $this->render('@Mobicoop/community/communities.html.twig', [
-            'communities' => $communities,
-            'communitiesUser' => $communitiesUser,
-            'canCreate' => $this->createFromFront
+            'defaultItemsPerPage' => self::DEFAULT_NB_COMMUNITIES_PER_PAGE
         ]);
     }
 
+    /**
+     * Get all communities (AJAX)
+     */
+    public function getCommunityList(CommunityManager $communityManager, UserManager $userManager, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $user = $userManager->getLoggedUser();
+            $data = json_decode($request->getContent(), true);
+
+            $perPage = (isset($data['perPage']) && !is_null($data['perPage'])) ? $data['perPage'] : null;
+            $page = (isset($data['page']) && !is_null($data['page'])) ? $data['page'] : null;
+            $search = (isset($data['search']) && !is_null($data['search'])) ? $data['search'] : [];
+
+            if ($user) {
+
+                // We get all the communities
+                $communities = $communityManager->getCommunities($user->getId(), $perPage, $page, $search);
+
+                // We get de communities of the user
+                $communityUsers = $communityManager->getAllCommunityUser($user->getId());
+                $communitiesUser = [];
+                $idCommunitiesUser = [];
+                foreach ($communityUsers as $communityUser) {
+                    $communitiesUser[] = $communityUser->getCommunity();
+                    $idCommunitiesUser[] = $communityUser->getCommunity()->getId();
+                }
+
+                // we delete those who the user is already in
+                // To Do : This code does'nt work anymore
+                // $tempCommunities = [];
+                // foreach ($communities as $key => $community) {
+                //     if (!in_array($community->getId(), $idCommunitiesUser)) {
+                //         $tempCommunities[] = $communities[$key];
+                //     }
+                // }
+                // $communities = $tempCommunities;
+            } else {
+                $communitiesUser = [];
+                $communities = $communityManager->getCommunities(null, $perPage, $page, $search);
+            }
+
+            return new JsonResponse([
+                'communities' => $communities->getMember(),
+                'communitiesUser' => $communitiesUser,
+                'canCreate' => $this->createFromFront,
+                'communitiesView' => $communities->getView(),
+                'totalItems' => $communities->getTotalItems()
+            ]);
+        } else {
+            return new JsonResponse("bad method");
+        }
+    }
+    
+    
     /**
      * Show a community
      */
@@ -244,19 +271,6 @@ class CommunityController extends AbstractController
             }
         }
 
-        // todo : move inside service ?
-        // Get the community users
-        $users = [];
-        //test if the community has members
-        if (count($community->getCommunityUsers()) > 0) {
-            foreach ($community->getCommunityUsers() as $communityUser) {
-                if ($communityUser->getStatus() == 1 || $communityUser->getStatus() == 2) {
-                    // get all community Users
-                    array_push($users, $communityUser->getUser());
-                }
-            }
-        }
-
         return $this->render('@Mobicoop/community/community.html.twig', [
             'community' => $community,
             'user' => $user,
@@ -264,10 +278,33 @@ class CommunityController extends AbstractController
             'searchRoute' => "covoiturage/recherche",
             'error' => (isset($error)) ? $error : false,
             'points' => $ways,
-            'lastUsers' => $lastUsersFormated,
-            'users' => $users
+            'lastUsers' => $lastUsersFormated
+            
         ]);
     }
+
+    public function getCommunityUsers(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            // Get the community users
+            $users = [];
+            //test if the community has members
+            if (count($community->getCommunityUsers()) > 0) {
+                foreach ($community->getCommunityUsers() as $communityUser) {
+                    if ($communityUser->getStatus() == 1 || $communityUser->getStatus() == 2) {
+                        // get all community Users
+                        array_push($users, $communityUser->getUser());
+                    }
+                }
+            }
+
+            return new JsonResponse();
+        }
+        return new JsonResponse();
+    }
+
 
     /**
      * Join a community

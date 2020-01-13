@@ -33,6 +33,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Geography\Entity\Address;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
@@ -97,6 +98,7 @@ use App\Event\Controller\ReportAction;
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "fromDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(DateFilter::class, properties={"toDate"})
+ * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  */
 class Event
 {
