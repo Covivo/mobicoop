@@ -335,7 +335,6 @@ class CarpoolController extends AbstractController
                         }
                     }
                 }
-
             }
         }
 
