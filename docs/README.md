@@ -128,10 +128,6 @@ Still this is purely optional it will drastically increase the speed to download
     - [rdex operator api](api/config/rdex/operator.json.dist)
     - [rdex clients api](api/config/rdex/clients.json.dist)
     - [rdex providers api](api/config/rdex/providers.dist)
-  
-- *Duplicate, rename without .dist & edit the gecocoder yaml config file (this is where you choose which geocoder providers to use):*
-  - [bazinga geocoder](api/config/packages/bazinga_geocoder.yaml.dist)
-
 
 ### Databases
 
