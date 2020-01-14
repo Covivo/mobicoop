@@ -174,11 +174,11 @@ class GeoSearcher
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
 
             // special case : if locality equals the input, we put the result at the head of the array
-            if (strtolower(trim($address->getAddressLocality())) == strtolower(trim($input))) {
-                array_unshift($result, $address);
-            } else {
-                $result[] = $address;
-            }
+            // if (strtolower(trim($address->getAddressLocality())) == strtolower(trim($input))) {
+            //     array_unshift($result, $address);
+            // } else {
+            $result[] = $address;
+            // }
         }
 
         // we limit the number of results

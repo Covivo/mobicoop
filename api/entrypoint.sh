@@ -5,4 +5,5 @@ openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e57
 chmod 777 config/jwt/* &&
 cp config/rdex/clients.json.dist config/rdex/clients.json &&
 cp config/rdex/operator.json.dist config/rdex/operator.json &&
-cp config/rdex/providers.json.dist config/rdex/providers.json
+cp config/rdex/providers.json.dist config/rdex/providers.json &&
+cp config/packages/bazinga_geocoder.yaml.dist config/packages/bazinga_geocoder.yaml

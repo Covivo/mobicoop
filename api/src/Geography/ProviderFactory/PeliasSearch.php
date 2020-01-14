@@ -154,7 +154,7 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
                 'streetNumber' => isset($props['housenumber']) ? $props['housenumber'] : null,
                 'streetName' => isset($props['street']) ? $props['street'] : null,
                 'subLocality' => isset($props['neighbourhood']) ? $props['neighbourhood'] : null,
-                'locality' => isset($props['locality']) ? $props['locality'] : null,
+                'locality' => (isset($props['locality']) && !is_null($props['locality'])) ? $props['locality'] : (isset($props['localadmin']) ? $props['localadmin'] : null),
                 'postalCode' => isset($props['postalcode']) ? $props['postalcode'] : null,
                 'adminLevels' => $adminLevels,
                 'country' => isset($props['country']) ? $props['country'] : null,
