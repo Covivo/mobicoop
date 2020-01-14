@@ -27,7 +27,6 @@
           lg="9"
           md="10"
           xl="6"
-          align="center"
         >
           <!-- Community : avatar, title and description -->
           <community-infos
@@ -36,9 +35,7 @@
             :avatar-version="avatarVersion"
           />
           <!-- community buttons and map -->
-          <v-row
-            align="center"
-          >
+          <v-row>
             <v-col
               cols="4"
               class="text-center"
@@ -176,14 +173,14 @@
 
           <!-- community members list + last 3 users -->
           <v-row
-            v-if="isLogged && isAccepted"
+            v-if="isLogged && isAccepted && !loading"
             align="start"
           >
             <v-col
               cols="8"
             >
               <community-member-list
-                :community="community"
+                :community-id="community.id"
                 :refresh="refreshMemberList"
                 :given-users="users"
                 :hidden="(!isAccepted && community.membersHidden)"
@@ -204,19 +201,31 @@
               />
             </v-col>
           </v-row>
+          <v-row v-else-if="loading">
+            <v-col cols="9">
+              <v-skeleton-loader
+                class="mx-auto"
+                type="card"
+              />              
+            </v-col>
+            <v-col cols="3">
+              <v-skeleton-loader
+                class="mx-auto"
+                type="card"
+              />              
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
       <!-- search journey -->
       <v-row
         justify="center"
-        align="left"
       >
         <v-col
           cols="12"
           lg="9"
           md="10"
           xl="6"
-          align="center"
           class="mt-6"
         >
           <h3 class="headline text-justify font-weight-bold">
@@ -225,7 +234,6 @@
         </v-col>
       </v-row>
       <v-row
-        align="center"
         justify="center"
       >
         <search
@@ -303,10 +311,6 @@ export default {
       type: Object,
       default: null
     },
-    users: {
-      type: Array,
-      default: null
-    },
     community:{
       type: Object,
       default: null
@@ -364,7 +368,7 @@ export default {
       pointsToMap:[],
       directionWay:[],
       leaveCommunityDialog: false,
-      loading: false,
+      loading: true,
       snackbar: false,
       textSnackbar: null,
       textSnackOk: this.community.validationType == 1 ? this.$t("snackbar.joinCommunity.textOkManualValidation") : this.$t("snackbar.joinCommunity.textOkAutoValidation"),
@@ -378,6 +382,7 @@ export default {
       refreshMemberList: false,
       refreshLastUsers: false,
       params: { 'communityId' : this.community.id },
+      users:[]
     }
   },
   mounted() {
@@ -416,7 +421,11 @@ export default {
               this.askToJoin = true
             }
             this.checkValidation = false;
+            this.loading = false;
           });
+      }
+      else{
+        this.loading = false;
       }
     },
     joinCommunity() {

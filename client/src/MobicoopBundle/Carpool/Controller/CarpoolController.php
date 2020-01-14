@@ -124,10 +124,11 @@ class CarpoolController extends AbstractController
         $proposal = new Proposal();
         $this->denyAccessUnlessGranted('create_ad', $proposal);
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
+            "firstAd" => true,
             "pricesRange" => [
                 "mid" => $this->midPrice,
                 "high" => $this->highPrice,
-                "forbidden" => $this->forbiddenPrice
+                "forbidden" => $this->forbiddenPrice,
             ]
         ]);
     }
@@ -313,25 +314,28 @@ class CarpoolController extends AbstractController
         )) {
             $result = $ad->getResults();
             //We get the id of proposal the current user already asks (no matter the status)
-            if ($userManager->getLoggedUser() != null){
+            if ($userManager->getLoggedUser() != null) {
                 $proposalAlreadyAsk = $userManager->getAsks($userManager->getLoggedUser());
+
                 foreach ($result as $key => $oneResult) {
                     $result[$key]['alreadyask'] = 0;
-                    if ($oneResult['resultPassenger'] != null) {
-                        $proposal = $oneResult['resultPassenger']['outward']['proposalId'];
-                        if (in_array($proposal, $proposalAlreadyAsk['offers'])) {
-                            $result[$key]['alreadyask'] = 1;
+                    //User made 0 ask, we skip verification
+                    if ($proposalAlreadyAsk != null){
+                        if ($oneResult['resultPassenger'] != null) {
+                            $proposal = $oneResult['resultPassenger']['outward']['proposalId'];
+                            if (in_array($proposal, $proposalAlreadyAsk['offers'])) {
+                                $result[$key]['alreadyask'] = 1;
+                            }
                         }
-                    }
-                    if ($oneResult['resultDriver'] != null) {
-                        $proposal = $oneResult['resultDriver']['outward']['proposalId'];
-                        if (in_array($proposal, $proposalAlreadyAsk['request'])) {
-                            $result[$key]['alreadyask'] = 1;
+                        if ($oneResult['resultDriver'] != null) {
+                            $proposal = $oneResult['resultDriver']['outward']['proposalId'];
+                            if (in_array($proposal, $proposalAlreadyAsk['request'])) {
+                                $result[$key]['alreadyask'] = 1;
+                            }
                         }
                     }
                 }
             }
-
         }
 
         return $this->json($result);
