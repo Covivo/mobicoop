@@ -313,7 +313,7 @@ class CarpoolController extends AbstractController
         )) {
             $result = $ad->getResults();
             //We get the id of proposal the current user already asks (no matter the status)
-            if ($userManager->getLoggedUser() != null){
+            if ($userManager->getLoggedUser() != null) {
                 $proposalAlreadyAsk = $userManager->getAsks($userManager->getLoggedUser());
                 foreach ($result as $key => $oneResult) {
                     $result[$key]['alreadyask'] = 0;
@@ -331,7 +331,6 @@ class CarpoolController extends AbstractController
                     }
                 }
             }
-
         }
 
         return $this->json($result);
