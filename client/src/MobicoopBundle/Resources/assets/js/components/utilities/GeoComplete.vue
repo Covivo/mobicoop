@@ -10,6 +10,7 @@
       hide-no-data
       clearable
       item-text="selectedDisplayedLabel"
+      item-value="key"
       color="primary"
       return-object
       no-filter
@@ -114,9 +115,7 @@ export default {
   },
   computed: {
     items() {
-      return this.entries.map(entry => {
-        return Object.assign({}, entry);
-      });
+      return this.entries;
     },
     geoRules() {
       if (this.required) {
@@ -141,6 +140,7 @@ export default {
         this.address = this.initAddress;
         this.entries = [];
         if (this.address) {
+          this.address.key = '0';
           this.address.displayedLabel = `${this.address.displayLabel[0]}`;
           this.address.displayedSecondLabel = `${this.address.displayLabel[1]}`;
           if (this.address.name) {
@@ -189,6 +189,7 @@ export default {
           }
 
           addresses.forEach((address, addressKey) => {
+            addresses[addressKey].key = addressKey;
             addresses[addressKey].displayedLabel = `${address.displayLabel[0]}`;
             addresses[addressKey].displayedSecondLabel = `${address.displayLabel[1]}`;
             if (address.name) {
@@ -254,8 +255,6 @@ export default {
           // Set Data & show them
           if (this.isLoading) return; // Another request is fetching, we do not show the previous one
           this.entries = [...results];
-          console.log(this.entries);
-
         })
         .catch(err => {
           this.items = [];

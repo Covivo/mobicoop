@@ -3,7 +3,7 @@ bazinga_geocoder:
     gmaps:
       factory: Bazinga\GeocoderBundle\ProviderFactory\GoogleMapsFactory
       cache: 'app.simple_cache'
-      # cache_lifetime: 3600
+      cache_lifetime: 3600
       aliases:
         - GMaps
       options:
@@ -21,8 +21,8 @@ bazinga_geocoder:
     
     pelias_autocomplete:
       factory: App\Geography\ProviderFactory\PeliasAutocompleteFactory
-      # cache: 'app.simple_cache'
-      # cache_lifetime: 3600
+      cache: 'app.simple_cache'
+      cache_lifetime: 3600
       locale: 'fr'
       aliases:
         - PeliasAutocomplete
@@ -31,8 +31,8 @@ bazinga_geocoder:
 
     pelias_search:
       factory: App\Geography\ProviderFactory\PeliasSearchFactory
-      # cache: 'app.simple_cache'
-      # cache_lifetime: 3600
+      cache: 'app.simple_cache'
+      cache_lifetime: 3600
       locale: 'fr'
       aliases:
         - PeliasSearch
@@ -44,4 +44,4 @@ bazinga_geocoder:
       factory: Bazinga\GeocoderBundle\ProviderFactory\ChainFactory
       options:
         # This is the order in which Providers will be called. Note that it stops its iteration when a provider returns a result.
-        services: ['@PeliasAutocomplete','@PeliasSearch', '@GMaps']
+        services: ['@PeliasAutocomplete','@PeliasSearch','@GMaps']
