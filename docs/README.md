@@ -129,7 +129,6 @@ Still this is purely optional it will drastically increase the speed to download
     - [rdex clients api](api/config/rdex/clients.json.dist)
     - [rdex providers api](api/config/rdex/providers.dist)
 
-
 ### Databases
 
 ⚠️ Don't forget to setup your SQL before !

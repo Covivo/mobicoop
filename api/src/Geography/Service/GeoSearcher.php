@@ -110,7 +110,6 @@ class GeoSearcher
 
         // 1 - sig addresses
         $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input)->withLimit($this->defaultSigResultNumber))->all();
-        // var_dump($geoResults);exit;
         foreach ($geoResults as $geoResult) {
             // ?? todo : exclude all results that doesn't include any input word at all
             $address = new Address();
@@ -170,7 +169,6 @@ class GeoSearcher
             }
             
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
-
             $result[] = $address;
         }
         
