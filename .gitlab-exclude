@@ -6,7 +6,6 @@
 /api/.env.prod.local
 /api/config/rdex/*.json
 /api/config/jwt/
-/api/config/packages/bazinga_geocoder.yaml
 /api/var/log/
 /api/public/robots.txt
 + /api/public/upload/icons/address-any.svg
