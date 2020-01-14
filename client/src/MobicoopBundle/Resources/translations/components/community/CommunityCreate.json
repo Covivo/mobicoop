@@ -31,7 +31,7 @@
       },
       "domain": {
         "label": "Restriction du domaine",
-        "tooltips": "Si vous souhaitez restreindre l'accès à la communauté à des emails spécifiques, saisissez ces noms de domaines ( exemple : monentreprise.fr) séparés par un ;",
+        "tooltips": "Si vous souhaitez restreindre l'accès à la communauté à des emails spécifiques, saisissez ces noms de domaines (exemple : monentreprise.fr) séparés par un ;",
         "error": "Veuillez renseigner un nom de domaine au bon format"
       }
     },
