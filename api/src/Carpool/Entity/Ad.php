@@ -70,7 +70,8 @@ use App\Carpool\Controller\AdAskGet;
  *              "method"="GET",
  *              "path"="/carpools/{id}",
  *              "controller"=AdGet::class,
- *              "read"=false
+ *              "read"=false,
+ *              "access_control"="is_granted('results_ad',object)"
  *          },
  *          "put_ask"={
  *              "method"="PUT",

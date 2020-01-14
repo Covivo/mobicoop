@@ -156,6 +156,7 @@ use App\User\EntityListener\UserListener;
  *      itemOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"read"}},
+ *              "security"="is_granted('read',object)"
  *          },
  *          "password_update"={
  *              "method"="PUT",
@@ -668,6 +669,11 @@ class User implements UserInterface, EquatableInterface
      * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRole", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      */
     private $userRoles;
+
+    /**
+     * @Groups({"read"})
+     */
+    private $roles;
 
     /**
      * @var ArrayCollection|null A user may have many specific rights.

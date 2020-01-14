@@ -320,7 +320,7 @@ class CarpoolController extends AbstractController
                 foreach ($result as $key => $oneResult) {
                     $result[$key]['alreadyask'] = 0;
                     //User made 0 ask, we skip verification
-                    if ($proposalAlreadyAsk != null){
+                    if ($proposalAlreadyAsk != null) {
                         if ($oneResult['resultPassenger'] != null) {
                             $proposal = $oneResult['resultPassenger']['outward']['proposalId'];
                             if (in_array($proposal, $proposalAlreadyAsk['offers'])) {
