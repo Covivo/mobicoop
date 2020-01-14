@@ -78,7 +78,7 @@ export default {
   },
   computed: {
     formateDate(){
-      return moment.utc(this.date).format("ddd DD MMM YYYY");
+      return moment.utc(this.date).format("L");
     },
     name() {
       return this.givenName + " " + this.familyName.substr(0, 1).toUpperCase() + ".";
