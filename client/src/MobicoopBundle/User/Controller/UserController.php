@@ -373,7 +373,7 @@ class UserController extends AbstractController
             $tabDefault = 'myProfile';
         }
 
-        dump ( $userManager->getProposals($user));
+        dump($userManager->getProposals($user));
 
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
