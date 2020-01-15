@@ -125,7 +125,7 @@ class Community
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readCommunity","results"})
+     * @Groups({"readCommunity","readCommunityUser","results"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -135,7 +135,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readCommunity","write","results"})
+     * @Groups({"readCommunity","readCommunityUser","write","results"})
      */
     private $name;
 

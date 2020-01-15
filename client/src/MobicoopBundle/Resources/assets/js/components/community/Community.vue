@@ -418,7 +418,7 @@ export default {
       document.body.appendChild(form);
       form.submit();
     },
-    /* Not used anymore. The status is sent directly from the controler. We keep it for potential rollback
+    // Not used anymore. The status is sent directly from the controler. We keep it for potential rollback
     // getCommunityUser() {
     //   if(this.user){
     //     this.checkValidation = true;
