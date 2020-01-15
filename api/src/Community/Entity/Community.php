@@ -240,7 +240,7 @@ class Community
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"readCommunity","write"})
+     * @Groups({"readCommunity","readCommunityUser","write"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
