@@ -627,6 +627,30 @@ class AdManager
     }
 
     /**
+     * Get an ad for permission check.
+     * Returns the ad based on the proposal without results.
+     *
+     * @param int $id       The ad id to get
+     * @return Ad|null
+     */
+    public function getAdForPermission(int $id)
+    {
+        $ad = new Ad();
+        if ($proposal = $this->proposalManager->get($id)) {
+            $ad->setId($id);
+            $ad->setFrequency($proposal->getCriteria()->getFrequency());
+            $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
+            $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
+            $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
+            if (!is_null($proposal->getUser())) {
+                $ad->setUserId($proposal->getUser()->getId());
+            }
+            return $ad;
+        }
+        return null;
+    }
+
+    /**
      * get all ads od a user
      *
      * @param integer $userId

@@ -26,16 +26,32 @@ namespace App\Carpool\Security;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Carpool\Entity\Ad;
+use App\Carpool\Service\AdManager;
+use App\Right\Service\PermissionManager;
 use App\User\Entity\User;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class AdVoter extends Voter
 {
     const CREATE_AD = 'create_ad';
     const DELETE_AD = 'delete_ad';
-    const POST = 'post';
-    const POST_DELEGATE = 'post_delegate';
-    const RESULTS = 'results_ad';
+    const POST_AD = 'post';
+    const POST_AD_DELEGATE = 'post_delegate';
+    const RESULTS_AD = 'results_ad';
     
+    private $security;
+    private $request;
+    private $adManager;
+    private $permissionManager;
+
+    public function __construct(RequestStack $requestStack, Security $security, AdManager $adManager, PermissionManager $permissionManager)
+    {
+        $this->request = $requestStack->getCurrentRequest();
+        $this->security = $security;
+        $this->adManager = $adManager;
+    }
 
     protected function supports($attribute, $subject)
     {
@@ -43,42 +59,37 @@ class AdVoter extends Voter
         if (!in_array($attribute, [
             self::CREATE_AD,
             self::DELETE_AD,
-            self::POST,
-            self::POST_DELEGATE,
-            self::RESULTS
+            self::POST_AD,
+            self::POST_AD_DELEGATE,
+            self::RESULTS_AD
             ])) {
             return false;
         }
 
-        // only vote on Ad objects inside this voter
-        // if (!$subject instanceof Ad) {
-        //     echo get_class($subject);exit;
-        //     return false;
-        // }
-
+        // Ad is a 'virtual' resource, we can't check its class
         return true;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $user = $token->getUser();
-        var_dump($token);
-        exit;
-        // $ad = $subject;
+        if (!$ad = $this->adManager->getAdForPermission($this->request->get("id"))) {
+            return false;
+        }
 
-        return true;
-        // switch ($attribute) {
-        //     case self::CREATE_AD:
-        //         return $this->canCreateAd();
-        //     case self::DELETE_AD:
-        //         return $this->canDeleteAd($ad, $user);
-        //     case self::POST:
-        //         return $this->canPostAd($user);
-        //     case self::POST_DELEGATE:
-        //         return $this->canPostDelegateAd($user);
-        //     case self::RESULTS:
-        //         return $this->canViewAdResults($ad, $user);
-        // }
+        $requester = $token->getUser();
+
+        switch ($attribute) {
+            case self::CREATE_AD:
+                return $this->canCreateAd();
+            case self::DELETE_AD:
+                return $this->canDeleteAd($ad, $requester);
+            case self::POST_AD:
+                return $this->canPostAd($requester);
+            case self::POST_AD_DELEGATE:
+                return $this->canPostDelegateAd($requester);
+            case self::RESULTS_AD:
+                return $this->canViewAdResults($ad, $requester);
+        }
 
         throw new \LogicException('This code should not be reached!');
     }
@@ -89,48 +100,48 @@ class AdVoter extends Voter
         return true;
     }
 
-    private function canDeleteAd(Ad $ad, User $user)
+    private function canDeleteAd(Ad $ad, UserInterface $requester)
     {
         // only registered users can delete ad
-        if (!$user instanceof User) {
+        if (!$requester instanceof User) {
             return false;
         }
         // only the author of the ad can delete the ad
-        if ($ad->getUser()->getId() !== $user->getId()) {
+        if ($ad->getUserId() !== $requester->getId()) {
             return false;
         }
-        return $this->permissionManager->checkPermission('proposal_delete_self', $user);
+        return $this->permissionManager->checkPermission('proposal_delete_self', $requester);
     }
 
-    private function canPostad(User $user)
+    private function canPostAd(UserInterface $requester)
     {
         // only registered users can post a ad
-        if (!$user instanceof User) {
+        if (!$requester instanceof User) {
             return false;
         }
         return true;
     }
 
-    private function canPostDelegateAd(User $user)
+    private function canPostDelegateAd(UserInterface $requester)
     {
         // only dedicated users can post a ad for another user
-        if (!$user instanceof User) {
+        if (!$requester instanceof User) {
             return false;
         }
-        return $this->permissionManager->checkPermission('proposal_post_delegate', $user);
+        return $this->permissionManager->checkPermission('proposal_post_delegate', $requester);
     }
 
-    private function canViewAdResults(Ad $ad, User $user)
+    private function canViewAdResults(Ad $ad, UserInterface $requester)
     {
         // only registered users can view ad results
-        if (!$user instanceof User) {
+        if (!$requester instanceof User) {
             return false;
         }
         // only the author of the ad or a dedicated user can view the results
-        if (($ad->getUserId() != $user->getId()) && (!$this->permissionManager->checkPermission('proposal_results_delegate', $user))) {
+        if (($ad->getUserId() != $requester->getId()) && (!$this->permissionManager->checkPermission('proposal_results_delegate', $requester))) {
             return false;
         }
         
-        return $this->permissionManager->checkPermission('proposal_results', $user);
+        return $this->permissionManager->checkPermission('proposal_results', $requester);
     }
 }
