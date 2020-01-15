@@ -23,64 +23,90 @@
 
 namespace App\User\Security;
 
+use App\Right\Service\PermissionManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserVoter extends Voter
 {
-    const READ = 'read';
+    const READ = 'user_read';
+    const UPDATE = 'update';
+    const PASSWORD = 'password';
+    const DELETE = 'delete';
+    const PROPOSALS_SELF = 'proposals_self';
+    const MESSAGES = 'messages';
 
     private $security;
+    private $permissionManager;
 
-    public function __construct(Security $security)
+    public function __construct(Security $security, PermissionManager $permissionManager)
     {
         $this->security = $security;
+        $this->permissionManager = $permissionManager;
     }
 
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::READ
+            self::READ,
+            self::UPDATE,
+            self::PASSWORD,
+            self::DELETE,
+            self::PROPOSALS_SELF,
+            self::MESSAGES,
             ])) {
             return false;
         }
-        
         // only vote on User objects inside this voter
         if (!$subject instanceof User) {
             return false;
         }
-
         return true;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        $requester = $token->getUser();
+        
         switch ($attribute) {
             case self::READ:
-                if ($this->security->isGranted('ROLE_ADMIN')) {
-                    return true;
-                }
+                return $this->canReadSelf($requester);
+            case self::UPDATE:
+                return $this->canUpdateSelf($requester);
+            case self::PASSWORD:
+                return $this->canChangePassword($requester);
+            case self::DELETE:
+                return $this->canDeleteSelf($requester);
+            case self::PROPOSALS_SELF:
+                return true;
+            case self::MESSAGES:
+                return true;
         }
-        $user = $token->getUser();
-        // $ad = $subject;
-
-        return true;
-        // switch ($attribute) {
-        //     case self::CREATE_AD:
-        //         return $this->canCreateAd();
-        //     case self::DELETE_AD:
-        //         return $this->canDeleteAd($ad, $user);
-        //     case self::POST:
-        //         return $this->canPostAd($user);
-        //     case self::POST_DELEGATE:
-        //         return $this->canPostDelegateAd($user);
-        //     case self::RESULTS:
-        //         return $this->canViewAdResults($ad, $user);
-        // }
 
         throw new \LogicException('This code should not be reached!');
+    }
+
+    private function canReadSelf(UserInterface $requester)
+    {
+        return $this->permissionManager->checkPermission('user_read_self', $requester);
+    }
+
+    private function canUpdateSelf(UserInterface $requester)
+    {
+        return $this->permissionManager->checkPermission('user_update_self', $requester);
+    }
+
+    private function canChangePassword(UserInterface $requester)
+    {
+        return $this->permissionManager->checkPermission('user_password_self', $requester);
+    }
+
+    private function canDeleteSelf(UserInterface $requester)
+    {
+        return $this->permissionManager->checkPermission('user_delete_self', $requester);
     }
 }

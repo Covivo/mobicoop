@@ -37,8 +37,8 @@ class AdVoter extends Voter
 {
     const CREATE_AD = 'create_ad';
     const DELETE_AD = 'delete_ad';
-    const POST_AD = 'post';
-    const POST_AD_DELEGATE = 'post_delegate';
+    const POST_AD = 'post_ad';
+    const POST_AD_DELEGATE = 'post_ad_delegate';
     const RESULTS_AD = 'results_ad';
     
     private $security;
@@ -51,6 +51,7 @@ class AdVoter extends Voter
         $this->request = $requestStack->getCurrentRequest();
         $this->security = $security;
         $this->adManager = $adManager;
+        $this->permissionManager = $permissionManager;
     }
 
     protected function supports($attribute, $subject)

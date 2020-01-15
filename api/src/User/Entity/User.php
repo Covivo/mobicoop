@@ -156,13 +156,14 @@ use App\User\EntityListener\UserListener;
  *      itemOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"read"}},
- *              "security"="is_granted('read',object)"
+ *              "security"="is_granted('user_read',object)"
  *          },
  *          "password_update"={
  *              "method"="PUT",
  *              "path"="/users/{id}/password_update",
  *              "controller"=UserUpdatePassword::class,
- *              "defaults"={"name"="reply"}
+ *              "defaults"={"name"="reply"},
+ *              "security"="is_granted('user_password_self',object)"
  *          },
  *          "password_update_request"={
  *              "method"="PUT",
@@ -204,6 +205,8 @@ use App\User\EntityListener\UserListener;
  *              "denormalization_context"={"groups"={"alerts"}},
  *              "path"="/users/{id}/alerts",
  *              "controller"=UserAlertsUpdate::class,
+ *              "security"="is_granted('user_update_self',object)"
+ *
  *          },
  *          "threads"={
  *              "method"="GET",
@@ -226,7 +229,8 @@ use App\User\EntityListener\UserListener;
  *          "put"={
  *              "method"="PUT",
  *              "path"="/users/{id}",
- *              "controller"=UserUpdate::class
+ *              "controller"=UserUpdate::class,
+ *              "security"="is_granted('user_update_self',object)"
  *          },
  *          "anonymise_user"={
  *              "method"="PUT",
