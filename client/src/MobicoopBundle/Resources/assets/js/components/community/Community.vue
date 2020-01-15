@@ -350,6 +350,10 @@ export default {
     points: {
       type: Array,
       default: null
+    },
+    userCommunityStatus: {
+      type: Number,
+      default:-1
     }
   },
   data () {
@@ -368,7 +372,7 @@ export default {
       pointsToMap:[],
       directionWay:[],
       leaveCommunityDialog: false,
-      loading: true,
+      loading: false,
       snackbar: false,
       textSnackbar: null,
       textSnackOk: this.community.validationType == 1 ? this.$t("snackbar.joinCommunity.textOkManualValidation") : this.$t("snackbar.joinCommunity.textOkAutoValidation"),
@@ -386,7 +390,12 @@ export default {
     }
   },
   mounted() {
-    this.getCommunityUser();
+    //this.getCommunityUser();
+    if(this.userCommunityStatus>=0){
+      this.isAccepted = (this.userCommunityStatus == 1 || this.userCommunityStatus == 2);
+      this.askToJoin = true
+    }
+
     this.checkIfUserLogged();
     this.showCommunityProposals();
     this.checkDomain();
@@ -409,25 +418,26 @@ export default {
       document.body.appendChild(form);
       form.submit();
     },
-    getCommunityUser() {
-      if(this.user){
-        this.checkValidation = true;
-        axios
-          .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
-          .then(res => {
-            if (res.data.length > 0) {
-              //accepted as user or moderator
-              this.isAccepted = (res.data[0].status == 1 || res.data[0].status == 2);
-              this.askToJoin = true
-            }
-            this.checkValidation = false;
-            this.loading = false;
-          });
-      }
-      else{
-        this.loading = false;
-      }
-    },
+    /* Not used anymore. The status is sent directly from the controler. We keep it for potential rollback
+    // getCommunityUser() {
+    //   if(this.user){
+    //     this.checkValidation = true;
+    //     axios
+    //       .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
+    //       .then(res => {
+    //         if (res.data.length > 0) {
+    //           //accepted as user or moderator
+    //           this.isAccepted = (res.data[0].status == 1 || res.data[0].status == 2);
+    //           this.askToJoin = true
+    //         }
+    //         this.checkValidation = false;
+    //         this.loading = false;
+    //       });
+    //   }
+    //   else{
+    //     this.loading = false;
+    //   }
+    // },
     joinCommunity() {
       this.loading = true;
       axios
