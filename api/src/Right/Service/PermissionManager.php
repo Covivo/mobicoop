@@ -64,7 +64,7 @@ class PermissionManager
      * @param Territory $territory
      * @return Permission
      */
-    public function checkPermission(String $rightName, UserInterface $requester, Territory $territory=null)
+    public function checkPermission(string $rightName, UserInterface $requester, Territory $territory=null)
     {
         $right = $this->rightRepository->findByName($rightName);
         if ($requester instanceof User) {
@@ -72,9 +72,7 @@ class PermissionManager
         } elseif ($requester instanceof App) {
             return $this->appHasPermission($right, $requester)->isGranted();
         }
-        $permission = new Permission(1);
-        $permission->setGranted(false);
-        return $permission->isGranted();
+        return false;
     }
 
     /**
@@ -161,8 +159,7 @@ class PermissionManager
         }
 
         // we check if the app has a role that has the right to do the action
-        foreach ($app->getRoles() as $roleName) {
-            $role = $this->roleRepository->findByName($roleName);
+        foreach ($app->getRoleObjects() as $role) {
             if ($this->roleHasRight($role, $right)) {
                 $permission->setGranted(true);
                 return $permission;

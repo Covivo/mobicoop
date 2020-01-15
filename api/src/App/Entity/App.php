@@ -163,6 +163,11 @@ class App implements UserInterface, EquatableInterface
         return $roles;
     }
     
+    public function getRoleObjects()
+    {
+        return $this->roles;
+    }
+
     public function addRole(Role $role): self
     {
         if (!$this->roles->contains($role)) {
