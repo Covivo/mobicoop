@@ -418,26 +418,25 @@ export default {
       document.body.appendChild(form);
       form.submit();
     },
-    // Not used anymore. The status is sent directly from the controler. We keep it for potential rollback
-    // getCommunityUser() {
-    //   if(this.user){
-    //     this.checkValidation = true;
-    //     axios
-    //       .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
-    //       .then(res => {
-    //         if (res.data.length > 0) {
-    //           //accepted as user or moderator
-    //           this.isAccepted = (res.data[0].status == 1 || res.data[0].status == 2);
-    //           this.askToJoin = true
-    //         }
-    //         this.checkValidation = false;
-    //         this.loading = false;
-    //       });
-    //   }
-    //   else{
-    //     this.loading = false;
-    //   }
-    // },
+    getCommunityUser() {
+      if(this.user){
+        this.checkValidation = true;
+        axios
+          .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
+          .then(res => {
+            if (res.data.length > 0) {
+              //accepted as user or moderator
+              this.isAccepted = (res.data[0].status == 1 || res.data[0].status == 2);
+              this.askToJoin = true
+            }
+            this.checkValidation = false;
+            this.loading = false;
+          });
+      }
+      else{
+        this.loading = false;
+      }
+    },
     joinCommunity() {
       this.loading = true;
       axios

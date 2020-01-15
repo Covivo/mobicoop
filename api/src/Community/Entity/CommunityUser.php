@@ -98,7 +98,7 @@ class CommunityUser
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readCommunityUser","write"})
+     * @Groups({"readCommunity","readCommunityUser","write"})
      * @MaxDepth(1)
      * @Assert\NotBlank
      */
@@ -108,7 +108,7 @@ class CommunityUser
      * @var int The status of the event (active/inactive).
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"readCommunityUser","write"})
+     * @Groups({"readCommunity","readCommunityUser","write"})
      */
     private $status;
     
