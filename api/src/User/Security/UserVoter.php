@@ -58,8 +58,6 @@ class UserVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        var_dump($this->security->getToken());
-        exit;
         switch ($attribute) {
             case self::READ:
                 if ($this->security->isGranted('ROLE_ADMIN')) {
