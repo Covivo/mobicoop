@@ -49,11 +49,24 @@ use App\Image\Entity\Image;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
+ *      collectionOperations={
+ *          "get"={
+ *              "security"="is_granted('relayPoint_read',object)"
+ *          },
+ *          "post"={
+ *              "security"="is_granted('relayPoint_create',object)"
+ *          },
+ *      },
  *      itemOperations={
- *          "get",
- *          "put",
- *          "delete"
+ *          "get"={
+ *              "security"="is_granted('relayPoint_read',object)"
+ *          },
+ *          "put"={
+ *              "security"="is_granted('relayPoint_update',object)"
+ *          },
+ *          "delete"={
+ *              "security"="is_granted('relayPoint_delete',object)"
+ *          }
  *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})

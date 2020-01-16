@@ -47,8 +47,19 @@ use App\Image\Entity\Icon;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *          "get",
+ *          "post"={
+ *              "security"="is_granted('relayPointType_create',object)"
+ *          },
+ *      },
+ *      itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"={
+ *              "security"="is_granted('relayPointType_delete',object)"
+ *          }
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
