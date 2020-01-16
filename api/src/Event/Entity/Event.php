@@ -199,6 +199,7 @@ class Event
     /**
      * @var User The creator of the event.
      *
+     * @ApiProperty(push=true)
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
@@ -220,6 +221,7 @@ class Event
     /**
      * @var Address The address of the event.
      *
+     * @ApiProperty(push=true)
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="event", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
