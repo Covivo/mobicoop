@@ -223,7 +223,9 @@ class UserManager
         if ($this->tokenStorage->getToken() === null) {
             return null;
         }
+        dump($this->tokenStorage->getToken());
         $user = $this->tokenStorage->getToken()->getUser();
+        dump($user);
         if ($user instanceof User) {
             if ($user->getBirthDate()) {
                 $user->setBirthYear($user->getBirthDate()->format('Y'));
