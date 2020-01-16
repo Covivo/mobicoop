@@ -277,6 +277,16 @@ services:
     App\Import\Controller\:
         resource: '../src/Import/Controller'
         tags: ['controller.service_arguments']
+    
+    # Mass Communication
+    App\MassCommunication\Controller\:
+        resource: '../src/MassCommunication/Controller'
+        tags: ['controller.service_arguments']
+
+    App\MassCommunication\Service\CampaignManager:
+        arguments:
+            $mailerProvider: '%env(resolve:MASS_MAILER_PROVIDER)%'
+            $smsProvider: '%env(resolve:MASS_SMS_PROVIDER)%'
 
     # Match
     App\Match\Controller\:

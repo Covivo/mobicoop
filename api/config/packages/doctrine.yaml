@@ -103,6 +103,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Import/Entity'
                 prefix: 'App\Import\Entity'
                 alias: Import
+            MassCommunication:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/MassCommunication/Entity'
+                prefix: 'App\MassCommunication\Entity'
+                alias: MassCommunication
             Match:
                 is_bundle: false
                 type: annotation

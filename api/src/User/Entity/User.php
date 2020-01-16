@@ -76,6 +76,8 @@ use App\User\Filter\ValidatedDateTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
 use App\Import\Entity\UserImport;
+use App\MassCommunication\Entity\Campaign;
+use App\MassCommunication\Entity\Delivery;
 use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 
@@ -328,6 +330,14 @@ class User implements UserInterface, EquatableInterface
     private $shortFamilyName;
 
     /**
+     * @var string|null The name of the user in a professional context.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $proName;
+
+    /**
      * @var string The email of the user.
      *
      * @Assert\NotBlank
@@ -336,6 +346,15 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","write"})
      */
     private $email;
+
+    /**
+     * @var string The email of the user in a professional context.
+     *
+     * @Assert\Email()
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $proEmail;
 
     /**
      * @var string The encoded password of the user.
@@ -761,6 +780,20 @@ class User implements UserInterface, EquatableInterface
     private $userNotifications;
 
     /**
+     * @var ArrayCollection|null The campaigns made by this user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Campaign", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     */
+    private $campaigns;
+
+    /**
+     * @var ArrayCollection|null The campaing deliveries where this user is recipient.
+     *
+     * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Delivery", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     */
+    private $deliveries;
+
+    /**
      * @var UserImport|null The user import data.
      *
      * @ORM\OneToOne(targetEntity="\App\Import\Entity\UserImport", mappedBy="user")
@@ -823,6 +856,8 @@ class User implements UserInterface, EquatableInterface
         $this->diariesAdmin = new ArrayCollection();
         $this->solidaries = new ArrayCollection();
         $this->userNotifications = new ArrayCollection();
+        $this->campaigns = new ArrayCollection();
+        $this->deliveries = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -875,6 +910,18 @@ class User implements UserInterface, EquatableInterface
         return strtoupper($this->familyName[0]) . ".";
     }
 
+    public function getProName(): ?string
+    {
+        return $this->proName;
+    }
+
+    public function setProName(?string $proName): self
+    {
+        $this->proName = $proName;
+
+        return $this;
+    }
+
     public function getEmail(): string
     {
         return $this->email;
@@ -883,6 +930,18 @@ class User implements UserInterface, EquatableInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getProEmail(): string
+    {
+        return $this->proEmail;
+    }
+
+    public function setProEmail(string $proEmail): self
+    {
+        $this->proEmail = $proEmail;
 
         return $this;
     }
@@ -1745,6 +1804,62 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($userNotification->getUser() === $this) {
                 $userNotification->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCampaigns()
+    {
+        return $this->campaigns->getValues();
+    }
+
+    public function addCampaign(Campaign $campaign): self
+    {
+        if (!$this->campaigns->contains($campaign)) {
+            $this->campaigns->add($campaign);
+            $campaign->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCampaign(Campaign $campaign): self
+    {
+        if ($this->campaigns->contains($campaign)) {
+            $this->campaigns->removeElement($campaign);
+            // set the owning side to null (unless already changed)
+            if ($campaign->getUser() === $this) {
+                $campaign->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDeliveries()
+    {
+        return $this->deliveries->getValues();
+    }
+
+    public function addDelivery(Delivery $delivery): self
+    {
+        if (!$this->deliveries->contains($delivery)) {
+            $this->deliveries->add($delivery);
+            $delivery->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDelivery(Delivery $delivery): self
+    {
+        if ($this->deliveries->contains($delivery)) {
+            $this->deliveries->removeElement($delivery);
+            // set the owning side to null (unless already changed)
+            if ($delivery->getUser() === $this) {
+                $delivery->setUser(null);
             }
         }
 
