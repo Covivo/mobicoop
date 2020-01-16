@@ -4,7 +4,8 @@
       <!--      Display travel informations-->
       <v-col
         cols="12"
-        class="col-lg-8"
+        md="8"
+        xl="6"
       >
         <!-- First line : dates -->
         <v-row
@@ -191,7 +192,7 @@
                 >
                   <v-col
                     cols="12"
-                    offset="1"
+                    class="ml-6"
                   >
                     <h2
                       v-if="!regular"
@@ -213,96 +214,101 @@
                     </p>
                   </v-col>
                 </v-row>
+              </v-row>
+              <v-col
+                cols="12"
+              >
+                <v-row
+                  align="center"
+                  dense
+                >
+                  <!--                    <v-col-->
+                  <!--                      :cols="12"-->
+                  <!--                    >-->
+                  <v-divider class="mb-2" />
+                  <!--                    </v-col>-->
+                </v-row>
+              </v-col>
+              <v-row dense>
                 <v-col
-                  cols="12"
+                  :cols="displayInfo ? 8 : 10"
+                  align="left"
+                  class="ml-3"
                 >
                   <v-row
                     align="center"
-                    dense
                   >
-                    <!--                    <v-col-->
-                    <!--                      :cols="12"-->
-                    <!--                    >-->
-                    <v-divider class="mb-3" />
-                    <!--                    </v-col>-->
+                    <v-timeline
+                      dense
+                      class="py-0"
+                    >
+                      <v-timeline-item
+                        color="primary"
+                        medium
+                      >
+                        <v-row dense>
+                          <v-col
+                            v-if="!regular"
+                            :cols="displayInfo ? 6 : 10"
+                          >
+                            <strong>{{ computedReturnOutwardTimeFormat }}</strong>
+                          </v-col>
+                          <v-col :cols="displayInfo ? 6 : 12">
+                            <!-- return so we invert destination and origin-->
+                            {{ (route && route.destination) ? route.destination.addressLocality : null }}
+                          </v-col>
+                        </v-row>
+                      </v-timeline-item>
+
+                      <!--                <v-timeline-item-->
+                      <!--                  v-for="waypoint in reversedActiveWaypoints"-->
+                      <!--                  :key="waypoint.id"-->
+                      <!--                  small-->
+                      <!--                >-->
+                      <v-row
+                        v-for="waypoint in reversedActiveWaypoints"
+                        :key="waypoint.id"
+                        dense
+                        class="ml-12"
+                      >
+                        <v-col :cols="displayInfo ? 12 : 12">
+                          <v-row class="ml-12">
+                            <v-icon
+                              color="secondary"
+                              class="mr-3"
+                            >
+                              mdi-arrow-right-bold
+                            </v-icon>
+                            {{ waypoint.address.addressLocality }}
+                          </v-row>
+                        </v-col>
+                      </v-row>
+                      <!--                </v-timeline-item>-->
+
+                      <v-timeline-item
+                        color="primary"
+                        medium
+                        class="mt-3 pb-0"
+                      >
+                        <v-row dense>
+                          <v-col
+                            v-if="!regular"
+                            :cols="displayInfo ? 6 : 10"
+                          >
+                            <strong>{{ computedReturnDestinationTime }}</strong>
+                          </v-col>
+                          <v-col :cols="displayInfo ? 6 : 12">
+                            <!-- return so we invert destination and origin-->
+                            {{ (route && route.origin) ? route.origin.addressLocality : null }}
+                          </v-col>
+                        </v-row>
+                      </v-timeline-item>
+                    </v-timeline>
                   </v-row>
                 </v-col>
               </v-row>
-
-              <v-row>
-                <v-col
-                  cols="10"
-                >
-                  <v-timeline
-                    dense
-                    class="py-0"
-                  >
-                    <v-timeline-item
-                      color="primary"
-                      medium
-                    >
-                      <v-row dense>
-                        <v-col
-                          v-if="!regular"
-                          :cols="displayInfo ? 6 : 10"
-                        >
-                          <strong>{{ computedReturnOutwardTimeFormat }}</strong>
-                        </v-col>
-                        <v-col :cols="displayInfo ? 6 : 10">
-                          <!-- return so we invert destination and origin-->
-                          {{ (route && route.destination) ? route.destination.addressLocality : null }}
-                        </v-col>
-                      </v-row>
-                    </v-timeline-item>
-
-                    <!--                <v-timeline-item-->
-                    <!--                  v-for="waypoint in reversedActiveWaypoints"-->
-                    <!--                  :key="waypoint.id"-->
-                    <!--                  small-->
-                    <!--                >-->
-                    <v-row
-                      v-for="waypoint in reversedActiveWaypoints"
-                      :key="waypoint.id"
-                      dense
-                      class="ml-12"
-                    >
-                      <v-col :cols="displayInfo ? 12 : 12">
-                        <v-row class="ml-12">
-                          <v-icon
-                            color="secondary"
-                            class="mr-3"
-                          >
-                            mdi-arrow-right-bold
-                          </v-icon>
-                          {{ waypoint.address.addressLocality }}
-                        </v-row>
-                      </v-col>
-                    </v-row>
-                    <!--                </v-timeline-item>-->
-
-                    <v-timeline-item
-                      color="primary"
-                      medium
-                      class="mt-3 pb-0"
-                    >
-                      <v-row dense>
-                        <v-col
-                          v-if="!regular"
-                          :cols="displayInfo ? 6 : 10"
-                        >
-                          <strong>{{ computedReturnDestinationTime }}</strong>
-                        </v-col>
-                        <v-col :cols="displayInfo ? 6 : 12">
-                          <!-- return so we invert destination and origin-->
-                          {{ (route && route.origin) ? route.origin.addressLocality : null }}
-                        </v-col>
-                      </v-row>
-                    </v-timeline-item>
-                  </v-timeline>
-                </v-col>
-              </v-row>
             </v-row>
-
+     
             <!-- Days if regular and there is more than one schedule -->
             <v-row
               v-if="regular && schedules!==null && schedules.length > 0"
