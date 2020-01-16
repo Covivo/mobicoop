@@ -32,12 +32,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserVoter extends Voter
 {
+    const REGISTER = 'user_register';
     const READ = 'user_read';
-    const UPDATE = 'update';
-    const PASSWORD = 'password';
-    const DELETE = 'delete';
-    const PROPOSALS_SELF = 'proposals_self';
-    const MESSAGES = 'messages';
+    const UPDATE = 'user_update';
+    const PASSWORD = 'user_password';
+    const DELETE = 'user_delete';
+    const ASKS = 'user_asks';
+    const MESSAGES = 'user_messages';
+    // const ADMIN_READ = 'user_admin_read';
 
     private $security;
     private $permissionManager;
@@ -52,12 +54,14 @@ class UserVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
+            self::REGISTER,
             self::READ,
             self::UPDATE,
             self::PASSWORD,
             self::DELETE,
-            self::PROPOSALS_SELF,
+            self::ASKS,
             self::MESSAGES,
+            // self::ADMIN_READ
             ])) {
             return false;
         }
@@ -73,6 +77,8 @@ class UserVoter extends Voter
         $requester = $token->getUser();
         
         switch ($attribute) {
+            case self::REGISTER:
+                return $this->canRegister($requester);
             case self::READ:
                 return $this->canReadSelf($requester);
             case self::UPDATE:
@@ -81,10 +87,12 @@ class UserVoter extends Voter
                 return $this->canChangePassword($requester);
             case self::DELETE:
                 return $this->canDeleteSelf($requester);
-            case self::PROPOSALS_SELF:
-                return true;
+            case self::ASKS:
+                return $this->canReadSelfAsks($requester);
             case self::MESSAGES:
-                return true;
+                return $this->canReadSelfMessages($requester);
+            // case self::ADMIN_READ:
+            //     return $this->canReadUsers($requester);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -109,4 +117,28 @@ class UserVoter extends Voter
     {
         return $this->permissionManager->checkPermission('user_delete_self', $requester);
     }
+
+    private function canReadSelfMessages(UserInterface $requester)
+    {
+        return $this->permissionManager->checkPermission('user_messages_self', $requester);
+    }
+
+    private function canReadSelfAsks(UserInterface $requester)
+    {
+        return $this->permissionManager->checkPermission('user_asks_self', $requester);
+    }
+
+    private function canRegister(UserInterface $requester)
+    {
+        if ($requester instanceof User) {
+            // the user must not be logged in; if not, deny access
+            return false;
+        }
+        return $this->permissionManager->checkPermission('user_register', $requester);
+    }
+
+    // private function canReadUsers(UserInterface $requester)
+    // {
+    //     return $this->permissionManager->checkPermission('user_read', $requester);
+    // }
 }
