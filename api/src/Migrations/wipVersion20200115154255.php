@@ -36,6 +36,19 @@ final class Version20200114141330 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('INSERT INTO `uright` (`id`, `type`, `name`, `parent_id`, `description`) VALUES (NULL, 1, \'user_read\', 1, \'read a user\'), (NULL, 1, \'user_read_self\', 4, \'Read itself\');');
+        $this->addSql(
+            'INSERT INTO `uright` (`id`, `type`, `name`, `parent_id`, `description`) VALUES 
+        (86, 1, \'user_read\', 1, \'read a user\'), 
+        (87, 1, \'user_read_self\', 4, \'Read itself\'), 
+        (88, 1, \'user_messages\', 1, \'access to the messages of a user\'), 
+        (89, 1, \'user_messages_self\', 4, \'User access to its own messages\'), 
+        (90, 1, \'user_asks\', 1, \'access to the asks of a user\'), 
+        (91, 1, \'user_asks_self\', 4, \'User access to its own asks\'),
+        (92, 1, \'event_read\', NULL, \'View an event\');'
+        );
+        $this->addSql(
+            'INSERT INTO `role_right` (`role_id`, `right_id`) VALUES
+        (5, 92)'
+        );
     }
 }
