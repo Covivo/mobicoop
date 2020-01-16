@@ -771,7 +771,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var array|null The avatars of the user
-     * @Groups({"read","results","threads","thread"})
+     * @Groups({"read","readCommunity","results","threads","thread"})
      */
     private $avatars;
 
