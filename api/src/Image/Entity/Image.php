@@ -55,7 +55,7 @@ use App\User\Entity\User;
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}},
+ *          "security"={"groups"={"write"}},
  *      },
  *      collectionOperations={
  *          "get",
@@ -64,7 +64,7 @@ use App\User\Entity\User;
  *              "path"="/images",
  *              "controller"=CreateImageAction::class,
  *              "defaults"={"_api_receive"=false},
- *              "security"="is_granted('image_post',object)"
+ *              "access_control"="is_granted('image_post',object)"
  *          },
  *      },
  *      itemOperations={

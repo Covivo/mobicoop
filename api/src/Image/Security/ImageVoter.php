@@ -30,7 +30,7 @@ use App\Image\Entity\Image;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class UserVoter extends Voter
+class ImageVoter extends Voter
 {
     const POST = 'image_post';
     const UPDATE = 'image_update';
@@ -55,10 +55,12 @@ class UserVoter extends Voter
             ])) {
             return false;
         }
+        
         // only vote on Image objects inside this voter
         if (!$subject instanceof Image) {
             return false;
         }
+        
         return true;
     }
 
@@ -69,9 +71,9 @@ class UserVoter extends Voter
         switch ($attribute) {
             case self::POST:
                 return $this->canPost($requester, $subject);
-            case self::POST:
+            case self::UPDATE:
                 return $this->canUpdate($requester, $subject);
-            case self::POST:
+            case self::DELETE:
                 return $this->canDelete($requester, $subject);
         
         }
