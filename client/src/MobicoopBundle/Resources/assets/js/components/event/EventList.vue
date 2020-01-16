@@ -1,48 +1,5 @@
 <template>
   <div>
-    <!-- Lister les evenements de l'user
-   <v-row>
-     <v-col
-       cols="12"
-       style="margin-bottom: 0px!important; padding-bottom: 0px!important;"
-     >
-       <v-toolbar
-         flat
-         color="primary"
-         dark
-       >
-         <v-toolbar-title> {{ $t('myCommunities') }}</v-toolbar-title>
-       </v-toolbar>
-       <v-card class="pa-6">
-         <v-data-iterator
-           :items="communitiesUser"
-           :items-per-page.sync="itemsPerPage"
-           :footer-props="{
-             'items-per-page-options': itemsPerPageOptions,
-             'items-per-page-all-text': $t('all'),
-             'itemsPerPageText': $t('linePerPage')
-           }"
-         >
-           <template>
-             <v-row>
-               <v-col
-                 v-for="item in communitiesUser"
-                 :key="item.index"
-                 cols="12"
-                 class="ma-3 pa-6"
-                 outlined
-                 tile
-               >
-                 <CommunityListItem :item="item" />
-               </v-col>
-             </v-row>
-           </template>
-         </v-data-iterator>
-       </v-card>
-     </v-col>
-   </v-row>
-
-   -->
     <!-- Title and subtitle -->
     <v-row 
       justify="center"
@@ -397,12 +354,6 @@ export default {
       document.body.appendChild(form);
       form.submit();
     },
-    checkIfUserLogged() {
-      if (this.user !== null) {
-        this.isLogged = true;
-      }
-    },
-
     buildPoint: function(e,lat,lng,title="",pictoUrl="",size=[],anchor=[]){
       let point = {
         title:title,

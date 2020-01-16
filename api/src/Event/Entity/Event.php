@@ -51,7 +51,7 @@ use App\Event\Controller\ReportAction;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readEvent"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}},
  *          "pagination_client_items_per_page"=true
  *      },
@@ -111,7 +111,7 @@ class Event
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups("readEvent")
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -120,7 +120,7 @@ class Event
      * @var string The name of the event.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"readEvent","write"})
      */
     private $name;
 
@@ -128,7 +128,7 @@ class Event
      * @var int The status of the event (active/inactive).
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"readEvent","write"})
      */
     private $status;
     
@@ -136,7 +136,7 @@ class Event
      * @var string The short description of the event.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"readEvent","write"})
      */
     private $description;
     
@@ -144,7 +144,7 @@ class Event
      * @var string The full description of the event.
      *
      * @ORM\Column(type="text")
-     * @Groups({"read","write"})
+     * @Groups({"readEvent","write"})
      */
     private $fullDescription;
     
@@ -153,7 +153,7 @@ class Event
      *
      * @Assert\NotBlank
      * @ORM\Column(type="datetime")
-     * @Groups({"read","write"})
+     * @Groups({"readEvent","write"})
      */
     private $fromDate;
 
@@ -162,7 +162,7 @@ class Event
      *
      * @Assert\NotBlank
      * @ORM\Column(type="datetime")
-     * @Groups({"read","write"})
+     * @Groups({"readEvent","write"})
      */
     private $toDate;
     
@@ -170,7 +170,7 @@ class Event
      * @var boolean Use the time for the starting and ending date of the event.
      *
      * @ORM\Column(type="boolean")
-     * @Groups({"read","write"})
+     * @Groups({"readEvent","write"})
      */
     private $useTime;
     
@@ -178,7 +178,7 @@ class Event
      * @var string The information url for the event.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readEvent","write"})
      */
     private $url;
     
@@ -203,7 +203,7 @@ class Event
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"readEvent","write"})
      * @MaxDepth(1)
      */
     private $user;
@@ -212,7 +212,7 @@ class Event
      * @var Event Event related for the proposal
      *
      * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Proposal", mappedBy="event")
-     * @Groups({"read","write"})
+     * @Groups({"readEvent","write"})
      * @ApiSubresource(maxDepth=1)
      * @MaxDepth(1)
      */
@@ -225,7 +225,7 @@ class Event
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="event", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Groups({"read","write"})
+     * @Groups({"readEvent","write"})
      * @MaxDepth(1)
      */
     private $address;
@@ -235,7 +235,7 @@ class Event
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="event", cascade="remove", orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups("read")
+     * @Groups("readEvent")
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */

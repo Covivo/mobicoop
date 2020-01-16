@@ -206,7 +206,7 @@ class Address
      * @var float|null The latitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","readCommunity","results","write","pt","mass","massCompute","threads","thread"})
+     * @Groups({"read","readCommunity","readEvent","results","write","pt","mass","massCompute","threads","thread"})
      */
     private $latitude;
 
@@ -214,7 +214,7 @@ class Address
      * @var float|null The longitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","readCommunity","results","write","pt","mass","massCompute","threads","thread"})
+     * @Groups({"read","readCommunity","readEvent","results","write","pt","mass","massCompute","threads","thread"})
      */
     private $longitude;
 
@@ -267,7 +267,7 @@ class Address
     /**
      * @var array|null Label for display
      *
-     * @Groups({"read","readCommunity","results","pt"})
+     * @Groups({"read","readCommunity","readEvent","results","pt"})
      */
     private $displayLabel;
 
