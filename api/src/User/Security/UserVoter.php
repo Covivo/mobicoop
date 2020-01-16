@@ -39,7 +39,7 @@ class UserVoter extends Voter
     const DELETE = 'user_delete';
     const ASKS = 'user_asks';
     const MESSAGES = 'user_messages';
-    // const ADMIN_READ = 'user_admin_read';
+    const ADMIN_READ = 'user_admin_read';
 
     private $security;
     private $permissionManager;
@@ -61,7 +61,7 @@ class UserVoter extends Voter
             self::DELETE,
             self::ASKS,
             self::MESSAGES,
-            // self::ADMIN_READ
+            self::ADMIN_READ
             ])) {
             return false;
         }
@@ -91,8 +91,8 @@ class UserVoter extends Voter
                 return $this->canReadSelfAsks($requester);
             case self::MESSAGES:
                 return $this->canReadSelfMessages($requester);
-            // case self::ADMIN_READ:
-            //     return $this->canReadUsers($requester);
+            case self::ADMIN_READ:
+                return $this->canReadUsers($requester);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -137,8 +137,8 @@ class UserVoter extends Voter
         return $this->permissionManager->checkPermission('user_register', $requester);
     }
 
-    // private function canReadUsers(UserInterface $requester)
-    // {
-    //     return $this->permissionManager->checkPermission('user_read', $requester);
-    // }
+    private function canReadUsers(UserInterface $requester)
+    {
+        return $this->permissionManager->checkPermission('user_read', $requester);
+    }
 }
