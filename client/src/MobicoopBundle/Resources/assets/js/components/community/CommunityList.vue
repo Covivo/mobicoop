@@ -202,8 +202,7 @@ export default {
     }
   },
   mounted() {
-    //this.getCommunities();
-    console.error(this.communities.length);
+    //this.getCommunities();    
   },
   methods: {
     leaveCommunity(community) {

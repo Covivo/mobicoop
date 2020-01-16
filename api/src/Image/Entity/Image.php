@@ -311,7 +311,7 @@ class Image
 
     /**
      * @var array|null The versions of with the image.
-     * @Groups({"read", "results"})
+     * @Groups({"read","readCommunity","readCommunityUser","readEvent","results"})
      */
     private $versions;
         

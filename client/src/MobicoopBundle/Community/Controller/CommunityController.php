@@ -278,7 +278,8 @@ class CommunityController extends AbstractController
             'searchRoute' => "covoiturage/recherche",
             'error' => (isset($error)) ? $error : false,
             'points' => $ways,
-            'lastUsers' => $lastUsersFormated
+            'lastUsers' => $lastUsersFormated,
+            'communityUserStatus' => (isset($communityUser) && $communityUser!==null)?$communityUser[0]->getStatus():-1
             
         ]);
     }

@@ -350,6 +350,10 @@ export default {
     points: {
       type: Array,
       default: null
+    },
+    userCommunityStatus: {
+      type: Number,
+      default:-1
     }
   },
   data () {
@@ -368,7 +372,7 @@ export default {
       pointsToMap:[],
       directionWay:[],
       leaveCommunityDialog: false,
-      loading: true,
+      loading: false,
       snackbar: false,
       textSnackbar: null,
       textSnackOk: this.community.validationType == 1 ? this.$t("snackbar.joinCommunity.textOkManualValidation") : this.$t("snackbar.joinCommunity.textOkAutoValidation"),
@@ -386,7 +390,12 @@ export default {
     }
   },
   mounted() {
-    this.getCommunityUser();
+    //this.getCommunityUser();
+    if(this.userCommunityStatus>=0){
+      this.isAccepted = (this.userCommunityStatus == 1 || this.userCommunityStatus == 2);
+      this.askToJoin = true
+    }
+
     this.checkIfUserLogged();
     this.showCommunityProposals();
     this.checkDomain();

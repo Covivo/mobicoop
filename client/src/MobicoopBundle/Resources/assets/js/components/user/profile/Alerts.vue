@@ -46,7 +46,7 @@ export default {
   },
   props:{
     alerts:{
-      type:Array,
+      type:Object,
       default:null
     }
   },
