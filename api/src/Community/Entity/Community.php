@@ -227,6 +227,7 @@ class Community
     /**
      * @var Address The address of the community.
      *
+     * @ApiProperty(push=true)
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -238,6 +239,7 @@ class Community
     /**
      * @var ArrayCollection|null The images of the community.
      *
+     * @ApiProperty(push=true)
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"readCommunity","readCommunityUser","write"})
@@ -258,6 +260,7 @@ class Community
     /**
      * @var ArrayCollection|null The members of the community.
      *
+     * @ApiProperty(push=true)
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"readCommunity","write"})
      * @MaxDepth(1)

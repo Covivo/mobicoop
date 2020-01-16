@@ -85,6 +85,7 @@ class CommunityUser
     /**
      * @var Community The community.
      *
+     * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="communityUsers")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"readCommunityUser","write"})
@@ -96,6 +97,7 @@ class CommunityUser
     /**
      * @var User The user.
      *
+     * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"readCommunity","readCommunityUser","write"})
