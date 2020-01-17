@@ -584,19 +584,25 @@ export default {
       axios
         .post(this.$t('phone.validation.route'),
         {
-          token: this.token
+          token: this.token,
+          telephone: this.telephone
         },{
           headers:{
             'content-type': 'application/json'
           }
         })
         .then(res => {
-          if (res.data.state) {
+          if(!res.data){
             this.errorUpdate = true;
-            this.textSnackError = this.$t(res.data.message);
+            this.textSnackError = this.$t("snackBar.unknown");
             this.snackbar = true;
           }
-          this.phoneVerified = !res.data.state;
+          else{
+            this.errorUpdate = false;
+            this.textSnackOk = this.$t("snackBar.phoneValidated");
+            this.snackbar = true;
+             this.phoneVerified = true;
+          }
           this.loadingValidatePhone = false;
         })
         // Todo create "emit" event to refresh the alerts
