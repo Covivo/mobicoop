@@ -248,7 +248,7 @@ class Campaign
         return $this->fromName;
     }
 
-    public function setFrom(string $fromName): self
+    public function setFromName(string $fromName): self
     {
         $this->fromName = $fromName;
 

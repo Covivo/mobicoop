@@ -91,10 +91,10 @@ class CampaignManager
     {
         // call the service
         $this->massEmailProvider->send(
-            $campaign->getSubject(), 
-            $campaign->getFromName(), 
-            $campaign->getEmail(), 
-            $campaign->getReplyTo(), 
+            $campaign->getSubject(),
+            $campaign->getFromName(),
+            $campaign->getEmail(),
+            $campaign->getReplyTo(),
             $this->getFormedEmailBody($campaign->getBody()),
             $this->getRecipientsFromDeliveries($campaign->getDeliveries())
         );

@@ -67,6 +67,7 @@ class MandrillProvider implements MassEmailProviderInterface
                 'vars' => $vars
             ];
         }
+        return true;
         try {
             $mandrill = new Mandrill($this->key);
             $message = [
@@ -107,12 +108,11 @@ class MandrillProvider implements MassEmailProviderInterface
             $ip_pool = 'Main Pool';
             $send_at = new \DateTime();
             $result = $mandrill->messages->send($message, $async, $ip_pool, $send_at->format('YmdHis'));
-        } catch(Mandrill_Error $e) {
+        } catch (Mandrill_Error $e) {
             // Mandrill errors are thrown as exceptions
             echo 'A mandrill error occurred: ' . get_class($e) . ' - ' . $e->getMessage();
             // A mandrill error occurred: Mandrill_Unknown_Subaccount - No subaccount exists with the id 'customer-123'
             throw $e;
         }
-
     }
 }
