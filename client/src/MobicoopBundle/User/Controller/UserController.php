@@ -252,22 +252,26 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             // We need to check if the token is right
-            if ($user->getPhoneToken() == $data['token']) {
-                if ($user->getPhoneValidatedDate()!==null) {
-                    $phoneError["state"] = "true";
-                    $phoneError["message"] = "snackBar.phoneAlreadyVerified";
-                } else {
-                    $user->setPhoneValidatedDate(new \Datetime()); // TO DO : Correct timezone
-                    $user = $userManager->updateUser($user);
-                    if (!$user) {
-                        $phoneError["state"] = "true";
-                        $phoneError["message"] = "snackBar.phoneUpdate";
-                    }
-                }
-            } else {
-                $phoneError["state"] = "true";
-                $phoneError["message"] = "snackBar.unknown";
-            }
+            // if ($user->getPhoneToken() == $data['token']) {
+            //     if ($user->getPhoneValidatedDate()!==null) {
+            //         $phoneError["state"] = "true";
+            //         $phoneError["message"] = "snackBar.phoneAlreadyVerified";
+            //     } else {
+            //         $user->setPhoneValidatedDate(new \Datetime()); // TO DO : Correct timezone
+            //         $user = $userManager->updateUser($user);
+            //         if (!$user) {
+            //             $phoneError["state"] = "true";
+            //             $phoneError["message"] = "snackBar.phoneUpdate";
+            //         }
+            //     }
+            // } else {
+            //     $phoneError["state"] = "true";
+            //     $phoneError["message"] = "snackBar.unknown";
+            // }
+
+            
+            $response = $userManager->validPhoneByToken($data['token'], $data['telephone']);
+            return new Response(json_encode($response));
         }
         return new Response(json_encode($phoneError));
     }

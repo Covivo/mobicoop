@@ -144,7 +144,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     /**
      * @var string|null The telephone number of the user.
      *
-     * @Groups({"post","put"})
+     * @Groups({"post","put","checkPhoneToken"})
      */
     private $telephone;
 
@@ -333,7 +333,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
     /**
      * @var string|null Token for phone validation.
-     * @Groups({"post","put"})
+     * @Groups({"post","put","checkPhoneToken"})
      */
     private $phoneToken;
 

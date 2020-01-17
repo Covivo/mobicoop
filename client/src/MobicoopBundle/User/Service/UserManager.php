@@ -624,4 +624,22 @@ class UserManager
 
         return $response->getValue();
     }
+
+    /**
+     * Validation phone
+     *
+     * @param string $token
+     * @param string $phone
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function validPhoneByToken(string $token, string $phone)
+    {
+        $user = new User();
+        $user->setTelephone($phone);
+        $user->setPhoneToken($token);
+        $response = $this->dataProvider->postSpecial($user, ["checkPhoneToken"], "checkPhoneToken");
+
+        return $response->getValue();
+    }
 }
