@@ -27,27 +27,33 @@ use App\Communication\Entity\Medium;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\MassEmailProvider\MandrillProvider;
 use Doctrine\ORM\EntityManagerInterface;
+use Twig\Environment;
 
 /**
  * Campaign manager service.
  */
 class CampaignManager
 {
+    private $templating;
     private $entityManager;
     private $massEmailProvider;
+    private $massEmailApi;
     private $massSmsProvider;
+    private $mailTemplate;
 
     const MAIL_PROVIDER_MANDRILL = 'mandrill';
 
     /**
      * Constructor.
      */
-    public function __construct(string $mailerProvider, string $smsProvider, EntityManagerInterface $entityManager)
+    public function __construct(Environment $templating, EntityManagerInterface $entityManager, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate)
     {
         $this->entityManager = $entityManager;
+        $this->mailTemplate = $mailTemplate;
+        $this->templating = $templating;
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_MANDRILL:
-                $this->massEmailProvider = new MandrillProvider();
+                $this->massEmailProvider = new MandrillProvider($mailerApiKey);
                 break;
         }
     }
@@ -84,7 +90,14 @@ class CampaignManager
     private function sendMassEmail(Campaign $campaign)
     {
         // call the service
-        $this->massEmailProvider->send($campaign->getSubject(), $campaign->getFrom(), $campaign->getEmail(), $campaign->getReplyTo(), $this->getFormedEmailBody($campaign->getBody()), $this->getRecipientsFromDeliveries($campaign->getDeliveries()));
+        $this->massEmailProvider->send(
+            $campaign->getSubject(), 
+            $campaign->getFromName(), 
+            $campaign->getEmail(), 
+            $campaign->getReplyTo(), 
+            $this->getFormedEmailBody($campaign->getBody()),
+            $this->getRecipientsFromDeliveries($campaign->getDeliveries())
+        );
         
         // if the result of the send is returned here
         // foreach ($campaign->getDeliveries() as $delivery) {
@@ -122,18 +135,23 @@ class CampaignManager
 
     /**
      * Create a well-formed body for email send.
+     * Note : the context variables should be present in the template.
      *
      * @param string $body
      * @return void
      */
     private function getFormedEmailBody(?string $body): string
     {
-        // todo
-        return $body;
+        return $this->templating->render(
+            $this->mailTemplate,
+            [
+                'message' => str_replace(array("\r\n", "\r", "\n"), "<br />", $body)
+            ]
+        );
     }
 
     /**
-     * Get an array of recipients email from an array of Delivery objects.
+     * Get an array of recipients with its context variables from an array of Delivery objects.
      *
      * @param array $deliveries
      * @return array
@@ -142,7 +160,12 @@ class CampaignManager
     {
         $recipients = [];
         foreach ($deliveries as $delivery) {
-            $recipients[] = $delivery->getUser()->getEmail();
+            $recipients[$delivery->getUser()->getEmail()] = [
+                // put here the list of needed variables !
+                "givenName" => $delivery->getUser()->getGivenName(),
+                "familyName" => $delivery->getUser()->getFamilyName(),
+                "email" => $delivery->getUser()->getEmail()
+            ];
         }
         return $recipients;
     }

@@ -41,7 +41,7 @@ interface MassEmailProviderInterface
      * @param string $fromEmail The email of the sender
      * @param string $replyTo   The reply to email
      * @param string $body      The body of the message
-     * @param array $recipients The array of recipients email
+     * @param array $recipients The array of recipients email, with its context variables (under the form [$email => [$context]])
      * @return mixed
      */
     public function send(string $subject, string $fromName, string $fromEmail, string $replyTo, string $body, array $recipients);

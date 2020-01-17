@@ -286,7 +286,10 @@ services:
     App\MassCommunication\Service\CampaignManager:
         arguments:
             $mailerProvider: '%env(resolve:MASS_MAILER_PROVIDER)%'
+            $mailerApiUrl: '%env(resolve:MASS_MAILER_API_URL)%'
             $smsProvider: '%env(resolve:MASS_SMS_PROVIDER)%'
+            $mailerApiKey: '%env(resolve:MASS_MAILER_API_KEY)%'
+            $mailTemplate: '%env(resolve:MASS_MAILER_BASE_TEMPLATE)%'
 
     # Match
     App\Match\Controller\:
