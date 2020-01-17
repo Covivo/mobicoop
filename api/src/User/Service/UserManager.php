@@ -692,7 +692,7 @@ class UserManager
         return [];
     }
 
-    public function findByValidatedDateToken($data)
+    public function checkValidatedDateToken($data)
     {
         $userFound = $this->userRepository->findOneBy(["validatedDateToken"=>$data->getValidatedDateToken()]);
         
@@ -708,7 +708,29 @@ class UserManager
                 return new JsonResponse();
             }
         } else {
-            // More than one user, problem. We return nothing.
+            // No user found. We return nothing.
+            return new JsonResponse();
+        }
+        return new JsonResponse();
+    }
+
+    public function checkPhoneToken($data)
+    {
+        $userFound = $this->userRepository->findOneBy(["phoneToken"=>$data->getPhoneToken()]);
+        
+        if (!is_null($userFound)) {
+            if ($data->getTelephone()===$userFound->getTelephone()) {
+                // User found by token match with the given Telephone. We update de validated date, persist, then return the user found
+                $userFound->setPhoneValidatedDate(new \Datetime());
+                $this->entityManager->persist($userFound);
+                $this->entityManager->flush();
+                return $userFound;
+            } else {
+                // User found by token doesn't match with the given telephone. We return nothing.
+                return new JsonResponse();
+            }
+        } else {
+            // No user found. We return nothing.
             return new JsonResponse();
         }
         return new JsonResponse();

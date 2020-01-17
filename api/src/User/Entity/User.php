@@ -63,6 +63,7 @@ use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserUpdate;
 use App\User\Controller\UserAnonymise;
 use App\User\Controller\UserCheckSignUpValidationToken;
+use App\User\Controller\UserCheckPhoneToken;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\HomeAddressDirectionTerritoryFilter;
@@ -159,6 +160,13 @@ use App\User\EntityListener\UserListener;
  *              "normalization_context"={"groups"={"readUser"}},
  *              "path"="/users/checkSignUpValidationToken",
  *              "controller"=UserCheckSignUpValidationToken::class
+ *          },
+ *          "checkPhoneToken"={
+ *              "method"="POST",
+ *              "denormalization_context"={"groups"={"checkPhoneToken"}},
+ *              "normalization_context"={"groups"={"readUser"}},
+ *              "path"="/users/checkPhoneToken",
+ *              "controller"=UserCheckPhoneToken::class
  *          }
  *      },
  *      itemOperations={
@@ -394,7 +402,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The telephone number of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","checkPhoneToken"})
      */
     private $telephone;
     
@@ -566,7 +574,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null Token for phone validation.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","checkPhoneToken"})
      */
     private $phoneToken;
 

@@ -32,11 +32,11 @@ use App\User\Entity\User;
 use App\User\Service\UserManager;
 
 /**
- * Controller class for UserCheckSignUpValidationToken
+ * Controller class for UserCheckPhoneToken
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class UserCheckSignUpValidationToken
+class UserCheckPhoneToken
 {
     use TranslatorTrait;
 
@@ -55,6 +55,6 @@ class UserCheckSignUpValidationToken
      */
     public function __invoke(User $data)
     {
-        return $this->userManager->checkValidatedDateToken($data);
+        return $this->userManager->checkPhoneToken($data);
     }
 }
