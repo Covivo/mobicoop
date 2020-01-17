@@ -69,9 +69,7 @@ class AddressVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         $requester = $token->getUser();
-        var_dump($requester->getId());
         switch ($attribute) {
-            
             case self::READ:
                 return $this->canRead($requester, $subject);
             case self::UPDATE:
