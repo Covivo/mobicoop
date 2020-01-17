@@ -33,7 +33,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AddressVoter extends Voter
 {
-    const POST = 'address_post';
     const READ = 'address_read';
     const UPDATE = 'address_update';
     const DELETE = 'address_delete';
@@ -62,7 +61,6 @@ class AddressVoter extends Voter
         if (!$subject instanceof Address) {
             return false;
         }
-        
         return true;
     }
 
@@ -76,7 +74,6 @@ class AddressVoter extends Voter
                 return $this->canUpdate($requester, $subject);
             case self::DELETE:
                 return $this->canDelete($requester, $subject);
-        
         }
 
         throw new \LogicException('This code should not be reached!');

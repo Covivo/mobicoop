@@ -53,8 +53,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get"={
- *              "security"="is_granted('address_read',object)"},
+ *          "get",
  *          "search"={
  *              "method"="GET",
  *              "path"="/addresses/search",
@@ -73,19 +72,15 @@ use Doctrine\Common\Collections\ArrayCollection;
  *                         "type" = "string",
  *                         "description" = "The geographic token authorization"
  *                     }
- *                   }
+ *                  }
  *              }
  *          }
  *      },
- *      itemOperations={
- *          "get"={
- *              "security"="is_granted('address_read',object)"},
- *          "put"={
- *              "security"="is_granted('address_update',object)"}
- *      }
+ *      itemOperations={"get","put"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})
  */
+
 class Address
 {
     const DEFAULT_ID = 999999999999;

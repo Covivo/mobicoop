@@ -55,7 +55,7 @@ use App\User\Entity\User;
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "security"={"groups"={"write"}},
+ *          "denormalization_context"={"groups"={"write"}},
  *      },
  *      collectionOperations={
  *          "get",
@@ -64,19 +64,12 @@ use App\User\Entity\User;
  *              "path"="/images",
  *              "controller"=CreateImageAction::class,
  *              "defaults"={"_api_receive"=false},
- *              "access_control"="is_granted('image_post',object)"
  *          },
  *      },
  *      itemOperations={
- *          "get"={
- *              "security"="is_granted('image_read',object)"
- *          },
- *          "put"={
- *              "security"="is_granted('image_update',object)"
- *          },
- *          "delete"={
- *              "security"="is_granted('image_delete',object)"
- *          }
+ *          "get",
+ *          "put",
+ *          "delete"
  *      }
  * )
  * @Vich\Uploadable
@@ -322,7 +315,7 @@ class Image
 
     /**
      * @var array|null The versions of with the image.
-     * @Groups({"read", "results"})
+     * @Groups({"read","readCommunity","readCommunityUser","readEvent","results"})
      */
     private $versions;
         

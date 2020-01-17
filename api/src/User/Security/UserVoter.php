@@ -65,10 +65,12 @@ class UserVoter extends Voter
             ])) {
             return false;
         }
+       
         // only vote on User objects inside this voter
         if (!$subject instanceof User) {
             return false;
         }
+        
         return true;
     }
 
@@ -78,6 +80,7 @@ class UserVoter extends Voter
         
         switch ($attribute) {
             case self::REGISTER:
+                echo 'register ';
                 return $this->canRegister($requester);
             case self::READ:
                 return $this->canReadSelf($requester);

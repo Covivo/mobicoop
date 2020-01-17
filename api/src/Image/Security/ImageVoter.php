@@ -56,10 +56,10 @@ class ImageVoter extends Voter
             return false;
         }
         
-        // only vote on Image objects inside this voter
-        if (!$subject instanceof Image) {
-            return false;
-        }
+        // // only vote on Image objects inside this voter
+        // if (!$subject instanceof Image) {
+        //     return false;
+        // }
         
         return true;
     }

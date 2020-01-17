@@ -151,7 +151,7 @@ use App\User\EntityListener\UserListener;
  *                      }
  *                  }
  *              },
- *              "security"="is_granted('user_register',object)"
+ *              "security_post_denormalize"="is_granted('user_register',object)"
  *          }
  *      },
  *      itemOperations={
