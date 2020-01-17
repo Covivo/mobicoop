@@ -48,4 +48,22 @@ class UserRepository
     {
         return $this->repository->findOneBy($criteria);
     }
+
+    public function findByValidatedDateToken($token)
+    {
+        $query = $this->repository->createQueryBuilder('u')
+        ->where('u.validatedDateToken = :token')
+        ->setParameter('token', $token)
+        ;
+        return $query->getQuery()->getResult();
+    }
+
+    public function findByPwdTokenDate($token)
+    {
+        $query = $this->repository->createQueryBuilder('u')
+        ->where('u.pwdTokenDate = :token')
+        ->setParameter('token', $token)
+        ;
+        return $query->getQuery()->getResult();
+    }
 }

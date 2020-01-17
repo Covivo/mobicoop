@@ -691,4 +691,25 @@ class UserManager
         }
         return [];
     }
+
+    public function findByValidatedDateToken($data)
+    {
+        $userFound = $this->userRepository->findByValidatedDateToken($data->getValidatedDateToken());
+        if (count($userFound)==1) {
+            if ($data->getEmail()===$userFound[0]->getEmail()) {
+                // User found by token match with the given email. We update de validated date, persist, then return the user found
+                $userFound[0]->setValidatedDate(new \Datetime());
+                $this->entityManager->persist($userFound[0]);
+                $this->entityManager->flush();
+                return $userFound;
+            } else {
+                // User found by token doesn't match with the given email. We return nothing.
+                $userFound = [];
+            }
+        } else {
+            // More than one user, problem. We return nothing.
+            $userFound = [];
+        }
+        return $userFound;
+    }
 }
