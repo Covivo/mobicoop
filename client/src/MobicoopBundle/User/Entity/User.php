@@ -103,7 +103,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     /**
      * @var string The email of the user.
      *
-     * @Groups({"post","put"})
+     * @Groups({"post","put","checkValidationToken"})
      *
      * @Assert\NotBlank(groups={"signUp","update"})
      * @Assert\Email()
@@ -236,7 +236,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     /**
      * @var string|null Token for account validation by email
      *
-     * @Groups({"post","put"})
+     * @Groups({"post","put","checkValidationToken"})
      */
     private $validatedDateToken;
     

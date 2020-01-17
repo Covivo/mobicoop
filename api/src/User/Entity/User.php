@@ -156,6 +156,7 @@ use App\User\EntityListener\UserListener;
  *          "checkSignUpValidationToken"={
  *              "method"="POST",
  *              "denormalization_context"={"groups"={"checkValidationToken"}},
+ *              "normalization_context"={"groups"={"readUser"}},
  *              "path"="/users/checkSignUpValidationToken",
  *              "controller"=UserCheckSignUpValidationToken::class
  *          }

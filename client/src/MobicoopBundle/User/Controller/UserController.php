@@ -189,33 +189,29 @@ class UserController extends AbstractController
     /**
      * User registration email validation
      */
-    public function userSignUpValidation($token, UserManager $userManager, Request $request)
+    public function userSignUpValidation($token, $email, UserManager $userManager, Request $request)
     {
         $error = "";
-        if ($request->isMethod('POST') && $token !== "") {
-            // We need to check if the token exists
-            $userFound = $userManager->findByValidationDateToken($token);
-            if (!empty($userFound)) {
-                if ($userFound->getValidatedDate()!==null) {
-                    $error = "alreadyValidated";
+        if ($request->isMethod('POST')) {
+            if ($token !== "" && $email!=="") {
+                $user = $userManager->validSignUpByToken($token, $email);
+                if (is_null($user)) {
+                    $error="updateError";
                 } else {
-                    $userFound->setValidatedDate(new \Datetime()); // TO DO : Correct timezone
-                    $userFound = $userManager->updateUser($userFound);
-                    if (!$userFound) {
-                        $error = "updateError";
-                    } else {
-                        // Auto login and redirect
-                        $token = new UsernamePasswordToken($userFound, null, 'main', $userFound->getRoles());
-                        $this->get('security.token_storage')->setToken($token);
-                        $this->get('session')->set('_security_main', serialize($token));
-                        return $this->redirectToRoute('carpool_first_ad_post');
-                    }
+                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                    $this->get('security.token_storage')->setToken($token);
+                    $this->get('session')->set('_security_main', serialize($token));
+                    return $this->redirectToRoute('carpool_first_ad_post');
                 }
             } else {
-                $error = "unknown";
+                $error = "missingArguments";
             }
         }
-        return $this->render('@Mobicoop/user/signupValidation.html.twig', ['urlToken'=>$token, 'error'=>$error]);
+        return $this->render('@Mobicoop/user/signupValidation.html.twig', [
+            'urlToken'=>$token,
+            'urlEmail'=>$email,
+            'error'=>$error
+        ]);
     }
 
     /**

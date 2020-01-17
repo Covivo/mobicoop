@@ -694,22 +694,23 @@ class UserManager
 
     public function findByValidatedDateToken($data)
     {
-        $userFound = $this->userRepository->findByValidatedDateToken($data->getValidatedDateToken());
-        if (count($userFound)==1) {
-            if ($data->getEmail()===$userFound[0]->getEmail()) {
+        $userFound = $this->userRepository->findOneBy(["validatedDateToken"=>$data->getValidatedDateToken()]);
+        
+        if (!is_null($userFound)) {
+            if ($data->getEmail()===$userFound->getEmail()) {
                 // User found by token match with the given email. We update de validated date, persist, then return the user found
-                $userFound[0]->setValidatedDate(new \Datetime());
-                $this->entityManager->persist($userFound[0]);
+                $userFound->setValidatedDate(new \Datetime());
+                $this->entityManager->persist($userFound);
                 $this->entityManager->flush();
                 return $userFound;
             } else {
                 // User found by token doesn't match with the given email. We return nothing.
-                $userFound = [];
+                return new JsonResponse();
             }
         } else {
             // More than one user, problem. We return nothing.
-            $userFound = [];
+            return new JsonResponse();
         }
-        return $userFound;
+        return new JsonResponse();
     }
 }

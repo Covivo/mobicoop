@@ -64,7 +64,7 @@
           ref="form"
           v-model="valid"
           lazy-validation
-          :action="$t('urlPost')+(token)"
+          :action="$t('urlPost',{'token':token,'email':email})"
           method="POST"
         >
           <v-text-field
@@ -102,6 +102,10 @@ export default {
       type: String,
       default: ""
     },
+    urlEmail:{
+      type: String,
+      default: ""
+    },
     error: {
       type: String,
       default: ""
@@ -111,6 +115,7 @@ export default {
     return {
       valid:true,
       token:this.urlToken,
+      email:this.urlEmail,
       tokenRules: [
         v => !!v || this.$t("tokenRequired")
       ],
