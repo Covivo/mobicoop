@@ -57,7 +57,9 @@ use App\Event\Controller\ReportAction;
  *      },
  *      collectionOperations={
  *          "get",
- *          "post",
+ *          "post" ={
+ *              "security_post_denormalize"="is_granted('event_create',object)"
+ *          },
  *          "report"={
  *              "method"="POST",
  *              "path"="/events/{id}/report",
@@ -81,19 +83,27 @@ use App\Event\Controller\ReportAction;
  *                          "description" = "Description"
  *                      }
  *                  }
- *              }
- *          },"valide_create_event"={
+ *              },
+ *              "security"="is_granted('event_read',object)"
+ *          },
+ *          "valide_create_event"={
  *              "method"="POST",
  *              "path"="/events/{id}/valide_create_event",
 *               "requirements"={"id"="\d+"},
  *              "controller"=ValidateCreateEventController::class,
- *
+ *              "security"="is_granted('event_create',object)"
  *          },
  *      },
  *      itemOperations={
- *          "get",
- *          "put",
- *          "delete"
+ *          "get"={
+ *              "security"="is_granted('event_read',object)"
+ *          },
+ *          "put"={
+ *              "security"="is_granted('event_update',object)"
+ *          },
+ *          "delete"={
+ *              "security"="is_granted('event_delete',object)"
+ *          }
  *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "fromDate"}, arguments={"orderParameterName"="order"})
