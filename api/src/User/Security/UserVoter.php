@@ -65,7 +65,7 @@ class UserVoter extends Voter
             ])) {
             return false;
         }
-       
+      
         // only vote on User objects inside this voter
         if (!$subject instanceof User) {
             return false;
@@ -77,23 +77,21 @@ class UserVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         $requester = $token->getUser();
-        
         switch ($attribute) {
             case self::REGISTER:
-                echo 'register ';
                 return $this->canRegister($requester);
             case self::READ:
-                return $this->canReadSelf($requester);
+                return $this->canReadSelf($requester, $subject);
             case self::UPDATE:
-                return $this->canUpdateSelf($requester);
+                return $this->canUpdateSelf($requester, $subject);
             case self::PASSWORD:
                 return $this->canChangePassword($requester);
             case self::DELETE:
-                return $this->canDeleteSelf($requester);
+                return $this->canDeleteSelf($requester, $subject);
             case self::ASKS:
-                return $this->canReadSelfAsks($requester);
+                return $this->canReadSelfAsks($requester, $subject);
             case self::MESSAGES:
-                return $this->canReadSelfMessages($requester);
+                return $this->canReadSelfMessages($requester, $subject);
             case self::ADMIN_READ:
                 return $this->canReadUsers($requester);
         }
@@ -101,14 +99,22 @@ class UserVoter extends Voter
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canReadSelf(UserInterface $requester)
+    private function canReadSelf(UserInterface $requester, User $subject)
     {
-        return $this->permissionManager->checkPermission('user_read_self', $requester);
+        if (($subject->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
+            return $this->permissionManager->checkPermission('user_read_self', $requester);
+        } else {
+            return false;
+        }
     }
 
-    private function canUpdateSelf(UserInterface $requester)
+    private function canUpdateSelf(UserInterface $requester, User $subject)
     {
-        return $this->permissionManager->checkPermission('user_update_self', $requester);
+        if (($subject->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
+            return $this->permissionManager->checkPermission('user_update_self', $requester);
+        } else {
+            return false;
+        }
     }
 
     private function canChangePassword(UserInterface $requester)
@@ -116,19 +122,31 @@ class UserVoter extends Voter
         return $this->permissionManager->checkPermission('user_password_self', $requester);
     }
 
-    private function canDeleteSelf(UserInterface $requester)
+    private function canDeleteSelf(UserInterface $requester, User $subject)
     {
-        return $this->permissionManager->checkPermission('user_delete_self', $requester);
+        if (($subject->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
+            return $this->permissionManager->checkPermission('user_delete_self', $requester);
+        } else {
+            return false;
+        }
     }
 
-    private function canReadSelfMessages(UserInterface $requester)
+    private function canReadSelfMessages(UserInterface $requester, User $subject)
     {
-        return $this->permissionManager->checkPermission('user_messages_self', $requester);
+        if (($subject->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
+            return $this->permissionManager->checkPermission('user_messages_self', $requester);
+        } else {
+            return false;
+        }
     }
 
-    private function canReadSelfAsks(UserInterface $requester)
+    private function canReadSelfAsks(UserInterface $requester, User $subject)
     {
-        return $this->permissionManager->checkPermission('user_asks_self', $requester);
+        if (($subject->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
+            return $this->permissionManager->checkPermission('user_asks_self', $requester);
+        } else {
+            return false;
+        }
     }
 
     private function canRegister(UserInterface $requester)
