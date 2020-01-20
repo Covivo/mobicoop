@@ -57,9 +57,14 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          "get",
  *          "post"={
  *              "controller"=JoinAction::class,
+ *              "security_post_denormalize"="is_granted('communityUser_create',object)"
  *          }
  *      },
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={
+ *          "get"={"security"="is_granted('communityUser_read',object)"},
+ *          "put"={"security"="is_granted('communityUser_update',object)"},
+ *          "delete"={"security"="is_granted('communityUser_delete',object)"}
+ *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"user.id","community.id","status"})
  * @ApiFilter(SearchFilter::class, properties={"community":"exact","user":"exact"})

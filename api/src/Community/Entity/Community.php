@@ -69,7 +69,9 @@ use App\Community\Controller\JoinAction;
  *                  }
  *              }
 *           },
- *          "post",
+ *          "post"={
+ *              "security_post_denormalize"="is_granted('community_create',object)"
+ *          },
  *          "available"={
  *              "method"="GET",
  *              "path"="/communities/available",
@@ -84,7 +86,8 @@ use App\Community\Controller\JoinAction;
  *                          "description" = "The id of the user for which we want the communities"
  *                      }
  *                  }
- *              }
+ *              },
+ *              "security"="is_granted('community_create',object)"
  *          },
  *          "exists"={
  *              "method"="GET",
@@ -100,13 +103,20 @@ use App\Community\Controller\JoinAction;
  *                          "description" = "The name of the community"
  *                      }
  *                  }
- *              }
+ *              },
+ *              "security"="is_granted('community_read',object)"
  *          }
  *      },
  *      itemOperations={
- *          "get",
- *          "put",
- *          "delete"
+ *          "get"={
+ *              "security"="is_granted('community_read',object)"
+ *          },
+ *          "put"={
+ *              "security"="is_granted('community_update',object)"
+ *          },
+ *          "delete"={
+ *              "security"="is_granted('community_delete',object)"
+ *          }
  *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})
