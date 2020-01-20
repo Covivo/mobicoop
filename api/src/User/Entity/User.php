@@ -96,9 +96,7 @@ use App\User\EntityListener\UserListener;
  *      },
  *      collectionOperations={
  *          "get"={
- *
- *              "normalization_context"={"groups"={"read"}},
- *              "security"="is_granted('user_admin_read',object)"
+ *              "normalization_context"={"groups"={"read"}}
  *          },
  *          "post"={
  *              "method"="POST",

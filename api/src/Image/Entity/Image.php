@@ -64,6 +64,7 @@ use App\User\Entity\User;
  *              "path"="/images",
  *              "controller"=CreateImageAction::class,
  *              "defaults"={"_api_receive"=false},
+ *              "security_post_denormalize"="is_granted('image_post',object)"
  *          },
  *      },
  *      itemOperations={
