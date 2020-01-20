@@ -59,8 +59,8 @@
         cols="1"
       >
         <v-icon
-          :color="iconColor"
           size="64"
+          :color="iconColor"
         >
           mdi-ray-start-end
         </v-icon>
@@ -69,7 +69,7 @@
       <!-- Destination -->
       <v-col
         cols="5"
-        :class="type==1 ? 'text-left' : regular ? 'text-left ml-4' : 'text-right  ml-8'"
+        :class="type==1 ? 'text-left' : regular ? 'text-left ml-n4' : 'text-right  ml-8'"
       >
         <v-list-item
           two-line
