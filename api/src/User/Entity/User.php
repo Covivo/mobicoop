@@ -934,7 +934,7 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getProEmail(): string
+    public function getProEmail(): ?string
     {
         return $this->proEmail;
     }
