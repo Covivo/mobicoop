@@ -20,7 +20,7 @@
       <v-col
         cols="5"
         class="text-right"
-        :class="type==1 ? 'text-right' : regular ? 'text-right' : 'text-right  mr-n4'"
+        :class="type==1 ? 'text-left' : regular ? 'text-left' : 'text-left  mr-n4'"
       >
         <v-list-item
           two-line
@@ -28,25 +28,25 @@
         >
           <v-list-item-content>
             <v-list-item-title 
-              :class="(regular && type==2 || !regular && type==1) ? 'subtitle-1' : 'subtitle-1 font-weight-bold'"
+              :class="(regular && type==2 || !regular && type==1) ? 'subtitle-1 font-weight-bold' : 'subtitle-2 font-weight-bold'"
             >
               <span :class="textColorClass">{{ originFirstLine }}</span>
             </v-list-item-title>
             <v-list-item-title
               v-if="type==1 && regular"
-              :class="'subtitle-1 font-weight-bold'"
+              :class="'subtitle-2 font-weight-bold'"
             >
               <span :class="textColorClass">{{ originSecondLine }}</span>
             </v-list-item-title>
             <v-list-item-subtitle
               v-if="type==2"
-              :class="(regular && type==2) ? 'subtitle-1 font-weight-bold' : ((regular) ? 'subtitle-1 font-weight-bold' : 'subtitle-1')"
+              :class="(regular && type==2) ? 'subtitle-2 font-weight-bold' : ((regular) ? 'subtitle-2 font-weight-bold' : 'subtitle-2')"
             >
               <span :class="textColorClass">{{ originSecondLine }}</span>
             </v-list-item-subtitle>
             <v-list-item-subtitle
               v-if="!regular && type==1"
-              class="subtitle-1 font-weight-bold"
+              class="subtitle-2 font-weight-bold"
             >
               <span :class="textColorClass">{{ originSecondLine }}</span>
             </v-list-item-subtitle>
@@ -59,8 +59,8 @@
         cols="1"
       >
         <v-icon
-          :color="iconColor"
           size="64"
+          :color="iconColor"
         >
           mdi-ray-start-end
         </v-icon>
@@ -69,7 +69,7 @@
       <!-- Destination -->
       <v-col
         cols="5"
-        :class="type==1 ? 'text-left' : regular ? 'text-left ml-4' : 'text-right  ml-8'"
+        :class="type==1 ? 'text-left' : regular ? 'text-left ml-4' : 'text-right  ml-6'"
       >
         <v-list-item
           two-line
@@ -77,25 +77,25 @@
         >
           <v-list-item-content>
             <v-list-item-title 
-              :class="(regular && type==2 || !regular && type==1) ? 'subtitle-1' : 'subtitle-1 font-weight-bold'"
+              :class="(regular && type==2 || !regular && type==1) ? 'subtitle-1 font-weight-bold' : 'subtitle-2 font-weight-bold'"
             >
               <span :class="textColorClass">{{ destinationFirstLine }}</span>
             </v-list-item-title>
             <v-list-item-title
               v-if="type==1 && regular"
-              :class="'subtitle-1 font-weight-bold'"
+              :class="'subtitle-2 font-weight-bold'"
             >
               <span :class="textColorClass">{{ destinationSecondLine }}</span>
             </v-list-item-title>
             <v-list-item-subtitle
               v-if="type==2"
-              :class="(regular && type==2) ? 'subtitle-1 font-weight-bold' : ((regular) ? 'subtitle-1 font-weight-bold' : 'subtitle-1')"
+              :class="(regular && type==2) ? 'subtitle-2 font-weight-bold ml-6' : ((regular) ? 'subtitle-2 font-weight-bold' : 'subtitle-2')"
             >
               <span :class="textColorClass">{{ destinationSecondLine }}</span>
             </v-list-item-subtitle>
             <v-list-item-subtitle
               v-if="!regular && type==1"
-              class="subtitle-1 font-weight-bold"
+              class="subtitle-2 font-weight-bold"
             >
               <span :class="textColorClass">{{ destinationSecondLine }}</span>
             </v-list-item-subtitle>
