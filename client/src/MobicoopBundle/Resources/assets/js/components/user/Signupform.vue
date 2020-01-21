@@ -529,7 +529,7 @@ export default {
           }
         })
         .then(response=>{
-          window.location.href = this.$t('urlRedirectAfterSignUp');
+          window.location.href = this.$t('urlRedirectAfterSignUp',{"email":this.form.email});
           //console.log(response);
         })
         .catch(function (error) {

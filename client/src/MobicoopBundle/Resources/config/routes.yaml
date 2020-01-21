@@ -44,10 +44,11 @@ user_sign_up:
 
 user_sign_up_validation:
     path:
-        fr: /utilisateur/inscription/validation/{token}
-        en: /user/signup/validation/{token}
+        fr: /utilisateur/inscription/validation/{email}/{token}
+        en: /user/signup/validation/{email}/{token}
     defaults:
         token: ""
+        email: ""
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
 
 # profile update
