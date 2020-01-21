@@ -672,7 +672,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"results","write"})
+     * @Groups({"readUser","results","write"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
