@@ -167,6 +167,9 @@
             "ref": "523b4b0cfb88dc8637cb56e427e6be7718bdce32"
         }
     },
+    "mandrill/mandrill": {
+        "version": "1.0.55"
+    },
     "monolog/monolog": {
         "version": "1.24.0"
     },
