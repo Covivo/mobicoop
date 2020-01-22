@@ -2,8 +2,8 @@ bazinga_geocoder:
   providers:
     gmaps:
       factory: Bazinga\GeocoderBundle\ProviderFactory\GoogleMapsFactory
-      cache: 'app.simple_cache'
-      cache_lifetime: 3600
+      # cache: 'app.simple_cache'
+      # cache_lifetime: 3600
       aliases:
         - GMaps
       options:
@@ -11,8 +11,8 @@ bazinga_geocoder:
 
     locationiq:
       factory: App\Geography\ProviderFactory\LocationIQFactory
-      cache: 'app.simple_cache'
-      cache_lifetime: 3600
+      # cache: 'app.simple_cache'
+      # cache_lifetime: 3600
       locale: 'fr'
       aliases:
         - LocationIQ
