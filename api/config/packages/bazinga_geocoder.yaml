@@ -2,8 +2,8 @@ bazinga_geocoder:
   providers:
     gmaps:
       factory: Bazinga\GeocoderBundle\ProviderFactory\GoogleMapsFactory
-      cache: 'app.simple_cache'
-      cache_lifetime: 3600
+      # cache: 'app.simple_cache'
+      # cache_lifetime: 3600
       aliases:
         - GMaps
       options:
@@ -11,8 +11,8 @@ bazinga_geocoder:
 
     locationiq:
       factory: App\Geography\ProviderFactory\LocationIQFactory
-      cache: 'app.simple_cache'
-      cache_lifetime: 3600
+      # cache: 'app.simple_cache'
+      # cache_lifetime: 3600
       locale: 'fr'
       aliases:
         - LocationIQ
@@ -21,8 +21,8 @@ bazinga_geocoder:
     
     pelias_autocomplete:
       factory: App\Geography\ProviderFactory\PeliasAutocompleteFactory
-      cache: 'app.simple_cache'
-      cache_lifetime: 3600
+      # cache: 'app.simple_cache'
+      # cache_lifetime: 3600
       locale: 'fr'
       aliases:
         - PeliasAutocomplete
@@ -31,8 +31,8 @@ bazinga_geocoder:
 
     pelias_search:
       factory: App\Geography\ProviderFactory\PeliasSearchFactory
-      cache: 'app.simple_cache'
-      cache_lifetime: 3600
+      # cache: 'app.simple_cache'
+      # cache_lifetime: 3600
       locale: 'fr'
       aliases:
         - PeliasSearch
