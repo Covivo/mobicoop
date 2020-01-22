@@ -53,8 +53,16 @@ use App\Communication\Entity\Message;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
+ *      collectionOperations={
+ *          "get"={
+ *              "security"="is_granted('log_read',object)"
+ *          },
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('logs_read',object)"
+ *          },
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "date"}, arguments={"orderParameterName"="order"})
  */
