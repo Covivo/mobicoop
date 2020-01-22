@@ -137,6 +137,14 @@ class UserManager
         $user->setChat($this->chat);
         $user->setMusic($this->music);
         $user->setSmoke($this->smoke);
+
+        // Create token to valid inscription
+        $datetime = new DateTime();
+        $time = $datetime->getTimestamp();
+        // For safety, we strip the slashes because this token can be passed in url
+        $validationToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        $user->setValidatedDateToken($validationToken);
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
