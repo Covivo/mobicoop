@@ -274,11 +274,12 @@ class CommunityController extends AbstractController
         return $this->render('@Mobicoop/community/community.html.twig', [
             'community' => $community,
             'user' => $user,
-            'communityUser' => (isset($communityUser) && $communityUser!==null)?$communityUser:null,
+            'communityUser' => (isset($communityUser) && $communityUser!==null && count($communityUser)>0)?$communityUser:null,
             'searchRoute' => "covoiturage/recherche",
             'error' => (isset($error)) ? $error : false,
             'points' => $ways,
-            'lastUsers' => $lastUsersFormated
+            'lastUsers' => $lastUsersFormated,
+            'communityUserStatus' => (isset($communityUser) && $communityUser!==null && count($communityUser)>0)?$communityUser[0]->getStatus():-1
             
         ]);
     }

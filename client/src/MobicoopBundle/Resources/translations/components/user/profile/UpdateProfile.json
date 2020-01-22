@@ -10,7 +10,8 @@
             "errorProfileUpdate": "Erreur, votre profil n'a pas été mis à jour.",
             "phoneAlreadyVerified": "Votre téléphone est déjà vérifié.",
             "phoneUpdate": "Erreur votre télephone n'a pas été vérifié.",
-            "unknown": "Le code de validation est érroné.",
+            "phoneValidated": "Votre télephone a bien été vérifié.",
+            "unknown": "Le code de validation est erroné.",
             "tokenOk": "Le code de validation a bien été envoyé.",
             "tokenError": "Erreur le code n'a pas été envoyé"
         },
@@ -85,7 +86,9 @@
         },
         "snackBar": {
             "profileUpdated":"Your profile has been updated",
-            "errorProfileUpdate": "Error, your profile hasn't been updated"
+            "errorProfileUpdate": "Error, your profile hasn't been updated",
+            "phoneValidated": "Your phone number has been verified.",
+            "unknown": "Your validation code is incorrect."
         },
         "avatar": {
             "label": "Avatar",
