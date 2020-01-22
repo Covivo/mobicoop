@@ -192,11 +192,14 @@ class UserManager
 
     /**
      * Send the recovery mail password
-     * @param int $userId The user id that requested the password change
+     * @param string $email The user email that requested the password change
      */
-    public function sendEmailRecoveryPassword(int $userId)
+    public function sendEmailRecoveryPassword(string $email)
     {
-        return $this->dataProvider->getSpecialItem($userId, "password_update_request");
+        $user = new User();
+        $user->setEmail($email);
+        $response = $this->dataProvider->postSpecial($user, ['passwordUpdateRequest'], "password_update_request");
+        return $response->getValue();
     }
 
 
@@ -309,6 +312,19 @@ class UserManager
         return null;
     }
 
+    /**
+     * Update a user password from the reset form
+     * @param string $token     The token to retrieve the user
+     * @param string $password  The new password
+     */
+    public function userUpdatePasswordReset(string $token, string $password)
+    {
+        $user = new User();
+        $user->setPwdToken($token);
+        $user->setPassword($this->encoder->encodePassword($user, $password));
+        return $this->dataProvider->postSpecial($user, ['passwordUpdate'], "password_update")->getValue();
+    }
+    
     /**
      * Delete a user
      *
@@ -617,10 +633,7 @@ class UserManager
         $user = new User();
         $user->setEmail($email);
         $user->setValidatedDateToken($token);
-        $response = $this->dataProvider->postSpecial($user, ["checkValidationToken"], "checkSignUpValidationToken", [
-            'email'=>$email,
-            'validatedDateToken'=>$token
-        ]);
+        $response = $this->dataProvider->postSpecial($user, ["checkValidationToken"], "checkSignUpValidationToken");
 
         return $response->getValue();
     }

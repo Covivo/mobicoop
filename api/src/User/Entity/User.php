@@ -173,17 +173,23 @@ use App\User\EntityListener\UserListener;
  *          "get"={
  *              "normalization_context"={"groups"={"readUser"}},
  *          },
- *          "password_update"={
- *              "method"="PUT",
- *              "path"="/users/{id}/password_update",
- *              "controller"=UserUpdatePassword::class,
- *              "defaults"={"name"="reply"}
- *          },
  *          "password_update_request"={
- *              "method"="PUT",
- *              "path"="/users/{id}/password_update_request",
+ *              "method"="POST",
+ *              "path"="/users/password_update_request",
  *              "controller"=UserUpdatePassword::class,
- *              "defaults"={"name"="request"}
+ *              "defaults"={"name"="request"},
+ *              "read"=false,
+ *              "denormalization_context"={"groups"={"passwordUpdateRequest"}},
+ *              "normalization_context"={"groups"={"passwordUpdateRequest"}},
+ *          },
+ *          "password_update"={
+ *              "method"="POST",
+ *              "path"="/users/password_update",
+ *              "controller"=UserUpdatePassword::class,
+ *              "defaults"={"name"="update"},
+ *              "read"=false,
+ *              "denormalization_context"={"groups"={"passwordUpdate"}},
+ *              "normalization_context"={"groups"={"passwordUpdate"}},
  *          },
  *          "generate_phone_token"={
  *              "method"="GET",
@@ -349,7 +355,7 @@ class User implements UserInterface, EquatableInterface
      * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=100, unique=true)
-     * @Groups({"readUser","write","checkValidationToken"})
+     * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate"})
      */
     private $email;
 
@@ -357,7 +363,7 @@ class User implements UserInterface, EquatableInterface
      * @var string The encoded password of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","passwordUpdate"})
      */
     private $password;
 
@@ -558,7 +564,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null Token for password modification.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","passwordUpdateRequest","passwordUpdate"})
      */
     private $pwdToken;
 

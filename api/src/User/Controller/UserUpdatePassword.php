@@ -23,12 +23,10 @@
  namespace App\User\Controller;
 
 use ApiPlatform\Core\Exception\InvalidArgumentException;
-use App\Right\Service\PermissionManager;
 use App\TranslatorTrait;
 use App\User\Entity\User;
-use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserUpdatePassword
 {
@@ -38,15 +36,9 @@ class UserUpdatePassword
      */
     private $userManager;
  
-    private $request;
-    private $permissionManager;
-    private $userRepository;
  
-    public function __construct(RequestStack $requestStack, PermissionManager $permissionManager, UserRepository $userRepository, UserManager $userManager)
+    public function __construct(UserManager $userManager)
     {
-        $this->request = $requestStack->getCurrentRequest();
-        $this->permissionManager = $permissionManager;
-        $this->userRepository = $userRepository;
         $this->userManager= $userManager;
     }
  
@@ -57,9 +49,9 @@ class UserUpdatePassword
      * @param User $data
      * @param string $data
      * @throws InvalidArgumentException
-     * @return User
+     * @return Response
      */
-    public function __invoke(User $data, string $name): User
+    public function __invoke(User $data, string $name)
     {
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
@@ -68,8 +60,8 @@ class UserUpdatePassword
             case 'request':
                 $data = $this->userManager->updateUserPasswordRequest($data);
                 break;
-            case 'reply':
-                $data = $this->userManager->updateUserPasswordConfirm($data);
+            case 'update':
+                $data = $this->userManager->updateUserPassword($data);
                 break;
             default:
                 throw new InvalidArgumentException($this->translator->trans('Unrecognized parameter :%name%', ['name' => $name]));

@@ -164,12 +164,6 @@ class UserController extends AbstractController
                 $user->setFacebookId($data['idFacebook']);
             }
 
-            // Create token to valid inscription
-            $datetime = new DateTime();
-            $time = $datetime->getTimestamp();
-            // For safety, we strip the slashes because this token can be passed in url
-            $pwdToken = str_replace("/", "", $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
-            $user->setValidatedDateToken($pwdToken);
             // create user in database
             $data = $userManager->createUser($user);
             $reponseofmanager= $this->handleManagerReturnValue($data);
@@ -466,14 +460,8 @@ class UserController extends AbstractController
         $this->denyAccessUnlessGranted('login');
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-
-            if (isset($data["email"]) && $data["email"]!==null) {
-                return new Response(json_encode($userManager->findByEmail($data["email"], true)));
-            } elseif (isset($data["phone"]) && $data["phone"]!==null) {
-                // For now, the recovery by phone has been removed from front but it functionnal in the backend
-                return new Response(json_encode($userManager->findByPhone($data["phone"], true)));
-            }
-            return new Response();
+            $response = $userManager->sendEmailRecoveryPassword($data["email"]);
+            return new Response(json_encode($response));
         }
     }
 
@@ -503,26 +491,14 @@ class UserController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            
-            $user = $userManager->findByPwdToken($token);
-
-            $this->denyAccessUnlessGranted('password', $user);
-
-            if (!empty($user)) {
-                $user->setPassword($data["password"]);
-
-                if ($user = $userManager->updateUserPassword($user)) {
-                    // after successful update, we re-log the user
-                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                    $this->get('security.token_storage')->setToken($token);
-                    $this->get('session')->set('_security_main', serialize($token));
-                    $userManager->flushUserToken($user);
-                    return new Response(json_encode($user));
-                } else {
-                    return new Response(json_encode("error"));
-                }
-            } else {
-                return new Response(json_encode("error"));
+            $user = $userManager->userUpdatePasswordReset($token, $data['password']);
+            if (!is_null($user)) {
+                // after successful update, we re-log the user
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                $this->get('security.token_storage')->setToken($token);
+                $this->get('session')->set('_security_main', serialize($token));
+                $userManager->flushUserToken($user);
+                return new Response(json_encode($user));
             }
         }
 
