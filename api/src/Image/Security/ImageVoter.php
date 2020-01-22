@@ -33,6 +33,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class ImageVoter extends Voter
 {
     const POST = 'image_post';
+    const READ = 'image_read';
     const UPDATE = 'image_update';
     const DELETE = 'image_delete';
     const ADMIN_MANAGE_EVENT = 'image_admin_manage_event';
@@ -53,6 +54,7 @@ class ImageVoter extends Voter
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
             self::POST,
+            self::READ,
             self::UPDATE,
             self::DELETE,
             self::ADMIN_MANAGE_EVENT,
@@ -62,7 +64,8 @@ class ImageVoter extends Voter
             ])) {
             return false;
         }
-        
+        var_dump($subject);
+        die;
         // only vote on Image objects inside this voter
         if (!$subject instanceof Image) {
             return false;
@@ -76,6 +79,8 @@ class ImageVoter extends Voter
         $requester = $token->getUser();
         
         switch ($attribute) {
+            case self::READ:
+                return $this->canRead($requester, $subject);
             case self::POST:
                 return $this->canPost($requester, $subject);
             case self::UPDATE:
@@ -92,6 +97,18 @@ class ImageVoter extends Voter
         }
 
         throw new \LogicException('This code should not be reached!');
+    }
+    
+    private function canRead(UserInterface $requester, Image $subject)
+    {
+        if (($subject->getEventId() && $subject->getEvent()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('event_manage', $requester))) {
+            return $this->permissionManager->checkPermission('event_read', $requester);
+        } elseif (($subject->getCommunityId() && $subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
+            return $this->permissionManager->checkPermission('community_read', $requester);
+        } elseif (($subject->getUserId() && $subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
+            return $this->permissionManager->checkPermission('user_read_self', $requester);
+        }
+        return false;
     }
 
     private function canPost(UserInterface $requester, Image $subject)

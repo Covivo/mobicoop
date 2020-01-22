@@ -33,9 +33,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AddressVoter extends Voter
 {
+    const POST ='address_post';
     const READ = 'address_read';
     const UPDATE = 'address_update';
     const DELETE = 'address_delete';
+    const ADMIN_MANAGE_EVENT = 'image_admin_manage_event';
+    const ADMIN_MANAGE_COMMUNITY = 'image_admin_manage_community';
+    const ADMIN_MANAGE_USER = 'image_admin_manage_user';
 
     private $security;
     private $permissionManager;
@@ -50,9 +54,13 @@ class AddressVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
+            self::POST,
             self::READ,
             self::UPDATE,
-            self::DELETE
+            self::DELETE,
+            self::ADMIN_MANAGE_EVENT,
+            self::ADMIN_MANAGE_COMMUNITY,
+            self::ADMIN_MANAGE_USER,
             ])) {
             return false;
         }
@@ -68,24 +76,44 @@ class AddressVoter extends Voter
     {
         $requester = $token->getUser();
         switch ($attribute) {
+            case self::POST:
+                return $this->canPost($requester, $subject);
             case self::READ:
                 return $this->canRead($requester, $subject);
             case self::UPDATE:
                 return $this->canUpdate($requester, $subject);
             case self::DELETE:
                 return $this->canDelete($requester, $subject);
+            case self::ADMIN_MANAGE_EVENT:
+                return $this->canAdminManageEvent($requester, $subject);
+            case self::ADMIN_MANAGE_COMMUNITY:
+                return $this->canAdminManageCommunity($requester, $subject);
+            case self::ADMIN_MANAGE_USER:
+                return $this->canAdminManageUser($requester, $subject);
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
+    private function canPost(UserInterface $requester, Address $subject)
+    {
+        if (($subject->getEvent()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('event_manage', $requester))) {
+            return $this->permissionManager->checkPermission('event_create', $requester);
+        } elseif (($subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
+            return $this->permissionManager->checkPermission('community_create', $requester);
+        } elseif (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
+            return $this->permissionManager->checkPermission('user_address_create_self', $requester);
+        }
+        return false;
+    }
+
     private function canRead(UserInterface $requester, Address $subject)
     {
-        if ($subject->getEvent()) {
+        if (($subject->getEvent()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('event_manage', $requester))) {
             return $this->permissionManager->checkPermission('event_read', $requester);
-        } elseif ($subject->getCommunity()) {
+        } elseif (($subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
             return $this->permissionManager->checkPermission('community_read', $requester);
-        } elseif ($subject->getUser()) {
+        } elseif (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
             return $this->permissionManager->checkPermission('user_read_self', $requester);
         }
         return false;
@@ -93,25 +121,40 @@ class AddressVoter extends Voter
 
     private function canUpdate(UserInterface $requester, Address $subject)
     {
-        if ($subject->getEvent()) {
+        if (($subject->getEvent()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('event_manage', $requester))) {
             return $this->permissionManager->checkPermission('event_update_self', $requester);
-        } elseif ($subject->getCommunity()) {
+        } elseif (($subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
             return $this->permissionManager->checkPermission('community_update_self', $requester);
-        } elseif ($subject->getUser()) {
-            return $this->permissionManager->checkPermission('user_update_self', $requester);
+        } elseif (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
+            return $this->permissionManager->checkPermission('user_address_update_self', $requester);
         }
         return false;
     }
 
     private function canDelete(UserInterface $requester, Address $subject)
     {
-        if ($subject->getEvent()) {
+        if (($subject->getEvent()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('event_manage', $requester))) {
             return $this->permissionManager->checkPermission('event_delete_self', $requester);
-        } elseif ($subject->getCommunity()) {
+        } elseif (($subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
             return $this->permissionManager->checkPermission('community_delete_self', $requester);
-        } elseif ($subject->getUser()) {
-            return $this->permissionManager->checkPermission('user_delete_self', $requester);
+        } elseif (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
+            return $this->permissionManager->checkPermission('user_address_delete_self', $requester);
         }
         return false;
+    }
+
+    private function canAdminManageEvent($requester)
+    {
+        return $this->permissionManager->checkPermission('event_manage', $requester);
+    }
+
+    private function canAdminManageCommunity($requester)
+    {
+        return $this->permissionManager->checkPermission('community_manage', $requester);
+    }
+
+    private function canAdminManageUser($requester)
+    {
+        return $this->permissionManager->checkPermission('user_manage', $requester);
     }
 }

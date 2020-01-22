@@ -68,9 +68,15 @@ use App\User\Entity\User;
  *          },
  *      },
  *      itemOperations={
- *          "get",
- *          "put",
- *          "delete"
+ *          "get" = {
+ *              "security"="is_granted('image_read',object)"
+ *          },
+ *          "put" = {
+ *              "security"="is_granted('image_update',object)"
+ *          },
+ *          "delete" = {
+ *              "security"="is_granted('image_delete',object)"
+ *          }
  *      }
  * )
  * @Vich\Uploadable
