@@ -43,6 +43,9 @@
       :server-items-length="totalItems"
       @update:options="updateOptions"
     >
+      <template v-slot:item.member="{ item }">
+        {{ item.givenName +' '+ item.shortFamilyName }}
+      </template> 
       <template v-slot:item.action="{ item }">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
@@ -108,8 +111,7 @@ export default {
       search: '',
       dialog: false,
       headers: [
-        { text: this.$t('table.colTitle.familyName'), value: 'familyName' },
-        { text: this.$t('table.colTitle.givenName'), value: 'givenName' },
+        { text: this.$t('table.colTitle.familyName'), value: 'member' },
         { text: this.$t('table.colTitle.actions'), value: 'action', sortable: false },
       ],
       itemsPerPageOptions: [1, 10, 20, 50, 100, -1],

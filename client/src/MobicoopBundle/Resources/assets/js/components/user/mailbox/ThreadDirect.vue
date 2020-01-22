@@ -49,7 +49,7 @@ export default {
       type: String,
       default:""
     },
-    familyName: {
+    shortFamilyName: {
       type: String,
       default:""
     },
@@ -81,7 +81,7 @@ export default {
       return moment.utc(this.date).format("L");
     },
     name() {
-      return this.givenName + " " + this.familyName.substr(0, 1).toUpperCase() + ".";
+      return this.givenName + " " + this.shortFamilyName;
     },
   },
   watch: {
