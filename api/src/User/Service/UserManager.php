@@ -375,45 +375,55 @@ class UserManager
        * User password change request.
        *
        * @param User $user
-       * @return User
+       * @return Response
        */
-    public function updateUserPasswordRequest(User $user)
+    public function updateUserPasswordRequest(User $data)
     {
-        $datetime = new DateTime();
-        $time = $datetime->getTimestamp();
-        // encoding of the password
-        $pwdToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
-        $user->setPwdToken($pwdToken);
-        // update of the geotoken
-        $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
-        $user->setGeoToken($geoToken);
-        // persist the user
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-        // dispatch en event
-        $event = new UserPasswordChangeAskedEvent($user);
-        $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
-        // return the user
-        return $user;
+        // Get the user
+        $user = $this->userRepository->findOneBy(["email"=>$data->getEmail()]);
+        
+        if (!is_null($user)) {
+            $datetime = new DateTime();
+            $time = $datetime->getTimestamp();
+            // encoding of the password
+            $pwdToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+            $user->setPwdToken($pwdToken);
+            // update of the geotoken
+            $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+            $user->setGeoToken($geoToken);
+            // persist the user
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+            // dispatch en event
+            $event = new UserPasswordChangeAskedEvent($user);
+            $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
+            return $user;
+        }
+        return new JsonResponse();
     }
  
     /**
        * User password change confirmation.
        *
        * @param User $user
-       * @return User
+       * @return Response
        */
-    public function updateUserPasswordConfirm(User $user)
+    public function updateUserPassword(User $data)
     {
-        $user->setPwdToken(null);
-        // persist the user
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-        // dispatch en event
-        $event = new UserPasswordChangedEvent($user);
-        $this->eventDispatcher->dispatch($event, UserPasswordChangedEvent::NAME);
-        // return the user
-        return $user;
+        $user = $this->userRepository->findOneBy(["pwdToken"=>$data->getPwdToken()]);
+        if (!is_null($user)) {
+            $user->setPwdToken(null);
+            $user->setPassword($data->getPassword());
+            // persist the user
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+            // dispatch en event
+            $event = new UserPasswordChangedEvent($user);
+            $this->eventDispatcher->dispatch($event, UserPasswordChangedEvent::NAME);
+            // return the user
+            return $user;
+        }
+        return new JsonResponse();
     }
 
     /**
