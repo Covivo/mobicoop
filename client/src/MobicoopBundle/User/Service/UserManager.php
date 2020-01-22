@@ -620,10 +620,7 @@ class UserManager
         $user = new User();
         $user->setEmail($email);
         $user->setValidatedDateToken($token);
-        $response = $this->dataProvider->postSpecial($user, ["checkValidationToken"], "checkSignUpValidationToken", [
-            'email'=>$email,
-            'validatedDateToken'=>$token
-        ]);
+        $response = $this->dataProvider->postSpecial($user, ["checkValidationToken"], "checkSignUpValidationToken");
 
         return $response->getValue();
     }
