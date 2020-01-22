@@ -103,7 +103,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     /**
      * @var string The email of the user.
      *
-     * @Groups({"post","put","checkValidationToken"})
+     * @Groups({"post","put","checkValidationToken","passwordUpdateRequest"})
      *
      * @Assert\NotBlank(groups={"signUp","update"})
      * @Assert\Email()

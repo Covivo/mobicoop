@@ -466,14 +466,8 @@ class UserController extends AbstractController
         $this->denyAccessUnlessGranted('login');
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-
-            if (isset($data["email"]) && $data["email"]!==null) {
-                return new Response(json_encode($userManager->findByEmail($data["email"], true)));
-            } elseif (isset($data["phone"]) && $data["phone"]!==null) {
-                // For now, the recovery by phone has been removed from front but it functionnal in the backend
-                return new Response(json_encode($userManager->findByPhone($data["phone"], true)));
-            }
-            return new Response();
+            $response = $userManager->sendEmailRecoveryPassword($data["email"]);
+            return new Response(json_encode($response));
         }
     }
 

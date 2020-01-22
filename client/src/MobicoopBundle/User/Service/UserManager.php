@@ -192,11 +192,14 @@ class UserManager
 
     /**
      * Send the recovery mail password
-     * @param int $userId The user id that requested the password change
+     * @param string $email The user email that requested the password change
      */
-    public function sendEmailRecoveryPassword(int $userId)
+    public function sendEmailRecoveryPassword(string $email)
     {
-        return $this->dataProvider->getSpecialItem($userId, "password_update_request");
+        $user = new User();
+        $user->setEmail($email);
+        $response = $this->dataProvider->postSpecial($user, ['passwordUpdateRequest'], "password_update_request");
+        return $response->getValue();
     }
 
 
