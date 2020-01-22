@@ -412,7 +412,6 @@ class UserManager
     {
         $user = $this->userRepository->findOneBy(["pwdToken"=>$data->getPwdToken()]);
         if (!is_null($user)) {
-            $user->setPwdToken(null);
             $user->setPassword($data->getPassword());
             // persist the user
             $this->entityManager->persist($user);

@@ -497,26 +497,14 @@ class UserController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            
-            $user = $userManager->findByPwdToken($token);
-
-            $this->denyAccessUnlessGranted('password', $user);
-
-            if (!empty($user)) {
-                $user->setPassword($data["password"]);
-
-                if ($user = $userManager->updateUserPassword($user)) {
-                    // after successful update, we re-log the user
-                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                    $this->get('security.token_storage')->setToken($token);
-                    $this->get('session')->set('_security_main', serialize($token));
-                    $userManager->flushUserToken($user);
-                    return new Response(json_encode($user));
-                } else {
-                    return new Response(json_encode("error"));
-                }
-            } else {
-                return new Response(json_encode("error"));
+            $user = $userManager->userUpdatePasswordReset($token, $data['password']);
+            if (!is_null($user)) {
+                // after successful update, we re-log the user
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                $this->get('security.token_storage')->setToken($token);
+                $this->get('session')->set('_security_main', serialize($token));
+                $userManager->flushUserToken($user);
+                return new Response(json_encode($user));
             }
         }
 

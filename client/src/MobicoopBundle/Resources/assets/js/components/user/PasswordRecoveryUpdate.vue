@@ -114,7 +114,6 @@ export default {
             }
           })
           .then(response => {
-            //console.log(response.data);
             if(response.data.id !== undefined){
               this.snackbarText = this.$t("snackBar.ok");
               window.location.href = "/";
@@ -122,17 +121,14 @@ export default {
             else{
               this.snackbarText = this.$t("snackBar.error");
             }
-            this.snackbar = true;
             this.loading = false;
+            this.snackbar = true;
           })
           .catch(function (error) {
-            console.log(error);
+            console.error(error);
             this.snackbarText = this.$t("snackBar.error");
           });
       }
-    },
-    recovery(){
-          
     }
   }
 };

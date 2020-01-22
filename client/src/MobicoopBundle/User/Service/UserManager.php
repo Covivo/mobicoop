@@ -313,6 +313,19 @@ class UserManager
     }
 
     /**
+     * Update a user password from the reset form
+     * @param string $token     The token to retrieve the user
+     * @param string $password  The new password
+     */
+    public function userUpdatePasswordReset(string $token, string $password)
+    {
+        $user = new User();
+        $user->setPwdToken($token);
+        $user->setPassword($this->encoder->encodePassword($user, $password));
+        return $this->dataProvider->postSpecial($user, ['passwordUpdate'], "password_update")->getValue();
+    }
+    
+    /**
      * Delete a user
      *
      * @param int $id The id of the user to delete
