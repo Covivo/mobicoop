@@ -332,7 +332,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","write", "threads", "thread"})
+     * @Groups({"readUser","write"})
      */
     private $familyName;
 
