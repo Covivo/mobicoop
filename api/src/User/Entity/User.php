@@ -339,7 +339,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"readUser","results","write", "threads", "thread"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser"})
      */
     private $shortFamilyName;
 

@@ -5,7 +5,7 @@
       :key="index"
       :avatar="message.avatarsRecipient"
       :given-name="message.givenName"
-      :family-name="message.familyName"
+      :short-family-name="message.shortFamilyName"
       :date="message.date"
       :id-message="message.idMessage"
       :id-recipient="message.idRecipient"
@@ -109,7 +109,7 @@ export default {
           if(this.newThread){
             response.data.threads.push({
               date:moment().format(),
-              familyName:this.newThread.familyName,
+              shortFamilyName:this.newThread.shortFamilyName,
               givenName:this.newThread.givenName,
               idMessage:-1,
               idRecipient:this.newThread.idRecipient
@@ -122,8 +122,8 @@ export default {
           console.log(error);
         });
     },
-    name(givenName, familyName) {
-      return givenName + " " + familyName.substr(0, 1).toUpperCase() + ".";
+    name(givenName, shortFamilyName) {
+      return givenName + " " + shortFamilyName;
     }
   }
 }

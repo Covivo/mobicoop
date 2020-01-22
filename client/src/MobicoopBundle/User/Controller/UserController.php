@@ -606,7 +606,7 @@ class UserController extends AbstractController
                 $newThread = [
                     "carpool" => (int)$request->request->get('carpool'),
                     "idRecipient" => (int)$request->request->get('idRecipient'),
-                    "familyName" => $request->request->get('familyName'),
+                    "shortFamilyName" => $request->request->get('shortFamilyName'),
                     "givenName" => $request->request->get('givenName'),
                     "avatar" => $request->request->get('avatar')
                 ];
