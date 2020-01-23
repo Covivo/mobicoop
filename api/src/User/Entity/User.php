@@ -770,7 +770,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      * @MaxDepth(1)
      * @Groups("read")
-     * @Apisubresource
+     * Apisubresource
      */
     private $solidaries;
 
