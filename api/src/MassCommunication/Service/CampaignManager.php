@@ -143,10 +143,9 @@ class CampaignManager
      */
     private function sendMassEmailTest(Campaign $campaign)
     {
-        var_dump($this->getFormedEmailBody($campaign->getBody()));
         // call the service
         $this->massEmailProvider->send(
-            '** TEST CAMPAGNE EMAIL **'.$campaign->getSubject(),
+            '** TEST CAMPAGNE EMAIL ** '.$campaign->getSubject(),
             $campaign->getFromName(),
             $campaign->getEmail(),
             $campaign->getReplyTo(),
@@ -165,6 +164,7 @@ class CampaignManager
         // persist the result depending of the status
         $campaign->setStatus(Campaign::STATUS_CREATED);
         $this->entityManager->persist($campaign);
+        $this->entityManager->flush();
 
         return $campaign;
     }

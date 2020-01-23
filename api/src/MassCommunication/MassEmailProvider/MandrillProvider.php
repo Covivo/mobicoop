@@ -107,9 +107,8 @@ class MandrillProvider implements MassEmailProviderInterface
             $async = true;
             $ip_pool = 'Main Pool';
             $send_at = new \DateTime();
-            //$result = $mandrill->messages->send($message, $async, $ip_pool, $send_at->format('YmdHis'));
+            $result = $mandrill->messages->send($message, $async, $ip_pool, $send_at->format('YmdHis'));
 
-            var_dump($result);
         } catch (Mandrill_Error $e) {
             // Mandrill errors are thrown as exceptions
             echo 'A mandrill error occurred: ' . get_class($e) . ' - ' . $e->getMessage();
