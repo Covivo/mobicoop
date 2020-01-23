@@ -45,9 +45,9 @@ final class Version20200114141330 extends AbstractMigration
         (90, 1, \'user_asks\', 1, \'Access to the asks of a user\'), 
         (91, 1, \'user_asks_self\', 4, \'User access to its own asks\'),
         (92, 1, \'event_read\', NULL, \'View an event\'),
-        (93, 1, \'action_manage\', NULL, \'Manage actions\'),
+        (93, 2, \'action_manage\', NULL, \'Manage actions\'),
         (94, 1, \'action_read\', 93, \'Read an action\'),
-        (95, 1, \'log_manage\', NULL, \'Manage log records\'),
+        (95, 2, \'log_manage\', NULL, \'Manage log records\'),
         (96, 1, \'log_read\', 95, \'Read a log record\')'
         );
         $this->addSql(

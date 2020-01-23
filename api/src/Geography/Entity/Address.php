@@ -53,7 +53,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get",
  *          "search"={
  *              "method"="GET",
  *              "path"="/addresses/search",
@@ -76,7 +75,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              }
  *          }
  *      },
- *      itemOperations={"get","put"}
+ *      itemOperations={"get"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})
  */
