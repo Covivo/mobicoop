@@ -14,7 +14,7 @@
             "passenger_carpool_linked_ad_deleted_urgent" : "Suppression de l'annonce liée à un covoiturage accepté comme passager et imminent",
             "driver_carpool_linked_ad_deleted" : "Suppression de l'annonce liée à un covoiturage accepté comme conducteur",
             "driver_carpool_linked_ad_deleted_urgent" : "Suppression de l'annonce liée à un covoiturage accepté comme conducteur et imminent",
-            "validate_create_event" : "Confirmation de crétaion d'événement"
+            "validate_create_event" : "Confirmation de création d'événement"
         },
         "medium":{
             "media1":"Message",
