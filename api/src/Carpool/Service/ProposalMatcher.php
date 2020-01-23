@@ -36,6 +36,7 @@ use App\Geography\Entity\Address;
 use App\Geography\Interfaces\GeorouterInterface;
 use App\Geography\Service\GeoRouter;
 use App\Import\Entity\UserImport;
+use App\Service\FormatDataManager;
 use App\User\Entity\User;
 use Psr\Log\LoggerInterface;
 
@@ -70,6 +71,7 @@ class ProposalMatcher
     private $geoMatcher;
     private $geoRouter;
     private $logger;
+    private $formatDataManager;
     
     /**
      * Constructor.
@@ -78,13 +80,14 @@ class ProposalMatcher
      * @param ProposalRepository $proposalRepository
      * @param GeoMatcher $geoMatcher
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, GeoMatcher $geoMatcher, GeoRouter $geoRouter, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, GeoMatcher $geoMatcher, GeoRouter $geoRouter, LoggerInterface $logger, FormatDataManager $formatDataManager)
     {
         $this->entityManager = $entityManager;
         $this->proposalRepository = $proposalRepository;
         $this->geoRouter = $geoRouter;
         $this->geoMatcher = $geoMatcher;
         $this->logger = $logger;
+        $this->formatDataManager = $formatDataManager;
     }
 
     /**
@@ -600,11 +603,17 @@ class ProposalMatcher
             $matchingCriteria->setPriceKm($matching->getProposalOffer()->getCriteria()->getPriceKm());
             
             // we use the passenger's computed prices
-            $matchingCriteria->setDriverComputedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedPrice());
-            $matchingCriteria->setDriverComputedRoundedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedRoundedPrice());
-            $matchingCriteria->setPassengerComputedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedPrice());
-            $matchingCriteria->setPassengerComputedRoundedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedRoundedPrice());
+            // $matchingCriteria->setDriverComputedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedPrice());
+            // $matchingCriteria->setDriverComputedRoundedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedRoundedPrice());
+            // $matchingCriteria->setPassengerComputedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedPrice());
+            // $matchingCriteria->setPassengerComputedRoundedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedRoundedPrice());
             
+            // we use the driver's computed prices
+            $matchingCriteria->setDriverComputedPrice(($matching->getCommonDistance()+$matching->getDetourDistance())*$matching->getProposalOffer()->getCriteria()->getPriceKm()/1000);
+            $matchingCriteria->setDriverComputedRoundedPrice($this->formatDataManager->roundPrice((float)$matchingCriteria->getDriverComputedPrice(), $matchingCriteria->getFrequency()));
+            $matchingCriteria->setPassengerComputedPrice($matchingCriteria->getDriverComputedPrice());
+            $matchingCriteria->setPassengerComputedRoundedPrice($matchingCriteria->getDriverComputedRoundedPrice());
+
             // frequency, fromDate and toDate
             if ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching->getProposalRequest()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                 $matchingCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
