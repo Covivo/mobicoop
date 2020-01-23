@@ -2,12 +2,10 @@
   <div>
     <v-snackbar
       v-model="snackbar"
+      :color="(snackbarSuccess) ? 'success' : 'error'"
       top
     >
       {{ snackbarText }}
-      <v-icon color="tertiary">
-        mdi-information-outline
-      </v-icon>
     </v-snackbar>
     <v-container fluid />
     <v-row 
@@ -31,8 +29,6 @@
         ref="form"
         v-model="valid"
         lazy-validation
-        action="/utilisateur/mot-de-passe/recuperation"
-        method="POST"
       >
         <v-row>
           <v-col class="col-12">
@@ -43,11 +39,6 @@
               :label="$t('inputs.email')"
               name="email"
             />
-            <!-- <v-text-field
-              v-model="phone"
-              :label="$t('inputs.phone')"
-              name="phone"
-            /> -->
             <v-btn
               :loading="loading"
               color="primary"
@@ -83,7 +74,8 @@ export default {
         v => /.+@.+/.test(v) || this.$t("messages.errors.emailValid")
       ],
       snackbar:false,
-      snackbarText:""
+      snackbarText:"",
+      snackbarSuccess:false
     }
   },
   methods:{
@@ -91,18 +83,18 @@ export default {
       event.preventDefault();
       if (this.$refs.form.validate()) {
         this.loading = true;
-        axios.post('/user/password/recovery/send',
+        axios.post(this.$t("urlPasswordRecovery"),
           {
             email:this.email,
-            phone:this.phone,
           },{
             headers:{
               'content-type': 'application/json'
             }
           })
           .then(response=>{
-            if(response.data !== null && response.data.id !== undefined){
+            if(response.data !== null){
               this.snackbarText = this.$t("snackBar.ok");
+              this.snackbarSuccess = true;
             }
             else{
               this.snackbarText = this.$t("snackBar.notfound");
@@ -113,6 +105,7 @@ export default {
           .catch(error=> {
             console.log(error);
             this.snackbarText = this.$t("snackBar.error");
+            this.loading = false;
           });
       }
     },

@@ -103,7 +103,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     /**
      * @var string The email of the user.
      *
-     * @Groups({"post","put","checkValidationToken"})
+     * @Groups({"post","put","checkValidationToken","passwordUpdateRequest"})
      *
      * @Assert\NotBlank(groups={"signUp","update"})
      * @Assert\Email()
@@ -113,7 +113,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     /**
      * @var string|null The encoded password of the user.
      *
-     * @Groups({"post","put","password"})
+     * @Groups({"post","put","password","passwordUpdate"})
      *
      * @Assert\NotBlank(groups={"signUp","password"})
      */
@@ -315,7 +315,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
     /**
      * @var string|null Token for password modification.
-     *  @Groups({"post","put", "password_token"})
+     *  @Groups({"post","put", "password_token", "passwordUpdate"})
      */
     private $pwdToken;
 

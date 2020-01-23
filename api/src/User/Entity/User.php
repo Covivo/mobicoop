@@ -78,6 +78,8 @@ use App\User\Filter\ValidatedDateTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
 use App\Import\Entity\UserImport;
+use App\MassCommunication\Entity\Campaign;
+use App\MassCommunication\Entity\Delivery;
 use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 
@@ -173,17 +175,23 @@ use App\User\EntityListener\UserListener;
  *          "get"={
  *              "normalization_context"={"groups"={"readUser"}},
  *          },
- *          "password_update"={
- *              "method"="PUT",
- *              "path"="/users/{id}/password_update",
- *              "controller"=UserUpdatePassword::class,
- *              "defaults"={"name"="reply"}
- *          },
  *          "password_update_request"={
- *              "method"="PUT",
- *              "path"="/users/{id}/password_update_request",
+ *              "method"="POST",
+ *              "path"="/users/password_update_request",
  *              "controller"=UserUpdatePassword::class,
- *              "defaults"={"name"="request"}
+ *              "defaults"={"name"="request"},
+ *              "read"=false,
+ *              "denormalization_context"={"groups"={"passwordUpdateRequest"}},
+ *              "normalization_context"={"groups"={"passwordUpdateRequest"}},
+ *          },
+ *          "password_update"={
+ *              "method"="POST",
+ *              "path"="/users/password_update",
+ *              "controller"=UserUpdatePassword::class,
+ *              "defaults"={"name"="update"},
+ *              "read"=false,
+ *              "denormalization_context"={"groups"={"passwordUpdate"}},
+ *              "normalization_context"={"groups"={"passwordUpdate"}},
  *          },
  *          "generate_phone_token"={
  *              "method"="GET",
@@ -332,16 +340,24 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","write", "threads", "thread"})
+     * @Groups({"readUser","write"})
      */
     private $familyName;
 
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"readUser","results","write", "threads", "thread"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser"})
      */
     private $shortFamilyName;
+
+    /**
+     * @var string|null The name of the user in a professional context.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $proName;
 
     /**
      * @var string The email of the user.
@@ -349,15 +365,24 @@ class User implements UserInterface, EquatableInterface
      * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=100, unique=true)
-     * @Groups({"readUser","write","checkValidationToken"})
+     * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate"})
      */
     private $email;
+
+    /**
+     * @var string The email of the user in a professional context.
+     *
+     * @Assert\Email()
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $proEmail;
 
     /**
      * @var string The encoded password of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","passwordUpdate"})
      */
     private $password;
 
@@ -558,7 +583,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null Token for password modification.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","passwordUpdateRequest","passwordUpdate"})
      */
     private $pwdToken;
 
@@ -777,6 +802,20 @@ class User implements UserInterface, EquatableInterface
     private $userNotifications;
 
     /**
+     * @var ArrayCollection|null The campaigns made by this user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Campaign", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     */
+    private $campaigns;
+
+    /**
+     * @var ArrayCollection|null The campaing deliveries where this user is recipient.
+     *
+     * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Delivery", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     */
+    private $deliveries;
+
+    /**
      * @var UserImport|null The user import data.
      *
      * @ORM\OneToOne(targetEntity="\App\Import\Entity\UserImport", mappedBy="user")
@@ -839,6 +878,8 @@ class User implements UserInterface, EquatableInterface
         $this->diariesAdmin = new ArrayCollection();
         $this->solidaries = new ArrayCollection();
         $this->userNotifications = new ArrayCollection();
+        $this->campaigns = new ArrayCollection();
+        $this->deliveries = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -891,6 +932,18 @@ class User implements UserInterface, EquatableInterface
         return strtoupper($this->familyName[0]) . ".";
     }
 
+    public function getProName(): ?string
+    {
+        return $this->proName;
+    }
+
+    public function setProName(?string $proName): self
+    {
+        $this->proName = $proName;
+
+        return $this;
+    }
+
     public function getEmail(): string
     {
         return $this->email;
@@ -899,6 +952,18 @@ class User implements UserInterface, EquatableInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getProEmail(): ?string
+    {
+        return $this->proEmail;
+    }
+
+    public function setProEmail(string $proEmail): self
+    {
+        $this->proEmail = $proEmail;
 
         return $this;
     }
@@ -1761,6 +1826,62 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($userNotification->getUser() === $this) {
                 $userNotification->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCampaigns()
+    {
+        return $this->campaigns->getValues();
+    }
+
+    public function addCampaign(Campaign $campaign): self
+    {
+        if (!$this->campaigns->contains($campaign)) {
+            $this->campaigns->add($campaign);
+            $campaign->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCampaign(Campaign $campaign): self
+    {
+        if ($this->campaigns->contains($campaign)) {
+            $this->campaigns->removeElement($campaign);
+            // set the owning side to null (unless already changed)
+            if ($campaign->getUser() === $this) {
+                $campaign->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDeliveries()
+    {
+        return $this->deliveries->getValues();
+    }
+
+    public function addDelivery(Delivery $delivery): self
+    {
+        if (!$this->deliveries->contains($delivery)) {
+            $this->deliveries->add($delivery);
+            $delivery->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDelivery(Delivery $delivery): self
+    {
+        if ($this->deliveries->contains($delivery)) {
+            $this->deliveries->removeElement($delivery);
+            // set the owning side to null (unless already changed)
+            if ($delivery->getUser() === $this) {
+                $delivery->setUser(null);
             }
         }
 

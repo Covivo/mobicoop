@@ -242,7 +242,7 @@ class CommunityController extends AbstractController
         $lastUsers = $communityManager->getLastUsers($id);
         $lastUsersFormated = [];
         foreach ($lastUsers as $key => $commUser) {
-            $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".ucfirst($commUser->getUser()->getFamilyName());
+            $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".$commUser->getUser()->getShortFamilyName();
             $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');
         }
 
@@ -256,7 +256,7 @@ class CommunityController extends AbstractController
                     "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
                     "frequency"=>($proposal["criteria"]["frequency"]==Criteria::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
                     "carpoolerFirstName" => $proposal["user"]["givenName"],
-                    "carpoolerLastName" => $proposal["user"]["familyName"],
+                    "carpoolerLastName" => $proposal["user"]["shortFamilyName"],
                     "waypoints"=>[]
                 ];
                 foreach ($proposal["waypoints"] as $waypoint) {
@@ -396,7 +396,7 @@ class CommunityController extends AbstractController
         $lastUsers = $communityManager->getLastUsers($id);
         $lastUsersFormated = [];
         foreach ($lastUsers as $key => $commUser) {
-            $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".ucfirst($commUser->getUser()->getFamilyName());
+            $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".$commUser->getUser()->getShortFamilyName();
             $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');
         }
         return new Response(json_encode($lastUsersFormated));

@@ -405,7 +405,6 @@ class DataProvider
         if (is_null($groups)) {
             $groups = ['post'];
         }
-
         try {
             $uri = $this->resource."/".$operation;
             $clientResponse = $this->client->post($uri, [

@@ -20,6 +20,7 @@
         "halaxa/json-machine": "^0.3.2",
         "lexik/jwt-authentication-bundle": "^2.6",
         "liip/imagine-bundle": "^2.1",
+        "mandrill/mandrill": "^1.0",
         "php-http/guzzle6-adapter": "1.1.1",
         "php-http/message": "^1.7",
         "sensio/framework-extra-bundle": "^5.2",

@@ -137,6 +137,14 @@ class UserManager
         $user->setChat($this->chat);
         $user->setMusic($this->music);
         $user->setSmoke($this->smoke);
+
+        // Create token to valid inscription
+        $datetime = new DateTime();
+        $time = $datetime->getTimestamp();
+        // For safety, we strip the slashes because this token can be passed in url
+        $validationToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        $user->setValidatedDateToken($validationToken);
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -281,7 +289,7 @@ class UserManager
                 'idRecipient' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getId() : $message->getUser('user')->getId(),
                 'avatarsRecipient' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getAvatars()[0] : $message->getUser('user')->getAvatars()[0],
                 'givenName' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getGivenName() : $message->getUser('user')->getGivenName(),
-                'familyName' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getFamilyName() : $message->getUser('user')->getFamilyName(),
+                'shortFamilyName' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getShortFamilyName() : $message->getUser('user')->getShortFamilyName(),
                 'date' => ($message->getLastMessage()===null) ? $message->getCreatedDate() : $message->getLastMessage()->getCreatedDate(),
                 'selected' => false
             ];
@@ -313,7 +321,7 @@ class UserManager
                     'idRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getId() : $ask->getUser('user')->getId(),
                     'avatarsRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getAvatars()[0] : $ask->getUser('user')->getAvatars()[0],
                     'givenName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getGivenName() : $ask->getUser('user')->getGivenName(),
-                    'familyName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getFamilyName() : $ask->getUser('user')->getFamilyName(),
+                    'shortFamilyName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getShortFamilyName() : $ask->getUser('user')->getShortFamilyName(),
                     'date' => ($message===null) ? $askHistory->getCreatedDate() : $message->getCreatedDate(),
                     'selected' => false
                 ];
@@ -375,45 +383,54 @@ class UserManager
        * User password change request.
        *
        * @param User $user
-       * @return User
+       * @return Response
        */
-    public function updateUserPasswordRequest(User $user)
+    public function updateUserPasswordRequest(User $data)
     {
-        $datetime = new DateTime();
-        $time = $datetime->getTimestamp();
-        // encoding of the password
-        $pwdToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
-        $user->setPwdToken($pwdToken);
-        // update of the geotoken
-        $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
-        $user->setGeoToken($geoToken);
-        // persist the user
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-        // dispatch en event
-        $event = new UserPasswordChangeAskedEvent($user);
-        $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
-        // return the user
-        return $user;
+        // Get the user
+        $user = $this->userRepository->findOneBy(["email"=>$data->getEmail()]);
+        
+        if (!is_null($user)) {
+            $datetime = new DateTime();
+            $time = $datetime->getTimestamp();
+            // encoding of the password
+            $pwdToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+            $user->setPwdToken($pwdToken);
+            // update of the geotoken
+            $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+            $user->setGeoToken($geoToken);
+            // persist the user
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+            // dispatch en event
+            $event = new UserPasswordChangeAskedEvent($user);
+            $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
+            return $user;
+        }
+        return new JsonResponse();
     }
  
     /**
        * User password change confirmation.
        *
        * @param User $user
-       * @return User
+       * @return Response
        */
-    public function updateUserPasswordConfirm(User $user)
+    public function updateUserPassword(User $data)
     {
-        $user->setPwdToken(null);
-        // persist the user
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-        // dispatch en event
-        $event = new UserPasswordChangedEvent($user);
-        $this->eventDispatcher->dispatch($event, UserPasswordChangedEvent::NAME);
-        // return the user
-        return $user;
+        $user = $this->userRepository->findOneBy(["pwdToken"=>$data->getPwdToken()]);
+        if (!is_null($user)) {
+            $user->setPassword($data->getPassword());
+            // persist the user
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+            // dispatch en event
+            $event = new UserPasswordChangedEvent($user);
+            $this->eventDispatcher->dispatch($event, UserPasswordChangedEvent::NAME);
+            // return the user
+            return $user;
+        }
+        return new JsonResponse();
     }
 
     /**

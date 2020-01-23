@@ -603,7 +603,7 @@ export default {
       const params = {
         carpool:0,
         idRecipient:data.id,
-        familyName:data.familyName,
+        shortFamilyName:data.shortFamilyName,
         givenName:data.givenName,
         avatar:data.avatars[0]
       }
