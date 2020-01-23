@@ -50,6 +50,7 @@ class MandrillProvider implements MassEmailProviderInterface
         // todo : check the best method to send a email from mandrill, and how to get the results (sync / async ? webhook ?)
         $to = [];
         $merge = [];
+
         foreach ($recipients as $email=>$context) {
             $to[] = [
                 'email' => $email,
@@ -67,7 +68,6 @@ class MandrillProvider implements MassEmailProviderInterface
                 'vars' => $vars
             ];
         }
-        return true;
         try {
             $mandrill = new Mandrill($this->key);
             $message = [
@@ -107,7 +107,9 @@ class MandrillProvider implements MassEmailProviderInterface
             $async = true;
             $ip_pool = 'Main Pool';
             $send_at = new \DateTime();
-            $result = $mandrill->messages->send($message, $async, $ip_pool, $send_at->format('YmdHis'));
+            //$result = $mandrill->messages->send($message, $async, $ip_pool, $send_at->format('YmdHis'));
+
+            var_dump($result);
         } catch (Mandrill_Error $e) {
             // Mandrill errors are thrown as exceptions
             echo 'A mandrill error occurred: ' . get_class($e) . ' - ' . $e->getMessage();
