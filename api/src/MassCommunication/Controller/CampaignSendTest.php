@@ -31,7 +31,7 @@ use App\TranslatorTrait;
  * Controller class for campaign send.
  *
  */
-class CampaignSend
+class CampaignSendTest
 {
     use TranslatorTrait;
 
@@ -47,6 +47,6 @@ class CampaignSend
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad campaign id is provided"));
         }
-        return $this->campaignManager->send($data);
+        return $this->campaignManager->sendTest($data);
     }
 }

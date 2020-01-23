@@ -80,6 +80,29 @@ class CampaignManager
         }
         return $campaign;
     }
+
+    /**
+     * Send  the test messages for a campaign, to the sender
+     *
+     * @param Campaign $campaign    The campaign to send the messages for
+     * @return Campaign The campaign modified with the result of the send.
+     */
+    public function sendTest(Campaign $campaign)
+    {
+        if ( in_array($campaign->getStatus(),array( Campaign::STATUS_PENDING, Campaign::STATUS_CREATED) ) ) {
+            switch ($campaign->getMedium()->getId()) {
+                case Medium::MEDIUM_EMAIL:
+                    return $this->sendMassEmailTest($campaign);
+                    break;
+                case Medium::MEDIUM_SMS:
+                    return $this->sendMassSms($campaign);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return $campaign;
+    }
     
     /**
      * Send messages for a campaign by email.
@@ -108,6 +131,36 @@ class CampaignManager
         $campaign->setStatus(Campaign::STATUS_SENT);
         $this->entityManager->persist($campaign);
         
+        return $campaign;
+    }
+
+    /**
+     * Send messages test for a campaign by email.
+     *
+     * @param Campaign $campaign    The campaign to send the messages for
+     * @return Campaign The campaign modified with the result of the send.
+     */
+    private function sendMassEmailTest(Campaign $campaign)
+    {
+        // call the service
+        $this->massEmailProvider->send(
+            $campaign->getSubject(),
+            $campaign->getFromName(),
+            $campaign->getEmail(),
+            $campaign->getReplyTo(),
+            $this->getFormedEmailBody($campaign->getBody()),
+            null
+        );
+
+        // if the result of the send is returned here
+        // foreach ($campaign->getDeliveries() as $delivery) {
+        //     $delivery->setStatus(Delivery::STATUS_SENT);
+        // }
+
+        // persist the result depending of the status
+        $campaign->setStatus(Campaign::STATUS_CREATED);
+        $this->entityManager->persist($campaign);
+
         return $campaign;
     }
 
