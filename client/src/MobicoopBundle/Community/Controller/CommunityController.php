@@ -256,7 +256,7 @@ class CommunityController extends AbstractController
                     "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
                     "frequency"=>($proposal["criteria"]["frequency"]==Criteria::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
                     "carpoolerFirstName" => $proposal["user"]["givenName"],
-                    "carpoolerLastName" => $proposal["user"]["familyName"],
+                    "carpoolerLastName" => $proposal["user"]["shortFamilyName"],
                     "waypoints"=>[]
                 ];
                 foreach ($proposal["waypoints"] as $waypoint) {
