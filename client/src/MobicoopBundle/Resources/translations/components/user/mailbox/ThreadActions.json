@@ -7,6 +7,7 @@
             "ask":"Proposer un covoiturage régulier"
         },
         "distance":"Distance",
+        "distanceTooltip":"Distance covoiturée incluant le détour conducteur",
         "seatsAvailable":"Places disponibles",
         "price":"Prix",
         "priceTooltip":"Tarif indicatif",
@@ -21,8 +22,10 @@
             "ask":"Ask a regular carpool"
         },
         "distance":"Distance",
+        "distanceTooltip":"Carpooled distance including driver detour",
         "seatsAvailable":"Available seats",
         "price":"Price",
-        "priceTooltip":"Indicative price"
+        "priceTooltip":"Indicative price",
+        "userDelete" : "Unsubscribed user"
     }
 }
