@@ -35,11 +35,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AdVoter extends Voter
 {
-    const CREATE_AD = 'create_ad';
-    const DELETE_AD = 'delete_ad';
-    const POST_AD = 'post_ad';
-    const POST_AD_DELEGATE = 'post_ad_delegate';
-    const RESULTS_AD = 'results_ad';
+    const CREATE_AD = 'ad_create';
+    const DELETE_AD = 'ad_delete';
+    const POST_AD = 'ad_post';
+    const POST_AD_DELEGATE = 'ad_post_delegate';
+    const RESULTS_AD = 'ad_results';
     
     private $security;
     private $request;

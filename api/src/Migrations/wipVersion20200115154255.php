@@ -38,17 +38,26 @@ final class Version20200114141330 extends AbstractMigration
 
         $this->addSql(
             'INSERT INTO `uright` (`id`, `type`, `name`, `parent_id`, `description`) VALUES 
-        (86, 1, \'user_read\', 1, \'read a user\'), 
+        (86, 1, \'user_read\', 1, \'Read a user\'), 
         (87, 1, \'user_read_self\', 4, \'Read itself\'), 
-        (88, 1, \'user_messages\', 1, \'access to the messages of a user\'), 
+        (88, 1, \'user_messages\', 1, \'Access to the messages of a user\'), 
         (89, 1, \'user_messages_self\', 4, \'User access to its own messages\'), 
-        (90, 1, \'user_asks\', 1, \'access to the asks of a user\'), 
+        (90, 1, \'user_asks\', 1, \'Access to the asks of a user\'), 
         (91, 1, \'user_asks_self\', 4, \'User access to its own asks\'),
-        (92, 1, \'event_read\', NULL, \'View an event\');'
+        (92, 1, \'event_read\', NULL, \'View an event\'),
+        (93, 1, \'action_manage\', NULL, \'Manage actions\'),
+        (94, 1, \'action_read\', 93, \'Read an action\'),
+        (95, 1, \'log_manage\', NULL, \'Manage log records\'),
+        (96, 1, \'log_read\', 95, \'Read a log record\')'
         );
         $this->addSql(
             'INSERT INTO `role_right` (`role_id`, `right_id`) VALUES
-        (5, 92)'
+        (5, 92),
+        (2, 93),
+        (2, 95)'
+        );
+        $this->addSql(
+            'UPDATE `role` SET parent_id=1 WHERE id=2'
         );
     }
 }
