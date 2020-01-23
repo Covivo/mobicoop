@@ -131,6 +131,7 @@ class CampaignManager
         // persist the result depending of the status
         $campaign->setStatus(Campaign::STATUS_SENT);
         $this->entityManager->persist($campaign);
+        $this->entityManager->flush();
         
         return $campaign;
     }
@@ -154,14 +155,6 @@ class CampaignManager
         );
 
 
-
-
-        // if the result of the send is returned here
-        // foreach ($campaign->getDeliveries() as $delivery) {
-        //     $delivery->setStatus(Delivery::STATUS_SENT);
-        // }
-
-        // persist the result depending of the status
         $campaign->setStatus(Campaign::STATUS_CREATED);
         $this->entityManager->persist($campaign);
         $this->entityManager->flush();

@@ -59,7 +59,7 @@ use App\MassCommunication\Controller\CampaignSendTest;
  *              "method"="GET",
  *              "controller"=CampaignSendTest::class,
  *              "path"="/campaigns/{id}/send-test"
- *          },*
+ *          },
  *      }
  * )
  */
