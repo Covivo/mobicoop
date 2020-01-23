@@ -31,7 +31,7 @@ use App\Geography\Entity\Address;
 /**
  * Carpooling : result item for an ad.
  *
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}

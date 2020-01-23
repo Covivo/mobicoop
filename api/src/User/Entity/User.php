@@ -721,7 +721,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @MaxDepth(1)
-     * @ApiSubresource
+     * ApiSubresource
      */
     private $recipients;
 
