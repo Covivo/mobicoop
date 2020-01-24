@@ -59,8 +59,8 @@ import axios from "axios";
 import { merge } from "lodash";
 import Translations from "@translations/components/event/Event.json";
 import TranslationsClient from "@clientTranslations/components/event/Event.json";
-import EventInfos from "@components/event/EventInfos";
-import Search from "@components/carpool/search/Search";
+// import EventInfos from "@components/event/EventInfos";
+// import Search from "@components/carpool/search/Search";
 // import MMap from "@components/utilities/MMap"
 import L from "leaflet";
 

@@ -103,7 +103,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     /**
      * @var string The email of the user.
      *
-     * @Groups({"post","put"})
+     * @Groups({"post","put","checkValidationToken","passwordUpdateRequest"})
      *
      * @Assert\NotBlank(groups={"signUp","update"})
      * @Assert\Email()
@@ -113,7 +113,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     /**
      * @var string|null The encoded password of the user.
      *
-     * @Groups({"post","put","password"})
+     * @Groups({"post","put","password","passwordUpdate"})
      *
      * @Assert\NotBlank(groups={"signUp","password"})
      */
@@ -144,7 +144,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     /**
      * @var string|null The telephone number of the user.
      *
-     * @Groups({"post","put"})
+     * @Groups({"post","put","checkPhoneToken"})
      */
     private $telephone;
 
@@ -236,7 +236,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     /**
      * @var string|null Token for account validation by email
      *
-     * @Groups({"post","put"})
+     * @Groups({"post","put","checkValidationToken"})
      */
     private $validatedDateToken;
     
@@ -315,7 +315,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
     /**
      * @var string|null Token for password modification.
-     *  @Groups({"post","put", "password_token"})
+     *  @Groups({"post","put", "password_token", "passwordUpdate"})
      */
     private $pwdToken;
 
@@ -333,7 +333,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
     /**
      * @var string|null Token for phone validation.
-     * @Groups({"post","put"})
+     * @Groups({"post","put","checkPhoneToken"})
      */
     private $phoneToken;
 
@@ -883,7 +883,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
     public function getBirthYear(): ?int
     {
-        return $this->birthDate ? (int)$this->birthDate->format('Y') : null;
+        return $this->birthYear;
     }
 
     public function setBirthYear(?int $birthYear)

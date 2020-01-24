@@ -3,104 +3,65 @@
     <!-- The Ask is just Initiated -->
     <!-- Only the Ask User can make a formal request of carpool -->
     <div v-if="status==1 && canUpdateAsk">
-      <v-tooltip
+      <v-btn
         v-if="driver"
-        bottom
+        class="mb-2"
         color="primary"
+        large
+        dark
+        rounded
+        depressed
+        :loading="loading"
+        @click="updateStatus(2,'driver')"
       >
-        <template v-slot:activator="{ on }">
-          <v-btn
-            color="primary"
-            fab
-            large
-            dark
-            depressed
-            :loading="loading"
-            v-on="on"
-            @click="updateStatus(2,'driver')"
-          >
-            <v-icon class="display-2">
-              mdi-car
-            </v-icon>
-          </v-btn> 
-        </template>
-        <span>{{ $t('button.askCarpoolAsDriver') }}</span>
-      </v-tooltip>     
-      <v-tooltip
+        {{ $t('button.askCarpoolAsDriver') }}
+      </v-btn> 
+       
+      <v-btn
         v-if="passenger"
-        bottom
         color="primary"
+        large
+        dark
+        rounded
+        depressed
+        :loading="loading"
+        @click="updateStatus(3,'passenger')"
       >
-        <template v-slot:activator="{ on }">
-          <v-btn
-            color="primary"
-            fab
-            large
-            dark
-            depressed
-            :loading="loading"
-            v-on="on"
-            @click="updateStatus(3,'passenger')"
-          >
-            <v-icon class="display-2">
-              mdi-walk
-            </v-icon>
-          </v-btn> 
-        </template>
-        <span>{{ $t('button.askCarpoolAsPassenger') }}</span>
-      </v-tooltip>     
+        {{ $t('button.askCarpoolAsPassenger') }}
+      </v-btn>
     </div>
     <div v-if="status==1 && !canUpdateAsk">
       <v-card-text>{{ $t('onlyAskUser') }}</v-card-text>
     </div>
     <!-- end ask just Initiated -->
 
-
     <!-- The Ask is pending -->
     <!-- If you are the ask user you cannot accept or delined -->
     <div v-if="(status==2 || status==3) && canUpdateAsk">
-      <v-tooltip
-        bottom
+      <v-btn
+        class="mr-12"
+        width="30%"
         color="success"
+        rounded                 
+        small
+        dark
+        depressed
+        @click="updateStatus((status==2) ? 4 : 5)"
       >
-        <template v-slot:activator="{ on }">
-          <v-btn
-            color="success"
-            fab
-            large
-            dark
-            depressed
-            v-on="on"
-            @click="updateStatus((status==2) ? 4 : 5)"
-          >
-            <v-icon class="display-2">
-              mdi-check
-            </v-icon>
-          </v-btn> 
-        </template>
-        <span>{{ $t('button.accept') }}</span>
-      </v-tooltip>     
-      <v-tooltip
-        bottom
+        {{ $t('button.accept') }}
+      </v-btn> 
+      <v-btn
+        class="ml-12"
+        width="30%"
         color="error"
+        rounded
+        small
+        dark
+        depressed
+        @click="updateStatus((status==2) ? 6 : 7)"
       >
-        <template v-slot:activator="{ on }">
-          <v-btn
-            color="error"
-            fab
-            large
-            dark
-            depressed
-            v-on="on"
-            @click="updateStatus((status==2) ? 6 : 7)"
-          >
-            <v-icon class="display-2">
-              mdi-close
-            </v-icon>
-          </v-btn>      
-        </template>
-        <span>{{ $t('button.refuse') }}</span>
-      </v-tooltip>     
+        {{ $t('button.refuse') }}
+      </v-btn>       
     </div>
     <div v-else-if="(status==2 || status==3)">
       <v-card

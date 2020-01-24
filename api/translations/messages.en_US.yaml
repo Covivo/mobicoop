@@ -43,6 +43,7 @@ towards: "en direction de"
 newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet"
 seeYouIn: "Rendez-vous dans" 
 myAds: "Mes annonces"
+linkMyAds: "/user/profil/update/my-proposals"
 toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact"
 justPublished : "vient d'être publiée"
 

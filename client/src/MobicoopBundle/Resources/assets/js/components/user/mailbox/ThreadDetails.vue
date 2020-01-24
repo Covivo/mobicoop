@@ -42,7 +42,7 @@
           >{{ item.createdDate }}</span>
         </v-timeline-item>
       </v-timeline>
-      <v-card v-else-if="!loading && !hideNoThreadSelected">
+      <v-card v-else-if="(!loading && !hideNoThreadSelected) || clearClickIcon">
         <v-card-text
           class="font-italic subtitle-1"
         >
@@ -97,7 +97,8 @@ export default {
       tile: false,
       type: 'article',
       types: [],
-      loading: false
+      loading: false,
+      clearClickIcon : false
     }
   },
   watch:{
@@ -120,6 +121,8 @@ export default {
 
       // if idMessage = -1 it means that is a "virtuel" thread. When you initiate a contact without previous message
       if(this.idMessage>-1 && this.idMessage != null){
+
+        this.clearClickIcon = false
         this.loading = true;
         axios.get(this.$t("urlCompleteThread",{idMessage:this.idMessage}))
           .then(response => {
@@ -131,7 +134,7 @@ export default {
 
             let firstItem = {
               divider: true,
-              createdDate: moment(response.data[0].createdDate).format("ddd DD MMM YYYY")
+              createdDate: moment(response.data[0].createdDate).format("L")
             }
             this.items.push(firstItem);
 
@@ -143,7 +146,7 @@ export default {
               if (moment(item.createdDate).format("DDMMYYYY") !== currentDate) {
                 let divider = {
                   divider: true,
-                  createdDate: moment(item.createdDate).format("ddd DD MMM YYYY")
+                  createdDate: moment(item.createdDate).format("L")
                 };
                 currentDate = moment(item.createdDate).format("DDMMYYYY");
                 this.items.push(divider);
@@ -163,6 +166,8 @@ export default {
           .catch(function (error) {
             console.log(error);
           });
+      }else if (this.idMessage == -2){
+        this.clearClickIcon = true
       }
       else{
         this.emit();

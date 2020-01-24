@@ -38,7 +38,7 @@
     <!--Confirmation Popup-->
     <v-dialog
       v-model="dialog"
-      max-width="500"
+      max-width="495"
     >
       <v-card>
         <v-card-title class="headline">

@@ -86,28 +86,33 @@ export default {
     carpoolOffers: {
       type: Array,
       default: () => []
+    },
+    nbMatchings:{
+      type: Number,
+      default: 0
     }
   },
   computed: {
     computedRequestsCount () {
-      if (this.isDriver && !this.isPassenger) {
-        return this.carpoolRequests.length;
-      } else if (!this.isDriver && this.isPassenger) {
-        return this.carpoolOffers.length;
-      } else if (this.isDriver && this.isPassenger) {
-        let data = [];
-        this.carpoolRequests.forEach(request => {
-          data.push(request.proposalOffer)
-        });
-        this.carpoolOffers.forEach(offer => {
-          if (!find(data, {id: offer.proposalRequest.id})) {
-            data.push(offer.proposalRequest)
-          }
-        });
-        return data.length;
-      } else {
-        return 0;
-      }
+      // if (this.isDriver && !this.isPassenger) {
+      //   return this.carpoolRequests.length;
+      // } else if (!this.isDriver && this.isPassenger) {
+      //   return this.carpoolOffers.length;
+      // } else if (this.isDriver && this.isPassenger) {
+      //   let data = [];
+      //   this.carpoolRequests.forEach(request => {
+      //     data.push(request.proposalRequest)
+      //   });
+      //   this.carpoolOffers.forEach(offer => {
+      //     if (!find(data, {id: offer.proposalOffer.id})) {
+      //       data.push(offer.proposalOffer)
+      //     }
+      //   });
+      //   return data.length;
+      // } else {
+      //   return 0;
+      // }
+      return this.nbMatchings;
     }
   },
   methods: {

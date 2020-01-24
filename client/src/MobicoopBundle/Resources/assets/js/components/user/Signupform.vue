@@ -229,7 +229,7 @@
             <v-date-picker
               ref="picker"
               v-model="form.date"
-              :max="new Date().toISOString().substr(0, 10)"
+              :max="maxDate()"
               :locale="locale"
               first-day-of-week="1"
               @change="save"
@@ -295,13 +295,13 @@
               v-slot:activator="{ on }"
             >
               <div>
-                {{ $t('ui.pages.signup.chart.text') }}
+                {{ $t('chart.text') }}
                 <a
                   class="primary--text"
                   target="_blank"
-                  :href="$t('ui.pages.signup.chart.route')"
+                  :href="$t('chart.route')"
                   @click.stop
-                >{{ $t('ui.pages.signup.chart.link') }}
+                >{{ $t('chart.link') }}
                 </a>
               </div>
             </template>
@@ -456,7 +456,7 @@ export default {
             diff /= (60 * 60 * 24);
 
             var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
-            return diffYears >= 18 || this.$t("models.user.birthDay.errors.notadult")
+            return diffYears >= 16 || this.$t("models.user.birthDay.errors.notadult")
           }
         },
         homeAddress:null,
@@ -496,6 +496,11 @@ export default {
     this.container = document.getElementById ( "scroll-target" )
   },
   methods: {
+    maxDate() {
+      let maxDate = new Date();
+      maxDate.setFullYear (maxDate.getFullYear() - 16);
+      return maxDate.toISOString().substr(0, 10);
+    },
     selectedGeo(address) {
       this.form.homeAddress = address;
       if (this.requiredHomeAddress) {
@@ -524,7 +529,7 @@ export default {
           }
         })
         .then(response=>{
-          window.location.href = this.$t('urlRedirectAfterSignUp');
+          window.location.href = this.$t('urlRedirectAfterSignUp',{"email":this.form.email});
           //console.log(response);
         })
         .catch(function (error) {
@@ -553,7 +558,7 @@ export default {
       var diff =(d1.getTime() - d2.getTime()) / 1000;
       diff /= (60 * 60 * 24);
 
-      var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
+      //var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
     },
 
   }

@@ -54,6 +54,7 @@ use App\User\Controller\UserPermissions;
 use App\User\Controller\UserAlerts;
 use App\User\Controller\UserAlertsUpdate;
 use App\User\Controller\UserLogin;
+use App\User\Controller\UserAsks;
 use App\User\Controller\UserThreads;
 use App\User\Controller\UserThreadsDirectMessages;
 use App\User\Controller\UserThreadsCarpoolMessages;
@@ -61,6 +62,8 @@ use App\User\Controller\UserUpdatePassword;
 use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserUpdate;
 use App\User\Controller\UserAnonymise;
+use App\User\Controller\UserCheckSignUpValidationToken;
+use App\User\Controller\UserCheckPhoneToken;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\HomeAddressDirectionTerritoryFilter;
@@ -74,6 +77,9 @@ use App\User\Filter\SolidaryFilter;
 use App\User\Filter\ValidatedDateTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
+use App\Import\Entity\UserImport;
+use App\MassCommunication\Entity\Campaign;
+use App\MassCommunication\Entity\Delivery;
 use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 
@@ -89,34 +95,103 @@ use App\User\EntityListener\UserListener;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read","mass"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readUser","mass"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
  *          "get"={
- *              "normalization_context"={"groups"={"read"}},
+ *              "normalization_context"={"groups"={"readUser"}},
  *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/users",
  *              "controller"=UserRegistration::class,
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "givenName",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's given name"
+ *                      },
+ *                      {
+ *                          "name" = "familyName",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's family name"
+ *                      },
+ *                      {
+ *                          "name" = "email",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's email"
+ *                      },
+ *                      {
+ *                          "name" = "password",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "Encoded version of the password (i.e. bcrypt)"
+ *                      },
+ *                      {
+ *                          "name" = "gender",
+ *                          "type" = "int",
+ *                          "enum" = {1,2,3},
+ *                          "required" = true,
+ *                          "description" = "User's gender (1 : female, 2 : male, 3 : other)"
+ *                      },
+ *                      {
+ *                          "name" = "birthDate",
+ *                          "type" = "string",
+ *                          "format" = "date",
+ *                          "required" = true,
+ *                          "example" = "1997-08-14T00:00:00+00:00",
+ *                          "description" = "User's birthdate"
+ *                      },
+ *                      {
+ *                          "name" = "validatedDateToken",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "A token to be send to the user for email validation purpose"
+ *                      }
+ *                  }
+ *              }
  *          },
+ *          "checkSignUpValidationToken"={
+ *              "method"="POST",
+ *              "denormalization_context"={"groups"={"checkValidationToken"}},
+ *              "normalization_context"={"groups"={"readUser"}},
+ *              "path"="/users/checkSignUpValidationToken",
+ *              "controller"=UserCheckSignUpValidationToken::class
+ *          },
+ *          "checkPhoneToken"={
+ *              "method"="POST",
+ *              "denormalization_context"={"groups"={"checkPhoneToken"}},
+ *              "normalization_context"={"groups"={"readUser"}},
+ *              "path"="/users/checkPhoneToken",
+ *              "controller"=UserCheckPhoneToken::class
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
- *              "normalization_context"={"groups"={"read"}},
- *          },
- *          "password_update"={
- *              "method"="PUT",
- *              "path"="/users/{id}/password_update",
- *              "controller"=UserUpdatePassword::class,
- *              "defaults"={"name"="reply"}
+ *              "normalization_context"={"groups"={"readUser"}},
  *          },
  *          "password_update_request"={
- *              "method"="PUT",
- *              "path"="/users/{id}/password_update_request",
+ *              "method"="POST",
+ *              "path"="/users/password_update_request",
  *              "controller"=UserUpdatePassword::class,
- *              "defaults"={"name"="request"}
+ *              "defaults"={"name"="request"},
+ *              "read"=false,
+ *              "denormalization_context"={"groups"={"passwordUpdateRequest"}},
+ *              "normalization_context"={"groups"={"passwordUpdateRequest"}},
+ *          },
+ *          "password_update"={
+ *              "method"="POST",
+ *              "path"="/users/password_update",
+ *              "controller"=UserUpdatePassword::class,
+ *              "defaults"={"name"="update"},
+ *              "read"=false,
+ *              "denormalization_context"={"groups"={"passwordUpdate"}},
+ *              "normalization_context"={"groups"={"passwordUpdate"}},
  *          },
  *          "generate_phone_token"={
  *              "method"="GET",
@@ -181,6 +256,11 @@ use App\User\EntityListener\UserListener;
  *              "path"="/users/{id}/anonymise_user",
  *              "controller"=UserAnonymise::class
  *          },
+ *          "asks"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/asks",
+ *              "controller"=UserAsks::class
+ *          }
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})
@@ -234,7 +314,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","results","threads", "thread"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","threads", "thread"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -244,7 +324,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"readUser","readCommunityUser","write"})
      */
     private $status;
 
@@ -252,7 +332,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","results","write", "threads", "thread"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread"})
      */
     private $givenName;
 
@@ -260,16 +340,24 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","results","write", "threads", "thread"})
+     * @Groups({"readUser","write"})
      */
     private $familyName;
 
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"read","results","write", "threads", "thread"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser"})
      */
     private $shortFamilyName;
+
+    /**
+     * @var string|null The name of the user in a professional context.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $proName;
 
     /**
      * @var string The email of the user.
@@ -277,15 +365,24 @@ class User implements UserInterface, EquatableInterface
      * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=100, unique=true)
-     * @Groups({"read","results","write"})
+     * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate"})
      */
     private $email;
+
+    /**
+     * @var string The email of the user in a professional context.
+     *
+     * @Assert\Email()
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $proEmail;
 
     /**
      * @var string The encoded password of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write","passwordUpdate"})
      */
     private $password;
 
@@ -293,7 +390,7 @@ class User implements UserInterface, EquatableInterface
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"readUser","results","write"})
      */
     private $gender;
 
@@ -301,7 +398,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The nationality of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $nationality;
 
@@ -309,7 +406,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface|null The birth date of the user.
      *
      * @ORM\Column(type="date", nullable=true)
-     * @Groups({"read","results","write"})
+     * @Groups({"readUser","write"})
      *
      * @ApiProperty(
      *     attributes={
@@ -320,25 +417,38 @@ class User implements UserInterface, EquatableInterface
     private $birthDate;
 
     /**
+     * @var \DateTimeInterface|null The birth year of the user.
+     *
+     * @Groups({"readUser","results"})
+     */
+    private $birthYear;
+
+    /**
      * @var string|null The telephone number of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","results","write"})
+     * @Groups({"readUser","write","checkPhoneToken"})
      */
     private $telephone;
     
     /**
      * @var string|null The telephone number of the user.
-     * @Groups({"read", "write"})
+     * @Groups({"readUser", "write"})
      */
     private $oldTelephone;
+
+    /**
+     * @var string|null The telephone number of the user (for results).
+     * @Groups({"readUser","results"})
+     */
+    private $phone;
 
     /**
      * @var int phone display configuration (1 = restricted (default); 2 = all).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write", "results"})
+     * @Groups({"readUser","write", "results"})
      */
     private $phoneDisplay;
 
@@ -346,7 +456,7 @@ class User implements UserInterface, EquatableInterface
      * @var int|null The maximum detour duration (in seconds) as a driver to accept a request proposal.
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $maxDetourDuration;
 
@@ -354,7 +464,7 @@ class User implements UserInterface, EquatableInterface
      * @var int|null The maximum detour distance (in metres) as a driver to accept a request proposal.
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $maxDetourDistance;
 
@@ -362,7 +472,7 @@ class User implements UserInterface, EquatableInterface
      * @var boolean|null The user accepts any route as a passenger from its origin to the destination.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $anyRouteAsPassenger;
 
@@ -370,7 +480,7 @@ class User implements UserInterface, EquatableInterface
      * @var boolean|null The user accepts any transportation mode.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $multiTransportMode;
 
@@ -381,7 +491,7 @@ class User implements UserInterface, EquatableInterface
      * 2 = i smoke
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $smoke;
 
@@ -391,7 +501,7 @@ class User implements UserInterface, EquatableInterface
      * 1 = i listen to music or radio
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $music;
 
@@ -399,7 +509,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null Music favorites.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $musicFavorites;
 
@@ -409,7 +519,7 @@ class User implements UserInterface, EquatableInterface
      * 1 = chat
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $chat;
 
@@ -417,7 +527,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null Chat favorite subjects.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $chatFavorites;
 
@@ -425,7 +535,7 @@ class User implements UserInterface, EquatableInterface
      * @var boolean|null The user accepts to receive news about the platform.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $newsSubscription;
 
@@ -433,7 +543,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface Creation date of the user.
      *
      * @ORM\Column(type="datetime")
-     * @Groups("read")
+     * @Groups("readUser")
      */
     private $createdDate;
 
@@ -441,7 +551,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface Validation date of the user.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $validatedDate;
 
@@ -449,7 +559,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null Token for account validation by email
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write","checkValidationToken"})
      */
     private $validatedDateToken;
 
@@ -457,7 +567,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface Updated date of the user.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("read")
+     * @Groups("readUser")
      */
     private $updatedDate;
 
@@ -465,7 +575,7 @@ class User implements UserInterface, EquatableInterface
      * @var DateTime|null  Date of password token generation modification.
      *
      * @ORM\Column(type="datetime", length=100, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $pwdTokenDate;
 
@@ -473,7 +583,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null Token for password modification.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write","passwordUpdateRequest","passwordUpdate"})
      */
     private $pwdToken;
 
@@ -481,7 +591,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null Token for geographical search authorization.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $geoToken;
 
@@ -489,7 +599,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null Token for phone validation.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write","checkPhoneToken"})
      */
     private $phoneToken;
 
@@ -497,7 +607,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface|null Validation date of the phone number.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $phoneValidatedDate;
 
@@ -505,7 +615,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null iOS app ID.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $iosAppId;
 
@@ -513,13 +623,13 @@ class User implements UserInterface, EquatableInterface
      * @var string|null Android app ID.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $androidAppId;
 
     /**
      * @var string User language
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      * @ORM\Column(name="language", type="string", length=10, nullable=true)
      */
     private $language;
@@ -530,7 +640,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Address", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @MaxDepth(1)
      * @ApiSubresource
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $addresses;
 
@@ -538,7 +648,7 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null A user may have many cars.
      *
      * @ORM\OneToMany(targetEntity="\App\User\Entity\Car", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $cars;
 
@@ -587,7 +697,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","results","write"})
+     * @Groups({"readUser","results","write"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -646,7 +756,7 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null A user may have many action logs.
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $logs;
 
@@ -654,7 +764,7 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null A user may have many diary action logs as an admin.
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="admin", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $logsAdmin;
 
@@ -662,7 +772,7 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null A user may have many action logs.
      *
      * @ORM\OneToMany(targetEntity="\App\User\Entity\Diary", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $diaries;
 
@@ -670,7 +780,7 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null A user may have many diary action logs.
      *
      * @ORM\OneToMany(targetEntity="\App\User\Entity\Diary", mappedBy="admin", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $diariesAdmin;
 
@@ -679,7 +789,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      * @MaxDepth(1)
-     * @Groups("read")
+     * @Groups("readUser")
      * @Apisubresource
      */
     private $solidaries;
@@ -692,8 +802,31 @@ class User implements UserInterface, EquatableInterface
     private $userNotifications;
 
     /**
+     * @var ArrayCollection|null The campaigns made by this user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Campaign", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     */
+    private $campaigns;
+
+    /**
+     * @var ArrayCollection|null The campaing deliveries where this user is recipient.
+     *
+     * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Delivery", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     */
+    private $deliveries;
+
+    /**
+     * @var UserImport|null The user import data.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Import\Entity\UserImport", mappedBy="user")
+     * @Groups({"readUser"})
+     * @MaxDepth(1)
+     */
+    private $import;
+
+    /**
      * @var array|null The avatars of the user
-     * @Groups({"read","results","threads","thread"})
+     * @Groups({"readUser","readCommunity","results","threads","thread"})
      */
     private $avatars;
 
@@ -719,7 +852,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null Facebook ID of the user
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $facebookId;
 
@@ -745,6 +878,8 @@ class User implements UserInterface, EquatableInterface
         $this->diariesAdmin = new ArrayCollection();
         $this->solidaries = new ArrayCollection();
         $this->userNotifications = new ArrayCollection();
+        $this->campaigns = new ArrayCollection();
+        $this->deliveries = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -797,6 +932,18 @@ class User implements UserInterface, EquatableInterface
         return strtoupper($this->familyName[0]) . ".";
     }
 
+    public function getProName(): ?string
+    {
+        return $this->proName;
+    }
+
+    public function setProName(?string $proName): self
+    {
+        $this->proName = $proName;
+
+        return $this;
+    }
+
     public function getEmail(): string
     {
         return $this->email;
@@ -805,6 +952,18 @@ class User implements UserInterface, EquatableInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getProEmail(): ?string
+    {
+        return $this->proEmail;
+    }
+
+    public function setProEmail(string $proEmail): self
+    {
+        $this->proEmail = $proEmail;
 
         return $this;
     }
@@ -857,6 +1016,11 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getBirthYear(): ?int
+    {
+        return ($this->birthDate ? $this->birthDate->format('Y') : null);
+    }
+
     public function getTelephone(): ?string
     {
         return $this->telephone;
@@ -867,6 +1031,11 @@ class User implements UserInterface, EquatableInterface
         $this->telephone = $telephone;
 
         return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return ($this->phoneDisplay == self::PHONE_DISPLAY_ALL ? $this->telephone : null);
     }
 
     public function getPhoneDisplay(): ?int
@@ -1659,6 +1828,74 @@ class User implements UserInterface, EquatableInterface
                 $userNotification->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCampaigns()
+    {
+        return $this->campaigns->getValues();
+    }
+
+    public function addCampaign(Campaign $campaign): self
+    {
+        if (!$this->campaigns->contains($campaign)) {
+            $this->campaigns->add($campaign);
+            $campaign->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCampaign(Campaign $campaign): self
+    {
+        if ($this->campaigns->contains($campaign)) {
+            $this->campaigns->removeElement($campaign);
+            // set the owning side to null (unless already changed)
+            if ($campaign->getUser() === $this) {
+                $campaign->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDeliveries()
+    {
+        return $this->deliveries->getValues();
+    }
+
+    public function addDelivery(Delivery $delivery): self
+    {
+        if (!$this->deliveries->contains($delivery)) {
+            $this->deliveries->add($delivery);
+            $delivery->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDelivery(Delivery $delivery): self
+    {
+        if ($this->deliveries->contains($delivery)) {
+            $this->deliveries->removeElement($delivery);
+            // set the owning side to null (unless already changed)
+            if ($delivery->getUser() === $this) {
+                $delivery->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getImport(): ?UserImport
+    {
+        return $this->import;
+    }
+
+    public function setImport(?UserImport $import): self
+    {
+        $this->import = $import;
 
         return $this;
     }

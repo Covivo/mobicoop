@@ -161,7 +161,7 @@ class Matching
     /**
      * @var ArrayCollection|null The notifications sent for the matching.
      *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="matching")
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="matching", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -172,6 +172,97 @@ class Matching
      * @Groups({"read","write","results"})
      */
     private $filters;
+
+    /**
+     * @var int|null The original distance of the driver in metres.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write","results"})
+     */
+    private $originalDistance;
+
+    /**
+     * @var int|null The accepted detour distance of the driver in metres.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write","results"})
+     */
+    private $acceptedDetourDistance;
+
+    /**
+     * @var int|null The new distance of the driver including the detour in metres.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write","results"})
+     */
+    private $newDistance;
+
+    /**
+     * @var int|null The detour distance of the driver in metres.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write","results"})
+     */
+    private $detourDistance;
+
+    /**
+     * @var float|null The detour distance of the driver in percentage of the original distance.
+     * @ORM\Column(type="decimal", precision=5, scale=2, nullable=true)
+     * @Groups({"read","write","results"})
+     */
+    private $detourDistancePercent;
+
+    /**
+     * @var int|null The original duration of the driver in seconds.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write","results"})
+     */
+    private $originalDuration;
+
+    /**
+     * @var int|null The accepted detour duration of the driver in seconds.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write","results"})
+     */
+    private $acceptedDetourDuration;
+
+    /**
+     * @var int|null The new duration of the driver including the detour in seconds.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write","results"})
+     */
+    private $newDuration;
+
+    /**
+     * @var int|null The detour duration of the driver in seconds.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write","results"})
+     */
+    private $detourDuration;
+
+    /**
+     * @var int|null The detour duration of the driver in percentage of the original duration.
+     * @ORM\Column(type="decimal", precision=5, scale=2, nullable=true)
+     * @Groups({"read","write","results"})
+     */
+    private $detourDurationPercent;
+
+    /**
+     * @var int|null The common distance in metres.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write","results"})
+     */
+    private $commonDistance;
+
+    /**
+     * @var int|null The duration till the pick up of the passenger in seconds.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write","results"})
+     */
+    private $pickUpDuration;
+
+    /**
+     * @var int|null The duration till the dropoff of the passenger in seconds.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write","results"})
+     */
+    private $dropOffDuration;
 
     public function __construct()
     {
@@ -404,6 +495,162 @@ class Matching
     public function setFilters(array $filters): self
     {
         $this->filters = $filters;
+
+        return $this;
+    }
+
+    public function getOriginalDistance(): ?int
+    {
+        return $this->originalDistance;
+    }
+
+    public function setOriginalDistance(int $originalDistance): self
+    {
+        $this->originalDistance = $originalDistance;
+
+        return $this;
+    }
+
+    public function getAcceptedDetourDistance(): ?int
+    {
+        return $this->acceptedDetourDistance;
+    }
+
+    public function setAcceptedDetourDistance(int $acceptedDetourDistance): self
+    {
+        $this->acceptedDetourDistance = $acceptedDetourDistance;
+
+        return $this;
+    }
+
+    public function getNewDistance(): ?int
+    {
+        return $this->newDistance;
+    }
+
+    public function setNewDistance(int $newDistance): self
+    {
+        $this->newDistance = $newDistance;
+
+        return $this;
+    }
+
+    public function getDetourDistance(): ?int
+    {
+        return $this->detourDistance;
+    }
+
+    public function setDetourDistance(int $detourDistance): self
+    {
+        $this->detourDistance = $detourDistance;
+
+        return $this;
+    }
+
+    public function getDetourDistancePercent(): ?float
+    {
+        return $this->detourDistancePercent;
+    }
+
+    public function setDetourDistancePercent(float $detourDistancePercent): self
+    {
+        $this->detourDistancePercent = $detourDistancePercent;
+
+        return $this;
+    }
+
+    public function getOriginalDuration(): ?int
+    {
+        return $this->originalDuration;
+    }
+
+    public function setOriginalDuration(int $originalDuration): self
+    {
+        $this->originalDuration = $originalDuration;
+
+        return $this;
+    }
+
+    public function getAcceptedDetourDuration(): ?int
+    {
+        return $this->acceptedDetourDuration;
+    }
+
+    public function setAcceptedDetourDuration(int $acceptedDetourDuration): self
+    {
+        $this->acceptedDetourDuration = $acceptedDetourDuration;
+
+        return $this;
+    }
+
+    public function getNewDuration(): ?int
+    {
+        return $this->newDuration;
+    }
+
+    public function setNewDuration(int $newDuration): self
+    {
+        $this->newDuration = $newDuration;
+
+        return $this;
+    }
+
+    public function getDetourDuration(): ?int
+    {
+        return $this->detourDuration;
+    }
+
+    public function setDetourDuration(int $detourDuration): self
+    {
+        $this->detourDuration = $detourDuration;
+
+        return $this;
+    }
+
+    public function getDetourDurationPercent(): ?float
+    {
+        return $this->detourDurationPercent;
+    }
+
+    public function setDetourDurationPercent(float $detourDurationPercent): self
+    {
+        $this->detourDurationPercent = $detourDurationPercent;
+
+        return $this;
+    }
+
+    public function getCommonDistance(): ?int
+    {
+        return $this->commonDistance;
+    }
+
+    public function setCommonDistance(int $commonDistance): self
+    {
+        $this->commonDistance = $commonDistance;
+
+        return $this;
+    }
+
+    public function getPickUpDuration(): ?int
+    {
+        return $this->pickUpDuration;
+    }
+
+    public function setPickUpDuration(int $pickUpDuration): self
+    {
+        $this->pickUpDuration = $pickUpDuration;
+
+        return $this;
+    }
+
+    public function getDropOffDuration(): ?int
+    {
+        return $this->dropOffDuration;
+    }
+
+    public function setDropOffDuration(int $dropOffDuration): self
+    {
+        $this->dropOffDuration = $dropOffDuration;
 
         return $this;
     }

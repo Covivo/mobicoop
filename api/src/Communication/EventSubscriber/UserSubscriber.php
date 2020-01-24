@@ -82,11 +82,11 @@ class UserSubscriber implements EventSubscriberInterface
 
     public function onUserDeleteAccountWasDriverEvent(UserDeleteAccountWasDriverEvent $event)
     {
-        $this->notificationManager->notifies(UserDeleteAccountWasDriverEvent::NAME, $event->getAsk()->getUser(), $event->getAsk()->getMatching());
+        $this->notificationManager->notifies(UserDeleteAccountWasDriverEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
     }
 
     public function onUserDeleteAccountWasPassengerEvent(UserDeleteAccountWasPassengerEvent $event)
     {
-        $this->notificationManager->notifies(UserDeleteAccountWasPassengerEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk()->getMatching());
+        $this->notificationManager->notifies(UserDeleteAccountWasPassengerEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
     }
 }

@@ -48,7 +48,7 @@
         >
           <!--Upload Avatar-->
           <v-row justify="center">
-            <v-col cols="3">
+            <v-col >
               <v-avatar
                 color="grey lighten-3"
                 size="225px"
@@ -62,7 +62,8 @@
           </v-row>
 
           <v-row justify="center">
-            <v-col cols="3" justify-self="center" align-self="center" v-if="!displayFileUpload">
+            <v-col cols="3"  xl="3"
+              sm="8" justify-self="center" align-self="center" v-if="!displayFileUpload">
 
             <v-btn
               :loading="loadingDelete"
@@ -78,7 +79,7 @@
 
             </v-col>
 
-            <v-col cols="5" class="text-center" v-else>
+            <v-col cols="5" class="text-center" justify-self="center" align-self="center" v-else>
               <v-file-input
                 v-model="avatar"
                 :rules="avatarRules"
@@ -152,7 +153,7 @@
                   <span>{{$t('phone.tooltips.notVerified')}}</span>
               </v-tooltip>
             </v-col>
-            <v-col cols="3" xl="3" sm="8"  v-if="diplayVerification && telephone && phoneVerified == false">
+            <v-col cols="4" xl="4" sm="8"  v-if="diplayVerification && telephone && phoneVerified == false">
               <v-btn 
                 rounded color="secondary" 
                 @click="generateToken" class="mt-4" 
@@ -317,17 +318,18 @@
 
     <v-row>
 
-
+      <v-container>
+        <v-col class="text-center">
       <v-dialog
               v-model="dialogDelete"
               width="500"
       >
-        <template v-slot:activator="{ on }">
+        <template v-slot:activator="{ on }" >
           <!--Delete button -->
           <v-btn
                   class="button"
                   v-on="on"
-                  color="secondary"
+                  color="error"
                   rounded
                   :disabled="!valid"
                   :loading="loading"
@@ -354,20 +356,27 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary darken-1" text @click="dialog=false; newsSubscription=true">{{ $t('ui.common.no') }}</v-btn>
             <v-btn
-                    color="primary"
-                    text
-                    :href="$t('route.supprimer')"
-                    @click="dialog = false"
+              color="primary darken-1"
+              text
+              @click="dialogDelete = false; newsSubscription = true"
+            >
+              {{ $t('ui.common.no') }}
+            </v-btn>
+            <v-btn
+              color="primary"
+              text
+              :href="$t('route.supprimer')"
+              @click="dialogDelete = false"
             >
               {{ $t('dialog.buttons.confirmDelete') }}
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
+        </v-col>
 
-
+      </v-container>
     </v-row>
 
   </v-container>
@@ -482,17 +491,9 @@ export default {
     this.checkVerifiedPhone();
   },
   methods: {
-      deleteAccount (){
-          axios
-            .post(this.$t('route.supprimer'))
-            .then(res => {
-
-            });
-      },
     homeAddressSelected(address){
       this.homeAddress = address;
     },
-
     validate () {
       if (this.$refs.form.validate()) {
         this.checkForm();
@@ -583,19 +584,25 @@ export default {
       axios
         .post(this.$t('phone.validation.route'),
         {
-          token: this.token
+          token: this.token,
+          telephone: this.telephone
         },{
           headers:{
             'content-type': 'application/json'
           }
         })
         .then(res => {
-          if (res.data.state) {
+          if(!res.data){
             this.errorUpdate = true;
-            this.textSnackError = this.$t(res.data.message);
+            this.textSnackError = this.$t("snackBar.unknown");
             this.snackbar = true;
           }
-          this.phoneVerified = !res.data.state;
+          else{
+            this.errorUpdate = false;
+            this.textSnackOk = this.$t("snackBar.phoneValidated");
+            this.snackbar = true;
+             this.phoneVerified = true;
+          }
           this.loadingValidatePhone = false;
         })
         // Todo create "emit" event to refresh the alerts

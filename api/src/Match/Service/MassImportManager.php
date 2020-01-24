@@ -35,6 +35,7 @@ use App\Match\Entity\MassData;
 use App\Match\Entity\MassPerson;
 use App\Match\Entity\Candidate;
 use App\Geography\Entity\Address;
+use App\Geography\Interfaces\GeorouterInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Geography\Service\GeoSearcher;
@@ -214,7 +215,11 @@ class MassImportManager
         $geocodedDestinations = [];
         $this->logger->info('Mass analyze | Geocode destinations start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         foreach ($destinations as $key => $destination) {
-            $address = trim($destination['houseNumber'] . " " . $destination['street'] . ", " . $destination['postalCode'] . " " . $destination['addressLocality'] . " " . $destination['addressCountry']);
+            $address = trim($destination['houseNumber']) . " " . trim($destination['street']) . " " . trim($destination['postalCode']) . " " . trim($destination['addressLocality']) . " " . trim($destination['addressCountry']);
+            // strip the coma
+            $address = str_replace(",", "", $address);
+
+            //$this->logger->info($address);
             if ($addresses = $this->geoSearcher->geoCode($address)) {
                 if (count($addresses) > 0) {
                     // we use the first result as best result
@@ -242,14 +247,16 @@ class MassImportManager
                 continue;
             }
             // no gps points
-            $address = trim(
-                $massPerson->getPersonalAddress()->getHouseNumber() . " " .
-                $massPerson->getPersonalAddress()->getStreet() . ", " .
-                $massPerson->getPersonalAddress()->getPostalCode() . " " .
-                $massPerson->getPersonalAddress()->getAddressLocality() . " " .
-                $massPerson->getPersonalAddress()->getAddressCountry()
-            );
+            $address = trim($massPerson->getPersonalAddress()->getHouseNumber()) . " " .
+            trim($massPerson->getPersonalAddress()->getStreet()) . " " .
+            trim($massPerson->getPersonalAddress()->getPostalCode()) . " " .
+            trim($massPerson->getPersonalAddress()->getAddressLocality()) . " " .
+            trim($massPerson->getPersonalAddress()->getAddressCountry());
             $this->logger->info('Mass analyze | Geocode personal address n°' . $i . ' start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            // strip the coma
+            $address = str_replace(",", "", $address);
+
+            //$this->logger->info($address);
             if ($addresses = $this->geoSearcher->geoCode($address)) {
                 if (count($addresses) > 0) {
                     // we use the first result as best result
@@ -298,7 +305,7 @@ class MassImportManager
             $routesOwner[$i] = $massPerson;
             $i++;
         }
-        $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes);
+        $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_ARRAY);
 
         foreach ($routesOwner as $key => $massPerson) {
             if (isset($ownerRoutes[$key])) {
@@ -314,14 +321,14 @@ class MassImportManager
             } else {
                 $origin = trim(
                     $massPerson->getPersonalAddress()->getHouseNumber() . " " .
-                    $massPerson->getPersonalAddress()->getStreet() . ", " .
+                    $massPerson->getPersonalAddress()->getStreet() . " " .
                     $massPerson->getPersonalAddress()->getPostalCode() . " " .
                     $massPerson->getPersonalAddress()->getAddressLocality() . " " .
                     $massPerson->getPersonalAddress()->getAddressCountry()
                 );
                 $destination = trim(
                     $massPerson->getWorkAddress()->getHouseNumber() . " " .
-                    $massPerson->getWorkAddress()->getStreet() . ", " .
+                    $massPerson->getWorkAddress()->getStreet() . " " .
                     $massPerson->getWorkAddress()->getPostalCode() . " " .
                     $massPerson->getWorkAddress()->getAddressLocality() . " " .
                     $massPerson->getWorkAddress()->getAddressCountry()
@@ -472,7 +479,7 @@ class MassImportManager
 
         // we try to match with the candidates
         $this->logger->info('Mass match | Creating matches records start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        if ($matches = $this->geoMatcher->multiMatch($candidates)) {
+        if ($matches = $this->geoMatcher->multiMatch($candidates, true)) {
             if (is_array($matches) && count($matches)>0) {
                 foreach ($matches as $match) {
                     foreach ($match['matches'] as $matched) {
@@ -895,12 +902,12 @@ class MassImportManager
             case Mass::STATUS_ANALYZED:
                 $email->setObject("[MobiMatch] Analyze du fichier n°".$mass->getId()." terminée");
                 $email->setMessage("L'analyse du fichier n°".$mass->getId()." a été effectuée");
-                $retour = $this->emailManager->send($email, $this->emailTemplatePath."mass.html.twig");
+                $retour = $this->emailManager->send($email, $this->emailTemplatePath."mass");
             break;
             case Mass::STATUS_MATCHED:
                 $email->setObject("[MobiMatch] Potentiel du fichier n°".$mass->getId()." terminée");
                 $email->setMessage("Le calcul du potentiel de covoiturage du fichier n°".$mass->getId()." a été effectué");
-                $retour = $this->emailManager->send($email, $this->emailTemplatePath."mass.html.twig");
+                $retour = $this->emailManager->send($email, $this->emailTemplatePath."mass");
             break;
         }
     }

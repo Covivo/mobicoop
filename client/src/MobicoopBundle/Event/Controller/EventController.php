@@ -43,31 +43,53 @@ class EventController extends AbstractController
 {
     use HydraControllerTrait;
 
+    const DEFAULT_NB_EVENTS_PER_PAGE = 10; // Nb items per page by default
+
+    /**
+     * Events list controller.
+     */
+    public function eventList()
+    {
+        return $this->render('@Mobicoop/event/events.html.twig', [
+            'defaultItemsPerPage' => self::DEFAULT_NB_EVENTS_PER_PAGE
+        ]);
+    }
+
     /**
      * Get all events.
      */
-    public function eventList(EventManager $eventManager)
+    public function getEventList(EventManager $eventManager, Request $request)
     {
         // We get all the events
-        $eventComing = $eventManager->getEvents();
-        $eventPassed = $eventManager->getEvents(0);
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
 
-        if (null !== $eventComing) {
-            $pointsComing = [];
-            foreach ($eventComing as $event) {
-                $pointsComing[] = [
-                    'title' => $event->getName().', '.$event->getAddress()->getAddressLocality(),
-                    'latLng' => ['lat' => $event->getAddress()->getLatitude(), 'lon' => $event->getAddress()->getLongitude()],
-                    'event' => $event,
-                ];
+            $search = (isset($data['search']) && !is_null($data['search'])) ? $data['search'] : [];
+            if (!$data['coming']) {
+                $search = (isset($data['searchPassed']) && !is_null($data['searchPassed'])) ? $data['searchPassed'] : [];
             }
-        }
 
-        return $this->render('@Mobicoop/event/events.html.twig', [
-            'eventComing' => $eventComing,
-            'eventPassed' => $eventPassed,
-            'pointComing' => $pointsComing,
-        ]);
+            $apiEvents = $eventManager->getEvents($data['coming'], null, "fromDate", "asc", $data['perPage'], $data['page'], $search);
+            $events = $apiEvents->getMember();
+            $eventsTotalItems = $apiEvents->getTotalItems();
+            $pointsComing = [];
+            if (null !== $events && $data['coming']) {
+                foreach ($events as $event) {
+                    $pointsComing[] = [
+                        'title' => $event->getName().', '.$event->getAddress()->getAddressLocality(),
+                        'latLng' => ['lat' => $event->getAddress()->getLatitude(), 'lon' => $event->getAddress()->getLongitude()],
+                        'event' => $event,
+                    ];
+                }
+            }
+
+            return new JsonResponse([
+                'eventComing' => ($data['coming']) ? $events : null,
+                'eventPassed' => (!$data['coming']) ? $events : null,
+                'points' => $pointsComing,
+                'totalItems' => $eventsTotalItems
+            ]);
+        }
     }
 
     /**
@@ -94,6 +116,8 @@ class EventController extends AbstractController
                 if ($image = $imageManager->createImage($image)) {
                     return new Response();
                 }
+                //If an error occur on upload image, the event is already create, so we delete him
+                $eventManager->deleteEvent($event->getId());
                 // return error if image post didnt't work
                 return new Response(json_encode('error.image'));
             }

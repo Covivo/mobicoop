@@ -42,19 +42,25 @@ use App\Carpool\Controller\AdAskGet;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
+ *          "get"={
+ *              "method"="GET",
+ *              "path"="/carpools",
+ *          },
  *          "post"={
  *              "method"="POST",
+ *              "path"="/carpools",
+ *              "normalization_context"={"groups"={"results"}},
  *              "controller"=AdPost::class,
  *          },
  *          "post_ask"={
  *              "method"="POST",
- *              "path"="/ads/ask",
+ *              "path"="/carpools/ask",
  *              "controller"=AdAskPost::class,
  *              "defaults"={"type"="ask"}
  *          },
  *          "post_contact"={
  *              "method"="POST",
- *              "path"="/ads/contact",
+ *              "path"="/carpools/contact",
  *              "controller"=AdAskPost::class,
  *              "defaults"={"type"="contact"}
  *          }
@@ -62,23 +68,25 @@ use App\Carpool\Controller\AdAskGet;
  *      itemOperations={
  *          "get"={
  *              "method"="GET",
+ *              "path"="/carpools/{id}",
  *              "controller"=AdGet::class,
  *              "read"=false
  *          },
  *          "put_ask"={
  *              "method"="PUT",
- *              "path"="/ads/ask/{id}",
+ *              "path"="/carpools/ask/{id}",
  *              "controller"=AdAskPut::class,
  *              "read"=false
  *          },
  *          "get_ask"={
  *              "method"="GET",
- *              "path"="/ads/ask/{id}",
+ *              "path"="/carpools/ask/{id}",
  *              "controller"=AdAskGet::class,
  *              "read"=false
  *          }
  *      }
  * )
+ *
  */
 class Ad
 {
@@ -345,7 +353,7 @@ class Ad
     /**
      * @var array|null The carpool results.
      *
-     * @Groups("read")
+     * @Groups("results")
      */
     private $results;
 
@@ -369,6 +377,13 @@ class Ad
      * @Groups({"read","write"})
      */
     private $askStatus;
+
+    /**
+     * @var int The ask id if the ad concerns a given ask.
+     *
+     * @Groups({"read","write"})
+     */
+    private $askId;
 
     /**
      * @var boolean|null The given user can update the ask if the ad concerns a given ask.
@@ -861,6 +876,18 @@ class Ad
     public function setAskStatus(int $askStatus): self
     {
         $this->askStatus = $askStatus;
+
+        return $this;
+    }
+
+    public function getAskId(): ?int
+    {
+        return $this->askId;
+    }
+
+    public function setAskId(int $askId): self
+    {
+        $this->askId = $askId;
 
         return $this;
     }

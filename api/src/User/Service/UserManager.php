@@ -55,7 +55,7 @@ use App\User\Repository\UserRepository;
 /**
  * User manager service.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 class UserManager
 {
@@ -71,6 +71,11 @@ class UserManager
     private $logger;
     private $eventDispatcher;
     private $encoder;
+
+    // Default carpool settings
+    private $chat;
+    private $music;
+    private $smoke;
  
     /**
         * Constructor.
@@ -78,7 +83,7 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -92,6 +97,9 @@ class UserManager
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
         $this->userRepository = $userRepository;
+        $this->chat = $chat;
+        $this->music = $music;
+        $this->smoke = $smoke;
     }
 
     /**
@@ -125,6 +133,18 @@ class UserManager
         $time = $datetime->getTimestamp();
         $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         $user->setGeoToken($geoToken);
+        // Default carpool settings
+        $user->setChat($this->chat);
+        $user->setMusic($this->music);
+        $user->setSmoke($this->smoke);
+
+        // Create token to valid inscription
+        $datetime = new DateTime();
+        $time = $datetime->getTimestamp();
+        // For safety, we strip the slashes because this token can be passed in url
+        $validationToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        $user->setValidatedDateToken($validationToken);
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -170,6 +190,35 @@ class UserManager
         $event = new UserUpdatedSelfEvent($user);
         $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
         // return the user
+        return $user;
+    }
+
+    /**
+     * Treat a user : set default parameters.
+     * Used for example for imports.
+     *
+     * @param User $user    The user to treat
+     * @return User         The user treated
+     */
+    public function treatUser(User $user)
+    {
+        // we treat the role
+        if (count($user->getUserRoles()) == 0) {
+            // we have to add a role
+            $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL);
+            $userRole = new UserRole();
+            $userRole->setRole($role);
+            $user->addUserRole($userRole);
+        }
+
+        // we treat the notifications
+        if (count($user->getUserNotifications()) == 0) {
+            // we have to create the default user notifications, we don't persist immediately
+            $user = $this->createAlerts($user, false);
+        }
+
+        $this->entityManager->persist($user);
+
         return $user;
     }
 
@@ -240,7 +289,7 @@ class UserManager
                 'idRecipient' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getId() : $message->getUser('user')->getId(),
                 'avatarsRecipient' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getAvatars()[0] : $message->getUser('user')->getAvatars()[0],
                 'givenName' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getGivenName() : $message->getUser('user')->getGivenName(),
-                'familyName' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getFamilyName() : $message->getUser('user')->getFamilyName(),
+                'shortFamilyName' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getShortFamilyName() : $message->getUser('user')->getShortFamilyName(),
                 'date' => ($message->getLastMessage()===null) ? $message->getCreatedDate() : $message->getLastMessage()->getCreatedDate(),
                 'selected' => false
             ];
@@ -272,7 +321,7 @@ class UserManager
                     'idRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getId() : $ask->getUser('user')->getId(),
                     'avatarsRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getAvatars()[0] : $ask->getUser('user')->getAvatars()[0],
                     'givenName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getGivenName() : $ask->getUser('user')->getGivenName(),
-                    'familyName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getFamilyName() : $ask->getUser('user')->getFamilyName(),
+                    'shortFamilyName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getShortFamilyName() : $ask->getUser('user')->getShortFamilyName(),
                     'date' => ($message===null) ? $askHistory->getCreatedDate() : $message->getCreatedDate(),
                     'selected' => false
                 ];
@@ -334,45 +383,54 @@ class UserManager
        * User password change request.
        *
        * @param User $user
-       * @return User
+       * @return Response
        */
-    public function updateUserPasswordRequest(User $user)
+    public function updateUserPasswordRequest(User $data)
     {
-        $datetime = new DateTime();
-        $time = $datetime->getTimestamp();
-        // encoding of the password
-        $pwdToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
-        $user->setPwdToken($pwdToken);
-        // update of the geotoken
-        $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
-        $user->setGeoToken($geoToken);
-        // persist the user
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-        // dispatch en event
-        $event = new UserPasswordChangeAskedEvent($user);
-        $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
-        // return the user
-        return $user;
+        // Get the user
+        $user = $this->userRepository->findOneBy(["email"=>$data->getEmail()]);
+        
+        if (!is_null($user)) {
+            $datetime = new DateTime();
+            $time = $datetime->getTimestamp();
+            // encoding of the password
+            $pwdToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+            $user->setPwdToken($pwdToken);
+            // update of the geotoken
+            $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+            $user->setGeoToken($geoToken);
+            // persist the user
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+            // dispatch en event
+            $event = new UserPasswordChangeAskedEvent($user);
+            $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
+            return $user;
+        }
+        return new JsonResponse();
     }
  
     /**
        * User password change confirmation.
        *
        * @param User $user
-       * @return User
+       * @return Response
        */
-    public function updateUserPasswordConfirm(User $user)
+    public function updateUserPassword(User $data)
     {
-        $user->setPwdToken(null);
-        // persist the user
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-        // dispatch en event
-        $event = new UserPasswordChangedEvent($user);
-        $this->eventDispatcher->dispatch($event, UserPasswordChangedEvent::NAME);
-        // return the user
-        return $user;
+        $user = $this->userRepository->findOneBy(["pwdToken"=>$data->getPwdToken()]);
+        if (!is_null($user)) {
+            $user->setPassword($data->getPassword());
+            // persist the user
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+            // dispatch en event
+            $event = new UserPasswordChangedEvent($user);
+            $this->eventDispatcher->dispatch($event, UserPasswordChangedEvent::NAME);
+            // return the user
+            return $user;
+        }
+        return new JsonResponse();
     }
 
     /**
@@ -441,10 +499,11 @@ class UserManager
     /**
      * Create user alerts
      *
-     * @param User $user
+     * @param User $user        The user to treat
+     * @param boolean $perist   Persist immediately (false for mass import)
      * @return User
      */
-    public function createAlerts(User $user)
+    public function createAlerts(User $user, $persist=true)
     {
         $notifications = $this->notificationRepository->findUserEditable();
         foreach ($notifications as $notification) {
@@ -461,7 +520,9 @@ class UserManager
             $user->addUserNotification($userNotification);
         }
         $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        if ($persist) {
+            $this->entityManager->flush();
+        }
         return $user;
     }
 
@@ -575,7 +636,6 @@ class UserManager
                 }
             }
             //Set user at null and private on the proposal : we keep info for message, proposal cant be found
-            $proposal->setUser(null);
             $proposal->setPrivate(1);
         }
 
@@ -632,5 +692,64 @@ class UserManager
         $this->entityManager->flush();
 
         return array();
+    }
+
+
+    //Get asks for an user -> use for check if a ask is already done on a proposal
+    public function getAsks(User $user): array
+    {
+        if ($asks = $this->askRepository->findAskByAsker($user)) {
+            $arrayAsks = array();
+            foreach ($asks as $ask) {
+                $arrayAsks['offers'][] = $ask->getMatching()->getProposalOffer()->getId();
+                $arrayAsks['request'][] = $ask->getMatching()->getProposalRequest()->getId();
+            }
+            return $arrayAsks;
+        }
+        return [];
+    }
+
+    public function checkValidatedDateToken($data)
+    {
+        $userFound = $this->userRepository->findOneBy(["validatedDateToken"=>$data->getValidatedDateToken()]);
+        
+        if (!is_null($userFound)) {
+            if ($data->getEmail()===$userFound->getEmail()) {
+                // User found by token match with the given email. We update de validated date, persist, then return the user found
+                $userFound->setValidatedDate(new \Datetime());
+                $this->entityManager->persist($userFound);
+                $this->entityManager->flush();
+                return $userFound;
+            } else {
+                // User found by token doesn't match with the given email. We return nothing.
+                return new JsonResponse();
+            }
+        } else {
+            // No user found. We return nothing.
+            return new JsonResponse();
+        }
+        return new JsonResponse();
+    }
+
+    public function checkPhoneToken($data)
+    {
+        $userFound = $this->userRepository->findOneBy(["phoneToken"=>$data->getPhoneToken()]);
+        
+        if (!is_null($userFound)) {
+            if ($data->getTelephone()===$userFound->getTelephone()) {
+                // User found by token match with the given Telephone. We update de validated date, persist, then return the user found
+                $userFound->setPhoneValidatedDate(new \Datetime());
+                $this->entityManager->persist($userFound);
+                $this->entityManager->flush();
+                return $userFound;
+            } else {
+                // User found by token doesn't match with the given telephone. We return nothing.
+                return new JsonResponse();
+            }
+        } else {
+            // No user found. We return nothing.
+            return new JsonResponse();
+        }
+        return new JsonResponse();
     }
 }

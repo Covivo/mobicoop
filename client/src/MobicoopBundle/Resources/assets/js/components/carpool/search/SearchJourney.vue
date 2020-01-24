@@ -159,7 +159,6 @@
           <v-menu
             v-model="menu"
             :close-on-content-click="false"
-            full-width
             offset-y
             min-width="290px"
           >

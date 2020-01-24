@@ -42,7 +42,8 @@ class ZoneManager
         1,
         0.5,
         0.25,
-        0.125
+        0.125,
+        //0.0625
     ];
 
     /**
@@ -133,7 +134,7 @@ class ZoneManager
     }
 
     /**
-     * Get near zones.
+     * Get near zones of an address.
      *
      * @param Address $address  The address
      * @param float $precision  The precision of the grid in degrees

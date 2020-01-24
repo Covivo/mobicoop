@@ -15,12 +15,16 @@ doctrine:
             charset: utf8mb4
             collate: utf8mb4_unicode_ci
         url: '%env(resolve:DATABASE_URL)%'
+        logging: false
+        profiling: false
         types:
             geometry:   CrEOF\Spatial\DBAL\Types\GeometryType
             point:      CrEOF\Spatial\DBAL\Types\Geometry\PointType
             polygon:    CrEOF\Spatial\DBAL\Types\Geometry\PolygonType
             multipolygon:    CrEOF\Spatial\DBAL\Types\Geometry\MultiPolygonType
             linestring: CrEOF\Spatial\DBAL\Types\Geometry\LineStringType
+        options:
+            1001: true
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
         naming_strategy: doctrine.orm.naming_strategy.underscore
@@ -29,9 +33,11 @@ doctrine:
             datetime_functions:
                 dayofweek: DoctrineExtensions\Query\Mysql\DayOfWeek
             numeric_functions:
-                st_contains:        CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STContains
                 contains:           CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Contains
+                st_contains:        CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STContains
+                st_distance:        CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STDistance
                 st_area:            CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Area
+                linestringfromwkb:  CrEOF\Spatial\ORM\Query\AST\Functions\MySql\LineStringFromWKB
                 st_geomfromtext:    CrEOF\Spatial\ORM\Query\AST\Functions\MySql\GeomFromText
                 st_intersects:      CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STIntersects
                 st_buffer:          CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STBuffer
@@ -91,6 +97,18 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Image/Entity'
                 prefix: 'App\Image\Entity'
                 alias: Image
+            Import:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Import/Entity'
+                prefix: 'App\Import\Entity'
+                alias: Import
+            MassCommunication:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/MassCommunication/Entity'
+                prefix: 'App\MassCommunication\Entity'
+                alias: MassCommunication
             Match:
                 is_bundle: false
                 type: annotation

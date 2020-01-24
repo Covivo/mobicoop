@@ -194,11 +194,6 @@ services:
         tags:
             - { name: monolog.logger, channel: community }
 
-    # Data Provider
-    App\DataProvider\Entity\GeoRouterProvider:
-        tags:
-            - { name: monolog.logger, channel: georouter }
-
     # Event
     App\Event\Controller\:
         resource: '../src/Event/Controller'
@@ -226,11 +221,17 @@ services:
         resource: '../src/Geography/Controller'
         tags: ['controller.service_arguments']
 
+    App\Geography\EventSubscriber\CarpoolSubscriber:
+        arguments:
+            $directory: '%env(resolve:ASYNC_GEO_TEMP)%'
+
     App\Geography\Service\GeoRouter:
         arguments:
             $uri: '%env(resolve:SIG_GEOROUTER_URI)%'
-            $batchScriptPath: '%env(resolve:MOBIMATCH_BATCH_SCRIPT_PATH)%'
-            $batchTemp: '%env(resolve:MOBIMATCH_BATCH_TEMP)%'
+            $type: '%env(resolve:SIG_GEOROUTER_TYPE)%'
+            $batchScriptPath: '%env(resolve:SIG_GEOROUTER_BATCH_SCRIPT_PATH)%'
+            $batchScriptArgs: '%env(resolve:SIG_GEOROUTER_BATCH_SCRIPT_ARGS)%'
+            $batchTemp: '%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%'
         tags:
             - { name: monolog.logger, channel: georouter }
 
@@ -245,12 +246,18 @@ services:
                 displayStreetAddress: '%env(resolve:DISPLAY_STREETADDRESS)%'
                 displayVenue: '%env(resolve:DISPLAY_VENUE)%'
                 displayRelayPoint: '%env(resolve:DISPLAY_RELAY_POINT)%'
+                displayNamed: '%env(resolve:DISPLAY_NAMED)%'
+                displayEvent: '%env(resolve:DISPLAY_EVENT)%'
                 displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%'
     
     App\Geography\Service\GeoSearcher:
         arguments:
             $iconPath: '%env(resolve:GEOCOMPLETE_ICONS_PATH)%'
             $dataPath: '%env(resolve:DATA_URI)%'
+            $defaultSigResultNumber: '%env(resolve:GEOCOMPLETE_SIG_DEFAULT_RESULTS)%'
+            $defaultNamedResultNumber: '%env(resolve:GEOCOMPLETE_NAMED_DEFAULT_RESULTS)%'
+            $defaultRelayPointResultNumber: '%env(resolve:GEOCOMPLETE_RELAY_POINTS_DEFAULT_RESULTS)%'
+            $defaultEventResultNumber: '%env(resolve:GEOCOMPLETE_EVENTS_DEFAULT_RESULTS)%'
 
     # Image
     App\Image\Controller\:
@@ -265,6 +272,24 @@ services:
     App\Image\Service\ImageManager:
         arguments:
             $types: '%images%'
+
+    # Import
+    App\Import\Controller\:
+        resource: '../src/Import/Controller'
+        tags: ['controller.service_arguments']
+    
+    # Mass Communication
+    App\MassCommunication\Controller\:
+        resource: '../src/MassCommunication/Controller'
+        tags: ['controller.service_arguments']
+
+    App\MassCommunication\Service\CampaignManager:
+        arguments:
+            $mailerProvider: '%env(resolve:MASS_MAILER_PROVIDER)%'
+            $mailerApiUrl: '%env(resolve:MASS_MAILER_API_URL)%'
+            $smsProvider: '%env(resolve:MASS_SMS_PROVIDER)%'
+            $mailerApiKey: '%env(resolve:MASS_MAILER_API_KEY)%'
+            $mailTemplate: '%env(resolve:MASS_MAILER_BASE_TEMPLATE)%'
 
     # Match
     App\Match\Controller\:
@@ -282,6 +307,11 @@ services:
         tags:
             - { name: monolog.logger, channel: mass }
 
+    # Price
+    App\Price\Controller\:
+        resource: '../src/Price/Controller'
+        tags: ['controller.service_arguments']
+
     # Rdex
     App\Rdex\Controller\:
         resource: '../src/Rdex/Controller'
@@ -290,6 +320,11 @@ services:
     # Right
     App\Right\Controller\:
         resource: '../src/Right/Controller'
+        tags: ['controller.service_arguments']
+    
+    # Solidary
+    App\Solidary\Controller\:
+        resource: '../src/Solidary/Controller'
         tags: ['controller.service_arguments']
 
     # User
@@ -305,12 +340,8 @@ services:
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
 
-    # Solidary
-    App\Solidary\Controller\:
-        resource: '../src/Solidary/Controller'
-        tags: ['controller.service_arguments']
-
-    # Price
-    App\Price\Controller\:
-        resource: '../src/Price/Controller'
-        tags: ['controller.service_arguments']
+    App\User\Service\UserManager:
+        arguments:
+            $chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
+            $music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
+            $smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'

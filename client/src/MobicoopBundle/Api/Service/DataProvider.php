@@ -343,6 +343,7 @@ class DataProvider
      */
     public function post(ResourceInterface $object, ?string $operation = null): Response
     {
+        // var_dump($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]));exit;
         $op = '';
         if (!is_null($operation)) {
             $op = '/'.$operation;
@@ -390,6 +391,35 @@ class DataProvider
         } catch (ClientException $e) {
             return new Response($e->getCode(), $e->getMessage());
         }
+    }
+
+    /**
+     * Post item with special operation
+     *
+     * @param ResourceInterface $object An object representing the resource to put
+     *
+     * @return Response The response of the operation.
+     */
+    public function postSpecial(ResourceInterface $object, ?array $groups=null, ?string $operation, ?array $params=null, bool $reverseOperationId=false): Response
+    {
+        if (is_null($groups)) {
+            $groups = ['post'];
+        }
+        try {
+            $uri = $this->resource."/".$operation;
+            $clientResponse = $this->client->post($uri, [
+                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true),
+                    'query' => $params
+            ]);
+            if ($clientResponse->getStatusCode() == 201) {
+                return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
+            }
+        } catch (ClientException|ServerException $e) {
+            return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
     }
 
     /**

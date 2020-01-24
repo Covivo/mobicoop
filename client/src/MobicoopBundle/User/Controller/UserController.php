@@ -164,12 +164,6 @@ class UserController extends AbstractController
                 $user->setFacebookId($data['idFacebook']);
             }
 
-            // Create token to valid inscription
-            $datetime = new DateTime();
-            $time = $datetime->getTimestamp();
-            // For safety, we strip the slashes because this token can be passed in url
-            $pwdToken = str_replace("/", "", $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
-            $user->setValidatedDateToken($pwdToken);
             // create user in database
             $data = $userManager->createUser($user);
             $reponseofmanager= $this->handleManagerReturnValue($data);
@@ -189,33 +183,29 @@ class UserController extends AbstractController
     /**
      * User registration email validation
      */
-    public function userSignUpValidation($token, UserManager $userManager, Request $request)
+    public function userSignUpValidation($token, $email, UserManager $userManager, Request $request)
     {
         $error = "";
-        if ($request->isMethod('POST') && $token !== "") {
-            // We need to check if the token exists
-            $userFound = $userManager->findByValidationDateToken($token);
-            if (!empty($userFound)) {
-                if ($userFound->getValidatedDate()!==null) {
-                    $error = "alreadyValidated";
+        if ($request->isMethod('POST')) {
+            if ($token !== "" && $email!=="") {
+                $user = $userManager->validSignUpByToken($token, $email);
+                if (is_null($user)) {
+                    $error="updateError";
                 } else {
-                    $userFound->setValidatedDate(new \Datetime()); // TO DO : Correct timezone
-                    $userFound = $userManager->updateUser($userFound);
-                    if (!$userFound) {
-                        $error = "updateError";
-                    } else {
-                        // Auto login and redirect
-                        $token = new UsernamePasswordToken($userFound, null, 'main', $userFound->getRoles());
-                        $this->get('security.token_storage')->setToken($token);
-                        $this->get('session')->set('_security_main', serialize($token));
-                        return $this->redirectToRoute('carpool_first_ad_post');
-                    }
+                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                    $this->get('security.token_storage')->setToken($token);
+                    $this->get('session')->set('_security_main', serialize($token));
+                    return $this->redirectToRoute('carpool_first_ad_post');
                 }
             } else {
-                $error = "unknown";
+                $error = "missingArguments";
             }
         }
-        return $this->render('@Mobicoop/user/signupValidation.html.twig', ['urlToken'=>$token, 'error'=>$error]);
+        return $this->render('@Mobicoop/user/signupValidation.html.twig', [
+            'urlToken'=>$token,
+            'urlEmail'=>$email,
+            'error'=>$error
+        ]);
     }
 
     /**
@@ -256,22 +246,26 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             // We need to check if the token is right
-            if ($user->getPhoneToken() == $data['token']) {
-                if ($user->getPhoneValidatedDate()!==null) {
-                    $phoneError["state"] = "true";
-                    $phoneError["message"] = "snackBar.phoneAlreadyVerified";
-                } else {
-                    $user->setPhoneValidatedDate(new \Datetime()); // TO DO : Correct timezone
-                    $user = $userManager->updateUser($user);
-                    if (!$user) {
-                        $phoneError["state"] = "true";
-                        $phoneError["message"] = "snackBar.phoneUpdate";
-                    }
-                }
-            } else {
-                $phoneError["state"] = "true";
-                $phoneError["message"] = "snackBar.unknown";
-            }
+            // if ($user->getPhoneToken() == $data['token']) {
+            //     if ($user->getPhoneValidatedDate()!==null) {
+            //         $phoneError["state"] = "true";
+            //         $phoneError["message"] = "snackBar.phoneAlreadyVerified";
+            //     } else {
+            //         $user->setPhoneValidatedDate(new \Datetime()); // TO DO : Correct timezone
+            //         $user = $userManager->updateUser($user);
+            //         if (!$user) {
+            //             $phoneError["state"] = "true";
+            //             $phoneError["message"] = "snackBar.phoneUpdate";
+            //         }
+            //     }
+            // } else {
+            //     $phoneError["state"] = "true";
+            //     $phoneError["message"] = "snackBar.unknown";
+            // }
+
+            
+            $response = $userManager->validPhoneByToken($data['token'], $data['telephone']);
+            return new Response(json_encode($response));
         }
         return new Response(json_encode($phoneError));
     }
@@ -364,7 +358,15 @@ class UserController extends AbstractController
                 }
             }
         }
-        
+
+        //TODO - fix : Change this when use router vue
+        if ($tabDefault == 'mes-annonces') {
+            $tabDefault = 'myProposals';
+        }
+        if ($tabDefault == 'mon-profil') {
+            $tabDefault = 'myProfile';
+        }
+
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
                 'alerts' => $userManager->getAlerts($user)['alerts'],
@@ -458,14 +460,8 @@ class UserController extends AbstractController
         $this->denyAccessUnlessGranted('login');
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-
-            if (isset($data["email"]) && $data["email"]!==null) {
-                return new Response(json_encode($userManager->findByEmail($data["email"], true)));
-            } elseif (isset($data["phone"]) && $data["phone"]!==null) {
-                // For now, the recovery by phone has been removed from front but it functionnal in the backend
-                return new Response(json_encode($userManager->findByPhone($data["phone"], true)));
-            }
-            return new Response();
+            $response = $userManager->sendEmailRecoveryPassword($data["email"]);
+            return new Response(json_encode($response));
         }
     }
 
@@ -495,26 +491,14 @@ class UserController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            
-            $user = $userManager->findByPwdToken($token);
-
-            $this->denyAccessUnlessGranted('password', $user);
-
-            if (!empty($user)) {
-                $user->setPassword($data["password"]);
-
-                if ($user = $userManager->updateUserPassword($user)) {
-                    // after successful update, we re-log the user
-                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                    $this->get('security.token_storage')->setToken($token);
-                    $this->get('session')->set('_security_main', serialize($token));
-                    $userManager->flushUserToken($user);
-                    return new Response(json_encode($user));
-                } else {
-                    return new Response(json_encode("error"));
-                }
-            } else {
-                return new Response(json_encode("error"));
+            $user = $userManager->userUpdatePasswordReset($token, $data['password']);
+            if (!is_null($user)) {
+                // after successful update, we re-log the user
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                $this->get('security.token_storage')->setToken($token);
+                $this->get('session')->set('_security_main', serialize($token));
+                $userManager->flushUserToken($user);
+                return new Response(json_encode($user));
             }
         }
 
@@ -598,7 +582,7 @@ class UserController extends AbstractController
                 $newThread = [
                     "carpool" => (int)$request->request->get('carpool'),
                     "idRecipient" => (int)$request->request->get('idRecipient'),
-                    "familyName" => $request->request->get('familyName'),
+                    "shortFamilyName" => $request->request->get('shortFamilyName'),
                     "givenName" => $request->request->get('givenName'),
                     "avatar" => $request->request->get('avatar')
                 ];
@@ -741,12 +725,12 @@ class UserController extends AbstractController
 
             $schedule = [];
             if (!is_null($outwardSchedule) || !is_null($returnSchedule)) {
-
+               
                 // It's a regular journey I need to build the schedule of this journey (structure of an Ad)
 
                 $days = ["mon","tue","wed","thu","fri","sat","sun"];
                 foreach ($days as $day) {
-                    $currentOutwardTime = (!is_null($returnSchedule)) ? $outwardSchedule[$day."Time"] : null;
+                    $currentOutwardTime = (!is_null($outwardSchedule)) ? $outwardSchedule[$day."Time"] : null;
                     $currentReturnTime = (!is_null($returnSchedule)) ? $returnSchedule[$day."Time"] : null;
 
                     // I need to know if there is already a section of the schedule with these times
@@ -763,7 +747,7 @@ class UserController extends AbstractController
                             }
                         }
                     }
-
+                    
                     // It's a new section i need tu push it with the good day at 1
                     if (!$alreadyExists && (!is_null($currentOutwardTime) || !is_null($currentReturnTime))) {
                         $schedule[] = [
@@ -780,7 +764,7 @@ class UserController extends AbstractController
                     }
                 }
             }
-
+           
             // I build the Ad for the put
             $adToPost = new Ad($idAsk);
             $adToPost->setAskStatus($status);

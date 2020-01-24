@@ -35,6 +35,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Psr\Log\LoggerInterface;
 use DateTime;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 
@@ -191,11 +192,14 @@ class UserManager
 
     /**
      * Send the recovery mail password
-     * @param int $userId The user id that requested the password change
+     * @param string $email The user email that requested the password change
      */
-    public function sendEmailRecoveryPassword(int $userId)
+    public function sendEmailRecoveryPassword(string $email)
     {
-        return $this->dataProvider->getSpecialItem($userId, "password_update_request");
+        $user = new User();
+        $user->setEmail($email);
+        $response = $this->dataProvider->postSpecial($user, ['passwordUpdateRequest'], "password_update_request");
+        return $response->getValue();
     }
 
 
@@ -308,6 +312,19 @@ class UserManager
         return null;
     }
 
+    /**
+     * Update a user password from the reset form
+     * @param string $token     The token to retrieve the user
+     * @param string $password  The new password
+     */
+    public function userUpdatePasswordReset(string $token, string $password)
+    {
+        $user = new User();
+        $user->setPwdToken($token);
+        $user->setPassword($this->encoder->encodePassword($user, $password));
+        return $this->dataProvider->postSpecial($user, ['passwordUpdate'], "password_update")->getValue();
+    }
+    
     /**
      * Delete a user
      *
@@ -473,21 +490,21 @@ class UserManager
     public function getProposals(User $user)
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
-        // we set the private param to false to get only published ad, not proposals posted after a search
-        $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class, null, ['private'=>false]);
-        $proposals = $response->getValue();
+        $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
+        $response = $this->dataProvider->getCollection(["userId"=>$user->getId()]);
         
-        $proposalsSanitized = [
+        $ads = $response->getValue();
+
+        $adsSanitized = [
             "ongoing" => [],
             "archived" => []
         ];
         
-        /** @var \App\Carpool\Entity\Proposal $proposal */
-        foreach ($proposals as $proposal) {
+        foreach ($ads as $ad) {
             $isAlreadyInArray = false;
             
-            if (isset($proposalsSanitized["ongoing"][$proposal["id"]]) || isset($proposalsSanitized["ongoing"][$proposal["proposalLinked"]["id"]]) ||
-                isset($proposalsSanitized["archived"][$proposal["id"]]) || isset($proposalsSanitized["archived"][$proposal["proposalLinked"]["id"]])) {
+            if (isset($adsSanitized["ongoing"][$ad["id"]]) ||
+                isset($adsSanitized["archived"][$ad["id"]])) {
                 $isAlreadyInArray = true;
             }
             
@@ -498,44 +515,51 @@ class UserManager
             $now = new DateTime();
             
             // Carpool regular
-            if ($proposal["criteria"]["frequency"] === Criteria::FREQUENCY_REGULAR) {
-                $date = new DateTime($proposal["criteria"]["toDate"]);
+            if ($ad["frequency"] === Criteria::FREQUENCY_REGULAR) {
+                $date = new DateTime($ad["outwardLimitDate"]);
             }
             // Carpool punctual
             else {
-                $fromDate = new DateTime($proposal["criteria"]["fromDate"]);
-                $linkedDate = isset($proposal["proposalLinked"]) ? new DateTime($proposal["proposalLinked"]["criteria"]["fromDate"]) : null;
-                $date = isset($linkedDate) && $linkedDate > $fromDate ? $linkedDate : $fromDate;
+                $fromDate = new DateTime($ad["outwardDate"]);
+                // $linkedDate = isset($proposal["proposalLinked"]) ? new DateTime($proposal["proposalLinked"]["criteria"]["fromDate"]) : null;
+                // $date = isset($linkedDate) && $linkedDate > $fromDate ? $linkedDate : $fromDate;
+                $date = $fromDate;
             }
 
             $key = $date < $now ? 'archived' : 'ongoing';
 
             // We do not keep the matchingOffers or matchingRequest where proposals are private
             // TO DO : The api should return the array without all these
-            $proposal = $this->cleanPrivateMatchings($proposal, 'Offers');
-            $proposal = $this->cleanPrivateMatchings($proposal, 'Requests');
+            // Not usefull anymore, Ad route does'nt return private proposals
+            // $proposal = $this->cleanPrivateMatchings($proposal, 'Offers');
+            // $proposal = $this->cleanPrivateMatchings($proposal, 'Requests');
 
             // proposal is an outward
-            if ($proposal["type"] === Proposal::TYPE_OUTWARD && !is_null($proposal["proposalLinked"])) {
-                $proposalsSanitized[$key][$proposal["id"]] = [
-                    'outward' => $proposal,
-                    'return' => $proposal["proposalLinked"]
-                ];
-            // proposal is a return
-            } elseif ($proposal["type"] === Proposal::TYPE_RETURN && !is_null($proposal["proposalLinked"])) {
-                $proposalsSanitized[$key][$proposal["id"]] = [
-                    'outward' => $proposal["proposalLinked"],
-                    'return' => $proposal
-                ];
-            // proposal is one way
-            } else {
-                $proposalsSanitized[$key][$proposal["id"]] = [
-                    'outward' => $proposal
-                ];
+            // if ($proposal["type"] === Proposal::TYPE_OUTWARD && !is_null($proposal["proposalLinked"])) {
+            //     $proposalsSanitized[$key][$proposal["id"]] = [
+            //         'outward' => $proposal,
+            //         'return' => $proposal["proposalLinked"]
+            //     ];
+            // // proposal is a return
+            // } elseif ($proposal["type"] === Proposal::TYPE_RETURN && !is_null($proposal["proposalLinked"])) {
+            //     $proposalsSanitized[$key][$proposal["id"]] = [
+            //         'outward' => $proposal["proposalLinked"],
+            //         'return' => $proposal
+            //     ];
+            // // proposal is one way
+            // } else {
+            //     $proposalsSanitized[$key][$proposal["id"]] = [
+            //         'outward' => $proposal
+            //     ];
+            // }
+
+            $adsSanitized[$key][$ad["id"]]['outward'] = $ad;
+            if (!$ad['oneWay']) {
+                $adsSanitized[$key][$ad["id"]]['return'] = $ad;
             }
         }
 
-        return $proposalsSanitized;
+        return $adsSanitized;
     }
 
     /**
@@ -579,5 +603,56 @@ class UserManager
         }
         $this->logger->info('User PhoneToken Update | Fail');
         return null;
+    }
+
+
+    /**
+     * Get the asks of a user
+     *
+     * @param User $user The user
+     *
+     * @return array Of asks or null
+     */
+    public function getAsks(User $user)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSubCollection($user->getId(), 'ask', 'asks');
+        return $response->getValue();
+    }
+
+    /**
+     * Validation email
+     *
+     * @param string $token
+     * @param string $email
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function validSignUpByToken(string $token, string $email)
+    {
+        $user = new User();
+        $user->setEmail($email);
+        $user->setValidatedDateToken($token);
+        $response = $this->dataProvider->postSpecial($user, ["checkValidationToken"], "checkSignUpValidationToken");
+
+        return $response->getValue();
+    }
+
+    /**
+     * Validation phone
+     *
+     * @param string $token
+     * @param string $phone
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function validPhoneByToken(string $token, string $phone)
+    {
+        $user = new User();
+        $user->setTelephone($phone);
+        $user->setPhoneToken($token);
+        $response = $this->dataProvider->postSpecial($user, ["checkPhoneToken"], "checkPhoneToken");
+
+        return $response->getValue();
     }
 }

@@ -23,7 +23,6 @@
 
 namespace App\Carpool\Repository;
 
-use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
@@ -31,6 +30,7 @@ use App\Geography\Service\ZoneManager;
 use App\Geography\Entity\Direction;
 use App\User\Service\UserManager;
 use App\Community\Entity\Community;
+use App\Geography\Service\GeoTools;
 
 /**
  * @method Proposal|null find($id, $lockMode = null, $lockVersion = null)
@@ -40,17 +40,31 @@ use App\Community\Entity\Community;
  */
 class ProposalRepository
 {
-    const METERS_BY_DEGREE = 111319;
-    
+    const METERS_BY_DEGREE = 111319;            // value of a degree in metres, at the equator
+    const BEARING_RANGE = 10;                   // if used, only accept proposal where the bearing direction (cape) is not at the opposite, more or less the range degrees
+                                                // for example, if the bearing is 0 (S->N), the proposals where the bearing is between 170 and 190 (~ N->S) are excluded
+    const PASSENGER_PROPORTION = 0.3;           // minimum passenger distance relative to the driver distance, eg passenger distance should be at least 20% of the driver distance
+    const MAX_DISTANCE_PUNCTUAL = 0.1;          // percentage of the driver direction to compute the max distance between driver and passenger directions (punctual)
+    const MAX_DISTANCE_REGULAR = 0.05;          // percentage of the driver direction to compute the max distance between driver and passenger directions (regular)
+    const DISTANCE_RATIO = 100000;              // ratio to use when computing distance filter (used to convert geographic degrees to metres)
+
+    const USE_ZONES = false;                    // use the ~common zones~ filtering
+    const USE_BEARING = true;                   // use the ~bearing check~ filtering
+    const USE_BBOX = true;                      // use the ~bbox check~ filtering (check if the (extended) bounding box of the proposals intersect)
+    const USE_PASSENGER_PROPORTION = true;      // use the ~passenger distance proportion~
+    const USE_DISTANCE = true;                  // use the ~distance between the driver and the passenger~ filtering
+
     private $repository;
     private $zoneManager;
     private $userManager;
+    private $geoTools;
     
-    public function __construct(EntityManagerInterface $entityManager, ZoneManager $zoneManager, UserManager $userManager)
+    public function __construct(EntityManagerInterface $entityManager, ZoneManager $zoneManager, UserManager $userManager, GeoTools $geoTools)
     {
         $this->repository = $entityManager->getRepository(Proposal::class);
         $this->zoneManager = $zoneManager;
         $this->userManager = $userManager;
+        $this->geoTools = $geoTools;
     }
     
     /**
@@ -79,28 +93,77 @@ class ProposalRepository
      *
      * @param Proposal $proposal        The proposal to match
      * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
+     * @param bool $driversOnly         Exclude the matching proposals as passenger (used for import)
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
      */
-    public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true)
+    public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true, bool $driversOnly = false)
     {
         // the "master" proposal is simply called the "proposal"
         // the potential matching proposals are called the "candidates"
 
         // we search the matchings in the proposal entity
-        $query = $this->repository->createQueryBuilder('p')
-        ->select(['p','u'])
+        $query = $this->repository->createQueryBuilder('p');
+
+        $selection = [
+            'p.id as pid',
+            'u.id as uid',
+            'c.driver',
+            'c.passenger',
+            'c.maxDetourDuration',
+            'c.maxDetourDistance',
+            'dp.duration as dpduration',
+            'dp.distance as dpdistance',
+            'w.position',
+            'w.destination',
+            'a.longitude',
+            'a.latitude',
+            'a.streetAddress',
+            'a.postalCode',
+            'a.addressLocality',
+            'a.addressCountry',
+            'a.elevation',
+            'a.houseNumber',
+            'a.street',
+            'a.subLocality',
+            'a.localAdmin',
+            'a.county',
+            'a.macroCounty',
+            'a.region',
+            'a.macroRegion',
+            'a.countryCode'
+        ];
+        if (!$driversOnly) {
+            $selection[] = 'dd.duration as ddduration';
+            $selection[] = 'dd.distance as dddistance';
+        }
+        
+        $query->select($selection);
+        
         //->select(['p','u','p.id as proposalId','SUM(ac.seats) as nbSeats'])
         // we need the criteria (for the dates, number of seats...)
-        ->join('p.criteria', 'c')
+        $query->join('p.criteria', 'c')
         // we will need the user informations
         ->join('p.user', 'u')
         // we need the directions and the geographical zones
-        ->leftJoin('c.directionDriver', 'dd')->leftJoin('dd.zones', 'zd')
-        ->leftJoin('c.directionPassenger', 'dp')->leftJoin('dp.zones', 'zp')
+        ->leftJoin('c.directionPassenger', 'dp')
+        ->leftJoin('p.waypoints', 'w')
+        ->leftJoin('w.address', 'a')
         // we need the matchings and asks to check the available seats
         //->leftJoin('p.matchingOffers', 'm')->leftjoin('m.asks', 'a')->leftJoin('a.criteria', 'ac')->addGroupBy('proposalId')
         //we need the communities
-        ->leftJoin('p.communities', 'co');
+        ->leftJoin('p.communities', 'co')
+        ;
+
+        if (self::USE_ZONES) {
+            $query->leftJoin('dp.zones', 'zp');
+        }
+
+        if (!$driversOnly) {
+            $query->leftJoin('c.directionDriver', 'dd');
+            if (self::USE_ZONES) {
+                $query->leftJoin('dd.zones', 'zd');
+            }
+        }
 
         // do we exclude the user itself if the proposal isn't anonymous ?
         if ($excludeProposalUser && $proposal->getUser()) {
@@ -153,22 +216,192 @@ class ProposalRepository
         $zoneDriverWhere = '';
         $zonePassengerWhere = '';
         if ($proposal->getCriteria()->isDriver()) {
-            $zonesAsDriver = $proposal->getCriteria()->getDirectionDriver()->getZones();
-            $zones = [];
-            foreach ($zonesAsDriver as $zone) {
-                $zones[] = $zone->getZoneid();
+            $zonePassengerWhere = "";
+            if (self::USE_ZONES) {
+                $precision = $this->getPrecision($proposal->getCriteria()->getDirectionDriver());
+                $zonesAsDriver = $proposal->getCriteria()->getDirectionDriver()->getZones();
+                $zones = [];
+                foreach ($zonesAsDriver as $zone) {
+                    if ($zone->getThinness() == $precision) {
+                        $zones[] = $zone->getZoneid();
+                    }
+                }
+                $zonePassengerWhere = 'zp.thinness = :thinnessPassenger and zp.zoneid IN(' . implode(',', $zones) . ')';
+                $query->setParameter('thinnessPassenger', $precision);
             }
-            $zonePassengerWhere = 'zp.thinness = :thinnessPassenger and zp.zoneid IN(' . implode(',', $zones) . ')';
-            $query->setParameter('thinnessPassenger', $this->getPrecision($proposal->getCriteria()->getDirectionDriver()));
+            
+            // bearing => we exclude the proposals if their direction is outside the authorize range (opposite bearing +/- BEARING_RANGE degrees)
+            if (self::USE_BEARING) {
+                if ($zonePassengerWhere != "") {
+                    $zonePassengerWhere .= " and ";
+                }
+                $range = $this->geoTools->getOppositeBearing($proposal->getCriteria()->getDirectionDriver()->getBearing(), self::BEARING_RANGE);
+                if ($range['min']<=$range['max']) {
+                    // usual case, eg. 140 to 160
+                    $zonePassengerWhere .= '(dp.bearing <= :minDriverRange or dp.bearing >= :maxDriverRange)';
+                    $query->setParameter('minDriverRange', $range['min']);
+                    $query->setParameter('maxDriverRange', $range['max']);
+                } elseif ($range['min']>$range['max']) {
+                    // the range is like between 350 and 10
+                    $zonePassengerWhere .= '(dp.bearing >= :maxDriverRange and dp.bearing <= :minDriverRange)';
+                    $query->setParameter('minDriverRange', $range['min']);
+                    $query->setParameter('maxDriverRange', $range['max']);
+                }
+            }
+
+            // bounding box
+            if (self::USE_BBOX) {
+                if ($zonePassengerWhere != "") {
+                    $zonePassengerWhere .= " and ";
+                }
+                $zonePassengerWhere .= '(ST_INTERSECTS(dp.geoJsonBbox,ST_GeomFromText(\'' .
+                    $this->getGeoPolygon(
+                        $this->geoTools->moveGeoLon(
+                            $proposal->getCriteria()->getDirectionDriver()->getBboxMinLon(),
+                            $proposal->getCriteria()->getDirectionDriver()->getBboxMinLat(),
+                            -($this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance()))
+                        ),
+                        $this->geoTools->moveGeoLat(
+                            $proposal->getCriteria()->getDirectionDriver()->getBboxMinLat(),
+                            -($this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance()))
+                        ),
+                        $this->geoTools->moveGeoLon(
+                            $proposal->getCriteria()->getDirectionDriver()->getBboxMaxLon(),
+                            $proposal->getCriteria()->getDirectionDriver()->getBboxMaxLat(),
+                            $this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance())
+                        ),
+                        $this->geoTools->moveGeoLat(
+                            $proposal->getCriteria()->getDirectionDriver()->getBboxMaxLat(),
+                            $this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance())
+                        )
+                    ) . '\'))=1)';
+            }
+
+            // passenger proportion
+            if (self::USE_PASSENGER_PROPORTION) {
+                if ($zonePassengerWhere != "") {
+                    $zonePassengerWhere .= " and ";
+                }
+                $zonePassengerWhere .= '(dp.distance >= ' . $proposal->getCriteria()->getDirectionDriver()->getDistance()*self::PASSENGER_PROPORTION . ')';
+            }
+
+            // distance to passenger
+            if (self::USE_DISTANCE) {
+                if ($zonePassengerWhere != "") {
+                    $zonePassengerWhere .= " and ";
+                }
+                $maxDistance = $proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL ?
+                    ($proposal->getCriteria()->getDirectionDriver()->getDistance() * self::MAX_DISTANCE_PUNCTUAL / self::DISTANCE_RATIO) :
+                    ($proposal->getCriteria()->getDirectionDriver()->getDistance() * self::MAX_DISTANCE_REGULAR / self::DISTANCE_RATIO);
+                $query
+                ->join('p.waypoints', 'w2')
+                ->join('p.waypoints', 'w3')
+                ->join('w2.address', 'a2')
+                ->join('w3.address', 'a3')
+                ->join('\App\Geography\Entity\Direction', 'dirDri')
+                ->andWhere('w2.position = 0 and w3.destination = 1')
+                ->andWhere('dirDri.id = :dirDriId');
+                $zonePassengerWhere .= "ST_Distance(dirDri.geoJsonSimplified,a2.geoJson)<=".$maxDistance." and ST_Distance(dirDri.geoJsonSimplified,a3.geoJson)<=".$maxDistance;
+                $query->setParameter('dirDriId', $proposal->getCriteria()->getDirectionDriver()->getId());
+            }
         }
-        if ($proposal->getCriteria()->isPassenger()) {
-            $zonesAsPassenger = $proposal->getCriteria()->getDirectionPassenger()->getZones();
-            $zones = [];
-            foreach ($zonesAsPassenger as $zone) {
-                $zones[] = $zone->getZoneid();
+        if (!$driversOnly && $proposal->getCriteria()->isPassenger()) {
+            $zoneDriverWhere = "";
+            if (self::USE_ZONES) {
+                $precision = $this->getPrecision($proposal->getCriteria()->getDirectionPassenger());
+                $zonesAsPassenger = $proposal->getCriteria()->getDirectionPassenger()->getZones();
+                $zones = [];
+                foreach ($zonesAsPassenger as $zone) {
+                    if ($zone->getThinness() == $precision) {
+                        $zones[] = $zone->getZoneid();
+                    }
+                }
+                $zoneDriverWhere = 'zd.thinness = :thinnessDriver and zd.zoneid IN(' . implode(',', $zones) . ')';
+                $query->setParameter('thinnessDriver', $precision);
             }
-            $zoneDriverWhere = 'zd.thinness = :thinnessDriver and zd.zoneid IN(' . implode(',', $zones) . ')';
-            $query->setParameter('thinnessDriver', $this->getPrecision($proposal->getCriteria()->getDirectionPassenger()));
+            
+            // bearing => we exclude the proposals if their direction is outside the authorize range (opposite bearing +/- BEARING_RANGE degrees)
+            if (self::USE_BEARING) {
+                if ($zoneDriverWhere != "") {
+                    $zoneDriverWhere .= " and ";
+                }
+                $range = $this->geoTools->getOppositeBearing($proposal->getCriteria()->getDirectionPassenger()->getBearing(), self::BEARING_RANGE);
+                if ($range['min']<=$range['max']) {
+                    // usual case, eg. 140 to 160
+                    $zoneDriverWhere .= '(dd.bearing <= :minPassengerRange or dd.bearing >= :maxPassengerRange)';
+                    $query->setParameter('minPassengerRange', $range['min']);
+                    $query->setParameter('maxPassengerRange', $range['max']);
+                } elseif ($range['min']>$range['max']) {
+                    // the range is like between 350 and 10
+                    $zoneDriverWhere .= '(dd.bearing >= :maxPassengerRange and dd.bearing <= :minPassengerRange)';
+                    $query->setParameter('minPassengerRange', $range['min']);
+                    $query->setParameter('maxPassengerRange', $range['max']);
+                }
+            }
+
+            // bounding box
+            if (self::USE_BBOX) {
+                if ($zoneDriverWhere != "") {
+                    $zoneDriverWhere .= " and ";
+                }
+                $zoneDriverWhere .= '(ST_INTERSECTS(dd.geoJsonBbox,ST_GeomFromText(\'' .
+                $this->getGeoPolygon(
+                    $this->geoTools->moveGeoLon(
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLon(),
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLat(),
+                        -($this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance()))
+                    ),
+                    $this->geoTools->moveGeoLat(
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLat(),
+                        -($this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance()))
+                    ),
+                    $this->geoTools->moveGeoLon(
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLon(),
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLat(),
+                        $this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance())
+                    ),
+                    $this->geoTools->moveGeoLat(
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLat(),
+                        $this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance())
+                    )
+                ) . '\'))=1)';
+            }
+
+            // passenger proportion
+            if (self::USE_PASSENGER_PROPORTION) {
+                if ($zoneDriverWhere != "") {
+                    $zoneDriverWhere .= " and ";
+                }
+                $zoneDriverWhere .= '(dd.distance >= ' . $proposal->getCriteria()->getDirectionPassenger()->getDistance()*(1-self::PASSENGER_PROPORTION) . ')';
+            }
+
+            // distance to passenger
+            if (self::USE_DISTANCE) {
+                $origin = 0;
+                $destination = 0;
+                foreach ($proposal->getWaypoints() as $waypoint) {
+                    if ($waypoint->getPosition() == 0) {
+                        $origin = "Point('" . $waypoint->getAddress()->getLongitude() . "','" . $waypoint->getAddress()->getLatitude() . "')";
+                    } elseif ($waypoint->isDestination() == 1) {
+                        $destination = "Point('" . $waypoint->getAddress()->getLongitude() . "','" . $waypoint->getAddress()->getLatitude() . "')";
+                    }
+                }
+                if ($zoneDriverWhere != "") {
+                    $zoneDriverWhere .= " and ";
+                }
+                // $query
+                // ->join('p.waypoints', 'w4')
+                // ->join('p.waypoints', 'w5')
+                // ->join('w4.address','a4')
+                // ->join('w5.address','a5')
+                // ->andWhere('w4.position = 0 and w5.destination = 1');
+                $zoneDriverWhere .= "((c.frequency=" . Criteria::FREQUENCY_PUNCTUAL . " and ST_Distance(dd.geoJsonSimplified," . $origin . ")<=(dd.distance*".self::MAX_DISTANCE_PUNCTUAL."/".self::DISTANCE_RATIO.")) OR ";
+                $zoneDriverWhere .= "(c.frequency=" . Criteria::FREQUENCY_REGULAR . " and ST_Distance(dd.geoJsonSimplified," . $origin . ")<=(dd.distance*".self::MAX_DISTANCE_REGULAR."/".self::DISTANCE_RATIO."))";
+                $zoneDriverWhere .= ") and ";
+                $zoneDriverWhere .= "((c.frequency=" . Criteria::FREQUENCY_PUNCTUAL . " and ST_Distance(dd.geoJsonSimplified," . $destination . ")<=(dd.distance*".self::MAX_DISTANCE_PUNCTUAL."/".self::DISTANCE_RATIO.")) OR ";
+                $zoneDriverWhere .= "(c.frequency=" . Criteria::FREQUENCY_REGULAR . " and ST_Distance(dd.geoJsonSimplified," . $destination . ")<=(dd.distance*".self::MAX_DISTANCE_REGULAR."/".self::DISTANCE_RATIO."))";
+                $zoneDriverWhere .= ")";
+            }
         }
 
         // SEATS AVAILABLE
@@ -178,7 +411,7 @@ class ProposalRepository
         // }
 
         // we search if the user can be passenger and/or driver
-        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
             // $query->andWhere('((c.driver = 1 and ' . $zoneDriverWhere . ' and ' . $seatsDriverWhere . ') OR (c.passenger = 1 and ' . $zonePassengerWhere . '))');
             $query->andWhere('((c.driver = 1 and ' . $zoneDriverWhere . ') OR (c.passenger = 1 and ' . $zonePassengerWhere . '))');
         } elseif ($proposal->getCriteria()->isDriver()) {
@@ -232,7 +465,7 @@ class ProposalRepository
                 }
                 // if we use times
                 if ($proposal->getCriteria()->getFromTime()) {
-                    if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                    if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                         $punctualAndWhere .= ' and (
                             (c.passenger = 1 and c.maxTime >= :minTime) or 
                             (c.driver = 1 and c.minTime <= :maxTime)
@@ -259,7 +492,7 @@ class ProposalRepository
                         case 0:     // sunday
                                     $regularDay = ' and c.sunCheck = 1';
                                     if ($proposal->getCriteria()->getFromTime()) {
-                                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                                             $regularTime = ' and (
                                                 (c.passenger = 1 and c.sunMaxTime >= :minTime) or 
                                                 (c.driver = 1 and c.sunMinTime <= :maxTime)
@@ -278,7 +511,7 @@ class ProposalRepository
                         case 1:     // monday
                                     $regularDay = ' and c.monCheck = 1';
                                     if ($proposal->getCriteria()->getFromTime()) {
-                                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                                             $regularTime = ' and (
                                                 (c.passenger = 1 and c.monMaxTime >= :minTime) or 
                                                 (c.driver = 1 and c.monMinTime <= :maxTime)
@@ -297,7 +530,7 @@ class ProposalRepository
                         case 2:     // tuesday
                                     $regularDay = ' and c.tueCheck = 1';
                                     if ($proposal->getCriteria()->getFromTime()) {
-                                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                                             $regularTime = ' and (
                                                 (c.passenger = 1 and c.tueMaxTime >= :minTime) or 
                                                 (c.driver = 1 and c.tueMinTime <= :maxTime)
@@ -316,7 +549,7 @@ class ProposalRepository
                         case 3:     // wednesday
                                     $regularDay = ' and c.wedCheck = 1';
                                     if ($proposal->getCriteria()->getFromTime()) {
-                                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                                             $regularTime = ' and (
                                                 (c.passenger = 1 and c.wedMaxTime >= :minTime) or 
                                                 (c.driver = 1 and c.wedMinTime <= :maxTime)
@@ -335,7 +568,7 @@ class ProposalRepository
                         case 4:     // thursday
                                     $regularDay = ' and c.thuCheck = 1';
                                     if ($proposal->getCriteria()->getFromTime()) {
-                                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                                             $regularTime = ' and (
                                                 (c.passenger = 1 and c.thuMaxTime >= :minTime) or 
                                                 (c.driver = 1 and c.thuMinTime <= :maxTime)
@@ -354,7 +587,7 @@ class ProposalRepository
                         case 5:     //friday
                                     $regularDay = ' and c.friCheck = 1';
                                     if ($proposal->getCriteria()->getFromTime()) {
-                                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                                             $regularTime = ' and (
                                                 (c.passenger = 1 and c.friMaxTime >= :minTime) or 
                                                 (c.driver = 1 and c.friMinTime <= :maxTime)
@@ -373,7 +606,7 @@ class ProposalRepository
                         case 6:     // saturday
                                     $regularDay = ' and c.satCheck = 1';
                                     if ($proposal->getCriteria()->getFromTime()) {
-                                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                                             $regularTime = ' and (
                                                 (c.passenger = 1 and c.satMaxTime >= :minTime) or 
                                                 (c.driver = 1 and c.satMinTime <= :maxTime)
@@ -454,7 +687,7 @@ class ProposalRepository
                     $regularSunDay = 'c.sunCheck = 1';
                     $days .= "1,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getSunTime()) {
-                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularSunDay .= ' and (
                                 (c.passenger = 1 and c.sunMaxTime >= :sunMinTime) or 
                                 (c.driver = 1 and c.sunMinTime <= :sunMaxTime)
@@ -479,7 +712,7 @@ class ProposalRepository
                     $regularMonDay = 'c.monCheck = 1';
                     $days .= "2,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getMonTime()) {
-                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularMonDay .= ' and (
                                 (c.passenger = 1 and c.monMaxTime >= :monMinTime) or 
                                 (c.driver = 1 and c.monMinTime <= :monMaxTime)
@@ -504,7 +737,7 @@ class ProposalRepository
                     $regularTueDay = 'c.tueCheck = 1';
                     $days .= "3,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getTueTime()) {
-                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularTueDay .= ' and (
                                 (c.passenger = 1 and c.tueMaxTime >= :tueMinTime) or 
                                 (c.driver = 1 and c.tueMinTime <= :tueMaxTime)
@@ -529,7 +762,7 @@ class ProposalRepository
                     $regularWedDay = 'c.wedCheck = 1';
                     $days .= "4,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getWedTime()) {
-                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularWedDay .= ' and (
                                 (c.passenger = 1 and c.wedMaxTime >= :wedMinTime) or 
                                 (c.driver = 1 and c.wedMinTime <= :wedMaxTime)
@@ -554,7 +787,7 @@ class ProposalRepository
                     $regularThuDay = 'c.thuCheck = 1';
                     $days .= "5,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getThuTime()) {
-                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularThuDay .= ' and (
                                 (c.passenger = 1 and c.thuMaxTime >= :thuMinTime) or 
                                 (c.driver = 1 and c.thuMinTime <= :thuMaxTime)
@@ -579,7 +812,7 @@ class ProposalRepository
                     $regularFriDay = 'c.friCheck = 1';
                     $days .= "6,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getFriTime()) {
-                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularFriDay .= ' and (
                                 (c.passenger = 1 and c.friMaxTime >= :friMinTime) or 
                                 (c.driver = 1 and c.friMinTime <= :friMaxTime)
@@ -604,7 +837,7 @@ class ProposalRepository
                     $regularSatDay = 'c.satCheck = 1';
                     $days .= "7,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getSatTime()) {
-                        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                        if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularSatDay .= ' and (
                                 (c.passenger = 1 and c.satMaxTime >= :satMinTime) or 
                                 (c.driver = 1 and c.satMinTime <= :satMaxTime)
@@ -646,7 +879,7 @@ class ProposalRepository
                     // if the proposal is not strictly regualr, we include the punctual proposals
                     $punctualAndWhere = '(';
                     $punctualAndWhere .= 'c.frequency=' . Criteria::FREQUENCY_PUNCTUAL . ' and c.fromDate >= :fromDate and c.fromDate <= :toDate and DAYOFWEEK(c.fromDate) IN (' . $days . ')';
-                    if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+                    if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                         $punctualAndWhere .= ' and (
                             (c.passenger = 1' . ($minTime != "" ? ' and ' . $minTime : '') . ') or 
                             (c.driver = 1' . ($maxTime != "" ? ' and ' . $maxTime : '') . ')
@@ -749,10 +982,9 @@ class ProposalRepository
         if ($setToDate) {
             $query->setParameter('toDate', $proposal->getCriteria()->getToDate()->format('Y-m-d'));
         }
-
         // var_dump($punctualAndWhere);
         // var_dump($regularAndWhere);
-        // var_dump($query->getQuery()->getSql());
+        //var_dump($query->getQuery()->getSql());exit;
         // foreach ($query->getQuery()->getParameters() as $parameter) {
         //     echo $parameter->getName();
         // }
@@ -762,6 +994,87 @@ class ProposalRepository
         // we launch the request and return the result
         return $query->getQuery()->getResult();
     }
+
+    // public function filterByDirectionDeltaDistance(Proposal $proposal, $proposals, $driversOnly=false)
+    // {
+    //     $query = $this->repository->createQueryBuilder('p')
+    //     ->select('p.id')
+    //     ->distinct()
+    //     ->join('p.criteria', 'c')
+    //     ->leftJoin('c.directionPassenger', 'dp')
+    //     ->leftJoin('c.directionDriver', 'dd')
+    //     ->where('p.id IN (:proposalsId)')
+    //     ->setParameter('proposalsId', array_keys($proposals));
+
+    //     $wherePassenger = '';
+    //     if ($proposal->getCriteria()->isDriver()) {
+    //         $query
+    //         ->join('\App\Geography\Entity\Direction', 'dirDri')
+    //         ->andWhere('dirDri.id = :dirDriId');
+    //         $wherePassenger = "ST_Distance(dirDri.geoJsonDetail,dp.geoJsonDetail)<=".(self::DISTANCE/self::DISTANCE_RATIO);
+    //         $query->setParameter('dirDriId', $proposal->getCriteria()->getDirectionDriver()->getId());
+    //     }
+    //     $whereDriver = '';
+    //     if (!$driversOnly && $proposal->getCriteria()->isPassenger()) {
+    //         $query
+    //         ->join('\App\Geography\Entity\Direction', 'dirPas')
+    //         ->andWhere('dirPas.id = :dirPasId');
+    //         $whereDriver = "ST_Distance(dirPas.geoJsonDetail,dd.geoJsonDetail)<=".(self::DISTANCE/self::DISTANCE_RATIO);
+    //         $query->setParameter('dirPasId', $proposal->getCriteria()->getDirectionPassenger()->getId());
+    //     }
+
+    //     // we search if the user can be passenger and/or driver
+    //     if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+    //         $query->andWhere('((c.driver = 1 and ' . $whereDriver . ') OR (c.passenger = 1 and ' . $wherePassenger . '))');
+    //     } elseif ($proposal->getCriteria()->isDriver()) {
+    //         $query->andWhere('(c.passenger = 1 and ' . $wherePassenger . ')');
+    //     } elseif ($proposal->getCriteria()->isPassenger()) {
+    //         $query->andWhere('(c.driver = 1 and ' . $whereDriver . ')');
+    //     }
+
+    //     return $query->getQuery()->getResult();
+    // }
+
+    // public function filterByPassengerOriginDeltaDistance(Proposal $proposal, $proposals, $driversOnly=false)
+    // {
+    //     $query = $this->repository->createQueryBuilder('p')
+    //     ->select('p.id')
+    //     ->distinct()
+    //     ->join('p.criteria', 'c')
+    //     ->join('p.waypoints', 'w')
+    //     ->join('w.address','a')
+    //     ->where('p.id IN (:proposalsId) and w.position = 0')
+    //     ->setParameter('proposalsId', array_keys($proposals));
+
+    //     $wherePassenger = '';
+    //     if ($proposal->getCriteria()->isDriver()) {
+    //         $query
+    //         ->join('\App\Geography\Entity\Direction', 'dirDri')
+    //         ->andWhere('dirDri.id = :dirDriId');
+    //         $wherePassenger = "ST_Distance(dirDri.geoJsonSimplified,a.geoJson)<=".(self::DISTANCE/self::DISTANCE_RATIO);
+    //         $query->setParameter('dirDriId', $proposal->getCriteria()->getDirectionDriver()->getId());
+    //     }
+    //     $whereDriver = '';
+    //     if (!$driversOnly && $proposal->getCriteria()->isPassenger()) {
+    //         $query
+    //         ->join('\App\Geography\Entity\Direction', 'dirPas')
+    //         ->andWhere('dirPas.id = :dirPasId');
+    //         $whereDriver = "ST_Distance(dirPas.geoJsonSimplified,a.geoJson)<=".(self::DISTANCE/self::DISTANCE_RATIO);
+    //         $query->setParameter('dirPasId', $proposal->getCriteria()->getDirectionPassenger()->getId());
+    //     }
+
+    //     // we search if the user can be passenger and/or driver
+    //     if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+    //         $query->andWhere('((c.driver = 1 and ' . $whereDriver . ') OR (c.passenger = 1 and ' . $wherePassenger . '))');
+    //     } elseif ($proposal->getCriteria()->isDriver()) {
+    //         $query->andWhere('(c.passenger = 1 and ' . $wherePassenger . ')');
+    //     } elseif ($proposal->getCriteria()->isPassenger()) {
+    //         $query->andWhere('(c.driver = 1 and ' . $whereDriver . ')');
+    //     }
+
+    //     return $query->getQuery()->getResult();
+    // }
+
     
     /**
      * Get the precision of the grid for a direction.
@@ -777,7 +1090,7 @@ class ProposalRepository
         $i = 0;
         $found = false;
         while (!$found && $i < count($thinnesses)) {
-            if (($direction->getDistance()/4)<($thinnesses[$i]*self::METERS_BY_DEGREE)) {
+            if (($direction->getDistance()/80)<($thinnesses[$i]*self::METERS_BY_DEGREE)) {
                 $found = true;
             } else {
                 $i++;
@@ -789,8 +1102,80 @@ class ProposalRepository
         return array_pop($thinnesses);
     }
 
+    /**
+     * Return the geoJson string representation of a bounding box polygon
+     *
+     * @param float $minLon
+     * @param float $minLat
+     * @param float $maxLon
+     * @param float $maxLat
+     * @return void
+     */
+    private function getGeoPolygon(float $minLon, float $minLat, float $maxLon, float $maxLat)
+    {
+        return 'POLYGON((' . $minLon . ' ' . $minLat . ',' . $minLon . ' ' . $maxLat . ',' . $maxLon . ' ' . $maxLat . ',' . $maxLon . ' ' . $minLat . ',' . $minLon . ' ' . $minLat . '))';
+    }
+
+    private function getGeoPoint(float $lon, float $lat)
+    {
+        return 'POINT('.$lon.','.$lat.')';
+    }
+
+    // private function getGeoLineString($lineString)
+    // {
+    //     $return = 'LINESTRING(';
+    //     $i=0;
+    //     foreach ($lineString->toArray() as $point) {
+    //         if ($i%2==0) {
+    //             $return .= implode(' ', $point) . ',';
+    //         }
+    //         $i++;
+    //     }
+    //     $return = substr($return, 0, -1) . ')';
+    //     return $return;
+    // }
+
+    private function getBBoxExtension($distance)
+    {
+        if ($distance<20000) {
+            return 3000;
+        } elseif ($distance<30000) {
+            return 5000;
+        } elseif ($distance<50000) {
+            return 8000;
+        } elseif ($distance<100000) {
+            return 10000;
+        } else {
+            return 20000;
+        }
+    }
+
     public function find(int $id): ?Proposal
     {
         return $this->repository->find($id);
+    }
+
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    {
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    /**
+     * Find proposals linked to imported users
+     *
+     * @param integer $status
+     * @return array
+     */
+    public function findImportedProposals(int $status)
+    {
+        $query = $this->repository->createQueryBuilder('p')
+        ->select('p.id')
+        ->join('p.criteria', 'c')
+        ->join('p.user', 'u')
+        ->join('u.import', 'i')
+        ->where('i.status = :status and c.directionDriver is not null')
+        ->andwhere('c.frequency = 1 or (c.monCheck = 1 or c.tueCheck = 1 or c.wedCheck = 1 or c.thuCheck = 1 or c.friCheck = 1 or c.satCheck = 1 or c.sunCheck = 1)')
+        ->setParameter('status', $status);
+        return $query->getQuery()->getResult();
     }
 }

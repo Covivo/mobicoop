@@ -26,6 +26,7 @@ namespace App\Community\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
@@ -50,7 +51,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readCommunityUser"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
@@ -78,16 +79,17 @@ class CommunityUser
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups("readCommunityUser")
      */
     private $id;
         
     /**
      * @var Community The community.
      *
+     * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="communityUsers")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"readCommunityUser","write"})
      * @MaxDepth(1)
      * @Assert\NotBlank
      */
@@ -96,9 +98,10 @@ class CommunityUser
     /**
      * @var User The user.
      *
+     * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"readCommunity","readCommunityUser","write"})
      * @MaxDepth(1)
      * @Assert\NotBlank
      */
@@ -108,7 +111,7 @@ class CommunityUser
      * @var int The status of the event (active/inactive).
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"readCommunity","readCommunityUser","write"})
      */
     private $status;
     
@@ -116,7 +119,7 @@ class CommunityUser
      * @var User The user that validates/invalidates the registration.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
-     * @Groups({"read","write"})
+     * @Groups({"readCommunityUser","write"})
      * @MaxDepth(1)
      */
     private $admin;
@@ -125,7 +128,7 @@ class CommunityUser
     * @var \DateTimeInterface Creation date of the community user.
     *
     * @ORM\Column(type="datetime")
-    * @Groups({"read","write"})
+    * @Groups({"readCommunityUser","write"})
     */
     private $createdDate;
 
@@ -140,7 +143,7 @@ class CommunityUser
     * @var \DateTimeInterface Accepted date.
     *
     * @ORM\Column(type="datetime", nullable=true)
-    * @Groups({"read","write"})
+    * @Groups({"readCommunityUser","write"})
     */
     private $acceptedDate;
 
@@ -148,7 +151,7 @@ class CommunityUser
     * @var \DateTimeInterface Refusal date.
     *
     * @ORM\Column(type="datetime", nullable=true)
-    * @Groups({"read","write"})
+    * @Groups({"readCommunityUser","write"})
     */
     private $refusedDate;
 
@@ -166,7 +169,7 @@ class CommunityUser
 
     /**
      * @var boolean If the user is also the creator of the community.
-     * @Groups("read")
+     * @Groups("readCommunityUser")
      */
     private $creator;
     

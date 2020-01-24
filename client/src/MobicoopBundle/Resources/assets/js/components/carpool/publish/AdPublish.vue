@@ -21,7 +21,7 @@
     >
       <v-col
         cols="12"
-        xl="10"
+        xl="8"
         align="center"
       >
         <h1>{{ $t('title') }}</h1>
@@ -36,7 +36,7 @@
     >
       <v-col
         cols="12"
-        xl="10"
+        xl="8"
       >
         <v-alert type="info">
           <p>{{ $t("messageSolidaryExclusiveAd.message") }}</p>
@@ -49,14 +49,14 @@
     >
       <v-col
         cols="12"
-        xl="10"
+        xl="8"
         class="d-flex justify-center"
       >
         <v-switch
           v-model="solidaryExclusive"
           color="success"
           inset
-          :label="this.$t('messageSolidaryExclusiveAd.switch.label')"
+          :label="$t('messageSolidaryExclusiveAd.switch.label')"
         />
       </v-col>
     </v-row>
@@ -66,7 +66,7 @@
     >
       <v-col
         cols="12"
-        xl="10"
+        xl="8"
       >
         <v-alert type="info">
           <p>{{ $t("messageFirstAd.signUpDone", {'givenName':user.givenName}) }}.</p>
@@ -80,7 +80,7 @@
     >
       <v-col
         cols="12"
-        xl="10"
+        xl="8"
         align="center"
       >
         <v-stepper
@@ -423,23 +423,29 @@
                 </v-col>
               </v-row>
               <v-row
-                v-if="pricePerKm >= 0.12"
+                v-if="pricePerKm >= pricesRanges.mid"
                 justify="center"
               >
                 <v-col cols="10">
                   <v-card>
                     <v-card-text>
                       <p
-                        v-if="pricePerKm >= 0.12 && pricePerKm < 0.3"
+                        v-if="pricePerKm >= pricesRanges.forbidden"
                         :class="colorPricePerKm + '--text'"
                       >
-                        {{ $t('participation.mid') }}
+                        {{ $t('participation.forbidden') }}
                       </p>
                       <p
-                        v-else-if="pricePerKm >= 0.3"
+                        v-else-if="pricePerKm >= pricesRanges.high"
                         :class="colorPricePerKm + '--text'"
                       >
                         {{ $t('participation.high') }}
+                      </p>
+                      <p
+                        v-else-if="pricePerKm >= pricesRanges.mid"
+                        :class="colorPricePerKm + '--text'"
+                      >
+                        {{ $t('participation.mid') }}
                       </p>
                     </v-card-text>
                   </v-card>
@@ -541,8 +547,8 @@
       </v-btn>
 
       <v-btn
-        v-if="(step === 5 && driver)"
-        :disabled="disableNextButton || price <= 0"
+        v-if="(step === 5 && driver && !solidaryExclusive)"
+        :disabled="disableNextButton || price < 0"
         :loading="loadingPrice"
         rounded
         color="secondary"
@@ -554,7 +560,7 @@
       </v-btn>
 
       <v-btn
-        v-if="((step < 7 && driver && step !== 5)|| (step < 5 && !driver))"
+        v-if="((step < 7 && driver && step !== 5 && !solidaryExclusive) || (step < 5 && !driver && !solidaryExclusive) || (solidaryExclusive && step < 6))"
         :disabled="!validNext"
         rounded
         color="secondary"
@@ -681,7 +687,10 @@ export default {
       type: Boolean,
       default: false
     },
-   
+    defaultPricesRanges:{
+      type: Object,
+      default: null
+    }
 
   },
   data() {
@@ -727,11 +736,23 @@ export default {
       numberSeats : [ 1,2,3,4],
       seats : 3,
       snackbar: false,
-      alert: this.$t('messageRoundedPrice')
+      alert: this.$t('messageRoundedPrice'),
+      priceForbidden: false
     }
   },
   computed: {
-   
+    pricesRanges(){
+      if(this.defaultPricesRanges){
+        return this.defaultPricesRanges;
+      }
+      else{
+        return {
+          "mid":0.12,
+          "high":0.3,
+          "forbidden":0.5
+        }
+      }
+    },
     hintPricePerKm() {
       let pricePerKm = this.pricePerKm;
       if (isNaN(this.pricePerKm)) pricePerKm = 0;
@@ -749,7 +770,12 @@ export default {
       // For the publish button
 
       // step validation
-      if ((this.driver && this.step != 7) || (!this.driver && this.step != 5)) return false;
+      if(this.solidaryExclusive){
+        if(this.step<6) return false;
+      }
+      else{
+        if ((this.driver && this.step != 7) || (!this.driver && this.step != 5)) return false;
+      }
       // role validation
       if (this.driver === false && this.passenger === false) return false;
       // route validation
@@ -762,6 +788,8 @@ export default {
       if (this.regular && !this.schedules) return false;
       // regular schedules validation
       if(this.step==2 && this.regular && (this.schedules==null || this.schedules.length==0)) return false;
+      // Price to high. Forbidden to post
+      if(this.priceForbidden) return false;
       // validation ok
       return true;
     },
@@ -805,9 +833,9 @@ export default {
       return this.price.replace(".",",");
     },
     colorPricePerKm(){
-      if (this.pricePerKm < 0.12) {
+      if (this.pricePerKm < this.pricesRanges.mid) {
         return "success";
-      } else if (this.pricePerKm >= 0.12 && this.pricePerKm < 0.3) {
+      } else if (this.pricePerKm >= this.pricesRanges.mid && this.pricePerKm < this.pricesRanges.high) {
         return "warning";
       } else {
         return "error";
@@ -817,6 +845,7 @@ export default {
   watch: {
     price() {
       this.pricePerKm = (this.distance>0 ? Math.round(parseFloat(this.price) / this.distance * 100)/100 : this.defaultPriceKm);
+      (this.pricePerKm>this.pricesRanges.forbidden) ? this.priceForbidden = true : this.priceForbidden = false;
     },
     distance() {
       let price = Math.round(this.distance * this.pricePerKm * 100)/100;
@@ -900,7 +929,7 @@ export default {
       this.route = route;
       this.origin = route.origin;
       this.destination = route.destination;
-      this.distance = route.direction ? route.direction.distance / 1000 : null;
+      this.distance = route.direction ? route.direction.distance : null;
       this.duration = route.direction ? route.direction.duration : null;
       this.selectedCommunities = route.communities ? route.communities : null;
     },
@@ -945,17 +974,17 @@ export default {
       if (this.anyRouteAsPassenger) postObject.anyRouteAsPassenger = this.anyRouteAsPassenger;
 
       this.loading = true;
-      var self = this;
+      //var self = this;
       axios.post(this.urlToCall,postObject,{
         headers:{
           'content-type': 'application/json'
         }
       })
         .then(function (response) {
-          if (response.data && response.data.result && response.data.result.id) {
+          if (response.data) {
             // uncomment when results page activated
             //var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
-            window.location.href = "/utilisateur/profil/modifier/myProposals";
+            window.location.href = "/utilisateur/profil/modifier/mes-annonces";
           }
           //console.log(response);
         })
@@ -967,7 +996,7 @@ export default {
         });
     },
     roundPrice (price, frequency, doneByUser = false) {
-      if (price > 0 && frequency > 0) {
+      if (price >= 0 && frequency > 0) {
         this.loadingPrice = true;
         axios.post(this.$t('route.roundPrice'), {
           value: price,

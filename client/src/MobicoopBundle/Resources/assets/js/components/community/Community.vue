@@ -27,7 +27,6 @@
           lg="9"
           md="10"
           xl="6"
-          align="center"
         >
           <!-- Community : avatar, title and description -->
           <community-infos
@@ -36,9 +35,7 @@
             :avatar-version="avatarVersion"
           />
           <!-- community buttons and map -->
-          <v-row
-            align="center"
-          >
+          <v-row>
             <v-col
               cols="4"
               class="text-center"
@@ -67,10 +64,13 @@
                 </v-tooltip>
               </div>
               <!-- button if member is accepted -->
-              <div v-else-if="isAccepted">
+              <div
+                v-else-if="isAccepted"
+              >
                 <v-btn
                   color="secondary"
                   rounded
+                  :width="250"
                   :loading="loading"
                   @click="publish"
                 >
@@ -80,6 +80,7 @@
                   class="mt-5"
                   color="primary"
                   rounded
+                  :width="250"
                   :loading="loading"
                   :disabled="!isLogged"
                   @click="leaveCommunityDialog = true"
@@ -172,14 +173,14 @@
 
           <!-- community members list + last 3 users -->
           <v-row
-            v-if="isLogged && isAccepted"
+            v-if="isLogged && isAccepted && !loading"
             align="start"
           >
             <v-col
               cols="8"
             >
               <community-member-list
-                :community="community"
+                :community-id="community.id"
                 :refresh="refreshMemberList"
                 :given-users="users"
                 :hidden="(!isAccepted && community.membersHidden)"
@@ -200,19 +201,31 @@
               />
             </v-col>
           </v-row>
+          <v-row v-else-if="loading">
+            <v-col cols="9">
+              <v-skeleton-loader
+                class="mx-auto"
+                type="card"
+              />              
+            </v-col>
+            <v-col cols="3">
+              <v-skeleton-loader
+                class="mx-auto"
+                type="card"
+              />              
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
       <!-- search journey -->
       <v-row
         justify="center"
-        align="left"
       >
         <v-col
           cols="12"
           lg="9"
           md="10"
           xl="6"
-          align="center"
           class="mt-6"
         >
           <h3 class="headline text-justify font-weight-bold">
@@ -221,7 +234,6 @@
         </v-col>
       </v-row>
       <v-row
-        align="center"
         justify="center"
       >
         <search
@@ -299,10 +311,6 @@ export default {
       type: Object,
       default: null
     },
-    users: {
-      type: Array,
-      default: null
-    },
     community:{
       type: Object,
       default: null
@@ -342,6 +350,10 @@ export default {
     points: {
       type: Array,
       default: null
+    },
+    userCommunityStatus: {
+      type: Number,
+      default:-1
     }
   },
   data () {
@@ -374,10 +386,16 @@ export default {
       refreshMemberList: false,
       refreshLastUsers: false,
       params: { 'communityId' : this.community.id },
+      users:[]
     }
   },
   mounted() {
-    this.getCommunityUser();
+    //this.getCommunityUser();
+    if(this.userCommunityStatus>=0){
+      this.isAccepted = (this.userCommunityStatus == 1 || this.userCommunityStatus == 2);
+      this.askToJoin = true
+    }
+
     this.checkIfUserLogged();
     this.showCommunityProposals();
     this.checkDomain();
@@ -412,7 +430,11 @@ export default {
               this.askToJoin = true
             }
             this.checkValidation = false;
+            this.loading = false;
           });
+      }
+      else{
+        this.loading = false;
       }
     },
     joinCommunity() {
@@ -429,7 +451,7 @@ export default {
           this.askToJoin = true;
           this.isAccepted = false;
           this.snackbar = true;
-          this.textSnackbar = (this.errorUpdate) ? this.$t("snackbar.joinCommunity.textError") : this.$t("snackbar.joinCommunity.textOk");
+          this.textSnackbar = (this.errorUpdate) ? this.$t("snackbar.joinCommunity.textError") : this.textSnackOk;
           this.refreshMemberList = true;
           this.refreshLastUsers = true;
           this.getCommunityUser();
@@ -506,8 +528,15 @@ export default {
           };
 
           if(proposal.type !== 'return'){ // We show only outward or one way proposals
+
+            infosForPopUp.carpoolerFirstName = proposal.carpoolerFirstName;
+            infosForPopUp.carpoolerLastName = proposal.carpoolerLastName;
+
+            // We build the content of the popup
+            currentProposal.desc = "<p style='text-align:center;'><strong>"+infosForPopUp.carpoolerFirstName+" "+infosForPopUp.carpoolerLastName+"</strong></p>"
+
+
             proposal.waypoints.forEach((waypoint, index) => {
-              this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
               currentProposal.latLngs.push(waypoint.latLng);
               if(index==0){
                 infosForPopUp.origin = waypoint.title;
@@ -519,12 +548,10 @@ export default {
                 infosForPopUp.destinationLat = waypoint.latLng.lat;
                 infosForPopUp.destinationLon = waypoint.latLng.lon;
               }
+              this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,currentProposal.desc,"",[],[],"<p>"+waypoint.title+"</p>"));
             });
-            infosForPopUp.carpoolerFirstName = proposal.carpoolerFirstName;
-            infosForPopUp.carpoolerLastName = proposal.carpoolerLastName;
 
-            // We build the content of the popup
-            currentProposal.desc = "<p><strong>"+infosForPopUp.carpoolerFirstName+" "+infosForPopUp.carpoolerLastName+"</strong></p>"
+
             currentProposal.desc += "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
             currentProposal.desc += "<strong>"+this.$t('map.destination')+"</strong> : "+infosForPopUp.destination+"<br />";
             if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em>";
@@ -545,11 +572,11 @@ export default {
       }
       this.$refs.mmap.redrawMap();
     },
-    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
+    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[],popupDesc=""){
       let point = {
         title:title,
         latLng:L.latLng(lat, lng),
-        icon: {}
+        icon: {},
       };
 
       if(pictoUrl!==""){
@@ -560,6 +587,12 @@ export default {
         }
       }
 
+      if(popupDesc!==""){
+        point.popup = {
+          title:title,
+          description:popupDesc
+        }
+      }
       return point;
     },
     contact: function(data){
@@ -570,7 +603,7 @@ export default {
       const params = {
         carpool:0,
         idRecipient:data.id,
-        familyName:data.familyName,
+        shortFamilyName:data.shortFamilyName,
         givenName:data.givenName,
         avatar:data.avatars[0]
       }

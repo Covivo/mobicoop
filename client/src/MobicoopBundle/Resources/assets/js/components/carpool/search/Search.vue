@@ -9,9 +9,9 @@
       >
         <v-col
           cols="12"
-          xl="6"
-          lg="9"
-          md="10"
+          :xl="results ? 12 : 6"
+          :lg="results ? 12 : 6"
+          :md="results ? 12 : 6"
         >
           <!--SearchJourney-->
           <search-journey
@@ -19,9 +19,11 @@
             :user="user"
             :init-regular="dataRegular"
             :init-destination="destination"
+            :init-origin="origin"
             :punctual-date-optional="punctualDateOptional"
             :show-destination="showDestination"
             :iswidget="isWidget"
+            :init-outward-date="defaultOutwardDate"
             @change="searchChanged"
           />
         </v-col>
@@ -86,6 +88,7 @@
                 :loading="loadingSearch"
                 color="secondary"
                 rounded
+                min-width="150px"
                 @click="search"
               >
                 {{ $t('buttons.search.label') }}
@@ -140,6 +143,10 @@ export default {
       type: Object,
       default: null
     },
+    defaultOrigin: {
+      type: Object,
+      default: null
+    },
     disableSearch: {
       type: Boolean,
       default: false
@@ -156,6 +163,14 @@ export default {
       type: Boolean,
       default: false
     },
+    results: {
+      type: Boolean,
+      default: false
+    },
+    defaultOutwardDate: {
+      type: String,
+      default: null
+    }
   },
   data() {
     return {
@@ -165,7 +180,7 @@ export default {
       dataRegular: this.regular,
       date: null,
       time: null,
-      origin: null,
+      origin: this.defaultOrigin,
       destination: this.defaultDestination,
       locale: this.$i18n.locale,
     };

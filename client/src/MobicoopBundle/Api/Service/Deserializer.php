@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 
+use Mobicoop\Bundle\MobicoopBundle\Import\Entity\Redirect;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Contact;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Structure;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Subject;
@@ -181,6 +182,10 @@ class Deserializer
                 break;
             case Price::class:
                 return self::deserializePrice($data);
+                break;
+            case Redirect::class:
+                return self::deserializeRedirect($data);
+                break;
             default:
                 break;
         }
@@ -879,6 +884,14 @@ class Deserializer
         $price = self::autoSet($price, $data);
 
         return $price;
+    }
+
+    private function deserializeRedirect(array $data) : ?Redirect
+    {
+        $redirect = new Redirect();
+        $redirect = self::autoSet($redirect, $data);
+
+        return $redirect;
     }
     
     private function autoSet($object, $data)

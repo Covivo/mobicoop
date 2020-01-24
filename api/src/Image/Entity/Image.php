@@ -38,6 +38,9 @@ use App\Community\Entity\Community;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Entity\RelayPointType;
 use App\Image\Controller\CreateImageAction;
+use App\Image\Controller\ImportImageCommunityController;
+use App\Image\Controller\ImportImageEventController;
+use App\Image\Controller\ImportImageUserController;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\User\Entity\User;
@@ -61,7 +64,7 @@ use App\User\Entity\User;
  *              "path"="/images",
  *              "controller"=CreateImageAction::class,
  *              "defaults"={"_api_receive"=false},
- *          }
+ *          },
  *      },
  *      itemOperations={"get","put","delete"}
  * )
@@ -75,7 +78,7 @@ class Image
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read","readUser"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -84,7 +87,7 @@ class Image
      * @var string The name of the image.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups("read")
+     * @Groups({"read","readUser"})
      */
     private $name;
 
@@ -92,7 +95,7 @@ class Image
      * @var string The html title of the image.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups("read")
+     * @Groups({"read","readUser"})
      */
     private $title;
     
@@ -140,7 +143,7 @@ class Image
      * @var string The final file name of the image.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","results","write"})
+     * @Groups({"read","results","write","readUser"})
      */
     private $fileName;
     
@@ -308,7 +311,7 @@ class Image
 
     /**
      * @var array|null The versions of with the image.
-     * @Groups({"read", "results"})
+     * @Groups({"read","readCommunity","readCommunityUser","readEvent","readUser","results"})
      */
     private $versions;
         

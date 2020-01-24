@@ -106,17 +106,14 @@ export default {
       isSent: false,
       email: null,
       emailRules: [
-        v => !!v || this.$t("form.email.errors.required"),
-        v => /.+@.+/.test(v) || this.$t("form.email.errors.valid")
+        v => !!v || this.$t("popup.form.email.errors.required"),
+        v => /.+@.+/.test(v) || this.$t("popup.form.email.errors.valid")
       ],
       description: null,
       descriptionRules: [
-        v => !!v || this.$t("form.description.errors.required")
+        v => !!v || this.$t("popup.form.description.errors.required")
       ]
     }
-  },
-  created() {
-    console.log(this.event);
   },
   methods:{
     report() {

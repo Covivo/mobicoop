@@ -44,7 +44,7 @@ export default (type, params) => {
                 })
                 .then(({id,token}) => {
                     // second request to get all the permissions
-                    const requestPermissions = new Request(`${uri}users/${id}/permissions`, {
+                    const requestPermissions = new Request(`${uri}/users/${id}/permissions`, {
                         method: 'GET',
                         headers: new Headers({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }),
                     });

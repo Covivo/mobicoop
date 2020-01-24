@@ -25,6 +25,10 @@ namespace App\Geography\Service;
 
 use App\Geography\Entity\Address;
 
+class InvalidParameterException extends \Exception
+{
+}
+
 /**
  * Geographical tools.
  *
@@ -32,12 +36,15 @@ use App\Geography\Entity\Address;
  */
 class GeoTools
 {
+    const METERS_BY_DEGREE = 111319;
+    const RDP_EPSILON = 0.01;             // Ramer-Douglas-Peucker Epsilon : maximum perpendicular distance for any point from the line between two adjacent points.
+
     private $params;
 
     /**
      * Constructor.
      */
-    public function __construct(array $params)
+    public function __construct(?array $params=null)
     {
         $this->params = $params;
     }
@@ -115,7 +122,11 @@ class GeoTools
      */
     public function getOppositeBearing(int $bearing, int $range=0)
     {
-        $newBearing = abs($bearing-180);
+        if ($bearing >= 180) {
+            $newBearing = $bearing-180;
+        } else {
+            $newBearing = $bearing+180;
+        }
         return [
             'opposite' => $newBearing,
             'min' => (($newBearing-$range)<0) ? ($newBearing-$range+360) : ($newBearing-$range),
@@ -134,6 +145,33 @@ class GeoTools
     {
         //return round(((($distance)/1000) * 7 * 0.0232), $round);
         return round($distance/1000 * 213, $round);
+    }
+
+    /**
+     * Get the new latitude of a given point after moving it from a given distance.
+     * Only the latitude is needed.
+     *
+     * @param float $lat    The initial latitude of the point
+     * @param int $dlat     The delta latitude in metres
+     * @return float
+     */
+    public function moveGeoLat(float $lat, int $dlat)
+    {
+        return $lat+((1/self::METERS_BY_DEGREE)*$dlat);
+    }
+
+    /**
+     * Get the new longitude of a given point after moving it from a given distance.
+     * Longitude AND latitude are needed.
+     *
+     * @param float $lon    The initial longitude of the point
+     * @param float $lat    The initial latitude of the point
+     * @param int $dlon     The delta longitude in metres
+     * @return float
+     */
+    public function moveGeoLon(float $lon, float $lat, int $dlon)
+    {
+        return $lon + (((1/self::METERS_BY_DEGREE)*$dlon)/cos($lat*0.018)); // pi / 180 = 0.018
     }
 
     /**
@@ -178,6 +216,22 @@ class GeoTools
             if ($relayPoint = $address->getRelayPoint()) {
                 if (trim($relayPoint->getName())!=="") {
                     $displayLabelTab[0][] = $relayPoint->getName();
+                }
+            }
+        }
+
+        // named address
+        if (isset($this->params['displayNamed']) && trim($this->params['displayNamed'])==="true") {
+            if (trim($address->getName())!=="") {
+                $displayLabelTab[0][] = $address->getName();
+            }
+        }
+
+        // event
+        if (isset($this->params['displayEvent']) && trim($this->params['displayEvent'])==="true") {
+            if ($event = $address->getEvent()) {
+                if (trim($event->getName())!=="") {
+                    $displayLabelTab[0][] = $event->getName();
                 }
             }
         }
@@ -233,5 +287,171 @@ class GeoTools
         }
         
         return [implode($displaySeparator, $displayLabelTab[0]),implode($displaySeparator, $displayLabelTab[1])];
+    }
+
+    /**
+     * Return a simplified array of points from an array of addresses.
+     * /!\ This is used for approximate purpose only : The RDP algorithm works only on a 2D coordinates system, not on a 3D sphere system /!\
+     *
+     * @param array $addresses  The array of addresses representing the line
+     * @return array            The array of addresses, simplified
+     */
+    public function getSimplifiedPoints(array $addresses)
+    {
+        $line = [];
+        foreach ($addresses as $address) {
+            $line[] = [
+                $address->getLongitude(),
+                $address->getLatitude()
+            ];
+        }
+        return $this->RamerDouglasPeucker2d($line, SELF::RDP_EPSILON);
+    }
+
+    /**
+     * Get the length of a longitude degree depending on the latitude
+     *
+     * @param float $lat
+     * @return void
+     */
+    private function getDegreeValueForLat(float $lat)
+    {
+        return cos($lat)*self::METERS_BY_DEGREE;
+    }
+
+
+    /**
+     * The following source code is taken from this repository : https://github.com/david-r-edgar/RDP-PHP
+     * Not included via composer because of a failure from Packagist...
+     * All the credits goes to David Edgar !
+     */
+
+    /**
+     * An implementation of the Ramer-Douglas-Peucker algorithm for reducing
+     * the number of points on a polyline.
+     *
+     * For more information, see:
+     * http://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm
+     *
+     * @author David Edgar
+     *
+     * @license PD The author has placed this work in the Public Domain, thereby
+     * relinquishing all copyrights.
+     * You may use, modify, republish, sell or give away this work without prior
+     * consent.
+     * This implementation comes with no warranty or guarantee of fitness for any
+     * purpose.
+     */
+
+    /**
+     * Finds the perpendicular distance from a point to a straight line.
+     *
+     * The coordinates of the point are specified as $ptX and $ptY.
+     *
+     * The line passes through points l1 and l2, specified respectively with
+     * their coordinates $l1x and $l1y, and $l2x and $l2y
+     *
+     * @param float $ptX X coordinate of the point
+     * @param float $ptY Y coordinate of the point
+     * @param float $l1x X coordinate of point on the line l1
+     * @param float $l1y Y coordinate of point on the line l1
+     * @param float $l2x X coordinate of point on the line l2
+     * @param float $l2y Y coordinate of point on the line l2
+     *
+     * @return float The distance from the point to the line.
+     */
+    protected static function perpendicularDistance2d(
+        $ptX,
+        $ptY,
+        $l1x,
+        $l1y,
+        $l2x,
+        $l2y
+    ) {
+        $result = 0;
+        if ($l2x == $l1x) {
+            //vertical lines - treat this case specially to avoid dividing
+            //by zero
+            $result = abs($ptX - $l2x);
+        } else {
+            $slope = (($l2y-$l1y) / ($l2x-$l1x));
+            $passThroughY = (0-$l1x)*$slope + $l1y;
+            $result = (abs(($slope * $ptX) - $ptY + $passThroughY)) /
+                      (sqrt($slope*$slope + 1));
+        }
+        return $result;
+    }
+
+    /**
+     * RamerDouglasPeucker2d
+     *
+     * Reduces the number of points on a polyline by removing those that are
+     * closer to the line than the distance $epsilon.
+     *
+     * @param array $pointList An array of arrays, where each internal array
+     * is one point on the polyline, specified by two numeric coordinates.
+     * @param float $epsilon The distance threshold to use. The unit should be
+     * the same as that of the coordinates of the points in $pointList.
+     *
+     * @return array $pointList An array of arrays, with the same format as the
+     * original argument $pointList. Each point returned in the result array will
+     * retain all its original data.
+     */
+    public static function RamerDouglasPeucker2d($pointList, $epsilon)
+    {
+        if ($epsilon <= 0) {
+            throw new InvalidParameterException('Non-positive epsilon.');
+        }
+        if (count($pointList) < 2) {
+            return $pointList;
+        }
+        // Find the point with the maximum distance
+        $dmax = 0;
+        $index = 0;
+        $totalPoints = count($pointList);
+        for ($i = 1; $i < ($totalPoints - 1); $i++) {
+            $d = self::perpendicularDistance2d(
+                $pointList[$i][0],
+                $pointList[$i][1],
+                $pointList[0][0],
+                $pointList[0][1],
+                $pointList[$totalPoints-1][0],
+                $pointList[$totalPoints-1][1]
+            );
+            if ($d > $dmax) {
+                $index = $i;
+                $dmax = $d;
+            }
+        }
+        $resultList = array();
+        // If max distance is greater than epsilon, recursively simplify
+        if ($dmax >= $epsilon) {
+            // Recursive call on each 'half' of the polyline
+            $recResults1 = self::RamerDouglasPeucker2d(
+                array_slice($pointList, 0, $index + 1),
+                $epsilon
+            );
+            $recResults2 = self::RamerDouglasPeucker2d(
+                array_slice($pointList, $index, $totalPoints - $index),
+                $epsilon
+            );
+            // Build the result list
+            $resultList = array_merge(
+                array_slice(
+                    $recResults1,
+                    0,
+                    count($recResults1) - 1
+                ),
+                array_slice(
+                    $recResults2,
+                    0,
+                    count($recResults2)
+                )
+            );
+        } else {
+            $resultList = array($pointList[0], $pointList[$totalPoints-1]);
+        }
+        // Return the result
+        return $resultList;
     }
 }

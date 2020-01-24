@@ -68,6 +68,14 @@
 /api/public/upload/mass/files/*.xml
 /api/public/upload/mass/files/*.zip
 /api/public/upload/mass/files/*.json
+/api/public/import/
+/api/public/import/*.*
+/api/public/import/Avatar/*.*
+/api/public/import/Community/*.*
+/api/public/import/Event/*.*
+/api/public/import/RelaisPoint/*.*
+/api/public/upload/masscommunication/
+/api/public/upload/masscommunication/*.*
 /client/.env.dev.local
 /client/.env.test.local
 /client/.env.prod.local

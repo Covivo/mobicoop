@@ -36,3 +36,9 @@ services:
         class: Mobicoop\Bundle\MobicoopBundle\Security\AccessDeniedHandler
         calls:
         - [handle, ['@?', '@?']]
+
+    mobicoop_bundle_mobicoop.listener.logoutListener:
+        class: Mobicoop\Bundle\MobicoopBundle\Listener\LogoutListener
+        arguments:
+            $router: "@router"
+            $tokenStorage : "@security.token_storage"

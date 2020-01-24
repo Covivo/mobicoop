@@ -26,6 +26,7 @@ namespace App\Communication\Service;
 use App\Communication\Entity\Email;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 use function GuzzleHttp\json_decode;
 
@@ -48,7 +49,7 @@ class EmailManager
     /**
        * EmailManager constructor.
        * @param \Swift_Mailer $mailer
-       * @param \Twig_Environment $templating
+       * @param Environment $templating
        * @param LoggerInterface $logger
        * @param TranslatorInterface $translator
        * @param string $emailSender
@@ -56,7 +57,7 @@ class EmailManager
        * @param string $templatePath
        * @param string $emailAdditionalHeaders
        */
-    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailReplyTo, string $templatePath, string $emailAdditionalHeaders)
+    public function __construct(\Swift_Mailer $mailer, Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailReplyTo, string $templatePath, string $emailAdditionalHeaders)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
@@ -91,9 +92,10 @@ class EmailManager
         } else {
             $replyToEmail = $mail->getReturnEmail();
         }
-
+        
         $sessionLocale= $this->translator->getLocale();
         $this->translator->setLocale($lang);
+       
         $message = (new \Swift_Message($mail->getObject()))
             ->setFrom($senderEmail)
             ->setTo($mail->getRecipientEmail())
@@ -108,6 +110,7 @@ class EmailManager
                 ),
                 'text/html'
             );
+            
         if ($this->emailAdditionalHeaders) {
             $headers = json_decode($this->emailAdditionalHeaders, true);
             foreach ($headers as $key => $value) {
@@ -121,10 +124,10 @@ class EmailManager
                 $message->getHeaders()->addTextHeader($this->translator->trans($key), $data);
             }
         }
+       
         $this->translator->setLocale($sessionLocale);
-
         $failures = $this->mailer->send($message, $failures);
-
+        
         return $failures;
     }
 }

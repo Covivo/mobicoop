@@ -38,6 +38,7 @@
               href="#tab-cm"
               class="ma-0"
               ripple
+              @click="reloadOnIcon()"
             >
               <v-icon class="display-1">
                 mdi-car
@@ -48,6 +49,7 @@
               href="#tab-dm"
               class="ma-0"
               ripple
+              @click="reloadOnIcon()"
             >
               <v-icon class="display-1">
                 mdi-chat
@@ -105,6 +107,7 @@
                 :id-thread-message="idMessage"
                 :id-recipient="idRecipient"
                 :loading="loadingTypeText"
+                :hidden="hideClickIcon"
                 @sendInternalMessage="sendInternalMessage"
               />
             </v-col>
@@ -191,7 +194,8 @@ export default {
       refreshThreadsCarpool:false,
       refreshActions:false,
       loadingDetails:false,
-      loadingBtnAction:false
+      loadingBtnAction:false,
+      hideClickIcon : false,
     };
   },
   mounted() {
@@ -212,6 +216,8 @@ export default {
   },
   methods: {
     updateDetails(data){
+      
+      this.hideClickIcon = false;
       (data.type=="Carpool") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
       this.idMessage = data.idMessage;
       this.idRecipient = data.idRecipient;
@@ -289,6 +295,14 @@ export default {
       this.loadingDetails = true;
       (data.idAsk) ? this.currentIdAsk  = data.idAsk : this.idMessage = data.idMessage;
       this.refreshActions = true;
+    },
+    reloadOnIcon(){
+      this.loadingDetails = true;
+      this.refreshActions = true;
+      this.refreshDetails = true;
+      this.hideClickIcon = true;
+      this.idMessage = -2;
+      this.currentIdAsk = -2;
     },
     refreshDetailsCompleted(){
       //this.refreshActions = true;

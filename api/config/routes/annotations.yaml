@@ -7,6 +7,10 @@ carpool:
     resource: 'Carpool/Controller/'
     type: annotation
 
+import:
+    resource: 'Import/Controller/'
+    type: annotation
+
 geography:
     resource: 'Geography/Controller/'
     type: annotation

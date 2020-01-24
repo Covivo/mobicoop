@@ -50,6 +50,19 @@ class CarpoolController extends AbstractController
 {
     use HydraControllerTrait;
 
+    private $midPrice;
+    private $highPrice;
+    private $forbiddenPrice;
+    private $defaultRole;
+
+    public function __construct($midPrice, $highPrice, $forbiddenPrice, $defaultRole)
+    {
+        $this->midPrice = $midPrice;
+        $this->highPrice = $highPrice;
+        $this->forbiddenPrice = $forbiddenPrice;
+        $this->defaultRole = $defaultRole;
+    }
+    
     /**
      * Create a carpooling ad.
      */
@@ -94,7 +107,13 @@ class CarpoolController extends AbstractController
         }
 
         $this->denyAccessUnlessGranted('create_ad', $proposal);
-        return $this->render('@Mobicoop/carpool/publish.html.twig');
+        return $this->render('@Mobicoop/carpool/publish.html.twig', [
+            "pricesRange" => [
+                "mid" => $this->midPrice,
+                "high" => $this->highPrice,
+                "forbidden" => $this->forbiddenPrice
+            ]
+        ]);
     }
 
     /**
@@ -104,7 +123,14 @@ class CarpoolController extends AbstractController
     {
         $proposal = new Proposal();
         $this->denyAccessUnlessGranted('create_ad', $proposal);
-        return $this->render('@Mobicoop/carpool/publish.html.twig');
+        return $this->render('@Mobicoop/carpool/publish.html.twig', [
+            "firstAd" => true,
+            "pricesRange" => [
+                "mid" => $this->midPrice,
+                "high" => $this->highPrice,
+                "forbidden" => $this->forbiddenPrice,
+            ]
+        ]);
     }
         
     /**
@@ -118,6 +144,11 @@ class CarpoolController extends AbstractController
             '@Mobicoop/carpool/publish.html.twig',
             [
                 'solidaryExclusiveAd'=>true,
+                "pricesRange" => [
+                    "mid" => $this->midPrice,
+                    "high" => $this->highPrice,
+                    "forbidden" => $this->forbiddenPrice
+                ]
             ]
         );
     }
@@ -140,7 +171,12 @@ class CarpoolController extends AbstractController
                 'destination'=>$request->request->get('destination'),
                 'regular'=>json_decode($request->request->get('regular')),
                 'date'=>$request->request->get('date'),
-                'time'=>$request->request->get('time')
+                'time'=>$request->request->get('time'),
+                "pricesRange" => [
+                    "mid" => $this->midPrice,
+                    "high" => $this->highPrice,
+                    "forbidden" => $this->forbiddenPrice
+                ]
             ]
         );
     }
@@ -239,7 +275,7 @@ class CarpoolController extends AbstractController
      * Matching Search
      * (AJAX POST)
      */
-    public function carpoolSearchMatching(Request $request, AdManager $adManager)
+    public function carpoolSearchMatching(Request $request, AdManager $adManager, UserManager $userManager)
     {
         $params = json_decode($request->getContent(), true);
         if (isset($params['date']) && $params['date'] != '') {
@@ -255,7 +291,7 @@ class CarpoolController extends AbstractController
         $strictDate = isset($params['strictDate']) ? $params['strictDate'] : null;
         $strictPunctual = isset($params['strictPunctual']) ? $params['strictPunctual'] : null;
         $strictRegular = isset($params['strictRegular']) ? $params['strictRegular'] : null;
-        $role = isset($params['role']) ? $params['role'] : Criteria::ROLE_BOTH;
+        $role = isset($params['role']) ? $params['role'] : $this->defaultRole;
         $userId = isset($params['userId']) ? $params['userId'] : null;
         $communityId = isset($params['communityId']) ? $params['communityId'] : null;
 
@@ -277,6 +313,29 @@ class CarpoolController extends AbstractController
             $filters
         )) {
             $result = $ad->getResults();
+            //We get the id of proposal the current user already asks (no matter the status)
+            if ($userManager->getLoggedUser() != null) {
+                $proposalAlreadyAsk = $userManager->getAsks($userManager->getLoggedUser());
+
+                foreach ($result as $key => $oneResult) {
+                    $result[$key]['alreadyask'] = 0;
+                    //User made 0 ask, we skip verification
+                    if ($proposalAlreadyAsk != null) {
+                        if ($oneResult['resultPassenger'] != null) {
+                            $proposal = $oneResult['resultPassenger']['outward']['proposalId'];
+                            if (in_array($proposal, $proposalAlreadyAsk['offers'])) {
+                                $result[$key]['alreadyask'] = 1;
+                            }
+                        }
+                        if ($oneResult['resultDriver'] != null) {
+                            $proposal = $oneResult['resultDriver']['outward']['proposalId'];
+                            if (in_array($proposal, $proposalAlreadyAsk['request'])) {
+                                $result[$key]['alreadyask'] = 1;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         return $this->json($result);

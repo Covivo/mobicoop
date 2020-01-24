@@ -8,7 +8,7 @@ import {
     Datagrid,
     TextInput, SelectInput, ReferenceInput, BooleanInput,
     TextField, EmailField, DateField, 
-    ShowButton, EditButton,
+    EditButton,
     Filter
 } from 'react-admin';
 
@@ -30,13 +30,12 @@ const UserFilter = (props) => (
 );
 export const UserList = (props) => (
     <List {...props} title="Utilisateurs > liste" perPage={ 25 } filters={<UserFilter />} sort={{ field: 'id', order: 'ASC' }}>
-        <Datagrid>
+        <Datagrid rowClick="show">
             <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="givenName" label="Prénom"/>
             <TextField source="familyName" label="Nom"/>
             <EmailField source="email" label="Email" />
             <DateField source="createdDate" label="Date de création"/>
-            <ShowButton />
             {isAuthorized("user_update") && 
                 <EditButton />
             }

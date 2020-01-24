@@ -29,6 +29,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Image\Entity\Image;
@@ -50,13 +51,13 @@ use App\Community\Controller\JoinAction;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readCommunity"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}},
  *          "pagination_client_items_per_page"=true
  *      },
  *      collectionOperations={
  *          "get"={
-  *              "swagger_context" = {
+ *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
  *                          "name" = "userId",
@@ -110,6 +111,7 @@ use App\Community\Controller\JoinAction;
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
+ * @ApiFilter(NumericFilter::class, properties={"communityUsers.user.id"})
  */
 class Community
 {
@@ -123,7 +125,7 @@ class Community
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","results"})
+     * @Groups({"readCommunity","readCommunityUser","results"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -133,15 +135,23 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write","results"})
+     * @Groups({"readCommunity","readCommunityUser","write","results"})
      */
     private $name;
+
+    /**
+     * @var int Community status.
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Groups({"readCommunity","write"})
+     */
+    private $status;
 
     /**
      * @var boolean|null Members are only visible by the members of the community.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readCommunity","write"})
      */
     private $membersHidden;
 
@@ -149,7 +159,7 @@ class Community
      * @var boolean|null Proposals are only visible by the members of the community.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readCommunity","write"})
      */
     private $proposalsHidden;
 
@@ -157,7 +167,7 @@ class Community
      * @var int|null The type of validation (automatic/manual/domain).
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"readCommunity","write"})
      */
     private $validationType;
 
@@ -165,7 +175,7 @@ class Community
      * @var string|null The domain of the community.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readCommunity","write"})
      */
     private $domain;
     
@@ -174,7 +184,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"readCommunity","write"})
      */
     private $description;
     
@@ -183,7 +193,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="text")
-     * @Groups({"read","write"})
+     * @Groups({"readCommunity","write"})
      */
     private $fullDescription;
     
@@ -191,7 +201,7 @@ class Community
     * @var \DateTimeInterface Creation date of the community.
     *
     * @ORM\Column(type="datetime")
-    * @Groups("read")
+    * @Groups("readCommunity")
     */
     private $createdDate;
 
@@ -199,27 +209,29 @@ class Community
      * @var \DateTimeInterface Updated date of the community.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("read")
+     * @Groups("readCommunity")
      */
     private $updatedDate;
     
     /**
      * @var User The creator of the community.
      *
+     * @ApiProperty(push=true)
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"readCommunity","write"})
      */
     private $user;
 
     /**
      * @var Address The address of the community.
      *
+     * @ApiProperty(push=true)
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"read","write"})
+     * @Groups({"readCommunity","write"})
      * @MaxDepth(1)
      */
     private $address;
@@ -227,9 +239,10 @@ class Community
     /**
      * @var ArrayCollection|null The images of the community.
      *
+     * @ApiProperty(push=true)
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","write"})
+     * @Groups({"readCommunity","readCommunityUser","write"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -247,8 +260,9 @@ class Community
     /**
      * @var ArrayCollection|null The members of the community.
      *
+     * @ApiProperty(push=true)
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","write"})
+     * @Groups({"readCommunity","write"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -258,7 +272,7 @@ class Community
      * @var ArrayCollection|null The security files of the community.
      *
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunitySecurity", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","write"})
+     * @Groups({"readCommunity","write"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -266,7 +280,7 @@ class Community
     
     /**
      * @var boolean|null If the current user asking is member of the community
-     * @Groups({"read"})
+     * @Groups({"readCommunity"})
      */
     private $member;
 
@@ -297,6 +311,18 @@ class Community
     public function setName(string $name)
     {
         $this->name = $name;
+    }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?int $status): self
+    {
+        $this->status = $status;
+
+        return $this;
     }
 
     public function isMembersHidden(): ?bool

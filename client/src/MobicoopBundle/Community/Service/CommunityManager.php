@@ -66,18 +66,32 @@ class CommunityManager
     /**
     * Get all communities
     * @param int|null $userId   The id of the user you want to know if he is already an accepted member of the community
+    * @param int|null $perPage  Number of items per page
+    * @param int|null $page     Current page
+    * @param int|null $search   Array of search criterias
     * @return array|null        The communities found or null if not found.
     *
     */
-    public function getCommunities(?int $userId=null)
+    public function getCommunities(?int $userId=null, ?int $perPage=null, ?int $page=null, array $search=[])
     {
         $params = null;
         if ($userId!==null) {
             $params['userId'] = $userId;
         }
+        if ($perPage!==null) {
+            $params['perPage'] = $perPage;
+        }
+        if ($page!==null) {
+            $params['page'] = $page;
+        }
+        if (count($search)>0) {
+            foreach ($search as $key => $value) {
+                $params[$key] = $value;
+            }
+        }
         $response = $this->dataProvider->getCollection($params);
         if ($response->getCode() >=200 && $response->getCode() <= 300) {
-            return $response->getValue()->getMember();
+            return $response->getValue();
         }
         return $response->getValue();
     }
@@ -138,6 +152,23 @@ class CommunityManager
             return $response->getValue();
         }
         return null;
+    }
+
+    /**
+     * Delete a community -> Use for delete community if an error occur with the image upload
+     *
+     * @param int $id The id of the community to delete
+     *
+     * @return boolean The result of the deletion.
+     */
+    public function deleteCommunity(int $id)
+    {
+        $this->dataProvider->setClass(Community::class);
+        $response = $this->dataProvider->delete($id);
+        if ($response->getCode() == 204) {
+            return true;
+        }
+        return false;
     }
 
     /**

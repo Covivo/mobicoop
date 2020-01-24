@@ -55,7 +55,7 @@
                 <v-btn
                   class="mt-3"
 
-                  color="secondary"
+                  color="primary"
                   rounded
                   :href="$t('buttons.widget.route') + event.id"
                 >
@@ -134,7 +134,6 @@
 </template>
 <script>
 
-import axios from "axios";
 import { merge } from "lodash";
 import Translations from "@translations/components/event/Event.json";
 import TranslationsClient from "@clientTranslations/components/event/Event.json";

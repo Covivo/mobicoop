@@ -334,7 +334,7 @@
       <v-spacer />
       <!-- Carpool (driver xor passenger) -->
       <v-btn
-        v-if="(driver ^ passenger) && step == 1"
+        v-if="(driver ^ passenger) && step == 1 && lResult.alreadyask == 0"
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
@@ -345,7 +345,7 @@
 
       <!-- Carpool (driver) --> 
       <v-btn
-        v-if="driver && passenger"
+        v-if="driver && passenger && lResult.alreadyask == 0"
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
@@ -356,7 +356,7 @@
 
       <!-- Carpool (passenger) --> 
       <v-btn
-        v-if="driver && passenger"
+        v-if="driver && passenger && lResult.alreadyask == 0"
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
@@ -364,6 +364,10 @@
       >
         {{ $t('carpoolAsPassenger') }}
       </v-btn>
+
+      <p v-if="lResult.alreadyask == 1">
+        {{ $t('alreadyAskCarpool') }}
+      </p>
 
       <!-- Step 2 or 3 (previous) --> 
       <v-btn
@@ -386,7 +390,7 @@
 
       <!-- Step 2 (regular outward, no return) --> 
       <v-btn
-        v-if="step == 2 && !lResult.return && outwardTrip.length>0"
+        v-if="step == 2 && !lResult.return && outwardTrip.length>0 && lResult.alreadyask == 0"
         color="secondary"
         @click="driver ? carpool(1) : carpool(2)"
       >
@@ -395,7 +399,7 @@
 
       <!-- Step 3 (regular return) --> 
       <v-btn
-        v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0)"
+        v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0) && lResult.alreadyask == 0"
         color="secondary"
         @click="driver ? carpool(1) : carpool(2)"
       >
@@ -552,7 +556,7 @@ export default {
         return (this.defaultRole == "driver");
       }
       else{
-        return (this.lResult && this.lResult.resultDriver);
+        return (this.lResult != null && this.lResult.resultDriver != null);
       }
     },
     passenger() {
@@ -560,7 +564,7 @@ export default {
         return (this.defaultRole=="passenger");
       }
       else{
-        return (this.lResult && this.lResult.resultPassenger);
+        return (this.lResult != null && this.lResult.resultPassenger != null);
       }
     },
     regular() {
@@ -585,7 +589,12 @@ export default {
         : "";
     },
     age() {
-      return this.lResult ? moment().diff(moment([this.lResult.carpooler.birthDate]),'years')+' '+this.$t("birthYears") : ''
+      if (this.lResult) {
+        if (this.lResult.carpooler.birthYear) {
+          return moment().diff(moment([this.lResult.carpooler.birthYear]),'years')+' '+this.$t("birthYears");
+        }
+      }
+      return null;
     },
     waypoints() {
       return this.lResult.resultPassenger ? this.lResult.resultPassenger.outward.waypoints : this.lResult.resultDriver.outward.waypoints;
@@ -621,6 +630,7 @@ export default {
     }
   },
   mounted() {
+    this.computeMaxDate();
     this.computeTimes();
   },
   created() {
@@ -628,7 +638,10 @@ export default {
   },
   methods: {
     computeMaxDate() {
-      if (this.range == 1) {
+      if (this.range == 0) {
+        this.maxDate = moment(this.fromDate).add(1, 'W').toISOString();
+      }
+      else if (this.range == 1) {
         this.maxDate = moment(this.fromDate).add(1, 'M').toISOString();
       } else if (this.range == 2) {
         this.maxDate = moment(this.fromDate).add(3, 'M').toISOString();

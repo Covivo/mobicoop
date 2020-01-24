@@ -1,0 +1,15 @@
+{
+  "fr": {
+    "whatsCommunity":"Une communauté est un regroupement d’inscrits ayant un intérêt en commun. Elle permet par exemple d’identifier les salariés d’une entreprise, d’une zone d’activités, les personnes fréquentant une salle de spectacle ou encore les habitants d’une commune, pour faciliter les mises en relation des covoitureurs.",
+    "communityforwhat":{
+        "title":"La création d’une communauté permet :",
+        "list":{
+            "firstLine":"à ses membres de se voir mutuellement et d’échanger entre eux",
+            "secondLine":"de faciliter la mise en relation des covoitureurs en augmentant la confiance entre membres",
+            "thirdLine":"de disposer d’un widget personnalisé à installer par exemple sur un intranet",
+            "fourthLine":"de disposer, pour le créateur de la communauté, de statistiques sur les inscrits et les covoitureurs de sa communauté"
+        }
+    },
+    "whoCanCreate":"Toute personne qui le souhaite peut créer une communauté dans OuestGo à condition qu’elle soit inscrite sur le site et ait envie d’animer et de dynamiser le covoiturage à son niveau. Créer une communauté se fait en quelques clics sur ouestgo.fr. Cela vous permettra d’accéder au front office librement. Si vous souhaitez aller plus loin dans l’animation et accéder au back office, contactez xxxxx@megalis.xxx. L’ensemble des fonctionnalités d’une communauté est accessible gratuitement."
+  }
+}

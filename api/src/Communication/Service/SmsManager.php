@@ -27,6 +27,7 @@ use App\Communication\Entity\Sms;
 use App\DataProvider\Entity\SmsEnvoiProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 /**
  * Sms sending service via SmsEnvoi
@@ -44,12 +45,12 @@ class SmsManager
     /**
      * SmsManager constructor.
      *
-     * @param \Twig_Environment $templating
+     * @param Environment $templating
      * @param LoggerInterface $logger
      * @param SmsProvider $smsProvider
      * @param string $templatePath
      */
-    public function __construct(\Twig_Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $templatePath, string $smsProvider, string $username, string $password, string $sender)
+    public function __construct(Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $templatePath, string $smsProvider, string $username, string $password, string $sender)
     {
         $this->templating = $templating;
         $this->templatePath = $templatePath;

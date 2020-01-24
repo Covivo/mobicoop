@@ -7,7 +7,7 @@
     >
       <v-col
         v-if="time"
-        col="2"
+        cols="1"
       >
         <span
           class="body-1 font-weight-bold"
@@ -18,8 +18,9 @@
       </v-col>
       <!-- Origin -->
       <v-col
-        :cols="time ? 4 : 5"
-        align="left"
+        cols="5"
+        class="text-right"
+        :class="type==1 ? 'text-left' : regular ? 'text-left' : 'text-left  mr-n4'"
       >
         <v-list-item
           two-line
@@ -27,19 +28,25 @@
         >
           <v-list-item-content>
             <v-list-item-title 
-              :class="(regular && type==2) ? 'title' : 'title font-weight-bold'"
+              :class="(regular && type==2 || !regular && type==1) ? 'subtitle-1 font-weight-bold' : 'subtitle-2 font-weight-bold'"
             >
               <span :class="textColorClass">{{ originFirstLine }}</span>
             </v-list-item-title>
             <v-list-item-title
               v-if="type==1 && regular"
-              :class="'title font-weight-bold'"
+              :class="'subtitle-2 font-weight-bold'"
             >
               <span :class="textColorClass">{{ originSecondLine }}</span>
             </v-list-item-title>
             <v-list-item-subtitle
               v-if="type==2"
-              :class="(regular && type==2) ? 'subtitle-1 font-weight-bold' : ((regular) ? 'title font-weight-bold' : 'subtitle-1')"
+              :class="(regular && type==2) ? 'subtitle-2 font-weight-bold' : ((regular) ? 'subtitle-2 font-weight-bold' : 'subtitle-2')"
+            >
+              <span :class="textColorClass">{{ originSecondLine }}</span>
+            </v-list-item-subtitle>
+            <v-list-item-subtitle
+              v-if="!regular && type==1"
+              class="subtitle-2 font-weight-bold"
             >
               <span :class="textColorClass">{{ originSecondLine }}</span>
             </v-list-item-subtitle>
@@ -49,11 +56,11 @@
 
       <!-- Icon -->
       <v-col
-        cols="2"
+        cols="1"
       >
         <v-icon
-          :color="iconColor"
           size="64"
+          :color="iconColor"
         >
           mdi-ray-start-end
         </v-icon>
@@ -61,9 +68,8 @@
 
       <!-- Destination -->
       <v-col
-        :cols="time ? 4 : 5"
-        class="title font-weight-bold mt-0"
-        align="left"
+        cols="5"
+        :class="type==1 ? 'text-left' : regular ? 'text-left ml-4' : 'text-right  ml-6'"
       >
         <v-list-item
           two-line
@@ -71,19 +77,25 @@
         >
           <v-list-item-content>
             <v-list-item-title 
-              :class="(regular && type==2) ? 'title' : 'title font-weight-bold'"
+              :class="(regular && type==2 || !regular && type==1) ? 'subtitle-1 font-weight-bold' : 'subtitle-2 font-weight-bold'"
             >
               <span :class="textColorClass">{{ destinationFirstLine }}</span>
             </v-list-item-title>
             <v-list-item-title
               v-if="type==1 && regular"
-              :class="'title font-weight-bold'"
+              :class="'subtitle-2 font-weight-bold'"
             >
               <span :class="textColorClass">{{ destinationSecondLine }}</span>
             </v-list-item-title>
             <v-list-item-subtitle
               v-if="type==2"
-              :class="(regular && type==2) ? 'subtitle-1 font-weight-bold' : ((regular) ? 'title font-weight-bold' : 'subtitle-1')"
+              :class="(regular && type==2) ? 'subtitle-2 font-weight-bold ml-6' : ((regular) ? 'subtitle-2 font-weight-bold' : 'subtitle-2')"
+            >
+              <span :class="textColorClass">{{ destinationSecondLine }}</span>
+            </v-list-item-subtitle>
+            <v-list-item-subtitle
+              v-if="!regular && type==1"
+              class="subtitle-2 font-weight-bold"
             >
               <span :class="textColorClass">{{ destinationSecondLine }}</span>
             </v-list-item-subtitle>
@@ -152,7 +164,9 @@ export default {
   computed: {
     originFirstLine() {
       if (this.type == 1 && !this.regular) {
-        return (this.origin.streetAddress ? this.origin.streetAddress+', ' : '')+this.origin.addressLocality
+        // return (this.origin.streetAddress ? this.origin.streetAddress+', ' : '')+this.origin.addressLocality
+        return (this.origin.streetAddress) ? this.origin.streetAddress : this.origin.addressLocality
+
       } else if (this.type == 1 && this.regular) {
         return this.origin.streetAddress
       } else if (this.type == 2 && !this.regular) {
@@ -163,7 +177,8 @@ export default {
     },
     destinationFirstLine() {
       if (this.type == 1 && !this.regular) {
-        return (this.destination.streetAddress ? this.destination.streetAddress+', ' : '')+this.destination.addressLocality
+        //        return (this.destination.streetAddress ? this.destination.streetAddress+', ' : '')+this.destination.addressLocality
+        return (this.destination.streetAddress) ? this.destination.streetAddress : this.destination.addressLocality
       } else if (this.type == 1 && this.regular) {
         return this.destination.streetAddress
       } else if (this.type == 2 && !this.regular) {
@@ -175,6 +190,8 @@ export default {
     originSecondLine() {
       if (this.type == 1 && this.regular) {
         return this.origin.addressLocality
+      } else if(this.type == 1 && !this.regular){
+        return (this.origin.streetAddress) ? this.origin.addressLocality : ''
       } else if (this.type == 2 && !this.regular) {
         return this.origin.streetAddress
       } else if (this.type == 2 && this.regular) {
@@ -185,6 +202,8 @@ export default {
     destinationSecondLine() {
       if (this.type == 1 && this.regular) {
         return this.destination.addressLocality
+      } else if(this.type == 1 && !this.regular){
+        return (this.destination.streetAddress) ? this.destination.addressLocality : ''
       } else if (this.type == 2 && !this.regular) {
         return this.destination.streetAddress
       } else if (this.type == 2 && this.regular) {

@@ -31,7 +31,7 @@
           </v-icon>
         </v-col>
         <v-col
-          v-if="originPassenger"
+          v-if="(!originDriver && originPassenger) || (originPassenger && originPassenger.addressLocality != originDriver.addressLocality)"
           cols="auto"
         >
           <v-chip>
@@ -39,7 +39,7 @@
           </v-chip>
         </v-col>
         <v-col
-          v-if="originPassenger"
+          v-if="(!originDriver && originPassenger) || (originPassenger && originPassenger.addressLocality != originDriver.addressLocality)"
           cols="auto"
         >
           <v-icon
@@ -57,7 +57,7 @@
           </v-chip>
         </v-col>
         <v-col
-          v-if="destinationDriver"
+          v-if="(!destinationPassenger && destinationDriver) || (destinationDriver && destinationPassenger.addressLocality != destinationDriver.addressLocality)"
           cols="auto"
         >
           <v-icon
@@ -67,7 +67,7 @@
           </v-icon>
         </v-col>
         <v-col
-          v-if="destinationDriver"
+          v-if="(!destinationPassenger && destinationDriver) || (destinationDriver && destinationPassenger.addressLocality != destinationDriver.addressLocality)"
           cols="auto"
         >
           <v-chip>

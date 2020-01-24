@@ -2,18 +2,39 @@
   <v-content>
     <v-card
       class="pa-2 text-center"
+      :hidden="hideClickIcon"
     >
+      <v-card
+        class="mb-3"
+        flat
+      >
+        <threads-actions-buttons
+          :can-update-ask="infosComplete.canUpdateAsk"
+          :status="infosComplete.askStatus"
+          :regular="infosComplete.frequency==2"
+          :loading-btn="dataLoadingBtn"
+          :driver="driver"
+          :passenger="passenger"
+          @updateStatus="updateStatus"
+        />
+      </v-card>
+       
       <!-- Always visible (carpool or not) -->
       <v-avatar v-if="infosComplete.carpooler && infosComplete.carpooler.avatars && !loading">
         <img :src="infosComplete.carpooler.avatars[0]">
       </v-avatar>
       <v-card-text
-        v-if="!loading && infosComplete.carpooler"
+        v-if="!loading && infosComplete.carpooler && infosComplete.carpooler.status != 3"
         class="font-weight-bold headline"
       >
         {{ infosComplete.carpooler.givenName+' '+infosComplete.carpooler.shortFamilyName }}
       </v-card-text>
-
+      <v-card-text
+        v-if="infosComplete.carpooler.status == 3"
+        class="font-weight-bold headline"
+      >
+        {{ $t("userDelete") }}
+      </v-card-text>
       <!-- Only visible for carpool -->
       <v-card
         v-if="idAsk && !loading"
@@ -49,11 +70,27 @@
           :time="!infos.outward.multipleTimes"
           :role="driver ? 'driver' : 'passenger'"
         />
-        <v-simple-table>
+        <v-simple-table v-if="infosComplete.carpooler && infosComplete.carpooler.status != 3">
           <tbody>
             <tr>
               <td class="text-left">
                 {{ $t('distance') }}
+                <v-tooltip
+                  slot="append"
+                  right
+                  color="info"
+                  :max-width="'35%'"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                      justify="left"
+                      v-on="on"
+                    >
+                      mdi-help-circle-outline
+                    </v-icon>
+                  </template>
+                  <span>{{ $t('distanceTooltip') }}</span>
+                </v-tooltip>                
               </td>
               <td class="text-left">
                 {{ distanceInKm }}
@@ -93,15 +130,6 @@
             </tr>
           </tbody>
         </v-simple-table>
-        <threads-actions-buttons
-          :can-update-ask="infosComplete.canUpdateAsk"
-          :status="infosComplete.askStatus"
-          :regular="infosComplete.frequency==2"
-          :loading-btn="dataLoadingBtn"
-          :driver="driver"
-          :passenger="passenger"
-          @updateStatus="updateStatus"
-        />
       </v-card>
       <v-card v-else-if="!loading">
         <v-card-text>
@@ -230,12 +258,14 @@ export default {
       returnSunTime: null,
       outwardTrip:[],
       returnTrip:[],
-      chosenRole:null
+      chosenRole:null,
+      hideClickIcon : false
+
     }
   },
   computed:{
     distanceInKm(){
-      return (this.driver) ? parseInt(this.infos.outward.newDistance) / 1000 + ' km' : parseInt(this.infos.outward.originalDistance) / 1000 + ' km';
+      return Math.round((this.infos.outward.commonDistance + this.infos.outward.detourDistance) / 1000) + ' km';
     }
   },
   watch:{
@@ -253,42 +283,47 @@ export default {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods:{
-    refreshInfos(){
-      this.loading = true;
-      let params = {
-        idAsk:this.idAsk,
-        idRecipient:this.idRecipient
-      }
-      axios.post(this.$t("urlGetAdAsk"),params)
-        .then(response => {
-          //console.error(response.data);
-          this.infosComplete = response.data;
+    refreshInfos() {
+      this.hideClickIcon = false;
+      if (this.idAsk != -2){
+        this.loading = true;
+        let params = {
+          idAsk: this.idAsk,
+          idRecipient: this.idRecipient
+        }
+        axios.post(this.$t("urlGetAdAsk"), params)
+          .then(response => {
+            //console.error(response.data);
+            this.infosComplete = response.data;
 
-          // If the user can be driver and passenger, we display driver infos by default
-          if(this.infosComplete.resultDriver !== null && this.infosComplete.resultPassenger !== null){
-            this.infos = this.infosComplete.resultDriver;
-            this.driver = this.passenger = true;
-          }
-          else if(this.infosComplete.resultPassenger !== null){
-            this.infos = this.infosComplete.resultPassenger;
-            this.driver = false;
-            this.passenger = true;
-          }
-          else{
-            this.infos = this.infosComplete.resultDriver;
-            this.driver = true;
-            this.passenger = false;
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-        .finally(()=>{
-          this.$emit("refreshActionsCompleted");
-        });
+            // If the user can be driver and passenger, we display driver infos by default
+            if (this.infosComplete.resultDriver !== null && this.infosComplete.resultPassenger !== null) {
+              this.infos = this.infosComplete.resultDriver;
+              this.driver = this.passenger = true;
+            } else if (this.infosComplete.resultPassenger !== null && this.infosComplete.resultDriver === null) {
+              this.infos = this.infosComplete.resultPassenger;
+              this.driver = false;
+              this.passenger = true;
+            } else {
+              this.infos = this.infosComplete.resultDriver;
+              this.driver = true;
+              this.passenger = false;
+            }
+          })
+          .catch(function (error) {
+            // console.log(error);
+          })
+          .finally(() => {
+            this.$emit("refreshActionsCompleted");
+          });
+
+      }else{
+        this.hideClickIcon = true;
+        this.$emit("refreshActionsCompleted");
+      }
     },
     formatHour(date){
-      return moment(date).format("HH")+'h'+moment(date).format("mm")
+      return moment.utc(date).format("HH")+'h'+moment.utc(date).format("mm")
     },
     formatArrayForRegular(results,direction){
       let currentTrip = null;
@@ -354,6 +389,8 @@ export default {
 
     },
     updateStatus(data){
+      // console.info(this.infosComplete)
+      // console.info(this.infosComplete.carpooler)
       if(this.infosComplete.askStatus==1 && this.infosComplete.frequency==2){
         // If the Ask is only initiated and that the carpool is regular
 

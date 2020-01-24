@@ -15,7 +15,11 @@ home:
         en: /
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::index
 
-
+home_logout:
+    path:
+        fr: /utilisateur/compte-supprimer
+        en: /user/account-delete
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::indexLogout
 ###############
 # user routes #
 ###############
@@ -40,10 +44,11 @@ user_sign_up:
 
 user_sign_up_validation:
     path:
-        fr: /utilisateur/inscription/validation/{token}
-        en: /user/signup/validation/{token}
+        fr: /utilisateur/inscription/validation/{email}/{token}
+        en: /user/signup/validation/{email}/{token}
     defaults:
         token: ""
+        email: ""
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
 
 # profile update
@@ -350,6 +355,14 @@ community_list:
         en: /community
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityList
 
+# Get the communities (AJAX)
+community_get_list:
+    methods: [POST]
+    path:
+        fr: /community/getCommunityList
+        en: /community/getCommunityList
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityList
+
 # display one community
 community_show:
     path:
@@ -408,9 +421,10 @@ community_last_users:
 
 # get community members list (AJAX)
 community_member_list:
+    methods: [POST]
     path:
-        fr: /community-member-list/{id}
-        en: /community-member-list/{id}
+        fr: /community/memberList
+        en: /community/memberList
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityMemberList
     requirements:
         id: '\d+'
@@ -464,6 +478,48 @@ data_policy:
         fr: /protection-donnees
         en: /data-policy
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDataPolicy
+
+# display insurance policy page
+insurance_policy:
+    path:
+        fr: /assurance
+        en: /insurance
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showInsurancePolicy    
+
+# display history page
+history:
+    path:
+        fr: /historique
+        en: /history
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showHistroy    
+    
+# display actors page
+actors:
+    path:
+        fr: /Les-acteurs
+        en: /actors
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showActors
+
+# display solidary carpool page
+solidary_carpool:
+    path:
+        fr: /covoiturage-solidaire
+        en: /solidary-carpool
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showSolidaryCarpool    
+
+# display become a partner page
+become_partner:
+    path:
+        fr: /devenir-partenaire
+        en: /become-partner
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showBecomePartner    
+
+# display FAQ page
+FAQ:
+    path:
+        fr: /FAQ
+        en: /FAQ
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showFAQ    
 
 ####################
 # geography routes #
@@ -521,6 +577,14 @@ event_list:
         fr: /evenements
         en: /events
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventList
+
+# Get the communities (AJAX)
+event_get_list:
+    methods: [POST]
+    path:
+        fr: /evenements/getEventList
+        en: /events/getEventList
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::getEventList
 
 # create event
 event_create:

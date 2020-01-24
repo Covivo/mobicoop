@@ -5,7 +5,6 @@
         <v-img
           v-if="item['images'][0]"
           :src="item['images'][0]['versions']['square_250']"
-          lazy-src="https://picsum.photos/id/11/10/6"
           aspect-ratio="1"
           class="grey lighten-2"
           max-width="200"
@@ -13,12 +12,11 @@
         />
         <v-img
           v-else
-          src="https://picsum.photos/id/11/500/300"
-          lazy-src="https://picsum.photos/id/11/10/6"
+          src="/images/avatarsDefault/avatar.svg"
           aspect-ratio="1"
           class="grey lighten-2"
           max-width="200"
-          max-height="150"
+          max-height="200"
         />
       </v-col>
       <v-col cols="6">
@@ -27,6 +25,13 @@
             <h4>
               <a :href="linkToEventShow(item)">{{ item.name }}</a>
             </h4>
+            <p v-if="dateLine1">
+              <span class="subtitle-1">{{ dateLine1 }}</span><br>
+              <span
+                v-if="dateLine2"
+                class="subtitle-1"
+              >{{ dateLine2 }}</span>
+            </p>
           </div>
         </v-card-title>
         <v-divider />
@@ -67,6 +72,7 @@
 <script>
 
 import { merge } from "lodash";
+import moment from "moment";
 import EventReport from "@components/event/EventReport";
 import Translations from "@translations/components/event/EventListItem.json";
 import TranslationsClient from "@clientTranslations/components/event/EventListItem.json";
@@ -85,9 +91,32 @@ export default {
       default: null
     }
   },
+  data() {
+    return {
+      locale: this.$i18n.locale,
+      dateLine1:null,
+      dateLine2:null
+    };
+  },
+  created() {
+    moment.locale(this.locale); // DEFINE DATE LANGUAGE
+    this.computeEventDate();
+  },
   methods:{
     linkToEventShow: function (item) {
       return this.$t('routes.event', {id:item.id});
+    },
+    computeEventDate(){
+      let fromDate = moment(this.item.fromDate.date).format(this.$t("ui.i18n.date.format.shortCompleteDate"));
+      let toDate = moment(this.item.toDate.date).format(this.$t("ui.i18n.date.format.shortCompleteDate"));
+      
+      if(fromDate === toDate){
+        this.dateLine1 = this.$t("date.the")+" "+fromDate+" "+this.$t("date.at")+" "+moment(this.item.fromDate.date).format(this.$t("ui.i18n.time.format.hourMinute"));
+      }
+      else{
+        this.dateLine1 = this.$t("date.from")+" "+fromDate+" "+this.$t("date.at")+" "+moment(this.item.fromDate.date).format(this.$t("ui.i18n.time.format.hourMinute"));
+        this.dateLine2 = this.$t("date.to")+" "+toDate+" "+this.$t("date.at")+" "+moment(this.item.toDate.date).format(this.$t("ui.i18n.time.format.hourMinute"));
+      }
     }
   }
 }

@@ -14,9 +14,7 @@
             <br/><br/>
             <community-list
                     :paths="{{ {'community_create':path('community_create'), 'community_ad_post':path('carpool_ad_post')}|json_encode }}"
-                    :communities="{{ communities|json_encode }}"
-                    :communities-user="{{ communitiesUser|json_encode }}"
-                    :can-create="{{ canCreate }}"
+                    :items-per-page-default="{{ defaultItemsPerPage }}"
             ></community-list>
             <br/><br/>
         </div>

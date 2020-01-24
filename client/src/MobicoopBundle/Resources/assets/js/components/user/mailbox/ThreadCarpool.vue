@@ -82,7 +82,7 @@ export default {
       type: String,
       default:""
     },
-    familyName: {
+    shortFamilyName: {
       type: String,
       default:""
     },
@@ -127,7 +127,7 @@ export default {
   },
   computed: {
     formateDate(){
-      return moment.utc(this.date).format("ddd DD MMM YYYY");
+      return moment.utc(this.date).format("L");
     },
     formateFromDate(){
       return moment.utc(this.criteria.fromDate).format("ddd DD MMM YYYY");
@@ -147,7 +147,7 @@ export default {
       return carpoolDays.join(", ");
     },
     name() {
-      return (this.givenName != null && this.familyName != null ) ? this.givenName + " " + this.familyName.substr(0, 1).toUpperCase() + "." : (this.$t("userDelete"));
+      return (this.givenName != null && this.shortFamilyName != null ) ? this.givenName + " " + this.shortFamilyName : (this.$t("userDelete"));
     },
   },
   watch: {

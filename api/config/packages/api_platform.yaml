@@ -37,6 +37,8 @@ api_platform:
             '%kernel.project_dir%/src/ExternalJourney/Entity',
             '%kernel.project_dir%/src/Geography/Entity',
             '%kernel.project_dir%/src/Image/Entity',
+            '%kernel.project_dir%/src/Import/Entity',
+            '%kernel.project_dir%/src/MassCommunication/Entity',
             '%kernel.project_dir%/src/Match/Entity',
             '%kernel.project_dir%/src/PublicTransport/Entity',
             '%kernel.project_dir%/src/RelayPoint/Entity',
@@ -59,6 +61,8 @@ api_platform:
         - '%kernel.project_dir%/src/Event/Entity'
         - '%kernel.project_dir%/src/Geography/Entity'
         - '%kernel.project_dir%/src/Image/Entity'
+        - '%kernel.project_dir%/src/Import/Entity'
+        - '%kernel.project_dir%/src/MassCommunication/Entity'
         - '%kernel.project_dir%/src/Match/Entity'
         - '%kernel.project_dir%/src/PublicTransport/Entity'
         - '%kernel.project_dir%/src/RelayPoint/Entity'

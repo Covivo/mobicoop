@@ -32,6 +32,33 @@
           </v-snackbar>
         </v-col>
       </v-row>
+
+      <v-row v-if="displayDeleteAccount">
+        <v-col>
+          <v-snackbar
+            v-model="snackbar"
+            top
+            multi-line
+            color="info"
+            vertical
+          >
+            <div>
+              {{ $t('snackbar-account-delete') }}
+            </div>
+            <v-btn
+              color="info"
+              elevation="0"
+              @click="snackbar = false"
+            >
+              <v-icon
+                color="primary"
+              >
+                mdi-close
+              </v-icon>
+            </v-btn>
+          </v-snackbar>
+        </v-col>
+      </v-row>
       <!-- Title and subtitle -->
       <v-row
         align="center"
@@ -133,6 +160,10 @@ export default {
     eventDisplay: {
       type: Boolean,
       default: false
+    },
+    displayDeleteAccount: {
+      type: Number,
+      default: 0
     },
     communityDisplay: {
       type: Boolean,

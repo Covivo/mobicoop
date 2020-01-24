@@ -17,7 +17,7 @@
       <!--<accessibility />-->
       <v-toolbar-items
         v-if="user"
-        class="hidden-sm-and-down"
+        class="hidden-md-and-down"
       >
         <v-btn
           text
@@ -34,7 +34,7 @@
       </v-toolbar-items>
       <v-toolbar-items
         v-else
-        class="hidden-sm-and-down"
+        class="hidden-md-and-down"
       >
         <v-btn
           rounded
@@ -55,7 +55,7 @@
         v-if="user"
         rounded
         :href="$t('buttons.shareAnAd.route')"
-        class="hidden-sm-and-down"
+        class="hidden-md-and-down"
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
@@ -64,7 +64,7 @@
           v-if="!user"
           rounded
           disabled
-          class="hidden-sm-and-down"
+          class="hidden-md-and-down"
         >
           {{ $t('buttons.shareAnAd.label') }}
         </v-btn>
@@ -100,7 +100,7 @@
         <template v-slot:activator="{ on }">
           <v-btn
             icon
-            class="hidden-md-and-up"
+            class="hidden-lg-and-up"
             v-on="on"
           >
             <v-icon>mdi-menu</v-icon>
@@ -158,7 +158,7 @@
         <template v-slot:activator="{ on }">
           <v-btn
             icon
-            class="hidden-md-and-up"
+            class="hidden-lg-and-up"
             v-on="on"
           >
             <v-icon>mdi-menu</v-icon>
@@ -248,7 +248,8 @@ export default {
   },
   data () {
     return {
-      snackbar: false
+      snackbar: false,
+      width: 0,
     }
   },
   mounted() {
@@ -256,6 +257,6 @@ export default {
     {
       window.location.href = this.urlMobile;
     } 
-  }
+  },
 };
 </script>

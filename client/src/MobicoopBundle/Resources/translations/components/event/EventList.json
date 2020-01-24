@@ -13,7 +13,8 @@
     "endEvent" : "Fin",
 
     "routes": {
-      "event": "/evenement/{id}"
+      "event": "/evenement/{id}",
+      "getList": "/evenements/getEventList"
     }
   },
   "en": {
@@ -26,7 +27,8 @@
     "seeAds":"See the ads",
 
     "routes": {
-      "event": "/event/{id}"
+      "event": "/event/{id}",
+      "getList": "/events/getEventList"
     }
   }
 }

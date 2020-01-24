@@ -14,7 +14,7 @@
             <v-list-item-title class="title font-weight-bold">
               {{ computedTime }}
             </v-list-item-title>
-            <v-list-item-subtitle class="subtitle-1">
+            <v-list-item-subtitle class="body-2">
               {{ computedDate }}
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -36,7 +36,7 @@
       <!-- Seats -->
       <v-col
         cols="2"
-        class="text-center"
+        class="text-right"
       >
         {{ $tc('places', seats, { seats: seats }) }}
       </v-col>

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,40 +21,40 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Controller;
+namespace App\User\Controller;
 
-use App\Carpool\Service\ProposalManager;
-use App\Carpool\Entity\Proposal;
 use App\TranslatorTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
+use App\Right\Service\PermissionManager;
+use Symfony\Component\HttpFoundation\Response;
+use App\Right\Entity\Permission;
+use App\User\Entity\User;
+use App\User\Service\UserManager;
 
 /**
- * Controller class for proposal results.
+ * Controller class for UserCheckSignUpValidationToken
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class ProposalResults
+class UserCheckSignUpValidationToken
 {
     use TranslatorTrait;
-    private $proposalManager;
 
-    public function __construct(ProposalManager $proposalManager)
+    private $userManager;
+
+    public function __construct(UserManager $userManager)
     {
-        $this->proposalManager = $proposalManager;
+        $this->userManager = $userManager;
     }
 
     /**
-     * This method is invoked when a new proposal is posted.
-     * It returns the new proposal created, with its matchings as subresources.
+     * This method is invoked when
      *
-     * @param Proposal $data
-     * @return Proposal
+     * @param $data
+     * @return Response
      */
-    public function __invoke(Proposal $data): Proposal
+    public function __invoke(User $data)
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad proposal id is provided"));
-        }
-        $data = $this->proposalManager->getResults($data);
-        return $data;
+        return $this->userManager->checkValidatedDateToken($data);
     }
 }

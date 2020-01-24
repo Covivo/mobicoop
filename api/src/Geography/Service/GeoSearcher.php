@@ -48,8 +48,7 @@ class GeoSearcher
     const ICON_COMMUNITY = 3;
     const ICON_EVENT = 4;
     const ICON_VENUE = 23;
-
-
+    
     private $geocoder;
     private $geoTools;
     private $userRepository;
@@ -59,11 +58,15 @@ class GeoSearcher
     private $iconPath;
     private $dataPath;
     private $eventRepository;
+    private $defaultSigResultNumber;
+    private $defaultNamedResultNumber;
+    private $defaultRelayPointResultNumber;
+    private $defaultEventResultNumber;
 
     /**
      * Constructor.
      */
-    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, IconRepository $iconRepository, string $iconPath, string $dataPath)
+    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, IconRepository $iconRepository, string $iconPath, string $dataPath, string $defaultSigResultNumber, string $defaultNamedResultNumber, string $defaultRelayPointResultNumber, string $defaultEventResultNumber)
     {
         $this->geocoder = $geocoder;
         $this->geoTools = $geoTools;
@@ -74,6 +77,10 @@ class GeoSearcher
         $this->iconPath = $iconPath;
         $this->dataPath = $dataPath;
         $this->eventRepository = $eventRepository;
+        $this->defaultSigResultNumber = $defaultSigResultNumber;
+        $this->defaultNamedResultNumber = $defaultNamedResultNumber;
+        $this->defaultRelayPointResultNumber = $defaultRelayPointResultNumber;
+        $this->defaultEventResultNumber = $defaultEventResultNumber;
     }
 
     /**
@@ -100,64 +107,9 @@ class GeoSearcher
         if ($token) {
             $user = $this->userRepository->findOneBy(['geoToken'=>$token]);
         }
-        
-        // 1 - named addresses
-        if ($user) {
-            $namedAddresses = $this->addressRepository->findByName($input, $user->getId());
-            if (count($namedAddresses)>0) {
-                foreach ($namedAddresses as $address) {
-                    $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
-                    $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_ADDRESS_PERSONAL)->getFileName());
-                    $result[] = $address;
-                }
-            }
-        }
 
-        // 2 - Events points
-        $events = $this->eventRepository->findByNameAndStatus($input, Event::STATUS_ACTIVE);
-        // exclude the private relay points
-        foreach ($events as $event) {
-            $address = $event->getAddress();
-            $address->setEvent($event);
-            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
-            $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_EVENT)->getFileName());
-            $result[] = $address;
-        }
-
-        // 3 - relay points
-        $relayPoints = $this->relayPointRepository->findByNameAndStatus($input, RelayPoint::STATUS_ACTIVE);
-        // exclude the private relay points
-        foreach ($relayPoints as $relayPoint) {
-            $exclude = false;
-            if ($relayPoint->getCommunity() && $relayPoint->isPrivate()) {
-                $exclude = true;
-                if ($user) {
-                    // todo : maybe find a quicker way than a foreach :)
-                    foreach ($relayPoint->getCommunity()->getCommunityUsers() as $communityUser) {
-                        if ($communityUser->getUser()->getId() == $user->getId() && $communityUser->getStatus() == (CommunityUser::STATUS_ACCEPTED_AS_MEMBER or CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)) {
-                            $exclude = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            if (!$exclude) {
-                $address = $relayPoint->getAddress();
-                $address->setRelayPoint($relayPoint);
-                // set address icon
-                if ($relayPoint->getRelayPointType()->getIcon()->getPrivateIconLinked()) {
-                    $address->setIcon($this->dataPath.$this->iconPath.$relayPoint->getRelayPointType()->getIcon()->getPrivateIconLinked()->getFileName());
-                } else {
-                    $address->setIcon($this->dataPath.$this->iconPath.$relayPoint->getRelayPointType()->getIcon()->getFileName());
-                }
-                $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
-                $result[] = $address;
-            }
-        }
-
-        // 4 - sig addresses
-        $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input))->all();
-        // var_dump($geoResults);exit;
+        // 1 - sig addresses
+        $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input)->withLimit($this->defaultSigResultNumber))->all();
         foreach ($geoResults as $geoResult) {
             // ?? todo : exclude all results that doesn't include any input word at all
             $address = new Address();
@@ -217,8 +169,82 @@ class GeoSearcher
             }
             
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
-
             $result[] = $address;
+        }
+        
+        // 2 - named addresses
+        if ($user) {
+            $namedAddresses = $this->addressRepository->findByName($input, $user->getId());
+            if (count($namedAddresses)>0) {
+                $i = 0;
+                foreach ($namedAddresses as $address) {
+                    $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+                    $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_ADDRESS_PERSONAL)->getFileName());
+                    $result[] = $address;
+                    $i++;
+                    if ($i>=$this->defaultNamedResultNumber) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        // 3 - relay points
+        $relayPoints = $this->relayPointRepository->findByNameAndStatus($input, RelayPoint::STATUS_ACTIVE);
+        // exclude the private relay points
+        $i = 0;
+        foreach ($relayPoints as $relayPoint) {
+            $exclude = false;
+            if ($relayPoint->getCommunity() && $relayPoint->isPrivate()) {
+                $exclude = true;
+                if ($user) {
+                    // todo : maybe find a quicker way than a foreach :)
+                    foreach ($relayPoint->getCommunity()->getCommunityUsers() as $communityUser) {
+                        if ($communityUser->getUser()->getId() == $user->getId() && $communityUser->getStatus() == (CommunityUser::STATUS_ACCEPTED_AS_MEMBER or CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)) {
+                            $exclude = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!$exclude) {
+                $address = $relayPoint->getAddress();
+                $address->setRelayPoint($relayPoint);
+                // set address icon
+                if (is_null($relayPoint->getRelayPointTypes()[0]->getIcon())) {
+                    $relayPoint->getRelayPointTypes()[0]->setIcon($this->iconRepository->find(1));
+                }
+                
+                if (count($relayPoint->getRelayPointTypes())>0 && !is_null($relayPoint->getRelayPointTypes()[0]->getIcon())) {
+                    if ($relayPoint->getRelayPointTypes()[0]->getIcon()->getPrivateIconLinked()) {
+                        $address->setIcon($this->dataPath.$this->iconPath.$relayPoint->getRelayPointTypes()[0]->getIcon()->getPrivateIconLinked()->getFileName());
+                    } else {
+                        $address->setIcon($this->dataPath.$this->iconPath.$relayPoint->getRelayPointTypes()[0]->getIcon()->getFileName());
+                    }
+                }
+                $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+                $result[] = $address;
+                $i++;
+                if ($i>=$this->defaultRelayPointResultNumber) {
+                    break;
+                }
+            }
+        }
+
+        // 4 - Events points
+        $events = $this->eventRepository->findByNameAndStatus($input, Event::STATUS_ACTIVE);
+        // exclude the private relay points
+        $i = 0;
+        foreach ($events as $event) {
+            $address = $event->getAddress();
+            $address->setEvent($event);
+            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+            $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_EVENT)->getFileName());
+            $result[] = $address;
+            $i++;
+            if ($i>=$this->defaultEventResultNumber) {
+                break;
+            }
         }
 
         return $result;
@@ -229,21 +255,53 @@ class GeoSearcher
      *
      * @param float $lat     The latitude
      * @param float $lon     The longitude
-     * @return array            The results
+     * @return Address            The results
      */
     public function reverseGeoCode(float $lat, float $lon)
     {
         if ($geoResults = $this->geocoder->reverseQuery(ReverseQuery::fromCoordinates($lat, $lon))) {
             foreach ($geoResults as $geoResult) {
-                if (
-                    ($geoResult->getStreetNumber() <> "") &&
-                    ($geoResult->getStreetName() <> "") &&
-                    ($geoResult->getPostalCode() <> "") &&
-                    ($geoResult->getLocality() <> "") &&
-                    ($geoResult->getStreetNumber() < 500)
-                ) {
-                    return $geoResult->getStreetNumber() . ";" . $geoResult->getStreetName() . ";" . $geoResult->getPostalCode() . ";" . $geoResult->getLocality();
+                $address = new Address();
+                if ($geoResult->getCoordinates() && $geoResult->getCoordinates()->getLatitude()) {
+                    $address->setLatitude((string)$geoResult->getCoordinates()->getLatitude());
                 }
+                if ($geoResult->getCoordinates() && $geoResult->getCoordinates()->getLongitude()) {
+                    $address->setLongitude((string)$geoResult->getCoordinates()->getLongitude());
+                }
+                $address->setHouseNumber($geoResult->getStreetNumber());
+                $address->setStreet($geoResult->getStreetName());
+                $address->setStreetAddress($geoResult->getStreetName() ? trim(($geoResult->getStreetNumber() ? $geoResult->getStreetNumber() : '') . ' ' . $geoResult->getStreetName()) : null);
+                $address->setSubLocality($geoResult->getSubLocality());
+                $address->setAddressLocality($geoResult->getLocality());
+                foreach ($geoResult->getAdminLevels() as $level) {
+                    switch ($level->getLevel()) {
+                        case 1:
+                            $address->setLocalAdmin($level->getName());
+                            break;
+                        case 2:
+                            $address->setCounty($level->getName());
+                            break;
+                        case 3:
+                            $address->setMacroCounty($level->getName());
+                            break;
+                        case 4:
+                            $address->setRegion($level->getName());
+                            break;
+                        case 5:
+                            $address->setMacroRegion($level->getName());
+                            break;
+                    }
+                }
+                $address->setPostalCode($geoResult->getPostalCode());
+                if ($geoResult->getCountry() && $geoResult->getCountry()->getName()) {
+                    $address->setAddressCountry($geoResult->getCountry()->getName());
+                }
+                if ($geoResult->getCountry() && $geoResult->getCountry()->getCode()) {
+                    $address->setCountryCode($geoResult->getCountry()->getCode());
+                }
+                $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+
+                return $address;
             }
         }
         return false;

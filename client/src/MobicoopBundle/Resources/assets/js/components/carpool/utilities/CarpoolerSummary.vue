@@ -99,7 +99,7 @@
               @click="toggleButton"
             >
               <v-icon>mdi-phone</v-icon>
-              {{ carpooler.telephone }}
+              {{ carpooler.phone }}
             </v-btn>
           </div>
           <!-- <div>
@@ -190,7 +190,11 @@ export default {
   },
   computed: {
     age (){
-      return moment().diff(moment([this.carpooler.birthDate]),'years')+' '+this.$t("birthYears")
+      if (this.carpooler.birthYear) {
+        return moment().diff(moment([this.carpooler.birthYear]),'years')+' '+this.$t("birthYears");
+      } else {
+        return null;
+      }
     }
   },
   created() {

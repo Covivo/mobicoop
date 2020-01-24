@@ -51,6 +51,11 @@ services:
     Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\:
         resource: '@MobicoopBundle/Carpool/Controller/*'
         tags: ['controller.service_arguments']
+        arguments:
+            $midPrice: '%env(resolve:MID_PRICE)%'
+            $highPrice: '%env(resolve:HIGH_PRICE)%'
+            $forbiddenPrice: '%env(resolve:FORBIDDEN_PRICE)%'
+            $defaultRole: '%env(resolve:CARPOOL_ROLE)%'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
         resource: '@MobicoopBundle/Carpool/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager:
@@ -87,6 +92,12 @@ services:
     Mobicoop\Bundle\MobicoopBundle\Event\Security\:
         resource: '@MobicoopBundle/Event/Security/*'
 
+    # Event Listener
+    Mobicoop\Bundle\MobicoopBundle\EventListener\ExceptionListener:
+        arguments: ['@router']
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
+
     # External journey
     Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\:
         resource: '@MobicoopBundle/ExternalJourney/Service/*'
@@ -101,6 +112,10 @@ services:
     # Image
     Mobicoop\Bundle\MobicoopBundle\Image\Service\:
         resource: '@MobicoopBundle/Image/Service/*'
+
+    # Import
+    Mobicoop\Bundle\MobicoopBundle\Import\Service\:
+        resource: '@MobicoopBundle/Import/Service/*'
 
     # Mass
     Mobicoop\Bundle\MobicoopBundle\Match\Service\:

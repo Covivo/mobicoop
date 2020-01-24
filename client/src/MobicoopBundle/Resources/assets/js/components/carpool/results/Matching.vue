@@ -35,12 +35,11 @@
           >
             <v-col
               v-if="!loading"
-              cols="12"
+              cols="8"
               align="left"
             >
               {{ $tc('matchingNumber', numberOfResults, { number: numberOfResults }) }}
             </v-col>
-
             <v-col
               v-else
               cols="12"
@@ -48,8 +47,35 @@
             >
               {{ $t('search') }}
             </v-col>
+            <v-col
+              v-if="!loading && !newSearch"
+              cols="4"
+              align="end"
+            >
+              <v-btn
+                rounded
+                color="secondary"
+                @click="startNewSearch()"
+              >
+                {{ $t('newSearch') }}
+              </v-btn>
+            </v-col>
           </v-row>
-
+          <v-row v-if="newSearch">
+            <v-col cols="12">
+              <search
+                :geo-search-url="geoSearchUrl"
+                :user="user"
+                :regular="regular"
+                :hide-publish="true"
+                :punctual-date-optional="true"
+                :results="true"
+                :default-destination="destination"
+                :default-origin="origin"
+                :default-outward-date="date"
+              />
+            </v-col>
+          </v-row>
           <!-- Matching results -->
           <div v-if="loading">
             <v-row
@@ -121,6 +147,7 @@ import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
 import MatchingResult from "@components/carpool/results/MatchingResult";
 import MatchingJourney from "@components/carpool/results/MatchingJourney";
+import Search from "@components/carpool/search/Search";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
@@ -128,7 +155,8 @@ export default {
     MatchingHeader,
     MatchingFilter,
     MatchingResult,
-    MatchingJourney
+    MatchingJourney,
+    Search
   },
   i18n: {
     messages: TranslationsMerged,
@@ -174,7 +202,12 @@ export default {
     carpoolerRate: {
       type: Boolean,
       default: true
+    },
+    geoSearchUrl: {
+      type: String,
+      default: null
     }
+    
   },
   data : function() {
     return {
@@ -187,7 +220,8 @@ export default {
       lOrigin: null,
       lDestination: null,
       lProposalId: this.proposalId,
-      filters: null
+      filters: null,
+      newSearch: false,
     };
   },
   computed: {
@@ -263,6 +297,7 @@ export default {
             if (this.results[0].id) {
               this.lProposalId = this.results[0].id;
             }
+
           })
           .catch((error) => {
             console.log(error);
@@ -319,6 +354,9 @@ export default {
     updateFilters(data){
       this.filters = data;
       this.search();
+    },
+    startNewSearch() {
+      this.newSearch = true;
     }
   }
 };

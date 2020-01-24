@@ -40,6 +40,8 @@ use App\Carpool\Entity\Matching;
 use App\Communication\Entity\Recipient;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Ask;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 /**
  * Notification manager
@@ -60,8 +62,10 @@ class NotificationManager
     private $notificationRepository;
     private $userNotificationRepository;
     private $enabled;
+    private $translator;
+    const LANG = 'fr_FR';
 
-    public function __construct(EntityManagerInterface $entityManager, \Twig_Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, SmsManager $smsManager, LoggerInterface $logger, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled)
+    public function __construct(EntityManagerInterface $entityManager, Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, SmsManager $smsManager, LoggerInterface $logger, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled, TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -75,6 +79,7 @@ class NotificationManager
         $this->smsTemplatePath = $smsTemplatePath;
         $this->templating = $templating;
         $this->enabled = $enabled;
+        $this->translator = $translator;
     }
 
     /**
@@ -147,7 +152,7 @@ class NotificationManager
      * @param object|null   $object
      * @return void
      */
-    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null)
+    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null, $lang='fr_FR')
     {
         $email = new Email();
         $email->setRecipientEmail($recipient->getEmail());
@@ -170,8 +175,15 @@ class NotificationManager
                     break;
                 case Ask::class:
                     $titleContext = [];
-                    $bodyContext = ['user'=>$recipient, 'ask'=>$object];
-                break;
+                    foreach ($object->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
+                        if ($waypoint->getPosition() == 0) {
+                            $passengerOriginWaypoint = $waypoint;
+                        } elseif ($waypoint->isDestination() == true) {
+                            $passengerDestinationWaypoint = $waypoint;
+                        }
+                    }
+                    $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaypoint, 'destination'=>$passengerDestinationWaypoint];
+                    break;
                 case Recipient::class:
                     $titleContext = [];
                     $bodyContext = [];
@@ -188,6 +200,12 @@ class NotificationManager
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
         }
+        
+        $lang = self::LANG;
+        if (!is_null($recipient->getLanguage())) {
+            $lang = $recipient->getLanguage();
+        }
+        $this->translator->setLocale($lang);
         $email->setObject($this->templating->render(
             $notification->getTemplateTitle() ? $this->emailTitleTemplatePath . $notification->getTemplateTitle() : $this->emailTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
             [
@@ -195,7 +213,7 @@ class NotificationManager
             ]
         ));
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $recipient->getLanguage());
+        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $lang);
     }
 
     /**
@@ -224,7 +242,14 @@ class NotificationManager
                     $bodyContext = ['user'=>$recipient];
                     break;
                 case Ask::class:
-                    $bodyContext = ['user'=>$recipient, 'ask'=>$object];
+                    foreach ($object->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
+                        if ($waypoint->getPosition() == 0) {
+                            $passengerOriginWaypoint = $waypoint;
+                        } elseif ($waypoint->isDestination() == true) {
+                            $passengerDestinationWaypoint = $waypoint;
+                        }
+                    };
+                    $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaypoint, 'destination'=>$passengerDestinationWaypoint];
                 break;
                 case Recipient::class:
                     $bodyContext = [];
