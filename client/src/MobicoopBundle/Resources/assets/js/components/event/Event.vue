@@ -55,7 +55,7 @@
                 <v-btn
                   class="mt-3"
 
-                  color="secondary"
+                  color="primary"
                   rounded
                   :href="$t('buttons.widget.route') + event.id"
                 >

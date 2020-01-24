@@ -672,6 +672,8 @@ class AdManager
         $ad->setOutwardTime($proposal->getCriteria()->getFromTime() ? $proposal->getCriteria()->getFromTime()->format('Y-m-d H:i:s') : null);
         $ad->setOutwardLimitDate($proposal->getCriteria()->getToDate());
         $ad->setOneWay(true);
+        $ad->setSolidary($proposal->getCriteria()->isSolidary());
+        $ad->setSolidaryExclusive($proposal->getCriteria()->isSolidaryExclusive());
 
         // set return if twoWays ad
         if ($proposal->getProposalLinked()) {

@@ -66,6 +66,7 @@
           <v-btn
             color="secondary"
             rounded
+            :width="250"
             :href="linkToCommunityShow(item)"
           >
             {{ $t('communityDetails') }}
