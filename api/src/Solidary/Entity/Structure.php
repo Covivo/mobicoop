@@ -31,6 +31,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A solidary structure.
@@ -86,6 +87,20 @@ class Structure
      * @Groups({"read"})
      */
     private $updatedDate;
+
+    /**
+     * @var ArrayCollection|null The solidary records for this structure.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @Groups("read")
+     */
+    private $solidaries;
+
+    public function __construct()
+    {
+        $this->solidaries = new ArrayCollection();
+    }
     
     public function getId(): ?int
     {
@@ -131,6 +146,34 @@ class Structure
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getSolidaries()
+    {
+        return $this->solidaries->getValues();
+    }
+
+    public function addSolidary(Solidary $solidary): self
+    {
+        if (!$this->solidaries->contains($solidary)) {
+            $this->solidaries->add($solidary);
+            $solidary->setStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSolidary(Solidary $solidary): self
+    {
+        if ($this->solidaries->contains($solidary)) {
+            $this->solidaries->removeElement($solidary);
+            // set the owning side to null (unless already changed)
+            if ($solidary->getStructure() === $this) {
+                $solidary->setStructure(null);
+            }
+        }
 
         return $this;
     }

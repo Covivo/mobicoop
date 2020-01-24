@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Entity;
+namespace App\Action\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -31,6 +31,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Action\Entity\Action;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryMatching;
+use App\User\Entity\User;
 
 /**
  * Animation action diary for a user.
@@ -68,6 +69,14 @@ class Diary
      * @MaxDepth(1)
      */
     private $action;
+
+    /**
+     * @var string A comment about the action.
+     *
+     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $comment;
         
     /**
      * @var User The user related with the action.
@@ -136,6 +145,18 @@ class Diary
     public function setAction(?Action $action): self
     {
         $this->action = $action;
+        
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+    
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
         
         return $this;
     }

@@ -84,19 +84,21 @@ class Solidary
     private $assisted;
 
     /**
-     * @var string Structure of the solidary record.
+     * @var Structure Structure of the solidary record.
      *
      * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaries")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      */
     private $structure;
 
     /**
-     * @var string Subject of the solidary record.
+     * @var Subject Subject of the solidary record.
      *
      * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="solidaries")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      */
     private $subject;
@@ -121,6 +123,23 @@ class Solidary
      * @MaxDepth(1)
      */
     private $user;
+
+    /**
+     * @var \DateTimeInterface Deadline date of the solidary record.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("read")
+     */
+    private $deadlineDate;
+
+    /**
+     * @var string Detail for regular ask.
+     *
+     * @Assert\NotBlank
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"read","write"})
+     */
+    private $regularDetail;
 
     /**
      * @var \DateTimeInterface Creation date of the solidary record.
@@ -167,24 +186,24 @@ class Solidary
         return $this;
     }
 
-    public function getStructure(): ?string
+    public function getStructure(): ?Structure
     {
         return $this->structure;
     }
 
-    public function setStructure(string $structure): self
+    public function setStructure(?Structure $structure): self
     {
         $this->structure = $structure;
 
         return $this;
     }
 
-    public function getSubject(): ?string
+    public function getSubject(): ?Subject
     {
         return $this->subject;
     }
 
-    public function setSubject(string $subject): self
+    public function setSubject(?Subject $subject): self
     {
         $this->subject = $subject;
 
@@ -212,6 +231,30 @@ class Solidary
     {
         $this->user = $user;
         
+        return $this;
+    }
+
+    public function getDeadlineDate(): ?\DateTimeInterface
+    {
+        return $this->deadlineDate;
+    }
+
+    public function setDeadlineDate(\DateTimeInterface $deadlineDate): self
+    {
+        $this->deadlineDate = $deadlineDate;
+
+        return $this;
+    }
+
+    public function getRegularDetail(): ?string
+    {
+        return $this->regularDetail;
+    }
+
+    public function setRegularDetail(string $regularDetail): self
+    {
+        $this->regularDetail = $regularDetail;
+
         return $this;
     }
 

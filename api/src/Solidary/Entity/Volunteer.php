@@ -34,7 +34,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A solidary subject.
+ * A solidary volunteer.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -49,11 +49,11 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  */
-class Subject
+class Volunteer
 {
     
     /**
-     * @var int The id of this subject.
+     * @var int The id of this volunteer.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -64,13 +64,13 @@ class Subject
     private $id;
 
     /**
-     * @var string Label of the subject.
+     * @var string A comment about the volunteer.
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
      * @Groups({"read","write"})
      */
-    private $label;
+    private $comment;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -87,20 +87,6 @@ class Subject
      * @Groups({"read"})
      */
     private $updatedDate;
-
-    /**
-     * @var ArrayCollection|null The solidary records for this subject.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="subject", cascade={"remove"}, orphanRemoval=true)
-     * @MaxDepth(1)
-     * @Groups("read")
-     */
-    private $solidaries;
-
-    public function __construct()
-    {
-        $this->solidaries = new ArrayCollection();
-    }
     
     public function getId(): ?int
     {
@@ -114,15 +100,15 @@ class Subject
         return $this;
     }
     
-    public function getLabel(): ?string
+    public function getComment(): ?string
     {
-        return $this->label;
+        return $this->comment;
     }
-
-    public function setLabel(string $label): self
+    
+    public function setComment(?string $comment): self
     {
-        $this->label = $label;
-
+        $this->comment = $comment;
+        
         return $this;
     }
 
@@ -146,34 +132,6 @@ class Subject
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
-
-        return $this;
-    }
-
-    public function getSolidaries()
-    {
-        return $this->solidaries->getValues();
-    }
-
-    public function addSolidary(Solidary $solidary): self
-    {
-        if (!$this->solidaries->contains($solidary)) {
-            $this->solidaries->add($solidary);
-            $solidary->setStructure($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSolidary(Solidary $solidary): self
-    {
-        if ($this->solidaries->contains($solidary)) {
-            $this->solidaries->removeElement($solidary);
-            // set the owning side to null (unless already changed)
-            if ($solidary->getStructure() === $this) {
-                $solidary->setStructure(null);
-            }
-        }
 
         return $this;
     }
