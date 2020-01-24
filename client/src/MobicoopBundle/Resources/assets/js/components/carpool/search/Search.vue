@@ -88,6 +88,7 @@
                 :loading="loadingSearch"
                 color="secondary"
                 rounded
+                min-width="150px"
                 @click="search"
               >
                 {{ $t('buttons.search.label') }}
