@@ -122,7 +122,11 @@ class GeoTools
      */
     public function getOppositeBearing(int $bearing, int $range=0)
     {
-        $newBearing = abs($bearing-180);
+        if ($bearing >= 180) {
+            $newBearing = $bearing-180;
+        } else {
+            $newBearing = $bearing+180;
+        }
         return [
             'opposite' => $newBearing,
             'min' => (($newBearing-$range)<0) ? ($newBearing-$range+360) : ($newBearing-$range),
