@@ -9,15 +9,27 @@
       fill-dot
     >
       <template v-slot:icon>
-        <v-avatar>
-          <img
-            v-if="waypoint.avatar && waypoint.avatar!==''"
-            :src="waypoint.avatar"
-          >
-          <v-icon v-else>
-            {{ getIcon(waypoint.type,waypoint.role) }}
-          </v-icon>
-        </v-avatar>
+        <v-tooltip
+          color="info" 
+          right
+        >
+          <template v-slot:activator="{ on }">
+            <v-avatar>
+              <img
+                v-if="waypoint.avatar && waypoint.avatar!==''"
+                :src="waypoint.avatar"
+              >
+              <v-icon
+                v-else
+                color="white"
+                v-on="on"
+              >
+                {{ getIcon(waypoint.type,waypoint.role) }}
+              </v-icon>
+            </v-avatar>
+          </template>
+          <span> {{ getTooltipMessage (waypoint.type,waypoint.role) }}</span>
+        </v-tooltip>
       </template>    
       <v-row dense>
         <v-col 
@@ -72,6 +84,7 @@ export default {
   data() {
     return {
       locale: this.$i18n.locale,
+      message:null
     };
   },
   //icon:
@@ -90,6 +103,17 @@ export default {
         if (type == 'step') return 'mdi-debug-step-into';
       }
     },
+    getTooltipMessage (type,role){
+      if (role == 'driver') {
+        if (type == 'origin') return this.$t('driverOrigin'); 
+        if (type == 'destination') return this.$t('driverDestination');
+        if (type == 'step') return this.$t('step');
+      } else {
+        if (type == 'origin') return this.$t('supported');
+        if (type == 'destination') return this.$t('dropOff');
+        if (type == 'step') return this.$t('step');
+      }
+    }, 
     formatTime(time) {
       if(time) return moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute")); 
     }
