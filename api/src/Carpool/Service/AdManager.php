@@ -669,17 +669,33 @@ class AdManager
         $ad->setUserId($userId);
         $ad->setOutwardWaypoints($proposal->getWaypoints());
         $ad->setOutwardDate($proposal->getCriteria()->getFromDate());
-        $ad->setOutwardTime($proposal->getCriteria()->getFromTime() ? $proposal->getCriteria()->getFromTime()->format('Y-m-d H:i:s') : null);
+
+        if ($proposal->getCriteria()->getFromTime()) {
+            $ad->setOutwardTime($ad->getOutwardDate()->format('Y-m-d').' '.$proposal->getCriteria()->getFromTime()->format('H:i:s'));
+        } else {
+            $ad->setOutwardTime(null);
+        }
+
+
         $ad->setOutwardLimitDate($proposal->getCriteria()->getToDate());
         $ad->setOneWay(true);
         $ad->setSolidary($proposal->getCriteria()->isSolidary());
         $ad->setSolidaryExclusive($proposal->getCriteria()->isSolidaryExclusive());
 
+        
         // set return if twoWays ad
         if ($proposal->getProposalLinked()) {
             $ad->setReturnWaypoints($proposal->getProposalLinked()->getWaypoints());
             $ad->setReturnDate($proposal->getProposalLinked()->getCriteria()->getFromDate());
-            $ad->setReturnTime($proposal->getProposalLinked()->getCriteria()->getFromTime() ? $proposal->getProposalLinked()->getCriteria()->getFromTime()->format('Y-m-d H:i:s') : null);
+            
+            if ($proposal->getProposalLinked()->getCriteria()->getFromTime()) {
+                $ad->setReturnTime($ad->getReturnDate()->format('Y-m-d').' '.$proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i:s'));
+            } else {
+                $ad->setReturnTime(null);
+            }
+
+
+
             $ad->setReturnLimitDate($proposal->getProposalLinked()->getCriteria()->getToDate());
             $ad->setOneWay(false);
         }
