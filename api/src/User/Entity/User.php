@@ -772,7 +772,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A user may have many action logs.
      *
-     * @ORM\OneToMany(targetEntity="\App\User\Entity\Diary", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"readUser","write"})
      */
     private $diaries;
@@ -780,7 +780,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A user may have many diary action logs.
      *
-     * @ORM\OneToMany(targetEntity="\App\User\Entity\Diary", mappedBy="admin", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="admin", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"readUser","write"})
      */
     private $diariesAdmin;

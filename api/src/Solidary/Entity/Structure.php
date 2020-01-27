@@ -316,7 +316,6 @@ class Structure
      * @var ArrayCollection|null The solidary records for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @MaxDepth(1)
      * @Groups("read")
      */
     private $solidaries;
@@ -325,7 +324,6 @@ class Structure
      * @var ArrayCollection|null Child structures.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\structure", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @MaxDepth(1)
      * @Groups("read")
      */
     private $structures;
@@ -334,7 +332,6 @@ class Structure
      * @var ArrayCollection|null The volunteers for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Volunteer", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @MaxDepth(1)
      * @Groups("read")
      */
     private $volunteers;
@@ -343,7 +340,6 @@ class Structure
      * @var ArrayCollection|null The subjects for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Subject", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @MaxDepth(1)
      * @Groups("read")
      */
     private $subjects;
@@ -352,7 +348,6 @@ class Structure
      * @var ArrayCollection|null The special needs for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Need", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @MaxDepth(1)
      * @Groups("read")
      */
     private $needs;
@@ -361,7 +356,6 @@ class Structure
      * @var ArrayCollection|null The special services for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Service", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @MaxDepth(1)
      * @Groups("read")
      */
     private $services;
