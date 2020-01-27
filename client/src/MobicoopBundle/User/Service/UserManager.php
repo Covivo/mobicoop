@@ -559,8 +559,6 @@ class UserManager
                 $adsSanitized[$key][$ad["id"]]['return'] = $ad;
             }
         }
-        dump($adsSanitized);
-
         return $adsSanitized;
     }
 
