@@ -60,9 +60,7 @@ class SolidaryMatching
     /**
      * @var Matching The matching.
      *
-     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching")
-     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -78,6 +76,22 @@ class SolidaryMatching
      * @MaxDepth(1)
      */
     private $solidary;
+
+    /**
+     * @var Volunteer The volunteer if needed.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Volunteer")
+     * @Groups({"read","write"})
+     */
+    private $volunteer;
+
+    /**
+     * @var string A comment about the solidary matching.
+     *
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"read","write"})
+     */
+    private $comment;
 
     /**
      * @var \DateTimeInterface Creation date of the solidary record.
@@ -100,7 +114,7 @@ class SolidaryMatching
         return $this->id;
     }
 
-    public function getMatching(): Matching
+    public function getMatching(): ?Matching
     {
         return $this->matching;
     }
@@ -120,6 +134,30 @@ class SolidaryMatching
     public function setSolidary(?Solidary $solidary): self
     {
         $this->solidary = $solidary;
+        
+        return $this;
+    }
+
+    public function getVolunteer(): Volunteer
+    {
+        return $this->volunteer;
+    }
+    
+    public function setVolunteer(?Volunteer $volunteer): self
+    {
+        $this->volunteer = $volunteer;
+        
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+    
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
         
         return $this;
     }

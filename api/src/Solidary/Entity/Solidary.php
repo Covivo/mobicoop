@@ -31,6 +31,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Entity\Proposal;
 use App\User\Entity\User;
 use App\Solidary\Controller\SolidaryProposalPost;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A solidary record.
@@ -142,6 +143,14 @@ class Solidary
     private $regularDetail;
 
     /**
+     * @var ArrayCollection|null The special needs for this solidary record.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
+     * @Groups({"read","write"})
+     */
+    private $needs;
+
+    /**
      * @var \DateTimeInterface Creation date of the solidary record.
      *
      * @ORM\Column(type="datetime")
@@ -156,6 +165,11 @@ class Solidary
      * @Groups("read")
      */
     private $updatedDate;
+
+    public function __construct()
+    {
+        $this->needs = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -255,6 +269,29 @@ class Solidary
     {
         $this->regularDetail = $regularDetail;
 
+        return $this;
+    }
+
+    public function getNeeds()
+    {
+        return $this->needs->getValues();
+    }
+    
+    public function addNeed(Need $need): self
+    {
+        if (!$this->needs->contains($need)) {
+            $this->needs[] = $need;
+        }
+        
+        return $this;
+    }
+    
+    public function removeNeed(Need $need): self
+    {
+        if ($this->needs->contains($need)) {
+            $this->needs->removeElement($need);
+        }
+        
         return $this;
     }
 

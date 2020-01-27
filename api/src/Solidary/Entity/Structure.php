@@ -75,7 +75,7 @@ class Structure
     /**
      * @var \DateTimeInterface Creation date.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime")
      * @Groups({"read"})
      */
     private $createdDate;
@@ -89,6 +89,230 @@ class Structure
     private $updatedDate;
 
     /**
+     * @var \DateTimeInterface Morning min time.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $mMinTime;
+    
+    /**
+     * @var \DateTimeInterface Morning max time.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $mMaxTime;
+    
+    /**
+     * @var \DateTimeInterface Afternoon min time.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $aMinTime;
+    
+    /**
+     * @var \DateTimeInterface Afternoon max time.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $aMaxTime;
+    
+    /**
+     * @var \DateTimeInterface Evening min time.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $eMinTime;
+    
+    /**
+     * @var \DateTimeInterface Evening max time.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $eMaxTime;
+    
+    /**
+     * @var bool Available on monday morning.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $mMon;
+    
+    /**
+     * @var bool Available on monday afternoon.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $aMon;
+    
+    /**
+     * @var bool Available on monday evening.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $eMon;
+    
+    /**
+     * @var bool Available on tuesday morning.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $mTue;
+    
+    /**
+     * @var bool Available on tuesday afternoon.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $aTue;
+    
+    /**
+     * @var bool Available on tuesday evening.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $eTue;
+    
+    /**
+     * @var bool Available on wednesday morning.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $mWed;
+    
+    /**
+     * @var bool Available on wednesday afternoon.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $aWed;
+    
+    /**
+     * @var bool Available on wednesday evening.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $eWed;
+    
+    /**
+     * @var bool Available on thursday morning.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $mThu;
+    
+    /**
+     * @var bool Available on thursday afternoon.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $aThu;
+    
+    /**
+     * @var bool Available on thursday evening.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $eThu;
+    
+    /**
+     * @var bool Available on friday morning.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $mFri;
+    
+    /**
+     * @var bool Available on friday afternoon.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $aFri;
+    
+    /**
+     * @var bool Available on friday evening.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $eFri;
+    
+    /**
+     * @var bool Available on saturday morning.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $mSat;
+    
+    /**
+     * @var bool Available on saturday afternoon.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $aSat;
+    
+    /**
+     * @var bool Available on saturday evening.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $eSat;
+    
+    /**
+     * @var bool Available on sunday morning.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $mSun;
+    
+    /**
+     * @var bool Available on sunday afternoon.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $aSun;
+    
+    /**
+     * @var bool Available on sunday evening.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $eSun;
+
+    /**
+     * @var Structure Parent structure.
+     *
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="structures")
+     * @Groups({"read","write"})
+     */
+    private $structure;
+
+    /**
      * @var ArrayCollection|null The solidary records for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
@@ -97,9 +321,59 @@ class Structure
      */
     private $solidaries;
 
+    /**
+     * @var ArrayCollection|null Child structures.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\structure", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @Groups("read")
+     */
+    private $structures;
+
+    /**
+     * @var ArrayCollection|null The volunteers for this structure.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Volunteer", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @Groups("read")
+     */
+    private $volunteers;
+
+    /**
+     * @var ArrayCollection|null The subjects for this structure.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Subject", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @Groups("read")
+     */
+    private $subjects;
+
+    /**
+     * @var ArrayCollection|null The special needs for this structure.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Need", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @Groups("read")
+     */
+    private $needs;
+
+    /**
+     * @var ArrayCollection|null The special services for this structure.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Service", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @Groups("read")
+     */
+    private $services;
+
     public function __construct()
     {
         $this->solidaries = new ArrayCollection();
+        $this->structures = new ArrayCollection();
+        $this->volunteers = new ArrayCollection();
+        $this->subjects = new ArrayCollection();
+        $this->needs = new ArrayCollection();
+        $this->services = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -146,6 +420,342 @@ class Structure
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+        
+        return $this;
+    }
+
+    public function getMMinTime(): ?\DateTimeInterface
+    {
+        return $this->mMinTime;
+    }
+
+    public function setMMinTime(\DateTimeInterface $mMinTime): self
+    {
+        $this->mMinTime = $mMinTime;
+
+        return $this;
+    }
+    
+    public function getMMaxTime(): ?\DateTimeInterface
+    {
+        return $this->mMaxTime;
+    }
+
+    public function setMMaxTime(\DateTimeInterface $mMaxTime): self
+    {
+        $this->mMaxTime = $mMaxTime;
+
+        return $this;
+    }
+    
+    public function getAMinTime(): ?\DateTimeInterface
+    {
+        return $this->aMinTime;
+    }
+
+    public function setAMinTime(\DateTimeInterface $aMinTime): self
+    {
+        $this->aMinTime = $aMinTime;
+
+        return $this;
+    }
+    
+    public function getAMaxTime(): ?\DateTimeInterface
+    {
+        return $this->aMaxTime;
+    }
+
+    public function setAMaxTime(\DateTimeInterface $aMaxTime): self
+    {
+        $this->aMaxTime = $aMaxTime;
+
+        return $this;
+    }
+    
+    public function getEMinTime(): ?\DateTimeInterface
+    {
+        return $this->eMinTime;
+    }
+
+    public function setEMinTime(\DateTimeInterface $eMinTime): self
+    {
+        $this->eMinTime = $eMinTime;
+
+        return $this;
+    }
+    
+    public function getEMaxTime(): ?\DateTimeInterface
+    {
+        return $this->eMaxTime;
+    }
+
+    public function setEMaxTime(\DateTimeInterface $eMaxTime): self
+    {
+        $this->eMaxTime = $eMaxTime;
+
+        return $this;
+    }
+    
+    public function hasMMon(): ?bool
+    {
+        return $this->mMon;
+    }
+    
+    public function setMMon(bool $mMon): self
+    {
+        $this->mMon = $mMon;
+
+        return $this;
+    }
+
+    public function hasAMon(): ?bool
+    {
+        return $this->aMon;
+    }
+
+    public function setAMon(bool $aMon): self
+    {
+        $this->aMon = $aMon;
+
+        return $this;
+    }
+    
+    public function hasEMon(): ?bool
+    {
+        return $this->eMon;
+    }
+    
+    public function setEMon(bool $eMon): self
+    {
+        $this->eMon = $eMon;
+
+        return $this;
+    }
+    
+    public function hasMTue(): ?bool
+    {
+        return $this->mTue;
+    }
+    
+    public function setMTue(bool $mTue): self
+    {
+        $this->mTue = $mTue;
+
+        return $this;
+    }
+    
+    public function hasATue(): ?bool
+    {
+        return $this->aTue;
+    }
+   
+    public function setATue(bool $aTue): self
+    {
+        $this->aTue = $aTue;
+
+        return $this;
+    }
+    
+    public function hasETue(): ?bool
+    {
+        return $this->eTue;
+    }
+   
+    public function setETue(bool $eTue): self
+    {
+        $this->eTue = $eTue;
+
+        return $this;
+    }
+    
+    public function hasMWed(): ?bool
+    {
+        return $this->mWed;
+    }
+   
+    public function setMWed(bool $mWed): self
+    {
+        $this->mWed = $mWed;
+
+        return $this;
+    }
+    
+    public function hasAWed(): ?bool
+    {
+        return $this->aWed;
+    }
+   
+    public function setAWed(bool $aWed): self
+    {
+        $this->aWed = $aWed;
+
+        return $this;
+    }
+    
+    public function hasEWed(): ?bool
+    {
+        return $this->eWed;
+    }
+   
+    public function setEWed(bool $eWed): self
+    {
+        $this->eWed = $eWed;
+
+        return $this;
+    }
+    
+    public function hasMThu(): ?bool
+    {
+        return $this->mThu;
+    }
+   
+    public function setMThu(bool $mThu): self
+    {
+        $this->mThu = $mThu;
+
+        return $this;
+    }
+    
+    public function hasAThu(): ?bool
+    {
+        return $this->aThu;
+    }
+   
+    public function setAThu(bool $aThu): self
+    {
+        $this->aThu = $aThu;
+
+        return $this;
+    }
+    
+    public function hasEThu(): ?bool
+    {
+        return $this->eThu;
+    }
+   
+    public function setEThu(bool $eThu): self
+    {
+        $this->eThu = $eThu;
+
+        return $this;
+    }
+    
+    public function hasMFri(): ?bool
+    {
+        return $this->mFri;
+    }
+   
+    public function setMFri(bool $mFri): self
+    {
+        $this->mFri = $mFri;
+
+        return $this;
+    }
+    
+    public function hasAFri(): ?bool
+    {
+        return $this->aFri;
+    }
+   
+    public function setAFri(bool $aFri): self
+    {
+        $this->aFri = $aFri;
+
+        return $this;
+    }
+    
+    public function hasEFri(): ?bool
+    {
+        return $this->eFri;
+    }
+   
+    public function setEFri(bool $eFri): self
+    {
+        $this->eFri = $eFri;
+
+        return $this;
+    }
+    
+    public function hasMSat(): ?bool
+    {
+        return $this->mSat;
+    }
+   
+    public function setMSat(bool $mSat): self
+    {
+        $this->mSat = $mSat;
+
+        return $this;
+    }
+    
+    public function hasASat(): ?bool
+    {
+        return $this->aSat;
+    }
+   
+    public function setASat(bool $aSat): self
+    {
+        $this->aSat = $aSat;
+
+        return $this;
+    }
+    
+    public function hasESat(): ?bool
+    {
+        return $this->eSat;
+    }
+   
+    public function setESat(bool $eSat): self
+    {
+        $this->eSat = $eSat;
+
+        return $this;
+    }
+    
+    public function hasMSun(): ?bool
+    {
+        return $this->mSun;
+    }
+   
+    public function setMSun(bool $mSun): self
+    {
+        $this->mSun = $mSun;
+
+        return $this;
+    }
+    
+    public function hasASun(): ?bool
+    {
+        return $this->aSun;
+    }
+   
+    public function setASun(bool $aSun): self
+    {
+        $this->aSun = $aSun;
+
+        return $this;
+    }
+    
+    public function hasESun(): ?bool
+    {
+        return $this->eSun;
+    }
+
+    public function setESun(bool $eSun): self
+    {
+        $this->eSun = $eSun;
+
+        return $this;
+    }
+
+    public function getStructure(): ?Structure
+    {
+        return $this->structure;
+    }
+
+    public function setStructure(?Structure $structure): self
+    {
+        $this->structure = $structure;
 
         return $this;
     }
@@ -172,6 +782,146 @@ class Structure
             // set the owning side to null (unless already changed)
             if ($solidary->getStructure() === $this) {
                 $solidary->setStructure(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getStructures()
+    {
+        return $this->structures->getValues();
+    }
+
+    public function addStructure(Structure $structure): self
+    {
+        if (!$this->structures->contains($structure)) {
+            $this->structures->add($structure);
+            $structure->setStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStructure(Structure $structure): self
+    {
+        if ($this->structures->contains($structure)) {
+            $this->structures->removeElement($structure);
+            // set the owning side to null (unless already changed)
+            if ($structure->getStructure() === $this) {
+                $structure->setStructure(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getVolunteers()
+    {
+        return $this->volunteers->getValues();
+    }
+
+    public function addVolunteer(Volunteer $volunteer): self
+    {
+        if (!$this->volunteers->contains($volunteer)) {
+            $this->volunteers->add($volunteer);
+            $volunteer->setStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVolunteer(Volunteer $volunteer): self
+    {
+        if ($this->volunteers->contains($volunteer)) {
+            $this->volunteers->removeElement($volunteer);
+            // set the owning side to null (unless already changed)
+            if ($volunteer->getStructure() === $this) {
+                $volunteer->setStructure(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getSubjects()
+    {
+        return $this->subjects->getValues();
+    }
+
+    public function addSubject(Subject $subject): self
+    {
+        if (!$this->subjects->contains($subject)) {
+            $this->subjects->add($subject);
+            $subject->setStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubject(Subject $subject): self
+    {
+        if ($this->subjects->contains($subject)) {
+            $this->subjects->removeElement($subject);
+            // set the owning side to null (unless already changed)
+            if ($subject->getStructure() === $this) {
+                $subject->setStructure(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getNeeds()
+    {
+        return $this->needs->getValues();
+    }
+
+    public function addNeed(Need $need): self
+    {
+        if (!$this->needs->contains($need)) {
+            $this->needs->add($need);
+            $need->setStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNeed(Need $need): self
+    {
+        if ($this->needs->contains($need)) {
+            $this->needs->removeElement($need);
+            // set the owning side to null (unless already changed)
+            if ($need->getStructure() === $this) {
+                $need->setStructure(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getServices()
+    {
+        return $this->services->getValues();
+    }
+
+    public function addService(Service $service): self
+    {
+        if (!$this->services->contains($service)) {
+            $this->services->add($service);
+            $service->setStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeService(Service $service): self
+    {
+        if ($this->services->contains($service)) {
+            $this->services->removeElement($service);
+            // set the owning side to null (unless already changed)
+            if ($service->getStructure() === $this) {
+                $service->setStructure(null);
             }
         }
 

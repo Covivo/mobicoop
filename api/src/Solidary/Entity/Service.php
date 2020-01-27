@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Action\Entity;
+namespace App\Solidary\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -31,9 +31,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * An action that can be logged and / or trigger notifications.
+ * A special service for a solidary record.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -45,14 +46,14 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *      collectionOperations={"get"},
  *      itemOperations={"get"}
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
  */
-class Action
+class Service
 {
     
     /**
-     * @var int The id of this action.
+     * @var int The id of this service.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -63,45 +64,21 @@ class Action
     private $id;
 
     /**
-     * @var string Name of the action.
+     * @var string Label of the service.
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
      * @Groups({"read","write"})
      */
-    private $name;
+    private $label;
 
     /**
-     * @var bool The action has to be logged in the log system.
+     * @var Structure Structure of the service.
      *
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="services")
      * @Groups({"read","write"})
      */
-    private $inLog;
-
-    /**
-     * @var bool The action has to be logged in the user action diary.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
-     */
-    private $inDiary;
-
-    /**
-     * @var int|null The default progression in percent if the action can be related to a solidary record.
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
-     */
-    private $progression;
-
-    /**
-     * @var int Position number in user preferences.
-     *
-     * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
-     */
-    private $position;
+    private $structure;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -119,6 +96,11 @@ class Action
      */
     private $updatedDate;
 
+    public function __construct()
+    {
+        $this->solidaries = new ArrayCollection();
+    }
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -131,62 +113,26 @@ class Action
         return $this;
     }
     
-    public function getName(): ?string
+    public function getLabel(): ?string
     {
-        return $this->name;
+        return $this->label;
     }
 
-    public function setName(string $name): self
+    public function setLabel(string $label): self
     {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function isInLog(): ?bool
-    {
-        return $this->inLog;
-    }
-    
-    public function setInLog(bool $isInLog): self
-    {
-        $this->inLog = $isInLog;
-        
-        return $this;
-    }
-
-    public function isInDiary(): ?bool
-    {
-        return $this->inDiary;
-    }
-    
-    public function setInDiary(bool $isIndiary): self
-    {
-        $this->inDiary = $isIndiary;
-        
-        return $this;
-    }
-
-    public function getProgression(): ?int
-    {
-        return $this->progression;
-    }
-
-    public function setProgression(?int $progression): self
-    {
-        $this->progression = $progression;
+        $this->label = $label;
 
         return $this;
     }
 
-    public function getPosition(): ?int
+    public function getStructure(): ?Structure
     {
-        return $this->position;
+        return $this->structure;
     }
 
-    public function setPosition(int $position): self
+    public function setStructure(?Structure $structure): self
     {
-        $this->position = $position;
+        $this->structure = $structure;
 
         return $this;
     }

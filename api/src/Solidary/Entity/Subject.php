@@ -46,8 +46,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      collectionOperations={"get"},
  *      itemOperations={"get"}
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
  */
 class Subject
 {
@@ -71,6 +71,14 @@ class Subject
      * @Groups({"read","write"})
      */
     private $label;
+
+    /**
+     * @var Structure Structure of the subject.
+     *
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="subjects")
+     * @Groups({"read","write"})
+     */
+    private $structure;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -122,6 +130,18 @@ class Subject
     public function setLabel(string $label): self
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function getStructure(): ?Structure
+    {
+        return $this->structure;
+    }
+
+    public function setStructure(?Structure $structure): self
+    {
+        $this->structure = $structure;
 
         return $this;
     }

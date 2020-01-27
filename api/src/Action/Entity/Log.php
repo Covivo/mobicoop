@@ -42,6 +42,7 @@ use App\Solidary\Entity\Solidary;
 use App\Geography\Entity\Territory;
 use App\User\Entity\Car;
 use App\Communication\Entity\Message;
+use App\MassCommunication\Entity\Campaign;
 
 /**
  * User actions log.
@@ -196,6 +197,14 @@ class Log
      * @Groups({"read","write"})
      */
     private $message;
+
+    /**
+     * @var Campaign|null The campaign if the action concerns a campaign.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign")
+     * @Groups({"read","write"})
+     */
+    private $campaign;
 
     public function getId(): ?int
     {
@@ -373,6 +382,18 @@ class Log
     public function setMessage(?Message $message): self
     {
         $this->message = $message;
+        
+        return $this;
+    }
+
+    public function getCampaign(): ?Campaign
+    {
+        return $this->campaign;
+    }
+    
+    public function setCampaign(?Message $campaign): self
+    {
+        $this->campaign = $campaign;
         
         return $this;
     }
