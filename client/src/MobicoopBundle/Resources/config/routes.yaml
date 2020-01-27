@@ -496,7 +496,7 @@ history:
 # display actors page
 actors:
     path:
-        fr: /Les-acteurs
+        fr: /les-acteurs
         en: /actors
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showActors
 
