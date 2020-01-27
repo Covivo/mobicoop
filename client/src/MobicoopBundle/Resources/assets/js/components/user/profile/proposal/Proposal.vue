@@ -74,7 +74,7 @@ export default {
     },
     isPassenger () {
       //return !!this.proposal.outward.criteria.passenger;
-      return (this.proposal.outward.role === 2 || this.proposal.outward.role === 3) && this.proposal.outward.solidary != 1
+      return (this.proposal.outward.role === 2 || this.proposal.outward.role === 3) && this.proposal.outward.solidaryExclusive != 1
     },
     isRegular () {
       return this.proposal.outward.frequency === 2;
