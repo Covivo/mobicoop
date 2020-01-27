@@ -1,8 +1,6 @@
 <template>
   <div :key="rerenderKey">
-    <v-row
-      v-if="communitiesUser.length>0"
-    >
+    <v-row>
       <v-col
         v-if="canCreate"
         cols="6"
@@ -17,6 +15,10 @@
           </v-btn>
         </a>
       </v-col>
+    </v-row>
+    <v-row
+      v-if="communitiesUser.length>0"
+    >
       <v-col
         cols="12"
         style="margin-bottom: 0px!important; padding-bottom: 0px!important;"
