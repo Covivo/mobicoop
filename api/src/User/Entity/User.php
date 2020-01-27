@@ -331,7 +331,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null The first name of the user.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread"})
      */
     private $givenName;
@@ -339,7 +339,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null The family name of the user.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
      */
     private $familyName;
@@ -364,7 +364,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @Assert\Email()
-     * @ORM\Column(type="string", length=100, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate"})
      */
     private $email;
@@ -381,7 +381,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string The encoded password of the user.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","passwordUpdate"})
      */
     private $password;
@@ -397,7 +397,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null The nationality of the user.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
      */
     private $nationality;
@@ -426,7 +426,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null The telephone number of the user.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","checkPhoneToken"})
      */
     private $telephone;
@@ -558,7 +558,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null Token for account validation by email
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","checkValidationToken"})
      */
     private $validatedDateToken;
@@ -574,7 +574,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var DateTime|null  Date of password token generation modification.
      *
-     * @ORM\Column(type="datetime", length=100, nullable=true)
+     * @ORM\Column(type="datetime", length=255, nullable=true)
      * @Groups({"readUser","write"})
      */
     private $pwdTokenDate;
@@ -582,7 +582,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null Token for password modification.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","passwordUpdateRequest","passwordUpdate"})
      */
     private $pwdToken;
@@ -590,7 +590,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null Token for geographical search authorization.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
      */
     private $geoToken;
@@ -598,7 +598,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null Token for phone validation.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","checkPhoneToken"})
      */
     private $phoneToken;
@@ -614,7 +614,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null iOS app ID.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
      */
     private $iosAppId;
@@ -622,7 +622,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null Android app ID.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
      */
     private $androidAppId;
@@ -851,7 +851,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null Facebook ID of the user
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
      */
     private $facebookId;

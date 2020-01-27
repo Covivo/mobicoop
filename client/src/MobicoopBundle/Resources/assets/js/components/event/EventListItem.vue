@@ -25,6 +25,9 @@
             <h4>
               <a :href="linkToEventShow(item)">{{ item.name }}</a>
             </h4>
+            <p class="headline text-justify subtitle-1">
+              {{ item.address.addressLocality }}
+            </p>
             <p v-if="dateLine1">
               <span class="subtitle-1">{{ dateLine1 }}</span><br>
               <span
