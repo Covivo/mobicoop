@@ -116,11 +116,13 @@
               <v-timeline
                 dense
                 class="py-0"
+                width="100"
               >
                 <v-timeline-item
                   color="primary"
                   medium
                   class="mb-3"
+                  width="100%"
                 >
                   <v-row dense>
                     <v-col
@@ -129,8 +131,13 @@
                     >
                       <strong>{{ computedOutwardTimeFormat }}</strong>
                     </v-col>
-                    <v-col :cols="displayInfo ? 6 : 12">
-                      {{ (route && route.origin) ? route.origin.addressLocality : null }}
+                    <v-col :cols="displayInfo ? 12 : 12">
+                      <v-row>
+                        {{ (route && route.origin) ? route.origin.addressLocality : null }}<br>
+                        {{ (route && route.origin && route.origin.streetAddress!=='') ? route.origin.streetAddress : null }}
+                        {{ (route && route.origin && route.origin.venue!=='') ? route.origin.venue : null }}
+                      </v-row>
+                      <v-row />                      
                     </v-col>
                   </v-row>
                 </v-timeline-item>
@@ -153,7 +160,9 @@
                         class="mr-3"
                       >
                         mdi-arrow-right-bold
-                      </v-icon> {{ waypoint.address.addressLocality }}
+                      </v-icon> {{ waypoint.address.addressLocality }}<br>
+                      {{ (waypoint.address.streetAddress!=='') ? waypoint.address.streetAddress : null }}
+                      {{ (waypoint.address.venue!=='') ? waypoint.address.venue : null }}
                     </v-row>
                   </v-col>
                 </v-row>
@@ -171,8 +180,10 @@
                     >
                       <strong>{{ computedDestinationTime }}</strong>
                     </v-col>
-                    <v-col :cols="displayInfo ? 6 : 12">
-                      {{ (route && route.destination) ? route.destination.addressLocality : null }}
+                    <v-col :cols="displayInfo ? 12 : 12">
+                      {{ (route && route.destination) ? route.destination.addressLocality : null }}<br>
+                      {{ (route && route.destination && route.destination.streetAddress!=='') ? route.destination.streetAddress : null }}
+                      {{ (route && route.destination && route.destination.venue!=='') ? route.destination.venue : null }}
                     </v-col>
                   </v-row>
                 </v-timeline-item>
