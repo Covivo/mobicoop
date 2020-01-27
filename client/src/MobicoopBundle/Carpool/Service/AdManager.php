@@ -169,7 +169,6 @@ class AdManager
         if (isset($data['backSeats'])) {
             $ad->setBackSeats($data['backSeats']);
         }
-
         // solidary
         if (isset($data['solidary'])) {
             $ad->setSolidary($data['solidary']);
@@ -177,7 +176,7 @@ class AdManager
 
         // solidary exclusive
         if (isset($data['solidaryExclusive'])) {
-            $ad->setSolidary($data['solidaryExclusive']);
+            $ad->setSolidaryExclusive($data['solidaryExclusive']);
         }
 
         // avoid motorway
