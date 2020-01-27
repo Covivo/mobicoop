@@ -27,6 +27,8 @@ use App\Carpool\Repository\AskHistoryRepository;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Service\AskManager;
 use App\Communication\Entity\Medium;
+use App\Community\Repository\CommunityUserRepository;
+use App\Image\Service\ImageManager;
 use App\User\Entity\User;
 use App\User\Event\UserDeleteAccountWasDriverEvent;
 use App\User\Event\UserDeleteAccountWasPassengerEvent;
@@ -60,8 +62,10 @@ use App\User\Repository\UserRepository;
 class UserManager
 {
     private $entityManager;
+    private $imageManager;
     private $roleRepository;
     private $communityRepository;
+    private $communityUserRepository;
     private $messageRepository;
     private $askRepository;
     private $askHistoryRepository;
@@ -83,12 +87,14 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music)
+    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository)
     {
         $this->entityManager = $entityManager;
+        $this->imageManager = $imageManager;
         $this->logger = $logger;
         $this->roleRepository = $roleRepository;
         $this->communityRepository = $communityRepository;
+        $this->communityUserRepository = $communityUserRepository;
         $this->messageRepository = $messageRepository;
         $this->askRepository = $askRepository;
         $this->askHistoryRepository = $askHistoryRepository;
@@ -691,7 +697,34 @@ class UserManager
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
+        $this->checkIfUserHaveImages($user);
+        $this->checkIfUserIsInCommunity($user);
+
         return array();
+    }
+
+
+    //Check if the delete account have image, and delete them
+    // deleteBase -> delete the base image and remove the entry
+    private function checkIfUserHaveImages(User $user)
+    {
+        foreach ($user->getImages() as $image) {
+            $this->imageManager->deleteVersions($image);
+            $this->imageManager->deleteBase($image);
+        }
+    }
+
+
+    //Check if the delete account have image, and delete them
+    // deleteBase -> delete the base image and remove the entry
+    private function checkIfUserIsInCommunity(User $user)
+    {
+        $myCommunities = $this->communityUserRepository->findBy(array('user'=>$user));
+
+        foreach ($myCommunities as $myCommunity) {
+            $this->entityManager->remove($myCommunity);
+        }
+        $this->entityManager->flush();
     }
 
 
