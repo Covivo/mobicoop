@@ -3,7 +3,7 @@
         "driverOrigin": "Départ du conducteur",
         "driverDestination": "Arrivée du conducteur",
         "step":"Point de passage",
-        "supported": "Pris en charge",
+        "pickUp": "Pris en charge",
         "dropOff": "Dépose"
     },
     "en": {

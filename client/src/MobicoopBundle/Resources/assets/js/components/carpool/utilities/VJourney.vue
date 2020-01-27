@@ -109,7 +109,7 @@ export default {
         if (type == 'destination') return this.$t('driverDestination');
         if (type == 'step') return this.$t('step');
       } else {
-        if (type == 'origin') return this.$t('supported');
+        if (type == 'origin') return this.$t('pickUp');
         if (type == 'destination') return this.$t('dropOff');
         if (type == 'step') return this.$t('step');
       }
