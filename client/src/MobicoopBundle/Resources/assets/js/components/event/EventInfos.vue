@@ -38,7 +38,7 @@
             {{ event.name }}
           </h3>
           <p class="headline text-justify subtitle-1">
-            {{ event.address.localAdmin }}
+            {{ event.address.addressLocality }}
           </p><p
             v-if="displayDescription"
             class="body-1 pa-3"
