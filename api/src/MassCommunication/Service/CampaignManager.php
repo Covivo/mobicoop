@@ -26,6 +26,7 @@ namespace App\MassCommunication\Service;
 use App\Communication\Entity\Medium;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\MassEmailProvider\MandrillProvider;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Twig\Environment;
 
@@ -80,6 +81,29 @@ class CampaignManager
         }
         return $campaign;
     }
+
+    /**
+     * Send  the test messages for a campaign, to the sender
+     *
+     * @param Campaign $campaign    The campaign to send the messages for
+     * @return Campaign The campaign modified with the result of the send.
+     */
+    public function sendTest(Campaign $campaign)
+    {
+        if (in_array($campaign->getStatus(), array( Campaign::STATUS_PENDING, Campaign::STATUS_CREATED))) {
+            switch ($campaign->getMedium()->getId()) {
+                case Medium::MEDIUM_EMAIL:
+                    return $this->sendMassEmailTest($campaign);
+                    break;
+                case Medium::MEDIUM_SMS:
+                    return $this->sendMassSms($campaign);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return $campaign;
+    }
     
     /**
      * Send messages for a campaign by email.
@@ -107,7 +131,34 @@ class CampaignManager
         // persist the result depending of the status
         $campaign->setStatus(Campaign::STATUS_SENT);
         $this->entityManager->persist($campaign);
+        $this->entityManager->flush();
         
+        return $campaign;
+    }
+
+    /**
+     * Send messages test for a campaign by email.
+     *
+     * @param Campaign $campaign    The campaign to test
+     * @return Campaign The campaign modified with the result of the test.
+     */
+    private function sendMassEmailTest(Campaign $campaign)
+    {
+        // call the service
+        $this->massEmailProvider->send(
+            $campaign->getSubject(),
+            $campaign->getFromName(),
+            $campaign->getEmail(),
+            $campaign->getReplyTo(),
+            $this->getFormedEmailBody($campaign->getBody()),
+            $this->setRecipientsIsOwner($campaign->getUser())
+        );
+
+
+        $campaign->setStatus(Campaign::STATUS_CREATED);
+        $this->entityManager->persist($campaign);
+        $this->entityManager->flush();
+
         return $campaign;
     }
 
@@ -144,9 +195,7 @@ class CampaignManager
     {
         return $this->templating->render(
             $this->mailTemplate,
-            [
-                'message' => str_replace(array("\r\n", "\r", "\n"), "<br />", $body)
-            ]
+            array('message' => $body)
         );
     }
 
@@ -167,6 +216,24 @@ class CampaignManager
                 "email" => $delivery->getUser()->getEmail()
             ];
         }
+        return $recipients;
+    }
+
+    /**
+     * Build an array for send email to the sender
+     *
+     * @param User $user
+     * @return array
+     */
+    private function setRecipientsIsOwner(User $user)
+    {
+        $recipients[$user->getEmail()] = [
+            // put here the list of needed variables !
+            "givenName" => $user->getGivenName(),
+            "familyName" => $user->getFamilyName(),
+            "email" => $user->getEmail()
+        ];
+
         return $recipients;
     }
 }

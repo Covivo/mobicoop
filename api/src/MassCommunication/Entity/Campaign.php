@@ -33,6 +33,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use App\Communication\Entity\Medium;
 use App\User\Entity\User;
 use App\MassCommunication\Controller\CampaignSend;
+use App\MassCommunication\Controller\CampaignSendTest;
 
 /**
  * A mass communication campaign.
@@ -53,6 +54,11 @@ use App\MassCommunication\Controller\CampaignSend;
  *              "method"="GET",
  *              "controller"=CampaignSend::class,
  *              "path"="/campaigns/{id}/send"
+ *          },
+ *          "send-test"={
+ *              "method"="GET",
+ *              "controller"=CampaignSendTest::class,
+ *              "path"="/campaigns/{id}/send-test"
  *          },
  *      }
  * )
