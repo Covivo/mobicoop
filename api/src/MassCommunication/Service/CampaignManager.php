@@ -146,7 +146,7 @@ class CampaignManager
     {
         // call the service
         $this->massEmailProvider->send(
-            '** TEST CAMPAGNE EMAIL ** '.$campaign->getSubject(),
+            $campaign->getSubject(),
             $campaign->getFromName(),
             $campaign->getEmail(),
             $campaign->getReplyTo(),
