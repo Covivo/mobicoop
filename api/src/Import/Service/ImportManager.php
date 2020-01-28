@@ -102,7 +102,7 @@ class ImportManager
      */
     public function treatUserImport(string $origin)
     {
-        set_time_limit(3600);
+        set_time_limit(7200);
         //gc_enable();
         
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
