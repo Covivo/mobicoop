@@ -543,7 +543,7 @@ class ResultManager
                     $item->setTime($fromTime);
                 }
             } else {
-                if($matching['request']->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL){
+                if ($matching['request']->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
 
                     // Set the date to the carpooler's date
                     $item->setDate($matching['request']->getProposalRequest()->getCriteria()->getFromDate());
@@ -582,8 +582,7 @@ class ResultManager
                     }
 
                     $item->setTime($fromTime);
-                }
-                else{
+                } else {
                     // the search or ad is regular => no date
                     // we have to find common days (if it's a search the common days should be the carpooler days)
                     // we check if pickup times have been calculated already
@@ -1031,7 +1030,7 @@ class ResultManager
                 }
                 $item->setTime($fromTime);
             } else {
-                if($matching['offer']->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL){
+                if ($matching['offer']->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
 
                     // Set the date to the carpooler's date
                     $item->setDate($matching['offer']->getProposalOffer()->getCriteria()->getFromDate());
@@ -1057,8 +1056,7 @@ class ResultManager
                         $fromTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                     }
                     $item->setTime($fromTime);
-                }
-                else{
+                } else {
                     // the search or ad is regular => no date
                     // we have to find common days (if it's a search the common days should be the carpooler days)
                     // we check if pickup times have been calculated already
