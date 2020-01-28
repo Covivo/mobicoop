@@ -132,7 +132,8 @@ class CarpoolController extends AbstractController
                 "mid" => $this->midPrice,
                 "high" => $this->highPrice,
                 "forbidden" => $this->forbiddenPrice,
-            ]
+            ],
+            "regular" => $this->defaultRegular
         ]);
     }
         
@@ -151,7 +152,8 @@ class CarpoolController extends AbstractController
                     "mid" => $this->midPrice,
                     "high" => $this->highPrice,
                     "forbidden" => $this->forbiddenPrice
-                ]
+                ],
+                "regular" => $this->defaultRegular
             ]
         );
     }
@@ -179,7 +181,8 @@ class CarpoolController extends AbstractController
                     "mid" => $this->midPrice,
                     "high" => $this->highPrice,
                     "forbidden" => $this->forbiddenPrice
-                ]
+                ],
+                "regular" => $this->defaultRegular
             ]
         );
     }
