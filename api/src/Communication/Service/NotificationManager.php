@@ -40,6 +40,7 @@ use App\Carpool\Entity\Matching;
 use App\Communication\Entity\Recipient;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Ask;
+use App\Communication\Entity\Message;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
@@ -196,6 +197,9 @@ class NotificationManager
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'event' => $object];
                     break;
+                case Message::class:
+                    $titleContext = [];
+                    $bodyContext = ['text'=>$object->getText()];
             }
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
