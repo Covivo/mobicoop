@@ -408,7 +408,7 @@ class ResultItem
         return $this->toDate;
     }
 
-    public function setToDate(\DateTimeInterface $toDate): self
+    public function setToDate(?\DateTimeInterface $toDate): self
     {
         $this->toDate = $toDate;
 
