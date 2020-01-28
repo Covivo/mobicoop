@@ -238,16 +238,6 @@
             class="birthYear"
           />
 
-          <!--GeoComplete-->
-          <GeoComplete
-            :url="geoSearchUrl"
-            :label="$t('models.user.homeTown.label')"
-            :token="user ? user.geoToken : ''"
-            :init-address="user.homeAddress ? user.homeAddress : null"
-            :display-name-in-selected="false"
-            @address-selected="homeAddressSelected"
-          />
-
           <!--NewsSubscription-->
           <v-row>
             <v-col>
@@ -302,6 +292,37 @@
             {{ $t('ui.button.save') }}
           </v-btn>
         </v-form>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <!--GeoComplete-->
+        <GeoComplete
+          :url="geoSearchUrl"
+          :label="$t('models.user.homeTown.label')"
+          :token="user ? user.geoToken : ''"
+          :init-address="homeAddress"
+          :display-name-in-selected="false"
+          @address-selected="homeAddressSelected"
+        />
+      </v-col>
+      <v-col 
+        cols="4" 
+        xl="4" 
+        sm="8" 
+        class="justify-center"
+      >
+        <v-btn 
+          rounded 
+          color='secondary' 
+          class="mt-4" 
+          :disabled='disabledAddress' 
+          :loading='false' 
+          type="button"
+          @click='updateAddress' 
+        >
+          {{$t('address.update.label')}}
+        </v-btn>
       </v-col>
     </v-row>
     <v-row class="text-left title font-weight-bold">
@@ -444,7 +465,7 @@ export default {
       givenName: this.user.givenName,
       familyName: this.user.familyName,
       birthYear: this.user.birthYear,
-      homeAddress: null,
+      homeAddress: this.user.homeAddress ? this.user.homeAddress : null,
       phoneToken: this.user.phoneToken,
       phoneValidatedDate: this.user.phoneValidatedDate,
       token: null,
@@ -476,7 +497,9 @@ export default {
       phoneVerified: null,
       diplayVerification: this.user.telephone ? true : false,
       loadingToken: false,
-      loadingValidatePhone: false
+      loadingValidatePhone: false,
+      disabledAddress: true,
+      loadingAddress: false
     };
   },
   computed : {
@@ -493,6 +516,7 @@ export default {
   methods: {
     homeAddressSelected(address){
       this.homeAddress = address;
+      this.disabledAddress = false;
     },
     validate () {
       if (this.$refs.form.validate()) {
@@ -506,7 +530,6 @@ export default {
       updateUser.append("familyName", this.familyName);
       updateUser.append("gender", this.gender);
       updateUser.append("givenName", this.givenName);
-      updateUser.append("homeAddress", JSON.stringify(this.user.homeAddress));
       updateUser.append("telephone", this.telephone);
       updateUser.append("birthYear", this.birthYear);
       updateUser.append("avatar", this.avatar);
@@ -532,6 +555,22 @@ export default {
           }
           this.urlAvatar = res.data.versions.square_800;
           this.displayFileUpload = false; 
+        });
+    },
+    updateAddress () {
+      this.loadingAddress = true;
+      this.homeAddress.id = this.user.homeAddress ? this.user.homeAddress.id : null;
+      axios
+        .post(this.$t('address.update.route'), this.homeAddress,
+          {
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
+        .then(res => {
+          this.homeAddress = res.data;
+          this.loadingAddress = false;
+          this.disabledAddress = true;
         });
     },
     avatarDelete () {

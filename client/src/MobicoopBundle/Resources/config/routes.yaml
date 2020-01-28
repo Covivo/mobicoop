@@ -51,6 +51,13 @@ user_sign_up_validation:
         email: ""
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
 
+# user update address
+user_homeAddress_update:
+    path:
+        fr: /utilisateur/profil/modifier/adresse
+        en: /user/profile/update/address   
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::UserAddressUpdate
+
 # profile update
 user_profile_update:
     path:

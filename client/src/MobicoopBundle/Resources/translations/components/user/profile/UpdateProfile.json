@@ -76,6 +76,12 @@
         },
         "buttons" : {
             "supprimerAccount" : "Supprimer mon compte"
+        },
+        "address" : {
+            "update" : {
+                "label": "Enregistrer adresse",
+                "route": "/utilisateur/profil/modifier/adresse"
+            }
         }
     },
     "en":{
