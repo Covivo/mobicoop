@@ -90,7 +90,7 @@ class Address
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read", "readUser"})
      * @ApiProperty(identifier=true)
      */
     private $id;
