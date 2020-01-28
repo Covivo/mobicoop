@@ -38,8 +38,8 @@ use App\Carpool\Entity\Matching;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
@@ -53,7 +53,7 @@ class SolidaryMatching
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups("readSolidary")
      */
     private $id;
 
@@ -61,7 +61,7 @@ class SolidaryMatching
      * @var Matching The matching.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching")
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $matching;
@@ -70,9 +70,9 @@ class SolidaryMatching
      * @var Solidary The solidary record.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Solidary")
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Solidary", inversedBy="solidaryMatchings")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read"})
+     * @Groups({"readSolidary"})
      * @MaxDepth(1)
      */
     private $solidary;
@@ -81,7 +81,7 @@ class SolidaryMatching
      * @var Volunteer The volunteer if needed.
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Volunteer")
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $volunteer;
 
@@ -89,7 +89,7 @@ class SolidaryMatching
      * @var string A comment about the solidary matching.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $comment;
 
@@ -97,7 +97,7 @@ class SolidaryMatching
      * @var \DateTimeInterface Creation date of the solidary record.
      *
      * @ORM\Column(type="datetime")
-     * @Groups("read")
+     * @Groups("readSolidary")
      */
     private $createdDate;
 
@@ -105,7 +105,7 @@ class SolidaryMatching
      * @var \DateTimeInterface Updated date of the solidary record.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("read")
+     * @Groups("readSolidary")
      */
     private $updatedDate;
 

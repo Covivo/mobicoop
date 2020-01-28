@@ -41,8 +41,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={
  *     "get",
@@ -63,7 +63,7 @@ class Solidary
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups("readSolidary")
      */
     private $id;
 
@@ -72,7 +72,7 @@ class Solidary
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $status;
 
@@ -80,7 +80,7 @@ class Solidary
      * @var bool Social assist.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $assisted;
 
@@ -90,7 +90,7 @@ class Solidary
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaries")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $structure;
 
@@ -100,7 +100,7 @@ class Solidary
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="solidaries")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $subject;
 
@@ -109,7 +109,7 @@ class Solidary
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $proposal;
@@ -120,7 +120,7 @@ class Solidary
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solidaries")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read", "write"})
+     * @Groups({"readSolidary", "writeSolidary"})
      * @MaxDepth(1)
      */
     private $user;
@@ -129,7 +129,7 @@ class Solidary
      * @var \DateTimeInterface Deadline date of the solidary record.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("read")
+     * @Groups("readSolidary")
      */
     private $deadlineDate;
 
@@ -138,7 +138,7 @@ class Solidary
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $regularDetail;
 
@@ -146,15 +146,24 @@ class Solidary
      * @var ArrayCollection|null The special needs for this solidary record.
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $needs;
+
+    /**
+     * @var ArrayCollection|null Solidary matchings.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
+     * @Groups("readSolidary")
+     * @MaxDepth(1)
+     */
+    private $solidaryMatchings;
 
     /**
      * @var \DateTimeInterface Creation date of the solidary record.
      *
      * @ORM\Column(type="datetime")
-     * @Groups("read")
+     * @Groups("readSolidary")
      */
     private $createdDate;
 
@@ -162,13 +171,14 @@ class Solidary
      * @var \DateTimeInterface Updated date of the solidary record.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("read")
+     * @Groups("readSolidary")
      */
     private $updatedDate;
 
     public function __construct()
     {
         $this->needs = new ArrayCollection();
+        $this->solidaryMatchings = new ArrayCollection();
     }
 
     public function getId(): int
@@ -290,6 +300,29 @@ class Solidary
     {
         if ($this->needs->contains($need)) {
             $this->needs->removeElement($need);
+        }
+        
+        return $this;
+    }
+
+    public function getSolidaryMatchings()
+    {
+        return $this->solidaryMatchings->getValues();
+    }
+    
+    public function addSolidaryMatching(SolidaryMatching $solidaryMatching): self
+    {
+        if (!$this->solidaryMatchings->contains($solidaryMatching)) {
+            $this->solidaryMatchings[] = $solidaryMatching;
+        }
+        
+        return $this;
+    }
+    
+    public function removeSolidaryMatching(SolidaryMatching $solidaryMatching): self
+    {
+        if ($this->solidaryMatchings->contains($solidaryMatching)) {
+            $this->solidaryMatchings->removeElement($solidaryMatching);
         }
         
         return $this;

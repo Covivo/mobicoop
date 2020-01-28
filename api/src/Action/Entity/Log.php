@@ -51,8 +51,8 @@ use App\MassCommunication\Entity\Campaign;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"readLog"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeLog"}}
  *      },
  *      collectionOperations={"get"},
  *      itemOperations={"get"}
@@ -69,15 +69,16 @@ class Log
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("read")
+     * @Groups("readLog")
      */
     private $id;
 
     /**
      * @var \DateTimeInterface Creation date of the log action.
      *
+     * @Assert\NotBlank
      * @ORM\Column(type="datetime")
-     * @Groups("read")
+     * @Groups("readLog")
      */
     private $date;
 
@@ -87,7 +88,7 @@ class Log
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="logs")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"readLog","writeLog"})
      * @MaxDepth(1)
      */
     private $user;
@@ -95,9 +96,10 @@ class Log
     /**
      * @var Action The action.
      *
+     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Action\Entity\Action")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"readLog","writeLog"})
      * @MaxDepth(1)
      */
     private $action;
@@ -106,7 +108,7 @@ class Log
      * @var User|null Admin if the action is made by an administrator for a user.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="logsAdmin")
-     * @Groups({"read","write"})
+     * @Groups({"readLog","writeLog"})
      */
     private $admin;
 
@@ -114,7 +116,7 @@ class Log
      * @var Proposal|null The proposal if the action concerns a proposal.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
-     * @Groups({"read","write"})
+     * @Groups({"readLog","writeLog"})
      */
     private $proposal;
 
@@ -122,7 +124,7 @@ class Log
      * @var Matching|null The matching if the action concerns a matching.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching")
-     * @Groups({"read","write"})
+     * @Groups({"readLog","writeLog"})
      */
     private $matching;
 
@@ -130,7 +132,7 @@ class Log
      * @var Ask|null The ask if the action concerns an ask.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask")
-     * @Groups({"read","write"})
+     * @Groups({"readLog","writeLog"})
      */
     private $ask;
 
@@ -138,7 +140,7 @@ class Log
      * @var Article|null The article if the action concerns an article.
      *
      * @ORM\ManyToOne(targetEntity="\App\Article\Entity\Article")
-     * @Groups({"read","write"})
+     * @Groups({"readLog","writeLog"})
      */
     private $article;
 
@@ -146,7 +148,7 @@ class Log
      * @var Event|null The event if the action concerns an event.
      *
      * @ORM\ManyToOne(targetEntity="\App\Event\Entity\Event")
-     * @Groups({"read","write"})
+     * @Groups({"readLog","writeLog"})
      */
     private $event;
 
@@ -154,7 +156,7 @@ class Log
      * @var Community|null The community if the action concerns a community.
      *
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community")
-     * @Groups({"read","write"})
+     * @Groups({"readLog","writeLog"})
      */
     private $community;
 
@@ -162,7 +164,7 @@ class Log
      * @var Solidary|null The solidary record if the action concerns a solidary record.
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Solidary")
-     * @Groups({"read","write"})
+     * @Groups({"readLog","writeLog"})
      */
     private $solidary;
 
@@ -170,7 +172,7 @@ class Log
      * @var Territory|null The territory if the action concerns a territory.
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Territory")
-     * @Groups({"read","write"})
+     * @Groups({"readLog","writeLog"})
      */
     private $territory;
 
@@ -178,7 +180,7 @@ class Log
      * @var Car|null The car if the action concerns a car.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\Car")
-     * @Groups({"read","write"})
+     * @Groups({"readLog","writeLog"})
      */
     private $car;
 
@@ -186,7 +188,7 @@ class Log
      * @var User|null The user if the action concerns a user.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
-     * @Groups({"read","write"})
+     * @Groups({"readLog","writeLog"})
      */
     private $userRelated;
 
@@ -194,7 +196,7 @@ class Log
      * @var Message|null The message if the action concerns a message.
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message")
-     * @Groups({"read","write"})
+     * @Groups({"readLog","writeLog"})
      */
     private $message;
 
@@ -202,7 +204,7 @@ class Log
      * @var Campaign|null The campaign if the action concerns a campaign.
      *
      * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign")
-     * @Groups({"read","write"})
+     * @Groups({"readLog","writeLog"})
      */
     private $campaign;
 

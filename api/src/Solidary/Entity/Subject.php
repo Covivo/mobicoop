@@ -27,6 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
@@ -40,11 +41,11 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
+ *      collectionOperations={"get","post"},
+ *      itemOperations={"get","put","delete"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
@@ -59,7 +60,7 @@ class Subject
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("read")
+     * @Groups("readSolidary")
      */
     private $id;
 
@@ -68,15 +69,18 @@ class Subject
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $label;
 
     /**
      * @var Structure Structure of the subject.
      *
+     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="subjects")
-     * @Groups({"read","write"})
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $structure;
 
@@ -84,7 +88,7 @@ class Subject
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read"})
+     * @Groups({"readSolidary"})
      */
     private $createdDate;
 
@@ -92,7 +96,7 @@ class Subject
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read"})
+     * @Groups({"readSolidary"})
      */
     private $updatedDate;
 
@@ -100,7 +104,7 @@ class Subject
      * @var ArrayCollection|null The solidary records for this subject.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="subject", cascade={"remove"}, orphanRemoval=true)
-     * @Groups("read")
+     * @Groups("readSolidary")
      */
     private $solidaries;
 

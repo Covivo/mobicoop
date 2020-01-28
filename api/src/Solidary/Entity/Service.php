@@ -40,11 +40,11 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
+ *      collectionOperations={"get","post"},
+ *      itemOperations={"get","put","delete"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
@@ -59,7 +59,7 @@ class Service
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("read")
+     * @Groups("readSolidary")
      */
     private $id;
 
@@ -68,15 +68,17 @@ class Service
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $label;
 
     /**
      * @var Structure Structure of the service.
      *
+     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="services")
-     * @Groups({"read","write"})
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $structure;
 
@@ -84,7 +86,7 @@ class Service
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read"})
+     * @Groups({"readSolidary"})
      */
     private $createdDate;
 
@@ -92,7 +94,7 @@ class Service
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read"})
+     * @Groups({"readSolidary"})
      */
     private $updatedDate;
 

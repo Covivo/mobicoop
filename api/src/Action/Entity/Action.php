@@ -106,7 +106,7 @@ class Action
     /**
      * @var \DateTimeInterface Creation date.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime")
      * @Groups({"read"})
      */
     private $createdDate;

@@ -40,11 +40,11 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
+ *      collectionOperations={"get","post"},
+ *      itemOperations={"get","put","delete"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
@@ -59,7 +59,7 @@ class Need
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("read")
+     * @Groups("readSolidary")
      */
     private $id;
 
@@ -68,15 +68,17 @@ class Need
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"readSolidarySolidary"})
      */
     private $label;
 
     /**
      * @var Structure Structure of the need.
      *
+     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="needs")
-     * @Groups({"read","write"})
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readSolidarySolidary"})
      */
     private $structure;
 
@@ -84,7 +86,6 @@ class Need
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read"})
      */
     private $createdDate;
 
@@ -92,7 +93,6 @@ class Need
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read"})
      */
     private $updatedDate;
 
