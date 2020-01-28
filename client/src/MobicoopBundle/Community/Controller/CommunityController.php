@@ -232,7 +232,12 @@ class CommunityController extends AbstractController
             $communityUser->setLogin($request->request->get("credential1"));
             $communityUser->setPassword($request->request->get("credential2"));
             $communityUser = $communityManager->joinCommunity($communityUser);
-            (null === $communityUser) ? $error = true : $error = false;
+            if (null === $communityUser) {
+                $error = true;
+            } else {
+                $error = false;
+                $communityUser = [$communityUser]; // To fit the getCommunityUser behavior we need to have an array
+            }
         } else {
             (null !== $user) ? $communityUser = $communityManager->getCommunityUser($id, $user->getId()) : $communityUser = null;
         }
