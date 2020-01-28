@@ -113,7 +113,6 @@ class MandrillProvider implements MassEmailProviderInterface
             // $resultTest = array();
             // $resultTest[0]= array('email' => "julien.deschampt@mobicoop.org","status"=>"sent","_id" => "5d40ea17e5b64a1d93179026a87f17d2","reject_reason" => NULL);
             return $result;
-
         } catch (Mandrill_Error $e) {
             // Mandrill errors are thrown as exceptions
             echo 'A mandrill error occurred: ' . get_class($e) . ' - ' . $e->getMessage();
