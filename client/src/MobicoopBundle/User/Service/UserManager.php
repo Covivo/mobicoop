@@ -520,7 +520,8 @@ class UserManager
             }
             // Carpool punctual
             else {
-                $fromDate = new DateTime($ad["outwardDate"]);
+                $fromDate = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
+                //dump($fromDate);
                 // $linkedDate = isset($proposal["proposalLinked"]) ? new DateTime($proposal["proposalLinked"]["criteria"]["fromDate"]) : null;
                 // $date = isset($linkedDate) && $linkedDate > $fromDate ? $linkedDate : $fromDate;
                 $date = $fromDate;
@@ -558,7 +559,6 @@ class UserManager
                 $adsSanitized[$key][$ad["id"]]['return'] = $ad;
             }
         }
-
         return $adsSanitized;
     }
 

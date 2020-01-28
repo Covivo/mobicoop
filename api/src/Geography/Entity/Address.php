@@ -90,7 +90,7 @@ class Address
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read", "readUser"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -141,7 +141,7 @@ class Address
      * @var string|null The locality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","readUser","results","write","pt","mass","massCompute","threads","thread"})
+     * @Groups({"read","readUser","readEvent","results","write","pt","mass","massCompute","threads","thread"})
      * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
      */
     private $addressLocality;

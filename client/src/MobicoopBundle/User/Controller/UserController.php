@@ -139,15 +139,15 @@ class UserController extends AbstractController
                 $address->setLongitude($data['address']['longitude']);
                 $address->setMacroCounty($data['address']['macroCounty']);
                 $address->setMacroRegion($data['address']['macroRegion']);
-                $address->setName($translator->trans('homeAddress', [], 'signup'));
                 $address->setPostalCode($data['address']['postalCode']);
                 $address->setRegion($data['address']['region']);
                 $address->setStreet($data['address']['street']);
                 $address->setStreetAddress($data['address']['streetAddress']);
                 $address->setSubLocality($data['address']['subLocality']);
+                $address->setName($translator->trans('homeAddress', [], 'signup'));
                 $address->setHome(true);
+                $user->addAddress($address);
             }
-            $user->addAddress($address);
             // pass front info into user form
             $user->setEmail($data['email']);
             $user->setTelephone($data['telephone']);
@@ -292,40 +292,7 @@ class UserController extends AbstractController
             $data = $request->request;
             $file = $request->files->get('avatar');
             
-            if (!$homeAddress) {
-                $homeAddress = new Address();
-            }
-
-            $this->denyAccessUnlessGranted('address_update_self', $user);
-            
-            
-            $address=json_decode($data->get('homeAddress'), true);
-            $homeAddress->setAddressCountry($address['addressCountry']);
-            $homeAddress->setAddressLocality($address['addressLocality']);
-            $homeAddress->setCountryCode($address['countryCode']);
-            $homeAddress->setCounty($address['county']);
-            $homeAddress->setLatitude($address['latitude']);
-            $homeAddress->setLocalAdmin($address['localAdmin']);
-            $homeAddress->setLongitude($address['longitude']);
-            $homeAddress->setMacroCounty($address['macroCounty']);
-            $homeAddress->setMacroRegion($address['macroRegion']);
-            $homeAddress->setPostalCode($address['postalCode']);
-            $homeAddress->setRegion($address['region']);
-            $homeAddress->setStreet($address['street']);
-            $homeAddress->setStreetAddress($address['streetAddress']);
-            $homeAddress->setSubLocality($address['subLocality']);
-            $homeAddress->setName($translator->trans('homeAddress', [], 'signup'));
-            $homeAddress->setHome(true);
-            
-            if (is_null($homeAddress->getId()) && !empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
-                $user->addAddress($homeAddress);
-            } elseif (!empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
-                $addressData = $addressManager->updateAddress($homeAddress);
-                $reponseofmanager= $this->handleManagerReturnValue($addressData);
-                if (!empty($reponseofmanager)) {
-                    return $reponseofmanager;
-                }
-            }
+           
             // check if the phone number is new and if so change token and validationdate
             if ($user->getTelephone() != $data->get('telephone')) {
                 $user->setTelephone($data->get('telephone'));
@@ -506,6 +473,58 @@ class UserController extends AbstractController
     }
 
     /**
+     * Update Address of a user
+     * Ajax
+     */
+    public function UserAddressUpdate(AddressManager $addressManager, Request $request, UserManager $userManager, TranslatorInterface $translator)
+    {
+        $user = clone $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+        $this->denyAccessUnlessGranted('update', $user);
+        $this->denyAccessUnlessGranted('address_update_self', $user);
+
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+           
+            $homeAddress = new Address();
+            
+            $homeAddress->setAddressCountry($data['addressCountry']);
+            $homeAddress->setAddressLocality($data['addressLocality']);
+            $homeAddress->setCountryCode($data['countryCode']);
+            $homeAddress->setCounty($data['county']);
+            $homeAddress->setLatitude($data['latitude']);
+            $homeAddress->setLocalAdmin($data['localAdmin']);
+            $homeAddress->setLongitude($data['longitude']);
+            $homeAddress->setMacroCounty($data['macroCounty']);
+            $homeAddress->setMacroRegion($data['macroRegion']);
+            $homeAddress->setPostalCode($data['postalCode']);
+            $homeAddress->setRegion($data['region']);
+            $homeAddress->setStreet($data['street']);
+            $homeAddress->setStreetAddress($data['streetAddress']);
+            $homeAddress->setSubLocality($data['subLocality']);
+            $homeAddress->setName($translator->trans('homeAddress', [], 'signup'));
+            $homeAddress->setHome(true);
+            
+            if (($data['id']) == null) {
+                $user->addAddress($homeAddress);
+                $user = $userManager->updateUser($user);
+                $addressData = $addressManager->updateAddress($user->getHomeAddress());
+            } else {
+                $homeAddress->setId($data['id']);
+                $addressData = $addressManager->updateAddress($homeAddress);
+            }
+            $reponseofmanager= $this->handleManagerReturnValue($addressData);
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
+            }
+            return new Response(json_encode($addressData));
+        }
+    }
+
+    /**
      * Delete the user by anonymise
      *
      * @param UserManager $userManager
@@ -652,6 +671,7 @@ class UserController extends AbstractController
                 $results = $response->getResults()[0];
                 $results["canUpdateAsk"] = $response->getCanUpdateAsk(); // Because it's not in result
                 $results["askStatus"] = $response->getAskStatus(); // Because it's not in result
+                $results["alreadyask"] = false; // TODO put that verification api side
 
                 return new JsonResponse($results);
             } else {

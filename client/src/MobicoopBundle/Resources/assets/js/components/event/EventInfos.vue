@@ -37,7 +37,9 @@
           <h3 class="headline text-justify font-weight-bold">
             {{ event.name }}
           </h3>
-          <p
+          <p class="headline text-justify subtitle-1">
+            {{ event.address.addressLocality }}
+          </p><p
             v-if="displayDescription"
             class="body-1 pa-3"
             md="6"

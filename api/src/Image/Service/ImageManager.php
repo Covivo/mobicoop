@@ -267,6 +267,25 @@ class ImageManager
             }
         }
     }
+
+    /**
+     * Delete the image base and delete the Entry in DB
+     * @param Image $image
+     * @throws \ReflectionException
+     */
+    public function deleteBase(Image $image): void
+    {
+        $owner = $this->getOwner($image);
+        $types = $this->types[strtolower((new \ReflectionClass($owner))->getShortName())];
+
+        $baseImage = $types['folder']['base'].$types['folder']['plain']. $image->getFileName();
+        if (file_exists($baseImage)) {
+            unlink($baseImage);
+        }
+        $this->entityManager->remove($image);
+        $this->entityManager->flush();
+    }
+
     
     /**
      * Generates a version of an image.

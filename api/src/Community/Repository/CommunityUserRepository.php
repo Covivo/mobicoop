@@ -21,30 +21,32 @@
  *    LICENSE
  **************************/
 
-namespace App\Communication\EventSubscriber;
+namespace App\Community\Repository;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use App\Communication\Service\NotificationManager;
-use App\Communication\Event\InternalMessageReceivedEvent;
+use App\Community\Entity\CommunityUser;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
-class InternalMessageSubscriber implements EventSubscriberInterface
+class CommunityUserRepository
 {
-    private $notificationManager;
-
-    public function __construct(NotificationManager $notificationManager)
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->notificationManager = $notificationManager;
+        $this->repository = $entityManager->getRepository(CommunityUser::class);
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * Find communities by criteria
+     *
+     * @param array $criteria
+     * @return void
+     */
+    public function findBy(array $criteria)
     {
-        return [
-            InternalMessageReceivedEvent::NAME => 'onInternalMessageReceived'
-        ];
-    }
-
-    public function onInternalMessageReceived(InternalMessageReceivedEvent $event)
-    {
-        $this->notificationManager->notifies(InternalMessageReceivedEvent::NAME, $event->getRecipient()->getUser(), $event->getRecipient()->getMessage());
+        return $this->repository->findBy($criteria);
     }
 }

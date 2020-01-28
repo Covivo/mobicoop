@@ -54,13 +54,15 @@ class CarpoolController extends AbstractController
     private $highPrice;
     private $forbiddenPrice;
     private $defaultRole;
+    private $defaultRegular;
 
-    public function __construct($midPrice, $highPrice, $forbiddenPrice, $defaultRole)
+    public function __construct($midPrice, $highPrice, $forbiddenPrice, $defaultRole, bool $defaultRegular)
     {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
         $this->forbiddenPrice = $forbiddenPrice;
         $this->defaultRole = $defaultRole;
+        $this->defaultRegular = $defaultRegular;
     }
     
     /**
@@ -112,7 +114,8 @@ class CarpoolController extends AbstractController
                 "mid" => $this->midPrice,
                 "high" => $this->highPrice,
                 "forbidden" => $this->forbiddenPrice
-            ]
+            ],
+            "regular" => $this->defaultRegular
         ]);
     }
 
@@ -129,7 +132,8 @@ class CarpoolController extends AbstractController
                 "mid" => $this->midPrice,
                 "high" => $this->highPrice,
                 "forbidden" => $this->forbiddenPrice,
-            ]
+            ],
+            "regular" => $this->defaultRegular
         ]);
     }
         
@@ -148,7 +152,8 @@ class CarpoolController extends AbstractController
                     "mid" => $this->midPrice,
                     "high" => $this->highPrice,
                     "forbidden" => $this->forbiddenPrice
-                ]
+                ],
+                "regular" => $this->defaultRegular
             ]
         );
     }
@@ -176,7 +181,8 @@ class CarpoolController extends AbstractController
                     "mid" => $this->midPrice,
                     "high" => $this->highPrice,
                     "forbidden" => $this->forbiddenPrice
-                ]
+                ],
+                "regular" => $this->defaultRegular
             ]
         );
     }
