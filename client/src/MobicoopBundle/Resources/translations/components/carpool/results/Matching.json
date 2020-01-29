@@ -6,6 +6,7 @@
     "carpoolUrl": "/covoiturage/demande",
     "contactUrl": "/covoiturage/contact",
     "mailboxUrl": "/utilisateur/messages",
+    "externalJourneyUrl": "/covoiturage/rdexJourney",
     "search": "Recherche en cours...",
     "newSearch": "Nouvelle recherche",
     "matchingNumber": "Aucune annonce en covoiturage trouvée... | {number} annonce en covoiturage trouvée | {number} annonces en covoiturage trouvées",
@@ -25,6 +26,7 @@
     "carpoolUrl": "/carpool/ask",
     "contactUrl": "/carpool/contact",
     "mailboxUrl": "/user/messages",
+    "externalJourneyUrl": "/carpool/rdexJourney",
     "search": "Searching...",
     "matchingNumber": "No carpooling ad found... | {number} carpooling ad found | {number} carpooling ads found",
     "snackBar": {

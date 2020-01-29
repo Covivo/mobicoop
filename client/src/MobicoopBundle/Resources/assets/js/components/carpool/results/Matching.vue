@@ -187,8 +187,11 @@ export default {
     geoSearchUrl: {
       type: String,
       default: null
+    },
+    externalJourneyProvider: {
+      type: String,
+      default:null
     }
-    
   },
   data : function() {
     return {
@@ -197,6 +200,7 @@ export default {
       proposal: null,
       result: null,
       loading : true,
+      loadingExternal : true,
       results: null,
       lOrigin: null,
       lDestination: null,
@@ -227,6 +231,7 @@ export default {
   },
   created() {
     this.search();
+    //    this.searchExternalJourneys();
   },
   methods :{
     carpool(carpool) {
@@ -287,9 +292,37 @@ export default {
       }
 
     },
-    searchExternalJourneys(){
-      this.loading = true;
-    },
+    // searchExternalJourneys(){
+    //   this.loadingExternal = true;
+    //   let postParams = {
+    //     "provider": this.externalJourneyProvider,
+    //     "driver": 1, // TO DO : Dynamic
+    //     "passenger": 0, // TO DO : Dynamic
+    //     "from_latitude": this.origin.latitude,
+    //     "from_longitude": this.origin.longitude,
+    //     "to_latitude": this.destination.latitude,
+    //     "to_longitude": this.destination.longitude
+    //   };
+    //   axios.post(this.$t("externalJourneyUrl"), postParams,
+    //     {
+    //       headers:{
+    //         'content-type': 'application/json'
+    //       }
+    //     })
+    //     .then((response) => {
+    //       this.loadingExternal = false;
+    //       console.error(response);
+    //       // this.results = response.data;
+    //       // if (this.results[0].id) {
+    //       //   this.lProposalId = this.results[0].id;
+    //       // }
+
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+
+    // },
     contact(params) {
       // console.log(params);
       axios.post(this.$t("contactUrl"), params,
