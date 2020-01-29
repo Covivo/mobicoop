@@ -86,48 +86,13 @@
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
             <v-tab-item value="carpools">
-              <!-- Matching results -->
-              <div v-if="loading">
-                <v-row
-                  v-for="n in 3"
-                  :key="n"
-                  class="text-left"
-                >
-                  <v-col cols="12">
-                    <v-skeleton-loader
-                      ref="skeleton"
-                      type="article"
-                      class="mx-auto"
-                    />
-                    <v-skeleton-loader
-                      ref="skeleton"
-                      type="actions"
-                      class="mx-auto"
-                    />
-                  </v-col>
-                </v-row>
-              </div>
-              <div v-else>
-                <v-row 
-                  v-for="(result,index) in results"
-                  :key="index"
-                  justify="center"
-                >
-                  <v-col
-                    cols="12"
-                    align="left"
-                  >
-                    <!-- Matching result -->
-                    <matching-result
-                      :result="result"
-                      :user="user"
-                      :distinguish-regular="distinguishRegular"
-                      :carpooler-rate="carpoolerRate"
-                      @carpool="carpool(result)"
-                    />
-                  </v-col>
-                </v-row>
-              </div>
+              <matching-results
+                :results="results"
+                :distinguish-regular="distinguishRegular"
+                :carpooler-rate="carpoolerRate"
+                :user="user"
+                @carpool="carpool"
+              />
             </v-tab-item>
             <v-tab-item value="otherCarpools">
               Les autres carpools
@@ -160,7 +125,7 @@ import Translations from "@translations/components/carpool/results/Matching.json
 import TranslationsClient from "@clientTranslations/components/carpool/results/Matching.json";
 import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
-import MatchingResult from "@components/carpool/results/MatchingResult";
+import MatchingResults from "@components/carpool/results/MatchingResults";
 import MatchingJourney from "@components/carpool/results/MatchingJourney";
 import Search from "@components/carpool/search/Search";
 
@@ -169,7 +134,7 @@ export default {
   components: {
     MatchingHeader,
     MatchingFilter,
-    MatchingResult,
+    MatchingResults,
     MatchingJourney,
     Search
   },
@@ -263,8 +228,8 @@ export default {
     this.search();
   },
   methods :{
-    carpool(result) {
-      this.result = result;
+    carpool(carpool) {
+      this.result = carpool;
       // open the dialog
       this.carpoolDialog = true;
     },
