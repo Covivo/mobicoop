@@ -50,6 +50,7 @@ use App\Image\Entity\Image;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
 use App\User\Controller\UserRegistration;
+use App\User\Controller\UserDelegateRegistration;
 use App\User\Controller\UserPermissions;
 use App\User\Controller\UserAlerts;
 use App\User\Controller\UserAlertsUpdate;
@@ -146,12 +147,67 @@ use App\User\EntityListener\UserListener;
  *                          "required" = true,
  *                          "example" = "1997-08-14T00:00:00+00:00",
  *                          "description" = "User's birthdate"
- *                      },
+ *                      }
+ *                  }
+ *              }
+ *          },
+ *          "delegateRegistration"={
+ *              "method"="POST",
+ *              "path"="/users/register",
+ *              "controller"=UserDelegateRegistration::class,
+ *              "swagger_context" = {
+ *                  "parameters" = {
  *                      {
- *                          "name" = "validatedDateToken",
+ *                          "name" = "givenName",
  *                          "type" = "string",
  *                          "required" = true,
- *                          "description" = "A token to be send to the user for email validation purpose"
+ *                          "description" = "User's given name"
+ *                      },
+ *                      {
+ *                          "name" = "familyName",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's family name"
+ *                      },
+ *                      {
+ *                          "name" = "email",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's email"
+ *                      },
+ *                      {
+ *                          "name" = "password",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "Clear version of the password"
+ *                      },
+ *                      {
+ *                          "name" = "gender",
+ *                          "type" = "int",
+ *                          "enum" = {1,2,3},
+ *                          "required" = true,
+ *                          "description" = "User's gender (1 : female, 2 : male, 3 : other)"
+ *                      },
+ *                      {
+ *                          "name" = "birthDate",
+ *                          "type" = "string",
+ *                          "format" = "date",
+ *                          "required" = true,
+ *                          "example" = "1997-08-14T00:00:00+00:00",
+ *                          "description" = "User's birthdate"
+ *                      },
+ *                      {
+ *                          "name" = "userDelegate",
+ *                          "type" = "string",
+ *                          "required" = false,
+ *                          "description" = "User IRI that creates the new user"
+ *                      },
+ *                      {
+ *                          "name" = "passwordSendtype",
+ *                          "type" = "int",
+ *                          "enum" = {0,1,2},
+ *                          "required" = true,
+ *                          "description" = "Password send type (0 : none, 1 : sms, 2 : email)"
  *                      }
  *                  }
  *              }
@@ -308,6 +364,10 @@ class User implements UserInterface, EquatableInterface
         "square_800"
     ];
 
+    const PWD_SEND_TYPE_NONE = 0;    // password not sent
+    const PWD_SEND_TYPE_SMS = 1;     // password sent by sms if phone present
+    const PWD_SEND_TYPE_EMAIL = 2;   // password sent by email
+
     /**
      * @var int The id of this user.
      *
@@ -385,6 +445,20 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","write","passwordUpdate"})
      */
     private $password;
+
+    /**
+     * @var string The clear password of the user, used for delagation (not persisted !).
+     *
+     * @Groups("write")
+     */
+    private $clearPassword;
+
+    /**
+     * @var int|null If indirect registration, how we want to send the password to the user (0 = not sent, 1 = by sms, 2 = by email)
+     *
+     * @Groups("write")
+     */
+    private $passwordSendType;
 
     /**
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
@@ -707,6 +781,8 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null A user may have many roles.
      *
      * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRole", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups("write")
+     * @MaxDepth(1)
      */
     private $userRoles;
 
@@ -856,6 +932,15 @@ class User implements UserInterface, EquatableInterface
      */
     private $facebookId;
 
+    /**
+     * @var User|null Admin that create the user.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @Groups({"readUser","write"})
+     * @MaxDepth(1)
+     */
+    private $userDelegate;
+
     public function __construct($status = null)
     {
         $this->addresses = new ArrayCollection();
@@ -977,6 +1062,30 @@ class User implements UserInterface, EquatableInterface
     {
         $this->password = $password;
 
+        return $this;
+    }
+
+    public function getClearPassword(): ?string
+    {
+        return $this->clearPassword;
+    }
+
+    public function setClearPassword(?string $clearPassword): self
+    {
+        $this->clearPassword = $clearPassword;
+
+        return $this;
+    }
+
+    public function getPasswordSendType(): ?int
+    {
+        return $this->passwordSendType;
+    }
+
+    public function setPasswordSendType(?int $passwordSendType): self
+    {
+        $this->passwordSendType = $passwordSendType;
+        
         return $this;
     }
 
@@ -2069,6 +2178,19 @@ class User implements UserInterface, EquatableInterface
         $this->facebookId = $facebookId;
         return $this;
     }
+
+    public function getUserDelegate(): ?User
+    {
+        return $this->userDelegate;
+    }
+
+    public function setUserDelegate(?User $userDelegate): self
+    {
+        $this->userDelegate = $userDelegate;
+
+        return $this;
+    }
+
 
     // DOCTRINE EVENTS
 

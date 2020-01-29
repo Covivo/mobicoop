@@ -48,6 +48,8 @@ use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Entity\UserNotification;
+use App\User\Event\UserDelegateRegisteredEvent;
+use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserGeneratePhoneTokenAskedEvent;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\User\Event\UserUpdatedSelfEvent;
@@ -80,7 +82,7 @@ class UserManager
     private $chat;
     private $music;
     private $smoke;
- 
+
     /**
         * Constructor.
         *
@@ -122,16 +124,25 @@ class UserManager
     /**
      * Registers a user.
      *
-     * @param User $user    The user to register
-     * @return User         The user created
+     * @param User      $user               The user to register
+     * @param boolean   $encodePassword     True to encode password
+     * @return User     The user created
      */
-    public function registerUser(User $user)
+    public function registerUser(User $user, bool $encodePassword=false)
     {
-        // default role : user registered full
-        $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL);
-        $userRole = new UserRole();
-        $userRole->setRole($role);
-        $user->addUserRole($userRole);
+        if (is_null($user->getUserRoles())) {
+            // default role : user registered full
+            $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL);
+            $userRole = new UserRole();
+            $userRole->setRole($role);
+            $user->addUserRole($userRole);
+        }
+
+        if ($encodePassword) {
+            $user->setClearPassword($user->getPassword());
+            $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
+        }
+
         // default phone display : restricted
         $user->setPhoneDisplay(User::PHONE_DISPLAY_RESTRICTED);
         // creation of the geotoken
@@ -154,11 +165,26 @@ class UserManager
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+        
         // creation of the alert preferences
         $user = $this->createAlerts($user);
+        
         // dispatch en event
-        $event = new UserRegisteredEvent($user);
-        $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
+        if (is_null($user->getUserDelegate())) {
+            // registration by the user itself
+            $event = new UserRegisteredEvent($user);
+            $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
+        } else {
+            // delegate registration
+            $event = new UserDelegateRegisteredEvent($user);
+            $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
+            // send password ?
+            if ($user->getPasswordSendType() == User::PWD_SEND_TYPE_SMS) {
+                $event = new UserDelegateRegisteredPasswordSendEvent($user);
+                $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
+            }
+        }
+        
         // return the user
         return $user;
     }
