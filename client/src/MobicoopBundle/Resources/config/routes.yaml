@@ -332,9 +332,10 @@ rdex_provider:
 
 # rdex journey (AJAX)
 rdex_journey:
+    methods: [POST]
     path:
-        fr: /journey/rdex
-        en: /journey/rdex
+        fr: /covoiturage/rdexJourney
+        en: /carpool/rdexJourney
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney
 
 # delete an ad (AJAX)
