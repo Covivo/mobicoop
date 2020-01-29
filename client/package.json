@@ -30,7 +30,7 @@
     "url": "https://gitlab.com/mobicoop/mobicoop/issues"
   },
   "browserslist": [
-    "last 2 versions",
+    ">0.25%",
     "ios >= 8"
   ],
   "homepage": "https://gitlab.com/mobicoop/mobicoop#README",
