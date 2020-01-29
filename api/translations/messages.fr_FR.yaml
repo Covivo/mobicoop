@@ -98,6 +98,8 @@ wellTakenIntoAccount: "est bien prise en compte"
 clickHereToConfirm: "Veuillez cliquer sur ce lien pour confirmer votre email"
 orUseTheValidationCode: "Ou utilisez le code de validation directement sur le site"
 urlEmailValidation: "/utilisateur/inscription/validation/"
+yourPasswordIs: "Votre mot de passe est"
+yourPasswordHasBeenSendBySms: "Votre mot de passe vous a été envoyé par SMS."
 
 # USER_UPDATED_SELF
 
