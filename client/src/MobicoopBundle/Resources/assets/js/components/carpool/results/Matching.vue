@@ -21,7 +21,6 @@
             :time="time"
             :regular="regular"
           />
-
           <!-- Matching filter -->
           <matching-filter 
             :communities="communities"
@@ -76,48 +75,64 @@
               />
             </v-col>
           </v-row>
-          <!-- Matching results -->
-          <div v-if="loading">
-            <v-row
-              v-for="n in 3"
-              :key="n"
-              class="text-left"
-            >
-              <v-col cols="12">
-                <v-skeleton-loader
-                  ref="skeleton"
-                  type="article"
-                  class="mx-auto"
-                />
-                <v-skeleton-loader
-                  ref="skeleton"
-                  type="actions"
-                  class="mx-auto"
-                />
-              </v-col>
-            </v-row>
-          </div>
-          <div v-else>
-            <v-row 
-              v-for="(result,index) in results"
-              :key="index"
-              justify="center"
-            >
-              <v-col
-                cols="12"
-                align="left"
-              >
-                <!-- Matching result -->
-                <matching-result
-                  :result="result"
-                  :user="user"
-                  :distinguish-regular="distinguishRegular"
-                  :carpooler-rate="carpoolerRate"
-                  @carpool="carpool(result)"
-                />
-              </v-col>
-            </v-row>
-          </div>
+
+          <v-tabs v-model="modelTabs">
+            <v-tab href="#carpools">
+              {{ $t('tabs.carpools') }}
+            </v-tab>
+            <v-tab href="#otherCarpools">
+              {{ $t('tabs.otherCarpools') }}
+            </v-tab>
+          </v-tabs>
+          <v-tabs-items v-model="modelTabs">
+            <v-tab-item value="carpools">
+              <!-- Matching results -->
+              <div v-if="loading">
+                <v-row
+                  v-for="n in 3"
+                  :key="n"
+                  class="text-left"
+                >
+                  <v-col cols="12">
+                    <v-skeleton-loader
+                      ref="skeleton"
+                      type="article"
+                      class="mx-auto"
+                    />
+                    <v-skeleton-loader
+                      ref="skeleton"
+                      type="actions"
+                      class="mx-auto"
+                    />
+                  </v-col>
+                </v-row>
+              </div>
+              <div v-else>
+                <v-row 
+                  v-for="(result,index) in results"
+                  :key="index"
+                  justify="center"
+                >
+                  <v-col
+                    cols="12"
+                    align="left"
+                  >
+                    <!-- Matching result -->
+                    <matching-result
+                      :result="result"
+                      :user="user"
+                      :distinguish-regular="distinguishRegular"
+                      :carpooler-rate="carpoolerRate"
+                      @carpool="carpool(result)"
+                    />
+                  </v-col>
+                </v-row>
+              </div>
+            </v-tab-item>
+            <v-tab-item value="otherCarpools">
+              Les autres carpools
+            </v-tab-item>
+          </v-tabs-items>
         </v-col>
       </v-row>
     </v-container>
@@ -222,6 +237,7 @@ export default {
       lProposalId: this.proposalId,
       filters: null,
       newSearch: false,
+      modelTabs:"carpools"
     };
   },
   computed: {

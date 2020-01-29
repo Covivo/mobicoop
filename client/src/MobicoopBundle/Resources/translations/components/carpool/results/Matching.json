@@ -12,6 +12,10 @@
     "snackBar": {
       "success": "La prise de contact a bien été envoyée",
       "error": "Suite à un problème technique la prise de contact n'a pas pu être envoyée"
+    },
+    "tabs":{
+      "carpools":"Covoiturages {platform}",
+      "otherCarpools":"Autres covoiturages"
     }
   },
   "en":{
@@ -26,6 +30,10 @@
     "snackBar": {
       "success": "Contact has been successfuly established",
       "error": "Due to a technical difficuly, the contact hasn't been established"
+    },
+    "tabs":{
+      "carpools":"{platform} carpools",
+      "otherCarpools":"Other carpools"
     }
   }
 }
