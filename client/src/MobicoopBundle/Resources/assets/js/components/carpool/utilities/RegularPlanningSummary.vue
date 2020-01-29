@@ -7,13 +7,14 @@
 
       <!-- Outward -->
       <v-col
-        v-if="returnTrip && (outwardTime || returnTime)"
+        v-if="outwardTime"
         :cols="returnTrip ? '3' : '7'"
       >
         <v-row
           dense
         >
           <v-col
+            v-if="returnTrip"
             cols="auto"
           >
             {{ $t('outward') }}
