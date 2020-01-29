@@ -70,10 +70,19 @@ export default {
       type: Boolean,
       default: true
     },
+    loadingProp: {
+      type: Boolean,
+      default: false
+    }
   },
   data(){
     return {
-      loading:false
+      loading:this.loadingProp
+    }
+  },
+  watch:{
+    loadingProp(){
+      this.loading = this.loadingProp
     }
   },
   methods:{

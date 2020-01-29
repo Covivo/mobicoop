@@ -91,6 +91,7 @@
                 :distinguish-regular="distinguishRegular"
                 :carpooler-rate="carpoolerRate"
                 :user="user"
+                :loading-prop="loading"
                 @carpool="carpool"
               />
             </v-tab-item>
@@ -285,6 +286,9 @@ export default {
           });
       }
 
+    },
+    searchExternalJourneys(){
+      this.loading = true;
     },
     contact(params) {
       // console.log(params);
