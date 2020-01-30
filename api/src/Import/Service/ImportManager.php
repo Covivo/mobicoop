@@ -109,7 +109,7 @@ class ImportManager
 
         // create user_import rows
         $conn = $this->entityManager->getConnection();
-        $sql = "INSERT INTO user_import (user_id,origin,status,created_date) SELECT id, '" . $origin . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "' FROM user";
+        $sql = "INSERT INTO user_import (user_id,origin,status,created_date,user_external_id) SELECT id, '" . $origin . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',id FROM user";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
 

@@ -153,8 +153,6 @@ class GeoMatcher
         $routesOwner = [];
         $i=0;
 
-
-
         if (!$forMass) {
             foreach ($candidates as $keyActors=>$actors) {
                 foreach ($actors['passengers'] as $keyPassenger=>$candidateToMatch) {
@@ -218,7 +216,6 @@ class GeoMatcher
             $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_ARRAY);
     
             // we treat the routes to check if they match
-            //var_dump($ownerRoutes);die;
             foreach ($ownerRoutes as $ownerId=>$routes) {
                 if ($matches = $this->checkMassMultiMatch(
                     $candidates[$routesOwner[$ownerId]['actors']]['driver'],
