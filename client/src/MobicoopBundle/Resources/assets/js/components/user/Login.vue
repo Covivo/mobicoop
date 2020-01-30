@@ -18,8 +18,7 @@
     <v-row
       justify="center"
       align="center"
-      class="text-center"
-      style="height: 80%"
+      class="text-center mt-12 pt-12"
     >
       <v-col class="col-4">
         <v-alert
