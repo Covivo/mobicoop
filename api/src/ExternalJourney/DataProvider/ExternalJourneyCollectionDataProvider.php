@@ -26,11 +26,15 @@ namespace App\ExternalJourney\DataProvider;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use App\Carpool\Entity\Criteria;
+use App\Carpool\Entity\Result;
 use Symfony\Component\HttpFoundation\RequestStack;
 use GuzzleHttp\Client;
 
 use App\ExternalJourney\Entity\ExternalJourney;
 use App\ExternalJourney\Service\ExternalJourneyManager;
+use App\Geography\Entity\Address;
+use App\User\Entity\User;
 
 /**
  * Collection data provider for External Journey entity.
@@ -77,7 +81,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         $outwardMinDate = $this->request->get("outward_mindate");
         $outwardMaxDate = $this->request->get("outward_maxdate");
         $frequency = $this->request->get("frequency");
-
+        $rawJson = $this->request->get("rawJson");
         $days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
 
         // then we set these parameters
@@ -151,12 +155,130 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                 $data = $data->getBody()->getContents();
 
                 if ($data!=="") {
-                    return json_decode($data, true);
+                    if ($rawJson==1) {
+                        // rawJson flag set. We return RDEX format.
+                        return json_decode($data, true);
+                    } else {
+                        // No rawJson flag set or set to 0. We return array of Carpool -> Result.
+                        return $this->createResultFromRDEX($data);
+                    }
                 } else {
                     return [];
                 }
             }
         }
         return [];
+    }
+
+    public function createResultFromRDEX($data): array
+    {
+        $results = [];
+        $journeys = json_decode($data, true);
+        foreach ($journeys as $journey) {
+            $currentJourney = $journey['journeys'];
+            $result = new Result();
+
+            // The carpooler
+            $carpooler = new User();
+            $carpooler->setGivenName($currentJourney['driver']['alias']);
+            $carpooler->setGender(User::GENDER_FEMALE);
+            if ($currentJourney['driver']['gender']==="male") {
+                $carpooler->setGender(User::GENDER_MALE);
+            }
+            $result->setCarpooler($carpooler);
+
+
+
+            // Days checked
+            $result->setMonCheck($currentJourney['days']['monday']);
+            $result->setTueCheck($currentJourney['days']['tuesday']);
+            $result->setWedCheck($currentJourney['days']['wednesday']);
+            $result->setThuCheck($currentJourney['days']['thursday']);
+            $result->setFriCheck($currentJourney['days']['friday']);
+            $result->setSatCheck($currentJourney['days']['saturday']);
+            $result->setSunCheck($currentJourney['days']['sunday']);
+
+            // We check all times and if they are all the same, we set the time of the Result
+            $days = array('monday','tuesday','wednesday','thursday','friday','saturday','sunday');
+            $currentTime = "";
+            $returnTime = true;
+            $time = "";
+            foreach ($days as $day) {
+                // Only for checked days
+                if ($currentJourney['days'][$day]) {
+                    $time = $this->middleHour($currentJourney['outward'][$day]['mintime'], $currentJourney['outward'][$day]['maxtime'], $currentJourney['outward']['mindate'], $currentJourney['outward']['mindate']);
+                    
+                    // Only the first time to init the reference
+                    if ($currentTime==="") {
+                        $currentTime=$time;
+                    }
+                    
+                    if ($currentTime !== $time) {
+                        $returnTime = false;
+                        break;
+                    }
+                }
+            }
+
+            // Regular/Punctual treatment
+            if ($currentJourney['frequency']==="regular") {
+                // REGULAR
+                $result->setFrequency(Criteria::FREQUENCY_REGULAR);
+                $result->setOutwardTime(($time!=="") ? $time : null);
+            } else {
+                // PUNCTUAL
+                $result->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+                $result->setDate(new \Datetime($currentJourney['outward']['mindate']));
+            }
+
+            // Origin
+            $origin = new Address();
+            $origin->setLatitude($currentJourney['from']['latitude']);
+            $origin->setLongitude($currentJourney['from']['longitude']);
+            $origin->setStreetAddress($currentJourney['from']['address']);
+            $origin->setPostalCode($currentJourney['from']['postalcode']);
+            $origin->setAddressLocality($currentJourney['from']['city']);
+            $origin->setAddressCountry($currentJourney['from']['country']);
+            $result->setOrigin($origin);
+
+            // Destination
+            $destination = new Address();
+            $destination->setLatitude($currentJourney['to']['latitude']);
+            $destination->setLongitude($currentJourney['to']['longitude']);
+            $destination->setStreetAddress($currentJourney['to']['address']);
+            $destination->setPostalCode($currentJourney['to']['postalcode']);
+            $destination->setAddressLocality($currentJourney['to']['city']);
+            $destination->setAddressCountry($currentJourney['to']['country']);
+            $result->setDestination($destination);
+
+
+            // price - seats - distance - duration
+            $result->setTime(($time!=="") ? $time : null);
+            $result->setRoundedPrice(round(($currentJourney['distance'] / 1000) * $currentJourney['cost']['variable'], 2));
+            $result->setSeats($currentJourney['driver']['seats']);
+
+            // return trip ?
+            $result->setReturn(false);
+            if ($currentJourney["type"]==="round-trip") {
+                $result->setReturn(true);
+            }
+
+            $results[] = $result;
+        }
+
+        return $results;
+    }
+
+    public function middleHour($heureMin, $heureMax, $dateMin, $dateMax)
+    {
+        $min = \DateTime::createFromFormat('Y-m-d H:i:s', $dateMin . " " . $heureMin, new \DateTimeZone('UTC'));
+        $mintime = $min->getTimestamp();
+        $max = \DateTime::createFromFormat('Y-m-d H:i:s', $dateMax . " " . $heureMax, new \DateTimeZone('UTC'));
+        $maxtime = $max->getTimestamp();
+        $marge = ($maxtime - $mintime) / 2;
+        $middleHour = $mintime + $marge;
+        $returnHour = new \DateTime();
+        $returnHour->setTimestamp($middleHour);
+        return $returnHour;
     }
 }
