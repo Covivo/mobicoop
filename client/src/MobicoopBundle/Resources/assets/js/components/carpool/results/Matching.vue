@@ -78,9 +78,12 @@
 
           <v-tabs v-model="modelTabs">
             <v-tab href="#carpools">
-              {{ $t('tabs.carpools') }}
+              {{ $t('tabs.carpools', {'platform':platformName}) }}
             </v-tab>
-            <v-tab href="#otherCarpools">
+            <v-tab
+              v-if="externalRDEXJourneys"
+              href="#otherCarpools"
+            >
               {{ $t('tabs.otherCarpools') }}
             </v-tab>
           </v-tabs>
@@ -95,8 +98,18 @@
                 @carpool="carpool"
               />
             </v-tab-item>
-            <v-tab-item value="otherCarpools">
-              Les autres carpools
+            <v-tab-item
+              v-if="externalRDEXJourneys"
+              value="otherCarpools"
+            >
+              <matching-results
+                :results="null"
+                :distinguish-regular="distinguishRegular"
+                :carpooler-rate="carpoolerRate"
+                :user="user"
+                :loading-prop="loading"
+                @carpool="carpool"
+              />
             </v-tab-item>
           </v-tabs-items>
         </v-col>
@@ -188,9 +201,13 @@ export default {
       type: String,
       default: null
     },
-    externalJourneyProvider: {
+    externalRDEXJourneys: {
+      type: Boolean,
+      default: true
+    },
+    platformName: {
       type: String,
-      default:null
+      default: ""
     }
   },
   data : function() {
@@ -198,10 +215,11 @@ export default {
       locale: this.$i18n.locale,
       carpoolDialog: false,
       proposal: null,
+      results: null,
+      externalRDEXResults:null,
       result: null,
       loading : true,
       loadingExternal : true,
-      results: null,
       lOrigin: null,
       lDestination: null,
       lProposalId: this.proposalId,
@@ -231,7 +249,7 @@ export default {
   },
   created() {
     this.search();
-    //    this.searchExternalJourneys();
+    if(this.externalRDEXJourneys) this.searchExternalJourneys();
   },
   methods :{
     carpool(carpool) {
@@ -292,37 +310,31 @@ export default {
       }
 
     },
-    // searchExternalJourneys(){
-    //   this.loadingExternal = true;
-    //   let postParams = {
-    //     "provider": this.externalJourneyProvider,
-    //     "driver": 1, // TO DO : Dynamic
-    //     "passenger": 0, // TO DO : Dynamic
-    //     "from_latitude": this.origin.latitude,
-    //     "from_longitude": this.origin.longitude,
-    //     "to_latitude": this.destination.latitude,
-    //     "to_longitude": this.destination.longitude
-    //   };
-    //   axios.post(this.$t("externalJourneyUrl"), postParams,
-    //     {
-    //       headers:{
-    //         'content-type': 'application/json'
-    //       }
-    //     })
-    //     .then((response) => {
-    //       this.loadingExternal = false;
-    //       console.error(response);
-    //       // this.results = response.data;
-    //       // if (this.results[0].id) {
-    //       //   this.lProposalId = this.results[0].id;
-    //       // }
+    searchExternalJourneys(){
+      this.loadingExternal = true;
+      let postParams = {
+        "driver": 1, // TO DO : Dynamic
+        "passenger": 0, // TO DO : Dynamic
+        "from_latitude": this.origin.latitude,
+        "from_longitude": this.origin.longitude,
+        "to_latitude": this.destination.latitude,
+        "to_longitude": this.destination.longitude
+      };
+      axios.post(this.$t("externalJourneyUrl"), postParams,
+        {
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then((response) => {
+          this.loadingExternal = false;
+          this.externalRDEXResults = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-
-    // },
+    },
     contact(params) {
       // console.log(params);
       axios.post(this.$t("contactUrl"), params,

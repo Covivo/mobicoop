@@ -57,6 +57,7 @@ services:
             $forbiddenPrice: '%env(resolve:FORBIDDEN_PRICE)%'
             $defaultRole: '%env(resolve:CARPOOL_ROLE)%'
             $defaultRegular: '%env(bool:CARPOOL_SEARCH_REGULAR)%'
+            $platformName: '%env(resolve:APP_NAME)%'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
         resource: '@MobicoopBundle/Carpool/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager:
