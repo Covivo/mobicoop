@@ -35,7 +35,7 @@ If you want to use docker we  provide you a simple way to install/start everythi
 
 ⚡️ Do not forget to duplicate the .env  into a .env.local & edit the SIG_GEOCODER & SIG_GEOROUTER  
 
-If you want to work on mobicoop we cna provide you a some ip for those elements (they ar used for autococomplete & road calc)
+If you want to work on mobicoop we can provide you a some ip for those elements (they are used for autococomplete & road calc)
 
 
 

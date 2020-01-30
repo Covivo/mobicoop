@@ -567,7 +567,6 @@ class ProposalMatcher
         ) {
             $matchings = $this->checkPickUp($matchings);
         }
-        
 
         $this->logger->info("ProposalMatcher : completeMatchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
@@ -1339,6 +1338,20 @@ class ProposalMatcher
                                             'destination'=>$proposalFound['destination'],
                                             'latitude'=>$proposalFound['latitude'],
                                             'longitude'=>$proposalFound['longitude'],
+                                            'streetAddress'=>$proposalFound['streetAddress'],
+                                            'postalCode'=>$proposalFound['postalCode'],
+                                            'addressLocality'=>$proposalFound['addressLocality'],
+                                            'addressCountry'=>$proposalFound['addressCountry'],
+                                            'elevation'=>$proposalFound['elevation'],
+                                            'houseNumber'=>$proposalFound['houseNumber'],
+                                            'street'=>$proposalFound['street'],
+                                            'subLocality'=>$proposalFound['subLocality'],
+                                            'localAdmin'=>$proposalFound['localAdmin'],
+                                            'county'=>$proposalFound['county'],
+                                            'macroCounty'=>$proposalFound['macroCounty'],
+                                            'region'=>$proposalFound['region'],
+                                            'macroRegion'=>$proposalFound['macroRegion'],
+                                            'countryCode'=>$proposalFound['countryCode']
                                         ]
                                     ]
                                 ];
@@ -1348,6 +1361,20 @@ class ProposalMatcher
                                     'destination'=>$proposalFound['destination'],
                                     'latitude'=>$proposalFound['latitude'],
                                     'longitude'=>$proposalFound['longitude'],
+                                    'streetAddress'=>$proposalFound['streetAddress'],
+                                    'postalCode'=>$proposalFound['postalCode'],
+                                    'addressLocality'=>$proposalFound['addressLocality'],
+                                    'addressCountry'=>$proposalFound['addressCountry'],
+                                    'elevation'=>$proposalFound['elevation'],
+                                    'houseNumber'=>$proposalFound['houseNumber'],
+                                    'street'=>$proposalFound['street'],
+                                    'subLocality'=>$proposalFound['subLocality'],
+                                    'localAdmin'=>$proposalFound['localAdmin'],
+                                    'county'=>$proposalFound['county'],
+                                    'macroCounty'=>$proposalFound['macroCounty'],
+                                    'region'=>$proposalFound['region'],
+                                    'macroRegion'=>$proposalFound['macroRegion'],
+                                    'countryCode'=>$proposalFound['countryCode']
                                 ];
                                 if (!in_array($element, $aproposals[$proposalFound['pid']]['addresses'])) {
                                     $aproposals[$proposalFound['pid']]['addresses'][] = $element;
@@ -1548,6 +1575,8 @@ class ProposalMatcher
                         $waypoint->setDestination(true);
                     }
                     $waypoint->setAddress(clone $point['address']);
+                    $waypoint->setDuration($point['duration']);
+                    $waypoint->setRole($point['candidate']);
                     $matching->addWaypoint($waypoint);
                 }
     
@@ -1771,6 +1800,20 @@ class ProposalMatcher
                     $address = new Address();
                     $address->setLatitude($waypoint['latitude']);
                     $address->setLongitude($waypoint['longitude']);
+                    $address->setHouseNumber($waypoint['houseNumber']);
+                    $address->setStreet($waypoint['street']);
+                    $address->setStreetAddress($waypoint['streetAddress']);
+                    $address->setPostalCode($waypoint['postalCode']);
+                    $address->setSubLocality($waypoint['subLocality']);
+                    $address->setAddressLocality($waypoint['addressLocality']);
+                    $address->setLocalAdmin($waypoint['localAdmin']);
+                    $address->setCounty($waypoint['county']);
+                    $address->setMacroCounty($waypoint['macroCounty']);
+                    $address->setRegion($waypoint['region']);
+                    $address->setMacroRegion($waypoint['macroRegion']);
+                    $address->setAddressCountry($waypoint['addressCountry']);
+                    $address->setCountryCode($waypoint['countryCode']);
+                    $address->setElevation($waypoint['elevation']);
                     $addressesCandidate[] = $address;
                 }
                 $candidate->setAddresses($addressesCandidate);
