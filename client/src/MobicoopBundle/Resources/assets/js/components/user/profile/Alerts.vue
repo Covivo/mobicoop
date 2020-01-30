@@ -58,7 +58,6 @@ export default {
   },
   methods:{
     updateAlert(data){
-      console.error(data);
       let params = {
         id:data.id,
         active:data.active
