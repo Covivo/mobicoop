@@ -103,7 +103,7 @@
               value="otherCarpools"
             >
               <matching-results
-                :results="null"
+                :results="externalRDEXResults"
                 :distinguish-regular="distinguishRegular"
                 :carpooler-rate="carpoolerRate"
                 :user="user"
