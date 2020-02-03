@@ -225,6 +225,15 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                 // REGULAR
                 $result->setFrequency(Criteria::FREQUENCY_REGULAR);
                 $result->setOutwardTime(($time!=="") ? $time : null);
+
+                // We need to find the first valid date
+                $firsValidDay = new \DateTime();
+                $cptDay = 0;
+                while($cptDay<6 && !$currentJourney['days'][lcfirst($firsValidDay->format('l'))]){
+                    $cptDay++;
+                    $firsValidDay = new \DateTime("now +".$cptDay." days");
+                }
+                $result->setDate($firsValidDay);
             } else {
                 // PUNCTUAL
                 $result->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
