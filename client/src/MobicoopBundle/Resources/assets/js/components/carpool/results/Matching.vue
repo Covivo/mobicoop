@@ -25,6 +25,7 @@
           <!-- Matching filter -->
           <matching-filter 
             :communities="communities"
+            :disabled-filters="loading"
             @updateFilters="updateFilters" 
           />
 
