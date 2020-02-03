@@ -50,13 +50,15 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
     private const EXTERNAL_JOURNEY_HASH = "sha256";         // hash algorithm
 
     private $externalJourneyManager;
+    private $params;
 
     protected $request;
 
-    public function __construct(RequestStack $requestStack, ExternalJourneyManager $externalJourneyManager)
+    public function __construct(RequestStack $requestStack, ExternalJourneyManager $externalJourneyManager, $params)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->externalJourneyManager = $externalJourneyManager;
+        $this->params = $params;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -185,6 +187,16 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             $carpooler->setGender(User::GENDER_FEMALE);
             if ($currentJourney['driver']['gender']==="male") {
                 $carpooler->setGender(User::GENDER_MALE);
+            }
+            if(is_null($currentJourney['driver']['image'])){
+                foreach (json_decode($this->params['avatarSizes']) as $size) {
+                    if (in_array($size, User::AUTHORIZED_SIZES_DEFAULT_AVATAR)) {
+                        $carpooler->addAvatar($this->params['avatarDefaultFolder'].$size.".svg");
+                    }
+                }
+            }
+            else{
+                $carpooler->addAvatar($currentJourney['driver']['image']);
             }
             $result->setCarpooler($carpooler);
 
