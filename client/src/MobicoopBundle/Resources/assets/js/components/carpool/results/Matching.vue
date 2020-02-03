@@ -108,6 +108,7 @@
                 :carpooler-rate="carpoolerRate"
                 :user="user"
                 :loading-prop="loading"
+                :external-rdex-journeys="externalRDEXJourneys"
                 @carpool="carpool"
               />
             </v-tab-item>
@@ -299,7 +300,7 @@ export default {
           .then((response) => {
             this.loading = false;
             this.results = response.data;
-            if (this.results[0].id) {
+            if (this.results.length>0 && this.results[0].id) {
               this.lProposalId = this.results[0].id;
             }
 

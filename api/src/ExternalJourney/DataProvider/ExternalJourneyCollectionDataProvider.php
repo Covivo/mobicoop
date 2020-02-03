@@ -188,14 +188,13 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             if ($currentJourney['driver']['gender']==="male") {
                 $carpooler->setGender(User::GENDER_MALE);
             }
-            if(is_null($currentJourney['driver']['image'])){
+            if (is_null($currentJourney['driver']['image'])) {
                 foreach (json_decode($this->params['avatarSizes']) as $size) {
                     if (in_array($size, User::AUTHORIZED_SIZES_DEFAULT_AVATAR)) {
                         $carpooler->addAvatar($this->params['avatarDefaultFolder'].$size.".svg");
                     }
                 }
-            }
-            else{
+            } else {
                 $carpooler->addAvatar($currentJourney['driver']['image']);
             }
             $result->setCarpooler($carpooler);
@@ -295,6 +294,14 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                 $resultDriver = new ResultRole();
                 $result->setResultDriver($resultDriver);
             }
+
+            if (strpos($currentJourney['url'], 'http')) {
+                $result->setExternalUrl($currentJourney['url']);
+            } else {
+                $result->setExternalUrl('https://'.$currentJourney['url']);
+            }
+            $result->setExternalOrigin($currentJourney['origin']);
+            $result->setExternalOperator($currentJourney['operator']);
 
             $results[] = $result;
         }

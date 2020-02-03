@@ -70,6 +70,9 @@
             :carpooler="result.carpooler"
             :carpooler-rate="carpoolerRate"
             :user="user"
+            :external-rdex-journeys="externalRDEXJourneys"
+            :external-url="(result.externalUrl) ? result.externalUrl : null"
+            :external-origin="(result.externalOrigin) ? result.externalOrigin : null"
             @carpool="carpool"
           />
         </v-col>
@@ -112,6 +115,10 @@ export default {
       default: false
     },
     carpoolerRate: {
+      type: Boolean,
+      default: true
+    },
+    externalRDEXJourneys: {
       type: Boolean,
       default: true
     },

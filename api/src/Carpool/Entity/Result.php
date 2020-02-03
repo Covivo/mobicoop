@@ -268,6 +268,24 @@ class Result
      */
     private $acceptedAsk;
 
+    /**
+     * @var string Url of the result if it's an external result (like RDEX)
+     * @Groups("externalJourney")
+     */
+    private $externalUrl;
+
+    /**
+     * @var string Name of the external operator of the result if it's an external result (like RDEX)
+     * @Groups("externalJourney")
+     */
+    private $externalOperator;
+
+    /**
+     * @var string Origin of the result if it's an external result (like RDEX)
+     * @Groups("externalJourney")
+     */
+    private $externalOrigin;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -709,6 +727,42 @@ class Result
     public function setAcceptedAsk(?bool $acceptedAsk): self
     {
         $this->acceptedAsk = $acceptedAsk;
+
+        return $this;
+    }
+
+    public function getExternalUrl(): ?string
+    {
+        return $this->externalUrl;
+    }
+
+    public function setExternalUrl(?string $externalUrl): self
+    {
+        $this->externalUrl = $externalUrl;
+
+        return $this;
+    }
+
+    public function getExternalOperator(): ?string
+    {
+        return $this->externalOperator;
+    }
+
+    public function setExternalOperator(?string $externalOperator): self
+    {
+        $this->externalOperator = $externalOperator;
+
+        return $this;
+    }
+
+    public function getExternalOrigin(): ?string
+    {
+        return $this->externalOrigin;
+    }
+
+    public function setExternalOrigin(?string $externalOrigin): self
+    {
+        $this->externalOrigin = $externalOrigin;
 
         return $this;
     }
