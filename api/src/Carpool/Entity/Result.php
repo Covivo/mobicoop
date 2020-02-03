@@ -54,13 +54,13 @@ class Result
 
     /**
      * @var ResultRole|null The result with the requester as a driver and the carpooler as a passenger.
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $resultDriver;
 
     /**
      * @var ResultRole|null The result with the requester as a passenger and the carpooler as a driver.
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $resultPassenger;
 

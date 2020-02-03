@@ -28,6 +28,7 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Result;
+use App\Carpool\Entity\ResultRole;
 use Symfony\Component\HttpFoundation\RequestStack;
 use GuzzleHttp\Client;
 
@@ -229,7 +230,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                 // We need to find the first valid date
                 $firsValidDay = new \DateTime();
                 $cptDay = 0;
-                while($cptDay<6 && !$currentJourney['days'][lcfirst($firsValidDay->format('l'))]){
+                while ($cptDay<6 && !$currentJourney['days'][lcfirst($firsValidDay->format('l'))]) {
                     $cptDay++;
                     $firsValidDay = new \DateTime("now +".$cptDay." days");
                 }
@@ -270,6 +271,17 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             $result->setReturn(false);
             if ($currentJourney["type"]==="round-trip") {
                 $result->setReturn(true);
+            }
+
+            // We only set resultPassenger and resultDriver for the roles.
+            // We don't need the data.
+            if (isset($currentJourney['driver']) && !is_null($currentJourney['driver'])) {
+                $resultPassenger = new ResultRole();
+                $result->setResultPassenger($resultPassenger);
+            }
+            if (isset($currentJourney['passenger']) && !is_null($currentJourney['passenger'])) {
+                $resultDriver = new ResultRole();
+                $result->setResultDriver($resultDriver);
             }
 
             $results[] = $result;
