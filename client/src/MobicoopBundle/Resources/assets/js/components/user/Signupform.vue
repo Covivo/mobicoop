@@ -498,7 +498,7 @@ export default {
   methods: {
     maxDate() {
       let maxDate = new Date();
-      maxDate.setFullYear (maxDate.getFullYear() - 16);
+      maxDate.setFullYear (maxDate.getFullYear() - this.ageMin);
       return maxDate.toISOString().substr(0, 10);
     },
     selectedGeo(address) {
