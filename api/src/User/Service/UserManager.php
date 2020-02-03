@@ -130,7 +130,7 @@ class UserManager
      */
     public function registerUser(User $user, bool $encodePassword=false)
     {
-        if (is_null($user->getUserRoles())) {
+        if (count($user->getUserRoles()) == 0) {
             // default role : user registered full
             $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL);
             $userRole = new UserRole();
