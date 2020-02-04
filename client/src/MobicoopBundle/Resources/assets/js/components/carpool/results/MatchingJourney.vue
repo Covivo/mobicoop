@@ -165,7 +165,7 @@
                         class="text-center"
                       >
                         <v-btn
-                          v-if="!hideContact"
+                          v-if="!hideContact && lResult.pendingAsk == false && lResult.acceptedAsk == false"
                           color="primary"
                           :disabled="contactDisabled"
                           :loading="contactLoading"
@@ -334,7 +334,7 @@
       <v-spacer />
       <!-- Carpool (driver xor passenger) -->
       <v-btn
-        v-if="(driver ^ passenger) && step == 1 && lResult.alreadyask == 0"
+        v-if="(driver ^ passenger) && step == 1 && lResult.pendingAsk == false && lResult.acceptedAsk == false"
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
@@ -345,7 +345,7 @@
 
       <!-- Carpool (driver) --> 
       <v-btn
-        v-if="driver && passenger && lResult.alreadyask == 0"
+        v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false"
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
@@ -356,7 +356,7 @@
 
       <!-- Carpool (passenger) --> 
       <v-btn
-        v-if="driver && passenger && lResult.alreadyask == 0"
+        v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false"
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
@@ -365,7 +365,13 @@
         {{ $t('carpoolAsPassenger') }}
       </v-btn>
 
-      <p v-if="lResult.alreadyask == 1">
+      <p
+        v-if="lResult.pendingAsk == true || lResult.acceptedAsk == true"
+        class="warning--text font-weight-bold"
+      >
+        <v-icon color="warning">
+          mdi-alert
+        </v-icon>
         {{ $t('alreadyAskCarpool') }}
       </p>
 
@@ -390,7 +396,7 @@
 
       <!-- Step 2 (regular outward, no return) --> 
       <v-btn
-        v-if="step == 2 && !lResult.return && outwardTrip.length>0 && lResult.alreadyask == 0"
+        v-if="step == 2 && !lResult.return && outwardTrip.length>0 && lResult.pendingAsk == false && lResult.acceptedAsk == false"
         color="secondary"
         @click="driver ? carpool(1) : carpool(2)"
       >
@@ -399,7 +405,7 @@
 
       <!-- Step 3 (regular return) --> 
       <v-btn
-        v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0) && lResult.alreadyask == 0"
+        v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0) && lResult.pendingAsk == false && lResult.acceptedAsk == false"
         color="secondary"
         @click="driver ? carpool(1) : carpool(2)"
       >
