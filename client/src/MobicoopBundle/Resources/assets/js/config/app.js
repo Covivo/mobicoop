@@ -29,7 +29,7 @@ import Vuetify, {
   VTabs, VTabsItems, VTab, VTabItem, VCheckbox, VAvatar, VCard, VCardTitle, VCardActions, VDivider, VList, VListItem, VListItemContent, VListItemTitle, VListItemSubtitle,
   VSkeletonLoader, VSnackbar, VDataIterator, VOverlay, VDialog, VSlider, VCarousel, VCarouselItem, VSheet, VResponsive,
   VFileInput, VProgressCircular, VSimpleTable, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
-  VExpansionPanels,VExpansionPanel,VExpansionPanelHeader,VExpansionPanelContent,
+  VExpansionPanels,VExpansionPanel,VExpansionPanelHeader,VExpansionPanelContent, VBadge,
   // header
   VToolbar, VToolbarTitle, VToolbarItems, VBtn, VImg,
   // footer
@@ -43,7 +43,7 @@ Vue.use(Vuetify, {
     VTabs, VTabsItems, VTab, VTabItem, VCheckbox, VAvatar, VCard, VCardTitle, VCardActions, VDivider, VList, VListItem, VListItemContent, VListItemTitle, VListItemSubtitle,
     VSkeletonLoader, VSnackbar, VDataIterator, VOverlay, VDialog, VSlider, VCarousel, VCarouselItem, VSheet, VResponsive,
     VFileInput, VProgressCircular, VSimpleTable, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
-    VExpansionPanels,VExpansionPanel,VExpansionPanelHeader,VExpansionPanelContent,
+    VExpansionPanels,VExpansionPanel,VExpansionPanelHeader,VExpansionPanelContent, VBadge,
     // header
     VToolbar, VToolbarTitle, VToolbarItems, VBtn, VImg,
     // footer

@@ -135,7 +135,7 @@ class Ad
     /**
      * @var array|null The waypoints for the outward.
      *
-     * @Groups({"read","write"})
+     * @Groups({"read","write","results"})
      */
     private $outwardWaypoints;
 

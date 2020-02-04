@@ -57,8 +57,9 @@ class CarpoolController extends AbstractController
     private $defaultRole;
     private $defaultRegular;
     private $platformName;
+    private $carpoolRDEXJourneys;
 
-    public function __construct($midPrice, $highPrice, $forbiddenPrice, $defaultRole, bool $defaultRegular, string $platformName)
+    public function __construct($midPrice, $highPrice, $forbiddenPrice, $defaultRole, bool $defaultRegular, string $platformName, bool $carpoolRDEXJourneys)
     {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -66,6 +67,7 @@ class CarpoolController extends AbstractController
         $this->defaultRole = $defaultRole;
         $this->defaultRegular = $defaultRegular;
         $this->platformName = $platformName;
+        $this->carpoolRDEXJourneys = $carpoolRDEXJourneys;
     }
     
     /**
@@ -233,13 +235,15 @@ class CarpoolController extends AbstractController
      * Ad results.
      * (POST)
      */
-    public function carpoolAdResults($id, AdManager $adManager)
+    public function carpoolAdResults($id, AdManager $adManager, ProposalManager $proposalManager)
     {
         $ad = $adManager->getAd($id);
         $this->denyAccessUnlessGranted('results_ad', $ad);
 
         return $this->render('@Mobicoop/carpool/results.html.twig', [
-            'proposalId' => $id
+            'proposalId' => $id,
+            'platformName' => $this->platformName,
+            'externalRDEXJourneys' => false // No RDEX, this not a new search
         ]);
     }
 
@@ -277,7 +281,8 @@ class CarpoolController extends AbstractController
             'regular' => $request->request->get('regular'),
             'communityId' => $request->request->get('communityId'),
             'user' => $userManager->getLoggedUser(),
-            'platformName' => $this->platformName
+            'platformName' => $this->platformName,
+            'externalRDEXJourneys' => $this->carpoolRDEXJourneys
         ]);
     }
 

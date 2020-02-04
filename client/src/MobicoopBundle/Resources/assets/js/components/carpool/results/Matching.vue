@@ -76,15 +76,28 @@
             </v-col>
           </v-row>
 
-          <v-tabs v-model="modelTabs">
+          <v-tabs
+            v-if="externalRdexJourneys"
+            v-model="modelTabs"
+          >
             <v-tab href="#carpools">
-              {{ $t('tabs.carpools', {'platform':platformName}) }}
+              <v-badge
+                color="primary"
+                :content="nbCarpoolPlatform"
+              >              
+                {{ $t('tabs.carpools', {'platform':platformName}) }}
+              </v-badge>
             </v-tab>
             <v-tab
-              v-if="externalRDEXJourneys"
+              v-if="externalRdexJourneys"
               href="#otherCarpools"
             >
-              {{ $t('tabs.otherCarpools') }}
+              <v-badge
+                color="primary"
+                :content="nbCarpoolOther"
+              >              
+                {{ $t('tabs.otherCarpools') }}
+              </v-badge>
             </v-tab>
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
@@ -99,7 +112,7 @@
               />
             </v-tab-item>
             <v-tab-item
-              v-if="externalRDEXJourneys"
+              v-if="externalRdexJourneys"
               value="otherCarpools"
             >
               <matching-results
@@ -108,7 +121,7 @@
                 :carpooler-rate="carpoolerRate"
                 :user="user"
                 :loading-prop="loading"
-                :external-rdex-journeys="externalRDEXJourneys"
+                :external-rdex-journeys="externalRdexJourneys"
                 @carpool="carpool"
               />
             </v-tab-item>
@@ -202,7 +215,7 @@ export default {
       type: String,
       default: null
     },
-    externalRDEXJourneys: {
+    externalRdexJourneys: {
       type: Boolean,
       default: true
     },
@@ -226,12 +239,17 @@ export default {
       lProposalId: this.proposalId,
       filters: null,
       newSearch: false,
-      modelTabs:"carpools"
+      modelTabs:"carpools",
+      nbCarpoolPlatform:"-",
+      nbCarpoolOther:"-"
     };
   },
   computed: {
     numberOfResults() {
-      return this.results ? Object.keys(this.results).length : 0 // ES5+
+      let numberOfResults = 0;
+      (!isNaN(this.nbCarpoolPlatform)) ? numberOfResults = numberOfResults + this.nbCarpoolPlatform : 0;
+      (!isNaN(this.nbCarpoolOther)) ? numberOfResults = numberOfResults + this.nbCarpoolOther : 0;
+      return numberOfResults;
     },
     communities() {
       if (!this.results) return null;
@@ -250,7 +268,7 @@ export default {
   },
   created() {
     this.search();
-    if(this.externalRDEXJourneys) this.searchExternalJourneys();
+    if(this.externalRdexJourneys) this.searchExternalJourneys();
   },
   methods :{
     carpool(carpool) {
@@ -274,6 +292,7 @@ export default {
           .then((response) => {
             this.loading = false;
             this.results = response.data;
+            if(response.data.length>0) this.nbCarpoolPlatform = response.data.length;
           })
           .catch((error) => {
             console.log(error);
@@ -302,6 +321,7 @@ export default {
             this.results = response.data;
             if (this.results.length>0 && this.results[0].id) {
               this.lProposalId = this.results[0].id;
+              this.nbCarpoolPlatform = this.results.length;
             }
 
           })
@@ -330,6 +350,7 @@ export default {
         .then((response) => {
           this.loadingExternal = false;
           this.externalRDEXResults = response.data;
+          if(response.data.length>0) this.nbCarpoolOther = response.data.length;
         })
         .catch((error) => {
           console.log(error);
