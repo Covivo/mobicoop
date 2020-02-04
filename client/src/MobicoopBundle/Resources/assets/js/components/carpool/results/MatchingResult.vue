@@ -70,7 +70,7 @@
             :carpooler="result.carpooler"
             :carpooler-rate="carpoolerRate"
             :user="user"
-            :external-rdex-journeys="externalRDEXJourneys"
+            :external-rdex-journeys="externalRdexJourneys"
             :external-url="(result.externalUrl) ? result.externalUrl : null"
             :external-origin="(result.externalOrigin) ? result.externalOrigin : null"
             @carpool="carpool"
@@ -118,9 +118,9 @@ export default {
       type: Boolean,
       default: true
     },
-    externalRDEXJourneys: {
+    externalRdexJourneys: {
       type: Boolean,
-      default: true
+      default: false
     },
   },
   data : function() {

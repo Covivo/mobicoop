@@ -122,7 +122,7 @@
 
       <!-- Button -->
       <v-col
-        v-if="!externalRDEXJourneys"
+        v-if="!externalRdexJourneys"
         cols="3"
         class="text-right"
       >
@@ -151,7 +151,7 @@
       </v-col>
       <v-col
         v-else
-        cols="4"
+        cols="3"
         class="text-right"
       >
         <v-btn
@@ -161,13 +161,16 @@
           type="button"
           :href="externalUrl"
           target="_blank"
+          class="mt-1"
         >
           <span>
             {{ $t('externalUrl') }}
           </span>
         </v-btn>
         <br>
-        <em>{{ externalOrigin }}</em>
+        <v-card-text class="py-0">
+          <em>{{ externalOrigin }}</em>
+        </v-card-text>
       </v-col>      
     </v-row>
   </div>
@@ -201,7 +204,7 @@ export default {
       type: Object,
       default: null
     },
-    externalRDEXJourneys: {
+    externalRdexJourneys: {
       type: Boolean,
       default: true
     },

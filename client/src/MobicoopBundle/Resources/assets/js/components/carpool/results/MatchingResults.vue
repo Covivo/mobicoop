@@ -39,6 +39,7 @@
             :user="user"
             :distinguish-regular="distinguishRegular"
             :carpooler-rate="carpoolerRate"
+            :external-rdex-journeys="externalRdexJourneys"
             @carpool="carpool(result)"
           />
         </v-col>
@@ -66,7 +67,7 @@ export default {
     messages: Translations,
   },
   props:{
-    externalJourneys:{
+    externalRdexJourneys:{
       type: Boolean,
       default: false
     },
