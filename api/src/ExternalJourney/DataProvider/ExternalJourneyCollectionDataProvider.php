@@ -141,36 +141,47 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             }
         }
 
-        // @todo error management (api not responding, bad parameters...)
-        foreach ($this->externalJourneyManager->getProviders() as $provider) {
-            if ($provider->getName() == $providerName) {
-                $query = array(
-                    'timestamp' => time(),
-                    'apikey'    => $provider->getApiKey(),
-                    'p'         => $searchParameters
-                );
-                // construct the requested url
-                $url = $provider->getUrl().'/'.$provider->getResource().'?'.http_build_query($query);
-                $signature = hash_hmac(self::EXTERNAL_JOURNEY_HASH, $url, $provider->getPrivateKey());
-                $signedUrl = $url.'&signature='.$signature;
-                // request url
-                $data = $client->request('GET', $signedUrl);
-                $data = $data->getBody()->getContents();
-
-                if ($data!=="") {
-                    if ($rawJson==1) {
-                        // rawJson flag set. We return RDEX format.
-                        return json_decode($data, true);
-                    } else {
-                        // No rawJson flag set or set to 0. We return array of Carpool -> Result.
-                        return $this->createResultFromRDEX($data);
-                    }
-                } else {
-                    return [];
+        $aggregatedResults = [];
+        $providers = $this->externalJourneyManager->getProviders();
+        
+        // If a provider is given in parameters, we take only this one
+        // Otherwise, we use all providers
+        if ($providerName !== '') {
+            foreach ($providers as $provider) {
+                if ($provider->getName() == $providerName) {
+                    $providers = [$provider];
                 }
             }
         }
-        return [];
+        
+        // @todo error management (api not responding, bad parameters...)
+        foreach ($providers as $provider) {
+            $query = array(
+                'timestamp' => time(),
+                'apikey'    => $provider->getApiKey(),
+                'p'         => $searchParameters
+            );
+            // construct the requested url
+            $url = $provider->getUrl().'/'.$provider->getResource().'?'.http_build_query($query);
+            $signature = hash_hmac(self::EXTERNAL_JOURNEY_HASH, $url, $provider->getPrivateKey());
+            $signedUrl = $url.'&signature='.$signature;
+            // request url
+            $data = $client->request('GET', $signedUrl);
+            $data = $data->getBody()->getContents();
+
+            if ($data!=="") {
+                if ($rawJson==1) {
+                    // rawJson flag set. We return RDEX format.
+                    $aggregatedResults[] = json_decode($data, true);
+                } else {
+                    // No rawJson flag set or set to 0. We return array of Carpool -> Result.
+                    foreach ($this->createResultFromRDEX($data) as $currentResult) {
+                        $aggregatedResults[] = $currentResult;
+                    }
+                }
+            }
+        }
+        return $aggregatedResults;
     }
 
     public function createResultFromRDEX($data): array
