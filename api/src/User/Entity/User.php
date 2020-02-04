@@ -392,7 +392,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney"})
      */
     private $givenName;
 
@@ -464,7 +464,7 @@ class User implements UserInterface, EquatableInterface
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","results","write"})
+     * @Groups({"readUser","results","write","externalJourney"})
      */
     private $gender;
 
@@ -902,7 +902,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var array|null The avatars of the user
-     * @Groups({"readUser","readCommunity","results","threads","thread"})
+     * @Groups({"readUser","readCommunity","results","threads","thread","externalJourney"})
      */
     private $avatars;
 
@@ -943,6 +943,7 @@ class User implements UserInterface, EquatableInterface
 
     public function __construct($status = null)
     {
+        $this->id = self::DEFAULT_ID;
         $this->addresses = new ArrayCollection();
         $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();

@@ -122,6 +122,7 @@
 
       <!-- Button -->
       <v-col
+        v-if="!externalRdexJourneys"
         cols="3"
         class="text-right"
       >
@@ -148,6 +149,29 @@
           <span> {{ $t('needTobeConnected') }} </span>
         </v-tooltip>
       </v-col>
+      <v-col
+        v-else
+        cols="3"
+        class="text-right"
+      >
+        <v-btn
+          rounded
+          color="secondary"
+          large
+          type="button"
+          :href="externalUrl"
+          target="_blank"
+          class="mt-1"
+        >
+          <span>
+            {{ $t('externalUrl') }}
+          </span>
+        </v-btn>
+        <br>
+        <v-card-text class="py-0">
+          <em>{{ externalOrigin }}</em>
+        </v-card-text>
+      </v-col>      
     </v-row>
   </div>
 </template>
@@ -179,7 +203,19 @@ export default {
     user: {
       type: Object,
       default: null
-    }
+    },
+    externalRdexJourneys: {
+      type: Boolean,
+      default: true
+    },
+    externalUrl: {
+      type: String,
+      default: null
+    },    
+    externalOrigin: {
+      type: String,
+      default: null
+    }, 
   },
   data() {
     return {

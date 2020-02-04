@@ -345,3 +345,9 @@ services:
             $chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
             $music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
             $smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'
+    
+    App\ExternalJourney\DataProvider\ExternalJourneyCollectionDataProvider:
+        arguments:
+            $params:
+                avatarSizes: '%env(string:AVATAR_SIZES)%'
+                avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'
