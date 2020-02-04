@@ -21,33 +21,49 @@
     </v-row>
   </div>
   <div v-else>
-    <v-row 
-      v-for="(result,index) in results"
-      :key="index"
-      justify="center"
+    <div
+      v-if="results.length>0"
     >
+      <v-row 
+        v-for="(result,index) in results"
+        :key="index"
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          align="left"
+        >
+          <!-- Matching result -->
+          <matching-result
+            :result="result"
+            :user="user"
+            :distinguish-regular="distinguishRegular"
+            :carpooler-rate="carpoolerRate"
+            @carpool="carpool(result)"
+          />
+        </v-col>
+      </v-row>
+    </div>
+    <div v-else>
       <v-col
         cols="12"
         align="left"
       >
-        <!-- Matching result -->
-        <matching-result
-          :result="result"
-          :user="user"
-          :distinguish-regular="distinguishRegular"
-          :carpooler-rate="carpoolerRate"
-          @carpool="carpool(result)"
-        />
+        {{ $t('noResult') }}
       </v-col>
-    </v-row>
+    </div>
   </div>
 </template>
 <script>
 import MatchingResult from "@components/carpool/results/MatchingResult";
+import Translations from "@translations/components/carpool/results/MatchingResults.json";
 
 export default {
   components: {
     MatchingResult,
+  },
+  i18n: {
+    messages: Translations,
   },
   props:{
     externalJourneys:{

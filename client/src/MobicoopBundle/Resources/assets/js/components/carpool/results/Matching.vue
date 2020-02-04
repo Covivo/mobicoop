@@ -33,7 +33,7 @@
             align="center"
           >
             <v-col
-              v-if="!loading"
+              v-if="!loading && !loadingExternal"
               cols="8"
               align="left"
             >
@@ -47,7 +47,7 @@
               {{ $t('search') }}
             </v-col>
             <v-col
-              v-if="!loading && !newSearch"
+              v-if="!loading && !loadingExternal && !newSearch"
               cols="4"
               align="end"
             >
@@ -84,6 +84,7 @@
               <v-badge
                 color="primary"
                 :content="nbCarpoolPlatform"
+                icon="mdi-timer-sand"
               >              
                 {{ $t('tabs.carpools', {'platform':platformName}) }}
               </v-badge>
@@ -95,6 +96,7 @@
               <v-badge
                 color="primary"
                 :content="nbCarpoolOther"
+                icon="mdi-timer-sand"
               >              
                 {{ $t('tabs.otherCarpools') }}
               </v-badge>
@@ -120,7 +122,7 @@
                 :distinguish-regular="distinguishRegular"
                 :carpooler-rate="carpoolerRate"
                 :user="user"
-                :loading-prop="loading"
+                :loading-prop="loadingExternal"
                 :external-rdex-journeys="externalRdexJourneys"
                 @carpool="carpool"
               />
@@ -240,8 +242,8 @@ export default {
       filters: null,
       newSearch: false,
       modelTabs:"carpools",
-      nbCarpoolPlatform:"-",
-      nbCarpoolOther:"-"
+      nbCarpoolPlatform:0,
+      nbCarpoolOther:0
     };
   },
   computed: {
@@ -292,7 +294,7 @@ export default {
           .then((response) => {
             this.loading = false;
             this.results = response.data;
-            if(response.data.length>0) this.nbCarpoolPlatform = response.data.length;
+            (response.data.length>0) ? this.nbCarpoolPlatform = response.data.length : this.nbCarpoolPlatform = "-";
           })
           .catch((error) => {
             console.log(error);
@@ -323,6 +325,9 @@ export default {
               this.lProposalId = this.results[0].id;
               this.nbCarpoolPlatform = this.results.length;
             }
+            else{
+              this.nbCarpoolPlatform = "-";
+            }
 
           })
           .catch((error) => {
@@ -350,7 +355,7 @@ export default {
         .then((response) => {
           this.loadingExternal = false;
           this.externalRDEXResults = response.data;
-          if(response.data.length>0) this.nbCarpoolOther = response.data.length;
+          (response.data.length>0) ? this.nbCarpoolOther = response.data.length : this.nbCarpoolOther = '-';
         })
         .catch((error) => {
           console.log(error);
