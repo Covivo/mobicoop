@@ -151,7 +151,7 @@
       </v-col>
       <v-col
         v-else
-        cols="3"
+        cols="4"
         class="text-right"
       >
         <v-btn
@@ -165,7 +165,9 @@
           <span>
             {{ $t('externalUrl') }}
           </span>
-        </v-btn>      
+        </v-btn>
+        <br>
+        <em>{{ externalOrigin }}</em>
       </v-col>      
     </v-row>
   </div>
