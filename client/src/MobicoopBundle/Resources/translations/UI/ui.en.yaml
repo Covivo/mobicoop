@@ -1,64 +1,30 @@
-# buttons
-button:
-    submit: 'Submit'
-    delete: 'Delete'
-    connexion: 'Login'
-
-# menus
-menu:
-    signup: 'Sign up'
-    login: 'Log in'
-    account: 'My account'
-    profile: 'My profile'
-    messages: 'Messages'
-    ad_create: 'Post a carpool ad'
-    logout: 'Logout'
-
 # pages
 user:
     signup:
         title: 'Sign up'
-        h1: 'Sign up'
     signupValidation:
         title: 'Email validation'
     login:
         title: 'Login'
-        h1: 'Login'
     profile:
         title: 'My profile'
-        h1: 'My profile'
-        buttons:
-            update: 'Update'
-            password: 'Password'
-            delete: 'Delete my account'
-            ads: 'My proposals'
     profile_update:
         title: 'Update my profile'
-        h1: 'Update my profile'
     profile_password_update:
         title: 'Update my password'
-        h1: 'Update my password'
-    profile_delete:
-        title: 'Delete my account'
-        h1: 'Delete my account'
-        text: 'Are you sure you want to delete your account ?'
     messages:
         title: 'Mailbox'
-        h1: 'Messages'
     password_recovery:
         title: 'Password recovery'
 carpool:
     ad_create:
         title: 'Post a carpool ad'
-        h1: 'Post an ad'
     results:
         title: 'Carpool results'
 contact:
     title: "Contact us"
-
 solidary:
     title: "Post a solidary carpool ad"
-
 communities:
     community:
         title: "Community"
@@ -66,11 +32,9 @@ communities:
         title: "Communities"
     create:
         title: "Create a community"
-
 events:
     events:
         title: "Events"
-        h1: "Events"
     event:
         title: "Event"
     create:

@@ -160,9 +160,9 @@ class Action
         return $this->inDiary;
     }
     
-    public function setInDiary(bool $isIndiary): self
+    public function setInDiary(bool $isInDiary): self
     {
-        $this->inDiary = $isIndiary;
+        $this->inDiary = $isInDiary;
         
         return $this;
     }

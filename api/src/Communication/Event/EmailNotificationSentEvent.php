@@ -23,7 +23,7 @@
 
 namespace App\Communication\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use App\Communication\Entity\Email;
 use App\Communication\Entity\Medium;
 use App\Communication\Entity\Notification;
