@@ -23,6 +23,7 @@
 
 namespace App\Geography\Entity;
 
+use App\Community\Entity\Community;
 use App\Event\Entity\Event;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -52,7 +53,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get",
  *          "search"={
  *              "method"="GET",
  *              "path"="/addresses/search",
@@ -71,14 +71,15 @@ use Doctrine\Common\Collections\ArrayCollection;
  *                         "type" = "string",
  *                         "description" = "The geographic token authorization"
  *                     }
- *                   }
+ *                  }
  *              }
  *          }
  *      },
- *      itemOperations={"get","put"}
+ *      itemOperations={"get"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})
  */
+
 class Address
 {
     const DEFAULT_ID = 999999999999;
@@ -284,6 +285,14 @@ class Address
      * @Groups({"read","pt"})
      */
     private $event;
+
+    /**
+     * @var Community|null The community of the address.
+     *
+     * @ORM\OneToOne(targetEntity="App\Community\Entity\Community", mappedBy="address")
+     * @Groups({"read"})
+     */
+    private $community;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -644,6 +653,18 @@ class Address
     public function setEvent(?Event $event): self
     {
         $this->event = $event;
+
+        return $this;
+    }
+
+    public function getCommunity(): ?Community
+    {
+        return $this->community;
+    }
+
+    public function setCommunity(?Community $community): self
+    {
+        $this->community = $community;
 
         return $this;
     }

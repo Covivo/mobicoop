@@ -23,8 +23,8 @@
 
 namespace App\Right\Service;
 
+use App\App\Entity\App;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use App\User\Entity\User;
 use App\Geography\Entity\Territory;
 use App\Right\Repository\RightRepository;
@@ -33,6 +33,7 @@ use App\Right\Entity\Role;
 use App\Right\Repository\RoleRepository;
 use App\Right\Entity\Permission;
 use App\Right\Entity\UserRole;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Permission manager service.
@@ -41,8 +42,6 @@ use App\Right\Entity\UserRole;
  */
 class PermissionManager
 {
-    private $entityManager;
-    private $logger;
     private $rightRepository;
     private $roleRepository;
 
@@ -51,12 +50,29 @@ class PermissionManager
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, RightRepository $rightRepository, RoleRepository $roleRepository)
+    public function __construct(RightRepository $rightRepository, RoleRepository $roleRepository)
     {
-        $this->entityManager = $entityManager;
-        $this->logger = $logger;
         $this->rightRepository = $rightRepository;
         $this->roleRepository = $roleRepository;
+    }
+
+    /**
+     * Check if a requester has a permission on an right, eventually on a given territory
+     *
+     * @param Right $right
+     * @param UserInterface $requester
+     * @param Territory $territory
+     * @return Permission
+     */
+    public function checkPermission(string $rightName, UserInterface $requester, Territory $territory=null)
+    {
+        $right = $this->rightRepository->findByName($rightName);
+        if ($requester instanceof User) {
+            return $this->userHasPermission($right, $requester, $territory)->isGranted();
+        } elseif ($requester instanceof App) {
+            return $this->appHasPermission($right, $requester)->isGranted();
+        }
+        return false;
     }
 
     /**
@@ -116,6 +132,39 @@ class PermissionManager
             }
         }
 
+        return $permission;
+    }
+
+    /**
+     * Check if an app has a permission on an right
+     *
+     * @param Right $right
+     * @param App|null $app
+     * @return void
+     */
+    public function appHasPermission(Right $right, ?App $app): Permission
+    {
+        $permission = new Permission(1);
+        $permission->setGranted(false);
+        // if no user is passed we consider the basic user
+        if (!$app instanceof App) {
+            $app = new App();
+        }
+
+        // we first check if the app is seated on the iron throne
+        if (in_array('ROLE_SUPER_ADMIN', $app->getRoles())) {
+            // King of the Andals and the First Men, Lord of the Seven Kingdoms, and Protector of the Realm
+            $permission->setGranted(true);
+            return $permission;
+        }
+
+        // we check if the app has a role that has the right to do the action
+        foreach ($app->getRoleObjects() as $role) {
+            if ($this->roleHasRight($role, $right)) {
+                $permission->setGranted(true);
+                return $permission;
+            }
+        }
         return $permission;
     }
 

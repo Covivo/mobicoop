@@ -149,7 +149,8 @@ use App\User\EntityListener\UserListener;
  *                          "description" = "User's birthdate"
  *                      }
  *                  }
- *              }
+ *              },
+ *              "security_post_denormalize"="is_granted('user_register',object)"
  *          },
  *          "delegateRegistration"={
  *              "method"="POST",
@@ -225,11 +226,13 @@ use App\User\EntityListener\UserListener;
  *              "normalization_context"={"groups"={"readUser"}},
  *              "path"="/users/checkPhoneToken",
  *              "controller"=UserCheckPhoneToken::class
+ *              },
  *          }
  *      },
  *      itemOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"readUser"}},
+ *              "security"="is_granted('user_read',object)"
  *          },
  *          "password_update_request"={
  *              "method"="POST",
@@ -239,6 +242,7 @@ use App\User\EntityListener\UserListener;
  *              "read"=false,
  *              "denormalization_context"={"groups"={"passwordUpdateRequest"}},
  *              "normalization_context"={"groups"={"passwordUpdateRequest"}},
+ *              "security"="is_granted('user_password',object)"
  *          },
  *          "password_update"={
  *              "method"="POST",
@@ -248,11 +252,14 @@ use App\User\EntityListener\UserListener;
  *              "read"=false,
  *              "denormalization_context"={"groups"={"passwordUpdate"}},
  *              "normalization_context"={"groups"={"passwordUpdate"}},
+ *              "security"="is_granted('user_password',object)"
+ *
  *          },
  *          "generate_phone_token"={
  *              "method"="GET",
  *              "path"="/users/{id}/generate_phone_token",
  *              "controller"=UserGeneratePhoneToken::class,
+ *              "security"="is_granted('user_update',object)"
  *          },
  *          "permissions"={
  *              "method"="GET",
@@ -269,13 +276,15 @@ use App\User\EntityListener\UserListener;
  *                          "description" = "The territory id"
  *                      },
  *                  }
- *              }
+ *              },
+ *              "security"="is_granted('user_read',object)"
  *          },
  *          "alerts"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"alerts"}},
  *              "controller"=UserAlerts::class,
  *              "path"="/users/{id}/alerts",
+ *              "security"="is_granted('user_read',object)"
  *          },
  *          "putAlerts"={
  *              "method"="PUT",
@@ -283,40 +292,48 @@ use App\User\EntityListener\UserListener;
  *              "denormalization_context"={"groups"={"alerts"}},
  *              "path"="/users/{id}/alerts",
  *              "controller"=UserAlertsUpdate::class,
+ *              "security"="is_granted('user_update',object)"
+ *
  *          },
  *          "threads"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
  *              "controller"=UserThreads::class,
- *              "path"="/users/{id}/threads"
+ *              "path"="/users/{id}/threads",
+ *              "security"="is_granted('user_messages',object)"
  *          },
  *          "threadsDirectMessages"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
  *              "controller"=UserThreadsDirectMessages::class,
- *              "path"="/users/{id}/threadsDirectMessages"
+ *              "path"="/users/{id}/threadsDirectMessages",
+ *              "security"="is_granted('user_messages',object)"
  *          },
  *          "threadsCarpoolMessages"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
  *              "controller"=UserThreadsCarpoolMessages::class,
- *              "path"="/users/{id}/threadsCarpoolMessages"
+ *              "path"="/users/{id}/threadsCarpoolMessages",
+ *              "security"="is_granted('user_messages',object)"
  *          },
  *          "put"={
  *              "method"="PUT",
  *              "path"="/users/{id}",
- *              "controller"=UserUpdate::class
+ *              "controller"=UserUpdate::class,
+ *              "security"="is_granted('user_update',object)"
  *          },
  *          "anonymise_user"={
  *              "method"="PUT",
  *              "path"="/users/{id}/anonymise_user",
- *              "controller"=UserAnonymise::class
+ *              "controller"=UserAnonymise::class,
+ *              "security"="is_granted('user_delete',object)"
  *          },
  *          "asks"={
  *              "method"="GET",
  *              "path"="/users/{id}/asks",
- *              "controller"=UserAsks::class
- *          }
+ *              "controller"=UserAsks::class,
+ *              "security"="is_granted('user_asks',object)"
+ *          },
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})
@@ -787,6 +804,11 @@ class User implements UserInterface, EquatableInterface
     private $userRoles;
 
     /**
+     * @Groups({"read"})
+     */
+    private $roles;
+
+    /**
      * @var ArrayCollection|null A user may have many specific rights.
      *
      * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRight", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
@@ -817,7 +839,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @MaxDepth(1)
-     * @ApiSubresource
+     * ApiSubresource
      */
     private $recipients;
 

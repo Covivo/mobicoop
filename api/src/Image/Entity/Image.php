@@ -64,9 +64,20 @@ use App\User\Entity\User;
  *              "path"="/images",
  *              "controller"=CreateImageAction::class,
  *              "defaults"={"_api_receive"=false},
+ *              "security_post_denormalize"="is_granted('image_post',object)"
  *          },
  *      },
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={
+ *          "get" = {
+ *              "security"="is_granted('image_read',object)"
+ *          },
+ *          "put" = {
+ *              "security"="is_granted('image_update',object)"
+ *          },
+ *          "delete" = {
+ *              "security"="is_granted('image_delete',object)"
+ *          }
+ *      }
  * )
  * @Vich\Uploadable
  */

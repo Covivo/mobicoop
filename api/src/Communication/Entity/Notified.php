@@ -42,7 +42,7 @@ use App\Carpool\Entity\Proposal;
  *
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
@@ -51,8 +51,8 @@ use App\Carpool\Entity\Proposal;
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "title"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(SearchFilter::class, properties={"title":"partial"})
+ * ApiFilter(OrderFilter::class, properties={"id", "title"}, arguments={"orderParameterName"="order"})
+ * ApiFilter(SearchFilter::class, properties={"title":"partial"})
  */
 class Notified
 {

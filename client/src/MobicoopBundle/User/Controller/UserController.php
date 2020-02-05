@@ -335,10 +335,10 @@ class UserController extends AbstractController
         }
 
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
-                'error' => $error,
-                'alerts' => $userManager->getAlerts($user)['alerts'],
-                'tabDefault' => $tabDefault,
-                'proposals' => $userManager->getProposals($user)
+            'error' => $error,
+            'alerts' => $userManager->getAlerts($user)['alerts'],
+            'tabDefault' => $tabDefault,
+            'proposals' => $userManager->getProposals($user)
         ]);
     }
 
