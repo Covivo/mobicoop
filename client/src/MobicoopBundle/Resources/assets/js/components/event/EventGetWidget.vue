@@ -24,6 +24,7 @@
         <v-col
           cols="4"
           align="center"
+          class="justify-center"
         >
           <iframe
             :src="`/evenement-widget/${event.id}`"

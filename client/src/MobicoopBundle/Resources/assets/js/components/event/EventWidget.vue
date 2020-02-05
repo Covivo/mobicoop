@@ -31,6 +31,7 @@
             :url-alt-avatar="urlAltAvatar"
             :avatar-version="avatarVersion"
             :display-description="false"
+            :is-widget="true"
           />
         </v-col>
       </v-row>
