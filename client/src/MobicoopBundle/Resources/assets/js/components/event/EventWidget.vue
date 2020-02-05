@@ -74,8 +74,6 @@ import Translations from "@translations/components/event/Event.json";
 import TranslationsClient from "@clientTranslations/components/event/Event.json";
 import EventInfos from "@components/event/EventInfos";
 import Search from "@components/carpool/search/Search";
-// import MMap from "@components/utilities/MMap"
-import L from "leaflet";
 import moment from "moment";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
@@ -104,10 +102,6 @@ export default {
       type: Object,
       default: null
     },
-    lastUsers: {
-      type: Array,
-      default: null
-    },
     avatarVersion: {
       type: String,
       default: null
@@ -123,48 +117,17 @@ export default {
     punctualDateOptional: {
       type: Boolean,
       default: false
-    },
-    mapProvider:{
-      type: String,
-      default: ""
-    },
-    urlTiles:{
-      type: String,
-      default: ""
-    },
-    attributionCopyright:{
-      type: String,
-      default: ""
-    },
+    }
   },
   data () {
     return {
       locale: this.$i18n.locale,
       search: '',
-      headers: [
-        {
-          text: 'Id',
-          align: 'left',
-          sortable: false,
-          value: 'id',
-        },
-        { text: 'Nom', value: 'familyName' },
-        { text: 'Prenom', value: 'givenName' },
-        { text: 'Telephone', value: 'telephone' },
-      ],
-      pointsToMap:[],
-      directionWay:[],
       loading: false,
       snackbar: false,
       errorUpdate: false,
-      isAccepted: false,
-      askToJoin: false,
-      checkValidation: false,
       isLogged: false,
-      loadingMap: false,
       domain: true,
-      refreshMemberList: false,
-      refreshLastUsers: false,
       params: { 'eventId' : this.event.id },
       defaultDestination: this.event.address,
     }
@@ -178,119 +141,15 @@ export default {
         return false;
     }
   },
-  mounted() {
-    this.getEventProposals();
-    this.checkDomain();
-  },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods:{
-    post: function (path, params, method='post') {
-      const form = document.createElement('form');
-      form.method = method;
-      form.action = window.location.origin+'/'+path;
-
-      for (const key in params) {
-        if (params.hasOwnProperty(key)) {
-          const hiddenField = document.createElement('input');
-          hiddenField.type = 'hidden';
-          hiddenField.name = key;
-          hiddenField.value = params[key];
-          form.appendChild(hiddenField);
-        }
-      }
-      document.body.appendChild(form);
-      form.submit();
-    },
     checkIfUserLogged() {
       if (this.user !== null) {
         this.isLogged = true;
       }
-    },
-    checkDomain() {
-      if (this.event.validationType == 2) {
-        let mailDomain = (this.user.email.split("@"))[1];
-        if (!(this.event.domain.includes(mailDomain))) {
-          return this.domain = false;
-        }
-      }
-    },
-    getEventProposals () {
-      this.loadingMap = true;
-      axios
-        .get('/event-proposals/'+this.event.id,
-          {
-            headers:{
-              'content-type': 'application/json'
-            }
-          })
-        .then(res => {
-          this.errorUpdate = res.data.state;
-          this.pointsToMap.length = 0;
-          // add the event address to display on the map
-          if (this.event.address) {
-            this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name));
-          }
-
-          // add all the waypoints of the event to display on the map :
-          res.data.forEach((waypoint, index) => {
-            this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
-          });
-          this.loadingMap = false;
-          // setTimeout(this.$refs.mmap.redrawMap(),600);
-
-        });
-    },
-
-    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
-      let point = {
-        title:title,
-        latLng:L.latLng(lat, lng),
-        icon: {}
-      }
-
-      if(pictoUrl!==""){
-        point.icon = {
-          url:pictoUrl,
-          size:size,
-          anchor:anchor
-        }
-      }
-
-      return point;
-    },
-    contact: function(data){
-      const form = document.createElement('form');
-      form.method = 'post';
-      form.action = this.$t("buttons.contact.route");
-
-      const params = {
-        carpool:0,
-        idRecipient:data.id,
-        familyName:data.familyName,
-        givenName:data.givenName
-      }
-
-      for (const key in params) {
-        if (params.hasOwnProperty(key)) {
-          const hiddenField = document.createElement('input');
-          hiddenField.type = 'hidden';
-          hiddenField.name = key;
-          hiddenField.value = params[key];
-          form.appendChild(hiddenField);
-        }
-      }
-      document.body.appendChild(form);
-      form.submit();
-    },
-    membersListRefreshed(){
-      this.refreshMemberList = false;
-    },
-    lastUsersRefreshed(){
-      this.refreshLastUsers = false;
     }
-
   }
 }
 </script>
