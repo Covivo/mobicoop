@@ -73,9 +73,9 @@ class ArticleManager
     /**
      * Change the position of a section, and the position of the associated section.
      *
-     * @param Section $section
-     * @param string $direction
-     * @return Section
+     * @param Section $section  The section
+     * @param string $direction The direction (up/down)
+     * @return Section  The section
      */
     public function changeSectionPosition(Section $section, string $direction): Section
     {
@@ -106,9 +106,9 @@ class ArticleManager
     /**
      * Change the position of a paragraph, and the position of the associated paragraph.
      *
-     * @param Paragraph $paragraph
-     * @param string $direction
-     * @return Paragraph
+     * @param Paragraph $paragraph  The paragraph
+     * @param string $direction     The direction (up/down)
+     * @return Paragraph    The paragraph
      */
     public function changeParagraphPosition(Paragraph $paragraph, string $direction): Paragraph
     {

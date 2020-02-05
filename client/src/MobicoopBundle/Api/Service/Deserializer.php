@@ -74,7 +74,6 @@ use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Mobicoop\Bundle\MobicoopBundle\Price\Entity\Price;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\UserNotification;
 
 /**
  * Custom deserializer service.

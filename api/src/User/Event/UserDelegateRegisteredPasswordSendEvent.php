@@ -24,7 +24,7 @@
 namespace App\User\Event;
 
 use App\User\Entity\User;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event sent when a user is registered by delegation.

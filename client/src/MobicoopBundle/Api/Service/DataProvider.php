@@ -50,8 +50,6 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\JwtManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Strategy\Auth\JsonAuthStrategy;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-use function GuzzleHttp\json_encode;
-
 /**
  * Data provider service.
  * Uses an API to retrieve/send data.
@@ -343,7 +341,6 @@ class DataProvider
      */
     public function post(ResourceInterface $object, ?string $operation = null): Response
     {
-        // var_dump($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]));exit;
         $op = '';
         if (!is_null($operation)) {
             $op = '/'.$operation;

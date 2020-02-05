@@ -49,7 +49,7 @@ class ArticleVoter extends Voter
             return false;
         }
 
-        // only vote on Ad objects inside this voter
+        // only vote on Article objects inside this voter
         if (!$subject instanceof Article) {
             return false;
         }
@@ -63,8 +63,6 @@ class ArticleVoter extends Voter
         if (!$user instanceof User) {
             $user = null;
         }
-
-        $article = $subject;
 
         switch ($attribute) {
             case self::SHOW:
