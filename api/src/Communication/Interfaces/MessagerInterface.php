@@ -21,7 +21,9 @@
  *    LICENSE
  **************************/
 
-namespace App\Communication\Entity;
+namespace App\Communication\Interfaces;
+
+use App\Communication\Entity\Message;
 
 /**
  * Messager interface.

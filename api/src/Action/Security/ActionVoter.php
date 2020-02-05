@@ -36,14 +36,10 @@ class ActionVoter extends Voter
     const READ_ACTION = 'action_read';
     const READ_ACTIONS = 'actions_read';
     
-    private $security;
-    private $request;
     private $permissionManager;
 
-    public function __construct(RequestStack $requestStack, Security $security, PermissionManager $permissionManager)
+    public function __construct(PermissionManager $permissionManager)
     {
-        $this->request = $requestStack->getCurrentRequest();
-        $this->security = $security;
         $this->permissionManager = $permissionManager;
     }
 

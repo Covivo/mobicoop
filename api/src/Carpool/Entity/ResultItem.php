@@ -23,22 +23,11 @@
 
 namespace App\Carpool\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Geography\Entity\Address;
 
 /**
  * Carpooling : result item for an ad.
- *
- * ApiResource(
- *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
- * )
  */
 class ResultItem
 {
@@ -46,7 +35,6 @@ class ResultItem
     
     /**
      * @var int The id of this result item.
-     * @ApiProperty(identifier=true)
      */
     private $id;
 

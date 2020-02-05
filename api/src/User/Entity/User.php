@@ -226,7 +226,6 @@ use App\User\EntityListener\UserListener;
  *              "normalization_context"={"groups"={"readUser"}},
  *              "path"="/users/checkPhoneToken",
  *              "controller"=UserCheckPhoneToken::class
- *              },
  *          }
  *      },
  *      itemOperations={
@@ -253,7 +252,6 @@ use App\User\EntityListener\UserListener;
  *              "denormalization_context"={"groups"={"passwordUpdate"}},
  *              "normalization_context"={"groups"={"passwordUpdate"}},
  *              "security"="is_granted('user_password',object)"
- *
  *          },
  *          "generate_phone_token"={
  *              "method"="GET",
@@ -293,7 +291,6 @@ use App\User\EntityListener\UserListener;
  *              "path"="/users/{id}/alerts",
  *              "controller"=UserAlertsUpdate::class,
  *              "security"="is_granted('user_update',object)"
- *
  *          },
  *          "threads"={
  *              "method"="GET",

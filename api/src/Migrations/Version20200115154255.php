@@ -29,7 +29,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20200114141330 extends AbstractMigration
+final class Version20200115154255 extends AbstractMigration
 {
     public function up(Schema $schema) : void
     {
@@ -59,5 +59,16 @@ final class Version20200114141330 extends AbstractMigration
         $this->addSql(
             'UPDATE `role` SET parent_id=1 WHERE id=2'
         );
+    }
+
+    public function down(Schema $schema) : void
+    {
+        // this down() migration is auto-generated, please modify it to your needs
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+
+        $this->addSql('DELETE FROM `role_right` WHERE `role_id` = 5 AND `right_id` = 92;');
+        $this->addSql('DELETE FROM `role_right` WHERE `role_id` = 2 AND `right_id` = 93;');
+        $this->addSql('DELETE FROM `role_right` WHERE `role_id` = 2 AND `right_id` = 95;');
+        $this->addSql('DELETE FROM `uright` WHERE `id` IN (86,87,88,89,90,91,92,93,94,95,96);');
     }
 }

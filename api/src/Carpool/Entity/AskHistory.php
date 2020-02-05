@@ -34,8 +34,8 @@ use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Communication\Entity\Message;
-use App\Communication\Entity\MessagerInterface;
 use App\Communication\Entity\Notified;
+use App\Communication\Interfaces\MessagerInterface;
 
 /**
  * Carpooling : a history item for an ask (all the items represent a thread for the ask).

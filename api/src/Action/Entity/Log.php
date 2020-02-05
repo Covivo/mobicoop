@@ -55,12 +55,12 @@ use App\Communication\Entity\Message;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security"="is_granted('log_read',object)"
+ *              "security"="is_granted('logs_read',object)"
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('logs_read',object)"
+ *              "security"="is_granted('log_read',object)"
  *          },
  *      }
  * )

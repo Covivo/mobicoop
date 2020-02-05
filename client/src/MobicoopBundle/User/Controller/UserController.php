@@ -23,18 +23,9 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 
-use Herrera\Json\Exception\Exception;
-use Http\Client\Exception\HttpException;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
@@ -50,11 +41,7 @@ use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -536,33 +523,6 @@ class UserController extends AbstractController
         $userManager->deleteUser($user);
 
         return $this->redirectToRoute('user_logout');
-    }
-
-
-    /*************
-     * PROPOSALS *
-     *************/
-
-    /**
-     * Retrieve all proposals for the current user.
-     */
-    public function userProposalList(UserManager $userManager, ProposalManager $proposalManager)
-    {
-        $user = $userManager->getLoggedUser();
-        $reponseofmanager= $this->handleManagerReturnValue($user);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $this->denyAccessUnlessGranted('proposals_self', $user);
-    
-        $data=$proposalManager->getProposals($user);
-        $reponseofmanager= $this->handleManagerReturnValue($data);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        return $this->render('@Mobicoop/proposal/index.html.twig', [
-            'hydra' => $data
-        ]);
     }
 
 

@@ -45,12 +45,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security"="is_granted('action_read',object)"
+ *              "security"="is_granted('actions_read',object)"
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('actions_read',object)"
+ *              "security"="is_granted('action_read',object)"
  *          },
  *      }
  * )

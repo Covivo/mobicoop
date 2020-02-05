@@ -23,7 +23,7 @@
 
 namespace App\Communication\Service;
 
-use App\Communication\Entity\MessagerInterface;
+use App\Communication\Interfaces\MessagerInterface;
 use App\Event\Entity\Event;
 use Psr\Log\LoggerInterface;
 use App\Communication\Repository\NotificationRepository;
