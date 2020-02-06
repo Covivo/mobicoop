@@ -300,7 +300,7 @@ export default {
       this.pointsToMap.length = 0;
       // add the event address to display on the map
       if (this.event.address) {
-        this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name));
+        this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name,"/images/cartography/pictos/destination.png",[36, 42]));
       }
           
       // add all the waypoints of the event to display on the map
