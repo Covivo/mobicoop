@@ -649,7 +649,8 @@ class UserController extends AbstractController
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
         $completeThread = $internalMessageManager->getThread($idMessage, DataProvider::RETURN_JSON);
-        return new Response(json_encode($completeThread));
+        $response = str_replace("\\n", "<br />", json_encode($completeThread));
+        return new Response($response);
     }
 
 
