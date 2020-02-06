@@ -88,6 +88,7 @@
                 v-show="!loadingMap"
                 ref="mmap"
                 :points="pointsToMap"
+                :ways="directionWay"
                 :provider="mapProvider"
                 :url-tiles="urlTiles"
                 :attribution-copyright="attributionCopyright"
@@ -221,8 +222,6 @@ export default {
       directionWay:[],
       loading: false,
       snackbar: false,
-      // textSnackOk: this.$t("snackbar.joinCommunity.textOk"),
-      // textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
       isLogged: false,
       loadingMap: false,
@@ -247,8 +246,7 @@ export default {
     this.destination = this.initDestination;
   },
   mounted() {
-    this.showPoints();
-    // this.getEventProposals();
+    this.showEventProposals();
   },
   methods:{
     searchChanged: function (search) {
@@ -300,26 +298,80 @@ export default {
       this.post(`${this.$t("buttons.publish.route")}`, lParams);
     },
 
-    showPoints () {
+    showEventProposals () {
       this.pointsToMap.length = 0;
       // add the event address to display on the map
       if (this.event.address) {
         this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name));
       }
+          
+      // add all the waypoints of the event to display on the map
+      // We draw straight lines between those points
+      // if the user is already accepted or if the doesn't hide members or proposals to non members.
+      this.points.forEach((proposal, index) => {
+        let currentProposal = {latLngs:[]};
+        let infosForPopUp = {
+          origin:'',
+          destination:'',
+          originLat:null,
+          originLon:null,
+          destinationLat:null,
+          destinationLon:null,
+          carpoolerFirstName:"",
+          carpoolerLastName:""
+        };
 
-      // add all the waypoints of the event to display on the map :
-      this.points.forEach((waypoint, index) => {
-        this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+        if(proposal.type !== 'return'){ // We show only outward or one way proposals
+
+          infosForPopUp.carpoolerFirstName = proposal.carpoolerFirstName;
+          infosForPopUp.carpoolerLastName = proposal.carpoolerLastName;
+
+          // We build the content of the popup
+          currentProposal.desc = "<p style='text-align:center;'><strong>"+infosForPopUp.carpoolerFirstName+" "+infosForPopUp.carpoolerLastName+"</strong></p>"
+
+
+          proposal.waypoints.forEach((waypoint, index) => {
+            console.error(waypoint);
+            currentProposal.latLngs.push(waypoint.latLng);
+            infosForPopUp.origin = waypoint.title;
+            infosForPopUp.originLat = waypoint.latLng.lat;
+            infosForPopUp.originLon = waypoint.latLng.lon;
+            this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,currentProposal.desc,"",[],[],"<p>"+waypoint.title+"</p>"));
+          });
+
+
+          currentProposal.desc += "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
+          if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em>";
+
+          // And now the content of a tooltip (same as popup but without the button)
+          currentProposal.title = currentProposal.desc;
+                
+          // We add the button to the popup (To Do: Button isn't functionnal. Find a good way to launch a research)
+          //currentProposal.desc += "<br /><button type='button' class='v-btn v-btn--contained v-btn--rounded theme--light v-size--small secondary overline'>"+this.$t('map.findMatchings')+"</button>";
+
+          // We are closing the two p
+          currentProposal.title += "</p>";
+          currentProposal.desc += "</p>";
+
+          // We set the destination before the push to directinWay. It's the address of the event
+          let destination = {
+            "lat":this.event.address.latitude,
+            "lon":this.event.address.longitude
+          }
+          currentProposal.latLngs.push(destination);
+
+          this.directionWay.push(currentProposal);
+
+        }
       });
-      this.loadingMap = false;
-      setTimeout(this.$refs.mmap.redrawMap(),600);
+      this.$refs.mmap.redrawMap();
     },
-    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
+    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[],popupDesc=""){
       let point = {
         title:title,
         latLng:L.latLng(lat, lng),
-        icon: {}
-      }
+        icon: {},
+      };
 
       if(pictoUrl!==""){
         point.icon = {
@@ -329,6 +381,12 @@ export default {
         }
       }
 
+      if(popupDesc!==""){
+        point.popup = {
+          title:title,
+          description:popupDesc
+        }
+      }
       return point;
     }
   }

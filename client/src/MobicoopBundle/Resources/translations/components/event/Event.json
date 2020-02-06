@@ -25,6 +25,9 @@
     "title": {
       "searchCarpool" : "Chercher un trajet pour l'événement"
     },
+    "map": {
+      "origin":"Départ"
+    },
     "urlCommunityUser":"/community-user"
   },
   "en": {
@@ -52,6 +55,9 @@
     },
     "title": {
       "searchCarpool" : "Search a journey for the event"
+    },
+    "map": {
+      "origin":"Origin"
     },
     "urlCommunityUser":"/community-user"
   }
