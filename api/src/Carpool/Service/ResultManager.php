@@ -922,29 +922,32 @@ class ResultManager
                 }
             } else {
                 // search for existing matchings with same proposalId as passenger
-                if ($asks = $this->askRepository->findAskForAd(
-                    $matching["request"]->getProposalRequest(),
-                    $matching["request"]->getProposalOffer()->getUser(),
-                    [
-                        Ask::STATUS_INITIATED,
-                        Ask::STATUS_PENDING_AS_DRIVER,
-                        Ask::STATUS_PENDING_AS_PASSENGER,
-                        Ask::STATUS_ACCEPTED_AS_DRIVER,
-                        Ask::STATUS_ACCEPTED_AS_PASSENGER
-                    ]
-                )) {
-                    foreach ($asks as $ask) {
-                        switch ($ask->getStatus()) {
-                                case Ask::STATUS_INITIATED:
-                                case Ask::STATUS_PENDING_AS_DRIVER:
-                                case Ask::STATUS_PENDING_AS_PASSENGER:
-                                    $item->setPendingAsk(true);
-                                    break;
-                                case Ask::STATUS_ACCEPTED_AS_DRIVER:
-                                case Ask::STATUS_ACCEPTED_AS_PASSENGER:
-                                    $item->setAcceptedAsk(true);
-                                    break;
-                            }
+                // first we check if a user is associated to the proposal (if a user is logged)
+                if ($matching["request"]->getProposalOffer()->getUser()) {
+                    if ($asks = $this->askRepository->findAskForAd(
+                        $matching["request"]->getProposalRequest(),
+                        $matching["request"]->getProposalOffer()->getUser(),
+                        [
+                            Ask::STATUS_INITIATED,
+                            Ask::STATUS_PENDING_AS_DRIVER,
+                            Ask::STATUS_PENDING_AS_PASSENGER,
+                            Ask::STATUS_ACCEPTED_AS_DRIVER,
+                            Ask::STATUS_ACCEPTED_AS_PASSENGER
+                        ]
+                    )) {
+                        foreach ($asks as $ask) {
+                            switch ($ask->getStatus()) {
+                                    case Ask::STATUS_INITIATED:
+                                    case Ask::STATUS_PENDING_AS_DRIVER:
+                                    case Ask::STATUS_PENDING_AS_PASSENGER:
+                                        $item->setPendingAsk(true);
+                                        break;
+                                    case Ask::STATUS_ACCEPTED_AS_DRIVER:
+                                    case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+                                        $item->setAcceptedAsk(true);
+                                        break;
+                                }
+                        }
                     }
                 }
             }
@@ -1430,29 +1433,32 @@ class ResultManager
                 }
             } else {
                 // search for existing matchings with same proposalId as passenger
-                if ($asks = $this->askRepository->findAskForAd(
-                    $matching["offer"]->getProposalOffer(),
-                    $matching["offer"]->getProposalRequest()->getUser(),
-                    [
-                        Ask::STATUS_INITIATED,
-                        Ask::STATUS_PENDING_AS_DRIVER,
-                        Ask::STATUS_PENDING_AS_PASSENGER,
-                        Ask::STATUS_ACCEPTED_AS_DRIVER,
-                        Ask::STATUS_ACCEPTED_AS_PASSENGER
-                    ]
-                )) {
-                    foreach ($asks as $ask) {
-                        switch ($ask->getStatus()) {
-                                case Ask::STATUS_INITIATED:
-                                case Ask::STATUS_PENDING_AS_DRIVER:
-                                case Ask::STATUS_PENDING_AS_PASSENGER:
-                                    $item->setPendingAsk(true);
-                                    break;
-                                case Ask::STATUS_ACCEPTED_AS_DRIVER:
-                                case Ask::STATUS_ACCEPTED_AS_PASSENGER:
-                                    $item->setAcceptedAsk(true);
-                                    break;
-                            }
+                // first we check if a user is associated to the proposal (if a user is logged)
+                if ($matching["offer"]->getProposalRequest()->getUser()) {
+                    if ($asks = $this->askRepository->findAskForAd(
+                        $matching["offer"]->getProposalOffer(),
+                        $matching["offer"]->getProposalRequest()->getUser(),
+                        [
+                            Ask::STATUS_INITIATED,
+                            Ask::STATUS_PENDING_AS_DRIVER,
+                            Ask::STATUS_PENDING_AS_PASSENGER,
+                            Ask::STATUS_ACCEPTED_AS_DRIVER,
+                            Ask::STATUS_ACCEPTED_AS_PASSENGER
+                        ]
+                    )) {
+                        foreach ($asks as $ask) {
+                            switch ($ask->getStatus()) {
+                                    case Ask::STATUS_INITIATED:
+                                    case Ask::STATUS_PENDING_AS_DRIVER:
+                                    case Ask::STATUS_PENDING_AS_PASSENGER:
+                                        $item->setPendingAsk(true);
+                                        break;
+                                    case Ask::STATUS_ACCEPTED_AS_DRIVER:
+                                    case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+                                        $item->setAcceptedAsk(true);
+                                        break;
+                                }
+                        }
                     }
                 }
             }

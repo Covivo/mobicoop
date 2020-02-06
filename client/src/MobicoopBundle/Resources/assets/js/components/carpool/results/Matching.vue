@@ -219,7 +219,7 @@ export default {
     },
     externalRdexJourneys: {
       type: Boolean,
-      default: true
+      default: false
     },
     platformName: {
       type: String,
@@ -235,7 +235,7 @@ export default {
       externalRDEXResults:null,
       result: null,
       loading : true,
-      loadingExternal : true,
+      loadingExternal : false,
       lOrigin: null,
       lDestination: null,
       lProposalId: this.proposalId,
