@@ -34,7 +34,7 @@
             class="elevation-2 font-weight-bold"
             :class="(item.origin==='own')?'primary lighten-4':''"
           >
-            <v-card-text>{{ item.text }}</v-card-text>
+            <v-card-text v-html="item.text" />
           </v-card>
           <span
             v-if="item.divider===true"
@@ -157,6 +157,8 @@ export default {
               if(this.idUser==item.user.id){
                 item.origin = "own";
               }
+              //item.text.replace("\\n","<br />");
+              console.error(item.text);
               this.items.push(item);
 
               this.emit();
