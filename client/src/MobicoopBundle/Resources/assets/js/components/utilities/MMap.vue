@@ -53,6 +53,7 @@
           :key="'w'+i"
           :lat-lngs="way.latLngs"
           :color="(way.color!=='' && way.color !==undefined)?way.color:'blue'"
+          @click="clickOnPolyline"
         >        
           <l-tooltip v-if="way.title !==undefined && way.title!==''">
             <p v-html="way.title" />
@@ -154,6 +155,10 @@ export default {
     updateLatLng(data){
       // data containts a LatLng object.
       this.$emit("updateLatLng",data);
+    },
+    clickOnPolyline(data){
+      // data containts a LatLng object.
+      this.$emit("clickOnPolyline",data);
     }
   }
 };
