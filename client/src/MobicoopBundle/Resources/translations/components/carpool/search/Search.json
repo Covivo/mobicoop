@@ -22,7 +22,8 @@
             },
             "search": {
                 "label": "Rechercher",
-                "route": "covoiturage/recherche"
+                "route": "covoiturage/recherche",
+                "widgetRoute": "event/{id}/recherche/covoiturage"
             }
         },
         "tooltips": {
