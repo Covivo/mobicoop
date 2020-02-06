@@ -206,10 +206,11 @@ class CommunityManager
     /**
      * Remove the link between the journeys of a user and a community
      */
-    public function unlinkCommunityJourneys(CommunityUser $communityUser){
-        foreach($communityUser->getUser()->getProposals() as $proposal){
-            foreach($proposal->getCommunities() as $community){
-                if($community->getId() == $communityUser->getCommunity()->getId()){
+    public function unlinkCommunityJourneys(CommunityUser $communityUser)
+    {
+        foreach ($communityUser->getUser()->getProposals() as $proposal) {
+            foreach ($proposal->getCommunities() as $community) {
+                if ($community->getId() == $communityUser->getCommunity()->getId()) {
                     $proposal->removeCommunity($community);
                     $this->entityManager->persist($proposal);
                 }

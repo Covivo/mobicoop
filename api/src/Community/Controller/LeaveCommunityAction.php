@@ -50,6 +50,7 @@ final class LeaveCommunityAction
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad community user is provided"));
         }
-        return $this->communityManager->unlinkCommunityJourneys($data);;
+        return $this->communityManager->unlinkCommunityJourneys($data);
+        ;
     }
 }
