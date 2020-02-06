@@ -231,7 +231,7 @@ class CarpoolController extends AbstractController
      * Ad results.
      * (POST)
      */
-    public function carpoolAdResults($id, AdManager $adManager, ProposalManager $proposalManager)
+    public function carpoolAdResults($id, AdManager $adManager)
     {
         $ad = $adManager->getAd($id);
         $this->denyAccessUnlessGranted('results_ad', $ad);

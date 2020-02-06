@@ -37,6 +37,9 @@ class Ad implements ResourceInterface
     const ROLE_DRIVER_OR_PASSENGER = 3;
     const FREQUENCY_PUNCTUAL = 1;
     const FREQUENCY_REGULAR = 2;
+    const TYPE_ONE_WAY = 1;
+    const TYPE_OUTWARD = 2;
+    const TYPE_RETURN = 3;
     const RESOURCE_NAME = "carpools";
 
     /**

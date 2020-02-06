@@ -113,7 +113,7 @@ class Message
     /**
      * @var int|null Id of an Ask if this message is related to an Ask
      *
-     * @Groups("write")
+     * @Groups({"read","write"})
      */
     private $idAsk;
 
@@ -231,6 +231,9 @@ class Message
 
     public function getIdAsk(): ?int
     {
+        if (!is_null($this->getAskHistory())) {
+            return $this->getAskHistory()->getAsk()->getId();
+        }
         return $this->idAsk;
     }
 

@@ -31,7 +31,6 @@ use TypeError;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Matching;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTDeparture;
@@ -40,8 +39,6 @@ use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTCompany;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLine;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStep;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLeg;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\IndividualStop;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Direction;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourneyProvider;
@@ -53,9 +50,7 @@ use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Paragraph;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Permission\Entity\Permission;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
@@ -116,9 +111,6 @@ class Deserializer
             case Proposal::class:
                 return self::deserializeProposal($data);
                 break;
-            case Matching::class:
-                return self::deserializeMatching($data);
-                break;
             case PTJourney::class:
                 return self::deserializePTJourney($data);
                 break;
@@ -157,12 +149,6 @@ class Deserializer
                 break;
             case Message::class:
                 return self::deserializeMessage($data);
-                break;
-            case AskHistory::class:
-                return self::deserializeAskHistory($data);
-                break;
-            case Ask::class:
-                return self::deserializeAsk($data);
                 break;
             case Recipient::class:
                 return self::deserializeRecipient($data);
@@ -271,62 +257,15 @@ class Deserializer
         if (isset($data["user"])) {
             $proposal->setUser(self::deserializeUser($data['user']));
         }
-        if (isset($data["waypoints"])) {
-            foreach ($data["waypoints"] as $waypoint) {
-                $proposal->addWaypoint(self::deserializeWaypoint($waypoint));
-            }
-        }
-        if (isset($data["matchingOffers"]) && is_array($data["matchingOffers"])) {
-            foreach ($data["matchingOffers"] as $matching) {
-                if (!is_null($matching) && is_array($matching)) {
-                    $proposal->addMatchingOffer(self::deserializeMatching($matching));
-                }
-            }
-        }
-        if (isset($data["matchingRequests"]) && is_array($data["matchingRequests"])) {
-            foreach ($data["matchingRequests"] as $matching) {
-                if (!is_null($matching) && is_array($matching)) {
-                    $proposal->addMatchingRequest(self::deserializeMatching($matching));
-                }
-            }
-        }
         if (isset($data["travelModes"])) {
             foreach ($data["travelModes"] as $travelMode) {
                 $proposal->addTravelMode(self::deserializeTravelMode($travelMode));
             }
         }
-        if (isset($data["criteria"])) {
-            $proposal->setCriteria(self::deserializeCriteria($data['criteria']));
-        }
-        if (isset($data["individualStops"])) {
-            foreach ($data["individualStops"] as $individualStop) {
-                $proposal->addIndividualStop(self::deserializeIndividualStop($individualStop));
-            }
-        }
         if (isset($data["proposalLinked"]) && is_array($data["proposalLinked"])) {
             $proposal->setProposalLinked(self::deserializeProposal($data['proposalLinked']));
         }
-        if (isset($data["matchingLinked"]) && is_array($data["matchingLinked"])) {
-            $proposal->setMatchingLinked(self::deserializeMatching($data['matchingLinked']));
-        }
-        if (isset($data["askLinked"]) && is_array($data["askLinked"])) {
-            $proposal->setAskLinked(self::deserializeAsk($data['askLinked']));
-        }
-        //echo "<pre>" . print_r($proposal,true) . "</pre>";exit;
         return $proposal;
-    }
-
-    private function deserializeWaypoint(array $data): ?Waypoint
-    {
-        $waypoint = new Waypoint();
-        $waypoint = self::autoSet($waypoint, $data);
-        if (isset($data["@id"])) {
-            $waypoint->setIri($data["@id"]);
-        }
-        if (isset($data["address"])) {
-            $waypoint->setAddress(self::deserializeAddress($data['address']));
-        }
-        return $waypoint;
     }
 
     private function deserializeTravelMode(array $data): ?TravelMode
@@ -337,22 +276,6 @@ class Deserializer
             $travelMode->setIri($data["@id"]);
         }
         return $travelMode;
-    }
-
-    private function deserializeCriteria(array $data): ?Criteria
-    {
-        $criteria = new Criteria();
-        $criteria = self::autoSet($criteria, $data);
-        if (isset($data["@id"])) {
-            $criteria->setIri($data["@id"]);
-        }
-        if (isset($data["directionDriver"])) {
-            $criteria->setDirectionDriver(self::deserializeDirection($data['directionDriver']));
-        }
-        if (isset($data["directionPassenger"])) {
-            $criteria->setDirectionPassenger(self::deserializeDirection($data['directionPassenger']));
-        }
-        return $criteria;
     }
 
     private function deserializeDirection(array $data): ?Direction
@@ -373,49 +296,6 @@ class Deserializer
             $direction->setDirectPoints($data["directPoints"]);
         }
         return $direction;
-    }
-
-    private function deserializeIndividualStop(array $data): ?IndividualStop
-    {
-        $individualStop = new IndividualStop();
-        $individualStop = self::autoSet($individualStop, $data);
-        if (isset($data["@id"])) {
-            $individualStop->setIri($data["@id"]);
-        }
-        if (isset($data["proposal"])) {
-            $individualStop->setProposal(self::deserializeProposal($data['proposal']));
-        }
-        if (isset($data["address"])) {
-            $individualStop->setAddress(self::deserializeAddress($data['address']));
-        }
-        return $individualStop;
-    }
-
-    private function deserializeMatching(array $data): ?Matching
-    {
-        $matching = new Matching();
-        $matching = self::autoSet($matching, $data);
-        if (isset($data["@id"])) {
-            $matching->setIri($data["@id"]);
-        }
-        if (isset($data["proposalOffer"]) && is_array($data["proposalOffer"])) {
-            $matching->setProposalOffer(self::deserializeProposal($data['proposalOffer']));
-        }
-        if (isset($data["proposalRequest"]) && is_array($data["proposalRequest"])) {
-            $matching->setProposalRequest(self::deserializeProposal($data['proposalRequest']));
-        }
-        if (isset($data["criteria"])) {
-            $matching->setCriteria(self::deserializeCriteria($data['criteria']));
-        }
-        if (isset($data["waypoints"])) {
-            foreach ($data["waypoints"] as $waypoint) {
-                $matching->addWaypoint(self::deserializeWaypoint($waypoint));
-            }
-        }
-        if (isset($data["filters"])) {
-            $matching->setFilters($data["filters"]);
-        }
-        return $matching;
     }
 
     private function deserializePTJourney(array $data): ?PTJourney
@@ -789,52 +669,6 @@ class Deserializer
         }
 
         return $message;
-    }
-
-    private function deserializeAsk(array $data): ?Ask
-    {
-        $ask = new Ask();
-        $ask = self::autoSet($ask, $data);
-        if (isset($data["@id"])) {
-            $ask->setIri($data["@id"]);
-        }
-        if (isset($data["user"])) {
-            $ask->setUser(self::deserializeUser($data["user"]));
-        }
-        if (isset($data["userRelated"])) {
-            $ask->setUserRelated(self::deserializeUser($data["userRelated"]));
-        }
-        if (isset($data["matching"])) {
-            $ask->setMatching(self::deserializeMatching($data["matching"]));
-        }
-        if (isset($data["criteria"])) {
-            $ask->setCriteria(self::deserializeCriteria($data["criteria"]));
-        }
-        if (isset($data["ask"])) {
-            $ask->setAsk(self::deserializeAsk($data["ask"]));
-        }
-        if (isset($data["askLinked"])) {
-            $ask->setAskLinked(self::deserializeAsk($data["askLinked"]));
-        }
-        if (isset($data["waypoints"])) {
-            foreach ($data["waypoints"] as $waypoint) {
-                $ask->addWaypoint(self::deserializeWaypoint($waypoint));
-            }
-        }
-        return $ask;
-    }
-
-    private function deserializeAskHistory(array $data): ?AskHistory
-    {
-        $askHistory = new AskHistory();
-        $askHistory = self::autoSet($askHistory, $data);
-        if (isset($data["@id"])) {
-            $askHistory->setIri($data["@id"]);
-        }
-        if (isset($data["ask"])) {
-            $askHistory->setAsk(self::deserializeAsk($data["ask"]));
-        }
-        return $askHistory;
     }
 
     private function deserializeRecipient(array $data): ?Recipient

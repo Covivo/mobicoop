@@ -556,7 +556,7 @@ class UserController extends AbstractController
                 }
                 $idMessage = $idThreadDefault = !empty($message->getMessage()) ? $message->getMessage()->getId() : $message->getMessage();
                 $idRecipient = $message->getRecipients()[0]->getId();
-                $idAsk = $message->getAskHistory()["ask"]["id"];
+                $idAsk = $message->getIdAsk();
             } else {
                 $newThread = [
                     "carpool" => (int)$request->request->get('carpool'),
