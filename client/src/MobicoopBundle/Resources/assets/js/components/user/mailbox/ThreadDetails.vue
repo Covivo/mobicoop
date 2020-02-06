@@ -157,8 +157,6 @@ export default {
               if(this.idUser==item.user.id){
                 item.origin = "own";
               }
-              //item.text.replace("\\n","<br />");
-              console.error(item.text);
               this.items.push(item);
 
               this.emit();
