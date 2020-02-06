@@ -409,7 +409,7 @@ class Image
     
     public function getCropY2(): ?int
     {
-        return $this->cropX1;
+        return $this->cropY2;
     }
     
     public function setCropY2(?int $cropY2): self

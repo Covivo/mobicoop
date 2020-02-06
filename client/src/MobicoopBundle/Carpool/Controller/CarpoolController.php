@@ -32,13 +32,8 @@ use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
-use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -70,17 +65,17 @@ class CarpoolController extends AbstractController
      */
     public function carpoolAdPost(AdManager $adManager, UserManager $userManager, Request $request)
     {
-        $proposal = new Proposal();
+        $ad = new Ad();
         $poster = $userManager->getLoggedUser();
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             if ($poster && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
-                $this->denyAccessUnlessGranted('post_delegate', $proposal);
+                $this->denyAccessUnlessGranted('post_delegate', $ad);
                 $data['userId'] = $data['userDelegated'];
                 $data['posterId'] = $poster->getId();
             } else {
-                $this->denyAccessUnlessGranted('post', $proposal);
+                $this->denyAccessUnlessGranted('post', $ad);
                 $data['userId'] = $poster->getId();
             }
             if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
@@ -108,7 +103,7 @@ class CarpoolController extends AbstractController
             return $this->json(['result'=>$adManager->createAd($data)]);
         }
 
-        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        $this->denyAccessUnlessGranted('create_ad', $ad);
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
             "pricesRange" => [
                 "mid" => $this->midPrice,
@@ -124,8 +119,9 @@ class CarpoolController extends AbstractController
      */
     public function carpoolFirstAdPost()
     {
-        $proposal = new Proposal();
-        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        $ad = new Ad();
+        $this->denyAccessUnlessGranted('create_ad', $ad);
+        
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
             "firstAd" => true,
             "pricesRange" => [
@@ -142,8 +138,9 @@ class CarpoolController extends AbstractController
     */
     public function carpoolSolidaryExclusiveAdPost()
     {
-        $proposal = new Proposal();
-        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        $ad = new Ad();
+        $this->denyAccessUnlessGranted('create_ad', $ad);
+
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
@@ -164,9 +161,8 @@ class CarpoolController extends AbstractController
      */
     public function carpoolAdPostFromSearch(Request $request)
     {
-        $proposal = new Proposal();
-
-        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        $ad = new Ad();
+        $this->denyAccessUnlessGranted('create_ad', $ad);
         
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
@@ -319,29 +315,6 @@ class CarpoolController extends AbstractController
             $filters
         )) {
             $result = $ad->getResults();
-            //We get the id of proposal the current user already asks (no matter the status)
-            if ($userManager->getLoggedUser() != null) {
-                $proposalAlreadyAsk = $userManager->getAsks($userManager->getLoggedUser());
-
-                foreach ($result as $key => $oneResult) {
-                    $result[$key]['alreadyask'] = 0;
-                    //User made 0 ask, we skip verification
-                    if ($proposalAlreadyAsk != null) {
-                        if ($oneResult['resultPassenger'] != null) {
-                            $proposal = $oneResult['resultPassenger']['outward']['proposalId'];
-                            if (in_array($proposal, $proposalAlreadyAsk['offers'])) {
-                                $result[$key]['alreadyask'] = 1;
-                            }
-                        }
-                        if ($oneResult['resultDriver'] != null) {
-                            $proposal = $oneResult['resultDriver']['outward']['proposalId'];
-                            if (in_array($proposal, $proposalAlreadyAsk['request'])) {
-                                $result[$key]['alreadyask'] = 1;
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         return $this->json($result);

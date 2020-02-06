@@ -25,8 +25,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**
  * Ad management service.
@@ -85,7 +83,7 @@ class AdManager
         }
 
         // frequency
-        $ad->setFrequency($data['regular'] ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL);
+        $ad->setFrequency($data['regular'] ? Ad::FREQUENCY_REGULAR : Ad::FREQUENCY_PUNCTUAL);
 
         // outward waypoints
         $outwardsWaypoints[] = $data['origin'];
@@ -98,7 +96,7 @@ class AdManager
         $ad->setOutwardWaypoints($outwardsWaypoints);
 
         // date and time
-        if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+        if ($ad->getFrequency() == Ad::FREQUENCY_REGULAR) {
             if (isset($data['fromDate'])) {
                 $ad->setOutwardDate(\DateTime::createFromFormat('Y-m-d', $data['fromDate']));
             } else {

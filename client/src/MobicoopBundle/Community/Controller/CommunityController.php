@@ -22,7 +22,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Controller;
 
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -112,7 +112,6 @@ class CommunityController extends AbstractController
                 $community->addCommunityUser($communityUser);
                 $community->setDomain($data->get('domain'));
 
-                
                 // create community
                 if ($community = $communityManager->createCommunity($community)) {
 
@@ -147,7 +146,6 @@ class CommunityController extends AbstractController
     {
         $this->denyAccessUnlessGranted('list', new Community());
 
-
         return $this->render('@Mobicoop/community/communities.html.twig', [
             'defaultItemsPerPage' => self::DEFAULT_NB_COMMUNITIES_PER_PAGE
         ]);
@@ -171,7 +169,7 @@ class CommunityController extends AbstractController
                 // We get all the communities
                 $communities = $communityManager->getCommunities($user->getId(), $perPage, $page, $search);
 
-                // We get de communities of the user
+                // We get the communities of the user
                 $communityUsers = $communityManager->getAllCommunityUser($user->getId());
                 $communitiesUser = [];
                 $idCommunitiesUser = [];
@@ -259,7 +257,7 @@ class CommunityController extends AbstractController
             foreach ($proposals as $proposal) {
                 $currentProposal = [
                     "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
-                    "frequency"=>($proposal["criteria"]["frequency"]==Criteria::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
+                    "frequency"=>($proposal["criteria"]["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
                     "carpoolerFirstName" => $proposal["user"]["givenName"],
                     "carpoolerLastName" => $proposal["user"]["shortFamilyName"],
                     "waypoints"=>[]
@@ -467,7 +465,7 @@ class CommunityController extends AbstractController
             foreach ($proposals as $proposal) {
                 $currentProposal = [
                     "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
-                    "frequency"=>($proposal["criteria"]["frequency"]==Criteria::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
+                    "frequency"=>($proposal["criteria"]["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
                     "waypoints"=>[]
                 ];
                 foreach ($proposal["waypoints"] as $waypoint) {

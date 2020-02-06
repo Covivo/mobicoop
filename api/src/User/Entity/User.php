@@ -429,7 +429,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The name of the user in a professional context.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $proName;
 
@@ -448,7 +448,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $proEmail;
 
@@ -801,7 +801,7 @@ class User implements UserInterface, EquatableInterface
     private $userRoles;
 
     /**
-     * @Groups({"read"})
+     * @Groups({"readUser"})
      */
     private $roles;
 
