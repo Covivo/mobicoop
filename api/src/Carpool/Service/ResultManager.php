@@ -31,6 +31,7 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Result;
 use App\Carpool\Entity\ResultItem;
 use App\Carpool\Entity\ResultRole;
+use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Service\FormatDataManager;
 use DateTime;
@@ -46,6 +47,7 @@ class ResultManager
     private $formatDataManager;
     private $proposalMatcher;
     private $matchingRepository;
+    private $askRepository;
     private $params;
 
     /**
@@ -54,12 +56,14 @@ class ResultManager
      * @param FormatDataManager $formatDataManager
      * @param ProposalMatcher $proposalMatcher
      * @param MatchingRepository $matchingRepository
+     * @param AskRepository $askRepository
      */
-    public function __construct(FormatDataManager $formatDataManager, ProposalMatcher $proposalMatcher, MatchingRepository $matchingRepository)
+    public function __construct(FormatDataManager $formatDataManager, ProposalMatcher $proposalMatcher, MatchingRepository $matchingRepository, AskRepository $askRepository)
     {
         $this->formatDataManager = $formatDataManager;
         $this->proposalMatcher = $proposalMatcher;
         $this->matchingRepository = $matchingRepository;
+        $this->askRepository = $askRepository;
     }
 
     // set the params
@@ -916,6 +920,36 @@ class ResultManager
                             break;
                     }
                 }
+            } else {
+                // search for existing matchings with same proposalId as passenger
+                // first we check if a user is associated to the proposal (if a user is logged)
+                if ($matching["request"]->getProposalOffer()->getUser()) {
+                    if ($asks = $this->askRepository->findAskForAd(
+                        $matching["request"]->getProposalRequest(),
+                        $matching["request"]->getProposalOffer()->getUser(),
+                        [
+                            Ask::STATUS_INITIATED,
+                            Ask::STATUS_PENDING_AS_DRIVER,
+                            Ask::STATUS_PENDING_AS_PASSENGER,
+                            Ask::STATUS_ACCEPTED_AS_DRIVER,
+                            Ask::STATUS_ACCEPTED_AS_PASSENGER
+                        ]
+                    )) {
+                        foreach ($asks as $ask) {
+                            switch ($ask->getStatus()) {
+                                    case Ask::STATUS_INITIATED:
+                                    case Ask::STATUS_PENDING_AS_DRIVER:
+                                    case Ask::STATUS_PENDING_AS_PASSENGER:
+                                        $item->setPendingAsk(true);
+                                        break;
+                                    case Ask::STATUS_ACCEPTED_AS_DRIVER:
+                                    case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+                                        $item->setAcceptedAsk(true);
+                                        break;
+                                }
+                        }
+                    }
+                }
             }
             
             if (!$return) {
@@ -1395,6 +1429,36 @@ class ResultManager
                         case Ask::STATUS_ACCEPTED_AS_PASSENGER:
                             $item->setAcceptedAsk(true);
                             break;
+                    }
+                }
+            } else {
+                // search for existing matchings with same proposalId as passenger
+                // first we check if a user is associated to the proposal (if a user is logged)
+                if ($matching["offer"]->getProposalRequest()->getUser()) {
+                    if ($asks = $this->askRepository->findAskForAd(
+                        $matching["offer"]->getProposalOffer(),
+                        $matching["offer"]->getProposalRequest()->getUser(),
+                        [
+                            Ask::STATUS_INITIATED,
+                            Ask::STATUS_PENDING_AS_DRIVER,
+                            Ask::STATUS_PENDING_AS_PASSENGER,
+                            Ask::STATUS_ACCEPTED_AS_DRIVER,
+                            Ask::STATUS_ACCEPTED_AS_PASSENGER
+                        ]
+                    )) {
+                        foreach ($asks as $ask) {
+                            switch ($ask->getStatus()) {
+                                    case Ask::STATUS_INITIATED:
+                                    case Ask::STATUS_PENDING_AS_DRIVER:
+                                    case Ask::STATUS_PENDING_AS_PASSENGER:
+                                        $item->setPendingAsk(true);
+                                        break;
+                                    case Ask::STATUS_ACCEPTED_AS_DRIVER:
+                                    case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+                                        $item->setAcceptedAsk(true);
+                                        break;
+                                }
+                        }
                     }
                 }
             }

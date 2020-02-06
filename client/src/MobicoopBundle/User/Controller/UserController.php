@@ -631,7 +631,6 @@ class UserController extends AbstractController
                 $results = $response->getResults()[0];
                 $results["canUpdateAsk"] = $response->getCanUpdateAsk(); // Because it's not in result
                 $results["askStatus"] = $response->getAskStatus(); // Because it's not in result
-                $results["alreadyask"] = false; // TODO put that verification api side
 
                 return new JsonResponse($results);
             } else {

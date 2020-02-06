@@ -2,11 +2,13 @@
     "fr": {
         "birthYears": "ans",
         "carpool": "Covoiturer",
+        "externalUrl":"S'y rendre",
         "needTobeConnected": "Vous devez être connecté pour effectuer cette action.",
         "inDev": "En cours de développement."
     },
     "en": {
         "birthYears": "years",
+        "externalUrl":"Go to",
         "carpool": "Carpool"
     }
 }

@@ -5,7 +5,6 @@
     {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/results") }}#}
 {% endblock %}
 {% block main %}
-
     <matching
         :proposal-id = "{{ proposalId is defined ? (proposalId ? proposalId : 'null') : 'null' }}"
         :origin = "{{ origin is defined ? origin : 'null' }}"
@@ -17,7 +16,9 @@
         {{ regular is defined ? (regular == 'true' ? 'regular' : '') : '' }}
         {{ distinguishRegular ? 'distinguish-regular' : '' }}
         :carpooler-rate = "{{ carpoolerRate }}"
-        geo-search-url="{{ geoCompleteUri }}" 
+        geo-search-url="{{ geoCompleteUri }}"
+        platform-name="{{ platformName }}"
+        :external-rdex-journeys="{{ (externalRDEXJourneys) ? 'true' : 'false' }}"
     />
 
 

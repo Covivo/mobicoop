@@ -39,7 +39,8 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Controller class for carpooling related actions.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class CarpoolController extends AbstractController
 {
@@ -50,14 +51,18 @@ class CarpoolController extends AbstractController
     private $forbiddenPrice;
     private $defaultRole;
     private $defaultRegular;
+    private $platformName;
+    private $carpoolRDEXJourneys;
 
-    public function __construct($midPrice, $highPrice, $forbiddenPrice, $defaultRole, bool $defaultRegular)
+    public function __construct($midPrice, $highPrice, $forbiddenPrice, $defaultRole, bool $defaultRegular, string $platformName, bool $carpoolRDEXJourneys)
     {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
         $this->forbiddenPrice = $forbiddenPrice;
         $this->defaultRole = $defaultRole;
         $this->defaultRegular = $defaultRegular;
+        $this->platformName = $platformName;
+        $this->carpoolRDEXJourneys = $carpoolRDEXJourneys;
     }
     
     /**
@@ -226,13 +231,15 @@ class CarpoolController extends AbstractController
      * Ad results.
      * (POST)
      */
-    public function carpoolAdResults($id, AdManager $adManager)
+    public function carpoolAdResults($id, AdManager $adManager, ProposalManager $proposalManager)
     {
         $ad = $adManager->getAd($id);
         $this->denyAccessUnlessGranted('results_ad', $ad);
 
         return $this->render('@Mobicoop/carpool/results.html.twig', [
-            'proposalId' => $id
+            'proposalId' => $id,
+            'platformName' => $this->platformName,
+            'externalRDEXJourneys' => false // No RDEX, this not a new search
         ]);
     }
 
@@ -269,7 +276,9 @@ class CarpoolController extends AbstractController
             'time' =>  $request->request->get('time'),
             'regular' => $request->request->get('regular'),
             'communityId' => $request->request->get('communityId'),
-            'user' => $userManager->getLoggedUser()
+            'user' => $userManager->getLoggedUser(),
+            'platformName' => $this->platformName,
+            'externalRDEXJourneys' => $this->carpoolRDEXJourneys
         ]);
     }
 
@@ -363,15 +372,12 @@ class CarpoolController extends AbstractController
      */
     public function rdexJourney(ExternalJourneyManager $externalJourneyManager, Request $request)
     {
-        $params = [
-            'provider' => $request->query->get('provider'),
-            'driver' => $request->query->get('driver'),
-            'passenger' => $request->query->get('passenger'),
-            'from_latitude' => $request->query->get('from_latitude'),
-            'from_longitude' => $request->query->get('from_longitude'),
-            'to_latitude' => $request->query->get('to_latitude'),
-            'to_longitude' => $request->query->get('to_longitude')
-        ];
-        return $this->json($externalJourneyManager->getExternalJourney($params, DataProvider::RETURN_JSON));
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            //$data['provider'] = "mobicoopV1"; // To Do : Really usefull ? The API should handle this
+            return $this->json($externalJourneyManager->getExternalJourney($data, DataProvider::RETURN_JSON));
+        }
+
+        return $this->json("");
     }
 }
