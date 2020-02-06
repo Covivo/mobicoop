@@ -26,7 +26,7 @@
           lg="9"
           md="10"
           xl="6"
-          align="center"
+          class="text-center"
         >
           <!-- event : avatar, title and description -->
           <event-infos
@@ -36,7 +36,7 @@
           />
           <!-- event buttons and map -->
           <v-row
-            align="center"
+            class="text-center"
           >
             <v-col
               cols="4"
@@ -74,7 +74,7 @@
               <v-card
                 v-show="loadingMap"
                 flat
-                align="center"
+                class="text-center"
                 height="500"
                 color="backSpiner"
               >
@@ -100,15 +100,13 @@
       <!-- search journey -->
       <v-row
         justify="center"
-        align="left"
       >
         <v-col
           cols="12"
           lg="9"
           md="10"
           xl="6"
-          align="center"
-          class="mt-6"
+          class="text-center mt-6"
         >
           <h3 class="headline text-justify font-weight-bold">
             {{ $t('title.searchCarpool') }}
@@ -116,7 +114,7 @@
         </v-col>
       </v-row>
       <v-row
-        align="center"
+        class="text-center"
         justify="center"
       >
         <search
@@ -331,7 +329,6 @@ export default {
 
 
           proposal.waypoints.forEach((waypoint, index) => {
-            console.error(waypoint);
             currentProposal.latLngs.push(waypoint.latLng);
             infosForPopUp.origin = waypoint.title;
             infosForPopUp.originLat = waypoint.latLng.lat;
