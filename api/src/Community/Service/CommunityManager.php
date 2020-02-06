@@ -23,6 +23,7 @@
 
 namespace App\Community\Service;
 
+use App\Carpool\Repository\ProposalRepository;
 use App\Community\Entity\Community;
 use Psr\Log\LoggerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,7 +38,8 @@ use App\User\Repository\UserRepository;
  *
  * This service contains methods related to community management.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class CommunityManager
 {
@@ -46,6 +48,7 @@ class CommunityManager
     private $securityPath;
     private $userRepository;
     private $communityRepository;
+    private $proposalRepository;
 
     /**
      * Constructor
@@ -58,13 +61,15 @@ class CommunityManager
         LoggerInterface $logger,
         string $securityPath,
         UserRepository $userRepository,
-        CommunityRepository $communityRepository
+        CommunityRepository $communityRepository,
+        ProposalRepository $proposalRepository
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->securityPath = $securityPath;
         $this->userRepository = $userRepository;
         $this->communityRepository = $communityRepository;
+        $this->proposalRepository = $proposalRepository;
     }
 
     /**
@@ -195,5 +200,24 @@ class CommunityManager
     public function getCommunity(int $communityId)
     {
         return $this->communityRepository->find($communityId);
+    }
+
+    
+    /**
+     * Remove the link between the journeys of a user and a community
+     */
+    public function unlinkCommunityJourneys(CommunityUser $communityUser)
+    {
+        foreach ($communityUser->getUser()->getProposals() as $proposal) {
+            foreach ($proposal->getCommunities() as $community) {
+                if ($community->getId() == $communityUser->getCommunity()->getId()) {
+                    $proposal->removeCommunity($community);
+                    $this->entityManager->persist($proposal);
+                }
+            }
+        }
+        $this->entityManager->flush();
+
+        return $communityUser;
     }
 }

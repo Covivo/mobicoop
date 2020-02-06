@@ -501,6 +501,7 @@ export default {
           this.refreshLastUsers = true;
           this.getCommunityUser();
           this.loading = false;
+          location.reload(); // Yes, i know it's the lazy method to update the map...
         });
     },
     showCommunityProposals () {
