@@ -153,11 +153,11 @@ export default {
       }, 100);
     },
     updateLatLng(data){
-      // data containts a LatLng object.
+      // data contains a LatLng object.
       this.$emit("updateLatLng",data);
     },
     clickOnPolyline(data){
-      // data containts a LatLng object.
+      // data contains a LatLng object.
       this.$emit("clickOnPolyline",data);
     }
   }
