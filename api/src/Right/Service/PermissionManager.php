@@ -24,7 +24,6 @@
 namespace App\Right\Service;
 
 use App\App\Entity\App;
-use Doctrine\ORM\EntityManagerInterface;
 use App\User\Entity\User;
 use App\Geography\Entity\Territory;
 use App\Right\Repository\RightRepository;
@@ -48,7 +47,8 @@ class PermissionManager
     /**
      * Constructor.
      *
-     * @param EntityManagerInterface $entityManager
+     * @param RightRepository $rightRepository  (DI) Right repository
+     * @param RoleRepository $roleRepository    (DI) Role repository
      */
     public function __construct(RightRepository $rightRepository, RoleRepository $roleRepository)
     {
@@ -57,18 +57,19 @@ class PermissionManager
     }
 
     /**
-     * Check if a requester has a permission on an right, eventually on a given territory
+     * Check if a requester has a permission on an right, eventually on a given territory, eventually on a related object user
      *
-     * @param Right $right
-     * @param UserInterface $requester
-     * @param Territory $territory
-     * @return Permission
+     * @param Right $right              The right to check
+     * @param UserInterface $requester  The requester (an app or a user)
+     * @param Territory|null $territory The territory
+     * @param User|null $owner          The owner of the object related to the right
+     * @return bool
      */
-    public function checkPermission(string $rightName, UserInterface $requester, Territory $territory=null)
+    public function checkPermission(string $rightName, UserInterface $requester, ?Territory $territory=null, ?User $owner = null)
     {
         $right = $this->rightRepository->findByName($rightName);
         if ($requester instanceof User) {
-            return $this->userHasPermission($right, $requester, $territory)->isGranted();
+            return $this->userHasPermission($right, $requester, $territory, $owner)->isGranted();
         } elseif ($requester instanceof App) {
             return $this->appHasPermission($right, $requester)->isGranted();
         }
@@ -76,14 +77,15 @@ class PermissionManager
     }
 
     /**
-     * Check if a user has a permission on an right, eventually on a given territory
+     * Check if a user has a permission on an right, eventually on a given territory, eventually on a related object user
      *
-     * @param Right $right
-     * @param User|null $user
-     * @param Territory|null $territory
-     * @return void
+     * @param Right $right              The right to check
+     * @param User $user                The user
+     * @param Territory|null $territory The territory
+     * @param User|null $owner          The owner of the object related to the right
+     * @return Permission
      */
-    public function userHasPermission(Right $right, ?User $user, Territory $territory=null): Permission
+    public function userHasPermission(Right $right, ?User $user, ?Territory $territory=null, ?User $owner = null): Permission
     {
         $permission = new Permission(1);
         $permission->setGranted(false);
@@ -109,6 +111,11 @@ class PermissionManager
         foreach ($user->getUserRoles() as $userRole) {
             if (is_null($userRole->getTerritory()) || $userRole->getTerritory() == $territory) {
                 if ($this->roleHasRight($userRole->getRole(), $right)) {
+                    echo "la";exit;
+                    if ($right->hasCheckOwnership() && $user->getId() != $owner->getId()) {
+                        echo "la";exit;
+                        break;
+                    }
                     $permission->setGranted(true);
                     return $permission;
                 }
@@ -119,11 +126,17 @@ class PermissionManager
         foreach ($user->getUserRights() as $userRight) {
             if (is_null($userRight->getTerritory()) || $userRight->getTerritory() == $territory) {
                 if ($userRight->getRight()->getName() == $right->getName()) {
+                    if ($userRight->getRight()->hasCheckOwnership() && $user->getId() != $owner->getId()) {
+                        break;
+                    }
                     $permission->setGranted(true);
                     return $permission;
                 } else {
                     foreach ($this->rightRepository->findChildren($userRight->getRight()) as $child) {
                         if ($child->getName() == $right->getName()) {
+                            if ($child->hasCheckOwnership() && $user->getId() != $owner->getId()) {
+                                break;
+                            }
                             $permission->setGranted(true);
                             return $permission;
                         }
@@ -169,7 +182,7 @@ class PermissionManager
     }
 
     // check if a role has a right
-    // recursive if the role has children
+    // recursive if the role has a parent
     private function roleHasRight(Role $role, Right $right)
     {
         foreach ($role->getRights() as $uright) {

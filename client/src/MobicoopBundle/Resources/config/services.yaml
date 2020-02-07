@@ -77,7 +77,7 @@ services:
     Mobicoop\Bundle\MobicoopBundle\Community\Controller\:
         resource: '@MobicoopBundle/Community/Controller/*'
         arguments:
-            $createFromFront: '%env(resolve:COMMUNITIES_CREATE_FROM_FRONT)%'
+            $createFromFront: '%env(bool:COMMUNITIES_CREATE_FROM_FRONT)%'
     Mobicoop\Bundle\MobicoopBundle\Community\Service\:
         resource: '@MobicoopBundle/Community/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Community\Security\:

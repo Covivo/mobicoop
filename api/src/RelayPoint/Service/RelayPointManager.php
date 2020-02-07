@@ -26,6 +26,7 @@ namespace App\RelayPoint\Service;
 use Psr\Log\LoggerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\RelayPoint\Entity\RelayPoint;
+use App\RelayPoint\Repository\RelayPointRepository;
 
 /**
  * Relay point manager.
@@ -37,6 +38,7 @@ use App\RelayPoint\Entity\RelayPoint;
 class RelayPointManager
 {
     private $entityManager;
+    private $relayPointRepository;
     private $logger;
 
     /**
@@ -47,10 +49,23 @@ class RelayPointManager
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        RelayPointRepository $relayPointRepository
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
+        $this->relayPointRepository = $relayPointRepository;
+    }
+
+    /**
+     * Get a relayPoint by its id.
+     *
+     * @param integer $id
+     * @return RelayPoint|null
+     */
+    public function getRelayPoint(int $id)
+    {
+        return $this->relayPointRepository->find($id);
     }
 
     /**

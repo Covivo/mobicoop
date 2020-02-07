@@ -61,11 +61,17 @@ class PermissionCheck
      */
     public function __invoke(array $data): ?Permission
     {
+        
         $permission = null;
         // we check if the user exists
         $user = null;
         if ($this->request->get("user")) {
             $user = $this->userRepository->find($this->request->get("user"));
+        }
+        // we check if the owner exists
+        $owner = null;
+        if ($this->request->get("owner")) {
+            $owner = $this->userRepository->find($this->request->get("owner"));
         }
         // we check if the action exists
         if ($this->request->get("action") && $right = $this->rightRepository->findByName($this->request->get("action"))) {
@@ -75,7 +81,7 @@ class PermissionCheck
                 $territory = $this->territoryRepository->find($this->request->get("territory"));
             }
             // we search if the user has the permission
-            $permission = $this->permissionManager->userHasPermission($right, $user, $territory);
+            $permission = $this->permissionManager->userHasPermission($right, $user, $territory, $owner);
         }
         return $permission;
     }

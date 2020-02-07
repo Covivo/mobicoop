@@ -23,10 +23,17 @@
 
 namespace App\Image\Security;
 
+use App\Community\Service\CommunityManager;
+use App\Event\Service\EventManager;
 use App\Right\Service\PermissionManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Image\Entity\Image;
+use App\MassCommunication\Service\CampaignManager;
+use App\RelayPoint\Service\RelayPointManager;
+use App\User\Service\UserManager;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -40,13 +47,33 @@ class ImageVoter extends Voter
     const ADMIN_MANAGE_COMMUNITY = 'image_admin_manage_community';
     const ADMIN_MANAGE_USER = 'image_admin_manage_user';
 
-    private $security;
     private $permissionManager;
+    private $userManager;
+    private $communityManager;
+    private $eventManager;
+    private $relayPointManager;
+    private $campaignManager;
+    private $request;
 
-    public function __construct(Security $security, PermissionManager $permissionManager)
+    public function __construct(
+        Security $security, 
+        PermissionManager $permissionManager, 
+        RequestStack $requestStack, 
+        EventManager $eventManager, 
+        CommunityManager $communityManager, 
+        UserManager $userManager,
+        RelayPointManager $relayPointManager,
+        CampaignManager $campaignManager
+        )
     {
         $this->security = $security;
         $this->permissionManager = $permissionManager;
+        $this->userManager = $userManager;
+        $this->communityManager = $communityManager;
+        $this->eventManager = $eventManager;
+        $this->relayPointManager = $relayPointManager;
+        $this->campaignManager = $campaignManager;
+        $this->request = $requestStack->getCurrentRequest();
     }
 
     protected function supports($attribute, $subject)
@@ -60,17 +87,20 @@ class ImageVoter extends Voter
             self::ADMIN_MANAGE_EVENT,
             self::ADMIN_MANAGE_COMMUNITY,
             self::ADMIN_MANAGE_USER,
-
             ])) {
             return false;
         }
-        var_dump($subject);
-        die;
+
         // only vote on Image objects inside this voter
-        if (!$subject instanceof Image) {
+        // only for items actions
+        if (in_array($attribute, [
+            self::READ,
+            self::UPDATE,
+            self::DELETE,
+            ]) && !$subject instanceof Image) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -82,7 +112,7 @@ class ImageVoter extends Voter
             case self::READ:
                 return $this->canRead($requester, $subject);
             case self::POST:
-                return $this->canPost($requester, $subject);
+                return $this->canPost($requester, $this->request);
             case self::UPDATE:
                 return $this->canUpdate($requester, $subject);
             case self::DELETE:
@@ -111,15 +141,39 @@ class ImageVoter extends Voter
         return false;
     }
 
-    private function canPost(UserInterface $requester, Image $subject)
+    private function canPost(UserInterface $requester, Request $request)
     {
-        if (($subject->getEventId() && $subject->getEvent()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('event_manage', $requester))) {
-            return $this->permissionManager->checkPermission('event_create', $requester);
-        } elseif (($subject->getCommunityId() && $subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
-            return $this->permissionManager->checkPermission('community_create', $requester);
-        } elseif (($subject->getUserId() && $subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
+        if ($request->get('userId')) {
+            if (!$this->userManager->getUser($request->get('userId'))) {
+                return false;
+            }
             return $this->permissionManager->checkPermission('user_update_self', $requester);
-        }
+        } if ($request->get('communityId')) {
+            if (!$this->communityManager->getCommunity($request->get('userId'))) {
+                return false;
+            }
+            return $this->permissionManager->checkPermission('user_update_self', $requester);
+        } if ($request->get('eventId')) {
+            if (!$this->eventManager->getEvent($request->get('userId'))) {
+                return false;
+            }
+            return $this->permissionManager->checkPermission('user_update_self', $requester);
+        } if ($request->get('relayPointId')) {
+            if (!$this->relayPointManager->getRelayPoint($request->get('relayPointId'))) {
+                return false;
+            }
+            return $this->permissionManager->checkPermission('user_update_self', $requester);
+        } if ($request->get('relayPointTypeId')) {
+            if (!$this->userManager->getUser($request->get('userId'))) {
+                return false;
+            }
+            return $this->permissionManager->checkPermission('user_update_self', $requester);
+        } if ($request->get('campaignId')) {
+            if (!$this->userManager->getUser($request->get('userId'))) {
+                return false;
+            }
+            return $this->permissionManager->checkPermission('user_update_self', $requester);
+        } 
         return false;
     }
 

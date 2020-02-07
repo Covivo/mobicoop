@@ -28,7 +28,6 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Community\Entity\Community;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class CommunityVoter extends Voter
 {
@@ -36,9 +35,9 @@ class CommunityVoter extends Voter
     const READ = 'community_read';
     const UPDATE = 'community_update';
     const DELETE = 'community_delete';
+    const EXISTS = 'community_exists';
     const ADMIN_MANAGE = 'community_admin_manage';
 
-    private $security;
     private $permissionManager;
 
     public function __construct(Security $security, PermissionManager $permissionManager)
@@ -55,13 +54,19 @@ class CommunityVoter extends Voter
             self::READ,
             self::UPDATE,
             self::DELETE,
-            self::ADMIN_MANAGE
+            self::ADMIN_MANAGE,
+            self::EXISTS
             ])) {
             return false;
         }
 
         // only vote on Community objects inside this voter
-        if (!$subject instanceof Community) {
+        // only for items actions
+        if (in_array($attribute, [
+            self::READ,
+            self::UPDATE,
+            self::DELETE,
+            ]) && !$subject instanceof Community) {
             return false;
         }
 
@@ -83,6 +88,8 @@ class CommunityVoter extends Voter
                 return $this->canDelete($requester, $subject);
             case self::ADMIN_MANAGE:
                 return $this->canAdminManage($requester);
+            case self::EXISTS:
+                return $this->canCheckExistence($requester);
            
         }
 
@@ -120,5 +127,10 @@ class CommunityVoter extends Voter
     private function canAdminManage($requester)
     {
         return $this->permissionManager->checkPermission('community_manage', $requester);
+    }
+
+    private function canCheckExistence($requester)
+    {
+        return $this->permissionManager->checkPermission('community_read', $requester);
     }
 }

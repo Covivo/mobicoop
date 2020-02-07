@@ -87,12 +87,12 @@ use App\Community\Controller\JoinAction;
  *                      }
  *                  }
  *              },
- *              "security"="is_granted('community_create',object)"
+ *              "security_post_denormalize"="is_granted('community_create',object)"
  *          },
  *          "exists"={
  *              "method"="GET",
  *              "path"="/communities/exists",
- *              "normalization_context"={"groups"={"read"}},
+ *              "normalization_context"={"groups"={"readCommunity"}},
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -104,7 +104,7 @@ use App\Community\Controller\JoinAction;
  *                      }
  *                  }
  *              },
- *              "security"="is_granted('community_read',object)"
+ *              "security_post_denormalize"="is_granted('community_exists',object)"
  *          }
  *      },
  *      itemOperations={

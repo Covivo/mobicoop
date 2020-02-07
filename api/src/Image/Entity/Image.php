@@ -37,6 +37,7 @@ use App\Event\Entity\Event;
 use App\Community\Entity\Community;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Entity\RelayPointType;
+use App\MassCommunication\Entity\Campaign;
 use App\Image\Controller\CreateImageAction;
 use App\Image\Controller\ImportImageCommunityController;
 use App\Image\Controller\ImportImageEventController;
@@ -61,9 +62,8 @@ use App\User\Entity\User;
  *          "get",
  *          "post"={
  *              "method"="POST",
- *              "path"="/images",
  *              "controller"=CreateImageAction::class,
- *              "defaults"={"_api_receive"=false},
+ *              "deserialize"=false,
  *              "security_post_denormalize"="is_granted('image_post',object)"
  *          },
  *      },
@@ -319,6 +319,25 @@ class Image
      * @Groups({"read","write"})
      */
     private $relayPointTypeId;
+
+    /**
+     * @var Campaign|null The campaign associated with the image.
+     *
+     * ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign", inversedBy="images", cascade="persist")
+     */
+    private $campaign;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="campaign", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $campaignFile;
+    
+    /**
+     * @var int|null The campaign id associated with the image.
+     * @Groups({"read","write"})
+     */
+    private $campaignId;
 
     /**
      * @var array|null The versions of with the image.
@@ -692,6 +711,38 @@ class Image
     public function setRelayPointTypeId($relayPointTypeId)
     {
         $this->relayPointTypeId = $relayPointTypeId;
+    }
+
+    public function getCampaign(): ?Campaign
+    {
+        return $this->campaign;
+    }
+    
+    public function setCampaign(?Campaign $campaign): self
+    {
+        $this->campaign = $campaign;
+        
+        return $this;
+    }
+    
+    public function getCampaignFile(): ?File
+    {
+        return $this->campaignFile;
+    }
+    
+    public function setCampaignFile(?File $campaignFile)
+    {
+        $this->campaignFile = $campaignFile;
+    }
+    
+    public function getCampaignId(): ?int
+    {
+        return $this->campaignId;
+    }
+    
+    public function setCampaignId($campaignId)
+    {
+        $this->campaignId = $campaignId;
     }
     
     public function getVersions(): ?array

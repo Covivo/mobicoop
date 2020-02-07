@@ -99,6 +99,15 @@ class Right
      * @Groups({"read","write"})
      */
     private $parent;
+
+    /**
+     * @var bool|null Check related object ownership.
+     * If true, need to check if the object related to the right is owned by a given user.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $checkOwnership;
     
     public function getId(): ?int
     {
@@ -149,6 +158,18 @@ class Right
     public function setParent(?Right $parent): self
     {
         $this->parent = $parent;
+        
+        return $this;
+    }
+
+    public function hasCheckOwnership(): ?bool
+    {
+        return $this->checkOwnership;
+    }
+    
+    public function setcheckOwnership(bool $checkOwnership): self
+    {
+        $this->checkOwnership = $checkOwnership;
         
         return $this;
     }

@@ -36,7 +36,6 @@ use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -55,9 +54,9 @@ class CommunityController extends AbstractController
      * Constructor
      * @param string $createFromFront
      */
-    public function __construct($createFromFront)
+    public function __construct(bool $createFromFront)
     {
-        $this->createFromFront = ($createFromFront === 'true') ? true : false;
+        $this->createFromFront = $createFromFront;
     }
     
     /**
@@ -66,13 +65,13 @@ class CommunityController extends AbstractController
     public function communityCreate(CommunityManager $communityManager, UserManager $userManager, Request $request, ImageManager $imageManager)
     {
         // Deny the creation of a community if the .env say so
-        if ($this->createFromFront==="false") {
+        if (!$this->createFromFront) {
             return $this->redirectToRoute('home');
         }
         
         $community = new Community();
         $this->denyAccessUnlessGranted('create', $community);
-        $user = new User($userManager->getLoggedUser()->getId());
+        $user = $userManager->getLoggedUser();
         $communityUser = new CommunityUser();
         $address = new Address();
         
@@ -124,7 +123,7 @@ class CommunityController extends AbstractController
                         return new Response();
                     }
                     //If an error occur on upload image, the community is already create, so we delete her
-                    $communityManager->deleteCommunity($community->getId());
+                    //$communityManager->deleteCommunity($community->getId());
                     // return error if image post didnt't work
                     return new Response(json_encode('error.image'));
                 }
@@ -283,7 +282,6 @@ class CommunityController extends AbstractController
             'points' => $ways,
             'lastUsers' => $lastUsersFormated,
             'communityUserStatus' => (isset($communityUser) && $communityUser!==null && count($communityUser)>0)?$communityUser[0]->getStatus():-1
-            
         ]);
     }
 
