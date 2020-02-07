@@ -56,16 +56,15 @@ class ImageVoter extends Voter
     private $request;
 
     public function __construct(
-        Security $security, 
-        PermissionManager $permissionManager, 
-        RequestStack $requestStack, 
-        EventManager $eventManager, 
-        CommunityManager $communityManager, 
+        Security $security,
+        PermissionManager $permissionManager,
+        RequestStack $requestStack,
+        EventManager $eventManager,
+        CommunityManager $communityManager,
         UserManager $userManager,
         RelayPointManager $relayPointManager,
         CampaignManager $campaignManager
-        )
-    {
+    ) {
         $this->security = $security;
         $this->permissionManager = $permissionManager;
         $this->userManager = $userManager;
@@ -148,32 +147,37 @@ class ImageVoter extends Voter
                 return false;
             }
             return $this->permissionManager->checkPermission('user_update_self', $requester);
-        } if ($request->get('communityId')) {
+        }
+        if ($request->get('communityId')) {
             if (!$this->communityManager->getCommunity($request->get('userId'))) {
                 return false;
             }
             return $this->permissionManager->checkPermission('user_update_self', $requester);
-        } if ($request->get('eventId')) {
+        }
+        if ($request->get('eventId')) {
             if (!$this->eventManager->getEvent($request->get('userId'))) {
                 return false;
             }
             return $this->permissionManager->checkPermission('user_update_self', $requester);
-        } if ($request->get('relayPointId')) {
+        }
+        if ($request->get('relayPointId')) {
             if (!$this->relayPointManager->getRelayPoint($request->get('relayPointId'))) {
                 return false;
             }
             return $this->permissionManager->checkPermission('user_update_self', $requester);
-        } if ($request->get('relayPointTypeId')) {
+        }
+        if ($request->get('relayPointTypeId')) {
             if (!$this->userManager->getUser($request->get('userId'))) {
                 return false;
             }
             return $this->permissionManager->checkPermission('user_update_self', $requester);
-        } if ($request->get('campaignId')) {
+        }
+        if ($request->get('campaignId')) {
             if (!$this->userManager->getUser($request->get('userId'))) {
                 return false;
             }
             return $this->permissionManager->checkPermission('user_update_self', $requester);
-        } 
+        }
         return false;
     }
 

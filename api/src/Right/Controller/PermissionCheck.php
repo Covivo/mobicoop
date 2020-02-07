@@ -61,7 +61,6 @@ class PermissionCheck
      */
     public function __invoke(array $data): ?Permission
     {
-        
         $permission = null;
         // we check if the user exists
         $user = null;

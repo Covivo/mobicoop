@@ -111,9 +111,11 @@ class PermissionManager
         foreach ($user->getUserRoles() as $userRole) {
             if (is_null($userRole->getTerritory()) || $userRole->getTerritory() == $territory) {
                 if ($this->roleHasRight($userRole->getRole(), $right)) {
-                    echo "la";exit;
+                    echo "la";
+                    exit;
                     if ($right->hasCheckOwnership() && $user->getId() != $owner->getId()) {
-                        echo "la";exit;
+                        echo "la";
+                        exit;
                         break;
                     }
                     $permission->setGranted(true);
