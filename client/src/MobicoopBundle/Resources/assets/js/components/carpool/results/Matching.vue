@@ -39,7 +39,13 @@
               cols="8"
               align="left"
             >
-              {{ $tc('matchingNumber', numberOfResults, { number: numberOfResults }) }}
+              <p>{{ $tc('matchingNumber', numberOfResults, { number: numberOfResults }) }}</p>
+              <p
+                v-if="numberOfResults == 0 && !regular"
+                class="font-weight-bold"
+              >
+                {{ $t('AskNewSearch') }}
+              </p>
             </v-col>
             <v-col
               v-else
