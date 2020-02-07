@@ -38,6 +38,7 @@
           v-if="item.title"
           :href="item.url"
           :alt="item.title"
+          :class="linksColorClass"
         ><v-list-item-title>{{ item.title }}</v-list-item-title></a>
         <v-divider v-else />
       </v-list-item>
@@ -64,6 +65,10 @@ export default {
       default:"Profil"
     },
     textColorClass: {
+      type: String,
+      default: ""
+    },
+    linksColorClass: {
       type: String,
       default: ""
     }
