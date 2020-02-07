@@ -39,20 +39,19 @@
           </h3>
           <p class="headline text-justify subtitle-1">
             {{ event.address.addressLocality }}
-          </p><p
-            v-if="displayDescription"
-            class="body-1 pa-3"
-            md="6"
-          >
-            {{ event.description }}
           </p>
           <p
-            v-if="displayDescription"
+            v-if="displayDescription && formatedDescription!==''"
+            class="body-1 pa-3"
+            md="6"
+            v-html="formatedDescription"
+          />
+          <p
+            v-if="displayDescription && formatedFullDescription!==''"
             class="body-2 pa-3"
             md="6"
-          >
-            {{ event.fullDescription }}
-          </p>
+            v-html="formatedFullDescription"
+          />
           <v-row>
             <p class="body-2 pa-3">
               <span class="font-weight-black"> {{ $t('startEvent.label') }} :</span> {{ computedDateFormat(event.fromDate.date) }}
@@ -102,6 +101,20 @@ export default {
       locale: this.$i18n.locale,
       origin: this.initOrigin,
     };
+  },
+  computed:{
+    formatedDescription(){
+      if(this.event.description){
+        return this.event.description.replace('\n','<br />');
+      }
+      return '';
+    },
+    formatedFullDescription(){
+      if(this.event.fullDescription){
+        return this.event.fullDescription.replace('\n','<br />');
+      }
+      return '';
+    }
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE

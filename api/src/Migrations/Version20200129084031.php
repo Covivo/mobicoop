@@ -15,6 +15,7 @@ final class Version20200129084031 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
+        $this->addSql('ALTER TABLE user ROW_FORMAT=DYNAMIC;');
         $this->addSql('ALTER TABLE action CHANGE in_log in_log TINYINT(1) DEFAULT NULL, CHANGE in_diary in_diary TINYINT(1) DEFAULT NULL, CHANGE progression progression INT DEFAULT NULL, CHANGE created_date created_date DATETIME DEFAULT NULL, CHANGE updated_date updated_date DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE log CHANGE admin_id admin_id INT DEFAULT NULL, CHANGE proposal_id proposal_id INT DEFAULT NULL, CHANGE matching_id matching_id INT DEFAULT NULL, CHANGE ask_id ask_id INT DEFAULT NULL, CHANGE article_id article_id INT DEFAULT NULL, CHANGE event_id event_id INT DEFAULT NULL, CHANGE community_id community_id INT DEFAULT NULL, CHANGE solidary_id solidary_id INT DEFAULT NULL, CHANGE territory_id territory_id INT DEFAULT NULL, CHANGE car_id car_id INT DEFAULT NULL, CHANGE user_related_id user_related_id INT DEFAULT NULL, CHANGE message_id message_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE app CHANGE password password VARCHAR(100) DEFAULT NULL, CHANGE created_date created_date DATETIME DEFAULT NULL, CHANGE updated_date updated_date DATETIME DEFAULT NULL');
@@ -142,5 +143,6 @@ final class Version20200129084031 extends AbstractMigration
         $this->addSql('ALTER TABLE user_right CHANGE territory_id territory_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE user_role CHANGE territory_id territory_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE waypoint CHANGE proposal_id proposal_id INT DEFAULT NULL, CHANGE matching_id matching_id INT DEFAULT NULL, CHANGE ask_id ask_id INT DEFAULT NULL, CHANGE created_date created_date DATETIME DEFAULT \'NULL\', CHANGE updated_date updated_date DATETIME DEFAULT \'NULL\', CHANGE duration duration INT DEFAULT NULL, CHANGE role role INT DEFAULT NULL');
+        $this->addSql('ALTER TABLE user ROW_FORMAT=COMPACT;');
     }
 }

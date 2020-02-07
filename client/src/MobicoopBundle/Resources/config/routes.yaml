@@ -603,15 +603,6 @@ event_show:
     requirements:
         id: '\d+'
 
-# get all event proposals (AJAX)
-event_proposals:
-    path:
-        fr: /event-proposals/{id}
-        en: /event-proposals/{id}
-    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventProposals
-    requirements:
-        id: '\d+'
-
 # display one widget
 event_widget:
     path:
