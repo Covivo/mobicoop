@@ -101,20 +101,12 @@ class UserVoter extends Voter
 
     private function canReadSelf(UserInterface $requester, User $subject)
     {
-        if (($subject->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
-            return $this->permissionManager->checkPermission('user_read_self', $requester);
-        } else {
-            return false;
-        }
+        return $this->permissionManager->checkPermission('user_manage_self', $requester, null, $subject->getId());
     }
 
     private function canUpdateSelf(UserInterface $requester, User $subject)
     {
-        if (($subject->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
-            return $this->permissionManager->checkPermission('user_update_self', $requester);
-        } else {
-            return false;
-        }
+        return $this->permissionManager->checkPermission('user_update_self', $requester, null, $subject->getId());
     }
 
     private function canChangePassword(UserInterface $requester)

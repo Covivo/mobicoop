@@ -31,7 +31,7 @@ use App\Right\Entity\Right;
 use App\Right\Entity\Role;
 use App\Right\Repository\RoleRepository;
 use App\Right\Entity\Permission;
-use App\Right\Entity\UserRole;
+use App\Right\Exception\RightNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -62,14 +62,16 @@ class PermissionManager
      * @param Right $right              The right to check
      * @param UserInterface $requester  The requester (an app or a user)
      * @param Territory|null $territory The territory
-     * @param User|null $owner          The owner of the object related to the right
+     * @param int|null  $id             The id of the related object
      * @return bool
      */
-    public function checkPermission(string $rightName, UserInterface $requester, ?Territory $territory=null, ?User $owner = null)
+    public function checkPermission(string $rightName, UserInterface $requester, ?Territory $territory=null, ?int $id = null)
     {
-        $right = $this->rightRepository->findByName($rightName);
+        if (!$right = $this->rightRepository->findByName($rightName)) {
+            throw new RightNotFoundException('Right ' . $rightName . ' not found');
+        }
         if ($requester instanceof User) {
-            return $this->userHasPermission($right, $requester, $territory, $owner)->isGranted();
+            return $this->userHasPermission($right, $requester, $territory, $id)->isGranted();
         } elseif ($requester instanceof App) {
             return $this->appHasPermission($right, $requester)->isGranted();
         }
@@ -80,23 +82,15 @@ class PermissionManager
      * Check if a user has a permission on an right, eventually on a given territory, eventually on a related object user
      *
      * @param Right $right              The right to check
-     * @param User $user                The user
+     * @param User $user                The user to check the right for
      * @param Territory|null $territory The territory
-     * @param User|null $owner          The owner of the object related to the right
+     * @param int|null  $id             The id of the related object
      * @return Permission
      */
-    public function userHasPermission(Right $right, ?User $user, ?Territory $territory=null, ?User $owner = null): Permission
+    public function userHasPermission(Right $right, User $user, ?Territory $territory=null, ?int $id=null): Permission
     {
         $permission = new Permission(1);
         $permission->setGranted(false);
-        // if no user is passed we consider the basic user
-        if (!$user instanceof User) {
-            $user = new User();
-            $userRole = new UserRole();
-            $userRole->setUser($user);
-            $userRole->setRole($this->roleRepository->find(Role::ROLE_USER));
-            $user->addUserRole($userRole);
-        }
 
         // we first check if the user is seated on the iron throne
         if (in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
@@ -105,44 +99,22 @@ class PermissionManager
             return $permission;
         }
 
-        // todo : maybe replace the following code by a DQL request...
-
         // we check if the user has a role that has the right to do the action
         foreach ($user->getUserRoles() as $userRole) {
             if (is_null($userRole->getTerritory()) || $userRole->getTerritory() == $territory) {
-                if ($this->roleHasRight($userRole->getRole(), $right)) {
-                    echo "la";
-                    exit;
-                    if ($right->hasCheckOwnership() && $user->getId() != $owner->getId()) {
-                        echo "la";
-                        exit;
-                        break;
-                    }
+                if ($this->roleHasRight($userRole->getRole(), $right, $user->getId(), $id)) {
                     $permission->setGranted(true);
                     return $permission;
                 }
             }
         }
-        
-        // we check if a the user has the specific right to do the action
+
+        // we check if the user has the specific right to do the action
         foreach ($user->getUserRights() as $userRight) {
             if (is_null($userRight->getTerritory()) || $userRight->getTerritory() == $territory) {
-                if ($userRight->getRight()->getName() == $right->getName()) {
-                    if ($userRight->getRight()->hasCheckOwnership() && $user->getId() != $owner->getId()) {
-                        break;
-                    }
+                if ($this->rightHasRight($right, $userRight->getRight(), $user->getId(), $id)) {
                     $permission->setGranted(true);
                     return $permission;
-                } else {
-                    foreach ($this->rightRepository->findChildren($userRight->getRight()) as $child) {
-                        if ($child->getName() == $right->getName()) {
-                            if ($child->hasCheckOwnership() && $user->getId() != $owner->getId()) {
-                                break;
-                            }
-                            $permission->setGranted(true);
-                            return $permission;
-                        }
-                    }
                 }
             }
         }
@@ -153,18 +125,14 @@ class PermissionManager
     /**
      * Check if an app has a permission on an right
      *
-     * @param Right $right
-     * @param App|null $app
-     * @return void
+     * @param Right $right  The right to check
+     * @param App $app      The app
+     * @return Permission
      */
-    public function appHasPermission(Right $right, ?App $app): Permission
+    public function appHasPermission(Right $right, App $app): Permission
     {
         $permission = new Permission(1);
         $permission->setGranted(false);
-        // if no user is passed we consider the basic user
-        if (!$app instanceof App) {
-            $app = new App();
-        }
 
         // we first check if the app is seated on the iron throne
         if (in_array('ROLE_SUPER_ADMIN', $app->getRoles())) {
@@ -183,29 +151,59 @@ class PermissionManager
         return $permission;
     }
 
-    // check if a role has a right
-    // recursive if the role has a parent
-    private function roleHasRight(Role $role, Right $right)
+    //
+    /**
+     * Check if a role has a right
+     * Recursive if the role has children
+     *
+     * @param Role $role            The role
+     * @param Right $right          The right
+     * @param integer|null $userId  The user id
+     * @param integer|null $id      The id of the related object if needed
+     * @return void
+     */
+    private function roleHasRight(Role $role, Right $right, ?int $userId=null, ?int $id=null)
     {
-        foreach ($role->getRights() as $uright) {
-            if ($uright->getName() == $right->getName()) {
+        foreach ($role->getRights() as $currentRight) {
+            if ($this->rightHasRight($right, $currentRight, $userId, $id)) {
                 return true;
-            } else {
-                foreach ($this->rightRepository->findChildren($uright) as $child) {
-                    if ($child->getName() == $right->getName()) {
-                        return true;
-                    }
+            }
+        }
+        // we check if the children of the role have the right
+        foreach ($this->roleRepository->findChildren($role) as $child) {
+            if ($this->roleHasRight($child, $right, $userId, $id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if two rights match
+     * Recursive if the current right to check has children
+     *
+     * @param Right $rightToCheck   The right to check
+     * @param Right $currentRight   The current right
+     * @param integer|null $userId  The user id
+     * @param integer|null $id      The id of the related object if needed
+     * @return void
+     */
+    private function rightHasRight(Right $rightToCheck, Right $currentRight, ?int $userId=null, ?int $id=null)
+    {
+        if ($currentRight->getName() == $rightToCheck->getName()) {
+            if (!$this->isOwner($rightToCheck, $userId, $id)) {
+                return false;
+            }
+            return true;
+        } else {
+            // we check if the children of the right have the right
+            foreach ($this->rightRepository->findChildren($currentRight) as $childRight) {
+                if ($this->rightHasRight($rightToCheck, $childRight, $userId, $id)) {
+                    return true;
                 }
             }
         }
-        $permission = false;
-        // we check if the children of the role have the right
-        foreach ($this->roleRepository->findChildren($role) as $child) {
-            if ($this->roleHasRight($child, $right)) {
-                return true;
-            }
-        }
-        return $permission;
+        return false;
     }
 
     /**
@@ -259,5 +257,27 @@ class PermissionManager
         foreach ($this->roleRepository->findChildren($role) as $child) {
             $this->getRoleRights($child, $territory, $permissions);
         }
+    }
+    
+    /**
+     * Check if a requester is the owner of an object related to a right
+     *
+     * @param Right $right              The right
+     * @param integer|null $requesterId The requester
+     * @param integer|null $objectId    The object id
+     * @return boolean
+     */
+
+    private function isOwner(Right $right, ?int $requesterId, ?int $objectId)
+    {
+        // if the right has no related object, it means we don't need to check for an ownership
+        if (is_null($right->getObject())) {
+            return true;
+        }
+        switch ($right->getObject()) {
+            case "user":
+                return $objectId === $requesterId;
+        }
+        return false;
     }
 }
