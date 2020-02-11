@@ -33,6 +33,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
@@ -332,6 +333,28 @@ class CarpoolController extends AbstractController
 
         return $this->json($result);
     }
+
+
+    /**
+     * PausedAd
+     * (AJAX PUT)
+     */
+    public function pauseAd(Request $request, AdManager $adManager, UserManager $userManager)
+    {
+        if ($request->isMethod('PUT')) {
+            $data = json_decode($request->getContent(), true);
+            ;
+            $ad = new Ad();
+          
+            $ad->setId($data['id']);
+            $ad->setPaused(($data['paused']));
+            $return = $adManager->updateAd($ad);
+
+            return new JsonResponse($return);
+        }
+        return new JsonResponse("Error");
+    }
+
 
     /**
      * Initiate contact from carpool results

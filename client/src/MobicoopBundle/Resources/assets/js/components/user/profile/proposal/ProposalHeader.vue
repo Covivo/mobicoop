@@ -67,7 +67,35 @@
         <span>{{ $t('proposals.tooltips.passenger') }}</span>
       </v-tooltip>
       <v-spacer />
-      <v-col cols="1">
+      <v-col
+        cols="6"
+        class="text-right"
+      >
+        <p v-if="isPausable && !isArchived && paused">
+          Attention votre annonce est en pause
+        </p>
+        <v-btn
+          v-if="isPausable && !isArchived && !paused"
+          class="secondary my-1 mr-1"
+          icon
+          :loading="loading"
+          @click="pauseAd"
+        >
+          <v-icon class="white--text">
+            mdi-pause
+          </v-icon>
+        </v-btn>
+        <v-btn
+          v-if="isPausable && !isArchived && paused"
+          class="secondary my-1 mr-1"
+          icon
+          :loading="loading"
+          @click="pauseAd"
+        >
+          <v-icon class="white--text">
+            mdi-play
+          </v-icon>
+        </v-btn>
         <v-btn
           class="secondary my-1"
           :class="isArchived ? 'mr-1' : ''"
@@ -82,7 +110,6 @@
           </v-icon>
         </v-btn>
       </v-col>
-      <!-- todo reactivate button when it will be possible to edit an ad -->
       <!-- <v-btn
         v-if="!isArchived"
         class="secondary ma-1"
@@ -91,16 +118,6 @@
       >
         <v-icon class="white--text">
           mdi-pencil
-        </v-icon>
-      </v-btn>
-      <v-btn
-        v-if="isPausable && !isArchived"
-        class="secondary my-1 mr-1"
-        icon
-        :loading="loading"
-      >
-        <v-icon class="white--text">
-          mdi-pause
         </v-icon>
       </v-btn> -->
     </v-row>
@@ -174,6 +191,10 @@ export default {
       type: Boolean,
       default: true
     },
+    isPaused: {
+      type: Boolean,
+      default: false
+    },
     isArchived: {
       type: Boolean,
       default: false
@@ -205,7 +226,8 @@ export default {
         content: "",
         textarea: true
       },
-      deleteMessage: ""
+      deleteMessage: "",
+      paused: this.isPaused
     }
   },
   methods: {
@@ -243,6 +265,18 @@ export default {
           }
           if (self.alert.type == 'error') self.loading = false;
         })
+    },
+    pauseAd () {
+      this.paused = this.paused?false:true;
+      this.loading = true;
+      axios
+        .put(this.$t('pause.route'), {
+          id: this.proposalId,
+          paused: this.paused
+        })
+        .then(res => {
+          this.loading = false;
+        });
     },
     resetAlert() {
       this.alert = {

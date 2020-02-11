@@ -345,6 +345,13 @@ carpool_ad_delete:
         en: /carpool/ad/delete
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDelete
 
+# pause an ad (AJAX)
+carpool_ad_pause:
+    path:
+        fr: /covoiturage/annonce/pause
+        en: /carpool/ad/pause
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::pauseAd    
+
 ####################
 # community routes #
 ####################

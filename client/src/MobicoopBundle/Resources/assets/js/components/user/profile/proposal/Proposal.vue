@@ -4,6 +4,7 @@
       :is-driver="isDriver"
       :is-passenger="isPassenger"
       :is-pausable="isRegular"
+      :is-paused="isPaused"
       :is-archived="isArchived"
       :has-accepted-ask="hasAtLeastOneAcceptedAsk"
       :has-ask="hasAtLeastOneAsk"
@@ -64,7 +65,8 @@ export default {
     return {
       hasAtLeastOneAsk: false,
       hasAtLeastOneAcceptedAsk: false,
-      lastMessageId: null
+      lastMessageId: null,
+      isPaused: this.proposal.outward.paused
     }
   },
   computed: {

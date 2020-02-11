@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**
@@ -519,6 +520,21 @@ class AdManager
     public function updateAdAsk(Ad $ad, int $userId)
     {
         if ($data = $this->dataProvider->putSpecial($ad, null, "ask", ["userId"=>$userId], true)) {
+            return $data->getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Paused an Ad
+     *
+     * @param int $ad   The ad to update
+     * @param int $userId  The user that make the request
+     * @return Ad|null
+     */
+    public function updateAd(Ad $ad)
+    {
+        if ($data = $this->dataProvider->put($ad)) {
             return $data->getValue();
         }
         return null;
