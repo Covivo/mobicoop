@@ -8,6 +8,7 @@
     "mailboxUrl": "/utilisateur/messages",
     "search": "Recherche en cours...",
     "newSearch": "Nouvelle recherche",
+    "AskNewSearch": "Réessayer avec une autre date?",
     "matchingNumber": "Aucune annonce en covoiturage trouvée... | {number} annonce en covoiturage trouvée | {number} annonces en covoiturage trouvées",
     "snackBar": {
       "success": "La prise de contact a bien été envoyée",
