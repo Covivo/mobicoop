@@ -234,3 +234,7 @@ header2Name: "X-JEMH-Adresse mail interlocuteur"
 header2Data: "senderEmail"
 header3Name: "X-JEMH-Nom et prenom interlocuteur"
 header3Data: "senderName"
+
+# EMAIL Masscommunication : send from admin
+urlUnsuscribeEmail: "/utilisateur/unsuscribe/"
+unsuscribeEmail : "Cliquez ici pour vous désabonner de nos emails"

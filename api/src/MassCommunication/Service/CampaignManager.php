@@ -29,6 +29,7 @@ use App\MassCommunication\MassEmailProvider\MandrillProvider;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Twig\Environment;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Campaign manager service.
@@ -41,17 +42,19 @@ class CampaignManager
     private $massEmailApi;
     private $massSmsProvider;
     private $mailTemplate;
+    private $translator;
 
     const MAIL_PROVIDER_MANDRILL = 'mandrill';
 
     /**
      * Constructor.
      */
-    public function __construct(Environment $templating, EntityManagerInterface $entityManager, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate)
+    public function __construct(Environment $templating, EntityManagerInterface $entityManager, TranslatorInterface $translator, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate)
     {
         $this->entityManager = $entityManager;
         $this->mailTemplate = $mailTemplate;
         $this->templating = $templating;
+        $this->translator = $translator;
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_MANDRILL:
                 $this->massEmailProvider = new MandrillProvider($mailerApiKey);
@@ -203,6 +206,13 @@ class CampaignManager
             }
         }
 
+        $urlUnsuscribe =  $this->translator->trans('urlUnsuscribeEmail');
+        $texteUnsuscribe =  $this->translator->trans('unsuscribeEmail');
+
+        var_dump($urlUnsuscribe);
+        var_dump($texteUnsuscribe);
+        die();
+
         return $this->templating->render(
             $this->mailTemplate,
             array('arrayForTemplate' => $arrayForTemplate)
@@ -243,6 +253,7 @@ class CampaignManager
             "givenName" => $user->getGivenName(),
             "familyName" => $user->getFamilyName(),
             "email" => $user->getEmail(),
+            "unsuscribeToken" => $user->getUnsuscribeToken(),
         ];
 
         return $recipients;
