@@ -941,6 +941,14 @@ class User implements UserInterface, EquatableInterface
      */
     private $userDelegate;
 
+    /**
+     * @var string|null Token for unsuscribee the user from receiving news
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser","write"})
+     */
+    private $unsuscribeToken;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -2189,6 +2197,17 @@ class User implements UserInterface, EquatableInterface
     {
         $this->userDelegate = $userDelegate;
 
+        return $this;
+    }
+
+    public function getUnsuscribeToken(): ?string
+    {
+        return $this->unsuscribeToken;
+    }
+
+    public function setUnsuscribeToken(?string $unsuscribeToken): self
+    {
+        $this->unsuscribeToken = $unsuscribeToken;
         return $this;
     }
 
