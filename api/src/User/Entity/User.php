@@ -321,7 +321,7 @@ use App\User\EntityListener\UserListener;
  *          },
  *          "unsuscribe_user"={
  *              "method"="PUT",
- *              "path"="/users/{id}/unsuscribe",
+ *              "path"="/users/{id}/unsuscribe_user",
  *              "controller"=UserUnsuscribeFromEmail::class
  *          }
  *      }
@@ -2226,7 +2226,7 @@ class User implements UserInterface, EquatableInterface
         $this->unsuscribeToken = $unsuscribeToken;
         return $this;
     }
-    
+
     public function getUnsuscribeDate(): ?\DateTimeInterface
     {
         return $this->unsuscribeDate;

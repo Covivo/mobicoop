@@ -817,8 +817,12 @@ class UserManager
     {
 
         $user->setNewsSubscription(0);
+        $user->setUnsuscribeDate(new \Datetime());
 
-        return new JsonResponse();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $user;
     }
 
 }

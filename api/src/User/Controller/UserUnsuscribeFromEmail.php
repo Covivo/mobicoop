@@ -55,6 +55,10 @@ class UserUnsuscribeFromEmail
      */
     public function __invoke(User $data)
     {
-        return $this->userManager->unsuscribeFromEmail($data);
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+        }
+        $data = $this->userManager->unsuscribeFromEmail($data);
+        return $data;
     }
 }
