@@ -65,6 +65,7 @@ use App\User\Controller\UserUpdate;
 use App\User\Controller\UserAnonymise;
 use App\User\Controller\UserCheckSignUpValidationToken;
 use App\User\Controller\UserCheckPhoneToken;
+use App\User\Controller\UserUnsuscribeFromEmail;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\HomeAddressDirectionTerritoryFilter;
@@ -317,6 +318,11 @@ use App\User\EntityListener\UserListener;
  *              "method"="GET",
  *              "path"="/users/{id}/asks",
  *              "controller"=UserAsks::class
+ *          },
+ *          "unsuscribe_user"={
+ *              "method"="PUT",
+ *              "path"="/users/{id}/unsuscribe",
+ *              "controller"=UserUnsuscribeFromEmail::class
  *          }
  *      }
  * )
@@ -950,6 +956,14 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","write"})
      */
     private $unsuscribeToken;
+
+    /**
+     * @var \DateTimeInterface Date when user unsuscribe from email
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("readUser")
+     */
+    private $unsuscribeDate;
 
     public function __construct($status = null)
     {
@@ -2210,6 +2224,18 @@ class User implements UserInterface, EquatableInterface
     public function setUnsuscribeToken(?string $unsuscribeToken): self
     {
         $this->unsuscribeToken = $unsuscribeToken;
+        return $this;
+    }
+    
+    public function getUnsuscribeDate(): ?\DateTimeInterface
+    {
+        return $this->unsuscribeDate;
+    }
+
+    public function setUnsuscribeDate(?\DateTimeInterface $unsuscribeDate): self
+    {
+        $this->unsuscribeDate = $unsuscribeDate;
+
         return $this;
     }
 

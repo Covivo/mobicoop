@@ -145,7 +145,6 @@ class UserManager
     public function findByUnsuscribeToken(string $token)
     {
         $response = $this->dataProvider->getCollection(['unsuscribeToken' => $token]);
-        dump($response);
         if ($response->getCode() == 200) {
             /** @var Hydra $user */
             $user = $response->getValue();
@@ -358,7 +357,6 @@ class UserManager
      */
     public function deleteUser(User $user)
     {
-        //$response = $this->dataProvider->getSpecialItem($user->getId(), "anonymise_user");
         $response = $this->dataProvider->putSpecial($user, null, "anonymise_user");
         //L'user est anonymiser
         if ($response->getCode() == 200) {
@@ -676,6 +674,22 @@ class UserManager
         $user->setTelephone($phone);
         $user->setPhoneToken($token);
         $response = $this->dataProvider->postSpecial($user, ["checkPhoneToken"], "checkPhoneToken");
+
+        return $response->getValue();
+    }
+
+    /**
+     * Unsuscribe the user from receiving news
+     *
+     * @param string $token
+     * @param string $phone
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function unsuscribeUserFromEmail(string $token)
+    {
+        $user = $this->findByUnsuscribeToken($token);
+        $response = $this->dataProvider->putSpecial($user, null, "unsuscribe_user");
 
         return $response->getValue();
     }

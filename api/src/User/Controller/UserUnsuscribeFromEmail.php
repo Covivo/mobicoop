@@ -32,7 +32,7 @@ use App\User\Entity\User;
 use App\User\Service\UserManager;
 
 /**
- * Controller class for UserUnsuscribeFromEmail
+ * Controller class for UserCheckSignUpValidationToken
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
@@ -55,6 +55,6 @@ class UserUnsuscribeFromEmail
      */
     public function __invoke(User $data)
     {
-        return $this->userManager->checkValidatedDateToken($data);
+        return $this->userManager->unsuscribeFromEmail($data);
     }
 }

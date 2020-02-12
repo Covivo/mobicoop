@@ -923,8 +923,7 @@ class UserController extends AbstractController
      */
     public function userUnsuscribeFromEmail(UserManager $userManager, string $token)
     {
-        $user = $userManager->findByUnsuscribeToken($token);
-        dump($user);
+        $userManager->unsuscribeUserFromEmail($token);
 
         return $this->render('@Mobicoop/user/unsuscribeFromEmail.html.twig', []);
     }

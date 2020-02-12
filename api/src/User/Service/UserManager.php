@@ -645,8 +645,7 @@ class UserManager
 
 
     /**
-     * Generate a validation token
-     * (Ajax)
+     * Anonymise the user
      *
      */
     public function anonymiseUser(User $user)
@@ -744,8 +743,7 @@ class UserManager
     }
 
 
-    //Check if the delete account have image, and delete them
-    // deleteBase -> delete the base image and remove the entry
+    //Check if the delete account is in community, and delete the link between
     private function checkIfUserIsInCommunity(User $user)
     {
         $myCommunities = $this->communityUserRepository->findBy(array('user'=>$user));
@@ -814,4 +812,13 @@ class UserManager
         }
         return new JsonResponse();
     }
+
+    public function unsuscribeFromEmail(User $user)
+    {
+
+        $user->setNewsSubscription(0);
+
+        return new JsonResponse();
+    }
+
 }
