@@ -15,7 +15,7 @@
       </v-btn>
     </v-snackbar>
 
-    <v-row>
+    <v-row :class="paused?'warning':''">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-icon
@@ -68,15 +68,20 @@
       </v-tooltip>
       <v-spacer />
       <v-col
-        cols="6"
-        class="text-right"
+        cols="8"
+        class="text-center"
       >
         <p
-          v-if="isPausable && !isArchived && paused"
-          class="warning--text"
+          v-if="isPausable && !isArchived && paused && !loading"
+          class="white--text font-weight-bold my-3"
         >
           {{ $t('pause.info') }}
         </p>
+      </v-col>
+      <v-col
+        cols="2"
+        class="text-right"
+      >
         <v-btn
           v-if="isPausable && !isArchived && !paused"
           class="secondary my-1 mr-1"
@@ -90,7 +95,7 @@
         </v-btn>
         <v-btn
           v-if="isPausable && !isArchived && paused"
-          class="secondary my-1 mr-1"
+          class="success my-1 mr-1"
           icon
           :loading="loading"
           @click="pauseAd"
@@ -124,7 +129,7 @@
         </v-icon>
       </v-btn> -->
     </v-row>
-
+    
     <!--DIALOG-->
     <v-row justify="center">
       <v-dialog
@@ -230,7 +235,8 @@ export default {
         textarea: true
       },
       deleteMessage: "",
-      paused: this.isPaused
+      paused: this.isPaused,
+      ad: {}
     }
   },
   methods: {
@@ -272,13 +278,32 @@ export default {
     pauseAd () {
       this.paused = this.paused?false:true;
       this.loading = true;
+      this.ad.proposalId = this.proposalId;
+      this.ad.paused = this.paused;
       axios
-        .put(this.$t('pause.route'), {
-          id: this.proposalId,
-          paused: this.paused
-        })
+        .put(this.$t('pause.route'), this.ad,
+          {
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
         .then(res => {
+          if (res.data && res.data.message == "success") {
+            this.alert = {
+              type: "success",
+              message: this.paused?this.$t("pause.success.pause"):this.$t("pause.success.unpause")
+            };
+            this.$emit('pause-ad', this.ad.paused);
+          }
+          if (res.data && res.data.message == "error") {
+            this.alert = {
+              type: "error",
+              message: this.paused?this.$t("pause.error.pause"):this.$t("pause.error.unpause")
+            };
+            this.paused = this.paused?false:true;
+          }
           this.loading = false;
+          this.snackbar = true;
         });
     },
     resetAlert() {

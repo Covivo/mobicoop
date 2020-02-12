@@ -10,6 +10,7 @@
       :has-ask="hasAtLeastOneAsk"
       :proposal-id="proposal.outward.id"
       @proposal-deleted="proposalDeleted()"
+      @pause-ad="pauseAd"
     />
     
     <v-card-text v-if="isRegular">
@@ -24,6 +25,7 @@
       
     <v-card-actions class="py-0">
       <proposal-footer
+        v-if="!isPaused"
         :id="proposal.outward.id"
         :seats="(isDriver) ? proposal.outward.seatsDriver : proposal.outward.seatsPassenger"
         :price="(isDriver) ? proposal.outward.outwardDriverPrice : proposal.outward.outwardPassengerPrice"
@@ -177,6 +179,10 @@ export default {
     },
     proposalDeleted(id) {
       this.$emit('proposal-deleted', id)
+    },
+    pauseAd(pauseAd) {
+      this.isPaused = pauseAd;
+     
     }
   }
 }

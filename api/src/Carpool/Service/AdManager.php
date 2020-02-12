@@ -747,14 +747,12 @@ class AdManager
     */
     public function updateAd(Ad $ad)
     {
-        $proposal = $this->proposalRepository->find($ad->getId());
-        var_dump($proposal->isPaused());
-        die;
+        $proposal = $this->proposalRepository->find($ad->getProposalId());
         $proposal->setPaused($ad->isPaused());
-
         $this->entityManager->persist($proposal);
         $this->entityManager->flush();
-       
+
+        $ad = $this->makeAd($proposal, $proposal->getUser()->getId());
         return $ad;
     }
 }

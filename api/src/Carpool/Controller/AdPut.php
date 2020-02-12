@@ -36,7 +36,7 @@ class AdPut
 {
     use TranslatorTrait;
     
-    private $askManager;
+    private $adManager;
     
     public function __construct(AdManager $adManager)
     {

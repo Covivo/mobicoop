@@ -397,7 +397,7 @@ class ResultManager
         // we search the matchings as an offer
         foreach ($proposal->getMatchingRequests() as $request) {
             // we exclude the private proposals
-            if ($request->getProposalRequest()->isPrivate()) {
+            if ($request->getProposalRequest()->isPrivate() || $request->getProposalRequest()->isPaused()) {
                 continue;
             }
             // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
@@ -409,7 +409,7 @@ class ResultManager
         // we search the matchings as a request
         foreach ($proposal->getMatchingOffers() as $offer) {
             // we exclude the private proposals
-            if ($offer->getProposalOffer()->isPrivate()) {
+            if ($offer->getProposalOffer()->isPrivate() || $offer->getProposalOffer()->isPaused()) {
                 continue;
             }
             // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)

@@ -337,22 +337,31 @@ class CarpoolController extends AbstractController
 
     /**
      * PausedAd
-     * (AJAX PUT)
+     * (AJAX POST)
      */
     public function pauseAd(Request $request, AdManager $adManager, UserManager $userManager)
     {
         if ($request->isMethod('PUT')) {
             $data = json_decode($request->getContent(), true);
-            ;
             $ad = new Ad();
-          
-            $ad->setId($data['id']);
-            $ad->setPaused(($data['paused']));
-            $return = $adManager->updateAd($ad);
-
-            return new JsonResponse($return);
+            $ad->setId($data['proposalId']);
+            $ad->setProposalId($data['proposalId']);
+            $ad->setPaused($data['paused']);
+            if ($return = $adManager->updateAd($ad)) {
+                return new JsonResponse(
+                    ["message" => "success"],
+                    \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
+                );
+            }
+            return new JsonResponse(
+                ["message" => "error"],
+                \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
+            );
         }
-        return new JsonResponse("Error");
+        return new JsonResponse(
+            ["message" => "error"],
+            \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN
+        );
     }
 
 

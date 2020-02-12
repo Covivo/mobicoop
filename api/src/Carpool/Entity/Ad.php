@@ -414,6 +414,13 @@ class Ad
     */
     private $paused;
 
+    /**
+     * @var int The Id of the proposal associated to the ad.
+     *
+     * @Groups({"read","write"})
+     */
+    private $proposalId;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -939,6 +946,18 @@ class Ad
     public function setPaused(?bool $paused): self
     {
         $this->paused = $paused;
+
+        return $this;
+    }
+
+    public function getProposalId(): ?int
+    {
+        return $this->proposalId;
+    }
+
+    public function setProposalId(?int $proposalId): self
+    {
+        $this->proposalId = $proposalId;
 
         return $this;
     }

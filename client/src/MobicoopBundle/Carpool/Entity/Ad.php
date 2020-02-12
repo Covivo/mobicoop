@@ -329,9 +329,17 @@ class Ad implements ResourceInterface
     * @var boolean Paused ad.
     * A paused ad can't be the found in the result of a search, and can be unpaused at any moment.
     *
-    * @Groups({"read","write"})
+    * @Groups({"post","put"})
     */
     private $paused;
+
+    /**
+    * @var int|null proposalId.
+    * A paused ad can't be the found in the result of a search, and can be unpaused at any moment.
+    *
+    * @Groups({"post","put"})
+    */
+    private $proposalId;
 
     public function __construct($id=null)
     {
@@ -849,6 +857,18 @@ class Ad implements ResourceInterface
     public function setPaused(?bool $paused): self
     {
         $this->paused = $paused;
+
+        return $this;
+    }
+
+    public function getProposalId(): ?int
+    {
+        return $this->proposalId;
+    }
+
+    public function setProposalId(?int $proposalId): self
+    {
+        $this->proposalId = $proposalId;
 
         return $this;
     }

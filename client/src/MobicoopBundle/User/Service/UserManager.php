@@ -494,7 +494,7 @@ class UserManager
         $response = $this->dataProvider->getCollection(["userId"=>$user->getId()]);
         
         $ads = $response->getValue();
-
+       
         $adsSanitized = [
             "ongoing" => [],
             "archived" => []
