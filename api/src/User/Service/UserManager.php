@@ -162,6 +162,9 @@ class UserManager
         $validationToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         $user->setValidatedDateToken($validationToken);
 
+        $unsuscribeToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        $user->setUnsuscribeToken($unsuscribeToken);
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
