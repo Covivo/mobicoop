@@ -76,6 +76,7 @@ use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\SolidaryFilter;
 use App\User\Filter\ValidatedDateTokenFilter;
+use App\User\Filter\UnsuscribeTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
 use App\Import\Entity\UserImport;
@@ -330,6 +331,7 @@ use App\User\EntityListener\UserListener;
  * @ApiFilter(WaypointTerritoryFilter::class, properties={"waypointTerritory"})
  * @ApiFilter(LoginFilter::class, properties={"login"})
  * @ApiFilter(PwdTokenFilter::class, properties={"pwdToken"})
+ * @ApiFilter(UnsuscribeTokenFilter::class, properties={"unsuscribeToken"})
  * @ApiFilter(ValidatedDateTokenFilter::class, properties={"validatedDateToken"})
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate"}, arguments={"orderParameterName"="order"})
@@ -942,7 +944,7 @@ class User implements UserInterface, EquatableInterface
     private $userDelegate;
 
     /**
-     * @var string|null Token for unsuscribee the user from receiving news
+     * @var string|null Token for unsuscribee the user from receiving email
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})

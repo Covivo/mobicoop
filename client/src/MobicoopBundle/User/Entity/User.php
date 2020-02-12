@@ -369,6 +369,13 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      */
     private $facebookId;
 
+    /**
+     * @var string|null Token Token for unsuscribee the user from receiving email
+     *
+     * @Groups({"post","put"})
+     */
+    private $unsuscribeToken;
+
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -1108,7 +1115,19 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         $this->language = $language;
     }
-    
+
+    public function getUnsuscribeToken(): ?string
+    {
+        return $this->unsuscribeToken;
+    }
+
+    public function setUnsuscribeToken(?string $unsuscribeToken): self
+    {
+        $this->unsuscribeToken = $unsuscribeToken;
+        return $this;
+    }
+
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1135,7 +1154,8 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'newsSubscription'      => $this->hasNewsSubscription(),
             'phoneDisplay'          => $this->getPhoneDisplay(),
             'phoneValidatedDate'    => $this->getPhoneValidatedDate(),
-            'phoneToken'            => $this->getPhoneToken()
+            'phoneToken'            => $this->getPhoneToken(),
+            'unsuscribeToken'       => $this->getUnsuscribeToken()
         ];
     }
 }

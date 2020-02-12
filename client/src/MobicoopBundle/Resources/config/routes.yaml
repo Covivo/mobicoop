@@ -229,6 +229,13 @@ user_communities:
         en: /user/communities
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCommunities
 
+# Unsuscribe user from email
+user_unsuscribe_email:
+    path:
+      fr: /utilisateur/unsuscribe/{token}
+      en: /user/unsuscribe/{token}
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userUnsuscribeFromEmail
+
 
 ##################
 # carpool routes #

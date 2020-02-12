@@ -135,7 +135,31 @@ class UserManager
         return null;
     }
 
-    
+    /**
+     * Search user by unsuscribe token
+     *
+     * @param string $token
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function findByUnsuscribeToken(string $token)
+    {
+        $response = $this->dataProvider->getCollection(['unsuscribeToken' => $token]);
+        dump($response);
+        if ($response->getCode() == 200) {
+            /** @var Hydra $user */
+            $user = $response->getValue();
+
+            if ($user->getTotalItems() == 0) {
+                return null;
+            } else {
+                return current($user->getMember());
+            }
+        }
+        return null;
+    }
+
+
     /**
      * Search user by email
      *
