@@ -36,6 +36,7 @@ use App\Right\Controller\PermissionCheck;
  *              "method"="GET",
  *              "controller"=PermissionCheck::class,
  *              "path"="/permissions",
+ *              "security"="is_granted('permission',object)",
  *              "swagger_context"={
  *                  "parameters"={
  *                      {
@@ -58,6 +59,13 @@ use App\Right\Controller\PermissionCheck;
  *                          "type" = "number",
  *                          "format" = "integer",
  *                          "description" = "The territory id"
+ *                      },
+ *                      {
+ *                          "name" = "id",
+ *                          "in" = "query",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "The related object id"
  *                      },
  *                   }
  *              }

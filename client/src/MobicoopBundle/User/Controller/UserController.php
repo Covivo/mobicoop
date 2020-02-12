@@ -296,7 +296,6 @@ class UserController extends AbstractController
             // cause we use FormData to post data
             $user->setNewsSubscription($data->get('newsSubscription') === "true" ? true : false);
             
-            
             if ($user = $userManager->updateUser($user)) {
                 if ($file) {
                     // Post avatar of the user

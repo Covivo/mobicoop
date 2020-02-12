@@ -259,24 +259,6 @@ use App\User\EntityListener\UserListener;
  *              "controller"=UserGeneratePhoneToken::class,
  *              "security"="is_granted('user_update',object)"
  *          },
- *          "permissions"={
- *              "method"="GET",
- *              "normalization_context"={"groups"={"permissions"}},
- *              "controller"=UserPermissions::class,
- *              "path"="/users/{id}/permissions",
- *              "swagger_context"={
- *                  "parameters"={
- *                      {
- *                          "name" = "territory",
- *                          "in" = "query",
- *                          "type" = "number",
- *                          "format" = "integer",
- *                          "description" = "The territory id"
- *                      },
- *                  }
- *              },
- *              "security"="is_granted('user_read',object)"
- *          },
  *          "alerts"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"alerts"}},

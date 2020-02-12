@@ -94,7 +94,7 @@ class Role
     /**
      * @var ArrayCollection|null The rights of the role.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Right")
+     * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Right", inversedBy="roles")
      * @Groups({"read","write"})
      */
     private $rights;

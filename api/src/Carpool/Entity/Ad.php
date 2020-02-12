@@ -45,24 +45,28 @@ use App\Carpool\Controller\AdAskGet;
  *          "get"={
  *              "method"="GET",
  *              "path"="/carpools",
+ *              "security_post_denormalize"="is_granted('ads_read',object)"
  *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/carpools",
  *              "normalization_context"={"groups"={"results"}},
  *              "controller"=AdPost::class,
+ *              "security_post_denormalize"="is_granted('ad_create',object)"
  *          },
  *          "post_ask"={
  *              "method"="POST",
  *              "path"="/carpools/ask",
  *              "controller"=AdAskPost::class,
- *              "defaults"={"type"="ask"}
+ *              "defaults"={"type"="ask"},
+ *              "security_post_denormalize"="is_granted('ad_ask_post',object)"
  *          },
  *          "post_contact"={
  *              "method"="POST",
  *              "path"="/carpools/contact",
  *              "controller"=AdAskPost::class,
- *              "defaults"={"type"="contact"}
+ *              "defaults"={"type"="contact"},
+ *              "security_post_denormalize"="is_granted('ad_ask_post',object)"
  *          }
  *      },
  *      itemOperations={
@@ -71,19 +75,21 @@ use App\Carpool\Controller\AdAskGet;
  *              "path"="/carpools/{id}",
  *              "controller"=AdGet::class,
  *              "read"=false,
- *
+ *              "security"="is_granted('ad_read',object)"
  *          },
  *          "put_ask"={
  *              "method"="PUT",
  *              "path"="/carpools/ask/{id}",
  *              "controller"=AdAskPut::class,
- *              "read"=false
+ *              "read"=false,
+ *              "security"="is_granted('ad_ask_put',object)"
  *          },
  *          "get_ask"={
  *              "method"="GET",
  *              "path"="/carpools/ask/{id}",
  *              "controller"=AdAskGet::class,
- *              "read"=false
+ *              "read"=false,
+ *              "security"="is_granted('ad_ask_get',object)"
  *          }
  *      }
  * )

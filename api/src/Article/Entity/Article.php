@@ -43,8 +43,25 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *          "get"={
+ *              "security_post_denormalize"="is_granted('articles_read',object)"
+ *          },
+ *          "post"={
+ *              "security_post_denormalize"="is_granted('article_create',object)"
+ *          },
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('article_read',object)"
+ *          },
+ *          "put"={
+ *              "security"="is_granted('article_update',object)"
+ *          },
+ *          "delete"={
+ *              "security"="is_granted('article_delete',object)"
+ *          },
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "title"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"title":"partial"})

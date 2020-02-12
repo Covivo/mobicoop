@@ -21,34 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\User\Security;
+namespace App\MassCommunication\Repository;
 
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use App\MassCommunication\Entity\Campaign;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
-class UnregisteredUserVoter extends Voter
+/**
+ * @method Campaign|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Campaign|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Campaign[]    findAll()
+ * @method Campaign[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class CampaignRepository
 {
-    const LOGIN = 'login';
-    const REGISTER = 'register';
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
 
-    protected function supports($attribute, $subject)
+    private $entityManager;
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        // if the attribute isn't one we support, return false
-        if (!in_array($attribute, [self::LOGIN, self::REGISTER])) {
-            return false;
-        }
-        return true;
+        $this->entityManager = $entityManager;
+        $this->repository = $entityManager->getRepository(Campaign::class);
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    public function find(int $id): ?Campaign
     {
-        $user = $token->getUser();
-
-        if ($user instanceof User) {
-            // the user must not be logged in; if not, deny access
-            return false;
-        }
-        return true;
+        return $this->repository->find($id);
     }
 }

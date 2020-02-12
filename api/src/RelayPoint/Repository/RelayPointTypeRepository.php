@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,48 +21,39 @@
  *    LICENSE
  **************************/
 
-namespace App\Right\Repository;
+namespace App\RelayPoint\Repository;
 
-use App\Right\Entity\Right;
-use App\User\Entity\User;
+use App\RelayPoint\Entity\RelayPointType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use App\Geography\Entity\Territory;
 
 /**
- * @method Right|null find($id, $lockMode = null, $lockVersion = null)
- * @method Right|null findOneBy(array $criteria, array $orderBy = null)
- * @method Right[]    findAll()
- * @method Right[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method RelayPointType|null find($id, $lockMode = null, $lockVersion = null)
+ * @method RelayPointType|null findOneBy(array $criteria, array $orderBy = null)
+ * @method RelayPointType[]    findAll()
  */
-class RightRepository
+class RelayPointTypeRepository
 {
     /**
      * @var EntityRepository
      */
     private $repository;
-
+    
     private $entityManager;
     
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(Right::class);
+        $this->repository = $entityManager->getRepository(RelayPointType::class);
     }
 
-    /**
-     * Find right by name.
-     *
-     * @param string $name
-     * @return Right
-     */
-    public function findByName(string $name)
+    public function find(int $id): ?RelayPointType
     {
-        return $this->repository->findOneBy(['name'=>$name]);
+        return $this->repository->find($id);
     }
 
-    public function findAll(): ?array
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
-        return $this->repository->findAll();
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 }

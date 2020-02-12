@@ -99,6 +99,15 @@ class UserVoter extends Voter
         throw new \LogicException('This code should not be reached!');
     }
 
+    private function canRegister(UserInterface $requester)
+    {
+        if ($requester instanceof User) {
+            // the user must not be logged in; if not, deny access
+            return false;
+        }
+        return $this->permissionManager->checkPermission('user_register', $requester);
+    }
+
     private function canReadSelf(UserInterface $requester, User $subject)
     {
         return $this->permissionManager->checkPermission('user_manage_self', $requester, null, $subject->getId());
@@ -123,15 +132,6 @@ class UserVoter extends Voter
         }
     }
 
-    private function canReadSelfMessages(UserInterface $requester, User $subject)
-    {
-        if (($subject->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
-            return $this->permissionManager->checkPermission('user_messages_self', $requester);
-        } else {
-            return false;
-        }
-    }
-
     private function canReadSelfAsks(UserInterface $requester, User $subject)
     {
         if (($subject->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
@@ -141,13 +141,13 @@ class UserVoter extends Voter
         }
     }
 
-    private function canRegister(UserInterface $requester)
+    private function canReadSelfMessages(UserInterface $requester, User $subject)
     {
-        if ($requester instanceof User) {
-            // the user must not be logged in; if not, deny access
+        if (($subject->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
+            return $this->permissionManager->checkPermission('user_messages_self', $requester);
+        } else {
             return false;
         }
-        return $this->permissionManager->checkPermission('user_register', $requester);
     }
 
     private function canReadUsers(UserInterface $requester)
