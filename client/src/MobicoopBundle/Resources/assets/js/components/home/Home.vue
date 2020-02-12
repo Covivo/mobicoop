@@ -59,6 +59,33 @@
           </v-snackbar>
         </v-col>
       </v-row>
+      <v-row v-if="displayUnsuscribeEmail">
+        <v-col>
+          <v-snackbar
+            v-model="snackbar"
+            top
+            multi-line
+            color="info"
+            vertical
+          >
+            <div>
+              {{ $t('snackbar-unsuscribe-email') }}
+            </div>
+            <v-btn
+              color="info"
+              elevation="0"
+              @click="snackbar = false"
+            >
+              <v-icon
+                color="primary"
+              >
+                mdi-close
+              </v-icon>
+            </v-btn>
+          </v-snackbar>
+        </v-col>
+      </v-row>
+
       <!-- Title and subtitle -->
       <v-row
         align="center"
@@ -162,6 +189,10 @@ export default {
       default: false
     },
     displayDeleteAccount: {
+      type: Number,
+      default: 0
+    },
+    displayUnsuscribeEmail: {
       type: Number,
       default: 0
     },

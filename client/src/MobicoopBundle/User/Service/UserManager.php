@@ -690,7 +690,6 @@ class UserManager
     {
         $user = $this->findByUnsuscribeToken($token);
         $response = $this->dataProvider->putSpecial($user, null, "unsuscribe_user");
-        dump($response);
 
         return $response->getValue();
     }

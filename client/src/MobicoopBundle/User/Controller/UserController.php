@@ -923,8 +923,26 @@ class UserController extends AbstractController
      */
     public function userUnsuscribeFromEmail(UserManager $userManager, string $token)
     {
-        $userManager->unsuscribeUserFromEmail($token);
+        $user = $userManager->unsuscribeUserFromEmail($token);
+        if ($user != null){
+            return $this->render(
+                '@Mobicoop/default/index.html.twig',
+                [
+                    'baseUri' => $_ENV['API_URI'],
+                    'metaDescription' => 'Mobicoop',
+                    'unsuscribe' => 1,
+                ]
+            );
+        }else{
+            return $this->render(
+                '@Mobicoop/default/index.html.twig',
+                [
+                    'baseUri' => $_ENV['API_URI'],
+                    'metaDescription' => 'Mobicoop',
+                ]
+            );
+        }
 
-        return $this->render('@Mobicoop/user/unsuscribeFromEmail.html.twig', []);
+
     }
 }

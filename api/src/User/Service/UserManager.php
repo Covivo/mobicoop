@@ -815,7 +815,6 @@ class UserManager
 
     public function unsuscribeFromEmail(User $user)
     {
-
         $user->setNewsSubscription(0);
         $user->setUnsuscribeDate(new \Datetime());
 
@@ -824,5 +823,4 @@ class UserManager
 
         return $user;
     }
-
 }
