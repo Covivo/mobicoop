@@ -223,7 +223,8 @@ class CampaignManager
                 // put here the list of needed variables !
                 "givenName" => $delivery->getUser()->getGivenName(),
                 "familyName" => $delivery->getUser()->getFamilyName(),
-                "email" => $delivery->getUser()->getEmail()
+                "email" => $delivery->getUser()->getEmail(),
+                "unsuscribeToken" => $delivery->getUser()->getUnsuscribeToken(),
             ];
         }
         return $recipients;
@@ -241,7 +242,7 @@ class CampaignManager
             // put here the list of needed variables !
             "givenName" => $user->getGivenName(),
             "familyName" => $user->getFamilyName(),
-            "email" => $user->getEmail()
+            "email" => $user->getEmail(),
         ];
 
         return $recipients;

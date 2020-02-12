@@ -52,6 +52,9 @@
         {% endfor %}
         <tr>
             <td>
+                *|IF:unsuscribeToken|*
+                   *|unsuscribeToken|*
+                *|END:IF|*
                 <!-- Footer-->
                 {# <table align="center" style="border-spacing:0;text-align:center;vertical-align:top;width:100%;margin-top:20px;font-family:Roboto, sans-serif;">
                     <tr>
