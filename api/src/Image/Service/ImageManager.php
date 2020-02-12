@@ -25,6 +25,8 @@ namespace App\Image\Service;
 
 use App\Image\Entity\Image;
 use App\Event\Entity\Event;
+use App\MassCommunication\Entity\Campaign;
+use App\MassCommunication\Repository\CampaignRepository;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Repository\RelayPointRepository;
 use App\User\Entity\User;
@@ -59,6 +61,7 @@ class ImageManager
     private $userRepository;
     private $imageRepository;
     private $relayPointRepository;
+    private $campaignRepository;
 
     private $fileManager;
     private $types;
@@ -80,7 +83,7 @@ class ImageManager
      * @param LoggerInterface $logger
      * @param array $types
      */
-    public function __construct(EntityManagerInterface $entityManager, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository, ImageRepository $imageRepository, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types)
+    public function __construct(EntityManagerInterface $entityManager, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository, ImageRepository $imageRepository, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types, CampaignRepository $campaignRepository)
     {
         $this->entityManager = $entityManager;
         $this->eventRepository = $eventRepository;
@@ -88,6 +91,7 @@ class ImageManager
         $this->userRepository = $userRepository;
         $this->imageRepository = $imageRepository;
         $this->relayPointRepository = $relayPointRepository;
+        $this->campaignRepository = $campaignRepository;
 
         $this->fileManager = $fileManager;
         $this->types = $types;
@@ -124,6 +128,12 @@ class ImageManager
         } elseif (!is_null($image->getRelayPoint())) {
             // the image is an image for a user
             return $this->relayPointRepository->find($image->getRelayPoint()->getId());
+        } elseif (!is_null($image->getCampaign())) {
+            // the image is an image for a campaign
+            return $this->campaignRepository->find($image->getCampaign()->getId());
+        } elseif (!is_null($image->getCampaignId())) {
+            // the image is an image for a campaign
+            return $this->campaignRepository->find($image->getCampaignId());
         }
         throw new OwnerNotFoundException('The owner of this image cannot be found');
     }
@@ -179,6 +189,14 @@ class ImageManager
                 if ($fileName = $this->fileManager->sanitize($this->generateRandomName() . " " . $image->getPosition())) {
                     return $fileName;
                 }
+                break;
+            case Campaign::class:
+                // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
+                // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
+                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
+                    return $fileName;
+                }
+
                 break;
                 
             default:
@@ -310,6 +328,7 @@ class ImageManager
         string $prefix
     ) {
         $versionName = $prefix . $fileName . "." . $extension;
+
         $liipImage = $this->dataManager->find($filter, $baseFolder.$folderOrigin.$image->getFileName());
         $resized = $this->filterManager->applyFilter($liipImage, $filter)->getContent();
         $this->saveImage($resized, $versionName, $baseFolder.$folderDestination);
@@ -353,7 +372,6 @@ class ImageManager
     }
 
 
-   
 
     /** TODO : create methods to :
      * - modify the position and filename of images of a set if positions change (switch between images)

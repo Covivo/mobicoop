@@ -2,7 +2,7 @@ import React from 'react';
 import { 
     Edit,
     SimpleForm, required, 
-    DisabledInput, TextInput, SelectInput
+    TextInput, SelectInput
 } from 'react-admin';
 
 const statusChoices = [
@@ -13,7 +13,7 @@ const statusChoices = [
 export const ArticleEdit = (props) => (
     <Edit {...props } title="Articles > éditer">
         <SimpleForm>
-            <DisabledInput source="originId" label="ID"/>
+            <TextInput disabled source="originId" label="ID"/>
             <TextInput source="title" label="Titre" />
             <SelectInput source="status" label="Status" choices={statusChoices} validate={required()}/>
         </SimpleForm>

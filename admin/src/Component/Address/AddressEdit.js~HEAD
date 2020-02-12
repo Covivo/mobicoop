@@ -9,7 +9,7 @@ import GeocompleteInput from '../Utilities/geocomplete';
 const userOptionRenderer = choice => `${choice.givenName} ${choice.familyName}`;
 
 // Edit
-export const AddressEdit = (props) => (
+export const AddressesEdit = (props) => (
     <Edit {...props } title="Adresse > éditer">
         <SimpleForm>
             <DisabledInput source="originId" label="ID"/>

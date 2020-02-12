@@ -1,15 +1,15 @@
 import React from 'react';
 import { HydraAdmin } from '@api-platform/admin';
+
 import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/parseHydraDocumentation';
-import { dataProvider as baseDataProvider, fetchHydra as baseFetchHydra  } from '@api-platform/admin';
 import authProvider from './authProvider';
 import { Redirect } from 'react-router-dom';
 
 import { Login, Resource } from 'react-admin';
 
 import { createMuiTheme } from '@material-ui/core/styles';
-import frenchMessages from 'ra-language-french';
-import MapIcon from '@material-ui/icons/Map';
+import i18nProviderTranslations  from './Component/Utilities/translations'
+import MyLayout from './MyLayout'
 
 import users from './Component/User/index';
 import articles from './Component/Article/Article/index';
@@ -23,13 +23,18 @@ import roles from './Component/Right/Role/index';
 import rights from './Component/Right/Right/index';
 import territories from './Component/Territory/index';
 import events from './Component/Event/index';
-import { AddressEdit } from './Component/Address/addresses';
-
-import isAuthorized from './Component/Utilities/authorization';
+import adresses from './Component/Address/index';
+import KibanaWidget from './Component/Dashboard/KibanaWidget'
+import {isAuthorized} from "./Component/Utilities/authorization";
+import {ResourceGuesser, ListGuesser} from '@api-platform/admin/lib';
+import ProposalList from './Component/Proposals/ProposalList';
+import myDataProvider from "./Component/Utilities/extendProviders";
+import campaigns from "./Component/Campaingns/index";
 
 require('dotenv').config();
 
 const MyLoginPage = () => <Login backgroundImage={process.env.REACT_APP_THEME_BACKGROUND} />;
+const entrypoint = process.env.REACT_APP_API;
 
 const theme = createMuiTheme({
     palette: {
@@ -52,27 +57,11 @@ const theme = createMuiTheme({
     },
 });
 
-const messages = {
-  fr: frenchMessages,
-}
-const i18nProvider = locale => messages[locale];
-
-const entrypoint = process.env.REACT_APP_API;
-
-// use this if the next code doesn't work... and remove the () after fetchHeaders on apiDocumentationParser declaration...
-// const fetchHeaders = {'Authorization': `Bearer ${localStorage.getItem('token')}`};
-// const fetchHydra = (url, options = {}) => baseFetchHydra(url, {
-//     ...options,
-//     headers: new Headers(fetchHeaders),
-// });
+const i18nProvider = i18nProviderTranslations;
 
 const fetchHeaders = function () {
-  return {'Authorization': `Bearer ${localStorage.getItem('token')}`};
+    return {'Authorization': `Bearer ${localStorage.getItem('token')}`};
 };
-const fetchHydra = (url, options = {}) => baseFetchHydra(url, {
-    ...options,
-    headers: new Headers(fetchHeaders()),
-});
 
 const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint, { headers: new Headers(fetchHeaders()) })
     .then(
@@ -95,22 +84,34 @@ const apiDocumentationParser = entrypoint => parseHydraDocumentation(entrypoint,
             }
         },
     );
-const dataProvider = baseDataProvider(entrypoint, fetchHydra, apiDocumentationParser);
+// use this if the next code doesn't work... and remove the () after fetchHeaders on apiDocumentationParser declaration...
+// const fetchHeaders = {'Authorization': `Bearer ${localStorage.getItem('token')}`};
+// const fetchHydra = (url, options = {}) => baseFetchHydra(url, {
+//     ...options,
+//     headers: new Headers(fetchHeaders),
+// });
+
+
 
 // todo : create a default resource that leads to the login page
 export default props => (
     <HydraAdmin
         apiDocumentationParser={ apiDocumentationParser }
-        dataProvider={ dataProvider }
+        dataProvider={ myDataProvider }
         authProvider={ authProvider }
         entrypoint={ entrypoint }
         loginPage={ MyLoginPage }
-        locale="fr" i18nProvider={ i18nProvider }
+        i18nProvider={ i18nProvider }
         theme={ theme }
+        dashboard={KibanaWidget}
+        layout={MyLayout}
     >
       {permissions => {
         return  [          
           <Resource name={'users'} {...users} />,
+        /* <Resource name={'proposals'} list={ProposalList} />, Uncomment when proposals will be ready*/
+          <Resource name={'campaigns'} {...campaigns} />,
+          <Resource name="addresses" {...adresses} />,
           isAuthorized("article_manage")      ? <Resource name={'articles'} {...articles} /> : null,
           isAuthorized("article_manage")      ? <Resource name={'sections'} {...sections} /> : null,
           isAuthorized("article_manage")      ? <Resource name={'paragraphs'} {...paragraphs} /> : null,
@@ -120,12 +121,14 @@ export default props => (
           isAuthorized("relay_point_manage")  ? <Resource name={'relay_point_types'} {...relay_point_types} /> : null,
           isAuthorized("permission_manage")   ? <Resource name={'roles'} {...roles} /> : null,
           isAuthorized("permission_manage")   ? <Resource name={'rights'} {...rights} /> : null,
-          isAuthorized("territory_manage")    ? <Resource name={'territories'} {...territories} /> : null,
-          isAuthorized("event_manage")        ? <Resource name={'events'} {...events} /> : null,
-          <Resource name="addresses" edit={ AddressEdit} title="Adresses" options={{ label: 'Adresses' }} icon={MapIcon} />,
-          <Resource name="images" />
-        ];
-    }
-      }
-    </HydraAdmin>
-);
+          /*  isAuthorized("territory_manage")    ? <Resource name={'territories'} {...territories} /> : null, */
+           isAuthorized("event_manage")        ? <ResourceGuesser name={'events'} {...events}  /> : null,
+           // <Resource name="addresses" edit={ AddressEdit} title="Adresses" options={{ label: 'Adresses' }} icon={MapIcon} />,
+           <Resource name="images" />,
+           <Resource name="roles" />,
+           <Resource name="territories" />
+         ];
+     }
+       }
+     </HydraAdmin>
+ );

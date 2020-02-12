@@ -1,35 +1,44 @@
 {
-  "name": "mobicoop-admin",
-  "version": "0.0.0",
+  "name": "admin",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
-    "@api-platform/admin": "^1.0.2",
-    "ajv": "^6.0.0",
+    "@api-platform/admin": "^2.0.0",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
     "awesome-debounce-promise": "^2.1.0",
-    "babel-eslint": "^9.0.0",
-    "bcryptjs": "^2.4.3",
-    "caniuse-lite": "1.0.30000974",
-    "dotenv": "^6.1.0",
-    "downshift": "^3.3.4",
+    "dotenv": "^8.2.0",
+    "final-form": "^4.18.7",
     "jwt-decode": "^2.2.0",
-    "ra-input-rich-text": "^2.8.6",
-    "ra-language-french": "^2.8.5",
-    "react": "^16.3.0",
-    "react-admin": "^2.9.0",
-    "react-dom": "^16.3.0",
-    "react-scripts": "^2.1.1"
+    "ra-input-rich-text": "^3.1.0",
+    "ra-language-french": "^3.1.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-final-form": "^6.3.5",
+    "react-scripts": "3.3.0",
+    "redux-form": "^8.2.6"
   },
   "scripts": {
     "start": "PORT=8082 FORCE_COLOR=true BROWSER=none NODE_ENV=dev react-scripts start | cat",
+    "dev": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "devDependencies": {
-    "cross-env": "^5.2.0"
+  "eslintConfig": {
+    "extends": "react-app"
   },
   "browserslist": {
-    "production": [],
-    "development": []
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

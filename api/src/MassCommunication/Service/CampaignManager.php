@@ -144,6 +144,7 @@ class CampaignManager
      */
     private function sendMassEmailTest(Campaign $campaign)
     {
+        //$this->getFormedEmailBody($campaign->getBody());
         // call the service
         $this->massEmailProvider->send(
             $campaign->getSubject(),
@@ -191,11 +192,20 @@ class CampaignManager
      * @param string $body
      * @return void
      */
-    private function getFormedEmailBody(?string $body): string
+    private function getFormedEmailBody(?string $body):string
     {
+        $encodedBody = json_decode($body);
+        $arrayForTemplate = array();
+
+        foreach ($encodedBody as $parts) {
+            foreach ($parts as $type => $content) {
+                $arrayForTemplate[] = array('type' => $type , 'content' => $content);
+            }
+        }
+
         return $this->templating->render(
             $this->mailTemplate,
-            array('message' => $body)
+            array('arrayForTemplate' => $arrayForTemplate)
         );
     }
 
