@@ -71,8 +71,11 @@
         cols="6"
         class="text-right"
       >
-        <p v-if="isPausable && !isArchived && paused">
-          Attention votre annonce est en pause
+        <p
+          v-if="isPausable && !isArchived && paused"
+          class="warning--text"
+        >
+          {{ $t('pause.info') }}
         </p>
         <v-btn
           v-if="isPausable && !isArchived && !paused"

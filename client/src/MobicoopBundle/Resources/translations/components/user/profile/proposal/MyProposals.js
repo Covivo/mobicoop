@@ -12,7 +12,8 @@ export default {
     pause: {
       route: "/covoiturage/annonce/pause",
       error: "Une erreur est survenue votre annonce n'est pas en pause.",
-      succes: "Votre annonce est maintenant en pause"
+      succes: "Votre annonce est maintenant en pause",
+      info: "Attention annonce en pause."
     },
     delete: {
       route: "/covoiturage/annonce/supprimer",
