@@ -84,7 +84,6 @@ final class CreateImageAction
                 $image->setName($image->getFileName());
             }
         }
-        
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->doctrine->getManager();
 
@@ -96,7 +95,6 @@ final class CreateImageAction
             if ($originalName) {
                 $image->setOriginalName($originalName);
             }
-            
             // we generate the versions available for the image
             $image->setVersions($this->imageManager->generateVersions($image));
 
