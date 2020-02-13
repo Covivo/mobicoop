@@ -37,7 +37,7 @@
           align="center"
         >
           <v-row justify="center">
-            <v-col cols="3">
+            <v-col cols="6">
               <v-text-field
                 v-model="name"
                 :rules="nameRules"
@@ -46,7 +46,7 @@
             </v-col>
           </v-row>
           <v-row justify="center">
-            <v-col cols="3">
+            <v-col cols="6">
               <v-text-field
                 v-model="description"
                 :rules="descriptionRules"
@@ -55,7 +55,7 @@
             </v-col>
           </v-row>
           <v-row justify="center">
-            <v-col cols="3">
+            <v-col cols="6">
               <v-textarea
                 v-model="fullDescription"
                 :rules="fullDescriptionRules"
@@ -69,7 +69,7 @@
             </v-col>
           </v-row>
           <v-row justify="center">
-            <v-col cols="3">
+            <v-col cols="6">
               <GeoComplete 
                 :url="geoSearchUrl"
                 :label="$t('form.address.label')"
@@ -78,7 +78,7 @@
             </v-col>
           </v-row>
           <v-row justify="center">
-            <v-col cols="3">
+            <v-col cols="6">
               <v-tooltip
                 left
                 color="info"
@@ -96,7 +96,7 @@
             </v-col>
           </v-row>
           <v-row justify="center">
-            <v-col cols="3">
+            <v-col cols="6">
               <v-file-input
                 v-model="avatar"
                 :rules="avatarRules"
