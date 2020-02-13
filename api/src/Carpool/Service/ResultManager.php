@@ -1588,30 +1588,39 @@ class ResultManager
 
         $role = Ad::ROLE_DRIVER;
 
-        // get the requester role, it depends on the status
-        switch ($ask->getStatus()) {
-            case Ask::STATUS_INITIATED:
-                if ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId) {
-                    // the requester is the driver
-                    $role = Ad::ROLE_DRIVER;
-                } else {
-                    // the requester is the passenger
-                    $role = Ad::ROLE_PASSENGER;
-                }
-                break;
-            case Ask::STATUS_PENDING_AS_DRIVER:
-            case Ask::STATUS_ACCEPTED_AS_DRIVER:
-            case Ask::STATUS_DECLINED_AS_DRIVER:
-                // the requester is the driver
-                $role = Ad::ROLE_DRIVER;
-                break;
-            case Ask::STATUS_PENDING_AS_PASSENGER:
-            case Ask::STATUS_ACCEPTED_AS_PASSENGER:
-            case Ask::STATUS_DECLINED_AS_PASSENGER:
-                // the requester is the passenger
-                $role = Ad::ROLE_PASSENGER;
-                break;
+        // This instead of the switch case below
+        if ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId) {
+            // the requester is the driver
+            $role = Ad::ROLE_DRIVER;
+        } else {
+            // the requester is the passenger
+            $role = Ad::ROLE_PASSENGER;
         }
+
+        // get the requester role, it depends on the status
+        // switch ($ask->getStatus()) {
+        //     case Ask::STATUS_INITIATED:
+        //         if ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId) {
+        //             // the requester is the driver
+        //             $role = Ad::ROLE_DRIVER;
+        //         } else {
+        //             // the requester is the passenger
+        //             $role = Ad::ROLE_PASSENGER;
+        //         }
+        //         break;
+        //     case Ask::STATUS_PENDING_AS_DRIVER:
+        //     case Ask::STATUS_ACCEPTED_AS_DRIVER:
+        //     case Ask::STATUS_DECLINED_AS_DRIVER:
+        //         // the requester is the driver
+        //         $role = Ad::ROLE_DRIVER;
+        //         break;
+        //     case Ask::STATUS_PENDING_AS_PASSENGER:
+        //     case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+        //     case Ask::STATUS_DECLINED_AS_PASSENGER:
+        //         // the requester is the passenger
+        //         $role = Ad::ROLE_PASSENGER;
+        //         break;
+        // }
 
         // we create the ResultRole for the ask
         if ($role == Ad::ROLE_DRIVER) {
