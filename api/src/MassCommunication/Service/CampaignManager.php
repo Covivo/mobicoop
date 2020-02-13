@@ -49,11 +49,12 @@ class CampaignManager
     /**
      * Constructor.
      */
-    public function __construct(Environment $templating, EntityManagerInterface $entityManager, TranslatorInterface $translator, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate)
+    public function __construct(Environment $templating, EntityManagerInterface $entityManager,  string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate,TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
         $this->mailTemplate = $mailTemplate;
         $this->templating = $templating;
+
         $this->translator = $translator;
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_MANDRILL:
@@ -145,9 +146,11 @@ class CampaignManager
      * @param Campaign $campaign    The campaign to test
      * @return Campaign The campaign modified with the result of the test.
      */
-    private function sendMassEmailTest(Campaign $campaign)
+    private function sendMassEmailTest(Campaign $campaign, $lang='fr_FR')
     {
-        //$this->getFormedEmailBody($campaign->getBody());
+        $this->translator->setLocale($lang);
+        //dump ($this->translator->trans('unsuscribeEmail'));
+
         // call the service
         $this->massEmailProvider->send(
             $campaign->getSubject(),
@@ -205,13 +208,6 @@ class CampaignManager
                 $arrayForTemplate[] = array('type' => $type , 'content' => $content);
             }
         }
-
-        $urlUnsuscribe =  $this->translator->trans('urlUnsuscribeEmail');
-        $texteUnsuscribe =  $this->translator->trans('unsuscribeEmail');
-
-        var_dump($urlUnsuscribe);
-        var_dump($texteUnsuscribe);
-        die();
 
         return $this->templating->render(
             $this->mailTemplate,

@@ -194,5 +194,5 @@ yourInscription: "Votre inscription"
 updatedSefl: "Modification de votre profil"
 
 # EMAIL Masscommunication : send from admin
-urlUnsuscribeEmail: "/user/unsuscribe/"
+urlUnsuscribeEmail: "/user/unsuscribe"
 unsuscribeEmail : "Cliquez ici pour vous désabonner de nos emails"
