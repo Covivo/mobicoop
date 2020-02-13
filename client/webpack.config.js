@@ -93,9 +93,14 @@ if (!Encore.isProduction()) {
     .enableBuildNotifications()
     .configureBabel(function (babelConfig) {
       // add additional presets
-      // babelConfig.plugins.push('transform-class-properties');
+      babelConfig.plugins.push('transform-class-properties');
       // babelConfig.presets.push('stage-3');
       // This will add compatibility for old nav
+    }, {
+      // node_modules is not processed through Babel by default
+      // but you can whitelist specific modules to process
+      include_node_modules: ['vue'],
+      include_node_modules: ['vuetify']
     })
 }
 
