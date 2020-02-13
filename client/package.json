@@ -31,8 +31,9 @@
   },
   "browserslist": [
     ">0.25%",
-    "iOS >= 8",
-    "Edge >= 10"
+    "Safari >= 11",
+    "Edge >= 10",
+    "Firefox >=68"
   ],
   "homepage": "https://gitlab.com/mobicoop/mobicoop#README",
   "devDependencies": {
