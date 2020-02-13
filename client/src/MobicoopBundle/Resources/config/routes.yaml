@@ -229,12 +229,12 @@ user_communities:
         en: /user/communities
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCommunities
 
-# Unsuscribe user from email
-user_unsuscribe_email:
+# Unsubscribe user from email
+user_unsubscribe_email:
     path:
-      fr: /utilisateur/unsuscribe/{token}
-      en: /user/unsuscribe/{token}
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userUnsuscribeFromEmail
+      fr: /utilisateur/unsubscribe/{token}
+      en: /user/unsubscribe/{token}
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userUnsubscribeFromEmail
 
 
 ##################

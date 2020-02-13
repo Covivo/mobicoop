@@ -165,16 +165,16 @@ class UserManager
         $validationToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         $user->setValidatedDateToken($validationToken);
 
-        $unsuscribeToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
-        $user->setUnsuscribeToken($unsuscribeToken);
+        $unsubscribeToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        $user->setUnsubscribeToken($unsubscribeToken);
 
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-        
+
         // creation of the alert preferences
         $user = $this->createAlerts($user);
-        
+
         // dispatch en event
         if (is_null($user->getUserDelegate())) {
             // registration by the user itself
@@ -190,11 +190,11 @@ class UserManager
                 $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
             }
         }
-        
+
         // return the user
         return $user;
     }
- 
+
     /**
      * Update a user.
      *
@@ -816,16 +816,16 @@ class UserManager
         return new JsonResponse();
     }
 
-    public function unsuscribeFromEmail(User $user, $lang='fr_FR')
+    public function unsubscribeFromEmail(User $user, $lang='fr_FR')
     {
         $this->translator->setLocale($lang);
 
-        $messageUnsuscribe = $this->translator->trans('unsuscribeEmailAlertFront', ['instanceName' => $_ENV['EMAILS_PLATFORM_NAME']]);
+        $messageUnsubscribe = $this->translator->trans('unsubscribeEmailAlertFront', ['instanceName' => $_ENV['EMAILS_PLATFORM_NAME']]);
 
         $user->setNewsSubscription(0);
-        $user->setUnsuscribeDate(new \Datetime());
+        $user->setUnsubscribeDate(new \Datetime());
 
-        $user->setUnsubscribeMessage($messageUnsuscribe);
+        $user->setUnsubscribeMessage($messageUnsubscribe);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();

@@ -194,5 +194,6 @@ yourInscription: "Votre inscription"
 updatedSefl: "Modification de votre profil"
 
 # EMAIL Masscommunication : send from admin
-urlUnsuscribeEmail: "/user/unsuscribe"
-unsuscribeEmail : "Click here to unsubscribe from {instanceName} Service News"
+urlUnsubscribeEmail: "/user/unsubscribe"
+unsubscribeEmail : "Click here to unsubscribe from {instanceName} Service News"
+unsubscribeEmailAlertFront : 'Vous êtes bien désinscrit des Actualités du service {instanceName}. Pour vous réinscrire ultérieurement, vous pouvez vous rendre dans Profil > Mon compte.'

@@ -370,7 +370,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $facebookId;
 
     /**
-     * @var string|null the unsuscribe message we return by api
+     * @var string|null the unsubscribe message we return by api
      * @Groups({"post","put"})
      */
     private $unsubscribeMessage;

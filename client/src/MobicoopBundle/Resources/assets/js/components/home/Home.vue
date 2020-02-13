@@ -59,7 +59,7 @@
           </v-snackbar>
         </v-col>
       </v-row>
-      <v-row v-if="displayUnsuscribeEmail">
+      <v-row v-if="displayUnsubscribeEmail">
         <v-col>
           <v-snackbar
             v-model="snackbar"
@@ -69,7 +69,7 @@
             vertical
           >
             <div>
-              {{ displayUnsuscribeEmail }}
+              {{ displayUnsubscribeEmail }}
             </div>
             <v-btn
               color="info"
@@ -192,7 +192,7 @@ export default {
       type: Number,
       default: 0
     },
-    displayUnsuscribeEmail: {
+    displayUnsubscribeEmail: {
       type: String,
       default: ""
     },

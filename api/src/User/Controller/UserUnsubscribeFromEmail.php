@@ -32,11 +32,11 @@ use App\User\Entity\User;
 use App\User\Service\UserManager;
 
 /**
- * Controller class for UserUnsuscribeFromEmail
+ * Controller class for UserUnsubscribeFromEmail
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class UserUnsuscribeFromEmail
+class UserUnsubscribeFromEmail
 {
     use TranslatorTrait;
 
@@ -59,7 +59,7 @@ class UserUnsuscribeFromEmail
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
         }
-        $data = $this->userManager->unsuscribeFromEmail($data);
+        $data = $this->userManager->unsubscribeFromEmail($data);
         return $data;
     }
 }

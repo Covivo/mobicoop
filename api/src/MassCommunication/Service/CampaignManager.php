@@ -229,7 +229,7 @@ class CampaignManager
                 "givenName" => $delivery->getUser()->getGivenName(),
                 "familyName" => $delivery->getUser()->getFamilyName(),
                 "email" => $delivery->getUser()->getEmail(),
-                "unsuscribeToken" => $delivery->getUser()->getUnsuscribeToken(),
+                "unsubscribeToken" => $delivery->getUser()->getUnsubscribeToken(),
             ];
         }
         return $recipients;
@@ -248,7 +248,7 @@ class CampaignManager
             "givenName" => $user->getGivenName(),
             "familyName" => $user->getFamilyName(),
             "email" => $user->getEmail(),
-            "unsuscribeToken" => $user->getUnsuscribeToken(),
+            "unsubscribeToken" => $user->getUnsubscribeToken(),
         ];
 
         return $recipients;

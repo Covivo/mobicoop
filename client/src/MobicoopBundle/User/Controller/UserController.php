@@ -921,16 +921,16 @@ class UserController extends AbstractController
     /**
      * Get all communities of a user
      */
-    public function userUnsuscribeFromEmail(UserManager $userManager, string $token)
+    public function userUnsubscribeFromEmail(UserManager $userManager, string $token)
     {
-        $user = $userManager->unsuscribeUserFromEmail($token);
+        $user = $userManager->unsubscribeUserFromEmail($token);
         if ($user != null) {
             return $this->render(
                 '@Mobicoop/default/index.html.twig',
                 [
                     'baseUri' => $_ENV['API_URI'],
                     'metaDescription' => 'Mobicoop',
-                    'unsuscribe' => json_encode($user->getUnsubscribeMessage())
+                    'unsubscribe' => json_encode($user->getUnsubscribeMessage())
                 ]
             );
         }

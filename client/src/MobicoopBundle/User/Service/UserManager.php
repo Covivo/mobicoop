@@ -136,15 +136,15 @@ class UserManager
     }
 
     /**
-     * Search user by unsuscribe token
+     * Search user by unsubscribe token
      *
      * @param string $token
      *
      * @return User|null The user found or null if not found.
      */
-    public function findByUnsuscribeToken(string $token)
+    public function findByUnsubscribeToken(string $token)
     {
-        $response = $this->dataProvider->getCollection(['unsuscribeToken' => $token]);
+        $response = $this->dataProvider->getCollection(['unsubscribeToken' => $token]);
         if ($response->getCode() == 200) {
             /** @var Hydra $user */
             $user = $response->getValue();
@@ -679,17 +679,17 @@ class UserManager
     }
 
     /**
-     * Unsuscribe the user from receiving news
+     * Unsubscribe the user from receiving news
      *
      * @param string $token
      * @param string $phone
      *
      * @return User|null The user found or null if not found.
      */
-    public function unsuscribeUserFromEmail(string $token)
+    public function unsubscribeUserFromEmail(string $token)
     {
-        $user = $this->findByUnsuscribeToken($token);
-        $response = $this->dataProvider->putSpecial($user, null, "unsuscribe_user");
+        $user = $this->findByUnsubscribeToken($token);
+        $response = $this->dataProvider->putSpecial($user, null, "unsubscribe_user");
 
         return $response->getValue();
     }

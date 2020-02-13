@@ -26,16 +26,16 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use Doctrine\ORM\QueryBuilder;
 
-final class UnsuscribeTokenFilter extends AbstractContextAwareFilter
+final class UnsubscribeTokenFilter extends AbstractContextAwareFilter
 {
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ($property != "unsuscribeToken") {
+        if ($property != "unsubscribeToken") {
             return;
         }
         
         $queryBuilder
-            ->andWhere('u.unsuscribeToken = \'' .$value . '\'');
+            ->andWhere('u.unsubscribeToken = \'' .$value . '\'');
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
@@ -52,8 +52,8 @@ final class UnsuscribeTokenFilter extends AbstractContextAwareFilter
                 'type' => 'string',
                 'required' => false,
                 'swagger' => [
-                    'description' => 'Filter for unsuscribe user after click on email',
-                    'name' => 'unsuscribeToken',
+                    'description' => 'Filter for unsubscribe user after click on email',
+                    'name' => 'unsubscribeToken',
                     'type' => 'string',
                 ],
             ];

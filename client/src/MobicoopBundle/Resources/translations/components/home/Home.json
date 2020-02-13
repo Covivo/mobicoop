@@ -5,7 +5,7 @@
         "snackbar": "Vous avez renseigné un numéro de téléphone, rassurez vos covoitureurs en le vérifiant. Envoyez un code de vérification depuis la page",
         "profileLink": "/utilisateur/profil/modifier/mon-profil",
         "snackbar-account-delete": "Votre compte à été supprimé avec succès.",
-        "snackbar-unsuscribe-email": "Vous êtes bien désinscrit de nos liste d'emailing",
+        "snackbar-unsubscribe-email": "Vous êtes bien désinscrit de nos liste d'emailing",
         "myProfile": "Profil"
     }
 }

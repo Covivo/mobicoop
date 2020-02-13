@@ -65,7 +65,7 @@ use App\User\Controller\UserUpdate;
 use App\User\Controller\UserAnonymise;
 use App\User\Controller\UserCheckSignUpValidationToken;
 use App\User\Controller\UserCheckPhoneToken;
-use App\User\Controller\UserUnsuscribeFromEmail;
+use App\User\Controller\UserUnsubscribeFromEmail;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\HomeAddressDirectionTerritoryFilter;
@@ -77,7 +77,7 @@ use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\SolidaryFilter;
 use App\User\Filter\ValidatedDateTokenFilter;
-use App\User\Filter\UnsuscribeTokenFilter;
+use App\User\Filter\UnsubscribeTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
 use App\Import\Entity\UserImport;
@@ -319,10 +319,10 @@ use App\User\EntityListener\UserListener;
  *              "path"="/users/{id}/asks",
  *              "controller"=UserAsks::class
  *          },
- *          "unsuscribe_user"={
+ *          "unsubscribe_user"={
  *              "method"="PUT",
- *              "path"="/users/{id}/unsuscribe_user",
- *              "controller"=UserUnsuscribeFromEmail::class
+ *              "path"="/users/{id}/unsubscribe_user",
+ *              "controller"=UserUnsubscribeFromEmail::class
  *          }
  *      }
  * )
@@ -337,7 +337,7 @@ use App\User\EntityListener\UserListener;
  * @ApiFilter(WaypointTerritoryFilter::class, properties={"waypointTerritory"})
  * @ApiFilter(LoginFilter::class, properties={"login"})
  * @ApiFilter(PwdTokenFilter::class, properties={"pwdToken"})
- * @ApiFilter(UnsuscribeTokenFilter::class, properties={"unsuscribeToken"})
+ * @ApiFilter(UnsubscribeTokenFilter::class, properties={"unsubscribeToken"})
  * @ApiFilter(ValidatedDateTokenFilter::class, properties={"validatedDateToken"})
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate"}, arguments={"orderParameterName"="order"})
@@ -950,23 +950,23 @@ class User implements UserInterface, EquatableInterface
     private $userDelegate;
 
     /**
-     * @var string|null Token for unsuscribee the user from receiving email
+     * @var string|null Token for unsubscribee the user from receiving email
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
      */
-    private $unsuscribeToken;
+    private $unsubscribeToken;
 
     /**
-     * @var \DateTimeInterface Date when user unsuscribe from email
+     * @var \DateTimeInterface Date when user unsubscribe from email
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups("readUser")
      */
-    private $unsuscribeDate;
+    private $unsubscribeDate;
 
     /**
-     * @var string|null the unsuscribe message we return to client : change this later By listener
+     * @var string|null the unsubscribe message we return to client : change this later By listener
      * @Groups({"readUser"})
      */
     private $unsubscribeMessage;
@@ -2222,25 +2222,25 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getUnsuscribeToken(): ?string
+    public function getUnsubscribeToken(): ?string
     {
-        return $this->unsuscribeToken;
+        return $this->unsubscribeToken;
     }
 
-    public function setUnsuscribeToken(?string $unsuscribeToken): self
+    public function setUnsubscribeToken(?string $unsubscribeToken): self
     {
-        $this->unsuscribeToken = $unsuscribeToken;
+        $this->unsubscribeToken = $unsubscribeToken;
         return $this;
     }
 
-    public function getUnsuscribeDate(): ?\DateTimeInterface
+    public function getUnsubscribeDate(): ?\DateTimeInterface
     {
-        return $this->unsuscribeDate;
+        return $this->unsubscribeDate;
     }
 
-    public function setUnsuscribeDate(?\DateTimeInterface $unsuscribeDate): self
+    public function setUnsubscribeDate(?\DateTimeInterface $unsubscribeDate): self
     {
-        $this->unsuscribeDate = $unsuscribeDate;
+        $this->unsubscribeDate = $unsubscribeDate;
 
         return $this;
     }
