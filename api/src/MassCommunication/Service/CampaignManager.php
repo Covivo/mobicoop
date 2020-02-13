@@ -29,6 +29,7 @@ use App\MassCommunication\MassEmailProvider\MandrillProvider;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Twig\Environment;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Campaign manager service.
@@ -41,17 +42,20 @@ class CampaignManager
     private $massEmailApi;
     private $massSmsProvider;
     private $mailTemplate;
+    private $translator;
 
     const MAIL_PROVIDER_MANDRILL = 'mandrill';
 
     /**
      * Constructor.
      */
-    public function __construct(Environment $templating, EntityManagerInterface $entityManager, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate)
+    public function __construct(Environment $templating, EntityManagerInterface $entityManager, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate, TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
         $this->mailTemplate = $mailTemplate;
         $this->templating = $templating;
+
+        $this->translator = $translator;
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_MANDRILL:
                 $this->massEmailProvider = new MandrillProvider($mailerApiKey);
@@ -142,9 +146,10 @@ class CampaignManager
      * @param Campaign $campaign    The campaign to test
      * @return Campaign The campaign modified with the result of the test.
      */
-    private function sendMassEmailTest(Campaign $campaign)
+    private function sendMassEmailTest(Campaign $campaign, $lang='fr_FR')
     {
-        //$this->getFormedEmailBody($campaign->getBody());
+        $this->translator->setLocale($lang);
+
         // call the service
         $this->massEmailProvider->send(
             $campaign->getSubject(),
@@ -223,7 +228,8 @@ class CampaignManager
                 // put here the list of needed variables !
                 "givenName" => $delivery->getUser()->getGivenName(),
                 "familyName" => $delivery->getUser()->getFamilyName(),
-                "email" => $delivery->getUser()->getEmail()
+                "email" => $delivery->getUser()->getEmail(),
+                "unsubscribeToken" => $delivery->getUser()->getUnsubscribeToken(),
             ];
         }
         return $recipients;
@@ -241,7 +247,8 @@ class CampaignManager
             // put here the list of needed variables !
             "givenName" => $user->getGivenName(),
             "familyName" => $user->getFamilyName(),
-            "email" => $user->getEmail()
+            "email" => $user->getEmail(),
+            "unsubscribeToken" => $user->getUnsubscribeToken(),
         ];
 
         return $recipients;

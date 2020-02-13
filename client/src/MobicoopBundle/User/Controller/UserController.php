@@ -917,4 +917,29 @@ class UserController extends AbstractController
         }
         return new JsonResponse(['error'=>'errorUpdateAlert']);
     }
+
+    /**
+     * Get all communities of a user
+     */
+    public function userUnsubscribeFromEmail(UserManager $userManager, string $token)
+    {
+        $user = $userManager->unsubscribeUserFromEmail($token);
+        if ($user != null) {
+            return $this->render(
+                '@Mobicoop/default/index.html.twig',
+                [
+                    'baseUri' => $_ENV['API_URI'],
+                    'metaDescription' => 'Mobicoop',
+                    'unsubscribe' => json_encode($user->getUnsubscribeMessage())
+                ]
+            );
+        }
+        return $this->render(
+            '@Mobicoop/default/index.html.twig',
+            [
+                'baseUri' => $_ENV['API_URI'],
+                'metaDescription' => 'Mobicoop',
+            ]
+        );
+    }
 }

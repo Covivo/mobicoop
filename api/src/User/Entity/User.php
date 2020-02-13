@@ -65,6 +65,7 @@ use App\User\Controller\UserUpdate;
 use App\User\Controller\UserAnonymise;
 use App\User\Controller\UserCheckSignUpValidationToken;
 use App\User\Controller\UserCheckPhoneToken;
+use App\User\Controller\UserUnsubscribeFromEmail;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\HomeAddressDirectionTerritoryFilter;
@@ -76,6 +77,7 @@ use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\SolidaryFilter;
 use App\User\Filter\ValidatedDateTokenFilter;
+use App\User\Filter\UnsubscribeTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
 use App\Import\Entity\UserImport;
@@ -316,6 +318,11 @@ use App\User\EntityListener\UserListener;
  *              "method"="GET",
  *              "path"="/users/{id}/asks",
  *              "controller"=UserAsks::class
+ *          },
+ *          "unsubscribe_user"={
+ *              "method"="PUT",
+ *              "path"="/users/{id}/unsubscribe_user",
+ *              "controller"=UserUnsubscribeFromEmail::class
  *          }
  *      }
  * )
@@ -330,6 +337,7 @@ use App\User\EntityListener\UserListener;
  * @ApiFilter(WaypointTerritoryFilter::class, properties={"waypointTerritory"})
  * @ApiFilter(LoginFilter::class, properties={"login"})
  * @ApiFilter(PwdTokenFilter::class, properties={"pwdToken"})
+ * @ApiFilter(UnsubscribeTokenFilter::class, properties={"unsubscribeToken"})
  * @ApiFilter(ValidatedDateTokenFilter::class, properties={"validatedDateToken"})
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate"}, arguments={"orderParameterName"="order"})
@@ -940,6 +948,28 @@ class User implements UserInterface, EquatableInterface
      * @MaxDepth(1)
      */
     private $userDelegate;
+
+    /**
+     * @var string|null Token for unsubscribee the user from receiving email
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser","write"})
+     */
+    private $unsubscribeToken;
+
+    /**
+     * @var \DateTimeInterface Date when user unsubscribe from email
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("readUser")
+     */
+    private $unsubscribeDate;
+
+    /**
+     * @var string|null the unsubscribe message we return to client : change this later By listener
+     * @Groups({"readUser"})
+     */
+    private $unsubscribeMessage;
 
     public function __construct($status = null)
     {
@@ -2191,6 +2221,42 @@ class User implements UserInterface, EquatableInterface
 
         return $this;
     }
+
+    public function getUnsubscribeToken(): ?string
+    {
+        return $this->unsubscribeToken;
+    }
+
+    public function setUnsubscribeToken(?string $unsubscribeToken): self
+    {
+        $this->unsubscribeToken = $unsubscribeToken;
+        return $this;
+    }
+
+    public function getUnsubscribeDate(): ?\DateTimeInterface
+    {
+        return $this->unsubscribeDate;
+    }
+
+    public function setUnsubscribeDate(?\DateTimeInterface $unsubscribeDate): self
+    {
+        $this->unsubscribeDate = $unsubscribeDate;
+
+        return $this;
+    }
+
+    public function getUnsubscribeMessage(): ?string
+    {
+        return $this->unsubscribeMessage;
+    }
+
+    public function setUnsubscribeMessage(?string $unsubscribeMessage): self
+    {
+        $this->unsubscribeMessage = $unsubscribeMessage;
+
+        return $this;
+    }
+
 
 
     // DOCTRINE EVENTS
