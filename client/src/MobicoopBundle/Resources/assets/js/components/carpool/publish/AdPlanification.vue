@@ -117,7 +117,7 @@
             :label="$t('returnTrip.label')"
             color="primary"
             hide-details
-            @change="change(),checkReturnDesactivate($event)"
+            @change="checkReturnDesactivate($event),change()"
           />
         </v-col>
 
@@ -589,7 +589,7 @@ export default {
       });
     },
     checkDateReturn(e){
-      if (e) this.returnTrip = true
+      this.returnTrip = e ? true : false;
     },
     blockDate(){
       this.maxDateFromOutward = this.outwardDate
@@ -613,6 +613,7 @@ export default {
       if (!e) {
         this.returnDate = null
         this.returnTime = null
+        this.returnTrip = false;
       }
     },
     getValueCheckbox(event,item,day){
