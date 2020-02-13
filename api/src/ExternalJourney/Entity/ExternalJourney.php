@@ -31,14 +31,15 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *
  * @ApiResource(
  *     collectionOperations={"get"={
+ *      "normalization_context"={"groups"={"externalJourney"}},
  *      "swagger_context"={
  *           "parameters"={
  *              {
  *                  "name" = "provider",
  *                  "in" = "query",
- *                  "required" = "true",
+ *                  "required" = "false",
  *                  "type" = "string",
- *                  "description" = "The name of the provider"
+ *                  "description" = "The name of the provider. If none, we return journeys from all the available providers"
  *              },
  *              {
  *                  "name" = "driver",
@@ -81,6 +82,13 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *                  "required" = "true",
  *                  "type" = "string",
  *                  "description" = "Longitude of the destination point"
+ *              },
+ *              {
+ *                  "name" = "rawJson",
+ *                  "in" = "query",
+ *                  "required" = "false",
+ *                  "type" = "string",
+ *                  "description" = "If set to 1, this return the raw RDEX format. Otherwise it's returning an array of Carpool Result"
  *              }
  *           }
  *      }

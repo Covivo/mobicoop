@@ -5,14 +5,16 @@ nowYouAreMore: "Vous êtes maintenant plus de"
 toUseTheService: "à utiliser le service ! Partagez vos trajets et trouvez votre bonheur"
 
 # CARPOOL_ASK_ACCEPTED
-
-summaryCarpools: "Voici le récapitulatif de vos covoiturages"
+yourPassengerIs: "Votre passager s'appelle"
+yourDriverIs: "Votre conducteur s'appelle"
+summaryCarpool: "Voici le récapitulatif de votre covoiturage"
 isThe: "est le"
-carpoolDistance: "Trajet régulier Distance covoiturée"
-driverDetour: "Détour conducteur"
+hisPhoneNumber: "son numéro de téléphone"
+regularCarpool: "Trajet régulier"
+concernedDays: "Jours covoiturés:"
+occasionnalCarpool: "Trajet occasionnel"
 supported:  "Prise en charge à"
-depositedAt: "Déposé à"
-appointmentHour: "Heures de RDV"
+depositedAt: "Dépose à"
 monday: "Lundi"
 tuesday: "Mardi"
 wednesday: "Mercredi"
@@ -23,38 +25,43 @@ sunday: "Dimanche"
 the: "Le"
 from: "du"
 to: "au"
+currency: "euros"
 passengerComment: "Commentaire du passager"
-reservedPlaces: "ContacterPlaces réservées"
+reservedPlaces: "Place(s) réservée(s)"
 indicativePrice: "Prix indicatif"
 phoneNumber: "Le numéro de téléphone de"
-driverComment: "Commentaire du conducteur"
+driverComment: "Commentaire du conducteur" 
+  #not used for now
+carpoolDistance: "Trajet régulier Distance covoiturée"
+driverDetour: "Détour conducteur"
+appointmentHour: "Heures de RDV"
 occassionalCarpoolDistance: "Trajet occasionnel Distance covoiturée"
 at: "à"
 
 # CARPOOL_ASK_REFUSED
-
+notBeAbleToCarpoolWithYouFor: "ne pourra pas covoiturer avec vous le "
 notBeAbleToCarpoolWithYou: "ne pourra pas covoiturer avec vous vers"
-followingDays: "les jours suivants"
+followingDays: "Les jours concernés"
 hisMessage: "Voici son message"
 towards: "en direction de"
 
 # CARPOOL_MATCHING_NEW
 
-newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet"
+newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet entre"
 seeYouIn: "Rendez-vous dans" 
 myAds: "Mes annonces"
-linkMyAds: "/user/profil/update/my-proposals"
+linkMyAds: "/utilisateur/profil/modifier/mes-annonces"
 toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact"
-justPublished : "vient d'être publiée"
+justPublished : "elle vient d'être publiée"
 
 # CARPOOL_PROPOSAL_POSTED
 
-yourAsk: "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous"
-replyViaEmail: "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"
+yourAsk: "a fait une demande formelle pour le covoiturage ci-dessous"
+replyViaEMail: "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
-sendYouMessage: "vous a envoyé un message"
+youHaveAMessage: "Vous avez reçu un message :"
 canAnswerViaEmailFrom: "Vous pouvez répondre à ce message via la messagerie de"
 clickHere: "en cliquant ici" 
 getProblem: "Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter"
@@ -74,20 +81,13 @@ infos: "Informations"
 technicalIssues: "Problèmes techniques"
 partnership: "Demande de partenariat"
 
-# AD_DELETED
-
-askLinkedAdDeleted: "Une annonce à laquelle vous aviez postulé a été supprimée"
-driverAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez conducteur a été supprimée"
-driverAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez conducteur a été supprimée"
-passengerAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez passagé a été supprimée"
-passengerAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez passagé a été supprimée"
-
 # USER_PASSWORD_CHANGED
 
+askNewPasswordTitle: "Nouveau mot de passe"
 askNewPassword: "Vous avez demandé un nouveau mot de passe"
 clickHereToChangePassword: "Veuillez cliquer sur ce lien pour changer votre mot de passe"
 linkChangePassword: "Lien de changement de mot de passe"
-urlUpdatePassword: '/utilisateur/mot-de-passe/reset/'
+urlUpdatePassword: "/utilisateur/mot-de-passe/reset/"
 yourPassword: "Votre mot de passe"
 successfullyChanged: "a bien été changé"
 thanksForUse: "Merci d’utiliser"
@@ -98,15 +98,39 @@ yourInscriptionAt: "Votre inscription au service"
 wellTakenIntoAccount: "est bien prise en compte"
 clickHereToConfirm: "Veuillez cliquer sur ce lien pour confirmer votre email"
 orUseTheValidationCode: "Ou utilisez le code de validation directement sur le site"
-urlEmailValidation: '/utilisateur/inscription/validation/'
+urlEmailValidation: "/utilisateur/inscription/validation/"
+yourPasswordIs: "Votre mot de passe est"
+yourPasswordHasBeenSendBySms: "Votre mot de passe vous a été envoyé par SMS."
 
 # USER_UPDATED_SELF
 
-theModificationIsConfirmed: "La modification suivante de votre profil est confirmée"
+theModificationIsConfirmed: "La modification de votre profil est confirmée"
 
-urlMailBox: '/utilisateur/messages'
-CheckoutForAnyURLMisspellingOr: 'messages'
+urlMailBox: "/utilisateur/messages"
+CheckoutForAnyURLMisspellingOr: "messages"
 
+# DRIVER_CARPOOL_LINKED_AD_DELETED
+
+yourCarpoolBetween: "Votre covoiturage entre"
+yourAskCarpoolBetween: "Votre demande de covoiturage entre"
+withThePassenger: "avec le.la passager.ère"
+withTheDriver: "avec le.la conducteur.rice"
+with: "avec"
+isCanceledBecause: "a été annulé, car"
+hasDeletedTheAssociateAd: "a supprimé son annonce associée."
+clickOnLinkToSearchAgain: "Cliquez sur ce lien pour relancer votre recherche"
+noPenaltyApplied: "Il n'y a pas de pénalité pour l'annulation de ce covoiturage. Cependant afin de garantir la fiabilité des annonces et protéger les covoitureurs d'annulations trop répétées, nous nous réservons le droit de suspendre les possibilités de publier des annonces si un covoitureur annule trop souvent."
+
+
+# EVEN CREATED
+
+eventCreated: "Votre événement à bien été enregistré"
+
+# EVENT REPORT
+
+theUser: "L'utilisateur"
+reportThatEvent: "à signaler l'événement"
+explanationOfTheReport: "Explication du signalement"
 
 ######      SMS      ######
 
@@ -175,6 +199,14 @@ newCarpoolAd: "Nouvelle(s) annonce(s) de covoiturage"
 
 newAd: "Nouvelle(s) annonce(s) sur "
 
+# AD_DELETED
+
+askLinkedAdDeleted: "Une annonce à laquelle vous aviez postulé a été supprimée"
+driverAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez conducteur a été supprimée"
+driverAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez conducteur a été supprimée"
+passengerAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez passagé a été supprimée"
+passengerAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez passagé a été supprimée"
+
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
 contactYou: "%givenName% vous contacte"
@@ -191,3 +223,20 @@ yourInscription: "Votre inscription"
 # USER_UPDATED_SELF
 
 updatedSefl: "Modification de votre profil"
+
+# USER_GENERATE_PHONE_TOKEN_ASKED 
+
+yourValidationToken: "Votre code de validation"
+
+# EMAIL ADDITIONAL HEADERS (ouestgo)
+header1Name: "X-JEMH-assignee"
+header1Data: "jira-ouestgo"
+header2Name: "X-JEMH-Adresse mail interlocuteur"
+header2Data: "senderEmail"
+header3Name: "X-JEMH-Nom et prenom interlocuteur"
+header3Data: "senderName"
+
+# EMAIL Masscommunication : send from admin
+urlUnsubscribeEmail: "/utilisateur/unsubscribe"
+unsubscribeEmail : 'Cliquez ici pour vous désabonner des Actualités du service {instanceName}'
+unsubscribeEmailAlertFront : 'Vous êtes bien désinscrit des Actualités du service {instanceName}. Pour vous réinscrire ultérieurement, vous pouvez vous rendre dans Profil > Mon compte.'

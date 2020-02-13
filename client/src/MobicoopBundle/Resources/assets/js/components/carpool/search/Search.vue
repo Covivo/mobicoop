@@ -9,9 +9,9 @@
       >
         <v-col
           cols="12"
-          :xl="results ? 12 : 6"
-          :lg="results ? 12 : 6"
-          :md="results ? 12 : 6"
+          :xl="fullSize ? 12 : results ? 12 : 6"
+          :lg="fullSize ? 12 : results ? 12 : 6"
+          :md="fullSize ? 12 : results ? 12 : 6"
         >
           <!--SearchJourney-->
           <search-journey
@@ -34,7 +34,7 @@
         justify="center"
       >
         <v-col
-          cols="6"
+          :cols="fullSize ? 12 : 6"
         >
           <v-row>
             <v-tooltip
@@ -45,8 +45,9 @@
               <template v-slot:activator="{ on }">
                 <v-col
                   v-if="!logged"
-                  cols="6"
-                  align="left"
+                  cols="12"
+                  md="6"
+                  :class="classAlignPublishButton"
                   v-on="on"
                 >
                   <v-btn
@@ -62,8 +63,9 @@
                 </v-col>
                 <v-col
                   v-if="logged"
-                  cols="6"
-                  align="left"
+                  cols="12"
+                  md="6"
+                  :class="classAlignSearchButton"
                 >
                   <v-btn
                     v-if="!hidePublish"
@@ -80,8 +82,9 @@
               <span> {{ $t('tooltips.needConnection') }}</span>
             </v-tooltip>
             <v-col
-              align="left"
-              cols="6"
+              :class="classAlignSearchButton"
+              cols="12"
+              md="6"
             >
               <v-btn
                 :disabled="searchUnavailable || disableSearch"
@@ -171,6 +174,18 @@ export default {
     defaultOutwardDate: {
       type: String,
       default: null
+    },
+    fullSize:{
+      type: Boolean,
+      default:false
+    },
+    classAlignPublishButton:{
+      type: String,
+      default:"text-left"
+    },
+    classAlignSearchButton:{
+      type: String,
+      default:"text-left"
     }
   },
   data() {

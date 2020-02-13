@@ -23,6 +23,7 @@
 
 namespace App\Image\Entity;
 
+use App\MassCommunication\Entity\Campaign;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
@@ -38,6 +39,7 @@ use App\Community\Entity\Community;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Entity\RelayPointType;
 use App\Image\Controller\CreateImageAction;
+use App\Image\Controller\CreateImageAdminCampaignController;
 use App\Image\Controller\ImportImageCommunityController;
 use App\Image\Controller\ImportImageEventController;
 use App\Image\Controller\ImportImageUserController;
@@ -66,7 +68,8 @@ use App\User\Entity\User;
  *              "defaults"={"_api_receive"=false},
  *          },
  *      },
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={"get","put","delete",
+ *     }
  * )
  * @Vich\Uploadable
  */
@@ -314,6 +317,25 @@ class Image
      * @Groups({"read","readCommunity","readCommunityUser","readEvent","readUser","results"})
      */
     private $versions;
+
+    /**
+     * @var Campaign|null The campaign associated with the image.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign", inversedBy="images", cascade="persist")
+     */
+    private $campaign;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="campaign", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $campaignFile;
+
+    /**
+     * @var int|null The campaign id associated with the image.
+     * @Groups({"read","write"})
+     */
+    private $campaignId;
         
     public function __construct($id=null)
     {
@@ -700,6 +722,39 @@ class Image
         $this->setCommunityFile(null);
         $this->setRelayPointFile(null);
         $this->setRelayPointTypeFile(null);
+        $this->setCampaignFile(null);
+    }
+
+    public function getCampaign(): ?Campaign
+    {
+        return $this->campaign;
+    }
+
+    public function setCampaign(?Campaign $campaign): self
+    {
+        $this->campaign = $campaign;
+
+        return $this;
+    }
+
+    public function getCampaignFile(): ?File
+    {
+        return $this->campaignFile;
+    }
+
+    public function setCampaignFile(?File $campaignFile)
+    {
+        $this->campaignFile = $campaignFile;
+    }
+
+    public function getCampaignId(): ?int
+    {
+        return $this->campaignId;
+    }
+
+    public function setCampaignId($campaignId)
+    {
+        $this->campaignId = $campaignId;
     }
     
     // DOCTRINE EVENTS

@@ -24,7 +24,6 @@ install:
 	$(info $(pink)Make ($(os)): Installing monorepo root deps...)
 	$(info $(pink)------------------------------------------------------$(reset))
 
-
 	@docker-compose -f docker-compose-builder-$(os).yml run --rm install
 	@make -s install-deps
 	@make -s build-admin

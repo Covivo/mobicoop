@@ -1,66 +1,91 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import GeocompleteInput from "../Utilities/geocomplete";
+
 //import bcrypt from 'bcryptjs';
 
-import { 
+import {
     Edit,
     TabbedForm, FormTab,
-    Datagrid,
-    TextInput, DisabledInput, SelectInput, DateInput,
-    email,
-    TextField,
-    EditButton,
-    Button, Link, ReferenceArrayField, BooleanField, FunctionField, DeleteButton
+    TextInput, SelectInput, DateInput,
+    email, regex,Button, useDataProvider,ReferenceArrayInput, SelectArrayInput
 } from 'react-admin';
 
-const genderChoices = [
-    { id: 1, name: 'Femme' },
-    { id: 2, name: 'Homme' },
-    { id: 3, name: 'Autre' },
-];
+const UserEdit = props => {
 
-// Edit
-const AddNewAddressButton = ({ record }) => (
-    <Button
-        component={Link}
-        to={{
-            pathname: `/addresses/create`,
-            search: `?user=${record.id}`
-        }}
-        label="Ajouter une adresse"
-    >
-    </Button>
-);
+    const required = (message = 'Champ requis') =>
+        value => value ? undefined : message;
 
-export const UserEdit = (props) => (
-    <Edit {...props} title="Utilisateurs > éditer">
-        <TabbedForm>
-            <FormTab label="Identité">
-                <DisabledInput source="originId" label="ID"/>
-                <TextInput source="givenName" label="Prénom"/>
-                <TextInput source="familyName" label="Nom"/>
-                <SelectInput source="gender" label="Sexe" choices={genderChoices} />
-                <TextInput source="email" label="Email" validate={ email() } />
-                <DateInput source="birthDate" label="Date de naissance" />
-                <TextInput source="telephone" label="Téléphone"/>
-            </FormTab>
-            <FormTab label="Préférences">
+    const minPassword = (message = 'Au minimum 8 caractères') =>
+        value => value && value.length >= 8 ? undefined  : message;
 
-            </FormTab>
-            <FormTab label="Adresses">
-                <ReferenceArrayField source="addresses" reference="addresses" addLabel={false}>
-                    <Datagrid>
-                        <BooleanField source="home" label="Domicile" />
-                        <TextField source="name" label="Nom" />
-                        <FunctionField label="Address" render={address => ((address.houseNumber && address.street) ? (address.houseNumber+ ' '+address.street) : address.streetAddress)} />
-                        <TextField source="postalCode" label="Code postal" />
-                        <TextField source="addressLocality" label="Ville" />
-                        <TextField source="addressCountry" label="Pays" />
-                        <EditButton />
-                        <DeleteButton />
-                    </Datagrid>
-                </ReferenceArrayField>
-                <AddNewAddressButton />
-            </FormTab>
-        </TabbedForm>
-    </Edit>
-);
+    const upperPassword = regex(/^(?=.*[A-Z]).*$/ , 'Au minimum 1 majuscule' );
+    const lowerPassword = regex(/^(?=.*[a-z]).*$/ , 'Au minimum 1 minuscule' );
+    const numberPassword = regex(/^(?=.*[0-9]).*$/ , 'Au minimum 1 chiffre' );
+
+    const validateUserCreation = (values) => {
+        const errors = {};
+        if (!values.firstName) {
+            errors.firstName = ['The firstName is required'];
+        }
+        return errors
+    };
+
+    const genderChoices = [
+        { id: 1, name: 'Femme' },
+        { id: 2, name: 'Homme' },
+        { id: 3, name: 'Autre' },
+    ];
+    const smoke = [
+        {id : 0, name : 'Je ne fume pas'},
+        {id : 1, name : 'Je ne fume pas en voiture'},
+        {id : 2, name : 'Je fume'},
+    ];
+    const musique = [
+        {id : false, name : 'Je préfère rouler sans fond sonore'},
+        {id : true, name : 'J’écoute la radio ou de la musique'},
+    ];
+
+    const bavardage = [
+        {id : false, name : 'Je ne suis pas bavard'},
+        {id : true, name : 'Je discute'},
+    ];
+
+
+    const validateRequired = [required()];
+    const paswwordRules = [required(),minPassword(),upperPassword,lowerPassword,numberPassword];
+
+    return (
+        <Edit { ...props } title="Utilisateurs > Editer">
+            <TabbedForm >
+                <FormTab label="Identité">
+                    <TextInput required source="email" label="Email" validate={ email() } />
+
+                    <TextInput required source="telephone" label="Téléphone" validate={ validateRequired }/>
+                    <TextInput required source="givenName" label="Prénom" validate={ validateRequired }/>
+                    <TextInput required source="familyName" label="Nom" validate={ validateRequired }/>
+                    <SelectInput required source="gender" label="Civilité" choices={genderChoices} validate={ validateRequired }/>
+                    <DateInput required source="birthDate" label="Date de naissance" validate={ validateRequired } />
+
+                    <ReferenceArrayInput  label='Roles' source="userRoles" reference="roles" >
+                        <SelectArrayInput optionText="title" />
+                    </ReferenceArrayInput>
+
+                </FormTab>
+                <FormTab label="Préférences">
+                    <SelectInput source="smoke" label="En ce qui concerne le tabac en voiture" choices={smoke} />
+                    <SelectInput source="music" label="En ce qui concerne la musique en voiture" choices={musique} />
+                    <TextInput source="musicFavorites" label="Radio et/musique préférées "/>
+                    <SelectInput source="chat" label="En ce qui concerne le bavardage en voiture" choices={bavardage} />
+                    <TextInput source="chatFavorites" label="Sujets préférés "/>
+                </FormTab>
+                <FormTab label="Adresses">
+                    <GeocompleteInput source="addresses" label="Adresse" validate={required()}/>
+                </FormTab>
+
+            </TabbedForm>
+        </Edit>
+    );
+
+};
+export default UserEdit
+

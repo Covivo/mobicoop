@@ -15,7 +15,7 @@
       </v-btn>
     </v-snackbar>
 
-    <v-row>
+    <v-row :class="paused?'warning':''">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-icon
@@ -67,7 +67,43 @@
         <span>{{ $t('proposals.tooltips.passenger') }}</span>
       </v-tooltip>
       <v-spacer />
-      <v-col cols="1">
+      <v-col
+        cols="8"
+        class="text-center"
+      >
+        <p
+          v-if="isPausable && !isArchived && paused && !loading"
+          class="white--text font-weight-bold my-3"
+        >
+          {{ $t('pause.info') }}
+        </p>
+      </v-col>
+      <v-col
+        cols="2"
+        class="text-right"
+      >
+        <v-btn
+          v-if="isPausable && !isArchived && !paused"
+          class="secondary my-1 mr-1"
+          icon
+          :loading="loading"
+          @click="pauseAd"
+        >
+          <v-icon class="white--text">
+            mdi-pause
+          </v-icon>
+        </v-btn>
+        <v-btn
+          v-if="isPausable && !isArchived && paused"
+          class="success my-1 mr-1"
+          icon
+          :loading="loading"
+          @click="pauseAd"
+        >
+          <v-icon class="white--text">
+            mdi-play
+          </v-icon>
+        </v-btn>
         <v-btn
           class="secondary my-1"
           :class="isArchived ? 'mr-1' : ''"
@@ -82,7 +118,6 @@
           </v-icon>
         </v-btn>
       </v-col>
-      <!-- todo reactivate button when it will be possible to edit an ad -->
       <!-- <v-btn
         v-if="!isArchived"
         class="secondary ma-1"
@@ -92,19 +127,9 @@
         <v-icon class="white--text">
           mdi-pencil
         </v-icon>
-      </v-btn>
-      <v-btn
-        v-if="isPausable && !isArchived"
-        class="secondary my-1 mr-1"
-        icon
-        :loading="loading"
-      >
-        <v-icon class="white--text">
-          mdi-pause
-        </v-icon>
       </v-btn> -->
     </v-row>
-
+    
     <!--DIALOG-->
     <v-row justify="center">
       <v-dialog
@@ -174,6 +199,10 @@ export default {
       type: Boolean,
       default: true
     },
+    isPaused: {
+      type: Boolean,
+      default: false
+    },
     isArchived: {
       type: Boolean,
       default: false
@@ -205,7 +234,9 @@ export default {
         content: "",
         textarea: true
       },
-      deleteMessage: ""
+      deleteMessage: "",
+      paused: this.isPaused,
+      ad: {}
     }
   },
   methods: {
@@ -243,6 +274,38 @@ export default {
           }
           if (self.alert.type == 'error') self.loading = false;
         })
+    },
+    pauseAd () {
+      this.paused = this.paused?false:true;
+      this.loading = true;
+      this.ad.proposalId = this.proposalId;
+      this.ad.paused = this.paused;
+      axios
+        .put(this.$t('pause.route'), this.ad,
+          {
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
+        .then(res => {
+          if (res.data && res.data.message == "success") {
+            this.alert = {
+              type: "success",
+              message: this.paused?this.$t("pause.success.pause"):this.$t("pause.success.unpause")
+            };
+            this.$emit('pause-ad', this.ad.paused);
+          }
+          if (res.data && res.data.message == "error") {
+            this.alert = {
+              type: "error",
+              message: this.paused?this.$t("pause.error.pause"):this.$t("pause.error.unpause")
+            };
+            this.paused = this.paused?false:true;
+          }
+          this.snackbar = true;
+          window.location.reload();
+
+        });
     },
     resetAlert() {
       this.alert = {

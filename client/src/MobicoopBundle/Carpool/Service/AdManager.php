@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**
@@ -209,7 +210,7 @@ class AdManager
         }
 
         //Gestion events : If an event is set as destination or arrival, we set the event in proposal
-        if ((isset($data['origin']['event']) && $data['origin']['event'] != null) || (isset($data['origin']['event']) && $data['destination']['event'] != null)) {
+        if ((isset($data['origin']['event']) && $data['origin']['event'] != null) || (isset($data['destination']['event']) && $data['destination']['event'] != null)) {
             $event = $data['origin']['event']  != null ? $data['origin']['event'] : $data['destination']['event'];
             $ad->setEventId($event['id']);
         }
@@ -520,6 +521,21 @@ class AdManager
     public function updateAdAsk(Ad $ad, int $userId)
     {
         if ($data = $this->dataProvider->putSpecial($ad, null, "ask", ["userId"=>$userId], true)) {
+            return $data->getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Paused an Ad
+     *
+     * @param int $ad   The ad to update
+     * @param int $userId  The user that make the request
+     * @return Ad|null
+     */
+    public function updateAd(Ad $ad)
+    {
+        if ($data = $this->dataProvider->put($ad)) {
             return $data->getValue();
         }
         return null;

@@ -6,6 +6,7 @@
     "carpoolUrl": "/covoiturage/demande",
     "contactUrl": "/covoiturage/contact",
     "mailboxUrl": "/utilisateur/messages",
+    "externalJourneyUrl": "/covoiturage/rdexJourney",
     "search": "Recherche en cours...",
     "newSearch": "Nouvelle recherche",
     "AskNewSearch": "Réessayer avec une autre date?",
@@ -13,6 +14,10 @@
     "snackBar": {
       "success": "La prise de contact a bien été envoyée",
       "error": "Suite à un problème technique la prise de contact n'a pas pu être envoyée"
+    },
+    "tabs":{
+      "carpools":"Covoiturages {platform}",
+      "otherCarpools":"Autres covoiturages"
     }
   },
   "en":{
@@ -22,11 +27,16 @@
     "carpoolUrl": "/carpool/ask",
     "contactUrl": "/carpool/contact",
     "mailboxUrl": "/user/messages",
+    "externalJourneyUrl": "/carpool/rdexJourney",
     "search": "Searching...",
     "matchingNumber": "No carpooling ad found... | {number} carpooling ad found | {number} carpooling ads found",
     "snackBar": {
       "success": "Contact has been successfuly established",
       "error": "Due to a technical difficuly, the contact hasn't been established"
+    },
+    "tabs":{
+      "carpools":"{platform} carpools",
+      "otherCarpools":"Other carpools"
     }
   }
 }

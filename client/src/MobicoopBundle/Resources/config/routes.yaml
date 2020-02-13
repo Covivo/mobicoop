@@ -237,6 +237,14 @@ user_check_email_exists:
         en: /user/check/email
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCheckEmailExists
 
+# Unsubscribe user from email
+user_unsubscribe_email:
+    path:
+      fr: /utilisateur/unsubscribe/{token}
+      en: /user/unsubscribe/{token}
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userUnsubscribeFromEmail
+
+
 ##################
 # carpool routes #
 ##################
@@ -339,9 +347,10 @@ rdex_provider:
 
 # rdex journey (AJAX)
 rdex_journey:
+    methods: [POST]
     path:
-        fr: /journey/rdex
-        en: /journey/rdex
+        fr: /covoiturage/rdexJourney
+        en: /carpool/rdexJourney
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney
 
 # delete an ad (AJAX)
@@ -350,6 +359,13 @@ carpool_ad_delete:
         fr: /covoiturage/annonce/supprimer
         en: /carpool/ad/delete
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDelete
+
+# pause an ad (AJAX)
+carpool_ad_pause:
+    path:
+        fr: /covoiturage/annonce/pause
+        en: /carpool/ad/pause
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::pauseAd    
 
 ####################
 # community routes #
@@ -613,15 +629,6 @@ event_show:
         fr: /evenement/{id}
         en: /event/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventShow
-    requirements:
-        id: '\d+'
-
-# get all event proposals (AJAX)
-event_proposals:
-    path:
-        fr: /event-proposals/{id}
-        en: /event-proposals/{id}
-    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventProposals
     requirements:
         id: '\d+'
 

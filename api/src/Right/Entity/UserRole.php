@@ -26,6 +26,7 @@ namespace App\Right\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use App\Geography\Entity\Territory;
 use App\User\Entity\User;
 
@@ -36,6 +37,7 @@ use App\User\Entity\User;
  * @ORM\Entity
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -61,6 +63,7 @@ class UserRole
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="userRoles")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $user;
     

@@ -56,6 +56,11 @@ final class ImageForm extends AbstractType
             'label' => 'label.file',
             'required' => false,
         ])
+        ->add('campaignFile', FileType::class, [
+            'label' => 'label.file',
+            'required' => false,
+        ])
+
         ->add('name')
         ->add('originalName')
         ->add('title')
@@ -77,6 +82,9 @@ final class ImageForm extends AbstractType
             'required' => false,
         ])
         ->add('relayPointTypeId', TextType::class, [
+            'required' => false,
+        ])
+        ->add('campaignId', TextType::class, [
             'required' => false,
         ])
         ;

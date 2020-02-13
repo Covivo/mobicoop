@@ -66,6 +66,7 @@ export default (type, params) => {
             return Promise.resolve();
 
         case AUTH_ERROR:
+            
             if (401 === params.response.status || 403 === params.response.status) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('roles');
@@ -73,6 +74,8 @@ export default (type, params) => {
                 localStorage.removeItem('permissions');
                 return Promise.reject();
             }
+            
+            console.log("AUTH_ERROR");
             return Promise.resolve();
 
         case AUTH_CHECK:
@@ -120,7 +123,7 @@ export default (type, params) => {
                     default:break;
                 }
             } else {
-                return true;
+                permission = true;
             }
             return permission ? Promise.resolve(permission) : Promise.reject();
             
