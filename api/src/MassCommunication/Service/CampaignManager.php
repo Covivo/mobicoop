@@ -49,7 +49,7 @@ class CampaignManager
     /**
      * Constructor.
      */
-    public function __construct(Environment $templating, EntityManagerInterface $entityManager,  string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate,TranslatorInterface $translator)
+    public function __construct(Environment $templating, EntityManagerInterface $entityManager, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate, TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
         $this->mailTemplate = $mailTemplate;
@@ -149,7 +149,6 @@ class CampaignManager
     private function sendMassEmailTest(Campaign $campaign, $lang='fr_FR')
     {
         $this->translator->setLocale($lang);
-        //dump ($this->translator->trans('unsuscribeEmail'));
 
         // call the service
         $this->massEmailProvider->send(

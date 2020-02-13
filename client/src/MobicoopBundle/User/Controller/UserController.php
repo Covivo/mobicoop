@@ -924,7 +924,7 @@ class UserController extends AbstractController
     public function userUnsuscribeFromEmail(UserManager $userManager, string $token)
     {
         $user = $userManager->unsuscribeUserFromEmail($token);
-        if ($user != null){
+        if ($user != null) {
             return $this->render(
                 '@Mobicoop/default/index.html.twig',
                 [
@@ -941,7 +941,5 @@ class UserController extends AbstractController
                 'metaDescription' => 'Mobicoop',
             ]
         );
-
-
     }
 }
