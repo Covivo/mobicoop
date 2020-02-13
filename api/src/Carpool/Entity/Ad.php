@@ -30,6 +30,7 @@ use App\Carpool\Controller\AdPost;
 use App\Carpool\Controller\AdGet;
 use App\Carpool\Controller\AdAskPost;
 use App\Carpool\Controller\AdAskPut;
+use App\Carpool\Controller\AdPut;
 use App\Carpool\Controller\AdAskGet;
 
 /**
@@ -83,7 +84,13 @@ use App\Carpool\Controller\AdAskGet;
  *              "path"="/carpools/ask/{id}",
  *              "controller"=AdAskGet::class,
  *              "read"=false
- *          }
+ *          },
+ *          "put"={
+ *              "method"="PUT",
+ *              "path"="/carpools/{id}",
+ *              "controller"=AdPut::class,
+ *              "read"=false
+ *          },
  *      }
  * )
  *
@@ -398,6 +405,21 @@ class Ad
      * @Groups("write")
      */
     private $filters;
+
+    /**
+    * @var boolean Paused ad.
+    * A paused ad can't be the found in the result of a search, and can be unpaused at any moment.
+    *
+    * @Groups({"read","write"})
+    */
+    private $paused;
+
+    /**
+     * @var int The Id of the proposal associated to the ad.
+     *
+     * @Groups({"read","write"})
+     */
+    private $proposalId;
 
     public function __construct()
     {
@@ -912,6 +934,30 @@ class Ad
     public function setFilters(?array $filters)
     {
         $this->filters = $filters;
+
+        return $this;
+    }
+
+    public function isPaused(): bool
+    {
+        return $this->paused ? true : false;
+    }
+
+    public function setPaused(?bool $paused): self
+    {
+        $this->paused = $paused;
+
+        return $this;
+    }
+
+    public function getProposalId(): ?int
+    {
+        return $this->proposalId;
+    }
+
+    public function setProposalId(?int $proposalId): self
+    {
+        $this->proposalId = $proposalId;
 
         return $this;
     }

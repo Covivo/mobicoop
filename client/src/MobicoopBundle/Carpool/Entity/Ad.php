@@ -325,6 +325,22 @@ class Ad implements ResourceInterface
      */
     private $askStatus;
 
+    /**
+    * @var boolean Paused ad.
+    * A paused ad can't be the found in the result of a search, and can be unpaused at any moment.
+    *
+    * @Groups({"post","put"})
+    */
+    private $paused;
+
+    /**
+    * @var int|null proposalId.
+    * A paused ad can't be the found in the result of a search, and can be unpaused at any moment.
+    *
+    * @Groups({"post","put"})
+    */
+    private $proposalId;
+
     public function __construct($id=null)
     {
         $this->outwardWaypoints = [];
@@ -829,6 +845,30 @@ class Ad implements ResourceInterface
     public function setAskStatus(?int $askStatus): self
     {
         $this->askStatus = $askStatus;
+
+        return $this;
+    }
+
+    public function isPaused(): bool
+    {
+        return $this->paused ? true : false;
+    }
+
+    public function setPaused(?bool $paused): self
+    {
+        $this->paused = $paused;
+
+        return $this;
+    }
+
+    public function getProposalId(): ?int
+    {
+        return $this->proposalId;
+    }
+
+    public function setProposalId(?int $proposalId): self
+    {
+        $this->proposalId = $proposalId;
 
         return $this;
     }
