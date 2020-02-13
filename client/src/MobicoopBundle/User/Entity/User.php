@@ -369,6 +369,12 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      */
     private $facebookId;
 
+    /**
+     * @var string|null the unsuscribe message we return by api
+     * @Groups({"post","put"})
+     */
+    private $unsubscribeMessage;
+
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -1109,6 +1115,19 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         $this->language = $language;
     }
 
+    public function getUnsubscribeMessage(): ?string
+    {
+        return $this->unsubscribeMessage;
+    }
+
+    public function setUnsubscribeMessage(?string $unsubscribeMessage): self
+    {
+        $this->unsubscribeMessage = $unsubscribeMessage;
+
+        return $this;
+    }
+
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1135,7 +1154,8 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'newsSubscription'      => $this->hasNewsSubscription(),
             'phoneDisplay'          => $this->getPhoneDisplay(),
             'phoneValidatedDate'    => $this->getPhoneValidatedDate(),
-            'phoneToken'            => $this->getPhoneToken()
+            'phoneToken'            => $this->getPhoneToken(),
+            'unsubscribeMessage'    => $this->getUnsubscribeMessage(),
         ];
     }
 }

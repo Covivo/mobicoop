@@ -69,7 +69,7 @@
             vertical
           >
             <div>
-              {{ $t('snackbar-unsuscribe-email') }}
+              {{ displayUnsuscribeEmail }}
             </div>
             <v-btn
               color="info"
@@ -193,8 +193,8 @@ export default {
       default: 0
     },
     displayUnsuscribeEmail: {
-      type: Number,
-      default: 0
+      type: String,
+      default: ""
     },
     communityDisplay: {
       type: Boolean,

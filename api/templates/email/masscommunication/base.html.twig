@@ -53,7 +53,7 @@
         <tr>
             <td>
                 *|IF:unsuscribeToken|*
-                    <a href="{{ api_env('EMAILS_PLATFORM_URL') }}{{  "urlUnsuscribeEmail"|trans }}/*|URL:unsuscribeToken|*">{{ "unsuscribeEmail"|trans }}</a>
+                    <a href="{{ api_env('EMAILS_PLATFORM_URL') }}{{  "urlUnsuscribeEmail"|trans }}/*|URL:unsuscribeToken|*">{{ "unsuscribeEmail"|trans({'%instanceName%' : api_env('EMAILS_PLATFORM_NAME')}) }}</a>
                 *|END:IF|*
                 <!-- Footer-->
                 {# <table align="center" style="border-spacing:0;text-align:center;vertical-align:top;width:100%;margin-top:20px;font-family:Roboto, sans-serif;">

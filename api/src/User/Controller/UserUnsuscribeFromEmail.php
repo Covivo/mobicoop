@@ -32,7 +32,7 @@ use App\User\Entity\User;
 use App\User\Service\UserManager;
 
 /**
- * Controller class for UserCheckSignUpValidationToken
+ * Controller class for UserUnsuscribeFromEmail
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
@@ -51,6 +51,7 @@ class UserUnsuscribeFromEmail
      * This method is invoked when
      *
      * @param $data
+     * @param string $data
      * @return Response
      */
     public function __invoke(User $data)

@@ -965,6 +965,12 @@ class User implements UserInterface, EquatableInterface
      */
     private $unsuscribeDate;
 
+    /**
+     * @var string|null the unsuscribe message we return to client : change this later By listener
+     * @Groups({"readUser"})
+     */
+    private $unsubscribeMessage;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -2238,6 +2244,19 @@ class User implements UserInterface, EquatableInterface
 
         return $this;
     }
+
+    public function getUnsubscribeMessage(): ?string
+    {
+        return $this->unsubscribeMessage;
+    }
+
+    public function setUnsubscribeMessage(?string $unsubscribeMessage): self
+    {
+        $this->unsubscribeMessage = $unsubscribeMessage;
+
+        return $this;
+    }
+
 
 
     // DOCTRINE EVENTS

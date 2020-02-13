@@ -930,18 +930,17 @@ class UserController extends AbstractController
                 [
                     'baseUri' => $_ENV['API_URI'],
                     'metaDescription' => 'Mobicoop',
-                    'unsuscribe' => 1,
-                ]
-            );
-        }else{
-            return $this->render(
-                '@Mobicoop/default/index.html.twig',
-                [
-                    'baseUri' => $_ENV['API_URI'],
-                    'metaDescription' => 'Mobicoop',
+                    'unsuscribe' => json_encode($user->getUnsubscribeMessage())
                 ]
             );
         }
+        return $this->render(
+            '@Mobicoop/default/index.html.twig',
+            [
+                'baseUri' => $_ENV['API_URI'],
+                'metaDescription' => 'Mobicoop',
+            ]
+        );
 
 
     }

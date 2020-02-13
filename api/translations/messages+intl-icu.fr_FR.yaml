@@ -237,4 +237,5 @@ header3Data: "senderName"
 
 # EMAIL Masscommunication : send from admin
 urlUnsuscribeEmail: "/utilisateur/unsuscribe"
-unsuscribeEmail : "Cliquez ici pour vous désabonner de nos emails"
+unsuscribeEmail : 'Cliquez ici pour vous désabonner des Actualités du service {instanceName}'
+unsuscribeEmailAlertFront : 'Vous êtes bien désinscrit des Actualités du service {instanceName}. Pour vous réinscrire ultérieurement, vous pouvez vous rendre dans Profil > Mon compte.'

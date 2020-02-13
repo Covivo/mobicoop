@@ -195,4 +195,4 @@ updatedSefl: "Modification de votre profil"
 
 # EMAIL Masscommunication : send from admin
 urlUnsuscribeEmail: "/user/unsuscribe"
-unsuscribeEmail : "Cliquez ici pour vous désabonner de nos emails"
+unsuscribeEmail : "Click here to unsubscribe from {instanceName} Service News"

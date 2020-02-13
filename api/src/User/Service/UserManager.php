@@ -55,6 +55,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\User\Event\UserUpdatedSelfEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\User\Repository\UserRepository;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * User manager service.
@@ -77,6 +78,7 @@ class UserManager
     private $logger;
     private $eventDispatcher;
     private $encoder;
+    private $translator;
 
     // Default carpool settings
     private $chat;
@@ -89,7 +91,7 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository)
+    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository,TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -102,6 +104,7 @@ class UserManager
         $this->askHistoryRepository = $askHistoryRepository;
         $this->eventDispatcher = $dispatcher;
         $this->encoder = $encoder;
+        $this->translator = $translator;
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
         $this->userRepository = $userRepository;
@@ -813,13 +816,21 @@ class UserManager
         return new JsonResponse();
     }
 
-    public function unsuscribeFromEmail(User $user)
+    public function unsuscribeFromEmail(User $user,$lang='fr_FR')
     {
+
+        $this->translator->setLocale($lang);
+
+        $messageUnsuscribe = $this->translator->trans('unsuscribeEmailAlertFront', ['instanceName' => $_ENV['EMAILS_PLATFORM_NAME']]);
+
         $user->setNewsSubscription(0);
         $user->setUnsuscribeDate(new \Datetime());
 
+        $user->setUnsubscribeMessage($messageUnsuscribe);
+
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+
 
         return $user;
     }
