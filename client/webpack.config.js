@@ -93,7 +93,7 @@ if (!Encore.isProduction()) {
     .enableBuildNotifications()
     .configureBabel(function (babelConfig) {
       // add additional presets
-      babelConfig.plugins.push('transform-class-properties');
+      // babelConfig.plugins.push('transform-class-properties');
       // babelConfig.presets.push('stage-3');
       // This will add compatibility for old nav
     })
