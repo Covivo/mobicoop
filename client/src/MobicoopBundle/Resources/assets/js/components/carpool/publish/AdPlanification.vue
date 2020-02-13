@@ -387,7 +387,6 @@
                     format="24hr"
                     header-color="secondary"
                     :disabled="item.returnDisabled"
-                    :min="item.maxTimeFromOutwardRegular"
                     @click:minute="closeReturnTime(item.id)"
                     @change="change()"
                   />
