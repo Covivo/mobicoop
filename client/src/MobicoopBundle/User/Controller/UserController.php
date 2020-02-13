@@ -919,4 +919,26 @@ class UserController extends AbstractController
         }
         return new JsonResponse(['error'=>'errorUpdateAlert']);
     }
+
+    /**
+     * Check if an email is already registered by a user
+     * AJAX
+     */
+    public function userCheckEmailExists(Request $request, UserManager $userManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if (isset($data['email']) && $data['email']!=="") {
+                $user = $userManager->findByEmail($data['email']);
+                if (!is_null($user)) {
+                    return new JsonResponse(['error'=>false, 'message'=>$user->getId()]);
+                } else {
+                    return new JsonResponse(['error'=>false, 'message'=>'']);
+                }
+            } else {
+                return new JsonResponse(['error'=>true, 'message'=>'empty email']);
+            }
+        }
+        return new JsonResponse(['error'=>true, 'message'=>'Only POST is allowed']);
+    }
 }
