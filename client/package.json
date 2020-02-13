@@ -31,7 +31,8 @@
   },
   "browserslist": [
     ">0.25%",
-    "ios >= 8"
+    "iOS >= 8",
+    "Edge >= 10"
   ],
   "homepage": "https://gitlab.com/mobicoop/mobicoop#README",
   "devDependencies": {
@@ -60,6 +61,7 @@
     "@symfony/webpack-encore": "^0.21.0",
     "axios": "^0.18.1",
     "babel-polyfill": "^6.26.0",
+    "browserslist": "^4.8.6",
     "buefy": "^0.7.7",
     "commander": "^2.18.0",
     "core-js": "^2.6.9",
