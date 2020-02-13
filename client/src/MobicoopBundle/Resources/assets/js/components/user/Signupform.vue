@@ -71,6 +71,7 @@
             :label="$t('models.user.email.placeholder')+` *`"
             name="email"
             required
+            :loading="loadingCheckEmailAldreadyTaken"
             @focusout="checkEmail"
             @focusin="emailAlreadyTaken = false"
           />
@@ -401,7 +402,7 @@ export default {
       container: "scroll-target",
 
       emailAlreadyTaken : false,
-
+      loadingCheckEmailAldreadyTaken: false,
       form: {
         createToken: this.sentToken,
         email: null,
@@ -575,6 +576,7 @@ export default {
       //var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
     },
     checkEmail(){
+      this.loadingCheckEmailAldreadyTaken = true;
       axios.post(this.$t('checkEmail.url'),
         {
           email:this.form.email
@@ -595,6 +597,9 @@ export default {
         })
         .catch(function (error) {
           console.error(error);
+        })
+        .finally(()=>{
+          this.loadingCheckEmailAldreadyTaken = false;
         });    
     }
 

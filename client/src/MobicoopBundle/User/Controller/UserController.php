@@ -928,21 +928,17 @@ class UserController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            if(isset($data['email']) && $data['email']!==""){
+            if (isset($data['email']) && $data['email']!=="") {
                 $user = $userManager->findByEmail($data['email']);
-                if(!is_null($user)){
+                if (!is_null($user)) {
                     return new JsonResponse(['error'=>false, 'message'=>$user->getId()]);
-                }
-                else{
+                } else {
                     return new JsonResponse(['error'=>false, 'message'=>'']);
                 }
-            }
-            else{
-                return new JsonResponse(['error'=>true, 'message'=>'empty email']);    
+            } else {
+                return new JsonResponse(['error'=>true, 'message'=>'empty email']);
             }
         }
         return new JsonResponse(['error'=>true, 'message'=>'Only POST is allowed']);
     }
-
-
 }
