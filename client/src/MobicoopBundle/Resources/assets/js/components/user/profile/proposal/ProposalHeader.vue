@@ -302,8 +302,9 @@ export default {
             };
             this.paused = this.paused?false:true;
           }
-          this.loading = false;
           this.snackbar = true;
+          window.location.reload();
+
         });
     },
     resetAlert() {
