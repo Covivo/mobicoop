@@ -392,7 +392,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","readCommunityUser","write"})
+     * @Groups({"readUser","readCommunityUser","results","write"})
      */
     private $status;
 

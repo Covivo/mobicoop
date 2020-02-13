@@ -268,7 +268,8 @@ class AdManager
             "waypoints" => [],
             "outwardDate" => $date,
             "regular" => $regular,
-            "search" => true
+            "search" => true,
+            "communities" => []
         ];
         if (!is_null($strictDate)) {
             $params["strictDate"] = $strictDate;
@@ -290,7 +291,7 @@ class AdManager
             $params["userId"] = $userId;
         }
         if (!is_null($communityId)) {
-            $params["communityId"] = $communityId;
+            $params["communities"] = [$communityId];
         }
         if (!is_null($filters)) {
             $params["filters"] = $filters;

@@ -649,7 +649,8 @@ class UserController extends AbstractController
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
         $completeThread = $internalMessageManager->getThread($idMessage, DataProvider::RETURN_JSON);
-        return new Response(json_encode($completeThread));
+        $response = str_replace("\\n", "<br />", json_encode($completeThread));
+        return new Response($response);
     }
 
 
@@ -919,8 +920,30 @@ class UserController extends AbstractController
     }
 
     /**
-     * Get all communities of a user
+     * Check if an email is already registered by a user
+     * AJAX
      */
+    public function userCheckEmailExists(Request $request, UserManager $userManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if (isset($data['email']) && $data['email']!=="") {
+                $user = $userManager->findByEmail($data['email']);
+                if (!is_null($user)) {
+                    return new JsonResponse(['error'=>false, 'message'=>$user->getId()]);
+                } else {
+                    return new JsonResponse(['error'=>false, 'message'=>'']);
+                }
+            } else {
+                return new JsonResponse(['error'=>true, 'message'=>'empty email']);
+            }
+        }
+        return new JsonResponse(['error'=>true, 'message'=>'Only POST is allowed']);
+    }
+    
+    /**
+    * Unsubscribe email for a user
+    */
     public function userUnsubscribeFromEmail(UserManager $userManager, string $token)
     {
         $user = $userManager->unsubscribeUserFromEmail($token);

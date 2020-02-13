@@ -229,6 +229,14 @@ user_communities:
         en: /user/communities
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCommunities
 
+# Check if email is already taken (POST)
+user_check_email_exists:
+    methods: [POST]
+    path:
+        fr: /utilisateur/verif/email
+        en: /user/check/email
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCheckEmailExists
+
 # Unsubscribe user from email
 user_unsubscribe_email:
     path:

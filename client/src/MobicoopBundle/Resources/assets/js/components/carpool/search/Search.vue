@@ -110,6 +110,7 @@ import {merge} from "lodash";
 import Translations from "@translations/components/carpool/search/Search.json";
 import TranslationsClient from "@clientTranslations/components/carpool/search/Search.json";
 import SearchJourney from "@components/carpool/search/SearchJourney";
+import axios from 'axios';
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -217,8 +218,10 @@ export default {
     post: function (path, params, method='post') {
       const form = document.createElement('form');
       form.method = method;
+      if (this.isWidget) {
+        form.target = '_blank';
+      }
       form.action = window.location.origin+'/'+path;
-      // this.isWidget  ? form.target ="_blank" : '';
 
       for (const key in params) {
         if (params.hasOwnProperty(key)) {
@@ -231,6 +234,7 @@ export default {
       }
       document.body.appendChild(form);
       form.submit();
+      this.loadingSearch= false;
     },
     searchChanged: function (search) {
       this.origin = search.origin;

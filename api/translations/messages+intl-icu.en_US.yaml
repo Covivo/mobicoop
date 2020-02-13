@@ -58,6 +58,7 @@ sendYouMessage: "vous a envoyé un message"
 canAnswerViaEmailFrom: "Vous pouvez répondre à ce message via la messagerie de"
 clickHere: "en cliquant ici" 
 getProblem: "Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter"
+mailBox: "votre messagerie"
 
 # CONTACT_EMAIL_POSTED
 
@@ -178,7 +179,7 @@ newAd: "Nouvelle(s) annonce(s) sur "
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
-contactYou: "vous contacte"
+contactYou: "%givenName% vous contacte"
 
 # USER_PASSWORD_CHANGED
 
