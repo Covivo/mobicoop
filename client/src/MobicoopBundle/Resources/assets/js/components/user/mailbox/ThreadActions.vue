@@ -30,7 +30,7 @@
         {{ infosComplete.carpooler.givenName+' '+infosComplete.carpooler.shortFamilyName }}
       </v-card-text>
       <v-card-text
-        v-if="infosComplete.carpooler.status == 3"
+        v-if="infosComplete.carpooler && infosComplete.carpooler.status == 3"
         class="font-weight-bold headline"
       >
         {{ $t("userDelete") }}

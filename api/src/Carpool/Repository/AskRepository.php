@@ -25,6 +25,7 @@ namespace App\Carpool\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\Proposal;
 use App\User\Entity\User;
 
 class AskRepository
@@ -58,6 +59,21 @@ class AskRepository
             ->setParameter('user', $user)
             ->orderBy('a.updatedDate', 'DESC');
 
+        return $query->getQuery()->getResult();
+    }
+
+    public function findAskForAd(Proposal $proposal, User $user, array $statuses)
+    {
+        $query = $this->repository->createQueryBuilder('a')
+        ->join('a.matching', 'm')
+        ->join('m.proposalOffer', 'o')
+        ->join('m.proposalRequest', 'r')
+        ->where('a.status IN (:statuses)')
+        ->andWhere('(m.proposalOffer = :proposal or m.proposalRequest= :proposal) and (o.user = :user or r.user= :user)')
+        ->setParameter('statuses', $statuses)
+        ->setParameter('proposal', $proposal)
+        ->setParameter('user', $user)
+        ;
         return $query->getQuery()->getResult();
     }
 }

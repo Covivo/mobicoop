@@ -26,8 +26,10 @@ namespace App\MassCommunication\Service;
 use App\Communication\Entity\Medium;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\MassEmailProvider\MandrillProvider;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Twig\Environment;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Campaign manager service.
@@ -40,17 +42,20 @@ class CampaignManager
     private $massEmailApi;
     private $massSmsProvider;
     private $mailTemplate;
+    private $translator;
 
     const MAIL_PROVIDER_MANDRILL = 'mandrill';
 
     /**
      * Constructor.
      */
-    public function __construct(Environment $templating, EntityManagerInterface $entityManager, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate)
+    public function __construct(Environment $templating, EntityManagerInterface $entityManager, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate, TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
         $this->mailTemplate = $mailTemplate;
         $this->templating = $templating;
+
+        $this->translator = $translator;
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_MANDRILL:
                 $this->massEmailProvider = new MandrillProvider($mailerApiKey);
@@ -70,6 +75,29 @@ class CampaignManager
             switch ($campaign->getMedium()->getId()) {
                 case Medium::MEDIUM_EMAIL:
                     return $this->sendMassEmail($campaign);
+                    break;
+                case Medium::MEDIUM_SMS:
+                    return $this->sendMassSms($campaign);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return $campaign;
+    }
+
+    /**
+     * Send  the test messages for a campaign, to the sender
+     *
+     * @param Campaign $campaign    The campaign to send the messages for
+     * @return Campaign The campaign modified with the result of the send.
+     */
+    public function sendTest(Campaign $campaign)
+    {
+        if (in_array($campaign->getStatus(), array( Campaign::STATUS_PENDING, Campaign::STATUS_CREATED))) {
+            switch ($campaign->getMedium()->getId()) {
+                case Medium::MEDIUM_EMAIL:
+                    return $this->sendMassEmailTest($campaign);
                     break;
                 case Medium::MEDIUM_SMS:
                     return $this->sendMassSms($campaign);
@@ -107,7 +135,36 @@ class CampaignManager
         // persist the result depending of the status
         $campaign->setStatus(Campaign::STATUS_SENT);
         $this->entityManager->persist($campaign);
+        $this->entityManager->flush();
         
+        return $campaign;
+    }
+
+    /**
+     * Send messages test for a campaign by email.
+     *
+     * @param Campaign $campaign    The campaign to test
+     * @return Campaign The campaign modified with the result of the test.
+     */
+    private function sendMassEmailTest(Campaign $campaign, $lang='fr_FR')
+    {
+        $this->translator->setLocale($lang);
+
+        // call the service
+        $this->massEmailProvider->send(
+            $campaign->getSubject(),
+            $campaign->getFromName(),
+            $campaign->getEmail(),
+            $campaign->getReplyTo(),
+            $this->getFormedEmailBody($campaign->getBody()),
+            $this->setRecipientsIsOwner($campaign->getUser())
+        );
+
+
+        $campaign->setStatus(Campaign::STATUS_CREATED);
+        $this->entityManager->persist($campaign);
+        $this->entityManager->flush();
+
         return $campaign;
     }
 
@@ -140,13 +197,20 @@ class CampaignManager
      * @param string $body
      * @return void
      */
-    private function getFormedEmailBody(?string $body): string
+    private function getFormedEmailBody(?string $body):string
     {
+        $encodedBody = json_decode($body);
+        $arrayForTemplate = array();
+
+        foreach ($encodedBody as $parts) {
+            foreach ($parts as $type => $content) {
+                $arrayForTemplate[] = array('type' => $type , 'content' => $content);
+            }
+        }
+
         return $this->templating->render(
             $this->mailTemplate,
-            [
-                'message' => str_replace(array("\r\n", "\r", "\n"), "<br />", $body)
-            ]
+            array('arrayForTemplate' => $arrayForTemplate)
         );
     }
 
@@ -164,9 +228,29 @@ class CampaignManager
                 // put here the list of needed variables !
                 "givenName" => $delivery->getUser()->getGivenName(),
                 "familyName" => $delivery->getUser()->getFamilyName(),
-                "email" => $delivery->getUser()->getEmail()
+                "email" => $delivery->getUser()->getEmail(),
+                "unsubscribeToken" => $delivery->getUser()->getUnsubscribeToken(),
             ];
         }
+        return $recipients;
+    }
+
+    /**
+     * Build an array for send email to the sender
+     *
+     * @param User $user
+     * @return array
+     */
+    private function setRecipientsIsOwner(User $user)
+    {
+        $recipients[$user->getEmail()] = [
+            // put here the list of needed variables !
+            "givenName" => $user->getGivenName(),
+            "familyName" => $user->getFamilyName(),
+            "email" => $user->getEmail(),
+            "unsubscribeToken" => $user->getUnsubscribeToken(),
+        ];
+
         return $recipients;
     }
 }

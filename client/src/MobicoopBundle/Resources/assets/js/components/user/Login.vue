@@ -18,7 +18,7 @@
     <v-row
       justify="center"
       align="center"
-      class="text-center mt-12 pt-12"
+      class="text-center pt-12 mt-12"
     >
       <v-col class="col-4">
         <v-alert
@@ -77,7 +77,8 @@
     <v-row
       v-if="showFacebookLogin"
       justify="center"
-      class="text-center"
+      
+      class="text-center align-start"
     >
       <v-col class="col-4">
         <m-facebook-auth

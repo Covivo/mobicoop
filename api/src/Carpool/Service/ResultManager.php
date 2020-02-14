@@ -31,6 +31,7 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Result;
 use App\Carpool\Entity\ResultItem;
 use App\Carpool\Entity\ResultRole;
+use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Service\FormatDataManager;
 use DateTime;
@@ -46,6 +47,7 @@ class ResultManager
     private $formatDataManager;
     private $proposalMatcher;
     private $matchingRepository;
+    private $askRepository;
     private $params;
 
     /**
@@ -54,12 +56,14 @@ class ResultManager
      * @param FormatDataManager $formatDataManager
      * @param ProposalMatcher $proposalMatcher
      * @param MatchingRepository $matchingRepository
+     * @param AskRepository $askRepository
      */
-    public function __construct(FormatDataManager $formatDataManager, ProposalMatcher $proposalMatcher, MatchingRepository $matchingRepository)
+    public function __construct(FormatDataManager $formatDataManager, ProposalMatcher $proposalMatcher, MatchingRepository $matchingRepository, AskRepository $askRepository)
     {
         $this->formatDataManager = $formatDataManager;
         $this->proposalMatcher = $proposalMatcher;
         $this->matchingRepository = $matchingRepository;
+        $this->askRepository = $askRepository;
     }
 
     // set the params
@@ -393,7 +397,7 @@ class ResultManager
         // we search the matchings as an offer
         foreach ($proposal->getMatchingRequests() as $request) {
             // we exclude the private proposals
-            if ($request->getProposalRequest()->isPrivate()) {
+            if ($request->getProposalRequest()->isPrivate() || $request->getProposalRequest()->isPaused()) {
                 continue;
             }
             // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
@@ -405,7 +409,7 @@ class ResultManager
         // we search the matchings as a request
         foreach ($proposal->getMatchingOffers() as $offer) {
             // we exclude the private proposals
-            if ($offer->getProposalOffer()->isPrivate()) {
+            if ($offer->getProposalOffer()->isPrivate() || $offer->getProposalOffer()->isPaused()) {
                 continue;
             }
             // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
@@ -916,6 +920,36 @@ class ResultManager
                             break;
                     }
                 }
+            } else {
+                // search for existing matchings with same proposalId as passenger
+                // first we check if a user is associated to the proposal (if a user is logged)
+                if ($matching["request"]->getProposalOffer()->getUser()) {
+                    if ($asks = $this->askRepository->findAskForAd(
+                        $matching["request"]->getProposalRequest(),
+                        $matching["request"]->getProposalOffer()->getUser(),
+                        [
+                            Ask::STATUS_INITIATED,
+                            Ask::STATUS_PENDING_AS_DRIVER,
+                            Ask::STATUS_PENDING_AS_PASSENGER,
+                            Ask::STATUS_ACCEPTED_AS_DRIVER,
+                            Ask::STATUS_ACCEPTED_AS_PASSENGER
+                        ]
+                    )) {
+                        foreach ($asks as $ask) {
+                            switch ($ask->getStatus()) {
+                                    case Ask::STATUS_INITIATED:
+                                    case Ask::STATUS_PENDING_AS_DRIVER:
+                                    case Ask::STATUS_PENDING_AS_PASSENGER:
+                                        $item->setPendingAsk(true);
+                                        break;
+                                    case Ask::STATUS_ACCEPTED_AS_DRIVER:
+                                    case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+                                        $item->setAcceptedAsk(true);
+                                        break;
+                                }
+                        }
+                    }
+                }
             }
             
             if (!$return) {
@@ -1397,6 +1431,36 @@ class ResultManager
                             break;
                     }
                 }
+            } else {
+                // search for existing matchings with same proposalId as passenger
+                // first we check if a user is associated to the proposal (if a user is logged)
+                if ($matching["offer"]->getProposalRequest()->getUser()) {
+                    if ($asks = $this->askRepository->findAskForAd(
+                        $matching["offer"]->getProposalOffer(),
+                        $matching["offer"]->getProposalRequest()->getUser(),
+                        [
+                            Ask::STATUS_INITIATED,
+                            Ask::STATUS_PENDING_AS_DRIVER,
+                            Ask::STATUS_PENDING_AS_PASSENGER,
+                            Ask::STATUS_ACCEPTED_AS_DRIVER,
+                            Ask::STATUS_ACCEPTED_AS_PASSENGER
+                        ]
+                    )) {
+                        foreach ($asks as $ask) {
+                            switch ($ask->getStatus()) {
+                                    case Ask::STATUS_INITIATED:
+                                    case Ask::STATUS_PENDING_AS_DRIVER:
+                                    case Ask::STATUS_PENDING_AS_PASSENGER:
+                                        $item->setPendingAsk(true);
+                                        break;
+                                    case Ask::STATUS_ACCEPTED_AS_DRIVER:
+                                    case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+                                        $item->setAcceptedAsk(true);
+                                        break;
+                                }
+                        }
+                    }
+                }
             }
             
             if (!$return) {
@@ -1524,30 +1588,39 @@ class ResultManager
 
         $role = Ad::ROLE_DRIVER;
 
-        // get the requester role, it depends on the status
-        switch ($ask->getStatus()) {
-            case Ask::STATUS_INITIATED:
-                if ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId) {
-                    // the requester is the driver
-                    $role = Ad::ROLE_DRIVER;
-                } else {
-                    // the requester is the passenger
-                    $role = Ad::ROLE_PASSENGER;
-                }
-                break;
-            case Ask::STATUS_PENDING_AS_DRIVER:
-            case Ask::STATUS_ACCEPTED_AS_DRIVER:
-            case Ask::STATUS_DECLINED_AS_DRIVER:
-                // the requester is the driver
-                $role = Ad::ROLE_DRIVER;
-                break;
-            case Ask::STATUS_PENDING_AS_PASSENGER:
-            case Ask::STATUS_ACCEPTED_AS_PASSENGER:
-            case Ask::STATUS_DECLINED_AS_PASSENGER:
-                // the requester is the passenger
-                $role = Ad::ROLE_PASSENGER;
-                break;
+        // This instead of the switch case below
+        if ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId) {
+            // the requester is the driver
+            $role = Ad::ROLE_DRIVER;
+        } else {
+            // the requester is the passenger
+            $role = Ad::ROLE_PASSENGER;
         }
+
+        // get the requester role, it depends on the status
+        // switch ($ask->getStatus()) {
+        //     case Ask::STATUS_INITIATED:
+        //         if ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId) {
+        //             // the requester is the driver
+        //             $role = Ad::ROLE_DRIVER;
+        //         } else {
+        //             // the requester is the passenger
+        //             $role = Ad::ROLE_PASSENGER;
+        //         }
+        //         break;
+        //     case Ask::STATUS_PENDING_AS_DRIVER:
+        //     case Ask::STATUS_ACCEPTED_AS_DRIVER:
+        //     case Ask::STATUS_DECLINED_AS_DRIVER:
+        //         // the requester is the driver
+        //         $role = Ad::ROLE_DRIVER;
+        //         break;
+        //     case Ask::STATUS_PENDING_AS_PASSENGER:
+        //     case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+        //     case Ask::STATUS_DECLINED_AS_PASSENGER:
+        //         // the requester is the passenger
+        //         $role = Ad::ROLE_PASSENGER;
+        //         break;
+        // }
 
         // we create the ResultRole for the ask
         if ($role == Ad::ROLE_DRIVER) {

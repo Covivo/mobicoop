@@ -52,6 +52,7 @@
                 :rules="fullDescriptionRules"
                 :label="$t('form.fullDescription.label')"
                 rows="5"
+                :maxlength="max"
                 auto-grow
                 clearable
                 outlined
@@ -356,6 +357,7 @@ export default {
   },
   data () {
     return {
+      max: 255,
       startDate: null,
       endDate : null,
       startTime: null,

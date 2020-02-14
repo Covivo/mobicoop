@@ -2,7 +2,7 @@ import React from 'react';
 import { 
     Edit,
     SimpleForm, required,
-    DisabledInput, TextInput, DateInput, BooleanInput, ReferenceInput, SelectInput,
+    TextInput, DateInput, BooleanInput, ReferenceInput, SelectInput,
     FunctionField, ReferenceField
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
@@ -19,7 +19,7 @@ const validationChoices = [
 export const CommunityEdit = (props) => (
     <Edit {...props } title="Communautés > éditer">
         <SimpleForm>
-            <DisabledInput source="originId" label="ID"/>
+            <TextInput disabled source="originId" label="ID"/>
             <ReferenceInput source="user" label="Créateur" reference="users">
                 <SelectInput optionText={userOptionRenderer} />
             </ReferenceInput>

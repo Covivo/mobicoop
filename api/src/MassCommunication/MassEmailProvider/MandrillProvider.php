@@ -50,6 +50,7 @@ class MandrillProvider implements MassEmailProviderInterface
         // todo : check the best method to send a email from mandrill, and how to get the results (sync / async ? webhook ?)
         $to = [];
         $merge = [];
+
         foreach ($recipients as $email=>$context) {
             $to[] = [
                 'email' => $email,
@@ -67,7 +68,6 @@ class MandrillProvider implements MassEmailProviderInterface
                 'vars' => $vars
             ];
         }
-        return true;
         try {
             $mandrill = new Mandrill($this->key);
             $message = [
@@ -79,13 +79,13 @@ class MandrillProvider implements MassEmailProviderInterface
                 'to' => $to,
                 'headers' => ['Reply-To' => $replyTo],
                 'important' => false,
-                'track_opens' => null,
+                'track_opens' => true,
                 'track_clicks' => null,
                 'auto_text' => null,
                 'auto_html' => null,
                 'inline_css' => null,
                 'url_strip_qs' => null,
-                'preserve_recipients' => null,
+                'preserve_recipients' => true,
                 'view_content_link' => null,
                 'bcc_address' => null,
                 'tracking_domain' => null,
@@ -108,6 +108,11 @@ class MandrillProvider implements MassEmailProviderInterface
             $ip_pool = 'Main Pool';
             $send_at = new \DateTime();
             $result = $mandrill->messages->send($message, $async, $ip_pool, $send_at->format('YmdHis'));
+
+            //Format des données retournées
+            // $resultTest = array();
+            // $resultTest[0]= array('email' => "julien.deschampt@mobicoop.org","status"=>"sent","_id" => "5d40ea17e5b64a1d93179026a87f17d2","reject_reason" => NULL);
+            return $result;
         } catch (Mandrill_Error $e) {
             // Mandrill errors are thrown as exceptions
             echo 'A mandrill error occurred: ' . get_class($e) . ' - ' . $e->getMessage();

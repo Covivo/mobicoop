@@ -6,7 +6,7 @@
      },
     "en": {
         "notThreadSelected":"No thread selected",
-        "urlCompleteThread":"user/messages/{idMessage}/thread",
+        "urlCompleteThread":"/user/messages/{idMessage}/thread",
         "messageDelete" :"Message delete"
     }
 }

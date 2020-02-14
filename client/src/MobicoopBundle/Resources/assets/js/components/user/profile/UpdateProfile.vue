@@ -104,10 +104,10 @@
 
           <!--Telephone-->
           <v-row 
-            justify="start" 
+            justify="center" 
             
           >
-            <v-col>
+            <v-col cols="3" md="4" sm="5" xl="2">
               <v-text-field
                 v-model="telephone"
                 :label="$t('models.user.phone.label')"
@@ -153,7 +153,7 @@
                   <span>{{$t('phone.tooltips.notVerified')}}</span>
               </v-tooltip>
             </v-col>
-            <v-col cols="4" xl="4" sm="8"  v-if="diplayVerification && telephone && phoneVerified == false">
+            <v-col cols="4" xl="4" sm="9"  v-if="diplayVerification && telephone && phoneVerified == false">
               <v-btn 
                 rounded color="secondary" 
                 @click="generateToken" class="mt-4" 
@@ -164,8 +164,9 @@
             </v-col>
             <v-col 
               cols="3" 
+              sm="7"
+              md="6"
               xl="3"
-              sm="5"
               v-if="phoneToken != null && telephone && phoneVerified == false"
             >
               <v-text-field
@@ -176,7 +177,7 @@
                   />
             </v-col>
             <v-col 
-              cols="2" xl="2" sm="6" class="justify-center" 
+              cols="2" xl="2" md="6" sm="7" class="justify-center" 
               v-if="phoneToken != null && telephone && phoneVerified == false"
             >
               <v-btn 
@@ -294,8 +295,8 @@
         </v-form>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col>
+    <v-row class="justify-center">
+      <v-col cols="7" xl="9" md="9" sm="7" >
         <!--GeoComplete-->
         <GeoComplete
           :url="geoSearchUrl"
@@ -307,9 +308,7 @@
         />
       </v-col>
       <v-col 
-        cols="4" 
-        xl="4" 
-        sm="8" 
+        cols="3" xl="3" md="4" sm="12"
         class="justify-center"
       >
         <v-btn 
@@ -317,7 +316,7 @@
           color='secondary' 
           class="mt-4" 
           :disabled='disabledAddress' 
-          :loading='false' 
+          :loading='loadingAddress' 
           type="button"
           @click='updateAddress' 
         >

@@ -54,25 +54,25 @@ class Result
 
     /**
      * @var ResultRole|null The result with the requester as a driver and the carpooler as a passenger.
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $resultDriver;
 
     /**
      * @var ResultRole|null The result with the requester as a passenger and the carpooler as a driver.
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $resultPassenger;
 
     /**
      * @var User The carpooler found.
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $carpooler;
 
     /**
      * @var int The frequency of the ad (1 = punctual / 2 = regular).
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $frequency;
 
@@ -84,7 +84,7 @@ class Result
 
     /**
      * @var Address The origin address to display.
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $origin;
 
@@ -96,7 +96,7 @@ class Result
 
     /**
      * @var Address The destination address to display.
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $destination;
 
@@ -132,31 +132,31 @@ class Result
 
     /**
      * @var \DateTimeInterface|null The date to display.
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $date;
 
     /**
      * @var \DateTimeInterface|null The time to display.
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $time;
 
     /**
      * @var \DateTimeInterface|null The possible start date if regular.
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $startDate;
 
     /**
      * @var \DateTimeInterface|null The possible end date if regular.
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $toDate;
 
     /**
      * @var int The global number of places to display.
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $seats;
 
@@ -180,7 +180,7 @@ class Result
 
     /**
      * @var string The computed rounded price to display.
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $roundedPrice;
 
@@ -192,61 +192,61 @@ class Result
 
     /**
      * @var boolean|null The journey is available on mondays (if regular).
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $monCheck;
 
     /**
      * @var boolean|null The journey is available on tuesdays (if regular).
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $tueCheck;
 
     /**
      * @var boolean|null The journey is available on wednesdays (if regular).
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $wedCheck;
 
     /**
      * @var boolean|null The journey is available on thursdays (if regular).
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $thuCheck;
 
     /**
      * @var boolean|null The journey is available on fridays (if regular).
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $friCheck;
 
     /**
      * @var boolean|null The journey is available on saturdays (if regular).
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $satCheck;
 
     /**
      * @var boolean|null The journey is available on sundays (if regular).
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $sunCheck;
 
     /**
      * @var \DateTimeInterface|null The outward time to display (if regular and unique).
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $outwardTime;
 
     /**
      * @var \DateTimeInterface|null The return time to display (if regular and unique).
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $returnTime;
 
     /**
      * @var boolean|null The journey has a return trip.
-     * @Groups("results")
+     * @Groups({"results","externalJourney"})
      */
     private $return;
 
@@ -267,6 +267,24 @@ class Result
      * @Groups("results")
      */
     private $acceptedAsk;
+
+    /**
+     * @var string Url of the result if it's an external result (like RDEX)
+     * @Groups("externalJourney")
+     */
+    private $externalUrl;
+
+    /**
+     * @var string Name of the external operator of the result if it's an external result (like RDEX)
+     * @Groups("externalJourney")
+     */
+    private $externalOperator;
+
+    /**
+     * @var string Origin of the result if it's an external result (like RDEX)
+     * @Groups("externalJourney")
+     */
+    private $externalOrigin;
 
     public function __construct()
     {
@@ -709,6 +727,42 @@ class Result
     public function setAcceptedAsk(?bool $acceptedAsk): self
     {
         $this->acceptedAsk = $acceptedAsk;
+
+        return $this;
+    }
+
+    public function getExternalUrl(): ?string
+    {
+        return $this->externalUrl;
+    }
+
+    public function setExternalUrl(?string $externalUrl): self
+    {
+        $this->externalUrl = $externalUrl;
+
+        return $this;
+    }
+
+    public function getExternalOperator(): ?string
+    {
+        return $this->externalOperator;
+    }
+
+    public function setExternalOperator(?string $externalOperator): self
+    {
+        $this->externalOperator = $externalOperator;
+
+        return $this;
+    }
+
+    public function getExternalOrigin(): ?string
+    {
+        return $this->externalOrigin;
+    }
+
+    public function setExternalOrigin(?string $externalOrigin): self
+    {
+        $this->externalOrigin = $externalOrigin;
 
         return $this;
     }

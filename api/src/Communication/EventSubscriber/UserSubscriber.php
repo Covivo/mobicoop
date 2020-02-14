@@ -29,6 +29,8 @@ use App\User\Event\UserRegisteredEvent;
 use App\User\Event\UserUpdatedSelfEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
+use App\User\Event\UserDelegateRegisteredEvent;
+use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserGeneratePhoneTokenAskedEvent;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
@@ -46,6 +48,8 @@ class UserSubscriber implements EventSubscriberInterface
     {
         return [
             UserRegisteredEvent::NAME => 'onUserRegistered',
+            UserDelegateRegisteredEvent::NAME => 'onUserDelegateRegistered',
+            UserDelegateRegisteredPasswordSendEvent::NAME => 'onUserDelegateRegisteredPasswordSend',
             UserUpdatedSelfEvent::NAME => 'onUserUpdatedSelf',
             UserPasswordChangeAskedEvent::NAME => 'onUserPasswordChangeAsked',
             UserPasswordChangedEvent::NAME => 'onUserPasswordChanged',
@@ -58,6 +62,16 @@ class UserSubscriber implements EventSubscriberInterface
     public function onUserRegistered(UserRegisteredEvent $event)
     {
         $this->notificationManager->notifies(UserRegisteredEvent::NAME, $event->getUser());
+    }
+
+    public function onUserDelegateRegistered(UserDelegateRegisteredEvent $event)
+    {
+        $this->notificationManager->notifies(UserDelegateRegisteredEvent::NAME, $event->getUser());
+    }
+
+    public function onUserDelegateRegisteredPasswordSend(UserDelegateRegisteredPasswordSendEvent $event)
+    {
+        $this->notificationManager->notifies(UserDelegateRegisteredPasswordSendEvent::NAME, $event->getUser());
     }
 
     public function onUserUpdatedSelf(UserUpdatedSelfEvent $event)

@@ -73,6 +73,27 @@ use Doctrine\Common\Collections\ArrayCollection;
  *                     }
  *                   }
  *              }
+ *          },
+ *          "reverse"={
+ *              "method"="GET",
+ *              "path"="/addresses/reverse",
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                     {
+ *                         "name" = "latitude",
+ *                         "in" = "query",
+ *                         "required" = "true",
+ *                         "type" = "string",
+ *                         "description" = "Latitude of the point"
+ *                     },
+ *                     {
+ *                         "name" = "longitude",
+ *                         "in" = "query",
+ *                         "type" = "string",
+ *                         "description" = "Longitude of the point"
+ *                     }
+ *                   }
+ *              }
  *          }
  *      },
  *      itemOperations={"get","put"}
@@ -116,7 +137,7 @@ class Address
      * @var string The full street address.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","readUser","results","write","pt","mass","massCompute","threads","thread"})
+     * @Groups({"read","readUser","results","write","pt","mass","massCompute","threads","thread","externalJourney"})
      */
     private $streetAddress;
 
@@ -124,7 +145,7 @@ class Address
      * @var string|null The postal code of the address.
      *
      * @ORM\Column(type="string", length=15, nullable=true)
-     * @Groups({"read","readUser","results","write","pt","mass","massCompute"})
+     * @Groups({"read","readUser","results","write","pt","mass","massCompute","externalJourney"})
      * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
      */
     private $postalCode;
@@ -141,7 +162,7 @@ class Address
      * @var string|null The locality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","readUser","readEvent","results","write","pt","mass","massCompute","threads","thread"})
+     * @Groups({"read","readUser","readEvent","results","write","pt","mass","massCompute","threads","thread","externalJourney"})
      * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
      */
     private $addressLocality;
@@ -190,7 +211,7 @@ class Address
      * @var string|null The country of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","readUser","results","write","pt","mass","massCompute","threads","thread"})
+     * @Groups({"read","readUser","results","write","pt","mass","massCompute","threads","thread","externalJourney"})
      */
     private $addressCountry;
 
@@ -206,7 +227,7 @@ class Address
      * @var float|null The latitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","readUser","readCommunity","readEvent","results","write","pt","mass","massCompute","threads","thread"})
+     * @Groups({"read","readUser","readCommunity","readEvent","results","write","pt","mass","massCompute","threads","thread","externalJourney"})
      */
     private $latitude;
 
@@ -214,7 +235,7 @@ class Address
      * @var float|null The longitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","readUser","readCommunity","readEvent","results","write","pt","mass","massCompute","threads","thread"})
+     * @Groups({"read","readUser","readCommunity","readEvent","results","write","pt","mass","massCompute","threads","thread","externalJourney"})
      */
     private $longitude;
 
