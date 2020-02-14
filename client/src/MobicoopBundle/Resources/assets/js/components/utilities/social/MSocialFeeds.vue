@@ -12,8 +12,13 @@
   </v-row> 
 </template>
 <script>
+import Translations from "@translations/components/utilities/social/MSocialFeeds.json";
 import MSocialFeedsItem from "@components/utilities/social/MSocialFeedsItem";
+import axios from "axios";
 export default {
+  i18n: {
+    messages: Translations
+  },
   components: {
     MSocialFeedsItem
   },
@@ -27,6 +32,19 @@ export default {
   },
   methods:{
     getArticles(){
+      let params = {};
+      axios.post(this.$t("urlGetArticles"), params)
+        .then(response => {
+          console.error(response.data);
+        })
+        .catch(function (error) {
+          // console.log(error);
+        })
+        .finally(() => {
+          this.$emit("refreshActionsCompleted");
+        });
+
+
       return []
     }
   }
