@@ -19,21 +19,16 @@ export default {
   },
   data() {
     return {
-      items:[
-        {
-          id:0,
-          iFrame:'<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:6634013653656051712" height="600" width="100%" frameborder="0" allowfullscreen="" title="Post intégré"></iframe>'
-        },
-        {
-          id:1,
-          iFrame:'<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:6623207035737526272" height="600" width="100%" frameborder="0" allowfullscreen="" title="Post intégré"></iframe>'
-        },
-        {
-          id:2,
-          iFrame:'<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:6623207035737526272" height="600" width="100%" frameborder="0" allowfullscreen="" title="Post intégré"></iframe>'
-        },
-      ]
+      items:[]
     }
   },
+  mounted(){
+    this.getArticles();
+  },
+  methods:{
+    getArticles(){
+      return []
+    }
+  }
 }
 </script>
