@@ -91,6 +91,14 @@ class Article
     private $sections;
 
     /**
+     * @var string The code of the article iFrame if it's displayed from an external source
+     *
+     * @ORM\Column(type="string", length=512, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $iFrame;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -163,6 +171,18 @@ class Article
             }
         }
 
+        return $this;
+    }
+
+    public function getIFrame(): ?string
+    {
+        return $this->iFrame;
+    }
+    
+    public function setIFrame(?string $iFrame): self
+    {
+        $this->iFrame = $iFrame;
+        
         return $this;
     }
 
