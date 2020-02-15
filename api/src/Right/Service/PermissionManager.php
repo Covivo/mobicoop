@@ -104,6 +104,7 @@ class PermissionManager
         if ($authorized) {
             return true;
         }
+        
         // here the user isn't authorized, we check if he has the right to check for its own objects
         $rightToCheck = $this->rightRepository->findByName('check_permission_self');
         $authorized = false;

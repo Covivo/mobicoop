@@ -58,7 +58,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *      collectionOperations={
  *          "get"={
  *              "security_post_denormalize"="is_granted('community_member_list',object)"
- *          }
+ *          },
  *          "post"={
  *              "controller"=JoinAction::class,
  *              "security_post_denormalize"="is_granted('community_join',object)"
