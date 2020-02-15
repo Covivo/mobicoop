@@ -23,11 +23,7 @@
 
 namespace App\Right\Security;
 
-use App\Geography\Exception\TerritoryNotFoundException;
-use App\Geography\Repository\TerritoryRepository;
-use App\Right\Exception\RightException;
-use App\Right\Exception\RightNotFoundException;
-use App\Right\Repository\RightRepository;
+use App\App\Entity\App;
 use App\Right\Service\PermissionManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -43,16 +39,12 @@ class PermissionVoter extends Voter
     private $permissionManager;
     private $request;
     private $userRepository;
-    private $rightRepository;
-    private $territoryRepository;
 
-    public function __construct(PermissionManager $permissionManager, RequestStack $requestStack, UserRepository $userRepository, RightRepository $rightRepository, TerritoryRepository $territoryRepository)
+    public function __construct(PermissionManager $permissionManager, RequestStack $requestStack, UserRepository $userRepository)
     {
         $this->permissionManager = $permissionManager;
         $this->request = $requestStack->getCurrentRequest();
         $this->userRepository = $userRepository;
-        $this->rightRepository = $rightRepository;
-        $this->territoryRepository = $territoryRepository;
     }
 
     protected function supports($attribute, $subject)
@@ -79,11 +71,8 @@ class PermissionVoter extends Voter
 
     private function canCheckPermission(UserInterface $requester)
     {
-        // we check if the user exists
-        if (!$this->request->get("user")) {
-            throw new RightException('User id is mandatory');
-        }
-        if (!$user = $this->userRepository->find($this->request->get("user"))) {
+        $user = null;
+        if (!is_null($this->request->get("user")) && !$user = $this->userRepository->find($this->request->get("user"))) {
             throw new UserNotFoundException('User #' . $this->request->get("user") . ' not found');
         }
         return $this->permissionManager->canCheckPermission($requester, $user);

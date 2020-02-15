@@ -49,17 +49,17 @@ class PermissionManager
      * Check if the user has a given permission
      *
      * @param string $action    The action to check
-     * @param User $user        The user that does the action
+     * @param User $user|null   The user that does the action
      * @param integer|null $id  The id of the related object
      * @return bool
      */
-    public function checkPermission(string $action, User $user, ?int $id=null)
+    public function checkPermission(string $action, ?User $user, ?int $id=null)
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_ARRAY);
-        $params = [
-            'action' => $action,
-            'user' => $user->getId()
-        ];
+        $params['action'] = $action;
+        if (!is_null($user)) {
+            $params['user'] = $user->getId();
+        }
         if (!is_null($id)) {
             $params['id'] = $id;
         }

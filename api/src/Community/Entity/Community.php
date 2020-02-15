@@ -67,8 +67,9 @@ use App\Community\Controller\JoinAction;
  *                          "description" = "Check if this userId is already an accepted member"
  *                      }
  *                  }
- *              }
-*           },
+ *              },
+ *              "security_post_denormalize"="is_granted('community_list',object)"
+ *          },
  *          "post"={
  *              "security_post_denormalize"="is_granted('community_create',object)"
  *          },
@@ -104,7 +105,7 @@ use App\Community\Controller\JoinAction;
  *                      }
  *                  }
  *              },
- *              "security_post_denormalize"="is_granted('community_exists',object)"
+ *              "security_post_denormalize"="is_granted('community_read',object)"
  *          }
  *      },
  *      itemOperations={

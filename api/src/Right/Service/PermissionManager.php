@@ -36,7 +36,10 @@ use App\Right\Entity\Right;
 use App\Right\Entity\Role;
 use App\Right\Repository\RoleRepository;
 use App\Right\Entity\Permission;
+use App\Right\Entity\UserRole;
 use App\Right\Exception\RightNotFoundException;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -53,6 +56,7 @@ class PermissionManager
     private $communityManager;
     private $eventManager;
     private $relayPointManager;
+    private $tokenStorage;
 
     /**
      * Constructor.
@@ -67,7 +71,8 @@ class PermissionManager
         CampaignManager $campaignManager,
         CommunityManager $communityManager,
         EventManager $eventManager,
-        RelayPointManager $relayPointManager
+        RelayPointManager $relayPointManager,
+        TokenStorageInterface $tokenStorage
     ) {
         $this->rightRepository = $rightRepository;
         $this->roleRepository = $roleRepository;
@@ -76,16 +81,17 @@ class PermissionManager
         $this->communityManager = $communityManager;
         $this->eventManager = $eventManager;
         $this->relayPointManager = $relayPointManager;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
-     * Check if a requester can check a permission on an right, eventually on a given territory, eventually on a related object user
+     * Check if a requester can check a permission on an right
      *
      * @param UserInterface $requester  The requester (an app or a user)
-     * @param UserInterface $user       The related user
+     * @param UserInterface|null $user  The related user
      * @return bool
      */
-    public function canCheckPermission(UserInterface $requester, UserInterface $user)
+    public function canCheckPermission(UserInterface $requester, ?UserInterface $user=null)
     {
         // we first check if the user has the right to check a permission !
         $rightToCheck = $this->rightRepository->findByName('check_permission');
@@ -107,16 +113,20 @@ class PermissionManager
             $authorized = $this->appHasPermission($rightToCheck, $requester)->isGranted();
         }
         if ($authorized) {
-            /**
-             * We check if the requester is the user
-             *
-             * @var User|App $requester
-             * @var User|App $user
-             */
-            if ($requester->getId() == $user->getId()) {
+            if (!is_null($user)) {
+                /**
+                 * We check if the requester is the user
+                 *
+                 * @var User|App $requester
+                 * @var User|App $user
+                 */
+                if ($requester->getId() == $user->getId()) {
+                    return true;
+                }
+                return false;
+            } else {
                 return true;
             }
-            return false;
         }
         return false;
     }
@@ -124,16 +134,23 @@ class PermissionManager
     /**
      * Check if a requester has a permission on an right, eventually on a given territory, eventually on a related object user
      *
-     * @param string $rightName         The name of the right to check
-     * @param UserInterface $requester  The requester (an app or a user)
-     * @param Territory|null $territory The territory
-     * @param int|null  $id             The id of the related object
+     * @param string $rightName             The name of the right to check
+     * @param UserInterface|null $requester The requester (an app or a user)
+     * @param Territory|null $territory     The territory
+     * @param int|null  $id                 The id of the related object
      * @return bool
      */
-    public function checkPermission(string $rightName, UserInterface $requester, ?Territory $territory=null, ?int $id = null)
+    public function checkPermission(string $rightName, ?UserInterface $requester=null, ?Territory $territory=null, ?int $id = null)
     {
         if (!$right = $this->rightRepository->findByName($rightName)) {
             throw new RightNotFoundException('Right ' . $rightName . ' not found');
+        }
+        if (is_null($requester)) {
+            $requester = new User();
+            $role = $this->roleRepository->find(Role::ROLE_USER);
+            $userRole = new UserRole();
+            $userRole->setRole($role);
+            $requester->addUserRole($userRole);
         }
         if ($requester instanceof User) {
             return $this->userHasPermission($right, $requester, $territory, $id)->isGranted();
@@ -152,8 +169,24 @@ class PermissionManager
      * @param int|null  $id             The id of the related object
      * @return Permission
      */
-    public function userHasPermission(Right $right, User $user, ?Territory $territory=null, ?int $id=null): Permission
+    public function userHasPermission(Right $right, ?User $user, ?Territory $territory=null, ?int $id=null): Permission
     {
+        if (is_null($user)) {
+            // no user specified, we check who is the requester
+            $requester = $this->tokenStorage->getToken()->getUser();
+            if ($requester instanceof App) {
+                // it's an app, we will check the permission for a basic (anonymous) user
+                $user = new User();
+                $role = $this->roleRepository->find(Role::ROLE_USER);
+                $userRole = new UserRole();
+                $userRole->setRole($role);
+                $user->addUserRole($userRole);
+            } else {
+                // "real" user, we use it
+                $user = $requester;
+            }
+        }
+
         $permission = new Permission(1);
         $permission->setGranted(false);
 
@@ -163,7 +196,7 @@ class PermissionManager
             $permission->setGranted(true);
             return $permission;
         }
-
+        
         // we search all the roles of the user (its direct roles and its children)
         // we also keep the territory, even if we don't really use it yet !
         // note : if a role is associated with a territory, its children are also associated with it
@@ -234,8 +267,11 @@ class PermissionManager
      */
     private function rightInRoles(Right $right, array $roles, ?int $userId=null, ?int $id=null)
     {
+        // echo "check right " . $right->getName() . "\n";
         foreach ($right->getRoles() as $rightRole) {
+            // echo "check rightrole " . $rightRole->getName() . "\n";
             foreach ($roles as $role) {
+                // echo "check role " . $role['role']->getName() . "\n";
                 if ($role['role']->getId() == $rightRole->getId()) {
                     // common role found
                     if ($this->isOwner($right, $userId, $id)) {
@@ -379,6 +415,9 @@ class PermissionManager
         // if the right has no related object, it means we don't need to check for an ownership
         if (is_null($right->getObject())) {
             return true;
+        }
+        if (is_null($objectId)) {
+            return false;
         }
         switch ($right->getObject()) {
             case "ad":

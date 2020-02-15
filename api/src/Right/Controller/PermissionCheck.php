@@ -66,10 +66,11 @@ class PermissionCheck
     public function __invoke(array $data): ?Permission
     {
         // we check if the user exists
-        if (!$this->request->get("user")) {
-            throw new RightException('User id is mandatory');
-        }
-        if (!$user = $this->userRepository->find($this->request->get("user"))) {
+        // if (!$this->request->get("user")) {
+        //     throw new RightException('User id is mandatory');
+        // }
+        $user = null;
+        if (!is_null($this->request->get("user")) && !$user = $this->userRepository->find($this->request->get("user"))) {
             throw new UserNotFoundException('User #' . $this->request->get("user") . ' not found');
         }
 

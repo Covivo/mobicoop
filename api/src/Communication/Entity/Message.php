@@ -48,17 +48,22 @@ use App\Communication\Controller\SendAction;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get",
  *          "post"={
  *              "controller"=SendAction::class,
+ *              "security_post_denormalize"="is_granted('message_create',object)"
  *          },
  *          "completeThread"={
  *              "method"="GET",
  *              "path"="/messages/completeThread",
  *              "normalization_context"={"groups"={"thread"}},
+ *              "security_post_denormalize"="is_granted('message_list',object)"
  *           }
  *      },
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('message_read',object)"
+ *          }
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "title", "createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"title":"partial"})

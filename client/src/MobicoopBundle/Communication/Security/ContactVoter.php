@@ -21,17 +21,17 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Article\Security;
+namespace Mobicoop\Bundle\MobicoopBundle\Communication\Security;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Article;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Contact;
 use Mobicoop\Bundle\MobicoopBundle\Permission\Service\PermissionManager;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
-class ArticleVoter extends Voter
+class ContactVoter extends Voter
 {
-    const SHOW = 'article_show';
+    const CREATE = 'contact_create';
     
     private $permissionManager;
 
@@ -44,16 +44,16 @@ class ArticleVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::SHOW
+            self::CREATE
             ])) {
             return false;
         }
 
-        // only vote on Article objects inside this voter
-        if (!$subject instanceof Article) {
+        // only vote on Ad objects inside this voter
+        if (!$subject instanceof Contact) {
             return false;
         }
-
+        
         return true;
     }
 
@@ -65,15 +65,18 @@ class ArticleVoter extends Voter
         }
 
         switch ($attribute) {
-            case self::SHOW:
-                return $this->canShow($user);
+            case self::CREATE:
+                return $this->canCreate($user);
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canShow(User $user)
+    private function canCreate(?User $user=null)
     {
-        return $this->permissionManager->checkPermission('article_read', $user);
+        // we assume everyone is authorized to create a contact message
+        // if we want to check authorization, switch the comments on the 2 following lines
+        return true;
+        // return $this->permissionManager->checkPermission('communication_contact', $user);
     }
 }

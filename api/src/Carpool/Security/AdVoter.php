@@ -29,7 +29,6 @@ use App\Carpool\Entity\Ad;
 use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Service\AdManager;
 use App\Right\Service\PermissionManager;
-use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -88,6 +87,9 @@ class AdVoter extends Voter
             case self::ADS_READ:
                 return $this->canReadAds($requester, $this->request->get("userId"));
             case self::AD_READ:
+                if (is_null($this->request->get("id"))) {
+                    return false;
+                }
                 if (!$ad = $this->adManager->getAdForPermission($this->request->get("id"))) {
                     return false;
                 }
@@ -95,37 +97,34 @@ class AdVoter extends Voter
             case self::AD_CREATE:
                 return $this->canCreateAd($requester);
             case self::AD_UPDATE:
+                if (is_null($this->request->get("id"))) {
+                    return false;
+                }
                 if (!$ad = $this->adManager->getAdForPermission($this->request->get("id"))) {
                     return false;
                 }
                 return $this->canUpdateAd($ad, $requester);
             case self::AD_DELETE:
+                if (is_null($this->request->get("id"))) {
+                    return false;
+                }
                 if (!$ad = $this->adManager->getAdForPermission($this->request->get("id"))) {
                     return false;
                 }
                 return $this->canDeleteAd($ad, $requester);
             case self::AD_ASK_POST:
-                // an Ask post is in fact an Ad post, with the original Ad id inside => we have these information in the subject
+                // an Ask post is in fact an Ad post, with the original Ad id inside => we have these informations in the subject
                 /**
                  * @var Ad $subject
                  */
                 if (!$ad = $this->adManager->getAdForPermission($subject->getAdId())) {
                     return false;
                 }
-                // we check that the user id provided in the request is one of the matching proposals owners
-                $matching = $this->matchingRepository->find($subject->getMatchingId());
-                if ($matching->getProposalOffer()->getUser()->getId() == $this->request->get("userId") || $matching->getProposalRequest()->getUser()->getId() == $this->request->get("userId")) {
-                    return true;
-                }
-                return false;
+                return $this->canPostAsk($ad, $subject->getMatchingId());
             case self::AD_ASK_GET:
             case self::AD_ASK_PUT:
-                // we check that the user id provided in the request is one of the matching proposals owners
-                $matching = $this->matchingRepository->find($this->request->get("id"));
-                if ($matching->getProposalOffer()->getUser()->getId() == $this->request->get("userId") || $matching->getProposalRequest()->getUser()->getId() == $this->request->get("userId")) {
-                    return true;
-                }
-                return false;
+                return $this->canReadOrUpdateAsk();
+                
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -154,5 +153,25 @@ class AdVoter extends Voter
     private function canDeleteAd(Ad $ad, UserInterface $requester)
     {
         return $this->permissionManager->checkPermission('ad_delete', $requester, null, $ad->getId());
+    }
+
+    private function canPostAsk(Ad $ad, int $matchingId)
+    {
+        // we check that the user id provided in the request is one of the matching proposals owners
+        $matching = $this->matchingRepository->find($matchingId());
+        if ($matching->getProposalOffer()->getUser()->getId() == $this->request->get("userId") || $matching->getProposalRequest()->getUser()->getId() == $this->request->get("userId")) {
+            return true;
+        }
+        return false;
+    }
+
+    private function canReadOrUpdateAsk()
+    {
+        // we check that the user id provided in the request is one of the matching proposals owners
+        $matching = $this->matchingRepository->find($this->request->get("id"));
+        if ($matching->getProposalOffer()->getUser()->getId() == $this->request->get("userId") || $matching->getProposalRequest()->getUser()->getId() == $this->request->get("userId")) {
+            return true;
+        }
+        return false;
     }
 }

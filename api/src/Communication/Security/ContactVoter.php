@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,17 +21,20 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Article\Security;
+namespace App\Communication\Security;
 
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Article;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Permission\Service\PermissionManager;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use App\Right\Service\PermissionManager;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
+use App\Communication\Entity\Contact;
 
-class ArticleVoter extends Voter
+class ContactVoter extends Voter
 {
-    const SHOW = 'article_show';
+    const CONTACT_CREATE = 'contact_create';
     
     private $permissionManager;
 
@@ -44,13 +47,16 @@ class ArticleVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::SHOW
+            self::CONTACT_CREATE
             ])) {
             return false;
         }
 
-        // only vote on Article objects inside this voter
-        if (!$subject instanceof Article) {
+        // only vote on Contact objects inside this voter
+        // only for items actions
+        if (!in_array($attribute, [
+            self::CONTACT_CREATE
+            ]) && !($subject instanceof Paginator) && !($subject instanceof Contact)) {
             return false;
         }
 
@@ -59,21 +65,22 @@ class ArticleVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $user = $token->getUser();
-        if (!$user instanceof User) {
-            $user = null;
-        }
+        $requester = $token->getUser();
 
         switch ($attribute) {
-            case self::SHOW:
-                return $this->canShow($user);
+            case self::CONTACT_CREATE:
+                return $this->canCreateContact($requester);
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canShow(User $user)
+    private function canCreateContact(UserInterface $requester)
     {
-        return $this->permissionManager->checkPermission('article_read', $user);
+        // only registered users/apps can create contact
+        if (!$requester instanceof UserInterface) {
+            return false;
+        }
+        return $this->permissionManager->checkPermission('communication_contact', $requester);
     }
 }

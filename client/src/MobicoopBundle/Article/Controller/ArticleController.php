@@ -53,7 +53,7 @@ class ArticleController extends AbstractController
      */
     public function showProject(ArticleManager $articleManager)
     {
-        $this->showArticle($articleManager->getArticle(self::PROJECT));
+        return $this->showArticle($articleManager->getArticle(self::PROJECT));
     }
 
     /**
@@ -62,7 +62,7 @@ class ArticleController extends AbstractController
      */
     public function showCgu(ArticleManager $articleManager)
     {
-        $this->showArticle($articleManager->getArticle(self::CGU));
+        return $this->showArticle($articleManager->getArticle(self::CGU));
     }
 
     /**
@@ -71,7 +71,7 @@ class ArticleController extends AbstractController
      */
     public function showNews(ArticleManager $articleManager)
     {
-        $this->showArticle($articleManager->getArticle(self::NEWS));
+        return $this->showArticle($articleManager->getArticle(self::NEWS));
     }
 
     /**
@@ -80,7 +80,7 @@ class ArticleController extends AbstractController
      */
     public function showDataPolicy(ArticleManager $articleManager)
     {
-        $this->showArticle($articleManager->getArticle(self::DATA_POLICY));
+        return $this->showArticle($articleManager->getArticle(self::DATA_POLICY));
     }
 
     /**
@@ -89,7 +89,7 @@ class ArticleController extends AbstractController
      */
     public function showInsurancePolicy(ArticleManager $articleManager)
     {
-        $this->showArticle($articleManager->getArticle(self::INSURANCE_POLICY));
+        return $this->showArticle($articleManager->getArticle(self::INSURANCE_POLICY));
     }
 
     /**
@@ -98,7 +98,7 @@ class ArticleController extends AbstractController
      */
     public function showHistroy(ArticleManager $articleManager)
     {
-        $this->showArticle($articleManager->getArticle(self::HISTORY));
+        return $this->showArticle($articleManager->getArticle(self::HISTORY));
     }
 
     /**
@@ -107,7 +107,7 @@ class ArticleController extends AbstractController
      */
     public function showActors(ArticleManager $articleManager)
     {
-        $this->showArticle($articleManager->getArticle(self::ACTORS));
+        return $this->showArticle($articleManager->getArticle(self::ACTORS));
     }
 
     /**
@@ -116,7 +116,7 @@ class ArticleController extends AbstractController
      */
     public function showSolidaryCarpool(ArticleManager $articleManager)
     {
-        $this->showArticle($articleManager->getArticle(self::SOLIDARY_CARPOOL));
+        return $this->showArticle($articleManager->getArticle(self::SOLIDARY_CARPOOL));
     }
 
     /**
@@ -125,7 +125,7 @@ class ArticleController extends AbstractController
      */
     public function showBecomePartner(ArticleManager $articleManager)
     {
-        $this->showArticle($articleManager->getArticle(self::BECOME_PARTNER));
+        return $this->showArticle($articleManager->getArticle(self::BECOME_PARTNER));
     }
 
     /**
@@ -134,7 +134,7 @@ class ArticleController extends AbstractController
      */
     public function showFAQ(ArticleManager $articleManager)
     {
-        $this->showArticle($articleManager->getArticle(self::FAQ));
+        return $this->showArticle($articleManager->getArticle(self::FAQ));
     }
 
     /**
@@ -149,7 +149,7 @@ class ArticleController extends AbstractController
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
-        $this->denyAccessUnlessGranted('show', $article);
+        $this->denyAccessUnlessGranted('article_show', $article);
         return $this->render('@Mobicoop/article/article.html.twig', [
             'article' => $article,
         ]);

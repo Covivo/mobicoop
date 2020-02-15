@@ -72,6 +72,8 @@ services:
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\Communication\Service\:
         resource: '@MobicoopBundle/Communication/Service/*'
+    Mobicoop\Bundle\MobicoopBundle\Communication\Security\:
+        resource: '@MobicoopBundle/Communication/Security/*'
 
     # Community
     Mobicoop\Bundle\MobicoopBundle\Community\Controller\:

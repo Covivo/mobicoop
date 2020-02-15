@@ -24,7 +24,6 @@
 namespace App\Article\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
-use App\Action\Entity\Action;
 use App\Article\Entity\Article;
 use App\Article\Entity\Paragraph;
 use App\Article\Entity\Section;

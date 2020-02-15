@@ -31,12 +31,12 @@ use Symfony\Component\Security\Core\Security;
 
 class CommunityVoter extends Voter
 {
-    const CREATE = 'community_create';
-    const READ = 'community_read';
-    const UPDATE = 'community_update';
-    const DELETE = 'community_delete';
-    const EXISTS = 'community_exists';
-    const ADMIN_MANAGE = 'community_admin_manage';
+    const COMMUNITY_CREATE = 'community_create';
+    const COMMUNITY_READ = 'community_read';
+    const COMMUNITY_UPDATE = 'community_update';
+    const COMMUNITY_DELETE = 'community_delete';
+    const COMMUNITY_LIST = 'community_list';
+    const COMMUNITY_JOIN = 'community_join';
 
     private $permissionManager;
 
@@ -50,12 +50,12 @@ class CommunityVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::CREATE,
-            self::READ,
-            self::UPDATE,
-            self::DELETE,
-            self::ADMIN_MANAGE,
-            self::EXISTS
+            self::COMMUNITY_CREATE,
+            self::COMMUNITY_READ,
+            self::COMMUNITY_UPDATE,
+            self::COMMUNITY_DELETE,
+            self::COMMUNITY_LIST,
+            self::COMMUNITY_JOIN,
             ])) {
             return false;
         }
@@ -63,9 +63,9 @@ class CommunityVoter extends Voter
         // only vote on Community objects inside this voter
         // only for items actions
         if (in_array($attribute, [
-            self::READ,
-            self::UPDATE,
-            self::DELETE,
+            self::COMMUNITY_READ,
+            self::COMMUNITY_UPDATE,
+            self::COMMUNITY_DELETE,
             ]) && !$subject instanceof Community) {
             return false;
         }
@@ -78,19 +78,16 @@ class CommunityVoter extends Voter
         $requester = $token->getUser();
 
         switch ($attribute) {
-            case self::CREATE:
+            case self::COMMUNITY_CREATE:
                 return $this->canPost($requester);
-            case self::READ:
+            case self::COMMUNITY_READ:
                 return $this->canRead($requester);
-            case self::UPDATE:
+            case self::COMMUNITY_UPDATE:
                 return $this->canUpdate($requester, $subject);
-            case self::DELETE:
+            case self::COMMUNITY_DELETE:
                 return $this->canDelete($requester, $subject);
-            case self::ADMIN_MANAGE:
+            case self::COMMUNITY_LIST:
                 return $this->canAdminManage($requester);
-            case self::EXISTS:
-                return $this->canCheckExistence($requester);
-           
         }
 
         throw new \LogicException('This code should not be reached!');

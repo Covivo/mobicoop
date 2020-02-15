@@ -100,7 +100,8 @@ class Right
     private $roles;
 
     /**
-     * @var string The object related to the right.
+     * @var string The object or method related to the right.
+     * Used to check ownership
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"read","write"})
