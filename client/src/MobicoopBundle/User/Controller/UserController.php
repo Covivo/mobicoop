@@ -608,7 +608,8 @@ class UserController extends AbstractController
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
         $completeThread = $internalMessageManager->getThread($idMessage, DataProvider::RETURN_JSON);
-        return new Response(json_encode($completeThread));
+        $response = str_replace("\\n", "<br />", json_encode($completeThread));
+        return new Response($response);
     }
 
 
@@ -875,5 +876,52 @@ class UserController extends AbstractController
             return new JsonResponse($communities);
         }
         return new JsonResponse(['error'=>'errorUpdateAlert']);
+    }
+
+    /**
+     * Check if an email is already registered by a user
+     * AJAX
+     */
+    public function userCheckEmailExists(Request $request, UserManager $userManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if (isset($data['email']) && $data['email']!=="") {
+                $user = $userManager->findByEmail($data['email']);
+                if (!is_null($user)) {
+                    return new JsonResponse(['error'=>false, 'message'=>$user->getId()]);
+                } else {
+                    return new JsonResponse(['error'=>false, 'message'=>'']);
+                }
+            } else {
+                return new JsonResponse(['error'=>true, 'message'=>'empty email']);
+            }
+        }
+        return new JsonResponse(['error'=>true, 'message'=>'Only POST is allowed']);
+    }
+    
+    /**
+    * Unsubscribe email for a user
+    */
+    public function userUnsubscribeFromEmail(UserManager $userManager, string $token)
+    {
+        $user = $userManager->unsubscribeUserFromEmail($token);
+        if ($user != null) {
+            return $this->render(
+                '@Mobicoop/default/index.html.twig',
+                [
+                    'baseUri' => $_ENV['API_URI'],
+                    'metaDescription' => 'Mobicoop',
+                    'unsubscribe' => json_encode($user->getUnsubscribeMessage())
+                ]
+            );
+        }
+        return $this->render(
+            '@Mobicoop/default/index.html.twig',
+            [
+                'baseUri' => $_ENV['API_URI'],
+                'metaDescription' => 'Mobicoop',
+            ]
+        );
     }
 }

@@ -9,7 +9,7 @@
     >
       <v-avatar
         color="grey lighten-3"
-        size="225"
+        :size="isWidget?150:225"
       >
         <img
           v-if="event.images[0]"
@@ -92,6 +92,10 @@ export default {
       type: Boolean,
       default: true
     },
+    isWidget: {
+      type: Boolean,
+      default: false
+    }
   },
   i18n: {
     messages: TranslationsMerged,

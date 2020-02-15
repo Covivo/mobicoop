@@ -22,6 +22,7 @@
         <a
           :href="$t('urlCommunityDetails',{id:item.id})"
           :alt="item.name"
+          :class="linksColorClass"
         ><v-list-item-title>{{ item.name }}</v-list-item-title></a>
       </v-list-item>
       <v-divider v-if="items.length>0" />
@@ -29,6 +30,7 @@
         <a
           :href="$t('urlCommunityList')"
           :alt="$t('availableCommunities')"
+          :class="linksColorClass"
         >{{ $t("availableCommunities") }}</a>
       </v-list-item>
     </v-list>
@@ -53,7 +55,11 @@ export default {
     textColorClass: {
       type: String,
       default: ""
-    }
+    },
+    linksColorClass: {
+      type: String,
+      default: ""
+    }    
   },
   data(){
     return {

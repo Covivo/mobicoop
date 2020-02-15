@@ -73,6 +73,27 @@ use Doctrine\Common\Collections\ArrayCollection;
  *                     }
  *                  }
  *              }
+ *          },
+ *          "reverse"={
+ *              "method"="GET",
+ *              "path"="/addresses/reverse",
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                     {
+ *                         "name" = "latitude",
+ *                         "in" = "query",
+ *                         "required" = "true",
+ *                         "type" = "string",
+ *                         "description" = "Latitude of the point"
+ *                     },
+ *                     {
+ *                         "name" = "longitude",
+ *                         "in" = "query",
+ *                         "type" = "string",
+ *                         "description" = "Longitude of the point"
+ *                     }
+ *                   }
+ *              }
  *          }
  *      },
  *      itemOperations={"get"}

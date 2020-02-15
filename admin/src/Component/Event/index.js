@@ -7,7 +7,7 @@ import { EventEdit } from './EventEdit';
 
 export default {
     options: {
-        label: 'Evénements'
+        label: 'Événements'
     },
     list: EventList,
     show: EventShow,

@@ -39,6 +39,7 @@ use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Entity\RelayPointType;
 use App\MassCommunication\Entity\Campaign;
 use App\Image\Controller\CreateImageAction;
+use App\Image\Controller\CreateImageAdminCampaignController;
 use App\Image\Controller\ImportImageCommunityController;
 use App\Image\Controller\ImportImageEventController;
 use App\Image\Controller\ImportImageUserController;
@@ -762,6 +763,7 @@ class Image
         $this->setCommunityFile(null);
         $this->setRelayPointFile(null);
         $this->setRelayPointTypeFile(null);
+        $this->setCampaignFile(null);
     }
     
     // DOCTRINE EVENTS

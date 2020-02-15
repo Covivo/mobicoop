@@ -101,13 +101,6 @@ final class CreateImageAction
             }
         }
 
-        $image->setTitle($request->request->get('title'));
-        $image->setAlt($request->request->get('alt'));
-        $image->setCropX1($request->request->get('cropX1'));
-        $image->setCropX2($request->request->get('cropX2'));
-        $image->setCropY1($request->request->get('cropY1'));
-        $image->setCropY2($request->request->get('cropY2'));
-
         return $image;
     }
 }

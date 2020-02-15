@@ -1,6 +1,6 @@
 import React from 'react';
-import isAuthorized from '../Utilities/authorization';
-
+import {isAuthorized} from '../Utilities/authorization';
+import { defaultExporter } from 'react-admin';
 //import bcrypt from 'bcryptjs';
 
 import { 
@@ -8,9 +8,19 @@ import {
     Datagrid,
     TextInput, SelectInput, ReferenceInput, BooleanInput,
     TextField, EmailField, DateField, 
-    EditButton,
+    EditButton, BulkDeleteButton,
     Filter
 } from 'react-admin';
+
+import EmailComposeButton from '../Email/EmailComposeButton';
+
+const UserBulkActionButtons = props => (
+    <>
+        <EmailComposeButton label="Email" {...props} />
+        {/* default bulk delete action */}
+        <BulkDeleteButton {...props} />
+    </>
+);
 
 const UserFilter = (props) => (
     <Filter {...props}>
@@ -29,7 +39,14 @@ const UserFilter = (props) => (
     </Filter>
 );
 export const UserList = (props) => (
-    <List {...props} title="Utilisateurs > liste" perPage={ 25 } filters={<UserFilter />} sort={{ field: 'id', order: 'ASC' }}>
+    <List {...props} 
+            title="Utilisateurs > liste" 
+            perPage={ 25 } 
+            filters={<UserFilter />} 
+            sort={{ field: 'id', order: 'ASC' }}
+            bulkActionButtons={<UserBulkActionButtons />}
+            exporter={isAuthorized("right_user_assign") ? defaultExporter : false}
+    >
         <Datagrid rowClick="show">
             <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="givenName" label="Prénom"/>

@@ -31,6 +31,7 @@ use App\MassCommunication\Repository\CampaignRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Twig\Environment;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Campaign manager service.
@@ -44,18 +45,20 @@ class CampaignManager
     private $massSmsProvider;
     private $mailTemplate;
     private $campaignRepository;
+    private $translator;
 
     const MAIL_PROVIDER_MANDRILL = 'mandrill';
 
     /**
      * Constructor.
      */
-    public function __construct(Environment $templating, EntityManagerInterface $entityManager, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate, CampaignRepository $campaignRepository)
+    public function __construct(Environment $templating, EntityManagerInterface $entityManager, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate, CampaignRepository $campaignRepository, TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
         $this->mailTemplate = $mailTemplate;
         $this->templating = $templating;
         $this->campaignRepository = $campaignRepository;
+        $this->translator = $translator;
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_MANDRILL:
                 $this->massEmailProvider = new MandrillProvider($mailerApiKey);
@@ -146,8 +149,10 @@ class CampaignManager
      * @param Campaign $campaign    The campaign to test
      * @return Campaign The campaign modified with the result of the test.
      */
-    private function sendMassEmailTest(Campaign $campaign)
+    private function sendMassEmailTest(Campaign $campaign, $lang='fr_FR')
     {
+        $this->translator->setLocale($lang);
+
         // call the service
         $this->massEmailProvider->send(
             $campaign->getSubject(),
@@ -195,11 +200,20 @@ class CampaignManager
      * @param string $body
      * @return void
      */
-    private function getFormedEmailBody(?string $body): string
+    private function getFormedEmailBody(?string $body):string
     {
+        $encodedBody = json_decode($body);
+        $arrayForTemplate = array();
+
+        foreach ($encodedBody as $parts) {
+            foreach ($parts as $type => $content) {
+                $arrayForTemplate[] = array('type' => $type , 'content' => $content);
+            }
+        }
+
         return $this->templating->render(
             $this->mailTemplate,
-            array('message' => $body)
+            array('arrayForTemplate' => $arrayForTemplate)
         );
     }
 
@@ -217,7 +231,8 @@ class CampaignManager
                 // put here the list of needed variables !
                 "givenName" => $delivery->getUser()->getGivenName(),
                 "familyName" => $delivery->getUser()->getFamilyName(),
-                "email" => $delivery->getUser()->getEmail()
+                "email" => $delivery->getUser()->getEmail(),
+                "unsubscribeToken" => $delivery->getUser()->getUnsubscribeToken(),
             ];
         }
         return $recipients;
@@ -235,7 +250,8 @@ class CampaignManager
             // put here the list of needed variables !
             "givenName" => $user->getGivenName(),
             "familyName" => $user->getFamilyName(),
-            "email" => $user->getEmail()
+            "email" => $user->getEmail(),
+            "unsubscribeToken" => $user->getUnsubscribeToken(),
         ];
 
         return $recipients;

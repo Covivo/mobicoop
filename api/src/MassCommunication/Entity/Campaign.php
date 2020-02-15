@@ -23,6 +23,7 @@
 
 namespace App\MassCommunication\Entity;
 
+use App\Image\Entity\Image;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -53,12 +54,12 @@ use App\MassCommunication\Controller\CampaignSendTest;
  *          "send"={
  *              "method"="GET",
  *              "controller"=CampaignSend::class,
- *              "path"="/campaigns/{id}/send"
+ *              "path"="/campaigns/send/{id}"
  *          },
  *          "send-test"={
  *              "method"="GET",
  *              "controller"=CampaignSendTest::class,
- *              "path"="/campaigns/{id}/send-test"
+ *              "path"="/campaigns/send-test/{id}"
  *          },
  *      }
  * )
@@ -192,6 +193,13 @@ class Campaign
      * @Groups({"read_campaign","write_campaign"})
      */
     private $deliveries;
+
+    /**
+     * @var ArrayCollection The images of the campaign.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="campaign", cascade="remove", orphanRemoval=true)
+     */
+    private $images;
     
     public function __construct()
     {
@@ -199,6 +207,7 @@ class Campaign
             $this->status = self::STATUS_PENDING;
         }
         $this->deliveries = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -381,6 +390,34 @@ class Campaign
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getImages()
+    {
+        return $this->images->getValues();
+    }
+
+    public function addImage(Image $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setCampaign($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->contains($image)) {
+            $this->images->removeElement($image);
+            // set the owning side to null (unless already changed)
+            if ($image->getCampaign() === $this) {
+                $image->setCampaign(null);
+            }
+        }
 
         return $this;
     }

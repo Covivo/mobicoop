@@ -74,6 +74,12 @@ security:
             stateless: true
             anonymous: true
 
+        # firewall for reverse geocoding
+        reverse:
+            pattern:  ^/addresses/reverse
+            stateless: true
+            anonymous: true    
+
         # firewall for dev (profiler)
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -95,4 +101,5 @@ security:
         - { path: ^/docs.json, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rd/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/addresses/search, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/addresses/reverse, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

@@ -265,7 +265,8 @@ class AdManager
             "waypoints" => [],
             "outwardDate" => $date,
             "regular" => $regular,
-            "search" => true
+            "search" => true,
+            "communities" => []
         ];
         if (!is_null($strictDate)) {
             $params["strictDate"] = $strictDate;
@@ -287,7 +288,7 @@ class AdManager
             $params["userId"] = $userId;
         }
         if (!is_null($communityId)) {
-            $params["communityId"] = $communityId;
+            $params["communities"] = [$communityId];
         }
         if (!is_null($filters)) {
             $params["filters"] = $filters;
@@ -517,6 +518,21 @@ class AdManager
     public function updateAdAsk(Ad $ad, int $userId)
     {
         if ($data = $this->dataProvider->putSpecial($ad, null, "ask", ["userId"=>$userId], true)) {
+            return $data->getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Paused an Ad
+     *
+     * @param int $ad   The ad to update
+     * @param int $userId  The user that make the request
+     * @return Ad|null
+     */
+    public function updateAd(Ad $ad)
+    {
+        if ($data = $this->dataProvider->put($ad)) {
             return $data->getValue();
         }
         return null;

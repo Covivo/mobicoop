@@ -2,11 +2,12 @@ import React from 'react';
 import { 
     Show, 
     Tab, TabbedShowLayout, 
-    Link, 
+    Link, List,
     Datagrid,
     Button, EditButton, DeleteButton,
-    BooleanField, TextField, DateField, RichTextField, SelectField, ReferenceArrayField, ReferenceField, FunctionField
+    BooleanField, TextField, DateField, RichTextField, SelectField, ReferenceArrayField, ReferenceField, FunctionField,BulkDeleteButton
 } from 'react-admin';
+import EmailComposeButton from "../../Email/EmailComposeButton";
 
 const statusChoices = [
     { id: 0, name: 'En attente' },
@@ -32,6 +33,15 @@ const AddNewMemberButton = ({ record }) => (
     </Button>
 );
 
+const UserBulkActionButtons = props => (
+    <>
+        <EmailComposeButton label="Email" {...props} />
+        {/* default bulk delete action */}
+        <BulkDeleteButton {...props} />
+    </>
+);
+
+
 const addressRenderer = address => `${address.displayLabel[0]} - ${address.displayLabel[1]}`;
 
 export const CommunityShow = (props) => (
@@ -53,7 +63,13 @@ export const CommunityShow = (props) => (
                 <EditButton />
             </Tab>
             <Tab label="Membres et Modérateurs" path="members">
+
                 <ReferenceArrayField source="communityUsers" reference="community_users" addLabel={false}>
+                    <List {...props}
+                          perPage={ 25 }
+                          bulkActionButtons={<UserBulkActionButtons />}
+                          sort={{ field: 'id', order: 'ASC' }}
+                    >
                     <Datagrid>
                         <ReferenceField source="user" label="Prénom" reference="users" linkType="">
                             <TextField source="givenName" />
@@ -65,7 +81,9 @@ export const CommunityShow = (props) => (
                         <EditButton />
                         <DeleteButton />
                     </Datagrid>
+                    </List>
                 </ReferenceArrayField>
+
                 <AddNewMemberButton />
             </Tab>
         </TabbedShowLayout>

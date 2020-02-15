@@ -174,8 +174,8 @@ class ProposalRepository
         // exclude private proposals
         $query->andWhere('(p.private IS NULL or p.private = 0)');
 
-        // exclude paused proposals
-        $query->andWhere('(p.paused IS NULL or p.paused = 0)');
+        // // exclude paused proposals
+        // $query->andWhere('(p.paused IS NULL or p.paused = 0)');
 
         // SOLIDARY
         if ($proposal->getCriteria()->isSolidaryExclusive()) {

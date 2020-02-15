@@ -35,6 +35,7 @@ use App\User\Entity\User;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Community\Controller\JoinAction;
+use App\Community\Controller\LeaveCommunityAction;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
@@ -66,7 +67,9 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *      itemOperations={
  *          "get"={"security"="is_granted('community_member_',object)"},
  *          "put"={"security"="is_granted('community_update',object)"},
- *          "delete"={"security"="is_granted('community_delete',object)"}
+ *          "delete"={
+ *              "controller"=LeaveCommunityAction::class
+ *          }
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"user.id","community.id","status"})

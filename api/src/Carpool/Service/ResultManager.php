@@ -397,7 +397,7 @@ class ResultManager
         // we search the matchings as an offer
         foreach ($proposal->getMatchingRequests() as $request) {
             // we exclude the private proposals
-            if ($request->getProposalRequest()->isPrivate()) {
+            if ($request->getProposalRequest()->isPrivate() || $request->getProposalRequest()->isPaused()) {
                 continue;
             }
             // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
@@ -409,7 +409,7 @@ class ResultManager
         // we search the matchings as a request
         foreach ($proposal->getMatchingOffers() as $offer) {
             // we exclude the private proposals
-            if ($offer->getProposalOffer()->isPrivate()) {
+            if ($offer->getProposalOffer()->isPrivate() || $offer->getProposalOffer()->isPaused()) {
                 continue;
             }
             // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
@@ -1588,30 +1588,39 @@ class ResultManager
 
         $role = Ad::ROLE_DRIVER;
 
-        // get the requester role, it depends on the status
-        switch ($ask->getStatus()) {
-            case Ask::STATUS_INITIATED:
-                if ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId) {
-                    // the requester is the driver
-                    $role = Ad::ROLE_DRIVER;
-                } else {
-                    // the requester is the passenger
-                    $role = Ad::ROLE_PASSENGER;
-                }
-                break;
-            case Ask::STATUS_PENDING_AS_DRIVER:
-            case Ask::STATUS_ACCEPTED_AS_DRIVER:
-            case Ask::STATUS_DECLINED_AS_DRIVER:
-                // the requester is the driver
-                $role = Ad::ROLE_DRIVER;
-                break;
-            case Ask::STATUS_PENDING_AS_PASSENGER:
-            case Ask::STATUS_ACCEPTED_AS_PASSENGER:
-            case Ask::STATUS_DECLINED_AS_PASSENGER:
-                // the requester is the passenger
-                $role = Ad::ROLE_PASSENGER;
-                break;
+        // This instead of the switch case below
+        if ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId) {
+            // the requester is the driver
+            $role = Ad::ROLE_DRIVER;
+        } else {
+            // the requester is the passenger
+            $role = Ad::ROLE_PASSENGER;
         }
+
+        // get the requester role, it depends on the status
+        // switch ($ask->getStatus()) {
+        //     case Ask::STATUS_INITIATED:
+        //         if ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId) {
+        //             // the requester is the driver
+        //             $role = Ad::ROLE_DRIVER;
+        //         } else {
+        //             // the requester is the passenger
+        //             $role = Ad::ROLE_PASSENGER;
+        //         }
+        //         break;
+        //     case Ask::STATUS_PENDING_AS_DRIVER:
+        //     case Ask::STATUS_ACCEPTED_AS_DRIVER:
+        //     case Ask::STATUS_DECLINED_AS_DRIVER:
+        //         // the requester is the driver
+        //         $role = Ad::ROLE_DRIVER;
+        //         break;
+        //     case Ask::STATUS_PENDING_AS_PASSENGER:
+        //     case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+        //     case Ask::STATUS_DECLINED_AS_PASSENGER:
+        //         // the requester is the passenger
+        //         $role = Ad::ROLE_PASSENGER;
+        //         break;
+        // }
 
         // we create the ResultRole for the ask
         if ($role == Ad::ROLE_DRIVER) {

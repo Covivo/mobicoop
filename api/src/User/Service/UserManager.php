@@ -55,6 +55,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\User\Event\UserUpdatedSelfEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\User\Repository\UserRepository;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * User manager service.
@@ -77,6 +78,7 @@ class UserManager
     private $logger;
     private $eventDispatcher;
     private $encoder;
+    private $translator;
 
     // Default carpool settings
     private $chat;
@@ -89,7 +91,7 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository)
+    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -102,6 +104,7 @@ class UserManager
         $this->askHistoryRepository = $askHistoryRepository;
         $this->eventDispatcher = $dispatcher;
         $this->encoder = $encoder;
+        $this->translator = $translator;
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
         $this->userRepository = $userRepository;
@@ -162,13 +165,16 @@ class UserManager
         $validationToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         $user->setValidatedDateToken($validationToken);
 
+        $unsubscribeToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        $user->setUnsubscribeToken($unsubscribeToken);
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-        
+
         // creation of the alert preferences
         $user = $this->createAlerts($user);
-        
+
         // dispatch en event
         if (is_null($user->getUserDelegate())) {
             // registration by the user itself
@@ -184,11 +190,11 @@ class UserManager
                 $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
             }
         }
-        
+
         // return the user
         return $user;
     }
- 
+
     /**
      * Update a user.
      *
@@ -375,7 +381,7 @@ class UserManager
                 $currentThread['idMessage'] = $idMessage;
 
                 $waypoints = $ask->getMatching()->getWaypoints();
-                $criteria = $ask->getMatching()->getCriteria();
+                $criteria = $ask->getCriteria();
                 $currentThread["carpoolInfos"] = [
                     "askHistoryId" => $askHistory->getId(),
                     "origin" => $waypoints[0]->getAddress()->getAddressLocality(),
@@ -642,8 +648,7 @@ class UserManager
 
 
     /**
-     * Generate a validation token
-     * (Ajax)
+     * Anonymise the user
      *
      */
     public function anonymiseUser(User $user)
@@ -655,16 +660,16 @@ class UserManager
             foreach ($proposal->getMatchingRequests() as $matching) {
                 //Check if there is ask on a proposal -> event for notifications
                 foreach ($matching->getAsks() as $ask) {
-                    $event = new UserDeleteAccountWasDriverEvent($ask);
-                    $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
+                    $event = new UserDeleteAccountWasPassengerEvent($ask);
+                    $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
                 }
             }
             //There is offers on the proposal -> we delete proposal + send email to passengers
             foreach ($proposal->getMatchingOffers() as $matching) {
                 //TODO libérer les places sur les annonces réservées
                 foreach ($matching->getAsks() as $ask) {
-                    $event = new UserDeleteAccountWasPassengerEvent($ask);
-                    $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
+                    $event = new UserDeleteAccountWasDriverEvent($ask);
+                    $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
                 }
             }
             //Set user at null and private on the proposal : we keep info for message, proposal cant be found
@@ -741,8 +746,7 @@ class UserManager
     }
 
 
-    //Check if the delete account have image, and delete them
-    // deleteBase -> delete the base image and remove the entry
+    //Check if the delete account is in community, and delete the link between
     private function checkIfUserIsInCommunity(User $user)
     {
         $myCommunities = $this->communityUserRepository->findBy(array('user'=>$user));
@@ -810,5 +814,23 @@ class UserManager
             return new JsonResponse();
         }
         return new JsonResponse();
+    }
+
+    public function unsubscribeFromEmail(User $user, $lang='fr_FR')
+    {
+        $this->translator->setLocale($lang);
+
+        $messageUnsubscribe = $this->translator->trans('unsubscribeEmailAlertFront', ['instanceName' => $_ENV['EMAILS_PLATFORM_NAME']]);
+
+        $user->setNewsSubscription(0);
+        $user->setUnsubscribeDate(new \Datetime());
+
+        $user->setUnsubscribeMessage($messageUnsubscribe);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+
+        return $user;
     }
 }

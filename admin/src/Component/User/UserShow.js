@@ -1,5 +1,5 @@
 import React from 'react';
-import isAuthorized from '../Utilities/authorization';
+import {isAuthorized} from '../Utilities/authorization';
 
 //import bcrypt from 'bcryptjs';
 

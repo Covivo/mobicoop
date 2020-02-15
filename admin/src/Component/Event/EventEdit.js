@@ -3,7 +3,7 @@ import React from 'react';
 import { 
     Edit, SimpleForm,
     TextInput,
-    DateTimeInput, ReferenceInput, SelectInput, LongTextInput
+    DateTimeInput, ReferenceInput, SelectInput,
 } from 'react-admin';
 
 const userOptionRenderer = choice => `${choice.givenName} ${choice.familyName}`;
@@ -18,8 +18,8 @@ export const EventEdit = (props) => (
             <ReferenceInput source="user" label="Créateur" reference="users">
                 <SelectInput optionText={userOptionRenderer} />
             </ReferenceInput>
-            <LongTextInput source="description" label="Description" validate={[required()]} />
-            <LongTextInput source="fullDescription" label="Description complète" validate={[required()]} />
+            <TextInput multiline source="description" label="Description" validate={[required()]} />
+            <TextInput multiline source="fullDescription" label="Description complète" validate={[required()]} />
             <DateTimeInput source="fromDate" label="Date de début" validate={[required()]} />
             <DateTimeInput source="toDate" label="Date de fin" validate={[required()]} />
             <TextInput source="url" type="url" />

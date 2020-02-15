@@ -3,6 +3,10 @@
         "title":"Inscription",
         "urlSignUp":"/utilisateur/inscription",
         "urlRedirectAfterSignUp":"/utilisateur/inscription/validation/{email}",
+        "checkEmail":{
+            "url":"/utilisateur/verif/email",
+            "error":"Cet email est déjà pris"
+        },
         "chart": {
             "text": "J'accepte ",
             "link": "la charte de la plateforme et sa politique de protection des données",
@@ -12,6 +16,15 @@
     "en":{
         "title":"Sign Up",
         "urlSignUp":"/user/signup",
-        "urlRedirectAfterSignUp":"/user/signup/validation/{email}"
+        "urlRedirectAfterSignUp":"/user/signup/validation/{email}",
+        "checkEmail":{
+            "url":"/user/check/email",
+            "error":"This email is already attached to an account"
+        },
+        "chart": {
+            "text": "I accept ",
+            "link": "the platform chart and its data protection policy",
+            "route": "/cgu"
+        }
     }
 }
