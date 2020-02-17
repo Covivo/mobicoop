@@ -30,10 +30,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * An article.
  */
-class Article implements ResourceInterface
+class Article implements ResourceInterface, \JsonSerializable
 {
     const STATUS_PENDING = 0;
     const STATUS_PUBLISHED = 1;
+    const NB_EXTERNAL_ARTICLES_DEFAULT = 3;
     
     /**
      * @var int The id of this article.
@@ -143,5 +144,15 @@ class Article implements ResourceInterface
         }
 
         return $this;
+    }
+
+    // If you want more info from user you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+        ];
     }
 }
