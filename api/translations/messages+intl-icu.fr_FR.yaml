@@ -1,3 +1,13 @@
+#BASE
+
+AQuestion: "Une question?"
+FAQ: "FAQ"
+EmailsAlerts: "Gérer vos alertes email"
+URLEmailsAlerts: "utilisateur/profil/modifier/mon-profil"
+Download: "Téléchargez l'application <b>Android</b> ou <b>IOS</b>"
+FollowUs: "Suivez-nous"
+
+
 # CARPOOL_AD_RENEWAL
 
 beCarefulFewDaysAnnouncementNotValid: "Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs"
@@ -5,38 +15,18 @@ nowYouAreMore: "Vous êtes maintenant plus de"
 toUseTheService: "à utiliser le service ! Partagez vos trajets et trouvez votre bonheur"
 
 # CARPOOL_ASK_ACCEPTED
-yourPassengerIs: "Votre passager s'appelle"
-yourDriverIs: "Votre conducteur s'appelle"
-summaryCarpool: "Voici le récapitulatif de votre covoiturage"
-isThe: "est le"
-hisPhoneNumber: "son numéro de téléphone"
-regularCarpool: "Trajet régulier"
-concernedDays: "Jours covoiturés:"
-occasionnalCarpool: "Trajet occasionnel"
-supported:  "Prise en charge à"
-depositedAt: "Dépose à"
-monday: "Lundi"
-tuesday: "Mardi"
-wednesday: "Mercredi"
-thusday: "Jeudi"
-friday: "Vendredi"
-saturday: "Samedi"
-sunday: "Dimanche"
-the: "Le"
-from: "du"
+acceptedCarpool: "VOTRE COVOITURAGE EST CONFIRMÉ !"
+hello: "Bonjour"
+yourCrapoolWith: "Votre covoiturage avec"
+isConfirmed: "est confirmé!"
+occasionalCarpool: "Récapitulatif de votre trajet occasionnel du"
+regularCarpool: "Récapitulatif de votre trajet régulier du"
 to: "au"
-currency: "euros"
-passengerComment: "Commentaire du passager"
-reservedPlaces: "Place(s) réservée(s)"
-indicativePrice: "Prix indicatif"
-phoneNumber: "Le numéro de téléphone de"
-driverComment: "Commentaire du conducteur" 
-  #not used for now
-carpoolDistance: "Trajet régulier Distance covoiturée"
-driverDetour: "Détour conducteur"
-appointmentHour: "Heures de RDV"
-occassionalCarpoolDistance: "Trajet occasionnel Distance covoiturée"
-at: "à"
+outward: "ALLER"
+return: "RETOUR"
+multipleShedules: "Horaires multiples"
+pickUp: "Prise en charge à"
+dropOff: "Déposé à"
 
 # CARPOOL_ASK_REFUSED
 notBeAbleToCarpoolWithYouFor: "ne pourra pas covoiturer avec vous le "

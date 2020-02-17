@@ -102,8 +102,8 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onAskAccepted(AskAcceptedEvent $event)
     {
         // the recipient is the user that has made the ask
-        $askRecipient = ($event->getAsk()->getUser());
-        $this->notificationManager->notifies(AskAcceptedEvent::NAME, $askRecipient, $event->getAsk());
+        $adRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
+        $this->notificationManager->notifies(AskAcceptedEvent::NAME, $adRecipient, $event->getAd());
     }
     
     /**

@@ -1,60 +1,164 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-
-{% set ask = context.ask %}
+{% set ad = context.ad %}
 {% set recipient = context.user %}
+{% set sender = context.sender %}
+{% set result = context.result %}
 
-<p>{{ "summaryCarpool"|trans }}.</p>
-<br></br>
-{# Ask user is driver #}
-{% if ask.matching.proposalOffer.user.id == recipient.id %}
-        {% set passenger = ask.userRelated %}
 
-        <p>{{ "yourPassengerIs"|trans }} {{ passenger.givenName|capitalize ~ " " ~ passenger.familyName|capitalize  }} {{"and"|trans}} {{ "hisPhoneNumber"|trans }} {{ "isThe"|trans}} {{ passenger.telephone }}.</p>
-        <br></br>
-        {% if ask.criteria.frequency == 1 %}
-                <p>{{ "occasionnalCarpool"|trans }} {{"the"|trans}} {{ ask.criteria.fromDate|date("d/m/Y") }}</p>
-        {% else %}
-                <p>{{ "regularCarpool"|trans }} {{ "from"|trans }} {{ ask.criteria.fromDate|date("d/m/Y") }} {{ "to"|trans }} {{ ask.criteria.toDate|date("d/m/Y") }}.</p>
-                <p>{{ "concernedDays"|trans }} {% if ask.criteria.monCheck %}{{ "monday" |trans}} {% endif %}
-                {% if ask.criteria.tueCheck %}{{ "tuesday" |trans}} {% endif %}
-                {% if ask.criteria.wedCheck %}{{ "wednesday" |trans}} {% endif %}
-                {% if ask.criteria.thuCheck %}{{ "thusday" |trans}} {% endif %}
-                {% if ask.criteria.friCheck %}{{ "friday" |trans}} {% endif %}
-                {% if ask.criteria.satCheck %}{{ "saturday" |trans}} {% endif %}
-                {% if ask.criteria.sunCheck %}{{ "sunday" |trans}}{% endif %}.</p>
-        {% endif %}        
-        <p>{{ "supported"|trans }}:  {{ context.origin.address.addressLocality }}.</p>
-        <p>{{ "depositedAt"|trans }}: {{ context.destination.address.addressLocality }}.</p> 
-        <br></br>
-        {% if ask.matching.proposalRequest.comment %}
-        <p>{{ "passengerComment"|trans }} {{ ask.matching.proposalRequest.comment }}</p>
-        {% endif %}
-        <p>{{ "reservedPlaces"|trans }}: {{ ask. criteria.seatsPassenger }}.</p>
-        <p>{{ "indicativePrice"|trans }}: {{ ask.criteria.passengerComputedRoundedPrice }} {{ "currency"|trans}}.</p>
-        {# Ask user is passenger #}
- {% else %}
-        {% set driver = ask.userRelated %}
-        <p>{{ "yourDriverIs"|trans }} {{ driver.givenName|capitalize ~ " " ~ driver.familyName|capitalize  }} {{"and"|trans}} {{ "hisPhoneNumber"|trans }} {{ "isThe"|trans}} {{ driver.telephone }}.</p>
-        <br></br>
-        {% if ask.criteria.frequency == 1 %}
-                <p>{{ "occasionnalCarpool"|trans }} {{ "the"|trans }} {{ ask.criteria.fromDate|date("d/m/Y") }}</p>
-        {% else %}
-                <p>{{ "regularCarpool"|trans }} {{ "from"|trans }} {{ ask.criteria.fromDate|date("d/m/Y") }} {{ "to"|trans }} {{ ask.criteria.toDate|date("d/m/Y") }}.</p>
-                <p>{{ "concernedDays"|trans }} {% if ask.criteria.monCheck %}{{ "monday" |trans}}{% endif %}
-                {% if ask.criteria.tueCheck %}{{ "tuesday" |trans}} {% endif %}
-                {% if ask.criteria.wedCheck %}{{ "wednesday" |trans}} {% endif %}
-                {% if ask.criteria.thuCheck %}{{ "thusday" |trans}} {% endif %}
-                {% if ask.criteria.friCheck %}{{ "friday" |trans}} {% endif %}
-                {% if ask.criteria.satCheck %}{{ "saturday" |trans}} {% endif %}
-                {% if ask.criteria.sunCheck %}{{ "sunday" |trans}}{% endif %}. </p> 
-        {% endif %}        
-        <p>{{ "supported"|trans }}  {{ context.origin.address.addressLocality }}.</p>
-        <p>{{ "depositedAt"|trans }} {{ context.destination.address.addressLocality }}.</p> 
-        <br></br>
-        {% if ask.matching.proposalOffer.comment %}
-        <p>{{ "passengerComment"|trans}} {{ ask.matching.proposalOffer.comment }}</p>
-        {% endif %}
-        <p>{{ "indicativePrice"|trans}}  {{ ask.criteria.passengerComputedRoundedPrice }} {{ "currency"|trans}}.</p> 
-{% endif %}  
+
+<table border="1" style="max-width:100%;font-family:Ubuntu, sans-serif;">
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td>
+                        <p style="color:#13a569;font-size:30" >{{ "acceptedCarpool"|trans }}</p>
+                        <hr>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table style="max-width:100%;">
+                <tr>
+                    <td style="width:70%">
+                        <p>{{ "hello"|trans }}<b style="color:#284b99"> {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b></p>
+                        <p>{{ "yourCarpoolWith"|trans }}<b style="color:#284b99"> {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}</b> {{ "isConfirmed"|trans }}</p>
+                        {% if ask.criteria.frequency == 1 %}
+                            <p>{{ "occasionalCarpool"|trans }} <b style="color:#284b99">{{ ask.criteria.fromDate|date("d/m/Y") }}</b>:</p>
+                        {% else %}
+                            <p>{{ "regularCarpool"|trans }} <b style="color:#284b99">{{ ask.criteria.fromDate|date("d/m/Y") }}</b> {{ "to"|trans }} <b style="color:#284b99">{{ ask.criteria.toDate|date("d/m/Y") }}</b> :</p>
+                        {% endif %}
+                    </td>
+                    <td style="width:30%">
+                        <img  style="border-radius:50%" src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/users/images/versions/100-0a49c977ff809cd0dd14bb86ff224d-1.jpeg" alt="UserAvatar"/>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table  style="max-width:100%;background-color:#E6E9F3">
+                <tr>
+                    <td style="width:10%">
+                        <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/PictoDepart-Arrivee.svg" alt="trajet"/>
+                    </td>
+                    <td style="width:90%">
+                        <p><b style="color:#284b99">{{ result.originPassenger.displayedLabel[0] }}</b></p>
+                        <p><b style="color:#284b99"> {{ result.destinationPassenger.displayedLabel[0] }}</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    {% if result.frequency == 2 %}
+    <tr>
+        <td>
+            <table  style="max-width:100%;">
+                <tr>
+                    <td style="width:100%">
+                        {% if result.outward.monCheck %}
+                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/darkMon.svg" alt="Mon"/>
+                        {% else %}
+                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/lightMon.svg" alt="Mon"/>
+                        {% endif %}
+                        {% if result.outward.tueCheck %}
+                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/darkTue.svg" alt="Tue"/>
+                        {% else %}
+                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/lightTue.svg" alt="Tue"/>
+                        {% endif %} 
+                        {% if result.outward.wedCheck %}
+                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/darkWed.svg" alt="Wed"/>
+                        {% else %}
+                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/lightWed.svg" alt="Wed"/>
+                        {% endif %} 
+                        {% if result.outward.thuCheck %}
+                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/darkThu.svg" alt="Thu"/>
+                        {% else %}
+                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/lightThu.svg" alt="Thu"/>
+                        {% endif %} 
+                        {% if result.outward.friCheck %}
+                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/darkFri.svg" alt="Fri"/>
+                        {% else %}
+                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/lightFri.svg" alt="Fri"/>
+                        {% endif %} 
+                        {% if result.outward.satCheck %}
+                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/darkSat.svg" alt="Sat"/>
+                        {% else %}
+                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/lightSat.svg" alt="Sat"/>
+                        {% endif %} 
+                        {% if result.outward.sunCheck %}
+                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/darkSun.svg" alt="Sun"/>
+                        {% else %}
+                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/lightSun.svg" alt="Sun"/>
+                        {% endif %}     
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td>
+            <table  style="max-width:100%;">
+                <tr>
+                    {% if result.outward %}
+                        <td style="width:45%">
+                            <p style="color:#ddb62d"><b>{{"outward"|trans}}</b></p>
+                        </td>
+                    {% endif %}
+                    <td>
+                        &nbsp;
+                    </td>
+                    {% if result.return %}
+                        <td style="width:45%">
+                            <p style="color:#ddb62d"><b>{{"return"|trans}}</b></p>
+                        </td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    {% if result.outward %}
+                        <td>
+                            {% if result.outward.multiplesTimes %}
+                            <p><b style="color:#284b99">{{"multipleShedules"|trans}}</b></p>
+                        {% else %}
+                            <p>{{"pickUp"|trans}}<b style="color:#284b99">{{result.outward.time}}</b></p>
+                        {% endif %}
+                        </td>
+                    {% endif %}
+                    <td>
+                        &nbsp;
+                    </td>
+                    {% if result.return %}
+                        <td>
+                            {% if result.return.multiplesTimes %}
+                                <p><b style="color:#284b99">{{"multipleShedules"|trans}}</b></p>
+                            {% else %}
+                                <p>{{"pickUp"|trans}}<b style="color:#284b99">{{result.return.time}}</b></p>
+                            {% endif %}    
+                        </td>
+                    {% endif %}
+                </tr>
+            </table>
+        </td>
+    </tr>
+    </hr>
+    <tr>
+        <td>
+            <table  style="max-width:100%;">
+                <tr>
+                    <td style="width:100%">
+                        <p>Place(s) réservée(s) : <b style="color:#284b99">{{ad.results[0].seats}}</b></p>
+                        <p>Prix indicatif : <b style="color:#284b99">{{ad.results[0].roundedPrice}}</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    </hr>
+</table>
 {% endblock %}    

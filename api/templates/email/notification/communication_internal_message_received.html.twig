@@ -1,9 +1,20 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    <p> {{ "youHaveAMessage"|trans }}</p>
-    <hr />
-    <p>{{ context.text | nl2br }}</p>
-    <hr />
-    <p>{{  "canAnswerViaEmailFrom" |trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere" |trans }} : <a href="{{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlMailBox"|trans }}">{{ "mailBox"|trans }}</a>.</p>
-    <p>{{ "getProblem" |trans }}.</p>
+    <table align="center" style="border-spacing:0;text-align:center;vertical-align:top;width:100%;margin-top:20px;font-family:Roboto, sans-serif;color:#13a569">
+    <tr>
+        <td>
+            <p> {{ "youHaveAMessage"|trans }}</p>
+        </td>
+    </tr> 
+    <tr>
+        <td>  
+            <p>{{ context.text | nl2br }}</p>
+        </td>
+    </tr> 
+        <td>
+            <p>{{  "canAnswerViaEmailFrom" |trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere" |trans }} : <a href="{{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlMailBox"|trans }}">{{ "mailBox"|trans }}</a>.</p>
+            <p>{{ "getProblem" |trans }}.</p>
+        </td>    
+    </tr>
+    </table>    
 {% endblock %}

@@ -24,6 +24,7 @@
 namespace App\Carpool\Event;
 
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\Ad;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -35,13 +36,13 @@ class AskAcceptedEvent extends Event
 
     protected $ask;
 
-    public function __construct(Ask $ask)
+    public function __construct(Ad $ad)
     {
-        $this->ask = $ask;
+        $this->ask = $ad;
     }
 
-    public function getAsk()
+    public function getAd()
     {
-        return $this->ask;
+        return $this->ad;
     }
 }

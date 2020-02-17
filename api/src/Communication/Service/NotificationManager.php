@@ -23,6 +23,7 @@
 
 namespace App\Communication\Service;
 
+use App\Carpool\Entity\Ad;
 use App\Communication\Entity\MessagerInterface;
 use App\Event\Entity\Event;
 use Psr\Log\LoggerInterface;
@@ -41,6 +42,7 @@ use App\Communication\Entity\Recipient;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Ask;
 use App\Communication\Entity\Message;
+use App\User\Service\UserManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
@@ -64,9 +66,11 @@ class NotificationManager
     private $userNotificationRepository;
     private $enabled;
     private $translator;
+    private $userManager;
     const LANG = 'fr_FR';
 
-    public function __construct(EntityManagerInterface $entityManager, Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, SmsManager $smsManager, LoggerInterface $logger, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled, TranslatorInterface $translator)
+
+    public function __construct(EntityManagerInterface $entityManager, Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, SmsManager $smsManager, LoggerInterface $logger, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled, TranslatorInterface $translator, UserManager $userManager)
     {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -81,6 +85,7 @@ class NotificationManager
         $this->templating = $templating;
         $this->enabled = $enabled;
         $this->translator = $translator;
+        $this->userManager = $userManager;
     }
 
     /**
@@ -93,9 +98,9 @@ class NotificationManager
      */
     public function notifies(string $action, User $recipient, ?object $object = null)
     {
-          if (!$this->enabled) {
-              return;
-          }
+        if (!$this->enabled) {
+            return;
+        }
 
         $notifications = null;
         // we check the user notifications
@@ -184,6 +189,16 @@ class NotificationManager
                         }
                     }
                     $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaypoint, 'destination'=>$passengerDestinationWaypoint];
+                    break;
+                case Ad::class:
+                    $titleContext = [];
+                    $sender = $this->userManager->getUser($object->getUserId());
+                    if ($object->getRole() == 1) {
+                        $result = $object->getResults[0]->getResultPassenger();
+                    } else {
+                        $result = $object->getResults[0]->getResultDriver();
+                    };
+                    $bodyContext = ['user'=>$recipient, 'ad'=>$object, 'sender'=>$sender, 'result'=>$result];
                     break;
                 case Recipient::class:
                     $titleContext = [];
