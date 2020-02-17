@@ -176,12 +176,16 @@ class PermissionManager
             // no user specified, we check who is the requester
             $requester = $this->tokenStorage->getToken()->getUser();
             if ($requester instanceof App) {
-                // it's an app, we will check the permission for a basic (anonymous) user
-                $user = new User();
-                $role = $this->roleRepository->find(Role::ROLE_USER);
-                $userRole = new UserRole();
-                $userRole->setRole($role);
-                $user->addUserRole($userRole);
+                // after refactor of the client token comment/uncomment the following
+                // ---
+                $user = $requester;
+            // it's an app, we will check the permission for a basic (anonymous) user
+                // $user = new User();
+                // $role = $this->roleRepository->find(Role::ROLE_USER);
+                // $userRole = new UserRole();
+                // $userRole->setRole($role);
+                // $user->addUserRole($userRole);
+                // ---
             } else {
                 // "real" user, we use it
                 $user = $requester;
