@@ -21,7 +21,10 @@
         </v-card-text>
       </v-col>
     </v-row>
-    <v-row justify="center">
+    <v-row
+      justify="center"
+      class="mt-10"
+    >
       <MFeaturesItem
         v-for="(item, index) in items"
         :key="index"
