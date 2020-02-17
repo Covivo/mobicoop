@@ -15,22 +15,21 @@ final class Version20200215143800 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('DELETE FROM role_right;');
-        $this->addSql('DELETE FROM role;');
-        $this->addSql('DELETE FROM user_right;');
-        $this->addSql('DELETE FROM uright;');
         $this->addSql('
+            UPDATE `role` SET `title`=\'Super admin\', `name`=\'ROLE_SUPER_ADMIN\', `parent_id`=NULL WHERE `id`=1;
+            UPDATE `role` SET `title`=\'Admin\', `name`=\'ROLE_ADMIN \', `parent_id`=1 WHERE `id`=2;
+            UPDATE `role` SET `title`=\'User with full registration\', `name`=\'ROLE_USER_REGISTERED_FULL \', `parent_id`=2 WHERE `id`=3;
+            UPDATE `role` SET `title`=\'User with minimal registration\', `name`=\'ROLE_USER_REGISTERED_MINIMAL \', `parent_id`=3 WHERE `id`=4;
+            UPDATE `role` SET `title`=\'Unregistered or disconnected user\', `name`=\'ROLE_USER \', `parent_id`=4 WHERE `id`=5;
+            UPDATE `role` SET `title`=\'Mobimatch user\', `name`=\'ROLE_MASS_MATCH \', `parent_id`=2 WHERE `id`=6;
             INSERT INTO `role` (`id`, `title`, `name`, `parent_id`) VALUES
-            (1,  \'Super admin \',  \'ROLE_SUPER_ADMIN \', NULL),
-            (2,  \'Admin \',  \'ROLE_ADMIN \', 1),
-            (3,  \'User with full registration \',  \'ROLE_USER_REGISTERED_FULL \', 2),
-            (4,  \'User with minimal registration \',  \'ROLE_USER_REGISTERED_MINIMAL \', 3),
-            (5,  \'Unregistered or disconnected user \',  \'ROLE_USER \', 4),
-            (6,  \'Mobimatch user \',  \'ROLE_MASS_MATCH \', 2),
             (7,  \'Community manager \',  \'ROLE_COMMUNITY_MANAGER \', 2),
             (8,  \'Solidary manager \',  \'ROLE_SOLIDARY_MANAGER \', 2),
             (9,  \'Communication manager \',  \'ROLE_COMMUNICATION_MANAGER \', 2);
         ');
+        $this->addSql('DELETE FROM role_right;');
+        $this->addSql('DELETE FROM user_right;');
+        $this->addSql('DELETE FROM uright;');
         $this->addSql('
             INSERT INTO `uright` (`id`, `name`, `description`, `object`) VALUES
             (1, \'user_manage\', \'Manage users\', NULL),
