@@ -4,15 +4,21 @@
       justify="center"
     >
       <v-col
-        cols="6"
+        cols="7"
         class="text-center"
       >
-        <h1 class="text-uppercase text--primary">
+        <v-card-text
+          class="display-1 text-uppercase"
+          :class="(textThin) ? 'text--'+colorTitle+' font-weight-thin' : 'text--'+colorTitle"
+        >
           {{ title }}
-        </h1>
-        <h3 class="headline">
+        </v-card-text>
+        <v-card-text
+          class="headline"
+          :class="(textThin) ? 'text--'+colorSubtitle+' font-weight-thin' : 'text--'+colorSubtitle"
+        >
           {{ subtitle }}
-        </h3>
+        </v-card-text>
       </v-col>
     </v-row>
     <v-row justify="center">
@@ -49,6 +55,18 @@ export default {
     backgroundImage:{
       type:String,
       default:null
+    },
+    colorTitle:{
+      type:String,
+      default:"primary"
+    },
+    colorSubtitle:{
+      type:String,
+      default:"primary"
+    },
+    textThin:{
+      type:Boolean,
+      default:false
     }
   }    
 }
