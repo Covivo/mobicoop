@@ -190,6 +190,7 @@
                 :init-outward-time="outwardTime"
                 :regular="regular"
                 :default-margin-time="defaultMarginTime"
+                :route="route"
                 @change="planificationChanged"
               />
             </v-stepper-content>
