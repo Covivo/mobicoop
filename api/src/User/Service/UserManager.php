@@ -334,6 +334,8 @@ class UserManager
 
             $messages[] = $currentMessage;
         }
+        // Sort with the last message received first
+        usort($messages, array($this, 'sortThread'));
         return $messages;
     }
 
