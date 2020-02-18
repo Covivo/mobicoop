@@ -179,7 +179,7 @@ newAd: "Nouvelle(s) annonce(s) sur "
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
-contactYou: "%givenName% vous contacte"
+contactYou: "{givenName} vous contacte"
 
 # USER_PASSWORD_CHANGED
 
