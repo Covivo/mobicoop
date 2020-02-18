@@ -209,7 +209,7 @@ passengerAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êti
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
-contactYou: "%givenName% vous contacte"
+contactYou: "{givenName} vous contacte"
 
 # USER_PASSWORD_CHANGED
 
