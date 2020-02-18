@@ -17,7 +17,7 @@ toUseTheService: "à utiliser le service ! Partagez vos trajets et trouvez votre
 # CARPOOL_ASK_ACCEPTED
 acceptedCarpool: "VOTRE COVOITURAGE EST CONFIRMÉ !"
 hello: "Bonjour"
-yourCrapoolWith: "Votre covoiturage avec"
+yourCarpoolWith: "Votre covoiturage avec"
 isConfirmed: "est confirmé!"
 occasionalCarpool: "Récapitulatif de votre trajet occasionnel du"
 regularCarpool: "Récapitulatif de votre trajet régulier du"
@@ -25,8 +25,10 @@ to: "au"
 outward: "ALLER"
 return: "RETOUR"
 multipleShedules: "Horaires multiples"
-pickUp: "Prise en charge à"
-dropOff: "Déposé à"
+pickUp: "Prise en charge à "
+dropOff: "Dépose à "
+seatsSelected: "Place(s) réservée(s) : "
+indicativePrice: "Prix indicatif : "
 
 # CARPOOL_ASK_REFUSED
 notBeAbleToCarpoolWithYouFor: "ne pourra pas covoiturer avec vous le "

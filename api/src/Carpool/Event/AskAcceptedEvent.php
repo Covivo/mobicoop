@@ -34,11 +34,11 @@ class AskAcceptedEvent extends Event
 {
     public const NAME = 'carpool_ask_accepted';
 
-    protected $ask;
+    protected $ad;
 
     public function __construct(Ad $ad)
     {
-        $this->ask = $ad;
+        $this->ad = $ad;
     }
 
     public function getAd()

@@ -645,8 +645,11 @@ class AskManager
         $askHistory->setType($ask->getType());
         $ask->addAskHistory($askHistory);
 
+       
         $this->entityManager->persist($ask);
         $this->entityManager->flush();
+        // get the complete ad to have data for the email
+        $ad = $this->getAskFromAd($ask->getId(), $userId);
         // dispatch en event
         if (($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
             $event = new AskAcceptedEvent($ad);

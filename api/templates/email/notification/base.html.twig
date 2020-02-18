@@ -8,7 +8,7 @@
 </head>
 <body>
 <center style="width: 100%; background-color: {{api_env('EMAILS_EXTERIOR_BACKGROUND_COLOR')}};">
-<table border="1" style="max-width:100%;font-family:Ubuntu, sans-serif;background-color: {{api_env('EMAILS_INTERIOR_BACKGROUND_COLOR')}};">
+<table style="max-width:100%;font-family:Ubuntu, sans-serif;background-color: {{api_env('EMAILS_INTERIOR_BACKGROUND_COLOR')}};">
     <tr>
         <td>
             <!-- Header -->
@@ -40,8 +40,8 @@
     <tr>
         <td style="border-spacing:0;text-align:center">
             <!-- Footer-->
-            </hr>
-            <table align="center" style="border-spacing:0;text-align:center;vertical-align:top;width:100%;margin-top:20px;font-family:Ubuntu, sans-serif;color:#13a569">
+            <hr>
+            <table align="center" style="border-spacing:0;text-align:center;vertical-align:top;width:100%;margin-top:20px;font-family:Ubuntu, sans-serif;color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
                 <tr>
                     <td style="width:10%"> 
                         &nbsp;
@@ -74,16 +74,16 @@
                         &nbsp;
                     </td>
                 </tr>
-                <tr>
+                {# <tr>
                     <td>
                         &nbsp;
                     </td>
-                     <td style="text-align:left">
+                     <td style="text-align:center">
                         <a href="{{api_env('EMAILS_ANDROID_URL')}}" >
-                            <img src="{{api_env('EMAILS_ANDROID_LOGO')}}" alt="Android"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_ANDROID_LOGO')}}" alt="Android"/>
                         </a>
                         <a href="{{api_env('EMAILS_IOS_URL')}}" >
-                            <img src="{{api_env('EMAILS_IOS_LOGO')}}" alt="AppleStore"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_IOS_LOGO')}}" alt="AppleStore"/>
                         </a>
                     </td>
                     <td>
@@ -105,18 +105,18 @@
                     <td>
                         &nbsp;
                     </td>
-                    <td style="text-align:left">
+                    <td style="text-align:center">
                         <a href="{{api_env('EMAILS_FACEBOOK_URL')}}" >
-                            <img src="{{api_env('EMAILS_FACEBOOK_LOGO')}}" alt="facebook"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_FACEBOOK_LOGO')}}" alt="facebook"/>
                         </a>
                         <a href="{{api_env('EMAILS_TWITTER_URL')}}" >
-                            <img src="{{api_env('EMAILS_TWITTER_LOGO')}}" alt="twitter"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_TWITTER_LOGO')}}" alt="twitter"/>
                         </a>
                     </td>
                     <td>
                         &nbsp;
                     </td>
-                </tr>    
+                </tr>     #}
         </table> 
         </td>
     </tr>

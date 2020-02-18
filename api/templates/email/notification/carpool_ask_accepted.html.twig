@@ -4,16 +4,18 @@
 {% set recipient = context.user %}
 {% set sender = context.sender %}
 {% set result = context.result %}
+{% set outwardOrigin = context.outwardOrigin %}
+{% set outwardDestination = context.outwardDestination %}
+{% set returnOrigin = context.returnOrigin %}
+{% set returnDestination = context.returnDestination %}
 
-
-
-<table border="1" style="max-width:100%;font-family:Ubuntu, sans-serif;">
+<table style="width:100%;font-family:Ubuntu, sans-serif;">
     <tr>
         <td>
             <table>
                 <tr>
                     <td>
-                        <p style="color:#13a569;font-size:30" >{{ "acceptedCarpool"|trans }}</p>
+                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30" ><b>{{ "acceptedCarpool"|trans }}</b></p>
                         <hr>
                     </td>
                 </tr>
@@ -22,19 +24,19 @@
     </tr>
     <tr>
         <td>
-            <table style="max-width:100%;">
+            <table style="width:100%;">
                 <tr>
                     <td style="width:70%">
-                        <p>{{ "hello"|trans }}<b style="color:#284b99"> {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b></p>
-                        <p>{{ "yourCarpoolWith"|trans }}<b style="color:#284b99"> {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}</b> {{ "isConfirmed"|trans }}</p>
-                        {% if ask.criteria.frequency == 1 %}
-                            <p>{{ "occasionalCarpool"|trans }} <b style="color:#284b99">{{ ask.criteria.fromDate|date("d/m/Y") }}</b>:</p>
+                        <p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b></p>
+                        <p>{{ "yourCarpoolWith"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}</b> {{ "isConfirmed"|trans }}</p>
+                        {% if ad.results[0].frequency == 1 %}
+                            <p>{{ "occasionalCarpool"|trans }} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ rad.results[0].fromDate|date("d/m/Y") }}</b>:</p>
                         {% else %}
-                            <p>{{ "regularCarpool"|trans }} <b style="color:#284b99">{{ ask.criteria.fromDate|date("d/m/Y") }}</b> {{ "to"|trans }} <b style="color:#284b99">{{ ask.criteria.toDate|date("d/m/Y") }}</b> :</p>
+                            <p>{{ "regularCarpool"|trans }} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].startDate|date("d/m/Y") }}</b> {{ "to"|trans }} <b style="color:#284b99">{{ ad.results[0].toDate|date("d/m/Y") }}</b> :</p>
                         {% endif %}
                     </td>
                     <td style="width:30%">
-                        <img  style="border-radius:50%" src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/users/images/versions/100-0a49c977ff809cd0dd14bb86ff224d-1.jpeg" alt="UserAvatar"/>
+                        <img  style="border-radius:50px" src="{{recipient.avatars[0]}}" alt="Avatar"/>
                     </td>
                 </tr>
             </table>
@@ -42,59 +44,59 @@
     </tr>
     <tr>
         <td>
-            <table  style="max-width:100%;background-color:#E6E9F3">
+            <table  style="width:100%;background-color:{{api_env('EMAILS_COLOR_PRIMARY_LIGHT')}};margin-top:5px;margin-bottom:5px;margin-left:5px">
                 <tr>
-                    <td style="width:10%">
-                        <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/PictoDepart-Arrivee.svg" alt="trajet"/>
+                    <td style="width:10%;text-align:left">
+                        <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_WAY_LOGO')}}" alt="trajet"/>
                     </td>
-                    <td style="width:90%">
-                        <p><b style="color:#284b99">{{ result.originPassenger.displayedLabel[0] }}</b></p>
-                        <p><b style="color:#284b99"> {{ result.destinationPassenger.displayedLabel[0] }}</b></p>
+                    <td style="width:90%;text-align:left">
+                        <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ outwardOrigin.address.displayLabel[0] }}</b></p>
+                        <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{ outwardDestination.address.displayLabel[0] }}</b></p>
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
-    {% if result.frequency == 2 %}
+    {% if ad.results[0].frequency == 2 %}
     <tr>
         <td>
-            <table  style="max-width:100%;">
+            <table  style="width:100%;">
                 <tr>
                     <td style="width:100%">
                         {% if result.outward.monCheck %}
-                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/darkMon.svg" alt="Mon"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_MON_DARK_LOGO')}}" alt="Mon"/>
                         {% else %}
-                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/lightMon.svg" alt="Mon"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_MON_LIGHT_LOGO')}}" alt="Mon"/>
                         {% endif %}
                         {% if result.outward.tueCheck %}
-                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/darkTue.svg" alt="Tue"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_TUE_DARK_LOGO')}}" alt="Tue"/>
                         {% else %}
-                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/lightTue.svg" alt="Tue"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_TUE_LIGHT_LOGO')}}" alt="Tue"/>
                         {% endif %} 
                         {% if result.outward.wedCheck %}
-                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/darkWed.svg" alt="Wed"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_WED_DARK_LOGO')}}" alt="Wed"/>
                         {% else %}
-                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/lightWed.svg" alt="Wed"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_WED_LIGHT_LOGO')}}" alt="Wed"/>
                         {% endif %} 
                         {% if result.outward.thuCheck %}
-                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/darkThu.svg" alt="Thu"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_THU_DARK_LOGO')}}" alt="Thu"/>
                         {% else %}
-                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/lightThu.svg" alt="Thu"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_THU_LIGHT_LOGO')}}" alt="Thu"/>
                         {% endif %} 
                         {% if result.outward.friCheck %}
-                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/darkFri.svg" alt="Fri"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_FRI_DARK_LOGO')}}" alt="Fri"/>
                         {% else %}
-                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/lightFri.svg" alt="Fri"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_FRI_LIGHT_LOGO')}}" alt="Fri"/>
                         {% endif %} 
                         {% if result.outward.satCheck %}
-                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/darkSat.svg" alt="Sat"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_SAT_DARK_LOGO')}}" alt="Sat"/>
                         {% else %}
-                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/lightSat.svg" alt="Sat"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_SAT_LIGHT_LOGO')}}" alt="Sat"/>
                         {% endif %} 
                         {% if result.outward.sunCheck %}
-                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/darkSun.svg" alt="Sun"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_SUN_DARK_LOGO')}}" alt="Sun"/>
                         {% else %}
-                            <img src="/home/remi/Documents/Dev/mobicoop-platform/api/public/upload/emails/lightSun.svg" alt="Sun"/>
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_SUN_LIGHT_LOGO')}}" alt="Sun"/>
                         {% endif %}     
                     </td>
                 </tr>
@@ -104,29 +106,30 @@
     {% endif %}
     <tr>
         <td>
-            <table  style="max-width:100%;">
+            <table  style="width:100%;">
                 <tr>
                     {% if result.outward %}
-                        <td style="width:45%">
-                            <p style="color:#ddb62d"><b>{{"outward"|trans}}</b></p>
+                        <td >
+                            <p style="color:{{api_env('EMAILS_COLOR_ACCENT')}}"><b>{{"outward"|trans}}</b></p>
                         </td>
                     {% endif %}
                     <td>
                         &nbsp;
                     </td>
                     {% if result.return %}
-                        <td style="width:45%">
-                            <p style="color:#ddb62d"><b>{{"return"|trans}}</b></p>
+                        <td >
+                            <p style="color:{{api_env('EMAILS_COLOR_ACCENT')}}"><b>{{"return"|trans}}</b></p>
                         </td>
                     {% endif %}
                 </tr>
                 <tr>
                     {% if result.outward %}
                         <td>
-                            {% if result.outward.multiplesTimes %}
-                            <p><b style="color:#284b99">{{"multipleShedules"|trans}}</b></p>
+                            {% if result.outward.multipleTimes %}
+                            <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{"multipleShedules"|trans}}</b></p>
                         {% else %}
-                            <p>{{"pickUp"|trans}}<b style="color:#284b99">{{result.outward.time}}</b></p>
+                            <p>{{"pickUp"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{outwardOrigin.time|date("h:m")}}</b></p>
+                            <p>{{"dropOff"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{outwardDestination.time|date("h:m")}}</b></p>
                         {% endif %}
                         </td>
                     {% endif %}
@@ -135,25 +138,27 @@
                     </td>
                     {% if result.return %}
                         <td>
-                            {% if result.return.multiplesTimes %}
-                                <p><b style="color:#284b99">{{"multipleShedules"|trans}}</b></p>
+                            {% if result.return.multipleTimes %}
+                                <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{"multipleShedules"|trans}}</b></p>
                             {% else %}
-                                <p>{{"pickUp"|trans}}<b style="color:#284b99">{{result.return.time}}</b></p>
+                                <p>{{"pickUp"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{returnOrigin.time|date("h:m")}}</b></p>
+                                <p>{{"dropOff"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{returnDestination.time|date("h:m")}}</b></p>
                             {% endif %}    
                         </td>
                     {% endif %}
                 </tr>
+                <hr>
             </table>
         </td>
     </tr>
-    </hr>
+
     <tr>
         <td>
-            <table  style="max-width:100%;">
+            <table  style="width:100%;">
                 <tr>
                     <td style="width:100%">
-                        <p>Place(s) réservée(s) : <b style="color:#284b99">{{ad.results[0].seats}}</b></p>
-                        <p>Prix indicatif : <b style="color:#284b99">{{ad.results[0].roundedPrice}}</b></p>
+                        <p>{{"seatsSelected"|trans}} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ad.results[0].seats}}</b></p>
+                        <p>{{"indicativePrice"|trans}} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ad.results[0].roundedPrice}}</b></p>
                     </td>
                 </tr>
             </table>
