@@ -40,7 +40,9 @@ class EmailManager
     private $mailer;
     private $templating;
     private $emailSenderDefault;
+    private $emailSenderNameDefault;
     private $emailReplyToDefault;
+    private $emailReplyToNameDefault;
     private $templatePath;
     private $logger;
     private $translator;
@@ -53,16 +55,20 @@ class EmailManager
        * @param LoggerInterface $logger
        * @param TranslatorInterface $translator
        * @param string $emailSender
+       * @param string $emailSenderName
        * @param string $emailReplyTo
+       * @param string $emailReplyToName
        * @param string $templatePath
        * @param string $emailAdditionalHeaders
        */
-    public function __construct(\Swift_Mailer $mailer, Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailReplyTo, string $templatePath, string $emailAdditionalHeaders)
+    public function __construct(\Swift_Mailer $mailer, Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailSenderName, string $emailReplyTo, string $emailReplyToName, string $templatePath, string $emailAdditionalHeaders)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
         $this->emailSenderDefault = $emailSender;
+        $this->emailSenderNameDefault = $emailSenderName;
         $this->emailReplyToDefault = $emailReplyTo;
+        $this->emailReplyToNameDefault = $emailReplyToName;
         $this->templatePath = $templatePath;
         $this->logger = $logger;
         $this->translator = $translator;
@@ -96,10 +102,14 @@ class EmailManager
         $sessionLocale= $this->translator->getLocale();
         $this->translator->setLocale($lang);
        
+        
+        $senderName = ($this->emailSenderNameDefault!=="") ? $this->emailSenderNameDefault : $senderEmail;
+        $senderReplyToName = ($this->emailReplyToNameDefault!=="") ? $this->emailReplyToNameDefault : $replyToEmail;
+        
         $message = (new \Swift_Message($mail->getObject()))
-            ->setFrom($senderEmail)
+            ->setFrom($senderEmail, $senderName)
             ->setTo($mail->getRecipientEmail())
-            ->setReplyTo($replyToEmail)
+            ->setReplyTo($replyToEmail, $senderReplyToName)
             ->setBody(
                 $this->templating->render(
                     $this->templatePath.$template.'.html.twig',
