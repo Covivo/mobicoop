@@ -88,8 +88,8 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onAskPosted(AskPostedEvent $event)
     {
         // the recipient is the user that has not made the ask
-        $askRecipient = ($event->getAsk()->getUserRelated());
-        $this->notificationManager->notifies(AskPostedEvent::NAME, $askRecipient, $event->getAsk());
+        $askRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
+        $this->notificationManager->notifies(AskPostedEvent::NAME, $askRecipient, $event->getAd());
     }
     
     /**

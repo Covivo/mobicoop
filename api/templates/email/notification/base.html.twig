@@ -8,7 +8,7 @@
 </head>
 <body>
 <center style="width: 100%; background-color: {{api_env('EMAILS_EXTERIOR_BACKGROUND_COLOR')}};">
-<table style="max-width:100%;font-family:Ubuntu, sans-serif;background-color: {{api_env('EMAILS_INTERIOR_BACKGROUND_COLOR')}};">
+<table style="width:700px;font-family:{{api_env('EMAILS_FONT')}}, sans-serif;background-color: {{api_env('EMAILS_INTERIOR_BACKGROUND_COLOR')}};">
     <tr>
         <td>
             <!-- Header -->
@@ -41,7 +41,7 @@
         <td style="border-spacing:0;text-align:center">
             <!-- Footer-->
             <hr>
-            <table align="center" style="border-spacing:0;text-align:center;vertical-align:top;width:100%;margin-top:20px;font-family:Ubuntu, sans-serif;color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
+            <table align="center" style="border-spacing:0;text-align:center;vertical-align:top;width:100%;margin-top:20px;font-family:{{api_env('EMAILS_FONT')}}, sans-serif;color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
                 <tr>
                     <td style="width:10%"> 
                         &nbsp;

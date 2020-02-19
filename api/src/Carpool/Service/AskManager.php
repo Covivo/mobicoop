@@ -80,8 +80,8 @@ class AskManager
         
         $this->entityManager->persist($ask);
         // dispatch en event
-        $event = new AskPostedEvent($ask);
-        $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
+        // $event = new AskPostedEvent($ask);
+        // $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
         return $ask;
     }
 
@@ -469,8 +469,10 @@ class AskManager
         $this->entityManager->flush($ask);
         
         $ad->setAskId($ask->getId());
+        // get the complete ad to have data for the email
+        $ad = $this->getAskFromAd($ask->getId(), $ask->getUser()->getId());
         // dispatch en event
-        $event = new AskPostedEvent($ask);
+        $event = new AskPostedEvent($ad);
         $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
 
         return $ad;

@@ -29,6 +29,12 @@ pickUp: "Prise en charge à "
 dropOff: "Dépose à "
 seatsSelected: "Place(s) réservée(s) : "
 indicativePrice: "Prix indicatif : "
+# CARPOOL_PROPOSAL_POSTED
+newCarpoolAsk: "VOUS AVEZ UNE DEMANDE DE COVOITURAGE!"
+askForCarpool: "vous sollicite pour un covoiturage."
+occasionalCarpoolAsk: "Récapitulatif de la demande de covoiturage occasionnel le"
+regularCarpoolAsk: "Récapitulatif de la demande de covoiturage régulier du"
+
 
 # CARPOOL_ASK_REFUSED
 notBeAbleToCarpoolWithYouFor: "ne pourra pas covoiturer avec vous le "
@@ -46,10 +52,7 @@ linkMyAds: "/utilisateur/profil/modifier/mes-annonces"
 toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact"
 justPublished : "elle vient d'être publiée"
 
-# CARPOOL_PROPOSAL_POSTED
 
-yourAsk: "a fait une demande formelle pour le covoiturage ci-dessous"
-replyViaEMail: "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
