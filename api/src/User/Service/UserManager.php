@@ -334,7 +334,18 @@ class UserManager
 
             $messages[] = $currentMessage;
         }
+        // Sort with the last message received first
+        usort($messages, array($this, 'sortThread'));
         return $messages;
+    }
+
+
+    public static function sortThread($a, $b)
+    {
+        if ($a['date'] == $b['date']) {
+            return 0;
+        }
+        return ($a['date'] < $b['date']) ? 1 : -1;
     }
 
     public function parseThreadsCarpoolMessages(User $user, array $threads)
@@ -404,6 +415,8 @@ class UserManager
             }
         }
 
+        // Sort with the last message received first
+        usort($messages, array($this, 'sortThread'));
         return $messages;
     }
 
