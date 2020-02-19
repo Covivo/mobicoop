@@ -1,5 +1,5 @@
 <template>
-  <v-content color="secondary">
+  <v-content>
     <v-container
       grid-list-md
       text-xs-center

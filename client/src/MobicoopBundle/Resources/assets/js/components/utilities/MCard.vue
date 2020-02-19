@@ -4,44 +4,65 @@
     :color="backgroundColor"
     :height="height"
     :max-width="280"
+    :flat="flat"
+    :tile="tile"
   >
-    <v-card-title
-      class="body-1 justify-center"
-      :class="textColor"
+    <v-row
+      dense
     >
-      {{ cardTitle }}
-    </v-card-title>
-    <v-card-text
-      :class="textColor"
-      align="center"
+      <v-col :style="'height:'+heightTitle+';'">
+        <v-card-title
+          :class="optionnalTitleClasses"
+          v-html="cardTitle"
+        />
+      </v-col>
+    </v-row>
+    <v-row
+      v-if="cardText"
+      dense
     >
-      {{ cardText }}
-    </v-card-text>
-    <v-card-actions>
-      <v-row
-        justify="center"
-      >
-        <v-btn
-          rounded
-          class="mb-4 body-2"
-          :class="cardTextColorButton+' '+cardColorButton"
-          :href="hrefButton"
-          width="90%"
+      <v-col>
+        <v-card-text
+          :class="textColor"
+          align="center"
         >
-          {{ cardTextButton }}
-        </v-btn>
-        <v-btn
-          v-if="cardTextButtonTwo!==''"
-          rounded
-          class="ma-0 body-2"
-          :class="cardTextColorButtonTwo+' '+cardColorButtonTwo"
-          :href="hrefButtonTwo"
-          width="90%"
-        >
-          {{ cardTextButtonTwo }}
-        </v-btn>
-      </v-row>
-    </v-card-actions>
+          {{ cardText }}
+        </v-card-text>
+      </v-col>
+    </v-row>
+    <v-row
+      dense
+    >
+      <v-col>
+        <v-card-actions>
+          <v-row
+            justify="center"
+          >
+            <v-col>
+              <v-btn
+                rounded
+                class="mb-4 body-2"
+                :class="cardTextColorButton+' '+cardColorButton"
+                :href="hrefButton"
+                width="90%"
+              >
+                {{ cardTextButton }}
+              </v-btn>
+              <v-btn
+                v-if="cardTextButtonTwo!==''"
+                rounded
+                class="ma-0 body-2"
+                :class="cardTextColorButtonTwo+' '+cardColorButtonTwo"
+                :href="hrefButtonTwo"
+                width="90%"
+              >
+                {{ cardTextButtonTwo }}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card-actions>
+      </v-col>
+    </v-row>
   </v-card>
 </template>
 
@@ -98,12 +119,44 @@ export default {
     },
     height: {
       type: Number,
-      default: 200
+      default: 250
+    },
+    boldTitle: {
+      type: Boolean,
+      default:false
+    },
+    justifyTitle: {
+      type: String,
+      default: "justify-center"
+    },
+    classTitle: {
+      type: String,
+      default:"body-1"
+    },
+    heightTitle:{
+      type:String,
+      default:"auto"
+    },
+    flat: {
+      type: Boolean,
+      default:false
+    },
+    tile: {
+      type: Boolean,
+      default:false
     }
   },
   data() {
     return {
     }
   },
+  computed:{
+    optionnalTitleClasses(){
+      let classes = this.justifyTitle+' '+this.textColor+' '+this.classTitle;
+      if(this.boldTitle) classes += ' font-weight-bold';
+
+      return classes;
+    }
+  }
 };
 </script>
