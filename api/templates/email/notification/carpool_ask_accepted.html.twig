@@ -9,6 +9,7 @@
 {% set returnOrigin = context.returnOrigin %}
 {% set returnDestination = context.returnDestination %}
 
+    
 <table style="width:100%;font-family:Ubuntu, sans-serif;">
     <tr>
         <td>
@@ -128,8 +129,8 @@
                             {% if result.outward.multipleTimes %}
                             <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{"multipleShedules"|trans}}</b></p>
                         {% else %}
-                            <p>{{"pickUp"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{outwardOrigin.time|date("h:m")}}</b></p>
-                            <p>{{"dropOff"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{outwardDestination.time|date("h:m")}}</b></p>
+                            <p>{{"pickUp"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{outwardOrigin.time|date('H:i')}}</b></p>
+                            <p>{{"dropOff"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{outwardDestination.time|date('H:i')}}</b></p>
                         {% endif %}
                         </td>
                     {% endif %}
@@ -141,8 +142,8 @@
                             {% if result.return.multipleTimes %}
                                 <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{"multipleShedules"|trans}}</b></p>
                             {% else %}
-                                <p>{{"pickUp"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{returnOrigin.time|date("h:m")}}</b></p>
-                                <p>{{"dropOff"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{returnDestination.time|date("h:m")}}</b></p>
+                                <p>{{"pickUp"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{returnOrigin.time|date('H:i')}}</b></p>
+                                <p>{{"dropOff"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{returnDestination.time|date('H:i')}}</b></p>
                             {% endif %}    
                         </td>
                     {% endif %}
