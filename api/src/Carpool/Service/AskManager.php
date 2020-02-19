@@ -657,7 +657,7 @@ class AskManager
             $event = new AskAcceptedEvent($ad);
             $this->eventDispatcher->dispatch(AskAcceptedEvent::NAME, $event);
         } elseif (($ask->getStatus() == Ask::STATUS_DECLINED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_DECLINED_AS_PASSENGER)) {
-            $event = new AskRefusedEvent($ask);
+            $event = new AskRefusedEvent($ad);
             $this->eventDispatcher->dispatch(AskRefusedEvent::NAME, $event);
         }
         return $ad;

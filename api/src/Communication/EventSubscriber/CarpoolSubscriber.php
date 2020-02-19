@@ -87,7 +87,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
      */
     public function onAskPosted(AskPostedEvent $event)
     {
-        // the recipient is the user that has not made the ask
+        // the recipient is the carpooler
         $askRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
         $this->notificationManager->notifies(AskPostedEvent::NAME, $askRecipient, $event->getAd());
     }
@@ -101,7 +101,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
      */
     public function onAskAccepted(AskAcceptedEvent $event)
     {
-        // the recipient is the user that has made the ask
+        // the recipient is the carpooler
         $adRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
         $this->notificationManager->notifies(AskAcceptedEvent::NAME, $adRecipient, $event->getAd());
     }
@@ -115,9 +115,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
      */
     public function onAskRefused(AskRefusedEvent $event)
     {
-        // the recipient is the user that has made the ask
-        $askRecipient = ($event->getAsk()->getUser());
-        $this->notificationManager->notifies(AskRefusedEvent::NAME, $askRecipient, $event->getAsk());
+        // the recipient is the carpooler
+        $adRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
+        $this->notificationManager->notifies(AskRefusedEvent::NAME, $adRecipient, $event->getAd());
     }
     
     /**

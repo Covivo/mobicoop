@@ -1,11 +1,12 @@
 #BASE
-
+hello: "Bonjour"
 AQuestion: "Une question?"
 FAQ: "FAQ"
 EmailsAlerts: "Gérer vos alertes email"
 URLEmailsAlerts: "utilisateur/profil/modifier/mon-profil"
 Download: "Téléchargez l'application <b>Android</b> ou <b>IOS</b>"
 FollowUs: "Suivez-nous"
+signature: "A bientôt sur "
 
 
 # CARPOOL_AD_RENEWAL
@@ -16,7 +17,6 @@ toUseTheService: "à utiliser le service ! Partagez vos trajets et trouvez votre
 
 # CARPOOL_ASK_ACCEPTED
 acceptedCarpool: "VOTRE COVOITURAGE EST CONFIRMÉ !"
-hello: "Bonjour"
 yourCarpoolWith: "Votre covoiturage avec"
 isConfirmed: "est confirmé!"
 occasionalCarpool: "Récapitulatif de votre trajet occasionnel du"
@@ -34,17 +34,20 @@ newCarpoolAsk: "VOUS AVEZ UNE DEMANDE DE COVOITURAGE!"
 askForCarpool: "vous sollicite pour un covoiturage."
 occasionalCarpoolAsk: "Récapitulatif de la demande de covoiturage occasionnel le"
 regularCarpoolAsk: "Récapitulatif de la demande de covoiturage régulier du"
-
-
 # CARPOOL_ASK_REFUSED
-notBeAbleToCarpoolWithYouFor: "ne pourra pas covoiturer avec vous le "
-notBeAbleToCarpoolWithYou: "ne pourra pas covoiturer avec vous vers"
-followingDays: "Les jours concernés"
-hisMessage: "Voici son message"
-towards: "en direction de"
+refusedCarpool: "VOTRE COVOITURAGE N'EST PAS VALIDÉ."
+refusedOccasionalCarpool: " n'a pas validé le covoiturage pour le trajet du"
+refusedRegularCarpool: " n'a pas validé le covoiturage pour le trajet régulier du"
+noPanic: "Pas de panique, vous pouvez rechercher un nouveau trajet ou publier une annonce."
+# CARPOOL_LINKED_AD_DELETED
+canceledCarpool: "VOTRE COVOITURAGE EST ANNULÉ."
+canceledOccasionalCarpool: " a annulé son trajet et ne pourra pas covoiturer avec vous le"
+canceledRegularCarpool: "  a annulé son trajet régulier et ne pourra pas covoiturer avec vous du"
+deletedAccountOccasionalCarpool: " a supprimé son compte et ne pourra pas covoiturer avec vous le"
+deletedAccountRegularCarpool: " a supprimé son compte et ne pourra pas covoiturer avec vous du"
+
 
 # CARPOOL_MATCHING_NEW
-
 newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet entre"
 seeYouIn: "Rendez-vous dans" 
 myAds: "Mes annonces"
@@ -181,7 +184,6 @@ carpoolAsk: "Demande de covoiturage"
 # CARPOOL_ASK_REFUSED
 
 askRefused: "Proposition de covoiturage déclinée"
-
 # CARPOOL_ASK_UPDATED
 
 carpoolWaitingForValidation: "Covoiturage en attente de validation"
