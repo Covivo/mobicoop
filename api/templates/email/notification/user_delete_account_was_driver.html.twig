@@ -1,7 +1,9 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
+<p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b>.</p>
     Votre demande pour un {{context.origin.address.addressLocality}} => {{context.destination.address.addressLocality}} avec {{context.ask.userRelated.givenName}} a été rejetée,
     car {{context.ask.userRelated.givenName}} a supprimé son annonce associé.
+<p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
 {% endblock %}
 
 
