@@ -59,7 +59,7 @@ justPublished : "elle vient d'être publiée"
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
-youHaveAMessage: "Vous avez reçu un message :"
+youHaveAMessage: "Vous avez reçu un nouveau message :"
 canAnswerViaEmailFrom: "Vous pouvez répondre à ce message via la messagerie de"
 clickHere: "en cliquant ici" 
 getProblem: "Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter"
@@ -145,32 +145,37 @@ renewYourAdsOn: "Renouvelez votre annonce sur"
 
 # CARPOOL_ASK_ACCEPTED
 
-carpoolAskAcceptedRegular: "Covoiturage régulier confirmé avec"
-between: "entre"
-and: "et"
-carpoolAskAccepted: "Covoiturage confirmé avec"
+carpoolAskAcceptedRegular: "Covoiturage régulier confirmé avec "
+between: "entre "
+and: "et "
+the: "le "
+from: "de "
+at: "à "
+seeTheAd: "Voir l annonce sur "
+carpoolAskAccepted: "Covoiturage confirmé avec "
 
 # CARPOOL_ASK_POSTED
 
-askYouCarpoolRegular: "vous propose un covoiturage régulier de"
-findTheProposalIn: "Retrouvez la proposition dans « Mes Messages »"
+askYouCarpoolRegular: "vous propose un covoiturage régulier de "
+findTheProposalIn: "Acceptez ou refusez la demande dans 'Mes Messages' sur "
 askYouCarpool: "vous propose un covoiturage de"
 
 # CARPOOL_ASK_REFUSED
 
-refusedAsk: "décline le covoiturage de"
-refusedAskRegular: "décline le covoiturage régulier de" 
+refusedAsk: "n a pas validé le covoiturage de "
+refusedAskReguar: "n a pas validé le covoiturage régulier de "
+goTotheSite: "Trouvez de nouveaux covoiturages ou déposez une annonce sur " 
 
 # CARPOOL_MATCHING_NEW
 
-newAdPublished: "Une nouvelle annonce a été publiée pour votre trajet"
-appointmentIn: "Rdv dans Mes annonces"
+newAdPublished: "Une nouvelle annonce correspond à votre trajet"
+appointmentIn: "Rdv dans 'Mes annonces' sur"
 newMatching: "Une nouvelle annonce a été publiée pour votre trajet"
 
 # CARPOOL_INTERNAL_MESSAGE_RECEIVED
 
 newMessage: "Vous avez reçu un nouveau message de"
-lookYourMessaging: "Voir sur votre messagerie"
+lookYourMessaging: "RDV dans 'Mes Messages' sur "
 
 
 ######      TITLE      ######
@@ -203,12 +208,13 @@ newCarpoolAd: "Nouvelle(s) annonce(s) de covoiturage"
 newAd: "Nouvelle(s) annonce(s) sur "
 
 # AD_DELETED
-
+carpoolDeleted: "a annulé son trajet et ne pourra pas covoiturer avec vous de"
 askLinkedAdDeleted: "Une annonce à laquelle vous aviez postulé a été supprimée"
 driverAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez conducteur a été supprimée"
 driverAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez conducteur a été supprimée"
 passengerAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez passagé a été supprimée"
 passengerAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez passagé a été supprimée"
+findNewCarpool: "Trouvez de nouveaux covoiturages ou déposez une annonce sur "
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 

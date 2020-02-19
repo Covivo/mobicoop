@@ -1,12 +1,16 @@
-{# {% if Driver regular %}
-{{ "carpoolAskAcceptedRegular"|trans }} @PrenomOuPseudoPassager @PortablePassager {{ "between"|trans }} @AdressePEC {{"and"|trans}} @AdresseDepose.
-{% elseif Driver occasionnal %}
-{{ "carpoolAskAccepted"|trans }} @PrenomOuPseudoPassager @PortablePassager {{ "the"|trans }} @DateDepartPassager {{"at"|trans}} @HeurePEC {{ "from"|trans }} @adressePEC {{"to"|trans}} @AdresseDepose.
-{% elseif Passenger regular %}
-{{ "carpoolAskAcceptedRegular"|trans }} @PrenomOuPseudoConducteur @PortableConducteur {{ "between"|trans }} @AdressePEC {{"and"|trans}} @AdresseDepose.
-{% elseif Passenger occasionnal %}
-{{ "carpoolAskAccepted"|trans }} @PrenomOuPseudoConducteur @PortableConducteur {{ "the"|trans }} @DateDepartConducteur {{"at"|trans}} @HeurePEC {{ "from"|trans }} @adressePEC {{"to"|trans}} @AdresseDeposesms.
-{% endif %} #}
+{% set ad = context.ad %}
+{% set recipient = context.user %}
+{% set sender = context.sender %}
+{% set result = context.result %}
+{% set outwardOrigin = context.outwardOrigin %}
+{% set outwardDestination = context.outwardDestination %}
+{% set returnOrigin = context.returnOrigin %}
+{% set returnDestination = context.returnDestination %}
 
-Votre trajet vient d'être confirmé.
-{{api_env('SMS_PLATFORM_NAME')}}
+{{"hello"|trans}} {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}
+{% if ad.results[0].frequency == 1 %}
+{{"carpoolAskAccepted"|trans}} {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} {{"the"|trans}} {{ ad.results[0].date|date("d/m/Y") }} {{"at"|trans}} {{outwardOrigin.time|date('H:i')}} {{"from"|trans}} {{ outwardOrigin.address.displayLabel[0] }} {{"at"|trans}} {{ outwardDestination.address.displayLabel[0] }}. {{"seeTheAd"|trans}} {{api_env('SMS_PLATFORM_NAME')}}.
+{% else %}
+{{"carpoolAskAcceptedRegular"|trans}} {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} {{"between"|trans}}  {{ outwardOrigin.address.displayLabel[0] }} {{"and"|trans}} {{ outwardDestination.address.displayLabel[0] }}. {{"seeTheAd"|trans}} {{api_env('SMS_PLATFORM_NAME')}}.
+{% endif %}
+{{"signature"|trans}} {{api_env('SMS_PLATFORM_NAME')}}

@@ -1,11 +1,16 @@
-{# {% if Driver regular %}
-@PrenomOuPseudoPassager {{ "refusedAskRegular"|trans }} @villePEC {{ "at"|trans }} @VilleDepose.
-{% elseif Driver occasionnal %}
-@PrenomOuPseudoPassager {{ "refusedAsk"|trans }} @villePEC {{ "at"|trans }} @VilleDepose {{ "the" |trans }} @DateVoyage {{ "at"|trans }} @HeurePEC.
-{% elseif Passenger regular %}
-@PrenomOuPseudoConducteur {{ "refusedAskRegular"|trans }} @villePEC {{ "at"|trans }} @VilleDepose.
-{% elseif Passenger occasionnal %}
-@PrenomOuPseudoConducteur {{ "refusedAsk"|trans }} @villePEC {{ "at"|trans }} @VilleDepose {{ "the"|trans }} @DateVoyage {{ "at"|trans }} @HeurePEC.
-{% endif %} #}
-Votre demande de covoiturage vient d'être décliné.
-{{api_env('SMS_PLATFORM_NAME')}}
+{% set ad = context.ad %}
+{% set recipient = context.user %}
+{% set sender = context.sender %}
+{% set result = context.result %}
+{% set outwardOrigin = context.outwardOrigin %}
+{% set outwardDestination = context.outwardDestination %}
+{% set returnOrigin = context.returnOrigin %}
+{% set returnDestination = context.returnDestination %}
+
+{{"hello"|trans}} {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}
+{% if ad.results[0].frequency == 1 %}
+{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} {{"refusedAsk"|trans}} {{ outwardOrigin.address.displayLabel[0] }} {{"at"|trans}} {{ outwardDestination.address.displayLabel[0] }}. {{"goTotheSite"|trans}} {{api_env('SMS_PLATFORM_NAME')}}.
+{% else %}
+{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} {{"refusedAskReguar"|trans}} {{ outwardOrigin.address.displayLabel[0] }} {{"at"|trans}} {{ outwardDestination.address.displayLabel[0] }}. {{"goTotheSite"|trans}} {{api_env('SMS_PLATFORM_NAME')}}.
+{% endif %}
+{{"signature"|trans}} {{api_env('SMS_PLATFORM_NAME')}}

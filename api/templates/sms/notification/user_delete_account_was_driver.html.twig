@@ -1,3 +1,4 @@
+{{"hello"|trans}} {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}
 Votre Covoiturage pour un {{context.origin.address.addressLocality}} => {{context.destination.address.addressLocality}} avec {{context.user.givenName}} a été rejetée,
 car {{context.user.givenName}} a supprimé son annonce.
-{{api_env('SMS_PLATFORM_NAME')}}
+{{"signature"|trans}} {{api_env('SMS_PLATFORM_NAME')}}
