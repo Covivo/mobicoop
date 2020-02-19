@@ -666,7 +666,6 @@ class UserManager
             }
             //There is offers on the proposal -> we delete proposal + send email to passengers
             foreach ($proposal->getMatchingOffers() as $matching) {
-                var_dump('mmm');
                 //TODO libérer les places sur les annonces réservées
                 foreach ($matching->getAsks() as $ask) {
                     $event = new UserDeleteAccountWasPassengerEvent($ask);
@@ -674,15 +673,15 @@ class UserManager
                 }
             }
             //Set user at null and private on the proposal : we keep info for message, proposal cant be found
-           // $proposal->setPrivate(1);
+            $proposal->setPrivate(1);
         }
 
         //Anonymise content of message with a key
-      /*  foreach ($user->getMessages() as $message) {
+        foreach ($user->getMessages() as $message) {
             $message->setText('@mobicoop2020Message_supprimer');
         }
 
-        return $this->setUserAtNull($user);*/
+        return $this->setUserAtNull($user);
     }
 
     private function setUserAtNull(User $user)

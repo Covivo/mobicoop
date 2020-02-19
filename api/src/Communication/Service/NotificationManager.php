@@ -93,9 +93,9 @@ class NotificationManager
      */
     public function notifies(string $action, User $recipient, ?object $object = null)
     {
-       /* if (!$this->enabled) {
-            return;
-        }*/
+         if (!$this->enabled) {
+             return;
+         }
 
         $notifications = null;
         // we check the user notifications
@@ -159,7 +159,6 @@ class NotificationManager
         $email->setRecipientEmail($recipient->getEmail());
         $titleContext = [];
         $bodyContext = [];
-        var_dump($object->getUser()->getGivenName());
         if ($object) {
             switch (get_class($object)) {
                 case Proposal::class:
