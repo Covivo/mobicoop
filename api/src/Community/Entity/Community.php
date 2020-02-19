@@ -88,7 +88,7 @@ use App\Community\Controller\JoinAction;
  *                      }
  *                  }
  *              },
- *              "security_post_denormalize"="is_granted('community_create',object)"
+ *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },
  *          "exists"={
  *              "method"="GET",
