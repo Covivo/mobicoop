@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -27,13 +27,16 @@ use App\Article\Entity\Section;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Article\Entity\Paragraph;
+use App\Article\Entity\Article;
 use App\Article\Repository\SectionRepository;
 use App\Article\Repository\ParagraphRepository;
+use App\Article\Repository\ArticleRepository;
 
 /**
  * Article manager service.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ArticleManager
 {
@@ -56,18 +59,23 @@ class ArticleManager
      * @var ParagraphRepository $paragraphRepository
      */
     private $paragraphRepository;
+    /**
+     * @var ArticleRepository $articleRepository
+     */
+    private $articleRepository;
 
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, SectionRepository $sectionRepository, ParagraphRepository $paragraphRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, SectionRepository $sectionRepository, ParagraphRepository $paragraphRepository, ArticleRepository $articleRepository)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->sectionRepository = $sectionRepository;
         $this->paragraphRepository = $paragraphRepository;
+        $this->articleRepository = $articleRepository;
     }
 
     /**
@@ -134,5 +142,13 @@ class ArticleManager
                 break;
         }
         return $paragraph;
+    }
+
+    /**
+     * Get the external articles
+     */
+    public function getLastExternalArticles(int $nbArticles=Article::NB_EXTERNAL_ARTICLES_DEFAULT)
+    {
+        return $this->articleRepository->findLastExternal($nbArticles);
     }
 }

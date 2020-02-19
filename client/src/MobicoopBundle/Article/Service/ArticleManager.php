@@ -54,4 +54,16 @@ class ArticleManager
         $response = $this->dataProvider->getItem($id);
         return $response->getValue();
     }
+
+    /**
+     * Get the last external articles
+     * @param int $nbArticles   Number of articles to return
+     * @return array
+     */
+    public function getLastExternalArticles($nbArticles)
+    {
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSpecialCollection("external", ['nbArticles'=>$nbArticles]);
+        return $response->getValue();
+    }
 }

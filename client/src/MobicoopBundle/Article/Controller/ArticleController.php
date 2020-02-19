@@ -27,6 +27,8 @@ use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Article;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Mobicoop\Bundle\MobicoopBundle\Article\Service\ArticleManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Controller class for articles actions.
@@ -153,5 +155,22 @@ class ArticleController extends AbstractController
         return $this->render('@Mobicoop/article/article.html.twig', [
             'article' => $article,
         ]);
+    }
+
+    /**
+     * Get the last external articles
+     */
+    public function lastExternalArticles(Request $request, ArticleManager $articleManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            $nbArticles = Article::NB_EXTERNAL_ARTICLES_DEFAULT;
+            if (isset($data['nbArticles']) && is_numeric($data['nbArticles'])) {
+                $nbArticles = $data['nbArticles'];
+            }
+            return new JsonResponse($articleManager->getLastExternalArticles($nbArticles));
+        }
+        return new JsonResponse();
     }
 }
