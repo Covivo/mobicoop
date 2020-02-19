@@ -33,7 +33,7 @@ class UserDeleteAccountWasDriverEvent extends Event
 {
     public const NAME = 'user_delete_account_was_driver';
 
-    protected $user;
+    protected $ask;
 
     public function __construct(Ask $ask)
     {
