@@ -68,7 +68,7 @@ class Need
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readSolidarySolidary"})
+     * @Groups({"readSolidary"})
      */
     private $label;
 
@@ -78,7 +78,7 @@ class Need
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="needs")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidarySolidary"})
+     * @Groups({"readSolidary"})
      */
     private $structure;
 
