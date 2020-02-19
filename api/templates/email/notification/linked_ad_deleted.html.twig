@@ -4,9 +4,7 @@
 {% set recipient = context.user %}
 
 {% if recipient.id == ask.user.id %}
-    {% set deleterGivenName = ask.userRelated.givenName %}
-    {% set deleterFamilyName = ask.userRelated.familyName %}
+    {% set deleter = ask.userRelated %}
 {% else %}
-    {% set deleterGivenName = ask.user.givenName %}
-    {% set deleterFamilyName = ask.user.familyName %}
+    {% set deleter = ask.user %}
 {% endif %}

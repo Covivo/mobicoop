@@ -91,7 +91,7 @@ successfullyChanged: "a bien été changé"
 thanksForUse: "Merci d’utiliser"
 
 # USER_REGISTERED
-
+inscriptionAt: "VOTRE INSCRIPTION EST VALIDÉE!"
 yourInscriptionAt: "Votre inscription au service"
 wellTakenIntoAccount: "est bien prise en compte"
 clickHereToConfirm: "Veuillez cliquer sur ce lien pour confirmer votre email"
@@ -103,6 +103,7 @@ yourPasswordHasBeenSendBySms: "Votre mot de passe vous a été envoyé par SMS."
 # USER_UPDATED_SELF
 
 theModificationIsConfirmed: "La modification de votre profil est confirmée"
+profilUpdate: "MISE À JOUR DE VOTRE PROFIL CONFIRMÉE!"
 
 urlMailBox: "/utilisateur/messages"
 CheckoutForAnyURLMisspellingOr: "messages"
@@ -122,7 +123,12 @@ noPenaltyApplied: "Il n'y a pas de pénalité pour l'annulation de ce covoiturag
 
 # EVEN CREATED
 
-eventCreated: "Votre événement à bien été enregistré"
+eventCreated: "Votre événement a bien été enregistré!"
+event: "VOTRE ÉVÉNEMENT EST ENREGISTRÉ!"
+eventDetail: "Voici les détails de votre événement :"
+eventName: "Nom: "
+eventLocation: "Adresse: "
+eventDescription: "Description: "
 
 # EVENT REPORT
 
@@ -211,6 +217,8 @@ contactYou: "%givenName% vous contacte"
 # USER_PASSWORD_CHANGED
 
 askPassword: "Demande de re-initialisation de mot de passe"
+renewPassword: "DEMANDE DE RE-INITIALISATION DE MOT DE PASSE."
+newPassword: "VOTRE NOUVEAU MOT DE PASSE EST BIEN ENREGISTRÉ!"
 passwordChanged: "Confirmation de re-initialisation de mot de passe"
 
 # USER_REGISTERED

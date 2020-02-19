@@ -88,8 +88,8 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onAskPosted(AskPostedEvent $event)
     {
         // the recipient is the carpooler
-        $askRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
-        $this->notificationManager->notifies(AskPostedEvent::NAME, $askRecipient, $event->getAd());
+        $adRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
+        $this->notificationManager->notifies(AskPostedEvent::NAME, $adRecipient, $event->getAd());
     }
     
     /**
