@@ -660,28 +660,29 @@ class UserManager
             foreach ($proposal->getMatchingRequests() as $matching) {
                 //Check if there is ask on a proposal -> event for notifications
                 foreach ($matching->getAsks() as $ask) {
-                    $event = new UserDeleteAccountWasPassengerEvent($ask);
-                    $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
-                }
-            }
-            //There is offers on the proposal -> we delete proposal + send email to passengers
-            foreach ($proposal->getMatchingOffers() as $matching) {
-                //TODO libérer les places sur les annonces réservées
-                foreach ($matching->getAsks() as $ask) {
                     $event = new UserDeleteAccountWasDriverEvent($ask);
                     $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
                 }
             }
+            //There is offers on the proposal -> we delete proposal + send email to passengers
+            foreach ($proposal->getMatchingOffers() as $matching) {
+                var_dump('mmm');
+                //TODO libérer les places sur les annonces réservées
+                foreach ($matching->getAsks() as $ask) {
+                    $event = new UserDeleteAccountWasPassengerEvent($ask);
+                    $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
+                }
+            }
             //Set user at null and private on the proposal : we keep info for message, proposal cant be found
-            $proposal->setPrivate(1);
+           // $proposal->setPrivate(1);
         }
 
         //Anonymise content of message with a key
-        foreach ($user->getMessages() as $message) {
+      /*  foreach ($user->getMessages() as $message) {
             $message->setText('@mobicoop2020Message_supprimer');
         }
 
-        return $this->setUserAtNull($user);
+        return $this->setUserAtNull($user);*/
     }
 
     private function setUserAtNull(User $user)

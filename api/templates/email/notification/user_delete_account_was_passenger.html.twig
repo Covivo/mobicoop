@@ -1,5 +1,5 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    Votre demande pour un {{context.origin.address.addressLocality}} => {{context.destination.address.addressLocality}} avec {{context.user.givenName}} a été rejetée,
-    car {{context.user.givenName}} a supprimé son annonce.
+    Votre covoiturage pour un {{context.origin.address.addressLocality}} => {{context.destination.address.addressLocality}} avec le passager {{context.ask.user.givenName}} vient d'être annulé
+    car {{context.ask.user.givenName}} a supprimé son annonce associée.
 {% endblock %}
