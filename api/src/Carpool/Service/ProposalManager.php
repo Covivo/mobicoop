@@ -461,7 +461,7 @@ class ProposalManager
         gc_enable();
         $this->logger->info('setDirectionsForProposals | Start creating arrays for calculation at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        $criterias = $this->criteriaRepository->findByUserImportStatus(UserImport::STATUS_USER_TREATED);
+        $criteriasFound = $this->criteriaRepository->findByUserImportStatus(UserImport::STATUS_USER_TREATED);
         
         $addressesForRoutes = [];
         $owner = [];
@@ -469,36 +469,73 @@ class ProposalManager
 
         $i=0;
         $this->logger->info('setDirectionsForProposals | Start iterate at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        $criterias = [];
+        foreach ($criteriasFound as $key=>$criteria) {
+            if (!array_key_exists($criteria['cid'], $criterias)) {
+                $criterias[$criteria['cid']] = [
+                    'cid'=>$criteria['cid'],
+                    'driver'=>$criteria['driver'],
+                    'passenger'=>$criteria['passenger'],
+                    'addresses'=>[
+                        [
+                            'position'=>$criteria['position'],
+                            'destination'=>$criteria['destination'],
+                            'latitude'=>$criteria['latitude'],
+                            'longitude'=>$criteria['longitude']
+                        ]
+                    ]
+                ];
+            } else {
+                $element = [
+                    'position'=>$criteria['position'],
+                    'destination'=>$criteria['destination'],
+                    'latitude'=>$criteria['latitude'],
+                    'longitude'=>$criteria['longitude']
+                ];
+                if (!in_array($element, $criterias[$criteria['cid']]['addresses'])) {
+                    $criterias[$criteria['cid']]['addresses'][] = $element;
+                }
+            }
+        }
+
         foreach ($criterias as $criteria) {
             $addressesDriver = [];
             $addressesPassenger = [];
-            foreach ($criteria->getProposal()->getWaypoints() as $waypoint) {
+            foreach ($criteria['addresses'] as $waypoint) {
                 // waypoints are already retrieved ordered by position, no need to check the position here
-                if ($criteria->isDriver()) {
-                    $addressesDriver[] = $waypoint->getAddress();
+                if ($criteria['driver']) {
+                    $address = new Address();
+                    $address->setLatitude($waypoint['latitude']);
+                    $address->setLongitude($waypoint['longitude']);
+                    $addressesDriver[] = $address;
                 }
-                if ($criteria->isPassenger() && ($waypoint->getPosition() == 0 || $waypoint->isDestination())) {
-                    $addressesPassenger[] = $waypoint->getAddress();
+                if ($criteria['passenger'] && ($waypoint['position'] == 0 || $waypoint['destination'])) {
+                    $address = new Address();
+                    $address->setLatitude($waypoint['latitude']);
+                    $address->setLongitude($waypoint['longitude']);
+                    $addressesPassenger[] = $address;
                 }
             }
             if (count($addressesDriver)>0) {
                 $addressesForRoutes[$i] = [$addressesDriver];
-                $owner[$criteria->getId()]['driver'] = $i;
+                $owner[$criteria['cid']]['driver'] = $i;
                 $i++;
             }
             if (count($addressesPassenger)>0) {
                 $addressesForRoutes[$i] = [$addressesPassenger];
-                $owner[$criteria->getId()]['passenger'] = $i;
+                $owner[$criteria['cid']]['passenger'] = $i;
                 $i++;
             }
-            $ids[] = $criteria->getId();
+            $ids[] = $criteria['cid'];
         }
         $this->logger->info('setDirectionsForProposals | End iterate at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
         $this->logger->info('setDirectionsForProposals | Start get routes status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_RAW);
         $this->logger->info('setDirectionsForProposals | End get routes status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
+        $criterias = null;
+        unset($criterias);
 
         $qCriteria = $this->entityManager->createQuery('SELECT c from App\Carpool\Entity\Criteria c WHERE c.id IN (' . implode(',', $ids) . ')');
 
