@@ -231,6 +231,10 @@ export default {
     platformName: {
       type: String,
       default: ""
+    },
+    defaultRole:{
+      type: Number,
+      default: 3
     }
   },
   data : function() {
@@ -250,7 +254,8 @@ export default {
       newSearch: false,
       modelTabs:"carpools",
       nbCarpoolPlatform:0,
-      nbCarpoolOther:0
+      nbCarpoolOther:0,
+      role:this.defaultRole
     };
   },
   computed: {
