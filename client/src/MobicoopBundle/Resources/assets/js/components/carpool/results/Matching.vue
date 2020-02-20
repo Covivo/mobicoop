@@ -77,7 +77,7 @@
                 v-if="role!=3"
                 v-model="includePassenger"
                 class="ma-2"
-                label="Voir aussi les annonces passager"
+                :label="$t('includePassengers')"
               />
               <v-alert
                 v-else
@@ -85,7 +85,7 @@
                 dense
                 dismissible
               >
-                Cette recherche contient également les annonces passager
+                {{ $t('alsoIncludePassengers') }}
               </v-alert>
             </v-col>
           </v-row>
