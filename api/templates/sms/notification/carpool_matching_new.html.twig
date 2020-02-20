@@ -1,3 +1,4 @@
-{# {{ "newMatching"|trans }} @villeDepart {{ "at"|trans }} @VilleArrivee. {{ "appointmentIn"|trans }}. #}
-Une nouvelle annonce vient d'être publiée pour votre trajet. Rdv dans "Mes annonces".
-{{api_env('SMS_PLATFORM_NAME')}}
+{{"hello"|trans}} {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}
+{{"newAdPublished"|trans}}!
+{{"appointmentIn"|trans}} {{api_env('SMS_PLATFORM_NAME')}}
+{{"signature"|trans}} {{api_env('SMS_PLATFORM_NAME')}}

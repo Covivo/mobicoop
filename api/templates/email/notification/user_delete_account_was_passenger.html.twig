@@ -1,5 +1,8 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    Votre demande pour un {{context.origin.address.addressLocality}} => {{context.destination.address.addressLocality}} avec {{context.user.givenName}} a été rejetée,
-    car {{context.user.givenName}} a supprimé son annonce.
+<p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b>.</p>
+Votre covoiturage pour un {{context.origin.address.addressLocality}} => {{context.destination.address.addressLocality}} avec le passager {{context.ask.user.givenName}} vient d'être annulé
+    car {{context.ask.user.givenName}} a supprimé son annonce associée.
+<p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
 {% endblock %}
+
