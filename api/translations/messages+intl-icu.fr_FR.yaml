@@ -32,19 +32,20 @@ indicativePrice: "Prix indicatif : "
 # CARPOOL_PROPOSAL_POSTED
 newCarpoolAsk: "VOUS AVEZ UNE DEMANDE DE COVOITURAGE!"
 askForCarpool: "vous sollicite pour un covoiturage."
-occasionalCarpoolAsk: "Récapitulatif de la demande de covoiturage occasionnel le"
-regularCarpoolAsk: "Récapitulatif de la demande de covoiturage régulier du"
+occasionalCarpoolAsk: "Récapitulatif de la demande de covoiturage occasionnel le "
+regularCarpoolAsk: "Récapitulatif de la demande de covoiturage régulier du "
 # CARPOOL_ASK_REFUSED
 refusedCarpool: "VOTRE COVOITURAGE N'EST PAS VALIDÉ."
-refusedOccasionalCarpool: " n'a pas validé le covoiturage pour le trajet du"
-refusedRegularCarpool: " n'a pas validé le covoiturage pour le trajet régulier du"
+refusedOccasionalCarpool: " n'a pas validé le covoiturage pour le trajet du "
+refusedRegularCarpool: " n'a pas validé le covoiturage pour le trajet régulier du "
 noPanic: "Pas de panique, vous pouvez rechercher un nouveau trajet ou publier une annonce."
 # CARPOOL_LINKED_AD_DELETED
 canceledCarpool: "VOTRE COVOITURAGE EST ANNULÉ."
-canceledOccasionalCarpool: " a annulé son trajet et ne pourra pas covoiturer avec vous le"
-canceledRegularCarpool: "  a annulé son trajet régulier et ne pourra pas covoiturer avec vous du"
-deletedAccountOccasionalCarpool: " a supprimé son compte et ne pourra pas covoiturer avec vous le"
-deletedAccountRegularCarpool: " a supprimé son compte et ne pourra pas covoiturer avec vous du"
+canceledOccasionalCarpool: " a annulé son trajet et ne pourra pas covoiturer avec vous le "
+canceledRegularCarpool: "  a annulé son trajet régulier et ne pourra pas covoiturer avec vous du "
+deletedAccountOccasionalCarpool: " a supprimé son compte et ne pourra pas covoiturer avec vous le "
+deletedAccountRegularCarpool: " a supprimé son compte et ne pourra pas covoiturer avec vous du "
+urlPublish: "/covoiturage/annonce/poster"
 
 
 # CARPOOL_MATCHING_NEW
@@ -210,6 +211,7 @@ newAd: "Nouvelle(s) annonce(s) sur "
 
 # AD_DELETED
 carpoolDeleted: "a annulé son trajet et ne pourra pas covoiturer avec vous de"
+accountDeleted: "a supprimé son compte et ne pourra pas covoiturer avec vous de"
 askLinkedAdDeleted: "Une annonce à laquelle vous aviez postulé a été supprimée"
 driverAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez conducteur a été supprimée"
 driverAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez conducteur a été supprimée"
