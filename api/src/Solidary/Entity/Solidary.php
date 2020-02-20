@@ -77,14 +77,6 @@ class Solidary
     private $status;
 
     /**
-     * @var bool Social assist.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
-     */
-    private $assisted;
-
-    /**
      * @var Structure Structure of the solidary record.
      *
      * @Assert\NotBlank

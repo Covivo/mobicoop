@@ -350,8 +350,8 @@ class Structure
     /**
      * @var ArrayCollection|null The special needs for this structure.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Need", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @Groups("readSolidary")
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $needs;
 
