@@ -334,7 +334,18 @@ class UserManager
 
             $messages[] = $currentMessage;
         }
+        // Sort with the last message received first
+        usort($messages, array($this, 'sortThread'));
         return $messages;
+    }
+
+
+    public static function sortThread($a, $b)
+    {
+        if ($a['date'] == $b['date']) {
+            return 0;
+        }
+        return ($a['date'] < $b['date']) ? 1 : -1;
     }
 
     public function parseThreadsCarpoolMessages(User $user, array $threads)
@@ -404,6 +415,8 @@ class UserManager
             }
         }
 
+        // Sort with the last message received first
+        usort($messages, array($this, 'sortThread'));
         return $messages;
     }
 
@@ -660,16 +673,16 @@ class UserManager
             foreach ($proposal->getMatchingRequests() as $matching) {
                 //Check if there is ask on a proposal -> event for notifications
                 foreach ($matching->getAsks() as $ask) {
-                    $event = new UserDeleteAccountWasPassengerEvent($ask);
-                    $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
+                    $event = new UserDeleteAccountWasDriverEvent($ask);
+                    $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
                 }
             }
             //There is offers on the proposal -> we delete proposal + send email to passengers
             foreach ($proposal->getMatchingOffers() as $matching) {
                 //TODO libérer les places sur les annonces réservées
                 foreach ($matching->getAsks() as $ask) {
-                    $event = new UserDeleteAccountWasDriverEvent($ask);
-                    $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
+                    $event = new UserDeleteAccountWasPassengerEvent($ask);
+                    $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
                 }
             }
             //Set user at null and private on the proposal : we keep info for message, proposal cant be found

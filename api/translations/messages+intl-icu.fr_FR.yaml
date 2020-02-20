@@ -93,6 +93,7 @@ thanksForUse: "Merci d’utiliser"
 # USER_REGISTERED
 inscriptionAt: "VOTRE INSCRIPTION EST VALIDÉE!"
 yourInscriptionAt: "Votre inscription au service"
+yourInscriptionAtByTiers : "Votre inscription au service {instanceName} par un tiers"
 wellTakenIntoAccount: "est bien prise en compte"
 clickHereToConfirm: "Veuillez cliquer sur ce lien pour confirmer votre email"
 orUseTheValidationCode: "Ou utilisez le code de validation directement sur le site"
@@ -218,7 +219,7 @@ findNewCarpool: "Trouvez de nouveaux covoiturages ou déposez une annonce sur "
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
-contactYou: "%givenName% vous contacte"
+contactYou: "{givenName} vous contacte"
 
 # USER_PASSWORD_CHANGED
 
