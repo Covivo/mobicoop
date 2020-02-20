@@ -1,6 +1,6 @@
 import UserIcon from '@material-ui/icons/Person';
 import { Admin, Resource, EditGuesser } from 'react-admin';
-import { UserList } from './UserList';
+import  UserList  from './UserList';
 import { UserShow } from './UserShow';
 import  UserCreate  from './UserCreate';
 import UserEdit  from './UserEdit';
