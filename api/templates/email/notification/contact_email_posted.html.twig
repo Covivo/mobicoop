@@ -1,5 +1,6 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
+    <p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b>.</p>
     <p>
         {{ "newContactAsk"|trans }}.
     </p>
@@ -11,5 +12,5 @@
         <li>{{ "ask"|trans }} : {{ context.contact.demand ? context.contact.demand|trans : "notMentioned"|trans }}</li>
     </ul>
     <p>{{ context.contact.message|nl2br }}</p>
-
+    <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
 {% endblock %}

@@ -25,6 +25,7 @@
           <matching-filter 
             :communities="communities"
             :disabled-filters="loading"
+            :disable-role="!this.includePassenger"
             @updateFilters="updateFilters" 
           />
 
@@ -35,8 +36,8 @@
           >
             <v-col
               v-if="!loading && !loadingExternal"
-              cols="8"
-              align="left"
+              :cols="(!newSearch) ? 8 : 12"
+              class="text-left"
             >
               <p>{{ $tc('matchingNumber', numberOfResults, { number: numberOfResults }) }}</p>
               <p
@@ -49,7 +50,6 @@
             <v-col
               v-else
               cols="12"
-              align="left"
             >
               {{ $t('search') }}
             </v-col>
@@ -59,6 +59,7 @@
               align="end"
             >
               <v-btn
+                v-if="!fromMyProposals"
                 rounded
                 color="secondary"
                 @click="startNewSearch()"
@@ -67,6 +68,29 @@
               </v-btn>
             </v-col>
           </v-row>
+          <v-row v-if="!fromMyProposals">
+            <v-col
+              cols="12"
+              class="text-left"
+            >
+              <v-switch
+                v-if="role!=3"
+                v-model="includePassenger"
+                class="ma-2"
+                :label="$t('includePassengers')"
+              />
+              <v-alert
+                v-else
+                class="accent white--text"
+                dense
+                dismissible
+              >
+                {{ $t('alsoIncludePassengers') }}
+              </v-alert>
+            </v-col>
+          </v-row>
+
+
           <v-row v-if="newSearch">
             <v-col cols="12">
               <search
@@ -231,6 +255,10 @@ export default {
     platformName: {
       type: String,
       default: ""
+    },
+    defaultRole:{
+      type: Number,
+      default: 3
     }
   },
   data : function() {
@@ -250,7 +278,10 @@ export default {
       newSearch: false,
       modelTabs:"carpools",
       nbCarpoolPlatform:0,
-      nbCarpoolOther:0
+      nbCarpoolOther:0,
+      role:this.defaultRole,
+      includePassenger:false,
+      fromMyProposals:false
     };
   },
   computed: {
@@ -275,7 +306,20 @@ export default {
       return communities;
     }
   },
+  watch:{
+    includePassenger(){
+      if(this.includePassenger){
+        this.role = 3;
+        this.lProposalId = null;
+      }
+      else{
+        this.role = 2;
+      }
+      this.search();
+    }
+  },
   created() {
+    if(this.proposalId) this.fromMyProposals = true;
     this.search();
     if(this.externalRdexJourneys) this.searchExternalJourneys();
   },
@@ -317,7 +361,8 @@ export default {
           "regular": this.regular,
           "userId": this.user ? this.user.id : null,
           "communityId": this.communityId,
-          "filters": this.filters
+          "filters": this.filters,
+          "role": this.role
         };
         axios.post(this.$t("matchingUrl"), postParams,
           {

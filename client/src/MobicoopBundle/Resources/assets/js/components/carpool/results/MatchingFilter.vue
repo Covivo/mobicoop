@@ -129,6 +129,10 @@ export default {
     disabledFilters: {
       type: Boolean,
       default: false
+    },
+    disableRole:{
+      type: Boolean,
+      default: false
     }
   },
   data : function() {
@@ -137,7 +141,7 @@ export default {
       filterEnabled:{
         "time":true,
         // "order":true,
-        "role":true,
+        "role":!this.disableRole,
         "gender":true,
         "community":true
       },
@@ -175,6 +179,11 @@ export default {
         hours.push({text:i+'h00',value:i+'h00'});
       }
       return hours;
+    }
+  },
+  watch:{
+    disableRole(){
+      this.filterEnabled['role'] = !this.disableRole;
     }
   },
   methods :{

@@ -97,8 +97,8 @@ class UserProvider implements UserProviderInterface
                 if ($userData->getMember()[0]->getValidatedDate() == null) {
                     $translated = $this->translator->trans('Account not validated');
                     throw new AuthenticationException(
-                         sprintf($translated, $username)
-                     );
+                        sprintf($translated, $username)
+                    );
                 }
                 return $userData->getMember()[0];
             }

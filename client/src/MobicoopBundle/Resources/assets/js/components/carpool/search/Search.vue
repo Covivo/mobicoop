@@ -1,5 +1,5 @@
 <template>
-  <v-content color="secondary">
+  <v-content>
     <v-container
       grid-list-md
       text-xs-center
@@ -24,6 +24,7 @@
             :show-destination="showDestination"
             :iswidget="isWidget"
             :init-outward-date="defaultOutwardDate"
+            :image-swap="imageSwap"
             @change="searchChanged"
           />
         </v-col>
@@ -186,6 +187,10 @@ export default {
     classAlignSearchButton:{
       type: String,
       default:"text-left"
+    },
+    imageSwap:{
+      type:String,
+      default:""
     }
   },
   data() {

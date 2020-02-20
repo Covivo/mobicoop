@@ -105,7 +105,6 @@ class EmailManager
         
         $senderName = ($this->emailSenderNameDefault!=="") ? $this->emailSenderNameDefault : $senderEmail;
         $senderReplyToName = ($this->emailReplyToNameDefault!=="") ? $this->emailReplyToNameDefault : $replyToEmail;
-        
         $message = (new \Swift_Message($mail->getObject()))
             ->setFrom($senderEmail, $senderName)
             ->setTo($mail->getRecipientEmail())
