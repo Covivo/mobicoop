@@ -103,6 +103,7 @@ class UserController extends AbstractController
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         $errorMessage = "";
+
         if (!is_null($error)) {
             $errorMessage = $error->getMessage();
         }
