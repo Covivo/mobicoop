@@ -32,7 +32,7 @@
                         {% if ad.results[0].frequency == 1 %}
                             <p>{{ "occasionalCarpoolAsk"|trans }} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].date|date("d/m/Y") }}</b>:</p>
                         {% else %}
-                            <p>{{ "regularCarpoolAsk"|trans }} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].startDate|date("d/m/Y") }}</b> {{ "to"|trans }} <b style="color:#284b99">{{ ad.results[0].toDate|date("d/m/Y") }}</b> :</p>
+                            <p>{{ "regularCarpoolAsk"|trans }} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].startDate|date("d/m/Y") }}</b> {{ "to"|trans }} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].toDate|date("d/m/Y") }}</b> :</p>
                         {% endif %}
                     </td>
                     <td style="width:30%">

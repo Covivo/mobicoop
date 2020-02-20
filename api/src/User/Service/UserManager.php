@@ -673,7 +673,7 @@ class UserManager
             foreach ($proposal->getMatchingRequests() as $matching) {
                 //Check if there is ask on a proposal -> event for notifications
                 foreach ($matching->getAsks() as $ask) {
-                    $event = new UserDeleteAccountWasDriverEvent($ask);
+                    $event = new UserDeleteAccountWasDriverEvent($ask, $user->getId());
                     $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
                 }
             }
@@ -681,7 +681,7 @@ class UserManager
             foreach ($proposal->getMatchingOffers() as $matching) {
                 //TODO libérer les places sur les annonces réservées
                 foreach ($matching->getAsks() as $ask) {
-                    $event = new UserDeleteAccountWasPassengerEvent($ask);
+                    $event = new UserDeleteAccountWasPassengerEvent($ask, $user->getId());
                     $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
                 }
             }
@@ -738,9 +738,9 @@ class UserManager
         $user->setPhoneValidatedDate(null);
 
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-
+        // $this->entityManager->persist($user);
+        // $this->entityManager->flush();
+        die;
         $this->checkIfUserHaveImages($user);
         $this->checkIfUserIsInCommunity($user);
 

@@ -22,7 +22,7 @@
                         {% if ask.criteria.frequency == 1 %}
                             <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}}</b>{{ "canceledOccasionalCarpool"|trans }} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ask.criteria.fromDate|date("d/m/Y") }}</b>:</p>
                         {% else %}
-                            <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}}</b>{{ "canceledRegularCarpool"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ask.criteria.fromDate|date("d/m/Y") }}</b> {{ "to"|trans }} <b style="color:#284b99">{{ ask.criteria.toDate|date("d/m/Y") }}</b> :</p>
+                            <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}}</b>{{ "canceledRegularCarpool"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ask.criteria.fromDate|date("d/m/Y") }}</b> {{ "to"|trans }} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ask.criteria.toDate|date("d/m/Y") }}</b> :</p>
                         {% endif %}
                     </td>
                 </tr>
@@ -52,11 +52,20 @@
                         <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"><b>{{"noPanic"|trans}}</b></p>
                     </td>
                 </tr>
-                <tr>
+                 {# <tr style="text-align:left">
                     <td>
-                    &nbsp;
-                    </td>      
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}" >
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_SEARCH_LOGO')}}" alt="search"/>
+                        </a>
+                    </td>  
                 </tr>
+                <tr style="text-align:left">
+                    <td>
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}{{'urlPublish'|trans}}">
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_PUBLISH_LOGO')}}" alt="publish"/>
+                        </a>
+                    </td>   
+                </tr> #}
                 <tr style="text-align:left">
                     <td>
                         <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>

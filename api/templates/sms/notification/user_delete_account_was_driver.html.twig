@@ -1,5 +1,10 @@
-{{"hello"|trans}} {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}
-Votre demande pour un {{context.origin.address.addressLocality}} => {{context.destination.address.addressLocality}} avec {{context.ask.userRelated.givenName}} a été rejetée,
-car {{context.ask.userRelated.givenName}} a supprimé son annonce associé.
+{% set ask = context.ask %}
+{% set recipient = context.user %}
+{% if recipient.id == ask.user.id %}
+    {% set deleter = ask.userRelated %}
+{% else %}
+    {% set deleter = ask.user %}
+{% endif %}
+{{"hello"|trans}} {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
+{{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}} {{"accountDeleted"|trans}} {{ context.origin.address.displayLabel[0] }} {{"at"|trans}} {{ context.destination.address.displayLabel[0] }}. {{"findNewCarpool"|trans}} {{api_env('SMS_PLATFORM_NAME')}}.
 {{"signature"|trans}} {{api_env('SMS_PLATFORM_NAME')}}
-

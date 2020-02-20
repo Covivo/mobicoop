@@ -175,7 +175,6 @@ class NotificationManager
                     $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'matching'=> $object];
                     break;
                 case AskHistory::class:
-                    
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'askHistory'=>$object];
                     break;
@@ -187,7 +186,7 @@ class NotificationManager
                         } elseif ($waypoint->isDestination() == true) {
                             $passengerDestinationWaypoint = $waypoint;
                         }
-                    }
+                    };
                     $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaypoint, 'destination'=>$passengerDestinationWaypoint];
                     break;
                 case Ad::class:
@@ -303,7 +302,6 @@ class NotificationManager
                     $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaypoint, 'destination'=>$passengerDestinationWaypoint];
                     break;
                 case Ad::class:
-                    $titleContext = [];
                     $outwardOrigin = null;
                     $outwardDestination = null;
                     $returnOrigin = null;
