@@ -27,6 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
@@ -73,14 +74,21 @@ class Need
     private $label;
 
     /**
-     * @var Structure Structure of the need.
+     * @var bool The need is not publicly available.
      *
-     * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="needs")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
-    private $structure;
+    private $private;
+
+    /**
+     * @var Solidary Solidary if the need was created for a specific solidary record.
+     *
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof")
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $solidary;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -95,11 +103,6 @@ class Need
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedDate;
-
-    public function __construct()
-    {
-        $this->solidaries = new ArrayCollection();
-    }
     
     public function getId(): ?int
     {
@@ -125,14 +128,26 @@ class Need
         return $this;
     }
 
-    public function getStructure(): ?Structure
+    public function isPrivate(): ?bool
     {
-        return $this->structure;
+        return $this->private;
+    }
+    
+    public function setPrivate(?bool $isPrivate): self
+    {
+        $this->private = $isPrivate;
+        
+        return $this;
     }
 
-    public function setStructure(?Structure $structure): self
+    public function getSolidary(): ?Solidary
     {
-        $this->structure = $structure;
+        return $this->solidary;
+    }
+
+    public function setSolidary(?Solidary $solidary): self
+    {
+        $this->solidary = $solidary;
 
         return $this;
     }

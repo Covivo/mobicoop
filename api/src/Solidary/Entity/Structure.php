@@ -869,7 +869,6 @@ class Structure
     {
         if (!$this->needs->contains($need)) {
             $this->needs->add($need);
-            $need->setStructure($this);
         }
 
         return $this;
@@ -879,10 +878,6 @@ class Structure
     {
         if ($this->needs->contains($need)) {
             $this->needs->removeElement($need);
-            // set the owning side to null (unless already changed)
-            if ($need->getStructure() === $this) {
-                $need->setStructure(null);
-            }
         }
 
         return $this;

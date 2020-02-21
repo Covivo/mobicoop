@@ -42,3 +42,11 @@ vich_uploader:
             namer:
                 service: Vich\UploaderBundle\Naming\PropertyNamer
                 options: { property: 'fileName'}
+
+        # mapping for solidary proof files
+        solidary:
+            uri_prefix: /upload/solidary/proofs/
+            upload_destination: '%kernel.project_dir%/public/upload/solidary/proofs/'
+            namer:
+                service: Vich\UploaderBundle\Naming\PropertyNamer
+                options: { property: 'fileName'}

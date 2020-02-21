@@ -785,22 +785,22 @@ class Volunteer
     {
         return $this->needs->getValues();
     }
-    
+
     public function addNeed(Need $need): self
     {
         if (!$this->needs->contains($need)) {
-            $this->needs[] = $need;
+            $this->needs->add($need);
         }
-        
+
         return $this;
     }
-    
+
     public function removeNeed(Need $need): self
     {
         if ($this->needs->contains($need)) {
             $this->needs->removeElement($need);
         }
-        
+
         return $this;
     }
 

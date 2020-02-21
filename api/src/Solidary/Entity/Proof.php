@@ -33,6 +33,8 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * A solidary proof related to a solidary record or a volunteer
@@ -49,6 +51,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
+ * @Vich\Uploadable
  */
 class Proof
 {
@@ -135,6 +138,12 @@ class Proof
     private $mimeType;
 
     /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="proof", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType")
+     */
+    private $file;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -150,6 +159,11 @@ class Proof
      */
     private $updatedDate;
     
+    public function __construct($id=null)
+    {
+        $this->id = $id;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -252,6 +266,16 @@ class Proof
         $this->mimeType = $mimeType;
     }
 
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+    
+    public function setFile(?File $file)
+    {
+        $this->file = $file;
+    }
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -274,6 +298,11 @@ class Proof
         $this->updatedDate = $updatedDate;
 
         return $this;
+    }
+
+    public function preventSerialization()
+    {
+        $this->setFile(null);
     }
 
     // DOCTRINE EVENTS
