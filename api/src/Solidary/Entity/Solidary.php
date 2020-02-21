@@ -42,7 +42,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeSolidary"}}
+ *          "denormalization_context"={"groups"={"writeSolidary"}},
  *      },
  *      collectionOperations={
  *     "get",
@@ -77,6 +77,60 @@ class Solidary
     private $status;
 
     /**
+     * @var string Detail for regular ask.
+     *
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $regularDetail;
+
+    /**
+     * @var \DateTimeInterface Deadline date of the solidary record.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("readSolidary")
+     */
+    private $deadlineDate;
+
+    /**
+     * @var \DateTimeInterface Creation date of the solidary record.
+     *
+     * @ORM\Column(type="datetime")
+     * @Groups("readSolidary")
+     */
+    private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date of the solidary record.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("readSolidary")
+     */
+    private $updatedDate;
+
+    /**
+     * @var User The user related with the solidary record.
+     *
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solidaries")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readSolidary", "writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $user;
+
+    /**
+     * @var Proposal The proposal.
+     *
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $proposal;
+
+    /**
      * @var Structure Structure of the solidary record.
      *
      * @Assert\NotBlank
@@ -97,44 +151,6 @@ class Solidary
     private $subject;
 
     /**
-     * @var Proposal The proposal.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","writeSolidary"})
-     * @MaxDepth(1)
-     */
-    private $proposal;
-
-    /**
-     * @var User The user related with the solidary record.
-     *
-     * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solidaries")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary", "writeSolidary"})
-     * @MaxDepth(1)
-     */
-    private $user;
-
-    /**
-     * @var \DateTimeInterface Deadline date of the solidary record.
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("readSolidary")
-     */
-    private $deadlineDate;
-
-    /**
-     * @var string Detail for regular ask.
-     *
-     * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"readSolidary","writeSolidary"})
-     */
-    private $regularDetail;
-
-    /**
      * @var ArrayCollection|null The special needs for this solidary record.
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
@@ -152,25 +168,19 @@ class Solidary
     private $solidaryMatchings;
 
     /**
-     * @var \DateTimeInterface Creation date of the solidary record.
+     * @var ArrayCollection|null Solidary proofs.
      *
-     * @ORM\Column(type="datetime")
-     * @Groups("readSolidary")
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
-    private $createdDate;
-
-    /**
-     * @var \DateTimeInterface Updated date of the solidary record.
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("readSolidary")
-     */
-    private $updatedDate;
+    private $proofs;
 
     public function __construct()
     {
         $this->needs = new ArrayCollection();
         $this->solidaryMatchings = new ArrayCollection();
+        $this->proofs = new ArrayCollection();
     }
 
     public function getId(): int
@@ -190,17 +200,78 @@ class Solidary
         return $this;
     }
 
-    public function isAssisted(): ?bool
+    public function getRegularDetail(): ?string
     {
-        return $this->assisted;
+        return $this->regularDetail;
     }
-    
-    public function setAssisted(bool $isAssisted): self
+
+    public function setRegularDetail(string $regularDetail): self
     {
-        $this->assisted = $isAssisted;
+        $this->regularDetail = $regularDetail;
+
+        return $this;
+    }
+
+    public function getDeadlineDate(): ?\DateTimeInterface
+    {
+        return $this->deadlineDate;
+    }
+
+    public function setDeadlineDate(\DateTimeInterface $deadlineDate): self
+    {
+        $this->deadlineDate = $deadlineDate;
+
+        return $this;
+    }
+
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
         
         return $this;
     }
+
+    public function getProposal(): Proposal
+    {
+        return $this->proposal;
+    }
+    
+    public function setProposal(?Proposal $proposal): self
+    {
+        $this->proposal = $proposal;
+        
+        return $this;
+    }
+
 
     public function getStructure(): ?Structure
     {
@@ -222,54 +293,6 @@ class Solidary
     public function setSubject(?Subject $subject): self
     {
         $this->subject = $subject;
-
-        return $this;
-    }
-
-    public function getProposal(): Proposal
-    {
-        return $this->proposal;
-    }
-    
-    public function setProposal(?Proposal $proposal): self
-    {
-        $this->proposal = $proposal;
-        
-        return $this;
-    }
-    
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-        
-        return $this;
-    }
-
-    public function getDeadlineDate(): ?\DateTimeInterface
-    {
-        return $this->deadlineDate;
-    }
-
-    public function setDeadlineDate(\DateTimeInterface $deadlineDate): self
-    {
-        $this->deadlineDate = $deadlineDate;
-
-        return $this;
-    }
-
-    public function getRegularDetail(): ?string
-    {
-        return $this->regularDetail;
-    }
-
-    public function setRegularDetail(string $regularDetail): self
-    {
-        $this->regularDetail = $regularDetail;
 
         return $this;
     }
@@ -320,27 +343,26 @@ class Solidary
         return $this;
     }
 
-    public function getCreatedDate(): ?\DateTimeInterface
+    public function getProves()
     {
-        return $this->createdDate;
+        return $this->proofs->getValues();
     }
-
-    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    
+    public function addProof(Proof $proof): self
     {
-        $this->createdDate = $createdDate;
-
+        if (!$this->proofs->contains($proof)) {
+            $this->proofs[] = $proof;
+        }
+        
         return $this;
     }
-
-    public function getUpdatedDate(): ?\DateTimeInterface
+    
+    public function removeProof(Proof $proof): self
     {
-        return $this->updatedDate;
-    }
-
-    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
-    {
-        $this->updatedDate = $updatedDate;
-
+        if ($this->proofs->contains($proof)) {
+            $this->proofs->removeElement($proof);
+        }
+        
         return $this;
     }
 

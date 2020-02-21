@@ -27,6 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
@@ -34,7 +35,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A special need for a solidary record.
+ * A solidary proof related to a solidary record or a volunteer
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -49,11 +50,11 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
  */
-class Need
+class Proof
 {
     
     /**
-     * @var int The id of this need.
+     * @var int The id of this proof.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -64,28 +65,80 @@ class Need
     private $id;
 
     /**
-     * @var string Label of the need.
+     * @var string The value entered by the user.
      *
-     * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
      * @Groups({"readSolidary","writeSolidary"})
      */
-    private $label;
+    private $value;
 
     /**
-     * @var Structure Structure of the need.
+     * @var StructureProof Structure proof.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="needs")
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof", inversedBy="proofs")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
-    private $structure;
+    private $structureProof;
+
+    /**
+     * @var Solidary Solidary record if the proof concerns a solidary requester.
+     *
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof", inversedBy="proofs")
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $solidary;
+
+    /**
+     * @var Volunteer Volunteer id if the proof concerns a volunteer.
+     *
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof", inversedBy="proofs")
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $volunteer;
+
+    /**
+     * @var string The final file name of the proof.
+     *
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $fileName;
+    
+    /**
+     * @var string The original file name of the proof.
+     *
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $originalName;
+
+    /**
+     * @var int The size in bytes of the file.
+     *
+     * @ORM\Column(type="integer")
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $size;
+    
+    /**
+     * @var string The mime type of the file.
+     *
+     * @ORM\Column(type="string", length=255)
+     * @Groups("readSolidary")
+     */
+    private $mimeType;
 
     /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readSolidary"})
      */
     private $createdDate;
 
@@ -93,13 +146,9 @@ class Need
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readSolidary"})
      */
     private $updatedDate;
-
-    public function __construct()
-    {
-        $this->solidaries = new ArrayCollection();
-    }
     
     public function getId(): ?int
     {
@@ -113,28 +162,94 @@ class Need
         return $this;
     }
     
-    public function getLabel(): ?string
+    public function getValue(): ?string
     {
-        return $this->label;
+        return $this->value;
     }
 
-    public function setLabel(string $label): self
+    public function setValue(?string $value): self
     {
-        $this->label = $label;
+        $this->value = $value;
 
         return $this;
     }
 
-    public function getStructure(): ?Structure
+    public function getStructureProof(): ?StructureProof
     {
-        return $this->structure;
+        return $this->structureProof;
     }
 
-    public function setStructure(?Structure $structure): self
+    public function setStructureProof(?StructureProof $structureProof): self
     {
-        $this->structure = $structure;
+        $this->structureProof = $structureProof;
 
         return $this;
+    }
+
+    public function getSolidary(): ?Solidary
+    {
+        return $this->solidary;
+    }
+
+    public function setSolidary(?Solidary $solidary): self
+    {
+        $this->solidary = $solidary;
+
+        return $this;
+    }
+
+    public function getVolunteer(): ?Volunteer
+    {
+        return $this->volunteer;
+    }
+
+    public function setVolunteer(?Volunteer $volunteer): self
+    {
+        $this->volunteer = $volunteer;
+
+        return $this;
+    }
+
+    public function getFileName(): ?string
+    {
+        return $this->fileName;
+    }
+    
+    public function setFileName(?string $fileName)
+    {
+        $this->fileName = $fileName;
+    }
+    
+    public function getOriginalName(): ?string
+    {
+        return $this->originalName;
+    }
+    
+    public function setOriginalName(?string $originalName)
+    {
+        $this->originalName = $originalName;
+    }
+
+    public function getSize(): ?int
+    {
+        return $this->size;
+    }
+    
+    public function setSize(?int $size): self
+    {
+        $this->size = $size;
+        
+        return $this;
+    }
+    
+    public function getMimeType(): ?string
+    {
+        return $this->mimeType;
+    }
+    
+    public function setMimeType(?string $mimeType)
+    {
+        $this->mimeType = $mimeType;
     }
 
     public function getCreatedDate(): ?\DateTimeInterface

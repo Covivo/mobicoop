@@ -335,12 +335,21 @@ class Volunteer
     private $comment;
 
     /**
-     * @var ArrayCollection|null The services proposed by the volunteer.
+     * @var ArrayCollection|null The special needs proposed by the volunteer.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Service")
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
      * @Groups({"readSolidary","writeSolidary"})
      */
-    private $services;
+    private $needs;
+
+    /**
+     * @var ArrayCollection|null Volunteer proofs.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="volunteer", cascade={"remove"}, orphanRemoval=true)
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $proofs;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -360,7 +369,8 @@ class Volunteer
 
     public function __construct()
     {
-        $this->services = new ArrayCollection();
+        $this->needs = new ArrayCollection();
+        $this->proofs = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -771,24 +781,47 @@ class Volunteer
         return $this;
     }
 
-    public function getServices()
+    public function getNeeds()
     {
-        return $this->services->getValues();
+        return $this->needs->getValues();
     }
     
-    public function addService(Service $service): self
+    public function addNeed(Need $need): self
     {
-        if (!$this->services->contains($service)) {
-            $this->services[] = $service;
+        if (!$this->needs->contains($need)) {
+            $this->needs[] = $need;
         }
         
         return $this;
     }
     
-    public function removeService(Service $service): self
+    public function removeNeed(Need $need): self
     {
-        if ($this->services->contains($service)) {
-            $this->services->removeElement($service);
+        if ($this->needs->contains($need)) {
+            $this->needs->removeElement($need);
+        }
+        
+        return $this;
+    }
+
+    public function getProves()
+    {
+        return $this->proofs->getValues();
+    }
+    
+    public function addProof(Proof $proof): self
+    {
+        if (!$this->proofs->contains($proof)) {
+            $this->proofs[] = $proof;
+        }
+        
+        return $this;
+    }
+    
+    public function removeProof(Proof $proof): self
+    {
+        if ($this->proofs->contains($proof)) {
+            $this->proofs->removeElement($proof);
         }
         
         return $this;

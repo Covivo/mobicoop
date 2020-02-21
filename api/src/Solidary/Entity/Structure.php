@@ -355,14 +355,6 @@ class Structure
      */
     private $needs;
 
-    /**
-     * @var ArrayCollection|null The special services for this structure.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Service", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @Groups("readSolidary")
-     */
-    private $services;
-
     public function __construct()
     {
         $this->solidaries = new ArrayCollection();
@@ -370,7 +362,6 @@ class Structure
         $this->volunteers = new ArrayCollection();
         $this->subjects = new ArrayCollection();
         $this->needs = new ArrayCollection();
-        $this->services = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -891,34 +882,6 @@ class Structure
             // set the owning side to null (unless already changed)
             if ($need->getStructure() === $this) {
                 $need->setStructure(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getServices()
-    {
-        return $this->services->getValues();
-    }
-
-    public function addService(Service $service): self
-    {
-        if (!$this->services->contains($service)) {
-            $this->services->add($service);
-            $service->setStructure($this);
-        }
-
-        return $this;
-    }
-
-    public function removeService(Service $service): self
-    {
-        if ($this->services->contains($service)) {
-            $this->services->removeElement($service);
-            // set the owning side to null (unless already changed)
-            if ($service->getStructure() === $this) {
-                $service->setStructure(null);
             }
         }
 
