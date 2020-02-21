@@ -25,8 +25,10 @@
           <matching-filter 
             :communities="communities"
             :disabled-filters="loading"
-            :disable-role="!this.includePassenger"
-            @updateFilters="updateFilters" 
+            :disable-role="!includePassenger"
+            :default-community-id="communityIdSearch"
+            :init-filters-chips="initFiltersChips"
+            @updateFilters="updateFilters"
           />
 
           <!-- Number of matchings -->
@@ -281,7 +283,10 @@ export default {
       nbCarpoolOther:0,
       role:this.defaultRole,
       includePassenger:false,
-      fromMyProposals:false
+      fromMyProposals:false,
+      initFiltersChips:false,
+      communityIdSearch: this.communityId,
+      communityIdSearchBak: this.communityId
     };
   },
   computed: {
@@ -316,6 +321,12 @@ export default {
         this.role = 2;
       }
       this.search();
+    },
+    communities(){
+      this.initFiltersChips = true;
+    },
+    communityIdSearch(){
+      this.communityIdSearchBak = this.communityIdSearch;
     }
   },
   created() {
@@ -360,7 +371,7 @@ export default {
           "time": this.time,
           "regular": this.regular,
           "userId": this.user ? this.user.id : null,
-          "communityId": this.communityId,
+          "communityId": this.communityIdSearch,
           "filters": this.filters,
           "role": this.role
         };
@@ -462,6 +473,14 @@ export default {
     },
     updateFilters(data){
       this.filters = data;
+      // Update the default filters also
+      this.communityIdSearch = (this.filters.filters.community) ? parseInt(this.filters.filters.community) : null;
+
+      // If the communityid for a research has been modified, we need to post a new proposal for the search
+      // We don't use the watch because it's excuted after updateFilters() is done (after the this.search...)
+      if(this.communityIdSearch !== this.communityIdSearchBak){
+        this.lProposalId = null;
+      }
       this.search();
     },
     startNewSearch() {
