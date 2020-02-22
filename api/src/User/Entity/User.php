@@ -1046,6 +1046,9 @@ class User implements UserInterface, EquatableInterface
 
     public function getShortFamilyName(): ?string
     {
+        if (is_null($this->familyName) || $this->familyName==="" || !isset($this->familyName[0])) {
+            return ".";
+        }
         return strtoupper($this->familyName[0]) . ".";
     }
 

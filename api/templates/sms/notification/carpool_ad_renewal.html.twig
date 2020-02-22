@@ -1,3 +1,4 @@
+{{"hello"|trans}} {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}
 {{ "inFewDays"|trans }}.
-Veuillez renouvelez votre annonce.
-{# {{ "renewYourAdsOn"|trans }} @NomDuSite. #}
+{{"renewYourAdsOn"|trans}} {{api_env('SMS_PLATFORM_NAME')}}.
+{{"signature"|trans}} {{api_env('SMS_PLATFORM_NAME')}}

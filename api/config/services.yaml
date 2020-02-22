@@ -151,7 +151,9 @@ services:
     App\Communication\Service\EmailManager:
         arguments:
             $emailSender: '%env(resolve:MAILER_SENDER)%'
+            $emailSenderName: '%env(resolve:MAILER_SENDER_NAME)%'
             $emailReplyTo: '%env(resolve:MAILER_REPLYTO)%'
+            $emailReplyToName: '%env(resolve:MAILER_REPLYTO_NAME)%'
             $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%'
             $emailAdditionalHeaders: '%env(resolve:MAILER_ADDITIONAL_HEADERS)%'
         tags:

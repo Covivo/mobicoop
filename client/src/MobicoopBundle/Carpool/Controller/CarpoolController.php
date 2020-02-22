@@ -239,7 +239,8 @@ class CarpoolController extends AbstractController
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             'proposalId' => $id,
             'platformName' => $this->platformName,
-            'externalRDEXJourneys' => false // No RDEX, this not a new search
+            'externalRDEXJourneys' => false, // No RDEX, this not a new search
+            'defaultRole'=>$this->defaultRole
         ]);
     }
 
@@ -278,7 +279,8 @@ class CarpoolController extends AbstractController
             'communityId' => $request->request->get('communityId'),
             'user' => $userManager->getLoggedUser(),
             'platformName' => $this->platformName,
-            'externalRDEXJourneys' => $this->carpoolRDEXJourneys
+            'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
+            'defaultRole'=>$this->defaultRole
         ]);
     }
 
@@ -286,7 +288,7 @@ class CarpoolController extends AbstractController
      * Matching Search
      * (AJAX POST)
      */
-    public function carpoolSearchMatching(Request $request, AdManager $adManager, UserManager $userManager)
+    public function carpoolSearchMatching(Request $request, AdManager $adManager)
     {
         $params = json_decode($request->getContent(), true);
         if (isset($params['date']) && $params['date'] != '') {

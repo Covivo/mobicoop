@@ -180,6 +180,7 @@
                 prepend-icon=""
                 readonly
                 v-on="on"
+                @click="setDefaultDateIfEmpty()"
               />
             </template>
             <v-time-picker
@@ -494,7 +495,11 @@ export default {
     defaultMarginTime: {
       type: Number,
       default: null
-    }
+    },
+    route: {
+      type: Object,
+      default: null
+    },
   },
   data() {
     return {
@@ -514,8 +519,9 @@ export default {
       maxDateFromOutward : null,
       maxTimeFromOutward : null,
       maxTimeIfToday : null,
-      nowDate : new Date().toISOString().slice(0,10)
-
+      nowDate : new Date().toISOString().slice(0,10),
+      maxTimeReturnCalcul : null,
+      maxDateReturnCalcul : null,
     };
   },
   computed: {
@@ -554,7 +560,7 @@ export default {
     initOutwardDate() {
       this.outwardDate = this.initOutwardDate;
       this.blockDate();
-    }
+    },
   },
   created:function(){
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
@@ -596,9 +602,25 @@ export default {
       this.maxTimeIfToday = (this.maxDateFromOutward == this.nowDate) ? moment().format('H:mm') : null;
     },
     blockTime(){
-      this.maxTimeFromOutward = (this.outwardDate == this.returnDate) ? this.outwardTime : null;
+      this.maxTimeReturnCalcul = moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format("HH:mm");
+      this.maxDateReturnCalcul = moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format("YYYY-MM-DD");
+
+      if (this.returnTrip) this.setDefaultDateIfEmpty()
       //Security -> if try to set return then outward, if outward is more far, we set return = outward
       if ( this.outwardDate > this.returnDate )  this.returnDate = this.outwardDate;
+    },
+    setDefaultDateIfEmpty(){
+      this.returnDate = this.outwardDate
+      this.returnTrip = true;
+      if (this.maxTimeReturnCalcul != null ){
+        this.returnTime = this.maxTimeReturnCalcul
+        this.maxTimeFromOutward = this.maxTimeReturnCalcul
+      }
+      if (this.maxDateReturnCalcul != null ) {
+        this.returnDate = this.maxDateReturnCalcul
+        this.maxDateFromOutward = this.maxDateReturnCalcul
+
+      }
     },
     blockTimeRegular(e,id){
       // test to allow return time to be set before outward time for regular work

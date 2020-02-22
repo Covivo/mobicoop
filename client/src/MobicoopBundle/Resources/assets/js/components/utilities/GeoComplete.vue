@@ -150,7 +150,7 @@ export default {
           } else if (this.address.relayPoint) {
             this.address.selectedDisplayedLabel = `${this.address.relayPoint.name}`;
           } else if (this.address.event) {
-            this.address.selectedDisplayedLabel = `${this.address.event.name}`;
+            this.address.selectedDisplayedLabel = `${this.address.displayLabel[0]}`;
           } else {
             this.address.selectedDisplayedLabel = `${this.address.displayLabel[0]}`;
           }

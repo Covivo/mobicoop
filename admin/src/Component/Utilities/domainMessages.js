@@ -4,6 +4,7 @@ const fr = {
             texte: {
                 emailTous: 'Email à tous',
                 emailSelect: 'Email aux sélectionnés',
+                blockUnsubscribe :"Vous ne pouvez pas envoyer de mailing à des personnes qui l'ont refusé."
             }
         },
         rgpd : {

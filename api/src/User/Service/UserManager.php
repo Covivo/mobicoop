@@ -334,7 +334,18 @@ class UserManager
 
             $messages[] = $currentMessage;
         }
+        // Sort with the last message received first
+        usort($messages, array($this, 'sortThread'));
         return $messages;
+    }
+
+
+    public static function sortThread($a, $b)
+    {
+        if ($a['date'] == $b['date']) {
+            return 0;
+        }
+        return ($a['date'] < $b['date']) ? 1 : -1;
     }
 
     public function parseThreadsCarpoolMessages(User $user, array $threads)
@@ -404,6 +415,8 @@ class UserManager
             }
         }
 
+        // Sort with the last message received first
+        usort($messages, array($this, 'sortThread'));
         return $messages;
     }
 
@@ -656,25 +669,25 @@ class UserManager
 
         // L'utilisateur à posté des annonces de covoiturages -> on les supprimes
         // User create ad : we delete them
-        foreach ($user->getProposals() as $proposal) {
-            foreach ($proposal->getMatchingRequests() as $matching) {
-                //Check if there is ask on a proposal -> event for notifications
-                foreach ($matching->getAsks() as $ask) {
-                    $event = new UserDeleteAccountWasPassengerEvent($ask);
-                    $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
-                }
-            }
-            //There is offers on the proposal -> we delete proposal + send email to passengers
-            foreach ($proposal->getMatchingOffers() as $matching) {
-                //TODO libérer les places sur les annonces réservées
-                foreach ($matching->getAsks() as $ask) {
-                    $event = new UserDeleteAccountWasDriverEvent($ask);
-                    $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
-                }
-            }
-            //Set user at null and private on the proposal : we keep info for message, proposal cant be found
-            $proposal->setPrivate(1);
-        }
+        // foreach ($user->getProposals() as $proposal) {
+        //     foreach ($proposal->getMatchingRequests() as $matching) {
+        //         //Check if there is ask on a proposal -> event for notifications
+        //         foreach ($matching->getAsks() as $ask) {
+        //             $event = new UserDeleteAccountWasDriverEvent($ask, $user->getId());
+        //             $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
+        //         }
+        //     }
+        //     //There is offers on the proposal -> we delete proposal + send email to passengers
+        //     foreach ($proposal->getMatchingOffers() as $matching) {
+        //         //TODO libérer les places sur les annonces réservées
+        //         foreach ($matching->getAsks() as $ask) {
+        //             $event = new UserDeleteAccountWasPassengerEvent($ask, $user->getId());
+        //             $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
+        //         }
+        //     }
+        //     //Set user at null and private on the proposal : we keep info for message, proposal cant be found
+        //     $proposal->setPrivate(1);
+        // }
 
         //Anonymise content of message with a key
         foreach ($user->getMessages() as $message) {
@@ -727,7 +740,7 @@ class UserManager
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-
+       
         $this->checkIfUserHaveImages($user);
         $this->checkIfUserIsInCommunity($user);
 

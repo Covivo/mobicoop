@@ -23,7 +23,7 @@ var toolbarOptions = [
     [{ 'font': [] }],
     [{ 'align': [] }],
 
-    ['link', 'image'],
+    ['link'],
   
     ['clean']                                         // remove formatting button
 ];
