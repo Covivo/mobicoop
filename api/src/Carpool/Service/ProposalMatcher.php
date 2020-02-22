@@ -36,6 +36,7 @@ use App\Geography\Entity\Address;
 use App\Geography\Interfaces\GeorouterInterface;
 use App\Geography\Service\GeoRouter;
 use App\Import\Entity\UserImport;
+use App\Service\FormatDataManager;
 use App\User\Entity\User;
 use Psr\Log\LoggerInterface;
 
@@ -70,6 +71,7 @@ class ProposalMatcher
     private $geoMatcher;
     private $geoRouter;
     private $logger;
+    private $formatDataManager;
     
     /**
      * Constructor.
@@ -78,13 +80,14 @@ class ProposalMatcher
      * @param ProposalRepository $proposalRepository
      * @param GeoMatcher $geoMatcher
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, GeoMatcher $geoMatcher, GeoRouter $geoRouter, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, GeoMatcher $geoMatcher, GeoRouter $geoRouter, LoggerInterface $logger, FormatDataManager $formatDataManager)
     {
         $this->entityManager = $entityManager;
         $this->proposalRepository = $proposalRepository;
         $this->geoRouter = $geoRouter;
         $this->geoMatcher = $geoMatcher;
         $this->logger = $logger;
+        $this->formatDataManager = $formatDataManager;
     }
 
     /**
@@ -564,7 +567,6 @@ class ProposalMatcher
         ) {
             $matchings = $this->checkPickUp($matchings);
         }
-        
 
         $this->logger->info("ProposalMatcher : completeMatchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
@@ -600,11 +602,17 @@ class ProposalMatcher
             $matchingCriteria->setPriceKm($matching->getProposalOffer()->getCriteria()->getPriceKm());
             
             // we use the passenger's computed prices
-            $matchingCriteria->setDriverComputedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedPrice());
-            $matchingCriteria->setDriverComputedRoundedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedRoundedPrice());
-            $matchingCriteria->setPassengerComputedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedPrice());
-            $matchingCriteria->setPassengerComputedRoundedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedRoundedPrice());
+            // $matchingCriteria->setDriverComputedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedPrice());
+            // $matchingCriteria->setDriverComputedRoundedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedRoundedPrice());
+            // $matchingCriteria->setPassengerComputedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedPrice());
+            // $matchingCriteria->setPassengerComputedRoundedPrice($matching->getProposalRequest()->getCriteria()->getPassengerComputedRoundedPrice());
             
+            // we use the driver's computed prices
+            $matchingCriteria->setDriverComputedPrice(($matching->getCommonDistance()+$matching->getDetourDistance())*$matching->getProposalOffer()->getCriteria()->getPriceKm()/1000);
+            $matchingCriteria->setDriverComputedRoundedPrice($this->formatDataManager->roundPrice((float)$matchingCriteria->getDriverComputedPrice(), $matchingCriteria->getFrequency()));
+            $matchingCriteria->setPassengerComputedPrice($matchingCriteria->getDriverComputedPrice());
+            $matchingCriteria->setPassengerComputedRoundedPrice($matchingCriteria->getDriverComputedRoundedPrice());
+
             // frequency, fromDate and toDate
             if ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching->getProposalRequest()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                 $matchingCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
@@ -1330,6 +1338,20 @@ class ProposalMatcher
                                             'destination'=>$proposalFound['destination'],
                                             'latitude'=>$proposalFound['latitude'],
                                             'longitude'=>$proposalFound['longitude'],
+                                            'streetAddress'=>$proposalFound['streetAddress'],
+                                            'postalCode'=>$proposalFound['postalCode'],
+                                            'addressLocality'=>$proposalFound['addressLocality'],
+                                            'addressCountry'=>$proposalFound['addressCountry'],
+                                            'elevation'=>$proposalFound['elevation'],
+                                            'houseNumber'=>$proposalFound['houseNumber'],
+                                            'street'=>$proposalFound['street'],
+                                            'subLocality'=>$proposalFound['subLocality'],
+                                            'localAdmin'=>$proposalFound['localAdmin'],
+                                            'county'=>$proposalFound['county'],
+                                            'macroCounty'=>$proposalFound['macroCounty'],
+                                            'region'=>$proposalFound['region'],
+                                            'macroRegion'=>$proposalFound['macroRegion'],
+                                            'countryCode'=>$proposalFound['countryCode']
                                         ]
                                     ]
                                 ];
@@ -1339,6 +1361,20 @@ class ProposalMatcher
                                     'destination'=>$proposalFound['destination'],
                                     'latitude'=>$proposalFound['latitude'],
                                     'longitude'=>$proposalFound['longitude'],
+                                    'streetAddress'=>$proposalFound['streetAddress'],
+                                    'postalCode'=>$proposalFound['postalCode'],
+                                    'addressLocality'=>$proposalFound['addressLocality'],
+                                    'addressCountry'=>$proposalFound['addressCountry'],
+                                    'elevation'=>$proposalFound['elevation'],
+                                    'houseNumber'=>$proposalFound['houseNumber'],
+                                    'street'=>$proposalFound['street'],
+                                    'subLocality'=>$proposalFound['subLocality'],
+                                    'localAdmin'=>$proposalFound['localAdmin'],
+                                    'county'=>$proposalFound['county'],
+                                    'macroCounty'=>$proposalFound['macroCounty'],
+                                    'region'=>$proposalFound['region'],
+                                    'macroRegion'=>$proposalFound['macroRegion'],
+                                    'countryCode'=>$proposalFound['countryCode']
                                 ];
                                 if (!in_array($element, $aproposals[$proposalFound['pid']]['addresses'])) {
                                     $aproposals[$proposalFound['pid']]['addresses'][] = $element;
@@ -1539,6 +1575,8 @@ class ProposalMatcher
                         $waypoint->setDestination(true);
                     }
                     $waypoint->setAddress(clone $point['address']);
+                    $waypoint->setDuration($point['duration']);
+                    $waypoint->setRole($point['candidate']);
                     $matching->addWaypoint($waypoint);
                 }
     
@@ -1762,6 +1800,20 @@ class ProposalMatcher
                     $address = new Address();
                     $address->setLatitude($waypoint['latitude']);
                     $address->setLongitude($waypoint['longitude']);
+                    $address->setHouseNumber($waypoint['houseNumber']);
+                    $address->setStreet($waypoint['street']);
+                    $address->setStreetAddress($waypoint['streetAddress']);
+                    $address->setPostalCode($waypoint['postalCode']);
+                    $address->setSubLocality($waypoint['subLocality']);
+                    $address->setAddressLocality($waypoint['addressLocality']);
+                    $address->setLocalAdmin($waypoint['localAdmin']);
+                    $address->setCounty($waypoint['county']);
+                    $address->setMacroCounty($waypoint['macroCounty']);
+                    $address->setRegion($waypoint['region']);
+                    $address->setMacroRegion($waypoint['macroRegion']);
+                    $address->setAddressCountry($waypoint['addressCountry']);
+                    $address->setCountryCode($waypoint['countryCode']);
+                    $address->setElevation($waypoint['elevation']);
                     $addressesCandidate[] = $address;
                 }
                 $candidate->setAddresses($addressesCandidate);

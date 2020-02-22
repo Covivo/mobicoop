@@ -1,23 +1,88 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-
-{% set ask = context.ask %}
+{% set ad = context.ad %}
 {% set recipient = context.user %}
-
-<br></br>
-{# Ask user is driver #}
-{% set carpooler = ask.userRelated %}
-    {% if ask.criteria.frequency == 1 %}
-        <p>{{ carpooler.givenName|capitalize ~ " " ~ carpooler.familyName|capitalize  }} {{ "notBeAbleToCarpoolWithYouFor"|trans }} {{ ask.criteria.fromDate|date("d/m/Y") }} {{ "towards"|trans }}  {{ context.destination.address.addressLocality }}.</p>
-    {% else %}
-        <p>{{ carpooler.givenName|capitalize ~ " " ~ carpooler.familyName|capitalize  }} {{ "notBeAbleToCarpoolWithYou"|trans }} {{ context.destination.address.addressLocality }}.</p>
-        <p> {{ "followingDays"|trans }} : 
-                {% if ask.criteria.monCheck %}{{ "monday" |trans}} {% endif %} 
-                {% if ask.criteria.tueCheck %}{{ "tuesday" |trans}} {% endif %} 
-                {% if ask.criteria.wedCheck %}{{ "wednesday" |trans}} {% endif %}
-                {% if ask.criteria.thuCheck %}{{ "thusday" |trans}} {% endif %}
-                {% if ask.criteria.friCheck %}{{ "friday" |trans}} {% endif %}
-                {% if ask.criteria.satCheck %}{{ "saturday" |trans}} {% endif %}
-                {% if ask.criteria.sunCheck %}{{ "sunday" |trans}}{% endif %}. {{ "from"|trans }} {{ ask.criteria.fromDate|date("d/m/Y") }} {{ "to"|trans }} {{ ask.criteria.toDate|date("d/m/Y") }}.</p>
-    {% endif %}        
-{% endblock %}
+{% set sender = context.sender %}
+{% set result = context.result %}
+{% set outwardOrigin = context.outwardOrigin %}
+{% set outwardDestination = context.outwardDestination %}
+{% set returnOrigin = context.returnOrigin %}
+{% set returnDestination = context.returnDestination %}
+    
+<table style="width:100%;font-family:{{api_env('EMAILS_FONT')}}, sans-serif;">
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td>
+                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30" ><b>{{ "refusedCarpool"|trans }}</b></p>
+                        <hr>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:70%">
+                        <p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}</b></p>
+                        {% if ad.results[0].frequency == 1 %}
+                            <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b>{{ "refusedOccasionalCarpool"|trans }} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].date|date("d/m/Y") }}</b>:</p>
+                        {% else %}
+                            <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b>{{ "refusedRegularCarpool"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].startDate|date("d/m/Y") }}</b> {{ "to"|trans }} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].toDate|date("d/m/Y") }}</b> :</p>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table  style="width:100%;background-color:{{api_env('EMAILS_COLOR_PRIMARY_LIGHT')}};margin-top:5px;margin-bottom:5px;margin-left:5px">
+                <tr>
+                    <td style="width:10%;text-align:left">
+                        <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_WAY_LOGO')}}" alt="trajet"/>
+                    </td>
+                    <td style="width:90%;text-align:left">
+                        <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ outwardOrigin.address.displayLabel[0] }}</b></p>
+                        <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{ outwardDestination.address.displayLabel[0] }}</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table  style="width:100%;">
+                <tr>
+                    <td>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"><b>{{"noPanic"|trans}}</b></p>
+                    </td>
+                </tr>
+                 {# <tr style="text-align:left">
+                    <td>
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}" >
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_SEARCH_LOGO')}}" alt="search"/>
+                        </a>
+                    </td>  
+                </tr>
+                <tr style="text-align:left">
+                    <td>
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}{{'urlPublish'|trans}}">
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_PUBLISH_LOGO')}}" alt="publish"/>
+                        </a>
+                    </td>   
+                </tr> #}
+                <tr style="text-align:left">
+                    <td>
+                        <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+                    </td>
+                </tr>
+                <hr>
+            </table>
+        </td>
+    </tr>
+</table>
+{% endblock %}    

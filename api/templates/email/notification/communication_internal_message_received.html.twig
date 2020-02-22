@@ -1,6 +1,32 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    <p> {{ "youHaveAMessage"|trans }}</p>
-    <p>{{  "canAnswerViaEmailFrom" |trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere" |trans }} <a href="{{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlMailBox"|trans }}">{{ "mailBox"|trans }}</a>.</p>
-    <p>{{ "getProblem" |trans }}.</p>
+
+    <table align="center" style="border-spacing:0;text-align:left;vertical-align:top;width:100%;margin-top:20px;font-family:Roboto, sans-serif;">
+    <tr>
+        <td>
+            <p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b>.</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p> {{ "youHaveAMessage"|trans }}</p>
+        </td>
+    </tr> 
+    <tr>
+        <td>  
+            <p>{{ context.text | nl2br }}</p>
+        </td>
+    </tr> 
+    <tr>
+        <td>
+            <p>{{  "canAnswerViaEmailFrom" |trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere" |trans }} : <a href="{{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlMailBox"|trans }}">{{ "mailBox"|trans }}</a>.</p>
+            <p>{{ "getProblem" |trans }}.</p>
+        </td>    
+    </tr>
+    <tr>
+        <td>
+            <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+        </td>
+    </tr>
+    </table>    
 {% endblock %}

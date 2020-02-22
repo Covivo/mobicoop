@@ -46,7 +46,7 @@
         small
         dark
         depressed
-        @click="updateStatus((status==2) ? 4 : 5)"
+        @click="updateStatus((status==2) ? 5 : 4)"
       >
         {{ $t('button.accept') }}
       </v-btn> 
@@ -58,7 +58,7 @@
         small
         dark
         depressed
-        @click="updateStatus((status==2) ? 6 : 7)"
+        @click="updateStatus((status==2) ? 7 : 6)"
       >
         {{ $t('button.refuse') }}
       </v-btn>       

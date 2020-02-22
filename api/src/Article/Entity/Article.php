@@ -31,6 +31,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Article\Controller\ExternalArticlesAction;
 
 /**
  * An article : informations that should be displayed in a page of a site or in a screen of a mobile app.
@@ -43,7 +44,15 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
+ *      collectionOperations={
+ *          "get",
+ *          "externalArticles"={
+ *              "method"="GET",
+ *              "path"="/articles/external",
+ *              "controller"=ExternalArticlesAction::class,
+ *          },
+ *          "post"
+ *      },
  *      itemOperations={"get","put","delete"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "title"}, arguments={"orderParameterName"="order"})
@@ -53,7 +62,8 @@ class Article
 {
     const STATUS_PENDING = 0;
     const STATUS_PUBLISHED = 1;
-    
+    const NB_EXTERNAL_ARTICLES_DEFAULT = 3;
+
     /**
      * @var int The id of this article.
      *
@@ -89,6 +99,14 @@ class Article
      * @MaxDepth(1)
      */
     private $sections;
+
+    /**
+     * @var string The code of the article iFrame if it's displayed from an external source
+     *
+     * @ORM\Column(type="string", length=512, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $iFrame;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -163,6 +181,18 @@ class Article
             }
         }
 
+        return $this;
+    }
+
+    public function getIFrame(): ?string
+    {
+        return $this->iFrame;
+    }
+    
+    public function setIFrame(?string $iFrame): self
+    {
+        $this->iFrame = $iFrame;
+        
         return $this;
     }
 

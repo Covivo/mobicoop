@@ -601,6 +601,7 @@ class AdManager
         $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
         $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
         $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
+        $ad->setPaused($proposal->isPaused());
         if (!is_null($proposal->getUser())) {
             $ad->setUserId($proposal->getUser()->getId());
         }
@@ -669,15 +670,34 @@ class AdManager
         $ad->setUserId($userId);
         $ad->setOutwardWaypoints($proposal->getWaypoints());
         $ad->setOutwardDate($proposal->getCriteria()->getFromDate());
-        $ad->setOutwardTime($proposal->getCriteria()->getFromTime() ? $proposal->getCriteria()->getFromTime()->format('Y-m-d H:i:s') : null);
+        $ad->setPaused($proposal->isPaused());
+
+        if ($proposal->getCriteria()->getFromTime()) {
+            $ad->setOutwardTime($ad->getOutwardDate()->format('Y-m-d').' '.$proposal->getCriteria()->getFromTime()->format('H:i:s'));
+        } else {
+            $ad->setOutwardTime(null);
+        }
+
+
         $ad->setOutwardLimitDate($proposal->getCriteria()->getToDate());
         $ad->setOneWay(true);
+        $ad->setSolidary($proposal->getCriteria()->isSolidary());
+        $ad->setSolidaryExclusive($proposal->getCriteria()->isSolidaryExclusive());
 
+        
         // set return if twoWays ad
         if ($proposal->getProposalLinked()) {
             $ad->setReturnWaypoints($proposal->getProposalLinked()->getWaypoints());
             $ad->setReturnDate($proposal->getProposalLinked()->getCriteria()->getFromDate());
-            $ad->setReturnTime($proposal->getProposalLinked()->getCriteria()->getFromTime() ? $proposal->getProposalLinked()->getCriteria()->getFromTime()->format('Y-m-d H:i:s') : null);
+            
+            if ($proposal->getProposalLinked()->getCriteria()->getFromTime()) {
+                $ad->setReturnTime($ad->getReturnDate()->format('Y-m-d').' '.$proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i:s'));
+            } else {
+                $ad->setReturnTime(null);
+            }
+
+
+
             $ad->setReturnLimitDate($proposal->getProposalLinked()->getCriteria()->getToDate());
             $ad->setOneWay(false);
         }
@@ -718,6 +738,21 @@ class AdManager
         $ad->setResults(
             $this->resultManager->createAdResults($proposal)
         );
+        return $ad;
+    }
+
+    /**
+    * Update an ad.
+    *
+    */
+    public function updateAd(Ad $ad)
+    {
+        $proposal = $this->proposalRepository->find($ad->getProposalId());
+        $proposal->setPaused($ad->isPaused());
+        $this->entityManager->persist($proposal);
+        $this->entityManager->flush();
+
+        $ad = $this->makeAd($proposal, $proposal->getUser()->getId());
         return $ad;
     }
 }

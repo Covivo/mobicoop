@@ -1,4 +1,4 @@
-<!--* Copyright (c) 2018, MOBICOOP. All rights reserved.-->
+<!--* Copyright (c) 2020, MOBICOOP. All rights reserved.-->
 <!--* This project is dual licensed under AGPL and proprietary licence.-->
 <!--***************************-->
 <!--*    This program is free software: you can redistribute it and/or modify-->
@@ -71,7 +71,16 @@
             :label="$t('models.user.email.placeholder')+` *`"
             name="email"
             required
+            :loading="loadingCheckEmailAldreadyTaken"
+            @focusout="checkEmail"
+            @focusin="emailAlreadyTaken = false"
           />
+          <v-alert
+            v-if="emailAlreadyTaken"
+            type="error"
+          >
+            {{ $t('checkEmail.error') }}
+          </v-alert>
           <v-text-field
             v-model="form.telephone"
             :label="$t('models.user.phone.placeholder')+` *`"
@@ -95,7 +104,7 @@
             rounded
             class="my-13"
             color="secondary"
-            :disabled="!step1"
+            :disabled="!step1 || emailAlreadyTaken"
             @click="$vuetify.goTo('#step2', options)"
           >
             {{ $t('ui.button.next') }}
@@ -384,9 +393,6 @@ export default {
       step5: true,
       menu : false,
 
-      // disable validation if homeAddress is empty and required
-      isDisable: this.requiredHomeAddress ? true : false,
-
       //scrolling data
       type: 'selector',
       selected: null,
@@ -395,6 +401,8 @@ export default {
       easing: "easeOutQuad",
       container: "scroll-target",
 
+      emailAlreadyTaken : false,
+      loadingCheckEmailAldreadyTaken: false,
       form: {
         createToken: this.sentToken,
         email: null,
@@ -484,6 +492,16 @@ export default {
         easing: this.easing,
         container: this.container,
       }
+    },
+    // disable validation if homeAddress is empty and required or email already taken
+    isDisable() {
+      if (this.requiredHomeAddress && !this.form.homeAddress) {
+        return true;
+      }
+      if(this.emailAlreadyTaken){
+        return true;
+      }
+      return false;
     }
   },
   watch: {
@@ -498,14 +516,11 @@ export default {
   methods: {
     maxDate() {
       let maxDate = new Date();
-      maxDate.setFullYear (maxDate.getFullYear() - 16);
+      maxDate.setFullYear (maxDate.getFullYear() - this.ageMin);
       return maxDate.toISOString().substr(0, 10);
     },
     selectedGeo(address) {
       this.form.homeAddress = address;
-      if (this.requiredHomeAddress) {
-        this.isDisable = address ? false : true;
-      }
     },
     save (date) {
       this.$refs.menu.save(date)
@@ -560,6 +575,33 @@ export default {
 
       //var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
     },
+    checkEmail(){
+      this.loadingCheckEmailAldreadyTaken = true;
+      axios.post(this.$t('checkEmail.url'),
+        {
+          email:this.form.email
+        },{
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then(response=>{
+          if(!response.data.error){
+            if(response.data.message!==""){
+              this.emailAlreadyTaken = true;
+            }
+            else{
+              this.emailAlreadyTaken = false;
+            }
+          }
+        })
+        .catch(function (error) {
+          console.error(error);
+        })
+        .finally(()=>{
+          this.loadingCheckEmailAldreadyTaken = false;
+        });    
+    }
 
   }
 

@@ -259,9 +259,11 @@ class GeoSearcher
      */
     public function reverseGeoCode(float $lat, float $lon)
     {
+        $addresses = [];
         if ($geoResults = $this->geocoder->reverseQuery(ReverseQuery::fromCoordinates($lat, $lon))) {
             foreach ($geoResults as $geoResult) {
                 $address = new Address();
+                $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_ADDRESS_ANY)->getFileName());
                 if ($geoResult->getCoordinates() && $geoResult->getCoordinates()->getLatitude()) {
                     $address->setLatitude((string)$geoResult->getCoordinates()->getLatitude());
                 }
@@ -299,10 +301,25 @@ class GeoSearcher
                 if ($geoResult->getCountry() && $geoResult->getCountry()->getCode()) {
                     $address->setCountryCode($geoResult->getCountry()->getCode());
                 }
+                // add venue if handled by the provider
+                if (method_exists($geoResult, 'getVenue')) {
+                    $address->setVenue($geoResult->getVenue());
+                }
+                if ((method_exists($geoResult, 'getEstablishment')) && ($geoResult->getEstablishment() != null)) {
+                    $address->setVenue($geoResult->getEstablishment());
+                }
+
+                if ((method_exists($geoResult, 'getPointOfInterest')) && ($geoResult->getPointOfInterest() != null)) {
+                    $address->setVenue($geoResult->getPointOfInterest());
+                }
+                if ($address->getVenue()) {
+                    $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_VENUE)->getFileName());
+                }
                 $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
 
-                return $address;
+                $addresses[] = $address;
             }
+            return $addresses;
         }
         return false;
     }

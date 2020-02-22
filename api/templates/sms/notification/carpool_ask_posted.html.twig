@@ -1,11 +1,16 @@
-{# {% if Driver regular %}
-@PrenomOuPseudoPassager {{ "askYouCarpoolRegular"|trans }} @villePEC {{ "at"|trans }} @VilleDepose. {{ "findTheProposalIn"|trans }}.
-{% elseif Driver occasionnal %}
-@PrenomOuPseudoPassager {{ "askYouCarpool"|trans }} @villePEC {{ "at"|trans }} @VilleDepose. {{ "findTheProposalIn"|trans }}.
-{% elseif Passenger regular %}
-@PrenomOuPseudoConducteur {{ "askYouCarpoolRegular"|trans }} @villePEC {{ "at"|trans }} @VilleDepose. {{ "findTheProposalIn"|trans }}.
-{% elseif Passenger occasionnal %}
-@PrenomOuPseudoConducteur {{ "askYouCarpool"|trans }} @villePEC {{ "at"|trans }} @VilleDepose. {{ "findTheProposalIn"|trans }}.
-{% endif %} #}
-Un utilisateur vous propose un trajet correspondant à votre recherche. Retrouvez la proposition dans "Mes messages".
-{{api_env('SMS_PLATFORM_NAME')}}
+{% set ad = context.ad %}
+{% set recipient = context.user %}
+{% set sender = context.sender %}
+{% set result = context.result %}
+{% set outwardOrigin = context.outwardOrigin %}
+{% set outwardDestination = context.outwardDestination %}
+{% set returnOrigin = context.returnOrigin %}
+{% set returnDestination = context.returnDestination %}
+
+{{"hello"|trans}} {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}
+{% if ad.results[0].frequency == 1 %}
+{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} {{"askYouCarpool"|trans}} {{ outwardOrigin.address.displayLabel[0] }} {{"at"|trans}} {{ outwardDestination.address.displayLabel[0] }}. {{"findTheProposalIn"|trans}} {{api_env('SMS_PLATFORM_NAME')}}.
+{% else %}
+{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} {{"askYouCarpoolRegular"|trans}} {{ outwardOrigin.address.displayLabel[0] }} {{"at"|trans}} {{ outwardDestination.address.displayLabel[0] }}. {{"findTheProposalIn"|trans}} {{api_env('SMS_PLATFORM_NAME')}}.
+{% endif %}
+{{"signature"|trans}} {{api_env('SMS_PLATFORM_NAME')}}

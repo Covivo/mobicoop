@@ -1,5 +1,21 @@
 <template>
   <div :key="rerenderKey">
+    <v-row>
+      <v-col
+        v-if="canCreate"
+        cols="6"
+      >
+        <a :href="paths.community_create">
+          <v-btn
+            type="button"
+            color="secondary"
+            rounded
+          >
+            {{ $t('createCommunity') }}
+          </v-btn>
+        </a>
+      </v-col>
+    </v-row>
     <v-row
       v-if="communitiesUser.length>0"
     >
@@ -14,6 +30,7 @@
         >
           <v-toolbar-title> {{ $t('myCommunities') }}</v-toolbar-title>
         </v-toolbar>
+
         <v-card class="pa-6">
           <v-row v-if="loading">
             <v-skeleton-loader
@@ -23,7 +40,7 @@
               type="list-item-avatar-three-line"
               class="mx-auto"
               width="100%"
-            />  
+            />
           </v-row>
           <v-row v-else>
             <v-col
@@ -61,23 +78,7 @@
     <v-card class="pa-6">
       <v-card-title>
         <v-row>
-          <v-col
-            v-if="canCreate"
-            cols="6"
-          >
-            <a :href="paths.community_create">
-              <v-btn
-                type="button"
-                color="secondary"
-                rounded
-              >
-                {{ $t('createCommunity') }}
-              </v-btn>
-            </a>
-          </v-col>
-          <v-col
-            :cols="(canCreate) ? 6 : 12"
-          >
+          <v-col>
             <div class="flex-grow-1" />
             <v-card
               class="ma-3 pa-6"

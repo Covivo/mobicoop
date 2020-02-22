@@ -9,6 +9,18 @@ export default {
         diverOrPassenger:"Peu importe: je serai conducteur ou passager"
       },
     },
+    pause: {
+      route: "/covoiturage/annonce/pause",
+      error: {
+        pause: "Une erreur est survenue votre annonce n'a pas été mise en pause.",
+        unpause: "Une erreur est survenue votre annonce n'a pas été activée"
+      },
+      success: {
+        pause: "Votre annonce est maintenant en pause.",
+        unpause: "Votre annonce est maintenant active."
+      }, 
+      info: "Attention annonce en pause!"
+    },
     delete: {
       route: "/covoiturage/annonce/supprimer",
       success: "Votre annonce a été supprimée avec succès.",

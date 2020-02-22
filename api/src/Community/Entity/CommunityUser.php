@@ -35,6 +35,7 @@ use App\User\Entity\User;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Community\Controller\JoinAction;
+use App\Community\Controller\LeaveCommunityAction;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
@@ -60,7 +61,12 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *              "controller"=JoinAction::class,
  *          }
  *      },
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={
+ *          "get","put",
+ *          "delete"={
+ *              "controller"=LeaveCommunityAction::class
+ *          }
+ *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"user.id","community.id","status"})
  * @ApiFilter(SearchFilter::class, properties={"community":"exact","user":"exact"})
@@ -79,7 +85,7 @@ class CommunityUser
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("readCommunityUser")
+     * @Groups({"readCommunity","readCommunityUser"})
      */
     private $id;
         

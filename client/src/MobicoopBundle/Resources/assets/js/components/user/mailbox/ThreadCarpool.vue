@@ -137,13 +137,13 @@ export default {
     },
     regularCarpoolDays(){
       let carpoolDays = [];
-      if(this.criteria.monCheck!==null){carpoolDays.push(this.$t('Mon'));}
-      if(this.criteria.tueCheck!==null){carpoolDays.push(this.$t('Tue'));}
-      if(this.criteria.wedCheck!==null){carpoolDays.push(this.$t('Wed'));}
-      if(this.criteria.thuCheck!==null){carpoolDays.push(this.$t('Thu'));}
-      if(this.criteria.friCheck!==null){carpoolDays.push(this.$t('Fri'));}
-      if(this.criteria.satCheck!==null){carpoolDays.push(this.$t('Sat'));}
-      if(this.criteria.sunCheck!==null){carpoolDays.push(this.$t('Sun'));}
+      if(this.criteria.monCheck==true){carpoolDays.push(this.$t('Mon'));}
+      if(this.criteria.tueCheck==true){carpoolDays.push(this.$t('Tue'));}
+      if(this.criteria.wedCheck==true){carpoolDays.push(this.$t('Wed'));}
+      if(this.criteria.thuCheck==true){carpoolDays.push(this.$t('Thu'));}
+      if(this.criteria.friCheck==true){carpoolDays.push(this.$t('Fri'));}
+      if(this.criteria.satCheck==true){carpoolDays.push(this.$t('Sat'));}
+      if(this.criteria.sunCheck==true){carpoolDays.push(this.$t('Sun'));}
       return carpoolDays.join(", ");
     },
     name() {

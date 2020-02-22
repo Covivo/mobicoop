@@ -27,6 +27,7 @@
                 <v-chip
                   v-for="chip in chips"
                   :key="chip.id"
+                  :disabled="disabledFilters"
                   close
                   @click:close="removeFilter(chip)"
                 >
@@ -57,7 +58,7 @@
                     outlined
                     dense
                     flat
-                    :disabled="!filterEnabled.time"
+                    :disabled="!filterEnabled.time || disabledFilters"
                     @change="updateFilterTime"
                   />
                 </v-col>
@@ -69,7 +70,7 @@
                     outlined
                     dense
                     flat
-                    :disabled="!filterEnabled.role"
+                    :disabled="!filterEnabled.role || disabledFilters"
                     @change="updateFilterRole"
                   />
                 </v-col>
@@ -81,7 +82,7 @@
                     outlined
                     dense
                     flat
-                    :disabled="!filterEnabled.gender"
+                    :disabled="!filterEnabled.gender || disabledFilters"
                     @change="updateFilterGender"
                   />
                 </v-col>
@@ -97,7 +98,7 @@
                     outlined
                     dense
                     flat
-                    :disabled="!filterEnabled.community"
+                    :disabled="!filterEnabled.community || disabledFilters"
                     @change="updateFilterCommunity"
                   />
                 </v-col>
@@ -124,6 +125,14 @@ export default {
     communities: {
       type: Array,
       default: null
+    },
+    disabledFilters: {
+      type: Boolean,
+      default: false
+    },
+    disableRole:{
+      type: Boolean,
+      default: false
     }
   },
   data : function() {
@@ -132,7 +141,7 @@ export default {
       filterEnabled:{
         "time":true,
         // "order":true,
-        "role":true,
+        "role":!this.disableRole,
         "gender":true,
         "community":true
       },
@@ -170,6 +179,11 @@ export default {
         hours.push({text:i+'h00',value:i+'h00'});
       }
       return hours;
+    }
+  },
+  watch:{
+    disableRole(){
+      this.filterEnabled['role'] = !this.disableRole;
     }
   },
   methods :{

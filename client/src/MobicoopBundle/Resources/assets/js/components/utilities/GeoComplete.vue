@@ -143,12 +143,14 @@ export default {
           this.address.key = '0';
           this.address.displayedLabel = `${this.address.displayLabel[0]}`;
           this.address.displayedSecondLabel = `${this.address.displayLabel[1]}`;
-          if (this.address.name) {
+          if (this.address.home) {
+            this.address.selectedDisplayedLabel = `${this.address.displayLabel[0]}`;
+          } else if (this.address.name) {
             this.address.selectedDisplayedLabel = `${this.address.name}`;
           } else if (this.address.relayPoint) {
             this.address.selectedDisplayedLabel = `${this.address.relayPoint.name}`;
           } else if (this.address.event) {
-            this.address.selectedDisplayedLabel = `${this.address.event.name}`;
+            this.address.selectedDisplayedLabel = `${this.address.displayLabel[0]}`;
           } else {
             this.address.selectedDisplayedLabel = `${this.address.displayLabel[0]}`;
           }

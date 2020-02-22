@@ -9,7 +9,7 @@
     >
       <v-avatar
         color="grey lighten-3"
-        size="225"
+        :size="isWidget?150:225"
       >
         <img
           v-if="event.images[0]"
@@ -37,20 +37,21 @@
           <h3 class="headline text-justify font-weight-bold">
             {{ event.name }}
           </h3>
+          <p class="headline text-justify subtitle-1">
+            {{ event.address.addressLocality }}
+          </p>
           <p
-            v-if="displayDescription"
+            v-if="displayDescription && formatedDescription!==''"
             class="body-1 pa-3"
             md="6"
-          >
-            {{ event.description }}
-          </p>
+            v-html="formatedDescription"
+          />
           <p
-            v-if="displayDescription"
+            v-if="displayDescription && formatedFullDescription!==''"
             class="body-2 pa-3"
             md="6"
-          >
-            {{ event.fullDescription }}
-          </p>
+            v-html="formatedFullDescription"
+          />
           <v-row>
             <p class="body-2 pa-3">
               <span class="font-weight-black"> {{ $t('startEvent.label') }} :</span> {{ computedDateFormat(event.fromDate.date) }}
@@ -91,6 +92,10 @@ export default {
       type: Boolean,
       default: true
     },
+    isWidget: {
+      type: Boolean,
+      default: false
+    }
   },
   i18n: {
     messages: TranslationsMerged,
@@ -100,6 +105,20 @@ export default {
       locale: this.$i18n.locale,
       origin: this.initOrigin,
     };
+  },
+  computed:{
+    formatedDescription(){
+      if(this.event.description){
+        return this.event.description.replace('\n','<br />');
+      }
+      return '';
+    },
+    formatedFullDescription(){
+      if(this.event.fullDescription){
+        return this.event.fullDescription.replace('\n','<br />');
+      }
+      return '';
+    }
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE

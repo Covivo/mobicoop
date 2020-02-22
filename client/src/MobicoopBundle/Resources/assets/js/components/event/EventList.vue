@@ -59,13 +59,14 @@
                     />
                   </v-card>
                   <m-map
-                    v-if="!loadingMap && !loading && pointsComingMap.length > 0"
+                    v-if="!loadingMap && !loading && pointsComingMap.length >= 0"
                     ref="mmap"
                     :points="pointsComingMap"
                     :provider="mapProvider"
                     :url-tiles="urlTiles"
                     :attribution-copyright="attributionCopyright"
-                  />
+                    :zoom="2"
+                  />                 
                   <v-skeleton-loader
                     v-else
                     ref="skeleton"
@@ -285,6 +286,7 @@ export default {
       type: Number,
       default: 1
     }
+
   },
   data () {
     return {
@@ -315,8 +317,7 @@ export default {
       eventspassed:[],
       pointsComing:[],
       totalItems:0,
-      totalItemsPassed:0
-
+      totalItemsPassed:0,
     }
   },
   watch:{

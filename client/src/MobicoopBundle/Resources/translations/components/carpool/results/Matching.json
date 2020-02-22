@@ -6,12 +6,20 @@
     "carpoolUrl": "/covoiturage/demande",
     "contactUrl": "/covoiturage/contact",
     "mailboxUrl": "/utilisateur/messages",
+    "externalJourneyUrl": "/covoiturage/rdexJourney",
     "search": "Recherche en cours...",
     "newSearch": "Nouvelle recherche",
+    "AskNewSearch": "Réessayer avec une autre date?",
     "matchingNumber": "Aucune annonce en covoiturage trouvée... | {number} annonce en covoiturage trouvée | {number} annonces en covoiturage trouvées",
+    "includePassengers":"Voir aussi les annonces passager",
+    "alsoIncludePassengers":"Cette recherche contient également les annonces passager",
     "snackBar": {
       "success": "La prise de contact a bien été envoyée",
       "error": "Suite à un problème technique la prise de contact n'a pas pu être envoyée"
+    },
+    "tabs":{
+      "carpools":"Covoiturages {platform}",
+      "otherCarpools":"Autres covoiturages"
     }
   },
   "en":{
@@ -21,11 +29,18 @@
     "carpoolUrl": "/carpool/ask",
     "contactUrl": "/carpool/contact",
     "mailboxUrl": "/user/messages",
+    "externalJourneyUrl": "/carpool/rdexJourney",
     "search": "Searching...",
     "matchingNumber": "No carpooling ad found... | {number} carpooling ad found | {number} carpooling ads found",
+    "includePassengers":"Show also passengers carpools",
+    "alsoIncludePassengers":"This research includes also passengers carpools",
     "snackBar": {
       "success": "Contact has been successfuly established",
       "error": "Due to a technical difficuly, the contact hasn't been established"
+    },
+    "tabs":{
+      "carpools":"{platform} carpools",
+      "otherCarpools":"Other carpools"
     }
   }
 }

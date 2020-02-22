@@ -51,6 +51,7 @@ use App\Image\Entity\Image;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
 use App\User\Controller\UserRegistration;
+use App\User\Controller\UserDelegateRegistration;
 use App\User\Controller\UserPermissions;
 use App\User\Controller\UserAlerts;
 use App\User\Controller\UserAlertsUpdate;
@@ -65,6 +66,7 @@ use App\User\Controller\UserUpdate;
 use App\User\Controller\UserAnonymise;
 use App\User\Controller\UserCheckSignUpValidationToken;
 use App\User\Controller\UserCheckPhoneToken;
+use App\User\Controller\UserUnsubscribeFromEmail;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\HomeAddressDirectionTerritoryFilter;
@@ -76,6 +78,7 @@ use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\SolidaryFilter;
 use App\User\Filter\ValidatedDateTokenFilter;
+use App\User\Filter\UnsubscribeTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
 use App\Import\Entity\UserImport;
@@ -147,12 +150,67 @@ use App\User\EntityListener\UserListener;
  *                          "required" = true,
  *                          "example" = "1997-08-14T00:00:00+00:00",
  *                          "description" = "User's birthdate"
- *                      },
+ *                      }
+ *                  }
+ *              }
+ *          },
+ *          "delegateRegistration"={
+ *              "method"="POST",
+ *              "path"="/users/register",
+ *              "controller"=UserDelegateRegistration::class,
+ *              "swagger_context" = {
+ *                  "parameters" = {
  *                      {
- *                          "name" = "validatedDateToken",
+ *                          "name" = "givenName",
  *                          "type" = "string",
  *                          "required" = true,
- *                          "description" = "A token to be send to the user for email validation purpose"
+ *                          "description" = "User's given name"
+ *                      },
+ *                      {
+ *                          "name" = "familyName",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's family name"
+ *                      },
+ *                      {
+ *                          "name" = "email",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's email"
+ *                      },
+ *                      {
+ *                          "name" = "password",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "Clear version of the password"
+ *                      },
+ *                      {
+ *                          "name" = "gender",
+ *                          "type" = "int",
+ *                          "enum" = {1,2,3},
+ *                          "required" = true,
+ *                          "description" = "User's gender (1 : female, 2 : male, 3 : other)"
+ *                      },
+ *                      {
+ *                          "name" = "birthDate",
+ *                          "type" = "string",
+ *                          "format" = "date",
+ *                          "required" = true,
+ *                          "example" = "1997-08-14T00:00:00+00:00",
+ *                          "description" = "User's birthdate"
+ *                      },
+ *                      {
+ *                          "name" = "userDelegate",
+ *                          "type" = "string",
+ *                          "required" = false,
+ *                          "description" = "User IRI that creates the new user"
+ *                      },
+ *                      {
+ *                          "name" = "passwordSendtype",
+ *                          "type" = "int",
+ *                          "enum" = {0,1,2},
+ *                          "required" = true,
+ *                          "description" = "Password send type (0 : none, 1 : sms, 2 : email)"
  *                      }
  *                  }
  *              }
@@ -261,6 +319,11 @@ use App\User\EntityListener\UserListener;
  *              "method"="GET",
  *              "path"="/users/{id}/asks",
  *              "controller"=UserAsks::class
+ *          },
+ *          "unsubscribe_user"={
+ *              "method"="PUT",
+ *              "path"="/users/{id}/unsubscribe_user",
+ *              "controller"=UserUnsubscribeFromEmail::class
  *          }
  *      }
  * )
@@ -275,6 +338,7 @@ use App\User\EntityListener\UserListener;
  * @ApiFilter(WaypointTerritoryFilter::class, properties={"waypointTerritory"})
  * @ApiFilter(LoginFilter::class, properties={"login"})
  * @ApiFilter(PwdTokenFilter::class, properties={"pwdToken"})
+ * @ApiFilter(UnsubscribeTokenFilter::class, properties={"unsubscribeToken"})
  * @ApiFilter(ValidatedDateTokenFilter::class, properties={"validatedDateToken"})
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate"}, arguments={"orderParameterName"="order"})
@@ -309,6 +373,10 @@ class User implements UserInterface, EquatableInterface
         "square_800"
     ];
 
+    const PWD_SEND_TYPE_NONE = 0;    // password not sent
+    const PWD_SEND_TYPE_SMS = 1;     // password sent by sms if phone present
+    const PWD_SEND_TYPE_EMAIL = 2;   // password sent by email
+
     /**
      * @var int The id of this user.
      *
@@ -325,22 +393,22 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","readCommunityUser","write"})
+     * @Groups({"readUser","readCommunityUser","results","write"})
      */
     private $status;
 
     /**
      * @var string|null The first name of the user.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney"})
      */
     private $givenName;
 
     /**
      * @var string|null The family name of the user.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
      */
     private $familyName;
@@ -365,7 +433,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @Assert\Email()
-     * @ORM\Column(type="string", length=100, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate"})
      */
     private $email;
@@ -382,23 +450,37 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string The encoded password of the user.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","passwordUpdate"})
      */
     private $password;
 
     /**
+     * @var string The clear password of the user, used for delagation (not persisted !).
+     *
+     * @Groups("write")
+     */
+    private $clearPassword;
+
+    /**
+     * @var int|null If indirect registration, how we want to send the password to the user (0 = not sent, 1 = by sms, 2 = by email)
+     *
+     * @Groups("write")
+     */
+    private $passwordSendType;
+
+    /**
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","results","write"})
+     * @Groups({"readUser","results","write","externalJourney"})
      */
     private $gender;
 
     /**
      * @var string|null The nationality of the user.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
      */
     private $nationality;
@@ -427,7 +509,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null The telephone number of the user.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","checkPhoneToken"})
      */
     private $telephone;
@@ -559,7 +641,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null Token for account validation by email
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","checkValidationToken"})
      */
     private $validatedDateToken;
@@ -575,7 +657,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var DateTime|null  Date of password token generation modification.
      *
-     * @ORM\Column(type="datetime", length=100, nullable=true)
+     * @ORM\Column(type="datetime", length=255, nullable=true)
      * @Groups({"readUser","write"})
      */
     private $pwdTokenDate;
@@ -583,7 +665,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null Token for password modification.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","passwordUpdateRequest","passwordUpdate"})
      */
     private $pwdToken;
@@ -591,7 +673,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null Token for geographical search authorization.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
      */
     private $geoToken;
@@ -599,7 +681,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null Token for phone validation.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","checkPhoneToken"})
      */
     private $phoneToken;
@@ -615,7 +697,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null iOS app ID.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
      */
     private $iosAppId;
@@ -623,7 +705,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null Android app ID.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
      */
     private $androidAppId;
@@ -708,6 +790,8 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null A user may have many roles.
      *
      * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRole", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups("write")
+     * @MaxDepth(1)
      */
     private $userRoles;
 
@@ -827,7 +911,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var array|null The avatars of the user
-     * @Groups({"readUser","readCommunity","results","threads","thread"})
+     * @Groups({"readUser","readCommunity","results","threads","thread","externalJourney"})
      */
     private $avatars;
 
@@ -852,13 +936,45 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null Facebook ID of the user
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
      */
     private $facebookId;
 
+    /**
+     * @var User|null Admin that create the user.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @Groups({"readUser","write"})
+     * @MaxDepth(1)
+     */
+    private $userDelegate;
+
+    /**
+     * @var string|null Token for unsubscribee the user from receiving email
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser","write"})
+     */
+    private $unsubscribeToken;
+
+    /**
+     * @var \DateTimeInterface Date when user unsubscribe from email
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("readUser")
+     */
+    private $unsubscribeDate;
+
+    /**
+     * @var string|null the unsubscribe message we return to client : change this later By listener
+     * @Groups({"readUser"})
+     */
+    private $unsubscribeMessage;
+
     public function __construct($status = null)
     {
+        $this->id = self::DEFAULT_ID;
         $this->addresses = new ArrayCollection();
         $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();
@@ -930,6 +1046,9 @@ class User implements UserInterface, EquatableInterface
 
     public function getShortFamilyName(): ?string
     {
+        if (is_null($this->familyName) || $this->familyName==="" || !isset($this->familyName[0])) {
+            return ".";
+        }
         return strtoupper($this->familyName[0]) . ".";
     }
 
@@ -978,6 +1097,30 @@ class User implements UserInterface, EquatableInterface
     {
         $this->password = $password;
 
+        return $this;
+    }
+
+    public function getClearPassword(): ?string
+    {
+        return $this->clearPassword;
+    }
+
+    public function setClearPassword(?string $clearPassword): self
+    {
+        $this->clearPassword = $clearPassword;
+
+        return $this;
+    }
+
+    public function getPasswordSendType(): ?int
+    {
+        return $this->passwordSendType;
+    }
+
+    public function setPasswordSendType(?int $passwordSendType): self
+    {
+        $this->passwordSendType = $passwordSendType;
+        
         return $this;
     }
 
@@ -2070,6 +2213,55 @@ class User implements UserInterface, EquatableInterface
         $this->facebookId = $facebookId;
         return $this;
     }
+
+    public function getUserDelegate(): ?User
+    {
+        return $this->userDelegate;
+    }
+
+    public function setUserDelegate(?User $userDelegate): self
+    {
+        $this->userDelegate = $userDelegate;
+
+        return $this;
+    }
+
+    public function getUnsubscribeToken(): ?string
+    {
+        return $this->unsubscribeToken;
+    }
+
+    public function setUnsubscribeToken(?string $unsubscribeToken): self
+    {
+        $this->unsubscribeToken = $unsubscribeToken;
+        return $this;
+    }
+
+    public function getUnsubscribeDate(): ?\DateTimeInterface
+    {
+        return $this->unsubscribeDate;
+    }
+
+    public function setUnsubscribeDate(?\DateTimeInterface $unsubscribeDate): self
+    {
+        $this->unsubscribeDate = $unsubscribeDate;
+
+        return $this;
+    }
+
+    public function getUnsubscribeMessage(): ?string
+    {
+        return $this->unsubscribeMessage;
+    }
+
+    public function setUnsubscribeMessage(?string $unsubscribeMessage): self
+    {
+        $this->unsubscribeMessage = $unsubscribeMessage;
+
+        return $this;
+    }
+
+
 
     // DOCTRINE EVENTS
 

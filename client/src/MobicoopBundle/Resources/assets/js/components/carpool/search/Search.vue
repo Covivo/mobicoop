@@ -1,5 +1,5 @@
 <template>
-  <v-content color="secondary">
+  <v-content>
     <v-container
       grid-list-md
       text-xs-center
@@ -9,9 +9,9 @@
       >
         <v-col
           cols="12"
-          :xl="results ? 12 : 6"
-          :lg="results ? 12 : 6"
-          :md="results ? 12 : 6"
+          :xl="fullSize ? 12 : results ? 12 : 6"
+          :lg="fullSize ? 12 : results ? 12 : 6"
+          :md="fullSize ? 12 : results ? 12 : 6"
         >
           <!--SearchJourney-->
           <search-journey
@@ -24,6 +24,7 @@
             :show-destination="showDestination"
             :iswidget="isWidget"
             :init-outward-date="defaultOutwardDate"
+            :image-swap="imageSwap"
             @change="searchChanged"
           />
         </v-col>
@@ -34,7 +35,7 @@
         justify="center"
       >
         <v-col
-          cols="6"
+          :cols="fullSize ? 12 : 6"
         >
           <v-row>
             <v-tooltip
@@ -45,8 +46,9 @@
               <template v-slot:activator="{ on }">
                 <v-col
                   v-if="!logged"
-                  cols="6"
-                  align="left"
+                  cols="12"
+                  md="6"
+                  :class="classAlignPublishButton"
                   v-on="on"
                 >
                   <v-btn
@@ -62,8 +64,9 @@
                 </v-col>
                 <v-col
                   v-if="logged"
-                  cols="6"
-                  align="left"
+                  cols="12"
+                  md="6"
+                  :class="classAlignSearchButton"
                 >
                   <v-btn
                     v-if="!hidePublish"
@@ -80,14 +83,16 @@
               <span> {{ $t('tooltips.needConnection') }}</span>
             </v-tooltip>
             <v-col
-              align="left"
-              cols="6"
+              :class="classAlignSearchButton"
+              cols="12"
+              md="6"
             >
               <v-btn
                 :disabled="searchUnavailable || disableSearch"
                 :loading="loadingSearch"
                 color="secondary"
                 rounded
+                min-width="150px"
                 @click="search"
               >
                 {{ $t('buttons.search.label') }}
@@ -106,6 +111,7 @@ import {merge} from "lodash";
 import Translations from "@translations/components/carpool/search/Search.json";
 import TranslationsClient from "@clientTranslations/components/carpool/search/Search.json";
 import SearchJourney from "@components/carpool/search/SearchJourney";
+import axios from 'axios';
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -169,6 +175,22 @@ export default {
     defaultOutwardDate: {
       type: String,
       default: null
+    },
+    fullSize:{
+      type: Boolean,
+      default:false
+    },
+    classAlignPublishButton:{
+      type: String,
+      default:"text-left"
+    },
+    classAlignSearchButton:{
+      type: String,
+      default:"text-left"
+    },
+    imageSwap:{
+      type:String,
+      default:""
     }
   },
   data() {
@@ -201,8 +223,10 @@ export default {
     post: function (path, params, method='post') {
       const form = document.createElement('form');
       form.method = method;
+      if (this.isWidget) {
+        form.target = '_blank';
+      }
       form.action = window.location.origin+'/'+path;
-      // this.isWidget  ? form.target ="_blank" : '';
 
       for (const key in params) {
         if (params.hasOwnProperty(key)) {
@@ -215,6 +239,7 @@ export default {
       }
       document.body.appendChild(form);
       form.submit();
+      this.loadingSearch= false;
     },
     searchChanged: function (search) {
       this.origin = search.origin;

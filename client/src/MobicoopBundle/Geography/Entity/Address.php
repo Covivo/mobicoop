@@ -37,6 +37,7 @@ class Address implements ResourceInterface, \JsonSerializable
 {
     /**
      * @var int The id of this address.
+     * @Groups({"post","put"})
      */
     private $id;
 

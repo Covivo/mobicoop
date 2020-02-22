@@ -26,6 +26,7 @@ namespace App\Image\Repository;
 use App\Community\Entity\Community;
 use App\Event\Entity\Event;
 use App\Image\Entity\Image;
+use App\MassCommunication\Entity\Campaign;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -73,6 +74,10 @@ class ImageRepository
             case Community::class:
                 $query->andWhere('i.community = :community')
                 ->setParameter('community', $owner);
+                break;
+            case Campaign::class:
+                $query->andWhere('i.campaign = :campaign')
+                    ->setParameter('campaign', $owner);
                 break;
             default:
                 break;

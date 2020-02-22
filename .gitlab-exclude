@@ -74,6 +74,8 @@
 /api/public/import/Community/*.*
 /api/public/import/Event/*.*
 /api/public/import/RelaisPoint/*.*
+/api/public/upload/masscommunication/
+/api/public/upload/masscommunication/*.*
 /client/.env.dev.local
 /client/.env.test.local
 /client/.env.prod.local

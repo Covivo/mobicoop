@@ -30,7 +30,7 @@
         {{ infosComplete.carpooler.givenName+' '+infosComplete.carpooler.shortFamilyName }}
       </v-card-text>
       <v-card-text
-        v-if="infosComplete.carpooler.status == 3"
+        v-if="infosComplete.carpooler && infosComplete.carpooler.status == 3"
         class="font-weight-bold headline"
       >
         {{ $t("userDelete") }}
@@ -75,6 +75,22 @@
             <tr>
               <td class="text-left">
                 {{ $t('distance') }}
+                <v-tooltip
+                  slot="append"
+                  right
+                  color="info"
+                  :max-width="'35%'"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                      justify="left"
+                      v-on="on"
+                    >
+                      mdi-help-circle-outline
+                    </v-icon>
+                  </template>
+                  <span>{{ $t('distanceTooltip') }}</span>
+                </v-tooltip>                
               </td>
               <td class="text-left">
                 {{ distanceInKm }}
@@ -249,7 +265,7 @@ export default {
   },
   computed:{
     distanceInKm(){
-      return (this.driver) ? parseInt(this.infos.outward.newDistance) / 1000 + ' km' : parseInt(this.infos.outward.originalDistance) / 1000 + ' km';
+      return Math.round((this.infos.outward.commonDistance + this.infos.outward.detourDistance) / 1000) + ' km';
     }
   },
   watch:{
@@ -284,7 +300,7 @@ export default {
             if (this.infosComplete.resultDriver !== null && this.infosComplete.resultPassenger !== null) {
               this.infos = this.infosComplete.resultDriver;
               this.driver = this.passenger = true;
-            } else if (this.infosComplete.resultPassenger !== null) {
+            } else if (this.infosComplete.resultPassenger !== null && this.infosComplete.resultDriver === null) {
               this.infos = this.infosComplete.resultPassenger;
               this.driver = false;
               this.passenger = true;

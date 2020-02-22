@@ -135,7 +135,30 @@ class UserManager
         return null;
     }
 
-    
+    /**
+     * Search user by unsubscribe token
+     *
+     * @param string $token
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function findByUnsubscribeToken(string $token)
+    {
+        $response = $this->dataProvider->getCollection(['unsubscribeToken' => $token]);
+        if ($response->getCode() == 200) {
+            /** @var Hydra $user */
+            $user = $response->getValue();
+
+            if ($user->getTotalItems() == 0) {
+                return null;
+            } else {
+                return current($user->getMember());
+            }
+        }
+        return null;
+    }
+
+
     /**
      * Search user by email
      *
@@ -334,7 +357,6 @@ class UserManager
      */
     public function deleteUser(User $user)
     {
-        //$response = $this->dataProvider->getSpecialItem($user->getId(), "anonymise_user");
         $response = $this->dataProvider->putSpecial($user, null, "anonymise_user");
         //L'user est anonymiser
         if ($response->getCode() == 200) {
@@ -494,7 +516,7 @@ class UserManager
         $response = $this->dataProvider->getCollection(["userId"=>$user->getId()]);
         
         $ads = $response->getValue();
-
+       
         $adsSanitized = [
             "ongoing" => [],
             "archived" => []
@@ -520,7 +542,8 @@ class UserManager
             }
             // Carpool punctual
             else {
-                $fromDate = new DateTime($ad["outwardDate"]);
+                $fromDate = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
+                //dump($fromDate);
                 // $linkedDate = isset($proposal["proposalLinked"]) ? new DateTime($proposal["proposalLinked"]["criteria"]["fromDate"]) : null;
                 // $date = isset($linkedDate) && $linkedDate > $fromDate ? $linkedDate : $fromDate;
                 $date = $fromDate;
@@ -558,7 +581,6 @@ class UserManager
                 $adsSanitized[$key][$ad["id"]]['return'] = $ad;
             }
         }
-
         return $adsSanitized;
     }
 
@@ -652,6 +674,22 @@ class UserManager
         $user->setTelephone($phone);
         $user->setPhoneToken($token);
         $response = $this->dataProvider->postSpecial($user, ["checkPhoneToken"], "checkPhoneToken");
+
+        return $response->getValue();
+    }
+
+    /**
+     * Unsubscribe the user from receiving news
+     *
+     * @param string $token
+     * @param string $phone
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function unsubscribeUserFromEmail(string $token)
+    {
+        $user = $this->findByUnsubscribeToken($token);
+        $response = $this->dataProvider->putSpecial($user, null, "unsubscribe_user");
 
         return $response->getValue();
     }

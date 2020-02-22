@@ -21,10 +21,11 @@
             :time="time"
             :regular="regular"
           />
-
           <!-- Matching filter -->
           <matching-filter 
             :communities="communities"
+            :disabled-filters="loading"
+            :disable-role="!this.includePassenger"
             @updateFilters="updateFilters" 
           />
 
@@ -34,25 +35,31 @@
             align="center"
           >
             <v-col
-              v-if="!loading"
-              cols="8"
-              align="left"
+              v-if="!loading && !loadingExternal"
+              :cols="(!newSearch) ? 8 : 12"
+              class="text-left"
             >
-              {{ $tc('matchingNumber', numberOfResults, { number: numberOfResults }) }}
+              <p>{{ $tc('matchingNumber', numberOfResults, { number: numberOfResults }) }}</p>
+              <p
+                v-if="numberOfResults == 0 && !regular"
+                class="font-weight-bold"
+              >
+                {{ $t('AskNewSearch') }}
+              </p>
             </v-col>
             <v-col
               v-else
               cols="12"
-              align="left"
             >
               {{ $t('search') }}
             </v-col>
             <v-col
-              v-if="!loading && !newSearch"
+              v-if="!loading && !loadingExternal && !newSearch"
               cols="4"
               align="end"
             >
               <v-btn
+                v-if="!fromMyProposals"
                 rounded
                 color="secondary"
                 @click="startNewSearch()"
@@ -61,6 +68,29 @@
               </v-btn>
             </v-col>
           </v-row>
+          <v-row v-if="!fromMyProposals">
+            <v-col
+              cols="12"
+              class="text-left"
+            >
+              <v-switch
+                v-if="role!=3"
+                v-model="includePassenger"
+                class="ma-2"
+                :label="$t('includePassengers')"
+              />
+              <v-alert
+                v-else
+                class="accent white--text"
+                dense
+                dismissible
+              >
+                {{ $t('alsoIncludePassengers') }}
+              </v-alert>
+            </v-col>
+          </v-row>
+
+
           <v-row v-if="newSearch">
             <v-col cols="12">
               <search
@@ -76,48 +106,59 @@
               />
             </v-col>
           </v-row>
-          <!-- Matching results -->
-          <div v-if="loading">
-            <v-row
-              v-for="n in 3"
-              :key="n"
-              class="text-left"
+
+          <v-tabs
+            v-if="externalRdexJourneys"
+            v-model="modelTabs"
+          >
+            <v-tab href="#carpools">
+              <v-badge
+                color="primary"
+                :content="nbCarpoolPlatform"
+                icon="mdi-timer-sand"
+              >              
+                {{ $t('tabs.carpools', {'platform':platformName}) }}
+              </v-badge>
+            </v-tab>
+            <v-tab
+              v-if="externalRdexJourneys"
+              href="#otherCarpools"
             >
-              <v-col cols="12">
-                <v-skeleton-loader
-                  ref="skeleton"
-                  type="article"
-                  class="mx-auto"
-                />
-                <v-skeleton-loader
-                  ref="skeleton"
-                  type="actions"
-                  class="mx-auto"
-                />
-              </v-col>
-            </v-row>
-          </div>
-          <div v-else>
-            <v-row 
-              v-for="(result,index) in results"
-              :key="index"
-              justify="center"
+              <v-badge
+                color="primary"
+                :content="nbCarpoolOther"
+                icon="mdi-timer-sand"
+              >              
+                {{ $t('tabs.otherCarpools') }}
+              </v-badge>
+            </v-tab>
+          </v-tabs>
+          <v-tabs-items v-model="modelTabs">
+            <v-tab-item value="carpools">
+              <matching-results
+                :results="results"
+                :distinguish-regular="distinguishRegular"
+                :carpooler-rate="carpoolerRate"
+                :user="user"
+                :loading-prop="loading"
+                @carpool="carpool"
+              />
+            </v-tab-item>
+            <v-tab-item
+              v-if="externalRdexJourneys"
+              value="otherCarpools"
             >
-              <v-col
-                cols="12"
-                align="left"
-              >
-                <!-- Matching result -->
-                <matching-result
-                  :result="result"
-                  :user="user"
-                  :distinguish-regular="distinguishRegular"
-                  :carpooler-rate="carpoolerRate"
-                  @carpool="carpool(result)"
-                />
-              </v-col>
-            </v-row>
-          </div>
+              <matching-results
+                :results="externalRDEXResults"
+                :distinguish-regular="distinguishRegular"
+                :carpooler-rate="carpoolerRate"
+                :user="user"
+                :loading-prop="loadingExternal"
+                :external-rdex-journeys="externalRdexJourneys"
+                @carpool="carpool"
+              />
+            </v-tab-item>
+          </v-tabs-items>
         </v-col>
       </v-row>
     </v-container>
@@ -145,7 +186,7 @@ import Translations from "@translations/components/carpool/results/Matching.json
 import TranslationsClient from "@clientTranslations/components/carpool/results/Matching.json";
 import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
-import MatchingResult from "@components/carpool/results/MatchingResult";
+import MatchingResults from "@components/carpool/results/MatchingResults";
 import MatchingJourney from "@components/carpool/results/MatchingJourney";
 import Search from "@components/carpool/search/Search";
 
@@ -154,7 +195,7 @@ export default {
   components: {
     MatchingHeader,
     MatchingFilter,
-    MatchingResult,
+    MatchingResults,
     MatchingJourney,
     Search
   },
@@ -206,27 +247,49 @@ export default {
     geoSearchUrl: {
       type: String,
       default: null
+    },
+    externalRdexJourneys: {
+      type: Boolean,
+      default: false
+    },
+    platformName: {
+      type: String,
+      default: ""
+    },
+    defaultRole:{
+      type: Number,
+      default: 3
     }
-    
   },
   data : function() {
     return {
       locale: this.$i18n.locale,
       carpoolDialog: false,
       proposal: null,
+      results: null,
+      externalRDEXResults:null,
       result: null,
       loading : true,
-      results: null,
+      loadingExternal : false,
       lOrigin: null,
       lDestination: null,
       lProposalId: this.proposalId,
       filters: null,
       newSearch: false,
+      modelTabs:"carpools",
+      nbCarpoolPlatform:0,
+      nbCarpoolOther:0,
+      role:this.defaultRole,
+      includePassenger:false,
+      fromMyProposals:false
     };
   },
   computed: {
     numberOfResults() {
-      return this.results ? Object.keys(this.results).length : 0 // ES5+
+      let numberOfResults = 0;
+      (!isNaN(this.nbCarpoolPlatform)) ? numberOfResults = numberOfResults + this.nbCarpoolPlatform : 0;
+      (!isNaN(this.nbCarpoolOther)) ? numberOfResults = numberOfResults + this.nbCarpoolOther : 0;
+      return numberOfResults;
     },
     communities() {
       if (!this.results) return null;
@@ -243,12 +306,26 @@ export default {
       return communities;
     }
   },
+  watch:{
+    includePassenger(){
+      if(this.includePassenger){
+        this.role = 3;
+        this.lProposalId = null;
+      }
+      else{
+        this.role = 2;
+      }
+      this.search();
+    }
+  },
   created() {
+    if(this.proposalId) this.fromMyProposals = true;
     this.search();
+    if(this.externalRdexJourneys) this.searchExternalJourneys();
   },
   methods :{
-    carpool(result) {
-      this.result = result;
+    carpool(carpool) {
+      this.result = carpool;
       // open the dialog
       this.carpoolDialog = true;
     },
@@ -268,6 +345,7 @@ export default {
           .then((response) => {
             this.loading = false;
             this.results = response.data;
+            (response.data.length>0) ? this.nbCarpoolPlatform = response.data.length : this.nbCarpoolPlatform = "-";
           })
           .catch((error) => {
             console.log(error);
@@ -283,7 +361,8 @@ export default {
           "regular": this.regular,
           "userId": this.user ? this.user.id : null,
           "communityId": this.communityId,
-          "filters": this.filters
+          "filters": this.filters,
+          "role": this.role
         };
         axios.post(this.$t("matchingUrl"), postParams,
           {
@@ -294,8 +373,12 @@ export default {
           .then((response) => {
             this.loading = false;
             this.results = response.data;
-            if (this.results[0].id) {
+            if (this.results.length>0 && this.results[0].id) {
               this.lProposalId = this.results[0].id;
+              this.nbCarpoolPlatform = this.results.length;
+            }
+            else{
+              this.nbCarpoolPlatform = "-";
             }
 
           })
@@ -303,6 +386,32 @@ export default {
             console.log(error);
           });
       }
+
+    },
+    searchExternalJourneys(){
+      this.loadingExternal = true;
+      let postParams = {
+        "driver": 1, // TO DO : Dynamic
+        "passenger": 0, // TO DO : Dynamic
+        "from_latitude": this.origin.latitude,
+        "from_longitude": this.origin.longitude,
+        "to_latitude": this.destination.latitude,
+        "to_longitude": this.destination.longitude
+      };
+      axios.post(this.$t("externalJourneyUrl"), postParams,
+        {
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then((response) => {
+          this.loadingExternal = false;
+          this.externalRDEXResults = response.data;
+          (response.data.length>0) ? this.nbCarpoolOther = response.data.length : this.nbCarpoolOther = '-';
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
     },
     contact(params) {

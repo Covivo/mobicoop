@@ -4,11 +4,13 @@
       :is-driver="isDriver"
       :is-passenger="isPassenger"
       :is-pausable="isRegular"
+      :is-paused="isPaused"
       :is-archived="isArchived"
       :has-accepted-ask="hasAtLeastOneAcceptedAsk"
       :has-ask="hasAtLeastOneAsk"
       :proposal-id="proposal.outward.id"
       @proposal-deleted="proposalDeleted()"
+      @pause-ad="pauseAd"
     />
     
     <v-card-text v-if="isRegular">
@@ -23,6 +25,7 @@
       
     <v-card-actions class="py-0">
       <proposal-footer
+        v-if="!isPaused"
         :id="proposal.outward.id"
         :seats="(isDriver) ? proposal.outward.seatsDriver : proposal.outward.seatsPassenger"
         :price="(isDriver) ? proposal.outward.outwardDriverPrice : proposal.outward.outwardPassengerPrice"
@@ -64,7 +67,8 @@ export default {
     return {
       hasAtLeastOneAsk: false,
       hasAtLeastOneAcceptedAsk: false,
-      lastMessageId: null
+      lastMessageId: null,
+      isPaused: this.proposal.outward.paused
     }
   },
   computed: {
@@ -74,7 +78,7 @@ export default {
     },
     isPassenger () {
       //return !!this.proposal.outward.criteria.passenger;
-      return (this.proposal.outward.role === 2 || this.proposal.outward.role === 3) && this.proposal.outward.solidary != 1
+      return (this.proposal.outward.role === 2 || this.proposal.outward.role === 3) && this.proposal.outward.solidaryExclusive != 1
     },
     isRegular () {
       return this.proposal.outward.frequency === 2;
@@ -175,6 +179,10 @@ export default {
     },
     proposalDeleted(id) {
       this.$emit('proposal-deleted', id)
+    },
+    pauseAd(pauseAd) {
+      this.isPaused = pauseAd;
+     
     }
   }
 }
