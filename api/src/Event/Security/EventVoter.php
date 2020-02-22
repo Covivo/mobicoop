@@ -60,11 +60,6 @@ class EventVoter extends Voter
             return false;
         }
 
-        // only vote on Event objects inside this voter
-        if (!$subject instanceof Event) {
-            return false;
-        }
-
         return true;
     }
 

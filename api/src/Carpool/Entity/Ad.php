@@ -143,14 +143,14 @@ class Ad
     /**
      * @var int|null The frequency for this ad.
      *
-     * @Groups({"read","write","readCommunity"})
+     * @Groups({"read","write","readCommunity","readEvent"})
      */
     private $frequency;
 
     /**
      * @var array|null The waypoints for the outward.
      *
-     * @Groups({"read","write","results","readCommunity"})
+     * @Groups({"read","write","results","readCommunity","readEvent"})
      */
     private $outwardWaypoints;
 
@@ -340,7 +340,7 @@ class Ad
     /**
      * @var User|null The ad owner. Null for an anonymous search.
      *
-     * @Groups({"readCommunity"})
+     * @Groups({"readCommunity","readEvent"})
      */
     private $user;
     

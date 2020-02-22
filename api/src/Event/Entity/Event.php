@@ -93,6 +93,12 @@ use App\Event\Controller\ReportAction;
  *              "controller"=ValidateCreateEventController::class,
  *              "security"="is_granted('event_create',object)"
  *          },
+ *          "ads"={
+ *              "method"="GET",
+ *              "path"="/events/{id}/ads",
+ *              "normalization_context"={"groups"={"readEvent"}},
+ *              "security_post_denormalize"="is_granted('event_read',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={

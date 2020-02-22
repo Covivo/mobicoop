@@ -396,7 +396,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent"})
      */
     private $givenName;
 
@@ -411,7 +411,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent"})
      */
     private $shortFamilyName;
 

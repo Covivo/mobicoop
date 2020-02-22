@@ -252,8 +252,6 @@ class CommunityController extends AbstractController
         // Get the proposals and waypoints
         $ads = $communityManager->getAds($community->getId());
 
-        dump($ads);
-
         $ways = [];
         foreach ($ads as $ad) {
             $currentAd = [

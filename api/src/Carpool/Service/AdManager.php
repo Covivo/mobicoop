@@ -690,7 +690,7 @@ class AdManager
         $refIdProposals = [];
         foreach ($community->getProposals() as $proposal) {
             if (!in_array($proposal->getId(), $refIdProposals) && !$proposal->isPrivate()) {
-                $ads[] = $this->makeAdForCommunity($proposal);
+                $ads[] = $this->makeAdForCommunityOrEvent($proposal);
                 if (!is_null($proposal->getProposalLinked())) {
                     $refIdProposals[$proposal->getId()] = $proposal->getProposalLinked()->getId();
                 }
@@ -698,6 +698,31 @@ class AdManager
         }
         return $ads;
     }
+
+    /**
+     * Get all ads of an Event
+     *
+     * @param integer $eventId Id of the Event
+     * @return void
+     */
+    public function getAdsOfEvent(int $eventId)
+    {
+        $ads = [];
+        $event = $this->eventManager->getEvent($eventId);
+        
+        
+        $refIdProposals = [];
+        foreach ($event->getProposals() as $proposal) {
+            if (!in_array($proposal->getId(), $refIdProposals) && !$proposal->isPrivate()) {
+                $ads[] = $this->makeAdForCommunityOrEvent($proposal);
+                if (!is_null($proposal->getProposalLinked())) {
+                    $refIdProposals[$proposal->getId()] = $proposal->getProposalLinked()->getId();
+                }
+            }
+        }
+        return $ads;
+    }
+
 
     /**
      * Make an ad from a proposal
@@ -796,7 +821,7 @@ class AdManager
      * @param Proposal $proposal Base Proposal of the Ad
      * @return void
      */
-    private function makeAdForCommunity(Proposal $proposal)
+    private function makeAdForCommunityOrEvent(Proposal $proposal)
     {
         $ad = new Ad();
                 

@@ -213,20 +213,6 @@ class CommunityManager
         return $response->getValue()->getMember();
     }
 
-    // /**
-    //  * Get all proposals of a community
-    //  *
-    //  * @param integer $id
-    //  * @return void
-    //  */
-    // public function getProposals(int $id)
-    // {
-    //     $this->dataProvider->setClass(Community::class);
-    //     $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
-    //     $proposals = $this->dataProvider->getSubCollection($id, "proposal", "proposals");
-    //     return $proposals->getValue();
-    // }
-
     /**
      * Get all proposals of a community
      *
