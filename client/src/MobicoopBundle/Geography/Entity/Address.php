@@ -192,6 +192,11 @@ class Address implements ResourceInterface, \JsonSerializable
     private $displayLabel;
 
     /**
+     * @var array|null The relaypoint related to the address.
+     */
+    private $relayPoint;
+    
+    /**
      * @var string|null The icon of the address.
      *
      */
@@ -440,6 +445,16 @@ class Address implements ResourceInterface, \JsonSerializable
     public function setDisplayLabel(?array $displayLabel)
     {
         $this->displayLabel = $displayLabel;
+    }
+
+    public function getRelayPoint(): ?array
+    {
+        return $this->relayPoint;
+    }
+
+    public function setRelayPoint(?array $relayPoint)
+    {
+        $this->relayPoint = $relayPoint;
     }
 
     public function getIcon()
