@@ -105,8 +105,9 @@ class Action
 
     /**
      * @var \DateTimeInterface Creation date.
+     * Nullable for now as actions are manually inserted.
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
      */
     private $createdDate;
