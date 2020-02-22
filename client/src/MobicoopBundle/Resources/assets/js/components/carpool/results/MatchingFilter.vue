@@ -133,6 +133,14 @@ export default {
     disableRole:{
       type: Boolean,
       default: false
+    },
+    defaultCommunityId:{
+      type: Number,
+      default:null
+    },
+    initFiltersChips:{
+      type: Boolean,
+      default: false
     }
   },
   data : function() {
@@ -167,7 +175,7 @@ export default {
           time:null,
           role:null,
           gender:null,
-          community:null
+          community:(this.defaultCommunityId) ? this.defaultCommunityId : null
         }
       }
     };
@@ -184,6 +192,9 @@ export default {
   watch:{
     disableRole(){
       this.filterEnabled['role'] = !this.disableRole;
+    },
+    initFiltersChips(){
+      if(this.filters.filters.community) this.updateFilterCommunity(this.filters.filters.community,true);
     }
   },
   methods :{
@@ -212,7 +223,7 @@ export default {
       this.closePanel();
       this.$emit("updateFilters",this.filters);
     },
-    updateFilterCommunity(data){
+    updateFilterCommunity(data,noemitt=false){
       var name="";
       this.communities.forEach((result,key) => {
         if (result.value==data) name=result.text;
@@ -220,7 +231,7 @@ export default {
       this.filterEnabled.community = false;
       this.chips.push({id:"community",text:this.$t('chips.community.label')+' : '+name,value:data});
       this.closePanel();
-      this.$emit("updateFilters",this.filters);
+      if(!noemitt) this.$emit("updateFilters",this.filters);
     },
     removeFilter(item){
       this.filterEnabled[item.id] = true;
