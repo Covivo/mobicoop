@@ -23,6 +23,7 @@
 
 namespace App\Community\Security;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Right\Service\PermissionManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -36,6 +37,7 @@ class CommunityUserVoter extends Voter
     const READ = 'communityUser_read';
     const UPDATE = 'communityUser_update';
     const DELETE = 'communityUser_delete';
+    const LIST = 'community_user_list';
 
     private $security;
     private $permissionManager;
@@ -53,13 +55,15 @@ class CommunityUserVoter extends Voter
             self::CREATE,
             self::READ,
             self::UPDATE,
-            self::DELETE
+            self::DELETE,
+            self::LIST
             ])) {
             return false;
         }
 
-        // only vote on CommunityUser objects inside this voter
-        if (!$subject instanceof CommunityUser) {
+        // only vote on Article objects inside this voter
+        // only for items actions
+        if (!($subject instanceof Paginator) && !($subject instanceof CommunityUser)) {
             return false;
         }
 
@@ -79,6 +83,8 @@ class CommunityUserVoter extends Voter
                 return false;
             case self::DELETE:
                 return $this->canDelete($requester, $subject);
+            case self::LIST:
+                return $this->canList($requester, $subject);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -105,5 +111,10 @@ class CommunityUserVoter extends Voter
     private function canRead($requester)
     {
         return $this->permissionManager->checkPermission('community_read', $requester);
+    }
+
+    private function canList($requester, $subject)
+    {
+        return $this->permissionManager->checkPermission('community_list', $requester);
     }
 }

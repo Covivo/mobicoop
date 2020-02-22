@@ -24,6 +24,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Event\Controller;
 
 use GuzzleHttp\RequestOptions;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
@@ -148,7 +149,7 @@ class EventController extends AbstractController
             foreach ($proposals as $proposal) {
                 $currentProposal = [
                     "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
-                    "frequency"=>($proposal["criteria"]["frequency"]==Criteria::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
+                    "frequency"=>($proposal["criteria"]["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
                     "carpoolerFirstName" => $proposal["user"]["givenName"],
                     "carpoolerLastName" => $proposal["user"]["shortFamilyName"],
                     "waypoints"=>[]
