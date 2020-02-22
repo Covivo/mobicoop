@@ -250,27 +250,26 @@ class CommunityController extends AbstractController
 
         // todo : move inside service ?
         // Get the proposals and waypoints
-        $proposals = $communityManager->getProposals($community->getId());
+        $ads = $communityManager->getAds($community->getId());
+
+        dump($ads);
+
         $ways = [];
-        if ($proposals!==null) {
-            foreach ($proposals as $proposal) {
-                $currentProposal = [
-                    "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
-                    "frequency"=>($proposal["criteria"]["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
-                    "carpoolerFirstName" => $proposal["user"]["givenName"],
-                    "carpoolerLastName" => $proposal["user"]["shortFamilyName"],
-                    "waypoints"=>[]
+        foreach ($ads as $ad) {
+            $currentAd = [
+                "frequency"=>($ad["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
+                "carpoolerFirstName" => $ad["user"]["givenName"],
+                "carpoolerLastName" => $ad["user"]["shortFamilyName"],
+                "waypoints"=>[]
+            ];
+            foreach ($ad["outwardWaypoints"] as $waypoint) {
+                $currentAd["waypoints"][] = [
+                    "title"=>$waypoint["address"]["addressLocality"],
+                    "destination"=>$waypoint['destination'],
+                    "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
                 ];
-                foreach ($proposal["waypoints"] as $waypoint) {
-                    $currentProposal["waypoints"][] = [
-                        // "title"=>(is_array($waypoint["address"]["displayLabel"])) ? implode(", ", $waypoint["address"]["displayLabel"]) : $waypoint["address"]["displayLabel"],
-                        "title"=>$waypoint["address"]["addressLocality"],
-                        "destination"=>$waypoint['destination'],
-                        "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
-                    ];
-                }
-                $ways[] = $currentProposal;
             }
+            $ways[] = $currentAd;
         }
 
         return $this->render('@Mobicoop/community/community.html.twig', [

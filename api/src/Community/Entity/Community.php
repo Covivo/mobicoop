@@ -106,7 +106,13 @@ use App\Community\Controller\JoinAction;
  *                  }
  *              },
  *              "security_post_denormalize"="is_granted('community_read',object)"
- *          }
+ *          },
+ *          "ads"={
+ *              "method"="GET",
+ *              "path"="/communities/{id}/ads",
+ *              "normalization_context"={"groups"={"readCommunity"}},
+ *              "security_post_denormalize"="is_granted('community_read',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={

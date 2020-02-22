@@ -23,6 +23,7 @@
 
 namespace App\Community\Security;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Right\Service\PermissionManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -57,16 +58,6 @@ class CommunityVoter extends Voter
             self::COMMUNITY_LIST,
             self::COMMUNITY_JOIN,
             ])) {
-            return false;
-        }
-
-        // only vote on Community objects inside this voter
-        // only for items actions
-        if (in_array($attribute, [
-            self::COMMUNITY_READ,
-            self::COMMUNITY_UPDATE,
-            self::COMMUNITY_DELETE,
-            ]) && !$subject instanceof Community) {
             return false;
         }
 

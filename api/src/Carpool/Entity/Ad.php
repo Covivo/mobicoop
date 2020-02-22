@@ -32,6 +32,7 @@ use App\Carpool\Controller\AdAskPost;
 use App\Carpool\Controller\AdAskPut;
 use App\Carpool\Controller\AdPut;
 use App\Carpool\Controller\AdAskGet;
+use App\User\Entity\User;
 
 /**
  * Carpooling : an ad.
@@ -142,14 +143,14 @@ class Ad
     /**
      * @var int|null The frequency for this ad.
      *
-     * @Groups({"read","write"})
+     * @Groups({"read","write","readCommunity"})
      */
     private $frequency;
 
     /**
      * @var array|null The waypoints for the outward.
      *
-     * @Groups({"read","write","results"})
+     * @Groups({"read","write","results","readCommunity"})
      */
     private $outwardWaypoints;
 
@@ -336,6 +337,13 @@ class Ad
      */
     private $comment;
 
+    /**
+     * @var User|null The ad owner. Null for an anonymous search.
+     *
+     * @Groups({"readCommunity"})
+     */
+    private $user;
+    
     /**
      * @var int|null The user id of the ad owner. Null for an anonymous search.
      *
@@ -845,6 +853,18 @@ class Ad
     public function setUserId(?int $userId): self
     {
         $this->userId = $userId;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

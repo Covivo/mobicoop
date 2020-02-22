@@ -72,7 +72,7 @@ class Waypoint
      *
      * @Assert\NotBlank
      * @ORM\Column(type="boolean")
-     * @Groups({"read","results","write","threads","thread"})
+     * @Groups({"read","results","write","threads","thread","readCommunity"})
      */
     private $destination;
 
@@ -103,7 +103,7 @@ class Waypoint
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Groups({"read","results","write","threads","thread"})
+     * @Groups({"read","results","write","threads","thread","readCommunity"})
      * @MaxDepth(1)
      */
     private $address;
