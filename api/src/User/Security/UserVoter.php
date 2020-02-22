@@ -144,7 +144,7 @@ class UserVoter extends Voter
     private function canReadSelfMessages(UserInterface $requester, User $subject)
     {
         if (($subject->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
-            return $this->permissionManager->checkPermission('user_messages_self', $requester);
+            return $this->permissionManager->checkPermission('user_message_read_self', $requester);
         } else {
             return false;
         }
