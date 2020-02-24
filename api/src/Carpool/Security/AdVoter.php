@@ -118,7 +118,13 @@ class AdVoter extends Voter
                 return $this->canPostAsk($subject, $requester);
             case self::AD_ASK_GET:
             case self::AD_ASK_PUT:
-                return $this->canReadOrUpdateAsk();
+                if (is_null($this->request->get("id"))) {
+                    return false;
+                }
+                if (!$ad = $this->adManager->getAdForPermission($this->request->get("id"))) {
+                    return false;
+                }
+                return $this->canReadOrUpdateAsk($ad, $requester);
                 
         }
 
@@ -155,13 +161,8 @@ class AdVoter extends Voter
         return $this->permissionManager->checkPermission('ad_ask_create', $requester, null, $ad->getMatchingId());
     }
 
-    private function canReadOrUpdateAsk()
+    private function canReadOrUpdateAsk(Ad $ad, UserInterface $requester)
     {
-        // we check that the user id provided in the request is one of the matching proposals owners
-        $matching = $this->matchingRepository->find($this->request->get("id"));
-        if ($matching->getProposalOffer()->getUser()->getId() == $this->request->get("userId") || $matching->getProposalRequest()->getUser()->getId() == $this->request->get("userId")) {
-            return true;
-        }
-        return false;
+        return $this->permissionManager->checkPermission('ad_read', $requester, null, $ad->getId());
     }
 }
