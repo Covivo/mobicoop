@@ -693,8 +693,7 @@ class UserManager
                     $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
                 }
             }
-            //Set user at null and private on the proposal : we keep info for message, proposal cant be found
-            $proposal->setPrivate(1);
+            $this->entityManager->remove($proposal);
         }
 
         //Anonymise content of message with a key
