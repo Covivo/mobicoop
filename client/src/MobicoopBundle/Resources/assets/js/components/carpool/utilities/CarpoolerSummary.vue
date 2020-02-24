@@ -137,6 +137,7 @@
                 rounded
                 color="secondary"
                 large
+                :disabled="!disabled"
                 @click="emitEvent"
               >
                 <span>
