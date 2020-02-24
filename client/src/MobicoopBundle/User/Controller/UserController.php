@@ -474,7 +474,8 @@ class UserController extends AbstractController
             return $reponseofmanager;
         }
         $this->denyAccessUnlessGranted('update', $user);
-        $this->denyAccessUnlessGranted('address_update_self', $user);
+        // To Do : Specific right for update a address ?
+        //$this->denyAccessUnlessGranted('address_update_self', $user);
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);

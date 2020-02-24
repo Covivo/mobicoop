@@ -483,7 +483,8 @@ class DataProvider
         if (is_null($groups)) {
             $groups = ['put'];
         }
-
+        // var_dump($this->resource."/".$object->getId());die;
+        // var_dump($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]));die;
         try {
             $clientResponse = $this->client->put($this->resource."/".$object->getId(), [
                     RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true)

@@ -96,7 +96,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              }
  *          }
  *      },
- *      itemOperations={"get"}
+ *      itemOperations={"get","put"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})
  */
