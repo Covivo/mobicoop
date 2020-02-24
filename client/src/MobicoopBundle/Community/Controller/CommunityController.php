@@ -210,7 +210,6 @@ class CommunityController extends AbstractController
      */
     public function communityShow($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
     {
-
         // retreive community;
         $community = $communityManager->getCommunity($id);
 
@@ -350,9 +349,9 @@ class CommunityController extends AbstractController
             if ($communityUserToDelete) {
                 $data = $communityManager->leaveCommunity($communityUserToDelete);
                 $reponseofmanager = $this->handleManagerReturnValue($data);
+                $session = $this->get('session');
+                $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
                 if (!empty($reponseofmanager)) {
-                    $session = $this->get('session');
-                    $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
                     return $reponseofmanager;
                 }
             }
