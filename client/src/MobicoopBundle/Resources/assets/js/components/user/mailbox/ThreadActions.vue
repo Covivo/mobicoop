@@ -15,6 +15,7 @@
           :loading-btn="dataLoadingBtn"
           :driver="driver"
           :passenger="passenger"
+          :carpool-context="(idAsk) ? true : false"
           @updateStatus="updateStatus"
         />
       </v-card>
