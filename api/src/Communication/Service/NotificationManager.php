@@ -101,9 +101,8 @@ class NotificationManager
         if (!$this->enabled) {
             return;
         }
-        
         // Check if the user is anonymised if yes we don't send notifications
-        if ($recipient->getFamilyName() == null && $recipient->getGivenName() == null) {
+        if ($recipient->getStatus() == USER::STATUS_ANONYMIZED) {
             return;
         }
 
