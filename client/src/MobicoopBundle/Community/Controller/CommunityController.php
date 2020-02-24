@@ -37,6 +37,7 @@ use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Controller class for community related actions.
@@ -233,6 +234,8 @@ class CommunityController extends AbstractController
                 $error = true;
             } else {
                 $error = false;
+                $session = $this->get('session');
+                $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
                 $communityUser = [$communityUser]; // To fit the getCommunityUser behavior we need to have an array
             }
         } else {
@@ -310,6 +313,8 @@ class CommunityController extends AbstractController
             $data = $communityManager->joinCommunity($communityUser);
             $reponseofmanager = $this->handleManagerReturnValue($data);
             if (!empty($reponseofmanager)) {
+                $session = $this->get('session');
+                $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
                 return $reponseofmanager;
             }
         }
@@ -346,6 +351,8 @@ class CommunityController extends AbstractController
                 $data = $communityManager->leaveCommunity($communityUserToDelete);
                 $reponseofmanager = $this->handleManagerReturnValue($data);
                 if (!empty($reponseofmanager)) {
+                    $session = $this->get('session');
+                    $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
                     return $reponseofmanager;
                 }
             }

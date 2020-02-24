@@ -79,6 +79,8 @@ class CommunityVoter extends Voter
                 return $this->canDelete($requester, $subject);
             case self::COMMUNITY_LIST:
                 return $this->canAdminManage($requester);
+            case self::COMMUNITY_JOIN:
+                return $this->canJoin($requester);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -120,5 +122,10 @@ class CommunityVoter extends Voter
     private function canCheckExistence($requester)
     {
         return $this->permissionManager->checkPermission('community_read', $requester);
+    }
+
+    private function canJoin($requester)
+    {
+        return $this->permissionManager->checkPermission('community_join', $requester);
     }
 }

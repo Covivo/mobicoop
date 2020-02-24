@@ -42,10 +42,12 @@ use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Controller class for user related actions.
@@ -868,10 +870,19 @@ class UserController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
+            // We get de communities in session. If it exists we don't need to make the api call
+            $session = $this->get('session');
+            $userCommunitiesInSession = $session->get(Community::SESSION_VAR_NAME);
             $communities = [];
-            if ($communityUsers = $communityManager->getAllCommunityUser($data['userId'])) {
-                foreach ($communityUsers as $communityUser) {
-                    $communities[] = $communityUser->getCommunity();
+            if (!is_null($userCommunitiesInSession)) {
+                return new JsonResponse($userCommunitiesInSession);
+            } else {
+                if ($communityUsers = $communityManager->getAllCommunityUser($data['userId'])) {
+                    foreach ($communityUsers as $communityUser) {
+                        $communities[] = $communityUser->getCommunity();
+                    }
+                    // We store de communities in session
+                    $session->set(Community::SESSION_VAR_NAME, $communities);
                 }
             }
             return new JsonResponse($communities);

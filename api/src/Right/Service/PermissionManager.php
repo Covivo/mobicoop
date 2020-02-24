@@ -449,8 +449,14 @@ class PermissionManager
                 break;
             case "user":
                 return $objectId === $requesterId;
-            
-        }
+            case "communityManaged()":
+                return self::communityManaged($objectId);
+            }
         return false;
+    }
+
+    private function communityManaged($communityId)
+    {
+        return true;
     }
 }
