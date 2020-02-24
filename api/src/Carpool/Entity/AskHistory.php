@@ -42,7 +42,7 @@ use App\Communication\Interfaces\MessagerInterface;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * ApiResource(
+ * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
