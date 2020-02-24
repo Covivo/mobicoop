@@ -114,13 +114,8 @@ class AdVoter extends Voter
                 return $this->canDeleteAd($ad, $requester);
             case self::AD_ASK_POST:
                 // an Ask post is in fact an Ad post, with the original Ad id inside => we have these informations in the subject
-                /**
-                 * @var Ad $subject
-                 */
-                if (!$ad = $this->adManager->getAdForPermission($subject->getAdId())) {
-                    return false;
-                }
-                return $this->canPostAsk($ad, $subject->getMatchingId());
+                //return $this->canPostAsk($ad, $subject->getMatchingId());
+                return $this->canPostAsk($subject, $requester);
             case self::AD_ASK_GET:
             case self::AD_ASK_PUT:
                 return $this->canReadOrUpdateAsk();
@@ -155,14 +150,9 @@ class AdVoter extends Voter
         return $this->permissionManager->checkPermission('ad_delete', $requester, null, $ad->getId());
     }
 
-    private function canPostAsk(Ad $ad, int $matchingId)
+    private function canPostAsk(Ad $ad, UserInterface $requester)
     {
-        // we check that the user id provided in the request is one of the matching proposals owners
-        $matching = $this->matchingRepository->find($matchingId());
-        if ($matching->getProposalOffer()->getUser()->getId() == $this->request->get("userId") || $matching->getProposalRequest()->getUser()->getId() == $this->request->get("userId")) {
-            return true;
-        }
-        return false;
+        return $this->permissionManager->checkPermission('ad_ask_create', $requester, null, $ad->getMatchingId());
     }
 
     private function canReadOrUpdateAsk()

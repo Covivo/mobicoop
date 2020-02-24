@@ -24,6 +24,8 @@
 namespace App\Right\Service;
 
 use App\App\Entity\App;
+use App\Carpool\Entity\Ad;
+use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Service\AdManager;
 use App\Community\Service\CommunityManager;
 use App\Event\Service\EventManager;
@@ -57,6 +59,7 @@ class PermissionManager
     private $eventManager;
     private $relayPointManager;
     private $tokenStorage;
+    private $matchingRepository;
 
     /**
      * Constructor.
@@ -72,7 +75,8 @@ class PermissionManager
         CommunityManager $communityManager,
         EventManager $eventManager,
         RelayPointManager $relayPointManager,
-        TokenStorageInterface $tokenStorage
+        TokenStorageInterface $tokenStorage,
+        MatchingRepository $matchingRepository
     ) {
         $this->rightRepository = $rightRepository;
         $this->roleRepository = $roleRepository;
@@ -82,6 +86,7 @@ class PermissionManager
         $this->eventManager = $eventManager;
         $this->relayPointManager = $relayPointManager;
         $this->tokenStorage = $tokenStorage;
+        $this->matchingRepository = $matchingRepository;
     }
 
     /**
@@ -135,13 +140,14 @@ class PermissionManager
     /**
      * Check if a requester has a permission on an right, eventually on a given territory, eventually on a related object user
      *
-     * @param string $rightName             The name of the right to check
-     * @param UserInterface|null $requester The requester (an app or a user)
-     * @param Territory|null $territory     The territory
-     * @param int|null  $id                 The id of the related object
+     * @param string                $rightName The name of the right to check
+     * @param UserInterface|null    $requester The requester (an app or a user)
+     * @param Territory|null        $territory The territory
+     * @param int|null              $id        The id of the related object
+     * @param object|null           $object    The related object
      * @return bool
      */
-    public function checkPermission(string $rightName, ?UserInterface $requester=null, ?Territory $territory=null, ?int $id = null)
+    public function checkPermission(string $rightName, ?UserInterface $requester=null, ?Territory $territory=null, ?int $id = null, ?object $object = null)
     {
         if (!$right = $this->rightRepository->findByName($rightName)) {
             throw new RightNotFoundException('Right ' . $rightName . ' not found');
@@ -154,7 +160,7 @@ class PermissionManager
             $requester->addUserRole($userRole);
         }
         if ($requester instanceof User) {
-            return $this->userHasPermission($right, $requester, $territory, $id)->isGranted();
+            return $this->userHasPermission($right, $requester, $territory, $id, $object)->isGranted();
         } elseif ($requester instanceof App) {
             return $this->appHasPermission($right, $requester)->isGranted();
         }
@@ -168,9 +174,10 @@ class PermissionManager
      * @param User $user                The user to check the right for
      * @param Territory|null $territory The territory
      * @param int|null  $id             The id of the related object
+     * @param object|null  $object      The related object
      * @return Permission
      */
-    public function userHasPermission(Right $right, ?User $user, ?Territory $territory=null, ?int $id=null): Permission
+    public function userHasPermission(Right $right, ?User $user, ?Territory $territory=null, ?int $id=null, ?object $object=null): Permission
     {
         if (is_null($user)) {
             // no user specified, we check who is the requester
@@ -221,7 +228,7 @@ class PermissionManager
             }
         }
         
-        if ($this->rightInRoles($right, $roles, $user->getId(), $id)) {
+        if ($this->rightInRoles($right, $roles, $user->getId(), $id, $object)) {
             $permission->setGranted(true);
             return $permission;
         }
@@ -264,13 +271,14 @@ class PermissionManager
     /**
      * Check if a right is in given roles
      *
-     * @param Right $right          The right
-     * @param array $roles          The array of roles
-     * @param integer|null $userId  The user id
-     * @param integer|null $id      The related object id
+     * @param Right $right              The right
+     * @param array $roles              The array of roles
+     * @param integer|null $userId      The user id
+     * @param integer|null $id          The related object id
+     * @param object|null $object       The related object
      * @return void
      */
-    private function rightInRoles(Right $right, array $roles, ?int $userId=null, ?int $id=null)
+    private function rightInRoles(Right $right, array $roles, ?int $userId=null, ?int $id=null, ?object $object=null)
     {
         // echo "check right " . $right->getName() . "\n";
         foreach ($right->getRoles() as $rightRole) {
@@ -279,7 +287,7 @@ class PermissionManager
                 // echo "check role " . $role['role']->getName() . "\n";
                 if ($role['role']->getId() == $rightRole->getId()) {
                     // common role found
-                    if ($this->isOwner($right, $userId, $id)) {
+                    if ($this->isOwner($right, $userId, $id, $object)) {
                         return true;
                     }
                     return false;
@@ -288,7 +296,7 @@ class PermissionManager
         }
         // no common role found => we try the parents of the right
         foreach ($right->getParents() as $parent) {
-            if ($this->rightInRoles($parent, $roles, $userId, $id)) {
+            if ($this->rightInRoles($parent, $roles, $userId, $id, $object)) {
                 return true;
             }
         }
@@ -412,10 +420,11 @@ class PermissionManager
      * @param Right $right              The right
      * @param integer|null $requesterId The requester
      * @param integer|null $objectId    The object id
+     * @param object|null $object    The object
      * @return boolean
      */
 
-    private function isOwner(Right $right, ?int $requesterId, ?int $objectId)
+    private function isOwner(Right $right, ?int $requesterId, ?int $objectId, ?object $object)
     {
         // if the right has no related object, it means we don't need to check for an ownership
         if (is_null($right->getObject())) {
@@ -430,6 +439,8 @@ class PermissionManager
                     return $ad->getUserId() == $requesterId;
                 }
                 break;
+            case "canCreateAsk()":
+                return self::canCreateAsk($objectId, $requesterId);
             case "campaign":
                 return $this->campaignManager->getCampaignOwner($objectId) == $requesterId;
             case "community":
@@ -451,12 +462,22 @@ class PermissionManager
                 return $objectId === $requesterId;
             case "communityManaged()":
                 return self::communityManaged($objectId);
-            }
+        }
         return false;
     }
 
     private function communityManaged($communityId)
     {
         return true;
+    }
+
+    private function canCreateAsk(int $matchingId, int $requesterId)
+    {
+        // we check that the user id provided in the request is one of the matching proposals owners
+        $matching = $this->matchingRepository->find($matchingId);
+        if ($matching->getProposalOffer()->getUser()->getId() == $requesterId || $matching->getProposalRequest()->getUser()->getId() == $requesterId) {
+            return true;
+        }
+        return false;
     }
 }

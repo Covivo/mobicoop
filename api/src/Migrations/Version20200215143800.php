@@ -142,7 +142,8 @@ final class Version20200215143800 extends AbstractMigration
             (108, \'communication_contact\', \'Send a contact message\', NULL),
             (109, \'role_assign\', \'Assign a role to a user\', \'role()\'),
             (110, \'right_role_assign\', \'Assign a right to a role\', NULL),
-            (111, \'right_user_assign\', \'Assign a right to a user\', NULL);
+            (111, \'right_user_assign\', \'Assign a right to a user\', NULL),
+            (112, \'ad_ask_create\', \'Create an ask for an ad\', \'canCreateAsk()\');
         ');
         $this->addSql('
             INSERT INTO `right_right` (`right_source`, `right_target`) VALUES
@@ -265,6 +266,7 @@ final class Version20200215143800 extends AbstractMigration
             (4, 3),
             (4, 4),
             (4, 6),
+            (4, 112),
             (5, 21),
             (5, 22),
             (5, 42),
