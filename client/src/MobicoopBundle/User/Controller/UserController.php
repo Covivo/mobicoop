@@ -338,7 +338,8 @@ class UserController extends AbstractController
     public function userProfileAvatarDelete(ImageManager $imageManager, UserManager $userManager)
     {
         $user = clone $userManager->getLoggedUser();
-        $this->denyAccessUnlessGranted('update', $user);
+        // To DO : Voter for deleting image
+        //$this->denyAccessUnlessGranted('update', $user);
         $imageId = $user->getImages()[0]->getId();
         $imageManager->deleteImage($imageId);
 
