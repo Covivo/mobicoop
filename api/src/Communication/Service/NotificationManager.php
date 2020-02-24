@@ -147,7 +147,7 @@ class NotificationManager
                     case Medium::MEDIUM_PUSH:
                         // todo : call the dedicated service to send the push with the notification template
                         $this->createNotified($notification, $recipient, $object);
-                        ("Push notification for  $action / " . $recipient->getEmail());
+                        $this->logger->info("Push notification for  $action / " . $recipient->getEmail());
                         break;
                 }
             }

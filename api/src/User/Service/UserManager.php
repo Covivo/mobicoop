@@ -674,7 +674,6 @@ class UserManager
                 continue;
             }
             foreach ($proposal->getMatchingRequests() as $matching) {
-                //Check if there is ask on a proposal -> event for notifications
                 foreach ($matching->getAsks() as $ask) {
                     // todo : find why class of $ask can be a proxy of Ask class
                     if (get_class($ask) !== Ask::class) {
@@ -684,9 +683,7 @@ class UserManager
                     $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
                 }
             }
-            //There is offers on the proposal -> we delete proposal + send email to passengers
             foreach ($proposal->getMatchingOffers() as $matching) {
-                //TODO libérer les places sur les annonces réservées
                 foreach ($matching->getAsks() as $ask) {
                     // todo : find why class of $ask can be a proxy of Ask class
                     if (get_class($ask) !== Ask::class) {
