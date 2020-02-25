@@ -221,7 +221,7 @@ export default {
     return {
       locale: this.$i18n.locale,
       phoneButtonToggled: false,
-      disabled: this.user ? false : true
+      disabled: this.user ? false : true,
     };
   },
   computed: {

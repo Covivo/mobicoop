@@ -175,7 +175,7 @@ class CarpoolController extends AbstractController
                 'communityIds'=>$request->request->get('communityId') ? [(int)$request->request->get('communityId')] : null,
                 'origin'=>$request->request->get('origin'),
                 'destination'=>$request->request->get('destination'),
-                'regular'=>json_decode($request->request->get('regular')),
+                'regular'=>$request->request->get('communityId') ? json_decode($request->request->get('regular')) : $this->defaultRegular,
                 'date'=>$request->request->get('date'),
                 'time'=>$request->request->get('time'),
                 "pricesRange" => [
@@ -183,7 +183,6 @@ class CarpoolController extends AbstractController
                     "high" => $this->highPrice,
                     "forbidden" => $this->forbiddenPrice
                 ],
-                "regular" => $this->defaultRegular
             ]
         );
     }

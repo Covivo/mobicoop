@@ -398,6 +398,8 @@
       <v-btn
         v-if="step == 2 && !lResult.return && outwardTrip.length>0 && lResult.pendingAsk == false && lResult.acceptedAsk == false"
         color="secondary"
+        :disabled="carpoolDisabled"
+        :loading="carpoolLoading"
         @click="driver ? carpool(1) : carpool(2)"
       >
         {{ $t('carpool') }}
@@ -407,6 +409,8 @@
       <v-btn
         v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0) && lResult.pendingAsk == false && lResult.acceptedAsk == false"
         color="secondary"
+        :disabled="carpoolDisabled"
+        :loading="carpoolLoading"
         @click="driver ? carpool(1) : carpool(2)"
       >
         {{ $t('carpool') }}
