@@ -46,6 +46,7 @@
         small
         dark
         depressed
+        :loading="loading"
         @click="updateStatus((status==2) ? 5 : 4)"
       >
         {{ $t('button.accept') }}
@@ -58,6 +59,7 @@
         small
         dark
         depressed
+        :loading="loading"
         @click="updateStatus((status==2) ? 7 : 6)"
       >
         {{ $t('button.refuse') }}

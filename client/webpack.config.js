@@ -94,8 +94,12 @@ if (!Encore.isProduction()) {
     .configureBabel(function (babelConfig) {
       // add additional presets
       babelConfig.plugins.push('transform-class-properties');
-      // babelConfig.presets.push('stage-3');
-      // This will add compatibility for old nav
+        const preset = babelConfig.presets.find(([name]) => name === "@babel/preset-env");
+        if (preset !== undefined) {
+            preset[1].useBuiltIns = "usage";
+        }
+    }, {
+        exclude: /node_modules[\\/](?!(vuetify)).*/
     })
 }
 

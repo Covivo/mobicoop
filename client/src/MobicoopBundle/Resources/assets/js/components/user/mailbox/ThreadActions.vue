@@ -389,6 +389,7 @@ export default {
 
     },
     updateStatus(data){
+      this.dataLoadingBtn = true;
       // console.info(this.infosComplete)
       // console.info(this.infosComplete.carpooler)
       if(this.infosComplete.askStatus==1 && this.infosComplete.frequency==2){
