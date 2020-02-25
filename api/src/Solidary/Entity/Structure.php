@@ -32,6 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\RelayPoint\Entity\RelayPoint;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -355,6 +356,15 @@ class Structure
      */
     private $needs;
 
+    /**
+     * @var ArrayCollection|null The relay points related to the structure.
+     *
+     * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="structure", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readSolidary","write"})
+     * @MaxDepth(1)
+     */
+    private $relayPoints;
+
     public function __construct()
     {
         $this->solidaries = new ArrayCollection();
@@ -362,6 +372,7 @@ class Structure
         $this->volunteers = new ArrayCollection();
         $this->subjects = new ArrayCollection();
         $this->needs = new ArrayCollection();
+        $this->relayPoints = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -880,6 +891,34 @@ class Structure
             $this->needs->removeElement($need);
         }
 
+        return $this;
+    }
+
+    public function getRelayPoints()
+    {
+        return $this->relayPoints->getValues();
+    }
+    
+    public function addRelayPoint(RelayPoint $relayPoint): self
+    {
+        if (!$this->relayPoints->contains($relayPoint)) {
+            $this->relayPoint[] = $relayPoint;
+            $relayPoint->setStructure($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeRelayPoint(RelayPoint $relayPoint): self
+    {
+        if ($this->relayPoint->contains($relayPoint)) {
+            $this->relayPoint->removeElement($relayPoint);
+            // set the owning side to null (unless already changed)
+            if ($relayPoint->getStructure() === $this) {
+                $relayPoint->setStructure(null);
+            }
+        }
+        
         return $this;
     }
 

@@ -692,7 +692,7 @@ class AskManager
         
 
     /**
-     * Ask user is considered passenger if he has made a proposal offer
+     * Ask user is considered driver if he has made a proposal offer
      *
      * @param Ask $ask
      * @return bool
