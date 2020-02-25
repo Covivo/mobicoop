@@ -316,9 +316,10 @@ class ImportManager
 
     public function importUserImage()
     {
-        //if ($this->userImportRepository->findBy(array('id' => 1)) == null) {
-        $this->importUserIfNotMigrate();
-        //}
+        set_time_limit(7200);
+        if ($this->userImportRepository->findBy(array('id' => 1)) == null) {
+            $this->importUserIfNotMigrate();
+        }
         $dir = "../public/import/Avatar/";
         $results = array('importer' => 0,'probleme-id-v1' => 0,'probleme-id-v2' => 0);
 
