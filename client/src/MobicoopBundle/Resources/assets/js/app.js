@@ -1,5 +1,6 @@
 'use strict'
 
+import 'babel-polyfill';
 import { Vue, vuetify, i18n } from '@js/config/app'
 
 import components from '@js/config/components'
