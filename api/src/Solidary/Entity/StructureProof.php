@@ -42,6 +42,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
@@ -70,7 +71,7 @@ class StructureProof
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","readVolunteer","writeSolidary"})
      */
     private $label;
 
@@ -79,7 +80,7 @@ class StructureProof
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","readVolunteer","writeSolidary"})
      */
     private $type;
 
@@ -88,7 +89,7 @@ class StructureProof
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","readVolunteer","writeSolidary"})
      */
     private $position;
 
@@ -96,7 +97,7 @@ class StructureProof
      * @var bool The proof is a checkbox.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","readVolunteer","writeSolidary"})
      */
     private $checkbox;
 
@@ -104,7 +105,7 @@ class StructureProof
      * @var bool The proof is a input.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","readVolunteer","writeSolidary"})
      */
     private $input;
 
@@ -112,39 +113,39 @@ class StructureProof
      * @var bool The proof is a select.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","readVolunteer","writeSolidary"})
      */
-    private $select;
+    private $selectbox;
 
     /**
      * @var bool The proof is a radio button.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","readVolunteer","writeSolidary"})
      */
     private $radio;
 
     /**
      * @var string Text options for radio or select (separated by semicolon, in the same order than values).
      *
-     * @ORM\Column(type="text")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"readSolidary","readVolunteer","writeSolidary"})
      */
     private $options;
 
     /**
      * @var string Values for radio or select (separated by semicolon, in the same order than options).
      *
-     * @ORM\Column(type="text")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"readSolidary","readVolunteer","writeSolidary"})
      */
-    private $values;
+    private $acceptedValues;
 
     /**
      * @var bool The proof is a file.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","readVolunteer","writeSolidary"})
      */
     private $file;
 
@@ -154,7 +155,7 @@ class StructureProof
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="structureProofs")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","readVolunteer","writeSolidary"})
      * @MaxDepth(1)
      */
     private $structure;
@@ -180,6 +181,7 @@ class StructureProof
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="structureProof", cascade={"remove"}, orphanRemoval=true)
      * @Groups("readSolidary")
+     * @MaxDepth(1)
      */
     private $proofs;
 
@@ -260,14 +262,14 @@ class StructureProof
         return $this;
     }
 
-    public function isSelect(): ?bool
+    public function isSelectbox(): ?bool
     {
-        return $this->select;
+        return $this->selectbox;
     }
     
-    public function setSelect(?bool $isSelect): self
+    public function setSelectbox(?bool $isSelectbox): self
     {
-        $this->select = $isSelect;
+        $this->selectbox = $isSelectbox;
         
         return $this;
     }
@@ -284,24 +286,24 @@ class StructureProof
         return $this;
     }
 
-    public function getOptions(): string
+    public function getOptions(): ?string
     {
         return $this->options;
     }
     
-    public function setOptions(string $options)
+    public function setOptions(?string $options)
     {
         $this->options = $options;
     }
 
-    public function getValues(): string
+    public function getAcceptedValues(): ?string
     {
-        return $this->values;
+        return $this->acceptedValues;
     }
     
-    public function setValues(string $values)
+    public function setAcceptedValues(?string $acceptedValues)
     {
-        $this->values = $values;
+        $this->acceptedValues = $acceptedValues;
     }
 
     public function isFile(): ?bool

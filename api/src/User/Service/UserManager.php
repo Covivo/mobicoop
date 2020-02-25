@@ -133,6 +133,44 @@ class UserManager
      */
     public function registerUser(User $user, bool $encodePassword=false)
     {
+        $user = $this->prepareUser($user);
+
+        // persist the user
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        // creation of the alert preferences
+        $user = $this->createAlerts($user);
+
+        // dispatch en event
+        if (is_null($user->getUserDelegate())) {
+            // registration by the user itself
+            $event = new UserRegisteredEvent($user);
+            $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
+        } else {
+            // delegate registration
+            $event = new UserDelegateRegisteredEvent($user);
+            $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
+            // send password ?
+            if ($user->getPasswordSendType() == User::PWD_SEND_TYPE_SMS) {
+                $event = new UserDelegateRegisteredPasswordSendEvent($user);
+                $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
+            }
+        }
+
+        // return the user
+        return $user;
+    }
+
+    /**
+     * Prepare a user for registration : set default values
+     *
+     * @param User      $user               The user to prepare
+     * @param boolean   $encodePassword     True to encode password
+     * @return User     The prepared user
+     */
+    public function prepareUser(User $user, bool $encodePassword=false)
+    {
         if (count($user->getUserRoles()) == 0) {
             // default role : user registered full
             $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL);
@@ -168,30 +206,6 @@ class UserManager
         $unsubscribeToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         $user->setUnsubscribeToken($unsubscribeToken);
 
-        // persist the user
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-
-        // creation of the alert preferences
-        $user = $this->createAlerts($user);
-
-        // dispatch en event
-        if (is_null($user->getUserDelegate())) {
-            // registration by the user itself
-            $event = new UserRegisteredEvent($user);
-            $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
-        } else {
-            // delegate registration
-            $event = new UserDelegateRegisteredEvent($user);
-            $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
-            // send password ?
-            if ($user->getPasswordSendType() == User::PWD_SEND_TYPE_SMS) {
-                $event = new UserDelegateRegisteredPasswordSendEvent($user);
-                $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
-            }
-        }
-
-        // return the user
         return $user;
     }
 
@@ -229,6 +243,18 @@ class UserManager
         $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
         // return the user
         return $user;
+    }
+
+    /**
+     * Encode a password for a user
+     *
+     * @param User $user        The user
+     * @param string $password  The password to encode
+     * @return string           The encoded password
+     */
+    public function encodePassword(User $user, string $password)
+    {
+        return $this->encoder->encodePassword($user, $password);
     }
 
     /**

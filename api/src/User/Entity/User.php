@@ -393,7 +393,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","readCommunityUser","results","write"})
+     * @Groups({"readUser","readCommunityUser","results","write","readVolunteer"})
      */
     private $status;
 
@@ -401,7 +401,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney","readVolunteer","writeVolunteer"})
      */
     private $givenName;
 
@@ -409,14 +409,14 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","readVolunteer","writeVolunteer"})
      */
     private $familyName;
 
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser","readVolunteer"})
      */
     private $shortFamilyName;
 
@@ -434,7 +434,7 @@ class User implements UserInterface, EquatableInterface
      * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate"})
+     * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate","readVolunteer","writeVolunteer"})
      */
     private $email;
 
@@ -451,7 +451,7 @@ class User implements UserInterface, EquatableInterface
      * @var string The encoded password of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","passwordUpdate"})
+     * @Groups({"readUser","write","passwordUpdate","writeVolunteer"})
      */
     private $password;
 
@@ -473,7 +473,7 @@ class User implements UserInterface, EquatableInterface
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","results","write","externalJourney"})
+     * @Groups({"readUser","results","write","externalJourney","readVolunteer","writeVolunteer"})
      */
     private $gender;
 
@@ -489,7 +489,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface|null The birth date of the user.
      *
      * @ORM\Column(type="date", nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","readVolunteer","writeVolunteer"})
      *
      * @ApiProperty(
      *     attributes={
@@ -510,7 +510,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The telephone number of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","checkPhoneToken"})
+     * @Groups({"readUser","write","checkPhoneToken","readVolunteer","writeVolunteer"})
      */
     private $telephone;
     
@@ -531,7 +531,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","write", "results"})
+     * @Groups({"readUser","write", "results","writeVolunteer"})
      */
     private $phoneDisplay;
 

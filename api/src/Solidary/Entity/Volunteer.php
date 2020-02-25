@@ -26,6 +26,7 @@ namespace App\Solidary\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -43,8 +44,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeSolidary"}}
+ *          "normalization_context"={"groups"={"readVolunteer"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeVolunteer"}}
  *      },
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
@@ -60,7 +61,7 @@ class Volunteer
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("readSolidary")
+     * @Groups("readVolunteer")
      */
     private $id;
 
@@ -68,7 +69,7 @@ class Volunteer
      * @var \DateTimeInterface Morning min time.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $mMinTime;
     
@@ -76,7 +77,7 @@ class Volunteer
      * @var \DateTimeInterface Morning max time.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $mMaxTime;
     
@@ -84,7 +85,7 @@ class Volunteer
      * @var \DateTimeInterface Afternoon min time.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $aMinTime;
     
@@ -92,7 +93,7 @@ class Volunteer
      * @var \DateTimeInterface Afternoon max time.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $aMaxTime;
     
@@ -100,7 +101,7 @@ class Volunteer
      * @var \DateTimeInterface Evening min time.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $eMinTime;
     
@@ -108,7 +109,7 @@ class Volunteer
      * @var \DateTimeInterface Evening max time.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $eMaxTime;
     
@@ -116,7 +117,7 @@ class Volunteer
      * @var bool Available on monday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $mMon;
     
@@ -124,7 +125,7 @@ class Volunteer
      * @var bool Available on monday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $aMon;
     
@@ -132,7 +133,7 @@ class Volunteer
      * @var bool Available on monday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $eMon;
     
@@ -140,7 +141,7 @@ class Volunteer
      * @var bool Available on tuesday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $mTue;
     
@@ -148,7 +149,7 @@ class Volunteer
      * @var bool Available on tuesday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $aTue;
     
@@ -156,7 +157,7 @@ class Volunteer
      * @var bool Available on tuesday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $eTue;
     
@@ -164,7 +165,7 @@ class Volunteer
      * @var bool Available on wednesday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $mWed;
     
@@ -172,7 +173,7 @@ class Volunteer
      * @var bool Available on wednesday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $aWed;
     
@@ -180,7 +181,7 @@ class Volunteer
      * @var bool Available on wednesday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $eWed;
     
@@ -188,7 +189,7 @@ class Volunteer
      * @var bool Available on thursday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $mThu;
     
@@ -196,7 +197,7 @@ class Volunteer
      * @var bool Available on thursday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $aThu;
     
@@ -204,7 +205,7 @@ class Volunteer
      * @var bool Available on thursday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $eThu;
     
@@ -212,7 +213,7 @@ class Volunteer
      * @var bool Available on friday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $mFri;
     
@@ -220,7 +221,7 @@ class Volunteer
      * @var bool Available on friday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $aFri;
     
@@ -228,7 +229,7 @@ class Volunteer
      * @var bool Available on friday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $eFri;
     
@@ -236,7 +237,7 @@ class Volunteer
      * @var bool Available on saturday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $mSat;
     
@@ -244,7 +245,7 @@ class Volunteer
      * @var bool Available on saturday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $aSat;
     
@@ -252,7 +253,7 @@ class Volunteer
      * @var bool Available on saturday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $eSat;
     
@@ -260,7 +261,7 @@ class Volunteer
      * @var bool Available on sunday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $mSun;
     
@@ -268,7 +269,7 @@ class Volunteer
      * @var bool Available on sunday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $aSun;
     
@@ -276,7 +277,7 @@ class Volunteer
      * @var bool Available on sunday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $eSun;
 
@@ -286,14 +287,14 @@ class Volunteer
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $address;
 
     /**
-     * @var int|null The maximum distance allowed from the center address.
+     * @var int|null The maximum distance in metres allowed from the center address.
      * @ORM\Column(type="integer")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $maxDistance;
 
@@ -301,7 +302,7 @@ class Volunteer
      * @var bool The volunteer has a vehicle.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $vehicle;
 
@@ -311,7 +312,8 @@ class Volunteer
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
+     * @ApiSubresource
      */
     private $user;
 
@@ -321,7 +323,7 @@ class Volunteer
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="volunteers")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      * @MaxDepth(1)
      */
     private $structure;
@@ -329,8 +331,8 @@ class Volunteer
     /**
      * @var string A comment about the volunteer.
      *
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $comment;
 
@@ -338,15 +340,16 @@ class Volunteer
      * @var ArrayCollection|null The special needs proposed by the volunteer.
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readVolunteer","writeVolunteer"})
      */
     private $needs;
 
     /**
      * @var ArrayCollection|null Volunteer proofs.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="volunteer", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="volunteer", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readVolunteer","writeVolunteer"})
+     * @ApiSubresource
      * @MaxDepth(1)
      */
     private $proofs;
@@ -355,7 +358,7 @@ class Volunteer
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary"})
+     * @Groups({"readVolunteer"})
      */
     private $createdDate;
 
@@ -363,7 +366,7 @@ class Volunteer
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary"})
+     * @Groups({"readVolunteer"})
      */
     private $updatedDate;
 
@@ -804,7 +807,7 @@ class Volunteer
         return $this;
     }
 
-    public function getProves()
+    public function getProofs()
     {
         return $this->proofs->getValues();
     }
@@ -813,6 +816,7 @@ class Volunteer
     {
         if (!$this->proofs->contains($proof)) {
             $this->proofs[] = $proof;
+            $proof->setVolunteer($this);
         }
         
         return $this;
@@ -822,6 +826,10 @@ class Volunteer
     {
         if ($this->proofs->contains($proof)) {
             $this->proofs->removeElement($proof);
+            // set the owning side to null (unless already changed)
+            if ($proof->getVolunteer() === $this) {
+                $proof->setVolunteer(null);
+            }
         }
         
         return $this;

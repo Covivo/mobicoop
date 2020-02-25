@@ -88,9 +88,9 @@ class Action
     private $inDiary;
 
     /**
-     * @var int|null The default progression in percent if the action can be related to a solidary record.
+     * @var int|null The progression if the action can be related to a process (like for solidary records). It's a numeric value, so it can be a percent, a step...
      *
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
      * @Groups({"read","write"})
      */
     private $progression;
@@ -168,12 +168,12 @@ class Action
         return $this;
     }
 
-    public function getProgression(): ?int
+    public function getProgression(): ?string
     {
         return $this->progression;
     }
 
-    public function setProgression(?int $progression): self
+    public function setProgression(?string $progression): self
     {
         $this->progression = $progression;
 

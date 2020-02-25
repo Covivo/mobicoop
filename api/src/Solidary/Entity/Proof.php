@@ -43,7 +43,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readSolidary","readVolunteer"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={"get","post"},
@@ -63,15 +63,15 @@ class Proof
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("readSolidary")
+     * @Groups({"readSolidary","readVolunteer"})
      */
     private $id;
 
     /**
      * @var string The value entered by the user.
      *
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readSolidary","readVolunteer","writeVolunteer"})
      */
     private $value;
 
@@ -81,7 +81,7 @@ class Proof
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof", inversedBy="proofs")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","readVolunteer","writeVolunteer"})
      * @MaxDepth(1)
      */
     private $structureProof;
@@ -89,9 +89,8 @@ class Proof
     /**
      * @var Solidary Solidary record if the proof concerns a solidary requester.
      *
-     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof", inversedBy="proofs")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","readVolunteer","writeVolunteer"})
      * @MaxDepth(1)
      */
     private $solidary;
@@ -99,8 +98,8 @@ class Proof
     /**
      * @var Volunteer Volunteer id if the proof concerns a volunteer.
      *
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof", inversedBy="proofs")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Volunteer", inversedBy="proofs")
+     * @Groups({"readSolidary","readVolunteer","writeVolunteer"})
      * @MaxDepth(1)
      */
     private $volunteer;
@@ -108,32 +107,32 @@ class Proof
     /**
      * @var string The final file name of the proof.
      *
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readSolidary","readVolunteer","writeVolunteer"})
      */
     private $fileName;
     
     /**
      * @var string The original file name of the proof.
      *
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readSolidary","readVolunteer","writeVolunteer"})
      */
     private $originalName;
 
     /**
      * @var int The size in bytes of the file.
      *
-     * @ORM\Column(type="integer")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"readSolidary","readVolunteer","writeVolunteer"})
      */
     private $size;
     
     /**
      * @var string The mime type of the file.
      *
-     * @ORM\Column(type="string", length=255)
-     * @Groups("readSolidary")
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readSolidary","readVolunteer"})
      */
     private $mimeType;
 
@@ -147,7 +146,7 @@ class Proof
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary"})
+     * @Groups({"readSolidary","readVolunteer"})
      */
     private $createdDate;
 
@@ -155,7 +154,7 @@ class Proof
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary"})
+     * @Groups({"readSolidary","readVolunteer"})
      */
     private $updatedDate;
     
