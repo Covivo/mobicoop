@@ -9,7 +9,6 @@
         flat
       >
         <threads-actions-buttons
-          v-if="idAsk && !loading"
           :can-update-ask="infosComplete.canUpdateAsk"
           :status="infosComplete.askStatus"
           :regular="infosComplete.frequency==2"
