@@ -1,4 +1,9 @@
+import { fetchUtils } from 'react-admin';
+
 const initialState = [];
+const token = localStorage.getItem('token');
+const httpClient = fetchUtils.fetchJson;
+const apiUrlUploadImage = process.env.REACT_APP_API+process.env.REACT_APP_SEND_IMAGES;
 
 function reducer(state, action) {
     let intermediaire
@@ -18,6 +23,21 @@ function reducer(state, action) {
             retourDown[ action.indice + 1] = intermediaire
             return retourDown
         case 'delete' :
+            //We delete an image : we remove her from server
+            if (state[action.indice].image  !== undefined){
+
+                const options = {}
+                if (!options.headers) {
+                    options.headers = new Headers({ Accept: 'application/json' });
+                }
+                options.headers.set('Authorization', `Bearer ${token}`);
+
+                var lid = state[action.indice].image.id;
+                httpClient(`${apiUrlUploadImage}/`+lid, {
+                    method: 'DELETE',
+                    headers : options.headers
+                })
+            }
             if (state.length===0) return state
             return state.filter( ( _ , i) => i !== action.indice) 
         case 'add_title' :

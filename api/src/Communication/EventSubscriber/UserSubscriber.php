@@ -34,14 +34,17 @@ use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserGeneratePhoneTokenAskedEvent;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
+use App\User\Service\UserManager;
 
 class UserSubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
+    private $userManager;
 
-    public function __construct(NotificationManager $notificationManager)
+    public function __construct(NotificationManager $notificationManager, UserManager $userManager)
     {
         $this->notificationManager = $notificationManager;
+        $this->userManager = $userManager;
     }
 
     public static function getSubscribedEvents()
@@ -96,11 +99,19 @@ class UserSubscriber implements EventSubscriberInterface
 
     public function onUserDeleteAccountWasDriverEvent(UserDeleteAccountWasDriverEvent $event)
     {
-        $this->notificationManager->notifies(UserDeleteAccountWasDriverEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+        if ($event->getAsk()->getUser()->getId() == $event->getDeleterId()) {
+            $this->notificationManager->notifies(UserDeleteAccountWasDriverEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
+        } else {
+            $this->notificationManager->notifies(UserDeleteAccountWasDriverEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+        }
     }
 
     public function onUserDeleteAccountWasPassengerEvent(UserDeleteAccountWasPassengerEvent $event)
     {
-        $this->notificationManager->notifies(UserDeleteAccountWasPassengerEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
+        if ($event->getAsk()->getUser()->getId() == $event->getDeleterId()) {
+            $this->notificationManager->notifies(UserDeleteAccountWasPassengerEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
+        } else {
+            $this->notificationManager->notifies(UserDeleteAccountWasPassengerEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+        }
     }
 }

@@ -36,7 +36,7 @@
           <v-col class="col-12">
             <v-text-field
               v-model="pwd"
-              :rules="pwdRules"
+              :rules="[pwdRules.required,pwdRules.min, pwdRules.checkUpper,pwdRules.checkLower,pwdRules.checkNumber]"
               :label="$t('inputs.pwd')"
               name="pwd"
               type="password"
@@ -84,11 +84,25 @@ export default {
       valid: true,
       loading:false,
       pwd:null,
-      pwdRules: [
-        v => !!v || this.$t("messages.errors.required"),
-        v =>
-          (!!v && v) === this.pwd || this.$t("messages.errors.notIdentiquals")
-      ],
+      pwdRules: {
+        required:  v => !!v || this.$t("models.user.password.errors.required"),
+        min: v => (v && v.length >= 8 ) || this.$t("models.user.password.errors.min"),
+        checkUpper : value => {
+          const pattern = /^(?=.*[A-Z]).*$/
+          return pattern.test(value) || this.$t("models.user.password.errors.upper")
+
+        },
+        checkLower : value => {
+          const pattern = /^(?=.*[a-z]).*$/
+          return pattern.test(value) || this.$t("models.user.password.errors.lower")
+
+        },
+        checkNumber : value => {
+          const pattern = /^(?=.*[0-9]).*$/
+          return pattern.test(value) || this.$t("models.user.password.errors.number")
+
+        },
+      },
       pwdConfirm:null,
       pwdConfirmRules: [
         v => !!v || this.$t("form.errors.required"),

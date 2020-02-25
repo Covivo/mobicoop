@@ -455,7 +455,7 @@ class User implements UserInterface, EquatableInterface
     private $password;
 
     /**
-     * @var string The clear password of the user, used for delagation (not persisted !).
+     * @var string The clear password of the user, used for delegation (not persisted !).
      *
      * @Groups("write")
      */
@@ -1045,6 +1045,9 @@ class User implements UserInterface, EquatableInterface
 
     public function getShortFamilyName(): ?string
     {
+        if (is_null($this->familyName) || $this->familyName==="" || !isset($this->familyName[0])) {
+            return ".";
+        }
         return strtoupper($this->familyName[0]) . ".";
     }
 

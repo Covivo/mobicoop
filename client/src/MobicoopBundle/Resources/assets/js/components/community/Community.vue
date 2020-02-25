@@ -475,7 +475,7 @@ export default {
       let lParams = {
         origin: null,
         destination: null,
-        regular: null,
+        regular: this.regular,
         date: null,
         time: null,
         ...this.params

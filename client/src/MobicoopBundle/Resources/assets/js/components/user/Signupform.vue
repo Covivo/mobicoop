@@ -495,7 +495,7 @@ export default {
     },
     // disable validation if homeAddress is empty and required or email already taken
     isDisable() {
-      if (this.requiredHomeAddress && !this.form.address) {
+      if (this.requiredHomeAddress && !this.form.homeAddress) {
         return true;
       }
       if(this.emailAlreadyTaken){

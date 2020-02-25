@@ -551,6 +551,14 @@ FAQ:
         en: /FAQ
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showFAQ    
 
+# Get the last external articles (AJAX)
+LastExternalArticles:
+    methods: [POST]
+    path:
+        fr: /articles/derniers/externes
+        en: /articles/last/extern
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::lastExternalArticles 
+
 ####################
 # geography routes #
 ####################

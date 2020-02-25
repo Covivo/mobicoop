@@ -80,8 +80,8 @@ class AskManager
         
         $this->entityManager->persist($ask);
         // dispatch en event
-        $event = new AskPostedEvent($ask);
-        $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
+        // $event = new AskPostedEvent($ask);
+        // $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
         return $ask;
     }
 
@@ -468,11 +468,12 @@ class AskManager
         $this->entityManager->persist($ask);
         $this->entityManager->flush($ask);
         
-        $ad->setAskId($ask->getId());
+        // get the complete ad to have data for the email
+        $ad = $this->getAskFromAd($ask->getId(), $ask->getUser()->getId());
+        
         // dispatch en event
-        $event = new AskPostedEvent($ask);
+        $event = new AskPostedEvent($ad);
         $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
-
         return $ad;
     }
 
@@ -488,6 +489,7 @@ class AskManager
         $ask = $this->askRepository->find($askId);
         $ad = new Ad();
         $ad->setUserId($userId);
+        $ad->setAskId($askId);
         $ad->setAskStatus($ask->getStatus());
 
         // first pass for role
@@ -645,14 +647,18 @@ class AskManager
         $askHistory->setType($ask->getType());
         $ask->addAskHistory($askHistory);
 
+       
         $this->entityManager->persist($ask);
         $this->entityManager->flush();
+
+        // get the complete ad to have data for the email
+        $ad = $this->getAskFromAd($ask->getId(), $userId);
         // dispatch en event
         if (($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
-            $event = new AskAcceptedEvent($ask);
+            $event = new AskAcceptedEvent($ad);
             $this->eventDispatcher->dispatch(AskAcceptedEvent::NAME, $event);
         } elseif (($ask->getStatus() == Ask::STATUS_DECLINED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_DECLINED_AS_PASSENGER)) {
-            $event = new AskRefusedEvent($ask);
+            $event = new AskRefusedEvent($ad);
             $this->eventDispatcher->dispatch(AskRefusedEvent::NAME, $event);
         }
         return $ad;
