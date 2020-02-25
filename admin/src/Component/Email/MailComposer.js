@@ -232,7 +232,7 @@ const MailComposer = ({isOpen, selectedIds, onClose, resource, basePath, filterV
                     { corpsMail.map( (d,i) => (
                         <Paper key={i} className={classes.ligne} onMouseEnter={()=>setElementSurvole(i)} onMouseLeave={()=>setElementSurvole(null)} >
                             { d.titre !== undefined && <TextField label="Titre" fullWidth variant="outlined" value={d.titre} onChange={modifieLigneCorpsMail(i, 'titre')} /> }
-                            { d.image !== undefined && <ImageUpload imageSrc={d.image} setImage={modifieLigneCorpsMail(i, 'image')} campaignId={campagne.originId} />}
+                            { d.image !== undefined && <ImageUpload imageSrc={d.image.src} imageId={d.image.id} setImage={modifieLigneCorpsMail(i, 'image')} campaignId={campagne.originId} />}
                             { d.texte !== undefined && <RichTextInput id={"email-compose"+i} value={d.texte} onChange={modifieLigneCorpsMail(i, 'texte')} /> }
                             { elementSurvole === i && <div className={classes.actionButton} >
                                 <Fab color="primary" size="small" aria-label="Up" onClick={()=>dispatchAndReset({type:'up', indice:i})}><ArrowUpwardIcon /></Fab>

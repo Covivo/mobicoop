@@ -132,7 +132,7 @@ class UserManager
      * @param boolean   $encodePassword     True to encode password
      * @return User     The user created
      */
-    public function registerUser(User $user, bool $encodePassword=false)
+    public function registerUser(User $user, bool $encodePassword=true)
     {
         if (count($user->getUserRoles()) == 0) {
             // default role : user registered full
