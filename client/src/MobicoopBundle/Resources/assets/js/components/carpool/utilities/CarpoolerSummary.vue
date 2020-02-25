@@ -222,7 +222,6 @@ export default {
       locale: this.$i18n.locale,
       phoneButtonToggled: false,
       disabled: this.user ? false : true,
-      disbledCarpool: false
     };
   },
   computed: {
