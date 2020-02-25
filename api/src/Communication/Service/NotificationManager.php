@@ -101,6 +101,10 @@ class NotificationManager
         if (!$this->enabled) {
             return;
         }
+        // Check if the user is anonymised if yes we don't send notifications
+        if ($recipient->getStatus() == USER::STATUS_ANONYMIZED) {
+            return;
+        }
 
         $notifications = null;
         // we check the user notifications
@@ -262,6 +266,7 @@ class NotificationManager
                 'context' => $titleContext
             ]
         ));
+
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $lang);
     }
@@ -351,7 +356,7 @@ class NotificationManager
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
         }
-       
+
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->smsManager->send($sms, $notification->getTemplateBody() ? $this->smsTemplatePath . $notification->getTemplateBody() : $this->smsTemplatePath . $notification->getAction()->getName(), $bodyContext);
     }
