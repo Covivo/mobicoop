@@ -455,7 +455,7 @@ class User implements UserInterface, EquatableInterface
     private $password;
 
     /**
-     * @var string The clear password of the user, used for delagation (not persisted !).
+     * @var string The clear password of the user, used for delegation (not persisted !).
      *
      * @Groups("write")
      */
