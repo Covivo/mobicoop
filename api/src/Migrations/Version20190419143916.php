@@ -68,8 +68,6 @@ final class Version20190419143916 extends AbstractMigration
         $this->addSql('INSERT INTO `app` (`id`, `name`, `username`, `password`) VALUES (1, \'FO\', \'front\', \'$2y$13$ZmXMawAMfTITXntmHimJBOnE3ukVNi1NT6t6141SgaXvlm0Q8Ga52\');');
         $this->addSql('INSERT INTO `role` (`id`, `title`, `name`) VALUES (1, \'User\', \'ROLE_USER\'),(2, \'Admin\', \'ROLE_ADMIN\');');
         $this->addSql('INSERT INTO `app_role` (`app_id`, `role_id`) VALUES (1, 1);');
-        $this->addSql('INSERT INTO `app` (`id`, `name`, `username`, `password`) VALUES (2, \'mobile\', \'mobile\', \'$2y$10$wFG8ZHo/06OP1z4JXBBZlOp6ZgrutLi9.0v647L7z/lAk.3BpSlha\');');
-        $this->addSql('INSERT INTO `app_role` (`app_id`, `role_id`) VALUES (2, 5);');
     }
 
     public function down(Schema $schema) : void
