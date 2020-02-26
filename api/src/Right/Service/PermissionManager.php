@@ -185,7 +185,7 @@ class PermissionManager
             if ($requester instanceof App) {
                 // after refactor of the client token comment/uncomment the following
                 // ---
-                $user = $requester;
+                $app = $requester;
             // it's an app, we will check the permission for a basic (anonymous) user
                 // $user = new User();
                 // $role = $this->roleRepository->find(Role::ROLE_USER);
@@ -199,46 +199,83 @@ class PermissionManager
             }
         }
 
-        $permission = new Permission(1);
-        $permission->setGranted(false);
-
-        // we first check if the user is seated on the iron throne
-        if (in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
-            // King of the Andals and the First Men, Lord of the Seven Kingdoms, and Protector of the Realm
-            $permission->setGranted(true);
-            return $permission;
-        }
-        
-        // we search all the roles of the user (its direct roles and its children)
-        // we also keep the territory, even if we don't really use it yet !
-        // note : if a role is associated with a territory, its children are also associated with it
-        $roles = [];
-        foreach ($user->getUserRoles() as $userRole) {
-            if (is_null($userRole->getTerritory()) || $userRole->getTerritory() == $territory) {
+        if (isset($app)) {
+            // I'm an app
+            $permission = new Permission(1);
+            $permission->setGranted(false);
+            // we first check if the user is seated on the iron throne
+            if (in_array('ROLE_SUPER_ADMIN', $app->getRoles())) {
+                // King of the Andals and the First Men, Lord of the Seven Kingdoms, and Protector of the Realm
+                $permission->setGranted(true);
+                return $permission;
+            }
+            
+            // we search all the roles of the user (its direct roles and its children)
+            // we also keep the territory, even if we don't really use it yet !
+            // note : if a role is associated with a territory, its children are also associated with it
+            $roles = [];
+            /**
+             * @var Role $role
+             */
+            foreach ($app->getRoleObjects() as $role) {
                 $roles[] = [
-                    'role' => $userRole->getRole(),
-                    'territory' => $territory
+                    'role' => $role
                 ];
-                foreach ($this->getRoleChildren($userRole->getRole()) as $role) {
+                foreach ($this->getRoleChildren($role) as $childRole) {
                     $roles[] = [
-                        'role' => $role,
-                        'territory' => $territory
+                        'role' => $childRole
                     ];
                 }
             }
-        }
-        
-        if ($this->rightInRoles($right, $roles, $user->getId(), $id, $object)) {
-            $permission->setGranted(true);
-            return $permission;
-        }
-        
-        // we check if the user has this specific right
-        foreach ($user->getUserRights() as $userRight) {
-            if (is_null($userRight->getTerritory()) || $userRight->getTerritory() == $territory) {
-                if ($this->rightHasRight($right, $userRight->getRight(), $user->getId(), $id)) {
-                    $permission->setGranted(true);
-                    return $permission;
+    
+            if ($this->rightInRoles($right, $roles, $app->getId(), $id, $object)) {
+                $permission->setGranted(true);
+                return $permission;
+            }
+        } else {
+
+            // I'm a real user
+
+            $permission = new Permission(1);
+            $permission->setGranted(false);
+            // we first check if the user is seated on the iron throne
+            if (in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
+                // King of the Andals and the First Men, Lord of the Seven Kingdoms, and Protector of the Realm
+                $permission->setGranted(true);
+                return $permission;
+            }
+            
+            // we search all the roles of the user (its direct roles and its children)
+            // we also keep the territory, even if we don't really use it yet !
+            // note : if a role is associated with a territory, its children are also associated with it
+            $roles = [];
+            foreach ($user->getUserRoles() as $userRole) {
+                if (is_null($userRole->getTerritory()) || $userRole->getTerritory() == $territory) {
+                    $roles[] = [
+                        'role' => $userRole->getRole(),
+                        'territory' => $territory
+                    ];
+                    foreach ($this->getRoleChildren($userRole->getRole()) as $role) {
+                        $roles[] = [
+                            'role' => $role,
+                            'territory' => $territory
+                        ];
+                    }
+                }
+            }
+    
+            if ($this->rightInRoles($right, $roles, $user->getId(), $id, $object)) {
+                $permission->setGranted(true);
+                return $permission;
+            }
+            
+            // we check if the user has this specific right
+            foreach ($user->getUserRights() as $userRight) {
+                if (is_null($userRight->getTerritory()) || $userRight->getTerritory() == $territory) {
+                    if ($this->rightHasRight($right, $userRight->getRight(), $user->getId(), $id)) {
+                        $permission->setGranted(true);
+                        return $permission;
+                    }
                 }
             }
         }
@@ -294,12 +331,7 @@ class PermissionManager
                 }
             }
         }
-        // no common role found => we try the parents of the right
-        foreach ($right->getParents() as $parent) {
-            if ($this->rightInRoles($parent, $roles, $userId, $id, $object)) {
-                return true;
-            }
-        }
+
         return false;
     }
 
@@ -430,9 +462,9 @@ class PermissionManager
         if (is_null($right->getObject())) {
             return true;
         }
-        if (is_null($objectId)) {
-            return false;
-        }
+        // if (is_null($objectId)) {
+        //     return false;
+        // }
         switch ($right->getObject()) {
             case "ad":
                 if ($ad = $this->adManager->getAdForPermission($objectId)) {
@@ -461,14 +493,22 @@ class PermissionManager
             case "user":
                 return $objectId === $requesterId;
             case "communityManaged()":
-                return self::communityManaged($objectId);
+                return self::communityManaged($right, $requesterId, $objectId);
         }
         return false;
     }
 
-    private function communityManaged($communityId)
+    private function communityManaged(Right $right, int $requesterId, ?int $communityId=null)
     {
-        return true;
+        // To Do... all the community cases
+        switch ($right->getName()) {
+            case "community_create":
+            case "community_private_create":
+                return true;
+                break;
+            default:
+                return false;
+        }
     }
 
     private function canCreateAsk(int $matchingId, int $requesterId)

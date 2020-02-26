@@ -49,7 +49,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      itemOperations={"get","put","delete"}
  * )
  * @ApiFilter(NumericFilter::class, properties={"type"})
- * @ApiFilter(OrderFilter::class, properties={"id", "type", "name", "parent"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "type", "name"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  */
 class Right
@@ -84,14 +84,6 @@ class Right
     private $description;
 
     /**
-     * @var ArrayCollection|null Child rights.
-     *
-     * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Right")
-     * @Groups({"read","write"})
-     */
-    private $parents;
-
-    /**
      * @var ArrayCollection|null The roles having this right.
      *
      * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Role", mappedBy="rights")
@@ -110,7 +102,6 @@ class Right
 
     public function __construct()
     {
-        $this->parents = new ArrayCollection();
         $this->roles = new ArrayCollection();
     }
     
@@ -143,29 +134,6 @@ class Right
         return $this;
     }
     
-    public function getParents()
-    {
-        return $this->parents;
-    }
-
-    public function addParent(Right $parent): self
-    {
-        if (!$this->parents->contains($parent)) {
-            $this->parents[] = $parent;
-        }
-        
-        return $this;
-    }
-    
-    public function removeParent(Right $parent): self
-    {
-        if ($this->parents->contains($parent)) {
-            $this->parents->removeElement($parent);
-        }
-        
-        return $this;
-    }
-
     public function getRoles()
     {
         return $this->roles->getValues();
