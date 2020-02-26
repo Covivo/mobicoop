@@ -468,12 +468,14 @@ class AskManager
         $this->entityManager->persist($ask);
         $this->entityManager->flush($ask);
         
-        // get the complete ad to have data for the email
-        $ad = $this->getAskFromAd($ask->getId(), $ask->getUser()->getId());
         
-        // dispatch en event
-        $event = new AskPostedEvent($ad);
-        $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
+        if ($ask->getStatus != ASk::STATUS_INITIATED) {
+            // dispatch en event
+            // get the complete ad to have data for the email
+            $ad = $this->getAskFromAd($ask->getId(), $ask->getUser()->getId());
+            $event = new AskPostedEvent($ad);
+            $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
+        }
         return $ad;
     }
 
@@ -654,7 +656,10 @@ class AskManager
         // get the complete ad to have data for the email
         $ad = $this->getAskFromAd($ask->getId(), $userId);
         // dispatch en event
-        if (($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
+        if (($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER)) {
+            $event = new AskPostedEvent($ad);
+            $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
+        } elseif (($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
             $event = new AskAcceptedEvent($ad);
             $this->eventDispatcher->dispatch(AskAcceptedEvent::NAME, $event);
         } elseif (($ask->getStatus() == Ask::STATUS_DECLINED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_DECLINED_AS_PASSENGER)) {
