@@ -110,7 +110,7 @@ class UserVoter extends Voter
 
     private function canReadSelf(UserInterface $requester, User $subject)
     {
-        return $this->permissionManager->checkPermission('user_manage_self', $requester, null, $subject->getId());
+        return $this->permissionManager->checkPermission('user_update_self', $requester, null, $subject->getId());
     }
 
     private function canUpdateSelf(UserInterface $requester, User $subject)

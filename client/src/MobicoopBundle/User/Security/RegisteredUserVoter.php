@@ -100,7 +100,7 @@ class RegisteredUserVoter extends Voter
 
     private function canUpdateSelf(User $user)
     {
-        return $this->permissionManager->checkPermission('user_update', $user, $user->getId());
+        return $this->permissionManager->checkPermission('user_update_self', $user, $user->getId());
     }
 
     private function canChangePassword(User $user)
