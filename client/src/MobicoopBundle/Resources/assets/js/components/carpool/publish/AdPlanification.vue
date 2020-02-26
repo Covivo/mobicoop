@@ -152,7 +152,7 @@
               :locale="locale"
               no-title
               first-day-of-week="1"
-              :min="maxDateFromOutward"
+              :min="outwardDate"
               @input="menuReturnDate = false"
               @change="checkDateReturn($event),change(),blockTime()"
             />
@@ -187,7 +187,6 @@
               v-if="menuReturnTime"
               v-model="returnTime"
               format="24hr"
-              :min="maxTimeFromOutward"
               header-color="secondary"
               @click:minute="$refs.menuReturnTime.save(returnTime)"
               @change="checkDateReturn($event),change()"
@@ -597,30 +596,30 @@ export default {
       this.returnTrip = e ? true : false;
     },
     blockDate(){
-      this.maxDateFromOutward = this.outwardDate
-      //We are Today -> we block min time for outwardTime < now time
-      this.maxTimeIfToday = (this.maxDateFromOutward == this.nowDate) ? moment().format('H:mm') : null;
+      // this.maxDateFromOutward = this.outwardDate
+      // //We are Today -> we block min time for outwardTime < now time
+      // this.maxTimeIfToday = (this.maxDateFromOutward == this.nowDate) ? moment().format('H:mm') : null;
     },
     blockTime(){
-      this.maxTimeReturnCalcul = moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format("HH:mm");
-      this.maxDateReturnCalcul = moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format("YYYY-MM-DD");
+      // this.maxTimeReturnCalcul = moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format("HH:mm");
+      // this.maxDateReturnCalcul = moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format("YYYY-MM-DD");
 
-      if (this.returnTrip) this.setDefaultDateIfEmpty()
-      //Security -> if try to set return then outward, if outward is more far, we set return = outward
-      if ( this.outwardDate > this.returnDate )  this.returnDate = this.outwardDate;
+      // if (this.returnTrip) this.setDefaultDateIfEmpty()
+      // //Security -> if try to set return then outward, if outward is more far, we set return = outward
+      // if ( this.outwardDate > this.returnDate )  this.returnDate = this.outwardDate;
     },
     setDefaultDateIfEmpty(){
-      this.returnDate = this.outwardDate
-      this.returnTrip = true;
-      if (this.maxTimeReturnCalcul != null ){
-        this.returnTime = this.maxTimeReturnCalcul
-        this.maxTimeFromOutward = this.maxTimeReturnCalcul
-      }
-      if (this.maxDateReturnCalcul != null ) {
-        this.returnDate = this.maxDateReturnCalcul
-        this.maxDateFromOutward = this.maxDateReturnCalcul
+      // this.returnDate = this.outwardDate
+      // this.returnTrip = true;
+      // if (this.maxTimeReturnCalcul != null ){
+      //   this.returnTime = this.maxTimeReturnCalcul
+      //   this.maxTimeFromOutward = this.maxTimeReturnCalcul
+      // }
+      // if (this.maxDateReturnCalcul != null ) {
+      //   this.returnDate = this.maxDateReturnCalcul
+      //   this.maxDateFromOutward = this.maxDateReturnCalcul
 
-      }
+      // }
     },
     blockTimeRegular(e,id){
       // test to allow return time to be set before outward time for regular work
