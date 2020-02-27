@@ -365,7 +365,7 @@ class GraphhopperProvider implements GeorouterInterface
                 gc_collect_cycles();
                 self::print_mem(7);
                 $this->logger->debug('Multiple Async | Exchange file deletion');
-                unlink($filename);
+                //unlink($filename);
                 break;
             }
         }

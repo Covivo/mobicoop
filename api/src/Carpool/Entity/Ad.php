@@ -32,6 +32,7 @@ use App\Carpool\Controller\AdAskPost;
 use App\Carpool\Controller\AdAskPut;
 use App\Carpool\Controller\AdPut;
 use App\Carpool\Controller\AdAskGet;
+use App\Carpool\Controller\UpdateCarpoolsLimits;
 
 /**
  * Carpooling : an ad.
@@ -64,6 +65,11 @@ use App\Carpool\Controller\AdAskGet;
  *              "path"="/carpools/contact",
  *              "controller"=AdAskPost::class,
  *              "defaults"={"type"="contact"}
+ *          },
+ *          "updateCarpoolsLimits"={
+ *              "method"="GET",
+ *              "path"="/carpools/updateCarpoolsLimits",
+ *              "controller"=UpdateCarpoolsLimits::class,
  *          }
  *      },
  *      itemOperations={
