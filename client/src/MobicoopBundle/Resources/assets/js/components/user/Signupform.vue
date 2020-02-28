@@ -668,12 +668,15 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-$stepper-content-padding:0px 24px 0px 24px !default;
 .v-stepper{
   box-shadow:none;
-  .v-stepper__label{
-    span{
-      text-shadow:none !important;
+  .v-stepper__step{
+      padding-top:5px;
+      padding-bottom:5px;
+    .v-stepper__label{
+      span{
+        text-shadow:none !important;
+      }
     }
   }
 }
