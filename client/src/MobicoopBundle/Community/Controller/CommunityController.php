@@ -121,6 +121,8 @@ class CommunityController extends AbstractController
                     $image->setCommunityId($community->getId());
                     $image->setName($community->getName());
                     if ($image = $imageManager->createImage($image)) {
+                        $session = $this->get('session');
+                        $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
                         return new Response();
                     }
                     //If an error occur on upload image, the community is already create, so we delete her
