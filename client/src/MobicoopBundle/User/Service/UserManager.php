@@ -282,9 +282,6 @@ class UserManager
      */
     public function createUser(User $user)
     {
-        // encoding of the password
-        $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
-
         $this->logger->info('User Creation | Start');
         $response = $this->dataProvider->post($user);
         if ($response->getCode() == 201) {
