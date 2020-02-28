@@ -36,11 +36,11 @@
         },
         "step":"Step",
         "steps":{
-            "1":"Identifiants",
-            "2":"Identité",
-            "3":"Genre",
-            "4":"Date de naissance",
-            "5":"Ville de résidence"
+            "1":"Credentials",
+            "2":"Identity",
+            "3":"Gender",
+            "4":"Birthdate",
+            "5":"Home town"
         }
     }
 }

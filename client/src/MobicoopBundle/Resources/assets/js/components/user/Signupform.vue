@@ -66,7 +66,7 @@
             :complete="step > 1"
             step="1"
           >
-            {{ $t('steps.1') }}
+            <span class="primary--text">{{ $t('steps.1') }}</span>
           </v-stepper-step>
           <v-stepper-content
             step="1"
@@ -130,7 +130,7 @@
             step="2"
             :hidden="step < 2"
           >
-            {{ $t('steps.2') }}
+            <span class="primary--text">{{ $t('steps.2') }}</span>
           </v-stepper-step>
           <v-stepper-content
             step="2"
@@ -191,7 +191,7 @@
             step="3"
             :hidden="step < 3"
           >
-            {{ $t('steps.3') }}
+            <span class="primary--text">{{ $t('steps.3') }}</span>
           </v-stepper-step>
           <v-stepper-content
             step="3"
@@ -201,6 +201,7 @@
               ref="step 3"
               v-model="step3"
               :hidden="!step1"
+              class="pb-2"
             >
               <v-select
                 v-model="form.gender"
@@ -246,7 +247,7 @@
             step="4"
             :hidden="step < 4"
           >
-            {{ $t('steps.4') }}
+            <span class="primary--text">{{ $t('steps.4') }}</span>
           </v-stepper-step>
           <v-stepper-content
             step="4"
@@ -256,6 +257,7 @@
               ref="step 4"
               v-model="step4"
               :hidden="!step2"
+              class="pb-2"
             >
               <v-menu
                 ref="menu"
@@ -320,7 +322,7 @@
             step="5"
             :hidden="step < 5"
           >
-            {{ $t('steps.5') }}
+            <span class="primary--text">{{ $t('steps.5') }}</span>
           </v-stepper-step>
           <v-stepper-content
             step="5"
@@ -330,6 +332,7 @@
               ref="form"
               v-model="step5"
               :hidden="!step3"
+              class="pb-2"
             >
               <GeoComplete
                 name="homeAddress"
@@ -668,8 +671,10 @@ export default {
 $stepper-content-padding:0px 24px 0px 24px !default;
 .v-stepper{
   box-shadow:none;
-  .v-stepper__content{
-    // border-left:none !important;
+  .v-stepper__label{
+    span{
+      text-shadow:none !important;
+    }
   }
 }
 </style>
