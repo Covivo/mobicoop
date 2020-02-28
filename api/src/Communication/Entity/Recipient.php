@@ -38,7 +38,7 @@ use App\User\Entity\User;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  * @ORM\EntityListeners({"App\Communication\EntityListener\RecipientListener"})
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
@@ -47,7 +47,7 @@ use App\User\Entity\User;
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "status"}, arguments={"orderParameterName"="order"})
+ * ApiFilter(OrderFilter::class, properties={"id", "status"}, arguments={"orderParameterName"="order"})
  */
 class Recipient
 {

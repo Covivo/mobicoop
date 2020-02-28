@@ -47,6 +47,7 @@ class ContactController extends AbstractController
      */
     public function showContact()
     {
+        $this->denyAccessUnlessGranted('contact_create', new Contact());
         return $this->render(
             '@Mobicoop/contact/contact.html.twig'
         );

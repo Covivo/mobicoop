@@ -30,7 +30,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * Carpooling : result, for a given role, for an ad.
  *
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}

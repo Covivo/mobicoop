@@ -29,9 +29,9 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Doctrine\Common\Collections\Collection;
 
 /**
  * A right.
@@ -49,7 +49,7 @@ use Doctrine\Common\Collections\Collection;
  *      itemOperations={"get","put","delete"}
  * )
  * @ApiFilter(NumericFilter::class, properties={"type"})
- * @ApiFilter(OrderFilter::class, properties={"id", "type", "name", "parent"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "type", "name"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  */
 class Right
@@ -66,15 +66,7 @@ class Right
      * @Groups("read")
      */
     private $id;
-        
-    /**
-     * @var int The type of the right (1=item; 2=group).
-     *
-     * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
-     */
-    private $type;
-    
+            
     /**
      * @var string The name of the right.
      *
@@ -92,31 +84,32 @@ class Right
     private $description;
 
     /**
-     * @var Right|null Parent right.
+     * @var ArrayCollection|null The roles having this right.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Right\Entity\Right")
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Role", mappedBy="rights")
      * @Groups({"read","write"})
      */
-    private $parent;
+    private $roles;
+
+    /**
+     * @var string The object or method related to the right.
+     * Used to check ownership
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $object;
+
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+    }
     
     public function getId(): ?int
     {
         return $this->id;
     }
-        
-    public function getType(): ?int
-    {
-        return $this->type;
-    }
-
-    public function setType(?int $type): self
-    {
-        $this->type = $type;
-        
-        return $this;
-    }
-    
+            
     public function getName(): ?string
     {
         return $this->name;
@@ -140,15 +133,38 @@ class Right
         
         return $this;
     }
-
-    public function getParent(): ?Right
+    
+    public function getRoles()
     {
-        return $this->parent;
+        return $this->roles->getValues();
     }
     
-    public function setParent(?Right $parent): self
+    public function addRole(Role $role): self
     {
-        $this->parent = $parent;
+        if (!$this->roles->contains($role)) {
+            $this->roles[] = $role;
+        }
+        
+        return $this;
+    }
+    
+    public function removeRole(Role $role): self
+    {
+        if ($this->roles->contains($role)) {
+            $this->roles->removeElement($role);
+        }
+        
+        return $this;
+    }
+
+    public function getObject(): ?string
+    {
+        return $this->object;
+    }
+    
+    public function setObject(?string $object): self
+    {
+        $this->object = $object;
         
         return $this;
     }

@@ -107,5 +107,28 @@ class UserProvider implements UserProviderInterface
         throw new UsernameNotFoundException(
             sprintf('Username "%s" does not exist.', $username)
         );
+
+        // // first we call the api login route to get the token
+        // $token = ''; // replace by jwtmanager call ?
+
+        // $decodedToken = json_decode(base64_decode(str_replace('_', '/', str_replace('-','+',explode('.', $token)[1]))));
+        // // secondly we get the user informations
+        // $response = $this->dataProvider->getItem($decodedToken['id']);
+        // if ($response->getCode() == 200) {
+        //     return $response->getValue();
+        // }
+
+        // // $response = $this->dataProvider->getCollection(["login"=>$username]);
+        // // if ($response->getCode() == 200) {
+        // //     $userData = $response->getValue();
+
+        // //     if (is_array($userData->getMember()) && count($userData->getMember())==1) {
+        // //         return $userData->getMember()[0];
+        // //     }
+        // // }
+        
+        // throw new UsernameNotFoundException(
+        //     sprintf('Username "%s" does not exist.', $username)
+        // );
     }
 }

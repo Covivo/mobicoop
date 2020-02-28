@@ -24,10 +24,10 @@
 namespace App\Carpool\Event;
 
 use App\Carpool\Entity\Ask;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a new proposal is deleted.
+ * Event sent when an ad is deleted.
  */
 class AskAdDeletedEvent extends Event
 {

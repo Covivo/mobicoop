@@ -143,13 +143,6 @@ user_update_alert:
         en: /user/alert/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::updateAlert
 
-# proposal list
-user_proposal_list:
-    path:
-        fr: /utilisateur/annonces
-        en: /user/ads
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposalList
-
 # messages
 user_message_list:
     path:

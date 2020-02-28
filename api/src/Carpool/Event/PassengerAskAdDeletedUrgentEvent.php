@@ -24,7 +24,7 @@
 namespace App\Carpool\Event;
 
 use App\Carpool\Entity\Ask;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event sent when a proposal is deleted and that at least one ask is accepted with a passenger and that the carpool is in less than 24h.

@@ -32,7 +32,7 @@ use App\Communication\Repository\MediumRepository;
 use App\User\Entity\User;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Event\InternalMessageReceivedEvent;
-use App\Communication\Entity\MessagerInterface;
+use App\Communication\Interfaces\MessagerInterface;
 use App\Communication\Repository\MessageRepository;
 
 /**

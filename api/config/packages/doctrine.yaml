@@ -9,13 +9,13 @@ doctrine:
     dbal:
         # configure these for your database server
         driver: 'pdo_mysql'
-        server_version: '5.7'
+        server_version: 'mariadb-10.4.6'
         charset: utf8mb4
         default_table_options:
             charset: utf8mb4
             collate: utf8mb4_unicode_ci
         url: '%env(resolve:DATABASE_URL)%'
-        logging: false
+        logging: true
         profiling: false
         types:
             geometry:   CrEOF\Spatial\DBAL\Types\GeometryType

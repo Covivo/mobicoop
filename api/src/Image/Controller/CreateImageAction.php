@@ -23,32 +23,21 @@
 
 namespace App\Image\Controller;
 
-use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
-use App\Image\Form\ImageForm;
 use App\TranslatorTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Image\Service\ImageManager;
 use App\Image\Entity\Image;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class CreateImageAction
 {
     use TranslatorTrait;
-    private $validator;
-    private $doctrine;
-    private $factory;
     private $imageManager;
     private $logger;
     
-    public function __construct(RegistryInterface $doctrine, FormFactoryInterface $factory, ValidatorInterface $validator, ImageManager $imageManager, LoggerInterface $logger)
+    public function __construct(ImageManager $imageManager, LoggerInterface $logger)
     {
-        $this->validator = $validator;
-        $this->doctrine = $doctrine;
-        $this->factory = $factory;
         $this->imageManager = $imageManager;
         $this->logger = $logger;
     }
@@ -56,18 +45,49 @@ final class CreateImageAction
     public function __invoke(Request $request): Image
     {
         if (is_null($request)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad request id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans("Bad request"));
         }
+
         $image = new Image();
-        
-        $form = $this->factory->create(ImageForm::class, $image);
-        $form->handleRequest($request);
-        
-        // TODO : check if the following code (before submit) could be managed by VichUploaderBundle events
-        // see https://github.com/dustin10/VichUploaderBundle/blob/master/Resources/doc/events.md
-        
-        $originalName = null;
-        
+
+        // check if file is present
+        if ($request->files->get('userFile') && $request->request->get('userId')) {
+            // User image
+            $image->setUserFile($request->files->get('userFile'));
+            $image->setUserId($request->request->get('userId'));
+        } elseif ($request->files->get('communityFile') && $request->request->get('communityId')) {
+            // Community image
+            $image->setCommunityFile($request->files->get('communityFile'));
+            $image->setCommunityId($request->request->get('communityId'));
+        } elseif ($request->files->get('eventFile') && $request->request->get('eventId')) {
+            // Event image
+            $image->setEventFile($request->files->get('eventFile'));
+            $image->setEventId($request->request->get('eventId'));
+        } elseif ($request->files->get('relayPointFile') && $request->request->get('relayPointId')) {
+            // RelayPoint image
+            $image->setRelayPointFile($request->files->get('relayPointFile'));
+            $image->setRelayPointId($request->request->get('relayPointId'));
+        } elseif ($request->files->get('relayPointTypeFile') && $request->request->get('relayPointTypeId')) {
+            // RelayPointType image
+            $image->setRelayPointTypeFile($request->files->get('relayPointTypeFile'));
+            $image->setRelayPointTypeId($request->request->get('relayPointTypeId'));
+        } elseif ($request->files->get('campaignFile') && $request->request->get('campaignId')) {
+            // Campaign image
+            $image->setCampaignFile($request->files->get('campaignFile'));
+            $image->setCampaignId($request->request->get('campaignId'));
+        } else {
+            throw new BadRequestHttpException('A valid file is required');
+        }
+                
+        $image->setName($request->request->get('name'));
+        $image->setOriginalName($request->request->get('originalName'));
+        $image->setTitle($request->request->get('title'));
+        $image->setAlt($request->request->get('alt'));
+        $image->setCropX1($request->request->get('cropX1'));
+        $image->setCropX2($request->request->get('cropX2'));
+        $image->setCropY1($request->request->get('cropY1'));
+        $image->setCropY2($request->request->get('cropY2'));
+
         // we search the future owner of the image (user ? event ?...)
         if ($owner = $this->imageManager->getOwner($image)) {
             // we associate the owner and the image
@@ -76,38 +96,11 @@ final class CreateImageAction
             $image->setPosition($this->imageManager->getNextPosition($image));
             // we rename the image depending on the owner
             $image->setFileName($this->imageManager->generateFilename($image));
-            // we check if an originalName has been sent
-            if ($image->getOriginalName()) {
-                $originalName = $image->getOriginalName();
-            }
             if (is_null($image->getName())) {
                 $image->setName($image->getFileName());
             }
         }
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->doctrine->getManager();
 
-            // the form is valid and the image has a valid owner
-            // we persist the image to fill the fields automatically (size, dimensions, mimetype...)
-            $em->persist($image);
-            
-            // we eventually write the originalName
-            if ($originalName) {
-                $image->setOriginalName($originalName);
-            }
-            // we generate the versions available for the image
-            $image->setVersions($this->imageManager->generateVersions($image));
-
-            // Prevent the serialization of the file property
-            $image->preventSerialization();
-            
-            $em->persist($image);
-            $em->flush();
-            
-            return $image;
-        }
-        
-        // This will be handled by API Platform and returns a validation error.
-        throw new ValidationException($this->validator->validate($image));
+        return $image;
     }
 }

@@ -24,13 +24,9 @@
 namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Psr\Log\LoggerInterface;
@@ -534,7 +530,7 @@ class UserManager
             $now = new DateTime();
             
             // Carpool regular
-            if ($ad["frequency"] === Criteria::FREQUENCY_REGULAR) {
+            if ($ad["frequency"] === Ad::FREQUENCY_REGULAR) {
                 $date = new DateTime($ad["outwardLimitDate"]);
             }
             // Carpool punctual

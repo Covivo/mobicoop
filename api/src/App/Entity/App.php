@@ -24,10 +24,10 @@
 namespace App\App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
+// use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
 use App\Right\Entity\Role;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 
@@ -36,7 +36,7 @@ use Symfony\Component\Security\Core\User\EquatableInterface;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"}
  *      },
@@ -163,6 +163,11 @@ class App implements UserInterface, EquatableInterface
         return $roles;
     }
     
+    public function getRoleObjects()
+    {
+        return $this->roles;
+    }
+
     public function addRole(Role $role): self
     {
         if (!$this->roles->contains($role)) {

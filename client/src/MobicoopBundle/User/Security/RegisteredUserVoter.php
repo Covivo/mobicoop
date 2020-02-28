@@ -100,21 +100,22 @@ class RegisteredUserVoter extends Voter
 
     private function canUpdateSelf(User $user)
     {
-        return $this->permissionManager->checkPermission('user_update_self', $user);
+        return $this->permissionManager->checkPermission('user_update_self', $user, $user->getId());
     }
 
     private function canChangePassword(User $user)
     {
-        return $this->permissionManager->checkPermission('user_password_self', $user);
+        return $this->permissionManager->checkPermission('user_password', $user, $user->getId());
     }
 
     private function canDeleteSelf(User $user)
     {
-        return $this->permissionManager->checkPermission('user_delete_self', $user);
+        return $this->permissionManager->checkPermission('user_delete', $user, $user->getId());
     }
     
     private function canAddressUpdateSelf(User $user)
     {
-        return $this->permissionManager->checkPermission('user_address_update_self', $user);
+        // To DO : user_address_update Action user_address_update not found
+        return $this->permissionManager->checkPermission('user_address_update', $user, $user->getId());
     }
 }
