@@ -620,13 +620,42 @@ class ProposalMatcher
                 $matchingCriteria->setToDate(min($matching->getProposalOffer()->getCriteria()->getToDate(), $matching->getProposalRequest()->getCriteria()->getToDate()));
             } elseif ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                 $matchingCriteria->setFromDate($matching->getProposalOffer()->getCriteria()->getFromDate());
+                $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getFromTime());
             } else {
                 $matchingCriteria->setFromDate($matching->getProposalRequest()->getCriteria()->getFromDate());
+                $matchingCriteria->setFromTime($proposal->getCriteria()->getFromTime());
+                if (is_null($proposal->getCriteria()->getFromTime())) {
+                    switch ($matching->getProposalRequest()->getCriteria()->getFromDate()->format('w')) {
+                        case 0:
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getSunTime());
+                            break;
+                        case 1:
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getMonTime());
+                            break;
+                        case 2:
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getTueTime());
+                            break;
+                        case 3:
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getWedTime());
+                            break;
+                        case 4:
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getThuTime());
+                            break;
+                        case 5:
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getFriTime());
+                            break;
+                        case 6:
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getSatTime());
+                            break;
+                    }
+                }
             }
 
             // seats (set to 1 for now)
             $matchingCriteria->setSeatsDriver(1);
             $matchingCriteria->setSeatsPassenger(1);
+
+            
 
             // pickup times
             if (isset($matching->getFilters()['pickup']['minPickupTime']) && isset($matching->getFilters()['pickup']['maxPickupTime'])) {
