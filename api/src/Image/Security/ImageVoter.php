@@ -149,13 +149,13 @@ class ImageVoter extends Voter
             return $this->permissionManager->checkPermission('user_update_self', $requester);
         }
         if ($request->get('communityId')) {
-            if (!$this->communityManager->getCommunity($request->get('userId'))) {
+            if (!$this->communityManager->getCommunity($request->get('communityId'))) {
                 return false;
             }
             return $this->permissionManager->checkPermission('user_update_self', $requester);
         }
         if ($request->get('eventId')) {
-            if (!$this->eventManager->getEvent($request->get('userId'))) {
+            if (!$this->eventManager->getEvent($request->get('eventId'))) {
                 return false;
             }
             return $this->permissionManager->checkPermission('user_update_self', $requester);
@@ -167,13 +167,13 @@ class ImageVoter extends Voter
             return $this->permissionManager->checkPermission('user_update_self', $requester);
         }
         if ($request->get('relayPointTypeId')) {
-            if (!$this->userManager->getUser($request->get('userId'))) {
+            if (!$this->userManager->getUser($request->get('relayPointTypeId'))) {
                 return false;
             }
             return $this->permissionManager->checkPermission('user_update_self', $requester);
         }
         if ($request->get('campaignId')) {
-            if (!$this->userManager->getUser($request->get('userId'))) {
+            if (!$this->userManager->getUser($request->get('campaignId'))) {
                 return false;
             }
             return $this->permissionManager->checkPermission('user_update_self', $requester);
