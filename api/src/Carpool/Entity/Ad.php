@@ -442,6 +442,13 @@ class Ad
      */
     private $proposalId;
 
+    /**
+     * @var string The external origin of this Ad
+     *
+     * @Groups({"read","write"})
+     */
+    private $external;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -991,6 +998,18 @@ class Ad
     public function setProposalId(?int $proposalId): self
     {
         $this->proposalId = $proposalId;
+
+        return $this;
+    }
+
+    public function getExternal(): ?String
+    {
+        return $this->external;
+    }
+
+    public function setExternal(?string $external): self
+    {
+        $this->external = $external;
 
         return $this;
     }
