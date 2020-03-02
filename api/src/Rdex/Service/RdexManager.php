@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -31,46 +31,52 @@ use App\Rdex\Entity\RdexDriver;
 use App\Rdex\Entity\RdexPassenger;
 use App\Rdex\Entity\RdexAddress;
 use App\Carpool\Entity\Criteria;
+use App\Carpool\Service\AdManager;
 use App\Rdex\Entity\RdexDay;
 use App\Rdex\Entity\RdexTripDate;
 use App\Rdex\Entity\RdexDayTime;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Rdex operations manager.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class RdexManager
 {
-    private const RDEX_CONFIG_FILE = "../config.json";
-    private const RDEX_CLIENT_KEY = "rdexClient";
+    private const RDEX_CONFIG_FILE = "../config/rdex/clients.json";
     private const RDEX_OPERATOR_KEY = "rdexOperator";
     private const RDEX_HASH = "sha256";         // hash algorithm
     private const MIN_TIMESTAMP_MINUTES = 60;   // accepted minutes for timestamp in the past
     private const MAX_TIMESTAMP_MINUTES = 60;   // accepted minutes for timestamp in the future
     // for testing purpose only
-    private const CHECK_SIGNATURE = false;
+    private const CHECK_SIGNATURE = true;
     
     private $proposalManager;
+    private $adManager;
+
+    private $clientKey; // Current client key in configuration file (clients.json)
     
     /**
      * Constructor.
      *
      * @param ProposalManager $proposalManager
      */
-    public function __construct(ProposalManager $proposalManager)
+    public function __construct(ProposalManager $proposalManager, AdManager $adManager)
     {
         $this->proposalManager = $proposalManager;
+        $this->adManager = $adManager;
     }
     
     /**
      * Validates the parameters of a request.
      *
-     * @param object $request
+     * @param Request $request
      * @return RdexError|bool True if validation is ok, error if not
      * @throws \Exception
      */
-    public function validate(object $request)
+    public function validate(Request $request)
     {
         // we check the mandatory parameters
         if (is_null($request->get("timestamp"))) {
@@ -116,44 +122,81 @@ class RdexManager
         $DTTimestamp = new \DateTime();
         $DTTimestamp->setTimestamp($timestamp);
         if ($DTTimestamp<$minTime || $DTTimestamp>$maxTime) {
-            return new RdexError("timestamp", RdexError::ERROR_TIMESTAMP_TOO_SKEWED);
+            /**** UNCOMMENT WHEN DEV IS OVER */
+//            return new RdexError("timestamp", RdexError::ERROR_TIMESTAMP_TOO_SKEWED);
         }
 
-        // we verify the signature
-        if (self::CHECK_SIGNATURE) {
-            if (!file_exists(self::RDEX_CONFIG_FILE)) {
-                return new RdexError(null, RdexError::ERROR_INTERNAL_ERROR);
+        // we check if the client exists in config
+        if (!file_exists(self::RDEX_CONFIG_FILE)) {
+            return new RdexError(null, RdexError::ERROR_MISSING_CONFIG);
+        }
+        $clientList = json_decode(file_get_contents(self::RDEX_CONFIG_FILE), true);
+        $apikeyFound = false;
+        $urlApikey = $request->get('apikey');
+        $privateApiKey = null;
+        foreach ($clientList as $currentClientKey => $currentClient) {
+            // if (array_key_exists("publicKey", $keys) && array_key_exists("privateKey", $keys) && $keys["publicKey"] == $apikey) {
+            //     $url = $request->getUri();
+            //     // we search if the signature is not the first parameter
+            //     $posSignature = strpos($url, "&signature=");
+            //     if ($posSignature === false) {
+            //         // the signature is the first parameter
+            //         $posSignature = strpos($url, "signature=");
+            //     }
+            // we search for the end of the signature (we add 1 to avoid getting the current &)
+            // $posEndSignature = strpos($url, "&", $posSignature+1);
+            // if ($posEndSignature !== false) {
+            //     $unsignedUrl = substr_replace($url, '', $posSignature, ($posEndSignature-$posSignature));
+            // } else {
+            //     $unsignedUrl = substr_replace($url, '', $posSignature);
+            // }
+            //     $expectedSignature = hash_hmac(self::RDEX_HASH, $unsignedUrl, $keys["privateKey"]);
+            //     //echo $expectedSignature;exit;
+            //     if ($expectedSignature != $signature) {
+            //         return new RdexError("signature", RdexError::ERROR_SIGNATURE_MISMATCH, "Invalid signature");
+            //     }
+            //     $apikeyFound = true;
+            //     break;
+            // }
+            
+            if ($currentClient["public_key"]==$urlApikey) {
+                $apikeyFound = true;
+                $this->clientKey = $currentClientKey;
+                $privateApiKey = $currentClient["private_key"];
             }
-            $config = json_decode(file_get_contents(self::RDEX_CONFIG_FILE), true);
-            $clientList = $config[self::RDEX_CLIENT_KEY];
-            $apikeyFound = false;
-            foreach ($clientList as $keys) {
-                if (array_key_exists("publicKey", $keys) && array_key_exists("privateKey", $keys) && $keys["publicKey"] == $apikey) {
-                    $url = $request->getUri();
-                    // we search if the signature is not the first parameter
-                    $posSignature = strpos($url, "&signature=");
-                    if ($posSignature === false) {
-                        // the signature is the first parameter
-                        $posSignature = strpos($url, "signature=");
-                    }
-                    // we search for the end of the signature (we add 1 to avoid getting the current &)
-                    $posEndSignature = strpos($url, "&", $posSignature+1);
-                    if ($posEndSignature !== false) {
-                        $unsignedUrl = substr_replace($url, '', $posSignature, ($posEndSignature-$posSignature));
-                    } else {
-                        $unsignedUrl = substr_replace($url, '', $posSignature);
-                    }
-                    $expectedSignature = hash_hmac(self::RDEX_HASH, $unsignedUrl, $keys["privateKey"]);
-                    //echo $expectedSignature;exit;
-                    if ($expectedSignature != $signature) {
-                        return new RdexError("signature", RdexError::ERROR_SIGNATURE_MISMATCH, "Invalid signature");
-                    }
-                    $apikeyFound = true;
-                    break;
-                }
-            }
+            
             if (!$apikeyFound) {
                 return new RdexError("apikey", RdexError::ERROR_ACCESS_DENIED, "Invalid apikey");
+            }
+        }
+
+        // we check the signature
+        if (self::CHECK_SIGNATURE) {
+            $signatureValid = false;
+
+
+            $posSignature = strpos($request->getUri(), "&signature=");
+            if ($posSignature === false) {
+                // the signature is the first parameter
+                $posSignature = strpos($request->getUri(), "signature=");
+            }
+
+            // we search for the end of the signature (we add 1 to avoid getting the current &)
+            $posEndSignature = strpos($request->getUri(), "&", $posSignature+1);
+            if ($posEndSignature !== false) {
+                $unsignedUrl = substr_replace($request->getUri(), '', $posSignature, ($posEndSignature-$posSignature));
+            } else {
+                $unsignedUrl = substr_replace($request->getUri(), '', $posSignature);
+            }
+
+            $expectedSignature = hash_hmac(self::RDEX_HASH, $unsignedUrl, $privateApiKey);
+
+            if ($expectedSignature == $request->get("signature")) {
+                $signatureValid = true;
+            }
+
+            if (!$signatureValid) {
+                return new RdexError("signature", RdexError::ERROR_SIGNATURE_MISMATCH, "Signature mismatch");
             }
         }
         
@@ -229,9 +272,14 @@ class RdexManager
      */
     public function getJourneys(array $parameters): array
     {
+        echo $this->clientKey;
+        die;
         $returnArray = [];
+
+        $config = json_decode(file_get_contents(self::RDEX_CONFIG_FILE), true);
+        $operator = $config[self::RDEX_OPERATOR_KEY];
         
-        $proposals = $this->proposalManager->getProposalsForRdex(
+        $ads = $this->adManager->getAdsForRdex(
             $parameters["driver"]["state"],
             $parameters["passenger"]["state"],
             $parameters["from"]["longitude"],
@@ -256,13 +304,10 @@ class RdexManager
             isset($parameters["outward"]["sunday"]["mintime"]) ? $parameters["outward"]["sunday"]["mintime"] : null,
             isset($parameters["outward"]["sunday"]["maxtime"]) ? $parameters["outward"]["sunday"]["maxtime"] : null
         );
-        
-        if (!file_exists(self::RDEX_CONFIG_FILE)) {
-            return ['no config.json file.'];
-        }
-        $config = json_decode(file_get_contents(self::RDEX_CONFIG_FILE), true);
-        $operator = $config[self::RDEX_OPERATOR_KEY];
-            
+
+
+        die;
+
         foreach ($proposals as $proposal) {
             // @todo : create a rule for uuid creation
             $journey = new RdexJourney($proposal->getId());
