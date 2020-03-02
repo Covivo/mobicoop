@@ -350,6 +350,9 @@ class GeoMatcher
             }
         } else {
             if ($candidate1->getMaxDetourDuration()) {
+                // echo $candidate1->getMaxDetourDuration()."\n";
+                // echo $candidate1->getDuration()."\n";
+                // echo $duration."\n";
                 // in seconds
                 if ($duration<=($candidate1->getDuration()+$candidate1->getMaxDetourDuration())) {
                     $detourDuration = true;
@@ -388,7 +391,9 @@ class GeoMatcher
                 }
             }
         }
-                
+        // echo "detourDistance : ".$detourDistance."\n";
+        // echo "detourDuration : ".$detourDuration."\n";
+        // echo "commonDistance : ".$commonDistance."\n";
         // if the detour is acceptable we keep the candidate
         if ($detourDistance && $detourDuration && $commonDistance) {
             // we deserialize the direction if needed

@@ -329,6 +329,13 @@ class Address
      */
     private $icon;
 
+    /**
+     * @var array|null The provider of the address
+     *
+     * @Groups({"read"})
+     */
+    private $providedBy;
+
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -620,6 +627,16 @@ class Address
     public function setIcon(?string $icon)
     {
         $this->icon = $icon;
+    }
+
+    public function getProvidedBy(): ?string
+    {
+        return $this->providedBy;
+    }
+
+    public function setProvidedBy(?string $providedBy)
+    {
+        $this->providedBy = $providedBy;
     }
 
     // DOCTRINE EVENTS

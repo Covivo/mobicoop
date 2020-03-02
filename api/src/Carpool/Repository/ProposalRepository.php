@@ -44,8 +44,8 @@ class ProposalRepository
     const BEARING_RANGE = 10;                   // if used, only accept proposal where the bearing direction (cape) is not at the opposite, more or less the range degrees
                                                 // for example, if the bearing is 0 (S->N), the proposals where the bearing is between 170 and 190 (~ N->S) are excluded
     const PASSENGER_PROPORTION = 0.3;           // minimum passenger distance relative to the driver distance, eg passenger distance should be at least 20% of the driver distance
-    const MAX_DISTANCE_PUNCTUAL = 0.1;          // percentage of the driver direction to compute the max distance between driver and passenger directions (punctual)
-    const MAX_DISTANCE_REGULAR = 0.05;          // percentage of the driver direction to compute the max distance between driver and passenger directions (regular)
+    const MAX_DISTANCE_PUNCTUAL = 0.2;          // percentage of the driver direction to compute the max distance between driver and passenger directions (punctual)
+    const MAX_DISTANCE_REGULAR = 0.2;           // percentage of the driver direction to compute the max distance between driver and passenger directions (regular)
     const DISTANCE_RATIO = 100000;              // ratio to use when computing distance filter (used to convert geographic degrees to metres)
 
     const USE_ZONES = false;                    // use the ~common zones~ filtering
