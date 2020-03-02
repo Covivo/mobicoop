@@ -256,27 +256,26 @@ export default {
               type: "success",
               message: self.$t(response.data.message)
             };
-            self.$emit('proposal-deleted', self.proposalId);
-            window.location.reload();
+            self.$emit('proposal-deleted', self.isArchived, self.proposalId);
           }
         })
         .catch(function (error) {
-          if (error.response.data && error.response.data.message) {
-            self.alert = {
-              type: "error",
-              message: self.$t(error.response.data.message)
-            };
-          }
+          self.alert = {
+            type: "error",
+            message: self.$t(error.response.data && error.response.data.message ?
+              error.response.data.message : error.response.data)
+          };
         })
         .finally(function () {
           if (self.alert.message.length > 0) {
             self.snackbar = true;
           }
-          if (self.alert.type == 'error') self.loading = false;
+          self.loading = false;
+          self.dialogActive = false;
         })
     },
     pauseAd () {
-      this.paused = this.paused?false:true;
+      this.paused = !this.paused;
       this.loading = true;
       this.ad.proposalId = this.proposalId;
       this.ad.paused = this.paused;
@@ -288,23 +287,22 @@ export default {
             }
           })
         .then(res => {
-          if (res.data && res.data.message == "success") {
+          if (res.data && res.data.message === "success") {
             this.alert = {
               type: "success",
-              message: this.paused?this.$t("pause.success.pause"):this.$t("pause.success.unpause")
+              message: this.paused ? this.$t("pause.success.pause") : this.$t("pause.success.unpause")
             };
             this.$emit('pause-ad', this.ad.paused);
           }
-          if (res.data && res.data.message == "error") {
+          if (res.data && res.data.message === "error") {
             this.alert = {
               type: "error",
-              message: this.paused?this.$t("pause.error.pause"):this.$t("pause.error.unpause")
+              message: this.paused ? this.$t("pause.error.pause") : this.$t("pause.error.unpause")
             };
-            this.paused = this.paused?false:true;
+            this.paused = !this.paused;
           }
           this.snackbar = true;
-          window.location.reload();
-
+          this.loading = false;
         });
     },
     resetAlert() {

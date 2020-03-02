@@ -32,10 +32,10 @@
         <v-btn
           color="secondary"
           rounded
-          :disabled="computedRequestsCount <= 0"
+          :disabled="nbMatchings <= 0"
           :href="$t('urlResult',{id:id})"
         >
-          {{ computedRequestsCount }}&nbsp;{{ computedRequestsCount > 1 ? $t('potentialCarpooler.plural') : $t('potentialCarpooler.singular') }}
+          {{ nbMatchings }}&nbsp;{{ nbMatchings > 1 ? $t('potentialCarpooler.plural') : $t('potentialCarpooler.singular') }}
         </v-btn>
       </v-col>
     </v-row>
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { merge, find } from "lodash";
+import { merge } from "lodash";
 import Translations from "@translations/components/user/profile/proposal/ProposalFooter.js";
 import TranslationsClient from "@clientTranslations/components/user/profile/proposal/ProposalFooter.js";
 
@@ -65,54 +65,13 @@ export default {
       type: String,
       default: null
     },
-    isDriver: {
-      type: Boolean,
-      default: false
-    },
-    isPassenger: {
-      type: Boolean,
-      default: false
-    },
     idMessage: {
       type: Number,
       default: -1
     },
-    // passengers
-    carpoolRequests: {
-      type: Array,
-      default: () => []
-    },
-    // drivers
-    carpoolOffers: {
-      type: Array,
-      default: () => []
-    },
     nbMatchings:{
       type: Number,
       default: 0
-    }
-  },
-  computed: {
-    computedRequestsCount () {
-      // if (this.isDriver && !this.isPassenger) {
-      //   return this.carpoolRequests.length;
-      // } else if (!this.isDriver && this.isPassenger) {
-      //   return this.carpoolOffers.length;
-      // } else if (this.isDriver && this.isPassenger) {
-      //   let data = [];
-      //   this.carpoolRequests.forEach(request => {
-      //     data.push(request.proposalRequest)
-      //   });
-      //   this.carpoolOffers.forEach(offer => {
-      //     if (!find(data, {id: offer.proposalOffer.id})) {
-      //       data.push(offer.proposalOffer)
-      //     }
-      //   });
-      //   return data.length;
-      // } else {
-      //   return 0;
-      // }
-      return this.nbMatchings;
     }
   },
   methods: {

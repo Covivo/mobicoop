@@ -16,7 +16,10 @@
                 :key="proposal.outward.id"
               >
                 <v-col cols="12">
-                  <Proposal :proposal="proposal" />
+                  <Proposal
+                    :proposal="proposal"
+                    @proposal-deleted="deleteProposal"
+                  />
                 </v-col>
               </v-row>
             </v-container>
@@ -32,7 +35,7 @@
                   <Proposal
                     :proposal="proposal"
                     :is-archived="true"
-                    @proposal-deleted="deleteProposal()"
+                    @proposal-deleted="deleteProposal"
                   />
                 </v-col>
               </v-row>
@@ -44,7 +47,7 @@
   </v-container>
 </template>
 <script>
-import { merge } from "lodash";
+import { merge, omit } from "lodash";
 import Translations from "@translations/components/user/profile/proposal/MyProposals.js";
 import TranslationsClient from "@clientTranslations/components/user/profile/proposal/MyProposals.js";
 
@@ -70,8 +73,9 @@ export default {
     }
   },
   methods: {
-    deleteProposal(id) {
-      // todo: remove deleted proposal from proposals if we want smooth delete without reloading the page
+    deleteProposal(isArchived, id) {
+      let type = isArchived ? "archived" : "ongoing";
+      this.localProposals[type] = omit(this.localProposals[type], id);
     }
   }
 }
