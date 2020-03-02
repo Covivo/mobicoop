@@ -272,12 +272,11 @@ class RdexManager
      */
     public function getJourneys(array $parameters): array
     {
-        echo $this->clientKey;
-        die;
         $returnArray = [];
 
-        $config = json_decode(file_get_contents(self::RDEX_CONFIG_FILE), true);
-        $operator = $config[self::RDEX_OPERATOR_KEY];
+        if (is_null($this->clientKey)) {
+            return new RdexError("apikey", RdexError::ERROR_ACCESS_DENIED, "Invalid apikey");
+        }
         
         $ads = $this->adManager->getAdsForRdex(
             $parameters["driver"]["state"],
@@ -302,7 +301,8 @@ class RdexManager
             isset($parameters["outward"]["saturday"]["mintime"]) ? $parameters["outward"]["saturday"]["mintime"] : null,
             isset($parameters["outward"]["saturday"]["maxtime"]) ? $parameters["outward"]["saturday"]["maxtime"] : null,
             isset($parameters["outward"]["sunday"]["mintime"]) ? $parameters["outward"]["sunday"]["mintime"] : null,
-            isset($parameters["outward"]["sunday"]["maxtime"]) ? $parameters["outward"]["sunday"]["maxtime"] : null
+            isset($parameters["outward"]["sunday"]["maxtime"]) ? $parameters["outward"]["sunday"]["maxtime"] : null,
+            $this->clientKey
         );
 
 
