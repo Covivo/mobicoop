@@ -51,23 +51,6 @@ class RightRepository
     }
 
     /**
-     * Find the children of a given right.
-     *
-     * @param Right $right
-     * @return void
-     */
-    public function findChildren(Right $right)
-    {
-        $query = $this->repository->createQueryBuilder('r')
-        ->andWhere('r.parent = :parent')
-        ->setParameter('parent', $right)
-        ->getQuery();
-        
-        return $query->getResult()
-        ;
-    }
-
-    /**
      * Find right by name.
      *
      * @param string $name
@@ -76,5 +59,10 @@ class RightRepository
     public function findByName(string $name)
     {
         return $this->repository->findOneBy(['name'=>$name]);
+    }
+
+    public function findAll(): ?array
+    {
+        return $this->repository->findAll();
     }
 }

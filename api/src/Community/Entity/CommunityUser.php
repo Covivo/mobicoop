@@ -56,13 +56,17 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get",
+ *          "get"={
+ *              "security_post_denormalize"="is_granted('community_user_list',object)"
+ *          },
  *          "post"={
  *              "controller"=JoinAction::class,
+ *              "security_post_denormalize"="is_granted('community_join',object)"
  *          }
  *      },
  *      itemOperations={
- *          "get","put",
+ *          "get",
+ *          "put",
  *          "delete"={
  *              "controller"=LeaveCommunityAction::class
  *          }

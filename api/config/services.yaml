@@ -151,7 +151,9 @@ services:
     App\Communication\Service\EmailManager:
         arguments:
             $emailSender: '%env(resolve:MAILER_SENDER)%'
+            $emailSenderName: '%env(resolve:MAILER_SENDER_NAME)%'
             $emailReplyTo: '%env(resolve:MAILER_REPLYTO)%'
+            $emailReplyToName: '%env(resolve:MAILER_REPLYTO_NAME)%'
             $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%'
             $emailAdditionalHeaders: '%env(resolve:MAILER_ADDITIONAL_HEADERS)%'
         tags:
@@ -170,7 +172,7 @@ services:
     App\Communication\Service\InternalMessageManager:
         tags:
             - { name: monolog.logger, channel: communication }
-
+    
     App\Communication\EntityListener\RecipientListener:
         tags:
             - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert

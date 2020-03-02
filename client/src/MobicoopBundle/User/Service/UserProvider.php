@@ -23,25 +23,32 @@
 namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserProvider implements UserProviderInterface
 {
     private $dataProvider;
+    private $router;
+    private $translator;
 
     /**
      * Constructor.
      *
      * @param DataProvider $dataProvider
      */
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(DataProvider $dataProvider, RouterInterface $router, TranslatorInterface $translator)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(User::class);
+        $this->router = $router;
+        $this->translator = $translator;
     }
 
     /**
@@ -86,6 +93,13 @@ class UserProvider implements UserProviderInterface
             $userData = $response->getValue();
 
             if (is_array($userData->getMember()) && count($userData->getMember())==1) {
+                //Account is not validated
+                if ($userData->getMember()[0]->getValidatedDate() == null) {
+                    $translated = $this->translator->trans('Account not validated');
+                    throw new AuthenticationException(
+                        sprintf($translated, $username)
+                    );
+                }
                 return $userData->getMember()[0];
             }
         }
@@ -93,5 +107,28 @@ class UserProvider implements UserProviderInterface
         throw new UsernameNotFoundException(
             sprintf('Username "%s" does not exist.', $username)
         );
+
+        // // first we call the api login route to get the token
+        // $token = ''; // replace by jwtmanager call ?
+
+        // $decodedToken = json_decode(base64_decode(str_replace('_', '/', str_replace('-','+',explode('.', $token)[1]))));
+        // // secondly we get the user informations
+        // $response = $this->dataProvider->getItem($decodedToken['id']);
+        // if ($response->getCode() == 200) {
+        //     return $response->getValue();
+        // }
+
+        // // $response = $this->dataProvider->getCollection(["login"=>$username]);
+        // // if ($response->getCode() == 200) {
+        // //     $userData = $response->getValue();
+
+        // //     if (is_array($userData->getMember()) && count($userData->getMember())==1) {
+        // //         return $userData->getMember()[0];
+        // //     }
+        // // }
+        
+        // throw new UsernameNotFoundException(
+        //     sprintf('Username "%s" does not exist.', $username)
+        // );
     }
 }

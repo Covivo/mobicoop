@@ -23,7 +23,8 @@
 
 namespace App\Communication\Service;
 
-use App\Communication\Entity\MessagerInterface;
+use App\Carpool\Entity\Ad;
+use App\Communication\Interfaces\MessagerInterface;
 use App\Event\Entity\Event;
 use Psr\Log\LoggerInterface;
 use App\Communication\Repository\NotificationRepository;
@@ -41,6 +42,7 @@ use App\Communication\Entity\Recipient;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Ask;
 use App\Communication\Entity\Message;
+use App\User\Service\UserManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
@@ -64,9 +66,11 @@ class NotificationManager
     private $userNotificationRepository;
     private $enabled;
     private $translator;
+    private $userManager;
     const LANG = 'fr_FR';
 
-    public function __construct(EntityManagerInterface $entityManager, Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, SmsManager $smsManager, LoggerInterface $logger, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled, TranslatorInterface $translator)
+
+    public function __construct(EntityManagerInterface $entityManager, Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, SmsManager $smsManager, LoggerInterface $logger, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled, TranslatorInterface $translator, UserManager $userManager)
     {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -81,6 +85,7 @@ class NotificationManager
         $this->templating = $templating;
         $this->enabled = $enabled;
         $this->translator = $translator;
+        $this->userManager = $userManager;
     }
 
     /**
@@ -94,6 +99,10 @@ class NotificationManager
     public function notifies(string $action, User $recipient, ?object $object = null)
     {
         if (!$this->enabled) {
+            return;
+        }
+        // Check if the user is anonymised if yes we don't send notifications
+        if ($recipient->getStatus() == USER::STATUS_ANONYMIZED) {
             return;
         }
 
@@ -170,7 +179,6 @@ class NotificationManager
                     $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'matching'=> $object];
                     break;
                 case AskHistory::class:
-                    
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'askHistory'=>$object];
                     break;
@@ -182,8 +190,49 @@ class NotificationManager
                         } elseif ($waypoint->isDestination() == true) {
                             $passengerDestinationWaypoint = $waypoint;
                         }
-                    }
+                    };
                     $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaypoint, 'destination'=>$passengerDestinationWaypoint];
+                    break;
+                case Ad::class:
+                    $titleContext = [];
+                    $outwardOrigin = null;
+                    $outwardDestination = null;
+                    $returnOrigin = null;
+                    $returnDestination = null;
+                    $sender = $this->userManager->getUser($object->getUserId());
+                    if ($object->getResults()[0]->getResultPassenger() !== null) {
+                        $result = $object->getResults()[0]->getResultPassenger();
+                    } else {
+                        $result = $object->getResults()[0]->getResultDriver();
+                    };
+                    if ($result->getOutward() !== null) {
+                        foreach ($result->getOutward()->getWaypoints() as $waypoint) {
+                            if ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'origin') {
+                                $outwardOrigin = $waypoint;
+                            } elseif ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'destination') {
+                                $outwardDestination = $waypoint;
+                            }
+                        }
+                    }
+                    if ($result->getReturn() !== null) {
+                        foreach ($result->getReturn()->getWaypoints() as $waypoint) {
+                            if ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'origin') {
+                                $returnOrigin = $waypoint;
+                            } elseif ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'destination') {
+                                $returnDestination = $waypoint;
+                            }
+                        }
+                    }
+                    $bodyContext = [
+                        'user'=>$recipient,
+                        'ad'=>$object,
+                        'sender'=>$sender,
+                        'result'=>$result,
+                        'outwardOrigin'=>$outwardOrigin,
+                        'outwardDestination'=>$outwardDestination,
+                        'returnOrigin'=>$returnOrigin,
+                        'returnDestination'=>$returnDestination
+                    ];
                     break;
                 case Recipient::class:
                     $titleContext = [];
@@ -199,7 +248,7 @@ class NotificationManager
                     break;
                 case Message::class:
                     $titleContext = ['user'=>$object->getUser()];
-                    $bodyContext = ['text'=>$object->getText()];
+                    $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
             }
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
@@ -209,6 +258,7 @@ class NotificationManager
         if (!is_null($recipient->getLanguage())) {
             $lang = $recipient->getLanguage();
         }
+        
         $this->translator->setLocale($lang);
         $email->setObject($this->templating->render(
             $notification->getTemplateTitle() ? $this->emailTitleTemplatePath . $notification->getTemplateTitle() : $this->emailTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
@@ -216,6 +266,7 @@ class NotificationManager
                 'context' => $titleContext
             ]
         ));
+
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $lang);
     }
@@ -254,7 +305,47 @@ class NotificationManager
                         }
                     };
                     $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaypoint, 'destination'=>$passengerDestinationWaypoint];
-                break;
+                    break;
+                case Ad::class:
+                    $outwardOrigin = null;
+                    $outwardDestination = null;
+                    $returnOrigin = null;
+                    $returnDestination = null;
+                    $sender = $this->userManager->getUser($object->getUserId());
+                    if ($object->getResults()[0]->getResultPassenger() !== null) {
+                        $result = $object->getResults()[0]->getResultPassenger();
+                    } else {
+                        $result = $object->getResults()[0]->getResultDriver();
+                    };
+                    if ($result->getOutward() !== null) {
+                        foreach ($result->getOutward()->getWaypoints() as $waypoint) {
+                            if ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'origin') {
+                                $outwardOrigin = $waypoint;
+                            } elseif ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'destination') {
+                                $outwardDestination = $waypoint;
+                            }
+                        }
+                    }
+                    if ($result->getReturn() !== null) {
+                        foreach ($result->getReturn()->getWaypoints() as $waypoint) {
+                            if ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'origin') {
+                                $returnOrigin = $waypoint;
+                            } elseif ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'destination') {
+                                $returnDestination = $waypoint;
+                            }
+                        }
+                    }
+                    $bodyContext = [
+                        'user'=>$recipient,
+                        'ad'=>$object,
+                        'sender'=>$sender,
+                        'result'=>$result,
+                        'outwardOrigin'=>$outwardOrigin,
+                        'outwardDestination'=>$outwardDestination,
+                        'returnOrigin'=>$returnOrigin,
+                        'returnDestination'=>$returnDestination
+                    ];
+                    break;
                 case Recipient::class:
                     $bodyContext = [];
                     break;
@@ -265,7 +356,7 @@ class NotificationManager
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
         }
-       
+
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->smsManager->send($sms, $notification->getTemplateBody() ? $this->smsTemplatePath . $notification->getTemplateBody() : $this->smsTemplatePath . $notification->getAction()->getName(), $bodyContext);
     }

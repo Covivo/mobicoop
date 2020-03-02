@@ -23,6 +23,7 @@
 
 namespace App\User\Service;
 
+use App\Carpool\Entity\Ask;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Service\AskManager;
@@ -131,7 +132,7 @@ class UserManager
      * @param boolean   $encodePassword     True to encode password
      * @return User     The user created
      */
-    public function registerUser(User $user, bool $encodePassword=false)
+    public function registerUser(User $user, bool $encodePassword=true)
     {
         if (count($user->getUserRoles()) == 0) {
             // default role : user registered full
@@ -334,7 +335,18 @@ class UserManager
 
             $messages[] = $currentMessage;
         }
+        // Sort with the last message received first
+        usort($messages, array($this, 'sortThread'));
         return $messages;
+    }
+
+
+    public static function sortThread($a, $b)
+    {
+        if ($a['date'] == $b['date']) {
+            return 0;
+        }
+        return ($a['date'] < $b['date']) ? 1 : -1;
     }
 
     public function parseThreadsCarpoolMessages(User $user, array $threads)
@@ -404,6 +416,8 @@ class UserManager
             }
         }
 
+        // Sort with the last message received first
+        usort($messages, array($this, 'sortThread'));
         return $messages;
     }
 
@@ -653,34 +667,39 @@ class UserManager
      */
     public function anonymiseUser(User $user)
     {
-
         // L'utilisateur à posté des annonces de covoiturages -> on les supprimes
         // User create ad : we delete them
         foreach ($user->getProposals() as $proposal) {
-            foreach ($proposal->getMatchingRequests() as $matching) {
-                //Check if there is ask on a proposal -> event for notifications
-                foreach ($matching->getAsks() as $ask) {
-                    $event = new UserDeleteAccountWasPassengerEvent($ask);
-                    $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
-                }
+            if ($proposal->isPrivate()) {
+                continue;
             }
-            //There is offers on the proposal -> we delete proposal + send email to passengers
-            foreach ($proposal->getMatchingOffers() as $matching) {
-                //TODO libérer les places sur les annonces réservées
+            foreach ($proposal->getMatchingRequests() as $matching) {
                 foreach ($matching->getAsks() as $ask) {
-                    $event = new UserDeleteAccountWasDriverEvent($ask);
+                    // todo : find why class of $ask can be a proxy of Ask class
+                    if (get_class($ask) !== Ask::class) {
+                        continue;
+                    }
+                    $event = new UserDeleteAccountWasDriverEvent($ask, $user->getId());
                     $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
                 }
             }
-            //Set user at null and private on the proposal : we keep info for message, proposal cant be found
-            $proposal->setPrivate(1);
+            foreach ($proposal->getMatchingOffers() as $matching) {
+                foreach ($matching->getAsks() as $ask) {
+                    // todo : find why class of $ask can be a proxy of Ask class
+                    if (get_class($ask) !== Ask::class) {
+                        continue;
+                    }
+                    $event = new UserDeleteAccountWasPassengerEvent($ask, $user->getId());
+                    $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
+                }
+            }
+            $this->entityManager->remove($proposal);
         }
 
         //Anonymise content of message with a key
         foreach ($user->getMessages() as $message) {
             $message->setText('@mobicoop2020Message_supprimer');
         }
-
         return $this->setUserAtNull($user);
     }
 
@@ -727,7 +746,7 @@ class UserManager
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-
+       
         $this->checkIfUserHaveImages($user);
         $this->checkIfUserIsInCommunity($user);
 

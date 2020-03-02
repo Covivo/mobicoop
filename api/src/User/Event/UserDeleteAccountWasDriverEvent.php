@@ -24,24 +24,29 @@
 namespace App\User\Event;
 
 use App\Carpool\Entity\Ask;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a user updates its account.
+ * Event sent when a user delete its account.
  */
 class UserDeleteAccountWasDriverEvent extends Event
 {
     public const NAME = 'user_delete_account_was_driver';
 
-    protected $user;
+    protected $ask;
 
-    public function __construct(Ask $ask)
+    public function __construct(Ask $ask, Int $deleterId)
     {
         $this->ask = $ask;
+        $this->deleterId = $deleterId;
     }
 
     public function getAsk()
     {
         return $this->ask;
+    }
+    public function getDeleterId()
+    {
+        return $this->deleterId;
     }
 }

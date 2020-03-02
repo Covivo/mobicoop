@@ -45,13 +45,29 @@ use App\Article\Controller\ExternalArticlesAction;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get",
+ *          "get"={
+ *              "security_post_denormalize"="is_granted('articles_read',object)"
+ *          },
  *          "externalArticles"={
  *              "method"="GET",
  *              "path"="/articles/external",
  *              "controller"=ExternalArticlesAction::class,
+ *              "security_post_denormalize"="is_granted('articles_read',object)"
  *          },
- *          "post"
+ *          "post"={
+ *              "security_post_denormalize"="is_granted('article_create',object)"
+ *          },
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('article_read',object)"
+ *          },
+ *          "put"={
+ *              "security"="is_granted('article_update',object)"
+ *          },
+ *          "delete"={
+ *              "security"="is_granted('article_delete',object)"
+ *          },
  *      },
  *      itemOperations={"get","put","delete"}
  * )

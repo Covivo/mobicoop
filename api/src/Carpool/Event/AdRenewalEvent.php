@@ -23,8 +23,8 @@
 
 namespace App\Carpool\Event;
 
-use Symfony\Component\EventDispatcher\Event;
 use App\Carpool\Entity\Proposal;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event sent when an ad must be renewed.

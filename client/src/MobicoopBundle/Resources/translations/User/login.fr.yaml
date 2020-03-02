@@ -1,6 +1,0 @@
-username:
-    label: 'Email'
-    placeholder: 'Saisissez votre adresse email'
-password:
-    label: 'Mot de passe'
-    placeholder: 'Saisissez votre mot de passe'

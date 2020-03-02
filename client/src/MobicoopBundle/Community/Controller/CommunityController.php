@@ -22,7 +22,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Controller;
 
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,8 +36,8 @@ use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Controller class for community related actions.
@@ -55,9 +55,9 @@ class CommunityController extends AbstractController
      * Constructor
      * @param string $createFromFront
      */
-    public function __construct($createFromFront)
+    public function __construct(bool $createFromFront)
     {
-        $this->createFromFront = ($createFromFront === 'true') ? true : false;
+        $this->createFromFront = $createFromFront;
     }
     
     /**
@@ -66,13 +66,13 @@ class CommunityController extends AbstractController
     public function communityCreate(CommunityManager $communityManager, UserManager $userManager, Request $request, ImageManager $imageManager)
     {
         // Deny the creation of a community if the .env say so
-        if ($this->createFromFront==="false") {
+        if (!$this->createFromFront) {
             return $this->redirectToRoute('home');
         }
         
         $community = new Community();
         $this->denyAccessUnlessGranted('create', $community);
-        $user = new User($userManager->getLoggedUser()->getId());
+        $user = $userManager->getLoggedUser();
         $communityUser = new CommunityUser();
         $address = new Address();
         
@@ -112,7 +112,6 @@ class CommunityController extends AbstractController
                 $community->addCommunityUser($communityUser);
                 $community->setDomain($data->get('domain'));
 
-                
                 // create community
                 if ($community = $communityManager->createCommunity($community)) {
 
@@ -122,10 +121,12 @@ class CommunityController extends AbstractController
                     $image->setCommunityId($community->getId());
                     $image->setName($community->getName());
                     if ($image = $imageManager->createImage($image)) {
+                        $session = $this->get('session');
+                        $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
                         return new Response();
                     }
                     //If an error occur on upload image, the community is already create, so we delete her
-                    $communityManager->deleteCommunity($community->getId());
+                    //$communityManager->deleteCommunity($community->getId());
                     // return error if image post didnt't work
                     return new Response(json_encode('error.image'));
                 }
@@ -146,7 +147,6 @@ class CommunityController extends AbstractController
     public function communityList()
     {
         $this->denyAccessUnlessGranted('list', new Community());
-
 
         return $this->render('@Mobicoop/community/communities.html.twig', [
             'defaultItemsPerPage' => self::DEFAULT_NB_COMMUNITIES_PER_PAGE
@@ -171,7 +171,7 @@ class CommunityController extends AbstractController
                 // We get all the communities
                 $communities = $communityManager->getCommunities($user->getId(), $perPage, $page, $search);
 
-                // We get de communities of the user
+                // We get the communities of the user
                 $communityUsers = $communityManager->getAllCommunityUser($user->getId());
                 $communitiesUser = [];
                 $idCommunitiesUser = [];
@@ -212,7 +212,6 @@ class CommunityController extends AbstractController
      */
     public function communityShow($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
     {
-
         // retreive community;
         $community = $communityManager->getCommunity($id);
 
@@ -236,6 +235,8 @@ class CommunityController extends AbstractController
                 $error = true;
             } else {
                 $error = false;
+                $session = $this->get('session');
+                $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
                 $communityUser = [$communityUser]; // To fit the getCommunityUser behavior we need to have an array
             }
         } else {
@@ -253,27 +254,24 @@ class CommunityController extends AbstractController
 
         // todo : move inside service ?
         // Get the proposals and waypoints
-        $proposals = $communityManager->getProposals($community->getId());
+        $ads = $communityManager->getAds($community->getId());
+
         $ways = [];
-        if ($proposals!==null) {
-            foreach ($proposals as $proposal) {
-                $currentProposal = [
-                    "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
-                    "frequency"=>($proposal["criteria"]["frequency"]==Criteria::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
-                    "carpoolerFirstName" => $proposal["user"]["givenName"],
-                    "carpoolerLastName" => $proposal["user"]["shortFamilyName"],
-                    "waypoints"=>[]
+        foreach ($ads as $ad) {
+            $currentAd = [
+                "frequency"=>($ad["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
+                "carpoolerFirstName" => $ad["user"]["givenName"],
+                "carpoolerLastName" => $ad["user"]["shortFamilyName"],
+                "waypoints"=>[]
+            ];
+            foreach ($ad["outwardWaypoints"] as $waypoint) {
+                $currentAd["waypoints"][] = [
+                    "title"=>$waypoint["address"]["addressLocality"],
+                    "destination"=>$waypoint['destination'],
+                    "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
                 ];
-                foreach ($proposal["waypoints"] as $waypoint) {
-                    $currentProposal["waypoints"][] = [
-                        // "title"=>(is_array($waypoint["address"]["displayLabel"])) ? implode(", ", $waypoint["address"]["displayLabel"]) : $waypoint["address"]["displayLabel"],
-                        "title"=>$waypoint["address"]["addressLocality"],
-                        "destination"=>$waypoint['destination'],
-                        "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
-                    ];
-                }
-                $ways[] = $currentProposal;
             }
+            $ways[] = $currentAd;
         }
 
         return $this->render('@Mobicoop/community/community.html.twig', [
@@ -285,7 +283,6 @@ class CommunityController extends AbstractController
             'points' => $ways,
             'lastUsers' => $lastUsersFormated,
             'communityUserStatus' => (isset($communityUser) && $communityUser!==null && count($communityUser)>0)?$communityUser[0]->getStatus():-1
-            
         ]);
     }
 
@@ -317,6 +314,8 @@ class CommunityController extends AbstractController
             $data = $communityManager->joinCommunity($communityUser);
             $reponseofmanager = $this->handleManagerReturnValue($data);
             if (!empty($reponseofmanager)) {
+                $session = $this->get('session');
+                $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
                 return $reponseofmanager;
             }
         }
@@ -352,6 +351,8 @@ class CommunityController extends AbstractController
             if ($communityUserToDelete) {
                 $data = $communityManager->leaveCommunity($communityUserToDelete);
                 $reponseofmanager = $this->handleManagerReturnValue($data);
+                $session = $this->get('session');
+                $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
                 if (!empty($reponseofmanager)) {
                     return $reponseofmanager;
                 }
@@ -467,7 +468,7 @@ class CommunityController extends AbstractController
             foreach ($proposals as $proposal) {
                 $currentProposal = [
                     "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
-                    "frequency"=>($proposal["criteria"]["frequency"]==Criteria::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
+                    "frequency"=>($proposal["criteria"]["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
                     "waypoints"=>[]
                 ];
                 foreach ($proposal["waypoints"] as $waypoint) {

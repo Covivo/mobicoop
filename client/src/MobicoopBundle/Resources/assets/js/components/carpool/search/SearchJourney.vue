@@ -82,7 +82,13 @@
                 icon
                 @click="swap"
               >
-                <v-icon>mdi-swap-horizontal</v-icon>
+                <v-icon v-if="!imageSwap">
+                  mdi-swap-horizontal
+                </v-icon>
+                <v-img
+                  v-else
+                  :src="imageSwap"
+                />
               </v-btn>
             </template>
             <span>{{ $t('swap.help') }}</span>
@@ -264,6 +270,10 @@ export default {
     showOrigin: {
       type: Boolean,
       default: true
+    },
+    imageSwap:{
+      type:String,
+      default:""
     }
   },
   data() {

@@ -23,18 +23,9 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 
-use Herrera\Json\Exception\Exception;
-use Http\Client\Exception\HttpException;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
@@ -50,15 +41,13 @@ use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Controller class for user related actions.
@@ -103,6 +92,7 @@ class UserController extends AbstractController
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         $errorMessage = "";
+
         if (!is_null($error)) {
             $errorMessage = $error->getMessage();
         }
@@ -309,7 +299,6 @@ class UserController extends AbstractController
             // cause we use FormData to post data
             $user->setNewsSubscription($data->get('newsSubscription') === "true" ? true : false);
             
-            
             if ($user = $userManager->updateUser($user)) {
                 if ($file) {
                     // Post avatar of the user
@@ -335,10 +324,10 @@ class UserController extends AbstractController
         }
 
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
-                'error' => $error,
-                'alerts' => $userManager->getAlerts($user)['alerts'],
-                'tabDefault' => $tabDefault,
-                'proposals' => $userManager->getProposals($user)
+            'error' => $error,
+            'alerts' => $userManager->getAlerts($user)['alerts'],
+            'tabDefault' => $tabDefault,
+            'proposals' => $userManager->getProposals($user)
         ]);
     }
 
@@ -349,7 +338,8 @@ class UserController extends AbstractController
     public function userProfileAvatarDelete(ImageManager $imageManager, UserManager $userManager)
     {
         $user = clone $userManager->getLoggedUser();
-        $this->denyAccessUnlessGranted('update', $user);
+        // To DO : Voter for deleting image
+        //$this->denyAccessUnlessGranted('update', $user);
         $imageId = $user->getImages()[0]->getId();
         $imageManager->deleteImage($imageId);
 
@@ -484,7 +474,8 @@ class UserController extends AbstractController
             return $reponseofmanager;
         }
         $this->denyAccessUnlessGranted('update', $user);
-        $this->denyAccessUnlessGranted('address_update_self', $user);
+        // To Do : Specific right for update a address ?
+        //$this->denyAccessUnlessGranted('address_update_self', $user);
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
@@ -540,33 +531,6 @@ class UserController extends AbstractController
 
 
     /*************
-     * PROPOSALS *
-     *************/
-
-    /**
-     * Retrieve all proposals for the current user.
-     */
-    public function userProposalList(UserManager $userManager, ProposalManager $proposalManager)
-    {
-        $user = $userManager->getLoggedUser();
-        $reponseofmanager= $this->handleManagerReturnValue($user);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $this->denyAccessUnlessGranted('proposals_self', $user);
-    
-        $data=$proposalManager->getProposals($user);
-        $reponseofmanager= $this->handleManagerReturnValue($data);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        return $this->render('@Mobicoop/proposal/index.html.twig', [
-            'hydra' => $data
-        ]);
-    }
-
-
-    /*************
      * MESSAGES  *
      *************/
 
@@ -596,7 +560,7 @@ class UserController extends AbstractController
                 }
                 $idMessage = $idThreadDefault = !empty($message->getMessage()) ? $message->getMessage()->getId() : $message->getMessage();
                 $idRecipient = $message->getRecipients()[0]->getId();
-                $idAsk = $message->getAskHistory()["ask"]["id"];
+                $idAsk = $message->getIdAsk();
             } else {
                 $newThread = [
                     "carpool" => (int)$request->request->get('carpool'),
@@ -908,10 +872,19 @@ class UserController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
+            // We get de communities in session. If it exists we don't need to make the api call
+            $session = $this->get('session');
+            $userCommunitiesInSession = $session->get(Community::SESSION_VAR_NAME);
             $communities = [];
-            if ($communityUsers = $communityManager->getAllCommunityUser($data['userId'])) {
-                foreach ($communityUsers as $communityUser) {
-                    $communities[] = $communityUser->getCommunity();
+            if (!is_null($userCommunitiesInSession)) {
+                return new JsonResponse($userCommunitiesInSession);
+            } else {
+                if ($communityUsers = $communityManager->getAllCommunityUser($data['userId'])) {
+                    foreach ($communityUsers as $communityUser) {
+                        $communities[] = $communityUser->getCommunity();
+                    }
+                    // We store de communities in session
+                    $session->set(Community::SESSION_VAR_NAME, $communities);
                 }
             }
             return new JsonResponse($communities);

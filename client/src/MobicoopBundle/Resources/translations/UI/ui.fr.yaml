@@ -1,64 +1,30 @@
-# buttons
-button:
-    submit: 'Envoyer'
-    delete: 'Supprimer'
-    connexion: 'Se connecter'
-
-# menus
-menu:
-    signup: 'Inscription'
-    login: 'Connexion'
-    account: 'Mon compte'
-    profile: 'Mon profil'
-    messages: 'Messages'
-    ad_create: 'Publier une annonce de covoiturage'
-    logout: 'Déconnexion'
-
 # pages
 user:
     signup:
         title: 'Inscription'
-        h1: 'Inscription'
     signupValidation:
         title: 'Vérification de votre email'
     login:
         title: 'Connexion'
-        h1: 'Connexion'
     profile:
         title: 'Mon profil'
-        h1: 'Mon profil'
-        buttons:
-            update: 'Mettre à jour'
-            password: 'Mot de passe'
-            delete: 'Supprimer mon compte'
-            ads: 'Mes annonces'
     profile_update:
         title: 'Mettre à jour mon profil'
-        h1: 'Mettre à jour mon profil'
     profile_password_update:
         title: 'Mettre à jour mon mot de passe'
-        h1: 'Mettre à jour mon mot de passe'
-    profile_delete:
-        title: 'Supprimer mon compte'
-        h1: 'Supprimer mon compte'
-        text: 'Etes-vous sûr de vouloir supprimer votre compte ?'
     messages:
         title: 'Messagerie'
-        h1: 'Messages'
     password_recovery:
         title: 'Récupération du mot de passe'
 carpool:
     ad_create:
         title: 'Publier une annonce de covoiturage'
-        h1: 'Publier une annonce'
     results:
         title: 'Résultats de covoiturage'
 contact:
     title: "Nous contacter"
-
 solidary:
     title: "Faire une demande de covoiturage solidaire"
-
 communities:
     community:
         title: "Communauté"
@@ -66,11 +32,9 @@ communities:
         title: "Les Communautés"
     create:
         title: "Créer une communauté"
-
 events:
     events:
         title: "Les événements"
-        h1: "Les événements"
     event:
         title: "Evénement"
     create:

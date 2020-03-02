@@ -32,14 +32,8 @@ use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
-use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -76,17 +70,17 @@ class CarpoolController extends AbstractController
      */
     public function carpoolAdPost(AdManager $adManager, UserManager $userManager, Request $request)
     {
-        $proposal = new Proposal();
+        $ad = new Ad();
         $poster = $userManager->getLoggedUser();
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             if ($poster && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
-                $this->denyAccessUnlessGranted('post_delegate', $proposal);
+                $this->denyAccessUnlessGranted('post_delegate', $ad);
                 $data['userId'] = $data['userDelegated'];
                 $data['posterId'] = $poster->getId();
             } else {
-                $this->denyAccessUnlessGranted('post', $proposal);
+                $this->denyAccessUnlessGranted('post', $ad);
                 $data['userId'] = $poster->getId();
             }
             if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
@@ -114,7 +108,7 @@ class CarpoolController extends AbstractController
             return $this->json(['result'=>$adManager->createAd($data)]);
         }
 
-        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        $this->denyAccessUnlessGranted('create_ad', $ad);
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
             "pricesRange" => [
                 "mid" => $this->midPrice,
@@ -130,8 +124,9 @@ class CarpoolController extends AbstractController
      */
     public function carpoolFirstAdPost()
     {
-        $proposal = new Proposal();
-        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        $ad = new Ad();
+        $this->denyAccessUnlessGranted('create_ad', $ad);
+        
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
             "firstAd" => true,
             "pricesRange" => [
@@ -148,8 +143,9 @@ class CarpoolController extends AbstractController
     */
     public function carpoolSolidaryExclusiveAdPost()
     {
-        $proposal = new Proposal();
-        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        $ad = new Ad();
+        $this->denyAccessUnlessGranted('create_ad', $ad);
+
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
@@ -170,9 +166,8 @@ class CarpoolController extends AbstractController
      */
     public function carpoolAdPostFromSearch(Request $request)
     {
-        $proposal = new Proposal();
-
-        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        $ad = new Ad();
+        $this->denyAccessUnlessGranted('create_ad', $ad);
         
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
@@ -180,7 +175,7 @@ class CarpoolController extends AbstractController
                 'communityIds'=>$request->request->get('communityId') ? [(int)$request->request->get('communityId')] : null,
                 'origin'=>$request->request->get('origin'),
                 'destination'=>$request->request->get('destination'),
-                'regular'=>json_decode($request->request->get('regular')),
+                'regular'=>$request->request->get('communityId') ? json_decode($request->request->get('regular')) : $this->defaultRegular,
                 'date'=>$request->request->get('date'),
                 'time'=>$request->request->get('time'),
                 "pricesRange" => [
@@ -188,7 +183,6 @@ class CarpoolController extends AbstractController
                     "high" => $this->highPrice,
                     "forbidden" => $this->forbiddenPrice
                 ],
-                "regular" => $this->defaultRegular
             ]
         );
     }
@@ -236,7 +230,7 @@ class CarpoolController extends AbstractController
      * Ad results.
      * (POST)
      */
-    public function carpoolAdResults($id, AdManager $adManager, ProposalManager $proposalManager)
+    public function carpoolAdResults($id, AdManager $adManager)
     {
         $ad = $adManager->getAd($id);
         $this->denyAccessUnlessGranted('results_ad', $ad);
@@ -244,7 +238,8 @@ class CarpoolController extends AbstractController
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             'proposalId' => $id,
             'platformName' => $this->platformName,
-            'externalRDEXJourneys' => false // No RDEX, this not a new search
+            'externalRDEXJourneys' => false, // No RDEX, this not a new search
+            'defaultRole'=>$this->defaultRole
         ]);
     }
 
@@ -283,7 +278,8 @@ class CarpoolController extends AbstractController
             'communityId' => $request->request->get('communityId'),
             'user' => $userManager->getLoggedUser(),
             'platformName' => $this->platformName,
-            'externalRDEXJourneys' => $this->carpoolRDEXJourneys
+            'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
+            'defaultRole'=>$this->defaultRole
         ]);
     }
 
@@ -291,7 +287,7 @@ class CarpoolController extends AbstractController
      * Matching Search
      * (AJAX POST)
      */
-    public function carpoolSearchMatching(Request $request, AdManager $adManager, UserManager $userManager)
+    public function carpoolSearchMatching(Request $request, AdManager $adManager)
     {
         $params = json_decode($request->getContent(), true);
         if (isset($params['date']) && $params['date'] != '') {

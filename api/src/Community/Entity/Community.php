@@ -67,9 +67,12 @@ use App\Community\Controller\JoinAction;
  *                          "description" = "Check if this userId is already an accepted member"
  *                      }
  *                  }
- *              }
-*           },
- *          "post",
+ *              },
+ *              "security_post_denormalize"="is_granted('community_list',object)"
+ *          },
+ *          "post"={
+ *              "security_post_denormalize"="is_granted('community_create',object)"
+ *          },
  *          "available"={
  *              "method"="GET",
  *              "path"="/communities/available",
@@ -84,12 +87,13 @@ use App\Community\Controller\JoinAction;
  *                          "description" = "The id of the user for which we want the communities"
  *                      }
  *                  }
- *              }
+ *              },
+ *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },
  *          "exists"={
  *              "method"="GET",
  *              "path"="/communities/exists",
- *              "normalization_context"={"groups"={"read"}},
+ *              "normalization_context"={"groups"={"readCommunity"}},
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -100,13 +104,26 @@ use App\Community\Controller\JoinAction;
  *                          "description" = "The name of the community"
  *                      }
  *                  }
- *              }
- *          }
+ *              },
+ *              "security_post_denormalize"="is_granted('community_read',object)"
+ *          },
+ *          "ads"={
+ *              "method"="GET",
+ *              "path"="/communities/{id}/ads",
+ *              "normalization_context"={"groups"={"readCommunity"}},
+ *              "security_post_denormalize"="is_granted('community_read',object)"
+ *          },
  *      },
  *      itemOperations={
- *          "get",
- *          "put",
- *          "delete"
+ *          "get"={
+ *              "security"="is_granted('community_read',object)"
+ *          },
+ *          "put"={
+ *              "security"="is_granted('community_update',object)"
+ *          },
+ *          "delete"={
+ *              "security"="is_granted('community_delete',object)"
+ *          }
  *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})

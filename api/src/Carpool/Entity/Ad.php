@@ -32,6 +32,7 @@ use App\Carpool\Controller\AdAskPost;
 use App\Carpool\Controller\AdAskPut;
 use App\Carpool\Controller\AdPut;
 use App\Carpool\Controller\AdAskGet;
+use App\User\Entity\User;
 
 /**
  * Carpooling : an ad.
@@ -46,24 +47,28 @@ use App\Carpool\Controller\AdAskGet;
  *          "get"={
  *              "method"="GET",
  *              "path"="/carpools",
+ *              "security_post_denormalize"="is_granted('ads_read',object)"
  *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/carpools",
  *              "normalization_context"={"groups"={"results"}},
  *              "controller"=AdPost::class,
+ *              "security_post_denormalize"="is_granted('ad_create',object)"
  *          },
  *          "post_ask"={
  *              "method"="POST",
  *              "path"="/carpools/ask",
  *              "controller"=AdAskPost::class,
- *              "defaults"={"type"="ask"}
+ *              "defaults"={"type"="ask"},
+ *              "security_post_denormalize"="is_granted('ad_ask_post',object)"
  *          },
  *          "post_contact"={
  *              "method"="POST",
  *              "path"="/carpools/contact",
  *              "controller"=AdAskPost::class,
- *              "defaults"={"type"="contact"}
+ *              "defaults"={"type"="contact"},
+ *              "security_post_denormalize"="is_granted('ad_ask_post',object)"
  *          }
  *      },
  *      itemOperations={
@@ -71,19 +76,22 @@ use App\Carpool\Controller\AdAskGet;
  *              "method"="GET",
  *              "path"="/carpools/{id}",
  *              "controller"=AdGet::class,
- *              "read"=false
+ *              "read"=false,
+ *              "security"="is_granted('ad_read',object)"
  *          },
  *          "put_ask"={
  *              "method"="PUT",
  *              "path"="/carpools/ask/{id}",
  *              "controller"=AdAskPut::class,
- *              "read"=false
+ *              "read"=false,
+ *              "security"="is_granted('ad_ask_put',object)"
  *          },
  *          "get_ask"={
  *              "method"="GET",
  *              "path"="/carpools/ask/{id}",
  *              "controller"=AdAskGet::class,
- *              "read"=false
+ *              "read"=false,
+ *              "security"="is_granted('ad_ask_get',object)"
  *          },
  *          "put"={
  *              "method"="PUT",
@@ -135,14 +143,14 @@ class Ad
     /**
      * @var int|null The frequency for this ad.
      *
-     * @Groups({"read","write"})
+     * @Groups({"read","write","readCommunity","readEvent"})
      */
     private $frequency;
 
     /**
      * @var array|null The waypoints for the outward.
      *
-     * @Groups({"read","write","results"})
+     * @Groups({"read","write","results","readCommunity","readEvent"})
      */
     private $outwardWaypoints;
 
@@ -329,6 +337,13 @@ class Ad
      */
     private $comment;
 
+    /**
+     * @var User|null The ad owner. Null for an anonymous search.
+     *
+     * @Groups({"readCommunity","readEvent"})
+     */
+    private $user;
+    
     /**
      * @var int|null The user id of the ad owner. Null for an anonymous search.
      *
@@ -838,6 +853,18 @@ class Ad
     public function setUserId(?int $userId): self
     {
         $this->userId = $userId;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

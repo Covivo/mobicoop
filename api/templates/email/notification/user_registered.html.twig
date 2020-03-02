@@ -1,6 +1,43 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    <p>{{ "yourInscriptionAt" |trans }}  {{api_env('EMAILS_PLATFORM_NAME')}}  {{ "wellTakenIntoAccount" |trans }}.</p>
-    <p>{{ "clickHereToConfirm" |trans}} : <a href="{{ api_env('EMAILS_PLATFORM_URL') }}{{  "urlEmailValidation" |trans }}{{ context.user.email }}/{{ context.user.validatedDateToken }}" title="">{{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlEmailValidation" |trans }}{{ context.user.email }}/{{ context.user.validatedDateToken }}</a>.</p>
-    <p>{{"orUseTheValidationCode" |trans }} : {{ context.user.validatedDateToken }}</p>
+<table style="width:100%;font-family:{{api_env('EMAILS_FONT')}}, sans-serif;">
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td>
+                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30" ><b>{{ "inscriptionAt"|trans }}</b></p>
+                        <hr>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:70%">
+                        <p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
+                        <p>{{ "yourInscriptionAt" |trans }}  <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" > {{api_env('EMAILS_PLATFORM_NAME')}}</b>  {{ "wellTakenIntoAccount" |trans }}.</p>
+                        <p>{{ "clickHereToConfirm" |trans}} : <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{ api_env('EMAILS_PLATFORM_URL') }}{{  "urlEmailValidation" |trans }}{{ context.user.email }}/{{ context.user.validatedDateToken }}" title="">{{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlEmailValidation" |trans }}{{ context.user.email }}/{{ context.user.validatedDateToken }}</a>.</p>
+                        <p>{{"orUseTheValidationCode" |trans }} : <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" >{{ context.user.validatedDateToken }}</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+     <tr>
+        <td>
+            <table  style="width:100%;">
+                <tr style="text-align:left">
+                    <td>
+                        <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+                    </td>
+                </tr>
+                <hr>
+            </table>
+        </td>
+    </tr>
+</table>
 {% endblock %}

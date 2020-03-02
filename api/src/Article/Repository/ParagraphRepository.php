@@ -39,12 +39,9 @@ class ParagraphRepository
      * @var EntityRepository
      */
     private $repository;
-
-    private $entityManager;
     
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Paragraph::class);
     }
 

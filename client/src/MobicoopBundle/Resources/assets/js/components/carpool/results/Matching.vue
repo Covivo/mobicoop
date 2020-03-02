@@ -25,7 +25,10 @@
           <matching-filter 
             :communities="communities"
             :disabled-filters="loading"
-            @updateFilters="updateFilters" 
+            :disable-role="!includePassenger"
+            :default-community-id="communityIdSearch"
+            :init-filters-chips="initFiltersChips"
+            @updateFilters="updateFilters"
           />
 
           <!-- Number of matchings -->
@@ -35,8 +38,8 @@
           >
             <v-col
               v-if="!loading && !loadingExternal"
-              cols="8"
-              align="left"
+              :cols="(!newSearch) ? 8 : 12"
+              class="text-left"
             >
               <p>{{ $tc('matchingNumber', numberOfResults, { number: numberOfResults }) }}</p>
               <p
@@ -49,7 +52,6 @@
             <v-col
               v-else
               cols="12"
-              align="left"
             >
               {{ $t('search') }}
             </v-col>
@@ -59,6 +61,7 @@
               align="end"
             >
               <v-btn
+                v-if="!fromMyProposals"
                 rounded
                 color="secondary"
                 @click="startNewSearch()"
@@ -67,6 +70,29 @@
               </v-btn>
             </v-col>
           </v-row>
+          <v-row v-if="!fromMyProposals">
+            <v-col
+              cols="12"
+              class="text-left"
+            >
+              <v-switch
+                v-if="role!=3"
+                v-model="includePassenger"
+                class="ma-2"
+                :label="$t('includePassengers')"
+              />
+              <v-alert
+                v-else
+                class="accent white--text"
+                dense
+                dismissible
+              >
+                {{ $t('alsoIncludePassengers') }}
+              </v-alert>
+            </v-col>
+          </v-row>
+
+
           <v-row v-if="newSearch">
             <v-col cols="12">
               <search
@@ -231,6 +257,10 @@ export default {
     platformName: {
       type: String,
       default: ""
+    },
+    defaultRole:{
+      type: Number,
+      default: 3
     }
   },
   data : function() {
@@ -250,7 +280,13 @@ export default {
       newSearch: false,
       modelTabs:"carpools",
       nbCarpoolPlatform:0,
-      nbCarpoolOther:0
+      nbCarpoolOther:0,
+      role:this.defaultRole,
+      includePassenger:false,
+      fromMyProposals:false,
+      initFiltersChips:false,
+      communityIdSearch: this.communityId,
+      communityIdSearchBak: this.communityId
     };
   },
   computed: {
@@ -275,7 +311,26 @@ export default {
       return communities;
     }
   },
+  watch:{
+    includePassenger(){
+      if(this.includePassenger){
+        this.role = 3;
+        this.lProposalId = null;
+      }
+      else{
+        this.role = 2;
+      }
+      this.search();
+    },
+    communities(){
+      this.initFiltersChips = true;
+    },
+    communityIdSearch(){
+      this.communityIdSearchBak = this.communityIdSearch;
+    }
+  },
   created() {
+    if(this.proposalId) this.fromMyProposals = true;
     this.search();
     if(this.externalRdexJourneys) this.searchExternalJourneys();
   },
@@ -316,8 +371,9 @@ export default {
           "time": this.time,
           "regular": this.regular,
           "userId": this.user ? this.user.id : null,
-          "communityId": this.communityId,
-          "filters": this.filters
+          "communityId": this.communityIdSearch,
+          "filters": this.filters,
+          "role": this.role
         };
         axios.post(this.$t("matchingUrl"), postParams,
           {
@@ -370,7 +426,6 @@ export default {
 
     },
     contact(params) {
-      // console.log(params);
       axios.post(this.$t("contactUrl"), params,
         {
           headers:{
@@ -417,6 +472,14 @@ export default {
     },
     updateFilters(data){
       this.filters = data;
+      // Update the default filters also
+      this.communityIdSearch = (this.filters.filters.community) ? parseInt(this.filters.filters.community) : null;
+
+      // If the communityid for a research has been modified, we need to post a new proposal for the search
+      // We don't use the watch because it's excuted after updateFilters() is done (after the this.search...)
+      if(this.communityIdSearch !== this.communityIdSearchBak){
+        this.lProposalId = null;
+      }
       this.search();
     },
     startNewSearch() {
