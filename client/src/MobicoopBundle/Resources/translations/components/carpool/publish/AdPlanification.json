@@ -22,6 +22,7 @@
             "label": "Retour"
         },
         "addSchedule": "Ajouter un créneau",
-        "marginTooltip": "Votre annonce apparaîtra dans des recherches avec une flexibilité de {margin} minutes autour de cet horaire"
+        "marginTooltip": "Votre annonce apparaîtra dans des recherches avec une flexibilité de {margin} minutes autour de cet horaire",
+        "errorReturnTime": "L'heure de retour est trop proche de l'heure de départ."
     }
 }
