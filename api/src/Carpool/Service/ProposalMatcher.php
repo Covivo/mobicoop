@@ -49,13 +49,13 @@ class ProposalMatcher
 {
     // max default detour distance
     // TODO : should depend on the total distance : total distance => max detour allowed
-    public const MAX_DETOUR_DISTANCE_PERCENT = 33;
-    public const MAX_DETOUR_DURATION_PERCENT = 33;
+    public const MAX_DETOUR_DISTANCE_PERCENT = 35;
+    public const MAX_DETOUR_DURATION_PERCENT = 35;
 
     // minimum distance to check the common distance
     public const MIN_COMMON_DISTANCE_CHECK = 50;
     // minimum common distance accepted
-    public const MIN_COMMON_DISTANCE_PERCENT = 30;
+    public const MIN_COMMON_DISTANCE_PERCENT = 20;
 
     // behaviour in case of multiple matches for the same candidates
     // 1 = keep fastest route
@@ -252,6 +252,7 @@ class ProposalMatcher
         if (!$proposalsFound = $this->proposalRepository->findMatchingProposals($proposal, $excludeProposalUser)) {
             return [];
         }
+        // echo count($proposalsFound);die;
 
         $this->logger->info("ProposalMatcher : create proposals for " . count($proposalsFound) . " results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $proposals= [];
@@ -318,7 +319,7 @@ class ProposalMatcher
             }
         }
         ksort($proposals);
-        
+        // echo count($proposals);die;
         $this->logger->info("ProposalMatcher : created proposals : " . count($proposals) . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         $matchings = [];
