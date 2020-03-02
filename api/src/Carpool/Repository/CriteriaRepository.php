@@ -60,4 +60,13 @@ class CriteriaRepository
         }
         return $query->getQuery()->getResult();
     }
+
+    public function findDrivers(): ?array
+    {
+        $query = $this->repository->createQueryBuilder('c')
+        ->select('c')
+        ->where('c.directionDriver IS NOT NULL');
+
+        return $query->getQuery()->getResult();
+    }
 }

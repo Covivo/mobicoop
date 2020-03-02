@@ -1529,6 +1529,10 @@ class ResultManager
                         // Filter on Time (the hour)
                         case "time":
                             $value = new \DateTime(str_replace("h", ":", $value));
+                            if (is_null($a->getTime()) || is_null($value)) {
+                                $return = false;
+                                break;
+                            }
                             $return = $a->getTime()->format("H") === $value->format("H");
                             break;
                         // Filter on Role (driver, passenger, both)

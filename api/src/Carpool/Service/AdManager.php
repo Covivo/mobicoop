@@ -34,10 +34,12 @@ use App\Event\Service\EventManager;
 use App\Geography\Entity\Address;
 use App\Carpool\Exception\AdException;
 use App\Carpool\Repository\ProposalRepository;
+use App\Carpool\Repository\CriteriaRepository;
 use App\User\Exception\UserNotFoundException;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use App\Carpool\Service\ProposalMatcher;
 
 /**
  * Ad manager service.
@@ -55,6 +57,8 @@ class AdManager
     private $params;
     private $logger;
     private $proposalRepository;
+    private $criteriaRepository;
+    private $proposalMatcher;
 
     /**
      * Constructor.
@@ -62,7 +66,7 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -73,6 +77,8 @@ class AdManager
         $this->logger = $logger;
         $this->params = $params;
         $this->proposalRepository = $proposalRepository;
+        $this->criteriaRepository = $criteriaRepository;
+        $this->proposalMatcher = $proposalMatcher;
     }
     
     /**
@@ -914,5 +920,25 @@ class AdManager
 
         $ad = $this->makeAd($proposal, $proposal->getUser()->getId());
         return $ad;
+    }
+
+    /**
+     * Update all carpools limits (i.e max_detour_duration, max_detour_distance...)
+     */
+    public function updateCarpoolsLimits()
+    {
+        set_time_limit(7200);
+        $criteria = $this->criteriaRepository->findDrivers();
+        /**
+         * @var Criteria $criterion
+         */
+        foreach ($criteria as $criterion) {
+            $criterion->setMaxDetourDistance($criterion->getDirectionDriver()->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
+            $criterion->setMaxDetourDuration($criterion->getDirectionDriver()->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
+            $this->entityManager->persist($criterion);
+        }
+        $this->entityManager->flush();
+
+        return ['yay!'];
     }
 }

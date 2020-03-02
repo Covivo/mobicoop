@@ -189,7 +189,6 @@ export default {
           if (!addresses.length) {
             return;
           }
-
           addresses.forEach((address, addressKey) => {
             addresses[addressKey].key = addressKey;
             addresses[addressKey].displayedLabel = `${address.displayLabel[0]}`;
@@ -209,18 +208,18 @@ export default {
             let addressLocality = address.addressLocality
               ? address.addressLocality
               : "";
-            if (!addressLocality) {
-              // No locality return, do not show them (region, department ..)
-              addresses.splice(addressKey, 1);
-            } else if (address.name) {
-              resultsNamed.push(address);
-            } else if (address.relayPoint) {
-              resultsRelayPoint.push(address);
-            } else if (address.event) {
-              resultsEvent.push(address);
-            } else {
-              resultsSig.push(address);
-            }
+            if (addressLocality) {
+              // If there is no locality return, do not show them (region, department ..)
+              if (address.name) {
+                resultsNamed.push(address);
+              } else if (address.relayPoint) {
+                resultsRelayPoint.push(address);
+              } else if (address.event) {
+                resultsEvent.push(address);
+              } else {
+                resultsSig.push(address);
+              }
+            } 
           });
 
           if (resultsNamed.length>0) {
@@ -254,6 +253,7 @@ export default {
               results.push(address);
             });
           }
+
           // Set Data & show them
           if (this.isLoading) return; // Another request is fetching, we do not show the previous one
           this.entries = [...results];

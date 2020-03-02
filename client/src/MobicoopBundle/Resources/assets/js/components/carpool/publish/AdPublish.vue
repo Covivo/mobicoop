@@ -738,7 +738,8 @@ export default {
       seats : 3,
       snackbar: false,
       alert: this.$t('messageRoundedPrice'),
-      priceForbidden: false
+      priceForbidden: false,
+      returnTimeIsValid: true,
     }
   },
   computed: {
@@ -820,7 +821,7 @@ export default {
       }
 
       // Step 2 punctual : you have to set the outward time
-      if(this.step==2 && !this.regular && !(this.outwardDate && this.outwardTime)) return false;
+      if(this.step==2 && ((!this.regular && !(this.outwardDate && this.outwardTime)) || !this.returnTimeIsValid)) return false;
       // Step 2 punctual, round-trip chosen : you have to set the outward date & time
       if(this.step==2 && !this.regular && this.returnTrip && !(this.returnDate && this.returnTime)) return false;
 
@@ -925,6 +926,7 @@ export default {
       this.schedules = planification.schedules;
       this.returnTrip = planification.returnTrip;
       this.fullschedule = planification.fullschedule;
+      this.returnTimeIsValid = planification.returnTimeIsValid;
     },
     routeChanged(route) {
       this.route = route;
