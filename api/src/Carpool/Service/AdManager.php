@@ -767,6 +767,7 @@ class AdManager
      */
     public function updateCarpoolsLimits()
     {
+        set_time_limit(7200);
         $criteria = $this->criteriaRepository->findDrivers();
         /**
          * @var Criteria $criterion
