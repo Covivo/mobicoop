@@ -970,6 +970,7 @@ class AdManager
      * @param string $outward_saturday_maxtime
      * @param string $outward_sunday_mintime
      * @param string $outward_sunday_maxtime
+     * @param string $external                  The external client
      */
     public function getAdsForRdex(
         bool $offer,
@@ -994,10 +995,51 @@ class AdManager
         string $outward_saturday_mintime = null,
         string $outward_saturday_maxtime = null,
         string $outward_sunday_mintime = null,
-        string $outward_sunday_maxtime = null
+        string $outward_sunday_maxtime = null,
+        string $external = null
     ) {
         $ad = new Ad();
+        $ad->setExternal($external);
 
+        // Role
+        if ($offer && $request) {
+            $ad->setRole(Ad::ROLE_DRIVER_OR_PASSENGER);
+        } elseif ($request) {
+            $ad->setRole(Ad::ROLE_DRIVER);
+        } else {
+            $ad->setRole(Ad::ROLE_PASSENGER);
+        }
+
+        // Origin/Destination
+        $ad->setOutwardWaypoints([
+            [
+                "latitude" => $from_latitude,
+                "longitude" => $from_longitude
+            ],
+            [
+                "latitude" => $to_latitude,
+                "longitude" => $to_longitude
+            ],
+        ]);
+
+        // Frequency
+        $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+        if (is_null($frequency) || $frequency=="punctual") {
+            $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+        } elseif ($frequency=="regular") {
+            $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
+        }
+
+        // Outward date
+        $ad->setOutwardDate($outward_mindate);
+        $ad->setOutwardLimitDate($outward_maxdate);
+
+        if ($ad->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
+            (!is_null($outward_monday_mintime)) ? $ad->setOutwardTime($outward_monday_mintime) : '';
+        }
+
+        var_dump($ad);
+        die;
 
         return $this->createAd($ad);
     }
