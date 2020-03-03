@@ -126,7 +126,7 @@ class UserVoter extends Voter
     private function canDeleteSelf(UserInterface $requester, User $subject)
     {
         if (($subject->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
-            return $this->permissionManager->checkPermission('user_delete_self', $requester);
+            return $this->permissionManager->checkPermission('user_delete_self', $requester, null, $subject->getId());
         } else {
             return false;
         }

@@ -62,7 +62,7 @@ use App\User\Controller\UserThreadsCarpoolMessages;
 use App\User\Controller\UserUpdatePassword;
 use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserUpdate;
-use App\User\Controller\UserAnonymise;
+use App\User\Controller\UserDelete;
 use App\User\Controller\UserCheckSignUpValidationToken;
 use App\User\Controller\UserCheckPhoneToken;
 use App\User\Controller\UserUnsubscribeFromEmail;
@@ -303,10 +303,10 @@ use App\User\EntityListener\UserListener;
  *              "controller"=UserUpdate::class,
  *              "security"="is_granted('user_update',object)"
  *          },
- *          "anonymise_user"={
- *              "method"="PUT",
- *              "path"="/users/{id}/anonymise_user",
- *              "controller"=UserAnonymise::class,
+ *          "delete_user"={
+ *              "method"="DELETE",
+ *              "path"="/users/{id}",
+ *              "controller"=UserDelete::class,
  *              "security"="is_granted('user_delete',object)"
  *          },
  *          "asks"={

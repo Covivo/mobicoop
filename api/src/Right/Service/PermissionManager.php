@@ -235,7 +235,6 @@ class PermissionManager
         } else {
 
             // I'm a real user
-
             $permission = new Permission(1);
             $permission->setGranted(false);
             // we first check if the user is seated on the iron throne
@@ -263,12 +262,10 @@ class PermissionManager
                     }
                 }
             }
-    
             if ($this->rightInRoles($right, $roles, $user->getId(), $id, $object)) {
                 $permission->setGranted(true);
                 return $permission;
             }
-            
             // we check if the user has this specific right
             foreach ($user->getUserRights() as $userRight) {
                 if (is_null($userRight->getTerritory()) || $userRight->getTerritory() == $territory) {
@@ -279,7 +276,6 @@ class PermissionManager
                 }
             }
         }
-
         return $permission;
     }
 
@@ -319,7 +315,7 @@ class PermissionManager
     {
         // echo "check right " . $right->getName() . "\n";
         foreach ($right->getRoles() as $rightRole) {
-            // echo "check rightrole " . $rightRole->getName() . "\n";
+            //  echo "check rightrole " . $rightRole->getName() . "\n";
             foreach ($roles as $role) {
                 // echo "check role " . $role['role']->getName() . "\n";
                 if ($role['role']->getId() == $rightRole->getId()) {
