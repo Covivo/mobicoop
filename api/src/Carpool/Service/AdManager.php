@@ -980,22 +980,8 @@ class AdManager
         float $to_longitude,
         float $to_latitude,
         string $frequency = null,
-        \DateTime $outward_mindate = null,
-        \DateTime $outward_maxdate = null,
-        string $outward_monday_mintime = null,
-        string $outward_monday_maxtime = null,
-        string $outward_tuesday_mintime = null,
-        string $outward_tuesday_maxtime = null,
-        string $outward_wednesday_mintime = null,
-        string $outward_wednesday_maxtime = null,
-        string $outward_thursday_mintime = null,
-        string $outward_thursday_maxtime = null,
-        string $outward_friday_mintime = null,
-        string $outward_friday_maxtime = null,
-        string $outward_saturday_mintime = null,
-        string $outward_saturday_maxtime = null,
-        string $outward_sunday_mintime = null,
-        string $outward_sunday_maxtime = null,
+        ?array $days = null,
+        ?array $outward = null,
         string $external = null
     ) {
         $ad = new Ad();
@@ -1030,17 +1016,65 @@ class AdManager
             $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
         }
 
+
         // Outward date
-        $ad->setOutwardDate($outward_mindate);
-        $ad->setOutwardLimitDate($outward_maxdate);
+        $ad->setOutwardDate(\DateTime::createFromFormat("Y-m-d", $outward["mindate"]));
+        (isset($outward["maxdate"])) ? $ad->setOutwardLimitDate(\DateTime::createFromFormat("Y-m-d", $outward["maxdate"])) : '';
+
+
+        // Create a schedule
+        // RDEX has always a explicit day (monday...) even for puntual
+        // So we always create a schedule then we make a deduction if it's punctual or regular based on it.
+        // If the frequency parameter is given it overides the deduction
+        $schedules = []; // We set a subschdeul because a real Ad can have multiple schedule. Only one in RDEX though.
+        $refTimes = [];
+        var_dump($outward);
+        foreach ($days as $day) {
+            echo $outward[$day]['mintime'];
+            die;
+            if (isset($outward[$day]['mintime']) && isset($outward[$day]['maxtime'])) {
+                $outward_mindate = $ad->getOutwardDate();
+                (is_null($ad->getOutwardLimitDate())) ? $outward_maxdate = $outward_mindate : $ad->getOutwardLimitDate();
+                $middleHour = $this->middleHour($outward[$day]['mintime'], $outward[$day]['maxtime'], $outward_mindate, $outward_maxdate);
+                
+                if (!in_array($middleHour, $refTimes)) {
+                    $refTimes[] = $middleHour;
+                }
+
+                $schedules[$cptSchedule] = [
+                    $day => 1,
+                    'outwardTime' => $middleHour
+                ];
+                
+                
+                $ad->setOutwardTime($middleHour->format("H:i:s"));
+            }
+        }
+        var_dump($schedules);
+        die;
 
         if ($ad->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
-            (!is_null($outward_monday_mintime)) ? $ad->setOutwardTime($outward_monday_mintime) : '';
         }
 
-        var_dump($ad);
+        //var_dump($ad);
         die;
 
         return $this->createAd($ad);
+    }
+
+    public function middleHour(string $heureMin, string $heureMax, \DateTime $dateMin, ?\DateTime $dateMax=null)
+    {
+        $dateMin = $dateMin->format("Y-m-d");
+        (is_null($dateMax)) ? $dateMax = $dateMin : $dateMax->format("Y-m-d");
+        
+        $min = \DateTime::createFromFormat('Y-m-d H:i:s', $dateMin . " " . $heureMin, new \DateTimeZone('UTC'));
+        $mintime = $min->getTimestamp();
+        $max = \DateTime::createFromFormat('Y-m-d H:i:s', $dateMax . " " . $heureMax, new \DateTimeZone('UTC'));
+        $maxtime = $max->getTimestamp();
+        $marge = ($maxtime - $mintime) / 2;
+        $middleHour = $mintime + $marge;
+        $returnHour = new \DateTime();
+        $returnHour->setTimestamp($middleHour);
+        return $returnHour;
     }
 }

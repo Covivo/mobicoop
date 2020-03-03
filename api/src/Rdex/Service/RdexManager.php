@@ -50,8 +50,8 @@ class RdexManager
     private const RDEX_HASH = "sha256";         // hash algorithm
     private const MIN_TIMESTAMP_MINUTES = 60;   // accepted minutes for timestamp in the past
     private const MAX_TIMESTAMP_MINUTES = 60;   // accepted minutes for timestamp in the future
-    // for testing purpose only
-    private const CHECK_SIGNATURE = true;
+    // false for testing purpose only
+    private const CHECK_SIGNATURE = false;
     
     private $proposalManager;
     private $adManager;
@@ -286,22 +286,8 @@ class RdexManager
             $parameters["to"]["longitude"],
             $parameters["to"]["latitude"],
             isset($parameters["frequency"]) ? $parameters["frequency"] : null,
-            isset($parameters["outward"]["mindate"]) ? \DateTime::createFromFormat("Y-m-d", $parameters["outward"]["mindate"]) : null,
-            isset($parameters["outward"]["maxdate"]) ? \DateTime::createFromFormat("Y-m-d", $parameters["outward"]["maxdate"]) : null,
-            isset($parameters["outward"]["monday"]["mintime"]) ? $parameters["outward"]["monday"]["mintime"] : null,
-            isset($parameters["outward"]["monday"]["maxtime"]) ? $parameters["outward"]["monday"]["maxtime"] : null,
-            isset($parameters["outward"]["tuesday"]["mintime"]) ? $parameters["outward"]["tuesday"]["mintime"] : null,
-            isset($parameters["outward"]["tuesday"]["maxtime"]) ? $parameters["outward"]["tuesday"]["maxtime"] : null,
-            isset($parameters["outward"]["wednesday"]["mintime"]) ? $parameters["outward"]["wednesday"]["mintime"] : null,
-            isset($parameters["outward"]["wednesday"]["maxtime"]) ? $parameters["outward"]["wednesday"]["maxtime"] : null,
-            isset($parameters["outward"]["thursday"]["mintime"]) ? $parameters["outward"]["thursday"]["mintime"] : null,
-            isset($parameters["outward"]["thursday"]["maxtime"]) ? $parameters["outward"]["thursday"]["maxtime"] : null,
-            isset($parameters["outward"]["friday"]["mintime"]) ? $parameters["outward"]["friday"]["mintime"] : null,
-            isset($parameters["outward"]["friday"]["maxtime"]) ? $parameters["outward"]["friday"]["maxtime"] : null,
-            isset($parameters["outward"]["saturday"]["mintime"]) ? $parameters["outward"]["saturday"]["mintime"] : null,
-            isset($parameters["outward"]["saturday"]["maxtime"]) ? $parameters["outward"]["saturday"]["maxtime"] : null,
-            isset($parameters["outward"]["sunday"]["mintime"]) ? $parameters["outward"]["sunday"]["mintime"] : null,
-            isset($parameters["outward"]["sunday"]["maxtime"]) ? $parameters["outward"]["sunday"]["maxtime"] : null,
+            isset($parameters["days"]) ? $parameters["days"] : null,
+            isset($parameters["outward"]) ? $parameters["outward"] : null,
             $this->clientKey
         );
 
