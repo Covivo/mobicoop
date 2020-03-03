@@ -85,6 +85,7 @@ use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Entity\Delivery;
 use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
+use App\Event\Entity\Event;
 
 /**
  * A user.
@@ -755,6 +756,13 @@ class User implements UserInterface, EquatableInterface
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      */
     private $asks;
+
+    /**
+     * @var ArrayCollection|null The events made by this user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Event\Entity\Event", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     */
+    private $events;
 
     /**
      * @var ArrayCollection|null The asks made for this user.
@@ -1584,6 +1592,8 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    
+
     public function getAsksRelated()
     {
         return $this->asksRelated->getValues();
@@ -1634,6 +1644,34 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($askDelegate->getUserDelegate() === $this) {
                 $askDelegate->setUserDelegate(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getEvents()
+    {
+        return $this->events->getValues();
+    }
+
+    public function addEvent(Event $event): self
+    {
+        if (!$this->events->contains($event)) {
+            $this->events->add($event);
+            $event->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Event $event): self
+    {
+        if ($this->events->contains($event)) {
+            $this->events->removeElement($event);
+            // set the owning side to null (unless already changed)
+            if ($event->getUser() === $this) {
+                $event->setUser(null);
             }
         }
 
