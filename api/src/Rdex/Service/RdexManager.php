@@ -333,76 +333,82 @@ class RdexManager
             }
 
             
-            if ($carpoolerIsDriver) {
-                $driver = new RdexDriver($result->getCarpooler()->getId());
-                $driver->setUuid($result->getCarpooler()->getId());
-                $driver->setAlias($result->getCarpooler()->getGivenName()." ".$result->getCarpooler()->getShortFamilyName());
-                
-                ($result->getCarpooler()->getGender()==1) ? $driver->setGender('female') : ($result->getCarpooler()->getGender()==2) ? $driver->setGender('male') : null;
-                
-                $driver->setSeats($result->getSeatsDriver());
-                $driver->setState($result->getCarpooler()->getStatus());
+            $driver = new RdexDriver($result->getCarpooler()->getId());
+            $driver->setUuid($result->getCarpooler()->getId());
+            $driver->setAlias($result->getCarpooler()->getGivenName()." ".$result->getCarpooler()->getShortFamilyName());
+            
+            ($result->getCarpooler()->getGender()==1) ? $driver->setGender('female') : ($result->getCarpooler()->getGender()==2) ? $driver->setGender('male') : null;
+            
+            $driver->setSeats($result->getSeatsDriver());
+            $driver->setState(($carpoolerIsDriver) ? 1 : 0);
 
-                $driver->setImage($result->getCarpooler()->getImages()[0]->getVersions()[self::IMAGE_VERSION]);
-                $journey->setDriver($driver);
+            $driver->setImage($result->getCarpooler()->getImages()[0]->getVersions()[self::IMAGE_VERSION]);
+            $journey->setDriver($driver);
+
+            $passenger = new RdexPassenger($result->getCarpooler()->getId());
+            $passenger->setUuid($result->getCarpooler()->getId());
+            $passenger->setAlias($result->getCarpooler()->getGivenName()." ".$result->getCarpooler()->getShortFamilyName());
+            
+            ($result->getCarpooler()->getGender()==1) ? $passenger->setGender('female') : ($result->getCarpooler()->getGender()==2) ? $passenger->setGender('male') : null;
+            
+            $passenger->setState(($carpoolerIsPassenger) ? 1 : 0);
+
+            $passenger->setImage($result->getCarpooler()->getImages()[0]->getVersions()[self::IMAGE_VERSION]);
+            $journey->setPassenger($passenger);
+
+
+            $from = new RdexAddress();
+            // We need to get the right address in resultsDriver or resultsPassenger given the situation
+            // The requester only sent Lat/Lon so we can't use his request
+            // We get some datas that relies on being passenger or driver
+            if (!$carpoolerIsDriver && $carpoolerIsPassenger) {
+                $fromAddress = $result->getResultDriver()->getOutward()->getOrigin();
+                $toAddress = $result->getResultDriver()->getOutward()->getDestination();
+                $distance = $result->getResultDriver()->getOutward()->getCommonDistance()+$result->getResultDriver()->getOutward()->getDetourDistance();
+                $kilometersPrice = $result->getResultDriver()->getOutward()->getDriverPriceKm();
+            } else {
+                $fromAddress = $result->getResultPassenger()->getOutward()->getOrigin();
+                $toAddress = $result->getResultPassenger()->getOutward()->getDestination();
+                $distance = $result->getResultPassenger()->getOutward()->getCommonDistance()+$result->getResultPassenger()->getOutward()->getDetourDistance();
+                $kilometersPrice = $result->getResultPassenger()->getOutward()->getDriverPriceKm();
             }
 
-            if ($carpoolerIsPassenger) {
-                $passenger = new RdexPassenger($result->getCarpooler()->getId());
-                $passenger->setUuid($result->getCarpooler()->getId());
-                $passenger->setAlias($result->getCarpooler()->getGivenName()." ".$result->getCarpooler()->getShortFamilyName());
-                
-                ($result->getCarpooler()->getGender()==1) ? $passenger->setGender('female') : ($result->getCarpooler()->getGender()==2) ? $passenger->setGender('male') : null;
-                
-                $passenger->setState($result->getCarpooler()->getStatus());
+            $from->setAddress($fromAddress->getStreetAddress());
+            $from->setPostalcode($fromAddress->getPostalCode());
+            $from->setCity($fromAddress->getAddressLocality());
+            $from->setCountry($fromAddress->getAddressCountry());
+            $from->setLatitude($fromAddress->getLatitude());
+            $from->setLongitude($fromAddress->getLongitude());
+            $journey->setFrom($from);
 
-                $passenger->setImage($result->getCarpooler()->getImages()[0]->getVersions()[self::IMAGE_VERSION]);
-                $journey->setPassenger($passenger);
-            }
+            $to = new RdexAddress();
+            $to->setAddress($toAddress->getStreetAddress());
+            $to->setPostalcode($toAddress->getPostalCode());
+            $to->setCity($toAddress->getAddressLocality());
+            $to->setCountry($toAddress->getAddressCountry());
+            $to->setLatitude($toAddress->getLatitude());
+            $to->setLongitude($toAddress->getLongitude());
+            $journey->setTo($to);
 
+            
+            // Metrics / Prices
+            $journey->setDistance($distance);
+//            $journey->setCost(['fixed'=>$result->getRoundedPrice()]);
+            $journey->setCost(['variable'=>$kilometersPrice]);
 
+            // Frequency
+            $journey->setFrequency(($result->getFrequency()==1) ? 'puntual' : 'regular');
+            
+            
             /** These two lines for Development purpose !!!! */
             $returnArray[] = $journey;
             continue;
 
-            if ($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER) {
-                $driver->setSeats($proposal->getCriteria()->getSeatsDriver());
-                $driver->setState(1);
-                $passenger->setState(0);
-                $journey->setDriver($driver);
-                $journey->setPassenger($passenger);
-            } else {
-                $driver->setState(0);
-                $passenger->setState(1);
-                $passenger->setPersons($proposal->getCriteria()->getSeatsPassenger());
+            // if we have 'from' and 'to' we don't check for any other point
+            if (!is_null($journey->getFrom()) && !is_null($journey->getTo())) {
+                break;
             }
-            $journey->setDriver($driver);
-            $journey->setPassenger($passenger);
-            foreach ($proposal->getPoints() as $point) {
-                if ($point->getPosition() == 0) {
-                    $from = new RdexAddress();
-                    $from->setAddress($point->getAddress()->getStreetAddress());
-                    $from->setPostalcode($point->getAddress()->getPostalCode());
-                    $from->setCity($point->getAddress()->getAddressLocality());
-                    $from->setCountry($point->getAddress()->getAddressCountry());
-                    $from->setLatitude($point->getAddress()->getLatitude());
-                    $from->setLongitude($point->getAddress()->getLongitude());
-                    $journey->setFrom($from);
-                } elseif ($point->getLastPoint()) {
-                    $to = new RdexAddress();
-                    $to->setAddress($point->getAddress()->getStreetAddress());
-                    $to->setPostalcode($point->getAddress()->getPostalCode());
-                    $to->setCity($point->getAddress()->getAddressLocality());
-                    $to->setCountry($point->getAddress()->getAddressCountry());
-                    $to->setLatitude($point->getAddress()->getLatitude());
-                    $to->setLongitude($point->getAddress()->getLongitude());
-                    $journey->setTo($to);
-                }
-                // if we have 'from' and 'to' we don't check for any other point
-                if (!is_null($journey->getFrom()) && !is_null($journey->getTo())) {
-                    break;
-                }
-            }
+            
             $days = new RdexDay();
             // there's always an outward
             $outward = new RdexTripDate();
