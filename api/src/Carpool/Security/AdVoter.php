@@ -85,7 +85,12 @@ class AdVoter extends Voter
 
         switch ($attribute) {
             case self::ADS_READ:
-                return $this->canReadAds($requester, $this->request->get("userId"));
+                /**
+                 * TO DO : We are not supposed to use userId from request. Only the one from security token.
+                 * Need to change the method in front and remove the one from the request
+                 * see : AdCollectionDataProvider.php
+                 */
+                return $this->canReadAds($requester, $this->request->get("userId", $this->security->getUser()->getId()));
             case self::AD_READ:
                 if (is_null($this->request->get("id"))) {
                     return false;
@@ -133,7 +138,7 @@ class AdVoter extends Voter
 
     private function canReadAds(UserInterface $requester, ?int $userId=null)
     {
-        return $this->permissionManager->checkPermission('ad_list', $requester, null, $userId);
+        return $this->permissionManager->checkPermission('ad_results_self', $requester, null, $userId);
     }
 
     private function canReadAd(Ad $ad, UserInterface $requester)
