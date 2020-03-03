@@ -278,7 +278,7 @@ class RdexManager
             return new RdexError("apikey", RdexError::ERROR_ACCESS_DENIED, "Invalid apikey");
         }
         
-        $ads = $this->adManager->getAdsForRdex(
+        $ad = $this->adManager->getAdForRdex(
             $parameters["driver"]["state"],
             $parameters["passenger"]["state"],
             $parameters["from"]["longitude"],
@@ -291,10 +291,8 @@ class RdexManager
             $this->clientKey
         );
 
-
-        die;
-
-        foreach ($proposals as $proposal) {
+        foreach ($ad->getResults() as $result) {
+            die;
             // @todo : create a rule for uuid creation
             $journey = new RdexJourney($proposal->getId());
             $journey->setOperator($operator['name']);
