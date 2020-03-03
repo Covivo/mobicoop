@@ -1,4 +1,9 @@
 #!/bin/bash
+
+################################
+# Backup the platform api data #
+################################
+
 # Date and time
 DATE=$(date +"%Y%m%d%H%M%S")
 
