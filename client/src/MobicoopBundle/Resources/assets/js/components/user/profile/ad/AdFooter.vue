@@ -44,8 +44,8 @@
 
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/user/profile/proposal/ProposalFooter.js";
-import TranslationsClient from "@clientTranslations/components/user/profile/proposal/ProposalFooter.js";
+import Translations from "@translations/components/user/profile/ad/AdFooter.js";
+import TranslationsClient from "@clientTranslations/components/user/profile/ad/AdFooter.js";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {

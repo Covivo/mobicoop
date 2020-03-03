@@ -6,7 +6,7 @@
         "tabs": {
             "myProfile": "Profil",
             "password": "Mot de passe",
-            "myProposals": "Mes annonces",
+            "myAds": "Mes annonces",
             "carpoolSettings": "Mes préférences",
             "alerts": "Mes alertes",
             "carpoolsAccepted": "Covoiturages acceptés",
@@ -32,7 +32,7 @@
         "tabs": {
             "myProfile": "Profile",
             "password": "Password",
-            "myProposals": "My proposals",
+            "myAds": "My proposals",
             "carpoolSettings": "My settings",
             "alerts": "My alerts",
             "carpoolsAccepted": "Accepted carpools",

@@ -26,7 +26,7 @@
             mdi-car
           </v-icon>
         </template>
-        <span> {{ $t('proposals.tooltips.driver') }} </span>
+        <span> {{ $t('ads.tooltips.driver') }} </span>
       </v-tooltip>
       <v-tooltip
         v-if="isPassenger && isDriver"
@@ -48,7 +48,7 @@
             mdi-car
           </v-icon>
         </template>
-        <span>{{ $t('proposals.tooltips.diverOrPassenger') }}</span>
+        <span>{{ $t('ads.tooltips.diverOrPassenger') }}</span>
       </v-tooltip>
       <v-divider
         v-if="isDriver && isPassenger"
@@ -64,7 +64,7 @@
             mdi-walk
           </v-icon>
         </template>
-        <span>{{ $t('proposals.tooltips.passenger') }}</span>
+        <span>{{ $t('ads.tooltips.passenger') }}</span>
       </v-tooltip>
       <v-spacer />
       <v-col
@@ -162,7 +162,7 @@
               color="green darken-1"
               text
               :loading="loading"
-              @click="deleteProposal()"
+              @click="deleteAd()"
             >
               {{ $t("delete.dialog.validate") }}
             </v-btn>
@@ -177,8 +177,8 @@
 import { merge } from "lodash";
 import axios from "axios";
 
-import Translations from "@translations/components/user/profile/proposal/MyProposals.js";
-import TranslationsClient from "@clientTranslations/components/user/profile/proposal/MyProposals.js";
+import Translations from "@translations/components/user/profile/ad/MyAds.js";
+import TranslationsClient from "@clientTranslations/components/user/profile/ad/MyAds.js";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -207,7 +207,7 @@ export default {
       type: Boolean,
       default: false
     },
-    proposalId: {
+    adId: {
       type: Number,
       default: null
     },
@@ -240,13 +240,13 @@ export default {
     }
   },
   methods: {
-    deleteProposal () {
+    deleteAd () {
       this.resetAlert();
       const self = this;
       this.loading = true;
       axios.delete(this.$t('delete.route'), {
         data: {
-          proposalId: this.proposalId,
+          adId: this.adId,
           deletionMessage: this.deleteMessage
         }
       })
@@ -256,7 +256,7 @@ export default {
               type: "success",
               message: self.$t(response.data.message)
             };
-            self.$emit('proposal-deleted', self.isArchived, self.proposalId);
+            self.$emit('ad-deleted', self.isArchived, self.adId);
           }
         })
         .catch(function (error) {
@@ -277,7 +277,7 @@ export default {
     pauseAd () {
       this.paused = !this.paused;
       this.loading = true;
-      this.ad.proposalId = this.proposalId;
+      this.ad.adId = this.adId;
       this.ad.paused = this.paused;
       axios
         .put(this.$t('pause.route'), this.ad,

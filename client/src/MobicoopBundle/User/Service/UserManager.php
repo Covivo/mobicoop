@@ -502,7 +502,7 @@ class UserManager
      * @return array|object
      * @throws \ReflectionException
      */
-    public function getProposals(User $user)
+    public function getAds(User $user)
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
@@ -535,39 +535,10 @@ class UserManager
             }
             // Carpool punctual
             else {
-                $fromDate = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
-                //dump($fromDate);
-                // $linkedDate = isset($proposal["proposalLinked"]) ? new DateTime($proposal["proposalLinked"]["criteria"]["fromDate"]) : null;
-                // $date = isset($linkedDate) && $linkedDate > $fromDate ? $linkedDate : $fromDate;
-                $date = $fromDate;
+                $date = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
             }
 
             $key = $date < $now ? 'archived' : 'ongoing';
-
-            // We do not keep the matchingOffers or matchingRequest where proposals are private
-            // TO DO : The api should return the array without all these
-            // Not usefull anymore, Ad route does'nt return private proposals
-            // $proposal = $this->cleanPrivateMatchings($proposal, 'Offers');
-            // $proposal = $this->cleanPrivateMatchings($proposal, 'Requests');
-
-            // proposal is an outward
-            // if ($proposal["type"] === Proposal::TYPE_OUTWARD && !is_null($proposal["proposalLinked"])) {
-            //     $proposalsSanitized[$key][$proposal["id"]] = [
-            //         'outward' => $proposal,
-            //         'return' => $proposal["proposalLinked"]
-            //     ];
-            // // proposal is a return
-            // } elseif ($proposal["type"] === Proposal::TYPE_RETURN && !is_null($proposal["proposalLinked"])) {
-            //     $proposalsSanitized[$key][$proposal["id"]] = [
-            //         'outward' => $proposal["proposalLinked"],
-            //         'return' => $proposal
-            //     ];
-            // // proposal is one way
-            // } else {
-            //     $proposalsSanitized[$key][$proposal["id"]] = [
-            //         'outward' => $proposal
-            //     ];
-            // }
 
             $adsSanitized[$key][$ad["id"]]['outward'] = $ad;
             if (!$ad['oneWay']) {
