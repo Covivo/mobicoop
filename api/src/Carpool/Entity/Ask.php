@@ -226,6 +226,14 @@ class Ask
     private $askHistories;
 
     /**
+     * @var ArrayCollection The proofs related to the ask.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\CarpoolProof", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     */
+    private $carpoolProofs;
+
+    /**
      * @var Matching|null Related matching for a round trip (return or outward journey).
      * Not persisted : used only to get the return trip information.
      * @Groups("write")
@@ -249,6 +257,7 @@ class Ask
     {
         $this->waypoints = new ArrayCollection();
         $this->askHistories = new ArrayCollection();
+        $this->carpoolProofs = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -468,6 +477,34 @@ class Ask
             // set the owning side to null (unless already changed)
             if ($askHistory->getAsk() === $this) {
                 $askHistory->setAsk(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getCarpoolProofs()
+    {
+        return $this->carpoolProofs->getValues();
+    }
+    
+    public function addCarpoolProof(CarpoolProof $carpoolProof): self
+    {
+        if (!$this->carpoolProofs->contains($carpoolProof)) {
+            $this->carpoolProofs[] = $carpoolProof;
+            $carpoolProof->setAsk($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeCarpoolProof(CarpoolProof $carpoolProof): self
+    {
+        if ($this->carpoolProofs->contains($carpoolProof)) {
+            $this->carpoolProofs->removeElement($carpoolProof);
+            // set the owning side to null (unless already changed)
+            if ($carpoolProof->getAsk() === $this) {
+                $carpoolProof->setAsk(null);
             }
         }
         
