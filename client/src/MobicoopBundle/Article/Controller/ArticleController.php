@@ -23,13 +23,12 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Article\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Article;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Mobicoop\Bundle\MobicoopBundle\Article\Service\ArticleManager;
-use PhpParser\Node\Expr\Cast\Int_;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Article;
 
 /**
  * Controller class for articles actions.
@@ -56,15 +55,7 @@ class ArticleController extends AbstractController
      */
     public function showProject(ArticleManager $articleManager)
     {
-        $article = $articleManager->getArticle(self::PROJECT);
-        $reponseofmanager= $this->handleManagerReturnValue($article);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $this->denyAccessUnlessGranted('show', $article);
-        return $this->render('@Mobicoop/article/article.html.twig', [
-            'article' => $article,
-        ]);
+        return $this->showArticle($articleManager->getArticle(self::PROJECT));
     }
 
     /**
@@ -73,15 +64,7 @@ class ArticleController extends AbstractController
      */
     public function showCgu(ArticleManager $articleManager)
     {
-        $article = $articleManager->getArticle(self::CGU);
-        $reponseofmanager= $this->handleManagerReturnValue($article);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $this->denyAccessUnlessGranted('show', $article);
-        return $this->render('@Mobicoop/article/article.html.twig', [
-            'article' => $article,
-        ]);
+        return $this->showArticle($articleManager->getArticle(self::CGU));
     }
 
     /**
@@ -90,15 +73,7 @@ class ArticleController extends AbstractController
      */
     public function showNews(ArticleManager $articleManager)
     {
-        $article = $articleManager->getArticle(self::NEWS);
-        $reponseofmanager= $this->handleManagerReturnValue($article);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $this->denyAccessUnlessGranted('show', $article);
-        return $this->render('@Mobicoop/article/article.html.twig', [
-            'article' => $article,
-        ]);
+        return $this->showArticle($articleManager->getArticle(self::NEWS));
     }
 
     /**
@@ -107,15 +82,7 @@ class ArticleController extends AbstractController
      */
     public function showDataPolicy(ArticleManager $articleManager)
     {
-        $article = $articleManager->getArticle(self::DATA_POLICY);
-        $reponseofmanager= $this->handleManagerReturnValue($article);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $this->denyAccessUnlessGranted('show', $article);
-        return $this->render('@Mobicoop/article/article.html.twig', [
-            'article' => $article,
-        ]);
+        return $this->showArticle($articleManager->getArticle(self::DATA_POLICY));
     }
 
     /**
@@ -124,15 +91,7 @@ class ArticleController extends AbstractController
      */
     public function showInsurancePolicy(ArticleManager $articleManager)
     {
-        $article = $articleManager->getArticle(self::INSURANCE_POLICY);
-        $reponseofmanager= $this->handleManagerReturnValue($article);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $this->denyAccessUnlessGranted('show', $article);
-        return $this->render('@Mobicoop/article/article.html.twig', [
-            'article' => $article,
-        ]);
+        return $this->showArticle($articleManager->getArticle(self::INSURANCE_POLICY));
     }
 
     /**
@@ -141,15 +100,7 @@ class ArticleController extends AbstractController
      */
     public function showHistroy(ArticleManager $articleManager)
     {
-        $article = $articleManager->getArticle(self::HISTORY);
-        $reponseofmanager= $this->handleManagerReturnValue($article);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $this->denyAccessUnlessGranted('show', $article);
-        return $this->render('@Mobicoop/article/article.html.twig', [
-            'article' => $article,
-        ]);
+        return $this->showArticle($articleManager->getArticle(self::HISTORY));
     }
 
     /**
@@ -158,15 +109,7 @@ class ArticleController extends AbstractController
      */
     public function showActors(ArticleManager $articleManager)
     {
-        $article = $articleManager->getArticle(self::ACTORS);
-        $reponseofmanager= $this->handleManagerReturnValue($article);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $this->denyAccessUnlessGranted('show', $article);
-        return $this->render('@Mobicoop/article/article.html.twig', [
-            'article' => $article,
-        ]);
+        return $this->showArticle($articleManager->getArticle(self::ACTORS));
     }
 
     /**
@@ -175,15 +118,7 @@ class ArticleController extends AbstractController
      */
     public function showSolidaryCarpool(ArticleManager $articleManager)
     {
-        $article = $articleManager->getArticle(self::SOLIDARY_CARPOOL);
-        $reponseofmanager= $this->handleManagerReturnValue($article);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $this->denyAccessUnlessGranted('show', $article);
-        return $this->render('@Mobicoop/article/article.html.twig', [
-            'article' => $article,
-        ]);
+        return $this->showArticle($articleManager->getArticle(self::SOLIDARY_CARPOOL));
     }
 
     /**
@@ -192,15 +127,7 @@ class ArticleController extends AbstractController
      */
     public function showBecomePartner(ArticleManager $articleManager)
     {
-        $article = $articleManager->getArticle(self::BECOME_PARTNER);
-        $reponseofmanager= $this->handleManagerReturnValue($article);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $this->denyAccessUnlessGranted('show', $article);
-        return $this->render('@Mobicoop/article/article.html.twig', [
-            'article' => $article,
-        ]);
+        return $this->showArticle($articleManager->getArticle(self::BECOME_PARTNER));
     }
 
     /**
@@ -209,12 +136,22 @@ class ArticleController extends AbstractController
      */
     public function showFAQ(ArticleManager $articleManager)
     {
-        $article = $articleManager->getArticle(self::FAQ);
+        return $this->showArticle($articleManager->getArticle(self::FAQ));
+    }
+
+    /**
+     * Show an article
+     *
+     * @param Article $article The article to show
+     * @return void
+     */
+    private function showArticle(Article $article)
+    {
         $reponseofmanager= $this->handleManagerReturnValue($article);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
-        $this->denyAccessUnlessGranted('show', $article);
+        $this->denyAccessUnlessGranted('article_show', $article);
         return $this->render('@Mobicoop/article/article.html.twig', [
             'article' => $article,
         ]);

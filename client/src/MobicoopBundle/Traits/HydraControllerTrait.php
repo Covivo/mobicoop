@@ -1,10 +1,4 @@
 <?php
-
-namespace Mobicoop\Bundle\MobicoopBundle\Traits;
-
-use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -25,6 +19,11 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  *    Licence MOBICOOP described in the file
  *    LICENSE
  **************************/
+
+namespace Mobicoop\Bundle\MobicoopBundle\Traits;
+
+use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 trait HydraControllerTrait
 {

@@ -23,6 +23,9 @@
 
 namespace App\Security\EventListener;
 
+use App\Right\Service\PermissionManager;
+use App\User\Entity\User;
+use App\App\Entity\App;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -37,13 +40,15 @@ class JWTCreatedListener
      * @var RequestStack
      */
     private $requestStack;
+    private $permissionManager;
 
     /**
      * @param RequestStack $requestStack
      */
-    public function __construct(RequestStack $requestStack)
+    public function __construct(RequestStack $requestStack, PermissionManager $permissionManager)
     {
         $this->requestStack = $requestStack;
+        $this->permissionManager = $permissionManager;
     }
 
     /**
@@ -55,12 +60,18 @@ class JWTCreatedListener
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        $payload       = $event->getData();
+        $payload = $event->getData();
+
+        /**
+         * @var User|App $user
+         */
         $user = $event->getUser();
         $payload['id'] = $user->getId();
+        if ($user instanceof User) {
+            $payload['permissions'] = $this->permissionManager->getUserPermissions($user);
+        }
         $event->setData($payload);
-        
-        $header        = $event->getHeader();
+        $header = $event->getHeader();
         $header['cty'] = 'JWT';
 
         $event->setHeader($header);

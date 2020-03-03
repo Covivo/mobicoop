@@ -426,7 +426,6 @@ export default {
 
     },
     contact(params) {
-      // console.log(params);
       axios.post(this.$t("contactUrl"), params,
         {
           headers:{

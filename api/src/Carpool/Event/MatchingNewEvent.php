@@ -23,7 +23,7 @@
 
 namespace App\Carpool\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use App\Carpool\Entity\Matching;
 use App\User\Entity\User;
 

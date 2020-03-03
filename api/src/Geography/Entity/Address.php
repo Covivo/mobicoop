@@ -23,6 +23,7 @@
 
 namespace App\Geography\Entity;
 
+use App\Community\Entity\Community;
 use App\Event\Entity\Event;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -52,7 +53,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get",
  *          "search"={
  *              "method"="GET",
  *              "path"="/addresses/search",
@@ -71,7 +71,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *                         "type" = "string",
  *                         "description" = "The geographic token authorization"
  *                     }
- *                   }
+ *                  }
  *              }
  *          },
  *          "reverse"={
@@ -100,6 +100,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})
  */
+
 class Address
 {
     const DEFAULT_ID = 999999999999;
@@ -162,7 +163,7 @@ class Address
      * @var string|null The locality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","readUser","readEvent","results","write","pt","mass","massCompute","threads","thread","externalJourney"})
+     * @Groups({"read","readUser","readEvent","results","write","pt","mass","massCompute","threads","thread","externalJourney","readCommunity"})
      * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
      */
     private $addressLocality;
@@ -307,6 +308,14 @@ class Address
     private $event;
 
     /**
+     * @var Community|null The community of the address.
+     *
+     * @ORM\OneToOne(targetEntity="App\Community\Entity\Community", mappedBy="address")
+     * @Groups({"read"})
+     */
+    private $community;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -328,6 +337,13 @@ class Address
      * @Groups({"read"})
      */
     private $icon;
+
+    /**
+     * @var array|null The provider of the address
+     *
+     * @Groups({"read"})
+     */
+    private $providedBy;
 
     public function __construct($id = null)
     {
@@ -622,6 +638,16 @@ class Address
         $this->icon = $icon;
     }
 
+    public function getProvidedBy(): ?string
+    {
+        return $this->providedBy;
+    }
+
+    public function setProvidedBy(?string $providedBy)
+    {
+        $this->providedBy = $providedBy;
+    }
+
     // DOCTRINE EVENTS
     
     /**
@@ -665,6 +691,18 @@ class Address
     public function setEvent(?Event $event): self
     {
         $this->event = $event;
+
+        return $this;
+    }
+
+    public function getCommunity(): ?Community
+    {
+        return $this->community;
+    }
+
+    public function setCommunity(?Community $community): self
+    {
+        $this->community = $community;
 
         return $this;
     }

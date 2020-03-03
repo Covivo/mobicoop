@@ -11,6 +11,14 @@
             "text": "J'accepte ",
             "link": "la charte de la plateforme et sa politique de protection des données",
             "route": "/cgu"
+        },
+        "step":"Etape",
+        "steps":{
+            "1":"Identifiants",
+            "2":"Identité",
+            "3":"Genre",
+            "4":"Date de naissance",
+            "5":"Ville de résidence"
         }
     },
     "en":{
@@ -25,6 +33,14 @@
             "text": "I accept ",
             "link": "the platform chart and its data protection policy",
             "route": "/cgu"
+        },
+        "step":"Step",
+        "steps":{
+            "1":"Credentials",
+            "2":"Identity",
+            "3":"Gender",
+            "4":"Birthdate",
+            "5":"Home town"
         }
     }
 }

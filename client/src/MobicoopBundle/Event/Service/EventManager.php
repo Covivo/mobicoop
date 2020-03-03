@@ -199,16 +199,16 @@ class EventManager
     }
 
     /**
-     * Undocumented function
+     * Get the proposals of an event
      *
      * @param integer $id
      * @return array|object
      * @throws \ReflectionException
      */
-    public function getProposals(int $id)
+    public function getAds(int $id)
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
-        $proposals = $this->dataProvider->getSubCollection($id, "proposal", "proposals");
+        $proposals = $this->dataProvider->getSubCollection($id, "ad", "ads");
         return $proposals->getValue();
     }
 }

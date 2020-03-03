@@ -54,6 +54,17 @@ class RoleRepository
     }
 
     /**
+    * Find role by name.
+    *
+    * @param string $name
+    * @return Role
+    */
+    public function findByName(string $name)
+    {
+        return $this->repository->findOneBy(['name'=>$name]);
+    }
+
+    /**
      * Find the children of a given Role.
      *
      * @param Role $role

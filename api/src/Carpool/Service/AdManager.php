@@ -34,10 +34,12 @@ use App\Event\Service\EventManager;
 use App\Geography\Entity\Address;
 use App\Carpool\Exception\AdException;
 use App\Carpool\Repository\ProposalRepository;
+use App\Carpool\Repository\CriteriaRepository;
 use App\User\Exception\UserNotFoundException;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use App\Carpool\Service\ProposalMatcher;
 
 /**
  * Ad manager service.
@@ -55,6 +57,8 @@ class AdManager
     private $params;
     private $logger;
     private $proposalRepository;
+    private $criteriaRepository;
+    private $proposalMatcher;
 
     /**
      * Constructor.
@@ -62,7 +66,7 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -73,6 +77,8 @@ class AdManager
         $this->logger = $logger;
         $this->params = $params;
         $this->proposalRepository = $proposalRepository;
+        $this->criteriaRepository = $criteriaRepository;
+        $this->proposalMatcher = $proposalMatcher;
     }
     
     /**
@@ -628,7 +634,31 @@ class AdManager
     }
 
     /**
-     * get all ads od a user
+     * Get an ad for permission check.
+     * Returns the ad based on the proposal without results.
+     *
+     * @param int $id       The ad id to get
+     * @return Ad|null
+     */
+    public function getAdForPermission(int $id)
+    {
+        $ad = new Ad();
+        if ($proposal = $this->proposalManager->get($id)) {
+            $ad->setId($id);
+            $ad->setFrequency($proposal->getCriteria()->getFrequency());
+            $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
+            $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
+            $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
+            if (!is_null($proposal->getUser())) {
+                $ad->setUserId($proposal->getUser()->getId());
+            }
+            return $ad;
+        }
+        return null;
+    }
+
+    /**
+     * Get all ads of a user
      *
      * @param integer $userId
      * @return void
@@ -652,10 +682,59 @@ class AdManager
     }
 
     /**
-     * make an ad from a proposal
+     * Get all ads of a Community
      *
-     * @param Proposal $proposal
-     * @param integer $userId
+     * @param integer $communityId Id of the Community
+     * @return void
+     */
+    public function getAdsOfCommunity(int $communityId)
+    {
+        $ads = [];
+        $community = $this->communityManager->getCommunity($communityId);
+        
+        
+        $refIdProposals = [];
+        foreach ($community->getProposals() as $proposal) {
+            if (!in_array($proposal->getId(), $refIdProposals) && !$proposal->isPrivate()) {
+                $ads[] = $this->makeAdForCommunityOrEvent($proposal);
+                if (!is_null($proposal->getProposalLinked())) {
+                    $refIdProposals[$proposal->getId()] = $proposal->getProposalLinked()->getId();
+                }
+            }
+        }
+        return $ads;
+    }
+
+    /**
+     * Get all ads of an Event
+     *
+     * @param integer $eventId Id of the Event
+     * @return void
+     */
+    public function getAdsOfEvent(int $eventId)
+    {
+        $ads = [];
+        $event = $this->eventManager->getEvent($eventId);
+        
+        
+        $refIdProposals = [];
+        foreach ($event->getProposals() as $proposal) {
+            if (!in_array($proposal->getId(), $refIdProposals) && !$proposal->isPrivate()) {
+                $ads[] = $this->makeAdForCommunityOrEvent($proposal);
+                if (!is_null($proposal->getProposalLinked())) {
+                    $refIdProposals[$proposal->getId()] = $proposal->getProposalLinked()->getId();
+                }
+            }
+        }
+        return $ads;
+    }
+
+
+    /**
+     * Make an ad from a proposal
+     *
+     * @param Proposal $proposal The base proposal of the ad
+     * @param integer $userId The userId who made the proposal
      * @return void
      */
     private function makeAd($proposal, $userId)
@@ -741,6 +820,93 @@ class AdManager
         return $ad;
     }
 
+
+    /**
+     * make an ad from a proposal
+     *
+     * @param Proposal $proposal Base Proposal of the Ad
+     * @return void
+     */
+    private function makeAdForCommunityOrEvent(Proposal $proposal)
+    {
+        $ad = new Ad();
+                
+        $ad->setId($proposal->getId());
+        $ad->setUser($proposal->getUser());
+        $ad->setFrequency($proposal->getCriteria()->getFrequency());
+        $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
+        $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
+        $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
+        $ad->setOutwardWaypoints($proposal->getWaypoints());
+        $ad->setOutwardDate($proposal->getCriteria()->getFromDate());
+        $ad->setPaused($proposal->isPaused());
+
+        if ($proposal->getCriteria()->getFromTime()) {
+            $ad->setOutwardTime($ad->getOutwardDate()->format('Y-m-d').' '.$proposal->getCriteria()->getFromTime()->format('H:i:s'));
+        } else {
+            $ad->setOutwardTime(null);
+        }
+
+
+        $ad->setOutwardLimitDate($proposal->getCriteria()->getToDate());
+        $ad->setOneWay(true);
+        $ad->setSolidary($proposal->getCriteria()->isSolidary());
+        $ad->setSolidaryExclusive($proposal->getCriteria()->isSolidaryExclusive());
+
+        
+        // set return if twoWays ad
+        if ($proposal->getProposalLinked()) {
+            $ad->setReturnWaypoints($proposal->getProposalLinked()->getWaypoints());
+            $ad->setReturnDate($proposal->getProposalLinked()->getCriteria()->getFromDate());
+            
+            if ($proposal->getProposalLinked()->getCriteria()->getFromTime()) {
+                $ad->setReturnTime($ad->getReturnDate()->format('Y-m-d').' '.$proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i:s'));
+            } else {
+                $ad->setReturnTime(null);
+            }
+
+
+
+            $ad->setReturnLimitDate($proposal->getProposalLinked()->getCriteria()->getToDate());
+            $ad->setOneWay(false);
+        }
+
+        // set schedule if regular
+        $schedule = [];
+        if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+            $schedule['mon'] = $proposal->getCriteria()->isMonCheck();
+            $schedule['monOutwardTime'] = $proposal->getCriteria()->getMonTime();
+            $schedule['monReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getMonTime() : null;
+            
+            $schedule['tue'] = $proposal->getCriteria()->isTueCheck();
+            $schedule['tueOutwardTime'] = $proposal->getCriteria()->getTueTime();
+            $schedule['tueReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getTueTime() : null;
+
+            $schedule['wed'] = $proposal->getCriteria()->isWedCheck();
+            $schedule['wedOutwardTime'] = $proposal->getCriteria()->getWedTime();
+            $schedule['wedReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getWedTime() : null;
+
+            $schedule['thu'] = $proposal->getCriteria()->isThuCheck();
+            $schedule['thuOutwardTime'] = $proposal->getCriteria()->getThuTime();
+            $schedule['thuReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getThuTime() : null;
+
+            $schedule['fri'] = $proposal->getCriteria()->isFriCheck();
+            $schedule['friOutwardTime'] = $proposal->getCriteria()->getFriTime();
+            $schedule['friReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getFriTime() : null;
+
+            $schedule['sat'] = $proposal->getCriteria()->isSatCheck();
+            $schedule['satOutwardTime'] = $proposal->getCriteria()->getSatTime();
+            $schedule['satReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getSatTime() : null;
+
+            $schedule['sun'] = $proposal->getCriteria()->isSunCheck();
+            $schedule['sunOutwardTime'] = $proposal->getCriteria()->getSunTime();
+            $schedule['sunReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getSunTime() : null;
+        }
+        $ad->setSchedule($schedule);
+
+        return $ad;
+    }
+
     /**
     * Update an ad.
     *
@@ -754,5 +920,25 @@ class AdManager
 
         $ad = $this->makeAd($proposal, $proposal->getUser()->getId());
         return $ad;
+    }
+
+    /**
+     * Update all carpools limits (i.e max_detour_duration, max_detour_distance...)
+     */
+    public function updateCarpoolsLimits()
+    {
+        set_time_limit(7200);
+        $criteria = $this->criteriaRepository->findDrivers();
+        /**
+         * @var Criteria $criterion
+         */
+        foreach ($criteria as $criterion) {
+            $criterion->setMaxDetourDistance($criterion->getDirectionDriver()->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
+            $criterion->setMaxDetourDuration($criterion->getDirectionDriver()->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
+            $this->entityManager->persist($criterion);
+        }
+        $this->entityManager->flush();
+
+        return ['yay!'];
     }
 }

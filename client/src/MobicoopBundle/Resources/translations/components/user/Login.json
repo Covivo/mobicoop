@@ -12,6 +12,7 @@
         "errorCredentials":"Bad username or password.",
         "errorCredentialsFacebook":"Error in connection by Facebook",
         "userFBNotFound":"This facebook user is not registered on the platform",
-        "urlRecovery":"Forgot password ?"
+        "urlRecovery":"/utilisateur/mot-de-passe/recuperation",
+        "textRecovery":"Forgot password ?"
     }
 }

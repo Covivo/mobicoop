@@ -61,17 +61,25 @@ services:
             $carpoolRDEXJourneys: '%env(bool:CARPOOL_RDEX_JOURNEYS)%'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
         resource: '@MobicoopBundle/Carpool/Service/*'
-    Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager:
-        arguments:
-            $marginTime: '%env(resolve:CARPOOL_MARGIN_TIME)%'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Security\:
         resource: '@MobicoopBundle/Carpool/Security/*'
+
+    # Communication
+    Mobicoop\Bundle\MobicoopBundle\Communication\Controller\:
+        resource: '@MobicoopBundle/Communication/Controller/*'
+        arguments:
+            $contactTypes: '%env(resolve:CONTACT_TYPES)%'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\Communication\Service\:
+        resource: '@MobicoopBundle/Communication/Service/*'
+    Mobicoop\Bundle\MobicoopBundle\Communication\Security\:
+        resource: '@MobicoopBundle/Communication/Security/*'
 
     # Community
     Mobicoop\Bundle\MobicoopBundle\Community\Controller\:
         resource: '@MobicoopBundle/Community/Controller/*'
         arguments:
-            $createFromFront: '%env(resolve:COMMUNITIES_CREATE_FROM_FRONT)%'
+            $createFromFront: '%env(bool:COMMUNITIES_CREATE_FROM_FRONT)%'
     Mobicoop\Bundle\MobicoopBundle\Community\Service\:
         resource: '@MobicoopBundle/Community/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Community\Security\:
@@ -127,10 +135,24 @@ services:
     # Permission
     Mobicoop\Bundle\MobicoopBundle\Permission\Service\:
         resource: '@MobicoopBundle/Permission/Service/*'
+    
+    # Price
+    Mobicoop\Bundle\MobicoopBundle\Price\Controller\:
+        resource: '@MobicoopBundle/Price/Controller/*'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\Price\Service\:
+        resource: '@MobicoopBundle/Price/Service/*'
 
     # Public transport
     Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service\:
         resource: '@MobicoopBundle/PublicTransport/Service/*'
+
+    # Solidary
+    Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\:
+        resource: '@MobicoopBundle/Solidary/Controller/*'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\Solidary\Service\:
+        resource: '@MobicoopBundle/Solidary/Service/*'
 
     # User
     Mobicoop\Bundle\MobicoopBundle\User\Controller\:
@@ -145,26 +167,3 @@ services:
         resource: '@MobicoopBundle/User/Service/*'
     Mobicoop\Bundle\MobicoopBundle\User\Security\:
         resource: '@MobicoopBundle/User/Security/*'
-
-    # Communication
-    Mobicoop\Bundle\MobicoopBundle\Communication\Controller\:
-        resource: '@MobicoopBundle/Communication/Controller/*'
-        arguments:
-            $contactTypes: '%env(resolve:CONTACT_TYPES)%'
-        tags: ['controller.service_arguments']
-    Mobicoop\Bundle\MobicoopBundle\Communication\Service\:
-        resource: '@MobicoopBundle/Communication/Service/*'
-
-    # Solidary
-    Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\:
-        resource: '@MobicoopBundle/Solidary/Controller/*'
-        tags: ['controller.service_arguments']
-    Mobicoop\Bundle\MobicoopBundle\Solidary\Service\:
-        resource: '@MobicoopBundle/Solidary/Service/*'
-
-    # Price
-    Mobicoop\Bundle\MobicoopBundle\Price\Controller\:
-        resource: '@MobicoopBundle/Price/Controller/*'
-        tags: ['controller.service_arguments']
-    Mobicoop\Bundle\MobicoopBundle\Price\Service\:
-        resource: '@MobicoopBundle/Price/Service/*'
