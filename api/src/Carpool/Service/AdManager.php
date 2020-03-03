@@ -125,6 +125,9 @@ class AdManager
         // the proposal is private if it's a search only ad
         $outwardProposal->setPrivate($ad->isSearch() ? true : false);
 
+        // If the proposal is external (i.e Rdex request...) we set it
+        $outwardProposal->setExternal($ad->getExternal());
+
         // we check if it's a round trip
         if ($ad->isOneWay()) {
             // the ad has explicitly been set to one way

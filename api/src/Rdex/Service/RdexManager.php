@@ -31,6 +31,7 @@ use App\Rdex\Entity\RdexDriver;
 use App\Rdex\Entity\RdexPassenger;
 use App\Rdex\Entity\RdexAddress;
 use App\Carpool\Entity\Criteria;
+use App\Carpool\Entity\Result;
 use App\Carpool\Service\AdManager;
 use App\Rdex\Entity\RdexDay;
 use App\Rdex\Entity\RdexTripDate;
@@ -46,10 +47,12 @@ use Symfony\Component\HttpFoundation\Request;
 class RdexManager
 {
     private const RDEX_CONFIG_FILE = "../config/rdex/clients.json";
-    private const RDEX_OPERATOR_KEY = "rdexOperator";
+    private const RDEX_OPERATOR_FILE = "../config/rdex/operator.json";
     private const RDEX_HASH = "sha256";         // hash algorithm
     private const MIN_TIMESTAMP_MINUTES = 60;   // accepted minutes for timestamp in the past
     private const MAX_TIMESTAMP_MINUTES = 60;   // accepted minutes for timestamp in the future
+    private const IMAGE_VERSION = "square_250";
+
     // false for testing purpose only
     private const CHECK_SIGNATURE = false;
     
@@ -57,6 +60,7 @@ class RdexManager
     private $adManager;
 
     private $clientKey; // Current client key in configuration file (clients.json)
+    private $operator; // Operator information (operator.json)
     
     /**
      * Constructor.
@@ -170,6 +174,14 @@ class RdexManager
             }
         }
 
+        // we check the operator file. It's the id of the site and it will be sent by RDEX response
+        // we check if the client exists in config
+        if (!file_exists(self::RDEX_OPERATOR_FILE)) {
+            return new RdexError(null, RdexError::ERROR_MISSING_OPERATOR);
+        } else {
+            $this->operator = json_decode(file_get_contents(self::RDEX_OPERATOR_FILE), true);
+        }
+
         // we check the signature
         if (self::CHECK_SIGNATURE) {
             $signatureValid = false;
@@ -277,7 +289,7 @@ class RdexManager
         if (is_null($this->clientKey)) {
             return new RdexError("apikey", RdexError::ERROR_ACCESS_DENIED, "Invalid apikey");
         }
-        
+
         $ad = $this->adManager->getAdForRdex(
             $parameters["driver"]["state"],
             $parameters["passenger"]["state"],
@@ -291,27 +303,68 @@ class RdexManager
             $this->clientKey
         );
 
+        /**
+         * @var Result $result
+         */
         foreach ($ad->getResults() as $result) {
-            die;
-            // @todo : create a rule for uuid creation
-            $journey = new RdexJourney($proposal->getId());
-            $journey->setOperator($operator['name']);
-            $journey->setOrigin($operator['origin']);
-            $journey->setUrl($operator['url']);
-            // by default the type is one-way
-            // if the proposal is the return of a round trip, it is considered as a one-way
-            // the type will be round trip only if the proposal type is outward
+            $journey = new RdexJourney($result->getId());
+            $journey->setOperator($this->operator['name']);
+            $journey->setOrigin($this->operator['origin']);
+            
+            /** The url should be the detail of a the matching */
+            $journey->setUrl($this->operator['url']);
+            
             $journey->setType(RdexJourney::TYPE_ONE_WAY);
-            if ($proposal->getJourneyType() == Proposal::JOURNEY_TYPE_OUTWARD) {
+            if ($result->hasReturn()) {
                 $journey->setType(RdexJourney::TYPE_ROUND_TRIP);
             }
-            $driver = new RdexDriver($proposal->getUSer()->getId());
-            // @todo : add alias to user entity
-            $driver->setAlias($proposal->getUser()->getGivenName());
-            $driver->setGender($proposal->getUser()->getGender());
-            $passenger = new RdexPassenger($proposal->getUSer()->getId());
-            $passenger->setAlias($proposal->getUser()->getGivenName());
-            $passenger->setGender($proposal->getUser()->getGender());
+
+            $carpoolerIsDriver = false;
+            $carpoolerIsPassenger = false;
+            if (!is_null($result->getResultPassenger()) && is_null($result->getResultDriver())) {
+                $carpoolerIsDriver = true;
+            } elseif (is_null($result->getResultPassenger()) && !is_null($result->getResultDriver())) {
+                $carpoolerIsPassenger = true;
+            } elseif (!is_null($result->getResultPassenger()) && !is_null($result->getResultDriver())) {
+                $carpoolerIsDriver = true;
+                $carpoolerIsPassenger = true;
+            } else {
+                continue;
+            }
+
+            
+            if ($carpoolerIsDriver) {
+                $driver = new RdexDriver($result->getCarpooler()->getId());
+                $driver->setUuid($result->getCarpooler()->getId());
+                $driver->setAlias($result->getCarpooler()->getGivenName()." ".$result->getCarpooler()->getShortFamilyName());
+                
+                ($result->getCarpooler()->getGender()==1) ? $driver->setGender('female') : ($result->getCarpooler()->getGender()==2) ? $driver->setGender('male') : null;
+                
+                $driver->setSeats($result->getSeatsDriver());
+                $driver->setState($result->getCarpooler()->getStatus());
+
+                $driver->setImage($result->getCarpooler()->getImages()[0]->getVersions()[self::IMAGE_VERSION]);
+                $journey->setDriver($driver);
+            }
+
+            if ($carpoolerIsPassenger) {
+                $passenger = new RdexPassenger($result->getCarpooler()->getId());
+                $passenger->setUuid($result->getCarpooler()->getId());
+                $passenger->setAlias($result->getCarpooler()->getGivenName()." ".$result->getCarpooler()->getShortFamilyName());
+                
+                ($result->getCarpooler()->getGender()==1) ? $passenger->setGender('female') : ($result->getCarpooler()->getGender()==2) ? $passenger->setGender('male') : null;
+                
+                $passenger->setState($result->getCarpooler()->getStatus());
+
+                $passenger->setImage($result->getCarpooler()->getImages()[0]->getVersions()[self::IMAGE_VERSION]);
+                $journey->setPassenger($passenger);
+            }
+
+
+            /** These two lines for Development purpose !!!! */
+            $returnArray[] = $journey;
+            continue;
+
             if ($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER) {
                 $driver->setSeats($proposal->getCriteria()->getSeatsDriver());
                 $driver->setState(1);
