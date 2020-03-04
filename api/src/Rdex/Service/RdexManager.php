@@ -400,18 +400,23 @@ class RdexManager
             $journey->setFrequency(($result->getFrequency()==1) ? 'puntual' : 'regular');
             
             
+            $days = new RdexDay();
+            // there's always an outward
+            $outward = new RdexTripDate();
+            
+            if ($result->isMonCheck()) {
+                $days->setMonday(1);
+                $rdexDayTime = new RdexDayTime();
+                $rdexDayTime->setMintime();
+                $rdexDayTime->setMaxtime();
+                $outward->setMonday($rdexDayTime);
+            }
+
             /** These two lines for Development purpose !!!! */
             $returnArray[] = $journey;
             continue;
 
-            // if we have 'from' and 'to' we don't check for any other point
-            if (!is_null($journey->getFrom()) && !is_null($journey->getTo())) {
-                break;
-            }
-            
-            $days = new RdexDay();
-            // there's always an outward
-            $outward = new RdexTripDate();
+
             $outward->setMindate($proposal->getCriteria()->getFromDate()->format("Y-m-d"));
             if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                 $journey->setFrequency(RdexJourney::FREQUENCY_PUNCTUAL);
