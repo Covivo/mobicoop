@@ -304,6 +304,14 @@ class Proposal
      * @MaxDepth(1)
      */
     private $event;
+
+    /**
+     * @var Position The last position given for dynamic carpooling.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Position", mappedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @Groups({"read","results","write","thread",})
+     */
+    private $position;
         
     public function __construct($id=null)
     {
@@ -710,6 +718,21 @@ class Proposal
     {
         $this->results = $results;
 
+        return $this;
+    }
+
+    public function getPosition(): ?Position
+    {
+        return $this->position;
+    }
+
+    public function setPosition(Criteria $position): self
+    {
+        if ($position->getProposal() !== $this) {
+            $position->setProposal($this);
+        }
+        $this->position = $position;
+        
         return $this;
     }
 

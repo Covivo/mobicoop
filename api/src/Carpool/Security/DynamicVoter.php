@@ -28,6 +28,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Right\Service\PermissionManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class DynamicVoter extends Voter
 {
@@ -72,8 +73,9 @@ class DynamicVoter extends Voter
         $requester = $token->getUser();
 
         switch ($attribute) {
-            case self::DYNAMIC_READ:
             case self::DYNAMIC_CREATE:
+                return $this->canCreatedynamic($requester);
+            case self::DYNAMIC_READ:
             case self::DYNAMIC_UPDATE:
             case self::DYNAMIC_ASK_READ:
             case self::DYNAMIC_ASK_CREATE:
@@ -82,5 +84,10 @@ class DynamicVoter extends Voter
         }
 
         throw new \LogicException('This code should not be reached!');
+    }
+
+    private function canCreateDynamic(UserInterface $requester)
+    {
+        return $this->permissionManager->checkPermission('ad_create', $requester);
     }
 }

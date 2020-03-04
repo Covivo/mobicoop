@@ -323,7 +323,7 @@ class Image
     /**
      * @var Campaign|null The campaign associated with the image.
      *
-     * ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign", inversedBy="images", cascade="persist")
+     * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign", inversedBy="images", cascade="persist")
      */
     private $campaign;
 

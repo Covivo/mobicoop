@@ -25,22 +25,25 @@ namespace App\Carpool\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\Geography\Entity\Address;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\User\Entity\User;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\User\Constraints\UserIdProvided;
 
 /**
  * Carpooling : an dynamic ad.
  *
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"readDynamic","results"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeDynamic"}}
+ *          "normalization_context"={"groups"={"readDynamic"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeDynamic"}},
+ *          "validation_groups"={"writeDynamic"}
  *      },
  *      collectionOperations={
  *          "get",
  *          "post"={
  *              "method"="POST",
- *              "path"="/dynamics",
  *              "security_post_denormalize"="is_granted('dynamic_create',object)"
  *          },
  *          "post_ask"={
@@ -52,14 +55,15 @@ use App\User\Entity\User;
  *      itemOperations={
  *          "get"={
  *              "method"="GET",
- *              "path"="/dynamics/{id}",
  *              "read"=false,
  *              "security"="is_granted('dynamic_read',object)"
  *          },
  *          "put"={
  *              "method"="PUT",
- *              "path"="/dynamics/{id}",
  *              "read"=false,
+ *              "normalization_context"={"groups"={"updateDynamic"}},
+ *              "denormalization_context"={"groups"={"updateDynamic"}},
+ *              "validation_groups"={"updateDynamic"},
  *              "security"="is_granted('dynamic_update',object)"
  *          },
  *          "put_ask"={
@@ -89,7 +93,7 @@ class Dynamic
      * @var int The id of this dynamic ad.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readDynamic","writeDynamic"})
+     * @Groups({"readDynamic","updateDynamic"})
      */
     private $id;
 
@@ -97,23 +101,41 @@ class Dynamic
      * @var int The role for this ad.
      *
      * @Groups({"readDynamic","writeDynamic"})
+     * @Assert\NotBlank(groups={"writeDynamic"})
      */
     private $role;
 
     /**
-     * @var \DateTimeInterface The date of dynamic ad.
+     * @var \DateTimeInterface The date and time of the start of the dynamic ad (= date and time of the creation of the dynamic ad, automatically filled).
      *
-     * @Groups({"readDynamic","writeDynamic"})
+     * @Groups("readDynamic")
      */
     private $date;
 
     /**
-     * @var array|null The waypoints.
+     * @var array The waypoints.
      *
      * @Groups({"readDynamic","writeDynamic"})
+     * @Assert\NotBlank(groups={"writeDynamic"})
      */
     private $waypoints;
-    
+
+    /**
+     * @var string The last latitude given.
+     *
+     * @Groups("updateDynamic")
+     * @Assert\NotBlank(groups={"updateDynamic"})
+     */
+    private $latitude;
+
+    /**
+     * @var string The last longitude given.
+     *
+     * @Groups("updateDynamic")
+     * @Assert\NotBlank(groups={"updateDynamic"})
+     */
+    private $longitude;
+
     /**
     * @var string|null The price per km.
     *
@@ -145,58 +167,57 @@ class Dynamic
     /**
      * @var int|null The user id of the dynamic ad owner.
      *
-     * @Groups({"readDynamic","writeDynamic"})
+     * @UserIdProvided(groups={"writeDynamic"})
+     * @Groups("writeDynamic")
      */
     private $userId;
 
     /**
      * @var User|null The ad owner.
      *
-     * @Groups({"readDynamic","writeDynamic"})
+     * @Groups("readDynamic")
      */
     private $user;
     
     /**
      * @var array|null The carpool results.
      *
-     * @Groups("results")
+     * @Groups("readDynamic")
      */
     private $results;
 
     /**
-     * @var int|null The dynamic ad id for which the current ad is an ask.
+     * @var int|null The dynamic ad id for which the current ad is an ask (used when creating an ask for a dynamic ad).
      *
-     * @Groups({"readDynamic","writeDynamic"})
+     * @Groups("writeDynamic")
      */
     private $dynamicId;
 
     /**
-     * @var int|null The matching id related to the above ad id.
+     * @var int|null The matching id related to the above ad id (used when creating an ask for a dynamic ad).
      *
-     * @Groups({"readDynamic","writeDynamic"})
+     * @Groups("writeDynamic")
      */
     private $matchingId;
 
     /**
      * @var int The ask status if the ad concerns a given ask.
      *
-     * @Groups({"readDynamic","writeDynamic"})
+     * @Groups("writeDynamic")
      */
     private $askStatus;
 
     /**
      * @var int The ask id if the ad concerns a given ask.
      *
-     * @Groups({"readDynamic","writeDynamic"})
+     * @Groups("writeDynamic")
      */
     private $askId;
 
     /**
-     * @var int The Id of the proposal associated to the ad.
-     *
-     * @Groups({"readDynamic","writeDynamic"})
+     * @var Proposal The proposal associated with the dynamic ad.
      */
-    private $proposalId;
+    private $proposal;
 
     public function __construct()
     {
@@ -229,16 +250,36 @@ class Dynamic
         return $this;
     }
 
-    public function getWaypoints(): ?array
+    public function getWaypoints(): array
     {
         return $this->waypoints;
     }
     
-    public function setWaypoints(?array $waypoints): self
+    public function setWaypoints(array $waypoints): self
     {
         $this->waypoints = $waypoints;
         
         return $this;
+    }
+
+    public function getLatitude()
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude($latitude)
+    {
+        $this->latitude = $latitude;
+    }
+
+    public function getLongitude()
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude($longitude)
+    {
+        $this->longitude = $longitude;
     }
 
     public function getDate(): ?\DateTimeInterface
@@ -381,14 +422,14 @@ class Dynamic
         return $this;
     }
 
-    public function getProposalId(): ?int
+    public function getProposal(): ?Proposal
     {
-        return $this->proposalId;
+        return $this->proposal;
     }
 
-    public function setProposalId(?int $proposalId): self
+    public function setProposal(?Proposal $proposal): self
     {
-        $this->proposalId = $proposalId;
+        $this->proposal = $proposal;
 
         return $this;
     }

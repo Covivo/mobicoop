@@ -198,6 +198,7 @@ class Campaign
      * @var ArrayCollection The images of the campaign.
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="campaign", cascade="remove", orphanRemoval=true)
+     * @Groups({"read_campaign","write_campaign"})
      */
     private $images;
     

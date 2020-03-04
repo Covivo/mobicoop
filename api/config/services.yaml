@@ -114,6 +114,14 @@ services:
         tags:
             - { name: monolog.logger, channel: carpool }
 
+    App\Carpool\Service\DynamicManager:
+        arguments:
+            $params:
+                defaultSeatsDriver: '%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%'
+                defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
+        tags:
+            - { name: monolog.logger, channel: carpool }
+
     App\Carpool\Service\ProposalManager:
         arguments:
             $params:

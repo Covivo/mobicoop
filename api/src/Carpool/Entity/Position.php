@@ -26,6 +26,7 @@ namespace App\Carpool\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Dynamic carpooling : last position of a dynamic carpooler.
@@ -47,7 +48,8 @@ class Position
     /**
      * @var Proposal|null The proposal related to the position.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="positions")
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $proposal;
         
@@ -63,7 +65,7 @@ class Position
     /**
      * @var Direction|null Direction related to the dynamic carpool - updated at each position update.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $direction;

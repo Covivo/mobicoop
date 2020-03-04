@@ -248,6 +248,12 @@ class Direction
      * Used to avoid slow insert/updates for realtime operations.
      */
     private $saveGeoJson;
+
+    /**
+     * @var boolean Set the possibility to update the detail directly, instead of using an external system.
+     * Used for dynamic carpool where we can construct a direction from scratch (adding points on the fly).
+     */
+    private $detailUpdatable;
     
     public function __construct()
     {
@@ -573,6 +579,18 @@ class Direction
         return $this;
     }
 
+    public function isDetailUpdatable(): ?bool
+    {
+        return $this->detailUpdatable;
+    }
+
+    public function setDetailUpdatable(bool $detailUpdatable): self
+    {
+        $this->detailUpdatable = $detailUpdatable;
+
+        return $this;
+    }
+
     public function getDirectionString(string $delimiter=";")
     {
         return
@@ -651,7 +669,7 @@ class Direction
         if (!$this->hasSaveGeoJson()) {
             return;
         }
-        if (!is_null($this->getGeoJsonDetail())) {
+        if (!is_null($this->getGeoJsonDetail()) && !$this->isDetailUpdatable()) {
             return;
         }
         if (!is_null($this->getPoints())) {
