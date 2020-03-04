@@ -8,7 +8,7 @@
       :is-archived="isArchived"
       :has-accepted-ask="hasAtLeastOneAcceptedAsk"
       :has-ask="hasAtLeastOneAsk"
-      :ad-id="ad.outward.id"
+      :ad-id="ad.id"
       @ad-deleted="adDeleted"
       @pause-ad="pauseAd"
     />
@@ -26,11 +26,11 @@
     <v-card-actions class="py-0">
       <ad-footer
         v-if="!isPaused"
-        :id="ad.outward.id"
-        :seats="(isDriver) ? ad.outward.seatsDriver : ad.outward.seatsPassenger"
-        :price="(isDriver) ? ad.outward.outwardDriverPrice : ad.outward.outwardPassengerPrice"
+        :id="ad.id"
+        :seats="(isDriver) ? ad.seatsDriver : ad.seatsPassenger"
+        :price="(isDriver) ? ad.outwardDriverPrice : ad.outwardPassengerPrice"
         :id-message="lastMessageId"
-        :nb-matchings="ad.outward.results.length"
+        :nb-matchings="ad.results.length"
       />
     </v-card-actions>
   </v-card>
@@ -64,21 +64,21 @@ export default {
       hasAtLeastOneAsk: false,
       hasAtLeastOneAcceptedAsk: false,
       lastMessageId: null,
-      isPaused: this.ad.outward.paused
+      isPaused: this.ad.paused
     }
   },
   computed: {
     isDriver () {
-      return this.ad.outward.role === 1 || this.ad.outward.role === 3
+      return this.ad.role === 1 || this.ad.role === 3
     },
     isPassenger () {
-      return (this.ad.outward.role === 2 || this.ad.outward.role === 3) && this.ad.outward.solidaryExclusive != 1
+      return (this.ad.role === 2 || this.ad.role === 3) && this.ad.solidaryExclusive !== 1
     },
     isRegular () {
-      return this.ad.outward.frequency === 2;
+      return this.ad.frequency === 2;
     },
     hasReturn () {
-      return !this.ad.outward.oneWay;
+      return !this.ad.oneWay;
     }
   },
   mounted () {
@@ -86,7 +86,7 @@ export default {
   },
   methods: {
     checkAsks () {
-      this.ad.outward.results.forEach(result => {
+      this.ad.results.forEach(result => {
         if (result.pendingAsk) {
           this.hasAtLeastOneAsk = true;
         }

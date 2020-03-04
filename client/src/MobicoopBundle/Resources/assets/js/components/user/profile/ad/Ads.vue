@@ -13,7 +13,7 @@
             <v-container v-if="localAds.ongoing">
               <v-row
                 v-for="ad in localAds.ongoing"
-                :key="ad.outward.id"
+                :key="ad.id"
               >
                 <v-col cols="12">
                   <Ad
@@ -29,7 +29,7 @@
             <v-container v-if="localAds.archived">
               <v-row
                 v-for="ad in localAds.archived"
-                :key="ad.outward.id"
+                :key="ad.id"
               >
                 <v-col cols="12">
                   <Ad

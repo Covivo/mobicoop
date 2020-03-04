@@ -514,7 +514,7 @@ class UserManager
             "ongoing" => [],
             "archived" => []
         ];
-        
+
         foreach ($ads as $ad) {
             $isAlreadyInArray = false;
             
@@ -540,10 +540,7 @@ class UserManager
 
             $key = $date < $now ? 'archived' : 'ongoing';
 
-            $adsSanitized[$key][$ad["id"]]['outward'] = $ad;
-            if (!$ad['oneWay']) {
-                $adsSanitized[$key][$ad["id"]]['return'] = $ad;
-            }
+            $adsSanitized[$key][$ad["id"]] = $ad;
         }
         return $adsSanitized;
     }

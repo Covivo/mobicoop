@@ -17,22 +17,17 @@
             {{ $t("tabs.myAds") }}
           </v-tab>
           <v-tab-item value="myAds">
-            <MyAds :ads="ads" />
+            <Ads :ads="ads" />
           </v-tab-item>
-          <!-- <v-tab
+          <v-tab
             class="text-left justify-start ml-2 mr-5 title"
             href="#carpoolsAccepted"
           >
             {{ $t("tabs.carpoolsAccepted") }}
           </v-tab>
           <v-tab-item value="carpoolsAccepted">
-            <v-alert
-              type="info"
-              class="text-center"
-            >
-              En cours de développement
-            </v-alert>
-          </v-tab-item> -->
+            <carpools :accepted-carpools="acceptedCarpools" />
+          </v-tab-item>
           <v-tab
             class="text-left justify-start ml-2 mr-5 title"
             href="#myProfile"
@@ -81,7 +76,8 @@
 </template>
 <script>
 import UpdateProfile from "@components/user/profile/UpdateProfile";
-import MyAds from "@components/user/profile/ad/MyAds";
+import Ads from "@components/user/profile/ad/Ads";
+import Carpools from "@components/user/profile/carpool/Carpools";
 import Alerts from "@components/user/profile/Alerts";
 import CarpoolSettings from "@components/user/profile/CarpoolSettings";
 
@@ -97,9 +93,10 @@ export default {
   },
   components: {
     UpdateProfile,
-    MyAds,
+    Ads,
     Alerts,
-    CarpoolSettings
+    CarpoolSettings,
+    Carpools
   },
   props: {
     user: {
@@ -139,6 +136,10 @@ export default {
       default: ""
     },
     ads: {
+      type: Object,
+      default: () => {}
+    },
+    acceptedCarpools: {
       type: Object,
       default: () => {}
     },

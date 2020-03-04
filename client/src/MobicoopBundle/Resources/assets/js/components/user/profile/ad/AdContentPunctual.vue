@@ -1,14 +1,12 @@
 <template>
   <v-container>
-    <v-row v-if="hasOutward">
+    <v-row>
       <schedules
         date-time-format="ui.i18n.date.format.shortDate"
-        :outward-times="[ad.outward.outwardDate]"
+        :outward-times="[ad.outwardDate]"
       />
     </v-row>
-    <v-row
-      v-if="hasOutward"
-    >
+    <v-row>
       <v-col
         class="pa-0"
       >
@@ -16,7 +14,7 @@
           :origin="origin"
           :destination="destination"
           :type="frequency"
-          :time="ad.outward.outwardTime"
+          :time="ad.outwardTime"
           text-color-class="primary--text"
           icon-color="accent"
         />
@@ -27,7 +25,7 @@
         :is-return="true"
         :is-outward="false"
         date-time-format="ui.i18n.date.format.shortDate"
-        :return-times="[ad.return.returnDate]"
+        :return-times="[ad.returnDate]"
       />
     </v-row>
     <v-row v-if="hasReturn">
@@ -38,7 +36,7 @@
           :origin="destination"
           :destination="origin"
           :type="frequency"
-          :time="ad.return.returnTime"
+          :time="ad.returnTime"
           text-color-class="primary--text"
           icon-color="accent"
         />
@@ -64,23 +62,17 @@ export default {
     }
   },
   computed: {
-    hasOutward () {
-      return !isEmpty(this.ad.outward);
-    },
     hasReturn () {
-      return !this.ad.outward.oneWay;
+      return !this.ad.oneWay;
     },
     frequency () {
-      return this.hasOutward ? this.ad.outward.frequency : 
-        this.hasReturn ? this.ad.return.frequency : null;
+      return this.ad.frequency;
     },
     origin () {
-      return this.hasOutward ? this.ad.outward.outwardWaypoints[0].address : 
-        this.hasReturn ? this.ad.return.returnWaypoints[0].address : null;
+      return this.ad.outwardWaypoints[0].address;
     },
     destination () {
-      return this.hasOutward ? this.ad.outward.outwardWaypoints[this.ad.outward.outwardWaypoints.length - 1].address :
-        this.hasReturn ? this.ad.return.returnWaypoints[this.ad.return.returnWaypoints.length - 1].address : null;
+      return this.ad.outwardWaypoints[this.ad.outwardWaypoints.length - 1].address;
     }
   }
 }

@@ -13,7 +13,7 @@
           :fri-active="hasFriday"
           :sat-active="hasSaturday"
           :sun-active="hasSunday"
-          :date-end-of-validity="ad.outward.outwardLimitDate"
+          :date-end-of-validity="ad.outwardLimitDate"
         />
       </v-col>
       
@@ -37,9 +37,9 @@
               class="py-0"
             >
               <route-summary
-                :origin="ad.outward.outwardWaypoints[0].address"
-                :destination="ad.outward.outwardWaypoints[ad.outward.outwardWaypoints.length - 1].address"
-                :type="ad.outward.frequency"
+                :origin="ad.outwardWaypoints[0].address"
+                :destination="ad.outwardWaypoints[ad.outwardWaypoints.length - 1].address"
+                :type="ad.frequency"
                 :regular="isRegular"
                 text-color-class="primary--text text--darken-2"
                 icon-color="accent"
@@ -53,8 +53,6 @@
 </template>
 
 <script>
-import { isEmpty } from "lodash";
-
 import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary.vue';
 import RouteSummary from '@components/carpool/utilities/RouteSummary.vue';
 import Schedules from '@components/user/profile/ad/Schedules.vue';
@@ -73,60 +71,53 @@ export default {
   },
   data () {
     return {
-      outwardTimes: this.ad.outward ? [
-        this.ad.outward.schedule.monOutwardTime, 
-        this.ad.outward.schedule.tueOutwardTime, 
-        this.ad.outward.schedule.wedOutwardTime, 
-        this.ad.outward.schedule.thuOutwardTime, 
-        this.ad.outward.schedule.friOutwardTime, 
-        this.ad.outward.schedule.satOutwardTime, 
-        this.ad.outward.schedule.sunOutwardTime
+      outwardTimes: this.ad ? [
+        this.ad.schedule.monOutwardTime,
+        this.ad.schedule.tueOutwardTime,
+        this.ad.schedule.wedOutwardTime,
+        this.ad.schedule.thuOutwardTime,
+        this.ad.schedule.friOutwardTime,
+        this.ad.schedule.satOutwardTime,
+        this.ad.schedule.sunOutwardTime
       ].filter(Boolean) : [],
-      returnTimes: this.ad.return ? [
-        this.ad.return.schedule.monReturnTime,
-        this.ad.return.schedule.tueReturnTime,
-        this.ad.return.schedule.wedReturnTime,
-        this.ad.return.schedule.thuReturnTime,
-        this.ad.return.schedule.friReturnTime,
-        this.ad.return.schedule.satReturnTime,
-        this.ad.return.schedule.sunReturnTime
+      returnTimes: this.ad ? [
+        this.ad.schedule.monReturnTime,
+        this.ad.schedule.tueReturnTime,
+        this.ad.schedule.wedReturnTime,
+        this.ad.schedule.thuReturnTime,
+        this.ad.schedule.friReturnTime,
+        this.ad.schedule.satReturnTime,
+        this.ad.schedule.sunReturnTime
       ].filter(Boolean) : []
     }
   },
   computed: {
     hasReturn () {
-      return !this.ad.outward.oneWay;
+      return !this.ad.oneWay;
     },
     isRegular () {
-      return this.ad.outward.frequency === 2;
+      return this.ad.frequency === 2;
     },
     hasMonday () {
-      return (this.ad.outward && this.ad.outward.schedule.mon) || 
-        (this.ad.return && this.ad.return.schedule.mon);
+      return this.ad && this.ad.schedule.mon;
     },
     hasTuesday () {
-      return (this.ad.outward && this.ad.outward.schedule.tue) || 
-        (this.ad.return && this.ad.return.schedule.tue);
+      return this.ad && this.ad.schedule.tue;
     },
     hasWednesday () {
-      return (this.ad.outward && this.ad.outward.schedule.wed) || 
-        (this.ad.return && this.ad.return.schedule.wed);
+      return this.ad && this.ad.schedule.wed;
     },
     hasThursday () {
-      return (this.ad.outward && this.ad.outward.schedule.thu) || 
-        (this.ad.return && this.ad.return.schedule.thu);
+      return this.ad && this.ad.schedule.thu;
     },
     hasFriday () {
-      return (this.ad.outward && this.ad.outward.schedule.fri) || 
-        (this.ad.return && this.ad.return.schedule.fri);
+      return this.ad && this.ad.schedule.fri;
     },
     hasSaturday () {
-      return (this.ad.outward && this.ad.outward.schedule.sat) || 
-        (this.ad.return && this.ad.return.schedule.sat);
+      return this.ad && this.ad.schedule.sat;
     },
     hasSunday () {
-      return (this.ad.outward && this.ad.outward.schedule.sun) || 
-        (this.ad.return && this.ad.return.schedule.sun);
+      return this.ad && this.ad.schedule.sun;
     }
   }
 }
