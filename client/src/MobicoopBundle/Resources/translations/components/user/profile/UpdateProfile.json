@@ -65,10 +65,14 @@
         },
         "dialog" : {
             "titles": {
-                "deleteAccount":"Suppression de votre compte"
+                "deleteAccount":"Suppression de votre compte",
+                "deletionImpossible": "Suppression de votre compte impossible"
             },
             "content": {
-                "deleteAccount":"Êtes-vous sûr de vouloir supprimer votre compte ?<br/> Cette action est irréversible.<br/> Elle aura pour conséquences de :<br/> - supprimer l’intégralité de vos données personnelles<br/>- supprimer tous vos messages échangés avec d’autres usagers<br/>- vous anonymiser dans les archives de covoiturages d’autres covoitureurs<br/>- supprimer toutes les annonces de covoiturage encore actives que vous auriez<br/>- rejeter toutes les demandes de covoiturage reçues en cours<br/>- annuler tous les covoiturages planifiés<br/><br/>Confirmez-vous ?"
+                "deleteAccount":"Êtes-vous sûr de vouloir supprimer votre compte ?<br/> Cette action est irréversible.<br/> Elle aura pour conséquences de :<br/> - supprimer l’intégralité de vos données personnelles<br/>- supprimer tous vos messages échangés avec d’autres usagers<br/>- vous anonymiser dans les archives de covoiturages d’autres covoitureurs<br/>- supprimer toutes les annonces de covoiturage encore actives que vous auriez<br/>- rejeter toutes les demandes de covoiturage reçues en cours<br/>- annuler tous les covoiturages planifiés<br/><br/>Confirmez-vous ?",
+                "errorEvents": "En tant qu’auteur de cet événement toujours à venir,<br/> vous ne pouvez supprimer votre compte tant que vous en êtes auteur ou qu’il reste à venir.<br/> Contactez le support technique pour changer d’auteur de l’événement ou demander de le supprimer, ou attendez que l’événement soit passé.",
+                "errorCommunities": "En tant que référent de cette communauté, vous ne pouvez pas la quitter,<br/> ou supprimer votre compte tant que vous êtes référent.<br/> Contactez le support technique pour changer de référent ou supprimer cette communauté."
+            
             },
             "buttons" :{
                 "confirmDelete":"Je confirme la suppression"
@@ -87,7 +91,7 @@
             "route": "/user/communities/owned"
         },
         "events" : {
-            "route": "/user/envents/created"
+            "route": "/user/events/created"
         }
     },
     "en":{

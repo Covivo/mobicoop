@@ -501,6 +501,9 @@ export default {
       loadingAddress: false,
       ownedCommunities: null,
       createdEvents: null,
+      hasCreatedEvents: false,
+      hasOwnedCommunities: false,
+
     };
   },
   computed : {
