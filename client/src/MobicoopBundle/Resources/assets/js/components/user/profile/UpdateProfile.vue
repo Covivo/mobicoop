@@ -351,7 +351,7 @@
                   v-on="on"
                   color="error"
                   rounded
-                  :disabled="!valid"
+                  :disabled="!valid || disabledCreatedEvents || disabledOwnedCommunities"
                   :loading="loading"
                   type="button"
                   :value="$t('ui.button.save')"
@@ -362,6 +362,14 @@
 
         <v-card>
           <v-card-title
+                  v-if="hasCreatedEvents || hasOwnedCommunities"
+                  class="headline error--text"
+                  primary-title
+          >
+            {{ $t('dialog.titles.deletionImpossible') }}
+          </v-card-title>
+          <v-card-title
+                  v-else
                   class="headline"
                   primary-title
           >
@@ -369,7 +377,9 @@
           </v-card-title>
 
           <v-card-text>
-            <p v-html="$t('dialog.content.deleteAccount')"></p>
+            <p v-if="hasOwnedCommunities" v-html="$t('dialog.content.errorCommunities')"></p>
+            <p v-else-if="hasCreatedEvents" v-html="$t('dialog.content.errorEvents')"></p>
+            <p v-else v-html="$t('dialog.content.deleteAccount')"></p>
           </v-card-text>
 
           <v-divider></v-divider>
@@ -386,6 +396,7 @@
             <v-btn
               color="primary"
               text
+              :disabled="hasCreatedEvents || hasOwnedCommunities"
               :href="$t('route.supprimer')"
               @click="dialogDelete = false"
             >
@@ -503,6 +514,8 @@ export default {
       createdEvents: null,
       hasCreatedEvents: false,
       hasOwnedCommunities: false,
+      disabledOwnedCommunities: false,
+      disabledCreatedEvents: false,
 
     };
   },
@@ -656,18 +669,28 @@ export default {
       let params = {
         'userId':this.user.id
       }
+      this.disabledOwnedCommunities = true;
       axios.post(this.$t("communities.route"), params)
         .then(res => {
-          this.ownedCommunities = res.data;
+          if (res.data.length > 0) {
+            this.ownedCommunities = res.data;
+            this.hasOwnedCommunities = true;
+          }
+          this.disabledOwnedCommunities = false;
         });
     },
     getCreatedEvents() {
       let params = {
         'userId':this.user.id
       }
+      this.disabledCreatedEvents = true;
       axios.post(this.$t("events.route"), params)
         .then(res => {
-          this.createdEvents = res.data;
+          if (res.data.length > 0) {
+            this.createdEvents = res.data;
+            this.hasCreatedEvents = true;
+          }
+          this.disabledCreatedEvents = false;
         });
     }
   }
