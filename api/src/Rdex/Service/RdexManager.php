@@ -32,6 +32,7 @@ use App\Rdex\Entity\RdexPassenger;
 use App\Rdex\Entity\RdexAddress;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Result;
+use App\Carpool\Entity\ResultItem;
 use App\Carpool\Service\AdManager;
 use App\Rdex\Entity\RdexDay;
 use App\Rdex\Entity\RdexTripDate;
@@ -310,7 +311,7 @@ class RdexManager
             $journey = new RdexJourney($result->getId());
             $journey->setOperator($this->operator['name']);
             $journey->setOrigin($this->operator['origin']);
-            
+
             /** The url should be the detail of a the matching */
             $journey->setUrl($this->operator['url']);
             
@@ -321,18 +322,21 @@ class RdexManager
 
             $carpoolerIsDriver = false;
             $carpoolerIsPassenger = false;
+            $resultItem = null;
             if (!is_null($result->getResultPassenger()) && is_null($result->getResultDriver())) {
                 $carpoolerIsDriver = true;
+                $resultItem = $result->getResultPassenger();
             } elseif (is_null($result->getResultPassenger()) && !is_null($result->getResultDriver())) {
                 $carpoolerIsPassenger = true;
+                $resultItem = $result->getResultDriver();
             } elseif (!is_null($result->getResultPassenger()) && !is_null($result->getResultDriver())) {
                 $carpoolerIsDriver = true;
                 $carpoolerIsPassenger = true;
+                $resultItem = $result->getResultDriver();
             } else {
                 continue;
             }
 
-            
             $driver = new RdexDriver($result->getCarpooler()->getId());
             $driver->setUuid($result->getCarpooler()->getId());
             $driver->setAlias($result->getCarpooler()->getGivenName()." ".$result->getCarpooler()->getShortFamilyName());
@@ -361,17 +365,11 @@ class RdexManager
             // We need to get the right address in resultsDriver or resultsPassenger given the situation
             // The requester only sent Lat/Lon so we can't use his request
             // We get some datas that relies on being passenger or driver
-            if (!$carpoolerIsDriver && $carpoolerIsPassenger) {
-                $fromAddress = $result->getResultDriver()->getOutward()->getOrigin();
-                $toAddress = $result->getResultDriver()->getOutward()->getDestination();
-                $distance = $result->getResultDriver()->getOutward()->getCommonDistance()+$result->getResultDriver()->getOutward()->getDetourDistance();
-                $kilometersPrice = $result->getResultDriver()->getOutward()->getDriverPriceKm();
-            } else {
-                $fromAddress = $result->getResultPassenger()->getOutward()->getOrigin();
-                $toAddress = $result->getResultPassenger()->getOutward()->getDestination();
-                $distance = $result->getResultPassenger()->getOutward()->getCommonDistance()+$result->getResultPassenger()->getOutward()->getDetourDistance();
-                $kilometersPrice = $result->getResultPassenger()->getOutward()->getDriverPriceKm();
-            }
+            $fromAddress = $resultItem->getOutward()->getOrigin();
+            $toAddress = $resultItem->getOutward()->getDestination();
+            $distance = $resultItem->getOutward()->getCommonDistance()+$result->getResultPassenger()->getOutward()->getDetourDistance();
+            $kilometersPrice = $resultItem->getOutward()->getDriverPriceKm();
+
 
             $from->setAddress($fromAddress->getStreetAddress());
             $from->setPostalcode($fromAddress->getPostalCode());
@@ -400,17 +398,18 @@ class RdexManager
             $journey->setFrequency(($result->getFrequency()==1) ? 'puntual' : 'regular');
             
             
-            $days = new RdexDay();
+
             // there's always an outward
-            $outward = new RdexTripDate();
-            
-            if ($result->isMonCheck()) {
-                $days->setMonday(1);
-                $rdexDayTime = new RdexDayTime();
-                $rdexDayTime->setMintime();
-                $rdexDayTime->setMaxtime();
-                $outward->setMonday($rdexDayTime);
+            $infos = $this->buildJourneyDetails($resultItem->getOutward(), $result->getFrequency(), $result->getTime(), $result->getDate());
+            $journey->setDays($infos['days']);
+            $journey->setOutward($infos['journey']);
+
+            // If there is a return
+            if ($result->hasReturn()) {
+                $infos = $this->buildJourneyDetails($resultItem->getReturn(), $result->getFrequency(), $result->getReturnTime(), $result->getDate());
+                $journey->setReturn($infos['journey']);
             }
+
 
             /** These two lines for Development purpose !!!! */
             $returnArray[] = $journey;
@@ -695,5 +694,117 @@ class RdexManager
             $returnArray[] = $journey;
         }
         return $returnArray;
+    }
+
+    private function computeMinMaxTime($time, $margin)
+    {
+        $mintime = clone($time);
+        $mintime->sub(new \DateInterval("PT" . $margin. "S"));
+        $maxtime = clone($time);
+        $maxtime->add(new \DateInterval("PT" . $margin. "S"));
+
+        return [$mintime, $maxtime];
+    }
+
+    /**
+     * Build the time infos of punctual or regular journey
+     *
+     * @param ResultItem $journey           The result item of the outward or the return
+     * @param integer $frequency            Frequency of the trip
+     * @param \DateTime|null $puntualTime   The time used for punctual
+     * @param \DateTime|null $date          The date used for punctual
+     * @return array
+     */
+    private function buildJourneyDetails(ResultItem $journey, int $frequency, ?\DateTime $puntualTime=null, \DateTime $date)
+    {
+        $days = new RdexDay();
+        $infos = new RdexTripDate();
+
+
+        if ($frequency==1) {
+            // Punctual
+            switch ($puntualTime->format("w")) {
+                case 0: {
+                    $days->setSunday(1);
+                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $journey->getSunMarginDuration());
+                    $rdexDayTime = new RdexDayTime();
+                    $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
+                    $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
+                    $infos->setSunday($rdexDayTime);
+                    break;
+                }
+                case 1: {
+                    $days->setMonday(1);
+                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $journey->getMonMarginDuration());
+                    $rdexDayTime = new RdexDayTime();
+                    $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
+                    $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
+                    $infos->setMonday($rdexDayTime);
+                    break;
+                }
+                case 2: {
+                    $days->setTuesday(1);
+                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $journey->getTueMarginDuration());
+                    $rdexDayTime = new RdexDayTime();
+                    $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
+                    $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
+                    $infos->setTuesday($rdexDayTime);
+                    break;
+                }
+                case 3: {
+                    $days->setWednesday(1);
+                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $journey->getWedMarginDuration());
+                    $rdexDayTime = new RdexDayTime();
+                    $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
+                    $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
+                    $infos->setWednesday($rdexDayTime);
+                    break;
+                }
+                case 4: {
+                    $days->setThursday(1);
+                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $journey->getThuMarginDuration());
+                    $rdexDayTime = new RdexDayTime();
+                    $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
+                    $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
+                    $infos->setThursday($rdexDayTime);
+                    break;
+                }
+                case 5: {
+                    $days->setFriday(1);
+                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $journey->getFriMarginDuration());
+                    $rdexDayTime = new RdexDayTime();
+                    $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
+                    $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
+                    $infos->setFriday($rdexDayTime);
+                    break;
+                }
+                case 6: {
+                    $days->setSaturday(1);
+                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $journey->getSatMarginDuration());
+                    $rdexDayTime = new RdexDayTime();
+                    $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
+                    $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
+                    $infos->setSaturday($rdexDayTime);
+                    break;
+                }
+            }
+
+            $infos->setMindate($date->format("Y-m-d"));
+            $infos->setMaxdate($date->format("Y-m-d"));
+        } else {
+            // // Regular
+            // if ($result->isMonCheck()) {
+            //     $days->setMonday(1);
+            //     $rdexDayTime = new RdexDayTime();
+            //     if (!$carpoolerIsDriver && $carpoolerIsPassenger) {
+            //         $time =
+            //     }
+            //     $rdexDayTime->setMintime();
+            //     $rdexDayTime->setMaxtime();
+            //     $outward->setMonday($rdexDayTime);
+            // }
+        }
+
+        return ["days"=>$days, "journey"=>$infos];
     }
 }
