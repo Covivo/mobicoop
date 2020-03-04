@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -210,5 +210,17 @@ class EventManager
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $proposals = $this->dataProvider->getSubCollection($id, "ad", "ads");
         return $proposals->getValue();
+    }
+
+    /**
+     * get  events created by the user
+     *
+     * @param integer $userId
+     * @return void
+     */
+    public function getCreatedEvents(int $userId)
+    {
+        $response = $this->dataProvider->getSpecialCollection('created', ['userId' => $userId]);
+        return $response->getValue()->getMember();
     }
 }

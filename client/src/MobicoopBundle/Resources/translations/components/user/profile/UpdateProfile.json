@@ -82,6 +82,12 @@
                 "label": "Enregistrer adresse",
                 "route": "/utilisateur/profil/modifier/adresse"
             }
+        },
+        "communities" : {
+            "route": "/user/communities/owned"
+        },
+        "events" : {
+            "route": "/user/envents/created"
         }
     },
     "en":{

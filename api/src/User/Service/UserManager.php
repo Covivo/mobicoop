@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@
 namespace App\User\Service;
 
 use App\Carpool\Entity\Ask;
+use App\Event\Entity\Event;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Service\AskManager;
@@ -56,12 +57,14 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\User\Event\UserUpdatedSelfEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\User\Repository\UserRepository;
+use DoctrineExtensions\Query\Mysql\Now;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * User manager service.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class UserManager
 {
@@ -695,67 +698,33 @@ class UserManager
             }
             $this->entityManager->remove($proposal);
         }
+        // Check if the user is not the author of an event that is not passed
+        foreach ($user->getEvents() as $event) {
+            if (($event->getUser()->getId() == $user->getId()) && ($event->getToDate() >= new \DateTime())) {
+                // to do throw exception
+                return false;
+            }
+        }
+        // Check if the user is not the author of a community
+        foreach ($user->getCommunityUsers() as $communityUser) {
+            if ($communityUser->getCommunity()->getUser()->getId() == $user->getId()) {
+                // todo throw execption
+                return false;
+            } else {
+                //delete all community subscriptions
+                $this->deleteCommunityUsers($user);
+            }
+        }
 
-        // $this->checkIfUserHaveImages($user);
-        // $this->checkIfUserIsInCommunity($user);
+        $this->deleteUserImages($user);
         
         $this->entityManager->remove($user);
         $this->entityManager->flush();
     }
 
-    // private function setUserAtNull(User $user)
-    // {
-    //     $datenow = new DateTime();
-    //     //Replace all mandatory value by default value or token
-    //     $user->setEmail(uniqid().'@'.uniqid().'.fr');
-    //     $user->setGender(3);
-    //     $user->setStatus(3);
-    //     $user->setCreatedDate($datenow);
-    //     $user->setValidatedDate($datenow);
-    //     $user->setPhoneDisplay(1);
-
-    //     //Replace all value nullable by null
-    //     $user->setGivenName(null);
-    //     $user->setFamilyName(null);
-    //     $user->setPassword(null);
-    //     $user->setGivenName(null);
-    //     $user->setNationality(null);
-    //     $user->setBirthDate(null);
-    //     $user->setTelephone(null);
-    //     $user->setAnyRouteAsPassenger(null);
-    //     $user->setMultiTransportMode(null);
-    //     $user->setMaxDetourDistance(null);
-    //     $user->setMaxDetourDuration(null);
-    //     $user->setPwdToken(null);
-    //     $user->setGeoToken(null);
-    //     $user->setLanguage(null);
-    //     $user->setPwdToken(null);
-    //     $user->setValidatedDateToken(null);
-    //     $user->setFacebookId(null);
-    //     $user->setSmoke(null);
-    //     $user->setMusic(null);
-    //     $user->setMusicFavorites(null);
-    //     $user->setChat(null);
-    //     $user->setChatFavorites(null);
-    //     $user->setNewsSubscription(null);
-    //     $user->setPhoneToken(null);
-    //     $user->setIosAppId(null);
-    //     $user->setAndroidAppId(null);
-    //     $user->setPhoneValidatedDate(null);
-
-
-    //     $this->entityManager->persist($user);
-    //     $this->entityManager->flush();
-       
-        
-
-    //     return array();
-    // }
-
-
-    //Check if the delete account have image, and delete them
+    //Delete images associated to the user
     // deleteBase -> delete the base image and remove the entry
-    private function checkIfUserHaveImages(User $user)
+    private function deleteUserImages(User $user)
     {
         foreach ($user->getImages() as $image) {
             $this->imageManager->deleteVersions($image);
@@ -763,14 +732,13 @@ class UserManager
         }
     }
 
-
-    //Check if the delete account is in community, and delete the link between
-    private function checkIfUserIsInCommunity(User $user)
+    //Delete link between the delete account and his communities
+    private function deleteCommunityUsers(User $user)
     {
-        $myCommunities = $this->communityUserRepository->findBy(array('user'=>$user));
+        $myCommunityUsers = $this->communityUserRepository->findBy(array('user'=>$user));
 
-        foreach ($myCommunities as $myCommunity) {
-            $this->entityManager->remove($myCommunity);
+        foreach ($myCommunityUsers as $myCommunityUser) {
+            $this->entityManager->remove($myCommunityUser);
         }
         $this->entityManager->flush();
     }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -86,6 +86,7 @@ use App\MassCommunication\Entity\Delivery;
 use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
+use App\Community\Entity\CommunityUser;
 
 /**
  * A user.
@@ -763,6 +764,13 @@ class User implements UserInterface, EquatableInterface
      * @ORM\OneToMany(targetEntity="\App\Event\Entity\Event", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      */
     private $events;
+
+    /**
+    * @var ArrayCollection|null The communityUser associated to this user
+    *
+    * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+    */
+    private $communityUsers;
 
     /**
      * @var ArrayCollection|null The asks made for this user.
@@ -1672,6 +1680,34 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($event->getUser() === $this) {
                 $event->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCommunityUsers()
+    {
+        return $this->communityUsers->getValues();
+    }
+
+    public function addCommunityUser(CommunityUser $communityUser): self
+    {
+        if (!$this->events->contains($communityUser)) {
+            $this->events->add($communityUser);
+            $communityUser->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommunityUser(CommunityUser $communityUser): self
+    {
+        if ($this->events->contains($communityUser)) {
+            $this->events->removeElement($communityUser);
+            // set the owning side to null (unless already changed)
+            if ($communityUser->getUser() === $this) {
+                $communityUser->setUser(null);
             }
         }
 

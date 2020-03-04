@@ -237,6 +237,21 @@ user_unsubscribe_email:
       en: /user/unsubscribe/{token}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userUnsubscribeFromEmail
 
+# Get communities owned by a user (POST)
+user_communities_owned:
+    methods: [POST]
+    path:
+        fr: /user/communities/owned
+        en: /user/communities/owned
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userOwnedCommunities  
+
+# Get events created by a user (POST)
+user_created_events:
+    methods: [POST]
+    path:
+        fr: /user/events/created
+        en: /user/events/created
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCreatedEvents   
 
 ##################
 # carpool routes #

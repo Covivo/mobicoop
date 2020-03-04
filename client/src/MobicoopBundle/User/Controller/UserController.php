@@ -44,6 +44,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
+use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -937,5 +938,37 @@ class UserController extends AbstractController
                 'metaDescription' => 'Mobicoop',
             ]
         );
+    }
+
+    /**
+     * Get all communities owned by a user
+     * AJAX
+     */
+    public function userOwnedCommunities(Request $request, CommunityManager $communityManager)
+    {
+        $userOwnedCommunities = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if ($userOwnedCommunities = $communityManager->getOwnedCommunities($data['userId'])) {
+                return new JsonResponse($userOwnedCommunities);
+            }
+        }
+        return new JsonResponse($userOwnedCommunities);
+    }
+
+    /**
+     * Get all communities owned by a user
+     * AJAX
+     */
+    public function userCreatedEvents(Request $request, EventManager $eventManager)
+    {
+        $userCreatedEvents = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if ($userCreatedEvents = $eventManager->getCreatedEvents($data['userId'])) {
+                return new JsonResponse($userCreatedEvents);
+            }
+        }
+        return new JsonResponse($userCreatedEvents);
     }
 }

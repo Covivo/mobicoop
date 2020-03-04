@@ -498,7 +498,9 @@ export default {
       loadingToken: false,
       loadingValidatePhone: false,
       disabledAddress: true,
-      loadingAddress: false
+      loadingAddress: false,
+      ownedCommunities: null,
+      createdEvents: null,
     };
   },
   computed : {
@@ -511,6 +513,8 @@ export default {
   },
   mounted() {
     this.checkVerifiedPhone();
+    this.getOwnedCommunities();
+    this.getCreatedEvents();
   },
   methods: {
     homeAddressSelected(address){
@@ -644,6 +648,24 @@ export default {
           this.loadingValidatePhone = false;
         })
         // Todo create "emit" event to refresh the alerts
+    },
+    getOwnedCommunities() {
+      let params = {
+        'userId':this.user.id
+      }
+      axios.post(this.$t("communities.route"), params)
+        .then(res => {
+          this.ownedCommunities = res.data;
+        });
+    },
+    getCreatedEvents() {
+      let params = {
+        'userId':this.user.id
+      }
+      axios.post(this.$t("events.route"), params)
+        .then(res => {
+          this.createdEvents = res.data;
+        });
     }
   }
 }
