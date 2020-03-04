@@ -396,7 +396,7 @@ class AdManager
                 $returnCriteria->setToDate($ad->getReturnLimitDate() ? \DateTime::createFromFormat('Y-m-d', $ad->getReturnLimitDate()) : null);
                 $hasSchedule = false;
                 foreach ($ad->getSchedule() as $schedule) {
-                    if ($schedule['returnTime'] != '') {
+                    if (isset($schedule['returnTime']) && $schedule['returnTime'] != '') {
                         if (isset($schedule['mon']) && $schedule['mon']) {
                             $hasSchedule = true;
                             $returnCriteria->setMonCheck(true);
@@ -963,6 +963,7 @@ class AdManager
      * @param string $external                  The external client
      */
     public function getAdForRdex(
+        ?string $external,
         bool $offer,
         bool $request,
         float $from_longitude,
@@ -971,8 +972,7 @@ class AdManager
         float $to_latitude,
         string $frequency = null,
         ?array $days = null,
-        ?array $outward = null,
-        string $external = null
+        ?array $outward = null
     ) {
         $ad = new Ad();
         $ad->setExternal($external);

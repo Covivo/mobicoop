@@ -292,6 +292,7 @@ class RdexManager
         }
 
         $ad = $this->adManager->getAdForRdex(
+            $this->clientKey,
             $parameters["driver"]["state"],
             $parameters["passenger"]["state"],
             $parameters["from"]["longitude"],
@@ -300,8 +301,7 @@ class RdexManager
             $parameters["to"]["latitude"],
             isset($parameters["frequency"]) ? $parameters["frequency"] : null,
             isset($parameters["days"]) ? $parameters["days"] : null,
-            isset($parameters["outward"]) ? $parameters["outward"] : null,
-            $this->clientKey
+            isset($parameters["outward"]) ? $parameters["outward"] : null
         );
 
         /**
@@ -326,13 +326,16 @@ class RdexManager
             if (!is_null($result->getResultPassenger()) && is_null($result->getResultDriver())) {
                 $carpoolerIsDriver = true;
                 $resultItem = $result->getResultPassenger();
+                $roleRequester = "passenger";
             } elseif (is_null($result->getResultPassenger()) && !is_null($result->getResultDriver())) {
                 $carpoolerIsPassenger = true;
                 $resultItem = $result->getResultDriver();
+                $roleRequester = "driver";
             } elseif (!is_null($result->getResultPassenger()) && !is_null($result->getResultDriver())) {
                 $carpoolerIsDriver = true;
                 $carpoolerIsPassenger = true;
                 $resultItem = $result->getResultDriver();
+                $roleRequester = "driver";
             } else {
                 continue;
             }
@@ -400,303 +403,30 @@ class RdexManager
             
 
             // there's always an outward
-            $infos = $this->buildJourneyDetails($resultItem->getOutward(), $result->getFrequency(), $result->getTime(), $result->getDate());
+            $infos = $this->buildJourneyDetails($result, $roleRequester, "outward");
             $journey->setDays($infos['days']);
             $journey->setOutward($infos['journey']);
 
             // If there is a return
-            if ($result->hasReturn()) {
-                $infos = $this->buildJourneyDetails($resultItem->getReturn(), $result->getFrequency(), $result->getReturnTime(), $result->getDate());
+            // TO DO : We don't treat return matching so we don't do it in RDEX also. Maybe one day...
+            if (isset($parameters["return"]) && !is_null($parameters["return"]) && $result->hasReturn()) {
+                $infos = $this->buildJourneyDetails($result, $roleRequester, "return");
                 $journey->setReturn($infos['journey']);
             }
 
-
-            /** These two lines for Development purpose !!!! */
-            $returnArray[] = $journey;
-            continue;
-
-
-            $outward->setMindate($proposal->getCriteria()->getFromDate()->format("Y-m-d"));
-            if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-                $journey->setFrequency(RdexJourney::FREQUENCY_PUNCTUAL);
-                $outward->setMaxdate($proposal->getCriteria()->getFromDate()->format("Y-m-d"));
-                $daytime = new RdexDayTime();
-                // we compute the min and max time using php Datetime methods
-                $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getCriteria()->getFromTime()->format("H:i:s"));
-                $mintime = clone($time);
-                $mintime->sub(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                $maxtime = clone($time);
-                $maxtime->add(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                $daytime->setMintime($mintime->format('H:i:s'));
-                $daytime->setMaxtime($maxtime->format('H:i:s'));
-                switch ($proposal->getCriteria()->getFromDate()->format('w')) {
-                    case 0:    $days->setSunday(1);
-                                $outward->setSunday($daytime);
-                                break;
-                    case 1:    $days->setMonday(1);
-                                $outward->setMonday($daytime);
-                                break;
-                    case 2:    $days->setTuesday(1);
-                                $outward->setTuesday($daytime);
-                                break;
-                    case 3:    $days->setWednesday(1);
-                                $outward->setWednesday($daytime);
-                                break;
-                    case 4:    $days->setThursday(1);
-                                $outward->setThursday($daytime);
-                                break;
-                    case 5:    $days->setFriday(1);
-                                $outward->setFriday($daytime);
-                                break;
-                    case 6:    $days->setSaturday(1);
-                                $outward->setSaturday($daytime);
-                                break;
-                }
-            } else {
-                $journey->setFrequency(RdexJourney::FREQUENCY_REGULAR);
-                $outward->setMaxdate($proposal->getCriteria()->getToDate()->format("Y-m-d"));
-                if ($proposal->getCriteria()->getMonCheck()) {
-                    $days->setMonday(1);
-                    $daytime = new RdexDayTime();
-                    // we compute the min and max time using php Datetime methods
-                    // for that we use the FromDate as support for the time; we could use any other date as we only keep the time part at the end
-                    $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getCriteria()->getMonTime()->format("H:i:s"));
-                    $mintime = clone($time);
-                    $mintime->sub(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                    $maxtime = clone($time);
-                    $maxtime->add(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                    $daytime->setMintime($mintime->format('H:i:s'));
-                    $daytime->setMaxtime($maxtime->format('H:i:s'));
-                    $outward->setMonday($daytime);
-                }
-                if ($proposal->getCriteria()->getTueCheck()) {
-                    $days->setTuesday(1);
-                    $daytime = new RdexDayTime();
-                    // we compute the min and max time using php Datetime methods
-                    // for that we use the FromDate as support for the time; we could use any other date as we only keep the time part at the end
-                    $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getCriteria()->getTueTime()->format("H:i:s"));
-                    $mintime = clone($time);
-                    $mintime->sub(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                    $maxtime = clone($time);
-                    $maxtime->add(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                    $daytime->setMintime($mintime->format('H:i:s'));
-                    $daytime->setMaxtime($maxtime->format('H:i:s'));
-                    $outward->setTuesday($daytime);
-                }
-                if ($proposal->getCriteria()->getWedCheck()) {
-                    $days->setWednesday(1);
-                    $daytime = new RdexDayTime();
-                    // we compute the min and max time using php Datetime methods
-                    // for that we use the FromDate as support for the time; we could use any other date as we only keep the time part at the end
-                    $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getCriteria()->getWedTime()->format("H:i:s"));
-                    $mintime = clone($time);
-                    $mintime->sub(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                    $maxtime = clone($time);
-                    $maxtime->add(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                    $daytime->setMintime($mintime->format('H:i:s'));
-                    $daytime->setMaxtime($maxtime->format('H:i:s'));
-                    $outward->setWednesday($daytime);
-                }
-                if ($proposal->getCriteria()->getThuCheck()) {
-                    $days->setThursday(1);
-                    $daytime = new RdexDayTime();
-                    // we compute the min and max time using php Datetime methods
-                    // for that we use the FromDate as support for the time; we could use any other date as we only keep the time part at the end
-                    $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getCriteria()->getThuTime()->format("H:i:s"));
-                    $mintime = clone($time);
-                    $mintime->sub(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                    $maxtime = clone($time);
-                    $maxtime->add(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                    $daytime->setMintime($mintime->format('H:i:s'));
-                    $daytime->setMaxtime($maxtime->format('H:i:s'));
-                    $outward->setThursday($daytime);
-                }
-                if ($proposal->getCriteria()->getFriCheck()) {
-                    $days->setFriday(1);
-                    $daytime = new RdexDayTime();
-                    // we compute the min and max time using php Datetime methods
-                    // for that we use the FromDate as support for the time; we could use any other date as we only keep the time part at the end
-                    $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getCriteria()->getFriTime()->format("H:i:s"));
-                    $mintime = clone($time);
-                    $mintime->sub(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                    $maxtime = clone($time);
-                    $maxtime->add(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                    $daytime->setMintime($mintime->format('H:i:s'));
-                    $daytime->setMaxtime($maxtime->format('H:i:s'));
-                    $outward->setFriday($daytime);
-                }
-                if ($proposal->getCriteria()->getSatCheck()) {
-                    $days->setSaturday(1);
-                    $daytime = new RdexDayTime();
-                    // we compute the min and max time using php Datetime methods
-                    // for that we use the FromDate as support for the time; we could use any other date as we only keep the time part at the end
-                    $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getCriteria()->getSatTime()->format("H:i:s"));
-                    $mintime = clone($time);
-                    $mintime->sub(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                    $maxtime = clone($time);
-                    $maxtime->add(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                    $daytime->setMintime($mintime->format('H:i:s'));
-                    $daytime->setMaxtime($maxtime->format('H:i:s'));
-                    $outward->setSaturday($daytime);
-                }
-                if ($proposal->getCriteria()->getSunCheck()) {
-                    $days->setSunday(1);
-                    $daytime = new RdexDayTime();
-                    // we compute the min and max time using php Datetime methods
-                    // for that we use the FromDate as support for the time; we could use any other date as we only keep the time part at the end
-                    $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getCriteria()->getSunTime()->format("H:i:s"));
-                    $mintime = clone($time);
-                    $mintime->sub(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                    $maxtime = clone($time);
-                    $maxtime->add(new \DateInterval("PT" . $proposal->getCriteria()->getMarginTime(). "S"));
-                    $daytime->setMintime($mintime->format('H:i:s'));
-                    $daytime->setMaxtime($maxtime->format('H:i:s'));
-                    $outward->setSunday($daytime);
-                }
-            }
-            $journey->setDays($days);
-            $journey->setOutward($outward);
-            if ($journey->getType() == RdexJourney::TYPE_ROUND_TRIP) {
-                // creation of the return
-                // we use the proposalLinkedJourney of the proposal
-                $return = new RdexTripDate();
-                $return->setMindate($proposal->getProposalLinkedJourney()->getCriteria()->getFromDate()->format("Y-m-d"));
-                if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-                    $return->setMaxdate($proposal->getProposalLinkedJourney()->getCriteria()->getFromDate()->format("Y-m-d"));
-                    $daytime = new RdexDayTime();
-                    // we compute the min and max time using php Datetime methods
-                    $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getProposalLinkedJourney()->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getProposalLinkedJourney()->getCriteria()->getFromTime()->format("H:i:s"));
-                    $mintime = clone($time);
-                    $mintime->sub(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                    $maxtime = clone($time);
-                    $maxtime->add(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                    $daytime->setMintime($mintime->format('H:i:s'));
-                    $daytime->setMaxtime($maxtime->format('H:i:s'));
-                    switch ($proposal->getCriteria()->getFromDate()->format('w')) {
-                        case 0:    $return->setSunday($daytime);
-                                    break;
-                        case 1:    $return->setMonday($daytime);
-                                    break;
-                        case 2:    $return->setTuesday($daytime);
-                                    break;
-                        case 3:    $return->setWednesday($daytime);
-                                    break;
-                        case 4:    $return->setThursday($daytime);
-                                    break;
-                        case 5:    $return->setFriday($daytime);
-                                    break;
-                        case 6:    $return->setSaturday($daytime);
-                                    break;
-                    }
-                } else {
-                    $return->setMaxdate($proposal->getProposalLinkedJourney()->getCriteria()->getToDate()->format("Y-m-d"));
-                    if ($proposal->getProposalLinkedJourney()->getCriteria()->getMonCheck()) {
-                        $days->setMonday(1);
-                        $daytime = new RdexDayTime();
-                        // we compute the min and max time using php Datetime methods
-                        // for that we use the FromDate as support for the time; we could use any other date as we only keep the time part at the end
-                        $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getProposalLinkedJourney()->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getProposalLinkedJourney()->getCriteria()->getMonTime()->format("H:i:s"));
-                        $mintime = clone($time);
-                        $mintime->sub(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                        $maxtime = clone($time);
-                        $maxtime->add(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                        $daytime->setMintime($mintime->format('H:i:s'));
-                        $daytime->setMaxtime($maxtime->format('H:i:s'));
-                        $return->setMonday($daytime);
-                    }
-                    if ($proposal->getProposalLinkedJourney()->getCriteria()->getTueCheck()) {
-                        $days->setTuesday(1);
-                        $daytime = new RdexDayTime();
-                        // we compute the min and max time using php Datetime methods
-                        // for that we use the FromDate as support for the time; we could use any other date as we only keep the time part at the end
-                        $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getProposalLinkedJourney()->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getProposalLinkedJourney()->getCriteria()->getTueTime()->format("H:i:s"));
-                        $mintime = clone($time);
-                        $mintime->sub(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                        $maxtime = clone($time);
-                        $maxtime->add(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                        $daytime->setMintime($mintime->format('H:i:s'));
-                        $daytime->setMaxtime($maxtime->format('H:i:s'));
-                        $return->setTuesday($daytime);
-                    }
-                    if ($proposal->getProposalLinkedJourney()->getCriteria()->getWedCheck()) {
-                        $days->setWednesday(1);
-                        $daytime = new RdexDayTime();
-                        // we compute the min and max time using php Datetime methods
-                        // for that we use the FromDate as support for the time; we could use any other date as we only keep the time part at the end
-                        $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getProposalLinkedJourney()->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getProposalLinkedJourney()->getCriteria()->getWedTime()->format("H:i:s"));
-                        $mintime = clone($time);
-                        $mintime->sub(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                        $maxtime = clone($time);
-                        $maxtime->add(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                        $daytime->setMintime($mintime->format('H:i:s'));
-                        $daytime->setMaxtime($maxtime->format('H:i:s'));
-                        $return->setWednesday($daytime);
-                    }
-                    if ($proposal->getProposalLinkedJourney()->getCriteria()->getThuCheck()) {
-                        $days->setThursday(1);
-                        $daytime = new RdexDayTime();
-                        // we compute the min and max time using php Datetime methods
-                        // for that we use the FromDate as support for the time; we could use any other date as we only keep the time part at the end
-                        $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getProposalLinkedJourney()->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getProposalLinkedJourney()->getCriteria()->getThuTime()->format("H:i:s"));
-                        $mintime = clone($time);
-                        $mintime->sub(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                        $maxtime = clone($time);
-                        $maxtime->add(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                        $daytime->setMintime($mintime->format('H:i:s'));
-                        $daytime->setMaxtime($maxtime->format('H:i:s'));
-                        $return->setThursday($daytime);
-                    }
-                    if ($proposal->getProposalLinkedJourney()->getCriteria()->getFriCheck()) {
-                        $days->setFriday(1);
-                        $daytime = new RdexDayTime();
-                        // we compute the min and max time using php Datetime methods
-                        // for that we use the FromDate as support for the time; we could use any other date as we only keep the time part at the end
-                        $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getProposalLinkedJourney()->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getProposalLinkedJourney()->getCriteria()->getFriTime()->format("H:i:s"));
-                        $mintime = clone($time);
-                        $mintime->sub(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                        $maxtime = clone($time);
-                        $maxtime->add(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                        $daytime->setMintime($mintime->format('H:i:s'));
-                        $daytime->setMaxtime($maxtime->format('H:i:s'));
-                        $return->setFriday($daytime);
-                    }
-                    if ($proposal->getProposalLinkedJourney()->getCriteria()->getSatCheck()) {
-                        $days->setSaturday(1);
-                        $daytime = new RdexDayTime();
-                        // we compute the min and max time using php Datetime methods
-                        // for that we use the FromDate as support for the time; we could use any other date as we only keep the time part at the end
-                        $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getProposalLinkedJourney()->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getProposalLinkedJourney()->getCriteria()->getSatTime()->format("H:i:s"));
-                        $mintime = clone($time);
-                        $mintime->sub(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                        $maxtime = clone($time);
-                        $maxtime->add(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                        $daytime->setMintime($mintime->format('H:i:s'));
-                        $daytime->setMaxtime($maxtime->format('H:i:s'));
-                        $return->setSaturday($daytime);
-                    }
-                    if ($proposal->getProposalLinkedJourney()->getCriteria()->getSunCheck()) {
-                        $days->setSunday(1);
-                        $daytime = new RdexDayTime();
-                        // we compute the min and max time using php Datetime methods
-                        // for that we use the FromDate as support for the time; we could use any other date as we only keep the time part at the end
-                        $time = \DateTime::createFromFormat("Y-m-d H:i:s", $proposal->getProposalLinkedJourney()->getCriteria()->getFromDate()->format("Y-m-d") . " " . $proposal->getProposalLinkedJourney()->getCriteria()->getSunTime()->format("H:i:s"));
-                        $mintime = clone($time);
-                        $mintime->sub(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                        $maxtime = clone($time);
-                        $maxtime->add(new \DateInterval("PT" . $proposal->getProposalLinkedJourney()->getCriteria()->getMarginTime(). "S"));
-                        $daytime->setMintime($mintime->format('H:i:s'));
-                        $daytime->setMaxtime($maxtime->format('H:i:s'));
-                        $return->setSunday($daytime);
-                    }
-                }
-                $journey->setReturn($return);
-            }
             $returnArray[] = $journey;
         }
         return $returnArray;
     }
 
-    private function computeMinMaxTime($time, $margin)
+    /**
+     * Compute the min and max time considering the margin time
+     *
+     * @param \DateTime $time   Base time
+     * @param integer $margin   Margin in seconds  to compute min and max time
+     * @return array
+     */
+    private function computeMinMaxTime(\DateTime $time, int $margin)
     {
         $mintime = clone($time);
         $mintime->sub(new \DateInterval("PT" . $margin. "S"));
@@ -709,21 +439,27 @@ class RdexManager
     /**
      * Build the time infos of punctual or regular journey
      *
-     * @param ResultItem $journey           The result item of the outward or the return
-     * @param integer $frequency            Frequency of the trip
-     * @param \DateTime|null $puntualTime   The time used for punctual
-     * @param \DateTime|null $date          The date used for punctual
+     * @param Result $result    The result from which we build the infos
+     * @param string $role      The role of the requester
+     * @param string $way       "outward" or "return" journey
      * @return array
      */
-    private function buildJourneyDetails(ResultItem $journey, int $frequency, ?\DateTime $puntualTime=null, \DateTime $date)
+    private function buildJourneyDetails(Result $result, string $role, string $way)
     {
+        if ($role=="passenger") {
+            ($way=="outward") ? $journey = $result->getResultPassenger()->getOutward() : $journey = $result->getResultPassenger()->getReturn();
+        } else {
+            ($way=="outward") ? $journey = $result->getResultDriver()->getOutward() : $journey = $result->getResultDriver()->getReturn();
+        }
         $days = new RdexDay();
         $infos = new RdexTripDate();
-
+        $frequency = $result->getFrequency();
 
         if ($frequency==1) {
             // Punctual
-            switch ($puntualTime->format("w")) {
+            $puntualTime = $result->getTime();
+            $date = $result->getDate();
+            switch ($date->format("w")) {
                 case 0: {
                     $days->setSunday(1);
                     $minMaxTime = $this->computeMinMaxTime($puntualTime, $journey->getSunMarginDuration());
@@ -792,17 +528,66 @@ class RdexManager
             $infos->setMindate($date->format("Y-m-d"));
             $infos->setMaxdate($date->format("Y-m-d"));
         } else {
-            // // Regular
-            // if ($result->isMonCheck()) {
-            //     $days->setMonday(1);
-            //     $rdexDayTime = new RdexDayTime();
-            //     if (!$carpoolerIsDriver && $carpoolerIsPassenger) {
-            //         $time =
-            //     }
-            //     $rdexDayTime->setMintime();
-            //     $rdexDayTime->setMaxtime();
-            //     $outward->setMonday($rdexDayTime);
-            // }
+            // Regular
+            if ($result->isMonCheck() && !is_null($journey->getMonTime())) {
+                $days->setMonday(1);
+                $rdexDayTime = new RdexDayTime();
+                $minMaxTime = $this->computeMinMaxTime($journey->getMonTime(), $journey->getMonMarginDuration());
+                $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
+                $rdexDayTime->setMaxtime($minMaxTime[0]->format("H:i:s"));
+                $infos->setMonday($rdexDayTime);
+            }
+            if ($result->isTueCheck() && !is_null($journey->getTueTime())) {
+                $days->setTuesday(1);
+                $rdexDayTime = new RdexDayTime();
+                $minMaxTime = $this->computeMinMaxTime($journey->getTueTime(), $journey->getTueMarginDuration());
+                $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
+                $rdexDayTime->setMaxtime($minMaxTime[0]->format("H:i:s"));
+                $infos->setMonday($rdexDayTime);
+            }
+            if ($result->isWedCheck() && !is_null($journey->getWedTime())) {
+                $days->setWednesday(1);
+                $rdexDayTime = new RdexDayTime();
+                $minMaxTime = $this->computeMinMaxTime($journey->getWedTime(), $journey->getWedMarginDuration());
+                $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
+                $rdexDayTime->setMaxtime($minMaxTime[0]->format("H:i:s"));
+                $infos->setWednesday($rdexDayTime);
+            }
+            if ($result->isThuCheck() && !is_null($journey->getThuTime())) {
+                $days->setThursday(1);
+                $rdexDayTime = new RdexDayTime();
+                $minMaxTime = $this->computeMinMaxTime($journey->getThuTime(), $journey->getThuMarginDuration());
+                $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
+                $rdexDayTime->setMaxtime($minMaxTime[0]->format("H:i:s"));
+                $infos->setThursday($rdexDayTime);
+            }
+            if ($result->isFriCheck() && !is_null($journey->getFriTime())) {
+                $days->setFriday(1);
+                $rdexDayTime = new RdexDayTime();
+                $minMaxTime = $this->computeMinMaxTime($journey->getFriTime(), $journey->getFriMarginDuration());
+                $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
+                $rdexDayTime->setMaxtime($minMaxTime[0]->format("H:i:s"));
+                $infos->setFriday($rdexDayTime);
+            }
+            if ($result->isSatCheck() && !is_null($journey->getSatTime())) {
+                $days->setSaturday(1);
+                $rdexDayTime = new RdexDayTime();
+                $minMaxTime = $this->computeMinMaxTime($journey->getSatTime(), $journey->getSatMarginDuration());
+                $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
+                $rdexDayTime->setMaxtime($minMaxTime[0]->format("H:i:s"));
+                $infos->setSaturday($rdexDayTime);
+            }
+            if ($result->isSunCheck() && !is_null($journey->getSunTime())) {
+                $days->setSunday(1);
+                $rdexDayTime = new RdexDayTime();
+                $minMaxTime = $this->computeMinMaxTime($journey->getSunTime(), $journey->getSunMarginDuration());
+                $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
+                $rdexDayTime->setMaxtime($minMaxTime[0]->format("H:i:s"));
+                $infos->setSunday($rdexDayTime);
+            }
+
+            $infos->setMindate($journey->getFromDate()->format("Y-m-d"));
+            $infos->setMaxdate($journey->getToDate()->format("Y-m-d"));
         }
 
         return ["days"=>$days, "journey"=>$infos];
