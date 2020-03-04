@@ -43,7 +43,7 @@
 
               <span
                 v-if="hasSameOutwardTimes"
-                class="primary--text text--darken-2 body-1"
+                class="primary--text text--darken-2 body-1 text-capitalize"
               >
                 {{ formatTime(outwardTimes[0]) }}
               </span>
@@ -69,7 +69,7 @@
 
               <span
                 v-if="hasSameReturnTimes"
-                class="primary--text text--darken-2 body-1"
+                class="primary--text text--darken-2 body-1 text-capitalize"
               >
                 {{ formatTime(returnTimes[0]) }}
               </span>
