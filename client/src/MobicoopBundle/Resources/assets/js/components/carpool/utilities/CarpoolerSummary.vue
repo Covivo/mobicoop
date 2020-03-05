@@ -8,25 +8,9 @@
       <v-col
         cols="4"
       >
-        <v-list-item>
-          <!--Carpooler avatar-->
-          <v-list-item-avatar
-            color="grey darken-3"
-            size="50"
-          >
-            <v-img
-              aspect-ratio="2"
-              :src="carpooler.avatars[0]"
-            />
-          </v-list-item-avatar>
-          <!--Carpooler data-->
-          <v-list-item-content>
-            <v-list-item-title class="font-weight-bold">
-              {{ carpooler.givenName }} {{ carpooler.shortFamilyName }}
-            </v-list-item-title>
-            <v-list-item-title>{{ age }} </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+        <carpooler-identity
+          :carpooler="carpooler"
+        />
       </v-col>
 
       <!-- Carpooler rate -->
@@ -70,54 +54,10 @@
       <v-col
         cols="4"
       >
-        <v-row
-          align="center"
-          justify="end"
-          class="min-width-no-flex"
-        >
-          <div v-if="user && carpooler.phoneDisplay == 2">
-            <v-btn
-              v-show="!phoneButtonToggled"
-              color="secondary"
-              small
-              depressed
-              fab
-              @click="toggleButton"
-            >
-              <v-icon>
-                mdi-phone
-              </v-icon>
-            </v-btn>
-            <v-btn
-              v-show="phoneButtonToggled"
-              color="secondary"
-              small
-              dark
-              depressed
-              rounded
-              height="40px"
-              @click="toggleButton"
-            >
-              <v-icon>mdi-phone</v-icon>
-              {{ carpooler.phone }}
-            </v-btn>
-          </div>
-          <!-- <div>
-            <v-btn
-              color="secondary"
-              small
-              depressed
-              fab
-              class="ml-2"
-            >
-              <v-icon
-                @click="buttonAlert(inDev,$event);"
-              >
-                mdi-email
-              </v-icon>
-            </v-btn>
-          </div> -->
-        </v-row>
+        <carpooler-contact
+          :carpooler="carpooler"
+          :user="user"
+        />
       </v-col>
 
       <!-- Button -->
@@ -178,14 +118,20 @@
 
 <script>
 import { merge } from "lodash";
-import moment from "moment";
 import Translations from "@translations/components/carpool/utilities/CarpoolerSummary.json";
 import TranslationsClient from "@clientTranslations/components/carpool/utilities/CarpoolerSummary.json";
+
+import CarpoolerIdentity from "./CarpoolerIdentity";
+import CarpoolerContact from "./CarpoolerContact";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged,
+  },
+  components: {
+    CarpoolerIdentity,
+    CarpoolerContact
   },
   props: {
     proposal: {
@@ -219,27 +165,10 @@ export default {
   },
   data() {
     return {
-      locale: this.$i18n.locale,
-      phoneButtonToggled: false,
-      disabled: this.user ? false : true,
+      disabled: !this.user,
     };
   },
-  computed: {
-    age (){
-      if (this.carpooler.birthYear) {
-        return moment().diff(moment([this.carpooler.birthYear]),'years')+' '+this.$t("birthYears");
-      } else {
-        return null;
-      }
-    }
-  },
-  created() {
-    moment.locale(this.locale); // DEFINE DATE LANGUAGE
-  },
   methods: {
-    toggleButton: function(){
-      this.phoneButtonToggled = !this.phoneButtonToggled;
-    },
     buttonAlert(msg, e) {
       alert(msg);
     },
