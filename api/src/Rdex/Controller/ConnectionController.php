@@ -32,7 +32,7 @@ use App\Rdex\Entity\RdexConnection;
 
 /**
  * Controller class for Rdex Connections
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ConnectionController
 {
@@ -52,12 +52,17 @@ class ConnectionController
      * @param RdexConnection $data
      * @return Response
      */
-    public function __invoke(array $data): Response
+    public function __invoke(RdexConnection $data)
     {
+        echo "ok";
+        die;
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad RdexJourney id is provided"));
         }
         $response = new Response();
+
+//        $this->rdexManager->validate($this->request);
+
 
         return $response;
     }

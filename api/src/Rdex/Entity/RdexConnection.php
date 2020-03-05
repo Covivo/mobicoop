@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
+use App\Rdex\Controller\ConnectionController;
 
 /**
  * An RDEX Connection (conctact a user on a rdex platform)
@@ -38,7 +39,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "normalization_context"={"groups"={"rdex"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={
- *          "get"={
+ *          "post"={
  *              "path"="/connections",
  *              "controller"=ConnectionController::class,
  *              "swagger_context" = {
@@ -108,21 +109,10 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      itemOperations={}
  * )
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class RdexConnection implements \JsonSerializable
 {
-    
-    /* @todo : put OPERATOR, ORIGIN and URL in a config file */
-    const OPERATOR = "mobicoop";
-    const ORIGIN = "mobicoop.io";
-    const URL = "https://www.mobicoop.io/";
-    
-    const FREQUENCY_PUNCTUAL = "punctual";
-    const FREQUENCY_REGULAR = "regular";
-
-    const TYPE_ONE_WAY = "one-way";
-    const TYPE_ROUND_TRIP = "round-trip";
     
     /**
      * @ApiProperty(identifier=true)
@@ -148,13 +138,6 @@ class RdexConnection implements \JsonSerializable
     private $origin;
     
     /**
-     * @var string The url of the ad.
-     *
-     * @Groups("rdex")
-     */
-    private $url;
-    
-    /**
      * @var RdexDriver The driver.
      *
      * @Groups("rdex")
@@ -167,125 +150,6 @@ class RdexConnection implements \JsonSerializable
      * @Groups("rdex")
      */
     private $passenger;
-    
-    /**
-     * @var RdexAddress The origin of the ride.
-     *
-     * @Groups("rdex")
-     */
-    private $from;
-    
-    /**
-     * @var RdexAddress The destination of the ride.
-     *
-     * @Groups("rdex")
-     */
-    private $to;
-    
-    /**
-     * @var int The distance of the ride.
-     *
-     * @Groups("rdex")
-     */
-    private $distance;
-    
-    /**
-     * @var int The duration of the ride.
-     *
-     * @Groups("rdex")
-     */
-    private $duration;
-    
-    /**
-     * @var string The route.
-     *
-     * @Groups("rdex")
-     */
-    private $route;
-    
-    /**
-     * @var int The number of waypoints.
-     *
-     * @Groups("rdex")
-     */
-    private $number_of_waypoints;
-    
-    /**
-     * @var RdexWaypoint[] The waypoints.
-     *
-     * @Groups("rdex")
-     */
-    private $waypoints;
-    
-    /**
-     * @var RdexCost The cost of the ride.
-     *
-     * @Groups("rdex")
-     */
-    private $cost;
-    
-    /**
-     * @var string A comment about the ride.
-     *
-     * @Groups("rdex")
-     */
-    private $details;
-    
-    /**
-     * @var RdexVehicle The vehicle.
-     *
-     * @Groups("rdex")
-     */
-    private $vehicle;
-    
-    /**
-     * @var string The frequency of the ride.
-     *
-     * @Groups("rdex")
-     */
-    private $frequency;
-    
-    /**
-     * @var string The type of the ride.
-     *
-     * @Groups("rdex")
-     */
-    private $type;
-    
-    /**
-     * @var bool The ride is a realtime ride.
-     *
-     * @Groups("rdex")
-     */
-    private $real_time;
-    
-    /**
-     * @var bool The ride is stopped.
-     *
-     * @Groups("rdex")
-     */
-    private $stopped;
-    
-    /**
-     * @var RdexDay The days of the ride.
-     *
-     * @Groups("rdex")
-     */
-    private $days;
-    
-    /**
-     * @var RdexTripDate The date details of the outward trip.
-     *
-     * @Groups("rdex")
-     */
-    private $outward;
-    
-    /**
-     * @var RdexTripDate The date details of the return trip.
-     *
-     * @Groups("rdex")
-     */
-    private $return;
     
     public function __construct($uuid)
     {
@@ -524,142 +388,6 @@ class RdexConnection implements \JsonSerializable
     {
         $this->passenger = $passenger;
     }
-
-    /**
-     * @param \App\Rdex\Entity\RdexAddress $from
-     */
-    public function setFrom($from)
-    {
-        $this->from = $from;
-    }
-
-    /**
-     * @param \App\Rdex\Entity\RdexAddress $to
-     */
-    public function setTo($to)
-    {
-        $this->to = $to;
-    }
-
-    /**
-     * @param number $distance
-     */
-    public function setDistance($distance)
-    {
-        $this->distance = $distance;
-    }
-
-    /**
-     * @param number $duration
-     */
-    public function setDuration($duration)
-    {
-        $this->duration = $duration;
-    }
-
-    /**
-     * @param string $route
-     */
-    public function setRoute($route)
-    {
-        $this->route = $route;
-    }
-
-    /**
-     * @param number $number_of_waypoints
-     */
-    public function setNumberOfWaypoints($number_of_waypoints)
-    {
-        $this->number_of_waypoints = $number_of_waypoints;
-    }
-
-    /**
-     * @param multitype:\App\Rdex\Entity\Waypoint  $waypoints
-     */
-    public function setWaypoints($waypoints)
-    {
-        $this->waypoints = $waypoints;
-    }
-
-    /**
-     * @param \App\Rdex\Entity\RdexCost $cost
-     */
-    public function setCost($cost)
-    {
-        $this->cost = $cost;
-    }
-
-    /**
-     * @param string $details
-     */
-    public function setDetails($details)
-    {
-        $this->details = $details;
-    }
-
-    /**
-     * @param \App\Rdex\Entity\RdexVehicle $vehicle
-     */
-    public function setVehicle($vehicle)
-    {
-        $this->vehicle = $vehicle;
-    }
-
-    /**
-     * @param string $frequency
-     */
-    public function setFrequency($frequency)
-    {
-        $this->frequency = $frequency;
-    }
-
-    /**
-     * @param string $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    /**
-     * @param boolean $real_time
-     */
-    public function setRealTime($real_time)
-    {
-        $this->real_time = $real_time;
-    }
-
-    /**
-     * @param boolean $stopped
-     */
-    public function setStopped($stopped)
-    {
-        $this->stopped = $stopped;
-    }
-
-    /**
-     * @param \App\Rdex\Entity\RdexDay $days
-     */
-    public function setDays($days)
-    {
-        $this->days = $days;
-    }
-
-    /**
-     * @param \App\Rdex\Entity\RdexTripDate $outward
-     */
-    public function setOutward($outward)
-    {
-        $this->outward = $outward;
-    }
-
-    /**
-     * @param \App\Rdex\Entity\RdexTripDate $return
-     */
-    public function setReturn($return)
-    {
-        $this->return = $return;
-    }
     
     public function jsonSerialize()
     {
@@ -671,23 +399,6 @@ class RdexConnection implements \JsonSerializable
             'url'       => $this->getUrl(),
             'driver'    => $this->getDriver(),
             'passenger' => $this->getPassenger(),
-            'from'      => $this->getFrom(),
-            'to'        => $this->getTo(),
-            'distance'  => $this->getDistance(),
-            'duration'  => $this->getDuration(),
-            'route'     => $this->getRoute(),
-            'number_of_waypoints'   => $this->getNumberOfWaypoints(),
-            'waypoints' => $this-> getWaypoints(),
-            'cost'      => $this->getCost(),
-            'details'   => $this->getDetails() ,
-            'vehicle'   => $this->getVehicle(),
-            'frequency' => $this->getFrequency(),
-            'type'      => $this->getType(),
-            'real_time' => $this->isRealTime(),
-            'stopped'   => $this->isStopped(),
-            'days'      => $this->getDays(),
-            'outward'   => $this->getOutward(),
-            'return'    => $this->getReturn()
         ];
     }
 }

@@ -597,4 +597,10 @@ class RdexManager
 
         return ["days"=>$days, "journey"=>$infos];
     }
+
+
+    public function validateConnection(Request $request)
+    {
+        echo "ok";
+    }
 }
