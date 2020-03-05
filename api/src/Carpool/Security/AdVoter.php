@@ -138,7 +138,7 @@ class AdVoter extends Voter
 
     private function canReadAds(UserInterface $requester, ?int $userId=null)
     {
-        return $this->permissionManager->checkPermission('ad_results_self', $requester, null, $userId);
+        return $this->permissionManager->checkPermission('ads_list_self', $requester, null, $userId);
     }
 
     private function canReadAd(Ad $ad, UserInterface $requester)
