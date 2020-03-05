@@ -604,7 +604,6 @@ export default {
         schedules: validSchedules,
         returnTimeIsValid: this.returnTimeIsValid,
       });
-      console.error(this.returnTimeIsValid)
     },
     checkDateReturn(e){
       this.returnTrip = e ? true : false;

@@ -415,6 +415,7 @@
 
 <script>
 import axios from "axios";
+import moment from "moment";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import ChangePassword from "@components/user/profile/ChangePassword";
 import { merge } from "lodash";
@@ -688,7 +689,7 @@ export default {
         .then(res => {
           if (res.data.length > 0) {
             this.createdEvents = res.data;
-            this.hasCreatedEvents = true;
+            this.hasCreatedEvents = moment(this.createdEvents[0].toDate.date) >= moment(new Date()) ? true : false;
           }
           this.disabledCreatedEvents = false;
         });
