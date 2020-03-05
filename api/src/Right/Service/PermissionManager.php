@@ -235,7 +235,6 @@ class PermissionManager
         } else {
 
             // I'm a real user
-
             $permission = new Permission(1);
             $permission->setGranted(false);
             // we first check if the user is seated on the iron throne
@@ -495,6 +494,8 @@ class PermissionManager
                 return $objectId === $requesterId;
             case "communityManaged()":
                 return self::communityManaged($right, $requesterId, $objectId);
+            case "message()":
+                return $objectId === $requesterId;
         }
         return false;
     }
