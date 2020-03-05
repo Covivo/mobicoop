@@ -383,8 +383,17 @@
           </v-card-text>
 
           <v-divider></v-divider>
-
-          <v-card-actions>
+          <v-card-actions v-if="hasCreatedEvents || hasOwnedCommunities">
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary darken-1"
+              text
+              @click="dialogDelete = false; newsSubscription = true"
+            >
+              {{ $t('dialog.buttons.close') }}
+            </v-btn>
+          </v-card-actions>
+          <v-card-actions v-else>
             <v-spacer></v-spacer>
             <v-btn
               color="primary darken-1"
@@ -396,7 +405,6 @@
             <v-btn
               color="primary"
               text
-              :disabled="hasCreatedEvents || hasOwnedCommunities"
               :href="$t('route.supprimer')"
               @click="dialogDelete = false"
             >

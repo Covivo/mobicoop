@@ -59,6 +59,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use App\User\Repository\UserRepository;
 use DoctrineExtensions\Query\Mysql\Now;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use App\User\Exception\UserDeleteException;
 
 /**
  * User manager service.
@@ -670,6 +671,23 @@ class UserManager
      */
     public function deleteUser(User $user)
     {
+        // Check if the user is not the author of an event that is still valid
+        foreach ($user->getEvents() as $event) {
+            if (($event->getUser()->getId() == $user->getId()) && ($event->getToDate() >= new \DateTime())) {
+                // to do throw exception
+                throw new UserDeleteException("An Event of the user is still runing");
+            }
+        }
+        // Check if the user is not the author of a community
+        foreach ($user->getCommunityUsers() as $communityUser) {
+            if ($communityUser->getCommunity()->getUser()->getId() == $user->getId()) {
+                // todo throw execption
+                throw new UserDeleteException("The user is a community owner");
+            } else {
+                //delete all community subscriptions
+                $this->deleteCommunityUsers($user);
+            }
+        }
         // We check if the user have ads.
         // If he have ads we check if a carpool is initiated if yes we send an email to the carpooler
         foreach ($user->getProposals() as $proposal) {
@@ -698,24 +716,6 @@ class UserManager
             }
             $this->entityManager->remove($proposal);
         }
-        // Check if the user is not the author of an event that is not passed
-        foreach ($user->getEvents() as $event) {
-            if (($event->getUser()->getId() == $user->getId()) && ($event->getToDate() >= new \DateTime())) {
-                // to do throw exception
-                return false;
-            }
-        }
-        // Check if the user is not the author of a community
-        foreach ($user->getCommunityUsers() as $communityUser) {
-            if ($communityUser->getCommunity()->getUser()->getId() == $user->getId()) {
-                // todo throw execption
-                return false;
-            } else {
-                //delete all community subscriptions
-                $this->deleteCommunityUsers($user);
-            }
-        }
-
         $this->deleteUserImages($user);
         
         $this->entityManager->remove($user);
