@@ -13,7 +13,7 @@
         <route-summary
           :origin="origin"
           :destination="destination"
-          :type="frequency"
+          :type="ad.frequency"
           :time="ad.outwardTime"
           text-color-class="primary--text"
           icon-color="accent"
@@ -35,7 +35,7 @@
         <route-summary
           :origin="destination"
           :destination="origin"
-          :type="frequency"
+          :type="ad.frequency"
           :time="ad.returnTime"
           text-color-class="primary--text"
           icon-color="accent"
@@ -46,7 +46,6 @@
 </template>
 
 <script>
-import {isEmpty} from "lodash";
 import RouteSummary from '@components/carpool/utilities/RouteSummary.vue';
 import Schedules from '@components/user/profile/ad/Schedules.vue';
 
@@ -64,9 +63,6 @@ export default {
   computed: {
     hasReturn () {
       return !this.ad.oneWay;
-    },
-    frequency () {
-      return this.ad.frequency;
     },
     origin () {
       return this.ad.outwardWaypoints[0].address;
