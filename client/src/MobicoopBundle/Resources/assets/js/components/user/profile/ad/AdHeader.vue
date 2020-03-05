@@ -68,6 +68,7 @@
       </v-tooltip>
       <v-spacer />
       <v-col
+        v-if="!isCarpool"
         cols="8"
         class="text-center"
       >
@@ -79,6 +80,7 @@
         </p>
       </v-col>
       <v-col
+        v-if="!isCarpool"
         cols="2"
         class="text-right"
       >
@@ -216,6 +218,10 @@ export default {
       default: false
     },
     hasAcceptedAsk: {
+      type: Boolean,
+      default: false
+    },
+    isCarpool: {
       type: Boolean,
       default: false
     }

@@ -319,6 +319,9 @@ class UserController extends AbstractController
         if ($tabDefault == 'mes-annonces') {
             $tabDefault = 'myAds';
         }
+        if ($tabDefault == 'mes-covoiturages-acceptes') {
+            $tabDefault = 'carpoolsAccepted';
+        }
         if ($tabDefault == 'mon-profil') {
             $tabDefault = 'myProfile';
         }
@@ -327,7 +330,8 @@ class UserController extends AbstractController
             'error' => $error,
             'alerts' => $userManager->getAlerts($user)['alerts'],
             'tabDefault' => $tabDefault,
-            'ads' => $userManager->getAds($user)
+            'ads' => $userManager->getAds($user),
+            'acceptedCarpools' => $userManager->getAds($user, true)
         ]);
     }
 

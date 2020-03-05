@@ -499,10 +499,11 @@ class UserManager
      * Get the proposals of an user
      *
      * @param User $user
+     * @param bool $isValidatedCarpool
      * @return array|object
      * @throws \ReflectionException
      */
-    public function getAds(User $user)
+    public function getAds(User $user, bool $isValidatedCarpool = false)
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
@@ -516,6 +517,15 @@ class UserManager
         ];
 
         foreach ($ads as $ad) {
+            if ($isValidatedCarpool) {
+                $acceptedAsks = array_filter($ad["results"], function ($result) {
+                    return $result["acceptedAsk"] === true;
+                });
+                if (count($acceptedAsks) === 0) {
+                    continue;
+                }
+            }
+
             $isAlreadyInArray = false;
             
             if (isset($adsSanitized["ongoing"][$ad["id"]]) ||
@@ -544,6 +554,12 @@ class UserManager
         }
         return $adsSanitized;
     }
+
+    public function getAcceptedCarpools(User $user)
+    {
+//        $ads = $this->adManager->
+    }
+
 
     /**
      * Cleaning the Matchings related to private Proposals
