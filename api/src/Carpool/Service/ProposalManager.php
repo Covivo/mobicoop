@@ -336,26 +336,37 @@ class ProposalManager
         foreach ($proposal->getWaypoints() as $waypoint) {
             $addresses[] = $waypoint->getAddress();
         }
-        if ($routes = $this->geoRouter->getRoutes($addresses, false, false, GeorouterInterface::RETURN_TYPE_OBJECT)) {
-            // for now we only keep the first route !
-            // if we ever want alternative routes we should pass the route as parameter of this method
-            // (problem : the route has no id, we should pass the whole route to check which route is chosen by the user...
-            //      => we would have to think of a way to simplify...)
-            $direction = $routes[0];
-            // creation of the crossed zones
-            $direction = $this->zoneManager->createZonesForDirection($direction);
-            $direction->setAutoGeoJsonDetail();
-            if ($proposal->getCriteria()->isDriver()) {
+        $routes = null;
+        if ($proposal->getCriteria()->isDriver()) {
+            if ($routes = $this->geoRouter->getRoutes($addresses, false, false, GeorouterInterface::RETURN_TYPE_OBJECT)) {
+                // for now we only keep the first route !
+                // if we ever want alternative routes we should pass the route as parameter of this method
+                // (problem : the route has no id, we should pass the whole route to check which route is chosen by the user...
+                //      => we would have to think of a way to simplify...)
+                $direction = $routes[0];
+                // creation of the crossed zones
+                $direction = $this->zoneManager->createZonesForDirection($direction);
+                $direction->setAutoGeoJsonDetail();
                 $proposal->getCriteria()->setDirectionDriver($direction);
                 $proposal->getCriteria()->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
                 $proposal->getCriteria()->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
             }
-            if ($proposal->getCriteria()->isPassenger()) {
+        }
+        if ($proposal->getCriteria()->isPassenger()) {
+            if ($routes && count($addresses)>2) {
                 // if the user is passenger we keep only the first and last points
-                $routes = $this->geoRouter->getRoutes([$addresses[0],$addresses[count($addresses)-1]], false, false, GeorouterInterface::RETURN_TYPE_OBJECT);
-                $direction = $routes[0];
+                if ($routes = $this->geoRouter->getRoutes([$addresses[0],$addresses[count($addresses)-1]], false, false, GeorouterInterface::RETURN_TYPE_OBJECT)) {
+                    $direction = $routes[0];
+                }
+            } elseif (!$routes) {
+                if ($routes = $this->geoRouter->getRoutes($addresses, false, false, GeorouterInterface::RETURN_TYPE_OBJECT)) {
+                    $direction = $routes[0];
+                }
+            }
+            if ($routes) {
                 // creation of the crossed zones
-                $direction = $this->zoneManager->createZonesForDirection($direction);
+                //$direction = $this->zoneManager->createZonesForDirection($direction);
+                $direction->setAutoGeoJsonDetail();
                 $proposal->getCriteria()->setDirectionPassenger($direction);
             }
         }
@@ -443,6 +454,107 @@ class ProposalManager
         }
         return $proposal;
     }
+
+
+
+
+
+
+    /************
+    *   DYNAMIC *
+    *************/
+
+    /**
+     * Update matchings for a proposal
+     *
+     * @param Proposal  $proposal   The proposal to treat
+     * @param Address $address      The current address
+     * @return Proposal The treated proposal
+     */
+    public function updateMatchingsForProposal(Proposal $proposal, Address $address)
+    {
+        $this->logger->info("ProposalManager : updateMatchingsForProposal #" . $proposal->getId() . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        
+        // set the directions
+        $proposal = $this->updateDirection($proposal, $address);
+        
+        // matching analyze
+        $proposal = $this->proposalMatcher->updateMatchingsForProposal($proposal);
+                
+        return $proposal;
+    }
+
+    /**
+     * Update the direction of a proposal, using the given address as origin.
+     * Used for dynamic carpooling, to compute the remaining direction to the destination.
+     * This kind of proposal should only have one role, but we will compute both eventually.
+     *
+     * @param Proposal $proposal    The proposal
+     * @param Address $address      The current address
+     * @return Proposal             The proposal with its updated direction
+     */
+    private function updateDirection(Proposal $proposal, Address $address)
+    {
+        // the first point is the current address
+        $addresses = [$address];
+        foreach ($proposal->getWaypoints() as $waypoint) {
+            // we take all the waypoints but the first and the reached
+            if (!$waypoint->isReached() && $waypoint->getPosition()>0) {
+                $addresses[] = $waypoint->getAddress();
+            }
+        }
+        $routes = null;
+        if ($proposal->getCriteria()->isDriver()) {
+            if ($routes = $this->geoRouter->getRoutes($addresses, false, false, GeorouterInterface::RETURN_TYPE_OBJECT)) {
+                // we update only some of the properties : distance, duration, ascend, descend, detail, format, snapped
+                // bearing and bbox are not updated as they are computed for the whole original direction
+                // (the current direction of the driver could not match with the passenger direction, whereas the whole directions could match)
+                $direction = $routes[0];
+                $direction->setSaveGeoJson(true);
+                $direction->setDetailUpdatable(true);
+                $direction->setAutoGeoJsonDetail();
+                $proposal->getCriteria()->getDirectionDriver()->setDistance($direction->getDistance());
+                $proposal->getCriteria()->getDirectionDriver()->setDuration($direction->getDuration());
+                $proposal->getCriteria()->getDirectionDriver()->setAscend($direction->getAscend());
+                $proposal->getCriteria()->getDirectionDriver()->setDescend($direction->getDescend());
+                $proposal->getCriteria()->getDirectionDriver()->setDetail($direction->getDetail());
+                $proposal->getCriteria()->getDirectionDriver()->setFormat($direction->getFormat());
+                $proposal->getCriteria()->getDirectionDriver()->setSnapped($direction->getSnapped());
+                $proposal->getCriteria()->getDirectionDriver()->setGeoJsonDetail($direction->getGeoJsonDetail());
+                $proposal->getCriteria()->getDirectionDriver()->setGeoJsonSimplified($direction->getGeoJsonSimplified());
+            }
+        }
+        if ($proposal->getCriteria()->isPassenger()) {
+            if ($routes && count($addresses)>2) {
+                // if the user is passenger we keep only the first and last points
+                if ($routes = $this->geoRouter->getRoutes([$addresses[0],$addresses[count($addresses)-1]], false, false, GeorouterInterface::RETURN_TYPE_OBJECT)) {
+                    $direction = $routes[0];
+                }
+            } elseif (!$routes) {
+                if ($routes = $this->geoRouter->getRoutes($addresses, false, false, GeorouterInterface::RETURN_TYPE_OBJECT)) {
+                    $direction = $routes[0];
+                }
+            }
+            if ($routes) {
+                $direction->setSaveGeoJson(true);
+                $direction->setDetailUpdatable(true);
+                $direction->setAutoGeoJsonDetail();
+                $proposal->getCriteria()->getDirectionPassenger()->setDistance($direction->getDistance());
+                $proposal->getCriteria()->getDirectionPassenger()->setDuration($direction->getDuration());
+                $proposal->getCriteria()->getDirectionPassenger()->setAscend($direction->getAscend());
+                $proposal->getCriteria()->getDirectionPassenger()->setDescend($direction->getDescend());
+                $proposal->getCriteria()->getDirectionPassenger()->setDetail($direction->getDetail());
+                $proposal->getCriteria()->getDirectionPassenger()->setFormat($direction->getFormat());
+                $proposal->getCriteria()->getDirectionPassenger()->setSnapped($direction->getSnapped());
+                $proposal->getCriteria()->getDirectionDriver()->setGeoJsonDetail($direction->getGeoJsonDetail());
+                $proposal->getCriteria()->getDirectionDriver()->setGeoJsonSimplified($direction->getGeoJsonSimplified());
+            }
+        }
+        return $proposal;
+    }
+
+    
+
 
 
 

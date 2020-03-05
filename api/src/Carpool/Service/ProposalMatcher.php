@@ -778,7 +778,6 @@ class ProposalMatcher
         
         return $matchings;
     }
-    
 
     /**
      * Callback function for array sort
@@ -1304,6 +1303,99 @@ class ProposalMatcher
         }
         return [$pickUp,$dropOff];
     }
+
+
+
+
+
+
+    /************
+    *   DYNAMIC *
+    *************/
+
+    /**
+     * Update Matching proposal entities for a proposal.
+     *
+     * @param Proposal $proposal    The proposal for which we want the matchings
+     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
+     * @return Proposal The proposal with the matchings
+     */
+    public function updateMatchingsForProposal(Proposal $proposal, bool $excludeProposalUser=true)
+    {
+        $this->logger->info("ProposalMatcher : updateMatchingsForProposal #" . $proposal->getId() . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        set_time_limit(360);
+
+        // we search the matchings
+        $matchings = $this->findMatchingProposals($proposal, $excludeProposalUser);
+        
+        // first, we will check if existing matchings are still valid
+        // for matchings as request
+        foreach ($proposal->getMatchingOffers() as $matchingOffer) {
+            // here, $proposal == matchingOffer->getProposalRequest()
+            $found = false;
+            foreach ($matchings as $matching) {
+                if ($matching->getProposalOffer()->getId() == $matchingOffer->getProposalOffer()->getId()) {
+                    // this matching already exists => it is still valid
+                    $found = true;
+                    // update the matching
+                }
+            }
+            if (!$found) {
+                // the matching was not found => it is now invalid, we remove it
+                $proposal->removeMatchingOffer($matchingOffer);
+            }
+        }
+        // for matchings as offer
+        foreach ($proposal->getMatchingRequests() as $matchingRequest) {
+            // here, $proposal == matchingRequest->getProposalOffer()
+            $found = false;
+            foreach ($matchings as $matching) {
+                if ($matching->getProposalRequest()->getId() == $matchingRequest->getProposalRequest()->getId()) {
+                    // this matching already exists => it is still valid
+                    $found = true;
+                    // update the matching
+
+                    break;
+                }
+            }
+            if (!$found) {
+                // the matching was not found => it is now invalid, we remove it
+                $proposal->removeMatchingRequest($matchingRequest);
+            }
+        }
+
+        // second, we add the new matchings
+        foreach ($matchings as $matching) {
+            $found = false;
+            if ($matching->getProposalOffer() === $proposal) {
+                foreach ($proposal->getMatchingRequests() as $matchingRequest) {
+                    if ($matchingRequest->getProposalRequest()->getId() == $matching->getProposalRequest()->getId()) {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    $proposal->addMatchingRequest($matching);
+                }
+            } else {
+                foreach ($proposal->getMatchingOffers() as $matchingOffer) {
+                    if ($matchingOffer->getProposalOffer()->getId() == $matching->getProposalOffer()->getId()) {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    $proposal->addMatchingOffer($matching);
+                }
+            }
+        }
+                
+        return $proposal;
+    }
+
+
+
 
 
 

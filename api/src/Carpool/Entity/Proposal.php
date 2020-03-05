@@ -124,12 +124,23 @@ class Proposal
     /**
      * @var boolean Active proposal.
      * Used for dynamic carpooling, only active proposal can be matched.
-     * A passenger proposal is set to inactive for when an ask is accepted, a driver proposal is set to inactive when no more passenger can be involved.
+     * A passenger proposal is set to inactive when an ask is accepted, a driver proposal is set to inactive when no more passenger can be involved.
+     * An inactive ad can still be updated, to keep the positions till the destination.
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write","thread",})
      */
     private $active;
+
+    /**
+     * @var boolean Finished proposal.
+     * Used for dynamic carpooling, only unfinished proposal can be matched.
+     * An ad is set to finished when it is manually stopped, or when the destination is reached.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread",})
+     */
+    private $finished;
 
     /**
      * @var boolean Private proposal.
@@ -390,6 +401,18 @@ class Proposal
     public function setActive(?bool $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function isFinished(): bool
+    {
+        return $this->finished ? true : false;
+    }
+
+    public function setFinished(?bool $finished): self
+    {
+        $this->finished = $finished;
 
         return $this;
     }

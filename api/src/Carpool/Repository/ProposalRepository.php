@@ -76,6 +76,10 @@ class ProposalRepository
      * - similar times (~ passenger time is after driver time)
      * - similar basic geographical zones
      *
+     * We also filter the dynamic ads :
+     * - a dynamic driver ad can only match with a dynamic passenger ad (for a dynamic driver, the matching is made only to check the validity, they are not presented to the driver)
+     * - a dynamic passenger ad can match with any driver ad
+     *
      * We can also filter with communities.
      * TODO : We also limit to the drivers that have enough seats left in their car for the passenger's needs.
      *
@@ -176,6 +180,11 @@ class ProposalRepository
 
         // // exclude paused proposals
         // $query->andWhere('(p.paused IS NULL or p.paused = 0)');
+
+        // DYNAMIC ADS : only drivers, for validity check (dynamic passengers can match with any driver, not only dynamic)
+        if ($proposal->getCriteria()->isDriver() && $proposal->isDynamic() && $proposal->isActive() && !$proposal->isFinished()) {
+            $query->andWhere('p.dynamic = 1 AND p.active=1 AND p.finished=0');
+        }
 
         // SOLIDARY
         if ($proposal->getCriteria()->isSolidaryExclusive()) {
@@ -984,9 +993,9 @@ class ProposalRepository
         }
         // var_dump($punctualAndWhere);
         // var_dump($regularAndWhere);
-        //var_dump($query->getQuery()->getSql());exit;
+        // var_dump($query->getQuery()->getSql());
         // foreach ($query->getQuery()->getParameters() as $parameter) {
-        //     echo $parameter->getName();
+        //     echo $parameter->getName() . " " . $parameter->getValue();
         // }
         // exit;
         //var_dump(count($query->getQuery()->getParameters()));exit;

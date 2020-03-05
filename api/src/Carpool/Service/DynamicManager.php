@@ -131,9 +131,12 @@ class DynamicManager
         $position = new Position();
         $direction = new Direction();
 
+        $proposal->setUser($dynamic->getUser());
+
         // special dynamic properties
         $proposal->setDynamic(true);
         $proposal->setActive(true);
+        $proposal->setFinished(false);
         $proposal->setType(Proposal::TYPE_ONE_WAY);
 
         // comment
@@ -229,14 +232,11 @@ class DynamicManager
             if ($waypointPosition == 0) {
                 // init position => the origin of the proposal
                 $position->setAddress(clone $address);
+                $position->setPoints([$position->getAddress()]);
                 $waypoint->setReached(true);
 
                 // direction
                 $direction->setPoints([$address]);
-                // $direction->setBboxMinLon($address->getLongitude());
-                // $direction->setBboxMinLat($address->getLatitude());
-                // $direction->setBboxMaxLon($address->getLongitude());
-                // $direction->setBboxMaxLat($address->getLatitude());
                 $direction->setDistance(0);
                 $direction->setDuration(0);
                 $direction->setDetail("");
@@ -278,19 +278,23 @@ class DynamicManager
             throw new DynamicException('This ad is not dynamic !');
         }
 
-        // still active ?
-        if (!$dynamic->getProposal()->isActive()) {
-            throw new DynamicException('This ad is not active !');
+        // not finished ?
+        if ($dynamic->getProposal()->isFinished()) {
+            throw new DynamicException('This ad is finished !');
         }
+
+        // TODO : check if the position is valid :
+        // - valid coordinates
+        // - not too far from the last point
+        // - etc...
 
         // we update the position
         $dynamic->setLatitude($dynamicData->getLatitude());
         $dynamic->setLongitude($dynamicData->getLongitude());
 
-        $address = new Address();
-        $address->setLatitude($dynamic->getLatitude());
-        $address->setLongitude($dynamic->getLongitude());
-        $dynamic->getProposal()->getPosition()->setAddress($address);
+        // update the address geographic coordinates
+        $dynamic->getProposal()->getPosition()->getAddress()->setLongitude($dynamic->getLongitude());
+        $dynamic->getProposal()->getPosition()->getAddress()->setElevation($dynamic->getLongitude());
 
         // we search if we have reached a waypoint
         foreach ($dynamic->getProposal()->getWaypoints() as $waypoint) {
@@ -298,37 +302,74 @@ class DynamicManager
              * @var Waypoint $waypoint
              */
             if (!$waypoint->isReached()) {
-                if ($this->geoTools->haversineGreatCircleDistance($address->getLatitude(), $address->getLongitude(), $waypoint->getAddress()->getLatitude(), $waypoint->getAddress()->getLongitude())<self::REACH_DISTANCE) {
+                if ($this->geoTools->haversineGreatCircleDistance($dynamic->getLatitude(), $dynamic->getLongitude(), $waypoint->getAddress()->getLatitude(), $waypoint->getAddress()->getLongitude())<self::REACH_DISTANCE) {
                     $waypoint->setReached(true);
                     // destination ? stop the dynamic !
                     if ($waypoint->isDestination()) {
-                        $dynamic->getProposal()->setActive(false);
+                        $dynamic->getProposal()->setFinished(true);
                     }
                     $this->entityManager->persist($waypoint);
+                    $this->entityManager->flush();
                 }
             }
         }
 
-        // we update the direction
-        $points = $dynamic->getProposal()->getPosition()->getDirection()->getGeoJsonDetail()->getPoints();
+        // we update the direction of the position
+
+        // first we get all the past points that are stored as a linestring in the geoJsonPoints property
+        $points = $dynamic->getProposal()->getPosition()->getGeoJsonPoints()->getPoints();
+        // then we add the last point (must be an object that have longitude and latitude properties, like an Address)
+        $address = new Address();
+        $address->setLatitude($dynamic->getLatitude());
+        $address->setLongitude($dynamic->getLongitude());
         $points[] = $address;
+        $dynamic->getProposal()->getPosition()->setPoints($points);
+        // here we force the update because maybe none of the properties from the entity could be updated, but we need to compute GeoJson
+        $dynamic->getProposal()->getPosition()->setAutoUpdatedDate();
 
-        // $addresses = [];
-        // foreach ($points as $point) {
-        //     $waypoint = new Address();
-        //     $waypoint->setLatitude($point->getLatitude());
-        //     $waypoint->setLongitude($point->getLongitude());
-        //     $addresses[] = $waypoint;
-        // }
-        // $routes = $this->geoRouter->getRoutes($addresses);
-        // $dynamic->getProposal()->getPosition()->setDirection($routes[0]);
+        // we create an array of Addresses to compute the real direction using the georouter
+        $addresses = [];
+        foreach ($points as $point) {
+            $waypoint = new Address();
+            $waypoint->setLatitude($point->getLatitude());
+            $waypoint->setLongitude($point->getLongitude());
+            $addresses[] = $waypoint;
+        }
+        if ($routes = $this->geoRouter->getRoutes($addresses)) {
+            // we have a direction
+            /**
+             * @var Direction $newDirection
+             */
+            $newDirection = $routes[0];
+            $dynamic->getProposal()->getPosition()->getDirection()->setDistance($newDirection->getDistance());
+            $dynamic->getProposal()->getPosition()->getDirection()->setDuration($newDirection->getDuration());
+            $dynamic->getProposal()->getPosition()->getDirection()->setAscend($newDirection->getAscend());
+            $dynamic->getProposal()->getPosition()->getDirection()->setDescend($newDirection->getDescend());
+            $dynamic->getProposal()->getPosition()->getDirection()->setBboxMinLon($newDirection->getBboxMinLon());
+            $dynamic->getProposal()->getPosition()->getDirection()->setBboxMinLat($newDirection->getBboxMinLat());
+            $dynamic->getProposal()->getPosition()->getDirection()->setBboxMaxLon($newDirection->getBboxMaxLon());
+            $dynamic->getProposal()->getPosition()->getDirection()->setBboxMaxLat($newDirection->getBboxMaxLat());
+            $dynamic->getProposal()->getPosition()->getDirection()->setDetail($newDirection->getDetail());
+            $dynamic->getProposal()->getPosition()->getDirection()->setFormat($newDirection->getFormat());
+            $dynamic->getProposal()->getPosition()->getDirection()->setSnapped($newDirection->getSnapped());
+            $dynamic->getProposal()->getPosition()->getDirection()->setBearing($newDirection->getBearing());
+            // the following is needed to compute the geoJson in the direction automatic update trigger
+            $dynamic->getProposal()->getPosition()->getDirection()->setPoints($routes[0]->getPoints());
+            $dynamic->getProposal()->getPosition()->getDirection()->setSaveGeoJson(true);
+            $dynamic->getProposal()->getPosition()->getDirection()->setDetailUpdatable(true);
+            // here we force the update because maybe none of the properties from the entity could be updated, but we need to compute GeoJson
+            $dynamic->getProposal()->getPosition()->getDirection()->setAutoUpdatedDate();
+        } else {
+            // the last point introduced an error as we couldn't compute the direction !
+            // we send an exeption...
+            throw new DynamicException("Bad geographic position... Point ignored !");
+        }
 
-        $dynamic->getProposal()->getPosition()->getDirection()->setSaveGeoJson(true);
-        $dynamic->getProposal()->getPosition()->getDirection()->setDetailUpdatable(true);
-        $dynamic->getProposal()->getPosition()->getDirection()->setPoints($points);
-        // here we force the update because none of the properties from the entity could be updated, but we need to compute GeoJson
-        $dynamic->getProposal()->getPosition()->getDirection()->setUpdatedDate(new \DateTime("UTC"));
+        // update the matchings
+        // (and update the proposal direction (= direction from the current point to the destination))
+        $dynamic->setProposal($this->proposalManager->updateMatchingsForProposal($dynamic->getProposal(), $address));
 
+        // persist the updates
         $this->entityManager->persist($dynamic->getProposal());
         $this->entityManager->flush();
 

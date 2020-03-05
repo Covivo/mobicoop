@@ -651,8 +651,8 @@ class Direction
             $this->setGeoJsonBbox(new Polygon([[
                 [$this->getBboxMinLon(),$this->getBboxMinLat()],
                 [$this->getBboxMinLon(),$this->getBboxMaxLat()],
-                [$this->getBboxMaxLon(),$this->getBboxMinLat()],
                 [$this->getBboxMaxLon(),$this->getBboxMaxLat()],
+                [$this->getBboxMaxLon(),$this->getBboxMinLat()],
                 [$this->getBboxMinLon(),$this->getBboxMinLat()]
             ]]));
         }
@@ -670,6 +670,7 @@ class Direction
             return;
         }
         if (!is_null($this->getGeoJsonDetail()) && !$this->isDetailUpdatable()) {
+            //if (!$this->isDetailUpdatable()) {
             return;
         }
         if (!is_null($this->getPoints())) {

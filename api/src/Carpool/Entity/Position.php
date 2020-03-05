@@ -27,6 +27,8 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
 use Symfony\Component\Validator\Constraints as Assert;
+use CrEOF\Spatial\PHP\Types\Geometry\LineString;
+use CrEOF\Spatial\PHP\Types\Geometry\Point;
 
 /**
  * Dynamic carpooling : last position of a dynamic carpooler.
@@ -71,6 +73,12 @@ class Position
     private $direction;
 
     /**
+     * @var string History of geographic points as a linestring, used to compute the direction. Updated at each new position. Can be emptied when the carpool is finished.
+     * @ORM\Column(type="linestring", nullable=true)
+     */
+    private $geoJsonPoints;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -83,6 +91,11 @@ class Position
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedDate;
+
+    /**
+     * @var array|null The array of points as Address objects. Used to create the geoJsonPoints.
+     */
+    private $points;
 
     public function getId(): ?int
     {
@@ -125,6 +138,18 @@ class Position
         return $this;
     }
 
+    public function getGeoJsonPoints()
+    {
+        return $this->geoJsonPoints;
+    }
+    
+    public function setGeoJsonPoints($geoJsonPoints): self
+    {
+        $this->geoJsonPoints = $geoJsonPoints;
+        
+        return $this;
+    }
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -149,6 +174,18 @@ class Position
         return $this;
     }
 
+    public function getPoints(): ?array
+    {
+        return $this->points;
+    }
+    
+    public function setPoints(array $points): self
+    {
+        $this->points = $points;
+        
+        return $this;
+    }
+
     // DOCTRINE EVENTS
     
     /**
@@ -169,5 +206,22 @@ class Position
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \Datetime());
+    }
+
+    /**
+     * GeoJson representation of the points.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function setAutoGeoJsonPoints()
+    {
+        if (!is_null($this->getPoints())) {
+            $arrayPoints = [];
+            foreach ($this->getPoints() as $address) {
+                $arrayPoints[] = new Point($address->getLongitude(), $address->getLatitude());
+            }
+            $this->setGeoJsonPoints(new LineString($arrayPoints));
+        }
     }
 }
