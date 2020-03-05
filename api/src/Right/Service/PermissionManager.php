@@ -317,11 +317,11 @@ class PermissionManager
      */
     private function rightInRoles(Right $right, array $roles, ?int $userId=null, ?int $id=null, ?object $object=null)
     {
-        // echo "check right " . $right->getName() . "\n";
+        //  echo "check right " . $right->getName() . "\n";
         foreach ($right->getRoles() as $rightRole) {
-            // echo "check rightrole " . $rightRole->getName() . "\n";
+            //  echo "check rightrole " . $rightRole->getName() . "\n";
             foreach ($roles as $role) {
-                // echo "check role " . $role['role']->getName() . "\n";
+                //  echo "check role " . $role['role']->getName() . "\n";
                 if ($role['role']->getId() == $rightRole->getId()) {
                     // common role found
                     if ($this->isOwner($right, $userId, $id, $object)) {
@@ -465,6 +465,7 @@ class PermissionManager
         // if (is_null($objectId)) {
         //     return false;
         // }
+        // var_dump($right->getObject());
         switch ($right->getObject()) {
             case "ad":
                 if ($ad = $this->adManager->getAdForPermission($objectId)) {
