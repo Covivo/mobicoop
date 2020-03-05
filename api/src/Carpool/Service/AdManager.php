@@ -1041,7 +1041,7 @@ class AdManager
                 }
             }
         }
-        var_dump($outward);
+        // var_dump($outward);
 
         // if days is null, we make an array using outward
         if (is_null($days)) {
@@ -1051,8 +1051,8 @@ class AdManager
             }
         }
 
-        var_dump($days);
-        die;
+        // var_dump($days);
+        // die;
 
         $schedules = $this->buildSchedule($days, $outward);
         if (count($schedules)>0) {

@@ -55,7 +55,7 @@ class RdexManager
     private const IMAGE_VERSION = "square_250";
 
     // false for testing purpose only
-    private const CHECK_SIGNATURE = true;
+    private const CHECK_SIGNATURE = false;
     
     private $proposalManager;
     private $adManager;
@@ -349,7 +349,9 @@ class RdexManager
             $driver->setSeats($result->getSeatsDriver());
             $driver->setState(($carpoolerIsDriver) ? 1 : 0);
 
-            $driver->setImage($result->getCarpooler()->getImages()[0]->getVersions()[self::IMAGE_VERSION]);
+            if (count($result->getCarpooler()->getImages())>0) {
+                $driver->setImage($result->getCarpooler()->getImages()[0]->getVersions()[self::IMAGE_VERSION]);
+            }
             $journey->setDriver($driver);
 
             $passenger = new RdexPassenger($result->getCarpooler()->getId());
@@ -360,7 +362,9 @@ class RdexManager
             
             $passenger->setState(($carpoolerIsPassenger) ? 1 : 0);
 
-            $passenger->setImage($result->getCarpooler()->getImages()[0]->getVersions()[self::IMAGE_VERSION]);
+            if (count($result->getCarpooler()->getImages())>0) {
+                $passenger->setImage($result->getCarpooler()->getImages()[0]->getVersions()[self::IMAGE_VERSION]);
+            }
             $journey->setPassenger($passenger);
 
 
@@ -458,11 +462,12 @@ class RdexManager
         if ($frequency==1) {
             // Punctual
             $puntualTime = $result->getTime();
+            $punctualMargin = $journey->getMarginDuration();
             $date = $result->getDate();
             switch ($date->format("w")) {
                 case 0: {
                     $days->setSunday(1);
-                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $journey->getSunMarginDuration());
+                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $punctualMargin);
                     $rdexDayTime = new RdexDayTime();
                     $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
                     $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
@@ -471,7 +476,7 @@ class RdexManager
                 }
                 case 1: {
                     $days->setMonday(1);
-                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $journey->getMonMarginDuration());
+                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $punctualMargin);
                     $rdexDayTime = new RdexDayTime();
                     $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
                     $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
@@ -480,7 +485,7 @@ class RdexManager
                 }
                 case 2: {
                     $days->setTuesday(1);
-                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $journey->getTueMarginDuration());
+                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $punctualMargin);
                     $rdexDayTime = new RdexDayTime();
                     $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
                     $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
@@ -489,7 +494,7 @@ class RdexManager
                 }
                 case 3: {
                     $days->setWednesday(1);
-                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $journey->getWedMarginDuration());
+                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $punctualMargin);
                     $rdexDayTime = new RdexDayTime();
                     $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
                     $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
@@ -498,7 +503,7 @@ class RdexManager
                 }
                 case 4: {
                     $days->setThursday(1);
-                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $journey->getThuMarginDuration());
+                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $punctualMargin);
                     $rdexDayTime = new RdexDayTime();
                     $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
                     $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
@@ -507,7 +512,7 @@ class RdexManager
                 }
                 case 5: {
                     $days->setFriday(1);
-                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $journey->getFriMarginDuration());
+                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $punctualMargin);
                     $rdexDayTime = new RdexDayTime();
                     $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
                     $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
@@ -516,7 +521,7 @@ class RdexManager
                 }
                 case 6: {
                     $days->setSaturday(1);
-                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $journey->getSatMarginDuration());
+                    $minMaxTime = $this->computeMinMaxTime($puntualTime, $punctualMargin);
                     $rdexDayTime = new RdexDayTime();
                     $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
                     $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
