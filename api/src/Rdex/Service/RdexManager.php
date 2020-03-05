@@ -55,7 +55,7 @@ class RdexManager
     private const IMAGE_VERSION = "square_250";
 
     // false for testing purpose only
-    private const CHECK_SIGNATURE = false;
+    private const CHECK_SIGNATURE = true;
     
     private $proposalManager;
     private $adManager;

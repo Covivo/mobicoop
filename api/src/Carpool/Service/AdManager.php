@@ -1003,6 +1003,57 @@ class AdManager
         // RDEX has always a explicit day (monday...) even for puntual
         // So we always create a schedule then we make a deduction if it's punctual or regular based on it.
         // If the frequency parameter is given it overides the deduction
+
+        // if outward is null, we make an array using now with 1 hour margin on $day bases
+        if (is_null($outward)) {
+            $time = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
+            $mintime = $time->format("H:i:s");
+            $maxtime = $time->add(new \DateInterval("PT1H"))->format("H:i:s");
+        
+            // if days is null, we are using today
+            if (is_null($days)) {
+                $today = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
+                $days = [strtolower($today->format('l'))=>1];
+                $outward = ["mindate"=>$time->format("Y-m-d")];
+                $outward[strtolower($today->format('l'))] = [
+                    "mintime" => $mintime,
+                    "maxtime" => $maxtime
+                ];
+            } else {
+                // We don't have any date so i'm looking for the first date corresponding to the first day
+                $dateFound = "";
+                $currentTestDate = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
+                $cpt = 0; // it's a failsafe to avoid infinit loop
+                while ($dateFound === "" && $cpt < 7) {
+                    if (isset($days[strtolower($currentTestDate->format('l'))])) {
+                        $dateFound = $currentTestDate;
+                    } else {
+                        $currentTestDate = $currentTestDate->add(new \DateInterval("P1D"));
+                    }
+                    $cpt++;
+                }
+                $outward = ["mindate"=>$dateFound->format("Y-m-d")];
+                foreach ($days as $day => $value) {
+                    $outward[$day] = [
+                        "mintime" => $mintime,
+                        "maxtime" => $maxtime
+                    ];
+                }
+            }
+        }
+        var_dump($outward);
+
+        // if days is null, we make an array using outward
+        if (is_null($days)) {
+            $today = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
+            foreach ($outward as $day => $times) {
+                $days = [$day=>1];
+            }
+        }
+
+        var_dump($days);
+        die;
+
         $schedules = $this->buildSchedule($days, $outward);
         if (count($schedules)>0) {
             if ($frequency=="punctual") {
@@ -1066,7 +1117,7 @@ class AdManager
      * @var array $outward  Array of the time for each days
      * @return array
      */
-    private function buildSchedule(array $days, array $outward)
+    private function buildSchedule(?array $days, ?array $outward)
     {
         $schedules = []; // We set a subschdeul because a real Ad can have multiple schedule. Only one in RDEX though.
         $refTimes = [];
