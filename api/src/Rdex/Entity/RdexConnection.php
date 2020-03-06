@@ -28,7 +28,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Rdex\Controller\ConnectionController;
-use App\EventListener\DeserializeListener;
+use App\Rdex\Entity\RdexConnectionUser;
 
 /**
  * An RDEX Connection (conctact a user on a rdex platform)
@@ -112,9 +112,11 @@ use App\EventListener\DeserializeListener;
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class RdexConnection implements \JsonSerializable
+class RdexConnection
 {
-    
+    const AUTHORIZED_STATE = ['sender','recipient'];
+    const MAX_LENGTH_DETAILS = 500;
+
     /**
      * @ApiProperty(identifier=true)
      *
@@ -139,267 +141,119 @@ class RdexConnection implements \JsonSerializable
     private $origin;
     
     /**
-     * @var RdexDriver The driver.
+     * @var RdexConnectionUser The driver.
      *
      * @Groups("rdex")
      */
     private $driver;
     
     /**
-     * @var RdexPassenger The passenger.
+     * @var RdexConnectionUser The passenger.
      *
      * @Groups("rdex")
      */
     private $passenger;
     
+    /**
+     * @var int The uuids of the journey.
+     * Yes, there a 's' in the spec but we only take one... don't ask
+     * @Groups("rdex")
+     */
+    private $journeysId;
+
+    /**
+     * @var string The message.
+     *
+     * @Groups("rdex")
+     */
+    private $details;
+
     public function __construct($uuid=null)
     {
         (!is_null($uuid)) ? $this->uuid = $uuid : $this->uuid = -999999999;
-        $this->waypoints = new ArrayCollection();
     }
     
-    /**
-     * @return mixed
-     */
-    public function getUuid()
+    public function getUuid(): int
     {
         return $this->uuid;
     }
 
-    /**
-     * @return string
-     */
-    public function getOperator()
+    public function setUuid(int $uuid): self
+    {
+        $this->uuid = $uuid;
+
+        return $this;
+    }
+
+    public function getOperator(): string
     {
         return $this->operator;
     }
 
-    /**
-     * @return string
-     */
-    public function getOrigin()
+    public function setOperator(string $operator): self
+    {
+        $this->operator = $operator;
+
+        return $this;
+    }
+
+    public function getOrigin(): string
     {
         return $this->origin;
     }
 
-    /**
-     * @return string
-     */
-    public function getUrl()
+    public function setOrigin(string $origin): self
     {
-        return $this->url;
-    }
+        $this->origin = $origin;
 
-    /**
-     * @return \App\Rdex\Entity\RdexDriver
-     */
-    public function getDriver()
+        return $this;
+    }
+        
+    public function getDriver(): RdexConnectionUser
     {
         return $this->driver;
     }
 
-    /**
-     * @return \App\Rdex\Entity\RdexPassenger
-     */
-    public function getPassenger()
+    public function setDriver(RdexConnectionUser $driver): self
+    {
+        $this->driver = $driver;
+
+        return $this;
+    }
+
+    public function getPassenger(): RdexConnectionUser
     {
         return $this->passenger;
     }
 
-    /**
-     * @return \App\Rdex\Entity\RdexAddress
-     */
-    public function getFrom()
+    public function setPassenger(RdexConnectionUser $passenger): self
     {
-        return $this->from;
+        $this->passenger = $passenger;
+
+        return $this;
     }
 
-    /**
-     * @return \App\Rdex\Entity\RdexAddress
-     */
-    public function getTo()
+    public function getJourneysId(): int
     {
-        return $this->to;
+        return $this->journeysId;
     }
 
-    /**
-     * @return number
-     */
-    public function getDistance()
+    public function setJourneysId(int $journeysId): self
     {
-        return $this->distance;
+        $this->journeysId = $journeysId;
+
+        return $this;
     }
 
-    /**
-     * @return number
-     */
-    public function getDuration()
-    {
-        return $this->duration;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRoute()
-    {
-        return $this->route;
-    }
-
-    /**
-     * @return number
-     */
-    public function getNumberOfWaypoints()
-    {
-        return $this->number_of_waypoints;
-    }
-
-    /**
-     * @return multitype:\App\Rdex\Entity\RdexWaypoint
-     */
-    public function getWaypoints()
-    {
-        return $this->waypoints;
-    }
-
-    /**
-     * @return \App\Rdex\Entity\RdexCost
-     */
-    public function getCost()
-    {
-        return $this->cost;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDetails()
+    public function getDetails(): string
     {
         return $this->details;
     }
 
-    /**
-     * @return \App\Rdex\Entity\RdexVehicle
-     */
-    public function getVehicle()
+    public function setDetails(string $details): self
     {
-        return $this->vehicle;
-    }
+        $this->details = $details;
 
-    /**
-     * @return string
-     */
-    public function getFrequency()
-    {
-        return $this->frequency;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isRealTime()
-    {
-        return $this->real_time;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isStopped()
-    {
-        return $this->stopped;
-    }
-
-    /**
-     * @return \App\Rdex\Entity\RdexDay
-     */
-    public function getDays()
-    {
-        return $this->days;
-    }
-
-    /**
-     * @return \App\Rdex\Entity\RdexTripDate
-     */
-    public function getOutward()
-    {
-        return $this->outward;
-    }
-
-    /**
-     * @return \App\Rdex\Entity\RdexTripDate
-     */
-    public function getReturn()
-    {
-        return $this->return;
-    }
-
-    /**
-     * @param mixed $uuid
-     */
-    public function setUuid($uuid)
-    {
-        $this->uuid = $uuid;
-    }
-
-    /**
-     * @param string $operator
-     */
-    public function setOperator($operator)
-    {
-        $this->operator = $operator;
-    }
-
-    /**
-     * @param string $origin
-     */
-    public function setOrigin($origin)
-    {
-        $this->origin = $origin;
-    }
-
-    /**
-     * @param string $url
-     */
-    public function setUrl($url)
-    {
-        $this->url = $url;
-    }
-
-    /**
-     * @param \App\Rdex\Entity\RdexDriver $driver
-     */
-    public function setDriver($driver)
-    {
-        $this->driver = $driver;
-    }
-
-    /**
-     * @param \App\Rdex\Entity\RdexPassenger $passenger
-     */
-    public function setPassenger($passenger)
-    {
-        $this->passenger = $passenger;
-    }
-    
-    public function jsonSerialize()
-    {
-        return
-        [
-            'uuid'      => $this->getUuid(),
-            'operator'  => $this->getOperator(),
-            'origin'    => $this->getOrigin(),
-            'url'       => $this->getUrl(),
-            'driver'    => $this->getDriver(),
-            'passenger' => $this->getPassenger(),
-        ];
+        return $this;
     }
 }

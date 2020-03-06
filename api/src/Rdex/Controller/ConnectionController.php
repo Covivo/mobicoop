@@ -54,14 +54,31 @@ class ConnectionController
      */
     public function __invoke(RdexConnection $data)
     {
-        echo "ok";
-        die;
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad RdexJourney id is provided"));
         }
         $response = new Response();
-
-//        $this->rdexManager->validate($this->request);
+        // if there are no parameters we stop without errors, in could be an api check, it shouldn't throw an error
+        if ($this->rdexManager->isEmptyRequest($this->request)) {
+            return $response;
+        }
+        
+        $validation = $this->rdexManager->validateConnection($this->request);
+        if ($validation instanceof RdexError) {
+            // Request invalid
+            $error = $this->rdexManager->createError($validation);
+            $response->setContent($error['error']);
+            $response->setStatusCode($error['code']);
+        } else {
+            $sending = $this->rdexManager->sendConnection($this->request);
+            if ($sending instanceof RdexError) {
+                // Error in the sending process
+                $error = $this->rdexManager->createError($sending);
+                $response->setContent($error['error']);
+                $response->setStatusCode($error['code']);
+            }
+            $response->setStatusCode(201);
+        }
 
 
         return $response;

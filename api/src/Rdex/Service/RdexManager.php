@@ -23,6 +23,7 @@
 
 namespace App\Rdex\Service;
 
+use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Response;
 use App\Carpool\Service\ProposalManager;
 use App\Rdex\Entity\RdexJourney;
 use App\Rdex\Entity\RdexError;
@@ -34,6 +35,7 @@ use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Result;
 use App\Carpool\Entity\ResultItem;
 use App\Carpool\Service\AdManager;
+use App\Rdex\Entity\RdexConnection;
 use App\Rdex\Entity\RdexDay;
 use App\Rdex\Entity\RdexTripDate;
 use App\Rdex\Entity\RdexDayTime;
@@ -55,7 +57,7 @@ class RdexManager
     private const IMAGE_VERSION = "square_250";
 
     // false for testing purpose only
-    private const CHECK_SIGNATURE = false;
+    private const CHECK_SIGNATURE = true;
     
     private $proposalManager;
     private $adManager;
@@ -73,6 +75,49 @@ class RdexManager
         $this->proposalManager = $proposalManager;
         $this->adManager = $adManager;
     }
+    
+    
+    /**
+     * Check if the request signature is valid
+     *
+     * @param Request $request
+     * @param string $privateApiKey
+     * @return RdexError|bool True if validation is ok, error if not
+     */
+    public function checkSignature(Request $request, string $privateApiKey)
+    {
+        // we check the signature
+        if (self::CHECK_SIGNATURE) {
+            $signatureValid = false;
+
+
+            $posSignature = strpos($request->getUri(), "&signature=");
+            if ($posSignature === false) {
+                // the signature is the first parameter
+                $posSignature = strpos($request->getUri(), "signature=");
+            }
+
+            // we search for the end of the signature (we add 1 to avoid getting the current &)
+            $posEndSignature = strpos($request->getUri(), "&", $posSignature+1);
+            if ($posEndSignature !== false) {
+                $unsignedUrl = substr_replace($request->getUri(), '', $posSignature, ($posEndSignature-$posSignature));
+            } else {
+                $unsignedUrl = substr_replace($request->getUri(), '', $posSignature);
+            }
+
+            $expectedSignature = hash_hmac(self::RDEX_HASH, $unsignedUrl, $privateApiKey);
+
+            if ($expectedSignature == $request->get("signature")) {
+                $signatureValid = true;
+            }
+            if (!$signatureValid) {
+                return new RdexError("signature", RdexError::ERROR_SIGNATURE_MISMATCH, "Signature mismatch");
+            }
+        } else {
+            return true;
+        }
+    }
+    
     
     /**
      * Validates the parameters of a request.
@@ -140,30 +185,6 @@ class RdexManager
         $urlApikey = $request->get('apikey');
         $privateApiKey = null;
         foreach ($clientList as $currentClientKey => $currentClient) {
-            // if (array_key_exists("publicKey", $keys) && array_key_exists("privateKey", $keys) && $keys["publicKey"] == $apikey) {
-            //     $url = $request->getUri();
-            //     // we search if the signature is not the first parameter
-            //     $posSignature = strpos($url, "&signature=");
-            //     if ($posSignature === false) {
-            //         // the signature is the first parameter
-            //         $posSignature = strpos($url, "signature=");
-            //     }
-            // we search for the end of the signature (we add 1 to avoid getting the current &)
-            // $posEndSignature = strpos($url, "&", $posSignature+1);
-            // if ($posEndSignature !== false) {
-            //     $unsignedUrl = substr_replace($url, '', $posSignature, ($posEndSignature-$posSignature));
-            // } else {
-            //     $unsignedUrl = substr_replace($url, '', $posSignature);
-            // }
-            //     $expectedSignature = hash_hmac(self::RDEX_HASH, $unsignedUrl, $keys["privateKey"]);
-            //     //echo $expectedSignature;exit;
-            //     if ($expectedSignature != $signature) {
-            //         return new RdexError("signature", RdexError::ERROR_SIGNATURE_MISMATCH, "Invalid signature");
-            //     }
-            //     $apikeyFound = true;
-            //     break;
-            // }
-            
             if ($currentClient["public_key"]==$urlApikey) {
                 $apikeyFound = true;
                 $this->clientKey = $currentClientKey;
@@ -184,35 +205,11 @@ class RdexManager
         }
 
         // we check the signature
-        if (self::CHECK_SIGNATURE) {
-            $signatureValid = false;
-
-
-            $posSignature = strpos($request->getUri(), "&signature=");
-            if ($posSignature === false) {
-                // the signature is the first parameter
-                $posSignature = strpos($request->getUri(), "signature=");
-            }
-
-            // we search for the end of the signature (we add 1 to avoid getting the current &)
-            $posEndSignature = strpos($request->getUri(), "&", $posSignature+1);
-            if ($posEndSignature !== false) {
-                $unsignedUrl = substr_replace($request->getUri(), '', $posSignature, ($posEndSignature-$posSignature));
-            } else {
-                $unsignedUrl = substr_replace($request->getUri(), '', $posSignature);
-            }
-
-            $expectedSignature = hash_hmac(self::RDEX_HASH, $unsignedUrl, $privateApiKey);
-
-            if ($expectedSignature == $request->get("signature")) {
-                $signatureValid = true;
-            }
-
-            if (!$signatureValid) {
-                return new RdexError("signature", RdexError::ERROR_SIGNATURE_MISMATCH, "Signature mismatch");
-            }
+        $checkSignature = $this->checkSignature($request, $privateApiKey);
+        if ($checkSignature instanceof RdexError) {
+            return $checkSignature;
         }
-        
+
         $now = new \DateTime("midnight"); // we use 'midnight' to set the time to 0, as createFromFormat below sets the time to 0 if no time is provided
         // verification of outward min date
         if (isset($p['outward']['mindate'])) {
@@ -598,9 +595,133 @@ class RdexManager
         return ["days"=>$days, "journey"=>$infos];
     }
 
-
+    /**
+     * Validate a rdex connection post request
+     *
+     * @param Request $request
+     * @return RdexError|bool True if validation is ok, error if not
+     */
     public function validateConnection(Request $request)
     {
-        echo "ok";
+        // var_dump($request->get('driver'));die;
+
+        if (is_null($request->get("timestamp"))) {
+            return new RdexError("timestamp", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+        }
+
+        // we check if the client exists in config
+        if (!file_exists(self::RDEX_CONFIG_FILE)) {
+            return new RdexError(null, RdexError::ERROR_MISSING_CONFIG);
+        }
+        $clientList = json_decode(file_get_contents(self::RDEX_CONFIG_FILE), true);
+        $apikeyFound = false;
+        $urlApikey = $request->get('apikey');
+        $privateApiKey = null;
+        foreach ($clientList as $currentClientKey => $currentClient) {
+            if ($currentClient["public_key"]==$urlApikey) {
+                $apikeyFound = true;
+                $this->clientKey = $currentClientKey;
+                $privateApiKey = $currentClient["private_key"];
+            }
+            
+            if (!$apikeyFound) {
+                return new RdexError("apikey", RdexError::ERROR_ACCESS_DENIED, "Invalid apikey");
+            }
+        }
+
+
+        // Is there a driver
+        if (
+            is_null($request->get("driver")) ||
+            !is_array($request->get("driver"))
+        ) {
+            return new RdexError("driver", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+        } else {
+            // We check if state in in the authorized values
+            if (!in_array($request->get("driver")['state'], RdexConnection::AUTHORIZED_STATE)) {
+                return new RdexError("driver[state]", RdexError::ERROR_INVALID_INPUT, "driver[state] value must be in (".implode(",", RdexConnection::AUTHORIZED_STATE).")");
+            } else {
+                // If the driver is the recipient, the uuid must be given
+                if ($request->get("driver")['state']==="recipient") {
+                    if (
+                        !isset($request->get("driver")['uuid']) ||
+                        trim($request->get("driver")['uuid'])==="" ||
+                        !is_numeric($request->get("driver")['uuid'])
+                    ) {
+                        return new RdexError("driver['uuid']", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+                    }
+                }
+            }
+        }
+
+        // Is there a passenger
+        if (
+            is_null($request->get("passenger")) ||
+            !is_array($request->get("passenger"))
+        ) {
+            return new RdexError("passenger", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+        } else {
+            // We check if state in in the authorized values
+            if (!in_array($request->get("passenger")['state'], RdexConnection::AUTHORIZED_STATE)) {
+                return new RdexError("passenger[state]", RdexError::ERROR_INVALID_INPUT, "passenger[state] value must be in (".implode(",", RdexConnection::AUTHORIZED_STATE).")");
+            } else {
+                // If the driver is the recipient, the uuid must be given
+                if ($request->get("passenger")['state']==="recipient") {
+                    if (
+                        !isset($request->get("passenger")['uuid']) ||
+                        trim($request->get("passenger")['uuid'])==="" ||
+                        !is_numeric($request->get("passenger")['uuid'])
+                    ) {
+                        return new RdexError("passenger['uuid']", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+                    }
+                }
+            }
+        }
+
+        // There is a journeyId
+        if (
+            is_null($request->get("journeys")) ||
+            !is_array($request->get("journeys")) ||
+            (!isset($request->get('journeys')['uuid'])) ||
+            is_null($request->get('journeys')['uuid']) ||
+            $request->get('journeys')['uuid'] === ""
+        ) {
+            return new RdexError("journeys", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+        }
+
+        // There is a message and it's not empty
+        if (trim($request->get("details")) === "") {
+            return new RdexError("details", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+        } else {
+            if (strlen($request->get("details"))>RdexConnection::MAX_LENGTH_DETAILS) {
+                return new RdexError("details", RdexError::ERROR_INVALID_INPUT, "Details length must be ".RdexConnection::MAX_LENGTH_DETAILS." maximum");
+            }
+        }
+
+        // Finally we check the signature
+        $checkSignature = $this->checkSignature($request, $privateApiKey);
+        if ($checkSignature instanceof RdexError) {
+            return $checkSignature;
+        }
+
+        return true;
+    }
+
+    /**
+     * Handle a RDEX Connection request
+     * For now, we are sending an email to the recipient
+     *
+     * @param Request $request
+     * @return RdexError|bool True if validation is ok, error if not
+     */
+    public function sendConnection(Request $request)
+    {
+        $rdexConnection = new RdexConnection();
+
+        // The message
+        $rdexConnection->setDetails($request->get("details"));
+
+        var_dump($rdexConnection);
+        return true;
     }
 }
