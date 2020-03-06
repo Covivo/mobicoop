@@ -42,6 +42,7 @@ use App\Communication\Entity\Recipient;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Ask;
 use App\Communication\Entity\Message;
+use App\Rdex\Entity\RdexConnection;
 use App\User\Service\UserManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -249,6 +250,15 @@ class NotificationManager
                 case Message::class:
                     $titleContext = ['user'=>$object->getUser()];
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
+                    // no break
+                case RdexConnection::class:
+                    $titleContext = [];
+                    $bodyContext = [
+                        'text'=>$object->getDetails(),
+                        'user'=>$recipient,
+                        'operator'=>$object->getOperator(),
+                        'origin'=>$object->getOrigin()
+                    ];
             }
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];

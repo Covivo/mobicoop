@@ -27,7 +27,6 @@ use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Response;
 use App\Carpool\Service\ProposalManager;
 use App\Rdex\Entity\RdexJourney;
 use App\Rdex\Entity\RdexError;
-use App\Carpool\Entity\Proposal;
 use App\Rdex\Entity\RdexDriver;
 use App\Rdex\Entity\RdexPassenger;
 use App\Rdex\Entity\RdexAddress;
@@ -36,10 +35,14 @@ use App\Carpool\Entity\Result;
 use App\Carpool\Entity\ResultItem;
 use App\Carpool\Service\AdManager;
 use App\Rdex\Entity\RdexConnection;
+use App\Rdex\Entity\RdexConnectionUser;
 use App\Rdex\Entity\RdexDay;
 use App\Rdex\Entity\RdexTripDate;
 use App\Rdex\Entity\RdexDayTime;
 use Symfony\Component\HttpFoundation\Request;
+use App\Communication\Service\NotificationManager;
+use App\Rdex\Event\RdexConnectionEvent;
+use App\User\Service\UserManager;
 
 /**
  * Rdex operations manager.
@@ -57,10 +60,11 @@ class RdexManager
     private const IMAGE_VERSION = "square_250";
 
     // false for testing purpose only
-    private const CHECK_SIGNATURE = true;
+    private const CHECK_SIGNATURE = false;
     
-    private $proposalManager;
     private $adManager;
+    private $notificationManager;
+    private $userManager;
 
     private $clientKey; // Current client key in configuration file (clients.json)
     private $operator; // Operator information (operator.json)
@@ -70,10 +74,11 @@ class RdexManager
      *
      * @param ProposalManager $proposalManager
      */
-    public function __construct(ProposalManager $proposalManager, AdManager $adManager)
+    public function __construct(AdManager $adManager, NotificationManager $notificationManager, UserManager $userManager)
     {
-        $this->proposalManager = $proposalManager;
         $this->adManager = $adManager;
+        $this->notificationManager = $notificationManager;
+        $this->userManager = $userManager;
     }
     
     
@@ -716,12 +721,60 @@ class RdexManager
      */
     public function sendConnection(Request $request)
     {
+        // we check the operator file. It's the id of the site and it will be sent by RDEX response
+        // we check if the client exists in config
+        if (!file_exists(self::RDEX_OPERATOR_FILE)) {
+            return new RdexError(null, RdexError::ERROR_MISSING_OPERATOR);
+        } else {
+            $this->operator = json_decode(file_get_contents(self::RDEX_OPERATOR_FILE), true);
+        }
+
         $rdexConnection = new RdexConnection();
 
         // The message
         $rdexConnection->setDetails($request->get("details"));
 
-        var_dump($rdexConnection);
+        $rdexConnection->setOperator($this->operator['name']);
+        $rdexConnection->setOrigin($this->operator['origin']);
+
+        
+        // The futur recipient of the message
+        $recipient = null;
+        
+        // Driver
+        $rdexDriver = new RdexConnectionUser();
+        $rdexDriver->setState($request->get("driver")['state']);
+        if (isset($request->get("driver")['alias'])) {
+            $rdexDriver->setAlias($request->get("driver")['alias']);
+        }
+        if ($request->get("driver")['state']=="recipient") {
+            $rdexDriver->setUuid($request->get("driver")['uuid']);
+            $recipient = $this->userManager->getUser($request->get("driver")['uuid']);
+        }
+        $rdexConnection->setDriver($rdexDriver);
+
+        // Passenger
+        $rdexPassenger = new RdexConnectionUser();
+        $rdexPassenger->setState($request->get("passenger")['state']);
+        if (isset($request->get("passenger")['alias'])) {
+            $rdexPassenger->setAlias($request->get("passenger")['alias']);
+        }
+        if ($request->get("passenger")['state']=="recipient") {
+            $rdexPassenger->setUuid($request->get("passenger")['uuid']);
+            $recipient = $this->userManager->getUser($request->get("passenger")['uuid']);
+        }
+        $rdexConnection->setPassenger($rdexPassenger);
+
+        // Journeys
+        $rdexConnection->setJourneysId($request->get('journeys')['uuid']);
+
+        // We dispatch a notification
+        if (!is_null($recipient)) {
+            $this->notificationManager->notifies(RdexConnectionEvent::NAME, $recipient, $rdexConnection);
+        } else {
+            return new RdexError("recipient", RdexError::ERROR_UNKNOWN_USER);
+        }
+
         return true;
     }
 }

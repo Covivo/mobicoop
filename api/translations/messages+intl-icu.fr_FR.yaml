@@ -254,3 +254,10 @@ header3Data: "senderName"
 urlUnsubscribeEmail: "/utilisateur/unsubscribe"
 unsubscribeEmail : 'Cliquez ici pour vous désabonner des Actualités du service {instanceName}'
 unsubscribeEmailAlertFront : 'Vous êtes bien désinscrit des Actualités du service {instanceName}. Pour vous réinscrire ultérieurement, vous pouvez vous rendre dans Profil > Mon compte.'
+
+# External Contact
+externalContact: "Contact pour un covoiturage"
+rdexMessage: "Son message"
+youReceivedExternalContact: "Vous avez reçu un message de la part d'un covoitureur inscrit sur {origin}."
+noDirectResponse: "Cet usager étant inscrit sur une autre platforme de covoiturage, vous ne pouvez pas lui répondre via {instanceName}."
+useDirectContact: "Vous pouvez utiliser les coordonnées qu'il vous a, en principe, transmis dans son message pour le contacter directement."
