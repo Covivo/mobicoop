@@ -55,7 +55,7 @@
       align="center"
     >
       <v-col
-        cols="5"
+        cols="7"
       >
         <carpooler-identity
           :carpooler="result.carpooler"
@@ -73,20 +73,20 @@
           :user="user"
         />
       </v-col>
-      <v-col
-        cols="2"
-        class="text-right"
-      >
-        <v-btn
-          rounded
-          depressed
-          color="secondary"
-          class="text-none"
-          height="40px"
-        >
-          {{ $t('ui.button.cancel') }}
-        </v-btn>
-      </v-col>
+      <!--      <v-col-->
+      <!--        cols="2"-->
+      <!--        class="text-right"-->
+      <!--      >-->
+      <!--        <v-btn-->
+      <!--          rounded-->
+      <!--          depressed-->
+      <!--          color="secondary"-->
+      <!--          class="text-none"-->
+      <!--          height="40px"-->
+      <!--        >-->
+      <!--          {{ $t('ui.button.cancel') }}-->
+      <!--        </v-btn>-->
+      <!--      </v-col>-->
       <v-col
         cols="2"
         class="font-weight-bold primary--text headline text-right"
