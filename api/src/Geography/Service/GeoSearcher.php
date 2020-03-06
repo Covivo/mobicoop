@@ -164,6 +164,8 @@ class GeoSearcher
                 $address->setVenue($geoResult->getPointOfInterest());
             }
 
+            $address->setProvidedBy($geoResult->getProvidedBy());
+
             if ($address->getVenue()) {
                 $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_VENUE)->getFileName());
             }

@@ -47,9 +47,25 @@ class CriteriaRepository
 
     public function findByUserImportStatus(int $status, ?\DateTimeInterface $date = null)
     {
-        $query = $this->repository->createQueryBuilder('c')
-        ->select('c')
-        ->join('c.proposal', 'p')
+
+        // we search the matchings in the proposal entity
+        $query = $this->repository->createQueryBuilder('c');
+
+        $selection = [
+            'c.id as cid',
+            'c.driver',
+            'c.passenger',
+            'w.position',
+            'w.destination',
+            'a.longitude',
+            'a.latitude'
+        ];
+        
+        $query->select($selection);
+        
+        $query->join('c.proposal', 'p')
+        ->join('p.waypoints', 'w')
+        ->join('w.address', 'a')
         ->join('p.user', 'u')
         ->join('u.import', 'i')
         ->where('i.status = :status')
@@ -58,6 +74,16 @@ class CriteriaRepository
             $query->andWhere('((c.frequency = 1 and c.toDate>=":date") or (c.frequency=2 and c.todate>=":date")))')
             ->setParameter('date', $date->format('Y-m-d'));
         }
+        
+        return $query->getQuery()->getResult();
+    }
+
+    public function findDrivers(): ?array
+    {
+        $query = $this->repository->createQueryBuilder('c')
+        ->select('c')
+        ->where('c.directionDriver IS NOT NULL');
+
         return $query->getQuery()->getResult();
     }
 }

@@ -270,11 +270,11 @@ class GraphhopperProvider implements GeorouterInterface
                 $this->logger->debug('Multiple Async | Creation of the exchange file end');
 
                 // call external script
-                $this->logger->debug('Multiple Async | Call external script start');
+                $this->logger->debug('Multiple Async | Call external script start : ' . $this->batchScriptPath . $filename . $this->batchScriptArgs . ' 2>&1');
                 $return = exec($this->batchScriptPath . $filename . $this->batchScriptArgs . ' 2>&1', $out, $err);
                 // $filenameReturn = $filename . ".log";
                 // $fpr = fopen($filenameReturn, 'w');
-                // fwrite($fpr, print_r($out,true));
+                // fwrite($fpr, print_r($out, true));
                 // fwrite($fpr, 'status : ' . $err);
                 // fclose($fpr);
                 $this->logger->debug('Multiple Async | Call external script end');
