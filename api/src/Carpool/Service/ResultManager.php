@@ -435,7 +435,7 @@ class ResultManager
                 }
             } else {
                 // we exclude the private proposals
-                if ($request->getProposalOffer()->isPrivate() || $request->getProposalOffer()->isPaused()) {
+                if ($offer->getProposalOffer()->isPrivate() || $offer->getProposalOffer()->isPaused()) {
                     continue;
                 }
             }

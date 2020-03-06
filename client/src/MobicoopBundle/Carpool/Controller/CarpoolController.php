@@ -198,17 +198,17 @@ class CarpoolController extends AbstractController
         if ($request->isMethod('DELETE')) {
             $data = json_decode($request->getContent(), true);
 
-            if (!isset($data['proposalId'])) {
+            if (!isset($data['adId'])) {
                 return new JsonResponse([
                     'message' => 'error'
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
-            $proposal = $proposalManager->getProposal($data['proposalId']);
-            
+            $proposal = $proposalManager->getProposal($data['adId']);
             $this->denyAccessUnlessGranted('delete_ad', $proposal);
+
             // add the id of the deleter
             $data['deleterId'] = $userManager->getLoggedUser()->getId();
-            if ($response = $proposalManager->deleteProposal($data['proposalId'], $data)) {
+            if ($response = $proposalManager->deleteProposal($data['adId'], $data)) {
                 return new JsonResponse(
                     ["message" => "delete.success"],
                     \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
@@ -340,8 +340,8 @@ class CarpoolController extends AbstractController
         if ($request->isMethod('PUT')) {
             $data = json_decode($request->getContent(), true);
             $ad = new Ad();
-            $ad->setId($data['proposalId']);
-            $ad->setProposalId($data['proposalId']);
+            $ad->setId($data['adId']);
+            $ad->setProposalId($data['adId']);
             $ad->setPaused($data['paused']);
             if ($return = $adManager->updateAd($ad)) {
                 return new JsonResponse(

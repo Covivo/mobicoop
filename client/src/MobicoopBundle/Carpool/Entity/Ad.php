@@ -884,7 +884,7 @@ class Ad implements ResourceInterface
         return $this;
     }
 
-    public function getPotentialCarpoolers(): int
+    public function getPotentialCarpoolers(): ?int
     {
         return $this->potentialCarpoolers;
     }

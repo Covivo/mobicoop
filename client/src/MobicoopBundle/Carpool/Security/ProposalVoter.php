@@ -102,7 +102,7 @@ class ProposalVoter extends Voter
         if ($proposal->getUser()->getId() !== $user->getId()) {
             return false;
         }
-        return $this->permissionManager->checkPermission('proposal_delete_self', $user);
+        return $this->permissionManager->checkPermission("ad_delete_self", $user, $proposal->getId());
     }
 
     private function canPostProposal(User $user)
