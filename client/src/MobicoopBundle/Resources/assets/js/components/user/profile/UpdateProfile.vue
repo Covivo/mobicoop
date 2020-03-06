@@ -697,7 +697,11 @@ export default {
         .then(res => {
           if (res.data.length > 0) {
             this.createdEvents = res.data;
-            this.hasCreatedEvents = moment(this.createdEvents[0].toDate.date) >= moment(new Date()) ? true : false;
+             this.createdEvents.forEach(createdEvent => {
+               if (moment(createdEvent.toDate.date) >= moment(new Date())) {
+                 this.hasCreatedEvents = true;
+               }
+             });
           }
           this.disabledCreatedEvents = false;
         });
