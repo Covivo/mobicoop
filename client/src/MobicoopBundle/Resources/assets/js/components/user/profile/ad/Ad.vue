@@ -30,7 +30,7 @@
         :seats="(isDriver) ? ad.seatsDriver : ad.seatsPassenger"
         :price="(isDriver) ? ad.outwardDriverPrice : ad.outwardPassengerPrice"
         :id-message="lastMessageId"
-        :nb-matchings="ad.results.length"
+        :nb-matchings="ad.potentialCarpoolers"
       />
     </v-card-actions>
   </v-card>

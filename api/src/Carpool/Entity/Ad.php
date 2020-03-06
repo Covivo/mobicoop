@@ -442,6 +442,13 @@ class Ad
      */
     private $proposalId;
 
+    /**
+     * @var int $potentialCarpoolers
+     * Potential carpoolers count
+     * @Groups({"read","write"})
+     */
+    private $potentialCarpoolers;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -992,6 +999,17 @@ class Ad
     {
         $this->proposalId = $proposalId;
 
+        return $this;
+    }
+
+    public function getPotentialCarpoolers(): ?int
+    {
+        return $this->potentialCarpoolers;
+    }
+
+    public function setPotentialCarpoolers(int $potentialCarpoolers): self
+    {
+        $this->potentialCarpoolers = $potentialCarpoolers;
         return $this;
     }
 }

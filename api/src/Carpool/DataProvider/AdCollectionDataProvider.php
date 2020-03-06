@@ -36,7 +36,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class AdCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
-    
+    protected $adManager;
+
     public function __construct(RequestStack $requestStack, AdManager $adManager)
     {
         $this->request = $requestStack->getCurrentRequest();
@@ -50,6 +51,6 @@ final class AdCollectionDataProvider implements CollectionDataProviderInterface,
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->adManager->getAds($this->request->get("userId"));
+        return $this->adManager->getAds($this->request->get("userId"), $this->request->get("acceptedAsks"));
     }
 }

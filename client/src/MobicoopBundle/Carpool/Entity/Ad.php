@@ -346,6 +346,12 @@ class Ad implements ResourceInterface
     */
     private $proposalId;
 
+    /**
+     * @var int $potentialCarpoolers
+     * Potential carpoolers count
+     */
+    private $potentialCarpoolers;
+
     public function __construct($id=null)
     {
         $this->outwardWaypoints = [];
@@ -875,6 +881,17 @@ class Ad implements ResourceInterface
     {
         $this->proposalId = $proposalId;
 
+        return $this;
+    }
+
+    public function getPotentialCarpoolers(): int
+    {
+        return $this->potentialCarpoolers;
+    }
+
+    public function setPotentialCarpoolers(int $potentialCarpoolers): self
+    {
+        $this->potentialCarpoolers = $potentialCarpoolers;
         return $this;
     }
 }

@@ -17,18 +17,6 @@
         cols="6"
         align="right"
       >
-        <!-- <v-btn
-          icon
-          :disabled="idMessage === -1"
-          outlined 
-          fab 
-          color="primary lighten-4"
-          @click="openMailBox()"
-        >
-          <v-icon>
-            mdi-email
-          </v-icon>
-        </v-btn> -->
         <v-btn
           color="secondary"
           rounded
@@ -72,31 +60,6 @@ export default {
     nbMatchings:{
       type: Number,
       default: 0
-    }
-  },
-  methods: {
-    post: function (path, params, method='post') {
-      const form = document.createElement('form');
-      form.method = method;
-      form.action = window.location.origin+'/'+path;
-
-      for (const key in params) {
-        if (params.hasOwnProperty(key)) {
-          const hiddenField = document.createElement('input');
-          hiddenField.type = 'hidden';
-          hiddenField.name = key;
-          hiddenField.value = params[key];
-          form.appendChild(hiddenField);
-        }
-      }
-      document.body.appendChild(form);
-      form.submit();
-    },
-    openMailBox () {
-      let lParams = {
-        idMessage: this.idMessage
-      };
-      this.post(`${this.$t("utilisateur/messages")}`, lParams);
     }
   }
 }

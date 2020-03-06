@@ -661,9 +661,10 @@ class AdManager
      * Get all ads of a user
      *
      * @param integer $userId
-     * @return void
+     * @param bool $acceptedAsks If we want to get private ads where there is at least one accepted ask
+     * @return array
      */
-    public function getAds(int $userId)
+    public function getAds(int $userId, bool $acceptedAsks = null)
     {
         $ads = [];
         $user = $this->userManager->getUser($userId);
@@ -672,7 +673,7 @@ class AdManager
         $refIdProposals = [];
         foreach ($proposals as $proposal) {
             if (!in_array($proposal->getId(), $refIdProposals)) {
-                $ads[] = $this->makeAd($proposal, $userId);
+                $ads[] = $this->makeAd($proposal, $userId, $acceptedAsks);
                 if (!is_null($proposal->getProposalLinked())) {
                     $refIdProposals[$proposal->getId()] = $proposal->getProposalLinked()->getId();
                 }
@@ -735,9 +736,10 @@ class AdManager
      *
      * @param Proposal $proposal The base proposal of the ad
      * @param integer $userId The userId who made the proposal
-     * @return void
+     * @param bool $acceptedAsks If we want to get private ads where there is at least one accepted ask
+     * @return Ad
      */
-    private function makeAd($proposal, $userId)
+    private function makeAd($proposal, $userId, bool $acceptedAsks = null)
     {
         $ad = new Ad();
                 
@@ -814,9 +816,10 @@ class AdManager
         }
         $ad->setSchedule($schedule);
 
-        $ad->setResults(
-            $this->resultManager->createAdResults($proposal)
-        );
+        $ad->setResults($this->resultManager->createAdResults($proposal, $acceptedAsks));
+
+        $ad->setPotentialCarpoolers(count($this->resultManager->createAdResults($proposal, false)));
+
         return $ad;
     }
 
