@@ -18,6 +18,7 @@
       </v-col>
       <!-- Origin -->
       <v-col
+        v-if="!compact"
         cols="5"
         class="text-right"
         :class="type==1 ? 'text-left' : regular ? 'text-left' : 'text-left  mr-n4'"
@@ -27,7 +28,7 @@
           :color="textColorClass"
         >
           <v-list-item-content>
-            <v-list-item-title 
+            <v-list-item-title
               :class="(regular && type==2 || !regular && type==1) ? 'subtitle-1 font-weight-bold' : 'subtitle-2 font-weight-bold'"
             >
               <span :class="textColorClass">{{ originFirstLine }}</span>
@@ -53,6 +54,41 @@
           </v-list-item-content>
         </v-list-item>
       </v-col>
+      <div
+        v-else
+        class="d-inline-flex text-right"
+      >
+        <v-list-item
+          two-line
+          :color="textColorClass"
+        >
+          <v-list-item-content>
+            <v-list-item-title
+              :class="(regular && type==2 || !regular && type==1) ? 'subtitle-1 font-weight-bold' : 'subtitle-2 font-weight-bold'"
+            >
+              <span :class="textColorClass">{{ originFirstLine }}</span>
+            </v-list-item-title>
+            <v-list-item-title
+              v-if="type==1 && regular"
+              :class="'subtitle-2 font-weight-bold'"
+            >
+              <span :class="textColorClass">{{ originSecondLine }}</span>
+            </v-list-item-title>
+            <v-list-item-subtitle
+              v-if="type==2"
+              :class="(regular && type==2) ? 'subtitle-2 font-weight-bold' : ((regular) ? 'subtitle-2 font-weight-bold' : 'subtitle-2')"
+            >
+              <span :class="textColorClass">{{ originSecondLine }}</span>
+            </v-list-item-subtitle>
+            <v-list-item-subtitle
+              v-if="!regular && type==1"
+              class="subtitle-2 font-weight-bold"
+            >
+              <span :class="textColorClass">{{ originSecondLine }}</span>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </div>
 
       <!-- Icon -->
       <v-col
@@ -68,7 +104,7 @@
 
       <!-- Destination -->
       <v-col
-        cols="5"
+        :cols="compact ? null : '5'"
         :class="type==1 ? 'text-left' : regular ? 'text-left ml-4' : 'text-right  ml-6'"
       >
         <v-list-item
@@ -154,6 +190,11 @@ export default {
     time: {
       type: String,
       default: null
+    },
+    // if we want start-end ray closer from time
+    compact: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
