@@ -4,7 +4,7 @@
     justify="end"
     class="min-width-no-flex"
   >
-    <div v-if="user && carpooler.phoneDisplay == 2">
+    <div v-if="user && displayPhone">
       <v-btn
         v-show="!phoneButtonToggled"
         color="secondary"
@@ -31,7 +31,7 @@
         {{ carpooler.phone }}
       </v-btn>
     </div>
-    <!-- <div>
+    <div v-if="displayMailBox">
       <v-btn
         color="secondary"
         small
@@ -40,16 +40,18 @@
         class="ml-2"
       >
         <v-icon
-          @click="buttonAlert(inDev,$event);"
+          @click="openMailBox()"
         >
           mdi-email
         </v-icon>
       </v-btn>
-    </div> -->
+    </div>
   </v-row>
 </template>
 
 <script>
+// import formData from "../../../utils/request";
+
 export default {
   props: {
     carpooler: {
@@ -59,6 +61,18 @@ export default {
     user: {
       type: Object,
       default: null
+    },
+    ask: {
+      type: Object,
+      default: null
+    },
+    displayPhone: {
+      type: Boolean,
+      default: false
+    },
+    displayMailBox: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -69,6 +83,12 @@ export default {
   methods: {
     toggleButton () {
       this.phoneButtonToggled = !this.phoneButtonToggled;
+    },
+    openMailBox () {
+      // let lParams = {
+      //   idAsk: this.ask.id
+      // };
+      // formData(`${this.$t("utilisateur/messages")}`, lParams);
     }
   }
 }
