@@ -44,6 +44,7 @@ use App\User\Constraints\UserIdProvided;
  *          "get",
  *          "post"={
  *              "method"="POST",
+ *              "normalization_context"={"groups"={"writeDynamic","results"}},
  *              "security_post_denormalize"="is_granted('dynamic_create',object)"
  *          },
  *          "post_ask"={
@@ -61,7 +62,7 @@ use App\User\Constraints\UserIdProvided;
  *          "put"={
  *              "method"="PUT",
  *              "read"=false,
- *              "normalization_context"={"groups"={"updateDynamic"}},
+ *              "normalization_context"={"groups"={"updateDynamic","results"}},
  *              "denormalization_context"={"groups"={"updateDynamic"}},
  *              "validation_groups"={"updateDynamic"},
  *              "security"="is_granted('dynamic_update',object)"
@@ -182,7 +183,7 @@ class Dynamic
     /**
      * @var array|null The carpool results.
      *
-     * @Groups("readDynamic")
+     * @Groups({"readDynamic","writeDynamic","updateDynamic"})
      */
     private $results;
 
@@ -215,6 +216,13 @@ class Dynamic
     private $askId;
 
     /**
+     * @var array|null The filters to apply to the results.
+     *
+     * @Groups("writeDynamic")
+     */
+    private $filters;
+
+    /**
      * @var Proposal The proposal associated with the dynamic ad.
      */
     private $proposal;
@@ -224,6 +232,7 @@ class Dynamic
         $this->id = self::DEFAULT_ID;
         $this->waypoints = [];
         $this->results = [];
+        $this->filters = [];
     }
     
     public function getId(): ?int
@@ -430,6 +439,18 @@ class Dynamic
     public function setProposal(?Proposal $proposal): self
     {
         $this->proposal = $proposal;
+
+        return $this;
+    }
+
+    public function getFilters(): ?array
+    {
+        return $this->filters;
+    }
+
+    public function setFilters(?array $filters)
+    {
+        $this->filters = $filters;
 
         return $this;
     }

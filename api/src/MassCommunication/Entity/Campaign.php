@@ -147,7 +147,6 @@ class Campaign
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Medium")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read_campaign","write_campaign"})
-     * @MaxDepth(1)
      */
     private $medium;
 

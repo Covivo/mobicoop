@@ -486,7 +486,10 @@ class ResultManager
                 }
                 // time
                 // the carpooler is passenger, the proposal owner is driver : we use his time if it's set
-                if ($proposal->getCriteria()->getFromTime()) {
+                // if the proposal is dynamic, we take the updated time of the position linked with the proposal
+                if ($matching['request']->getProposalOffer()->isDynamic()) {
+                    $item->setTime($matching['request']->getProposalOffer()->getPosition()->getUpdatedDate());
+                } elseif ($proposal->getCriteria()->getFromTime()) {
                     $item->setTime($proposal->getCriteria()->getFromTime());
                 } else {
                     // the time is not set, it must be the matching results of a search (and not an ad)
@@ -1010,8 +1013,13 @@ class ResultManager
                 // we have to calculate the starting time using the carpooler time
                 // we init the time to the one of the carpooler
                 if ($matching['offer']->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-                    // the carpooler proposal is punctual, we take the fromTime
-                    $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getFromTime();
+                    // if the proposal is dynamic, we take the updated time of the position linked with the proposal
+                    if ($matching['offer']->getProposalOffer()->isDynamic()) {
+                        $fromTime = $matching['offer']->getProposalOffer()->getPosition()->getUpdatedDate();
+                    } else {
+                        // the carpooler proposal is punctual, we take the fromTime
+                        $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getFromTime();
+                    }
                 } else {
                     // the carpooler proposal is regular, we have to take the search/ad day's time
                     switch ($proposal->getCriteria()->getFromDate()->format('w')) {

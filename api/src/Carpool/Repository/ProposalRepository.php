@@ -119,6 +119,7 @@ class ProposalRepository
             'dp.distance as dpdistance',
             'w.position',
             'w.destination',
+            'w.reached',
             'a.longitude',
             'a.latitude',
             'a.streetAddress',

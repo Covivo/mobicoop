@@ -119,6 +119,8 @@ services:
             $params:
                 defaultSeatsDriver: '%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%'
                 defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
+                dynamicReachedDistance: '%env(int:DYNAMIC_CARPOOL_REACHED_DISTANCE)%'
+                
         tags:
             - { name: monolog.logger, channel: carpool }
 
@@ -139,6 +141,9 @@ services:
             - { name: monolog.logger, channel: carpool }
     
     App\Carpool\Service\ProposalMatcher:
+        arguments:
+            $params:
+                dynamicMaxPendingTime: '%env(int:DYNAMIC_CARPOOL_MAX_PENDING_TIME)%'
         tags:
             - { name: monolog.logger, channel: carpool }
 

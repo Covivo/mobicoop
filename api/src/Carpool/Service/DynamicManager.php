@@ -47,8 +47,6 @@ use Psr\Log\LoggerInterface;
  */
 class DynamicManager
 {
-    const REACH_DISTANCE = 500; // distance in metres between the last position and a waypoint to consider it reached
-
     private $entityManager;
     private $proposalManager;
     private $userManager;
@@ -101,6 +99,8 @@ class DynamicManager
      */
     public function createDynamic(Dynamic $dynamic)
     {
+        // check if the user has already a dynamic ad pending
+
         // set User
         if (is_null($dynamic->getUser())) {
             // userId must be set
@@ -161,7 +161,7 @@ class DynamicManager
 
         // dates and times
 
-        // if the date is not set we use the current date
+        // we use the current date
         $criteria->setFromDate($dynamic->getDate());
         $criteria->setFromTime($dynamic->getDate());
         $criteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
@@ -231,6 +231,10 @@ class DynamicManager
 
             if ($waypointPosition == 0) {
                 // init position => the origin of the proposal
+                // we double this waypoint : it will be a floating waypoint that will reflect the current position of the user (useful for matching)
+                // the position of this waypoint will always be 0
+                $floatingWaypoint = clone $waypoint;
+                $proposal->addWaypoint($floatingWaypoint);
                 $position->setAddress(clone $address);
                 $position->setPoints([$position->getAddress()]);
                 $waypoint->setReached(true);
@@ -256,6 +260,27 @@ class DynamicManager
         $position->setProposal($proposal);
         $this->entityManager->persist($position);
         $this->entityManager->flush();
+
+        // we compute the results
+        
+        // default order
+        $dynamic->setFilters([
+            'order'=>[
+                'criteria'=>'date',
+                'value'=>'ASC'
+            ]
+        
+        ]);
+
+        $dynamic->setResults(
+            $this->resultManager->orderResults(
+                $this->resultManager->filterResults(
+                    $this->resultManager->createAdResults($proposal),
+                    $dynamic->getFilters()
+                ),
+                $dynamic->getFilters()
+            )
+        );
 
         $dynamic->setId($proposal->getId());
         return $dynamic;
@@ -294,15 +319,16 @@ class DynamicManager
 
         // update the address geographic coordinates
         $dynamic->getProposal()->getPosition()->getAddress()->setLongitude($dynamic->getLongitude());
-        $dynamic->getProposal()->getPosition()->getAddress()->setElevation($dynamic->getLongitude());
+        $dynamic->getProposal()->getPosition()->getAddress()->setLatitude($dynamic->getLatitude());
 
         // we search if we have reached a waypoint
         foreach ($dynamic->getProposal()->getWaypoints() as $waypoint) {
             /**
              * @var Waypoint $waypoint
              */
-            if (!$waypoint->isReached()) {
-                if ($this->geoTools->haversineGreatCircleDistance($dynamic->getLatitude(), $dynamic->getLongitude(), $waypoint->getAddress()->getLatitude(), $waypoint->getAddress()->getLongitude())<self::REACH_DISTANCE) {
+            if (!$waypoint->isReached() && $waypoint->getPosition()>0) {
+                // position>0 to exclude the floating waypoint
+                if ($this->geoTools->haversineGreatCircleDistance($dynamic->getLatitude(), $dynamic->getLongitude(), $waypoint->getAddress()->getLatitude(), $waypoint->getAddress()->getLongitude())<$this->params['dynamicReachedDistance']) {
                     $waypoint->setReached(true);
                     // destination ? stop the dynamic !
                     if ($waypoint->isDestination()) {
@@ -311,6 +337,14 @@ class DynamicManager
                     $this->entityManager->persist($waypoint);
                     $this->entityManager->flush();
                 }
+            }
+            if ($waypoint->getPosition() == 0) {
+                // update the floating waypoint address
+                $waypoint->getAddress()->setAddressLocality(""); // for now remove the locality just for testing purpose !
+                $waypoint->getAddress()->setLongitude($dynamic->getLongitude());
+                $waypoint->getAddress()->setLatitude($dynamic->getLatitude());
+                $this->entityManager->persist($waypoint);
+                $this->entityManager->flush();
             }
         }
 
@@ -372,6 +406,27 @@ class DynamicManager
         // persist the updates
         $this->entityManager->persist($dynamic->getProposal());
         $this->entityManager->flush();
+
+        // we compute the results
+
+        // default order
+        $dynamic->setFilters([
+            'order'=>[
+                'criteria'=>'date',
+                'value'=>'ASC'
+            ]
+        
+        ]);
+
+        $dynamic->setResults(
+            $this->resultManager->orderResults(
+                $this->resultManager->filterResults(
+                    $this->resultManager->createAdResults($dynamic->getProposal()),
+                    $dynamic->getFilters()
+                ),
+                $dynamic->getFilters()
+            )
+        );
 
         return $dynamic;
     }

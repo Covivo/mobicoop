@@ -196,6 +196,8 @@ class Position
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+        // we also set the updated date, which may be always needed
+        $this->setUpdatedDate(new \Datetime());
     }
 
     /**

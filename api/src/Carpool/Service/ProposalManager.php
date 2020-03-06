@@ -334,7 +334,9 @@ class ProposalManager
     {
         $addresses = [];
         foreach ($proposal->getWaypoints() as $waypoint) {
-            $addresses[] = $waypoint->getAddress();
+            if (!$waypoint->isReached()) {
+                $addresses[] = $waypoint->getAddress();
+            }
         }
         $routes = null;
         if ($proposal->getCriteria()->isDriver()) {
@@ -345,7 +347,7 @@ class ProposalManager
                 //      => we would have to think of a way to simplify...)
                 $direction = $routes[0];
                 // creation of the crossed zones
-                $direction = $this->zoneManager->createZonesForDirection($direction);
+                //$direction = $this->zoneManager->createZonesForDirection($direction);
                 $direction->setAutoGeoJsonDetail();
                 $proposal->getCriteria()->setDirectionDriver($direction);
                 $proposal->getCriteria()->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
@@ -473,8 +475,6 @@ class ProposalManager
      */
     public function updateMatchingsForProposal(Proposal $proposal, Address $address)
     {
-        $this->logger->info("ProposalManager : updateMatchingsForProposal #" . $proposal->getId() . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        
         // set the directions
         $proposal = $this->updateDirection($proposal, $address);
         
@@ -546,8 +546,8 @@ class ProposalManager
                 $proposal->getCriteria()->getDirectionPassenger()->setDetail($direction->getDetail());
                 $proposal->getCriteria()->getDirectionPassenger()->setFormat($direction->getFormat());
                 $proposal->getCriteria()->getDirectionPassenger()->setSnapped($direction->getSnapped());
-                $proposal->getCriteria()->getDirectionDriver()->setGeoJsonDetail($direction->getGeoJsonDetail());
-                $proposal->getCriteria()->getDirectionDriver()->setGeoJsonSimplified($direction->getGeoJsonSimplified());
+                $proposal->getCriteria()->getDirectionPassenger()->setGeoJsonDetail($direction->getGeoJsonDetail());
+                $proposal->getCriteria()->getDirectionPassenger()->setGeoJsonSimplified($direction->getGeoJsonSimplified());
             }
         }
         return $proposal;
