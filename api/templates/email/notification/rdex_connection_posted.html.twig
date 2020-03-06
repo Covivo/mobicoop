@@ -9,7 +9,12 @@
     </tr>
     <tr>
         <td>
-            <p> {{ "youReceivedExternalContact"|trans({'%origin%':context.origin}) }}</p>
+            <p> {{ "youReceivedExternalContact"|trans }} <strong>{{ "youReceivedExternalContactOrigin"|trans({'%origin%':context.origin}) }}</strong>.</p>
+        </td>
+    </tr> 
+    <tr>
+        <td>
+            <p>{{ "journeyDetail"|trans }} <strong>{{ "journeyDetailOrigin"|trans({'%journeyOrigin%':context.journeyOrigin}) }}</strong> {{ "journeyDetailTo"|trans }} <strong>{{ "journeyDetailDestination"|trans({'%journeyDestination%':context.journeyDestination}) }}</strong> {{ "journeyDetailTime"|trans({'%journeyDate%':context.journeyDate,'%journeyTime%':context.journeyTime}) }}</p>
         </td>
     </tr> 
     <tr>

@@ -58,7 +58,7 @@ class RdexConnectionUser
      */
     private $state;
     
-    public function getUuid(): int
+    public function getUuid(): ?int
     {
         return $this->uuid;
     }
@@ -70,7 +70,7 @@ class RdexConnectionUser
         return $this;
     }
 
-    public function getAlias(): string
+    public function getAlias(): ?string
     {
         return $this->alias;
     }
@@ -82,7 +82,7 @@ class RdexConnectionUser
         return $this;
     }
 
-    public function getState(): string
+    public function getState(): ?string
     {
         return $this->state;
     }
