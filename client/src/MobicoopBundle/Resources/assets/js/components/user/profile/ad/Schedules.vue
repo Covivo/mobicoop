@@ -35,9 +35,15 @@
               class="py-0"
               :align="isRegular ? 'right' : 'left'"
             >
-              <span class="accent--text text--accent font-weight-bold body-1">{{ $t('outward') }}</span>
+              <span
+                v-if="!isRefined"
+                class="accent--text text--accent font-weight-bold body-1"
+              >{{ $t('outward') }}</span>
 
-              <v-icon class="accent--text text--accent font-weight-bold">
+              <v-icon
+                v-if="!isRefined"
+                class="accent--text text--accent font-weight-bold"
+              >
                 mdi-arrow-right
               </v-icon>
 
@@ -123,7 +129,12 @@ export default {
     dateTimeFormat: {
       type: String,
       default: "ui.i18n.time.format.hourMinute"
-    } 
+    },
+    // if we want refined display of data for punctual carpools
+    isRefined: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {

@@ -26,7 +26,10 @@
             {{ $t("tabs.carpoolsAccepted") }}
           </v-tab>
           <v-tab-item value="carpoolsAccepted">
-            <carpools :accepted-carpools="acceptedCarpools" />
+            <carpools
+              :accepted-carpools="acceptedCarpools"
+              :user="user"
+            />
           </v-tab-item>
           <v-tab
             class="text-left justify-start ml-2 mr-5 title"

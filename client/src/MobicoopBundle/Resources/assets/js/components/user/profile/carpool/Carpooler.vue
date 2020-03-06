@@ -1,13 +1,28 @@
 <template>
   <v-container>
+    <!--    <v-row>-->
+    <!--      <v-col>-->
+    <!--        <route-summary-->
+    <!--          :origin="ad.outwardWaypoints[0].address"-->
+    <!--          :destination="ad.outwardWaypoints[ad.outwardWaypoints.length - 1].address"-->
+    <!--          :type="ad.frequency"-->
+    <!--          :regular="isRegular"-->
+    <!--          text-color-class="primary&#45;&#45;text text&#45;&#45;darken-2"-->
+    <!--          icon-color="accent"-->
+    <!--        />-->
+    <!--      </v-col>-->
+    <!--    </v-row>-->
     <v-row>
-      <v-col>
+      <v-col
+        class="pa-0"
+      >
         <route-summary
-          :origin="ad.outwardWaypoints[0].address"
-          :destination="ad.outwardWaypoints[ad.outwardWaypoints.length - 1].address"
-          :type="ad.frequency"
-          :regular="isRegular"
-          text-color-class="primary--text text--darken-2"
+          :origin="result.origin"
+          :destination="result.destination"
+          :type="result.frequency"
+          :time="result.time"
+          :compact="true"
+          text-color-class="primary--text"
           icon-color="accent"
         />
       </v-col>
@@ -35,31 +50,70 @@
     <!--        />-->
     <!--      </v-col>-->
     <!--    </v-row>-->
-    <v-row>
+    <v-row
+      no-gutters
+      align="center"
+    >
       <v-col
-        cols="8"
+        cols="5"
       >
         <carpooler-identity
           :carpooler="result.carpooler"
         />
       </v-col>
-      <v-col cols="4">
+      <v-col
+        cols="3"
+      >
+        <!--display phone is always true when ask is accepted-->
         <carpooler-contact
           :carpooler="result.carpooler"
+          :ask="result.ask"
+          :display-phone="true"
+          :display-mail-box="true"
+          :user="user"
         />
+      </v-col>
+      <v-col
+        cols="2"
+        class="text-right"
+      >
+        <v-btn
+          rounded
+          depressed
+          color="secondary"
+          class="text-none"
+          height="40px"
+        >
+          {{ $t('ui.button.cancel') }}
+        </v-btn>
+      </v-col>
+      <v-col
+        cols="2"
+        class="font-weight-bold primary--text headline text-right"
+      >
+        {{ result.roundedPrice }}€
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import { merge } from "lodash";
+import Translations from "@translations/components/user/profile/carpool/CarpoolFooter.js";
+import TranslationsClient from "@clientTranslations/components/user/profile/carpool/CarpoolFooter.js";
+
 // import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary.vue';
 import RouteSummary from '@components/carpool/utilities/RouteSummary.vue';
 import CarpoolerIdentity from "@components/carpool/utilities/CarpoolerIdentity";
 import CarpoolerContact from "@components/carpool/utilities/CarpoolerContact";
 // import Schedules from '@components/user/profile/ad/Schedules.vue';
 
+let TranslationsMerged = merge(Translations, TranslationsClient);
+
 export default {
+  i18n: {
+    messages: TranslationsMerged
+  },
   components: {
     CarpoolerIdentity,
     CarpoolerContact,
@@ -75,6 +129,10 @@ export default {
     result: {
       type: Object,
       required: true
+    },
+    user: {
+      type: Object,
+      default: null
     }
   },
   data () {

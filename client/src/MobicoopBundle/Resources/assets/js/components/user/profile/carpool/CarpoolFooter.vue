@@ -1,35 +1,17 @@
 <template>
-  <v-container fluid>
-    <v-row>
+  <v-container
+    fluid
+    class="pa-0"
+  >
+    <v-row
+      class="px-2"
+    >
       <v-col
         cols="3"
         class="primary--text"
       >
-        <span v-if="seats && seats > 0">{{ seats }}&nbsp;{{ seats > 1 ? $t('seat.plural') : $t('seat.singular') }}</span>
+        <span v-if="seats && seats > 0">{{ bookedSeats }}/{{ seats }}&nbsp;{{ $tc('seat.booked', bookedSeats) }}</span>
       </v-col>
-      <v-col
-        cols="3"
-        class="primary--text"
-      >
-        <span v-if="price && price > '0'">{{ price }} €</span>
-      </v-col>
-      <!--      <v-col-->
-      <!--        cols="6"-->
-      <!--        align="right"-->
-      <!--      >-->
-      <!--        <v-btn-->
-      <!--          icon-->
-      <!--          :disabled="idMessage === -1"-->
-      <!--          outlined-->
-      <!--          fab-->
-      <!--          color="primary lighten-4"-->
-      <!--          @click="openMailBox()"-->
-      <!--        >-->
-      <!--          <v-icon>-->
-      <!--            mdi-email-->
-      <!--          </v-icon>-->
-      <!--        </v-btn>-->
-      <!--      </v-col>-->
     </v-row>
     <v-expansion-panels
       v-model="panelActive"
@@ -38,11 +20,15 @@
       :flat="true"
     >
       <v-expansion-panel>
-        <v-expansion-panel-header>
-          {{ panelActive === 0 ? $t('passengers.hide') :$t('passengers.show') }}
+        <v-expansion-panel-header class="text-uppercase text-right">
+          <v-row no-gutters>
+            <v-col class="text-right font-weight-bold secondary--text">
+              {{ panelActive === 0 ? $t('passengers.hide') :$t('passengers.show') }}
+            </v-col>
+          </v-row>
           <template v-slot:actions>
             <v-icon
-              color="teal"
+              color="secondary"
               large
             >
               $expand
@@ -50,12 +36,24 @@
           </template>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
-          <carpooler
-            v-for="result in ad.results"
-            :key="result.carpooler.id"
-            :result="result"
-            :ad="ad"
+          <v-divider
+            class="primary extra-divider"
           />
+          <v-row
+            v-for="(result, index) in ad.results"
+            :key="index"
+            no-gutters
+          >
+            <carpooler
+              :result="result"
+              :ad="ad"
+              :user="user"
+            />
+            <v-divider
+              v-if="index < ad.results.length - 1"
+              class="primary lighten-5 ma-1"
+            />
+          </v-row>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -81,43 +79,37 @@ export default {
     ad: {
       type: Object,
       required: true
+    },
+    user: {
+      type: Object,
+      default: null
     }
   },
   data () {
     return {
-      panelActive: false,
-      seats: (this.isDriver) ? this.ad.seatsDriver : this.ad.seatsPassenger,
-      price: (this.isDriver) ? this.ad.outwardDriverPrice : this.ad.outwardPassengerPrice
+      panelActive: false
     }
   },
-  methods: {
-    post: function (path, params, method='post') {
-      const form = document.createElement('form');
-      form.method = method;
-      form.action = window.location.origin+'/'+path;
-
-      for (const key in params) {
-        if (params.hasOwnProperty(key)) {
-          const hiddenField = document.createElement('input');
-          hiddenField.type = 'hidden';
-          hiddenField.name = key;
-          hiddenField.value = params[key];
-          form.appendChild(hiddenField);
-        }
-      }
-      document.body.appendChild(form);
-      form.submit();
+  computed: {
+    bookedSeats() {
+      return this.ad.results.length
     },
-    // openMailBox () {
-    //   let lParams = {
-    //     idMessage: this.idMessage
-    //   };
-    //   this.post(`${this.$t("utilisateur/messages")}`, lParams);
-    // }
+    seats() {
+      return this.isDriver ? this.ad.seatsDriver : this.ad.seatsPassenger
+    },
+    isDriver() {
+      return this.ad.role === 1 || this.ad.role === 3
+    }
   }
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+
+.extra-divider {
+  width: calc(100% + 64px) !important;
+  max-width: unset !important;
+  margin-left: -32px !important;
+}
 
 </style>

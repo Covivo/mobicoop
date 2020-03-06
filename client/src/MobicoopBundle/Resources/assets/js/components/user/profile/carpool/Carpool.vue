@@ -16,10 +16,13 @@
     </v-card-text>
 
     <v-card-text v-else>
-      <ad-content-punctual :ad="ad" />
+      <ad-content-punctual
+        :ad="ad"
+        :is-refined="true"
+      />
     </v-card-text>
 
-    <v-divider class="primary lighten-5" />
+    <v-divider class="primary lighten-5 my-2 divider95" />
 
     <v-card-actions class="py-0">
       <carpool-footer
@@ -28,6 +31,7 @@
         :price="(isDriver) ? ad.outwardDriverPrice : ad.outwardPassengerPrice"
         :id-message="lastMessageId"
         :ad="ad"
+        :user="user"
       />
     </v-card-actions>
   </v-card>
@@ -55,6 +59,10 @@ export default {
     isArchived: {
       type: Boolean,
       default: false
+    },
+    user: {
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -97,4 +105,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.divider95 {
+  width: 95%;
+  margin: auto;
+}
 </style>

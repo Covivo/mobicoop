@@ -18,6 +18,7 @@
                 <v-col cols="12">
                   <Carpool
                     :ad="ad"
+                    :user="user"
                   />
                 </v-col>
               </v-row>
@@ -34,6 +35,7 @@
                   <Carpool
                     :ad="ad"
                     :is-archived="true"
+                    :user="user"
                   />
                 </v-col>
               </v-row>
@@ -63,6 +65,10 @@ export default {
     acceptedCarpools: {
       type: Object,
       default: () => {}
+    },
+    user: {
+      type: Object,
+      default: null
     }
   },
   data(){
