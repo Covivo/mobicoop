@@ -28,6 +28,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Rdex\Controller\ConnectionController;
+use App\EventListener\DeserializeListener;
 
 /**
  * An RDEX Connection (conctact a user on a rdex platform)
@@ -151,9 +152,9 @@ class RdexConnection implements \JsonSerializable
      */
     private $passenger;
     
-    public function __construct($uuid)
+    public function __construct($uuid=null)
     {
-        $this->uuid = $uuid;
+        (!is_null($uuid)) ? $this->uuid = $uuid : $this->uuid = -999999999;
         $this->waypoints = new ArrayCollection();
     }
     

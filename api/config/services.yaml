@@ -39,6 +39,15 @@ services:
 
     # EVENT LISTENERS
 
+    'App\EventListener\DeserializeListener':
+        tags:
+            - { name: 'kernel.event_listener', event: 'kernel.request', method: 'onKernelRequest', priority: 2 }
+        # Autoconfiguration must be disabled to set a custom priority
+        autoconfigure: false
+        decorates: 'api_platform.listener.request.deserialize'
+        arguments:
+            $decorated: '@App\EventListener\DeserializeListener.inner'
+
     # JWT Event Listener
     mobicoop.event.jwt_created_listener:
         class: App\Security\EventListener\JWTCreatedListener
