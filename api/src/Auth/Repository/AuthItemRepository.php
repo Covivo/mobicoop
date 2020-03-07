@@ -21,21 +21,21 @@
  *    LICENSE
  **************************/
 
-namespace App\Right\Repository;
+namespace App\Auth\Repository;
 
-use App\Right\Entity\Right;
+use App\Auth\Entity\AuthItem;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use App\Geography\Entity\Territory;
 
 /**
- * @method Right|null find($id, $lockMode = null, $lockVersion = null)
- * @method Right|null findOneBy(array $criteria, array $orderBy = null)
- * @method Right[]    findAll()
- * @method Right[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method AuthItem|null find($id, $lockMode = null, $lockVersion = null)
+ * @method AuthItem|null findOneBy(array $criteria, array $orderBy = null)
+ * @method AuthItem[]    findAll()
+ * @method AuthItem[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RightRepository
+class AuthItemRepository
 {
     /**
      * @var EntityRepository
@@ -47,14 +47,14 @@ class RightRepository
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(Right::class);
+        $this->repository = $entityManager->getRepository(AuthItem::class);
     }
 
     /**
-     * Find right by name.
+     * Find Auth Item by name.
      *
      * @param string $name
-     * @return Right
+     * @return AuthItem
      */
     public function findByName(string $name)
     {

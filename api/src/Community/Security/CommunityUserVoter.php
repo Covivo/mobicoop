@@ -24,7 +24,7 @@
 namespace App\Community\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
-use App\Right\Service\PermissionManager;
+use App\Auth\Service\PermissionManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Community\Entity\CommunityUser;

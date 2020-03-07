@@ -23,7 +23,7 @@
 
 namespace App\User\Security;
 
-use App\Right\Service\PermissionManager;
+use App\Auth\Service\PermissionManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\User\Entity\User;
@@ -81,9 +81,9 @@ class UserVoter extends Voter
             case self::REGISTER:
                 return $this->canRegister($requester);
             case self::READ:
-                return $this->canReadSelf($requester, $subject);
+                return $this->canRead($requester, $subject);
             case self::UPDATE:
-                return $this->canUpdateSelf($requester, $subject);
+                return $this->canUpdate($requester, $subject);
             case self::PASSWORD:
                 return $this->canChangePassword($requester);
             case self::DELETE:
@@ -108,19 +108,19 @@ class UserVoter extends Voter
         return $this->permissionManager->checkPermission('user_register', $requester);
     }
 
-    private function canReadSelf(UserInterface $requester, User $subject)
+    private function canRead(UserInterface $requester, User $subject)
     {
-        return $this->permissionManager->checkPermission('user_update_self', $requester, null, $subject->getId());
+        return $this->permissionManager->checkPermission('user_read', $requester, null, $subject->getId());
     }
 
-    private function canUpdateSelf(UserInterface $requester, User $subject)
+    private function canUpdate(UserInterface $requester, User $subject)
     {
-        return $this->permissionManager->checkPermission('user_update_self', $requester, null, $subject->getId());
+        return $this->permissionManager->checkPermission('user_update', $requester, null, $subject->getId());
     }
 
     private function canChangePassword(UserInterface $requester)
     {
-        return $this->permissionManager->checkPermission('user_password_self', $requester);
+        return $this->permissionManager->checkPermission('user_password', $requester);
     }
 
     private function canDeleteSelf(UserInterface $requester, User $subject)

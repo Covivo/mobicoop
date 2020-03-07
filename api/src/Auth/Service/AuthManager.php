@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Right\Service;
+namespace App\Auth\Service;
 
 use App\App\Entity\App;
 use App\Carpool\Entity\Ad;
@@ -33,13 +33,12 @@ use App\User\Entity\User;
 use App\Geography\Entity\Territory;
 use App\MassCommunication\Service\CampaignManager;
 use App\RelayPoint\Service\RelayPointManager;
-use App\Right\Repository\RightRepository;
-use App\Right\Entity\Right;
-use App\Right\Entity\Role;
-use App\Right\Repository\RoleRepository;
-use App\Right\Entity\Permission;
-use App\Right\Entity\UserRole;
-use App\Right\Exception\RightNotFoundException;
+use App\Auth\Entity\Right;
+use App\Auth\Entity\Role;
+use App\Auth\Entity\Permission;
+use App\Auth\Entity\UserRole;
+use App\Auth\Exception\AuthItemNotFoundException;
+use App\Auth\Repository\AuthItemRepository;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -51,8 +50,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class PermissionManager
 {
-    private $rightRepository;
-    private $roleRepository;
+    private $authItemRepository;
     private $adManager;
     private $campaignManager;
     private $communityManager;
@@ -63,13 +61,9 @@ class PermissionManager
 
     /**
      * Constructor.
-     *
-     * @param RightRepository $rightRepository  (DI) Right repository
-     * @param RoleRepository $roleRepository    (DI) Role repository
      */
     public function __construct(
-        RightRepository $rightRepository,
-        RoleRepository $roleRepository,
+        AuthItemRepository $authItemRepository,
         AdManager $adManager,
         CampaignManager $campaignManager,
         CommunityManager $communityManager,
@@ -78,8 +72,7 @@ class PermissionManager
         TokenStorageInterface $tokenStorage,
         MatchingRepository $matchingRepository
     ) {
-        $this->rightRepository = $rightRepository;
-        $this->roleRepository = $roleRepository;
+        $this->authItemRepository = $authItemRepository;
         $this->adManager = $adManager;
         $this->campaignManager = $campaignManager;
         $this->communityManager = $communityManager;
@@ -88,6 +81,67 @@ class PermissionManager
         $this->tokenStorage = $tokenStorage;
         $this->matchingRepository = $matchingRepository;
     }
+
+
+    /**
+     * Check if a requester has a permission on an item.
+     * The requester is retrieved from the connection token.
+     *
+     * @param string    $itemName   The name of the item to check
+     * @param array     $params     The params associated with the right
+     * @return bool
+     */
+    public function hasPermission(string $itemName, array $params = [])
+    {
+        if (is_null($this->tokenStorage->getToken())) {
+            // anonymous connection => any right should be denied, as allowed resources won't be checked for permissions
+            return false;
+        }
+        if (!$item = $this->authItemRepository->findByName($itemName)) {
+            throw new AuthItemNotFoundException('Auth item ' . $itemName . ' not found');
+        }
+
+        $requester = $this->tokenStorage->getToken()->getUser();
+        
+        
+         
+
+
+        return false;
+    }
+
+    /**
+     * Check if a right is in given roles
+     *
+     * @param Right $right  The right
+     * @param array $roles  The array of roles (may be associated with a territory)
+     * @return bool
+     */
+    private function rightInRoles(Right $right, array $roles)
+    {
+        // first we check if the right is directly associated with the role
+        foreach ($right->getRoles() as $rightRole) {
+            /**
+             * @var Role $rightRole
+             */
+            foreach ($roles as $role) {
+                if ($role['role']->getId() == $rightRole->getId()) {
+                    // common role found, we check if the
+                    if ($this->isOwner($right, $userId, $id, $object)) {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+
+
+
 
     /**
      * Check if a requester can check a permission on an right
@@ -304,35 +358,35 @@ class PermissionManager
         return $achildren;
     }
 
-    /**
-     * Check if a right is in given roles
-     *
-     * @param Right $right              The right
-     * @param array $roles              The array of roles
-     * @param integer|null $userId      The user id
-     * @param integer|null $id          The related object id
-     * @param object|null $object       The related object
-     * @return void
-     */
-    private function rightInRoles(Right $right, array $roles, ?int $userId=null, ?int $id=null, ?object $object=null)
-    {
-        //  echo "check right " . $right->getName() . "\n";
-        foreach ($right->getRoles() as $rightRole) {
-            //  echo "check rightrole " . $rightRole->getName() . "\n";
-            foreach ($roles as $role) {
-                //  echo "check role " . $role['role']->getName() . "\n";
-                if ($role['role']->getId() == $rightRole->getId()) {
-                    // common role found
-                    if ($this->isOwner($right, $userId, $id, $object)) {
-                        return true;
-                    }
-                    return false;
-                }
-            }
-        }
+    // /**
+    //  * Check if a right is in given roles
+    //  *
+    //  * @param Right $right              The right
+    //  * @param array $roles              The array of roles
+    //  * @param integer|null $userId      The user id
+    //  * @param integer|null $id          The related object id
+    //  * @param object|null $object       The related object
+    //  * @return void
+    //  */
+    // private function rightInRoles(Right $right, array $roles, ?int $userId=null, ?int $id=null, ?object $object=null)
+    // {
+    //     //  echo "check right " . $right->getName() . "\n";
+    //     foreach ($right->getRoles() as $rightRole) {
+    //         //  echo "check rightrole " . $rightRole->getName() . "\n";
+    //         foreach ($roles as $role) {
+    //             //  echo "check role " . $role['role']->getName() . "\n";
+    //             if ($role['role']->getId() == $rightRole->getId()) {
+    //                 // common role found
+    //                 if ($this->isOwner($right, $userId, $id, $object)) {
+    //                     return true;
+    //                 }
+    //                 return false;
+    //             }
+    //         }
+    //     }
 
-        return false;
-    }
+    //     return false;
+    // }
 
     /**
      * Check if an app has a permission on an right

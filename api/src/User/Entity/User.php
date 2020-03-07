@@ -43,9 +43,7 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Ask;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
-use App\Right\Entity\UserRole;
 use App\Match\Entity\Mass;
-use App\Right\Entity\UserRight;
 use App\Image\Entity\Image;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
@@ -80,9 +78,11 @@ use App\User\Filter\ValidatedDateTokenFilter;
 use App\User\Filter\UnsubscribeTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
+use App\Auth\Entity\AuthItem;
 use App\Import\Entity\UserImport;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Entity\Delivery;
+use App\Auth\Entity\UserAuthAssignment;
 use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 
@@ -782,25 +782,18 @@ class User implements UserInterface, EquatableInterface
     private $images;
     
     /**
-     * @var ArrayCollection|null A user may have many roles.
+     * @var ArrayCollection|null A user may have many auth assignments.
      *
-     * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRole", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Auth\Entity\UserAuthAssignment", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups("write")
      * @MaxDepth(1)
      */
-    private $userRoles;
+    private $userAuthAssignments;
 
     /**
      * @Groups({"readUser"})
      */
     private $roles;
-
-    /**
-     * @var ArrayCollection|null A user may have many specific rights.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRight", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
-     */
-    private $userRights;
 
     /**
      * @var ArrayCollection|null The mass import files of the user.
@@ -982,8 +975,7 @@ class User implements UserInterface, EquatableInterface
         $this->asks = new ArrayCollection();
         $this->asksRelated = new ArrayCollection();
         $this->asksDelegate = new ArrayCollection();
-        $this->userRoles = new ArrayCollection();
-        $this->userRights = new ArrayCollection();
+        $this->userAuthAssignments = new ArrayCollection();
         $this->masses = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->messages = new ArrayCollection();
@@ -1640,59 +1632,31 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getUserRoles()
+    public function getUserAuthAssignments()
     {
-        return $this->userRoles->getValues();
+        return $this->userAuthAssignments->getValues();
     }
 
-    public function addUserRole(UserRole $userRole): self
+    public function addUserAuthAssignment(UserAuthAssignment $userAuthAssignment): self
     {
-        if (!$this->userRoles->contains($userRole)) {
-            $this->userRoles->add($userRole);
-            $userRole->setUser($this);
+        if (!$this->userAuthAssignments->contains($userAuthAssignment)) {
+            $this->userAuthAssignments->add($userAuthAssignment);
+            $userAuthAssignment->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeUserRole(UserRole $userRole): self
+    public function removeUserAuthAssignment(UserAuthAssignment $userAuthAssignment): self
     {
-        if ($this->userRoles->contains($userRole)) {
-            $this->userRoles->removeElement($userRole);
+        if ($this->userAuthAssignments->contains($userAuthAssignment)) {
+            $this->userAuthAssignments->removeElement($userAuthAssignment);
             // set the owning side to null (unless already changed)
-            if ($userRole->getUser() === $this) {
-                $userRole->setUser(null);
+            if ($userAuthAssignment->getUser() === $this) {
+                $userAuthAssignment->setUser(null);
             }
         }
 
-        return $this;
-    }
-
-    public function getUserRights()
-    {
-        return $this->userRights->getValues();
-    }
-    
-    public function addUserRight(UserRight $userRight): self
-    {
-        if (!$this->userRights->contains($userRight)) {
-            $this->userRights->add($userRight);
-            $userRight->setUser($this);
-        }
-        
-        return $this;
-    }
-    
-    public function removeUserRight(UserRight $userRight): self
-    {
-        if ($this->userRights->contains($userRight)) {
-            $this->userRights->removeElement($userRight);
-            // set the owning side to null (unless already changed)
-            if ($userRight->getUser() === $this) {
-                $userRight->setUser(null);
-            }
-        }
-        
         return $this;
     }
 
@@ -2094,16 +2058,14 @@ class User implements UserInterface, EquatableInterface
     public function getRoles()
     {
         // we return an array of ROLE_***
-        // we only return the global roles, not the territory-specific roles
         $roles = [];
-        foreach ($this->userRoles as $userRole) {
-            if (is_null($userRole->getTerritory())) {
-                $roles[] = $userRole->getRole()->getName();
+        foreach ($this->userAuthAssignments as $userAuthAssignment) {
+            if ($userAuthAssignment->getAuthItem()->getType() == AuthItem::TYPE_ROLE) {
+                $roles[] = $userAuthAssignment->getAuthItem()->getName();
             }
         }
         return $roles;
     }
-
 
     public function getSalt()
     {

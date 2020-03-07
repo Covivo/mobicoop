@@ -92,6 +92,11 @@ services:
         resource: '../src/Article/Controller'
         tags: ['controller.service_arguments']
 
+    # Auth
+    App\Auth\Controller\:
+        resource: '../src/Auth/Controller'
+        tags: ['controller.service_arguments']
+
     # Carpool
     App\Carpool\Controller\:
         resource: '../src/Carpool/Controller'
@@ -317,11 +322,6 @@ services:
     # Rdex
     App\Rdex\Controller\:
         resource: '../src/Rdex/Controller'
-        tags: ['controller.service_arguments']
-
-    # Right
-    App\Right\Controller\:
-        resource: '../src/Right/Controller'
         tags: ['controller.service_arguments']
     
     # Solidary

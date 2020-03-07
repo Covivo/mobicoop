@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Right\Entity;
+namespace App\Auth\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -31,19 +31,18 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * A right.
- * Note : we change the name of the table to 'uright' to avoid sql errors as 'right' is a reserved word.
+ * An authorization item = a role or an item.
  *
  * @ORM\Entity
- * @ORM\Table(name="uright")
  * @UniqueEntity("name")
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"authRead"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"authWrite"}}
  *      },
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
@@ -52,62 +51,94 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ApiFilter(OrderFilter::class, properties={"id", "type", "name"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  */
-class Right
+class AuthItem
 {
-    const RIGHT_TYPE_ITEM = 1;
-    const RIGHT_TYPE_GROUP = 2;
+    const TYPE_ROLE = 1;
+    const TYPE_ITEM = 2;
     
     /**
-     * @var int The id of this right.
+     * @var int The id of this item.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups("authRead")
      */
     private $id;
+
+    /**
+     * @var string The type of the item : 1 = role, 2 = item.
+     *
+     * @ORM\Column(type="integer", length=1)
+     * @Groups({"authRead","authWrite"})
+     */
+    private $type;
             
     /**
-     * @var string The name of the right.
+     * @var string The name of the item.
      *
      * @ORM\Column(type="string", length=100)
-     * @Groups({"read","write"})
+     * @Groups({"authRead","authWrite"})
      */
     private $name;
 
     /**
-     * @var string The description of the right.
+     * @var string The description of the item.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"authRead","authWrite"})
      */
     private $description;
 
     /**
-     * @var ArrayCollection|null The roles having this right.
+     * @var AuthRule The rule associated with the item
      *
-     * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Role", mappedBy="rights")
-     * @Groups({"read","write"})
+     * @ORM\ManyToOne(targetEntity="\App\Auth\Entity\AuthRule")
+     * @Groups({"authRead","authWrite"})
+     * @MaxDepth(1)
      */
-    private $roles;
+    private $authRule;
 
     /**
-     * @var string The object or method related to the right.
-     * Used to check ownership
+     * @var ArrayCollection|null The children of this item.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\ManyToMany(targetEntity="App\Auth\Entity\AuthItem", mappedBy="parents")
      * @Groups({"read","write"})
      */
-    private $object;
+    private $items;
+
+    /**
+     * @var ArrayCollection|null The parents of this item.
+     *
+     * @ORM\ManyToMany(targetEntity="App\Auth\Entity\AuthItem", inversedBy="children")
+     * @ORM\JoinTable(name="auth_item_child",
+     *      joinColumns={@ORM\JoinColumn(name="parent_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="child_id", referencedColumnName="id")}
+     *      )
+     */
+    private $parents;
 
     public function __construct()
     {
-        $this->roles = new ArrayCollection();
+        $this->items = new ArrayCollection();
+        $this->parents = new ArrayCollection();
     }
     
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getType(): int
+    {
+        return $this->type;
+    }
+
+    public function setType(int $type): self
+    {
+        $this->type = $type;
+        
+        return $this;
     }
             
     public function getName(): ?string
@@ -133,38 +164,61 @@ class Right
         
         return $this;
     }
-    
-    public function getRoles()
+
+    public function getAuthRule(): ?AuthRule
     {
-        return $this->roles->getValues();
+        return $this->authRule;
     }
     
-    public function addRole(Role $role): self
+    public function setAuthRule(?AuthRule $authRule): self
     {
-        if (!$this->roles->contains($role)) {
-            $this->roles[] = $role;
+        $this->authRule = $authRule;
+        
+        return $this;
+    }
+
+    public function getItems()
+    {
+        return $this->items->getValues();
+    }
+    
+    public function addItem(AuthItem $item): self
+    {
+        if (!$this->items->contains($item)) {
+            $this->items[] = $item;
         }
         
         return $this;
     }
     
-    public function removeRole(Role $role): self
+    public function removeItem(AuthItem $item): self
     {
-        if ($this->roles->contains($role)) {
-            $this->roles->removeElement($role);
+        if ($this->items->contains($item)) {
+            $this->items->removeElement($item);
         }
         
         return $this;
     }
 
-    public function getObject(): ?string
+    public function getParents()
     {
-        return $this->object;
+        return $this->parents->getValues();
     }
     
-    public function setObject(?string $object): self
+    public function addParent(AuthItem $parent): self
     {
-        $this->object = $object;
+        if (!$this->parents->contains($parent)) {
+            $this->parents[] = $parent;
+        }
+        
+        return $this;
+    }
+    
+    public function removeParent(AuthItem $parent): self
+    {
+        if ($this->parents->contains($parent)) {
+            $this->parents->removeElement($parent);
+        }
         
         return $this;
     }

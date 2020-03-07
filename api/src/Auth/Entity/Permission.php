@@ -21,11 +21,11 @@
  *    LICENSE
  **************************/
 
-namespace App\Right\Entity;
+namespace App\Auth\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use App\Right\Controller\PermissionCheck;
+use App\Auth\Controller\PermissionCheck;
 
 /**
  * A permission to execute an action.

@@ -23,7 +23,7 @@
 
 namespace App\Security\EventListener;
 
-use App\Right\Service\PermissionManager;
+use App\Auth\Service\PermissionManager;
 use App\User\Entity\User;
 use App\App\Entity\App;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;

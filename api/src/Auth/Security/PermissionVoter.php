@@ -21,10 +21,10 @@
  *    LICENSE
  **************************/
 
-namespace App\Right\Security;
+namespace App\Auth\Security;
 
 use App\App\Entity\App;
-use App\Right\Service\PermissionManager;
+use App\Auth\Service\PermissionManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\User\Exception\UserNotFoundException;

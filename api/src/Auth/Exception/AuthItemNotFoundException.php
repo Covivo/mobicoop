@@ -21,8 +21,8 @@
  *    LICENSE
  **************************/
 
-namespace App\Right\Exception;
+namespace App\Auth\Exception;
 
-class RightException extends \LogicException
+class AuthItemNotFoundException extends \LogicException
 {
 }

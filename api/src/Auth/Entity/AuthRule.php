@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,20 +21,18 @@
  *    LICENSE
  **************************/
 
-namespace App\Right\Entity;
+namespace App\Auth\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
-use App\Geography\Entity\Territory;
-use App\User\Entity\User;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * A right granted to a user.
- * Additionnal properties could be added so we need this entity (could be useless without extra properties => if so it would be a 'classic' manytomany relation)
+ * An authorization rule.
  *
  * @ORM\Entity
+ * @UniqueEntity("name")
  * @ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
@@ -44,10 +42,11 @@ use App\User\Entity\User;
  *      itemOperations={"get","put","delete"}
  * )
  */
-class UserRight
+class AuthRule
 {
+    
     /**
-     * @var int The id of this user right.
+     * @var int The id of this rule.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -55,70 +54,28 @@ class UserRight
      * @Groups("read")
      */
     private $id;
-        
+            
     /**
-     * @var User The user.
+     * @var string The name of the rule.
      *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="userRights")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="string", length=100)
      * @Groups({"read","write"})
      */
-    private $user;
-    
-    /**
-     * @var Right The right.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Right\Entity\Right")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
-     */
-    private $right;
-
-    /**
-     * @var Territory|null The territory associated with the user role.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Territory")
-     * @Groups({"read","write"})
-     */
-    private $territory;
+    private $name;
     
     public function getId(): ?int
     {
         return $this->id;
     }
-        
-    public function getUser(): ?User
+            
+    public function getName(): ?string
     {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-        
-        return $this;
+        return $this->name;
     }
     
-    public function getRight(): ?Right
+    public function setName(?string $name): self
     {
-        return $this->right;
-    }
-
-    public function setRight(?Right $right): self
-    {
-        $this->right = $right;
-        
-        return $this;
-    }
-
-    public function getTerritory(): ?Territory
-    {
-        return $this->territory;
-    }
-
-    public function setTerritory(?Territory $territory): self
-    {
-        $this->territory = $territory;
+        $this->name = $name;
         
         return $this;
     }

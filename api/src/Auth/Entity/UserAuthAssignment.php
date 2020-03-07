@@ -21,66 +21,66 @@
  *    LICENSE
  **************************/
 
-namespace App\Right\Entity;
+namespace App\Auth\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Auth\Entity\AuthItem;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use App\Geography\Entity\Territory;
 use App\User\Entity\User;
 
 /**
- * A role granted to a user.
- * Additionnal properties could be added so we need this entity (could be useless without extra properties => if so it would be a 'classic' manytomany relation)
+ * User auth assignment
  *
  * @ORM\Entity
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"authRead"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"authWrite"}}
  *      },
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
  */
-class UserRole
+class UserAuthAssignment
 {
     /**
-     * @var int The id of this user role.
+     * @var int The id of this assignment.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups("authRead")
      */
     private $id;
         
     /**
      * @var User The user.
      *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="userRoles")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="userAuthAssignments")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"authRead","authWrite"})
      * @MaxDepth(1)
      */
     private $user;
     
     /**
-     * @var Role The role.
+     * @var AuthItem The auth item.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Right\Entity\Role")
+     * @ORM\ManyToOne(targetEntity="\App\Auth\Entity\AuthItem")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"authRead","authWrite"})
      */
-    private $role;
+    private $authItem;
 
     /**
-     * @var Territory|null The territory associated with the user role.
+     * @var Territory|null The territory associated with the assignment.
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Territory")
-     * @Groups({"read","write"})
+     * @Groups({"authRead","authWrite"})
      */
     private $territory;
     
@@ -89,26 +89,26 @@ class UserRole
         return $this->id;
     }
         
-    public function getUser(): ?User
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): self
+    public function setUser(User $user): self
     {
         $this->user = $user;
         
         return $this;
     }
     
-    public function getRole(): ?Role
+    public function getAuthItem(): AuthItem
     {
-        return $this->role;
+        return $this->authItem;
     }
 
-    public function setRole(?Role $role): self
+    public function setAuthItem(AuthItem $authItem): self
     {
-        $this->role = $role;
+        $this->authItem = $authItem;
         
         return $this;
     }

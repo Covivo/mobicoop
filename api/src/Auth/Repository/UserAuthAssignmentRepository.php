@@ -21,63 +21,42 @@
  *    LICENSE
  **************************/
 
-namespace App\Right\Repository;
+namespace App\Auth\Repository;
 
-use App\Right\Entity\Role;
+use App\Auth\Entity\AuthItem;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use App\Auth\Entity\UserAuthAssignment;
+use App\User\Entity\User;
 
 /**
- * @method Role|null find($id, $lockMode = null, $lockVersion = null)
- * @method Role|null findOneBy(array $criteria, array $orderBy = null)
- * @method Role[]    findAll()
- * @method Role[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RoleRepository
+class UserAuthAssignmentRepository
 {
     /**
      * @var EntityRepository
      */
     private $repository;
-
-    private $entityManager;
     
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(Role::class);
-    }
-
-    public function find(int $id): ?Role
-    {
-        return $this->repository->find($id);
+        $this->repository = $entityManager->getRepository(UserAuthAssignment::class);
     }
 
     /**
-    * Find role by name.
-    *
-    * @param string $name
-    * @return Role
-    */
-    public function findByName(string $name)
-    {
-        return $this->repository->findOneBy(['name'=>$name]);
-    }
-
-    /**
-     * Find the children of a given Role.
+     * Find Auth Item Assignment by AuthITem and User.
      *
-     * @param Role $role
-     * @return void
+     * @param AuthItem $authItem    The auth item
+     * @param User $user            The user
+     * @return array
      */
-    public function findChildren(Role $role)
+    public function findByAuthItemAndUser(AuthItem $authItem, User $user)
     {
-        $query = $this->repository->createQueryBuilder('r')
-        ->andWhere('r.parent = :parent')
-        ->setParameter('parent', $role)
-        ->getQuery();
-        
-        return $query->getResult()
-        ;
+        return $this->repository->findBy(['authItem'=>$authItem,'user'=>$user]);
+    }
+
+    public function findAll(): ?array
+    {
+        return $this->repository->findAll();
     }
 }

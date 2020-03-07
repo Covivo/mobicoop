@@ -38,9 +38,9 @@ use App\User\Event\UserPasswordChangedEvent;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use App\Right\Repository\RoleRepository;
-use App\Right\Entity\Role;
-use App\Right\Entity\UserRole;
+use App\Auth\Repository\AuthItemRepository;
+use App\Auth\Entity\Role;
+use App\Auth\Entity\UserRole;
 use App\Community\Repository\CommunityRepository;
 use App\Community\Entity\CommunityUser;
 use App\User\Event\UserRegisteredEvent;
@@ -67,7 +67,7 @@ class UserManager
 {
     private $entityManager;
     private $imageManager;
-    private $roleRepository;
+    private $authItemRepository;
     private $communityRepository;
     private $communityUserRepository;
     private $messageRepository;
@@ -92,12 +92,12 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator)
+    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, AuthItemRepository $authItemRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
         $this->logger = $logger;
-        $this->roleRepository = $roleRepository;
+        $this->authItemRepository = $authItemRepository;
         $this->communityRepository = $communityRepository;
         $this->communityUserRepository = $communityUserRepository;
         $this->messageRepository = $messageRepository;

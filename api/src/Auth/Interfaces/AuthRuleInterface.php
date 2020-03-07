@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,8 +21,26 @@
  *    LICENSE
  **************************/
 
-namespace App\Right\Exception;
+namespace App\Auth\Interfaces;
 
-class RightNotFoundException extends \LogicException
+use App\Auth\Entity\AuthItem;
+use Symfony\Component\Security\Core\User\UserInterface;
+
+/**
+ * Auth Rule interface.
+ *
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ *
+ */
+interface AuthRuleInterface
 {
+    /**
+     * Code to execute to validate the rule.
+     *
+     * @param UserInterface $user       The user
+     * @param AuthItem      $authItem   The auth item
+     * @param array         $params     The params needed for the validation
+     * @return bool True if the validated, false either
+     */
+    public function execute(UserInterface $user, AuthItem $authItem, array $params);
 }

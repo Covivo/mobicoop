@@ -21,18 +21,18 @@
  *    LICENSE
  **************************/
 
-namespace App\Right\Controller;
+namespace App\Auth\Controller;
 
 use App\Geography\Exception\TerritoryNotFoundException;
 use Symfony\Component\HttpFoundation\RequestStack;
-use App\Right\Service\PermissionManager;
+use App\Auth\Service\PermissionManager;
 use Symfony\Component\HttpFoundation\Response;
 use App\Geography\Repository\TerritoryRepository;
-use App\Right\Repository\RightRepository;
 use App\User\Repository\UserRepository;
-use App\Right\Entity\Permission;
-use App\Right\Exception\RightException;
-use App\Right\Exception\RightNotFoundException;
+use App\Auth\Entity\Permission;
+use App\Auth\Exception\RightException;
+use App\Auth\Exception\RightNotFoundException;
+use App\Auth\Repository\AuthItemRepository;
 use App\User\Exception\UserNotFoundException;
 
 /**
@@ -46,15 +46,15 @@ class PermissionCheck
     private $permissionManager;
     private $userRepository;
     private $territoryRepository;
-    private $rightRepository;
+    private $authItemRepository;
 
-    public function __construct(RequestStack $requestStack, PermissionManager $permissionManager, UserRepository $userRepository, TerritoryRepository $territoryRepository, RightRepository $rightRepository)
+    public function __construct(RequestStack $requestStack, PermissionManager $permissionManager, UserRepository $userRepository, TerritoryRepository $territoryRepository, AuthItemRepository $authItemRepository)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->permissionManager = $permissionManager;
         $this->userRepository = $userRepository;
         $this->territoryRepository = $territoryRepository;
-        $this->rightRepository = $rightRepository;
+        $this->authItemRepository = $authItemRepository;
     }
 
     /**
@@ -78,7 +78,7 @@ class PermissionCheck
         if (!$this->request->get("action")) {
             throw new RightException('Action is mandatory');
         }
-        if (!$right = $this->rightRepository->findByName($this->request->get("action"))) {
+        if (!$right = $this->authItemRepository->findByName($this->request->get("action"))) {
             throw new RightNotFoundException('Action ' . $this->request->get("action") . ' not found');
         }
         
