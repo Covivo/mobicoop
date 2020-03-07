@@ -15,7 +15,8 @@ final class Version20200307092121 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE mass ADD mass_type INT NOT NULL');
+        $this->addSql('ALTER TABLE mass ADD mass_type INT NULL');
+        $this->addSql('ALTER TABLE mass ADD date_check_legit DATETIME NULL');
     }
 
     public function down(Schema $schema) : void
@@ -24,5 +25,6 @@ final class Version20200307092121 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE mass DROP mass_type');
+        $this->addSql('ALTER TABLE mass DROP date_check_legit');
     }
 }

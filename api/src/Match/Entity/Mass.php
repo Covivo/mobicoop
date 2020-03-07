@@ -379,10 +379,24 @@ class Mass
 
     /**
      * @var int Type of Mass (0 : Anonymous, 1 : Qualified)
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups({"mass","massPost", "massAnalyze","massMatch", "massCompute"})
      */
     private $massType;
+
+    /**
+     * @var bool If the checkbox about the legitimity of the import has been checked
+     * @Groups({"mass"})
+     */
+    private $checkLegit;
+
+    /**
+     * @var \DateTimeInterface The date of the legitimacy check
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Groups({"mass"})
+     */
+    private $dateCheckLegit;
 
     public function __construct($id = null)
     {
@@ -613,6 +627,16 @@ class Mass
     }
 
     /**
+     * Legitimacy checkbox date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoDateCheckLegit()
+    {
+        $this->setDateCheckLegit(new \Datetime());
+    }
+
+    /**
      * Update date.
      *
      * @ORM\PreUpdate
@@ -686,5 +710,29 @@ class Mass
     public function setMassType($massType)
     {
         $this->massType = $massType;
+    }
+
+    public function isCheckLegit(): ?bool
+    {
+        return $this->checkLegit;
+    }
+
+    public function setCheckLegit(bool $checkLegit): self
+    {
+        $this->checkLegit = $checkLegit;
+
+        return $this;
+    }
+
+    public function getDateCheckLegit(): ?\DateTimeInterface
+    {
+        return $this->dateCheckLegit;
+    }
+
+    public function setDateCheckLegit(?\DateTimeInterface $dateCheckLegit): self
+    {
+        $this->dateCheckLegit = $dateCheckLegit;
+
+        return $this;
     }
 }
