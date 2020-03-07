@@ -31,6 +31,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
+use App\User\Entity\User;
 
 /**
  * A mass matching person, imported from a mass matching file.
@@ -229,6 +230,15 @@ class MassPerson
      * @Groups({"read"})
      */
     private $updatedDate;
+
+    /**
+     * @var User|null The user related if this MassPerson is from an Mass import.
+     *
+     * @ORM\OneToOne(targetEntity="\App\User\Entity\User")
+     * @MaxDepth(1)
+     * @Groups({"read"})
+     */
+    private $user;
 
     public function __construct()
     {
@@ -484,6 +494,18 @@ class MassPerson
     {
         $this->updatedDate = $updatedDate;
 
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+    
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
+        
         return $this;
     }
 
