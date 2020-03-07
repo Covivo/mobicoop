@@ -36,6 +36,7 @@ use App\Match\Controller\MassComputeAction;
 use App\Match\Controller\MassWorkingPlacesAction;
 use App\Match\Controller\MassReAnalyzeAction;
 use App\Match\Controller\MassReMatchAction;
+use App\Match\Controller\MassMigrateAction;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\User\Entity\User;
@@ -195,6 +196,12 @@ use Doctrine\Common\Collections\Collection;
  *              "normalization_context"={"groups"={"mass","massWorkingPlaces"}},
  *              "controller"=MassWorkingPlacesAction::class
  *          },
+  *          "migrate"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/migrate",
+ *              "normalization_context"={"groups"={"massMigrate"}},
+ *              "controller"=MassMigrateAction::class
+ *          },
  *      }
  * )
  * @Vich\Uploadable
@@ -209,6 +216,8 @@ class Mass
     const STATUS_MATCHING = 5;
     const STATUS_MATCHED = 6;
     const STATUS_ERROR = 7;
+    const STATUS_MIGRATING = 8;
+    const STATUS_MIGRATED = 9;
 
     const TYPE_ANONYMOUS = 0;
     const TYPE_QUALIFIED = 1;
@@ -225,7 +234,7 @@ class Mass
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"mass","massPost", "massAnalyze","massMatch", "massCompute"})
+     * @Groups({"mass","massPost", "massAnalyze","massMatch", "massCompute", "massMigrate"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -234,7 +243,7 @@ class Mass
      * @var int The status of this import.
      *
      * @ORM\Column(type="integer")
-     * @Groups({"mass","massPost", "massCompute"})
+     * @Groups({"mass","massPost", "massCompute", "massMigrate"})
      */
     private $status;
 
@@ -380,7 +389,7 @@ class Mass
     /**
      * @var int Type of Mass (0 : Anonymous, 1 : Qualified)
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"mass","massPost", "massAnalyze","massMatch", "massCompute"})
+     * @Groups({"mass","massPost", "massAnalyze","massMatch", "massCompute", "massMigrate"})
      */
     private $massType;
 
@@ -394,9 +403,16 @@ class Mass
      * @var \DateTimeInterface The date of the legitimacy check
      * @ORM\Column(type="datetime", nullable=true)
      *
-     * @Groups({"mass"})
+     * @Groups({"mass", "massMigrate"})
      */
     private $dateCheckLegit;
+
+
+    /**
+     * @var array|null The migrated users
+     * @Groups({"massMigrate"})
+     */
+    private $migratedUsers;
 
     public function __construct($id = null)
     {
@@ -707,7 +723,7 @@ class Mass
         return $this->massType;
     }
 
-    public function setMassType($massType)
+    public function setMassType(?int $massType)
     {
         $this->massType = $massType;
     }
@@ -717,7 +733,7 @@ class Mass
         return $this->checkLegit;
     }
 
-    public function setCheckLegit(bool $checkLegit): self
+    public function setCheckLegit(?bool $checkLegit): self
     {
         $this->checkLegit = $checkLegit;
 
@@ -732,6 +748,18 @@ class Mass
     public function setDateCheckLegit(?\DateTimeInterface $dateCheckLegit): self
     {
         $this->dateCheckLegit = $dateCheckLegit;
+
+        return $this;
+    }
+
+    public function getMigratedUsers(): ?array
+    {
+        return $this->migratedUsers;
+    }
+
+    public function setMigratedUsers(?array $migratedUsers): self
+    {
+        $this->migratedUsers = $migratedUsers;
 
         return $this;
     }

@@ -309,6 +309,15 @@ services:
         tags:
             - { name: monolog.logger, channel: mass }
 
+    App\Match\Service\MassMigrateManager:
+        arguments:
+            $params:
+                chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
+                music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
+                smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'
+        tags:
+            - { name: monolog.logger, channel: mass }
+
     # Price
     App\Price\Controller\:
         resource: '../src/Price/Controller'

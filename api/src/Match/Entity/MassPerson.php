@@ -81,6 +81,12 @@ class MassPerson
     private $familyName;
 
     /**
+     * @var string|null The email address of the person.
+     * @ORM\Column(type="string", length=512, nullable=true)
+     */
+    private $email;
+    
+    /**
      * @var Address The personal address of the person.
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -288,6 +294,18 @@ class MassPerson
         if ($this->familyName == '') {
             $this->familyName = null;
         }
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
+        
         return $this;
     }
 

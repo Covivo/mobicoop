@@ -31,7 +31,6 @@ use App\Match\Entity\Mass;
 /**
  * @method MassPerson|null find($id, $lockMode = null, $lockVersion = null)
  * @method MassPerson|null findOneBy(array $criteria, array $orderBy = null)
- * @method MassPerson[]    findAll()
  * @method MassPerson[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class MassPersonRepository
@@ -62,6 +61,20 @@ class MassPersonRepository
             ->select('DISTINCT wa.houseNumber, wa.street, wa.postalCode, wa.addressLocality, wa.addressCountry, wa.latitude, wa.longitude')
             ->leftJoin('mp.workAddress', 'wa')
             ->andWhere('mp.mass = :mass')
+            ->setParameter('mass', $mass)
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
+    /**
+     * Return all the MassPersons related to a mass.
+     * @return array
+     */
+    public function findAllByMass(Mass $mass)
+    {
+        $query = $this->repository->createQueryBuilder('mp')
+            ->where('mp.mass = :mass')
             ->setParameter('mass', $mass)
             ->getQuery();
 
