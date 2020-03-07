@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -210,6 +210,9 @@ class Mass
     const STATUS_MATCHED = 6;
     const STATUS_ERROR = 7;
 
+    const TYPE_ANONYMOUS = 0;
+    const TYPE_QUALIFIED = 1;
+
     const NB_WORKING_DAY = 228;
     const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070;
     const FLAT_EARTH_CIRCUMFERENCE_IN_MILES = 78186;
@@ -373,6 +376,13 @@ class Mass
      * @Groups({"massCompute"})
      */
     private $massMatrix;
+
+    /**
+     * @var int Type of Mass (0 : Anonymous, 1 : Qualified)
+     * @ORM\Column(type="integer")
+     * @Groups({"mass","massPost", "massAnalyze","massMatch", "massCompute"})
+     */
+    private $massType;
 
     public function __construct($id = null)
     {
@@ -666,5 +676,15 @@ class Mass
     public function setMassMatrix(?MassMatrix $massMatrix)
     {
         $this->massMatrix = $massMatrix;
+    }
+
+    public function getMassType(): ?int
+    {
+        return $this->massType;
+    }
+
+    public function setMassType($massType)
+    {
+        $this->massType = $massType;
     }
 }
