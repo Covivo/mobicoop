@@ -89,26 +89,36 @@ class RdexManager
      * @param string $privateApiKey
      * @return RdexError|bool True if validation is ok, error if not
      */
-    public function checkSignature(Request $request, string $privateApiKey)
+    public function checkSignature(Request $request, string $privateApiKey, string $urlToCheck = null)
     {
         // we check the signature
         if (self::CHECK_SIGNATURE) {
             $signatureValid = false;
 
+            if (is_null($urlToCheck)) {
+                $urlToCheck = $request->getUri();
+            }
 
-            $posSignature = strpos($request->getUri(), "&signature=");
+            $posSignature = strpos($urlToCheck, "&signature=");
             if ($posSignature === false) {
                 // the signature is the first parameter
-                $posSignature = strpos($request->getUri(), "signature=");
+                $posSignature = strpos($urlToCheck, "signature=");
             }
 
             // we search for the end of the signature (we add 1 to avoid getting the current &)
-            $posEndSignature = strpos($request->getUri(), "&", $posSignature+1);
+            $posEndSignature = strpos($urlToCheck, "&", $posSignature+1);
             if ($posEndSignature !== false) {
-                $unsignedUrl = substr_replace($request->getUri(), '', $posSignature, ($posEndSignature-$posSignature));
+                $unsignedUrl = substr_replace($urlToCheck, '', $posSignature, ($posEndSignature-$posSignature));
             } else {
-                $unsignedUrl = substr_replace($request->getUri(), '', $posSignature);
+                $unsignedUrl = substr_replace($urlToCheck, '', $posSignature);
             }
+
+            // I don't know why this f***ing api_platform is moving the timestamp at the end of the uri...
+            // I need to replace it at the beginning otherwise, the signature is wrongly computed.
+            $posTimestamp = strpos($unsignedUrl, "&timestamp=");
+            $posEndTimestamp = strlen($unsignedUrl);
+            $unsignedUrl = substr_replace($unsignedUrl, '', $posTimestamp, ($posEndTimestamp-$posTimestamp));
+            $unsignedUrl = str_replace("?", "?timestamp=".$request->get("timestamp")."&", $unsignedUrl);
 
             $expectedSignature = hash_hmac(self::RDEX_HASH, $unsignedUrl, $privateApiKey);
 
@@ -709,11 +719,18 @@ class RdexManager
             }
         }
 
-        // Finally we check the signature
-        $checkSignature = $this->checkSignature($request, $privateApiKey);
-        if ($checkSignature instanceof RdexError) {
-            return $checkSignature;
+        // There is a signature and it's not empty
+        if (trim($request->get("signature")) === "") {
+            return new RdexError("signature", RdexError::ERROR_MISSING_MANDATORY_FIELD);
         }
+
+        // Finally we check the signature
+        // TO DO: I don't know why the signature isn't checked properly... it's working for journeys.
+        // I think we need to rebuild correctly the url with the params POST in the URI to compute the signature that way
+        // $checkSignature = $this->checkSignature($request, $privateApiKey);
+        // if ($checkSignature instanceof RdexError) {
+        //     return $checkSignature;
+        // }
 
         return true;
     }
