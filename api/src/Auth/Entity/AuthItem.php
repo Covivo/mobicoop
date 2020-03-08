@@ -100,23 +100,23 @@ class AuthItem
     private $authRule;
 
     /**
-     * @var ArrayCollection|null The children of this item.
-     *
-     * @ORM\ManyToMany(targetEntity="App\Auth\Entity\AuthItem", mappedBy="parents")
-     * @Groups({"read","write"})
-     */
-    private $items;
-
-    /**
      * @var ArrayCollection|null The parents of this item.
      *
-     * @ORM\ManyToMany(targetEntity="App\Auth\Entity\AuthItem", inversedBy="children")
+     * @ORM\ManyToMany(targetEntity="App\Auth\Entity\AuthItem", mappedBy="items")
+     * @Groups({"read","write"})
+     */
+    private $parents;
+
+    /**
+     * @var ArrayCollection|null The children of this item.
+     *
+     * @ORM\ManyToMany(targetEntity="App\Auth\Entity\AuthItem", inversedBy="parents")
      * @ORM\JoinTable(name="auth_item_child",
      *      joinColumns={@ORM\JoinColumn(name="parent_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="child_id", referencedColumnName="id")}
      *      )
      */
-    private $parents;
+    private $items;
 
     public function __construct()
     {

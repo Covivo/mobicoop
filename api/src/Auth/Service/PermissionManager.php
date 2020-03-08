@@ -103,7 +103,7 @@ class PermissionManager
 
         $requester = $this->tokenStorage->getToken()->getUser();
         
-        
+
          
 
 
@@ -469,18 +469,18 @@ class PermissionManager
     {
         $permissions = [];
         // we search the rights of each role of the user (and its subsequent roles)
-        foreach ($user->getUserRoles() as $userRole) {
-            $this->getRoleRights($userRole->getRole(), $userRole->getTerritory(), $permissions);
-        }
-        // we search the rights directly granted to the user
-        foreach ($user->getUserRights() as $userRight) {
-            if ($userRight->getTerritory()) {
-                $permissions[$userRight->getRight()->getName()][] = $userRight->getTerritory()->getId();
-            } else {
-                $permissions[$userRight->getRight()->getName()] = [];
-            }
-        }
-        ksort($permissions);
+        // foreach ($user->getUserRoles() as $userRole) {
+        //     $this->getRoleRights($userRole->getRole(), $userRole->getTerritory(), $permissions);
+        // }
+        // // we search the rights directly granted to the user
+        // foreach ($user->getUserRights() as $userRight) {
+        //     if ($userRight->getTerritory()) {
+        //         $permissions[$userRight->getRight()->getName()][] = $userRight->getTerritory()->getId();
+        //     } else {
+        //         $permissions[$userRight->getRight()->getName()] = [];
+        //     }
+        // }
+        // ksort($permissions);
         return $permissions;
     }
 

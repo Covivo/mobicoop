@@ -38,10 +38,10 @@ interface AuthRuleInterface
     /**
      * Code to execute to validate the rule.
      *
-     * @param User|App $user       The user
+     * @param User|App      $requester  The requester
      * @param AuthItem      $authItem   The auth item
      * @param array         $params     The params needed for the validation
-     * @return bool True if the validated, false either
+     * @return bool True if the rule is validated, false either
      */
-    public function execute(object $user, AuthItem $authItem, array $params);
+    public function execute(object $requester, AuthItem $authItem, array $params);
 }

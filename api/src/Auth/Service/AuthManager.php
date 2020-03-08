@@ -25,6 +25,7 @@ namespace App\Auth\Service;
 
 use App\App\Entity\App;
 use App\Auth\Entity\AuthItem;
+use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Interfaces\AuthRuleInterface;
 use App\User\Entity\User;
 use App\Auth\Exception\AuthItemNotFoundException;
@@ -78,40 +79,45 @@ class AuthManager
         // we get the requester
         $requester = $this->tokenStorage->getToken()->getUser();
         
-        // check if the item is authorized for the user
+        // check if the item is authorized for the requester
         return $this->isAssigned($requester, $item, $params);
     }
 
+    /**
+     * Check if a requester is assigned an auth item (recursive).
+     *
+     * @param UserInterface $requester  The requester
+     * @param AuthItem $authItem        The auth item
+     * @param array $params             The params needed to check the authorization (will be passed to the rule if it exists)
+     * @return boolean  True if the requester is assigned the item, false either
+     */
     private function isAssigned(UserInterface $requester, AuthItem $authItem, array $params)
     {
-        // we check if the item is directly assigned to the user
-        if ($requester instanceof User) {
-            if ($this->userAuthAssignmentRepository->findByAuthItemAndUser($authItem, $requester)) {
-                // the item is found, we check if there's a rule
-                if ($this->checkRule($requester, $authItem, $params)) {
-                    // no rule or rule validated
+        // we check if there's a rule
+        if ($this->checkRule($requester, $authItem, $params)) {
+            // we check if the item is directly assigned to the user
+            if ($requester instanceof User) {
+                if ($this->userAuthAssignmentRepository->findByAuthItemAndUser($authItem, $requester)) {
+                    // the item is found
                     return true;
-                }
-            } else {
-                // the item is not assigned, we check its parents
-                foreach ($authItem->getParents() as $parent) {
-                    if ($this->isAssigned($requester, $parent, $params)) {
-                        return true;
+                } else {
+                    // the item is not assigned, we check its parents
+                    foreach ($authItem->getParents() as $parent) {
+                        if ($this->isAssigned($requester, $parent, $params)) {
+                            return true;
+                        }
                     }
                 }
-            }
-        } elseif ($requester instanceof App) {
-            if (in_array($authItem, $requester->getAuthItems())) {
-                // the item is found, we check if there's a rule
-                if ($this->checkRule($requester, $authItem, $params)) {
-                    // no rule or rule validated
+            } elseif ($requester instanceof App) {
+                if (in_array($authItem, $requester->getAuthItems())) {
+                    // the item is found
                     return true;
-                }
-            } else {
-                // the item is not assigned, we check its parents
-                foreach ($authItem->getParents() as $parent) {
-                    if ($this->isAssigned($requester, $parent, $params)) {
-                        return true;
+                } else {
+                    // the item is not assigned, we check its parents
+                    foreach ($authItem->getParents() as $parent) {
+                        if ($this->isAssigned($requester, $parent, $params)) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -121,6 +127,14 @@ class AuthManager
         return false;
     }
 
+    /**
+     * Check if there's a rule associated with an auth item, and execute it.
+     *
+     * @param UserInterface $requester  The requester
+     * @param AuthItem $authItem        The auth item
+     * @param array $params             The params needed to check the authorization
+     * @return boolean  True if there's no rule or if the rule is validated, false either
+     */
     private function checkRule(UserInterface $requester, AuthItem $authItem, array $params)
     {
         if (is_null($authItem->getAuthRule())) {
@@ -128,11 +142,76 @@ class AuthManager
             return true;
         }
         // at this point a rule is associated, we need to execute it
-        $authRuleName = '\\App\\Auth\\Rule\\' . $authItem->getAuthRule()->getName();
+        $authRuleName = "\\App\\Auth\Rule\\" . $authItem->getAuthRule()->getName();
         /**
          * @var AuthRuleInterface $authRule
          */
-        $authRule = new $authRuleName();
+        $authRule = new $authRuleName;
         return $authRule->execute($requester, $authItem, $params);
+    }
+
+    /**
+     * Get the allowed territories to the current requester for a right
+     *
+     * @param string    $itemName   The name of the item to check
+     * @return array The array of territories where the requester is authorized (empty array if the requester is authorized on any territory)
+     */
+    public function getTerritoriesForItem(string $itemName)
+    {
+        if (!$item = $this->authItemRepository->findByName($itemName)) {
+            throw new AuthItemNotFoundException('Auth item ' . $itemName . ' not found');
+        }
+
+        // we get the requester
+        $requester = $this->tokenStorage->getToken()->getUser();
+
+        $territories = [];
+
+        // we search the territories
+        $this->getTerritories($requester, $item, $territories);
+
+        if (in_array('all', $territories)) {
+            $territories = [];
+        }
+        $territories = array_unique($territories);
+        sort($territories);
+
+        return $territories;
+    }
+
+    /**
+     * Create an array of allowed territories for an item (recursive).
+     * For now just for Users, not Apps.
+     *
+     * @param UserInterface $requester  The requester
+     * @param AuthItem $authItem        The authItem to check
+     * @param array|null $territories   The territories array (passed by reference)
+     * @return void
+     */
+    private function getTerritories(UserInterface $requester, AuthItem $authItem, ?array &$territories)
+    {
+        // we don't check the rules here, we just search for territories
+        if ($requester instanceof User) {
+            if ($userAssignments = $this->userAuthAssignmentRepository->findByAuthItemAndUser($authItem, $requester)) {
+                // the item is directly associated with the requester
+                foreach ($userAssignments as $userAssignment) {
+                    /**
+                     * @var UserAuthAssignment $userAssignment
+                     */
+                    if (!is_null($userAssignment->getTerritory())) {
+                        // the authItem is associated with a territory, we add the territory to the list
+                        $territories[] = $userAssignment->getTerritory()->getId();
+                    } elseif (count($authItem->getParents()) == 0) {
+                        // the item has no parents => authorized everywhere !
+                        $territories[] = 'all';
+                        return;
+                    }
+                }
+            }
+            // we now search for the parents of the authItem
+            foreach ($authItem->getParents() as $parent) {
+                $this->getTerritories($requester, $parent, $territories);
+            }
+        }
     }
 }

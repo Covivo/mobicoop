@@ -25,18 +25,16 @@ namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
 
-class UserSelfRule implements AuthRuleInterface
+class IsUserSelf implements AuthRuleInterface
 {
-    public $name = 'isSelf';
-
     /**
      * {@inheritdoc}
      */
-    public function execute($user, $item, $params)
+    public function execute($requester, $item, $params)
     {
         if (!isset($params['id'])) {
             return false;
         }
-        return $params['id'] == $user->getId();
+        return $params['id'] == $requester->getId();
     }
 }
