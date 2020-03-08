@@ -24,7 +24,8 @@
 namespace App\Auth\Interfaces;
 
 use App\Auth\Entity\AuthItem;
-use Symfony\Component\Security\Core\User\UserInterface;
+use App\User\Entity\User;
+use App\App\Entity\App;
 
 /**
  * Auth Rule interface.
@@ -37,10 +38,10 @@ interface AuthRuleInterface
     /**
      * Code to execute to validate the rule.
      *
-     * @param UserInterface $user       The user
+     * @param User|App $user       The user
      * @param AuthItem      $authItem   The auth item
      * @param array         $params     The params needed for the validation
      * @return bool True if the validated, false either
      */
-    public function execute(UserInterface $user, AuthItem $authItem, array $params);
+    public function execute(object $user, AuthItem $authItem, array $params);
 }

@@ -29,7 +29,7 @@ use App\Article\Entity\Paragraph;
 use App\Article\Entity\Section;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\Auth\Service\PermissionManager;
+use App\Right\Service\PermissionManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;

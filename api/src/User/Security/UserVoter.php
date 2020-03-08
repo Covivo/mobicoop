@@ -23,6 +23,7 @@
 
 namespace App\User\Security;
 
+use App\Auth\Service\AuthManager;
 use App\Auth\Service\PermissionManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -43,11 +44,13 @@ class UserVoter extends Voter
 
     private $security;
     private $permissionManager;
+    private $authManager;
 
-    public function __construct(Security $security, PermissionManager $permissionManager)
+    public function __construct(Security $security, PermissionManager $permissionManager, AuthManager $authManager)
     {
         $this->security = $security;
         $this->permissionManager = $permissionManager;
+        $this->authManager = $authManager;
     }
 
     protected function supports($attribute, $subject)
@@ -70,7 +73,6 @@ class UserVoter extends Voter
         if (!$subject instanceof User) {
             return false;
         }
-        
         return true;
     }
 
@@ -110,7 +112,10 @@ class UserVoter extends Voter
 
     private function canRead(UserInterface $requester, User $subject)
     {
-        return $this->permissionManager->checkPermission('user_read', $requester, null, $subject->getId());
+        echo "ici";
+        exit;
+        //return $this->permissionManager->checkPermission('user_read', $requester, null, $subject->getId());
+        return $this->authManager->isAuthorized('user_read', ['id'=>$subject->getId()]);
     }
 
     private function canUpdate(UserInterface $requester, User $subject)
