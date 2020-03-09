@@ -675,7 +675,6 @@ class AdManager
         $user = $this->userManager->getUser($userId);
         $params = $anyAds ? ['user'=>$user] : ['user'=>$user, 'private'=>false];
         $proposals = $this->proposalRepository->findBy($params);
-//        dump($proposals);die;
         $refIdProposals = [];
         foreach ($proposals as $proposal) {
             if (!in_array($proposal->getId(), $refIdProposals)) {
