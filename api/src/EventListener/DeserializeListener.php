@@ -53,7 +53,7 @@ final class DeserializeListener
     public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
-        if ($request->isMethodSafe(false) || $request->isMethod(Request::METHOD_DELETE) || $request->getPathInfo() !== "/rdex/connections") {
+        if ($request->isMethodSafe(false) || $request->isMethod(Request::METHOD_DELETE)) {
             return;
         }
 
