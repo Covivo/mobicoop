@@ -1,55 +1,52 @@
 <template>
   <v-container>
-    <!--    <v-row>-->
-    <!--      <v-col>-->
-    <!--        <route-summary-->
-    <!--          :origin="ad.outwardWaypoints[0].address"-->
-    <!--          :destination="ad.outwardWaypoints[ad.outwardWaypoints.length - 1].address"-->
-    <!--          :type="ad.frequency"-->
-    <!--          :regular="isRegular"-->
-    <!--          text-color-class="primary&#45;&#45;text text&#45;&#45;darken-2"-->
-    <!--          icon-color="accent"-->
-    <!--        />-->
-    <!--      </v-col>-->
-    <!--    </v-row>-->
-    <v-row>
+    <v-row justify="center">
       <v-col
         class="pa-0"
       >
-        <route-summary
-          :origin="result.origin"
-          :destination="result.destination"
-          :type="result.frequency"
-          :time="result.time"
-          :compact="true"
-          text-color-class="primary--text"
-          icon-color="accent"
+        <v-container :class=" isRegular ? 'primary lighten-5 py-0' : 'py-0'">
+          <v-row class="py-0">
+            <v-col
+              class="py-0"
+            >
+              <route-summary
+                :origin="result.origin"
+                :destination="result.destination"
+                :type="result.frequency"
+                :time="!isRegular ? result.time : null"
+                :regular="isRegular"
+                :compact="true"
+                text-color-class="primary--text"
+                icon-color="accent"
+              />
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+    </v-row>
+    <v-row v-if="isRegular">
+      <v-col cols="5">
+        <regular-days-summary
+          :mon-active="hasMonday"
+          :tue-active="hasTuesday"
+          :wed-active="hasWednesday"
+          :thu-active="hasThursday"
+          :fri-active="hasFriday"
+          :sat-active="hasSaturday"
+          :sun-active="hasSunday"
+          :date-end-of-validity="ad.outwardLimitDate"
+        />
+      </v-col>
+
+      <v-col class="py-0">
+        <schedules
+          :outward-times="outwardTimes"
+          :return-times="returnTimes"
+          :is-return="hasReturn"
+          :is-regular="isRegular"
         />
       </v-col>
     </v-row>
-    <!--    <v-row>-->
-    <!--      <v-col cols="5">-->
-    <!--        <regular-days-summary-->
-    <!--          :mon-active="hasMonday"-->
-    <!--          :tue-active="hasTuesday"-->
-    <!--          :wed-active="hasWednesday"-->
-    <!--          :thu-active="hasThursday"-->
-    <!--          :fri-active="hasFriday"-->
-    <!--          :sat-active="hasSaturday"-->
-    <!--          :sun-active="hasSunday"-->
-    <!--          :date-end-of-validity="ad.outwardLimitDate"-->
-    <!--        />-->
-    <!--      </v-col>-->
-
-    <!--      <v-col class="py-0">-->
-    <!--        <schedules-->
-    <!--          :outward-times="outwardTimes"-->
-    <!--          :return-times="returnTimes"-->
-    <!--          :is-return="hasReturn"-->
-    <!--          :is-regular="isRegular"-->
-    <!--        />-->
-    <!--      </v-col>-->
-    <!--    </v-row>-->
     <v-row
       no-gutters
       align="center"
@@ -102,11 +99,11 @@ import { merge } from "lodash";
 import Translations from "@translations/components/user/profile/carpool/CarpoolFooter.js";
 import TranslationsClient from "@clientTranslations/components/user/profile/carpool/CarpoolFooter.js";
 
-// import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary.vue';
+import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary.vue';
 import RouteSummary from '@components/carpool/utilities/RouteSummary.vue';
 import CarpoolerIdentity from "@components/carpool/utilities/CarpoolerIdentity";
 import CarpoolerContact from "@components/carpool/utilities/CarpoolerContact";
-// import Schedules from '@components/user/profile/ad/Schedules.vue';
+import Schedules from '@components/user/profile/ad/Schedules.vue';
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -117,9 +114,9 @@ export default {
   components: {
     CarpoolerIdentity,
     CarpoolerContact,
-    // RegularDaysSummary,
+    RegularDaysSummary,
     RouteSummary,
-    // Schedules
+    Schedules
   },
   props: {
     ad: {
