@@ -37,6 +37,7 @@
               class="py-0"
             >
               <route-summary
+                :compact="true"
                 :origin="ad.outwardWaypoints[0].address"
                 :destination="ad.outwardWaypoints[ad.outwardWaypoints.length - 1].address"
                 :type="ad.frequency"

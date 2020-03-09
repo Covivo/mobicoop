@@ -10,7 +10,8 @@
         cols="3"
         class="primary--text"
       >
-        <span v-if="seats && seats > 0">{{ bookedSeats }}/{{ seats }}&nbsp;{{ $tc('seat.booked', bookedSeats) }}</span>
+        <span v-if="isDriver && seats && seats > 0">{{ bookedSeats }}/{{ seats }}&nbsp;{{ $tc('seat.booked', bookedSeats) }}</span>
+        <span v-else-if="!isDriver && seats && seats > 0">{{ bookedSeats }}&nbsp;{{ $tc('seat.booked', bookedSeats) }}</span>
       </v-col>
     </v-row>
     <v-expansion-panels
