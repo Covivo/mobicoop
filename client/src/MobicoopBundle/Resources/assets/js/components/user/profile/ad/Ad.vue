@@ -27,8 +27,8 @@
       <ad-footer
         v-if="!isPaused"
         :id="ad.id"
-        :seats="(isDriver) ? ad.seatsDriver : ad.seatsPassenger"
-        :price="(isDriver) ? ad.outwardDriverPrice : ad.outwardPassengerPrice"
+        :seats="(isDriver && !isPassenger) ? ad.seatsDriver : null"
+        :price="(isDriver && !isPassenger) ? ad.outwardDriverPrice : null"
         :id-message="lastMessageId"
         :nb-matchings="ad.potentialCarpoolers"
       />

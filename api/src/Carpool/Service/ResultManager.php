@@ -388,7 +388,7 @@ class ResultManager
      *
      * @param Proposal $proposal The proposal
      * @param boolean $return The result is for the return trip
-     * @param bool $handleAcceptedAsks Do not exclude private proposal if there is an accepted ask
+     * @param bool $handleAcceptedAsks Do not exclude private proposal if there is an accepted ask in matchings
      * @return array
      */
     private function createProposalResults(Proposal $proposal, bool $return = false, bool $handleAcceptedAsks = null)
@@ -707,7 +707,9 @@ class ResultManager
                             }
                         }
                         // we init the time to the one of the carpooler
-                        if ($matching['request']->getProposalRequest()->getCriteria()->isMonCheck()) {
+                        if ($matching['request']->getProposalRequest()->getCriteria()->isMonCheck() &&
+                            !is_null($matching['request']->getProposalRequest()->getCriteria()->getMonTime())) {
+//                            dump($matching['request']->getAsks());die;
                             $monTime = clone $matching['request']->getProposalRequest()->getCriteria()->getMonTime();
                             if ($pickupDuration) {
                                 $monTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
@@ -716,8 +718,9 @@ class ResultManager
                             $item->setTime($monTime);
                             $item->setMonMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getMonMarginDuration());
                         }
-                        if ($matching['request']->getProposalRequest()->getCriteria()->isTueCheck()) {
-                            $tueTime = clone $matching['request']->getProposalRequest()->getCriteria()->getTueTime();
+                        if ($matching['request']->getProposalRequest()->getCriteria()->isTueCheck() &&
+                            !is_null($matching['request']->getProposalRequest()->getCriteria()->getTueTime())) {
+                            $tueTime = $matching['request']->getProposalRequest()->getCriteria()->getTueTime();
                             if ($pickupDuration) {
                                 $tueTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
@@ -725,8 +728,9 @@ class ResultManager
                             $item->setTime($tueTime);
                             $item->setTueMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getTueMarginDuration());
                         }
-                        if ($matching['request']->getProposalRequest()->getCriteria()->isWedCheck()) {
-                            $wedTime = clone $matching['request']->getProposalRequest()->getCriteria()->getWedTime();
+                        if ($matching['request']->getProposalRequest()->getCriteria()->isWedCheck() &&
+                            !is_null($matching['request']->getProposalRequest()->getCriteria()->getWedTime())) {
+                            $wedTime = $matching['request']->getProposalRequest()->getCriteria()->getWedTime();
                             if ($pickupDuration) {
                                 $wedTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
@@ -734,8 +738,9 @@ class ResultManager
                             $item->setTime($wedTime);
                             $item->setWedMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getWedMarginDuration());
                         }
-                        if ($matching['request']->getProposalRequest()->getCriteria()->isThuCheck()) {
-                            $thuTime = clone $matching['request']->getProposalRequest()->getCriteria()->getThuTime();
+                        if ($matching['request']->getProposalRequest()->getCriteria()->isThuCheck() &&
+                            !is_null($matching['request']->getProposalRequest()->getCriteria()->getThuTime())) {
+                            $thuTime = $matching['request']->getProposalRequest()->getCriteria()->getThuTime();
                             if ($pickupDuration) {
                                 $thuTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
@@ -743,8 +748,9 @@ class ResultManager
                             $item->setTime($thuTime);
                             $item->setThuMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getThuMarginDuration());
                         }
-                        if ($matching['request']->getProposalRequest()->getCriteria()->isFriCheck()) {
-                            $friTime = clone $matching['request']->getProposalRequest()->getCriteria()->getFriTime();
+                        if ($matching['request']->getProposalRequest()->getCriteria()->isFriCheck() &&
+                            !is_null($matching['request']->getProposalRequest()->getCriteria()->getFriTime())) {
+                            $friTime = $matching['request']->getProposalRequest()->getCriteria()->getFriTime();
                             if ($pickupDuration) {
                                 $friTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
@@ -752,7 +758,8 @@ class ResultManager
                             $item->setTime($friTime);
                             $item->setFriMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getFriMarginDuration());
                         }
-                        if ($matching['request']->getProposalRequest()->getCriteria()->isSatCheck()) {
+                        if ($matching['request']->getProposalRequest()->getCriteria()->isSatCheck() &&
+                            !is_null($matching['request']->getProposalRequest()->getCriteria()->getSatTime())) {
                             $satTime = clone $matching['request']->getProposalRequest()->getCriteria()->getSatTime();
                             if ($pickupDuration) {
                                 $satTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
@@ -761,8 +768,9 @@ class ResultManager
                             $item->setTime($satTime);
                             $item->setSatMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getSatMarginDuration());
                         }
-                        if ($matching['request']->getProposalRequest()->getCriteria()->isSunCheck()) {
-                            $sunTime = clone $matching['request']->getProposalRequest()->getCriteria()->getSunTime();
+                        if ($matching['request']->getProposalRequest()->getCriteria()->isSunCheck() &&
+                            !is_null($matching['request']->getProposalRequest()->getCriteria()->getSunTime())) {
+                            $sunTime = $matching['request']->getProposalRequest()->getCriteria()->getSunTime();
                             if ($pickupDuration) {
                                 $sunTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }

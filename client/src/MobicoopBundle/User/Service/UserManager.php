@@ -507,7 +507,11 @@ class UserManager
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
-        $response = $this->dataProvider->getCollection(["userId"=>$user->getId(), "acceptedAsks" => true]);
+
+        $params = ["userId"=>$user->getId(), "acceptedAsks" => true];
+        $isValidatedCarpool ? $params = array_merge($params, ["anyAds" => true]) : null;
+
+        $response = $this->dataProvider->getCollection($params);
         
         $ads = $response->getValue();
        
