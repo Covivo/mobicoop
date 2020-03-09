@@ -25,6 +25,7 @@ namespace App\Auth\Service;
 
 use App\App\Entity\App;
 use App\Auth\Entity\AuthItem;
+use App\Auth\Entity\Permission;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Interfaces\AuthRuleInterface;
 use App\User\Entity\User;
@@ -63,7 +64,7 @@ class AuthManager
      * The requester is retrieved from the connection token.
      *
      * @param string    $itemName   The name of the item to check
-     * @param array     $params     The params associated with the right
+     * @param array     $params     The params associated with the item
      * @return bool
      */
     public function isAuthorized(string $itemName, array $params = [])
@@ -212,6 +213,61 @@ class AuthManager
             foreach ($authItem->getParents() as $parent) {
                 $this->getTerritories($requester, $parent, $territories);
             }
+        }
+    }
+
+    /**
+     * Check if a requester has an authorization on an item, and returns a Permission object.
+     * The requester is retrieved from the connection token.
+     *
+     * @param string    $itemName   The name of the item to check
+     * @param array     $params     The params associated with the item
+     * @return Permission           The permission
+     */
+    public function getPermissionForAuthItem(string $itemName, array $params = [])
+    {
+        $permission = new Permission(1);
+        $permission->setGranted($this->isAuthorized($itemName, $params));
+        return $permission;
+    }
+
+    /**
+     * Return the assigned AuthItem of the current user
+     *
+     * @return array The auth items
+     */
+    public function getAuthItems()
+    {
+        $authItems = [];
+
+        // we get the requester
+        $requester = $this->tokenStorage->getToken()->getUser();
+
+        if ($userAssignments = $this->userAuthAssignmentRepository->findByUser($requester)) {
+            foreach ($userAssignments as $userAssignment) {
+                if ($userAssignment->getAuthItem()->getType() == AuthItem::TYPE_ITEM) {
+                    $authItems[] = $userAssignment->getAuthItem()->getName();
+                }
+                $this->getChildrenNames($userAssignment->getAuthItem(), $authItems);
+            }
+        }
+        return array_unique($authItems);
+    }
+
+    /**
+     * Get the children names of an AuthItem (recursive)
+     *
+     * @param AuthItem  $authItem       The auth item
+     * @param array     $childrenNames  The array of names (passed by reference)
+     * @return void
+     */
+    private function getChildrenNames(AuthItem $authItem, array &$childrenNames)
+    {
+        foreach ($authItem->getItems() as $child) {
+            if ($child->getType() == AuthItem::TYPE_ITEM) {
+                $childrenNames[] = $child->getName();
+            }
+            $this->getChildrenNames($child, $childrenNames);
         }
     }
 }

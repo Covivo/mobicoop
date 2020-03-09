@@ -54,4 +54,15 @@ class UserAuthAssignmentRepository
     {
         return $this->repository->findBy(['authItem'=>$authItem,'user'=>$user]);
     }
+
+    /**
+     * Find Auth Item Assignment by User.
+     *
+     * @param User $user            The user
+     * @return array
+     */
+    public function findByUser(User $user)
+    {
+        return $this->repository->findBy(['user'=>$user]);
+    }
 }

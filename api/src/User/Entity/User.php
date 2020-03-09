@@ -785,7 +785,7 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null A user may have many auth assignments.
      *
      * @ORM\OneToMany(targetEntity="\App\Auth\Entity\UserAuthAssignment", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups("write")
+     * @Groups({"readUser","write"})
      * @MaxDepth(1)
      */
     private $userAuthAssignments;
@@ -989,6 +989,7 @@ class User implements UserInterface, EquatableInterface
         $this->userNotifications = new ArrayCollection();
         $this->campaigns = new ArrayCollection();
         $this->deliveries = new ArrayCollection();
+        $this->roles = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -2055,16 +2056,15 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getRoles()
+    public function getRoles(): array
     {
         // we return an array of ROLE_***
-        $roles = [];
         foreach ($this->userAuthAssignments as $userAuthAssignment) {
             if ($userAuthAssignment->getAuthItem()->getType() == AuthItem::TYPE_ROLE) {
-                $roles[] = $userAuthAssignment->getAuthItem()->getName();
+                $this->roles[] = $userAuthAssignment->getAuthItem()->getName();
             }
         }
-        return $roles;
+        return array_unique($this->roles);
     }
 
     public function getSalt()

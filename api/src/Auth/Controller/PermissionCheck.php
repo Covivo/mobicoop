@@ -30,9 +30,10 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Geography\Repository\TerritoryRepository;
 use App\User\Repository\UserRepository;
 use App\Auth\Entity\Permission;
-use App\Auth\Exception\RightException;
-use App\Auth\Exception\RightNotFoundException;
+use App\Auth\Exception\AuthItemException;
+use App\Auth\Exception\AuthItemNotFoundException;
 use App\Auth\Repository\AuthItemRepository;
+use App\Auth\Service\AuthManager;
 use App\User\Exception\UserNotFoundException;
 
 /**
@@ -43,18 +44,12 @@ use App\User\Exception\UserNotFoundException;
 class PermissionCheck
 {
     private $request;
-    private $permissionManager;
-    private $userRepository;
-    private $territoryRepository;
-    private $authItemRepository;
+    private $authManager;
 
-    public function __construct(RequestStack $requestStack, PermissionManager $permissionManager, UserRepository $userRepository, TerritoryRepository $territoryRepository, AuthItemRepository $authItemRepository)
+    public function __construct(RequestStack $requestStack, AuthManager $authManager)
     {
         $this->request = $requestStack->getCurrentRequest();
-        $this->permissionManager = $permissionManager;
-        $this->userRepository = $userRepository;
-        $this->territoryRepository = $territoryRepository;
-        $this->authItemRepository = $authItemRepository;
+        $this->authManager = $authManager;
     }
 
     /**
@@ -65,31 +60,6 @@ class PermissionCheck
      */
     public function __invoke(array $data): ?Permission
     {
-        // we check if the user exists
-        // if (!$this->request->get("user")) {
-        //     throw new RightException('User id is mandatory');
-        // }
-        $user = null;
-        if (!is_null($this->request->get("user")) && !$user = $this->userRepository->find($this->request->get("user"))) {
-            throw new UserNotFoundException('User #' . $this->request->get("user") . ' not found');
-        }
-
-        // we check if the action exists
-        if (!$this->request->get("action")) {
-            throw new RightException('Action is mandatory');
-        }
-        if (!$right = $this->authItemRepository->findByName($this->request->get("action"))) {
-            throw new RightNotFoundException('Action ' . $this->request->get("action") . ' not found');
-        }
-        
-        $territory = null;
-        if ($this->request->get("territory")) {
-            if (!$territory = $this->territoryRepository->find($this->request->get("territory"))) {
-                throw new TerritoryNotFoundException('Territory ' . $this->request->get("territory") . ' not found');
-            }
-        }
-
-        // we search if the user has the permission
-        return $this->permissionManager->userHasPermission($right, $user, $territory, $this->request->get("id"));
+        return $this->authManager->getPermissionForAuthItem($this->request->get('item'), ['id'=>$this->request->get("id")]);
     }
 }

@@ -25,6 +25,7 @@ namespace App\Auth\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\Auth\Controller\Permissions;
 use App\Auth\Controller\PermissionCheck;
 
 /**
@@ -32,33 +33,25 @@ use App\Auth\Controller\PermissionCheck;
  *
  * @ApiResource(
  *      collectionOperations={
+ *          "permissions"={
+ *              "method"="GET",
+ *              "controller"=Permissions::class,
+ *              "path"="/permissions",
+ *              "security"="is_granted('permission',object)"
+ *          },
  *          "granted"={
  *              "method"="GET",
  *              "controller"=PermissionCheck::class,
- *              "path"="/permissions",
+ *              "path"="/permissions/check",
  *              "security"="is_granted('permission',object)",
  *              "swagger_context"={
  *                  "parameters"={
  *                      {
- *                          "name" = "action",
+ *                          "name" = "item",
  *                          "in" = "query",
  *                          "required" = "true",
  *                          "type" = "string",
- *                          "description" = "The name of the action to check"
- *                      },
- *                      {
- *                          "name" = "user",
- *                          "in" = "query",
- *                          "type" = "number",
- *                          "format" = "integer",
- *                          "description" = "The user id"
- *                      },
- *                      {
- *                          "name" = "territory",
- *                          "in" = "query",
- *                          "type" = "number",
- *                          "format" = "integer",
- *                          "description" = "The territory id"
+ *                          "description" = "The name of the auth item to check"
  *                      },
  *                      {
  *                          "name" = "id",

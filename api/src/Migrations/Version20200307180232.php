@@ -388,6 +388,12 @@ final class Version20200307180232 extends AbstractMigration
         FROM user_role
         ');
 
+        $this->addSql('
+        INSERT INTO `app_auth_item` (`app_id`, `auth_item_id`) 
+        SELECT app_id, role_id 
+        FROM app_role
+        ');
+
         $this->addSql('DROP TABLE app_role');
         $this->addSql('DROP TABLE role');
         $this->addSql('DROP TABLE role_right');

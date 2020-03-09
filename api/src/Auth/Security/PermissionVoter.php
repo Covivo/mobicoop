@@ -24,6 +24,7 @@
 namespace App\Auth\Security;
 
 use App\App\Entity\App;
+use App\Auth\Service\AuthManager;
 use App\Auth\Service\PermissionManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -36,15 +37,11 @@ class PermissionVoter extends Voter
 {
     const PERMISSION = 'permission';
 
-    private $permissionManager;
-    private $request;
-    private $userRepository;
+    private $authManager;
 
-    public function __construct(PermissionManager $permissionManager, RequestStack $requestStack, UserRepository $userRepository)
+    public function __construct(AuthManager $authManager)
     {
-        $this->permissionManager = $permissionManager;
-        $this->request = $requestStack->getCurrentRequest();
-        $this->userRepository = $userRepository;
+        $this->authManager = $authManager;
     }
 
     protected function supports($attribute, $subject)
@@ -60,21 +57,16 @@ class PermissionVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $requester = $token->getUser();
         switch ($attribute) {
             case self::PERMISSION:
-                return $this->canCheckPermission($requester);
+                return $this->canCheckPermission();
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canCheckPermission(UserInterface $requester)
+    private function canCheckPermission()
     {
-        $user = null;
-        if (!is_null($this->request->get("user")) && !$user = $this->userRepository->find($this->request->get("user"))) {
-            throw new UserNotFoundException('User #' . $this->request->get("user") . ' not found');
-        }
-        return $this->permissionManager->canCheckPermission($requester, $user);
+        return $this->authManager->isAuthorized('check_permission');
     }
 }

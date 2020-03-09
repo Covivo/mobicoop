@@ -21,58 +21,37 @@
  *    LICENSE
  **************************/
 
-namespace App\Security\EventListener;
+namespace App\Auth\Controller;
 
-use App\Auth\Service\PermissionManager;
-use App\User\Entity\User;
-use App\App\Entity\App;
-use App\Auth\Service\AuthManager;
-use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
+use App\Auth\Entity\Permission;
+use App\Auth\Service\AuthManager;
 
 /**
- * Json Web Token Event listener
- * Used to customize the payload of the token, eg. add user id to payload
+ * Controller class for permission list.
+ *
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-class JWTCreatedListener
+class Permissions
 {
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
+    private $request;
     private $authManager;
 
-    /**
-     * @param RequestStack $requestStack
-     */
     public function __construct(RequestStack $requestStack, AuthManager $authManager)
     {
-        $this->requestStack = $requestStack;
+        $this->request = $requestStack->getCurrentRequest();
         $this->authManager = $authManager;
     }
 
     /**
-     * @param JWTCreatedEvent $event
+     * This method is invoked when a permission list is asked.
      *
-     * @return void
+     * @param array $data
+     * @return Response
      */
-    public function onJWTCreated(JWTCreatedEvent $event)
+    public function __invoke(array $data): ?array
     {
-        $payload = $event->getData();
-
-        /**
-         * @var User|App $user
-         */
-        $user = $event->getUser();
-        $payload['id'] = $user->getId();
-        if ($user instanceof User) {
-            $payload['admin'] = $this->authManager->isAuthorized('access_admin');
-        }
-        $event->setData($payload);
-        $header = $event->getHeader();
-        $header['cty'] = 'JWT';
-
-        $event->setHeader($header);
+        return $this->authManager->getAuthItems();
     }
 }

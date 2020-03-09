@@ -24,11 +24,9 @@
 namespace App\Communication\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\Auth\Service\PermissionManager;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Communication\Entity\Contact;
 
@@ -36,11 +34,11 @@ class ContactVoter extends Voter
 {
     const CONTACT_CREATE = 'contact_create';
     
-    private $permissionManager;
+    private $authManager;
 
-    public function __construct(PermissionManager $permissionManager)
+    public function __construct(AuthManager $authManager)
     {
-        $this->permissionManager = $permissionManager;
+        $this->authManager = $authManager;
     }
 
     protected function supports($attribute, $subject)
@@ -81,6 +79,6 @@ class ContactVoter extends Voter
         if (!$requester instanceof UserInterface) {
             return false;
         }
-        return $this->permissionManager->checkPermission('communication_contact', $requester);
+        return $this->authManager->isAuthorized('communication_contact');
     }
 }

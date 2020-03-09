@@ -53,8 +53,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class AuthItem
 {
-    const TYPE_ROLE = 1;
-    const TYPE_ITEM = 2;
+    const TYPE_ROLE = 2;
+    const TYPE_ITEM = 1;
     
     /**
      * @var int The id of this item.
