@@ -95,30 +95,42 @@ class RdexManager
         if (self::CHECK_SIGNATURE) {
             $signatureValid = false;
 
-            if (is_null($urlToCheck)) {
-                $urlToCheck = $request->getUri();
-            }
+            if ($request->getMethod()=="POST") {
+                $baseUrl = explode("?", $request->getUri());
 
-            $posSignature = strpos($urlToCheck, "&signature=");
-            if ($posSignature === false) {
-                // the signature is the first parameter
-                $posSignature = strpos($urlToCheck, "signature=");
-            }
-
-            // we search for the end of the signature (we add 1 to avoid getting the current &)
-            $posEndSignature = strpos($urlToCheck, "&", $posSignature+1);
-            if ($posEndSignature !== false) {
-                $unsignedUrl = substr_replace($urlToCheck, '', $posSignature, ($posEndSignature-$posSignature));
+                $params = [
+                    "timestamp" => $request->get('timestamp'),
+                    "apikey" => $request->get('apikey'),
+                    "p" => $request->request->all()
+                ];
+    
+                $unsignedUrl = $baseUrl[0]."?".http_build_query($params, '', '&');
             } else {
-                $unsignedUrl = substr_replace($urlToCheck, '', $posSignature);
-            }
+                if (is_null($urlToCheck)) {
+                    $urlToCheck = $request->getUri();
+                }
 
-            // I don't know why this f***ing api_platform is moving the timestamp at the end of the uri...
-            // I need to replace it at the beginning otherwise, the signature is wrongly computed.
-            $posTimestamp = strpos($unsignedUrl, "&timestamp=");
-            $posEndTimestamp = strlen($unsignedUrl);
-            $unsignedUrl = substr_replace($unsignedUrl, '', $posTimestamp, ($posEndTimestamp-$posTimestamp));
-            $unsignedUrl = str_replace("?", "?timestamp=".$request->get("timestamp")."&", $unsignedUrl);
+                $posSignature = strpos($urlToCheck, "&signature=");
+                if ($posSignature === false) {
+                    // the signature is the first parameter
+                    $posSignature = strpos($urlToCheck, "signature=");
+                }
+
+                // we search for the end of the signature (we add 1 to avoid getting the current &)
+                $posEndSignature = strpos($urlToCheck, "&", $posSignature+1);
+                if ($posEndSignature !== false) {
+                    $unsignedUrl = substr_replace($urlToCheck, '', $posSignature, ($posEndSignature-$posSignature));
+                } else {
+                    $unsignedUrl = substr_replace($urlToCheck, '', $posSignature);
+                }
+
+                // I don't know why this f***ing api_platform is moving the timestamp at the end of the uri...
+                // I need to replace it at the beginning otherwise, the signature is wrongly computed.
+                $posTimestamp = strpos($unsignedUrl, "&timestamp=");
+                $posEndTimestamp = strlen($unsignedUrl);
+                $unsignedUrl = substr_replace($unsignedUrl, '', $posTimestamp, ($posEndTimestamp-$posTimestamp));
+                $unsignedUrl = str_replace("?", "?timestamp=".$request->get("timestamp")."&", $unsignedUrl);
+            }
 
             $expectedSignature = hash_hmac(self::RDEX_HASH, $unsignedUrl, $privateApiKey);
 
@@ -725,12 +737,10 @@ class RdexManager
         }
 
         // Finally we check the signature
-        // TO DO: I don't know why the signature isn't checked properly... it's working for journeys.
-        // I think we need to rebuild correctly the url with the params POST in the URI to compute the signature that way
-        // $checkSignature = $this->checkSignature($request, $privateApiKey);
-        // if ($checkSignature instanceof RdexError) {
-        //     return $checkSignature;
-        // }
+        $checkSignature = $this->checkSignature($request, $privateApiKey);
+        if ($checkSignature instanceof RdexError) {
+            return $checkSignature;
+        }
 
         return true;
     }
