@@ -151,7 +151,7 @@ class AuthManager
     }
 
     /**
-     * Get the allowed territories to the current requester for a right
+     * Get the allowed territories to the current requester for an auth item
      *
      * @param string    $itemName   The name of the item to check
      * @return array The array of territories where the requester is authorized (empty array if the requester is authorized on any territory)
@@ -183,12 +183,12 @@ class AuthManager
      * Create an array of allowed territories for an item (recursive).
      * For now just for Users, not Apps.
      *
-     * @param UserInterface $requester  The requester
-     * @param AuthItem $authItem        The authItem to check
-     * @param array|null $territories   The territories array (passed by reference)
+     * @param UserInterface $requester      The requester
+     * @param AuthItem      $authItem       The authItem to check
+     * @param array         $territories    The territories array (passed by reference)
      * @return void
      */
-    private function getTerritories(UserInterface $requester, AuthItem $authItem, ?array &$territories)
+    private function getTerritories(UserInterface $requester, AuthItem $authItem, array &$territories)
     {
         // we don't check the rules here, we just search for territories
         if ($requester instanceof User) {
