@@ -298,6 +298,13 @@ class Proposal
      * @MaxDepth(1)
      */
     private $event;
+
+    /**
+     * @var string The external origin of this proposal
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $external;
         
     public function __construct($id=null)
     {
@@ -705,6 +712,18 @@ class Proposal
     public function setResults($results)
     {
         $this->results = $results;
+
+        return $this;
+    }
+
+    public function getExternal(): ?String
+    {
+        return $this->external;
+    }
+
+    public function setExternal(?string $external): self
+    {
+        $this->external = $external;
 
         return $this;
     }

@@ -28,6 +28,7 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Service\AdManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Collection data provider for user's ads.
@@ -37,11 +38,13 @@ final class AdCollectionDataProvider implements CollectionDataProviderInterface,
 {
     protected $request;
     protected $adManager;
+    protected $security;
 
-    public function __construct(RequestStack $requestStack, AdManager $adManager)
+    public function __construct(RequestStack $requestStack, AdManager $adManager, Security $security)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->adManager = $adManager;
+        $this->security = $security;
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -51,6 +54,16 @@ final class AdCollectionDataProvider implements CollectionDataProviderInterface,
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
+        /**
+         * TO DO : We are not supposed to use userId from request. Only the one from security token.
+         * Need to change the method in front and remove the one from the request
+         * see : AdVoter
+         */
         return $this->adManager->getAds($this->request->get("userId"), $this->request->get("acceptedAsks"));
+
+        /**
+         * TODO: do not works by now (09/03/2020)
+         */
+        return $this->adManager->getAds($this->request->get($this->security->getUser()->getId()));
     }
 }

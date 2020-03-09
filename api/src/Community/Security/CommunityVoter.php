@@ -78,7 +78,7 @@ class CommunityVoter extends Voter
             case self::COMMUNITY_DELETE:
                 return $this->canDelete($requester, $subject);
             case self::COMMUNITY_LIST:
-                return $this->canAdminManage($requester);
+                return $this->canList($requester);
             case self::COMMUNITY_JOIN:
                 return $this->canJoin($requester);
         }
@@ -114,9 +114,9 @@ class CommunityVoter extends Voter
         }
     }
 
-    private function canAdminManage($requester)
+    private function canList($requester)
     {
-        return $this->permissionManager->checkPermission('community_manage', $requester);
+        return $this->permissionManager->checkPermission('community_list', $requester);
     }
 
     private function canCheckExistence($requester)

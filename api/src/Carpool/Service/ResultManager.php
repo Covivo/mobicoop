@@ -516,6 +516,7 @@ class ResultManager
                 // the carpooler is passenger, the proposal owner is driver : we use his time if it's set
                 if ($proposal->getCriteria()->getFromTime()) {
                     $item->setTime($proposal->getCriteria()->getFromTime());
+                    $item->setMarginDuration($proposal->getCriteria()->getMarginDuration());
                 } else {
                     // the time is not set, it must be the matching results of a search (and not an ad)
                     // we have to calculate the starting time so that the driver will get the carpooler on the carpooler time
@@ -523,35 +524,43 @@ class ResultManager
                     if ($matching['request']->getProposalRequest()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                         // the carpooler proposal is punctual, we take the fromTime
                         $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getFromTime();
+                        $item->setMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getMarginDuration());
                     } else {
                         // the carpooler proposal is regular, we have to take the search/ad day's time
                         switch ($proposal->getCriteria()->getFromDate()->format('w')) {
                             case 0: {
                                 $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getSunTime();
+                                $item->setSunMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getSunMarginDuration());
                                 break;
                             }
                             case 1: {
                                 $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getMonTime();
+                                $item->setMonMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getMonMarginDuration());
                                 break;
                             }
                             case 2: {
                                 $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getTueTime();
+                                $item->setTueMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getTueMarginDuration());
                                 break;
                             }
                             case 3: {
                                 $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getWedTime();
+                                $item->setWedMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getWedMarginDuration());
                                 break;
                             }
                             case 4: {
                                 $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getThuTime();
+                                $item->setThuMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getThuMarginDuration());
                                 break;
                             }
                             case 5: {
                                 $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getFriTime();
+                                $item->setFriMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getFriMarginDuration());
                                 break;
                             }
                             case 6: {
                                 $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getSatTime();
+                                $item->setSatMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getSatMarginDuration());
                                 break;
                             }
                         }
@@ -579,36 +588,43 @@ class ResultManager
 
                     // Set the date to the carpooler's date
                     $item->setDate($matching['request']->getProposalRequest()->getCriteria()->getFromDate());
-
+                    $item->setMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getMarginDuration());
                     // the carpooler proposal is punctual, we have to take the proposal time matching to the carpooler day
                     $fromTime = new DateTime();
                     switch ($matching['request']->getProposalRequest()->getCriteria()->getFromDate()->format('w')) {
                         case 0: {
                             $fromTime = clone $proposal->getCriteria()->getSunTime();
+                            $item->setMonMarginDuration($proposal->getCriteria()->getMonMarginDuration());
                             break;
                         }
                         case 1: {
                             $fromTime = clone $proposal->getCriteria()->getMonTime();
+                            $item->setTueMarginDuration($proposal->getCriteria()->getTueMarginDuration());
                             break;
                         }
                         case 2: {
                             $fromTime = clone $proposal->getCriteria()->getTueTime();
+                            $item->setWedMarginDuration($proposal->getCriteria()->getWedMarginDuration());
                             break;
                         }
                         case 3: {
                             $fromTime = clone $proposal->getCriteria()->getWedTime();
+                            $item->setThuMarginDuration($proposal->getCriteria()->getThuMarginDuration());
                             break;
                         }
                         case 4: {
                             $fromTime = clone $proposal->getCriteria()->getThuTime();
+                            $item->setFriMarginDuration($proposal->getCriteria()->getFriMarginDuration());
                             break;
                         }
                         case 5: {
                             $fromTime = clone $proposal->getCriteria()->getFriTime();
+                            $item->setSatMarginDuration($proposal->getCriteria()->getSatMarginDuration());
                             break;
                         }
                         case 6: {
                             $fromTime = clone $proposal->getCriteria()->getSatTime();
+                            $item->setSunMarginDuration($proposal->getCriteria()->getSunMarginDuration());
                             break;
                         }
                     }
@@ -628,36 +644,43 @@ class ResultManager
                             $item->setMonCheck(true);
                             $item->setMonTime($proposal->getCriteria()->getMonTime());
                             $item->setTime($proposal->getCriteria()->getMonTime());
+                            $item->setMonMarginDuration($proposal->getCriteria()->getMonMarginDuration());
                         }
                         if (isset($matching['request']->getFilters()['pickup']['tueMinPickupTime']) && isset($matching['request']->getFilters()['pickup']['tueMaxPickupTime'])) {
                             $item->setTueCheck(true);
                             $item->setTueTime($proposal->getCriteria()->getTueTime());
                             $item->setTime($proposal->getCriteria()->getTueTime());
+                            $item->setTueMarginDuration($proposal->getCriteria()->getTueMarginDuration());
                         }
                         if (isset($matching['request']->getFilters()['pickup']['wedMinPickupTime']) && isset($matching['request']->getFilters()['pickup']['wedMaxPickupTime'])) {
                             $item->setWedCheck(true);
                             $item->setWedTime($proposal->getCriteria()->getWedTime());
                             $item->setTime($proposal->getCriteria()->getWedTime());
+                            $item->setWedMarginDuration($proposal->getCriteria()->getWedMarginDuration());
                         }
                         if (isset($matching['request']->getFilters()['pickup']['thuMinPickupTime']) && isset($matching['request']->getFilters()['pickup']['thuMaxPickupTime'])) {
                             $item->setThuCheck(true);
                             $item->setThuTime($proposal->getCriteria()->getThuTime());
                             $item->setTime($proposal->getCriteria()->getThuTime());
+                            $item->setThuMarginDuration($proposal->getCriteria()->getThuMarginDuration());
                         }
                         if (isset($matching['request']->getFilters()['pickup']['friMinPickupTime']) && isset($matching['request']->getFilters()['pickup']['friMaxPickupTime'])) {
                             $item->setFriCheck(true);
                             $item->setFriTime($proposal->getCriteria()->getFriTime());
                             $item->setTime($proposal->getCriteria()->getFriTime());
+                            $item->setFriMarginDuration($proposal->getCriteria()->getFriMarginDuration());
                         }
                         if (isset($matching['request']->getFilters()['pickup']['satMinPickupTime']) && isset($matching['request']->getFilters()['pickup']['satMaxPickupTime'])) {
                             $item->setSatCheck(true);
                             $item->setSatTime($proposal->getCriteria()->getSatTime());
                             $item->setTime($proposal->getCriteria()->getSatTime());
+                            $item->setSatMarginDuration($proposal->getCriteria()->getSatMarginDuration());
                         }
                         if (isset($matching['request']->getFilters()['pickup']['sunMinPickupTime']) && isset($matching['request']->getFilters()['pickup']['sunMaxPickupTime'])) {
                             $item->setSunCheck(true);
                             $item->setSunTime($proposal->getCriteria()->getSunTime());
                             $item->setTime($proposal->getCriteria()->getSunTime());
+                            $item->setSunMarginDuration($proposal->getCriteria()->getSunMarginDuration());
                         }
                     } else {
                         // no pick up times, it must be the matching results of a search (and not an ad)
@@ -691,6 +714,7 @@ class ResultManager
                             }
                             $item->setMonTime($monTime);
                             $item->setTime($monTime);
+                            $item->setMonMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getMonMarginDuration());
                         }
                         if ($matching['request']->getProposalRequest()->getCriteria()->isTueCheck()) {
                             $tueTime = clone $matching['request']->getProposalRequest()->getCriteria()->getTueTime();
@@ -699,6 +723,7 @@ class ResultManager
                             }
                             $item->setTueTime($tueTime);
                             $item->setTime($tueTime);
+                            $item->setTueMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getTueMarginDuration());
                         }
                         if ($matching['request']->getProposalRequest()->getCriteria()->isWedCheck()) {
                             $wedTime = clone $matching['request']->getProposalRequest()->getCriteria()->getWedTime();
@@ -707,6 +732,7 @@ class ResultManager
                             }
                             $item->setWedTime($wedTime);
                             $item->setTime($wedTime);
+                            $item->setWedMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getWedMarginDuration());
                         }
                         if ($matching['request']->getProposalRequest()->getCriteria()->isThuCheck()) {
                             $thuTime = clone $matching['request']->getProposalRequest()->getCriteria()->getThuTime();
@@ -715,6 +741,7 @@ class ResultManager
                             }
                             $item->setThuTime($thuTime);
                             $item->setTime($thuTime);
+                            $item->setThuMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getThuMarginDuration());
                         }
                         if ($matching['request']->getProposalRequest()->getCriteria()->isFriCheck()) {
                             $friTime = clone $matching['request']->getProposalRequest()->getCriteria()->getFriTime();
@@ -723,6 +750,7 @@ class ResultManager
                             }
                             $item->setFriTime($friTime);
                             $item->setTime($friTime);
+                            $item->setFriMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getFriMarginDuration());
                         }
                         if ($matching['request']->getProposalRequest()->getCriteria()->isSatCheck()) {
                             $satTime = clone $matching['request']->getProposalRequest()->getCriteria()->getSatTime();
@@ -731,6 +759,7 @@ class ResultManager
                             }
                             $item->setSatTime($satTime);
                             $item->setTime($satTime);
+                            $item->setSatMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getSatMarginDuration());
                         }
                         if ($matching['request']->getProposalRequest()->getCriteria()->isSunCheck()) {
                             $sunTime = clone $matching['request']->getProposalRequest()->getCriteria()->getSunTime();
@@ -739,6 +768,7 @@ class ResultManager
                             }
                             $item->setSunTime($sunTime);
                             $item->setTime($sunTime);
+                            $item->setSunMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getSunMarginDuration());
                         }
                     }
                     $item->setMultipleTimes();
@@ -1040,35 +1070,43 @@ class ResultManager
                 if ($matching['offer']->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                     // the carpooler proposal is punctual, we take the fromTime
                     $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getFromTime();
+                    $item->setMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getMarginDuration());
                 } else {
                     // the carpooler proposal is regular, we have to take the search/ad day's time
                     switch ($proposal->getCriteria()->getFromDate()->format('w')) {
                         case 0: {
                             $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getSunTime();
+                            $item->setSunMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getSunMarginDuration());
                             break;
                         }
                         case 1: {
                             $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getMonTime();
+                            $item->setMonMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getMonMarginDuration());
                             break;
                         }
                         case 2: {
                             $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getTueTime();
+                            $item->setTueMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getTueMarginDuration());
                             break;
                         }
                         case 3: {
                             $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getWedTime();
+                            $item->setWedMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getWedMarginDuration());
                             break;
                         }
                         case 4: {
                             $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getThuTime();
+                            $item->setThuMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getThuMarginDuration());
                             break;
                         }
                         case 5: {
                             $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getFriTime();
+                            $item->setFriMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getFriMarginDuration());
                             break;
                         }
                         case 6: {
                             $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getSatTime();
+                            $item->setSatMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getSatMarginDuration());
                             break;
                         }
                     }
@@ -1131,36 +1169,43 @@ class ResultManager
                             $item->setMonCheck(true);
                             $item->setMonTime($proposal->getCriteria()->getMonTime());
                             $item->setTime($proposal->getCriteria()->getMonTime());
+                            $item->setMonMarginDuration($proposal->getCriteria()->getMonMarginDuration());
                         }
                         if (isset($matching['offer']->getFilters()['pickup']['tueMinPickupTime']) && isset($matching['offer']->getFilters()['pickup']['tueMaxPickupTime'])) {
                             $item->setTueCheck(true);
                             $item->setTueTime($proposal->getCriteria()->getTueTime());
                             $item->setTime($proposal->getCriteria()->getTueTime());
+                            $item->setTueMarginDuration($proposal->getCriteria()->getTueMarginDuration());
                         }
                         if (isset($matching['offer']->getFilters()['pickup']['wedMinPickupTime']) && isset($matching['offer']->getFilters()['pickup']['wedMaxPickupTime'])) {
                             $item->setWedCheck(true);
                             $item->setWedTime($proposal->getCriteria()->getWedTime());
                             $item->setTime($proposal->getCriteria()->getWedTime());
+                            $item->setWedMarginDuration($proposal->getCriteria()->getWedMarginDuration());
                         }
                         if (isset($matching['offer']->getFilters()['pickup']['thuMinPickupTime']) && isset($matching['offer']->getFilters()['pickup']['thuMaxPickupTime'])) {
                             $item->setThuCheck(true);
                             $item->setThuTime($proposal->getCriteria()->getThuTime());
                             $item->setTime($proposal->getCriteria()->getThuTime());
+                            $item->setThuMarginDuration($proposal->getCriteria()->getThuMarginDuration());
                         }
                         if (isset($matching['offer']->getFilters()['pickup']['friMinPickupTime']) && isset($matching['offer']->getFilters()['pickup']['friMaxPickupTime'])) {
                             $item->setFriCheck(true);
                             $item->setFriTime($proposal->getCriteria()->getFriTime());
                             $item->setTime($proposal->getCriteria()->getFriTime());
+                            $item->setFriMarginDuration($proposal->getCriteria()->getFriMarginDuration());
                         }
                         if (isset($matching['offer']->getFilters()['pickup']['satMinPickupTime']) && isset($matching['offer']->getFilters()['pickup']['satMaxPickupTime'])) {
                             $item->setSatCheck(true);
                             $item->setSatTime($proposal->getCriteria()->getSatTime());
                             $item->setTime($proposal->getCriteria()->getSatTime());
+                            $item->setSatMarginDuration($proposal->getCriteria()->getSatMarginDuration());
                         }
                         if (isset($matching['offer']->getFilters()['pickup']['sunMinPickupTime']) && isset($matching['offer']->getFilters()['pickup']['sunMaxPickupTime'])) {
                             $item->setSunCheck(true);
                             $item->setSunTime($proposal->getCriteria()->getSunTime());
                             $item->setTime($proposal->getCriteria()->getSunTime());
+                            $item->setSunMarginDuration($proposal->getCriteria()->getSunMarginDuration());
                         }
                         $driverFromTime = $item->getTime();
                     } else {
@@ -1196,6 +1241,7 @@ class ResultManager
                             }
                             $item->setMonTime($monTime);
                             $item->setTime($monTime);
+                            $item->setMonMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getMonMarginDuration());
                         }
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isTueCheck()) {
                             $tueTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getTueTime();
@@ -1205,6 +1251,7 @@ class ResultManager
                             }
                             $item->setTueTime($tueTime);
                             $item->setTime($tueTime);
+                            $item->setTueMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getTueMarginDuration());
                         }
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isWedCheck()) {
                             $wedTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getWedTime();
@@ -1214,6 +1261,7 @@ class ResultManager
                             }
                             $item->setWedTime($wedTime);
                             $item->setTime($wedTime);
+                            $item->setWedMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getWedMarginDuration());
                         }
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isThuCheck()) {
                             $thuTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getThuTime();
@@ -1223,6 +1271,7 @@ class ResultManager
                             }
                             $item->setThuTime($thuTime);
                             $item->setTime($thuTime);
+                            $item->setThuMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getThuMarginDuration());
                         }
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isFriCheck()) {
                             $friTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getFriTime();
@@ -1232,6 +1281,7 @@ class ResultManager
                             }
                             $item->setFriTime($friTime);
                             $item->setTime($friTime);
+                            $item->setFriMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getFriMarginDuration());
                         }
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isSatCheck()) {
                             $satTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getSatTime();
@@ -1241,6 +1291,7 @@ class ResultManager
                             }
                             $item->setSatTime($satTime);
                             $item->setTime($satTime);
+                            $item->setSatMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getSatMarginDuration());
                         }
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isSunCheck()) {
                             $sunTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getSunTime();
@@ -1250,6 +1301,7 @@ class ResultManager
                             }
                             $item->setSunTime($sunTime);
                             $item->setTime($sunTime);
+                            $item->setSunMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getSunMarginDuration());
                         }
                     }
                     $item->setMultipleTimes();

@@ -80,7 +80,19 @@ security:
             stateless: true
             anonymous: true    
 
-        # firewall for dev (profiler)
+        # firewall for RDEX external requests
+        rdexExternalRequests:
+            pattern:  ^/rdex/journeys
+            stateless: true
+            anonymous: true
+
+        # firewall for RDEX external requests of connections
+        rdexExternalRequestsConnections:
+            pattern:  ^/rdex/connections
+            stateless: true
+            anonymous: true
+
+            # firewall for dev (profiler)
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
@@ -102,4 +114,6 @@ security:
         - { path: ^/rd/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/addresses/search, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/addresses/reverse, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/rdex/journeys, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/rdex/connections, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

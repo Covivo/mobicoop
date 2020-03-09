@@ -406,7 +406,6 @@ class CarpoolController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            //$data['provider'] = "mobicoopV1"; // To Do : Really usefull ? The API should handle this
             return $this->json($externalJourneyManager->getExternalJourney($data, DataProvider::RETURN_JSON));
         }
 

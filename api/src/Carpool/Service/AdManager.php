@@ -40,6 +40,7 @@ use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Carpool\Service\ProposalMatcher;
+use App\Rdex\Entity\RdexError;
 
 /**
  * Ad manager service.
@@ -123,6 +124,9 @@ class AdManager
 
         // the proposal is private if it's a search only ad
         $outwardProposal->setPrivate($ad->isSearch() ? true : false);
+
+        // If the proposal is external (i.e Rdex request...) we set it
+        $outwardProposal->setExternal($ad->getExternal());
 
         // we check if it's a round trip
         if ($ad->isOneWay()) {
@@ -392,7 +396,7 @@ class AdManager
                 $returnCriteria->setToDate($ad->getReturnLimitDate() ? \DateTime::createFromFormat('Y-m-d', $ad->getReturnLimitDate()) : null);
                 $hasSchedule = false;
                 foreach ($ad->getSchedule() as $schedule) {
-                    if ($schedule['returnTime'] != '') {
+                    if (isset($schedule['returnTime']) && $schedule['returnTime'] != '') {
                         if (isset($schedule['mon']) && $schedule['mon']) {
                             $hasSchedule = true;
                             $returnCriteria->setMonCheck(true);
@@ -943,5 +947,203 @@ class AdManager
         $this->entityManager->flush();
 
         return ['yay!'];
+    }
+
+
+    /**
+     * Returns an ad and its results matching the parameters.
+     * Used for RDEX export.
+     *
+     * @param bool $offer
+     * @param bool $request
+     * @param float $from_longitude
+     * @param float $from_latitude
+     * @param float $to_longitude
+     * @param float $to_latitude
+     * @param string $frequency
+     * @param array $days
+     * @param array $outward
+     * @param string $external                  The external client
+     */
+    public function getAdForRdex(
+        ?string $external,
+        bool $offer,
+        bool $request,
+        float $from_longitude,
+        float $from_latitude,
+        float $to_longitude,
+        float $to_latitude,
+        string $frequency = null,
+        ?array $days = null,
+        ?array $outward = null
+    ) {
+        $ad = new Ad();
+        $ad->setExternal($external);
+        $ad->setSearch(true); // Only a search. This Ad won't be publish.
+
+        // Role
+        if ($offer && $request) {
+            $ad->setRole(Ad::ROLE_DRIVER_OR_PASSENGER);
+        } elseif ($request) {
+            $ad->setRole(Ad::ROLE_DRIVER);
+        } else {
+            $ad->setRole(Ad::ROLE_PASSENGER);
+        }
+
+        // Origin/Destination
+        $ad->setOutwardWaypoints([
+            [
+                "latitude" => $from_latitude,
+                "longitude" => $from_longitude
+            ],
+            [
+                "latitude" => $to_latitude,
+                "longitude" => $to_longitude
+            ],
+        ]);
+
+        // Create a schedule and set frequency
+        // RDEX has always a explicit day (monday...) even for puntual
+        // So we always create a schedule then we make a deduction if it's punctual or regular based on it.
+        // If the frequency parameter is given it overides the deduction
+
+        // if outward is null, we make an array using now with 1 hour margin on $day bases
+        if (is_null($outward)) {
+            $time = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
+            $mintime = $time->format("H:i:s");
+            $maxtime = $time->add(new \DateInterval("PT1H"))->format("H:i:s");
+        
+            // if days is null, we are using today
+            if (is_null($days)) {
+                $today = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
+                $days = [strtolower($today->format('l'))=>1];
+                $outward = ["mindate"=>$time->format("Y-m-d")];
+                $outward[strtolower($today->format('l'))] = [
+                    "mintime" => $mintime,
+                    "maxtime" => $maxtime
+                ];
+            } else {
+                // We don't have any date so i'm looking for the first date corresponding to the first day
+                $dateFound = "";
+                $currentTestDate = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
+                $cpt = 0; // it's a failsafe to avoid infinit loop
+                while ($dateFound === "" && $cpt < 7) {
+                    if (isset($days[strtolower($currentTestDate->format('l'))])) {
+                        $dateFound = $currentTestDate;
+                    } else {
+                        $currentTestDate = $currentTestDate->add(new \DateInterval("P1D"));
+                    }
+                    $cpt++;
+                }
+                $outward = ["mindate"=>$dateFound->format("Y-m-d")];
+                foreach ($days as $day => $value) {
+                    $outward[$day] = [
+                        "mintime" => $mintime,
+                        "maxtime" => $maxtime
+                    ];
+                }
+            }
+        }
+        // var_dump($outward);
+
+        // if days is null, we make an array using outward
+        if (is_null($days)) {
+            $today = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
+            foreach ($outward as $day => $times) {
+                $days = [$day=>1];
+            }
+        }
+
+        // var_dump($days);
+        // die;
+
+        $schedules = $this->buildSchedule($days, $outward);
+        if (count($schedules)>0) {
+            if ($frequency=="punctual") {
+                // Punctual journey
+                $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+                $ad->setOutwardDate(\DateTime::createFromFormat("Y-m-d", $outward["mindate"]));
+                (isset($outward["maxdate"])) ? $ad->setOutwardLimitDate(\DateTime::createFromFormat("Y-m-d", $outward["maxdate"])) : '';
+
+                $ad->setOutwardTime($schedules[0]["outwardTime"]);
+            } elseif ($frequency=="regular") {
+                // Regular journey
+                $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
+                $ad->setSchedule($schedules);
+            } else {
+                // If only one schedule with one day punctual. Else it's regular.
+                if (count($schedules)>1 || count($schedules[0])>2) {
+                    $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
+                    $ad->setSchedule($schedules);
+                } else {
+                    $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+                    $ad->setOutwardDate(\DateTime::createFromFormat("Y-m-d", $outward["mindate"]));
+                    (isset($outward["maxdate"])) ? $ad->setOutwardLimitDate(\DateTime::createFromFormat("Y-m-d", $outward["maxdate"])) : '';
+    
+                    $ad->setOutwardTime($schedules[0]["outwardTime"]);
+                }
+            }
+        } else {
+            return new RdexError("apikey", RdexError::ERROR_MISSING_MANDATORY_FIELD, "Invalid outward");
+        }
+        
+        return $this->createAd($ad);
+    }
+
+    /**
+     * Compute the average hour between two hours.
+     *
+     * @param string $heureMin          Minimum hour
+     * @param string $heureMax          Maximum hour
+     * @param string $dateMin        Minimum date
+     * @param string|null $dateMax   Maximum date
+     * @return \Datetime
+     */
+    private function middleHour(string $heureMin, string $heureMax, string $dateMin, ?string $dateMax=null)
+    {
+        (is_null($dateMax)) ? $dateMax = $dateMin : '';
+        
+        $min = \DateTime::createFromFormat('Y-m-d H:i:s', $dateMin . " " . $heureMin, new \DateTimeZone('UTC'));
+        $mintime = $min->getTimestamp();
+        $max = \DateTime::createFromFormat('Y-m-d H:i:s', $dateMax . " " . $heureMax, new \DateTimeZone('UTC'));
+        $maxtime = $max->getTimestamp();
+        $marge = ($maxtime - $mintime) / 2;
+        $middleHour = $mintime + $marge;
+        $returnHour = new \DateTime();
+        $returnHour->setTimestamp($middleHour);
+        return $returnHour;
+    }
+
+    /**
+     * Build an Ad Schedule
+     * @var array $day      Array of the selected days
+     * @var array $outward  Array of the time for each days
+     * @return array
+     */
+    private function buildSchedule(?array $days, ?array $outward)
+    {
+        $schedules = []; // We set a subschdeul because a real Ad can have multiple schedule. Only one in RDEX though.
+        $refTimes = [];
+        foreach ($days as $day => $value) {
+            $shortDay = substr($day, 0, 3);
+            if (isset($outward[$day]['mintime']) && isset($outward[$day]['maxtime'])) {
+                $outward_mindate = $outward['mindate'];
+                (!isset($outward['maxdate'])) ? $outward_maxdate = $outward_mindate : $outward['maxdate'];
+                $middleHour = $this->middleHour($outward[$day]['mintime'], $outward[$day]['maxtime'], $outward_mindate, $outward_maxdate);
+                
+                $previousKey = array_search($middleHour, $refTimes);
+
+                if (is_null($previousKey) || !is_numeric($previousKey)) {
+                    $refTimes[] = $middleHour;
+                    $previousKey = array_search($middleHour, $refTimes);
+                    $schedules[$previousKey] = [
+                        'outwardTime' => $middleHour->format("H:i")
+                    ];
+                }
+
+                $schedules[$previousKey][$shortDay] = 1;
+            }
+        }
+        return $schedules;
     }
 }
