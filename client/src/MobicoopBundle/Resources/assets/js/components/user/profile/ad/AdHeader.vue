@@ -258,11 +258,11 @@ export default {
       })
         .then(function (response) {
           if (response.data && response.data.message) {
-            self.alert = {
-              type: "success",
-              message: self.$t(response.data.message)
-            };
-            self.$emit('ad-deleted', self.isArchived, self.adId);
+            // self.alert = {
+            //   type: "success",
+            //   message: self.$t(response.data.message)
+            // };
+            self.$emit('ad-deleted', self.isArchived, self.adId, self.$t(response.data.message));
           }
         })
         .catch(function (error) {

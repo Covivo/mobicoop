@@ -2,6 +2,20 @@
   <v-container
     fluid     
   >
+    <v-snackbar
+      v-model="snackbar"
+      :color="(alert.type === 'error')?'error':'success'"
+      top
+    >
+      {{ alert.message }}
+      <v-btn
+        color="white"
+        text
+        @click="snackbar = false"
+      >
+        <v-icon>mdi-close-circle-outline</v-icon>
+      </v-btn>
+    </v-snackbar>
     <v-row justify="center">
       <v-col>
         <v-tabs
@@ -69,13 +83,20 @@ export default {
   },
   data(){
     return {
-      localAds: this.ads
+      localAds: this.ads,
+      snackbar: false,
+      alert: {
+        type: "success",
+        message: ""
+      }
     }
   },
   methods: {
-    deleteAd(isArchived, id) {
+    deleteAd(isArchived, id, message) {
       let type = isArchived ? "archived" : "ongoing";
       this.localAds[type] = omit(this.localAds[type], id);
+      this.alert.message = message;
+      this.snackbar = true;
     }
   }
 }

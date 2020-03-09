@@ -95,8 +95,8 @@ export default {
         } 
       });
     },
-    adDeleted(isArchived, id) {
-      this.$emit('ad-deleted', isArchived, id)
+    adDeleted(isArchived, id, message) {
+      this.$emit('ad-deleted', isArchived, id, message)
     },
     pauseAd(pauseAd) {
       this.isPaused = pauseAd;
