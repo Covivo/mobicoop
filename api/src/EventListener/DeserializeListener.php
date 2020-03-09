@@ -41,6 +41,8 @@ final class DeserializeListener
     private $denormalizer;
     private $serializerContextBuilder;
 
+    const AUTHORIZED_FORM_URL = ['/rdex/connections'];
+
     public function __construct(DenormalizerInterface $denormalizer, SerializerContextBuilderInterface $serializerContextBuilder, DecoratedListener $decorated)
     {
         $this->denormalizer = $denormalizer;
@@ -55,7 +57,7 @@ final class DeserializeListener
             return;
         }
 
-        if ('form' === $request->getContentType()) {
+        if ('form' === $request->getContentType() && in_array($request->getPathInfo(), self::AUTHORIZED_FORM_URL)) {
             $this->denormalizeFormRequest($request);
         } else {
             $this->decorated->onKernelRequest($event);
