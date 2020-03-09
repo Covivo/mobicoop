@@ -547,16 +547,16 @@ FAQ:
 # display ToolBox page
 ToolBox:
     path:
-        fr: /Boite-à-outils
-        en: /ToolBox
+        fr: /boite-a-outils
+        en: /toolBox
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showToolbox        
 
 # display CommunityInfos page
 CommunityInfos:
     path:
-        fr: /Informations-communautés
-        en: /Community-infos
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCommunity
+        fr: /informations-communautes
+        en: /community-infos
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCommunityInfos
 
 # display LOM page
 LOM:
@@ -568,15 +568,15 @@ LOM:
 # display GoodPractices page
 GoodPractices:
     path:
-        fr: /Bonnes-pratiques
-        en: /Good-practices
+        fr: /bonnes-pratiques
+        en: /good-practices
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showGoodPractices
 
 # display MoreAbout page
 MoreAbout:
     path:
-        fr: /En-savoir-plus
-        en: /More-about
+        fr: /en-savoir-plus
+        en: /more-about
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMoreAbout
 
 # Get the last external articles (AJAX)
