@@ -118,12 +118,6 @@ use App\Rdex\Controller\JourneyCollectionController;
  */
 class RdexJourney implements \JsonSerializable
 {
-    
-    /* @todo : put OPERATOR, ORIGIN and URL in a config file */
-    const OPERATOR = "mobicoop";
-    const ORIGIN = "mobicoop.io";
-    const URL = "https://www.mobicoop.io/";
-    
     const FREQUENCY_PUNCTUAL = "punctual";
     const FREQUENCY_REGULAR = "regular";
 
