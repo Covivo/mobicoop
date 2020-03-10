@@ -34,7 +34,8 @@
           :fri-active="hasFriday"
           :sat-active="hasSaturday"
           :sun-active="hasSunday"
-          :date-end-of-validity="ad.outwardLimitDate"
+          :date-start-of-validity="result.fromDate"
+          :date-end-of-validity="result.toDate"
         />
       </v-col>
 
@@ -85,6 +86,7 @@
       <!--        </v-btn>-->
       <!--      </v-col>-->
       <v-col
+        v-if="isDriver"
         cols="2"
         class="font-weight-bold primary--text headline text-right"
       >

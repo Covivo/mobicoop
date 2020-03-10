@@ -13,6 +13,13 @@
         <span v-if="isDriver && seats && seats > 0">{{ bookedSeats }}/{{ seats }}&nbsp;{{ $tc('seat.booked', bookedSeats) }}</span>
         <span v-else-if="!isDriver && seats && seats > 0">{{ bookedSeats }}&nbsp;{{ $tc('seat.booked', bookedSeats) }}</span>
       </v-col>
+      <v-col
+        v-if="!isDriver && ad.outwardPassengerPrice"
+        cols="2"
+        class="font-weight-bold primary--text headline text-right"
+      >
+        {{ ad.outwardPassengerPrice }}€
+      </v-col>
     </v-row>
     <v-expansion-panels
       v-model="panelActive"
@@ -24,7 +31,7 @@
         <v-expansion-panel-header class="text-uppercase text-right">
           <v-row no-gutters>
             <v-col class="text-right font-weight-bold secondary--text">
-              {{ panelActive === 0 ? $t('passengers.hide') :$t('passengers.show') }}
+              {{ panelActive === 0 ? hideMessage : showMessage }}
             </v-col>
           </v-row>
           <template v-slot:actions>
@@ -100,6 +107,12 @@ export default {
     },
     isDriver() {
       return this.ad.role === 1 || this.ad.role === 3
+    },
+    hideMessage() {
+      return this.isDriver ? this.$t('passengers.hide') : this.$t('driver.hide');
+    },
+    showMessage() {
+      return this.isDriver ? this.$t('passengers.show') : this.$t('driver.show');
     }
   }
 }
