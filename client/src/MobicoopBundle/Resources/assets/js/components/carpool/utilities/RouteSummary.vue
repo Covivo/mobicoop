@@ -239,16 +239,17 @@ export default {
       return null;
     },
     destinationSecondLine() {
+      let secondline = '';
       if (this.type == 1 && this.regular) {
-        return this.destination.addressLocality
+        secondline = this.destination.addressLocality
       } else if(this.type == 1 && !this.regular){
-        return (this.destination.streetAddress) ? this.destination.addressLocality : ''
+        secondline = (this.destination.streetAddress) ? this.destination.addressLocality : ''
       } else if (this.type == 2 && !this.regular) {
-        return this.destination.streetAddress
+        secondline = this.destination.streetAddress
       } else if (this.type == 2 && this.regular) {
-        return this.destination.addressLocality
+        secondline = this.destination.addressLocality
       }
-      return null;
+      return secondline === this.destinationFirstLine ? null : secondline;
     }
   },
   created() {
