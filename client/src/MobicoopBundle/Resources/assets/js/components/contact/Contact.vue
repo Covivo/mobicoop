@@ -15,6 +15,7 @@
       </v-row>
       <contact-form
         :user="user"
+        :contact-types="contactTypes"
       />
     </v-container>
   </v-content>
@@ -36,6 +37,10 @@ export default {
   },
   props: {
     user: {
+      type: Object,
+      default: null
+    },
+    contactTypes: {
       type: Object,
       default: null
     }
