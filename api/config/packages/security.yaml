@@ -65,8 +65,12 @@ security:
         # firewall for R&D
         rd:
             pattern:  ^/rd/
+            provider: chain_provider
             stateless: true
-            anonymous: true
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+
 
         # firewall for geosearch
         geosearch:
@@ -94,12 +98,13 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
+
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/docs.json, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/rd/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/rd/, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/addresses/search, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/addresses/reverse, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
