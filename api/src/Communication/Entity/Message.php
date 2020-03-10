@@ -50,18 +50,18 @@ use App\Communication\Controller\SendAction;
  *      collectionOperations={
  *          "post"={
  *              "controller"=SendAction::class,
- *              "security_post_denormalize"="is_granted('message_create',object)"
+ *              "security_post_denormalize"="is_granted('user_message_create',object)"
  *          },
  *          "completeThread"={
  *              "method"="GET",
  *              "path"="/messages/completeThread",
  *              "normalization_context"={"groups"={"thread"}},
- *              "security_post_denormalize"="is_granted('message_list',object)"
+ *              "security_post_denormalize"="is_granted('user_message_read', object)"
  *           }
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('message_read',object)"
+ *              "security"="is_granted('user_message_read',object)"
  *          }
  *      }
  * )

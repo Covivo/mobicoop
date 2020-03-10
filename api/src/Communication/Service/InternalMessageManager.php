@@ -32,6 +32,7 @@ use App\Communication\Repository\MediumRepository;
 use App\User\Entity\User;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Event\InternalMessageReceivedEvent;
+use App\Communication\Exception\MessageNotFoundException;
 use App\Communication\Interfaces\MessagerInterface;
 use App\Communication\Repository\MessageRepository;
 
@@ -139,7 +140,9 @@ class InternalMessageManager
     public function getCompleteThread($idMessage)
     {
         $message = $this->messageRepository->find($idMessage);
-
+        if (empty($message)) {
+            throw new MessageNotFoundException("Message not found");
+        }
         return  array_merge([$message], $message->getMessages());
     }
 }

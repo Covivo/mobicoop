@@ -49,7 +49,8 @@ final class Version20200307180232 extends AbstractMigration
         (10, \'MassAuthor\'),
         (11, \'SolidaryVolunteerSelf\'),
         (12, \'SolidaryBeneficiarySelf\'),
-        (13, \'CampaignAuthor\')
+        (13, \'CampaignAuthor\'),
+        (14, \'MessageSender\')
         ');
 
         $this->addSql('
@@ -80,7 +81,7 @@ final class Version20200307180232 extends AbstractMigration
         (24, 1, 1, \'user_update_self\', \'Update its own profile\'),
         (25, 1, 1, \'user_delete_self\', \'Delete its own profile\'),
         (26, 1, 1, \'user_password_self\', \'Change its own password\'),
-        (27, NULL, 1, \'user_message_create\', \'Create a message\'),
+        (27, 14, 1, \'user_message_create\', \'Create a message\'),
         (28, NULL, 1, \'user_message_read\', \'Read a message of a user\'),
         (29, NULL, 1, \'user_message_delete\', \'Delete a message of a user\'),
         (30, NULL, 1, \'user_message_manage\', \'Manage user messages\'),

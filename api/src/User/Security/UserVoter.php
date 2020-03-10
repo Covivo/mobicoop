@@ -25,10 +25,9 @@ namespace App\User\Security;
 
 use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\User\Entity\User;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class UserVoter extends Voter
 {
@@ -76,7 +75,6 @@ class UserVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $requester = $token->getUser();
         switch ($attribute) {
             case self::USER_CREATE:
                 return $this->canCreateUser();

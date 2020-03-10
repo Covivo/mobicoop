@@ -29,7 +29,7 @@ use App\Communication\Entity\Message;
 /**
  *  Check that the requester is involved in the related Message (=author or recipient)
  */
-class MessageActor implements AuthRuleInterface
+class MessageSender implements AuthRuleInterface
 {
     /**
      * {@inheritdoc}
@@ -47,15 +47,6 @@ class MessageActor implements AuthRuleInterface
         if ($message->getUser()->getId()==$requester->getId()) {
             return true;
         }
-
-        // If the requester is one of the recipients
-        $recipients = $message->getRecipients();
-        foreach ($recipients as $recipient) {
-            if ($recipient->getUser()->getId() == $requester->getId()) {
-                return true;
-            }
-        }
-
 
         return false;
     }
