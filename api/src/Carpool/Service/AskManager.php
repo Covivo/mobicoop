@@ -469,7 +469,7 @@ class AskManager
         $this->entityManager->flush($ask);
         
         
-        if ($ask->getStatus == Ask::STATUS_PENDING_AS_DRIVER || $ask->getStatus == Ask::STATUS_PENDING_AS_PASSENGER) {
+        if ($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER || $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
             // dispatch en event
             // get the complete ad to have data for the email
             $ad = $this->getAskFromAd($ask->getId(), $ask->getUser()->getId());

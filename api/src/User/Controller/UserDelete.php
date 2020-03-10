@@ -29,7 +29,7 @@ use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class UserAnonymise
+class UserDelete
 {
     use TranslatorTrait;
     /**
@@ -62,7 +62,7 @@ class UserAnonymise
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
         }
-        $data = $this->userManager->anonymiseUser($data);
+        $data = $this->userManager->deleteUser($data);
         return $data;
     }
 }
