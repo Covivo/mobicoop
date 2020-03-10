@@ -398,7 +398,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate"})
      */
     private $givenName;
 
@@ -413,7 +413,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate"})
      */
     private $shortFamilyName;
 
@@ -988,6 +988,13 @@ class User implements UserInterface, EquatableInterface
      */
     private $unsubscribeMessage;
 
+    /**
+     * @var bool|null used to indicate a attempt to import this already registered user.
+     * @Groups({"massMigrate"})
+     */
+    private $alreadyRegistered;
+
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -1017,6 +1024,7 @@ class User implements UserInterface, EquatableInterface
             $status = self::STATUS_ACTIVE;
         }
         $this->setStatus($status);
+        $this->setAlreadyRegistered(false);
     }
 
     public function getId(): ?int
@@ -2335,6 +2343,17 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function isAlreadyRegistered(): ?bool
+    {
+        return $this->alreadyRegistered;
+    }
+
+    public function setAlreadyRegistered(?bool $alreadyRegistered): self
+    {
+        $this->alreadyRegistered = $alreadyRegistered;
+
+        return $this;
+    }
 
 
     // DOCTRINE EVENTS

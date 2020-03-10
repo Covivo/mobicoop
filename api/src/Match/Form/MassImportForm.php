@@ -41,6 +41,8 @@ final class MassImportForm extends AbstractType
         ])
         ->add('originalName')
         ->add('userId')
+        ->add('massType')
+        ->add('checkLegit')
         ;
     }
     
