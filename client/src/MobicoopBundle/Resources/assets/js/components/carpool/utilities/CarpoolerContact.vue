@@ -50,7 +50,7 @@
 </template>
 
 <script>
-// import formData from "../../../utils/request";
+import formData from "../../../utils/request";
 
 export default {
   props: {
@@ -62,9 +62,9 @@ export default {
       type: Object,
       default: null
     },
-    ask: {
-      type: Object,
-      default: null
+    askId: {
+      type: Number,
+      default: -99
     },
     displayPhone: {
       type: Boolean,
@@ -85,10 +85,10 @@ export default {
       this.phoneButtonToggled = !this.phoneButtonToggled;
     },
     openMailBox () {
-      // let lParams = {
-      //   idAsk: this.ask.id
-      // };
-      // formData(`${this.$t("utilisateur/messages")}`, lParams);
+      let lParams = {
+        idAsk: this.askId
+      };
+      formData("utilisateur/messages", lParams);
     }
   }
 }

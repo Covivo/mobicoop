@@ -555,7 +555,9 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST')) {
             // if we ask for a specific thread then we return it
-            if ($data->has("idMessage")) {
+            if ($data->has("idAsk")) {
+                $idAsk = $data->get("idAsk");
+            } elseif ($data->has("idMessage")) {
                 /** @var Message $message */
                 $message = $messageManager->getMessage($data->get("idMessage"));
                 $reponseofmanager = $this->handleManagerReturnValue($message);

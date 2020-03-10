@@ -211,8 +211,8 @@ export default {
         this.modelTabs="tab-dm";
         this.idRecipient = this.newThread.idRecipient;
       }
-      
     }
+    if(this.givenIdAsk) this.refreshActions = true;
   },
   methods: {
     updateDetails(data){

@@ -488,6 +488,9 @@ class ResultManager
             if (is_null($result->getComment()) && !is_null($matching['request']->getProposalRequest()->getComment())) {
                 $result->setComment($matching['request']->getProposalRequest()->getComment());
             }
+            if (is_null($result->getAskId()) && !empty($matching['request']->getAsks())) {
+                $result->setAskId($matching['request']->getAsks()[0]->getId());
+            }
 
             // communities
             foreach ($matching['request']->getProposalRequest()->getCommunities() as $community) {
@@ -1045,6 +1048,9 @@ class ResultManager
             }
             if (is_null($result->getComment()) && !is_null($matching['offer']->getProposalOffer()->getComment())) {
                 $result->setComment($matching['offer']->getProposalOffer()->getComment());
+            }
+            if (is_null($result->getAskId()) && !empty($matching['offer']->getAsks())) {
+                $result->setAskId($matching['offer']->getAsks()[0]->getId());
             }
 
             // communities

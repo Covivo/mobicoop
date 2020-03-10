@@ -65,7 +65,7 @@
         <!--display phone is always true when ask is accepted-->
         <carpooler-contact
           :carpooler="result.carpooler"
-          :ask="result.ask"
+          :ask-id="result.askId"
           :display-phone="true"
           :display-mail-box="true"
           :user="user"
