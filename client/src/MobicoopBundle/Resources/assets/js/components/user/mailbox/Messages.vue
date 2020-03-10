@@ -284,7 +284,8 @@ export default {
         .then(response => {
           //console.error(response.data);
           this.refreshActions = true;
-          this.loadingBtnAction = false;
+          // buttons become usable before the whole component is updated and so user can accept or refused multiple times, creating multiple proposals
+          // this.loadingBtnAction = false;
         })
         .catch(function (error) {
           console.error(error);
