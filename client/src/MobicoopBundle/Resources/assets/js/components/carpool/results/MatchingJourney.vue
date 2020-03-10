@@ -522,6 +522,10 @@ export default {
     hideContact: {
       type: Boolean,
       default: false
+    },
+    resetStep: {
+      type: Boolean,
+      default: false
     }
   },
   data : function() {
@@ -637,6 +641,12 @@ export default {
       this.fromDate = val.startDate ? val.startDate : null;
       this.toDate = val.toDate ? val.toDate : null;
       this.computeTimes();
+    },
+    resetStep(){
+      if(this.resetStep){
+        this.step = 1;
+        this.$emit('resetStepMatchingJourney');
+      }
     }
   },
   mounted() {
@@ -645,6 +655,9 @@ export default {
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
+    // We need to emit this event because the first time Matching has send the reset intruction,
+    // MatchingJourney was not created yet. So the watcher can't trigger and therefore, not send the event.
+    this.$emit('resetStepMatchingJourney');
   },
   methods: {
     computeMaxDate() {

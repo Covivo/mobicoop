@@ -146,6 +146,11 @@ services:
     # Communication
     App\Communication\Controller\:
         resource: '../src/Communication/Controller'
+        arguments:
+                $params:
+                    smsUsername: '%env(string:SMS_USERNAME)%'
+                    smsPassword: '%env(string:SMS_PASSWORD)%'
+                    smsSender: '%env(string:SMS_SENDER)%'
         tags: ['controller.service_arguments']
 
     App\Communication\Service\NotificationManager:
