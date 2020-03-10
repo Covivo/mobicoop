@@ -51,12 +51,23 @@ class AuthItemRepository
     }
 
     /**
+     * Find Auth Item by its id
+     *
+     * @param integer $id
+     * @return User|null
+     */
+    public function find(int $id): ?AuthItem
+    {
+        return $this->repository->find($id);
+    }
+
+    /**
      * Find Auth Item by name.
      *
      * @param string $name
      * @return AuthItem
      */
-    public function findByName(string $name)
+    public function findByName(string $name): ?AuthItem
     {
         return $this->repository->findOneBy(['name'=>$name]);
     }

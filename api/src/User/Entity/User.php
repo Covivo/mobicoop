@@ -91,7 +91,6 @@ use App\Community\Entity\CommunityUser;
 /**
  * A user.
  *
- * Users should not be fully removed, if a user wants to remove its account it should be anonymized, unless he has no interactions with other users.
  * Note : force eager is set to false to avoid max number of nested relations (can occure despite of maxdepth... https://github.com/api-platform/core/issues/1910)
  *
  * @ORM\Entity
@@ -1655,6 +1654,62 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($askDelegate->getUserDelegate() === $this) {
                 $askDelegate->setUserDelegate(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getEvents()
+    {
+        return $this->events->getValues();
+    }
+
+    public function addEvent(Event $event): self
+    {
+        if (!$this->events->contains($event)) {
+            $this->events->add($event);
+            $event->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Event $event): self
+    {
+        if ($this->events->contains($event)) {
+            $this->events->removeElement($event);
+            // set the owning side to null (unless already changed)
+            if ($event->getUser() === $this) {
+                $event->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCommunityUsers()
+    {
+        return $this->communityUsers->getValues();
+    }
+
+    public function addCommunityUser(CommunityUser $communityUser): self
+    {
+        if (!$this->events->contains($communityUser)) {
+            $this->events->add($communityUser);
+            $communityUser->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommunityUser(CommunityUser $communityUser): self
+    {
+        if ($this->events->contains($communityUser)) {
+            $this->events->removeElement($communityUser);
+            // set the owning side to null (unless already changed)
+            if ($communityUser->getUser() === $this) {
+                $communityUser->setUser(null);
             }
         }
 
