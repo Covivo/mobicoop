@@ -55,6 +55,20 @@ class AuthItem
 {
     const TYPE_ROLE = 2;
     const TYPE_ITEM = 1;
+
+    const ROLE_SUPER_ADMIN = 1;
+    const ROLE_ADMIN = 2;
+    const ROLE_USER_REGISTERED_FULL = 3;
+    const ROLE_USER_REGISTERED_MINIMAL = 4;
+    const ROLE_USER = 5;
+    const ROLE_MASS_MATCH = 6;
+    const ROLE_COMMUNITY_MANAGER = 7;
+    const ROLE_COMMUNITY_MANAGER_PUBLIC = 8;
+    const ROLE_COMMUNITY_MANAGER_PRIVATE = 9;
+    const ROLE_SOLIDARY_MANAGER = 10;
+    const ROLE_SOLIDARY_VOLUNTEER = 11;
+    const ROLE_SOLIDARY_BENEFICIARY = 12;
+    const ROLE_COMMUNICATION_MANAGER = 13;
     
     /**
      * @var int The id of this item.

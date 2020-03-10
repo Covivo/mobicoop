@@ -27,7 +27,6 @@ use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Event\Entity\Event;
-use Symfony\Component\Security\Core\Security;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Event\Service\EventManager;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -42,14 +41,12 @@ class EventVoter extends Voter
     const EVENT_LIST = 'event_list';
     const EVENT_LIST_ADS = 'event_list_ads';
 
-    private $security;
     private $authManager;
     private $requestStack;
     private $eventManager;
 
-    public function __construct(Security $security, AuthManager $authManager, RequestStack $requestStack, EventManager $eventManager)
+    public function __construct(AuthManager $authManager, RequestStack $requestStack, EventManager $eventManager)
     {
-        $this->security = $security;
         $this->authManager = $authManager;
         $this->request = $requestStack->getCurrentRequest();
         $this->eventManager = $eventManager;
@@ -97,12 +94,6 @@ class EventVoter extends Voter
                 return $this->canUpdateEvent($subject);
             case self::EVENT_DELETE:
                 return $this->canDeleteEvent($subject);
-            case self::EVENT_REPORT:
-                // here we don't have the denormalized event, we need to get it from the request
-                if ($event = $this->eventManager->getEvent($this->request->get('id'))) {
-                    return $this->canReadEvent($event);
-                }
-                return false;
             case self::EVENT_REPORT:
                 // here we don't have the denormalized event, we need to get it from the request
                 if ($event = $this->eventManager->getEvent($this->request->get('id'))) {

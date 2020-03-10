@@ -23,6 +23,8 @@
 
 namespace App\User\Service;
 
+use App\Auth\Entity\AuthItem;
+use App\Auth\Entity\UserAuthAssignment;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Carpool\Repository\AskRepository;
@@ -39,8 +41,6 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Auth\Repository\AuthItemRepository;
-use App\Auth\Entity\Role;
-use App\Auth\Entity\UserRole;
 use App\Community\Repository\CommunityRepository;
 use App\Community\Entity\CommunityUser;
 use App\User\Event\UserRegisteredEvent;
@@ -134,12 +134,12 @@ class UserManager
      */
     public function registerUser(User $user, bool $encodePassword=true)
     {
-        if (count($user->getUserRoles()) == 0) {
+        if (count($user->getUserAuthAssignments()) == 0) {
             // default role : user registered full
-            $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL);
-            $userRole = new UserRole();
-            $userRole->setRole($role);
-            $user->addUserRole($userRole);
+            $authItem = $this->authItemRepository->find(AuthItem::ROLE_USER_REGISTERED_FULL);
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
         }
 
         if ($encodePassword) {
@@ -242,12 +242,12 @@ class UserManager
     public function treatUser(User $user)
     {
         // we treat the role
-        if (count($user->getUserRoles()) == 0) {
-            // we have to add a role
-            $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL);
-            $userRole = new UserRole();
-            $userRole->setRole($role);
-            $user->addUserRole($userRole);
+        if (count($user->getUserAuthAssignments()) == 0) {
+            // default role : user registered full
+            $authItem = $this->authItemRepository->find(AuthItem::ROLE_USER_REGISTERED_FULL);
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
         }
 
         // we treat the notifications

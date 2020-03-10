@@ -35,9 +35,9 @@ class UserSelf implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        if (!isset($params['id'])) {
+        if (!isset($params['user'])) {
             return false;
         }
-        return $params['id'] == $requester->getId();
+        return $params['user']->getId() == $requester->getId();
     }
 }

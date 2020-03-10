@@ -104,6 +104,7 @@ use App\User\EntityListener\UserListener;
  *      collectionOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"readUser"}},
+ *              "security"="is_granted('user_list',object)"
  *          },
  *          "post"={
  *              "method"="POST",
@@ -152,7 +153,7 @@ use App\User\EntityListener\UserListener;
  *                      }
  *                  }
  *              },
- *              "security_post_denormalize"="is_granted('user_register',object)"
+ *              "security_post_denormalize"="is_granted('user_create',object)"
  *          },
  *          "delegateRegistration"={
  *              "method"="POST",
@@ -213,7 +214,8 @@ use App\User\EntityListener\UserListener;
  *                          "description" = "Password send type (0 : none, 1 : sms, 2 : email)"
  *                      }
  *                  }
- *              }
+ *              },
+ *              "security_post_denormalize"="is_granted('user_create',object)"
  *          },
  *          "checkSignUpValidationToken"={
  *              "method"="POST",
