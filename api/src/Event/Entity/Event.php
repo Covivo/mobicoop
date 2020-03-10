@@ -99,7 +99,7 @@ use App\Event\Controller\ReportAction;
  *              "method"="GET",
  *              "path"="/events/{id}/ads",
  *              "normalization_context"={"groups"={"readEvent"}},
- *              "security_post_denormalize"="is_granted('event_read',object)"
+ *              "security_post_denormalize"="is_granted('event_list_ads',object)"
  *          },
  *      },
  *      itemOperations={
