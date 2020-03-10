@@ -56,6 +56,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\User\Event\UserUpdatedSelfEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\User\Repository\UserRepository;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -80,6 +81,7 @@ class UserManager
     private $eventDispatcher;
     private $encoder;
     private $translator;
+    private $security;
 
     // Default carpool settings
     private $chat;
@@ -92,7 +94,7 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, AuthItemRepository $authItemRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator)
+    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, AuthItemRepository $authItemRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator, Security $security)
     {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -106,6 +108,7 @@ class UserManager
         $this->eventDispatcher = $dispatcher;
         $this->encoder = $encoder;
         $this->translator = $translator;
+        $this->security = $security;
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
         $this->userRepository = $userRepository;
@@ -123,6 +126,16 @@ class UserManager
     public function getUser(int $id)
     {
         return $this->userRepository->find($id);
+    }
+
+    /**
+     * Get a user by security token.
+     *
+     * @return User|null
+     */
+    public function getMe()
+    {
+        return $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
     }
     
     /**

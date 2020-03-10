@@ -14,8 +14,8 @@ security:
         # useful as many authentications systems exist : by app (frontend), by users (with mobile app), with a token...
         chain_provider:
             chain:
-                providers: [servers, users]
-                # providers: [jwt, servers, users]
+                # providers: [servers, users]
+                providers: [jwt, servers, users]
         # provider for apps authentication (eg. frontend)
         servers: 
             entity:
@@ -28,8 +28,8 @@ security:
                 property: 'email'
         # provider for logged users or app (eg. with a valid token)
         # /!\ this is the database-less provider, it avoids loading the user for each api call, so if you need the user information don't use this provider ! /!\
-        # jwt:
-        #     lexik_jwt: ~
+        jwt:
+            lexik_jwt: ~
 
     # firewalls
     firewalls:

@@ -64,6 +64,7 @@ use App\User\Controller\UserAnonymise;
 use App\User\Controller\UserCheckSignUpValidationToken;
 use App\User\Controller\UserCheckPhoneToken;
 use App\User\Controller\UserUnsubscribeFromEmail;
+use App\User\Controller\UserMe;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\HomeAddressDirectionTerritoryFilter;
@@ -228,7 +229,13 @@ use App\User\EntityListener\UserListener;
  *              "normalization_context"={"groups"={"readUser"}},
  *              "path"="/users/checkPhoneToken",
  *              "controller"=UserCheckPhoneToken::class
- *          }
+ *          },
+ *          "me"={
+ *              "normalization_context"={"groups"={"readUser"}},
+ *              "method"="GET",
+ *              "path"="/users/me",
+ *              "read"="false"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={

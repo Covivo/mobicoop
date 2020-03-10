@@ -70,6 +70,8 @@ class JwtManager
      */
     protected $cache;
 
+    private $tokenId;
+
     /**
      * Constructor.
      *
@@ -85,6 +87,7 @@ class JwtManager
     ) {
         $this->client = $client;
         $this->auth = $auth;
+        $this->tokenId = $tokenId;
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
             'token_url' => '/token',
@@ -94,13 +97,15 @@ class JwtManager
         ]);
         $resolver->setRequired(['token_url', 'timeout']);
         $this->options = $resolver->resolve($options);
-
+        
         // search for a token in the cache
         $this->cache = new FilesystemAdapter();
-        $token = $this->cache->getItem($tokenId.'.jwt.token');
+        //$this->cache->deleteItem($this->tokenId.'.jwt.token');
+        $token = $this->cache->getItem($this->tokenId.'.jwt.token');
         if ($token->isHit()) {
             $this->token = $token->get();
         }
+    
     }
 
     /**
@@ -114,12 +119,13 @@ class JwtManager
             return $this->token;
         }
         // no token found or token invalid => clear cache
-        $this->cache->deleteItem('mobicoop.jwt.token');
+        $this->cache->deleteItem($this->tokenId.'.jwt.token');
         $url = $this->options['token_url'];
         $requestOptions = array_merge(
             $this->getDefaultHeaders(),
             $this->auth->getRequestOptions()
         );
+        
         $response = $this->client->request('POST', $url, $requestOptions);
         $body = json_decode($response->getBody(), true);
         $expiresIn = isset($body[$this->options['expire_key']]) ? $body[$this->options['expire_key']] : null;
@@ -138,7 +144,7 @@ class JwtManager
         $this->token = new JwtToken($body[$this->options['token_key']], $expiration);
 
         // save the token in the cache
-        $token = $this->cache->getItem('mobicoop.jwt.token');
+        $token = $this->cache->getItem($this->tokenId.'.jwt.token');
         $token->set($this->token);
         $this->cache->save($token);
 

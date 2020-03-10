@@ -49,6 +49,9 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\JwtMiddleware;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\JwtManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Strategy\Auth\JsonAuthStrategy;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Data provider service.
@@ -79,6 +82,15 @@ class DataProvider
     const RETURN_ARRAY = 2;
     const RETURN_JSON = 3;
 
+    private $uri;
+    private $username;
+    private $password;
+    private $authPath;
+    private $loginPath;
+    private $tokenId;
+    private $authLoginPath;
+    private $session;
+
     private $client;
     private $resource;
     private $class;
@@ -89,46 +101,29 @@ class DataProvider
     /**
      * Constructor.
      *
-     * @param string $uri
-     * @param string $username
-     * @param string $password
-     * @param string $authPath
-     * @param string $tokenId
-     * @param Deserializer $deserializer
+     * @param bool $forceLogin              Force login
+     * @param string $uri                   The api uri
+     * @param string $username              The default api username
+     * @param string $password              The default api password
+     * @param string $authPath              The api path for default authentication
+     * @param string $loginPath             The api path for user authentication
+     * @param string $tokenId               The token id
+     * @param Deserializer $deserializer    The deserializer
      */
-    public function __construct(string $uri, string $username, string $password, string $authPath, string $tokenId, Deserializer $deserializer)
+    public function __construct(string $uri, string $username, string $password, string $authPath, string $loginPath, string $tokenId, Deserializer $deserializer)
     {
-        //Create your auth strategy
-        $authStrategy = new JsonAuthStrategy(
-            [
-                'username' => $username,
-                'password' => $password,
-                'json_fields' => ['username', 'password'],
-            ]
-        );
+        $this->uri = $uri;
+        $this->username = $username;
+        $this->password = $password;
+        $this->authPath = $authPath;
+        $this->loginPath = $loginPath;
+        $this->tokenId = $tokenId;
 
-        $authClient = new Client([
-                'base_uri' => $uri
-        ]);
+        $this->authLoginPath = $authPath;
 
-        //Create the JwtManager
-        $jwtManager = new JwtManager(
-            $authClient,
-            $authStrategy,
-            $tokenId,
-            [
-                'token_url' => $authPath,
-            ]
-        );
-
-        // Create a HandlerStack
-        $stack = HandlerStack::create();
-
-        // Add middleware
-        $stack->push(new JwtMiddleware($jwtManager));
-
-        $this->client = new Client(['handler' => $stack, 'base_uri' => $uri]);
-
+        // Create the auth strategy
+        $this->createAuthStrategy();
+        
         $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
 
         $encoders = array(new JsonEncoder());
@@ -136,8 +131,65 @@ class DataProvider
         $normalizers = array(new DateTimeNormalizer(), new RemoveNullObjectNormalizer($classMetadataFactory));
         $this->serializer = new Serializer($normalizers, $encoders);
         $this->deserializer = $deserializer;
-
         $this->format = self::RETURN_OBJECT;
+    }
+
+    /**
+     * Create the auth strategy
+     *
+     * @return void
+     */
+    private function createAuthStrategy() 
+    {
+        $authStrategy = new JsonAuthStrategy(
+            [
+                'username' => $this->username,
+                'password' => $this->password,
+                'json_fields' => ['username', 'password'],
+            ]
+        );
+
+        $authClient = new Client([
+                'base_uri' => $this->uri
+        ]);
+        //Create the JwtManager
+        $jwtManager = new JwtManager(
+            $authClient,
+            $authStrategy,
+            $this->tokenId,
+            [
+                'token_url' => $this->authLoginPath,
+            ]
+        );
+        
+        // Create a HandlerStack
+        $stack = HandlerStack::create();
+
+        // Add middleware
+        $stack->push(new JwtMiddleware($jwtManager));
+
+        $this->client = new Client(['handler' => $stack, 'base_uri' => $this->uri]);
+    }
+
+    public function setUsername(string $username)
+    {
+        $this->username = $username;
+    }
+
+    public function setPassword(string $password)
+    {
+        $this->password = $password;
+    }
+
+    public function useAuthPath()
+    {
+        $this->authLoginPath = $this->authPath;
+    }
+
+    public function useLoginPath()
+    {
+        $this->authLoginPath = $this->loginPath;
+        $this->createAuthStrategy();
     }
 
     /**
@@ -376,6 +428,13 @@ class DataProvider
         return new Response();
     }
 
+    /**
+     * Post on a given url
+     *
+     * @param string $url       The url to post on
+     * @param array $parameters The parameters
+     * @return Response         The response
+     */
     public function simplePost(string $url, array $parameters = []): Response
     {
         try {
