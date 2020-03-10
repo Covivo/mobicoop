@@ -26,7 +26,7 @@ namespace App\Auth\Rule;
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the requester has joined a Community
+ *  Check that the requester has joined the related Community
  */
 class CommunityJoined implements AuthRuleInterface
 {

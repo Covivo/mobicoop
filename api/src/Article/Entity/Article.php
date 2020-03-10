@@ -68,8 +68,7 @@ use App\Article\Controller\ExternalArticlesAction;
  *          "delete"={
  *              "security"="is_granted('article_delete',object)"
  *          },
- *      },
- *      itemOperations={"get","put","delete"}
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "title"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"title":"partial"})

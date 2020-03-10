@@ -26,7 +26,7 @@ namespace App\Auth\Rule;
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the requester is involved in a Message (=author or recipient)
+ *  Check that the requester is involved in the related Message (=author or recipient)
  */
 class MessageActor implements AuthRuleInterface
 {

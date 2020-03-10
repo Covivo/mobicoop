@@ -24,9 +24,10 @@
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
+use App\Event\Entity\Event;
 
 /**
- *  Check that the requester is the author of an Event
+ *  Check that the requester is the author of the related Event
  */
 class EventAuthor implements AuthRuleInterface
 {
@@ -35,10 +36,13 @@ class EventAuthor implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        return true;
-        // if (!isset($params['id'])) {
-        //     return false;
-        // }
-        // return $params['id'] == $requester->getId();
+        if (!isset($params['event'])) {
+            return false;
+        }
+        /**
+         * @var Event $event
+         */
+        $event = $params['event'];
+        return $event->getUser()->getId() == $requester->getId();
     }
 }

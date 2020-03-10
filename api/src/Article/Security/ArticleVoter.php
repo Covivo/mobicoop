@@ -30,7 +30,6 @@ use App\Article\Entity\Section;
 use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class ArticleVoter extends Voter
 {
@@ -76,66 +75,44 @@ class ArticleVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $requester = $token->getUser();
-
         switch ($attribute) {
             case self::ARTICLE_CREATE:
-                return $this->canCreateArticle($requester);
+                return $this->canCreateArticle();
             case self::ARTICLE_READ:
-                return $this->canReadArticle($requester, $subject);
+                return $this->canReadArticle($subject);
             case self::ARTICLE_UPDATE:
-                return $this->canUpdateArticle($requester, $subject);
+                return $this->canUpdateArticle($subject);
             case self::ARTICLE_DELETE:
-                return $this->canDeleteArticle($requester, $subject);
+                return $this->canDeleteArticle($subject);
             case self::ARTICLE_LIST:
-                return $this->canListArticle($requester);
+                return $this->canListArticle();
             }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canCreateArticle(UserInterface $requester)
+    private function canCreateArticle()
     {
-        // only registered users/apps can create articles
-        if (!$requester instanceof UserInterface) {
-            return false;
-        }
-        return $this->authManager->isAuthorized('article_create');
+        return $this->authManager->isAuthorized(self::ARTICLE_CREATE);
     }
 
-    private function canReadArticle(UserInterface $requester, Article $article)
+    private function canReadArticle(Article $article)
     {
-        // only registered users/apps can read articles
-        if (!$requester instanceof UserInterface) {
-            return false;
-        }
-        return $this->authManager->isAuthorized('article_read', ['id'=>$article->getId()]);
+        return $this->authManager->isAuthorized(self::ARTICLE_READ, ['article'=>$article]);
     }
 
-    private function canUpdateArticle(UserInterface $requester, Article $article)
+    private function canUpdateArticle(Article $article)
     {
-        // only registered users/apps can update articles
-        if (!$requester instanceof UserInterface) {
-            return false;
-        }
-        return $this->authManager->isAuthorized('article_update', ['id'=>$article->getId()]);
+        return $this->authManager->isAuthorized(self::ARTICLE_UPDATE, ['article'=>$article]);
     }
 
-    private function canDeleteArticle(UserInterface $requester, Article $article)
+    private function canDeleteArticle(Article $article)
     {
-        // only registered users/apps can delete articles
-        if (!$requester instanceof UserInterface) {
-            return false;
-        }
-        return $this->authManager->isAuthorized('article_delete', ['id'=>$article->getId()]);
+        return $this->authManager->isAuthorized(self::ARTICLE_DELETE, ['article'=>$article]);
     }
 
-    private function canListArticle(UserInterface $requester)
+    private function canListArticle()
     {
-        // only registered users/apps can list articles
-        if (!$requester instanceof UserInterface) {
-            return false;
-        }
-        return $this->authManager->isAuthorized('article_list');
+        return $this->authManager->isAuthorized(self::ARTICLE_LIST);
     }
 }

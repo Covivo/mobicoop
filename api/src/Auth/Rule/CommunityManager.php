@@ -26,7 +26,7 @@ namespace App\Auth\Rule;
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the requester is a manager of a Community
+ *  Check that the requester is a manager of the related Community
  */
 class CommunityManager implements AuthRuleInterface
 {

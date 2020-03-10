@@ -113,8 +113,8 @@ class UserVoter extends Voter
     private function canRead(UserInterface $requester, User $subject)
     {
         //return $this->permissionManager->checkPermission('user_read', $requester, null, $subject->getId());
-        var_dump($this->authManager->getTerritoriesForItem('user_read'));
-        exit;
+        // var_dump($this->authManager->getTerritoriesForItem('user_read'));
+        // exit;
         return $this->authManager->isAuthorized('user_read', ['id'=>$subject->getId()]);
     }
 

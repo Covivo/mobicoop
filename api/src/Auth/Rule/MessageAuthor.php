@@ -26,7 +26,7 @@ namespace App\Auth\Rule;
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the requester is the author of a Message
+ *  Check that the requester is the author of the related Message
  */
 class MessageAuthor implements AuthRuleInterface
 {

@@ -56,8 +56,10 @@ use App\Event\Controller\ReportAction;
  *          "pagination_client_items_per_page"=true
  *      },
  *      collectionOperations={
- *          "get",
- *          "post" ={
+ *          "get"={
+ *              "security_post_denormalize"="is_granted('event_list',object)"
+ *          },
+ *          "post"={
  *              "security_post_denormalize"="is_granted('event_create',object)"
  *          },
  *          "report"={
@@ -84,7 +86,7 @@ use App\Event\Controller\ReportAction;
  *                      }
  *                  }
  *              },
- *              "security"="is_granted('event_read',object)"
+ *              "security"="is_granted('event_report',object)"
  *          },
  *          "valide_create_event"={
  *              "method"="POST",

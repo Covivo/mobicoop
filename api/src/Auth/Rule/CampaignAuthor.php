@@ -26,7 +26,7 @@ namespace App\Auth\Rule;
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the requester is the author of a Campaign
+ *  Check that the requester is the author of the related Campaign
  */
 class CampaignAuthor implements AuthRuleInterface
 {
