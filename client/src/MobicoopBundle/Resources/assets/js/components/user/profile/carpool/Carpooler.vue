@@ -136,6 +136,7 @@ export default {
   },
   data () {
     return {
+      //todo: use correct times from result/result schedule object when it's developed
       outwardTimes: this.ad ? [
         this.ad.schedule.monOutwardTime,
         this.ad.schedule.tueOutwardTime,
@@ -170,25 +171,25 @@ export default {
       return this.ad.frequency === 2;
     },
     hasMonday () {
-      return this.ad && this.ad.schedule.mon;
+      return this.result && this.result.monCheck;
     },
     hasTuesday () {
-      return this.ad && this.ad.schedule.tue;
+      return this.result && this.result.tueCheck;
     },
     hasWednesday () {
-      return this.ad && this.ad.schedule.wed;
+      return this.result && this.result.wedCheck;
     },
     hasThursday () {
-      return this.ad && this.ad.schedule.thu;
+      return this.result && this.result.thuCheck;
     },
     hasFriday () {
-      return this.ad && this.ad.schedule.fri;
+      return this.result && this.result.friCheck;
     },
     hasSaturday () {
-      return this.ad && this.ad.schedule.sat;
+      return this.result && this.result.satCheck;
     },
     hasSunday () {
-      return this.ad && this.ad.schedule.sun;
+      return this.result && this.result.sunCheck;
     }
   },
 }
