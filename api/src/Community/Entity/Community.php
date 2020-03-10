@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -102,6 +102,23 @@ use App\Community\Controller\JoinAction;
  *                          "type" = "string",
  *                          "required" = "true",
  *                          "description" = "The name of the community"
+ *                      }
+ *                  }
+ *              },
+ *              "security_post_denormalize"="is_granted('community_read',object)"
+ *          },
+ *          "owned"={
+ *              "method"="GET",
+ *              "path"="/communities/owned",
+ *              "normalization_context"={"groups"={"readCommunity"}},
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "userId",
+ *                          "in" = "query",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "The id of the user for which we want the communities"
  *                      }
  *                  }
  *              },

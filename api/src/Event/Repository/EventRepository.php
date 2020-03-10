@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -76,5 +76,20 @@ class EventRepository
 
         return $query->getResult()
             ;
+    }
+
+    /**
+    *Get events created by the user
+    *
+    * @param Int $userId
+    * @return void
+    */
+    public function getCreatedEvents(Int $userId)
+    {
+        $query = $this->repository->createQueryBuilder('e')
+        ->where('e.user = :userId')
+        ->setParameter('userId', $userId)
+        ->getQuery()->getResult();
+        return $query;
     }
 }

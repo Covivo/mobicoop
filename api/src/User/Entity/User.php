@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -60,7 +60,7 @@ use App\User\Controller\UserThreadsCarpoolMessages;
 use App\User\Controller\UserUpdatePassword;
 use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserUpdate;
-use App\User\Controller\UserAnonymise;
+use App\User\Controller\UserDelete;
 use App\User\Controller\UserCheckSignUpValidationToken;
 use App\User\Controller\UserCheckPhoneToken;
 use App\User\Controller\UserUnsubscribeFromEmail;
@@ -85,6 +85,8 @@ use App\MassCommunication\Entity\Delivery;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
+use App\Event\Entity\Event;
+use App\Community\Entity\CommunityUser;
 
 /**
  * A user.
@@ -305,10 +307,10 @@ use App\User\EntityListener\UserListener;
  *              "controller"=UserUpdate::class,
  *              "security"="is_granted('user_update',object)"
  *          },
- *          "anonymise_user"={
- *              "method"="PUT",
- *              "path"="/users/{id}/anonymise_user",
- *              "controller"=UserAnonymise::class,
+ *          "delete_user"={
+ *              "method"="DELETE",
+ *              "path"="/users/{id}",
+ *              "controller"=UserDelete::class,
  *              "security"="is_granted('user_delete',object)"
  *          },
  *          "asks"={
@@ -398,7 +400,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate"})
      */
     private $givenName;
 
@@ -413,7 +415,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate"})
      */
     private $shortFamilyName;
 
@@ -759,6 +761,20 @@ class User implements UserInterface, EquatableInterface
     private $asks;
 
     /**
+     * @var ArrayCollection|null The events made by this user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Event\Entity\Event", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     */
+    private $events;
+
+    /**
+    * @var ArrayCollection|null The communityUser associated to this user
+    *
+    * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+    */
+    private $communityUsers;
+
+    /**
      * @var ArrayCollection|null The asks made for this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="userRelated", cascade={"remove"}, orphanRemoval=true)
@@ -967,6 +983,13 @@ class User implements UserInterface, EquatableInterface
      */
     private $unsubscribeMessage;
 
+    /**
+     * @var bool|null used to indicate a attempt to import this already registered user.
+     * @Groups({"massMigrate"})
+     */
+    private $alreadyRegistered;
+
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -996,6 +1019,7 @@ class User implements UserInterface, EquatableInterface
             $status = self::STATUS_ACTIVE;
         }
         $this->setStatus($status);
+        $this->setAlreadyRegistered(false);
     }
 
     public function getId(): ?int
@@ -1578,6 +1602,8 @@ class User implements UserInterface, EquatableInterface
 
         return $this;
     }
+
+    
 
     public function getAsksRelated()
     {
@@ -2225,6 +2251,17 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function isAlreadyRegistered(): ?bool
+    {
+        return $this->alreadyRegistered;
+    }
+
+    public function setAlreadyRegistered(?bool $alreadyRegistered): self
+    {
+        $this->alreadyRegistered = $alreadyRegistered;
+
+        return $this;
+    }
 
 
     // DOCTRINE EVENTS

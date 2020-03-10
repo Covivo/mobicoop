@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -40,6 +40,7 @@ use App\User\Repository\UserRepository;
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class CommunityManager
 {
@@ -219,5 +220,17 @@ class CommunityManager
         $this->entityManager->flush();
 
         return $communityUser;
+    }
+
+    /**
+     * retrive communities owned by a user
+     *
+     * @param Int $userId
+     * @return void
+     */
+    public function getOwnedCommunities(Int $userId)
+    {
+        $ownedCommunities = $this->communityRepository->getOwnedCommunities($userId);
+        return $ownedCommunities;
     }
 }

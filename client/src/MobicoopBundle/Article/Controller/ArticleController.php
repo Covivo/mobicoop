@@ -48,6 +48,11 @@ class ArticleController extends AbstractController
     const SOLIDARY_CARPOOL = 8;
     const BECOME_PARTNER = 9;
     const FAQ = 10;
+    const TOOLBOX = 11;
+    const COMMUNITYINFOS = 12;
+    const LOM = 13;
+    const GOODPRACTICES = 14;
+    const MOREABOUT = 15;
 
     /**
      * Display of the project page
@@ -137,6 +142,51 @@ class ArticleController extends AbstractController
     public function showFAQ(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::FAQ));
+    }
+
+    /**
+     * Display of the TOOLBOX page
+     *
+     */
+    public function showToolbox(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::TOOLBOX));
+    }
+
+    /**
+     * Display of the COMMUNITYINFOS page
+     *
+     */
+    public function showCommunityInfos(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::COMMUNITYINFOS));
+    }
+
+    /**
+     * Display of the LOM page
+     *
+     */
+    public function showLOM(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::LOM));
+    }
+
+    /**
+     * Display of the GOODPRACTICES page
+     *
+     */
+    public function showGoodPractices(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::GOODPRACTICES));
+    }
+
+    /**
+    * Display of the MOREABOUT page
+    *
+    */
+    public function showMoreAbout(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::MOREABOUT));
     }
 
     /**

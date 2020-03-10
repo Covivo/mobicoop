@@ -351,7 +351,7 @@
                   v-on="on"
                   color="error"
                   rounded
-                  :disabled="!valid"
+                  :disabled="!valid || disabledCreatedEvents || disabledOwnedCommunities"
                   :loading="loading"
                   type="button"
                   :value="$t('ui.button.save')"
@@ -362,6 +362,14 @@
 
         <v-card>
           <v-card-title
+                  v-if="hasCreatedEvents || hasOwnedCommunities"
+                  class="headline error--text"
+                  primary-title
+          >
+            {{ $t('dialog.titles.deletionImpossible') }}
+          </v-card-title>
+          <v-card-title
+                  v-else
                   class="headline"
                   primary-title
           >
@@ -369,12 +377,23 @@
           </v-card-title>
 
           <v-card-text>
-            <p v-html="$t('dialog.content.deleteAccount')"></p>
+            <p v-if="hasOwnedCommunities" v-html="$t('dialog.content.errorCommunities')"></p>
+            <p v-else-if="hasCreatedEvents" v-html="$t('dialog.content.errorEvents')"></p>
+            <p v-else v-html="$t('dialog.content.deleteAccount')"></p>
           </v-card-text>
 
           <v-divider></v-divider>
-
-          <v-card-actions>
+          <v-card-actions v-if="hasCreatedEvents || hasOwnedCommunities">
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary darken-1"
+              text
+              @click="dialogDelete = false; newsSubscription = true"
+            >
+              {{ $t('dialog.buttons.close') }}
+            </v-btn>
+          </v-card-actions>
+          <v-card-actions v-else>
             <v-spacer></v-spacer>
             <v-btn
               color="primary darken-1"
@@ -404,6 +423,7 @@
 
 <script>
 import axios from "axios";
+import moment from "moment";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import ChangePassword from "@components/user/profile/ChangePassword";
 import { merge } from "lodash";
@@ -498,7 +518,14 @@ export default {
       loadingToken: false,
       loadingValidatePhone: false,
       disabledAddress: true,
-      loadingAddress: false
+      loadingAddress: false,
+      ownedCommunities: null,
+      createdEvents: null,
+      hasCreatedEvents: false,
+      hasOwnedCommunities: false,
+      disabledOwnedCommunities: false,
+      disabledCreatedEvents: false,
+
     };
   },
   computed : {
@@ -511,6 +538,8 @@ export default {
   },
   mounted() {
     this.checkVerifiedPhone();
+    this.getOwnedCommunities();
+    this.getCreatedEvents();
   },
   methods: {
     homeAddressSelected(address){
@@ -644,6 +673,38 @@ export default {
           this.loadingValidatePhone = false;
         })
         // Todo create "emit" event to refresh the alerts
+    },
+    getOwnedCommunities() {
+      let params = {
+        'userId':this.user.id
+      }
+      this.disabledOwnedCommunities = true;
+      axios.post(this.$t("communities.route"), params)
+        .then(res => {
+          if (res.data.length > 0) {
+            this.ownedCommunities = res.data;
+            this.hasOwnedCommunities = true;
+          }
+          this.disabledOwnedCommunities = false;
+        });
+    },
+    getCreatedEvents() {
+      let params = {
+        'userId':this.user.id
+      }
+      this.disabledCreatedEvents = true;
+      axios.post(this.$t("events.route"), params)
+        .then(res => {
+          if (res.data.length > 0) {
+            this.createdEvents = res.data;
+             this.createdEvents.forEach(createdEvent => {
+               if (moment(createdEvent.toDate.date) >= moment(new Date())) {
+                 this.hasCreatedEvents = true;
+               }
+             });
+          }
+          this.disabledCreatedEvents = false;
+        });
     }
   }
 }

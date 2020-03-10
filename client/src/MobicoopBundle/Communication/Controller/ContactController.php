@@ -49,7 +49,10 @@ class ContactController extends AbstractController
     {
         $this->denyAccessUnlessGranted('contact_create', new Contact());
         return $this->render(
-            '@Mobicoop/contact/contact.html.twig'
+            '@Mobicoop/contact/contact.html.twig',
+            [
+                'contactTypes' => json_encode($this->contactTypes)
+            ]
         );
     }
 
