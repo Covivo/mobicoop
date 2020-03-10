@@ -41,7 +41,6 @@ use Twig\Environment;
  */
 class TestController extends AbstractController
 {
-    
     private $templating;
     private $translator;
     private $smsProvider;
@@ -86,6 +85,4 @@ class TestController extends AbstractController
         
         return $this->smsProvider->postCollection($sms);
     }
-
-
 }
