@@ -557,7 +557,42 @@ FAQ:
     path:
         fr: /FAQ
         en: /FAQ
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showFAQ    
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showFAQ
+
+# display ToolBox page
+ToolBox:
+    path:
+        fr: /boite-a-outils
+        en: /toolBox
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showToolbox        
+
+# display CommunityInfos page
+CommunityInfos:
+    path:
+        fr: /informations-communautes
+        en: /community-infos
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCommunityInfos
+
+# display LOM page
+LOM:
+    path:
+        fr: /LOM
+        en: /LOM
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showLOM
+
+# display GoodPractices page
+GoodPractices:
+    path:
+        fr: /bonnes-pratiques
+        en: /good-practices
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showGoodPractices
+
+# display MoreAbout page
+MoreAbout:
+    path:
+        fr: /en-savoir-plus
+        en: /more-about
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMoreAbout
 
 # Get the last external articles (AJAX)
 LastExternalArticles:
