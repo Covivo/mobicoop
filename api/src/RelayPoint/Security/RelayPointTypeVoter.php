@@ -62,6 +62,9 @@ class RelayPointTypeVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        // TO DO : Code the real Voter
+        return true;
+
         $requester = $token->getUser();
         
         switch ($attribute) {
