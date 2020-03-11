@@ -691,8 +691,15 @@ export default {
     defaultPricesRanges:{
       type: Object,
       default: null
+    },
+    ad: {
+      type: Object,
+      default: null
+    },
+    isUpdate: {
+      type: Boolean,
+      default: false
     }
-
   },
   data() {
     return {

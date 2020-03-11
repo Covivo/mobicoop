@@ -638,6 +638,19 @@ class AdManager
     }
 
     /**
+     * Get an ad with full data.
+     * Returns the ad, with its outward and return results.
+     *
+     * @param int $id       The ad id to get
+     * @return Ad
+     */
+    public function getFullAd(int $id)
+    {
+        $proposal = $this->proposalManager->get($id);
+        return $this->makeAd($proposal, $proposal->getUser()->getId());
+    }
+
+    /**
      * Get an ad for permission check.
      * Returns the ad based on the proposal without results.
      *

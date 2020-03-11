@@ -122,9 +122,9 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function carpoolAdUpdate(int $id, AdManager $adManager, UserManager $userManager, Request $request)
+    public function carpoolAdUpdate(int $id, AdManager $adManager, UserManager $userManager, ProposalManager $proposalManager, Request $request)
     {
-        $ad = $adManager->getAd($id);
+        $ad = $adManager->getFullAd($id);
         $poster = $userManager->getLoggedUser();
 
         if ($request->isMethod('PUT')) {
@@ -161,14 +161,10 @@ class CarpoolController extends AbstractController
 
 //            return $this->json(['result'=>$adManager->createAd($data)]);
         }
+//        dump($ad, $poster, json_encode($poster), json_encode($ad));die;
         $this->denyAccessUnlessGranted('update_ad', $ad);
-        return $this->render('@Mobicoop/carpool/publish.html.twig', [
-            "pricesRange" => [
-                "mid" => $this->midPrice,
-                "high" => $this->highPrice,
-                "forbidden" => $this->forbiddenPrice
-            ],
-            "regular" => $this->defaultRegular
+        return $this->render('@Mobicoop/carpool/update.html.twig', [
+            "ad" => $ad
         ]);
     }
 

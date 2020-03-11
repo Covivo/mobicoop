@@ -60,6 +60,20 @@ class AdManager
     }
 
     /**
+     * Get full ad data
+     *
+     * @param int $id
+     * @return array|object|null
+     */
+    public function getFullAd(int $id)
+    {
+        if ($data = $this->dataProvider->getSpecialItem($id, 'full')) {
+            return $data->getValue();
+        }
+        return null;
+    }
+
+    /**
      * Create an ad. The ad can be a search.
      *
      * @param array $data   The data used to create the ad

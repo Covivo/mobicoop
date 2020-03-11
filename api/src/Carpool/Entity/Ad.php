@@ -28,6 +28,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Carpool\Controller\AdPost;
 use App\Carpool\Controller\AdGet;
+use App\Carpool\Controller\AdGetFull;
 use App\Carpool\Controller\AdAskPost;
 use App\Carpool\Controller\AdAskPut;
 use App\Carpool\Controller\AdPut;
@@ -82,6 +83,13 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "method"="GET",
  *              "path"="/carpools/{id}",
  *              "controller"=AdGet::class,
+ *              "read"=false,
+ *              "security"="is_granted('ad_read',object)"
+ *          },
+ *          "get_full"={
+ *              "method"="GET",
+ *              "path"="/carpools/{id}/full",
+ *              "controller"=AdGetFull::class,
  *              "read"=false,
  *              "security"="is_granted('ad_read',object)"
  *          },

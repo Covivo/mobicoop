@@ -1,0 +1,11 @@
+{% extends '@Mobicoop/base.html.twig' %}
+{% block title %}
+  {% trans from 'ui' %}carpool.ad_update.title{% endtrans %} - {{ app_name }}
+{% endblock %}
+{% block main %}
+  <ad-publish 
+    :ad="{{ ad | json_encode }}"
+    :is-update="true"
+  />
+
+{% endblock %}

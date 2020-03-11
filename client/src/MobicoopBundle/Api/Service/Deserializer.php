@@ -247,7 +247,7 @@ class Deserializer
         return $ad;
     }
 
-    private function deserializeProposal(array $data): ?Proposal
+    private function deserializeProposal(array $data)
     {
         $proposal = new Proposal();
         $proposal = self::autoSet($proposal, $data);
@@ -265,7 +265,7 @@ class Deserializer
         if (isset($data["proposalLinked"]) && is_array($data["proposalLinked"])) {
             $proposal->setProposalLinked(self::deserializeProposal($data['proposalLinked']));
         }
-        return $proposal;
+        return $data;
     }
 
     private function deserializeTravelMode(array $data): ?TravelMode

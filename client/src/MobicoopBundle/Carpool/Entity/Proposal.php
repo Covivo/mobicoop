@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Http\Message\Authentication\Matching;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -109,7 +110,7 @@ class Proposal implements ResourceInterface, \JsonSerializable
 
     /**
      * @var Waypoint[] The waypoints of the proposal.
-     * @Groups({"post","put"})
+     * @Groups({"get","post","put"})
      *
      * @Assert\NotBlank
      */

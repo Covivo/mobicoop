@@ -24,13 +24,14 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Carpooling : an ad.
  * All actions related to a carpooling should be related to this entity.
  */
-class Ad implements ResourceInterface
+class Ad implements ResourceInterface, \JsonSerializable
 {
     const ROLE_DRIVER = 1;
     const ROLE_PASSENGER = 2;
@@ -340,7 +341,6 @@ class Ad implements ResourceInterface
 
     /**
     * @var int|null proposalId.
-    * A paused ad can't be the found in the result of a search, and can be unpaused at any moment.
     *
     * @Groups({"post","put"})
     */
@@ -351,6 +351,16 @@ class Ad implements ResourceInterface
      * Potential carpoolers count
      */
     private $potentialCarpoolers;
+
+    /**
+     * @var Boolean
+     */
+    private $smoke;
+
+    /**
+     * @var Boolean
+     */
+    private $music;
 
     public function __construct($id=null)
     {
@@ -692,6 +702,35 @@ class Ad implements ResourceInterface
         return $this;
     }
 
+    public function isSmoke(): ?bool
+    {
+        return $this->smoke;
+    }
+
+    public function setSmoke(?bool $smoke): ?bool
+    {
+        $this->smoke = $smoke;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasMusic(): ?bool
+    {
+        return $this->music;
+    }
+
+    /**
+     * @param bool $music
+     * @return Ad
+     */
+    public function setMusic(?bool $music): Ad
+    {
+        $this->music = $music;
+        return $this;
+    }
+
     public function hasBackSeats(): ?bool
     {
         return $this->backSeats;
@@ -893,5 +932,33 @@ class Ad implements ResourceInterface
     {
         $this->potentialCarpoolers = $potentialCarpoolers;
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+            [
+                'id' => $this->getId(),
+                'role' => $this->getRole(),
+                'oneWay' => $this->isOneWay(),
+                'outwardWaypoints' => $this->getOutwardWaypoints(),
+                'returnWaypoints' => $this->getReturnWaypoints(),
+                'outwardDate' => $this->getOutwardDate(),
+                'outwardLimitDate' => $this->getOutwardLimitDate(),
+                'returnDate' => $this->getReturnDate(),
+                'returnLimitDate' => $this->getReturnLimitDate(),
+                'outwardTime' => $this->getOutwardTime(),
+                'returnTime' => $this->getOutwardTime(),
+                'priceKm' => $this->getPriceKm(),
+                'outwardDriverPrice' => $this->getOutwardDriverPrice(),
+                'smoke' => $this->isSmoke(),
+                'seatsDriver' => $this->getSeatsDriver(),
+                'seatsPassenger' => $this->getSeatsPassenger(),
+                'music' => $this->hasMusic(),
+                'luggage' => $this->hasLuggage(),
+                'bike' => $this->hasBike(),
+                'backSeats' => $this->hasBackSeats(),
+                'comment' => $this->getComment()
+            ];
     }
 }
