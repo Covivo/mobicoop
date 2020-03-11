@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,40 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Api\Service\Strategy\Auth;
+namespace App\Auth\Rule;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use App\Auth\Interfaces\AuthRuleInterface;
+use App\Communication\Entity\Message;
 
 /**
- * JsonAuthStrategy
- * based on https://github.com/eljam/guzzle-jwt-middleware
+ *  Check that the requester is involved in the related Message (=author or recipient)
  */
-class JsonAuthStrategy extends AbstractBaseAuthStrategy
+class MessageSender implements AuthRuleInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function execute($requester, $item, $params)
     {
-        parent::configureOptions($resolver);
+        if (!isset($params['message'])) {
+            return false;
+        }
+        /**
+         * @var Message $message
+         */
+        $message = $params['message'];
+        // If the requester is the sender
+        if ($message->getUser()->getId()==$requester->getId()) {
+            return true;
+        }
 
-        $resolver->setDefaults([
-            'json_fields' => ['_username', '_password'],
-        ]);
-
-        $resolver->setRequired(['json_fields']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRequestOptions()
-    {
-        return [
-            \GuzzleHttp\RequestOptions::JSON => [
-                $this->options['json_fields'][0] => $this->options['username'],
-                $this->options['json_fields'][1] => $this->options['password'],
-            ],
-        ];
+        return false;
     }
 }

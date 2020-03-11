@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -88,6 +88,23 @@ use App\Event\Controller\ReportAction;
  *              },
  *              "security"="is_granted('event_report',object)"
  *          },
+ *          "created"={
+ *              "method"="GET",
+ *              "path"="/events/created",
+ *              "normalization_context"={"groups"={"readEvent"}},
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "userId",
+ *                          "in" = "query",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "The id of the user for which we want the events"
+ *                      }
+ *                  }
+ *              },
+ *              "security_post_denormalize"="is_granted('event_read',object)"
+ *          },
  *          "valide_create_event"={
  *              "method"="POST",
  *              "path"="/events/{id}/valide_create_event",
@@ -99,7 +116,7 @@ use App\Event\Controller\ReportAction;
  *              "method"="GET",
  *              "path"="/events/{id}/ads",
  *              "normalization_context"={"groups"={"readEvent"}},
- *              "security_post_denormalize"="is_granted('event_read',object)"
+ *              "security_post_denormalize"="is_granted('event_list_ads',object)"
  *          },
  *      },
  *      itemOperations={
@@ -391,7 +408,7 @@ class Event
         return $this->user;
     }
     
-    public function setUser(User $user): self
+    public function setUser(?User $user): self
     {
         $this->user = $user;
         

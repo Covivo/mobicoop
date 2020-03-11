@@ -73,7 +73,7 @@ class ArticleVoter extends Voter
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canShow(User $user)
+    private function canShow(?User $user)
     {
         return $this->permissionManager->checkPermission('article_read', $user);
     }

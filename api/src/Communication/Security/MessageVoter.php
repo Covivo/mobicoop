@@ -23,33 +23,32 @@
 
 namespace App\Communication\Security;
 
+use App\Auth\Service\AuthManager;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\Auth\Service\PermissionManager;
-use Symfony\Component\Security\Core\User\UserInterface;
 use App\Communication\Entity\Message;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class MessageVoter extends Voter
 {
-    const MESSAGE_CREATE = 'message_create';
-    const MESSAGE_LIST = 'message_list';
-    const MESSAGE_READ = 'message_read';
+    const USER_MESSAGE_CREATE = 'user_message_create';
+    const USER_MESSAGE_READ = 'user_message_read';
+    const USER_MESSAGE_DELETE = 'user_message_delete';
     
-    private $permissionManager;
+    private $authManager;
 
-    public function __construct(PermissionManager $permissionManager)
+    public function __construct(AuthManager $authManager)
     {
-        $this->permissionManager = $permissionManager;
+        $this->authManager = $authManager;
     }
 
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::MESSAGE_CREATE,
-            self::MESSAGE_LIST,
-            self::MESSAGE_READ
+            self::USER_MESSAGE_CREATE,
+            self::USER_MESSAGE_READ,
+            self::USER_MESSAGE_DELETE
             ])) {
             return false;
         }
@@ -57,9 +56,9 @@ class MessageVoter extends Voter
         // only vote on Message objects inside this voter
         // only for items actions
         if (!in_array($attribute, [
-            self::MESSAGE_CREATE,
-            self::MESSAGE_LIST,
-            self::MESSAGE_READ
+            self::USER_MESSAGE_CREATE,
+            self::USER_MESSAGE_READ,
+            self::USER_MESSAGE_DELETE
             ]) && !($subject instanceof Paginator) && !($subject instanceof Message)) {
             return false;
         }
@@ -68,51 +67,36 @@ class MessageVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $requester = $token->getUser();
-
         switch ($attribute) {
-            case self::MESSAGE_CREATE:
-                return $this->canCreateMessage($requester);
-            case self::MESSAGE_LIST:
-                return $this->canReadMessages($requester);
-            case self::MESSAGE_READ:
-                return $this->canReadMessage($requester, $subject);
+            case self::USER_MESSAGE_CREATE:
+                return $this->canCreateMessage($subject);
+            case self::USER_MESSAGE_READ:
+                if (is_array($subject)) {
+                    // If this is a complete thread we are sending the first message to check the permission
+                    (is_array($subject)) ? $message = $subject[0] : $message = $subject;
+                    return $this->canReadMessage($message);
+                } else {
+                    return $this->canReadMessage($subject);
+                }
+                // no break
+            case self::USER_MESSAGE_DELETE:
+                return $this->canDeleteMessage($subject);
         }
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canCreateMessage(UserInterface $requester)
+    private function canCreateMessage(Message $message)
     {
-        // only registered users/apps can create messages
-        if (!$requester instanceof UserInterface) {
-            return false;
-        }
-        return $this->permissionManager->checkPermission('user_message_create', $requester);
+        return $this->authManager->isAuthorized(self::USER_MESSAGE_CREATE, ['message'=>$message]);
     }
 
-    private function canReadMessages(UserInterface $requester)
+    private function canReadMessage(Message $message)
     {
-        // only registered users/apps can create messages
-        if (!$requester instanceof UserInterface) {
-            return false;
-        }
-        if ($this->permissionManager->checkPermission('user_message_read', $requester)) {
-            // we have to check that the user is allowed to read the messages, eg. he is the owner or one of the recipients
-            return true;
-        }
-        return false;
+        return $this->authManager->isAuthorized(self::USER_MESSAGE_READ, ['message'=>$message]);
     }
 
-    private function canReadMessage(UserInterface $requester, Message $message)
+    private function canDeleteMessage(Message $message)
     {
-        // only registered users/apps can create messages
-        if (!$requester instanceof UserInterface) {
-            return false;
-        }
-        if ($this->permissionManager->checkPermission('user_message_read', $requester)) {
-            // we have to check that the user is allowed to read the message, eg. he is the owner or one of the recipients
-            return true;
-        }
-        return false;
+        return $this->authManager->isAuthorized(self::USER_MESSAGE_DELETE, ['message'=>$message]);
     }
 }

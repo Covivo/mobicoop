@@ -71,6 +71,9 @@ class CarVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        // To DO : Code the real voter
+        return true;
+
         $requester = $token->getUser();
         switch ($attribute) {
             case self::CREATE:

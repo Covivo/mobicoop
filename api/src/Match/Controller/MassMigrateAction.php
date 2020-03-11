@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,18 +21,34 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Api\Service\Strategy\Auth;
+namespace App\Match\Controller;
 
-/**
- * AuthStrategyInterface
- * based on https://github.com/eljam/guzzle-jwt-middleware
- */
-interface AuthStrategyInterface
+use App\Match\Service\MassMigrateManager;
+use App\Match\Entity\Mass;
+use App\TranslatorTrait;
+
+final class MassMigrateAction
 {
-    /**
-     * getRequestOptions.
-     *
-     * @return array
-     */
-    public function getRequestOptions();
+    use TranslatorTrait;
+    
+    private $massMigrateManager;
+
+    public function __construct(MassMigrateManager $massMigrateManager)
+    {
+        $this->massMigrateManager = $massMigrateManager;
+    }
+
+    public function __invoke(Mass $data): Mass
+    {
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Mass id is provided"));
+        }
+
+        // Only qualified Masses can be migrated
+        if ($data->getMassType()!==1) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Mass type"));
+        }
+
+        return $this->massMigrateManager->migrate($data);
+    }
 }

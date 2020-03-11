@@ -24,6 +24,7 @@
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
+use App\Community\Entity\Community;
 
 /**
  *  Check that the requester has joined the related Community
@@ -35,10 +36,32 @@ class CommunityJoined implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        return true;
-        // if (!isset($params['id'])) {
-        //     return false;
-        // }
-        // return $params['id'] == $requester->getId();
+        if (!isset($params['community'])) {
+            return false;
+        }
+        
+        if (!($params['community'] instanceof Community)) {
+            return false;
+        }
+
+        /**
+         * @var Community $community
+         */
+        $community = $params['community'];
+        // We check if this is a secured Community
+        // If so, we check if the requester is a member of this community
+        if (count($community->getCommunitySecurities())>0) {
+            $communityUsers = $community->getCommunityUsers();
+            foreach ($communityUsers as $communityUser) {
+                if ($communityUser->getUser()->getId() == $requester->getId()) {
+                    return true;
+                }
+            }
+        } else {
+            // The community is not secured. No more condition to grant access
+            return true;
+        }
+
+        return false;
     }
 }

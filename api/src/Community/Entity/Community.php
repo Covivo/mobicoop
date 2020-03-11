@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -93,7 +93,7 @@ use App\Community\Controller\JoinAction;
  *          "exists"={
  *              "method"="GET",
  *              "path"="/communities/exists",
- *              "normalization_context"={"groups"={"readCommunity"}},
+ *              "normalization_context"={"groups"={"existsCommunity"}},
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -105,13 +105,25 @@ use App\Community\Controller\JoinAction;
  *                      }
  *                  }
  *              },
- *              "security_post_denormalize"="is_granted('community_read',object)"
+ *              "security_post_denormalize"="is_granted('community_list',object)"
+ *          },
+ *          "owned"={
+ *              "method"="GET",
+ *              "path"="/communities/owned",
+ *              "normalization_context"={"groups"={"readCommunity"}},
+ *              "security_post_denormalize"="is_granted('community_list',object)"
+ *          },
+ *          "ismember"={
+ *              "method"="GET",
+ *              "path"="/communities/ismember",
+ *              "normalization_context"={"groups"={"readCommunity"}},
+ *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },
  *          "ads"={
  *              "method"="GET",
  *              "path"="/communities/{id}/ads",
  *              "normalization_context"={"groups"={"readCommunity"}},
- *              "security_post_denormalize"="is_granted('community_read',object)"
+ *              "security_post_denormalize"="is_granted('community_ads',object)"
  *          },
  *      },
  *      itemOperations={
@@ -142,7 +154,7 @@ class Community
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readCommunity","readCommunityUser","results"})
+     * @Groups({"readCommunity","readCommunityUser","results","existsCommunity"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -152,7 +164,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readCommunity","readCommunityUser","write","results"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity"})
      */
     private $name;
 

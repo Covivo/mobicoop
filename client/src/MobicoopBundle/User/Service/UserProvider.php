@@ -38,7 +38,6 @@ class UserProvider implements UserProviderInterface
     private $router;
     private $translator;
     private $request;
-    private $security;
     private $user;
 
     /**
@@ -53,7 +52,6 @@ class UserProvider implements UserProviderInterface
         $this->request = $requestStack->getCurrentRequest();
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(User::class);
-        $this->user = null;
     }
 
     /**
@@ -62,9 +60,11 @@ class UserProvider implements UserProviderInterface
     public function loadUserByUsername($username)
     {
         if ($this->request->get('email') && $this->request->get('password')) {
+            // we want to login, we set the credentials for the dataProvider
             $this->dataProvider->setUsername($this->request->get('email'));
             $this->dataProvider->setPassword($this->request->get('password'));
-            $this->dataProvider->useLoginPath();
+            // we set the dataProvider to private => will discard the current JWT token
+            $this->dataProvider->setPrivate(true);
         }
         return $this->fetchUser($username);
     }
@@ -79,9 +79,7 @@ class UserProvider implements UserProviderInterface
                 sprintf('Instances of "%s" are not supported.', get_class($user))
             );
         }
-        $this->dataProvider->setToken($user->getApiToken());
         $username = $user->getUsername();
-        $this->user = $user;
 
         return $this->fetchUser($username);
     }
@@ -99,20 +97,17 @@ class UserProvider implements UserProviderInterface
      */
     private function fetchUser($username)
     {
-        if (is_null($this->user)) {
-            $response = $this->dataProvider->getSpecialCollection("me");
-            if ($response->getCode() == 200) {
-                $userData = $response->getValue();
+        $response = $this->dataProvider->getSpecialCollection("me");
+        if ($response->getCode() == 200) {
+            $userData = $response->getValue();
 
-                if (is_array($userData->getMember()) && count($userData->getMember())==1) {
-                    return $userData->getMember()[0];
-                }
+            if (is_array($userData->getMember()) && count($userData->getMember())==1) {
+                return $userData->getMember()[0];
             }
-        
-            throw new UsernameNotFoundException(
-                sprintf('Username "%s" does not exist.', $username)
-            );
         }
-        return $this->user;
+    
+        throw new UsernameNotFoundException(
+            sprintf('Username "%s" does not exist.', $username)
+        );
     }
 }

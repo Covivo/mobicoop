@@ -24,6 +24,7 @@
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
+use App\Communication\Entity\Message;
 
 /**
  *  Check that the requester is involved in the related Message (=author or recipient)
@@ -35,10 +36,27 @@ class MessageActor implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        return true;
-        // if (!isset($params['id'])) {
-        //     return false;
-        // }
-        // return $params['id'] == $requester->getId();
+        if (!isset($params['message'])) {
+            return false;
+        }
+        /**
+         * @var Message $message
+         */
+        $message = $params['message'];
+        // If the requester is the sender
+        if ($message->getUser()->getId()==$requester->getId()) {
+            return true;
+        }
+
+        // If the requester is one of the recipients
+        $recipients = $message->getRecipients();
+        foreach ($recipients as $recipient) {
+            if ($recipient->getUser()->getId() == $requester->getId()) {
+                return true;
+            }
+        }
+
+
+        return false;
     }
 }

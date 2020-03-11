@@ -5,6 +5,6 @@
 {% else %}
     {% set deleter = ask.user %}
 {% endif %}
-{{"hello"|trans}} {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
-{{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}} {{"accountDeleted"|trans}} {{ context.origin.address.displayLabel[0] }} {{"at"|trans}} {{ context.destination.address.displayLabel[0] }}. {{"findNewCarpool"|trans}} {{api_env('SMS_PLATFORM_NAME')}}.
-{{"signature"|trans}} {{api_env('SMS_PLATFORM_NAME')}}
+{{"hello"|trans|raw}} {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
+{{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}} {{"accountDeleted"|trans|raw}} {{ context.origin.address.displayLabel[0] }} {{"at"|trans|raw}} {{ context.destination.address.displayLabel[0] }}. {{"findNewCarpool"|trans|raw}} {{api_env('SMS_PLATFORM_NAME')}}.
+{{"signature"|trans|raw}} {{api_env('SMS_PLATFORM_NAME')}}

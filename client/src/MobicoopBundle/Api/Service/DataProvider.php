@@ -46,9 +46,13 @@ use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\HandlerStack;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\JwtMiddleware;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\JwtToken;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\JwtManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Strategy\Auth\JsonAuthStrategy;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Data provider service.
@@ -86,7 +90,12 @@ class DataProvider
     private $loginPath;
     private $tokenId;
     private $authLoginPath;
-    private $currentToken;
+    private $session;
+
+    /**
+     * @var JWTToken $jwtToken
+     */
+    private $jwtToken;
 
     private $client;
     private $resource;
@@ -94,11 +103,11 @@ class DataProvider
     private $serializer;
     private $deserializer;
     private $format;
+    private $cache;
 
     /**
      * Constructor.
      *
-     * @param bool $forceLogin              Force login
      * @param string $uri                   The api uri
      * @param string $username              The default api username
      * @param string $password              The default api password
@@ -107,7 +116,7 @@ class DataProvider
      * @param string $tokenId               The token id
      * @param Deserializer $deserializer    The deserializer
      */
-    public function __construct(string $uri, string $username, string $password, string $authPath, string $loginPath, string $tokenId, Deserializer $deserializer)
+    public function __construct(string $uri, string $username, string $password, string $authPath, string $loginPath, string $tokenId, Deserializer $deserializer, SessionInterface $session)
     {
         $this->uri = $uri;
         $this->username = $username;
@@ -115,11 +124,36 @@ class DataProvider
         $this->authPath = $authPath;
         $this->loginPath = $loginPath;
         $this->tokenId = $tokenId;
-
         $this->authLoginPath = $authPath;
+        $this->session = $session;
+        $this->private = false;
+        $this->cache = new FilesystemAdapter();
 
-        // Create the auth strategy
-        $this->createAuthStrategy();
+        // check an existing jwt token
+        if ($apiToken = $this->session->get('apiToken')) {
+            // there's an api token in session, we use it !
+            if (!$apiToken->isValid()) {
+                $this->session->remove('apiToken');
+            } else {
+                $this->jwtToken = $apiToken;
+                $this->private = true;
+            }
+        } else {
+            // check if there's a global api token in system cache
+            $cachedToken = $this->cache->getItem($this->tokenId.'.jwt.token');
+            if ($cachedToken->isHit()) {
+                /**
+                 * @var JWTToken $jwtToken
+                 */
+                $jwtToken = $cachedToken->get();
+                if ($jwtToken && $jwtToken->isValid()) {
+                    $this->jwtToken = $jwtToken;
+                } else {
+                    // clear cache
+                    $this->cache->deleteItem($this->tokenId.'.jwt.token');
+                }
+            }
+        }
         
         $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
 
@@ -129,50 +163,8 @@ class DataProvider
         $this->serializer = new Serializer($normalizers, $encoders);
         $this->deserializer = $deserializer;
         $this->format = self::RETURN_OBJECT;
-    }
 
-    /**
-     * Create the auth strategy
-     *
-     * @return void
-     */
-    private function createAuthStrategy()
-    {
-        $authStrategy = new JsonAuthStrategy(
-            [
-                'username' => $this->username,
-                'password' => $this->password,
-                'json_fields' => ['username', 'password'],
-            ]
-        );
-
-        $authClient = new Client([
-                'base_uri' => $this->uri
-        ]);
-        //Create the JwtManager
-        $jwtManager = new JwtManager(
-            $authClient,
-            $authStrategy,
-            $this->tokenId,
-            true,
-            [
-                'token_url' => $this->authLoginPath,
-            ],
-            $this->currentToken ? $this->currentToken : null
-        );
-        
-        // Create a HandlerStack
-        $stack = HandlerStack::create();
-
-        // Add middleware
-        $stack->push(new JwtMiddleware($jwtManager), 'JWT');
-
-        $this->client = new Client(['handler' => $stack, 'base_uri' => $this->uri]);
-    }
-
-    public function setToken(string $token)
-    {
-        $this->currentToken = $token;
+        $this->client = new Client(['base_uri' => $this->uri]);
     }
 
     public function setUsername(string $username)
@@ -185,15 +177,71 @@ class DataProvider
         $this->password = $password;
     }
 
-    public function useAuthPath()
+    public function setPrivate(bool $private)
     {
-        $this->authLoginPath = $this->authPath;
+        $this->private = $private;
+        if ($private) {
+            $this->authLoginPath = $this->loginPath;
+            $this->jwtToken = null;
+        } else {
+            $this->authLoginPath = $this->authPath;
+        }
     }
 
-    public function useLoginPath()
+    private function getHeaders(bool $json=true)
     {
-        $this->authLoginPath = $this->loginPath;
-        $this->createAuthStrategy();
+        if (is_null($this->jwtToken)) {
+            $token = $this->getJwtToken();
+            $expiration = null;
+
+            // decode token to get the expiration
+            if (count($jwtParts = explode('.', $token)) === 3
+                && is_array($payload = json_decode(base64_decode($jwtParts[1]), true))
+                // https://tools.ietf.org/html/rfc7519.html#section-4.1.4
+                && array_key_exists('exp', $payload)
+            ) {
+                // Manually process the payload part to avoid having to drag in a new library
+                $expiration = new \DateTime('@' . $payload['exp'], new \DateTimeZone('UTC'));
+            }
+
+            $this->jwtToken = new JWTToken($this->getJwtToken(), $expiration);
+
+            if ($this->private) {
+                // private request, store in session
+                $this->session->set('apiToken', $this->jwtToken);
+            } else {
+                // public request, store in system cache
+                $cachedToken = $this->cache->getItem($this->tokenId.'.jwt.token');
+                $cachedToken->set($this->jwtToken);
+                $this->cache->save($cachedToken);
+            }
+        }
+
+        $headers['Authorization'] = 'Bearer ' . $this->jwtToken->getToken();
+        if ($json) {
+            $headers['accept'] = 'application/json';
+        }
+        return $headers;
+    }
+
+    private function getJwtToken()
+    {
+        $value = null;
+        try {
+            $clientResponse = $this->client->post($this->authLoginPath, [
+                        'headers' => ['accept' => 'application/json'],
+                        RequestOptions::JSON => [
+                            "username" => $this->username,
+                            "password" => $this->password
+                        ]
+                ]);
+            $value = json_decode((string) $clientResponse->getBody(), true);
+        } catch (ServerException $e) {
+            return null;
+        } catch (ClientException $e) {
+            return null;
+        }
+        return $value["token"];
     }
 
     /**
@@ -312,9 +360,11 @@ class DataProvider
     {
         try {
             if ($this->format == self::RETURN_JSON) {
-                $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
+                $headers = $this->getHeaders();
+                $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers' => $headers]);
             } else {
-                $clientResponse = $this->client->get($this->resource, ['query'=>$params]);
+                $headers = $this->getHeaders(false);
+                $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers' => $headers]);
             }
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
@@ -339,9 +389,11 @@ class DataProvider
     {
         try {
             if ($this->format == self::RETURN_JSON) {
-                $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
+                $headers = $this->getHeaders();
+                $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params, 'headers' => $headers]);
             } else {
-                $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params]);
+                $headers = $this->getHeaders(false);
+                $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params, 'headers' => $headers]);
             }
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));

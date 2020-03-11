@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,24 +21,8 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Api\Service\Strategy\Auth;
+namespace App\Communication\Exception;
 
-/**
- * HttpBasicAuthStrategy
- * based on https://github.com/eljam/guzzle-jwt-middleware
- */
-class HttpBasicAuthStrategy extends AbstractBaseAuthStrategy
+class MessageNotFoundException extends \LogicException
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getRequestOptions()
-    {
-        return [
-            \GuzzleHttp\RequestOptions::AUTH => [
-                $this->options['username'],
-                $this->options['password'],
-            ],
-        ];
-    }
 }

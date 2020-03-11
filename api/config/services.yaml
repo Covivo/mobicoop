@@ -39,17 +39,21 @@ services:
 
     # EVENT LISTENERS
 
+    'App\EventListener\DeserializeListener':
+        tags:
+            - { name: 'kernel.event_listener', event: 'kernel.request', method: 'onKernelRequest', priority: 2 }
+        # Autoconfiguration must be disabled to set a custom priority
+        autoconfigure: false
+        decorates: 'api_platform.listener.request.deserialize'
+        arguments:
+            $decorated: '@App\EventListener\DeserializeListener.inner'
+
     # JWT Event Listener
     mobicoop.event.jwt_created_listener:
         class: App\Security\EventListener\JWTCreatedListener
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
     
-    mobicoop.event.jwt_encoded_listener:
-        class: App\Security\EventListener\JWTEncodedListener
-        tags:
-            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_encoded, method: onJWTEncoded }
-
     # Direction Load Listener
     mobicoop.direction.direction_load_listener:
         class: App\Geography\EventListener\DirectionLoadListener
@@ -146,6 +150,11 @@ services:
     # Communication
     App\Communication\Controller\:
         resource: '../src/Communication/Controller'
+        arguments:
+                $params:
+                    smsUsername: '%env(string:SMS_USERNAME)%'
+                    smsPassword: '%env(string:SMS_PASSWORD)%'
+                    smsSender: '%env(string:SMS_SENDER)%'
         tags: ['controller.service_arguments']
 
     App\Communication\Service\NotificationManager:
@@ -315,6 +324,15 @@ services:
         arguments:
             $params: '%mass%'
             $emailTemplatePath: '%env(resolve:MOBIMATCH_EMAIL_TEMPLATE_PATH)%'
+        tags:
+            - { name: monolog.logger, channel: mass }
+
+    App\Match\Service\MassMigrateManager:
+        arguments:
+            $params:
+                chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
+                music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
+                smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'
         tags:
             - { name: monolog.logger, channel: mass }
 
