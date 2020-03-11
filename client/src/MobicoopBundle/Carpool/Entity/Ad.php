@@ -934,6 +934,16 @@ class Ad implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getOrigin()
+    {
+        return $this->getOutwardWaypoints()[0]["address"];
+    }
+
+    public function getDestination()
+    {
+        return $this->getOutwardWaypoints()[count($this->getOutwardWaypoints()) - 1]["address"];
+    }
+
     public function jsonSerialize()
     {
         return
@@ -943,12 +953,12 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'oneWay' => $this->isOneWay(),
                 'outwardWaypoints' => $this->getOutwardWaypoints(),
                 'returnWaypoints' => $this->getReturnWaypoints(),
-                'outwardDate' => $this->getOutwardDate(),
+                'outwardDate' => $this->getOutwardDate()->format('Y-m-d'),
                 'outwardLimitDate' => $this->getOutwardLimitDate(),
-                'returnDate' => $this->getReturnDate(),
+                'returnDate' => $this->getReturnDate()->format('Y-m-d'),
                 'returnLimitDate' => $this->getReturnLimitDate(),
                 'outwardTime' => $this->getOutwardTime(),
-                'returnTime' => $this->getOutwardTime(),
+                'returnTime' => $this->getReturnTime(),
                 'priceKm' => $this->getPriceKm(),
                 'outwardDriverPrice' => $this->getOutwardDriverPrice(),
                 'smoke' => $this->isSmoke(),
@@ -958,7 +968,9 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'luggage' => $this->hasLuggage(),
                 'bike' => $this->hasBike(),
                 'backSeats' => $this->hasBackSeats(),
-                'comment' => $this->getComment()
+                'message' => $this->getComment(),
+                'origin' => $this->getOrigin(),
+                'destination' => $this->getDestination(),
             ];
     }
 }

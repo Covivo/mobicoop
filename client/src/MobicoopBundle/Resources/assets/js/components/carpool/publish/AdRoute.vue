@@ -332,6 +332,10 @@ export default {
     communityIds: {
       type: Array,
       default: null
+    },
+    initWaypoints: {
+      type: Array,
+      default: null
     }
   },
   data() {
@@ -370,6 +374,16 @@ export default {
     initDestination() {
       this.destination = this.initDestination;
       this.getRoute();
+    },
+    initWaypoints: {
+      immediate: true,
+      handler() {
+        for (let i = 0; i < this.initWaypoints.length && i < 4; i ++) {
+          this.waypoints[i].visible = true;
+          this.waypoints[i].address = this.initWaypoints[i].address
+        }
+        this.getRoute();
+      }
     }
   },
   mounted(){

@@ -504,6 +504,14 @@ export default {
       type: String,
       default: null
     },
+    initReturnDate: {
+      type: String,
+      default: null
+    },
+    initReturnTime: {
+      type: String,
+      default: null
+    },
     defaultMarginTime: {
       type: Number,
       default: null
@@ -516,14 +524,14 @@ export default {
   data() {
     return {
       outwardDate: this.initOutwardDate,
-      outwardTime: this.initOutwardTime,
-      returnDate: null,
-      returnTime: null,
+      outwardTime: moment(this.initOutwardTime).format('HH:mm'),
+      returnDate: this.initReturnDate,
+      returnTime: moment(this.initReturnTime).format('HH:mm'),
       menuOutwardDate: false,
       menuOutwardTime: false,
       menuReturnDate: false,
       menuReturnTime: false,
-      returnTrip: false,
+      returnTrip: !!(this.initReturnDate && this.initReturnTime),
       marginTime: this.defaultMarginTime,
       locale: this.$i18n.locale,
       arrayDay : ['mon','tue','wed','thu','fri','sat','sun'],

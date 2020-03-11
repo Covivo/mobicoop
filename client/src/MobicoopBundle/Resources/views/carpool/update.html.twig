@@ -1,11 +1,20 @@
 {% extends '@Mobicoop/base.html.twig' %}
 {% block title %}
-  {% trans from 'ui' %}carpool.ad_update.title{% endtrans %} - {{ app_name }}
+    {% trans from 'ui' %}carpool.ad_update.title{% endtrans %} - {{ app_name }}
 {% endblock %}
 {% block main %}
-  <ad-publish 
-    :ad="{{ ad | json_encode }}"
-    :is-update="true"
-  />
+    <ad-publish
+            geo-search-url="{{ geoCompleteUri }}"
+            :ad="{{ ad | json_encode }}"
+            :user="{{ app.user | json_encode }}"
+            :is-update="true"
+            :map-provider="{{ mapProvider|json_encode }}"
+            :url-tiles="{{ urlTiles|json_encode }}"
+            :attribution-copyright="{{ attributionCopyright|json_encode }}"
+            :init-origin="{{ ad.origin | json_encode }}"
+            :init-destination="{{ ad.destination | json_encode}}"
+            :init-regular="{% if (ad.frequency == 2) %}true{% else %}false{% endif %}"
+            :default-margin-time="{{ marginTime }}"
+    />
 
 {% endblock %}

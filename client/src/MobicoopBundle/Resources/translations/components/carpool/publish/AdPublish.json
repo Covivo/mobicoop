@@ -1,7 +1,12 @@
 {
     "fr": {
-        "title": "Publier une annonce",
-        "subtitle": "Commencer votre annonce",
+        "create": {
+            "title": "Publier une annonce",
+            "subtitle": "Commencer votre annonce"
+        },
+        "update" : {
+           "title": "Modifier votre annonce"
+        },
         "stepper": {
             "header": {
                 "search_journey": "Commencer votre annonce",
@@ -52,6 +57,7 @@
                 "next": "Suivant",
                 "previous": "Précédent",
                 "publish_ad": "Publier mon annonce",
+                "update_ad": "Modifier mon annonce",
                 "notValid" : "Vous devez être loggué pour publier une annonce et avoir fournis toutes les informations du trajet"
             }
         },
@@ -73,6 +79,7 @@
         "messageRoundedPrice": "Nous avons arrondi le tarif de votre annonce afin d'améliorer votre expérience et celle des autres usagers. Merci de votre compréhension.",
         "route": {
             "publish": "covoiturage/annonce/poster",
+            "update": "covoiturage/annonce/{id}/modifier",
             "myAds": "/utilisateur/profil/modifier/mes-annonces",
             "roundPrice": "/prix/arrondir"
         }

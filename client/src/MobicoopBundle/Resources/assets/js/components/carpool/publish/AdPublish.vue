@@ -24,9 +24,9 @@
         xl="8"
         align="center"
       >
-        <h1>{{ $t('title') }}</h1>
+        <h1>{{ $t( isUpdate ? 'update.title' : 'create.title') }}</h1>
         <h3 style="height: 30px">
-          {{ step === 1 ? $t('subtitle') : "" }}
+          {{ step === 1 && !isUpdate ? $t('create.subtitle') : "" }}
         </h3>
       </v-col>
     </v-row>
@@ -188,6 +188,8 @@
               <ad-planification
                 :init-outward-date="outwardDate"
                 :init-outward-time="outwardTime"
+                :init-return-date="returnDate"
+                :init-return-time="returnTime"
                 :regular="regular"
                 :default-margin-time="defaultMarginTime"
                 :route="route"
@@ -205,6 +207,7 @@
                     :user="user"
                     :init-origin="origin"
                     :init-destination="destination"
+                    :init-waypoints="initWaypoints"
                     :community-ids="communityIds"
                     @change="routeChanged"
                   />
@@ -585,9 +588,9 @@
               color="secondary"
               style="margin-left: 30px;"
               align-center
-              @click="postAd"
+              @click="isUpdate ? updateAd : postAd"
             >
-              {{ $t('stepper.buttons.publish_ad') }}
+              {{ isUpdate ? $t('stepper.buttons.update_ad', {id: ad.id}) : $t('stepper.buttons.publish_ad') }}
             </v-btn>
           </div>
         </template>
@@ -598,7 +601,7 @@
 </template>
 
 <script>
-import { merge } from "lodash";
+import { merge, isEmpty } from "lodash";
 import Translations from "@translations/components/carpool/publish/AdPublish.json";
 import TranslationsClient from "@clientTranslations/components/carpool/publish/AdPublish.json";
 
@@ -747,6 +750,7 @@ export default {
       alert: this.$t('messageRoundedPrice'),
       priceForbidden: false,
       returnTimeIsValid: true,
+      initWaypoints: []
     }
   },
   computed: {
@@ -849,6 +853,9 @@ export default {
       } else {
         return "error";
       }
+    },
+    isValidUpdate () {
+      return this.isUpdate && !isEmpty(this.ad);
     }
   },
   watch: {
@@ -869,6 +876,25 @@ export default {
     step(){
       this.$refs.mmapSummary.redrawMap();
       this.$refs.mmapRoute.redrawMap();
+    },
+    ad: {
+      immediate: true,
+      handler () {
+        this.origin = this.ad.origin;
+        this.outwardDate = this.ad.outwardDate;
+        this.outwardTime = this.ad.outwardTime;
+        this.returnDate = this.ad.returnDate;
+        this.returnTime = this.ad.returnTime;
+        this.initWaypoints = this.ad.outwardWaypoints.splice(this.ad.outwardWaypoints.length -1, 1).splice(1,1);
+        this.seats = this.ad.seatsDriver; //todo: check
+        this.luggage = this.ad.luggage;
+        this.smoke = this.ad.smoke;
+        this.bike = this.ad.bike;
+        this.backSeats = this.ad.backSeats;
+        this.music = this.ad.music;
+        this.message = this.ad.message;
+        this.price = this.ad.outwardDriverPrice; //todo: check
+      }
     }
   },
   methods: {
@@ -1004,6 +1030,9 @@ export default {
         .finally(function () {
           // self.loading = false;
         });
+    },
+    updateAd () {
+      console.log("update");
     },
     roundPrice (price, frequency, doneByUser = false) {
       if (price >= 0 && frequency > 0) {
