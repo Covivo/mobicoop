@@ -59,7 +59,7 @@ class UserVoter extends Voter
             return false;
         }
       
-        // only vote on Article objects inside this voter
+        // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::USER_CREATE,
             self::USER_READ,

@@ -93,7 +93,7 @@ use App\Community\Controller\JoinAction;
  *          "exists"={
  *              "method"="GET",
  *              "path"="/communities/exists",
- *              "normalization_context"={"groups"={"readCommunity"}},
+ *              "normalization_context"={"groups"={"existsCommunity"}},
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -105,30 +105,25 @@ use App\Community\Controller\JoinAction;
  *                      }
  *                  }
  *              },
- *              "security_post_denormalize"="is_granted('community_read',object)"
+ *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },
  *          "owned"={
  *              "method"="GET",
  *              "path"="/communities/owned",
  *              "normalization_context"={"groups"={"readCommunity"}},
- *              "swagger_context" = {
- *                  "parameters" = {
- *                      {
- *                          "name" = "userId",
- *                          "in" = "query",
- *                          "type" = "number",
- *                          "format" = "integer",
- *                          "description" = "The id of the user for which we want the communities"
- *                      }
- *                  }
- *              },
- *              "security_post_denormalize"="is_granted('community_read',object)"
+ *              "security_post_denormalize"="is_granted('community_list',object)"
+ *          },
+ *          "ismember"={
+ *              "method"="GET",
+ *              "path"="/communities/ismember",
+ *              "normalization_context"={"groups"={"readCommunity"}},
+ *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },
  *          "ads"={
  *              "method"="GET",
  *              "path"="/communities/{id}/ads",
  *              "normalization_context"={"groups"={"readCommunity"}},
- *              "security_post_denormalize"="is_granted('community_read',object)"
+ *              "security_post_denormalize"="is_granted('community_ads',object)"
  *          },
  *      },
  *      itemOperations={
@@ -159,7 +154,7 @@ class Community
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readCommunity","readCommunityUser","results"})
+     * @Groups({"readCommunity","readCommunityUser","results","existsCommunity"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -169,7 +164,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readCommunity","readCommunityUser","write","results"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity"})
      */
     private $name;
 

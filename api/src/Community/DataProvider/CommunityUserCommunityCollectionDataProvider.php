@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -28,17 +28,15 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Community\Entity\Community;
 use App\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Collection data provider for Community search (by name).
+ * Collection data provider for Community user search.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  *
  */
-final class CommunityIsOwnedByUserCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class CommunityUserCommunityCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
     private $communityManager;
@@ -53,12 +51,11 @@ final class CommunityIsOwnedByUserCollectionDataProvider implements CollectionDa
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Community::class === $resourceClass && $operationName === "owned";
+        return Community::class === $resourceClass && $operationName === "ismember";
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        (!is_null($this->request->get("userId"))) ? $userId = $this->request->get("userId") : $userId = $this->security->getUser()->getId();
-        return $this->communityManager->getOwnedCommunities($userId);
+        return $this->communityManager->getCommunitiesForUser($this->security->getUser()->getId());
     }
 }

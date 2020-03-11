@@ -147,6 +147,21 @@ class CommunityManager
     }
 
     /**
+     * Get communities where a user is registered
+     *
+     * @param integer $userId The user id
+     * @return void
+     */
+    public function getCommunitiesForUser(?int $userId)
+    {
+        $user = null;
+        if ($userId && !$user = $this->userRepository->find($userId)) {
+            return [];
+        }
+        return $this->communityRepository->findByUser($user);
+    }
+
+    /**
      * Check the credentials against a security file
      *
      * @param CommunitySecurity $security
