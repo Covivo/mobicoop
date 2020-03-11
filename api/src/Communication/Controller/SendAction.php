@@ -41,7 +41,7 @@ class SendAction
     private $entityManager;
     private $askHistoryRepository;
     
-    public function __construct(EntityManagerInterface $entityManager, AskHistoryRepository $askHistoryRepository)
+    public function __construct(EntityManagerInterface $entityManager, AskHistoryRepository $askHistoryRepository, array $params)
     {
         $this->entityManager = $entityManager;
         $this->askHistoryRepository = $askHistoryRepository;

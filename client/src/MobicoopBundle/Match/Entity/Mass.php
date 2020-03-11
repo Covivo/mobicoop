@@ -36,12 +36,14 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class Mass implements ResourceInterface
 {
+    const TYPE_ANONYMOUS = 0;
+    const TYPE_QUALIFIED = 1;
+
     const NB_WORKING_DAY = 228;
     const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070;
     const FLAT_EARTH_CIRCUMFERENCE_IN_MILES = 78186;
     const AVERAGE_EARTH_MOON_DISTANCE_IN_KILOMETERS = 384400;
     const PARIS_NEW_YORK_CO2_IN_GRAM = 875700; // For 1 passenger
-
 
     /**
      * @var int The id of this mass.
@@ -160,6 +162,19 @@ class Mass implements ResourceInterface
      * @var MassMatrix Matrix of carpools
      */
     private $massMatrix;
+
+    /**
+     * @var int Type of Mass (0 : Anonymous, 1 : Qualified)
+     * @Groups({"post","put"})
+     */
+    private $massType;
+
+    /**
+     * @var bool If the checkbox about the legitimity of the import has been checked
+     * @Groups({"post","put"})
+     */
+    private $checkLegit;
+
 
     public function __construct($id = null)
     {
@@ -437,5 +452,25 @@ class Mass implements ResourceInterface
     public function setMassMatrix(?MassMatrix $massMatrix)
     {
         $this->massMatrix = $massMatrix;
+    }
+
+    public function getMassType(): ?int
+    {
+        return $this->massType;
+    }
+
+    public function setMassType(int $massType)
+    {
+        $this->massType = $massType;
+    }
+
+    public function isCheckLegit(): ?bool
+    {
+        return $this->checkLegit;
+    }
+
+    public function setCheckLegit(bool $checkLegit)
+    {
+        $this->checkLegit = $checkLegit;
     }
 }

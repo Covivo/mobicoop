@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -158,5 +158,20 @@ class CommunityRepository
             return true;
         }
         return false;
+    }
+
+    /**
+     *Get communities owned by the user
+     *
+     * @param Int $userId
+     * @return void
+     */
+    public function getOwnedCommunities(Int $userId)
+    {
+        $query = $this->repository->createQueryBuilder('c')
+        ->where('c.user = :userId')
+        ->setParameter('userId', $userId)
+        ->getQuery()->getResult();
+        return $query;
     }
 }

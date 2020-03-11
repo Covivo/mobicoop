@@ -14,3 +14,7 @@ import:
 geography:
     resource: 'Geography/Controller/'
     type: annotation
+
+communication:
+    resource: 'Communication/Controller/'
+    type: annotation
