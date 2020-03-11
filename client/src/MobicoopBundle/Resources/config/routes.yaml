@@ -253,6 +253,16 @@ user_created_events:
         en: /user/events/created
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCreatedEvents   
 
+# Get proposals with accepted asks (AJAX)
+
+user_get_accepted_proposals:
+    methods: [GET]
+    path:
+        fr: /user/proposals/accepted
+        en: /user/proposals/accepted 
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposalsAccepted   
+      
+
 ##################
 # carpool routes #
 ##################

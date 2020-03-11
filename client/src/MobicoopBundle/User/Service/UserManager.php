@@ -686,4 +686,21 @@ class UserManager
 
         return $response->getValue();
     }
+
+    /**
+     * Get the proposals of an user
+     *
+     * @param User $user
+     * @return array|object
+     * @throws \ReflectionException
+     */
+    public function getMyAcceptedProposals(User $user)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
+        $response = $this->dataProvider->getSpecialCollection("futur", ["userId"=>$user->getId()]);
+        
+        $ads = $response->getValue();
+        return $ads;
+    }
 }
