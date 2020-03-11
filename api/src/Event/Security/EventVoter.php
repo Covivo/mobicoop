@@ -67,7 +67,7 @@ class EventVoter extends Voter
             return false;
         }
 
-        // only vote on Article objects inside this voter
+        // only vote on Event objects inside this voter
         if (!in_array($attribute, [
             self::EVENT_CREATE,
             self::EVENT_READ,

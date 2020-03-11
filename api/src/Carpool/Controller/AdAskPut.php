@@ -54,6 +54,8 @@ class AdAskPut
      */
     public function __invoke(Ad $data): Ad
     {
+        echo "ok";
+        die;
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
         }

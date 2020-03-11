@@ -109,7 +109,7 @@ final class Version20200307180232 extends AbstractMigration
         (52, NULL, 1, \'article_manage\', \'Manage articles\'),
         (53, NULL, 1, \'community_create\', \'Create a community\'),
         (54, NULL, 1, \'community_private_create\', \'Create a private community\'),
-        (55, 6, 1, \'community_read\', \'View a community\'),
+        (55, NULL, 1, \'community_read\', \'View a community\'),
         (56, 6, 1, \'community_private_read\', \'View a private community\'),
         (57, NULL, 1, \'community_join\', \'Join/leave a community\'),
         (58, NULL, 1, \'community_join_private\', \'Join/leave a private community\'),

@@ -24,6 +24,7 @@
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
+use App\Carpool\Entity\Matching;
 
 /**
  *  Check that the requester is involved in the related Matching
@@ -35,10 +36,23 @@ class MatchingActor implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        return true;
-        // if (!isset($params['id'])) {
-        //     return false;
-        // }
-        // return $params['id'] == $requester->getId();
+        if (!isset($params['matching'])) {
+            return false;
+        }
+
+        /**
+         * @var Matching $matching
+         */
+        $matching = $params['matching'];
+        // Missing proposal ? That's not normal
+        if (is_null($matching->getProposalOffer()) || is_null($matching->getProposalRequest())) {
+            return false;
+        }
+        $userIdOffer = $matching->getProposalOffer()->getUser()->getId();
+        $userIdRequest = $matching->getProposalRequest()->getUser()->getId();
+        if ($requester->getId() == $userIdOffer || $requester->getId() == $userIdRequest) {
+            return true;
+        }
+        return false;
     }
 }
