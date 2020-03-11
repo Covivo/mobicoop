@@ -282,8 +282,7 @@ use App\Community\Entity\CommunityUser;
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
  *              "controller"=UserThreads::class,
- *              "path"="/users/{id}/threads",
- *              "security"="is_granted('user_messages',object)"
+ *              "path"="/users/{id}/threads"
  *          },
  *          "threadsDirectMessages"={
  *              "method"="GET",
@@ -296,8 +295,7 @@ use App\Community\Entity\CommunityUser;
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
  *              "controller"=UserThreadsCarpoolMessages::class,
- *              "path"="/users/{id}/threadsCarpoolMessages",
- *              "security"="is_granted('user_messages',object)"
+ *              "path"="/users/{id}/threadsCarpoolMessages"
  *          },
  *          "put"={
  *              "method"="PUT",

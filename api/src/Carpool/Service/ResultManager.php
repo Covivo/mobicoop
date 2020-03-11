@@ -2077,4 +2077,41 @@ class ResultManager
 
         return $item;
     }
+
+    /**
+     * Create "user-friendly" results for the asks of an ad
+     * An Ad can have multiple asks, all linked (as a driver, as a passenger, each for outward and return)
+     * The results are different if they are computed for the driver or the passenger
+     * In that case, since the carpool is accepted we know the role so we only need the result of that role.
+     *
+     * @param Ask $ask      The master ask
+     * @param int $userId   The id of the user that makes the request
+     * @return array        The array of results
+     */
+    public function createSimpleAskResults(Ask $ask, int $userId, int $role)
+    {
+        $result = new Result();
+        $result->setId($ask->getId());
+
+        $resultDriver = null;
+        $resultPassenger = null;
+
+        if ($role == Ad::ROLE_DRIVER) {
+            $resultDriver = $this->createAskResultRole($ask, $role);
+        } else {
+            $resultPassenger = $this->createAskResultRole($ask, $role);
+        }
+        
+        $result->setResultDriver($resultDriver);
+        $result->setResultPassenger($resultPassenger);
+        
+        // create the global result
+        $result->setCarpooler($ask->getUser()->getId() == $userId ? $ask->getUserRelated() : $ask->getUser());
+        $result->setFrequency($ask->getCriteria()->getFrequency());
+        $result->setFrequencyResult($ask->getCriteria()->getFrequency());
+        $result = $this->createGlobalResult($result, $ask->getWaypoints());
+
+        // return the result
+        return $result;
+    }
 }
