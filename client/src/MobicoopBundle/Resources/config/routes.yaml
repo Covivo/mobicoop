@@ -264,6 +264,13 @@ carpool_ad_post:
         en: /carpool/ad/post/
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
 
+# update an ad
+carpool_ad_update:
+    path:
+        fr: /covoiturage/annonce/{id}/modifier
+        en: /carpool/ad/{id}/update/
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdUpdate
+
 # post a first ad
 carpool_first_ad_post:
     path:

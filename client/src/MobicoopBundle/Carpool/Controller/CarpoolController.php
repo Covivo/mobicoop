@@ -120,6 +120,59 @@ class CarpoolController extends AbstractController
     }
 
     /**
+     * Create a carpooling ad.
+     */
+    public function carpoolAdUpdate(int $id, AdManager $adManager, UserManager $userManager, Request $request)
+    {
+        $ad = $adManager->getAd($id);
+        $poster = $userManager->getLoggedUser();
+
+        if ($request->isMethod('PUT')) {
+//            $data = json_decode($request->getContent(), true);
+//            if ($poster && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
+//                $this->denyAccessUnlessGranted('post_delegate', $ad);
+//                $data['userId'] = $data['userDelegated'];
+//                $data['posterId'] = $poster->getId();
+//            } else {
+//                $this->denyAccessUnlessGranted('post', $ad);
+//                $data['userId'] = $poster->getId();
+//            }
+//            if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
+//                $data['outwardDate'] = new \DateTime();
+//            } else {
+//                $data['outwardDate'] = \DateTime::createFromFormat('Y-m-d', $data['outwardDate']);
+//            }
+//            if (isset($data['returnDate']) && $data['returnDate'] != '') {
+//                $data['returnDate'] = \DateTime::createFromFormat('Y-m-d', $data['returnDate']);
+//                $data['oneway'] = true; // only for punctual journey
+//            } else {
+//                $data['oneway'] = false; // only for punctual journey
+//            }
+//
+//            // one-way for regular
+//            if ($data['regular']) {
+//                $data['oneway'] = true;
+//                foreach ($data['schedules'] as $schedule) {
+//                    if (isset($schedule['returnTime']) && !is_null($schedule['returnTime'])) {
+//                        $data['oneway'] = false;
+//                    }
+//                }
+//            }
+
+//            return $this->json(['result'=>$adManager->createAd($data)]);
+        }
+        $this->denyAccessUnlessGranted('update_ad', $ad);
+        return $this->render('@Mobicoop/carpool/publish.html.twig', [
+            "pricesRange" => [
+                "mid" => $this->midPrice,
+                "high" => $this->highPrice,
+                "forbidden" => $this->forbiddenPrice
+            ],
+            "regular" => $this->defaultRegular
+        ]);
+    }
+
+    /**
      * Create the first carpooling ad.
      */
     public function carpoolFirstAdPost()

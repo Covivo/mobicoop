@@ -34,6 +34,7 @@ class AdVoter extends Voter
 {
     const CREATE_AD = 'create_ad';
     const DELETE_AD = 'delete_ad';
+    const UPDATE_AD = 'update_ad';
     const POST = 'post';
     const POST_DELEGATE = 'post_delegate';
     const RESULTS = 'results_ad';
@@ -51,6 +52,7 @@ class AdVoter extends Voter
         if (!in_array($attribute, [
             self::CREATE_AD,
             self::DELETE_AD,
+            self::UPDATE_AD,
             self::POST,
             self::POST_DELEGATE,
             self::RESULTS
@@ -75,6 +77,8 @@ class AdVoter extends Voter
                 return $this->canCreateAd();
             case self::DELETE_AD:
                 return $this->canDeleteAd($ad, $user);
+            case self::UPDATE_AD:
+                return $this->canUpdateAd($ad, $user);
             case self::POST:
                 return $this->canPostAd($user);
             case self::POST_DELEGATE:
@@ -99,6 +103,21 @@ class AdVoter extends Voter
             return false;
         }
         return $this->permissionManager->checkPermission('ad_delete', $user, $proposal->getId());
+    }
+
+    private function canUpdateAd(Ad $ad, User $user)
+    {
+        // only registered users can update ad
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        // only the author of the proposal can delete the proposal
+        if ($ad->getUserId() !== $user->getId()) {
+            return false;
+        }
+
+        return $this->permissionManager->checkPermission('ad_update_self', $user, $ad->getId());
     }
 
     private function canPostAd(User $user)

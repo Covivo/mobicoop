@@ -88,7 +88,7 @@ export default {
       let lParams = {
         idAsk: this.askId
       };
-      formData("utilisateur/messages", lParams);
+      formData("/utilisateur/messages", lParams);
     }
   }
 }

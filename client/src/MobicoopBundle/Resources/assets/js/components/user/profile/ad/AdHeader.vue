@@ -69,7 +69,7 @@
       <v-spacer />
       <v-col
         v-if="!isCarpool"
-        cols="8"
+        cols="7"
         class="text-center"
       >
         <p
@@ -81,20 +81,9 @@
       </v-col>
       <v-col
         v-if="!isCarpool"
-        cols="2"
+        cols="3"
         class="text-right"
       >
-        <v-btn
-          v-if="isPausable && !isArchived && !paused"
-          class="secondary my-1 mr-1"
-          icon
-          :loading="loading"
-          @click="pauseAd"
-        >
-          <v-icon class="white--text">
-            mdi-pause
-          </v-icon>
-        </v-btn>
         <v-btn
           v-if="isPausable && !isArchived && paused"
           class="success my-1 mr-1"
@@ -119,17 +108,29 @@
             mdi-delete-outline
           </v-icon>
         </v-btn>
+        <v-btn
+          v-if="!isArchived"
+          class="secondary ma-1"
+          icon
+          :loading="loading"
+          @click="updateAd"
+        >
+          <v-icon class="white--text">
+            mdi-pencil
+          </v-icon>
+        </v-btn>
+        <v-btn
+          v-if="isPausable && !isArchived && !paused"
+          class="secondary my-1 mr-1"
+          icon
+          :loading="loading"
+          @click="pauseAd"
+        >
+          <v-icon class="white--text">
+            mdi-pause
+          </v-icon>
+        </v-btn>
       </v-col>
-      <!-- <v-btn
-        v-if="!isArchived"
-        class="secondary ma-1"
-        icon
-        :loading="loading"
-      >
-        <v-icon class="white--text">
-          mdi-pencil
-        </v-icon>
-      </v-btn> -->
     </v-row>
     
     <!--DIALOG-->
@@ -178,6 +179,7 @@
 <script>
 import { merge } from "lodash";
 import axios from "axios";
+import formData from "../../../../utils/request";
 
 import Translations from "@translations/components/user/profile/ad/MyAds.js";
 import TranslationsClient from "@clientTranslations/components/user/profile/ad/MyAds.js";
@@ -279,6 +281,9 @@ export default {
           self.loading = false;
           self.dialogActive = false;
         })
+    },
+    updateAd () {
+      formData(this.$t('update.route', {id : this.adId}), null, 'GET');
     },
     pauseAd () {
       this.paused = !this.paused;
