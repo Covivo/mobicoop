@@ -49,9 +49,6 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\JwtMiddleware;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\JwtManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Strategy\Auth\JsonAuthStrategy;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Data provider service.
@@ -89,7 +86,7 @@ class DataProvider
     private $loginPath;
     private $tokenId;
     private $authLoginPath;
-    private $session;
+    private $currentToken;
 
     private $client;
     private $resource;
@@ -139,7 +136,7 @@ class DataProvider
      *
      * @return void
      */
-    private function createAuthStrategy() 
+    private function createAuthStrategy()
     {
         $authStrategy = new JsonAuthStrategy(
             [
@@ -157,18 +154,25 @@ class DataProvider
             $authClient,
             $authStrategy,
             $this->tokenId,
+            true,
             [
                 'token_url' => $this->authLoginPath,
-            ]
+            ],
+            $this->currentToken ? $this->currentToken : null
         );
         
         // Create a HandlerStack
         $stack = HandlerStack::create();
 
         // Add middleware
-        $stack->push(new JwtMiddleware($jwtManager));
+        $stack->push(new JwtMiddleware($jwtManager), 'JWT');
 
         $this->client = new Client(['handler' => $stack, 'base_uri' => $this->uri]);
+    }
+
+    public function setToken(string $token)
+    {
+        $this->currentToken = $token;
     }
 
     public function setUsername(string $username)

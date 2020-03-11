@@ -70,7 +70,19 @@ class JwtManager
      */
     protected $cache;
 
+    /**
+     * The id of the token in the cache system
+     *
+     * @var string
+     */
     private $tokenId;
+
+    /**
+     * Use the cache system
+     *
+     * @var bool
+     */
+    private $useCache;
 
     /**
      * Constructor.
@@ -83,11 +95,14 @@ class JwtManager
         ClientInterface $client,
         AuthStrategyInterface $auth,
         string $tokenId="token",
-        array $options = []
+        bool $useCache=true,
+        array $options = [],
+        JwtToken $currentToken = null
     ) {
         $this->client = $client;
         $this->auth = $auth;
         $this->tokenId = $tokenId;
+        $this->useCache = $useCache;
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
             'token_url' => '/token',
@@ -98,14 +113,17 @@ class JwtManager
         $resolver->setRequired(['token_url', 'timeout']);
         $this->options = $resolver->resolve($options);
         
-        // search for a token in the cache
-        $this->cache = new FilesystemAdapter();
-        //$this->cache->deleteItem($this->tokenId.'.jwt.token');
-        $token = $this->cache->getItem($this->tokenId.'.jwt.token');
-        if ($token->isHit()) {
-            $this->token = $token->get();
+        if (!is_null($currentToken)) {
+            $this->token = $currentToken;
+        } elseif ($this->useCache) {
+            // search for a token in the cache
+            $this->cache = new FilesystemAdapter();
+            //$this->cache->deleteItem($this->tokenId.'.jwt.token');
+            $cachedToken = $this->cache->getItem($this->tokenId.'.jwt.token');
+            if ($cachedToken->isHit()) {
+                $this->token = $cachedToken->get();
+            }
         }
-    
     }
 
     /**
@@ -144,9 +162,11 @@ class JwtManager
         $this->token = new JwtToken($body[$this->options['token_key']], $expiration);
 
         // save the token in the cache
-        $token = $this->cache->getItem($this->tokenId.'.jwt.token');
-        $token->set($this->token);
-        $this->cache->save($token);
+        if ($this->useCache) {
+            $cachedToken = $this->cache->getItem($this->tokenId.'.jwt.token');
+            $cachedToken->set($this->token);
+            $this->cache->save($cachedToken);
+        }
 
         return $this->token;
     }

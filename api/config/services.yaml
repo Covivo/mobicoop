@@ -42,9 +42,13 @@ services:
     # JWT Event Listener
     mobicoop.event.jwt_created_listener:
         class: App\Security\EventListener\JWTCreatedListener
-        arguments: [ '@request_stack' ]
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
+    
+    mobicoop.event.jwt_encoded_listener:
+        class: App\Security\EventListener\JWTEncodedListener
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_encoded, method: onJWTEncoded }
 
     # Direction Load Listener
     mobicoop.direction.direction_load_listener:

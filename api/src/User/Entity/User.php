@@ -972,6 +972,14 @@ class User implements UserInterface, EquatableInterface
      */
     private $unsubscribeMessage;
 
+    /**
+     * @var string|null Api token
+     *
+     * @ORM\Column(type="string", length=512, nullable=true)
+     * @Groups({"readUser","write"})
+     */
+    private $apiToken;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -2227,6 +2235,18 @@ class User implements UserInterface, EquatableInterface
     {
         $this->unsubscribeMessage = $unsubscribeMessage;
 
+        return $this;
+    }
+
+    public function getApiToken(): ?string
+    {
+        return $this->apiToken;
+    }
+    
+    public function setApiToken(?string $apiToken): self
+    {
+        $this->apiToken = $apiToken;
+        
         return $this;
     }
 

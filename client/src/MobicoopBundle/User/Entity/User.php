@@ -363,6 +363,11 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      */
     private $unsubscribeMessage;
 
+    /**
+     * @var string The API token
+     */
+    private $apiToken;
+
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -1059,6 +1064,17 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    public function getApiToken(): ?string
+    {
+        return $this->apiToken;
+    }
+    
+    public function setApiToken(?string $apiToken): self
+    {
+        $this->apiToken = $apiToken;
+        
+        return $this;
+    }
 
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()

@@ -36,7 +36,7 @@ use App\User\Service\UserManager;
  *
  */
 final class UserMeCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
-{    
+{
     private $userManager;
     
     public function __construct(UserManager $userManager)
@@ -51,6 +51,9 @@ final class UserMeCollectionDataProvider implements CollectionDataProviderInterf
     
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): array
     {
-        return [$this->userManager->getMe()];
+        if ($user = $this->userManager->getMe()) {
+            return [$user];
+        }
+        return [];
     }
 }

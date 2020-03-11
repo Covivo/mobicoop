@@ -39,6 +39,7 @@ class UserProvider implements UserProviderInterface
     private $translator;
     private $request;
     private $security;
+    private $user;
 
     /**
      * Constructor.
@@ -51,7 +52,8 @@ class UserProvider implements UserProviderInterface
         $this->translator = $translator;
         $this->request = $requestStack->getCurrentRequest();
         $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(User::class);        
+        $this->dataProvider->setClass(User::class);
+        $this->user = null;
     }
 
     /**
@@ -77,8 +79,9 @@ class UserProvider implements UserProviderInterface
                 sprintf('Instances of "%s" are not supported.', get_class($user))
             );
         }
-
+        $this->dataProvider->setToken($user->getApiToken());
         $username = $user->getUsername();
+        $this->user = $user;
 
         return $this->fetchUser($username);
     }
@@ -96,17 +99,20 @@ class UserProvider implements UserProviderInterface
      */
     private function fetchUser($username)
     {
-        $response = $this->dataProvider->getSpecialCollection("me");
-        if ($response->getCode() == 200) {
-            $userData = $response->getValue();
+        if (is_null($this->user)) {
+            $response = $this->dataProvider->getSpecialCollection("me");
+            if ($response->getCode() == 200) {
+                $userData = $response->getValue();
 
-            if (is_array($userData->getMember()) && count($userData->getMember())==1) {
-                return $userData->getMember()[0];
+                if (is_array($userData->getMember()) && count($userData->getMember())==1) {
+                    return $userData->getMember()[0];
+                }
             }
-        }
         
-        throw new UsernameNotFoundException(
-            sprintf('Username "%s" does not exist.', $username)
-        );
+            throw new UsernameNotFoundException(
+                sprintf('Username "%s" does not exist.', $username)
+            );
+        }
+        return $this->user;
     }
 }

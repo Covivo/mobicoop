@@ -28,45 +28,40 @@ use App\App\Entity\App;
 use App\Auth\Service\AuthManager;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTEncodedEvent;
 use Symfony\Component\Security\Core\Security;
 
 /**
  * Json Web Token Event listener
  * Used to customize the payload of the token, eg. add user id to payload
  */
-class JWTCreatedListener
+class JWTEncodedListener
 {
-    private $authManager;
     private $entityManager;
+    private $jwtEncoder;
+    private $userManager;
 
-    public function __construct(AuthManager $authManager, EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, JWTEncoderInterface $jwtEncoder, UserManager $userManager)
     {
-        $this->authManager = $authManager;
         $this->entityManager = $entityManager;
+        $this->jwtEncoder = $jwtEncoder;
+        $this->userManager = $userManager;
     }
 
     /**
-     * @param JWTCreatedEvent $event
-     *
-     * @return void
+     * @param JWTEncodedEvent $event
      */
-    public function onJWTCreated(JWTCreatedEvent $event)
+    public function onJwtEncoded(JWTEncodedEvent $event)
     {
-        $payload = $event->getData();
-
-        /**
-         * @var User|App $user
-         */
-        $user = $event->getUser();
-        $payload['id'] = $user->getId();
-        if ($user instanceof User) {
-            $payload['admin'] = $this->authManager->isAuthorized('access_admin');
+        $token = $event->getJWTString();
+        $payload = $this->jwtEncoder->decode($token);
+        // for now we check if the token concerns a user by checking the 'admin' index... not very good, to be improved !
+        if (isset($payload['admin'])) {
+            $user = $this->userManager->getUser($payload['id']);
+            $user->setApiToken($token);
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
         }
-        $event->setData($payload);
-        $header = $event->getHeader();
-        $header['cty'] = 'JWT';
-
-        $event->setHeader($header);
     }
 }
