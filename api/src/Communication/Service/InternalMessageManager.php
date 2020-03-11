@@ -145,4 +145,9 @@ class InternalMessageManager
         }
         return  array_merge([$message], $message->getMessages());
     }
+
+    public function getMessage($idMessage)
+    {
+        return $message = $this->messageRepository->find($idMessage);
+    }
 }

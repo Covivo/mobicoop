@@ -389,18 +389,19 @@ class UserManager
     }
 
     /**
+     * OBSOLETE---11/03/2020
      * Get the threads (messages) of a user
      *
      * @param User $user The user
      *
      * @return array The messages.
      */
-    public function getThreads(User $user)
-    {
-        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
-        $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threads');
-        return $response->getValue();
-    }
+    // public function getThreads(User $user)
+    // {
+    //     $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+    //     $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threads');
+    //     return $response->getValue();
+    // }
 
     /**
      * Get the threads of direct messages of a user

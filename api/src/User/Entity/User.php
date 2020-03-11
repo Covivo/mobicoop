@@ -279,26 +279,26 @@ use App\Community\Entity\CommunityUser;
  *              "controller"=UserAlertsUpdate::class,
  *              "security"="is_granted('user_update',object)"
  *          },
- *          "threads"={
+ *          "threadsOBSOLETE20200311"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
  *              "controller"=UserThreads::class,
  *              "path"="/users/{id}/threads",
- *              "security"="is_granted('user_messages',object)"
+ *              "security"="is_granted('user_read',object)"
  *          },
  *          "threadsDirectMessages"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
  *              "controller"=UserThreadsDirectMessages::class,
  *              "path"="/users/{id}/threadsDirectMessages",
- *              "security"="is_granted('user_messages',object)"
+ *              "security"="is_granted('user_read',object)"
  *          },
  *          "threadsCarpoolMessages"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
  *              "controller"=UserThreadsCarpoolMessages::class,
  *              "path"="/users/{id}/threadsCarpoolMessages",
- *              "security"="is_granted('user_messages',object)"
+ *              "security"="is_granted('user_read',object)"
  *          },
  *          "put"={
  *              "method"="PUT",
@@ -316,7 +316,7 @@ use App\Community\Entity\CommunityUser;
  *              "method"="GET",
  *              "path"="/users/{id}/asks",
  *              "controller"=UserAsks::class,
- *              "security"="is_granted('user_asks',object)"
+ *              "security"="is_granted('user_read',object)"
  *          },
  *          "unsubscribe_user"={
  *              "method"="PUT",
