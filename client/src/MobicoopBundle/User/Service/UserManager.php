@@ -556,6 +556,13 @@ class UserManager
 
             $adsSanitized[$key][$ad["id"]] = $ad;
         }
+        usort($adsSanitized['ongoing'], function ($a, $b) {
+            return $a["outwardTime"] > $b["outwardTime"];
+        });
+
+        usort($adsSanitized['archived'], function ($a, $b) {
+            return $a["outwardTime"] > $b["outwardTime"];
+        });
         return $adsSanitized;
     }
 
