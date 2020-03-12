@@ -223,4 +223,23 @@ class ArticleController extends AbstractController
         }
         return new JsonResponse();
     }
+
+    /**
+     * AJAX get article
+     *
+     * @param Request $request
+     * @param ArticleManager $articleManager
+     * @return void
+     */
+    public function articleGet(Request $request, ArticleManager $articleManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if (isset($data['articleId']) && is_numeric($data['articleId'])) {
+                $id = $data['articleId'];
+            }
+            return new JsonResponse($articleManager->getArticle($id));
+        }
+        return new JsonResponse();
+    }
 }

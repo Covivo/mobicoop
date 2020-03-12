@@ -28,6 +28,8 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Community\Entity\Community;
 use App\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Collection data provider for Community search (by name).
@@ -40,11 +42,13 @@ final class CommunityIsOwnedByUserCollectionDataProvider implements CollectionDa
 {
     protected $request;
     private $communityManager;
+    private $security;
     
-    public function __construct(RequestStack $requestStack, CommunityManager $communityManager)
+    public function __construct(RequestStack $requestStack, CommunityManager $communityManager, Security $security)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->communityManager = $communityManager;
+        $this->security = $security;
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -54,6 +58,7 @@ final class CommunityIsOwnedByUserCollectionDataProvider implements CollectionDa
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->communityManager->getOwnedCommunities($this->request->get("userId"));
+        (!is_null($this->request->get("userId"))) ? $userId = $this->request->get("userId") : $userId = $this->security->getUser()->getId();
+        return $this->communityManager->getOwnedCommunities($userId);
     }
 }

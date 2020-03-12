@@ -23,151 +23,147 @@
 
 namespace App\Carpool\Security;
 
+use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Carpool\Entity\Ad;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\Matching;
+use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Service\AdManager;
-use App\Right\Service\PermissionManager;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class AdVoter extends Voter
 {
-    const AD_READ = 'ad_read';
-    const ADS_READ = 'ads_read';
     const AD_CREATE = 'ad_create';
+    const AD_READ = 'ad_read';
     const AD_UPDATE = 'ad_update';
     const AD_DELETE = 'ad_delete';
-    const AD_ASK_POST = 'ad_ask_post';
-    const AD_ASK_PUT = 'ad_ask_put';
-    const AD_ASK_GET = 'ad_ask_get';
+    const AD_LIST = 'ad_list';
+    const AD_ASK_CREATE = 'ad_ask_create';
+    const AD_ASK_READ = 'ad_ask_read';
+    const AD_ASK_UPDATE = 'ad_ask_update';
     
-    private $security;
     private $request;
-    private $adManager;
-    private $permissionManager;
+    private $authManager;
     private $matchingRepository;
+    private $adManager;
+    private $askRepository;
 
-    public function __construct(RequestStack $requestStack, Security $security, AdManager $adManager, PermissionManager $permissionManager, MatchingRepository $matchingRepository)
+    public function __construct(RequestStack $requestStack, AuthManager $authManager, MatchingRepository $matchingRepository, AdManager $adManager, AskRepository $askRepository)
     {
         $this->request = $requestStack->getCurrentRequest();
-        $this->security = $security;
-        $this->adManager = $adManager;
-        $this->permissionManager = $permissionManager;
+        $this->authManager = $authManager;
         $this->matchingRepository = $matchingRepository;
+        $this->adManager = $adManager;
+        $this->askRepository = $askRepository;
     }
 
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::AD_READ,
-            self::ADS_READ,
             self::AD_CREATE,
+            self::AD_READ,
             self::AD_UPDATE,
             self::AD_DELETE,
-            self::AD_ASK_POST,
-            self::AD_ASK_PUT,
-            self::AD_ASK_GET
+            self::AD_LIST,
+            self::AD_ASK_CREATE,
+            self::AD_ASK_READ,
+            self::AD_ASK_UPDATE
             ])) {
             return false;
         }
 
+        // only vote on Event objects inside this voter
+        if (!in_array($attribute, [
+            self::AD_CREATE,
+            self::AD_READ,
+            self::AD_UPDATE,
+            self::AD_DELETE,
+            self::AD_LIST,
+            self::AD_ASK_CREATE,
+            self::AD_ASK_READ,
+            self::AD_ASK_UPDATE
+            ]) && !($subject instanceof Paginator) && !($subject instanceof Ad)) {
+            return false;
+        }
+                
         // Ad is a 'virtual' resource, we can't check its class
         return true;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $requester = $token->getUser();
+        // echo $attribute;die;
+        // var_dump($subject);die;
 
         switch ($attribute) {
-            case self::ADS_READ:
-                /**
-                 * TO DO : We are not supposed to use userId from request. Only the one from security token.
-                 * Need to change the method in front and remove the one from the request
-                 * see : AdCollectionDataProvider.php
-                 */
-                return $this->canReadAds($requester, $this->request->get("userId", $this->security->getUser()->getId()));
-            case self::AD_READ:
-                if (is_null($this->request->get("id"))) {
-                    return false;
-                }
-                if (!$ad = $this->adManager->getAdForPermission($this->request->get("id"))) {
-                    return false;
-                }
-                return $this->canReadAd($ad, $requester);
             case self::AD_CREATE:
-                return $this->canCreateAd($requester);
+                return $this->canCreateAd();
+            case self::AD_READ:
+                return $this->canReadAd();
             case self::AD_UPDATE:
-                if (is_null($this->request->get("id"))) {
-                    return false;
-                }
-                if (!$ad = $this->adManager->getAdForPermission($this->request->get("id"))) {
-                    return false;
-                }
-                return $this->canUpdateAd($ad, $requester);
+                return $this->canUpdateAd($subject);
             case self::AD_DELETE:
-                if (is_null($this->request->get("id"))) {
-                    return false;
-                }
-                if (!$ad = $this->adManager->getAdForPermission($this->request->get("id"))) {
-                    return false;
-                }
-                return $this->canDeleteAd($ad, $requester);
-            case self::AD_ASK_POST:
-                // an Ask post is in fact an Ad post, with the original Ad id inside => we have these informations in the subject
-                //return $this->canPostAsk($ad, $subject->getMatchingId());
-                return $this->canPostAsk($subject, $requester);
-            case self::AD_ASK_GET:
-            case self::AD_ASK_PUT:
-                if (is_null($this->request->get("id"))) {
-                    return false;
-                }
-                if (!$ad = $this->adManager->getAdForPermission($this->request->get("id"))) {
-                    return false;
-                }
-                return $this->canReadOrUpdateAsk($ad, $requester);
-                
+                return $this->canDeleteAd($subject);
+            case self::AD_LIST:
+                return $this->canListAd();
+            case self::AD_ASK_CREATE:
+                $matching = $this->matchingRepository->find($subject->getMatchingId());
+                return $this->canCreateAskFromAd($matching);
+            case self::AD_ASK_READ:
+                $ask = $this->askRepository->find($this->request->get('id'));
+                return $this->canReadAskFromAd($ask);
+            case self::AD_ASK_UPDATE:
+                $ask = $this->askRepository->find($this->request->get('id'));
+                return $this->canUpdateAskFromAd($ask);
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canReadAds(UserInterface $requester, ?int $userId=null)
+
+    private function canCreateAd()
     {
-        return $this->permissionManager->checkPermission('ads_list_self', $requester, null, $userId);
+        return $this->authManager->isAuthorized(self::AD_CREATE);
     }
 
-    private function canReadAd(Ad $ad, UserInterface $requester)
+    private function canReadAd()
     {
-        return $this->permissionManager->checkPermission('ad_read', $requester, null, $ad->getId());
+        return $this->authManager->isAuthorized(self::AD_READ);
     }
 
-    private function canUpdateAd(Ad $ad, UserInterface $requester)
+    private function canUpdateAd(Ad $ad)
     {
-        return $this->permissionManager->checkPermission('ad_update', $requester, null, $ad->getId());
+        return $this->authManager->isAuthorized(self::AD_UPDATE, ['ad'=>$ad]);
     }
 
-    private function canCreateAd(UserInterface $requester)
+    private function canDeleteAd(Ad $ad)
     {
-        return $this->permissionManager->checkPermission('ad_create', $requester);
+        return $this->authManager->isAuthorized(self::AD_DELETE, ['ad'=>$ad]);
     }
 
-    private function canDeleteAd(Ad $ad, UserInterface $requester)
+    private function canListAd()
     {
-        return $this->permissionManager->checkPermission('ad_delete', $requester, null, $ad->getId());
+        return $this->authManager->isAuthorized(self::AD_LIST);
     }
 
-    private function canPostAsk(Ad $ad, UserInterface $requester)
+    private function canCreateAskFromAd(Matching $matching)
     {
-        return $this->permissionManager->checkPermission('ad_ask_create', $requester, null, $ad->getMatchingId());
+        return $this->authManager->isAuthorized(self::AD_ASK_CREATE, ['matching'=>$matching]);
     }
 
-    private function canReadOrUpdateAsk(Ad $ad, UserInterface $requester)
+    private function canReadAskFromAd(Ask $ask)
     {
-        return $this->permissionManager->checkPermission('ad_read', $requester, null, $ad->getId());
+        return $this->authManager->isAuthorized(self::AD_ASK_READ, ['ask'=>$ask]);
+    }
+
+    private function canUpdateAskFromAd(Ask $ask)
+    {
+        return $this->authManager->isAuthorized(self::AD_ASK_UPDATE, ['ask'=>$ask]);
     }
 }

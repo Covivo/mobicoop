@@ -27,48 +27,45 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Article\Entity\Article;
 use App\Article\Entity\Paragraph;
 use App\Article\Entity\Section;
+use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\Right\Service\PermissionManager;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class ArticleVoter extends Voter
 {
-    const ARTICLE_READ = 'article_read';
-    const ARTICLES_READ = 'articles_read';
     const ARTICLE_CREATE = 'article_create';
+    const ARTICLE_READ = 'article_read';
     const ARTICLE_UPDATE = 'article_update';
     const ARTICLE_DELETE = 'article_delete';
+    const ARTICLE_LIST = 'article_list';
     
-    private $permissionManager;
+    private $authManager;
 
-    public function __construct(PermissionManager $permissionManager)
+    public function __construct(AuthManager $authManager)
     {
-        $this->permissionManager = $permissionManager;
+        $this->authManager = $authManager;
     }
 
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::ARTICLE_READ,
-            self::ARTICLES_READ,
             self::ARTICLE_CREATE,
+            self::ARTICLE_READ,
             self::ARTICLE_UPDATE,
-            self::ARTICLE_DELETE
+            self::ARTICLE_DELETE,
+            self::ARTICLE_LIST
             ])) {
             return false;
         }
 
         // only vote on Article objects inside this voter
-        // only for items actions
         if (!in_array($attribute, [
-            self::ARTICLE_READ,
             self::ARTICLE_CREATE,
+            self::ARTICLE_READ,
             self::ARTICLE_UPDATE,
-            self::ARTICLE_DELETE
+            self::ARTICLE_DELETE,
+            self::ARTICLE_LIST
             ]) && !($subject instanceof Paginator) && !($subject instanceof Article || $subject instanceof Section || $subject instanceof Paragraph)) {
             return false;
         }
@@ -78,66 +75,44 @@ class ArticleVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $requester = $token->getUser();
-
         switch ($attribute) {
-            case self::ARTICLE_READ:
-                return $this->canReadArticle($requester, $subject);
-            case self::ARTICLES_READ:
-                return $this->canReadArticles($requester);
             case self::ARTICLE_CREATE:
-                return $this->canCreateArticle($requester);
+                return $this->canCreateArticle();
+            case self::ARTICLE_READ:
+                return $this->canReadArticle($subject);
             case self::ARTICLE_UPDATE:
-                return $this->canUpdateArticle($requester, $subject);
+                return $this->canUpdateArticle($subject);
             case self::ARTICLE_DELETE:
-                return $this->canDeleteArticle($requester, $subject);
-        }
+                return $this->canDeleteArticle($subject);
+            case self::ARTICLE_LIST:
+                return $this->canListArticle();
+            }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canReadArticle(UserInterface $requester, Article $article)
+    private function canCreateArticle()
     {
-        // only registered users/apps can read articles
-        if (!$requester instanceof UserInterface) {
-            return false;
-        }
-        return $this->permissionManager->checkPermission('article_read', $requester, null, $article->getId());
+        return $this->authManager->isAuthorized(self::ARTICLE_CREATE);
     }
 
-    private function canReadArticles(UserInterface $requester)
+    private function canReadArticle(Article $article)
     {
-        // only registered users/apps can read articles
-        if (!$requester instanceof UserInterface) {
-            return false;
-        }
-        return $this->permissionManager->checkPermission('article_read', $requester);
+        return $this->authManager->isAuthorized(self::ARTICLE_READ, ['article'=>$article]);
     }
 
-    private function canCreateArticle(UserInterface $requester)
+    private function canUpdateArticle(Article $article)
     {
-        // only registered users/apps can create articles
-        if (!$requester instanceof UserInterface) {
-            return false;
-        }
-        return $this->permissionManager->checkPermission('article_create', $requester);
+        return $this->authManager->isAuthorized(self::ARTICLE_UPDATE, ['article'=>$article]);
     }
 
-    private function canUpdateArticle(UserInterface $requester, Article $article)
+    private function canDeleteArticle(Article $article)
     {
-        // only registered users/apps can update articles
-        if (!$requester instanceof UserInterface) {
-            return false;
-        }
-        return $this->permissionManager->checkPermission('article_update', $requester, null, $article->getId());
+        return $this->authManager->isAuthorized(self::ARTICLE_DELETE, ['article'=>$article]);
     }
 
-    private function canDeleteArticle(UserInterface $requester, Article $article)
+    private function canListArticle()
     {
-        // only registered users/apps can delete articles
-        if (!$requester instanceof UserInterface) {
-            return false;
-        }
-        return $this->permissionManager->checkPermission('article_delete', $requester, null, $article->getId());
+        return $this->authManager->isAuthorized(self::ARTICLE_LIST);
     }
 }

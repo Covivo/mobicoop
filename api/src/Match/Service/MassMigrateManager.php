@@ -23,18 +23,18 @@
 
 namespace App\Match\Service;
 
+use App\Auth\Entity\AuthItem;
+use App\Auth\Entity\UserAuthAssignment;
 use App\Geography\Entity\Address;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassPerson;
 use App\Match\Repository\MassPersonRepository;
-use App\Right\Entity\Role;
-use App\Right\Entity\UserRole;
-use App\Right\Repository\RoleRepository;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\Auth\Repository\AuthItemRepository;
 
 /**
  * Mass compute manager.
@@ -48,16 +48,16 @@ class MassMigrateManager
     private $massPersonRepository;
     private $entityManager;
     private $encoder;
-    private $roleRepository;
+    private $authItemRepository;
     private $userRepository;
     private $params;
 
-    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, RoleRepository $roleRepository, UserRepository $userRepository, array $params)
+    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, array $params)
     {
         $this->massPersonRepository = $massPersonRepository;
         $this->entityManager = $entityManager;
         $this->encoder = $encoder;
-        $this->roleRepository = $roleRepository;
+        $this->authItemRepository = $authItemRepository;
         $this->userRepository = $userRepository;
         $this->params = $params;
     }
@@ -125,11 +125,11 @@ class MassMigrateManager
 
                 // We give him a fully registrated role
                 // default role : user registered full
-                $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL);
-                $userRole = new UserRole();
-                $userRole->setRole($role);
-                $user->addUserRole($userRole);
-
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_USER_REGISTERED_FULL);
+                $userAuthAssignment = new UserAuthAssignment();
+                $userAuthAssignment->setAuthItem($authItem);
+                $user->addUserAuthAssignment($userAuthAssignment);
+    
                 $this->entityManager->persist($user);
 
                 $migratedUsers[] = $user; // For the return

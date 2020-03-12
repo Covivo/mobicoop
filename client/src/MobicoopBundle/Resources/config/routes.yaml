@@ -410,6 +410,15 @@ community_show:
     requirements:
         id: '\d+'
 
+# display the register form for a secured community
+community_secured_register:
+    path:
+        fr: /communaute/{id}/securisee/inscription
+        en: /community/{id}/secured/register
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communitySecuredRegister
+    requirements:
+        id: '\d+'
+
 # join a community (AJAX)
 community_join:
     path:
@@ -488,6 +497,13 @@ community_user_available:
 ##########################
 # editorial pages routes #
 ##########################
+
+#get an article (AJAX)
+article:
+    path:
+        fr: /article
+        en: /article
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::articleGet
 
 # display project page
 project:

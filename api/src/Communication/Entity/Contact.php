@@ -47,7 +47,7 @@ use App\Communication\Controller\ContactMessage;
  *              "method"="POST",
  *              "path"="/contacts",
  *              "controller"=ContactMessage::class,
- *              "security_post_denormalize"="is_granted('contact_create',object)"
+ *              "security_post_denormalize"="is_granted('communication_contact',object)"
  *          },
  *      },
  * )

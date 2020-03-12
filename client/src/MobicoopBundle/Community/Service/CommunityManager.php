@@ -273,4 +273,16 @@ class CommunityManager
         $response = $this->dataProvider->getCollection($params);
         return $response->getValue()->getMember();
     }
+
+    /**
+     * get the public infos of a community
+     *
+     * @param integer $communityId
+     * @return Community|null
+     */
+    public function getPublicInfos(int $communityId)
+    {
+        $response = $this->dataProvider->getSpecialItem($communityId, 'public');
+        return $response->getValue();
+    }
 }

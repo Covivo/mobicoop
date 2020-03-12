@@ -24,30 +24,28 @@
 namespace App\Communication\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\Right\Service\PermissionManager;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Communication\Entity\Contact;
 
 class ContactVoter extends Voter
 {
-    const CONTACT_CREATE = 'contact_create';
+    const COMMUNICATION_CONTACT = 'communication_contact';
     
-    private $permissionManager;
+    private $authManager;
 
-    public function __construct(PermissionManager $permissionManager)
+    public function __construct(AuthManager $authManager)
     {
-        $this->permissionManager = $permissionManager;
+        $this->authManager = $authManager;
     }
 
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::CONTACT_CREATE
+            self::COMMUNICATION_CONTACT
             ])) {
             return false;
         }
@@ -55,7 +53,7 @@ class ContactVoter extends Voter
         // only vote on Contact objects inside this voter
         // only for items actions
         if (!in_array($attribute, [
-            self::CONTACT_CREATE
+            self::COMMUNICATION_CONTACT
             ]) && !($subject instanceof Paginator) && !($subject instanceof Contact)) {
             return false;
         }
@@ -65,22 +63,16 @@ class ContactVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $requester = $token->getUser();
-
         switch ($attribute) {
-            case self::CONTACT_CREATE:
-                return $this->canCreateContact($requester);
+            case self::COMMUNICATION_CONTACT:
+                return $this->canContact();
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canCreateContact(UserInterface $requester)
+    private function canContact()
     {
-        // only registered users/apps can create contact
-        if (!$requester instanceof UserInterface) {
-            return false;
-        }
-        return $this->permissionManager->checkPermission('communication_contact', $requester);
+        return $this->authManager->isAuthorized(self::COMMUNICATION_CONTACT);
     }
 }
