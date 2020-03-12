@@ -23,6 +23,7 @@
 
 namespace App\Auth\Rule;
 
+use App\App\Entity\App;
 use App\Auth\Interfaces\AuthRuleInterface;
 use App\Community\Entity\Community;
 
@@ -41,6 +42,11 @@ class CommunityJoined implements AuthRuleInterface
         }
         
         if (!($params['community'] instanceof Community)) {
+            return false;
+        }
+
+        // An app can't see a secured community
+        if ($requester instanceof App) {
             return false;
         }
 

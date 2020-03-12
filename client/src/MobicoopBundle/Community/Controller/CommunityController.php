@@ -274,6 +274,11 @@ class CommunityController extends AbstractController
         // retreive logged user
         $user = $userManager->getLoggedUser();
         
+        // This should be removed when denyAccessUnlessGranted is functionnal
+        if (is_null($user)) {
+            return $this->redirectToRoute('user_login');
+        }
+        $this->denyAccessUnlessGranted('show', $community);
 
         if ($request->isMethod('POST')) {
             // If it's a post, we know that's a secured community credential
@@ -302,7 +307,7 @@ class CommunityController extends AbstractController
         return $this->render('@Mobicoop/community/community_secured_register.html.twig', [
             'communityId' => $id,
             'communityName' => $community->getName(),
-            'userId' => $user->getId(),
+            'userId' => (!is_null($user)) ? $user->getId() : null,
             'error' => (isset($error)) ? $error : false
         ]);
     }
