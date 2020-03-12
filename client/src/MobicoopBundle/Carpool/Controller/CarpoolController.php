@@ -162,7 +162,7 @@ class CarpoolController extends AbstractController
 //            return $this->json(['result'=>$adManager->createAd($data)]);
         }
 //        dump($ad, $poster, json_encode($poster), json_encode($ad));die;
-        $this->denyAccessUnlessGranted('update_ad', $ad);
+//        $this->denyAccessUnlessGranted('update_ad', $ad);
         return $this->render('@Mobicoop/carpool/update.html.twig', [
             "ad" => $ad
         ]);

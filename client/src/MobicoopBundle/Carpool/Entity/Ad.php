@@ -972,6 +972,7 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'message' => $this->getComment(),
                 'origin' => $this->getOrigin(),
                 'destination' => $this->getDestination(),
+                'schedule' => $this->getSchedule()
             ];
     }
 }

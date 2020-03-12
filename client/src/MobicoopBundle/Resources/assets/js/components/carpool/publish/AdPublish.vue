@@ -193,6 +193,7 @@
                 :init-return-time="returnTime"
                 :regular="regular"
                 :default-margin-time="defaultMarginTime"
+                :init-schedule="initSchedule"
                 :route="route"
                 @change="planificationChanged"
               />
@@ -752,6 +753,7 @@ export default {
       priceForbidden: false,
       returnTimeIsValid: true,
       initWaypoints: [],
+      initSchedule: null,
       role: null
     }
   },
@@ -889,6 +891,7 @@ export default {
         this.returnDate = this.ad.returnDate;
         this.returnTime = this.ad.returnTime;
         this.initWaypoints = this.ad.outwardWaypoints.filter(point => {return point.address.id !== self.initOrigin.id && point.address.id !== self.initDestination.id});
+        this.initSchedule = this.ad.schedule;
         this.seats = this.ad.seatsDriver; //todo: check
         this.luggage = this.ad.luggage;
         this.smoke = this.ad.smoke;

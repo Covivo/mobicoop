@@ -479,7 +479,7 @@
 
 <script>
 import moment from "moment";
-import { merge } from "lodash";
+import { merge, isEmpty, reject } from "lodash";
 import Translations from "@translations/components/carpool/publish/AdPlanification.json";
 import TranslationsClient from "@clientTranslations/components/carpool/publish/AdPlanification.json";
 
@@ -517,6 +517,10 @@ export default {
       default: null
     },
     route: {
+      type: Object,
+      default: null
+    },
+    initSchedule: {
       type: Object,
       default: null
     },
@@ -716,12 +720,58 @@ export default {
     },
     //Fill array for verification time + date
     setData(){
+      if (!isEmpty(this.initSchedule)) {
+        let schedule = this.initSchedule;
+        console.log(schedule);
+        let tempSchedules = [];
+        this.arrayDay.forEach(day => {
+          if (schedule[day] === true) {
+            tempSchedules.push({
+              day: day,
+              outwardTime: schedule[day + 'OutwardTime'],
+              returnTime: schedule[day + 'ReturnTime']
+            });
+          }
+        });
+
+        let schedulesLength = tempSchedules.length;
+        for (let i = 0; i < schedulesLength; i++) {
+          if (!tempSchedules) break;
+          let days = tempSchedules.filter(elem => {return elem.outwardTime === tempSchedules[i].outwardTime && elem.returnTime === tempSchedules[i].returnTime});
+
+          this.schedules.push({
+            id: i,
+            visible: true,
+            mon: days.some(day => {return day.day === 'mon'}),
+            tue: days.some(day => {return day.day === 'tue'}),
+            wed: days.some(day => {return day.day === 'wed'}),
+            thu: days.some(day => {return day.day === 'thu'}),
+            fri: days.some(day => {return day.day === 'fri'}),
+            sat: days.some(day => {return day.day === 'sat'}),
+            sun: days.some(day => {return day.day === 'sun'}),
+            outwardTime: moment(tempSchedules[i].outwardTime).format("HH:mm"),
+            returnTime: moment(tempSchedules[i].returnTime).format("HH:mm"),
+            menuOutwardTime: false,
+            menuReturnTime: false,
+            outwardDisabled: false,
+            returnDisabled: false,
+            maxTimeFromOutwardRegular: null
+          });
+
+          tempSchedules = days.forEach(day => {
+            reject(tempSchedules, el => {
+              return el.day === day.day;
+            })
+          })
+        }
+        this.change();
+      }
 
       //Fill array schedules
-      for (var j in [0,1,2,3,4,5,6]){
+      for (let j = this.schedules.length; j < 7; j++){
         this.schedules.push({
-          id:j,
-          visible: false,
+          id: j,
+          visible: j === 0,
           mon: false,
           tue: false,
           wed: false,
@@ -738,7 +788,6 @@ export default {
           maxTimeFromOutwardRegular : null
         });
       }
-      this.schedules[0].visible = true;
     },
 
     clearOutwardDate() {
