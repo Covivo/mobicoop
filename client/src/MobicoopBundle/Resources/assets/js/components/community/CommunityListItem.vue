@@ -154,6 +154,9 @@ export default {
   },
   methods:{
     linkToCommunityShow: function (item) {
+      if(item.isSecured && !item.isMember){
+        return this.$t('routes.communitySecuredRegister', {id:item.id})
+      }
       return this.$t('routes.community', {id:item.id});
     },
     postLeavingRequest() {

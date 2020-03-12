@@ -68,6 +68,7 @@ use App\Community\Controller\JoinAction;
  *                      }
  *                  }
  *              },
+ *              "normalization_context"={"groups"={"communities"}},
  *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },
  *          "post"={
@@ -130,6 +131,11 @@ use App\Community\Controller\JoinAction;
  *          "get"={
  *              "security"="is_granted('community_read',object)"
  *          },
+ *          "public"={
+ *              "method"="GET",
+ *              "path"="/communities/{id}/public",
+ *              "normalization_context"={"groups"={"readCommunityPublic"}},
+ *          },
  *          "put"={
  *              "security"="is_granted('community_update',object)"
  *          },
@@ -154,7 +160,7 @@ class Community
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readCommunity","readCommunityUser","results","existsCommunity"})
+     * @Groups({"readCommunity","readCommunityUser","results","existsCommunity","communities"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -164,7 +170,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic"})
      */
     private $name;
 
@@ -180,7 +186,7 @@ class Community
      * @var boolean|null Members are only visible by the members of the community.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readCommunity","write"})
+     * @Groups({"readCommunity","write","communities"})
      */
     private $membersHidden;
 
@@ -188,7 +194,7 @@ class Community
      * @var boolean|null Proposals are only visible by the members of the community.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readCommunity","write"})
+     * @Groups({"readCommunity","write","communities"})
      */
     private $proposalsHidden;
 
@@ -213,7 +219,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readCommunity","write"})
+     * @Groups({"readCommunity","write","communities"})
      */
     private $description;
     
@@ -222,7 +228,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="text")
-     * @Groups({"readCommunity","write"})
+     * @Groups({"readCommunity","write","communities"})
      */
     private $fullDescription;
     
@@ -230,7 +236,7 @@ class Community
     * @var \DateTimeInterface Creation date of the community.
     *
     * @ORM\Column(type="datetime")
-    * @Groups("readCommunity")
+    * @Groups({"readCommunity","communities"})
     */
     private $createdDate;
 
@@ -238,7 +244,7 @@ class Community
      * @var \DateTimeInterface Updated date of the community.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("readCommunity")
+     * @Groups({"readCommunity","communities"})
      */
     private $updatedDate;
     
@@ -271,7 +277,7 @@ class Community
      * @ApiProperty(push=true)
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"readCommunity","readCommunityUser","write"})
+     * @Groups({"readCommunity","readCommunityUser","write","communities"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -301,7 +307,7 @@ class Community
      * @var ArrayCollection|null The security files of the community.
      *
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunitySecurity", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readCommunity","write"})
+     * @Groups({"readCommunity","write","communities"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -309,7 +315,7 @@ class Community
     
     /**
      * @var boolean|null If the current user asking is member of the community
-     * @Groups({"readCommunity"})
+     * @Groups({"readCommunity","communities"})
      */
     private $member;
 

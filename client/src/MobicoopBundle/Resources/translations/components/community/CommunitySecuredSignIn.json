@@ -4,7 +4,7 @@
     "titleWithName":"Rejoindre la communauté",
     "credential1":"1er identifiant",
     "credential2":"2nd identifiant",
-    "urlSignIn":"/communaute/",
+    "urlSignIn":"/communaute/{id}/securisee/inscription",
     "join":"Rejoindre la communauté",
     "errors":{
       "required":"Ce champs est obligatoire",
@@ -17,7 +17,7 @@
     "titleWithName":"Join this community :",
     "credential1":"First credential",
     "credential2":"Second credential",
-    "urlSignIn":"/communauty/",
+    "urlSignIn":"/community/{id}/secured/register",
     "join":"Join the community",
     "errors":{
       "required":"This field is required",

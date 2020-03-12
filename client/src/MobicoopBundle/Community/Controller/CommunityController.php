@@ -220,28 +220,7 @@ class CommunityController extends AbstractController
         // retreive logged user
         $user = $userManager->getLoggedUser();
 
-        if ($request->isMethod('POST')) {
-            // If it's a post, we know that's a secured community credential
-            $communityUser = new CommunityUser();
-            $communityUser->setUser($user);
-            $communityUser->setCommunity($community);
-            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
-
-            // the credentials
-            $communityUser->setLogin($request->request->get("credential1"));
-            $communityUser->setPassword($request->request->get("credential2"));
-            $communityUser = $communityManager->joinCommunity($communityUser);
-            if (null === $communityUser) {
-                $error = true;
-            } else {
-                $error = false;
-                $session = $this->get('session');
-                $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
-                $communityUser = [$communityUser]; // To fit the getCommunityUser behavior we need to have an array
-            }
-        } else {
-            (null !== $user) ? $communityUser = $communityManager->getCommunityUser($id, $user->getId()) : $communityUser = null;
-        }
+        (null !== $user) ? $communityUser = $communityManager->getCommunityUser($id, $user->getId()) : $communityUser = null;
 
         // todo : move inside service ?
         // get the last 3 users and formate them to be used with vue
@@ -286,6 +265,47 @@ class CommunityController extends AbstractController
         ]);
     }
 
+    /**
+     * Show the register form for a secured community
+     */
+    public function communitySecuredRegister($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
+    {
+        $community = $communityManager->getPublicInfos($id);
+        // retreive logged user
+        $user = $userManager->getLoggedUser();
+        
+
+        if ($request->isMethod('POST')) {
+            // If it's a post, we know that's a secured community credential
+            $communityUser = new CommunityUser();
+            $communityUser->setUser($user);
+            $communityUser->setCommunity($community);
+            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
+
+            // the credentials
+            $communityUser->setLogin($request->request->get("credential1"));
+            $communityUser->setPassword($request->request->get("credential2"));
+            $communityUser = $communityManager->joinCommunity($communityUser);
+            if (null === $communityUser) {
+                $error = true;
+            } else {
+                $error = false;
+                $session = $this->get('session');
+                $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
+                $communityUser = [$communityUser]; // To fit the getCommunityUser behavior we need to have an array
+
+                // Redirect to the community
+                return $this->redirectToRoute('community_show', ['id'=>$id]);
+            }
+        }
+
+        return $this->render('@Mobicoop/community/community_secured_register.html.twig', [
+            'communityId' => $id,
+            'communityName' => $community->getName(),
+            'userId' => $user->getId(),
+            'error' => (isset($error)) ? $error : false
+        ]);
+    }
 
     /**
      * Join a community
