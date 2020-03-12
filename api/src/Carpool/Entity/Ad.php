@@ -41,7 +41,6 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *
  * @ApiResource(
  *      attributes={
- *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read","results"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -97,7 +96,7 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "path"="/carpools/ask/{id}",
  *              "controller"=AdAskGet::class,
  *              "read"=false,
- *              "security"="is_granted('ad_read',object)"
+ *              "security"="is_granted('ad_ask_read',object)"
  *          },
  *          "put"={
  *              "method"="PUT",
@@ -485,7 +484,7 @@ class Ad
         return $this;
     }
     
-    public function getRole(): int
+    public function getRole(): ?int
     {
         return $this->role;
     }

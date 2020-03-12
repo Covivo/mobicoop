@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -19,24 +20,34 @@
  *    Licence MOBICOOP described in the file
  *    LICENSE
  **************************/
-namespace App\Carpool\DataProvider;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use App\Carpool\Entity\Ad;
+namespace App\Auth\Rule;
 
-final class AdAskItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+use App\Auth\Interfaces\AuthRuleInterface;
+use App\Carpool\Entity\Ask;
+
+/**
+ *  Check that the requester is involved in the related Ask
+ */
+class AskActor implements AuthRuleInterface
 {
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    /**
+     * {@inheritdoc}
+     */
+    public function execute($requester, $item, $params)
     {
-        return Ad::class === $resourceClass && $operationName == "put_ask";
-    }
+        if (!isset($params['ask'])) {
+            return false;
+        }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Ad
-    {
-        echo "boom";
-        die;
-        // Retrieve the blog post item from somewhere then return it or null if not found
+        /**
+         * @var Ask $ask
+         */
+        $ask = $params['ask'];
+
+        if ($requester->getId() == $ask->getUser()->getId() || $requester->getId() == $ask->getUserRelated()->getId()) {
+            return true;
+        }
+        return false;
     }
 }

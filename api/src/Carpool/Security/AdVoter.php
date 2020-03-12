@@ -28,6 +28,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Carpool\Entity\Ad;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
@@ -43,6 +44,7 @@ class AdVoter extends Voter
     const AD_DELETE = 'ad_delete';
     const AD_LIST = 'ad_list';
     const AD_ASK_CREATE = 'ad_ask_create';
+    const AD_ASK_READ = 'ad_ask_read';
     const AD_ASK_UPDATE = 'ad_ask_update';
     
     private $request;
@@ -70,6 +72,7 @@ class AdVoter extends Voter
             self::AD_DELETE,
             self::AD_LIST,
             self::AD_ASK_CREATE,
+            self::AD_ASK_READ,
             self::AD_ASK_UPDATE
             ])) {
             return false;
@@ -83,6 +86,7 @@ class AdVoter extends Voter
             self::AD_DELETE,
             self::AD_LIST,
             self::AD_ASK_CREATE,
+            self::AD_ASK_READ,
             self::AD_ASK_UPDATE
             ]) && !($subject instanceof Paginator) && !($subject instanceof Ad)) {
             return false;
@@ -111,9 +115,12 @@ class AdVoter extends Voter
             case self::AD_ASK_CREATE:
                 $matching = $this->matchingRepository->find($subject->getMatchingId());
                 return $this->canCreateAskFromAd($matching);
+            case self::AD_ASK_READ:
+                $ask = $this->askRepository->find($this->request->get('id'));
+                return $this->canReadAskFromAd($ask);
             case self::AD_ASK_UPDATE:
                 $ask = $this->askRepository->find($this->request->get('id'));
-                return $this->canCreateAskFromAd($ask->getMatching());
+                return $this->canUpdateAskFromAd($ask);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -148,5 +155,15 @@ class AdVoter extends Voter
     private function canCreateAskFromAd(Matching $matching)
     {
         return $this->authManager->isAuthorized(self::AD_ASK_CREATE, ['matching'=>$matching]);
+    }
+
+    private function canReadAskFromAd(Ask $ask)
+    {
+        return $this->authManager->isAuthorized(self::AD_ASK_READ, ['ask'=>$ask]);
+    }
+
+    private function canUpdateAskFromAd(Ask $ask)
+    {
+        return $this->authManager->isAuthorized(self::AD_ASK_UPDATE, ['ask'=>$ask]);
     }
 }

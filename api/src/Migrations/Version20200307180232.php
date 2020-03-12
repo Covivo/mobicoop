@@ -200,7 +200,9 @@ final class Version20200307180232 extends AbstractMigration
         (143, NULL, 1, \'check_permission\', \'Check a permission on an auth item\'),
         (144, NULL, 1, \'auth_item_assign\', \'Assign an auth item to a user\'),
         (145, NULL, 1, \'access_admin\', \'Get access to administration\'),
-        (146, NULL, 1, \'communication_contact\', \'Send a contact message\');
+        (146, NULL, 1, \'communication_contact\', \'Send a contact message\'),
+        (147, 15, 1, \'ad_ask_read\', \'Read an ask for an ad\'),
+        (148, 15, 1, \'ad_ask_update\', \'Update an ask for an ad\');
         ');
 
         $this->addSql('
@@ -380,7 +382,9 @@ final class Version20200307180232 extends AbstractMigration
         (139, 138),
         (140, 135),
         (141, 136),
-        (142, 137);
+        (142, 137),
+        (4, 147),
+        (4, 148);
         ');
 
         $this->addSql('
