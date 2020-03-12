@@ -8,9 +8,10 @@ export default theme => ({
         '.ra-rich-text-input': {
             '& .ql-editor': {
                 fontSize: '1rem',
+                minHeight: '120px',
                 fontFamily: 'Roboto, sans-serif',
                 padding: '6px 12px',
-                backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                backgroundColor: 'rgba(0, 0, 0, 0.06)',
                 '&:hover::before': {
                     backgroundColor: 'rgba(0, 0, 0, 1)',
                     height: 2,

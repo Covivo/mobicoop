@@ -333,6 +333,76 @@ class PermissionManager
     }
 
     /**
+     * Get the allowed territories for a user and a right
+     *
+     * @param User $user        The user
+     * @param string $rightName The name of the right
+     * @return array The array of territories where the user is authorized (empty array if the user is authorized on any territory)
+     */
+    public function getTerritoriesForUserAndRight(User $user, string $rightName)
+    {
+        if (!$right = $this->rightRepository->findByName($rightName)) {
+            throw new RightNotFoundException('Right ' . $rightName . ' not found');
+        }
+
+        $territories = [];
+
+        // we first check if the user is seated on the iron throne
+        if (in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
+            // King of the Andals and the First Men, Lord of the Seven Kingdoms, and Protector of the Realm
+            return $territories;
+        }
+
+        // we check if the user has a role that is authorized for the right
+        foreach ($user->getUserRoles() as $userRole) {
+            foreach ($right->getRoles() as $rightRole) {
+                if ($userRole->getRole()->getId() == $rightRole->getId()) {
+                    // common role found
+                    if (is_null($userRole->getTerritory())) {
+                        // no territory is assigned to the role => all territories allowed !
+                        return [];
+                    } else {
+                        // a specific territory is assigned => we add it to the final list
+                        $territories[] = $userRole->getTerritory()->getId();
+                    }
+                } else {
+                    // no common role found => we check the children of the role
+                    foreach ($this->getRoleChildren($userRole->getRole()) as $role) {
+                        if ($role->getId() == $rightRole->getId()) {
+                            // common role found in children
+                            if (is_null($userRole->getTerritory())) {
+                                // no territory is assigned to the parent role => all territories allowed !
+                                return [];
+                            } else {
+                                // a specific territory is assigned => we add it to the final list
+                                $territories[] = $userRole->getTerritory()->getId();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // we check if the user has the specific right
+        foreach ($user->getUserRights() as $userRight) {
+            if ($userRight->getRight()->getId() == $right->getId()) {
+                // the user has the specific right
+                if (is_null($userRight->getTerritory())) {
+                    // no territory is assigned to the role => all territories allowed !
+                    return [];
+                } else {
+                    // a specific territory is assigned => we add it to the final list
+                    $territories[] = $userRight->getTerritory()->getId();
+                }
+            }
+        }
+        
+        return array_values($territories);
+    }
+
+
+
+    /**
      * Get the children of a role.
      *
      * @param Role $role    The role

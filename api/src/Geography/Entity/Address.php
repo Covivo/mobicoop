@@ -112,7 +112,7 @@ class Address
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read", "readUser"})
+     * @Groups({"read", "readUser", "readEvent"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -251,7 +251,7 @@ class Address
     /**
      * @var string The geoJson point of the address.
      * @ORM\Column(type="point", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","readEvent"})
      */
     private $geoJson;
 
@@ -303,7 +303,7 @@ class Address
      * @var Event|null The event of the address.
      *
      * @ORM\OneToOne(targetEntity="App\Event\Entity\Event", mappedBy="address")
-     * @Groups({"read","pt"})
+     * @Groups({"read","pt","readEvent","write"})
      */
     private $event;
 

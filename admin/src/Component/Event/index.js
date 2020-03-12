@@ -4,6 +4,7 @@ import { EventList } from './EventList';
 import { EventShow } from './EventShow';
 // import { TerritoryCreate } from './TerritoryCreate';
 import { EventEdit } from './EventEdit';
+import { EventCreate } from './EventCreate';
 
 export default {
     options: {
@@ -11,7 +12,7 @@ export default {
     },
     list: EventList,
     show: EventShow,
-    // create: TerritoryCreate,
+    create: EventCreate,
     edit: EventEdit, 
     icon: EventIcon
 };
