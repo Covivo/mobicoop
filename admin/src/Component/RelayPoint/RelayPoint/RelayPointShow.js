@@ -6,21 +6,20 @@ import {
     TextField, BooleanField, ReferenceField, SelectField, ReferenceArrayField, SingleFieldList, ChipField, NumberField, RichTextField, FunctionField  
 } from 'react-admin';
 
-const userOptionRenderer = choice => `${choice.givenName} ${choice.familyName}`;
+import { addressRenderer, UserRenderer} from '../../Utilities/renderers'
+
 const statusChoices = [
     { id: 0, name: 'En attente' },
     { id: 1, name: 'Actif' },
     { id: 2, name: 'Inactif' },
 ];  
 
-const addressRenderer = address => `${address.displayLabel[0]} - ${address.displayLabel[1]}`;
-
 export const RelayPointShow = (props) => (
     <Show { ...props } title="Points relais > afficher">
         <TabbedShowLayout>
             <FormTab label="Identité">
                 <ReferenceField source="user" label="Créateur" reference="users" >
-                    <FunctionField render={userOptionRenderer}/>
+                    <FunctionField render={<UserRenderer />}/>
                 </ReferenceField>
                 <TextField source="name" label="Nom" />
                 <ReferenceField source="address" label="Adresse" reference="addresses" linkType="">
