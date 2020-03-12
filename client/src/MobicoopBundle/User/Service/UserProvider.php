@@ -34,6 +34,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserProvider implements UserProviderInterface
 {
+    const USER_LOGIN_ROUTE = "user_login";
+
     private $dataProvider;
     private $router;
     private $translator;
@@ -59,7 +61,7 @@ class UserProvider implements UserProviderInterface
      */
     public function loadUserByUsername($username)
     {
-        if ($this->request->get('email') && $this->request->get('password')) {
+        if ($this->request->get('_route') == self::USER_LOGIN_ROUTE && $this->request->get('email') && $this->request->get('password')) {
             // we want to login, we set the credentials for the dataProvider
             $this->dataProvider->setUsername($this->request->get('email'));
             $this->dataProvider->setPassword($this->request->get('password'));

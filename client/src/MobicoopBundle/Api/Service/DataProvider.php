@@ -115,6 +115,7 @@ class DataProvider
      * @param string $loginPath             The api path for user authentication
      * @param string $tokenId               The token id
      * @param Deserializer $deserializer    The deserializer
+     * @param SessionInterface  $session    The session
      */
     public function __construct(string $uri, string $username, string $password, string $authPath, string $loginPath, string $tokenId, Deserializer $deserializer, SessionInterface $session)
     {
@@ -167,16 +168,34 @@ class DataProvider
         $this->client = new Client(['base_uri' => $this->uri]);
     }
 
+    /**
+     * Set the username (for user authentication)
+     *
+     * @param string $username  The username
+     * @return void
+     */
     public function setUsername(string $username)
     {
         $this->username = $username;
     }
 
+    /**
+     * Set the password (for user authentication)
+     *
+     * @param string $password  The password
+     * @return void
+     */
     public function setPassword(string $password)
     {
         $this->password = $password;
     }
 
+    /**
+     * Set the authentication to private (for user authentication : change the epi login path and the token storage system)
+     *
+     * @param boolean $private  True to set to private
+     * @return void
+     */
     public function setPrivate(bool $private)
     {
         $this->private = $private;
@@ -188,7 +207,14 @@ class DataProvider
         }
     }
 
-    private function getHeaders(bool $json=true)
+    /**
+     * Get the Client headers, including the token bearer.
+     * Automatically call for a token if not present.
+     *
+     * @param array $headers The headers to add
+     * @return void
+     */
+    private function getHeaders(array $headers=[])
     {
         if (is_null($this->jwtToken)) {
             $token = $this->getJwtToken();
@@ -217,13 +243,25 @@ class DataProvider
             }
         }
 
+        // automatically add the bearer token
         $headers['Authorization'] = 'Bearer ' . $this->jwtToken->getToken();
-        if ($json) {
-            $headers['accept'] = 'application/json';
+
+        // additional headers
+        foreach ($headers as $header) {
+            switch ($header) {
+                case 'json':
+                    $headers['accept'] = 'application/json';
+                    break;
+            }
         }
         return $headers;
     }
 
+    /**
+     * Call for an api jwt token
+     *
+     * @return string|null  The token retrieved
+     */
     private function getJwtToken()
     {
         $value = null;
@@ -291,13 +329,16 @@ class DataProvider
 
         try {
             if ($this->format == self::RETURN_ARRAY) {
-                $clientResponse = $this->client->get($this->resource."/".$id, ['query'=>$params]);
+                $headers = $this->getHeaders();
+                $clientResponse = $this->client->get($this->resource."/".$id, ['query'=>$params, 'headers' => $headers]);
                 $value = json_decode((string) $clientResponse->getBody(), true);
             } elseif ($this->format == self::RETURN_JSON) {
-                $clientResponse = $this->client->get($this->resource."/".$id, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
+                $headers = $this->getHeaders(['json']);
+                $clientResponse = $this->client->get($this->resource."/".$id, ['query'=>$params, 'headers' => $headers]);
                 $value = (string) $clientResponse->getBody();
             } else {
-                $clientResponse = $this->client->get($this->resource."/".$id, ['query'=>$params]);
+                $headers = $this->getHeaders();
+                $clientResponse = $this->client->get($this->resource."/".$id, ['query'=>$params, 'headers' => $headers]);
                 $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
             }
             if ($clientResponse->getStatusCode() == 200) {
@@ -325,16 +366,19 @@ class DataProvider
     {
         try {
             if ($this->format == self::RETURN_ARRAY) {
-                $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params]);
+                $headers = $this->getHeaders();
+                $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params, 'headers' => $headers]);
                 $value = json_decode((string) $clientResponse->getBody(), true);
             } elseif ($this->format == self::RETURN_JSON) {
-                $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
+                $headers = $this->getHeaders(['json']);
+                $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params, 'headers' => $headers]);
                 $value = (string) $clientResponse->getBody();
             } else {
+                $headers = $this->getHeaders();
                 if (!$reverseOperationId) {
-                    $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params]);
+                    $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params, 'headers' => $headers]);
                 } else {
-                    $clientResponse = $this->client->get($this->resource."/".$operation."/".$id, ['query'=>$params]);
+                    $clientResponse = $this->client->get($this->resource."/".$operation."/".$id, ['query'=>$params, 'headers' => $headers]);
                 }
                 $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
             }
@@ -360,10 +404,10 @@ class DataProvider
     {
         try {
             if ($this->format == self::RETURN_JSON) {
-                $headers = $this->getHeaders();
+                $headers = $this->getHeaders(['json']);
                 $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers' => $headers]);
             } else {
-                $headers = $this->getHeaders(false);
+                $headers = $this->getHeaders();
                 $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers' => $headers]);
             }
             if ($clientResponse->getStatusCode() == 200) {
@@ -389,10 +433,10 @@ class DataProvider
     {
         try {
             if ($this->format == self::RETURN_JSON) {
-                $headers = $this->getHeaders();
+                $headers = $this->getHeaders(['json']);
                 $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params, 'headers' => $headers]);
             } else {
-                $headers = $this->getHeaders(false);
+                $headers = $this->getHeaders();
                 $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params, 'headers' => $headers]);
             }
             if ($clientResponse->getStatusCode() == 200) {
@@ -425,9 +469,11 @@ class DataProvider
 
         try {
             if ($this->format == self::RETURN_JSON) {
-                $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
+                $headers = $this->getHeaders(['json']);
+                $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params, 'headers' => $headers]);
             } else {
-                $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params]);
+                $headers = $this->getHeaders();
+                $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params, 'headers' => $headers]);
             }
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody(), $subClassName));
@@ -457,18 +503,23 @@ class DataProvider
         }
         try {
             if ($this->format == self::RETURN_ARRAY) {
+                $headers = $this->getHeaders();
                 $clientResponse = $this->client->post($this->resource.$op, [
+                    'headers' => $headers,
                     RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)
                 ]);
                 $value = json_decode((string) $clientResponse->getBody(), true);
             } elseif ($this->format == self::RETURN_JSON) {
+                $headers = $this->getHeaders(['json']);
                 $clientResponse = $this->client->post($this->resource.$op, [
-                        'headers' => ['accept' => 'application/json'],
+                        'headers' => $headers,
                         RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)
                 ]);
                 $value = (string) $clientResponse->getBody();
             } else {
+                $headers = $this->getHeaders();
                 $clientResponse = $this->client->post($this->resource.$op, [
+                    'headers' => $headers,
                     RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)
                 ]);
                 $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
@@ -494,11 +545,12 @@ class DataProvider
     public function simplePost(string $url, array $parameters = []): Response
     {
         try {
+            $headers = $this->getHeaders();
             $clientResponse = $this->client->post($url, [
+                'headers' => $headers,
                 RequestOptions::JSON => $parameters,
             ]);
             $value = (string) $clientResponse->getBody();
-
             return new Response($clientResponse->getStatusCode(), $value);
         } catch (ServerException $e) {
             return new Response($e->getCode(), $e->getMessage());
@@ -521,7 +573,9 @@ class DataProvider
         }
         try {
             $uri = $this->resource."/".$operation;
+            $headers = $this->getHeaders();
             $clientResponse = $this->client->post($uri, [
+                    'headers' => $headers,
                     RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true),
                     'query' => $params
             ]);
@@ -572,7 +626,9 @@ class DataProvider
             }
         }
         try {
+            $headers = $this->getHeaders();
             $clientResponse = $this->client->post($this->resource, [
+                'headers' => $headers,
                 'multipart' => $multipart
             ]);
             if ($clientResponse->getStatusCode() == 201) {
@@ -601,7 +657,9 @@ class DataProvider
         // var_dump($this->resource."/".$object->getId());die;
         // var_dump($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]));die;
         try {
+            $headers = $this->getHeaders();
             $clientResponse = $this->client->put($this->resource."/".$object->getId(), [
+                    'headers' => $headers,
                     RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true)
             ]);
             if ($clientResponse->getStatusCode() == 200) {
@@ -635,7 +693,9 @@ class DataProvider
                 $uri = $this->resource."/".$operation."/".$object->getId();
             }
             
+            $headers = $this->getHeaders();
             $clientResponse = $this->client->put($uri, [
+                    'headers' => $headers,
                     RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true),
                     'query' => $params
             ]);
@@ -661,7 +721,8 @@ class DataProvider
     public function delete(int $id, ?array $data=null): Response
     {
         try {
-            $clientResponse = $this->client->delete($this->resource."/".$id, ['json' => $data]);
+            $headers = $this->getHeaders();
+            $clientResponse = $this->client->delete($this->resource."/".$id, ['headers' => $headers, 'json' => $data]);
             if ($clientResponse->getStatusCode() == 204) {
                 return new Response($clientResponse->getStatusCode());
             }
