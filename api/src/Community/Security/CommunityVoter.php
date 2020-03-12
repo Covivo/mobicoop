@@ -24,11 +24,12 @@
 namespace App\Community\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
-use App\Right\Service\PermissionManager;
+use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Community\Entity\Community;
-use Symfony\Component\Security\Core\Security;
+use App\Community\Service\CommunityManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class CommunityVoter extends Voter
 {
@@ -37,14 +38,17 @@ class CommunityVoter extends Voter
     const COMMUNITY_UPDATE = 'community_update';
     const COMMUNITY_DELETE = 'community_delete';
     const COMMUNITY_LIST = 'community_list';
-    const COMMUNITY_JOIN = 'community_join';
+    const COMMUNITY_ADS = 'community_ads';
 
     private $permissionManager;
+    private $request;
+    private $communityManager;
 
-    public function __construct(Security $security, PermissionManager $permissionManager)
+    public function __construct(AuthManager $authManager, RequestStack $requestStack, CommunityManager $communityManager)
     {
-        $this->security = $security;
-        $this->permissionManager = $permissionManager;
+        $this->authManager = $authManager;
+        $this->request = $requestStack->getCurrentRequest();
+        $this->communityManager = $communityManager;
     }
 
     protected function supports($attribute, $subject)
@@ -56,76 +60,70 @@ class CommunityVoter extends Voter
             self::COMMUNITY_UPDATE,
             self::COMMUNITY_DELETE,
             self::COMMUNITY_LIST,
-            self::COMMUNITY_JOIN,
+            self::COMMUNITY_ADS
             ])) {
             return false;
         }
 
+        // only vote on User objects inside this voter
+        if (!in_array($attribute, [
+            self::COMMUNITY_CREATE,
+            self::COMMUNITY_READ,
+            self::COMMUNITY_UPDATE,
+            self::COMMUNITY_DELETE,
+            self::COMMUNITY_LIST,
+            self::COMMUNITY_ADS
+            ]) && !($subject instanceof Paginator) && !($subject instanceof Community)) {
+            return false;
+        }
         return true;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $requester = $token->getUser();
-
         switch ($attribute) {
             case self::COMMUNITY_CREATE:
-                return $this->canPost($requester);
+                return $this->canCreateCommunity();
             case self::COMMUNITY_READ:
-                return $this->canRead($requester);
+                return $this->canReadCommunity($subject);
             case self::COMMUNITY_UPDATE:
-                return $this->canUpdate($requester, $subject);
+                return $this->canUpdateCommunity($subject);
             case self::COMMUNITY_DELETE:
-                return $this->canDelete($requester, $subject);
+                return $this->canDeleteCommunity($subject);
             case self::COMMUNITY_LIST:
-                return $this->canList($requester);
-            case self::COMMUNITY_JOIN:
-                return $this->canJoin($requester);
+                return $this->canListCommunity();
+            case self::COMMUNITY_ADS:
+                // here we don't have the denormalized event, we need to get it from the request
+                if ($community = $this->communityManager->getCommunity($this->request->get('id'))) {
+                    return $this->canReadCommunity($community);
+                }
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canPost($requester)
+    private function canCreateCommunity()
     {
-        return $this->permissionManager->checkPermission('community_create', $requester);
+        return $this->authManager->isAuthorized(self::COMMUNITY_CREATE);
     }
 
-    private function canRead($requester)
+    private function canReadCommunity(Community $community)
     {
-        return $this->permissionManager->checkPermission('community_read', $requester);
+        return $this->authManager->isAuthorized(self::COMMUNITY_READ, ['community'=>$community]);
     }
 
-    private function canUpdate($requester, Community $subject)
+    private function canUpdateCommunity(Community $community)
     {
-        if (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
-            return $this->permissionManager->checkPermission('community_update_self', $requester);
-        } else {
-            return false;
-        }
-    }
-    
-    private function canDelete($requester, Community $subject)
-    {
-        if (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
-            return $this->permissionManager->checkPermission('community_delete_self', $requester);
-        } else {
-            return false;
-        }
+        return $this->authManager->isAuthorized(self::COMMUNITY_UPDATE, ['community'=>$community]);
     }
 
-    private function canList($requester)
+    private function canDeleteCommunity(Community $community)
     {
-        return $this->permissionManager->checkPermission('community_list', $requester);
+        return $this->authManager->isAuthorized(self::COMMUNITY_DELETE, ['community'=>$community]);
     }
 
-    private function canCheckExistence($requester)
+    private function canListCommunity()
     {
-        return $this->permissionManager->checkPermission('community_read', $requester);
-    }
-
-    private function canJoin($requester)
-    {
-        return $this->permissionManager->checkPermission('community_join', $requester);
+        return $this->authManager->isAuthorized(self::COMMUNITY_LIST);
     }
 }

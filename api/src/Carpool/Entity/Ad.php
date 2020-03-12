@@ -48,7 +48,7 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *          "get"={
  *              "method"="GET",
  *              "path"="/carpools",
- *              "security_post_denormalize"="is_granted('ads_read',object)"
+ *              "security_post_denormalize"="is_granted('ad_list',object)"
  *          },
  *          "post"={
  *              "method"="POST",
@@ -62,14 +62,14 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "path"="/carpools/ask",
  *              "controller"=AdAskPost::class,
  *              "defaults"={"type"="ask"},
- *              "security_post_denormalize"="is_granted('ad_ask_post',object)"
+ *              "security_post_denormalize"="is_granted('ad_ask_create',object)"
  *          },
  *          "post_contact"={
  *              "method"="POST",
  *              "path"="/carpools/contact",
  *              "controller"=AdAskPost::class,
  *              "defaults"={"type"="contact"},
- *              "security_post_denormalize"="is_granted('ad_ask_post',object)"
+ *              "security_post_denormalize"="is_granted('ad_ask_create',object)"
  *          },
  *          "updateCarpoolsLimits"={
  *              "method"="GET",
@@ -88,22 +88,22 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *          "put_ask"={
  *              "method"="PUT",
  *              "path"="/carpools/ask/{id}",
- *              "controller"=AdAskPut::class,
  *              "read"=false,
- *              "security"="is_granted('ad_ask_put',object)"
+ *              "security"="is_granted('ad_ask_update',object)"
  *          },
  *          "get_ask"={
  *              "method"="GET",
  *              "path"="/carpools/ask/{id}",
  *              "controller"=AdAskGet::class,
  *              "read"=false,
- *              "security"="is_granted('ad_ask_get',object)"
+ *              "security"="is_granted('ad_ask_read',object)"
  *          },
  *          "put"={
  *              "method"="PUT",
  *              "path"="/carpools/{id}",
  *              "controller"=AdPut::class,
- *              "read"=false
+ *              "read"=false,
+ *              "security"="is_granted('ad_update',object)"
  *          },
  *      }
  * )
@@ -491,7 +491,7 @@ class Ad
         return $this;
     }
     
-    public function getRole(): int
+    public function getRole(): ?int
     {
         return $this->role;
     }

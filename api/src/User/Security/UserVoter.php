@@ -23,131 +23,103 @@
 
 namespace App\User\Security;
 
-use App\Right\Service\PermissionManager;
+use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\User\Entity\User;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class UserVoter extends Voter
 {
-    const REGISTER = 'user_register';
-    const READ = 'user_read';
-    const UPDATE = 'user_update';
-    const PASSWORD = 'user_password';
-    const DELETE = 'user_delete';
-    const ASKS = 'user_asks';
-    const MESSAGES = 'user_messages';
-    const ADMIN_READ = 'user_admin_read';
+    const USER_CREATE = 'user_create';
+    const USER_READ = 'user_read';
+    const USER_UPDATE = 'user_update';
+    const USER_DELETE = 'user_delete';
+    const USER_LIST = 'user_list';
+    const USER_PASSWORD = 'user_password';
+    
+    private $authManager;
 
-    private $security;
-    private $permissionManager;
-
-    public function __construct(Security $security, PermissionManager $permissionManager)
+    public function __construct(AuthManager $authManager)
     {
-        $this->security = $security;
-        $this->permissionManager = $permissionManager;
+        $this->authManager = $authManager;
     }
 
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::REGISTER,
-            self::READ,
-            self::UPDATE,
-            self::PASSWORD,
-            self::DELETE,
-            self::ASKS,
-            self::MESSAGES,
-            self::ADMIN_READ
+            self::USER_CREATE,
+            self::USER_READ,
+            self::USER_UPDATE,
+            self::USER_DELETE,
+            self::USER_LIST,
+            self::USER_PASSWORD
             ])) {
             return false;
         }
       
         // only vote on User objects inside this voter
-        if (!$subject instanceof User) {
+        if (!in_array($attribute, [
+            self::USER_CREATE,
+            self::USER_READ,
+            self::USER_UPDATE,
+            self::USER_DELETE,
+            self::USER_LIST,
+            self::USER_PASSWORD
+            ]) && !($subject instanceof Paginator) && !($subject instanceof User)) {
             return false;
         }
-        
         return true;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $requester = $token->getUser();
         switch ($attribute) {
-            case self::REGISTER:
-                return $this->canRegister($requester);
-            case self::READ:
-                return $this->canReadSelf($requester, $subject);
-            case self::UPDATE:
-                return $this->canUpdateSelf($requester, $subject);
-            case self::PASSWORD:
-                return $this->canChangePassword($requester);
-            case self::DELETE:
-                return $this->canDeleteSelf($requester, $subject);
-            case self::ASKS:
-                return $this->canReadSelfAsks($requester, $subject);
-            case self::MESSAGES:
-                return $this->canReadSelfMessages($requester, $subject);
-            case self::ADMIN_READ:
-                return $this->canReadUsers($requester);
+            case self::USER_CREATE:
+                return $this->canCreateUser();
+            case self::USER_READ:
+                return $this->canReadUser($subject);
+            case self::USER_UPDATE:
+                return $this->canUpdateUser($subject);
+            case self::USER_DELETE:
+                return $this->canDeleteUser($subject);
+            case self::USER_LIST:
+                return $this->canListUser();
+            case self::USER_PASSWORD:
+                return $this->canChangePassword($subject);
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canRegister(UserInterface $requester)
+    private function canCreateUser()
     {
-        if ($requester instanceof User) {
-            // the user must not be logged in; if not, deny access
-            return false;
-        }
-        return $this->permissionManager->checkPermission('user_register', $requester);
+        return $this->authManager->isAuthorized(self::USER_CREATE);
     }
 
-    private function canReadSelf(UserInterface $requester, User $subject)
+    private function canReadUser(User $user)
     {
-        return $this->permissionManager->checkPermission('user_update_self', $requester, null, $subject->getId());
+        return $this->authManager->isAuthorized(self::USER_READ, ['user'=>$user]);
     }
 
-    private function canUpdateSelf(UserInterface $requester, User $subject)
+    private function canUpdateUser(User $user)
     {
-        return $this->permissionManager->checkPermission('user_update_self', $requester, null, $subject->getId());
+        return $this->authManager->isAuthorized(self::USER_UPDATE, ['user'=>$user]);
+    }
+    
+    private function canDeleteUser(User $user)
+    {
+        return $this->authManager->isAuthorized(self::USER_DELETE, ['user'=>$user]);
+    }
+    
+    private function canListUser()
+    {
+        return $this->authManager->isAuthorized(self::USER_LIST);
     }
 
-    private function canChangePassword(UserInterface $requester)
+    private function canChangePassword(User $user)
     {
-        return $this->permissionManager->checkPermission('user_password_self', $requester);
-    }
-
-    private function canDeleteSelf(UserInterface $requester, User $subject)
-    {
-        if (($subject->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
-            return $this->permissionManager->checkPermission('user_delete_self', $requester, null, $subject->getId());
-        } else {
-            return false;
-        }
-    }
-
-    private function canReadSelfAsks(UserInterface $requester, User $subject)
-    {
-        if (($subject->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
-            return $this->permissionManager->checkPermission('user_asks_self', $requester);
-        } else {
-            return false;
-        }
-    }
-
-    private function canReadSelfMessages(UserInterface $requester, User $subject)
-    {
-        return $this->permissionManager->checkPermission('user_message_read_self', $requester, null, $subject->getId());
-    }
-
-    private function canReadUsers(UserInterface $requester)
-    {
-        return $this->permissionManager->checkPermission('user_read', $requester);
+        return $this->authManager->isAuthorized(self::USER_LIST, ['user'=>$user]);
     }
 }

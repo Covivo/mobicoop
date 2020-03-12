@@ -40,7 +40,7 @@ use App\Import\Repository\EventImportRepository;
 use App\Import\Repository\RelayPointImportRepository;
 use App\Import\Repository\UserImportRepository;
 use App\RelayPoint\Repository\RelayPointRepository;
-use App\Right\Repository\RoleRepository;
+use App\Auth\Repository\RoleRepository;
 use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -57,10 +57,8 @@ class ImportManager
     private $userImportRepository;
     private $proposalManager;
     private $userManager;
-    private $roleRepository;
     private $notificationRepository;
     private $proposalRepository;
-   
     private $imageManager;
     private $eventRepository;
     private $communityRepository;
@@ -75,13 +73,12 @@ class ImportManager
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, RelayPointImportRepository $relayPointImportRepository, EventImportRepository $eventImportRepository, CommunityImportRepository $communityImportRepository, ImageManager $imageManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, UserManager $userManager, RoleRepository $roleRepository, NotificationRepository $notificationRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository, RelayPointRepository $relayPointRepository)
+    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, RelayPointImportRepository $relayPointImportRepository, EventImportRepository $eventImportRepository, CommunityImportRepository $communityImportRepository, ImageManager $imageManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, UserManager $userManager, NotificationRepository $notificationRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository, RelayPointRepository $relayPointRepository)
     {
         $this->entityManager = $entityManager;
         $this->userImportRepository = $userImportRepository;
         $this->proposalManager = $proposalManager;
         $this->userManager = $userManager;
-        $this->roleRepository = $roleRepository;
         $this->notificationRepository = $notificationRepository;
         $this->proposalRepository = $proposalRepository;
         $this->imageManager = $imageManager;

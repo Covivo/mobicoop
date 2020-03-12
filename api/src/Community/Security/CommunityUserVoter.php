@@ -24,7 +24,8 @@
 namespace App\Community\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
-use App\Right\Service\PermissionManager;
+use App\Auth\Service\AuthManager;
+use App\Auth\Service\PermissionManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Community\Entity\CommunityUser;
@@ -33,37 +34,29 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class CommunityUserVoter extends Voter
 {
-    const CREATE = 'communityUser_create';
-    const READ = 'communityUser_read';
-    const UPDATE = 'communityUser_update';
-    const DELETE = 'communityUser_delete';
-    const LIST = 'community_user_list';
+    const COMMUNITY_JOIN = 'community_join';
 
-    private $security;
-    private $permissionManager;
+    private $authManager;
 
-    public function __construct(Security $security, PermissionManager $permissionManager)
+    public function __construct(AuthManager $authManager)
     {
-        $this->security = $security;
-        $this->permissionManager = $permissionManager;
+        $this->authManager = $authManager;
     }
 
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::CREATE,
-            self::READ,
-            self::UPDATE,
-            self::DELETE,
-            self::LIST
+            self::COMMUNITY_JOIN,
             ])) {
             return false;
         }
 
-        // only vote on Article objects inside this voter
+        // only vote on CommunityUser objects inside this voter
         // only for items actions
-        if (!($subject instanceof Paginator) && !($subject instanceof CommunityUser)) {
+        if (!in_array($attribute, [
+            self::COMMUNITY_JOIN
+            ]) && !($subject instanceof Paginator) && !($subject instanceof CommunityUser)) {
             return false;
         }
 
@@ -72,49 +65,16 @@ class CommunityUserVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $requester = $token->getUser();
-
         switch ($attribute) {
-            case self::CREATE:
-                return $this->canPost($requester, $subject);
-            case self::READ:
-                return $this->canRead($requester);
-            case self::UPDATE:
-                return false;
-            case self::DELETE:
-                return $this->canDelete($requester, $subject);
-            case self::LIST:
-                return $this->canList($requester, $subject);
+            case self::COMMUNITY_JOIN:
+                return $this->canJoin($subject);
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canPost($requester, $subject)
+    private function canJoin($subject)
     {
-        if (($subject->getUser()->getEmail() == $requester->getUsername())) {
-            return $this->permissionManager->checkPermission('community_join', $requester);
-        } else {
-            return false;
-        }
-    }
-
-    private function canDelete($requester, $subject)
-    {
-        if (($subject->getUser()->getEmail() == $requester->getUsername())) {
-            return $this->permissionManager->checkPermission('community_leave', $requester);
-        } else {
-            return false;
-        }
-    }
-
-    private function canRead($requester)
-    {
-        return $this->permissionManager->checkPermission('community_read', $requester);
-    }
-
-    private function canList($requester, $subject)
-    {
-        return $this->permissionManager->checkPermission('community_list', $requester);
+        return $this->authManager->isAuthorized(self::COMMUNITY_JOIN);
     }
 }

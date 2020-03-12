@@ -89,7 +89,7 @@ class Image
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","readUser"})
+     * @Groups({"read","readUser","communities"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -98,7 +98,7 @@ class Image
      * @var string The name of the image.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","readUser"})
+     * @Groups({"read","readUser","communities"})
      */
     private $name;
 
@@ -106,7 +106,7 @@ class Image
      * @var string The html title of the image.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","readUser"})
+     * @Groups({"read","readUser","communities"})
      */
     private $title;
     
@@ -323,7 +323,7 @@ class Image
     /**
      * @var Campaign|null The campaign associated with the image.
      *
-     * ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign", inversedBy="images", cascade="persist")
+     * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign", inversedBy="images", cascade="persist")
      */
     private $campaign;
 
@@ -341,7 +341,7 @@ class Image
 
     /**
      * @var array|null The versions of with the image.
-     * @Groups({"read","readCommunity","readCommunityUser","readEvent","readUser","results"})
+     * @Groups({"read","readCommunity","readCommunityUser","readEvent","readUser","results","communities"})
      */
     private $versions;
         

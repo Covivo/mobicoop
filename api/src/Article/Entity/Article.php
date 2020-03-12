@@ -46,13 +46,13 @@ use App\Article\Controller\ExternalArticlesAction;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security_post_denormalize"="is_granted('articles_read',object)"
+ *              "security_post_denormalize"="is_granted('article_list',object)"
  *          },
  *          "externalArticles"={
  *              "method"="GET",
  *              "path"="/articles/external",
  *              "controller"=ExternalArticlesAction::class,
- *              "security_post_denormalize"="is_granted('articles_read',object)"
+ *              "security_post_denormalize"="is_granted('article_list',object)"
  *          },
  *          "post"={
  *              "security_post_denormalize"="is_granted('article_create',object)"
@@ -68,8 +68,7 @@ use App\Article\Controller\ExternalArticlesAction;
  *          "delete"={
  *              "security"="is_granted('article_delete',object)"
  *          },
- *      },
- *      itemOperations={"get","put","delete"}
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "title"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"title":"partial"})

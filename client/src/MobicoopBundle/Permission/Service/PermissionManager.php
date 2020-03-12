@@ -55,6 +55,9 @@ class PermissionManager
      */
     public function checkPermission(string $action, ?User $user, ?int $id=null)
     {
+        // TEMPORARY FIX. The Security is only API side for now
+        return true;
+
         $this->dataProvider->setFormat($this->dataProvider::RETURN_ARRAY);
         $params['action'] = $action;
         if (!is_null($user)) {
