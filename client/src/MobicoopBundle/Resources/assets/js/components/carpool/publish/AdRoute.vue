@@ -49,7 +49,9 @@
     <!-- Waypoints -->
     <!-- For now additional waypoints are hardcorded and limited to 4 -->
     <v-row
-      v-show="waypoints[0].visible"
+      v-for="(waypoint, index) in waypoints"
+      v-show="waypoint.visible"
+      :key="index"
       align="center"
       no-gutters
     >
@@ -58,119 +60,22 @@
         offset="1"
       >
         <GeoComplete
-          name="etape1"
-          :label="$t('waypoint1.label')"
+          :name="'etape' + (index + 1)"
+          :label="$t('waypoint' + (index + 1) +'.label')"
           :url="geoSearchUrl"
-          @address-selected="waypointSelected(0, ...arguments)"
+          :init-address="waypoint.address"
+          @address-selected="waypointSelected(index, ...arguments)"
         />
       </v-col>
 
       <v-col
-        v-show="!waypoints[1].visible"
+        v-show="!waypoint.visible"
         cols="1"
       >
         <v-btn
           text
           icon
-          @click="removeWaypoint(0)"
-        >
-          <v-icon>
-            mdi-close-circle-outline
-          </v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
-
-    <v-row 
-      v-show="waypoints[1].visible"
-      align="center"
-      no-gutters
-    >
-      <v-col
-        cols="10"
-        offset="1"
-      >
-        <GeoComplete
-          name="etape2"
-          :label="$t('waypoint2.label')"
-          :url="geoSearchUrl"
-          @address-selected="waypointSelected(1, ...arguments)"
-        />
-      </v-col>
-
-      <v-col
-        v-show="!waypoints[2].visible"
-        cols="1"
-      >
-        <v-btn
-          text
-          icon
-          @click="removeWaypoint(1)"
-        >
-          <v-icon>
-            mdi-close-circle-outline
-          </v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
-
-    <v-row
-      v-show="waypoints[2].visible"
-      align="center"
-      no-gutters
-    >
-      <v-col
-        cols="10"
-        offset="1"
-      >
-        <GeoComplete
-          name="etape3"
-          :label="$t('waypoint3.label')"
-          :url="geoSearchUrl"
-          @address-selected="waypointSelected(2, ...arguments)"
-        />
-      </v-col>
-
-      <v-col
-        v-show="!waypoints[3].visible"
-        cols="1"
-      >
-        <v-btn
-          text
-          icon
-          @click="removeWaypoint(2)"
-        >
-          <v-icon>
-            mdi-close-circle-outline
-          </v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
-
-    <v-row
-      v-show="waypoints[3].visible"
-      align="center"
-      no-gutters
-    >
-      <v-col
-        cols="10"
-        offset="1"
-      >
-        <GeoComplete
-          name="etape4"
-          :label="$t('waypoint4.label')"
-          :url="geoSearchUrl"
-          @address-selected="waypointSelected(3, ...arguments)"
-        />
-      </v-col>
-
-      <v-col
-        cols="1"
-      >
-        <v-btn
-          text
-          icon
-          @click="removeWaypoint(3)"
+          @click="removeWaypoint(index)"
         >
           <v-icon>
             mdi-close-circle-outline
