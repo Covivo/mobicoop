@@ -498,6 +498,13 @@ community_user_available:
 # editorial pages routes #
 ##########################
 
+#get an article (AJAX)
+article:
+    path:
+        fr: /article
+        en: /article
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::articleGet
+
 # display project page
 project:
     path:

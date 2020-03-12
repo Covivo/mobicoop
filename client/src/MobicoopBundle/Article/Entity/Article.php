@@ -153,6 +153,7 @@ class Article implements ResourceInterface, \JsonSerializable
         [
             'id' => $this->getId(),
             'title' => $this->getTitle(),
+            'sections' => $this->getSections(),
         ];
     }
 }

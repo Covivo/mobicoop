@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * A paragraph of a section.
  */
-class Paragraph implements ResourceInterface
+class Paragraph implements ResourceInterface, \JsonSerializable
 {
     const STATUS_PENDING = 0;
     const STATUS_PUBLISHED = 1;
@@ -135,5 +135,15 @@ class Paragraph implements ResourceInterface
         $this->section = $section;
 
         return $this;
+    }
+
+    // If you want more info from user you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id' => $this->getId(),
+            'text' => $this->getText(),
+        ];
     }
 }
