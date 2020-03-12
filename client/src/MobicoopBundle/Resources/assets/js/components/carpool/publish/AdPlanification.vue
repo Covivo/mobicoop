@@ -524,9 +524,9 @@ export default {
   data() {
     return {
       outwardDate: this.initOutwardDate,
-      outwardTime: moment(this.initOutwardTime).format('HH:mm'),
+      outwardTime: this.initOutwardTime ? moment(this.initOutwardTime).format('HH:mm') : null,
       returnDate: this.initReturnDate,
-      returnTime: moment(this.initReturnTime).format('HH:mm'),
+      returnTime: this.initReturnTime ? moment(this.initReturnTime).format('HH:mm') : null,
       menuOutwardDate: false,
       menuOutwardTime: false,
       menuReturnDate: false,

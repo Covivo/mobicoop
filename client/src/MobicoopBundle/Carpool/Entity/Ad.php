@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use phpDocumentor\Reflection\Types\Boolean;
+use PhpOffice\PhpSpreadsheet\Calculation\DateTime;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -936,12 +937,12 @@ class Ad implements ResourceInterface, \JsonSerializable
 
     public function getOrigin()
     {
-        return $this->getOutwardWaypoints()[0]["address"];
+        return !empty($this->getOutwardWaypoints()) ? $this->getOutwardWaypoints()[0]["address"] : null;
     }
 
     public function getDestination()
     {
-        return $this->getOutwardWaypoints()[count($this->getOutwardWaypoints()) - 1]["address"];
+        return !empty($this->getOutwardWaypoints()) ? $this->getOutwardWaypoints()[count($this->getOutwardWaypoints()) - 1]["address"] : null;
     }
 
     public function jsonSerialize()
@@ -953,9 +954,9 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'oneWay' => $this->isOneWay(),
                 'outwardWaypoints' => $this->getOutwardWaypoints(),
                 'returnWaypoints' => $this->getReturnWaypoints(),
-                'outwardDate' => $this->getOutwardDate()->format('Y-m-d'),
+                'outwardDate' => !is_null($this->getReturnDate()) ? $this->getOutwardDate()->format('Y-m-d') : null,
                 'outwardLimitDate' => $this->getOutwardLimitDate(),
-                'returnDate' => $this->getReturnDate()->format('Y-m-d'),
+                'returnDate' => !is_null($this->getReturnDate()) ? $this->getReturnDate()->format('Y-m-d') : null,
                 'returnLimitDate' => $this->getReturnLimitDate(),
                 'outwardTime' => $this->getOutwardTime(),
                 'returnTime' => $this->getReturnTime(),

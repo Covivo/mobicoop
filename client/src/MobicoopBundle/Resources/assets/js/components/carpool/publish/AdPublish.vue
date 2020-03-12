@@ -90,7 +90,7 @@
         >
           <!-- Stepper Header -->
           <v-stepper-header
-            v-show="step!==1"
+            v-show="step!==1 || isUpdate"
             class="elevation-0"
           >
             <!-- Step 1 : search journey -->
@@ -179,6 +179,7 @@
                 :init-origin="origin"
                 :init-destination="destination"
                 :init-regular="regular"
+                :init-role="role"
                 @change="searchChanged"
               />
             </v-stepper-content>
@@ -588,7 +589,7 @@
               color="secondary"
               style="margin-left: 30px;"
               align-center
-              @click="isUpdate ? updateAd : postAd"
+              @click="isUpdate ? updateAd() : postAd()"
             >
               {{ isUpdate ? $t('stepper.buttons.update_ad', {id: ad.id}) : $t('stepper.buttons.publish_ad') }}
             </v-btn>
@@ -750,7 +751,8 @@ export default {
       alert: this.$t('messageRoundedPrice'),
       priceForbidden: false,
       returnTimeIsValid: true,
-      initWaypoints: []
+      initWaypoints: [],
+      role: null
     }
   },
   computed: {
@@ -880,12 +882,13 @@ export default {
     ad: {
       immediate: true,
       handler () {
+        const self = this;
         this.origin = this.ad.origin;
         this.outwardDate = this.ad.outwardDate;
         this.outwardTime = this.ad.outwardTime;
         this.returnDate = this.ad.returnDate;
         this.returnTime = this.ad.returnTime;
-        this.initWaypoints = this.ad.outwardWaypoints.splice(this.ad.outwardWaypoints.length -1, 1).splice(1,1);
+        this.initWaypoints = this.ad.outwardWaypoints.filter(point => {return point.address.id !== self.initOrigin.id && point.address.id !== self.initDestination.id});
         this.seats = this.ad.seatsDriver; //todo: check
         this.luggage = this.ad.luggage;
         this.smoke = this.ad.smoke;
@@ -894,6 +897,9 @@ export default {
         this.music = this.ad.music;
         this.message = this.ad.message;
         this.price = this.ad.outwardDriverPrice; //todo: check
+        this.role = this.ad.role;
+        this.driver = this.ad.role === 1 || this.ad.role === 3;
+        this.passenger = this.ad.role === 2 || this.ad.role === 3;
       }
     }
   },
@@ -1048,7 +1054,7 @@ export default {
             }
           }
         }).catch(error => {
-          // if and error occurred we set the original price
+          // if an error occurred we set the original price
           this.price = price;
         }).finally(() => {
           this.loadingPrice = false;
