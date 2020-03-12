@@ -39,7 +39,8 @@ use App\Rdex\Entity\RdexConnectionUser;
  *          "formats"={"xml", "jsonld", "json"},
  *          "normalization_context"={"groups"={"rdex"}, "enable_max_depth"="true"},
  *      },
- *      collectionOperations={
+ *       collectionOperations={
+ *          "get",
  *          "post"={
  *              "path"="/connections",
  *              "controller"=ConnectionController::class,
@@ -107,7 +108,9 @@ use App\Rdex\Entity\RdexConnectionUser;
  *              },
  *          }
  *      },
- *      itemOperations={}
+ *      itemOperations={
+ *          "get",
+*        }
  * )
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -125,35 +128,35 @@ class RdexConnection
      * @Groups("rdex")
      */
     private $uuid;
-    
+
     /**
      * @var string The name of the operator.
      *
      * @Groups("rdex")
      */
     private $operator;
-    
+
     /**
      * @var string The url of the site.
      *
      * @Groups("rdex")
      */
     private $origin;
-    
+
     /**
      * @var RdexConnectionUser The driver.
      *
      * @Groups("rdex")
      */
     private $driver;
-    
+
     /**
      * @var RdexConnectionUser The passenger.
      *
      * @Groups("rdex")
      */
     private $passenger;
-    
+
     /**
      * @var int The uuids of the journey.
      * Yes, there a 's' in the spec but we only take one... don't ask
@@ -172,7 +175,7 @@ class RdexConnection
     {
         (!is_null($uuid)) ? $this->uuid = $uuid : $this->uuid = -999999999;
     }
-    
+
     public function getUuid(): int
     {
         return $this->uuid;
@@ -208,7 +211,7 @@ class RdexConnection
 
         return $this;
     }
-        
+
     public function getDriver(): RdexConnectionUser
     {
         return $this->driver;
