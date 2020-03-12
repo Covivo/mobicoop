@@ -61,16 +61,14 @@
   </v-container>
 </template>
 <script>
-import { merge, omit } from "lodash";
+import { omit } from "lodash";
 import Translations from "@translations/components/user/profile/ad/MyAds.js";
-import TranslationsClient from "@clientTranslations/components/user/profile/ad/MyAds.js";
 
 import Ad from "@components/user/profile/ad/Ad.vue";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: Translations,
   },
   components: {
     Ad

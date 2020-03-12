@@ -47,16 +47,13 @@
   </v-container>
 </template>
 <script>
-import { merge } from "lodash";
 import Translations from "@translations/components/user/profile/carpool/AcceptedCarpools.js";
-import TranslationsClient from "@clientTranslations/components/user/profile/carpool/AcceptedCarpools.js";
 
 import Carpool from "@components/user/profile/carpool/Carpool.vue";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: Translations,
   },
   components: {
     Carpool

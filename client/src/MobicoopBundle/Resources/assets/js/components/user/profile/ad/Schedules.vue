@@ -95,15 +95,11 @@
 
 <script>
 import moment from 'moment';
-import {merge} from 'lodash';
 import Translations from "@translations/components/user/profile/ad/Schedules.js";
-import TranslationsClient from "@clientTranslations/components/user/profile/ad/Schedules.js";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: Translations
   },
   props: {
     outwardTimes: {

@@ -31,14 +31,11 @@
 </template>
 
 <script>
-import { merge } from "lodash";
 import Translations from "@translations/components/user/profile/ad/AdFooter.js";
-import TranslationsClient from "@clientTranslations/components/user/profile/ad/AdFooter.js";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: Translations
   },
   props: {
     id: {
