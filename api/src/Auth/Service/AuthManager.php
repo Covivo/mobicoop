@@ -38,7 +38,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * Auth manager service.
  *
- * @author Sylvain Briat <sylvain.briat@mobioop.org>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 class AuthManager
 {
@@ -76,10 +76,10 @@ class AuthManager
         if (!$item = $this->authItemRepository->findByName($itemName)) {
             throw new AuthItemNotFoundException('Auth item ' . $itemName . ' not found');
         }
-
+       
         // we get the requester
         $requester = $this->tokenStorage->getToken()->getUser();
-        
+       
         // check if the item is authorized for the requester
         return $this->isAssigned($requester, $item, $params);
     }

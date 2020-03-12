@@ -23,7 +23,6 @@
  namespace App\User\Controller;
 
 use ApiPlatform\Core\Exception\InvalidArgumentException;
-use App\Auth\Service\PermissionManager;
 use App\TranslatorTrait;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;

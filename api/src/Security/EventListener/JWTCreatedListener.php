@@ -23,12 +23,13 @@
 
 namespace App\Security\EventListener;
 
-use App\Auth\Service\PermissionManager;
 use App\User\Entity\User;
 use App\App\Entity\App;
 use App\Auth\Service\AuthManager;
+use App\User\Service\UserManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Json Web Token Event listener
@@ -36,20 +37,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class JWTCreatedListener
 {
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
     private $authManager;
+    private $entityManager;
 
-    /**
-     * @param RequestStack $requestStack
-     */
-    public function __construct(RequestStack $requestStack, AuthManager $authManager)
+    public function __construct(AuthManager $authManager, EntityManagerInterface $entityManager)
     {
-        $this->requestStack = $requestStack;
         $this->authManager = $authManager;
+        $this->entityManager = $entityManager;
     }
 
     /**

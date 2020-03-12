@@ -40,7 +40,6 @@ use App\Auth\Entity\UserRole;
 use App\Auth\Exception\AuthItemNotFoundException;
 use App\Auth\Repository\AuthItemRepository;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**

@@ -64,6 +64,7 @@ use App\User\Controller\UserDelete;
 use App\User\Controller\UserCheckSignUpValidationToken;
 use App\User\Controller\UserCheckPhoneToken;
 use App\User\Controller\UserUnsubscribeFromEmail;
+use App\User\Controller\UserMe;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\HomeAddressDirectionTerritoryFilter;
@@ -231,7 +232,13 @@ use App\Community\Entity\CommunityUser;
  *              "normalization_context"={"groups"={"readUser"}},
  *              "path"="/users/checkPhoneToken",
  *              "controller"=UserCheckPhoneToken::class
- *          }
+ *          },
+ *          "me"={
+ *              "normalization_context"={"groups"={"readUser"}},
+ *              "method"="GET",
+ *              "path"="/users/me",
+ *              "read"="false"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -987,7 +994,6 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"massMigrate"})
      */
     private $alreadyRegistered;
-
 
     public function __construct($status = null)
     {
