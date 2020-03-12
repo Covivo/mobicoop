@@ -1173,6 +1173,11 @@ class AdManager
                     }
                 }
             }
+            if (count($asks)>0) {
+                $ad = $this->makeAd($proposal, $userId, true);
+                $ad->setAsks($asks);
+                $ads[] = $ad;
+            }
             foreach ($proposal->getMatchingOffers() as $matching) {
                 foreach ($matching->getAsks() as $ask) {
                     if ($ask->getStatus() == (Ask::STATUS_ACCEPTED_AS_DRIVER || Ask::STATUS_ACCEPTED_AS_DRIVER)) {
@@ -1181,11 +1186,17 @@ class AdManager
                     }
                 }
             }
-            if (count($asks) > 0) {
+            if (count($asks)>0) {
                 $ad = $this->makeAd($proposal, $userId, true);
                 $ad->setAsks($asks);
-                $ads[] = $ad;
+                $ads[] =$ad;
             }
+            // var_dump('proposal |'.$proposal->getId());
+            // var_dump('asks number |'.count($asks));
+
+            // $ad = $this->makeAd($proposal, $userId, true);
+            // $ad->setAsks($asks);
+            // $ads = [$ad];
         }
         return $ads;
     }
