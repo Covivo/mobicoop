@@ -47,7 +47,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security_post_denormalize"="is_granted('articles_read',object)"
+ *              "security_post_denormalize"="is_granted('article_list',object)"
  *          },
  *          "post"={
  *              "security_post_denormalize"="is_granted('article_create',object)"

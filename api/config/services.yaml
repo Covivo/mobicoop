@@ -51,10 +51,9 @@ services:
     # JWT Event Listener
     mobicoop.event.jwt_created_listener:
         class: App\Security\EventListener\JWTCreatedListener
-        arguments: [ '@request_stack' ]
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
-
+    
     # Direction Load Listener
     mobicoop.direction.direction_load_listener:
         class: App\Geography\EventListener\DirectionLoadListener
@@ -99,6 +98,11 @@ services:
     # Article
     App\Article\Controller\:
         resource: '../src/Article/Controller'
+        tags: ['controller.service_arguments']
+
+    # Auth
+    App\Auth\Controller\:
+        resource: '../src/Auth/Controller'
         tags: ['controller.service_arguments']
 
     # Carpool
@@ -340,11 +344,6 @@ services:
     # Rdex
     App\Rdex\Controller\:
         resource: '../src/Rdex/Controller'
-        tags: ['controller.service_arguments']
-
-    # Right
-    App\Right\Controller\:
-        resource: '../src/Right/Controller'
         tags: ['controller.service_arguments']
     
     # Solidary

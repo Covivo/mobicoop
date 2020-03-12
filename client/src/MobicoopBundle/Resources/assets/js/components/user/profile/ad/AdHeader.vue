@@ -177,18 +177,14 @@
 </template>
 
 <script>
-import { merge } from "lodash";
 import axios from "axios";
 import formData from "../../../../utils/request";
 
 import Translations from "@translations/components/user/profile/ad/MyAds.js";
-import TranslationsClient from "@clientTranslations/components/user/profile/ad/MyAds.js";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: Translations
   },
   props: {
     isDriver: {

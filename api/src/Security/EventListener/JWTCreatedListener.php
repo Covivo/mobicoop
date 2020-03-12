@@ -23,11 +23,13 @@
 
 namespace App\Security\EventListener;
 
-use App\Right\Service\PermissionManager;
 use App\User\Entity\User;
 use App\App\Entity\App;
+use App\Auth\Service\AuthManager;
+use App\User\Service\UserManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Json Web Token Event listener
@@ -35,20 +37,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class JWTCreatedListener
 {
+    private $authManager;
+    private $entityManager;
 
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-    private $permissionManager;
-
-    /**
-     * @param RequestStack $requestStack
-     */
-    public function __construct(RequestStack $requestStack, PermissionManager $permissionManager)
+    public function __construct(AuthManager $authManager, EntityManagerInterface $entityManager)
     {
-        $this->requestStack = $requestStack;
-        $this->permissionManager = $permissionManager;
+        $this->authManager = $authManager;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -58,8 +53,6 @@ class JWTCreatedListener
      */
     public function onJWTCreated(JWTCreatedEvent $event)
     {
-        $request = $this->requestStack->getCurrentRequest();
-
         $payload = $event->getData();
 
         /**
@@ -68,7 +61,7 @@ class JWTCreatedListener
         $user = $event->getUser();
         $payload['id'] = $user->getId();
         if ($user instanceof User) {
-            $payload['permissions'] = $this->permissionManager->getUserPermissions($user);
+            $payload['admin'] = $this->authManager->isAuthorized('access_admin');
         }
         $event->setData($payload);
         $header = $event->getHeader();

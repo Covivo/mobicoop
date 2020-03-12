@@ -23,6 +23,8 @@
 
 namespace App\User\Service;
 
+use App\Auth\Entity\AuthItem;
+use App\Auth\Entity\UserAuthAssignment;
 use App\Carpool\Entity\Ask;
 use App\Event\Entity\Event;
 use App\Carpool\Repository\AskHistoryRepository;
@@ -39,9 +41,7 @@ use App\User\Event\UserPasswordChangedEvent;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use App\Right\Repository\RoleRepository;
-use App\Right\Entity\Role;
-use App\Right\Entity\UserRole;
+use App\Auth\Repository\AuthItemRepository;
 use App\Community\Repository\CommunityRepository;
 use App\Community\Entity\CommunityUser;
 use App\User\Event\UserRegisteredEvent;
@@ -57,7 +57,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\User\Event\UserUpdatedSelfEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\User\Repository\UserRepository;
-use DoctrineExtensions\Query\Mysql\Now;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\User\Exception\UserDeleteException;
 
@@ -71,7 +71,7 @@ class UserManager
 {
     private $entityManager;
     private $imageManager;
-    private $roleRepository;
+    private $authItemRepository;
     private $communityRepository;
     private $communityUserRepository;
     private $messageRepository;
@@ -84,6 +84,7 @@ class UserManager
     private $eventDispatcher;
     private $encoder;
     private $translator;
+    private $security;
 
     // Default carpool settings
     private $chat;
@@ -96,12 +97,12 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator)
+    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, AuthItemRepository $authItemRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator, Security $security)
     {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
         $this->logger = $logger;
-        $this->roleRepository = $roleRepository;
+        $this->authItemRepository = $authItemRepository;
         $this->communityRepository = $communityRepository;
         $this->communityUserRepository = $communityUserRepository;
         $this->messageRepository = $messageRepository;
@@ -110,6 +111,7 @@ class UserManager
         $this->eventDispatcher = $dispatcher;
         $this->encoder = $encoder;
         $this->translator = $translator;
+        $this->security = $security;
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
         $this->userRepository = $userRepository;
@@ -128,6 +130,16 @@ class UserManager
     {
         return $this->userRepository->find($id);
     }
+
+    /**
+     * Get a user by security token.
+     *
+     * @return User|null
+     */
+    public function getMe()
+    {
+        return $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+    }
     
     /**
      * Registers a user.
@@ -138,12 +150,12 @@ class UserManager
      */
     public function registerUser(User $user, bool $encodePassword=true)
     {
-        if (count($user->getUserRoles()) == 0) {
+        if (count($user->getUserAuthAssignments()) == 0) {
             // default role : user registered full
-            $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL);
-            $userRole = new UserRole();
-            $userRole->setRole($role);
-            $user->addUserRole($userRole);
+            $authItem = $this->authItemRepository->find(AuthItem::ROLE_USER_REGISTERED_FULL);
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
         }
 
         if ($encodePassword) {
@@ -246,12 +258,12 @@ class UserManager
     public function treatUser(User $user)
     {
         // we treat the role
-        if (count($user->getUserRoles()) == 0) {
-            // we have to add a role
-            $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL);
-            $userRole = new UserRole();
-            $userRole->setRole($role);
-            $user->addUserRole($userRole);
+        if (count($user->getUserAuthAssignments()) == 0) {
+            // default role : user registered full
+            $authItem = $this->authItemRepository->find(AuthItem::ROLE_USER_REGISTERED_FULL);
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
         }
 
         // we treat the notifications

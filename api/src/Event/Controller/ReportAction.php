@@ -85,7 +85,7 @@ final class ReportAction
                 'description' => $object->description
             ]);
 
-            return new Response();
+            return new Response('ok');
         }
 
         return new Response('Unauthorized', 403);

@@ -26,7 +26,7 @@ namespace App\Action\Security;
 use App\Action\Entity\Log;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\Right\Service\PermissionManager;
+use App\Auth\Service\PermissionManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;

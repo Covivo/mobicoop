@@ -1,0 +1,16 @@
+{# @var community \Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community #}
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}{% trans from 'ui' %}communities.community.title{% endtrans %} - {{ app_name }}
+{% endblock %}
+{% block stylesheets %}
+    {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}community/community") }}#}
+{% endblock %}
+{% block main %}
+    <community-secured-sign-in
+        :community-id="{{communityId}}"
+        community-name="{{communityName}}"
+        :user-id="{{userId}}"
+        :error="{{ error|json_encode }}"
+    ></community-secured-sign-in>
+{% endblock %}

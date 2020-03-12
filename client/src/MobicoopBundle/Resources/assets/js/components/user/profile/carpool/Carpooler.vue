@@ -97,9 +97,7 @@
 </template>
 
 <script>
-import { merge } from "lodash";
 import Translations from "@translations/components/user/profile/carpool/CarpoolFooter.js";
-import TranslationsClient from "@clientTranslations/components/user/profile/carpool/CarpoolFooter.js";
 
 import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary.vue';
 import RouteSummary from '@components/carpool/utilities/RouteSummary.vue';
@@ -107,11 +105,9 @@ import CarpoolerIdentity from "@components/carpool/utilities/CarpoolerIdentity";
 import CarpoolerContact from "@components/carpool/utilities/CarpoolerContact";
 import Schedules from '@components/user/profile/ad/Schedules.vue';
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
-
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: Translations
   },
   components: {
     CarpoolerIdentity,
