@@ -35,15 +35,21 @@
               class="py-0"
               :align="isRegular ? 'right' : 'left'"
             >
-              <span class="accent--text text--accent font-weight-bold body-1">{{ $t('outward') }}</span>
+              <span
+                v-if="!isRefined"
+                class="accent--text text--accent font-weight-bold body-1"
+              >{{ $t('outward') }}</span>
 
-              <v-icon class="accent--text text--accent font-weight-bold">
+              <v-icon
+                v-if="!isRefined"
+                class="accent--text text--accent font-weight-bold"
+              >
                 mdi-arrow-right
               </v-icon>
 
               <span
                 v-if="hasSameOutwardTimes"
-                class="primary--text text--darken-2 body-1"
+                class="primary--text text--darken-2 body-1 text-capitalize"
               >
                 {{ formatTime(outwardTimes[0]) }}
               </span>
@@ -69,7 +75,7 @@
 
               <span
                 v-if="hasSameReturnTimes"
-                class="primary--text text--darken-2 body-1"
+                class="primary--text text--darken-2 body-1 text-capitalize"
               >
                 {{ formatTime(returnTimes[0]) }}
               </span>
@@ -90,8 +96,8 @@
 <script>
 import moment from 'moment';
 import {merge} from 'lodash';
-import Translations from "@translations/components/user/profile/proposal/Schedules.js";
-import TranslationsClient from "@clientTranslations/components/user/profile/proposal/Schedules.js";
+import Translations from "@translations/components/user/profile/ad/Schedules.js";
+import TranslationsClient from "@clientTranslations/components/user/profile/ad/Schedules.js";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -123,7 +129,12 @@ export default {
     dateTimeFormat: {
       type: String,
       default: "ui.i18n.time.format.hourMinute"
-    } 
+    },
+    // if we want refined display of data for punctual carpools
+    isRefined: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {

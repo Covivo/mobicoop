@@ -443,6 +443,13 @@ class Ad
     private $proposalId;
 
     /**
+     * @var int $potentialCarpoolers
+     * Potential carpoolers count
+     * @Groups({"read","write"})
+     */
+    private $potentialCarpoolers;
+
+    /**
      * @var string The external origin of this Ad
      *
      * @Groups({"read","write"})
@@ -999,6 +1006,17 @@ class Ad
     {
         $this->proposalId = $proposalId;
 
+        return $this;
+    }
+
+    public function getPotentialCarpoolers(): ?int
+    {
+        return $this->potentialCarpoolers;
+    }
+
+    public function setPotentialCarpoolers(int $potentialCarpoolers): self
+    {
+        $this->potentialCarpoolers = $potentialCarpoolers;
         return $this;
     }
 

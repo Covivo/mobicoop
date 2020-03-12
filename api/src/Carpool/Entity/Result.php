@@ -274,6 +274,12 @@ class Result
      */
     private $externalOrigin;
 
+    /**
+     * @var int|null
+     * @Groups("results")
+     */
+    private $askId;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -752,6 +758,17 @@ class Result
     {
         $this->externalOrigin = $externalOrigin;
 
+        return $this;
+    }
+
+    public function getAskId(): ?int
+    {
+        return $this->askId;
+    }
+
+    public function setAskId(?int $askId): Result
+    {
+        $this->askId = $askId;
         return $this;
     }
 }

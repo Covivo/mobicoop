@@ -1,6 +1,6 @@
 export default {
   fr: {
-    proposals: {
+    ads: {
       ongoing: "Annonces en cours",
       archived: "Annonces archivées",
       tooltips: {
@@ -46,7 +46,7 @@ export default {
     }
   },
   en: {
-    proposals: {
+    ads: {
       ongoing: "On going proposals",
       archived: "Archived proposals"
     },

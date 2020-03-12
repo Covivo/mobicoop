@@ -318,7 +318,10 @@ class UserController extends AbstractController
 
         //TODO - fix : Change this when use router vue
         if ($tabDefault == 'mes-annonces') {
-            $tabDefault = 'myProposals';
+            $tabDefault = 'myAds';
+        }
+        if ($tabDefault == 'mes-covoiturages-acceptes') {
+            $tabDefault = 'carpoolsAccepted';
         }
         if ($tabDefault == 'mon-profil') {
             $tabDefault = 'myProfile';
@@ -328,7 +331,8 @@ class UserController extends AbstractController
             'error' => $error,
             'alerts' => $userManager->getAlerts($user)['alerts'],
             'tabDefault' => $tabDefault,
-            'proposals' => $userManager->getProposals($user)
+            'ads' => $userManager->getAds($user),
+            'acceptedCarpools' => $userManager->getAds($user, true)
         ]);
     }
 
@@ -552,7 +556,9 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST')) {
             // if we ask for a specific thread then we return it
-            if ($data->has("idMessage")) {
+            if ($data->has("idAsk")) {
+                $idAsk = $data->get("idAsk");
+            } elseif ($data->has("idMessage")) {
                 /** @var Message $message */
                 $message = $messageManager->getMessage($data->get("idMessage"));
                 $reponseofmanager = $this->handleManagerReturnValue($message);

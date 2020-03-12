@@ -211,8 +211,8 @@ export default {
         this.modelTabs="tab-dm";
         this.idRecipient = this.newThread.idRecipient;
       }
-      
     }
+    if(this.givenIdAsk) this.refreshActions = true;
   },
   methods: {
     updateDetails(data){
@@ -284,7 +284,8 @@ export default {
         .then(response => {
           //console.error(response.data);
           this.refreshActions = true;
-          this.loadingBtnAction = false;
+          // buttons become usable before the whole component is updated and so user can accept or refused multiple times, creating multiple proposals
+          // this.loadingBtnAction = false;
         })
         .catch(function (error) {
           console.error(error);

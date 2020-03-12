@@ -76,15 +76,16 @@ class ResultManager
      * Create "user-friendly" results from the matchings of an ad proposal
      *
      * @param Proposal $proposal    The proposal with its matchings
+     * @param bool $acceptedAsks    If we want to get private ads where there is at least one accepted ask
      * @return array                The array of results
      */
-    public function createAdResults(Proposal $proposal)
+    public function createAdResults(Proposal $proposal, bool $acceptedAsks = null)
     {
         // the outward results are the base results
-        $results = $this->createProposalResults($proposal);
+        $results = $this->createProposalResults($proposal, false, $acceptedAsks);
         $returnResults = [];
         if ($proposal->getProposalLinked()) {
-            $returnResults = $this->createProposalResults($proposal->getProposalLinked(), true);
+            $returnResults = $this->createProposalResults($proposal->getProposalLinked(), true, $acceptedAsks);
         }
 
         // the outward results are the base
@@ -385,21 +386,36 @@ class ResultManager
     /**
      * Create results for an outward or a return proposal.
      *
-     * @param Proposal $proposal    The proposal
-     * @param boolean $return       The result is for the return trip
+     * @param Proposal $proposal The proposal
+     * @param boolean $return The result is for the return trip
+     * @param bool $handleAcceptedAsks Do not exclude private proposal if there is an accepted ask in matchings
      * @return array
      */
-    private function createProposalResults(Proposal $proposal, bool $return = false)
+    private function createProposalResults(Proposal $proposal, bool $return = false, bool $handleAcceptedAsks = null)
     {
         $results = [];
         // we group the matchings by matching proposalId to merge potential driver and/or passenger candidates
         $matchings = [];
         // we search the matchings as an offer
+        /** @var Matching $request */
         foreach ($proposal->getMatchingRequests() as $request) {
-            // we exclude the private proposals
-            if ($request->getProposalRequest()->isPrivate() || $request->getProposalRequest()->isPaused()) {
-                continue;
+            if ($handleAcceptedAsks) {
+                $acceptedAsks = array_filter($request->getAsks(), function ($ask) {
+                    return $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || Ask::STATUS_ACCEPTED_AS_PASSENGER;
+                });
+                $hasAcceptedAsks = count($acceptedAsks) > 0;
+
+                // we exclude the private proposals if there is no accepted asks
+                if (!$hasAcceptedAsks && ($request->getProposalRequest()->isPrivate() || $request->getProposalRequest()->isPaused())) {
+                    continue;
+                }
+            } else {
+                // we exclude the private proposals
+                if ($request->getProposalRequest()->isPrivate() || $request->getProposalRequest()->isPaused()) {
+                    continue;
+                }
             }
+
             // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
             if (is_null($request->getFilters() && is_null($request->getPickUpDuration()))) {
                 $request->setFilters($this->proposalMatcher->getMatchingFilters($request));
@@ -408,10 +424,22 @@ class ResultManager
         }
         // we search the matchings as a request
         foreach ($proposal->getMatchingOffers() as $offer) {
-            // we exclude the private proposals
-            if ($offer->getProposalOffer()->isPrivate() || $offer->getProposalOffer()->isPaused()) {
-                continue;
+            if ($handleAcceptedAsks) {
+                $acceptedAsks = array_filter($offer->getAsks(), function ($ask) {
+                    return $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || Ask::STATUS_ACCEPTED_AS_PASSENGER;
+                });
+                $hasAcceptedAsks = count($acceptedAsks) > 0;
+                // we exclude the private proposals if there is no accepted asks
+                if (!$hasAcceptedAsks && $offer->getProposalOffer()->isPrivate() || $offer->getProposalOffer()->isPaused()) {
+                    continue;
+                }
+            } else {
+                // we exclude the private proposals
+                if ($offer->getProposalOffer()->isPrivate() || $offer->getProposalOffer()->isPaused()) {
+                    continue;
+                }
             }
+
             // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
             if (is_null($offer->getFilters() && is_null($offer->getPickUpDuration()))) {
                 $offer->setFilters($this->proposalMatcher->getMatchingFilters($offer));
@@ -459,6 +487,9 @@ class ResultManager
             }
             if (is_null($result->getComment()) && !is_null($matching['request']->getProposalRequest()->getComment())) {
                 $result->setComment($matching['request']->getProposalRequest()->getComment());
+            }
+            if (is_null($result->getAskId()) && !empty($matching['request']->getAsks())) {
+                $result->setAskId($matching['request']->getAsks()[0]->getId());
             }
 
             // communities
@@ -679,7 +710,9 @@ class ResultManager
                             }
                         }
                         // we init the time to the one of the carpooler
-                        if ($matching['request']->getProposalRequest()->getCriteria()->isMonCheck()) {
+                        if ($matching['request']->getProposalRequest()->getCriteria()->isMonCheck() &&
+                            !is_null($matching['request']->getProposalRequest()->getCriteria()->getMonTime())) {
+//                            dump($matching['request']->getAsks());die;
                             $monTime = clone $matching['request']->getProposalRequest()->getCriteria()->getMonTime();
                             if ($pickupDuration) {
                                 $monTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
@@ -688,8 +721,9 @@ class ResultManager
                             $item->setTime($monTime);
                             $item->setMonMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getMonMarginDuration());
                         }
-                        if ($matching['request']->getProposalRequest()->getCriteria()->isTueCheck()) {
-                            $tueTime = clone $matching['request']->getProposalRequest()->getCriteria()->getTueTime();
+                        if ($matching['request']->getProposalRequest()->getCriteria()->isTueCheck() &&
+                            !is_null($matching['request']->getProposalRequest()->getCriteria()->getTueTime())) {
+                            $tueTime = $matching['request']->getProposalRequest()->getCriteria()->getTueTime();
                             if ($pickupDuration) {
                                 $tueTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
@@ -697,8 +731,9 @@ class ResultManager
                             $item->setTime($tueTime);
                             $item->setTueMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getTueMarginDuration());
                         }
-                        if ($matching['request']->getProposalRequest()->getCriteria()->isWedCheck()) {
-                            $wedTime = clone $matching['request']->getProposalRequest()->getCriteria()->getWedTime();
+                        if ($matching['request']->getProposalRequest()->getCriteria()->isWedCheck() &&
+                            !is_null($matching['request']->getProposalRequest()->getCriteria()->getWedTime())) {
+                            $wedTime = $matching['request']->getProposalRequest()->getCriteria()->getWedTime();
                             if ($pickupDuration) {
                                 $wedTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
@@ -706,8 +741,9 @@ class ResultManager
                             $item->setTime($wedTime);
                             $item->setWedMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getWedMarginDuration());
                         }
-                        if ($matching['request']->getProposalRequest()->getCriteria()->isThuCheck()) {
-                            $thuTime = clone $matching['request']->getProposalRequest()->getCriteria()->getThuTime();
+                        if ($matching['request']->getProposalRequest()->getCriteria()->isThuCheck() &&
+                            !is_null($matching['request']->getProposalRequest()->getCriteria()->getThuTime())) {
+                            $thuTime = $matching['request']->getProposalRequest()->getCriteria()->getThuTime();
                             if ($pickupDuration) {
                                 $thuTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
@@ -715,8 +751,9 @@ class ResultManager
                             $item->setTime($thuTime);
                             $item->setThuMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getThuMarginDuration());
                         }
-                        if ($matching['request']->getProposalRequest()->getCriteria()->isFriCheck()) {
-                            $friTime = clone $matching['request']->getProposalRequest()->getCriteria()->getFriTime();
+                        if ($matching['request']->getProposalRequest()->getCriteria()->isFriCheck() &&
+                            !is_null($matching['request']->getProposalRequest()->getCriteria()->getFriTime())) {
+                            $friTime = $matching['request']->getProposalRequest()->getCriteria()->getFriTime();
                             if ($pickupDuration) {
                                 $friTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
@@ -724,7 +761,8 @@ class ResultManager
                             $item->setTime($friTime);
                             $item->setFriMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getFriMarginDuration());
                         }
-                        if ($matching['request']->getProposalRequest()->getCriteria()->isSatCheck()) {
+                        if ($matching['request']->getProposalRequest()->getCriteria()->isSatCheck() &&
+                            !is_null($matching['request']->getProposalRequest()->getCriteria()->getSatTime())) {
                             $satTime = clone $matching['request']->getProposalRequest()->getCriteria()->getSatTime();
                             if ($pickupDuration) {
                                 $satTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
@@ -733,8 +771,9 @@ class ResultManager
                             $item->setTime($satTime);
                             $item->setSatMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getSatMarginDuration());
                         }
-                        if ($matching['request']->getProposalRequest()->getCriteria()->isSunCheck()) {
-                            $sunTime = clone $matching['request']->getProposalRequest()->getCriteria()->getSunTime();
+                        if ($matching['request']->getProposalRequest()->getCriteria()->isSunCheck() &&
+                            !is_null($matching['request']->getProposalRequest()->getCriteria()->getSunTime())) {
+                            $sunTime = $matching['request']->getProposalRequest()->getCriteria()->getSunTime();
                             if ($pickupDuration) {
                                 $sunTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
@@ -1009,6 +1048,9 @@ class ResultManager
             }
             if (is_null($result->getComment()) && !is_null($matching['offer']->getProposalOffer()->getComment())) {
                 $result->setComment($matching['offer']->getProposalOffer()->getComment());
+            }
+            if (is_null($result->getAskId()) && !empty($matching['offer']->getAsks())) {
+                $result->setAskId($matching['offer']->getAsks()[0]->getId());
             }
 
             // communities

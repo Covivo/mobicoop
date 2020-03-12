@@ -665,18 +665,20 @@ class AdManager
      * Get all ads of a user
      *
      * @param integer $userId
-     * @return void
+     * @param bool|null $acceptedAsks If we want to get results even if corresponding ads are private but there is at least one accepted ask
+     * @param bool|null $anyAds If we want to get all ads of an user, either they are private or not
+     * @return array
      */
-    public function getAds(int $userId)
+    public function getAds(int $userId, bool $acceptedAsks = null, bool $anyAds = null)
     {
         $ads = [];
         $user = $this->userManager->getUser($userId);
-        $proposals = $this->proposalRepository->findBy(['user'=>$user, 'private'=>false]);
-        
+        $params = $anyAds ? ['user'=>$user] : ['user'=>$user, 'private'=>false];
+        $proposals = $this->proposalRepository->findBy($params);
         $refIdProposals = [];
         foreach ($proposals as $proposal) {
             if (!in_array($proposal->getId(), $refIdProposals)) {
-                $ads[] = $this->makeAd($proposal, $userId);
+                $ads[] = $this->makeAd($proposal, $userId, $acceptedAsks);
                 if (!is_null($proposal->getProposalLinked())) {
                     $refIdProposals[$proposal->getId()] = $proposal->getProposalLinked()->getId();
                 }
@@ -739,9 +741,10 @@ class AdManager
      *
      * @param Proposal $proposal The base proposal of the ad
      * @param integer $userId The userId who made the proposal
-     * @return void
+     * @param bool $acceptedAsks If we want to get results even if corresponding ads are private but there is at least one accepted ask
+     * @return Ad
      */
-    private function makeAd($proposal, $userId)
+    private function makeAd($proposal, $userId, bool $acceptedAsks = null)
     {
         $ad = new Ad();
                 
@@ -754,6 +757,7 @@ class AdManager
         $ad->setOutwardWaypoints($proposal->getWaypoints());
         $ad->setOutwardDate($proposal->getCriteria()->getFromDate());
         $ad->setPaused($proposal->isPaused());
+        $ad->setOutwardDriverPrice($proposal->getCriteria()->getDriverComputedRoundedPrice());
 
         if ($proposal->getCriteria()->getFromTime()) {
             $ad->setOutwardTime($ad->getOutwardDate()->format('Y-m-d').' '.$proposal->getCriteria()->getFromTime()->format('H:i:s'));
@@ -818,9 +822,10 @@ class AdManager
         }
         $ad->setSchedule($schedule);
 
-        $ad->setResults(
-            $this->resultManager->createAdResults($proposal)
-        );
+        $ad->setResults($this->resultManager->createAdResults($proposal, $acceptedAsks));
+
+        $ad->setPotentialCarpoolers(count($this->resultManager->createAdResults($proposal, false)));
+
         return $ad;
     }
 

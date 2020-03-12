@@ -26,7 +26,7 @@
             mdi-car
           </v-icon>
         </template>
-        <span> {{ $t('proposals.tooltips.driver') }} </span>
+        <span> {{ $t('ads.tooltips.driver') }} </span>
       </v-tooltip>
       <v-tooltip
         v-if="isPassenger && isDriver"
@@ -48,7 +48,7 @@
             mdi-car
           </v-icon>
         </template>
-        <span>{{ $t('proposals.tooltips.diverOrPassenger') }}</span>
+        <span>{{ $t('ads.tooltips.diverOrPassenger') }}</span>
       </v-tooltip>
       <v-divider
         v-if="isDriver && isPassenger"
@@ -64,10 +64,11 @@
             mdi-walk
           </v-icon>
         </template>
-        <span>{{ $t('proposals.tooltips.passenger') }}</span>
+        <span>{{ $t('ads.tooltips.passenger') }}</span>
       </v-tooltip>
       <v-spacer />
       <v-col
+        v-if="!isCarpool"
         cols="8"
         class="text-center"
       >
@@ -79,6 +80,7 @@
         </p>
       </v-col>
       <v-col
+        v-if="!isCarpool"
         cols="2"
         class="text-right"
       >
@@ -162,7 +164,7 @@
               color="green darken-1"
               text
               :loading="loading"
-              @click="deleteProposal()"
+              @click="deleteAd()"
             >
               {{ $t("delete.dialog.validate") }}
             </v-btn>
@@ -177,8 +179,8 @@
 import { merge } from "lodash";
 import axios from "axios";
 
-import Translations from "@translations/components/user/profile/proposal/MyProposals.js";
-import TranslationsClient from "@clientTranslations/components/user/profile/proposal/MyProposals.js";
+import Translations from "@translations/components/user/profile/ad/MyAds.js";
+import TranslationsClient from "@clientTranslations/components/user/profile/ad/MyAds.js";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -207,7 +209,7 @@ export default {
       type: Boolean,
       default: false
     },
-    proposalId: {
+    adId: {
       type: Number,
       default: null
     },
@@ -216,6 +218,10 @@ export default {
       default: false
     },
     hasAcceptedAsk: {
+      type: Boolean,
+      default: false
+    },
+    isCarpool: {
       type: Boolean,
       default: false
     }
@@ -240,45 +246,44 @@ export default {
     }
   },
   methods: {
-    deleteProposal () {
+    deleteAd () {
       this.resetAlert();
       const self = this;
       this.loading = true;
       axios.delete(this.$t('delete.route'), {
         data: {
-          proposalId: this.proposalId,
+          adId: this.adId,
           deletionMessage: this.deleteMessage
         }
       })
         .then(function (response) {
           if (response.data && response.data.message) {
-            self.alert = {
-              type: "success",
-              message: self.$t(response.data.message)
-            };
-            self.$emit('proposal-deleted', self.proposalId);
-            window.location.reload();
+            // self.alert = {
+            //   type: "success",
+            //   message: self.$t(response.data.message)
+            // };
+            self.$emit('ad-deleted', self.isArchived, self.adId, self.$t(response.data.message));
           }
         })
         .catch(function (error) {
-          if (error.response.data && error.response.data.message) {
-            self.alert = {
-              type: "error",
-              message: self.$t(error.response.data.message)
-            };
-          }
+          self.alert = {
+            type: "error",
+            message: self.$t(error.response.data && error.response.data.message ?
+              error.response.data.message : error.response.data)
+          };
         })
         .finally(function () {
           if (self.alert.message.length > 0) {
             self.snackbar = true;
           }
-          if (self.alert.type == 'error') self.loading = false;
+          self.loading = false;
+          self.dialogActive = false;
         })
     },
     pauseAd () {
-      this.paused = this.paused?false:true;
+      this.paused = !this.paused;
       this.loading = true;
-      this.ad.proposalId = this.proposalId;
+      this.ad.adId = this.adId;
       this.ad.paused = this.paused;
       axios
         .put(this.$t('pause.route'), this.ad,
@@ -288,23 +293,22 @@ export default {
             }
           })
         .then(res => {
-          if (res.data && res.data.message == "success") {
+          if (res.data && res.data.message === "success") {
             this.alert = {
               type: "success",
-              message: this.paused?this.$t("pause.success.pause"):this.$t("pause.success.unpause")
+              message: this.paused ? this.$t("pause.success.pause") : this.$t("pause.success.unpause")
             };
             this.$emit('pause-ad', this.ad.paused);
           }
-          if (res.data && res.data.message == "error") {
+          if (res.data && res.data.message === "error") {
             this.alert = {
               type: "error",
-              message: this.paused?this.$t("pause.error.pause"):this.$t("pause.error.unpause")
+              message: this.paused ? this.$t("pause.error.pause") : this.$t("pause.error.unpause")
             };
-            this.paused = this.paused?false:true;
+            this.paused = !this.paused;
           }
           this.snackbar = true;
-          window.location.reload();
-
+          this.loading = false;
         });
     },
     resetAlert() {

@@ -319,6 +319,8 @@ class Proposal
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
+        $this->setPrivate(false);
+        $this->setPaused(false);
         $this->results = [];
     }
     
