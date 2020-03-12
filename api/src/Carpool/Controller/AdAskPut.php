@@ -27,6 +27,7 @@ use App\Carpool\Entity\Ad;
 use App\Carpool\Service\AskManager;
 use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Controller class for ad ask : update an ask for a given ad.
@@ -39,11 +40,13 @@ class AdAskPut
     
     private $request;
     private $askManager;
+    private $security;
     
-    public function __construct(RequestStack $requestStack, AskManager $askManager)
+    public function __construct(RequestStack $requestStack, AskManager $askManager, Security $security)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->askManager = $askManager;
+        $this->security = $security;
     }
 
     /**
@@ -54,12 +57,10 @@ class AdAskPut
      */
     public function __invoke(Ad $data): Ad
     {
-        echo "ok";
-        die;
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
         }
-        $data = $this->askManager->updateAskFromAd($data, $this->request->get("id"), $this->request->get("userId"));
+        $data = $this->askManager->updateAskFromAd($data, $this->request->get("id"), $this->security->getUser()->getId());
         return $data;
     }
 }

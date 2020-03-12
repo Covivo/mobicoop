@@ -41,6 +41,7 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read","results"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -88,7 +89,6 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *          "put_ask"={
  *              "method"="PUT",
  *              "path"="/carpools/ask/{id}",
- *              "controller"=AdAskPut::class,
  *              "read"=false,
  *              "security"="is_granted('ad_ask_update',object)"
  *          },
