@@ -2324,6 +2324,10 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getRefresh()
+    {
+        return $this->email;
+    }
 
     // DOCTRINE EVENTS
 

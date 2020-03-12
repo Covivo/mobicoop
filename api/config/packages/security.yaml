@@ -57,6 +57,12 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
+        # firewall for token refresh
+        refresh:
+            pattern:  ^/token/refresh
+            stateless: true
+            anonymous: true
+
         # firewall for documentation
         doc:
             pattern:  ^/doc
@@ -122,4 +128,5 @@ security:
         - { path: ^/addresses/reverse, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rdex/journeys, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rdex/connections, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

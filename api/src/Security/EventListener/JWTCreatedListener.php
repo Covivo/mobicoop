@@ -29,7 +29,6 @@ use App\Auth\Service\AuthManager;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * Json Web Token Event listener
@@ -55,18 +54,20 @@ class JWTCreatedListener
     {
         $payload = $event->getData();
 
-        /**
-         * @var User|App $user
-         */
         $user = $event->getUser();
-        $payload['id'] = $user->getId();
-        if ($user instanceof User) {
-            $payload['admin'] = $this->authManager->isAuthorized('access_admin');
+        if ($user instanceof App || $user instanceof User) {
+            /**
+             * @var User|App $user
+             */
+            
+            $payload['id'] = $user->getId();
+            if ($user instanceof User) {
+                $payload['admin'] = $this->authManager->isAuthorized('access_admin');
+            }
+            $event->setData($payload);
         }
-        $event->setData($payload);
         $header = $event->getHeader();
         $header['cty'] = 'JWT';
-
         $event->setHeader($header);
     }
 }
