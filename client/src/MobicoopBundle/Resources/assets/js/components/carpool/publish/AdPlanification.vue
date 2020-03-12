@@ -479,7 +479,7 @@
 
 <script>
 import moment from "moment";
-import { merge, isEmpty, reject } from "lodash";
+import { merge, isEmpty, remove } from "lodash";
 import Translations from "@translations/components/carpool/publish/AdPlanification.json";
 import TranslationsClient from "@clientTranslations/components/carpool/publish/AdPlanification.json";
 
@@ -722,8 +722,8 @@ export default {
     setData(){
       if (!isEmpty(this.initSchedule)) {
         let schedule = this.initSchedule;
-        console.log(schedule);
         let tempSchedules = [];
+
         this.arrayDay.forEach(day => {
           if (schedule[day] === true) {
             tempSchedules.push({
@@ -735,8 +735,9 @@ export default {
         });
 
         let schedulesLength = tempSchedules.length;
+
         for (let i = 0; i < schedulesLength; i++) {
-          if (!tempSchedules) break;
+          if (tempSchedules.length === 0) break;
           let days = tempSchedules.filter(elem => {return elem.outwardTime === tempSchedules[i].outwardTime && elem.returnTime === tempSchedules[i].returnTime});
 
           this.schedules.push({
@@ -749,8 +750,8 @@ export default {
             fri: days.some(day => {return day.day === 'fri'}),
             sat: days.some(day => {return day.day === 'sat'}),
             sun: days.some(day => {return day.day === 'sun'}),
-            outwardTime: moment(tempSchedules[i].outwardTime).format("HH:mm"),
-            returnTime: moment(tempSchedules[i].returnTime).format("HH:mm"),
+            outwardTime: moment(tempSchedules[i].outwardTime).isValid() ? moment(tempSchedules[i].outwardTime).format("HH:mm") : null,
+            returnTime: moment(tempSchedules[i].returnTime).isValid() ? moment(tempSchedules[i].returnTime).format("HH:mm") : null,
             menuOutwardTime: false,
             menuReturnTime: false,
             outwardDisabled: false,
@@ -758,15 +759,15 @@ export default {
             maxTimeFromOutwardRegular: null
           });
 
-          tempSchedules = days.forEach(day => {
-            reject(tempSchedules, el => {
+          // console.log(days, tempSchedules);
+          days.forEach(day => {
+            remove(tempSchedules, el => {
               return el.day === day.day;
             })
           })
         }
-        this.change();
       }
-
+      console.log(this.schedules.length);
       //Fill array schedules
       for (let j = this.schedules.length; j < 7; j++){
         this.schedules.push({
@@ -788,6 +789,8 @@ export default {
           maxTimeFromOutwardRegular : null
         });
       }
+
+      this.change();
     },
 
     clearOutwardDate() {

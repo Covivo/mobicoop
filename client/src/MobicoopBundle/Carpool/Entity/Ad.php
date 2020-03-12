@@ -937,12 +937,16 @@ class Ad implements ResourceInterface, \JsonSerializable
 
     public function getOrigin()
     {
-        return !empty($this->getOutwardWaypoints()) ? $this->getOutwardWaypoints()[0]["address"] : null;
+        return !empty($this->getOutwardWaypoints()) && isset($this->getOutwardWaypoints()[0]["address"])
+            ? $this->getOutwardWaypoints()[0]["address"]
+            : null;
     }
 
     public function getDestination()
     {
-        return !empty($this->getOutwardWaypoints()) ? $this->getOutwardWaypoints()[count($this->getOutwardWaypoints()) - 1]["address"] : null;
+        return !empty($this->getOutwardWaypoints()) && isset($this->getOutwardWaypoints()[count($this->getOutwardWaypoints()) - 1]["address"])
+            ? $this->getOutwardWaypoints()[count($this->getOutwardWaypoints()) - 1]["address"]
+            : null;
     }
 
     public function jsonSerialize()
