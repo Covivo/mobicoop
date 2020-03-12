@@ -759,7 +759,6 @@ export default {
             maxTimeFromOutwardRegular: null
           });
 
-          // console.log(days, tempSchedules);
           days.forEach(day => {
             remove(tempSchedules, el => {
               return el.day === day.day;
@@ -767,7 +766,9 @@ export default {
           })
         }
       }
-      console.log(this.schedules.length);
+
+      this.change();
+
       //Fill array schedules
       for (let j = this.schedules.length; j < 7; j++){
         this.schedules.push({

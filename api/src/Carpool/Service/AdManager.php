@@ -771,6 +771,10 @@ class AdManager
         $ad->setOutwardDate($proposal->getCriteria()->getFromDate());
         $ad->setPaused($proposal->isPaused());
         $ad->setOutwardDriverPrice($proposal->getCriteria()->getDriverComputedRoundedPrice());
+        $ad->setBike($proposal->getCriteria()->hasBike());
+        $ad->setLuggage($proposal->getCriteria()->hasLuggage());
+        $ad->setBackSeats($proposal->getCriteria()->hasBackSeats());
+        $ad->setComment($proposal->getComment());
 
         if ($proposal->getCriteria()->getFromTime()) {
             $ad->setOutwardTime($ad->getOutwardDate()->format('Y-m-d').' '.$proposal->getCriteria()->getFromTime()->format('H:i:s'));
