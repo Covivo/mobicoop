@@ -237,6 +237,21 @@ user_unsubscribe_email:
       en: /user/unsubscribe/{token}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userUnsubscribeFromEmail
 
+# Get communities owned by a user (POST)
+user_communities_owned:
+    methods: [POST]
+    path:
+        fr: /user/communities/owned
+        en: /user/communities/owned
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userOwnedCommunities  
+
+# Get events created by a user (POST)
+user_created_events:
+    methods: [POST]
+    path:
+        fr: /user/events/created
+        en: /user/events/created
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCreatedEvents   
 
 ##################
 # carpool routes #
@@ -542,7 +557,42 @@ FAQ:
     path:
         fr: /FAQ
         en: /FAQ
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showFAQ    
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showFAQ
+
+# display ToolBox page
+ToolBox:
+    path:
+        fr: /boite-a-outils
+        en: /toolBox
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showToolbox        
+
+# display CommunityInfos page
+CommunityInfos:
+    path:
+        fr: /informations-communautes
+        en: /community-infos
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCommunityInfos
+
+# display LOM page
+LOM:
+    path:
+        fr: /LOM
+        en: /LOM
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showLOM
+
+# display GoodPractices page
+GoodPractices:
+    path:
+        fr: /bonnes-pratiques
+        en: /good-practices
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showGoodPractices
+
+# display MoreAbout page
+MoreAbout:
+    path:
+        fr: /en-savoir-plus
+        en: /more-about
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMoreAbout
 
 # Get the last external articles (AJAX)
 LastExternalArticles:

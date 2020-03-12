@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,42 +21,34 @@
  *    LICENSE
  **************************/
 
-namespace App\Communication\Controller;
+namespace App\Match\Controller;
 
-use App\Communication\Entity\Contact;
-use App\Communication\Service\ContactManager;
+use App\Match\Service\MassMigrateManager;
+use App\Match\Entity\Mass;
 use App\TranslatorTrait;
 
-/**
- * Controller class for contact message.
- *
- */
-class ContactMessage
+final class MassMigrateAction
 {
     use TranslatorTrait;
+    
+    private $massMigrateManager;
 
-    /**
-     * @var ContactManager
-     */
-    private $contactManager;
-
-    public function __construct(ContactManager $contactManager, array $params)
+    public function __construct(MassMigrateManager $massMigrateManager)
     {
-        $this->contactManager = $contactManager;
+        $this->massMigrateManager = $massMigrateManager;
     }
 
-    /**
-     * This method is invoked when a new contact is posted.
-     *
-     * @param Contact $data
-     * @return Contact
-     */
-    public function __invoke(Contact $data): Contact
+    public function __invoke(Mass $data): Mass
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad contact"));
+            throw new \InvalidArgumentException($this->translator->trans("bad Mass id is provided"));
         }
-        $data = $this->contactManager->sendContactMail($data);
-        return $data;
+
+        // Only qualified Masses can be migrated
+        if ($data->getMassType()!==1) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Mass type"));
+        }
+
+        return $this->massMigrateManager->migrate($data);
     }
 }

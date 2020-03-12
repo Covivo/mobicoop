@@ -350,7 +350,7 @@ class UserManager
      */
     public function deleteUser(User $user)
     {
-        $response = $this->dataProvider->putSpecial($user, null, "anonymise_user");
+        $response = $this->dataProvider->delete($user->getId());
         //L'user est anonymiser
         if ($response->getCode() == 200) {
             return $response->getValue();

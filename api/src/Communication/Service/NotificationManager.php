@@ -253,7 +253,7 @@ class NotificationManager
                 case Message::class:
                     $titleContext = ['user'=>$object->getUser()];
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
-                    // no break
+                break;
                 case RdexConnection::class:
                     $titleContext = [];
                     $ad = $this->adManager->getAd($object->getJourneysId());
@@ -285,6 +285,7 @@ class NotificationManager
                         'journeyDate' => $date,
                         'journeyTime' => $time
                     ];
+                break;
             }
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];

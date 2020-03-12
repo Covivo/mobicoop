@@ -262,12 +262,10 @@ class PermissionManager
                     }
                 }
             }
-    
             if ($this->rightInRoles($right, $roles, $user->getId(), $id, $object)) {
                 $permission->setGranted(true);
                 return $permission;
             }
-            
             // we check if the user has this specific right
             foreach ($user->getUserRights() as $userRight) {
                 if (is_null($userRight->getTerritory()) || $userRight->getTerritory() == $territory) {
@@ -278,7 +276,6 @@ class PermissionManager
                 }
             }
         }
-
         return $permission;
     }
 
