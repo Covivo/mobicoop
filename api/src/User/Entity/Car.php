@@ -43,18 +43,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      collectionOperations={
  *          "get",
  *          "post"={
- *              "security_post_denormalize"="is_granted('car_create',object)"
+ *              "security_post_denormalize"="is_granted('user_create',object)"
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('car_read',object)"
+ *              "security"="is_granted('user_read',object)"
  *          },
  *          "put"={
- *              "security"="is_granted('car_update',object)"
+ *              "security"="is_granted('user_update',object)"
  *          },
  *          "delete"={
- *              "security"="is_granted('car_delete',object)"
+ *              "security"="is_granted('user_delete',object)"
  *          }
  *      }
  * )

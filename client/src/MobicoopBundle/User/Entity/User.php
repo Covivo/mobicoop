@@ -1059,7 +1059,6 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
-
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {

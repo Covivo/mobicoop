@@ -1313,7 +1313,7 @@ class ProposalMatcher
 
     /**
      * Find potential matchings for multiple proposals at once.
-     * These potential proposal must be validated using the geomatcher.
+     * These potential proposals must be validated using the geomatcher.
      */
     public function findPotentialMatchingsForProposals(array $proposalIds)
     {
@@ -1321,7 +1321,7 @@ class ProposalMatcher
 
         gc_enable();
         // we create chunks of proposals to avoid freezing
-        $chunk = 8;
+        $chunk = 10;
         $proposalsChunked = array_chunk($proposalIds, $chunk, true);
 
         self::print_mem(2);
@@ -1347,7 +1347,6 @@ class ProposalMatcher
             $potentialProposals = [];
             $this->logger->info('Start searching potentials | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             foreach ($proposals as $proposal) {
-                //if (!$proposal->getCriteria()->isPassenger() && $proposal->getCriteria()->isDriver()) {
                 if ($proposal->getCriteria()->isDriver()) {
                     if ($proposalsFoundForProposal = $this->proposalRepository->findMatchingProposals($proposal, true, true)) {
                         $aproposals= [];

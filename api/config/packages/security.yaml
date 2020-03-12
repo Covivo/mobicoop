@@ -28,8 +28,9 @@ security:
                 property: 'email'
         # provider for logged users or app (eg. with a valid token)
         # /!\ this is the database-less provider, it avoids loading the user for each api call, so if you need the user information don't use this provider ! /!\
+        # /!\ the user is generally needed in every request because of permission management... /!\
         # jwt:
-        #     lexik_jwt: ~
+            # lexik_jwt: ~
 
     # firewalls
     firewalls:
@@ -84,7 +85,19 @@ security:
             stateless: true
             anonymous: true    
 
-        # firewall for dev (profiler)
+        # firewall for RDEX external requests
+        rdexExternalRequests:
+            pattern:  ^/rdex/journeys
+            stateless: true
+            anonymous: true
+
+        # firewall for RDEX external requests of connections
+        rdexExternalRequestsConnections:
+            pattern:  ^/rdex/connections
+            stateless: true
+            anonymous: true
+
+            # firewall for dev (profiler)
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
@@ -107,4 +120,6 @@ security:
         - { path: ^/rd/, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/addresses/search, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/addresses/reverse, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/rdex/journeys, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/rdex/connections, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

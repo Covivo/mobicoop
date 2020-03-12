@@ -44,6 +44,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
+use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -317,7 +318,10 @@ class UserController extends AbstractController
 
         //TODO - fix : Change this when use router vue
         if ($tabDefault == 'mes-annonces') {
-            $tabDefault = 'myProposals';
+            $tabDefault = 'myAds';
+        }
+        if ($tabDefault == 'mes-covoiturages-acceptes') {
+            $tabDefault = 'carpoolsAccepted';
         }
         if ($tabDefault == 'mon-profil') {
             $tabDefault = 'myProfile';
@@ -327,7 +331,8 @@ class UserController extends AbstractController
             'error' => $error,
             'alerts' => $userManager->getAlerts($user)['alerts'],
             'tabDefault' => $tabDefault,
-            'proposals' => $userManager->getProposals($user)
+            'ads' => $userManager->getAds($user),
+            'acceptedCarpools' => $userManager->getAds($user, true)
         ]);
     }
 
@@ -551,7 +556,9 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST')) {
             // if we ask for a specific thread then we return it
-            if ($data->has("idMessage")) {
+            if ($data->has("idAsk")) {
+                $idAsk = $data->get("idAsk");
+            } elseif ($data->has("idMessage")) {
                 /** @var Message $message */
                 $message = $messageManager->getMessage($data->get("idMessage"));
                 $reponseofmanager = $this->handleManagerReturnValue($message);
@@ -937,5 +944,37 @@ class UserController extends AbstractController
                 'metaDescription' => 'Mobicoop',
             ]
         );
+    }
+
+    /**
+     * Get all communities owned by a user
+     * AJAX
+     */
+    public function userOwnedCommunities(Request $request, CommunityManager $communityManager)
+    {
+        $userOwnedCommunities = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if ($userOwnedCommunities = $communityManager->getOwnedCommunities($data['userId'])) {
+                return new JsonResponse($userOwnedCommunities);
+            }
+        }
+        return new JsonResponse($userOwnedCommunities);
+    }
+
+    /**
+     * Get all communities owned by a user
+     * AJAX
+     */
+    public function userCreatedEvents(Request $request, EventManager $eventManager)
+    {
+        $userCreatedEvents = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if ($userCreatedEvents = $eventManager->getCreatedEvents($data['userId'])) {
+                return new JsonResponse($userCreatedEvents);
+            }
+        }
+        return new JsonResponse($userCreatedEvents);
     }
 }

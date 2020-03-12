@@ -43,6 +43,12 @@
       {{ $t('ui.abbr.day.sun') }}
     </v-chip>
     <p
+      v-if="dateStartOfValidity && dateEndOfValidity"
+      class="font-italic mt-1"
+    >
+      {{ $t('valid') }}&nbsp;{{ formattedDateStartOfValidity }}&nbsp;{{ $t('dateValidUntil') }}&nbsp;{{ formattedDateEndOfValidity }}
+    </p>
+    <p
       v-if="dateEndOfValidity"
       class="font-italic mt-1"
     >
@@ -94,17 +100,26 @@ export default {
     dateEndOfValidity: {
       type: String,
       default: null
+    },
+    dateStartOfValidity: {
+      type: String,
+      default: null
     }
   },
   data() {
     return {
       locale: this.$i18n.locale,
-    };
+    }
   },
   computed: {
     formattedDateEndOfValidity () {
       return this.dateEndOfValidity
         ? moment(this.dateEndOfValidity).format(this.$t("ui.i18n.date.format.shortCompleteDate"))
+        : "";
+    },
+    formattedDateStartOfValidity () {
+      return this.dateStartOfValidity
+        ? moment(this.dateStartOfValidity).format(this.$t("ui.i18n.date.format.shortCompleteDate"))
         : "";
     }
   },

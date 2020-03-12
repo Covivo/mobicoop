@@ -42,6 +42,9 @@ import EventWidget from "@components/event/EventWidget";
 import EventGetWidget from "@components/event/EventGetWidget";
 import EventReport from "@components/event/EventReport";
 
+// ARTICLE
+import MArticle from "@components/article/MArticle";
+
 export default {
   MHeader,
   MFooter,
@@ -68,5 +71,6 @@ export default {
   Event,
   EventWidget,
   EventGetWidget,
-  EventReport
+  EventReport,
+  MArticle
 }

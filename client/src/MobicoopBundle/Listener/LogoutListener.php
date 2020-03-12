@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Listener;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Router;
 use Symfony\Component\Security\Core\Authentication\Token\Storage;
@@ -35,15 +36,18 @@ class LogoutListener implements LogoutSuccessHandlerInterface
 {
     protected $router;
     protected $tokenStorage;
+    private $session;
 
-    public function __construct(Router $router, Storage\TokenStorage $tokenStorage)
+    public function __construct(Router $router, Storage\TokenStorage $tokenStorage, SessionInterface $session)
     {
         $this->router = $router;
         $this->tokenStorage = $tokenStorage;
+        $this->session = $session;
     }
 
     public function onLogoutSuccess(Request $request)
     {
+        $this->session->remove('apiToken');
         $routeToCall = $this->tokenStorage->getToken()->getUser() == 'anon.' ?
             $this->router->generate('home_logout', [], UrlGenerator::ABSOLUTE_PATH) :
             $this->router->generate('home', [], UrlGenerator::ABSOLUTE_PATH);

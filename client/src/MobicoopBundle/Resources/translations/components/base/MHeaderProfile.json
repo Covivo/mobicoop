@@ -6,7 +6,7 @@
             },
             "myAcceptedCarpools": {
                 "label": "Covoiturages acceptés",
-                "route": "/utilisateur/profil/modifier/carpoolsAccepted"
+                "route": "/utilisateur/profil/modifier/mes-covoiturages-acceptes"
             },
             "myProfile": {
                 "label": "Profil",

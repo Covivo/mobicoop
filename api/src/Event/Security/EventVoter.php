@@ -23,40 +23,60 @@
 
 namespace App\Event\Security;
 
-use App\Right\Service\PermissionManager;
+use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Event\Entity\Event;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Event\Service\EventManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class EventVoter extends Voter
 {
-    const CREATE = 'event_create';
-    const READ = 'event_read';
-    const UPDATE = 'event_update';
-    const DELETE = 'event_delete';
-    const ADMIN_MANAGE = 'event_admin_manage';
+    const EVENT_CREATE = 'event_create';
+    const EVENT_READ = 'event_read';
+    const EVENT_UPDATE = 'event_update';
+    const EVENT_DELETE = 'event_delete';
+    const EVENT_REPORT = 'event_report';
+    const EVENT_LIST = 'event_list';
+    const EVENT_LIST_ADS = 'event_list_ads';
 
-    private $security;
-    private $permissionManager;
+    private $authManager;
+    private $requestStack;
+    private $eventManager;
 
-    public function __construct(Security $security, PermissionManager $permissionManager)
+    public function __construct(AuthManager $authManager, RequestStack $requestStack, EventManager $eventManager)
     {
-        $this->security = $security;
-        $this->permissionManager = $permissionManager;
+        $this->authManager = $authManager;
+        $this->request = $requestStack->getCurrentRequest();
+        $this->eventManager = $eventManager;
     }
 
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::CREATE,
-            self::READ,
-            self::UPDATE,
-            self::DELETE,
-            self::ADMIN_MANAGE
+            self::EVENT_CREATE,
+            self::EVENT_READ,
+            self::EVENT_UPDATE,
+            self::EVENT_DELETE,
+            self::EVENT_REPORT,
+            self::EVENT_LIST,
+            self::EVENT_LIST_ADS
             ])) {
+            return false;
+        }
+
+        // only vote on Event objects inside this voter
+        if (!in_array($attribute, [
+            self::EVENT_CREATE,
+            self::EVENT_READ,
+            self::EVENT_UPDATE,
+            self::EVENT_DELETE,
+            self::EVENT_REPORT,
+            self::EVENT_LIST,
+            self::EVENT_LIST_ADS
+            ]) && !($subject instanceof Paginator) && !($subject instanceof Event)) {
             return false;
         }
 
@@ -65,55 +85,57 @@ class EventVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $requester = $token->getUser();
-
         switch ($attribute) {
-            case self::CREATE:
-                return $this->canPost($requester);
-            case self::READ:
-                return $this->canRead($requester);
-            case self::UPDATE:
-                return $this->canUpdate($requester, $subject);
-            case self::DELETE:
-                return $this->canDelete($requester, $subject);
-            case self::ADMIN_MANAGE:
-                return $this->canAdminManage($requester);
+            case self::EVENT_CREATE:
+                return $this->canCreateEvent();
+            case self::EVENT_READ:
+                return $this->canReadEvent($subject);
+            case self::EVENT_UPDATE:
+                return $this->canUpdateEvent($subject);
+            case self::EVENT_DELETE:
+                return $this->canDeleteEvent($subject);
+            case self::EVENT_REPORT:
+                // here we don't have the denormalized event, we need to get it from the request
+                if ($event = $this->eventManager->getEvent($this->request->get('id'))) {
+                    return $this->canReadEvent($event);
+                }
+                return false;
+            case self::EVENT_LIST_ADS:
+                // here we don't have the denormalized event, we need to get it from the request
+                if ($event = $this->eventManager->getEvent($this->request->get('id'))) {
+                    return $this->canReadEvent($event);
+                }
+                return false;
+            case self::EVENT_LIST:
+                return $this->canListEvent();
            
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canPost($requester)
+    private function canCreateEvent()
     {
-        return $this->permissionManager->checkPermission('event_create', $requester);
+        return $this->authManager->isAuthorized(self::EVENT_CREATE);
     }
 
-    private function canRead($requester)
+    private function canReadEvent(Event $event)
     {
-        return $this->permissionManager->checkPermission('event_read', $requester);
+        return $this->authManager->isAuthorized(self::EVENT_READ, ['event'=>$event]);
     }
 
-    private function canUpdate($requester, $subject)
+    private function canUpdateEvent(Event $event)
     {
-        if (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('event_manage', $requester))) {
-            return $this->permissionManager->checkPermission('event_update_self', $requester);
-        } else {
-            return false;
-        }
+        return $this->authManager->isAuthorized(self::EVENT_UPDATE, ['event'=>$event]);
     }
     
-    private function canDelete($requester, $subject)
+    private function canDeleteEvent(Event $event)
     {
-        if (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('event_manage', $requester))) {
-            return $this->permissionManager->checkPermission('event_delete_self', $requester);
-        } else {
-            return false;
-        }
+        return $this->authManager->isAuthorized(self::EVENT_DELETE, ['event'=>$event]);
     }
-
-    private function canAdminManage($requester)
+    
+    private function canListEvent()
     {
-        return $this->permissionManager->checkPermission('event_manage', $requester);
+        return $this->authManager->isAuthorized(self::EVENT_LIST);
     }
 }

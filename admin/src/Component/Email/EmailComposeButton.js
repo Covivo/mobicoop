@@ -6,13 +6,14 @@ import MailComposer from './MailComposer'
 import RgpdConsent from './RgpdConsent'
 
 
-const EmailComposeButton = ({ selectedIds, resource, basePath, filterValues,countChecked }) => {
+const EmailComposeButton = ({ selectedIds, resource, basePath, filterValues,countChecked = 0 }) => {
+
     const [open, setOpen] = useState(false);    // State of the mail modal
     const [openRgpd, setOpenRgpd] = useState(false);    // State of the RGPD modal
     const [rgpdAgree, setRgpdAgree] = useState(false);    // State of the RGPD modal
     const shouldFetch = !!Object.keys(filterValues).length;
     const [mutate, { data, error, loading, loaded }] = useMutation();
-    const dataProvider      = useDataProvider();
+    const dataProvider  = useDataProvider();
     const [sender, setSender] = useState([]);
     const [campagneInit, setCampagneInit] = useState([]);
     const translate = useTranslate();

@@ -1,3 +1,6 @@
+import UserReferenceField from "../User/UserReferenceField";
+import React from "react";
+
 const fr = {
     custom: {
         email: {
@@ -16,6 +19,64 @@ const fr = {
                 buttonAgree : "Je comprend et j'accepte",
                 buttonDisagree : "Je refuse"
             },
+        },
+        label : {
+            event :{
+                name : 'Nom',
+                resume : 'Résumé',
+                resumefull : 'Résumé long',
+                site : 'Site internet',
+                adresse : 'Adresse',
+                setTime : "Préciser l'heure",
+                createur : "Créateur",
+                status : "Status",
+                dateTimeStart: "Date et heure de début",
+                dateTimeFin : "Date et heure de fin",
+                dateStart: "Date de début",
+                dateFin: "Date de fin",
+                image : "Image"
+            },
+            community :{
+                community : 'Communauté',
+                name : 'Nom',
+                numberMember: 'Nombre de membres ',
+                adress : 'Adresse',
+                memberHidden : 'Membres masqués',
+                proposalHidden : 'Annonces masquées',
+                validationType : 'Type de validation',
+                domainName : 'Nom de domaine',
+                description : 'Description',
+                descriptionFull : 'Description complète',
+                createdDate : 'Date de création',
+                updateDate : 'Date de mise à jour',
+                status : "Status",
+                createdBy : 'Référent',
+                oldAdress : 'Ancienne adresse',
+                newAdress : 'Nouvelle adresse',
+                members : 'Membres',
+                member : 'Membre',
+                detail : 'Détail',
+                membersModerator : 'Membres & Modérateurs',
+                joinAt : 'Rejoint le',
+                acceptedAt : 'Accepté le',
+                refusedAt : 'Refusé le',
+            },
+            campaign : {
+                object : 'Sujet',
+                numberMember: 'Nombre de destinataires ',
+                sender: 'Expéditeur',
+                state: 'Statut',
+                createdDate: 'Création',
+                updateDate: 'Dernière modification',
+                sendDate: 'Expédition',
+                statusCampaign : {
+                    init : 'Initialiser',
+                    create: 'Créé',
+                    send: 'Expédié',
+                    archive: 'Archivé',
+                },
+                resumeCampaign : 'Reprendre la campagne'
+            }
         }
     }
 }

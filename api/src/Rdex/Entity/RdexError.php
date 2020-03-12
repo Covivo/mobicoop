@@ -52,6 +52,8 @@ class RdexError
     const ERROR_UNDEFINED_ERROR = "undefined_error";
     const ERROR_UNKNOWN_USER = "unknown_user";
     const ERROR_UNSUPPORTED_HTTP_VERB = "unsupported_http_verb";
+    const ERROR_MISSING_CONFIG = "config_file_missing";
+    const ERROR_MISSING_OPERATOR ="operator_file_missing";
     
     const ERRORS = [
         self::ERROR_ACCESS_DENIED => 401,
@@ -75,7 +77,9 @@ class RdexError
         self::ERROR_TOO_MANY_QUERIES => 429,
         self::ERROR_UNDEFINED_ERROR => 400,
         self::ERROR_UNKNOWN_USER => 400,
-        self::ERROR_UNSUPPORTED_HTTP_VERB => 405
+        self::ERROR_UNSUPPORTED_HTTP_VERB => 405,
+        self::ERROR_MISSING_CONFIG => 500,
+        self::ERROR_MISSING_OPERATOR => 500
     ];
     
     /**

@@ -5,8 +5,8 @@ import { Title } from 'react-admin';
 import { useKibana } from './useKibana';
 
 const KibanaWidget = ({from="now-1y", height="800", width="1000", url=process.env.REACT_APP_KIBANA_URL,dashboard="0a74b5d0-da3a-11e9-8719-5dd244c0aaea"}) => {
-   // const kibanaStatus = useKibana({username:"elastic", password:"mobiscope", url:url}) // username pwd should be elsewhere
-    const kibanaStatus = true
+    const kibanaStatus = useKibana({username:"elastic", password:"mobiscope", url:url}) // username pwd should be elsewhere
+    //const kibanaStatus = true
     return (
         <Card>
             <Title title="Dashboard" />

@@ -143,7 +143,6 @@ class EventController extends AbstractController
 
         // get event's proposals
         $ads = $eventManager->getAds($id);
-
         $ways = [];
         foreach ($ads as $ad) {
             $currentAd = [

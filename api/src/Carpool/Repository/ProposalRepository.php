@@ -1135,7 +1135,13 @@ class ProposalRepository
     //     return $return;
     // }
 
-    private function getBBoxExtension($distance)
+    /**
+     * Get the extension length of the bounding box from the original distance of the direction.
+     *
+     * @param int $distance The distance in metres
+     * @return int          The extension in metres
+     */
+    private function getBBoxExtension(int $distance)
     {
         if ($distance<20000) {
             return 3000;
@@ -1162,6 +1168,7 @@ class ProposalRepository
 
     /**
      * Find proposals linked to imported users
+     * We exclude proposals with wrong directions (can happen when importing data, when we can't sanitize the input data such as bad geographical coordinates)
      *
      * @param integer $status
      * @return array
@@ -1171,9 +1178,10 @@ class ProposalRepository
         $query = $this->repository->createQueryBuilder('p')
         ->select('p.id')
         ->join('p.criteria', 'c')
+        ->join('c.directionDriver', 'd')
         ->join('p.user', 'u')
         ->join('u.import', 'i')
-        ->where('i.status = :status and c.directionDriver is not null')
+        ->where('i.status = :status and d.distance>0')
         ->andwhere('c.frequency = 1 or (c.monCheck = 1 or c.tueCheck = 1 or c.wedCheck = 1 or c.thuCheck = 1 or c.friCheck = 1 or c.satCheck = 1 or c.sunCheck = 1)')
         ->setParameter('status', $status);
         return $query->getQuery()->getResult();
