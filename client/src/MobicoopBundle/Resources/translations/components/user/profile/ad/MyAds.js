@@ -10,7 +10,6 @@ export default {
       },
     },
     pause: {
-      route: "/covoiturage/annonce/pause",
       error: {
         pause: "Une erreur est survenue votre annonce n'a pas été mise en pause.",
         unpause: "Une erreur est survenue votre annonce n'a pas été activée"

@@ -939,7 +939,7 @@ class AdManager
     */
     public function updateAd(Ad $ad)
     {
-        $proposal = $this->proposalRepository->find($ad->getProposalId());
+        $proposal = $this->proposalRepository->find($ad->getAdId());
         $proposal->setPaused($ad->isPaused());
         $this->entityManager->persist($proposal);
         $this->entityManager->flush();

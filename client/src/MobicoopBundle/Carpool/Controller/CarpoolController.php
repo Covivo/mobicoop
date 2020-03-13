@@ -68,47 +68,15 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function carpoolAdPost(AdManager $adManager, UserManager $userManager, Request $request)
+    public function carpoolAdPost(AdManager $adManager, Request $request)
     {
         $ad = new Ad();
-        $poster = $userManager->getLoggedUser();
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            if ($poster && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
-                $this->denyAccessUnlessGranted('post_delegate', $ad);
-                $data['userId'] = $data['userDelegated'];
-                $data['posterId'] = $poster->getId();
-            } else {
-                $this->denyAccessUnlessGranted('post', $ad);
-                $data['userId'] = $poster->getId();
-            }
-            if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
-                $data['outwardDate'] = new \DateTime();
-            } else {
-                $data['outwardDate'] = \DateTime::createFromFormat('Y-m-d', $data['outwardDate']);
-            }
-            if (isset($data['returnDate']) && $data['returnDate'] != '') {
-                $data['returnDate'] = \DateTime::createFromFormat('Y-m-d', $data['returnDate']);
-                $data['oneway'] = true; // only for punctual journey
-            } else {
-                $data['oneway'] = false; // only for punctual journey
-            }
-
-            // one-way for regular
-            if ($data['regular']) {
-                $data['oneway'] = true;
-                foreach ($data['schedules'] as $schedule) {
-                    if (isset($schedule['returnTime']) && !is_null($schedule['returnTime'])) {
-                        $data['oneway'] = false;
-                    }
-                }
-            }
 
             return $this->json(['result'=>$adManager->createAd($data)]);
         }
-
-        $this->denyAccessUnlessGranted('create_ad', $ad);
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
             "pricesRange" => [
                 "mid" => $this->midPrice,
@@ -122,47 +90,15 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function carpoolAdUpdate(int $id, AdManager $adManager, UserManager $userManager, ProposalManager $proposalManager, Request $request)
+    public function carpoolAdUpdate(int $id, AdManager $adManager, Request $request)
     {
         $ad = $adManager->getFullAd($id);
-        $poster = $userManager->getLoggedUser();
 
         if ($request->isMethod('PUT')) {
-//            $data = json_decode($request->getContent(), true);
-//            if ($poster && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
-//                $this->denyAccessUnlessGranted('post_delegate', $ad);
-//                $data['userId'] = $data['userDelegated'];
-//                $data['posterId'] = $poster->getId();
-//            } else {
-//                $this->denyAccessUnlessGranted('post', $ad);
-//                $data['userId'] = $poster->getId();
-//            }
-//            if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
-//                $data['outwardDate'] = new \DateTime();
-//            } else {
-//                $data['outwardDate'] = \DateTime::createFromFormat('Y-m-d', $data['outwardDate']);
-//            }
-//            if (isset($data['returnDate']) && $data['returnDate'] != '') {
-//                $data['returnDate'] = \DateTime::createFromFormat('Y-m-d', $data['returnDate']);
-//                $data['oneway'] = true; // only for punctual journey
-//            } else {
-//                $data['oneway'] = false; // only for punctual journey
-//            }
-//
-//            // one-way for regular
-//            if ($data['regular']) {
-//                $data['oneway'] = true;
-//                foreach ($data['schedules'] as $schedule) {
-//                    if (isset($schedule['returnTime']) && !is_null($schedule['returnTime'])) {
-//                        $data['oneway'] = false;
-//                    }
-//                }
-//            }
-
-//            return $this->json(['result'=>$adManager->createAd($data)]);
+            $data = json_decode($request->getContent(), true);
+            return $this->json(['result'=>$adManager->updateAd($data)]);
         }
-//        dump($ad, $poster, json_encode($poster), json_encode($ad));die;
-//        $this->denyAccessUnlessGranted('update_ad', $ad);
+
         return $this->render('@Mobicoop/carpool/update.html.twig', [
             "ad" => $ad
         ]);
@@ -378,37 +314,6 @@ class CarpoolController extends AbstractController
 
         return $this->json($result);
     }
-
-
-    /**
-     * PausedAd
-     * (AJAX POST)
-     */
-    public function pauseAd(Request $request, AdManager $adManager, UserManager $userManager)
-    {
-        if ($request->isMethod('PUT')) {
-            $data = json_decode($request->getContent(), true);
-            $ad = new Ad();
-            $ad->setId($data['adId']);
-            $ad->setProposalId($data['adId']);
-            $ad->setPaused($data['paused']);
-            if ($return = $adManager->updateAd($ad)) {
-                return new JsonResponse(
-                    ["message" => "success"],
-                    \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
-                );
-            }
-            return new JsonResponse(
-                ["message" => "error"],
-                \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
-            );
-        }
-        return new JsonResponse(
-            ["message" => "error"],
-            \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN
-        );
-    }
-
 
     /**
      * Initiate contact from carpool results

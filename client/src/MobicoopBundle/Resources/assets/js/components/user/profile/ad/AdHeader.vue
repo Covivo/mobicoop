@@ -239,8 +239,7 @@ export default {
         textarea: true
       },
       deleteMessage: "",
-      paused: this.isPaused,
-      ad: {}
+      paused: this.isPaused
     }
   },
   methods: {
@@ -284,24 +283,25 @@ export default {
     pauseAd () {
       this.paused = !this.paused;
       this.loading = true;
-      this.ad.adId = this.adId;
-      this.ad.paused = this.paused;
+      let ad = {
+        id: this.adId,
+        paused: this.paused
+      };
       axios
-        .put(this.$t('pause.route'), this.ad,
+        .put(this.$t('update.route', {id : this.adId}), ad,
           {
             headers:{
               'content-type': 'application/json'
             }
           })
         .then(res => {
-          if (res.data && res.data.message === "success") {
+          if (res.data && res.data.result.id) {
             this.alert = {
               type: "success",
-              message: this.paused ? this.$t("pause.success.pause") : this.$t("pause.success.unpause")
+              message: res.data.result.paused ? this.$t("pause.success.pause") : this.$t("pause.success.unpause")
             };
-            this.$emit('pause-ad', this.ad.paused);
-          }
-          if (res.data && res.data.message === "error") {
+            this.$emit('pause-ad', res.data.result.paused);
+          } else {
             this.alert = {
               type: "error",
               message: this.paused ? this.$t("pause.error.pause") : this.$t("pause.error.unpause")
