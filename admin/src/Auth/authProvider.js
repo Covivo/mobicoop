@@ -30,12 +30,10 @@ export default (type, params) => {
                 })
                 .then(({ token }) => {
                     const decodedToken = decodeJwt(token);
-                    console.info(decodedToken)
                     if (!decodedToken.admin) throw new Error('Unauthorized');
                     localStorage.setItem('token', token);
                     localStorage.setItem('roles', decodedToken.roles);
                     localStorage.setItem('id', decodedToken.id);
-
                     const options = {}
                     let val = false;
                     const apiPermissions = process.env.REACT_APP_API+'/permissions';
@@ -45,15 +43,18 @@ export default (type, params) => {
                     }
                     options.headers.set('Authorization', `Bearer ${localStorage.token}`);
 
-                    httpClient(apiPermissions, {
-                        method: 'GET',
-                        headers : options.headers
-                    }).then( retour => {
-                        if (retour.status = '200') {
-                            localStorage.setItem('permission', retour.body);
-                        }
-                    });
-                    return {id: decodedToken.id, token};
+
+
+                    const callPermissions =  httpClient(apiPermissions, {
+                          method: 'GET',
+                          headers : options.headers
+                      }).then( retour => {
+                          if (retour.status = '200') {
+                              localStorage.setItem('permissions', retour.body);
+                          }
+                      });
+
+                   return {id: decodedToken.id, token};
                 });
 
         case AUTH_LOGOUT:
