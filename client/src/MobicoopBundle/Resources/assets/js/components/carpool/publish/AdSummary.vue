@@ -557,7 +557,7 @@
                     >
                       {{ user.givenName }} {{ user.shortFamilyName }}
                       <v-card-text>
-                        {{ (new Date()).getFullYear() - user.birthYear }} ans
+                        {{ birthDate }} ans
                       </v-card-text>
                     </v-card-text>
                     <v-divider />
@@ -680,6 +680,7 @@ export default {
   data() {
     return {
       locale: this.$i18n.locale,
+      birthDate: null
     };
   },
   computed: {
@@ -757,6 +758,9 @@ export default {
     hasReturn () {
       return this.returnDate !== null && this.returnTime !== null;
     }
+  },
+  mounted() {
+    this.birthDate = moment(moment(new Date()).format('Y-MM-DD')).diff(moment(this.user.birthDate.date).format('Y-MM-DD'), 'years')
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
