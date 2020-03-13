@@ -718,4 +718,33 @@ class AskManager
     {
         return $ask->getUser()->getId() === $ask->getMatching()->getProposalRequest()->getUser()->getId();
     }
+
+    /**
+    * Get a simplified ask from an ad
+    * @param int $askId    The ask id
+    * @param int $userId   The user id of the user making the request
+    * @return Ad       The ad for the ask with the computed results
+    */
+    public function getSimpleAskFromAd(int $askId, int $userId)
+    {
+        $ask = $this->askRepository->find($askId);
+        $ad = new Ad();
+        $ad->setUserId($userId);
+        $ad->setAskId($askId);
+        $ad->setAskStatus($ask->getStatus());
+
+        // first pass for role
+        switch ($ask->getStatus()) {
+            case Ask::STATUS_ACCEPTED_AS_DRIVER:
+                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_DRIVER : Ad::ROLE_PASSENGER);
+                break;
+            case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_PASSENGER : Ad::ROLE_DRIVER);
+                break;
+        }
+        // we compute the results
+        $ad->setResults([$this->resultManager->createSimpleAskResults($ask, $userId, $ad->getRole())]);
+
+        return $ad;
+    }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\Ad;
+use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
@@ -41,11 +42,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Carpool\Service\ProposalMatcher;
 use App\Rdex\Entity\RdexError;
+use App\Carpool\Service\AskManager;
 
 /**
  * Ad manager service.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class AdManager
 {
@@ -60,6 +63,7 @@ class AdManager
     private $proposalRepository;
     private $criteriaRepository;
     private $proposalMatcher;
+    private $askManager;
 
     /**
      * Constructor.
@@ -67,7 +71,7 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -80,6 +84,7 @@ class AdManager
         $this->proposalRepository = $proposalRepository;
         $this->criteriaRepository = $criteriaRepository;
         $this->proposalMatcher = $proposalMatcher;
+        $this->askManager = $askManager;
     }
     
     /**
@@ -665,20 +670,18 @@ class AdManager
      * Get all ads of a user
      *
      * @param integer $userId
-     * @param bool|null $acceptedAsks If we want to get results even if corresponding ads are private but there is at least one accepted ask
-     * @param bool|null $anyAds If we want to get all ads of an user, either they are private or not
-     * @return array
+     * @return void
      */
-    public function getAds(int $userId, bool $acceptedAsks = null, bool $anyAds = null)
+    public function getAds(int $userId)
     {
         $ads = [];
         $user = $this->userManager->getUser($userId);
-        $params = $anyAds ? ['user'=>$user] : ['user'=>$user, 'private'=>false];
-        $proposals = $this->proposalRepository->findBy($params);
+        $proposals = $this->proposalRepository->findBy(['user'=>$user, 'private'=>false]);
+        
         $refIdProposals = [];
         foreach ($proposals as $proposal) {
             if (!in_array($proposal->getId(), $refIdProposals)) {
-                $ads[] = $this->makeAd($proposal, $userId, $acceptedAsks);
+                $ads[] = $this->makeAd($proposal, $userId);
                 if (!is_null($proposal->getProposalLinked())) {
                     $refIdProposals[$proposal->getId()] = $proposal->getProposalLinked()->getId();
                 }
@@ -686,6 +689,7 @@ class AdManager
         }
         return $ads;
     }
+
 
     /**
      * Get all ads of a Community
@@ -744,7 +748,7 @@ class AdManager
      * @param bool $acceptedAsks If we want to get results even if corresponding ads are private but there is at least one accepted ask
      * @return Ad
      */
-    private function makeAd($proposal, $userId, bool $acceptedAsks = null)
+    private function makeAd($proposal, $userId, $hasAsks = false)
     {
         $ad = new Ad();
                 
@@ -822,10 +826,11 @@ class AdManager
         }
         $ad->setSchedule($schedule);
 
-        $ad->setResults($this->resultManager->createAdResults($proposal, $acceptedAsks));
-
-        $ad->setPotentialCarpoolers(count($this->resultManager->createAdResults($proposal, false)));
-
+        if (!$hasAsks) {
+            $ad->setResults(
+                $this->resultManager->createAdResults($proposal)
+            );
+        }
         return $ad;
     }
 
@@ -1147,5 +1152,55 @@ class AdManager
             }
         }
         return $schedules;
+    }
+
+    /**
+    * Get ads with accepted asks of a user
+    *
+    * @param integer $userId
+    * @return void
+    */
+    public function getMyAds(int $userId)
+    {
+        $ads = [];
+        $user = $this->userManager->getUser($userId);
+        $proposals = $this->proposalRepository->findBy(['user'=>$user]);
+        
+        $asks = [];
+        foreach ($proposals as $proposal) {
+            foreach ($proposal->getMatchingRequests() as $matching) {
+                foreach ($matching->getAsks() as $ask) {
+                    if ($ask->getStatus() == (Ask::STATUS_ACCEPTED_AS_DRIVER || Ask::STATUS_ACCEPTED_AS_DRIVER)) {
+                        $ask = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
+                        $asks[] = $ask;
+                    }
+                }
+            }
+            if (count($asks)>0) {
+                $ad = $this->makeAd($proposal, $userId, true);
+                $ad->setAsks($asks);
+                $ads[] = $ad;
+            }
+            foreach ($proposal->getMatchingOffers() as $matching) {
+                foreach ($matching->getAsks() as $ask) {
+                    if ($ask->getStatus() == (Ask::STATUS_ACCEPTED_AS_DRIVER || Ask::STATUS_ACCEPTED_AS_DRIVER)) {
+                        $ask = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
+                        $asks[] = $ask;
+                    }
+                }
+            }
+            if (count($asks)>0) {
+                $ad = $this->makeAd($proposal, $userId, true);
+                $ad->setAsks($asks);
+                $ads[] =$ad;
+            }
+            // var_dump('proposal |'.$proposal->getId());
+            // var_dump('asks number |'.count($asks));
+
+            // $ad = $this->makeAd($proposal, $userId, true);
+            // $ad->setAsks($asks);
+            // $ads = [$ad];
+        }
+        return $ads;
     }
 }

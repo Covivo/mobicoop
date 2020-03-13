@@ -34,7 +34,7 @@ use Symfony\Component\Security\Core\Security;
  * Collection data provider for user's ads.
  *
  */
-final class AdCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class MyAdCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
     protected $adManager;
@@ -49,7 +49,7 @@ final class AdCollectionDataProvider implements CollectionDataProviderInterface,
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Ad::class === $resourceClass && $operationName === "get";
+        return Ad::class === $resourceClass && $operationName === "getMyCarpools";
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
@@ -59,6 +59,6 @@ final class AdCollectionDataProvider implements CollectionDataProviderInterface,
          * Need to change the method in front and remove the one from the request
          * see : AdVoter
          */
-        return $this->adManager->getAds($this->request->get("userId", $this->security->getUser()->getId()));
+        return $this->adManager->getMyAds($this->request->get("userId", $this->security->getUser()->getId()));
     }
 }

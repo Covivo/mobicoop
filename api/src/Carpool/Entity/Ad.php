@@ -75,15 +75,18 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "method"="GET",
  *              "path"="/carpools/updateCarpoolsLimits",
  *              "controller"=UpdateCarpoolsLimits::class,
- *          }
+ *          },
+ *          "getMyCarpools"={
+ *              "method"="GET",
+ *              "path"="/carpools/accepted"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
  *              "method"="GET",
  *              "path"="/carpools/{id}",
  *              "controller"=AdGet::class,
- *              "read"=false,
- *              "security"="is_granted('ad_read',object)"
+ *              "read"=false
  *          },
  *          "put_ask"={
  *              "method"="PUT",
@@ -456,6 +459,13 @@ class Ad
      */
     private $external;
 
+    /**
+     * @var array|null The asks associated to the ad
+     *
+     * @Groups({"read","write"})
+     */
+    private $asks;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -465,6 +475,7 @@ class Ad
         $this->communities = [];
         $this->results = [];
         $this->filters = [];
+        $this->asks = [];
     }
     
     public function getId(): ?int
@@ -1028,6 +1039,18 @@ class Ad
     public function setExternal(?string $external): self
     {
         $this->external = $external;
+
+        return $this;
+    }
+
+    public function getAsks(): ?array
+    {
+        return $this->asks;
+    }
+
+    public function setAsks(?array $asks)
+    {
+        $this->asks = $asks;
 
         return $this;
     }

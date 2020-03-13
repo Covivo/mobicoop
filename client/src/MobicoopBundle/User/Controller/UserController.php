@@ -977,4 +977,15 @@ class UserController extends AbstractController
         }
         return new JsonResponse($userCreatedEvents);
     }
+
+    /**
+     * Get all proposals with an accepted ask
+     * Ajax
+     */
+    public function userProposalsAccepted(UserManager $userManager)
+    {
+        $user = $userManager->getLoggedUser();
+
+        return new JsonResponse($userManager->getMyAcceptedProposals($user));
+    }
 }

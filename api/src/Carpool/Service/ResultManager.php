@@ -76,16 +76,15 @@ class ResultManager
      * Create "user-friendly" results from the matchings of an ad proposal
      *
      * @param Proposal $proposal    The proposal with its matchings
-     * @param bool $acceptedAsks    If we want to get private ads where there is at least one accepted ask
      * @return array                The array of results
      */
-    public function createAdResults(Proposal $proposal, bool $acceptedAsks = null)
+    public function createAdResults(Proposal $proposal)
     {
         // the outward results are the base results
-        $results = $this->createProposalResults($proposal, false, $acceptedAsks);
+        $results = $this->createProposalResults($proposal, false);
         $returnResults = [];
         if ($proposal->getProposalLinked()) {
-            $returnResults = $this->createProposalResults($proposal->getProposalLinked(), true, $acceptedAsks);
+            $returnResults = $this->createProposalResults($proposal->getProposalLinked(), true);
         }
 
         // the outward results are the base
@@ -388,10 +387,9 @@ class ResultManager
      *
      * @param Proposal $proposal The proposal
      * @param boolean $return The result is for the return trip
-     * @param bool $handleAcceptedAsks Do not exclude private proposal if there is an accepted ask in matchings
      * @return array
      */
-    private function createProposalResults(Proposal $proposal, bool $return = false, bool $handleAcceptedAsks = null)
+    private function createProposalResults(Proposal $proposal, bool $return = false)
     {
         $results = [];
         // we group the matchings by matching proposalId to merge potential driver and/or passenger candidates
@@ -399,23 +397,10 @@ class ResultManager
         // we search the matchings as an offer
         /** @var Matching $request */
         foreach ($proposal->getMatchingRequests() as $request) {
-            if ($handleAcceptedAsks) {
-                $acceptedAsks = array_filter($request->getAsks(), function ($ask) {
-                    return $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || Ask::STATUS_ACCEPTED_AS_PASSENGER;
-                });
-                $hasAcceptedAsks = count($acceptedAsks) > 0;
-
-                // we exclude the private proposals if there is no accepted asks
-                if (!$hasAcceptedAsks && ($request->getProposalRequest()->isPrivate() || $request->getProposalRequest()->isPaused())) {
-                    continue;
-                }
-            } else {
-                // we exclude the private proposals
-                if ($request->getProposalRequest()->isPrivate() || $request->getProposalRequest()->isPaused()) {
-                    continue;
-                }
+            // we exclude the private proposals
+            if ($request->getProposalRequest()->isPrivate() || $request->getProposalRequest()->isPaused()) {
+                continue;
             }
-
             // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
             if (is_null($request->getFilters() && is_null($request->getPickUpDuration()))) {
                 $request->setFilters($this->proposalMatcher->getMatchingFilters($request));
@@ -424,22 +409,10 @@ class ResultManager
         }
         // we search the matchings as a request
         foreach ($proposal->getMatchingOffers() as $offer) {
-            if ($handleAcceptedAsks) {
-                $acceptedAsks = array_filter($offer->getAsks(), function ($ask) {
-                    return $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || Ask::STATUS_ACCEPTED_AS_PASSENGER;
-                });
-                $hasAcceptedAsks = count($acceptedAsks) > 0;
-                // we exclude the private proposals if there is no accepted asks
-                if (!$hasAcceptedAsks && $offer->getProposalOffer()->isPrivate() || $offer->getProposalOffer()->isPaused()) {
-                    continue;
-                }
-            } else {
-                // we exclude the private proposals
-                if ($offer->getProposalOffer()->isPrivate() || $offer->getProposalOffer()->isPaused()) {
-                    continue;
-                }
+            // we exclude the private proposals
+            if ($offer->getProposalOffer()->isPrivate() || $offer->getProposalOffer()->isPaused()) {
+                continue;
             }
-
             // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
             if (is_null($offer->getFilters() && is_null($offer->getPickUpDuration()))) {
                 $offer->setFilters($this->proposalMatcher->getMatchingFilters($offer));
@@ -2118,5 +2091,42 @@ class ResultManager
         $item->setComputedRoundedPrice($ask->getCriteria()->getPassengerComputedRoundedPrice());
 
         return $item;
+    }
+
+    /**
+     * Create "user-friendly" results for the asks of an ad
+     * An Ad can have multiple asks, all linked (as a driver, as a passenger, each for outward and return)
+     * The results are different if they are computed for the driver or the passenger
+     * In that case, since the carpool is accepted we know the role so we only need the result of that role.
+     *
+     * @param Ask $ask      The master ask
+     * @param int $userId   The id of the user that makes the request
+     * @return array        The array of results
+     */
+    public function createSimpleAskResults(Ask $ask, int $userId, int $role)
+    {
+        $result = new Result();
+        $result->setId($ask->getId());
+
+        $resultDriver = null;
+        $resultPassenger = null;
+
+        if ($role == Ad::ROLE_DRIVER) {
+            $resultDriver = $this->createAskResultRole($ask, $role);
+        } else {
+            $resultPassenger = $this->createAskResultRole($ask, $role);
+        }
+        
+        $result->setResultDriver($resultDriver);
+        $result->setResultPassenger($resultPassenger);
+        
+        // create the global result
+        $result->setCarpooler($ask->getUser()->getId() == $userId ? $ask->getUserRelated() : $ask->getUser());
+        $result->setFrequency($ask->getCriteria()->getFrequency());
+        $result->setFrequencyResult($ask->getCriteria()->getFrequency());
+        $result = $this->createGlobalResult($result, $ask->getWaypoints());
+
+        // return the result
+        return $result;
     }
 }
