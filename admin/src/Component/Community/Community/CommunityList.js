@@ -10,7 +10,6 @@ import {
 
 import UserReferenceField from '../../User/UserReferenceField'
 
-console.info(localStorage)
 const CommunityFilter = (props) => (
     <Filter {...props}>
         <TextInput source="name" label="Nom" alwaysOn />
@@ -28,7 +27,7 @@ export const CommunityList = (props) => {
             <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="name" label={translate('custom.label.community.name')}/>
             <DateField source="createdDate" label={translate('custom.label.community.createdDate')}/>
-            <FunctionField label={translate('custom.label.community.numberMember')} render={record => `${record.communityUsers.length}` } />
+            <FunctionField label={translate('custom.label.community.numberMember')}  render={record => `${record.communityUsers ? record.communityUsers.length : 0}` } />
             <UserReferenceField label={translate('custom.label.community.createdBy')} source="user" reference="users" />
             <ShowButton />
             <EditButton />

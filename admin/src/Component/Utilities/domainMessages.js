@@ -5,7 +5,7 @@ const fr = {
     custom: {
         email: {
             texte: {
-                emailTous: 'Email à tous',
+                emailTous: 'Email à tous les filtrés',
                 emailSelect: 'Email aux sélectionnés',
                 blockUnsubscribe :"Vous ne pouvez pas envoyer de mailing à des personnes qui l'ont refusé."
             }
