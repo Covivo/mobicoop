@@ -22,12 +22,9 @@
  
  namespace App\User\Controller;
 
-use App\Auth\Service\PermissionManager;
 use App\TranslatorTrait;
 use App\User\Entity\User;
-use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class UserUpdate
 {
@@ -36,16 +33,9 @@ class UserUpdate
      * @var UserManager $userManager
      */
     private $userManager;
- 
-    private $request;
-    private $permissionManager;
-    private $userRepository;
- 
-    public function __construct(RequestStack $requestStack, PermissionManager $permissionManager, UserRepository $userRepository, UserManager $userManager)
+  
+    public function __construct(UserManager $userManager)
     {
-        $this->request = $requestStack->getCurrentRequest();
-        $this->permissionManager = $permissionManager;
-        $this->userRepository = $userRepository;
         $this->userManager= $userManager;
     }
  

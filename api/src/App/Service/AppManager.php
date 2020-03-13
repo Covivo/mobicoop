@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,37 +21,37 @@
  *    LICENSE
  **************************/
 
-namespace App\Auth\Controller;
+namespace App\App\Service;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
-use App\Auth\Entity\Permission;
-use App\Auth\Service\AuthManager;
+use App\App\Entity\App;
+use App\App\Repository\AppRepository;
 
 /**
- * Controller class for permission check.
+ * App manager service.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-class PermissionCheck
+class AppManager
 {
-    private $request;
-    private $authManager;
+    private $appRepository;
 
-    public function __construct(RequestStack $requestStack, AuthManager $authManager)
-    {
-        $this->request = $requestStack->getCurrentRequest();
-        $this->authManager = $authManager;
+    /**
+     * Constructor.
+     */
+    public function __construct(
+        AppRepository $appRepository
+    ) {
+        $this->appRepository = $appRepository;
     }
 
     /**
-     * This method is invoked when a permission check is asked.
+     * Get an app by its username
      *
-     * @param array $data
-     * @return Response
+     * @param string $username  The username
+     * @return App|null The app found
      */
-    public function __invoke(array $data): ?Permission
+    public function getAppByUsername(string $username)
     {
-        return $this->authManager->getPermissionForAuthItem($this->request->get('item'), ['id'=>$this->request->get("id")]);
+        return $this->appRepository->findOneBy(['username'=>$username]);
     }
 }
