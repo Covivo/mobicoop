@@ -37,6 +37,7 @@ class UserVoter extends Voter
     const USER_DELETE = 'user_delete';
     const USER_LIST = 'user_list';
     const USER_PASSWORD = 'user_password';
+    const USER_REGISTER = 'user_register';
     
     private $authManager;
 
@@ -54,7 +55,8 @@ class UserVoter extends Voter
             self::USER_UPDATE,
             self::USER_DELETE,
             self::USER_LIST,
-            self::USER_PASSWORD
+            self::USER_PASSWORD,
+            self::USER_REGISTER
             ])) {
             return false;
         }
@@ -66,7 +68,8 @@ class UserVoter extends Voter
             self::USER_UPDATE,
             self::USER_DELETE,
             self::USER_LIST,
-            self::USER_PASSWORD
+            self::USER_PASSWORD,
+            self::USER_REGISTER
             ]) && !($subject instanceof Paginator) && !($subject instanceof User)) {
             return false;
         }
@@ -88,6 +91,8 @@ class UserVoter extends Voter
                 return $this->canListUser();
             case self::USER_PASSWORD:
                 return $this->canChangePassword($subject);
+            case self::USER_REGISTER:
+                return $this->canRegister();
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -121,5 +126,10 @@ class UserVoter extends Voter
     private function canChangePassword(User $user)
     {
         return $this->authManager->isAuthorized(self::USER_LIST, ['user'=>$user]);
+    }
+
+    private function canRegister()
+    {
+        return $this->authManager->isAuthorized(self::USER_REGISTER);
     }
 }
