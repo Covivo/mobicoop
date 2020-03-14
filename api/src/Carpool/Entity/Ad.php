@@ -446,6 +446,13 @@ class Ad
     private $proposalId;
 
     /**
+     * @var int The Id of the proposalLinked associated to the ad.
+     *
+     * @Groups({"read","write"})
+     */
+    private $proposalLinkedId;
+
+    /**
      * @var int $potentialCarpoolers
      * Potential carpoolers count
      * @Groups({"read","write"})
@@ -1016,6 +1023,18 @@ class Ad
     public function setProposalId(?int $proposalId): self
     {
         $this->proposalId = $proposalId;
+
+        return $this;
+    }
+
+    public function getProposalLinkedId(): ?int
+    {
+        return $this->proposalLinkedId;
+    }
+
+    public function setProposalLinkedId(?int $proposalLinkedId): self
+    {
+        $this->proposalLinkedId = $proposalLinkedId;
 
         return $this;
     }

@@ -745,7 +745,7 @@ class AdManager
      *
      * @param Proposal $proposal The base proposal of the ad
      * @param integer $userId The userId who made the proposal
-     * @param bool $acceptedAsks If we want to get results even if corresponding ads are private but there is at least one accepted ask
+     * @param bool $hasAsk if the ad has ask we do not return results since we return the ask with the ad
      * @return Ad
      */
     private function makeAd($proposal, $userId, $hasAsks = false)
@@ -753,6 +753,8 @@ class AdManager
         $ad = new Ad();
                 
         $ad->setId($proposal->getId());
+        $ad->setProposalId($proposal->getId());
+        $ad->setProposalLinkedId(($proposal->getProposalLinked()->getId()));
         $ad->setFrequency($proposal->getCriteria()->getFrequency());
         $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
         $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
@@ -768,7 +770,6 @@ class AdManager
         } else {
             $ad->setOutwardTime(null);
         }
-
 
         $ad->setOutwardLimitDate($proposal->getCriteria()->getToDate());
         $ad->setOneWay(true);
@@ -831,6 +832,8 @@ class AdManager
                 $this->resultManager->createAdResults($proposal)
             );
         }
+        $ad->setPotentialCarpoolers(count($this->resultManager->createAdResults($proposal)));
+
         return $ad;
     }
 
@@ -1162,45 +1165,59 @@ class AdManager
     */
     public function getMyAds(int $userId)
     {
+        // array of ads
         $ads = [];
-        $user = $this->userManager->getUser($userId);
-        $proposals = $this->proposalRepository->findBy(['user'=>$user]);
-        
+        // temporary array
+        $temp=[];
+        // array of asks
         $asks = [];
+        $user = $this->userManager->getUser($userId);
+        // We retrive all the proposals of the user
+        $proposals = $this->proposalRepository->findBy(['user'=>$user]);
+       
+        // We check for each proposal if he have matching
         foreach ($proposals as $proposal) {
             foreach ($proposal->getMatchingRequests() as $matching) {
+                // We check if the matching have an ask
                 foreach ($matching->getAsks() as $ask) {
-                    if ($ask->getStatus() == (Ask::STATUS_ACCEPTED_AS_DRIVER || Ask::STATUS_ACCEPTED_AS_DRIVER)) {
+                    // We check if the ask is accepted if yes we put the ask in the tab
+                    if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
                         $ask = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
                         $asks[] = $ask;
                     }
                 }
             }
-            if (count($asks)>0) {
-                $ad = $this->makeAd($proposal, $userId, true);
-                $ad->setAsks($asks);
-                $ads[] = $ad;
-            }
+            // We check for each proposal if he have matching
             foreach ($proposal->getMatchingOffers() as $matching) {
+                // We check if the matching have an ask
                 foreach ($matching->getAsks() as $ask) {
-                    if ($ask->getStatus() == (Ask::STATUS_ACCEPTED_AS_DRIVER || Ask::STATUS_ACCEPTED_AS_DRIVER)) {
+                    // We check if the ask is accepted if yes we put the ask in the tab
+                    if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
                         $ask = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
                         $asks[] = $ask;
                     }
                 }
             }
+            // we check if the proposal have accepted asks
             if (count($asks)>0) {
+                // if yes we create an ad with the associated asks
                 $ad = $this->makeAd($proposal, $userId, true);
                 $ad->setAsks($asks);
-                $ads[] =$ad;
+                // we put the id of the proposals linked in the temporary array
+                $temp[]=$ad->getProposalLinkedId();
+                // We reset the asks array for the next proposal
+                $asks=[];
+                // We check if the proposal is not a proposal linked of an other proposal
+                if (in_array($ad->getProposalId(), $temp)) {
+                    //  If yes we continue
+                    continue;
+                } else {
+                    // If not we add it to the ads array
+                    $ads[] = $ad;
+                }
             }
-            // var_dump('proposal |'.$proposal->getId());
-            // var_dump('asks number |'.count($asks));
-
-            // $ad = $this->makeAd($proposal, $userId, true);
-            // $ad->setAsks($asks);
-            // $ads = [$ad];
         }
+        // We return the ads array with only the ads with accepted asks associated
         return $ads;
     }
 }
