@@ -52,6 +52,12 @@ If you want to work on mobicoop we can provide you a some ip for those elements 
 
 After starting the app you can use `make fixtures` this will import the database, create private/public keys .. *DO IT 1 MN AFTER THE START, not before*
 
+### 🐳 Install needed deps
+
+To have a functional search you need to install a dep.
+Execute `make go-platform` you'll be in the container. Then execute `npm install -g request-dispatcher`. 
+When it's done you can exit the container by using `exit`.
+
 
 ### 🐳 Access apps
 

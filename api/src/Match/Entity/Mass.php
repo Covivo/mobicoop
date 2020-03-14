@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -36,6 +36,7 @@ use App\Match\Controller\MassComputeAction;
 use App\Match\Controller\MassWorkingPlacesAction;
 use App\Match\Controller\MassReAnalyzeAction;
 use App\Match\Controller\MassReMatchAction;
+use App\Match\Controller\MassMigrateAction;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\User\Entity\User;
@@ -195,6 +196,12 @@ use Doctrine\Common\Collections\Collection;
  *              "normalization_context"={"groups"={"mass","massWorkingPlaces"}},
  *              "controller"=MassWorkingPlacesAction::class
  *          },
+  *          "migrate"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/migrate",
+ *              "normalization_context"={"groups"={"massMigrate"}},
+ *              "controller"=MassMigrateAction::class
+ *          },
  *      }
  * )
  * @Vich\Uploadable
@@ -209,6 +216,11 @@ class Mass
     const STATUS_MATCHING = 5;
     const STATUS_MATCHED = 6;
     const STATUS_ERROR = 7;
+    const STATUS_MIGRATING = 8;
+    const STATUS_MIGRATED = 9;
+
+    const TYPE_ANONYMOUS = 0;
+    const TYPE_QUALIFIED = 1;
 
     const NB_WORKING_DAY = 228;
     const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070;
@@ -222,7 +234,7 @@ class Mass
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"mass","massPost", "massAnalyze","massMatch", "massCompute"})
+     * @Groups({"mass","massPost", "massAnalyze","massMatch", "massCompute", "massMigrate"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -231,7 +243,7 @@ class Mass
      * @var int The status of this import.
      *
      * @ORM\Column(type="integer")
-     * @Groups({"mass","massPost", "massCompute"})
+     * @Groups({"mass","massPost", "massCompute", "massMigrate"})
      */
     private $status;
 
@@ -373,6 +385,34 @@ class Mass
      * @Groups({"massCompute"})
      */
     private $massMatrix;
+
+    /**
+     * @var int Type of Mass (0 : Anonymous, 1 : Qualified)
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"mass","massPost", "massAnalyze","massMatch", "massCompute", "massMigrate"})
+     */
+    private $massType;
+
+    /**
+     * @var bool If the checkbox about the legitimity of the import has been checked
+     * @Groups({"mass"})
+     */
+    private $checkLegit;
+
+    /**
+     * @var \DateTimeInterface The date of the legitimacy check
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @Groups({"mass", "massMigrate"})
+     */
+    private $dateCheckLegit;
+
+
+    /**
+     * @var array|null The migrated users
+     * @Groups({"massMigrate"})
+     */
+    private $migratedUsers;
 
     public function __construct($id = null)
     {
@@ -603,6 +643,16 @@ class Mass
     }
 
     /**
+     * Legitimacy checkbox date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoDateCheckLegit()
+    {
+        $this->setDateCheckLegit(new \Datetime());
+    }
+
+    /**
      * Update date.
      *
      * @ORM\PreUpdate
@@ -666,5 +716,51 @@ class Mass
     public function setMassMatrix(?MassMatrix $massMatrix)
     {
         $this->massMatrix = $massMatrix;
+    }
+
+    public function getMassType(): ?int
+    {
+        return $this->massType;
+    }
+
+    public function setMassType(?int $massType)
+    {
+        $this->massType = $massType;
+    }
+
+    public function isCheckLegit(): ?bool
+    {
+        return $this->checkLegit;
+    }
+
+    public function setCheckLegit(?bool $checkLegit): self
+    {
+        $this->checkLegit = $checkLegit;
+
+        return $this;
+    }
+
+    public function getDateCheckLegit(): ?\DateTimeInterface
+    {
+        return $this->dateCheckLegit;
+    }
+
+    public function setDateCheckLegit(?\DateTimeInterface $dateCheckLegit): self
+    {
+        $this->dateCheckLegit = $dateCheckLegit;
+
+        return $this;
+    }
+
+    public function getMigratedUsers(): ?array
+    {
+        return $this->migratedUsers;
+    }
+
+    public function setMigratedUsers(?array $migratedUsers): self
+    {
+        $this->migratedUsers = $migratedUsers;
+
+        return $this;
     }
 }

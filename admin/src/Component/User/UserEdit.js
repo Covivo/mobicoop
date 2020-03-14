@@ -1,17 +1,26 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import GeocompleteInput from "../Utilities/geocomplete";
-
+import { UserRenderer, addressRenderer } from '../Utilities/renderers'
 //import bcrypt from 'bcryptjs';
 
 import {
     Edit,
     TabbedForm, FormTab,
     TextInput, SelectInput, DateInput,
-    email, regex,Button, useDataProvider,ReferenceArrayInput, SelectArrayInput
+    email, regex, ReferenceArrayInput, SelectArrayInput,BooleanInput,ReferenceInput,ReferenceField, FunctionField
 } from 'react-admin';
+import { makeStyles } from '@material-ui/core/styles'
+
+const useStyles = makeStyles({
+    spacedHalfwidth: { width:"45%", marginBottom:"1rem", display:'inline-flex', marginRight: '1rem' },
+    footer: { marginTop:"2rem" },
+});
+
 
 const UserEdit = props => {
 
+console.info(props)
+    const classes = useStyles();
     const required = (message = 'Champ requis') =>
         value => value ? undefined : message;
 
@@ -53,34 +62,49 @@ const UserEdit = props => {
 
     const validateRequired = [required()];
     const paswwordRules = [required(),minPassword(),upperPassword,lowerPassword,numberPassword];
+    const emailRules = [required(), email() ];
+
 
     return (
         <Edit { ...props } title="Utilisateurs > Editer">
-            <TabbedForm >
+            <TabbedForm validate={validateUserCreation} initialValues={{news_subscription:true}} >
                 <FormTab label="Identité">
-                    <TextInput required source="email" label="Email" validate={ email() } />
+                    <TextInput fullWidth required source="email" label="Email" validate={ emailRules } formClassName={classes.fullwidth} />
 
-                    <TextInput required source="telephone" label="Téléphone" validate={ validateRequired }/>
-                    <TextInput required source="givenName" label="Prénom" validate={ validateRequired }/>
-                    <TextInput required source="familyName" label="Nom" validate={ validateRequired }/>
-                    <SelectInput required source="gender" label="Civilité" choices={genderChoices} validate={ validateRequired }/>
-                    <DateInput required source="birthDate" label="Date de naissance" validate={ validateRequired } />
+                    <TextInput fullWidth required source="familyName" label="Nom" validate={ validateRequired } formClassName={classes.spacedHalfwidth} />
+                    <TextInput fullWidth required source="givenName" label="Prénom" validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
+                    <SelectInput required source="gender" label="Civilité" choices={genderChoices} validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
+                    <DateInput required source="birthDate" label="Date de naissance" validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
 
-                    <ReferenceArrayInput  label='Roles' source="userRoles" reference="roles" >
+                    <TextInput required source="telephone" label="Téléphone" validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
+
+                    <BooleanInput fullWidth label="Recevoir les actualités du service Ouestgo (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)" source="news_subscription" formClassName={classes.spacedHalfwidth} />
+
+                    <ReferenceField  source="addresses" label="s" reference="addresses" link="" formClassName={classes.fullwidthDense}>
+                        <FunctionField render={addressRenderer} />
+                    </ReferenceField>
+
+                    <GeocompleteInput source="addresses" label="Adresse" validate={required()} formClassName={classes.fullwidth}/>
+
+                    <ReferenceArrayInput required label="Droits d'accès" source="roles" reference="roles" validate={ validateRequired } formClassName={classes.footer}>
                         <SelectArrayInput optionText="title" />
                     </ReferenceArrayInput>
 
+                    <ReferenceInput label='Territoires' source="userTerritories" reference="territories">
+                        <SelectInput optionText="name" />
+                    </ReferenceInput>
+
+                    <BooleanInput initialValue={true} label="Accepte de recevoir les emails" source="newsSubscription" />
+  
                 </FormTab>
                 <FormTab label="Préférences">
-                    <SelectInput source="smoke" label="En ce qui concerne le tabac en voiture" choices={smoke} />
-                    <SelectInput source="music" label="En ce qui concerne la musique en voiture" choices={musique} />
-                    <TextInput source="musicFavorites" label="Radio et/musique préférées "/>
-                    <SelectInput source="chat" label="En ce qui concerne le bavardage en voiture" choices={bavardage} />
-                    <TextInput source="chatFavorites" label="Sujets préférés "/>
+                    <SelectInput fullWidth source="music" label="En ce qui concerne la musique en voiture" choices={musique} formClassName={classes.spacedHalfwidth}/>
+                    <TextInput fullWidth source="musicFavorites" label="Radio et/musique préférées " formClassName={classes.spacedHalfwidth}/>
+                    <SelectInput fullWidth source="chat" label="En ce qui concerne le bavardage en voiture" choices={bavardage} formClassName={classes.spacedHalfwidth}/>
+                    <TextInput fullWidth source="chatFavorites" label="Sujets préférés " formClassName={classes.spacedHalfwidth}/>
+                    <SelectInput fullWidth source="smoke" label="En ce qui concerne le tabac en voiture" choices={smoke} formClassName={classes.spacedHalfwidth}/>
                 </FormTab>
-                <FormTab label="Adresses">
-                    <GeocompleteInput source="addresses" label="Adresse" validate={required()}/>
-                </FormTab>
+
 
             </TabbedForm>
         </Edit>
@@ -88,4 +112,3 @@ const UserEdit = props => {
 
 };
 export default UserEdit
-

@@ -1,91 +1,117 @@
 import React from 'react';
-import { 
-    Show, 
-    Tab, TabbedShowLayout, 
-    Link, List,
+import {
+    Show,
+    Tab, TabbedShowLayout,
+    List,
     Datagrid,
-    Button, EditButton, DeleteButton,
-    BooleanField, TextField, DateField, RichTextField, SelectField, ReferenceArrayField, ReferenceField, FunctionField,BulkDeleteButton
+    BooleanField, TextField, DateField, RichTextField, SelectField, ReferenceArrayField, ReferenceField, FunctionField,BulkDeleteButton,useTranslate
 } from 'react-admin';
+import { makeStyles } from '@material-ui/core/styles';
+import { Typography, List as ListMaterial, ListItem, ListItemIcon, ListItemText, Card, CardHeader, Divider} from '@material-ui/core'
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import DriveEtaIcon from '@material-ui/icons/DriveEta';
+import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
+import TodayIcon from '@material-ui/icons/Today';
+import EventAvailableIcon from '@material-ui/icons/EventAvailable';
+
 import EmailComposeButton from "../../Email/EmailComposeButton";
+import UserReferenceField from '../../User/UserReferenceField';
+import {addressRenderer } from '../../Utilities/renderers'
+import {validationChoices, statusChoices } from './communityChoices'
+import isAuthorized from '../../../Auth/permissions'
 
-const statusChoices = [
-    { id: 0, name: 'En attente' },
-    { id: 1, name: 'Membre' },
-    { id: 2, name: 'Modérateur' },
-    { id: 3, name: 'Refusé' },
-];
-const validationChoices = [
-    { id: 0, name: 'Validation automatique' },
-    { id: 1, name: 'Validation manuelle' },
-    { id: 2, name: 'Validation par le domaine' },
-];
+const useStyles = makeStyles({
+    actionButton : { marginTop:"1rem", marginBottom:"1rem" },
+})
 
-const AddNewMemberButton = ({ record }) => (
-    <Button
-        component={Link}
-        to={{
-            pathname: `/community_users/create`,
-            search: `?community=${record.id}`
-        }}
-        label="Ajouter un membre"
-    >
-    </Button>
-);
 
 const UserBulkActionButtons = props => (
     <>
-        <EmailComposeButton label="Email" {...props} />
+        {isAuthorized("mass_create") && <EmailComposeButton label="Email" {...props} /> }
         {/* default bulk delete action */}
         <BulkDeleteButton {...props} />
     </>
 );
 
+const Aside = ({ record }) => (
+    <Card style={{ width: 300, marginLeft:'1rem' }} >
+        <CardHeader title={<Typography variant="button">Paramètres</Typography>} />
+        { record &&
+        <ListMaterial>
+            <ListItem >
+                <ListItemIcon><AccountBoxIcon /></ListItemIcon>
+                <ListItemText primary={<Typography variant="body2">{record.membersHidden ? "Membres cachés" : "Membres visibles"}</Typography>} />
+            </ListItem>
+            <ListItem >
+                <ListItemIcon><DriveEtaIcon /></ListItemIcon>
+                <ListItemText primary={<Typography variant="body2">{record.membersHidden ? "Annonces cachées" : "Annonces visibles"}</Typography>} />
+            </ListItem>
+            <ListItem >
+                <ListItemIcon><VerifiedUserIcon /></ListItemIcon>
+                <ListItemText primary={<Typography variant="body2">{validationChoices.find(e => e.id === (record.validationType || 0)).name }</Typography>} />
+            </ListItem>
+            <ListItem >
+                <ListItemIcon><TodayIcon /></ListItemIcon>
+                <ListItemText primary={<Typography variant="body2">{"Créée le " + new Date(record.createdDate).toLocaleDateString()}</Typography>} />
+            </ListItem>
+            <ListItem >
+                <ListItemIcon><EventAvailableIcon /></ListItemIcon>
+                <ListItemText primary={<Typography variant="body2">{"Mise à jour le " + new Date(record.updatedDate).toLocaleDateString()}</Typography>} />
+            </ListItem>
+        </ListMaterial>
+        }
 
-const addressRenderer = address => `${address.displayLabel[0]} - ${address.displayLabel[1]}`;
 
-export const CommunityShow = (props) => (
-    <Show { ...props } title="Communautés > afficher">
+    </Card>
+);
+
+const CommunityTitle = ({ record }) => {
+    return <span>Communauté {record ? `"${record.name}"` : ''}</span>;
+};
+
+export const CommunityShow = (props) => {
+    const translate = useTranslate();
+    return (
+    <Show { ...props } title={<CommunityTitle />} aside={<Aside />}>
         <TabbedShowLayout>
-            <Tab label="Détails">
-                <TextField source="originId" label="ID"/>
-                <TextField source="name" label="Nom"/>
-                <ReferenceField source="address" label="Adresse" reference="addresses" linkType="">
+            <Tab label={translate('custom.label.community.detail')}>
+                <TextField source="name" label={translate('custom.label.community.name')} />
+                <UserReferenceField label={translate('custom.label.community.createdBy')}  source="user" reference="users" />
+                <ReferenceField source="address"  label={translate('custom.label.community.adress')}  reference="addresses" link="">
                     <FunctionField render={addressRenderer} />
                 </ReferenceField>
-                <BooleanField source="membersHidden" label="Membres masqués" />
-                <BooleanField source="proposalsHidden" label="Annonces masquées" />
-                <SelectField source="validationType" label="Type de validation" choices={validationChoices} />
-                <TextField source="domain" label="Nom de domaine"/>
-                <TextField source="description" label="Description"/>
-                <RichTextField source="fullDescription" label="Description complète"/>
-                <DateField source="createdDate" label="Date de création"/>
-                <EditButton />
+                <TextField source="domain" label={translate('custom.label.community.domainName')} />
+                <TextField source="description" label={translate('custom.label.community.description')} />
+                <RichTextField source="fullDescription" label={translate('custom.label.community.descriptionFull')} />
+
             </Tab>
-            <Tab label="Membres et Modérateurs" path="members">
+            <Tab label={translate('custom.label.community.membersModerator')}>
 
                 <ReferenceArrayField source="communityUsers" reference="community_users" addLabel={false}>
                     <List {...props}
                           perPage={ 25 }
                           bulkActionButtons={<UserBulkActionButtons />}
+                          actions={null}
                           sort={{ field: 'id', order: 'ASC' }}
+                          title=": composition"
                     >
-                    <Datagrid>
-                        <ReferenceField source="user" label="Prénom" reference="users" linkType="">
-                            <TextField source="givenName" />
-                        </ReferenceField>
-                        <ReferenceField source="user" label="Nom" reference="users" linkType="">
-                            <TextField source="familyName" />
-                        </ReferenceField>
-                        <SelectField source="status" label="Statut" choices={statusChoices} />
-                        <EditButton />
-                        <DeleteButton />
-                    </Datagrid>
+                        <Datagrid>
+                            <UserReferenceField label={translate('custom.label.community.member')}  source="user" reference="users" />
+                            <SelectField source="status" label={translate('custom.label.community.status')}  choices={statusChoices} />
+                            <DateField source="createdDate"  label={translate('custom.label.community.joinAt')} />
+                            <DateField source="acceptedDate" label={translate('custom.label.community.acceptedAt')}/>
+                            <DateField source="refusedDate" label={translate('custom.label.community.refusedAt')}/>
+                            { /*
+                            Edit and Delete button should be in an Community Edit view
+                            <EditButton />
+                            <DeleteButton />
+                            */ }
+                        </Datagrid>
                     </List>
                 </ReferenceArrayField>
-
-                <AddNewMemberButton />
+                { /*  <AddNewMemberButton /> should be in an Community Edit view */ }
             </Tab>
         </TabbedShowLayout>
     </Show>
-);
+    )
+};

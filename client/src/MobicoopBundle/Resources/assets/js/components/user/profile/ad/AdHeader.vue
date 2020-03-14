@@ -1,0 +1,349 @@
+<template>
+  <v-container class="py-0">
+    <v-snackbar
+      v-model="snackbar"
+      :color="(alert.type === 'error')?'error':'success'"
+      top
+    >
+      {{ alert.message }}
+      <v-btn
+        color="white"
+        text
+        @click="snackbar = false"
+      >
+        <v-icon>mdi-close-circle-outline</v-icon>
+      </v-btn>
+    </v-snackbar>
+
+    <v-row :class="paused?'warning':''">
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-icon
+            v-if="isDriver && !(isDriver && isPassenger)"
+            class="accent pa-1 px-3 white--text"
+            v-on="on"
+          >
+            mdi-car
+          </v-icon>
+        </template>
+        <span> {{ $t('ads.tooltips.driver') }} </span>
+      </v-tooltip>
+      <v-tooltip
+        v-if="isPassenger && isDriver"
+        bottom
+      >
+        <template v-slot:activator="{ on }">
+          <v-icon
+            v-if="isPassenger"
+            class="secondary pa-1 px-3 white--text"
+            v-on="on"
+          >
+            mdi-walk
+          </v-icon>
+          <v-icon
+            v-if="isDriver"
+            class="accent pa-1 px-3 white--text"
+            v-on="on"
+          >
+            mdi-car
+          </v-icon>
+        </template>
+        <span>{{ $t('ads.tooltips.diverOrPassenger') }}</span>
+      </v-tooltip>
+      <v-divider
+        v-if="isDriver && isPassenger"
+        vertical
+      />
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-icon
+            v-if="isPassenger && !(isDriver && isPassenger)"
+            class="secondary pa-1 px-3 white--text"
+            v-on="on"
+          >
+            mdi-walk
+          </v-icon>
+        </template>
+        <span>{{ $t('ads.tooltips.passenger') }}</span>
+      </v-tooltip>
+      <v-spacer />
+      <v-col
+        v-if="!isCarpool"
+        cols="8"
+        class="text-center"
+      >
+        <p
+          v-if="isPausable && !isArchived && paused && !loading"
+          class="white--text font-weight-bold my-3"
+        >
+          {{ $t('pause.info') }}
+        </p>
+      </v-col>
+      <v-col
+        v-if="!isCarpool"
+        cols="2"
+        class="text-right"
+      >
+        <v-btn
+          v-if="isPausable && !isArchived && !paused"
+          class="secondary my-1 mr-1"
+          icon
+          :loading="loading"
+          @click="pauseAd"
+        >
+          <v-icon class="white--text">
+            mdi-pause
+          </v-icon>
+        </v-btn>
+        <v-btn
+          v-if="isPausable && !isArchived && paused"
+          class="success my-1 mr-1"
+          icon
+          :loading="loading"
+          @click="pauseAd"
+        >
+          <v-icon class="white--text">
+            mdi-play
+          </v-icon>
+        </v-btn>
+        <v-btn
+          class="secondary my-1"
+          :class="isArchived ? 'mr-1' : ''"
+          icon
+          :loading="loading"
+          @click="hasAcceptedAsk ? activeAcceptedAskDialog() : hasAsk ? activeAskDialog() : activeBaseDialog()"
+        >
+          <v-icon
+            class="white--text"
+          >
+            mdi-delete-outline
+          </v-icon>
+        </v-btn>
+      </v-col>
+      <!-- <v-btn
+        v-if="!isArchived"
+        class="secondary ma-1"
+        icon
+        :loading="loading"
+      >
+        <v-icon class="white--text">
+          mdi-pencil
+        </v-icon>
+      </v-btn> -->
+    </v-row>
+    
+    <!--DIALOG-->
+    <v-row justify="center">
+      <v-dialog
+        v-model="dialogActive"
+        persistent
+        max-width="495"
+      >
+        <v-card>
+          <v-card-title class="headline">
+            {{ dialog.title }}
+          </v-card-title>
+          <v-card-text>
+            <p>{{ dialog.content }}</p>
+            <v-textarea
+              v-if="dialog.textarea"
+              v-model="deleteMessage"
+            />
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="green darken-1"
+              text
+              :loading="loading"
+              @click="dialogActive = false"
+            >
+              {{ $t("delete.dialog.cancel") }}
+            </v-btn>
+            <v-btn
+              color="green darken-1"
+              text
+              :loading="loading"
+              @click="deleteAd()"
+            >
+              {{ $t("delete.dialog.validate") }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
+  </v-container>
+</template>
+
+<script>
+import axios from "axios";
+
+import Translations from "@translations/components/user/profile/ad/MyAds.js";
+
+export default {
+  i18n: {
+    messages: Translations
+  },
+  props: {
+    isDriver: {
+      type: Boolean,
+      default: false
+    },
+    isPassenger: {
+      type: Boolean,
+      default: false
+    },
+    isPausable: {
+      type: Boolean,
+      default: true
+    },
+    isPaused: {
+      type: Boolean,
+      default: false
+    },
+    isArchived: {
+      type: Boolean,
+      default: false
+    },
+    adId: {
+      type: Number,
+      default: null
+    },
+    hasAsk: {
+      type: Boolean,
+      default: false
+    },
+    hasAcceptedAsk: {
+      type: Boolean,
+      default: false
+    },
+    isCarpool: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data () {
+    return {
+      loading: false,
+      snackbar: false,
+      alert: {
+        type: "success",
+        message: ""
+      },
+      dialogActive: false,
+      dialog: {
+        title: "",
+        content: "",
+        textarea: true
+      },
+      deleteMessage: "",
+      paused: this.isPaused,
+      ad: {}
+    }
+  },
+  methods: {
+    deleteAd () {
+      this.resetAlert();
+      const self = this;
+      this.loading = true;
+      axios.delete(this.$t('delete.route'), {
+        data: {
+          adId: this.adId,
+          deletionMessage: this.deleteMessage
+        }
+      })
+        .then(function (response) {
+          if (response.data && response.data.message) {
+            // self.alert = {
+            //   type: "success",
+            //   message: self.$t(response.data.message)
+            // };
+            self.$emit('ad-deleted', self.isArchived, self.adId, self.$t(response.data.message));
+          }
+        })
+        .catch(function (error) {
+          self.alert = {
+            type: "error",
+            message: self.$t(error.response.data && error.response.data.message ?
+              error.response.data.message : error.response.data)
+          };
+        })
+        .finally(function () {
+          if (self.alert.message.length > 0) {
+            self.snackbar = true;
+          }
+          self.loading = false;
+          self.dialogActive = false;
+        })
+    },
+    pauseAd () {
+      this.paused = !this.paused;
+      this.loading = true;
+      this.ad.adId = this.adId;
+      this.ad.paused = this.paused;
+      axios
+        .put(this.$t('pause.route'), this.ad,
+          {
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
+        .then(res => {
+          if (res.data && res.data.message === "success") {
+            this.alert = {
+              type: "success",
+              message: this.paused ? this.$t("pause.success.pause") : this.$t("pause.success.unpause")
+            };
+            this.$emit('pause-ad', this.ad.paused);
+          }
+          if (res.data && res.data.message === "error") {
+            this.alert = {
+              type: "error",
+              message: this.paused ? this.$t("pause.error.pause") : this.$t("pause.error.unpause")
+            };
+            this.paused = !this.paused;
+          }
+          this.snackbar = true;
+          this.loading = false;
+        });
+    },
+    resetAlert() {
+      this.alert = {
+        type: "success",
+        message: ""
+      }
+    },
+    activeBaseDialog () {
+      this.deleteMessage = "";
+      this.dialog = {
+        title: this.$t('delete.dialog.base.title'),
+        content: this.$t('delete.dialog.base.text'),
+        textarea: false
+      };
+      this.dialogActive = true;
+    },
+    activeAskDialog () {
+      this.deleteMessage = "";
+      this.dialog = {
+        title: this.$t('delete.dialog.pending.title'),
+        content: this.$t('delete.dialog.pending.text'),
+        textarea: true
+      };
+      this.dialogActive = true;
+    },
+    activeAcceptedAskDialog () {
+      this.deleteMessage = "";
+      this.dialog = {
+        title: this.$t('delete.dialog.accepted.title'),
+        content: this.$t('delete.dialog.accepted.text'),
+        textarea: true
+      };
+      this.dialogActive = true;
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>

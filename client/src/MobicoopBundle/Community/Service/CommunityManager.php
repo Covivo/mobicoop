@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -243,6 +243,18 @@ class CommunityManager
     }
 
     /**
+     * get  communities owned by the user
+     *
+     * @param integer $userId
+     * @return void
+     */
+    public function getOwnedCommunities(int $userId)
+    {
+        $response = $this->dataProvider->getSpecialCollection('owned', ['userId' => $userId]);
+        return $response->getValue()->getMember();
+    }
+
+    /**
      * Check if a User has a certain status in a community
      * @param int $communityId  Id of the community
      * @param int $userId       Id of the User to test
@@ -260,5 +272,17 @@ class CommunityManager
         $this->dataProvider->setClass(CommunityUser::class);
         $response = $this->dataProvider->getCollection($params);
         return $response->getValue()->getMember();
+    }
+
+    /**
+     * get the public infos of a community
+     *
+     * @param integer $communityId
+     * @return Community|null
+     */
+    public function getPublicInfos(int $communityId)
+    {
+        $response = $this->dataProvider->getSpecialItem($communityId, 'public');
+        return $response->getValue();
     }
 }

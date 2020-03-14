@@ -350,7 +350,7 @@ class UserManager
      */
     public function deleteUser(User $user)
     {
-        $response = $this->dataProvider->putSpecial($user, null, "anonymise_user");
+        $response = $this->dataProvider->delete($user->getId());
         //L'user est anonymiser
         if ($response->getCode() == 200) {
             return $response->getValue();
@@ -389,18 +389,19 @@ class UserManager
     }
 
     /**
+     * OBSOLETE---11/03/2020
      * Get the threads (messages) of a user
      *
      * @param User $user The user
      *
      * @return array The messages.
      */
-    public function getThreads(User $user)
-    {
-        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
-        $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threads');
-        return $response->getValue();
-    }
+    // public function getThreads(User $user)
+    // {
+    //     $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+    //     $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threads');
+    //     return $response->getValue();
+    // }
 
     /**
      * Get the threads of direct messages of a user
@@ -499,14 +500,19 @@ class UserManager
      * Get the proposals of an user
      *
      * @param User $user
+     * @param bool $isValidatedCarpool
      * @return array|object
      * @throws \ReflectionException
      */
-    public function getProposals(User $user)
+    public function getAds(User $user, bool $isValidatedCarpool = false)
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
-        $response = $this->dataProvider->getCollection(["userId"=>$user->getId()]);
+
+        $params = ["userId"=>$user->getId(), "acceptedAsks" => true];
+        $isValidatedCarpool ? $params = array_merge($params, ["anyAds" => true]) : null;
+
+        $response = $this->dataProvider->getCollection($params);
         
         $ads = $response->getValue();
        
@@ -514,8 +520,17 @@ class UserManager
             "ongoing" => [],
             "archived" => []
         ];
-        
+
         foreach ($ads as $ad) {
+            if ($isValidatedCarpool) {
+                $acceptedAsks = array_filter($ad["results"], function ($result) {
+                    return $result["acceptedAsk"] === true;
+                });
+                if (count($acceptedAsks) === 0) {
+                    continue;
+                }
+            }
+
             $isAlreadyInArray = false;
             
             if (isset($adsSanitized["ongoing"][$ad["id"]]) ||
@@ -535,47 +550,28 @@ class UserManager
             }
             // Carpool punctual
             else {
-                $fromDate = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
-                //dump($fromDate);
-                // $linkedDate = isset($proposal["proposalLinked"]) ? new DateTime($proposal["proposalLinked"]["criteria"]["fromDate"]) : null;
-                // $date = isset($linkedDate) && $linkedDate > $fromDate ? $linkedDate : $fromDate;
-                $date = $fromDate;
+                $date = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
             }
 
             $key = $date < $now ? 'archived' : 'ongoing';
 
-            // We do not keep the matchingOffers or matchingRequest where proposals are private
-            // TO DO : The api should return the array without all these
-            // Not usefull anymore, Ad route does'nt return private proposals
-            // $proposal = $this->cleanPrivateMatchings($proposal, 'Offers');
-            // $proposal = $this->cleanPrivateMatchings($proposal, 'Requests');
-
-            // proposal is an outward
-            // if ($proposal["type"] === Proposal::TYPE_OUTWARD && !is_null($proposal["proposalLinked"])) {
-            //     $proposalsSanitized[$key][$proposal["id"]] = [
-            //         'outward' => $proposal,
-            //         'return' => $proposal["proposalLinked"]
-            //     ];
-            // // proposal is a return
-            // } elseif ($proposal["type"] === Proposal::TYPE_RETURN && !is_null($proposal["proposalLinked"])) {
-            //     $proposalsSanitized[$key][$proposal["id"]] = [
-            //         'outward' => $proposal["proposalLinked"],
-            //         'return' => $proposal
-            //     ];
-            // // proposal is one way
-            // } else {
-            //     $proposalsSanitized[$key][$proposal["id"]] = [
-            //         'outward' => $proposal
-            //     ];
-            // }
-
-            $adsSanitized[$key][$ad["id"]]['outward'] = $ad;
-            if (!$ad['oneWay']) {
-                $adsSanitized[$key][$ad["id"]]['return'] = $ad;
-            }
+            $adsSanitized[$key][$ad["id"]] = $ad;
         }
+        usort($adsSanitized['ongoing'], function ($a, $b) {
+            return $a["outwardTime"] > $b["outwardTime"];
+        });
+
+        usort($adsSanitized['archived'], function ($a, $b) {
+            return $a["outwardTime"] > $b["outwardTime"];
+        });
         return $adsSanitized;
     }
+
+    public function getAcceptedCarpools(User $user)
+    {
+//        $ads = $this->adManager->
+    }
+
 
     /**
      * Cleaning the Matchings related to private Proposals

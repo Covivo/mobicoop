@@ -48,6 +48,11 @@ class ArticleController extends AbstractController
     const SOLIDARY_CARPOOL = 8;
     const BECOME_PARTNER = 9;
     const FAQ = 10;
+    const TOOLBOX = 11;
+    const COMMUNITYINFOS = 12;
+    const LOM = 13;
+    const GOODPRACTICES = 14;
+    const MOREABOUT = 15;
 
     /**
      * Display of the project page
@@ -140,6 +145,51 @@ class ArticleController extends AbstractController
     }
 
     /**
+     * Display of the TOOLBOX page
+     *
+     */
+    public function showToolbox(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::TOOLBOX));
+    }
+
+    /**
+     * Display of the COMMUNITYINFOS page
+     *
+     */
+    public function showCommunityInfos(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::COMMUNITYINFOS));
+    }
+
+    /**
+     * Display of the LOM page
+     *
+     */
+    public function showLOM(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::LOM));
+    }
+
+    /**
+     * Display of the GOODPRACTICES page
+     *
+     */
+    public function showGoodPractices(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::GOODPRACTICES));
+    }
+
+    /**
+    * Display of the MOREABOUT page
+    *
+    */
+    public function showMoreAbout(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::MOREABOUT));
+    }
+
+    /**
      * Show an article
      *
      * @param Article $article The article to show
@@ -170,6 +220,25 @@ class ArticleController extends AbstractController
                 $nbArticles = $data['nbArticles'];
             }
             return new JsonResponse($articleManager->getLastExternalArticles($nbArticles));
+        }
+        return new JsonResponse();
+    }
+
+    /**
+     * AJAX get article
+     *
+     * @param Request $request
+     * @param ArticleManager $articleManager
+     * @return void
+     */
+    public function articleGet(Request $request, ArticleManager $articleManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if (isset($data['articleId']) && is_numeric($data['articleId'])) {
+                $id = $data['articleId'];
+            }
+            return new JsonResponse($articleManager->getArticle($id));
         }
         return new JsonResponse();
     }

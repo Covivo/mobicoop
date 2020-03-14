@@ -173,9 +173,11 @@
       <matching-journey
         :result="result"
         :user="user"
+        :reset-step="resetStepMatchingJourney"
         @close="carpoolDialog = false"
         @contact="contact"
         @carpool="launchCarpool"
+        @resetStepMatchingJourney="resetStepMatchingJourney = false"
       />
     </v-dialog>
   </div>
@@ -286,7 +288,8 @@ export default {
       fromMyProposals:false,
       initFiltersChips:false,
       communityIdSearch: this.communityId,
-      communityIdSearchBak: this.communityId
+      communityIdSearchBak: this.communityId,
+      resetStepMatchingJourney: false
     };
   },
   computed: {
@@ -339,6 +342,7 @@ export default {
       this.result = carpool;
       // open the dialog
       this.carpoolDialog = true;
+      this.resetStepMatchingJourney = true;
     },
     search(){
     // if a proposalId is provided, we load the proposal results
@@ -448,7 +452,7 @@ export default {
         })
     },
     launchCarpool(params) {
-      // console.log(params);
+      console.log(params);
       axios.post(this.$t("carpoolUrl"), params,
         {
           headers:{
