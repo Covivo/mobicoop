@@ -10,8 +10,8 @@
               class="py-0"
             >
               <route-summary
-                :origin="result.origin"
-                :destination="result.destination"
+                :origin="this.ad.role===2?carpoolInfos.outward.originPassenger:carpoolInfos.outward.originDriver"
+                :destination="this.ad.role===2?carpoolInfos.outward.destinationPassenger:carpoolInfos.outward.destinationDriver"
                 :type="result.frequency"
                 :time="!isRegular ? result.time : null"
                 :regular="isRegular"
