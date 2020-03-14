@@ -155,7 +155,7 @@ use App\Community\Entity\CommunityUser;
  *                      }
  *                  }
  *              },
- *              "security_post_denormalize"="is_granted('user_create',object)"
+ *              "security_post_denormalize"="is_granted('user_register',object)"
  *          },
  *          "delegateRegistration"={
  *              "method"="POST",
