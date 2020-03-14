@@ -78,7 +78,8 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *          },
  *          "getMyCarpools"={
  *              "method"="GET",
- *              "path"="/carpools/accepted"
+ *              "path"="/carpools/accepted",
+ *              "security_post_denormalize"="is_granted('ad_list',object)"
  *          },
  *      },
  *      itemOperations={

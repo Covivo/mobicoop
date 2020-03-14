@@ -48,17 +48,17 @@
             class="primary extra-divider"
           />
           <v-row
-            v-for="(result, index) in ad.results"
+            v-for="(ask, index) in ad.asks"
             :key="index"
             no-gutters
           >
             <carpooler
-              :result="result"
-              :ad="ad"
+              :result="ask.results[0]"
+              :ad="ask"
               :user="user"
             />
             <v-divider
-              v-if="index < ad.results.length - 1"
+              v-if="index < ad.asks.length - 1"
               class="primary lighten-5 ma-1"
             />
           </v-row>
@@ -96,7 +96,7 @@ export default {
   },
   computed: {
     bookedSeats() {
-      return this.ad.results.length
+      return this.ad.asks.length
     },
     seats() {
       return this.isDriver ? this.ad.seatsDriver : this.ad.seatsPassenger

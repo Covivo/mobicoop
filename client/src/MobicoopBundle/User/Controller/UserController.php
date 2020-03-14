@@ -332,7 +332,7 @@ class UserController extends AbstractController
             'alerts' => $userManager->getAlerts($user)['alerts'],
             'tabDefault' => $tabDefault,
             'ads' => $userManager->getAds($user),
-            'acceptedCarpools' => $userManager->getAds($user, true)
+            'acceptedCarpools' => $userManager->getMyAcceptedProposals($user)
         ]);
     }
 

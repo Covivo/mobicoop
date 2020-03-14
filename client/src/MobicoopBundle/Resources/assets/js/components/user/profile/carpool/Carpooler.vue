@@ -65,7 +65,7 @@
         <!--display phone is always true when ask is accepted-->
         <carpooler-contact
           :carpooler="result.carpooler"
-          :ask-id="result.askId"
+          :ask-id="ad.askId"
           :display-phone="true"
           :display-mail-box="true"
           :user="user"
@@ -132,25 +132,18 @@ export default {
   },
   data () {
     return {
-      //todo: use correct times from result/result schedule object when it's developed
-      outwardTimes: this.ad ? [
-        this.ad.schedule.monOutwardTime,
-        this.ad.schedule.tueOutwardTime,
-        this.ad.schedule.wedOutwardTime,
-        this.ad.schedule.thuOutwardTime,
-        this.ad.schedule.friOutwardTime,
-        this.ad.schedule.satOutwardTime,
-        this.ad.schedule.sunOutwardTime
-      ].filter(Boolean) : [],
-      returnTimes: this.ad ? [
-        this.ad.schedule.monReturnTime,
-        this.ad.schedule.tueReturnTime,
-        this.ad.schedule.wedReturnTime,
-        this.ad.schedule.thuReturnTime,
-        this.ad.schedule.friReturnTime,
-        this.ad.schedule.satReturnTime,
-        this.ad.schedule.sunReturnTime
-      ].filter(Boolean) : []
+      carpoolInfos: null,
+      outwardTimes:[],
+      returnTimes:[],
+      hasReturn: null,
+      isRegular: null,
+      hasMonday: null,
+      hasTuesday: null,
+      hasWednesday: null,
+      hasThursday: null,
+      hasFriday: null,
+      hasSaturday: null,
+      hasSunday: null
     }
   },
   computed: {
@@ -159,33 +152,41 @@ export default {
     },
     isPassenger() {
       return this.ad.role === 2 || this.ad.role === 3
-    },
-    hasReturn () {
-      return !this.ad.oneWay;
-    },
-    isRegular () {
-      return this.ad.frequency === 2;
-    },
-    hasMonday () {
-      return this.result && this.result.monCheck;
-    },
-    hasTuesday () {
-      return this.result && this.result.tueCheck;
-    },
-    hasWednesday () {
-      return this.result && this.result.wedCheck;
-    },
-    hasThursday () {
-      return this.result && this.result.thuCheck;
-    },
-    hasFriday () {
-      return this.result && this.result.friCheck;
-    },
-    hasSaturday () {
-      return this.result && this.result.satCheck;
-    },
-    hasSunday () {
-      return this.result && this.result.sunCheck;
+    }
+  },
+  mounted() {
+    this.setCarpoolInfo();
+  },
+  methods: {
+    setCarpoolInfo() {
+      this.carpoolInfos= this.ad.role === 2 ? this.result.resultPassenger : this.result.resultDriver;
+      this.outwardTimes.push(
+        this.carpoolInfos.outward.monTime,
+        this.carpoolInfos.outward.tueTime,
+        this.carpoolInfos.outward.wedTime,
+        this.carpoolInfos.outward.thuTime,
+        this.carpoolInfos.outward.friTime,
+        this.carpoolInfos.outward.satTime,
+        this.carpoolInfos.outward.sunTime
+      );
+      this.returnTimes.push(
+        this.carpoolInfos.return.monTime,
+        this.carpoolInfos.return.tueTime,
+        this.carpoolInfos.return.wedTime,
+        this.carpoolInfos.return.thuTime,
+        this.carpoolInfos.return.friTime,
+        this.carpoolInfos.return.satTime,
+        this.carpoolInfos.return.sunTime
+      );
+      this.hasReturn = this.carpoolInfos.return?true:false;
+      this.isRegular = this.result.frequency === 2;
+      this.hasMonday  = this.carpoolInfos.outward.monCheck;
+      this.hasTuesday = this.carpoolInfos.outward.tueCheck;
+      this.hasWednesday = this.carpoolInfos.outward.wedCheck;
+      this.hasThursday = this.carpoolInfos.outward.thuCheck;
+      this.hasFriday = this.carpoolInfos.outward.friCheck;
+      this.hasSaturday = this.carpoolInfos.outward.satCheck;
+      this.hasSunday = this.carpoolInfos.outward.sunCheck;
     }
   },
 }

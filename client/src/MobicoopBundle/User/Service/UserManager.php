@@ -504,15 +504,11 @@ class UserManager
      * @return array|object
      * @throws \ReflectionException
      */
-    public function getAds(User $user, bool $isValidatedCarpool = false)
+    public function getAds(User $user)
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
-
-        $params = ["userId"=>$user->getId(), "acceptedAsks" => true];
-        $isValidatedCarpool ? $params = array_merge($params, ["anyAds" => true]) : null;
-
-        $response = $this->dataProvider->getCollection($params);
+        $response = $this->dataProvider->getCollection(["userId"=>$user->getId()]);
         
         $ads = $response->getValue();
        
@@ -520,17 +516,8 @@ class UserManager
             "ongoing" => [],
             "archived" => []
         ];
-
+        
         foreach ($ads as $ad) {
-            if ($isValidatedCarpool) {
-                $acceptedAsks = array_filter($ad["results"], function ($result) {
-                    return $result["acceptedAsk"] === true;
-                });
-                if (count($acceptedAsks) === 0) {
-                    continue;
-                }
-            }
-
             $isAlreadyInArray = false;
             
             if (isset($adsSanitized["ongoing"][$ad["id"]]) ||
@@ -550,28 +537,18 @@ class UserManager
             }
             // Carpool punctual
             else {
-                $date = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
+                $fromDate = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
+                //dump($fromDate);
+                // $linkedDate = isset($proposal["proposalLinked"]) ? new DateTime($proposal["proposalLinked"]["criteria"]["fromDate"]) : null;
+                // $date = isset($linkedDate) && $linkedDate > $fromDate ? $linkedDate : $fromDate;
+                $date = $fromDate;
             }
 
             $key = $date < $now ? 'archived' : 'ongoing';
-
             $adsSanitized[$key][$ad["id"]] = $ad;
         }
-        usort($adsSanitized['ongoing'], function ($a, $b) {
-            return $a["outwardTime"] > $b["outwardTime"];
-        });
-
-        usort($adsSanitized['archived'], function ($a, $b) {
-            return $a["outwardTime"] > $b["outwardTime"];
-        });
         return $adsSanitized;
     }
-
-    public function getAcceptedCarpools(User $user)
-    {
-//        $ads = $this->adManager->
-    }
-
 
     /**
      * Cleaning the Matchings related to private Proposals
@@ -695,8 +672,44 @@ class UserManager
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
         $response = $this->dataProvider->getSpecialCollection("accepted", ["userId"=>$user->getId()]);
-        
+
         $ads = $response->getValue();
-        return $ads;
+
+        $adsSanitized = [
+            "ongoing" => [],
+            "archived" => []
+        ];
+        
+        foreach ($ads as $ad) {
+            $isAlreadyInArray = false;
+            
+            if (isset($adsSanitized["ongoing"][$ad["id"]]) ||
+                isset($adsSanitized["archived"][$ad["id"]])) {
+                $isAlreadyInArray = true;
+            }
+            
+            if ($isAlreadyInArray) {
+                continue;
+            }
+
+            $now = new DateTime();
+            
+            // Carpool regular
+            if ($ad["frequency"] === Ad::FREQUENCY_REGULAR) {
+                $date = new DateTime($ad["outwardLimitDate"]);
+            }
+            // Carpool punctual
+            else {
+                $fromDate = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
+                //dump($fromDate);
+                // $linkedDate = isset($proposal["proposalLinked"]) ? new DateTime($proposal["proposalLinked"]["criteria"]["fromDate"]) : null;
+                // $date = isset($linkedDate) && $linkedDate > $fromDate ? $linkedDate : $fromDate;
+                $date = $fromDate;
+            }
+
+            $key = $date < $now ? 'archived' : 'ongoing';
+            $adsSanitized[$key][$ad["id"]] = $ad;
+        }
+        return $adsSanitized;
     }
 }
