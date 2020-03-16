@@ -36,6 +36,7 @@ class MobileUser implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        return true;
+        // a user is a mobile user if an ios or android app id is related to his account
+        return (!is_null($requester->getIosAppId()) || !is_null($requester->getAndroidAppId()));
     }
 }

@@ -45,7 +45,7 @@ use App\User\Constraints\UserIdProvided;
  *          "post"={
  *              "method"="POST",
  *              "normalization_context"={"groups"={"writeDynamic","results"}},
- *              "security_post_denormalize"="is_granted('dynamic_create',object)"
+ *              "security_post_denormalize"="is_granted('dynamic_ad_create',object)"
  *          },
  *          "post_ask"={
  *              "method"="POST",
@@ -57,7 +57,7 @@ use App\User\Constraints\UserIdProvided;
  *          "get"={
  *              "method"="GET",
  *              "read"=false,
- *              "security"="is_granted('dynamic_read',object)"
+ *              "security"="is_granted('dynamic_ad_read',object)"
  *          },
  *          "put"={
  *              "method"="PUT",
@@ -65,7 +65,7 @@ use App\User\Constraints\UserIdProvided;
  *              "normalization_context"={"groups"={"updateDynamic","results"}},
  *              "denormalization_context"={"groups"={"updateDynamic"}},
  *              "validation_groups"={"updateDynamic"},
- *              "security"="is_granted('dynamic_update',object)"
+ *              "security"="is_granted('dynamic_ad_update',object)"
  *          },
  *          "put_ask"={
  *              "method"="PUT",

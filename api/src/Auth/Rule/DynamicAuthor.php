@@ -24,7 +24,7 @@
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
-use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\Dynamic;
 
 /**
  *  Check that the requester is the author of the related dynamic ad
@@ -36,6 +36,13 @@ class DynamicAuthor implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        return true;
+        if (!isset($params['dynamic'])) {
+            return false;
+        }
+        /**
+         * @var Dynamic $dynamic
+         */
+        $dynamic = $params['dynamic'];
+        return $dynamic->getUser()->getId() == $requester->getId();
     }
 }

@@ -82,7 +82,9 @@ class DynamicManager
      */
     public function getDynamic(int $id)
     {
-        $proposal = $this->proposalManager->get($id);
+        if (!$proposal = $this->proposalManager->get($id)) {
+            throw new DynamicException("Dynamic ad not found");
+        }
         $dynamic = new Dynamic();
         $dynamic->setProposal($proposal);
         $dynamic->setUser($proposal->getUser());
@@ -99,7 +101,7 @@ class DynamicManager
      */
     public function createDynamic(Dynamic $dynamic)
     {
-        // check if the user has already a dynamic ad pending
+        // todo : check if the user has already a dynamic ad pending
 
         // set User
         if (is_null($dynamic->getUser())) {
