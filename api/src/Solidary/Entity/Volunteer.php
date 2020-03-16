@@ -42,7 +42,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"readVolunteer"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeVolunteer"}}
