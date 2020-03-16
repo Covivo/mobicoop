@@ -508,8 +508,7 @@ class UserManager
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
-        $response = $this->dataProvider->getCollection(["userId"=>$user->getId()]);
-        
+        $response = $this->dataProvider->getCollection();
         $ads = $response->getValue();
        
         $adsSanitized = [
@@ -671,9 +670,12 @@ class UserManager
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
-        $response = $this->dataProvider->getSpecialCollection("accepted", ["userId"=>$user->getId()]);
+        $response = $this->dataProvider->getSpecialCollection("accepted");
+//        $isValidatedCarpool ? $params = array_merge($params, ["anyAds" => true]) : null;
 
         $ads = $response->getValue();
+
+//        dump($ads);die;
 
         $adsSanitized = [
             "ongoing" => [],

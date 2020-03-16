@@ -54,11 +54,6 @@ final class MyAdCollectionDataProvider implements CollectionDataProviderInterfac
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        /**
-         * TO DO : We are not supposed to use userId from request. Only the one from security token.
-         * Need to change the method in front and remove the one from the request
-         * see : AdVoter
-         */
-        return $this->adManager->getMyAds($this->request->get("userId", $this->security->getUser()->getId()));
+        return $this->adManager->getUserAcceptedCarpools($this->security->getUser()->getId());
     }
 }

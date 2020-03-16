@@ -14,11 +14,11 @@
         <span v-else-if="!isDriver && seats && seats > 0">{{ bookedSeats }}&nbsp;{{ $tc('seat.booked', bookedSeats) }}</span>
       </v-col>
       <v-col
-        v-if="!isDriver && ad.outwardPassengerPrice"
+        v-if="!isDriver && ad.asks[0].results[0].roundedPrice"
         cols="2"
         class="font-weight-bold primary--text headline text-right"
       >
-        {{ ad.outwardPassengerPrice }}€
+        {{ ad.asks[0].results[0].roundedPrice }}€
       </v-col>
     </v-row>
     <v-expansion-panels
@@ -54,7 +54,7 @@
           >
             <carpooler
               :result="ask.results[0]"
-              :ad="ask"
+              :ask="ask"
               :user="user"
             />
             <v-divider

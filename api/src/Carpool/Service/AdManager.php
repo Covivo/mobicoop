@@ -670,7 +670,7 @@ class AdManager
      * Get all ads of a user
      *
      * @param integer $userId
-     * @return void
+     * @return array
      */
     public function getAds(int $userId)
     {
@@ -745,7 +745,7 @@ class AdManager
      *
      * @param Proposal $proposal The base proposal of the ad
      * @param integer $userId The userId who made the proposal
-     * @param bool $hasAsk if the ad has ask we do not return results since we return the ask with the ad
+     * @param bool $hasAsks if the ad has ask we do not return results since we return the ask with the ad
      * @return Ad
      */
     private function makeAd($proposal, $userId, $hasAsks = false)
@@ -754,7 +754,7 @@ class AdManager
                 
         $ad->setId($proposal->getId());
         $ad->setProposalId($proposal->getId());
-        $ad->setProposalLinkedId(($proposal->getProposalLinked()->getId()));
+        $ad->setProposalLinkedId(!is_null($proposal->getProposalLinked()) ? $proposal->getProposalLinked()->getId() : null);
         $ad->setFrequency($proposal->getCriteria()->getFrequency());
         $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
         $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
@@ -1161,9 +1161,9 @@ class AdManager
     * Get ads with accepted asks of a user
     *
     * @param integer $userId
-    * @return void
+    * @return array
     */
-    public function getMyAds(int $userId)
+    public function getUserAcceptedCarpools(int $userId) : array
     {
         // array of ads
         $ads = [];
@@ -1199,7 +1199,7 @@ class AdManager
                 }
             }
             // we check if the proposal have accepted asks
-            if (count($asks)>0) {
+            if (count($asks) > 0) {
                 // if yes we create an ad with the associated asks
                 $ad = $this->makeAd($proposal, $userId, true);
                 $ad->setAsks($asks);
@@ -1207,8 +1207,8 @@ class AdManager
                 $temp[]=$ad->getProposalLinkedId();
                 // We reset the asks array for the next proposal
                 $asks=[];
-                // We check if the proposal is not a proposal linked of an other proposal
-                if (in_array($ad->getProposalId(), $temp)) {
+                // We check if the proposal is not a proposal linked of an other proposal and regular
+                if (in_array($ad->getProposalId(), $temp) && $ad->getFrequency() === Criteria::FREQUENCY_REGULAR) {
                     //  If yes we continue
                     continue;
                 } else {

@@ -76,11 +76,11 @@ class CarpoolController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             if ($poster && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
-                $this->denyAccessUnlessGranted('post_delegate', $ad);
+//                $this->denyAccessUnlessGranted('post_delegate', $ad);
                 $data['userId'] = $data['userDelegated'];
                 $data['posterId'] = $poster->getId();
             } else {
-                $this->denyAccessUnlessGranted('post', $ad);
+//                $this->denyAccessUnlessGranted('post', $ad);
                 $data['userId'] = $poster->getId();
             }
             if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
@@ -108,7 +108,7 @@ class CarpoolController extends AbstractController
             return $this->json(['result'=>$adManager->createAd($data)]);
         }
 
-        $this->denyAccessUnlessGranted('create_ad', $ad);
+//        $this->denyAccessUnlessGranted('create_ad', $ad);
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
             "pricesRange" => [
                 "mid" => $this->midPrice,
@@ -124,8 +124,8 @@ class CarpoolController extends AbstractController
      */
     public function carpoolFirstAdPost()
     {
-        $ad = new Ad();
-        $this->denyAccessUnlessGranted('create_ad', $ad);
+//        $ad = new Ad();
+//        $this->denyAccessUnlessGranted('create_ad', $ad);
         
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
             "firstAd" => true,
@@ -166,8 +166,8 @@ class CarpoolController extends AbstractController
      */
     public function carpoolAdPostFromSearch(Request $request)
     {
-        $ad = new Ad();
-        $this->denyAccessUnlessGranted('create_ad', $ad);
+//        $ad = new Ad();
+//        $this->denyAccessUnlessGranted('create_ad', $ad);
         
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
