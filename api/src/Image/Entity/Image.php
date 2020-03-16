@@ -23,7 +23,6 @@
 
 namespace App\Image\Entity;
 
-use App\MassCommunication\Entity\Campaign;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
@@ -38,6 +37,7 @@ use App\Event\Entity\Event;
 use App\Community\Entity\Community;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Entity\RelayPointType;
+use App\MassCommunication\Entity\Campaign;
 use App\Image\Controller\CreateImageAction;
 use App\Image\Controller\CreateImageAdminCampaignController;
 use App\Image\Controller\ImportImageCommunityController;
@@ -53,6 +53,7 @@ use App\User\Entity\User;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  * @ORM\EntityListeners({"App\Image\EntityListener\ImageListener"})
+ *  TO DO : Secure the DELETE in itemOperations
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -63,13 +64,20 @@ use App\User\Entity\User;
  *          "get",
  *          "post"={
  *              "method"="POST",
- *              "path"="/images",
  *              "controller"=CreateImageAction::class,
- *              "defaults"={"_api_receive"=false},
+ *              "deserialize"=false,
+ *              "security_post_denormalize"="is_granted('image_post',object)"
  *          },
  *      },
- *      itemOperations={"get","put","delete",
- *     }
+ *      itemOperations={
+ *          "get" = {
+ *              "security"="is_granted('image_read',object)"
+ *          },
+ *          "put" = {
+ *              "security"="is_granted('image_update',object)"
+ *          },
+ *          "delete"
+ *      }
  * )
  * @Vich\Uploadable
  */
@@ -81,7 +89,7 @@ class Image
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","readUser"})
+     * @Groups({"read","readUser","communities"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -90,7 +98,7 @@ class Image
      * @var string The name of the image.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","readUser"})
+     * @Groups({"read","readUser","communities"})
      */
     private $name;
 
@@ -98,7 +106,7 @@ class Image
      * @var string The html title of the image.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","readUser"})
+     * @Groups({"read","readUser","communities"})
      */
     private $title;
     
@@ -313,12 +321,6 @@ class Image
     private $relayPointTypeId;
 
     /**
-     * @var array|null The versions of with the image.
-     * @Groups({"read","readCommunity","readCommunityUser","readEvent","readUser","results"})
-     */
-    private $versions;
-
-    /**
      * @var Campaign|null The campaign associated with the image.
      *
      * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign", inversedBy="images", cascade="persist")
@@ -330,12 +332,18 @@ class Image
      * @Vich\UploadableField(mapping="campaign", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
     private $campaignFile;
-
+    
     /**
      * @var int|null The campaign id associated with the image.
      * @Groups({"read","write"})
      */
     private $campaignId;
+
+    /**
+     * @var array|null The versions of with the image.
+     * @Groups({"read","readCommunity","readCommunityUser","readEvent","readUser","results","communities"})
+     */
+    private $versions;
         
     public function __construct($id=null)
     {
@@ -420,7 +428,7 @@ class Image
     
     public function getCropY2(): ?int
     {
-        return $this->cropX1;
+        return $this->cropY2;
     }
     
     public function setCropY2(?int $cropY2): self
@@ -704,6 +712,38 @@ class Image
     {
         $this->relayPointTypeId = $relayPointTypeId;
     }
+
+    public function getCampaign(): ?Campaign
+    {
+        return $this->campaign;
+    }
+    
+    public function setCampaign(?Campaign $campaign): self
+    {
+        $this->campaign = $campaign;
+        
+        return $this;
+    }
+    
+    public function getCampaignFile(): ?File
+    {
+        return $this->campaignFile;
+    }
+    
+    public function setCampaignFile(?File $campaignFile)
+    {
+        $this->campaignFile = $campaignFile;
+    }
+    
+    public function getCampaignId(): ?int
+    {
+        return $this->campaignId;
+    }
+    
+    public function setCampaignId($campaignId)
+    {
+        $this->campaignId = $campaignId;
+    }
     
     public function getVersions(): ?array
     {
@@ -723,38 +763,6 @@ class Image
         $this->setRelayPointFile(null);
         $this->setRelayPointTypeFile(null);
         $this->setCampaignFile(null);
-    }
-
-    public function getCampaign(): ?Campaign
-    {
-        return $this->campaign;
-    }
-
-    public function setCampaign(?Campaign $campaign): self
-    {
-        $this->campaign = $campaign;
-
-        return $this;
-    }
-
-    public function getCampaignFile(): ?File
-    {
-        return $this->campaignFile;
-    }
-
-    public function setCampaignFile(?File $campaignFile)
-    {
-        $this->campaignFile = $campaignFile;
-    }
-
-    public function getCampaignId(): ?int
-    {
-        return $this->campaignId;
-    }
-
-    public function setCampaignId($campaignId)
-    {
-        $this->campaignId = $campaignId;
     }
     
     // DOCTRINE EVENTS

@@ -25,8 +25,10 @@
           <matching-filter 
             :communities="communities"
             :disabled-filters="loading"
-            :disable-role="!this.includePassenger"
-            @updateFilters="updateFilters" 
+            :disable-role="!includePassenger"
+            :default-community-id="communityIdSearch"
+            :init-filters-chips="initFiltersChips"
+            @updateFilters="updateFilters"
           />
 
           <!-- Number of matchings -->
@@ -171,9 +173,11 @@
       <matching-journey
         :result="result"
         :user="user"
+        :reset-step="resetStepMatchingJourney"
         @close="carpoolDialog = false"
         @contact="contact"
         @carpool="launchCarpool"
+        @resetStepMatchingJourney="resetStepMatchingJourney = false"
       />
     </v-dialog>
   </div>
@@ -281,7 +285,11 @@ export default {
       nbCarpoolOther:0,
       role:this.defaultRole,
       includePassenger:false,
-      fromMyProposals:false
+      fromMyProposals:false,
+      initFiltersChips:false,
+      communityIdSearch: this.communityId,
+      communityIdSearchBak: this.communityId,
+      resetStepMatchingJourney: false
     };
   },
   computed: {
@@ -316,6 +324,12 @@ export default {
         this.role = 2;
       }
       this.search();
+    },
+    communities(){
+      this.initFiltersChips = true;
+    },
+    communityIdSearch(){
+      this.communityIdSearchBak = this.communityIdSearch;
     }
   },
   created() {
@@ -328,6 +342,7 @@ export default {
       this.result = carpool;
       // open the dialog
       this.carpoolDialog = true;
+      this.resetStepMatchingJourney = true;
     },
     search(){
     // if a proposalId is provided, we load the proposal results
@@ -360,7 +375,7 @@ export default {
           "time": this.time,
           "regular": this.regular,
           "userId": this.user ? this.user.id : null,
-          "communityId": this.communityId,
+          "communityId": this.communityIdSearch,
           "filters": this.filters,
           "role": this.role
         };
@@ -415,7 +430,6 @@ export default {
 
     },
     contact(params) {
-      // console.log(params);
       axios.post(this.$t("contactUrl"), params,
         {
           headers:{
@@ -438,7 +452,7 @@ export default {
         })
     },
     launchCarpool(params) {
-      // console.log(params);
+      console.log(params);
       axios.post(this.$t("carpoolUrl"), params,
         {
           headers:{
@@ -462,6 +476,14 @@ export default {
     },
     updateFilters(data){
       this.filters = data;
+      // Update the default filters also
+      this.communityIdSearch = (this.filters.filters.community) ? parseInt(this.filters.filters.community) : null;
+
+      // If the communityid for a research has been modified, we need to post a new proposal for the search
+      // We don't use the watch because it's excuted after updateFilters() is done (after the this.search...)
+      if(this.communityIdSearch !== this.communityIdSearchBak){
+        this.lProposalId = null;
+      }
       this.search();
     },
     startNewSearch() {

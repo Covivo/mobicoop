@@ -30,8 +30,6 @@ use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
@@ -263,16 +261,6 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * @var Proposal[]|null The proposals made by this user.
      */
     private $proposals;
-
-    /**
-     * @var Ask[]|null The asks made by this user.
-     */
-    private $asks;
-
-    /**
-     * @var Ask[]|null The asks related to this user.
-     */
-    private $asksRelated;
 
     /**
      * @var Image[]|null The images of the user.
@@ -774,62 +762,6 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
     
-    public function getAsks(): Collection
-    {
-        return $this->asks;
-    }
-    
-    public function addAsk(Ask $ask): self
-    {
-        if (!$this->asks->contains($ask)) {
-            $this->asks->add($ask);
-            $ask->setUser($this);
-        }
-        
-        return $this;
-    }
-    
-    public function removeAsk(Ask $ask): self
-    {
-        if ($this->asks->contains($ask)) {
-            $this->asks->removeElement($ask);
-            // set the owning side to null (unless already changed)
-            if ($ask->getUser() === $this) {
-                $ask->setUser(null);
-            }
-        }
-        
-        return $this;
-    }
-
-    public function getAsksRelated(): Collection
-    {
-        return $this->asksRelated;
-    }
-    
-    public function addAskRelated(Ask $asksRelated): self
-    {
-        if (!$this->asksRelated->contains($asksRelated)) {
-            $this->asksRelated->add($asksRelated);
-            $asksRelated->setUser($this);
-        }
-        
-        return $this;
-    }
-    
-    public function removeAskRelated(Ask $asksRelated): self
-    {
-        if ($this->asksRelated->contains($asksRelated)) {
-            $this->asksRelated->removeElement($asksRelated);
-            // set the owning side to null (unless already changed)
-            if ($asksRelated->getUser() === $this) {
-                $asksRelated->setUser(null);
-            }
-        }
-        
-        return $this;
-    }
-
     /**
      *
      * @return Collection|Image[]
@@ -1126,7 +1058,6 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
         return $this;
     }
-
 
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()

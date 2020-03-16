@@ -31,6 +31,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
+use App\User\Entity\User;
 
 /**
  * A mass matching person, imported from a mass matching file.
@@ -79,6 +80,12 @@ class MassPerson
      */
     private $familyName;
 
+    /**
+     * @var string|null The email address of the person.
+     * @ORM\Column(type="string", length=512, nullable=true)
+     */
+    private $email;
+    
     /**
      * @var Address The personal address of the person.
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
@@ -230,6 +237,15 @@ class MassPerson
      */
     private $updatedDate;
 
+    /**
+     * @var User|null The user related if this MassPerson is from an Mass import.
+     *
+     * @ORM\OneToOne(targetEntity="\App\User\Entity\User")
+     * @MaxDepth(1)
+     * @Groups({"read"})
+     */
+    private $user;
+
     public function __construct()
     {
         $this->matchingsAsDriver = new ArrayCollection();
@@ -278,6 +294,18 @@ class MassPerson
         if ($this->familyName == '') {
             $this->familyName = null;
         }
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
+        
         return $this;
     }
 
@@ -484,6 +512,18 @@ class MassPerson
     {
         $this->updatedDate = $updatedDate;
 
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+    
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
+        
         return $this;
     }
 

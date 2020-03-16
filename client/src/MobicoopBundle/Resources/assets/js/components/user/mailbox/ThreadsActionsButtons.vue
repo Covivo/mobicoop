@@ -30,7 +30,7 @@
         {{ $t('button.askCarpoolAsPassenger') }}
       </v-btn>
     </div>
-    <div v-if="status==1 && !canUpdateAsk">
+    <div v-if="status==1 && !canUpdateAsk && carpoolContext">
       <v-card-text>{{ $t('onlyAskUser') }}</v-card-text>
     </div>
     <!-- end ask just Initiated -->
@@ -46,6 +46,7 @@
         small
         dark
         depressed
+        :loading="loading"
         @click="updateStatus((status==2) ? 5 : 4)"
       >
         {{ $t('button.accept') }}
@@ -58,6 +59,7 @@
         small
         dark
         depressed
+        :loading="loading"
         @click="updateStatus((status==2) ? 7 : 6)"
       >
         {{ $t('button.refuse') }}
@@ -125,6 +127,10 @@ export default {
       default:false
     },
     passenger:{
+      type:Boolean,
+      default:false
+    },
+    carpoolContext:{
       type:Boolean,
       default:false
     },

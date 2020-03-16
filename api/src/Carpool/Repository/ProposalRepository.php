@@ -44,8 +44,8 @@ class ProposalRepository
     const BEARING_RANGE = 10;                   // if used, only accept proposal where the bearing direction (cape) is not at the opposite, more or less the range degrees
                                                 // for example, if the bearing is 0 (S->N), the proposals where the bearing is between 170 and 190 (~ N->S) are excluded
     const PASSENGER_PROPORTION = 0.3;           // minimum passenger distance relative to the driver distance, eg passenger distance should be at least 20% of the driver distance
-    const MAX_DISTANCE_PUNCTUAL = 0.1;          // percentage of the driver direction to compute the max distance between driver and passenger directions (punctual)
-    const MAX_DISTANCE_REGULAR = 0.05;          // percentage of the driver direction to compute the max distance between driver and passenger directions (regular)
+    const MAX_DISTANCE_PUNCTUAL = 0.2;          // percentage of the driver direction to compute the max distance between driver and passenger directions (punctual)
+    const MAX_DISTANCE_REGULAR = 0.2;           // percentage of the driver direction to compute the max distance between driver and passenger directions (regular)
     const DISTANCE_RATIO = 100000;              // ratio to use when computing distance filter (used to convert geographic degrees to metres)
 
     const USE_ZONES = false;                    // use the ~common zones~ filtering
@@ -1135,7 +1135,13 @@ class ProposalRepository
     //     return $return;
     // }
 
-    private function getBBoxExtension($distance)
+    /**
+     * Get the extension length of the bounding box from the original distance of the direction.
+     *
+     * @param int $distance The distance in metres
+     * @return int          The extension in metres
+     */
+    private function getBBoxExtension(int $distance)
     {
         if ($distance<20000) {
             return 3000;
@@ -1162,6 +1168,7 @@ class ProposalRepository
 
     /**
      * Find proposals linked to imported users
+     * We exclude proposals with wrong directions (can happen when importing data, when we can't sanitize the input data such as bad geographical coordinates)
      *
      * @param integer $status
      * @return array
@@ -1171,9 +1178,10 @@ class ProposalRepository
         $query = $this->repository->createQueryBuilder('p')
         ->select('p.id')
         ->join('p.criteria', 'c')
+        ->join('c.directionDriver', 'd')
         ->join('p.user', 'u')
         ->join('u.import', 'i')
-        ->where('i.status = :status and c.directionDriver is not null')
+        ->where('i.status = :status and d.distance>0')
         ->andwhere('c.frequency = 1 or (c.monCheck = 1 or c.tueCheck = 1 or c.wedCheck = 1 or c.thuCheck = 1 or c.friCheck = 1 or c.satCheck = 1 or c.sunCheck = 1)')
         ->setParameter('status', $status);
         return $query->getQuery()->getResult();

@@ -206,18 +206,6 @@ export default {
     //this.getCommunities();    
   },
   methods: {
-    leaveCommunity(community) {
-      var self = this, i = null;
-      this.communitiesUser.forEach(function(item, index) {
-        if(item.id === community.id){
-          self.communities.push(community); // ADD TO AVAILABLE COMMUNITIES
-          i = index;
-          return;
-        }
-      });
-      this.communitiesUser.splice(i, 1); // REMOVE FROM MY COMMUNITIES
-      this.refreshComponent();
-    },
     refreshComponent() {
       this.rerenderKey++;
     },

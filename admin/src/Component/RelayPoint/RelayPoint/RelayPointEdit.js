@@ -9,9 +9,8 @@ import {
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
 import GeocompleteInput from '../../Utilities/geocomplete';
+import { addressRenderer , UserRenderer} from '../../Utilities/renderers';
 
-const userOptionRenderer = choice => `${choice.givenName} ${choice.familyName}`;
-const addressRenderer = address => `${address.displayLabel[0]} - ${address.displayLabel[1]}`;
 const userId = `/users/${localStorage.getItem('id')}`;
 const statusChoices = [
     { id: 0, name: 'En attente' },
@@ -24,7 +23,7 @@ export const RelayPointEdit = (props) => (
         <TabbedForm>
             <FormTab label="Identité">
                 <ReferenceInput source="user" label="Créateur" reference="users" defaultValue={userId}>
-                    <SelectInput optionText={userOptionRenderer}/>
+                    <SelectInput optionText={<UserRenderer />}/>
                 </ReferenceInput>
                 <TextInput source="name" label="Nom" validate={required()}/>
                 <ReferenceField source="address" label="Adresse actuelle" reference="addresses" linkType="">

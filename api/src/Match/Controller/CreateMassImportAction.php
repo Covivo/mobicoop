@@ -77,7 +77,6 @@ final class CreateMassImportAction
                 $originalName = $mass->getOriginalName();
             }
         }
-
         if ($form->isSubmitted() && $form->isValid()) {
             // the form is valid and the image has a valid user
             // we persist the file to fill the fields automatically (size, mimetype...)

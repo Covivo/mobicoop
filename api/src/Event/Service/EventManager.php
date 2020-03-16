@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -34,7 +34,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * This service contains methods related to event manipulations.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class EventManager
 {
@@ -80,5 +81,17 @@ class EventManager
         $this->eventDispatcher->dispatch($eventEvent, ValidateCreateEventEvent::NAME);
 
         return $event;
+    }
+
+    /**
+    * retrive events created by a user
+    *
+    * @param Int $userId
+    * @return void
+    */
+    public function getCreatedEvents(Int $userId)
+    {
+        $createdEvents = $this->eventRepository->getCreatedEvents($userId);
+        return $createdEvents;
     }
 }

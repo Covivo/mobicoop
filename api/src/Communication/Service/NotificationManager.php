@@ -24,7 +24,7 @@
 namespace App\Communication\Service;
 
 use App\Carpool\Entity\Ad;
-use App\Communication\Entity\MessagerInterface;
+use App\Communication\Interfaces\MessagerInterface;
 use App\Event\Entity\Event;
 use Psr\Log\LoggerInterface;
 use App\Communication\Repository\NotificationRepository;
@@ -42,9 +42,11 @@ use App\Communication\Entity\Recipient;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Ask;
 use App\Communication\Entity\Message;
+use App\Rdex\Entity\RdexConnection;
 use App\User\Service\UserManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
+use App\Carpool\Service\AdManager;
 
 /**
  * Notification manager
@@ -67,10 +69,11 @@ class NotificationManager
     private $enabled;
     private $translator;
     private $userManager;
+    private $adManager;
     const LANG = 'fr_FR';
 
 
-    public function __construct(EntityManagerInterface $entityManager, Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, SmsManager $smsManager, LoggerInterface $logger, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled, TranslatorInterface $translator, UserManager $userManager)
+    public function __construct(EntityManagerInterface $entityManager, Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, SmsManager $smsManager, LoggerInterface $logger, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled, TranslatorInterface $translator, UserManager $userManager, AdManager $adManager)
     {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -86,6 +89,7 @@ class NotificationManager
         $this->enabled = $enabled;
         $this->translator = $translator;
         $this->userManager = $userManager;
+        $this->adManager = $adManager;
     }
 
     /**
@@ -99,6 +103,10 @@ class NotificationManager
     public function notifies(string $action, User $recipient, ?object $object = null)
     {
         if (!$this->enabled) {
+            return;
+        }
+        // Check if the user is anonymised if yes we don't send notifications
+        if ($recipient->getStatus() == USER::STATUS_ANONYMIZED) {
             return;
         }
 
@@ -245,6 +253,39 @@ class NotificationManager
                 case Message::class:
                     $titleContext = ['user'=>$object->getUser()];
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
+                break;
+                case RdexConnection::class:
+                    $titleContext = [];
+                    $ad = $this->adManager->getAd($object->getJourneysId());
+                    if (!is_null($object->getDriver()->getUuid())) {
+                        $journey = $ad->getResults()[0]->getResultPassenger();
+                    } else {
+                        $journey = $ad->getResults()[0]->getResultDriver();
+                    }
+
+                    $origin = $journey->getOutward()->getOrigin()->getAddressLocality();
+                    $destination = $journey->getOutward()->getDestination()->getAddressLocality();
+                    $date = "";
+                    if (!is_null($journey->getOutward()->getDate())) {
+                        $date = $journey->getOutward()->getDate()->format("d/m/Y");
+                    } elseif (!is_null($journey->getOutward()->getFromDate())) {
+                        $date = $journey->getOutward()->getFromDate()->format("d/m/Y");
+                    }
+                    $time = "";
+                    if (!is_null($journey->getOutward()->getTime())) {
+                        $time = $journey->getOutward()->getTime()->format("H\hi");
+                    }
+                    $bodyContext = [
+                        'text'=>$object->getDetails(),
+                        'user'=>$recipient,
+                        'operator'=>$object->getOperator(),
+                        'origin'=>$object->getOrigin(),
+                        'journeyOrigin' => $origin,
+                        'journeyDestination' => $destination,
+                        'journeyDate' => $date,
+                        'journeyTime' => $time
+                    ];
+                break;
             }
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
@@ -262,6 +303,7 @@ class NotificationManager
                 'context' => $titleContext
             ]
         ));
+
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $lang);
     }
@@ -351,7 +393,7 @@ class NotificationManager
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
         }
-       
+
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->smsManager->send($sms, $notification->getTemplateBody() ? $this->smsTemplatePath . $notification->getTemplateBody() : $this->smsTemplatePath . $notification->getAction()->getName(), $bodyContext);
     }

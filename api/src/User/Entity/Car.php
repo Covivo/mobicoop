@@ -40,8 +40,23 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *          "get",
+ *          "post"={
+ *              "security_post_denormalize"="is_granted('user_create',object)"
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('user_read',object)"
+ *          },
+ *          "put"={
+ *              "security"="is_granted('user_update',object)"
+ *          },
+ *          "delete"={
+ *              "security"="is_granted('user_delete',object)"
+ *          }
+ *      }
  * )
  */
 class Car

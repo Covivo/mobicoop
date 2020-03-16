@@ -8,5 +8,8 @@
 {% endblock %}
 
 {% block main %}
-    <contact :user="{{app.user|json_encode}}"></contact>
+   <contact
+        :user="{{ app.user|json_encode }}"
+        :contact-types="{{ contactTypes }}"
+    ></contact>
 {% endblock %}

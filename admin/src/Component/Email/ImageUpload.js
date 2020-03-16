@@ -30,14 +30,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ImageUpload = ({imageSrc, setImage,campaignId}) => {
+const ImageUpload = ({imageSrc, imageId, setImage,campaignId}) => {
 
     const classes = useStyles();
     const [loading, setLoading] = useState(false)
     const [erreur, setErreur]   = useState("")
     const [afficheUpload, setAfficheUpload] = useState(false)
-
-
 
     const apiUrlUploadImage = process.env.REACT_APP_API+process.env.REACT_APP_SEND_IMAGES;
     const token = localStorage.getItem('token');
@@ -60,14 +58,14 @@ const ImageUpload = ({imageSrc, setImage,campaignId}) => {
             body: data,
             headers : options.headers
         }).then( retour => {
-            if (retour.status = '201') setImage(retour.json.versions.max)
+            if (retour.status = '201') setImage({'src' : retour.json.versions.max, 'id' : retour.json.id  })
             else setErreur("Impossible de charge l'image. Erreur : " + retour.error)
         })
     }
 
     return (
         <div className={classes.container} onMouseEnter={()=>setAfficheUpload(true)} onMouseLeave={()=>setAfficheUpload(false)}>
-            {imageSrc && <img className={classes.img} src={imageSrc} alt={imageSrc} /> }
+            {imageSrc && <img className={classes.img} src={imageSrc} data-id={imageId} alt={imageSrc} /> }
             {erreur && <p>Erreur : {erreur} </p> }
             { (afficheUpload || !imageSrc) && 
                 <div className={classes.upload}>

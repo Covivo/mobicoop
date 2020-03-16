@@ -40,7 +40,7 @@ class ContactMessage
      */
     private $contactManager;
 
-    public function __construct(ContactManager $contactManager)
+    public function __construct(ContactManager $contactManager, array $params)
     {
         $this->contactManager = $contactManager;
     }

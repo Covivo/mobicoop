@@ -45,15 +45,30 @@ use App\Article\Controller\ExternalArticlesAction;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get",
+ *          "get"={
+ *              "security_post_denormalize"="is_granted('article_list',object)"
+ *          },
  *          "externalArticles"={
  *              "method"="GET",
  *              "path"="/articles/external",
  *              "controller"=ExternalArticlesAction::class,
+ *              "security_post_denormalize"="is_granted('article_list',object)"
  *          },
- *          "post"
+ *          "post"={
+ *              "security_post_denormalize"="is_granted('article_create',object)"
+ *          },
  *      },
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('article_read',object)"
+ *          },
+ *          "put"={
+ *              "security"="is_granted('article_update',object)"
+ *          },
+ *          "delete"={
+ *              "security"="is_granted('article_delete',object)"
+ *          },
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "title"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"title":"partial"})

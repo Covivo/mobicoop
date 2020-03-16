@@ -23,6 +23,7 @@
 
 namespace App\Geography\Entity;
 
+use App\Community\Entity\Community;
 use App\Event\Entity\Event;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -52,7 +53,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get",
  *          "search"={
  *              "method"="GET",
  *              "path"="/addresses/search",
@@ -71,7 +71,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *                         "type" = "string",
  *                         "description" = "The geographic token authorization"
  *                     }
- *                   }
+ *                  }
  *              }
  *          },
  *          "reverse"={
@@ -100,6 +100,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})
  */
+
 class Address
 {
     const DEFAULT_ID = 999999999999;
@@ -111,7 +112,7 @@ class Address
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read", "readUser"})
+     * @Groups({"read", "readUser", "readEvent"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -162,7 +163,7 @@ class Address
      * @var string|null The locality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","readUser","readEvent","results","write","pt","mass","massCompute","threads","thread","externalJourney","readVolunteer","writeVolunteer"})
+     * @Groups({"read","readUser","readEvent","results","write","pt","mass","massCompute","threads","thread","externalJourney","readCommunity","readVolunteer","writeVolunteer"})
      * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
      */
     private $addressLocality;
@@ -250,7 +251,7 @@ class Address
     /**
      * @var string The geoJson point of the address.
      * @ORM\Column(type="point", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","readEvent"})
      */
     private $geoJson;
 
@@ -302,9 +303,17 @@ class Address
      * @var Event|null The event of the address.
      *
      * @ORM\OneToOne(targetEntity="App\Event\Entity\Event", mappedBy="address")
-     * @Groups({"read","pt"})
+     * @Groups({"read","pt","readEvent","write"})
      */
     private $event;
+
+    /**
+     * @var Community|null The community of the address.
+     *
+     * @ORM\OneToOne(targetEntity="App\Community\Entity\Community", mappedBy="address")
+     * @Groups({"read"})
+     */
+    private $community;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -328,6 +337,13 @@ class Address
      * @Groups({"read"})
      */
     private $icon;
+
+    /**
+     * @var array|null The provider of the address
+     *
+     * @Groups({"read"})
+     */
+    private $providedBy;
 
     public function __construct($id = null)
     {
@@ -622,6 +638,16 @@ class Address
         $this->icon = $icon;
     }
 
+    public function getProvidedBy(): ?string
+    {
+        return $this->providedBy;
+    }
+
+    public function setProvidedBy(?string $providedBy)
+    {
+        $this->providedBy = $providedBy;
+    }
+
     // DOCTRINE EVENTS
     
     /**
@@ -665,6 +691,18 @@ class Address
     public function setEvent(?Event $event): self
     {
         $this->event = $event;
+
+        return $this;
+    }
+
+    public function getCommunity(): ?Community
+    {
+        return $this->community;
+    }
+
+    public function setCommunity(?Community $community): self
+    {
+        $this->community = $community;
 
         return $this;
     }

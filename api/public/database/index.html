@@ -108,6 +108,8 @@
 <li><a href="#need_structure">need_structure </a></li>
 <li><a href="#structureProof">structureProof </a></li>
 <li><a href="#proof">proof </a></li>
+<li><a href="#position">position </a></li>
+<li><a href="#carpooProof">carpooProof </a></li>
 </ul>
 <a id="user"></a><table style="width:100%"><caption>Table: user </caption>
 <tr><td>Table Comments</td><td colspan="6">User table</td></tr>
@@ -214,6 +216,9 @@ The proposal is linked with offer or request criteria.
 1 : one way trip
 2 : outward of a round trip
 3 : return of a round trip</td></tr>
+<tr><td>dynamic</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Dynamic carpool (real-time)</td></tr>
+<tr><td>active</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The dynamic carpool proposal is active. A passenger proposal is set to inactive when an ask is accepted, a driver proposal is set to inactive when no more passenger can be involved.</td></tr>
+<tr><td>finished</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The dynamic carpool proposal is finished. An ad is set to finished when it is manually stopped, or when the destination is reached.</td></tr>
 <tr><td>private</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Private proposal. A private proposal can't be the found in the result of a search.</td></tr>
 <tr><td>paused</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Paused proposal. A paused proposal can't be the found in the result of a search, and can be unpaused at any moment. </td></tr>
 <tr><td>comment</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td>Comment</td></tr>
@@ -315,6 +320,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>idask</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Ask if the waypoint is an ask waypoint (calculated by the georouting algorythm and potentially modified by the user that creates the ask)</td></tr>
 <tr><td>position</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Position number</td></tr>
 <tr><td>destination</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>True if it's the last point</td></tr>
+<tr><td>reached</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The waypoint has been reached during a dynamic carpooling</td></tr>
 <tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
@@ -1095,7 +1101,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
 <tr><td>description</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Description</td></tr>
 <tr><td>fullDescription</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Full description</td></tr>
-<tr><td>private</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Private relay point for a community</td></tr>
+<tr><td>private</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Private relay point for a community or a solidary structure</td></tr>
 <tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Status (active/inactive/pending)</td></tr>
 <tr><td>places</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Number of places</td></tr>
 <tr><td>placesDisabled</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Number of places for disabled people</td></tr>
@@ -1107,6 +1113,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address</td></tr>
 <tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Creator</td></tr>
 <tr><td>idcommunity</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Community</td></tr>
+<tr><td>idstructure</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Structure</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
 </table><a href="#home">Table List </a></br>
@@ -1160,6 +1167,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The status of publication of the article : 
 0 : pending
 1 : published</td></tr>
+<tr><td>iFrame</td><td>VARCHAR(512)</td><td>No</td><td>No</td><td>No</td><td></td><td>The code of the article iFrame if it's displayed from an external source</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
 </table><a href="#home">Table List </a></br>
@@ -1289,7 +1297,8 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="action"></a><table style="width:100%"><caption>Table: action </caption>
-<tr><td>Table Comments</td><td colspan="6">List of actions that can be logged and / or trigger notifications</td></tr>
+<tr><td>Table Comments</td><td colspan="6">List of actions that can be logged and / or trigger notifications. 
+Some actions can reflect a real action made by a user, some can be automatic actions triggered by other actions. Usually, these "triggered" actions aren't logged.</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1304,7 +1313,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the action</td></tr>
 <tr><td>inLog</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The action has to be logged in the log system</td></tr>
 <tr><td>inDiary</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>The action has to be logged in the user action diary</td></tr>
-<tr><td>progression</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>The progression in percent if the action can be related to a solidary record</td></tr>
+<tr><td>progression</td><td>DECIMAL(6,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>The progression if the action can be related to a process (like for solidary records). It's a numeric value, so it can be a percent, a step...</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
 <tr><td>position</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Display position in user preferences</td></tr>
@@ -1498,8 +1507,8 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
 <tr><td>date</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date</td></tr>
 <tr><td>idaction</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Action</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>The user that make the action (or the user for whom the action is made)</td></tr>
-<tr><td>idadmin</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Admin if the action is made by an administrator for a user</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>The user concerned by the action</td></tr>
+<tr><td>iduserDelegate</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The user that makes the action if the action is made for another user</td></tr>
 <tr><td>idproposal</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The proposal if the action concerns a proposal</td></tr>
 <tr><td>idmatching</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The matching if the action concerns a matching</td></tr>
 <tr><td>idask</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The ask if the action concerns an ask</td></tr>
@@ -1545,7 +1554,9 @@ A waypoint is created by a user who wants to travel by certain points.
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
-<tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>updatedDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Update date
+Special need for this entity : we need to know the last action made in a diary for a solidary record, so we have to know the last date between createdDate and updatedDate.
+To do so, we will use the updatedDate, so it is mandatory and will be populated with the createdDate at insert time.</td></tr>
 <tr><td>comment</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>A comment about the action</td></tr>
 <tr><td>idaction</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Action</td></tr>
 <tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>The related user</td></tr>
@@ -1883,6 +1894,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>private</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Not publicly available</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>idsolidary</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Solidary if the need was created for a specific solidary record</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="solidary_need"></a><table style="width:100%"><caption>Table: solidary_need </caption>
 <tr><td>Table Comments</td><td colspan="6">List of special needs for a solidary record</td></tr>
@@ -1964,10 +1976,10 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>position</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Position in the form</td></tr>
 <tr><td>checkbox</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The proof is a checkbox</td></tr>
 <tr><td>input</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The proof is an input</td></tr>
-<tr><td>select</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The proof is a select</td></tr>
+<tr><td>selectbox</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The proof is a select</td></tr>
 <tr><td>radio</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The proof is a radio button</td></tr>
 <tr><td>options</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td>Text options for radio or select  (separated by semicolon, in the same order than values)</td></tr>
-<tr><td>values</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td>Values for radio or select (separated by semicolon, in the same order than options)</td></tr>
+<tr><td>acceptedValues</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td>Values for radio or select (separated by semicolon, in the same order than options)</td></tr>
 <tr><td>file</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The proof is a file</td></tr>
 <tr><td>idstructure</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Structure</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
@@ -1996,5 +2008,49 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>originalName</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Original name</td></tr>
 <tr><td>size</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Size in bytes</td></tr>
 <tr><td>mimeType</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Mime type</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="position"></a><table style="width:100%"><caption>Table: position </caption>
+<tr><td>Table Comments</td><td colspan="6">Current geographic position for dynamic carpooling.</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Updated date</td></tr>
+<tr><td>idproposal</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Proposal</td></tr>
+<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Current address (last address saved)</td></tr>
+<tr><td>iddirection</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Direction related to the dynamic carpool - updated at each position update</td></tr>
+<tr><td>geoJsonPoints</td><td>LINESTRING</td><td>No</td><td>No</td><td>No</td><td></td><td>History of geographic points as a linestring, used to compute the direction. Updated at each new position. Can be emptied when the carpool is finished.</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="carpooProof"></a><table style="width:100%"><caption>Table: carpooProof </caption>
+<tr><td>Table Comments</td><td colspan="6">Carpool certification proof</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>Position of the passenger when certification is asked</td></tr>
+<tr><td>pickupPassengerDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Passenger pickup certification date</td></tr>
+<tr><td>pickupDriverDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Driver pickup certification date</td></tr>
+<tr><td>dropoffPassengerDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Passenger dropoff certification date</td></tr>
+<tr><td>dropoffDriverDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Driver dropoff certification date</td></tr>
+<tr><td>idaddressPickupPassenger</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Position of the passenger when pickup certification is asked</td></tr>
+<tr><td>idaddressPickupDriver</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Position of the driver when pickup certification is asked</td></tr>
+<tr><td>idaddressDropoffPassenger</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Position of the passenger when dropoff certification is asked</td></tr>
+<tr><td>idaddressDropoffDriver</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Position of the driver when dropoff certification is asked</td></tr>
+<tr><td>iddirection</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The direction related to the proof</td></tr>
+<tr><td>idask</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Ask</td></tr>
 </table><a href="#home">Table List </a></br>
 </body></html>

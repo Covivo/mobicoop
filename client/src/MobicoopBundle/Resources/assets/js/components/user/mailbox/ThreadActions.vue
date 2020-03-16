@@ -15,6 +15,7 @@
           :loading-btn="dataLoadingBtn"
           :driver="driver"
           :passenger="passenger"
+          :carpool-context="(idAsk) ? true : false"
           @updateStatus="updateStatus"
         />
       </v-card>
@@ -389,6 +390,7 @@ export default {
 
     },
     updateStatus(data){
+      this.dataLoadingBtn = true;
       // console.info(this.infosComplete)
       // console.info(this.infosComplete.carpooler)
       if(this.infosComplete.askStatus==1 && this.infosComplete.frequency==2){

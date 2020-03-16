@@ -22,7 +22,7 @@
  
  namespace App\User\Controller;
 
-use App\Right\Service\PermissionManager;
+use App\Auth\Service\PermissionManager;
 use App\TranslatorTrait;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;

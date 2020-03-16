@@ -14,7 +14,8 @@ security:
         # useful as many authentications systems exist : by app (frontend), by users (with mobile app), with a token...
         chain_provider:
             chain:
-                providers: [jwt, servers, users]
+                providers: [servers, users]
+                # providers: [jwt, servers, users]
         # provider for apps authentication (eg. frontend)
         servers: 
             entity:
@@ -26,8 +27,10 @@ security:
                 class: 'App\User\Entity\User'
                 property: 'email'
         # provider for logged users or app (eg. with a valid token)
-        jwt:
-            lexik_jwt: ~
+        # /!\ this is the database-less provider, it avoids loading the user for each api call, so if you need the user information don't use this provider ! /!\
+        # /!\ the user is generally needed in every request because of permission management... /!\
+        # jwt:
+            # lexik_jwt: ~
 
     # firewalls
     firewalls:
@@ -63,8 +66,12 @@ security:
         # firewall for R&D
         rd:
             pattern:  ^/rd/
+            provider: chain_provider
             stateless: true
-            anonymous: true
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+
 
         # firewall for geosearch
         geosearch:
@@ -78,7 +85,19 @@ security:
             stateless: true
             anonymous: true    
 
-        # firewall for dev (profiler)
+        # firewall for RDEX external requests
+        rdexExternalRequests:
+            pattern:  ^/rdex/journeys
+            stateless: true
+            anonymous: true
+
+        # firewall for RDEX external requests of connections
+        rdexExternalRequestsConnections:
+            pattern:  ^/rdex/connections
+            stateless: true
+            anonymous: true
+
+            # firewall for dev (profiler)
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
@@ -92,12 +111,15 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
+
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/docs.json, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/rd/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/rd/, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/addresses/search, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/addresses/reverse, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/rdex/journeys, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/rdex/connections, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

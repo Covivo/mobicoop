@@ -1,15 +1,21 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import GeocompleteInput from "../Utilities/geocomplete";
 
 import {
     Create,
     TabbedForm, FormTab,
     TextInput, SelectInput, DateInput,
-    email, regex,Button, useDataProvider,ReferenceArrayInput, SelectArrayInput,BooleanInput
+    email, regex, ReferenceArrayInput, SelectArrayInput,BooleanInput,ReferenceInput
 } from 'react-admin';
+import { makeStyles } from '@material-ui/core/styles'
+
+const useStyles = makeStyles({
+    spacedHalfwidth: { width:"45%", marginBottom:"1rem", display:'inline-flex', marginRight: '1rem' },
+    footer: { marginTop:"2rem" },
+});
 
 const UserCreate = props => {
-
+    const classes = useStyles()
     const required = (message = 'Champ requis') =>
             value => value ? undefined : message;
 
@@ -19,14 +25,6 @@ const UserCreate = props => {
     const upperPassword = regex(/^(?=.*[A-Z]).*$/ , 'Au minimum 1 majuscule' );
     const lowerPassword = regex(/^(?=.*[a-z]).*$/ , 'Au minimum 1 minuscule' );
     const numberPassword = regex(/^(?=.*[0-9]).*$/ , 'Au minimum 1 chiffre' );
-
-    const validateUserCreation = (values) => {
-        const errors = {};
-        if (!values.firstName) {
-            errors.firstName = ['The firstName is required'];
-        }
-        return errors
-    };
 
     const genderChoices = [
         { id: 1, name: 'Femme' },
@@ -48,39 +46,48 @@ const UserCreate = props => {
         {id : true, name : 'Je discute'},
     ];
 
-
     const validateRequired = [required()];
     const paswwordRules = [required(),minPassword(),upperPassword,lowerPassword,numberPassword];
+    const emailRules = [required(), email() ];
+    const validateUserCreation = values => values.address ? {} :  ({ address : "L'adresse est obligatoire" })
 
     return (
         <Create { ...props } title="Utilisateurs > ajouter">
-            <TabbedForm >
+            <TabbedForm validate={validateUserCreation} initialValues={{news_subscription:true}} >
                 <FormTab label="Identité">
-                    <TextInput required source="email" label="Email" validate={ email() } />
-                    <TextInput required source="password" label="Mot de passe" type="password" validate={ paswwordRules }/>
-                    <TextInput required source="telephone" label="Téléphone" validate={ validateRequired }/>
-                    <TextInput required source="givenName" label="Prénom" validate={ validateRequired }/>
-                    <TextInput required source="familyName" label="Nom" validate={ validateRequired }/>
-                    <SelectInput required source="gender" label="Civilité" choices={genderChoices} validate={ validateRequired }/>
-                    <DateInput required source="birthDate" label="Date de naissance" validate={ validateRequired } />
+                    <TextInput fullWidth required source="email" label="Email" validate={ emailRules } formClassName={classes.spacedHalfwidth} />
+                    <TextInput fullWidth required source="password" label="Mot de passe" type="password" validate={ paswwordRules } formClassName={classes.spacedHalfwidth}/>
 
-                    <ReferenceArrayInput required label='Roles' source="userRoles" reference="roles" validate={ validateRequired }>
+                    <TextInput fullWidth required source="familyName" label="Nom" validate={ validateRequired } formClassName={classes.spacedHalfwidth} />
+                    <TextInput fullWidth required source="givenName" label="Prénom" validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
+                    <SelectInput required source="gender" label="Civilité" choices={genderChoices} validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
+                    <DateInput required source="birthDate" label="Date de naissance" validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
+
+                    <TextInput required source="telephone" label="Téléphone" validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
+
+                    <BooleanInput fullWidth label="Recevoir les actualités du service Ouestgo (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)" source="news_subscription" formClassName={classes.spacedHalfwidth} />
+
+                    <GeocompleteInput fullWidth source="addresses" label="Adresse" validate={required("L'adresse est obligatoire")}/>
+
+                    <ReferenceArrayInput required label="Droits d'accès" source="userRoles" reference="roles" validate={ validateRequired } formClassName={classes.footer}>
                         <SelectArrayInput optionText="title" />
                     </ReferenceArrayInput>
 
-                    <BooleanInput label="Accepte de recevoir les emails" source="news_subscription" />
+                    <ReferenceInput label='Territoires' source="userTerritories" reference="territories">
+                        <SelectInput optionText="name" />
+                    </ReferenceInput>
+
+                    <BooleanInput initialValue={true} label="Accepte de recevoir les emails" source="newsSubscription" />
 
                 </FormTab>
                 <FormTab label="Préférences">
-                    <SelectInput source="smoke" label="En ce qui concerne le tabac en voiture" choices={smoke} />
-                    <SelectInput source="music" label="En ce qui concerne la musique en voiture" choices={musique} />
-                    <TextInput source="musicFavorites" label="Radio et/musique préférées "/>
-                    <SelectInput source="chat" label="En ce qui concerne le bavardage en voiture" choices={bavardage} />
-                    <TextInput source="chatFavorites" label="Sujets préférés "/>
+                    <SelectInput fullWidth source="music" label="En ce qui concerne la musique en voiture" choices={musique} formClassName={classes.spacedHalfwidth}/>
+                    <TextInput fullWidth source="musicFavorites" label="Radio et/musique préférées " formClassName={classes.spacedHalfwidth}/>
+                    <SelectInput fullWidth source="chat" label="En ce qui concerne le bavardage en voiture" choices={bavardage} formClassName={classes.spacedHalfwidth}/>
+                    <TextInput fullWidth source="chatFavorites" label="Sujets préférés " formClassName={classes.spacedHalfwidth}/>
+                    <SelectInput fullWidth source="smoke" label="En ce qui concerne le tabac en voiture" choices={smoke} formClassName={classes.spacedHalfwidth}/>
                 </FormTab>
-                <FormTab label="Adresses">
-                     <GeocompleteInput source="addresses" label="Adresse" validate={required()}/>
-                </FormTab>
+
 
             </TabbedForm>
         </Create>

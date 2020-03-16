@@ -43,7 +43,7 @@
               :min="nowDate"
               first-day-of-week="1"
               @input="menuOutwardDate = false"
-              @change="change(),blockTime(),blockDate()"
+              @change="change(),clearOtherFields(),checkMinReturnTime(),checkIfTimeIsValid()"
             />
           </v-menu>
         </v-col>
@@ -68,7 +68,9 @@
                 :label="$t('outwardTime.label')"
                 prepend-icon=""
                 readonly
+                clearable
                 v-on="on"
+                @click:clear="clearOutwardTime"
               />
             </template>
             <v-time-picker
@@ -78,7 +80,7 @@
               :min="maxTimeIfToday"
               header-color="secondary"
               @click:minute="$refs.menuOutwardTime.save(outwardTime)"
-              @change="change(),blockTime()"
+              @change="change(), checkMinReturnTime(), checkIfTimeIsValid()"
             />
           </v-menu>
         </v-col>
@@ -138,7 +140,9 @@
                 :label="$t('returnDate.label')"
                 prepend-icon=""
                 readonly
+                clearable
                 v-on="on"
+                @click:clear="clearReturnDate"
               >
                 <v-icon
                   slot="prepend"
@@ -152,9 +156,9 @@
               :locale="locale"
               no-title
               first-day-of-week="1"
-              :min="maxDateFromOutward"
+              :min="outwardDate"
               @input="menuReturnDate = false"
-              @change="checkDateReturn($event),change(),blockTime()"
+              @change="checkDateReturn($event),change(), checkMinReturnTime(), checkIfTimeIsValid()"
             />
           </v-menu>
         </v-col>
@@ -179,18 +183,19 @@
                 :label="$t('returnTime.label')"
                 prepend-icon=""
                 readonly
+                clearable
                 v-on="on"
-                @click="setDefaultDateIfEmpty()"
+                @click:clear="clearReturnTime"
               />
             </template>
             <v-time-picker
               v-if="menuReturnTime"
               v-model="returnTime"
               format="24hr"
-              :min="maxTimeFromOutward"
               header-color="secondary"
+              :min="minReturnTime"
               @click:minute="$refs.menuReturnTime.save(returnTime)"
-              @change="checkDateReturn($event),change()"
+              @change="checkDateReturn($event),change(),checkIfTimeIsValid()"
             />
           </v-menu>
         </v-col>
@@ -213,6 +218,13 @@
           </v-tooltip>
         </v-col>
       </v-row>
+      <v-row v-if="returnTimeIsValid == false">
+        <v-col>
+          <p class="error--text">
+            {{ $t('errorReturnTime') }}
+          </p>
+        </v-col>  
+      </v-row>  
     </v-form>
     
     <!-- Regular -->
@@ -520,8 +532,8 @@ export default {
       maxTimeFromOutward : null,
       maxTimeIfToday : null,
       nowDate : new Date().toISOString().slice(0,10),
-      maxTimeReturnCalcul : null,
-      maxDateReturnCalcul : null,
+      minReturnTime : null,
+      returnTimeIsValid : true,
     };
   },
   computed: {
@@ -559,7 +571,6 @@ export default {
   watch: {
     initOutwardDate() {
       this.outwardDate = this.initOutwardDate;
-      this.blockDate();
     },
   },
   created:function(){
@@ -590,38 +601,35 @@ export default {
         returnDate: this.returnDate,
         returnTime: this.returnTime,
         returnTrip: this.returnTrip,
-        schedules: validSchedules
+        schedules: validSchedules,
+        returnTimeIsValid: this.returnTimeIsValid,
       });
     },
     checkDateReturn(e){
       this.returnTrip = e ? true : false;
     },
-    blockDate(){
-      this.maxDateFromOutward = this.outwardDate
-      //We are Today -> we block min time for outwardTime < now time
-      this.maxTimeIfToday = (this.maxDateFromOutward == this.nowDate) ? moment().format('H:mm') : null;
-    },
-    blockTime(){
-      this.maxTimeReturnCalcul = moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format("HH:mm");
-      this.maxDateReturnCalcul = moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format("YYYY-MM-DD");
-
-      if (this.returnTrip) this.setDefaultDateIfEmpty()
-      //Security -> if try to set return then outward, if outward is more far, we set return = outward
-      if ( this.outwardDate > this.returnDate )  this.returnDate = this.outwardDate;
-    },
-    setDefaultDateIfEmpty(){
-      this.returnDate = this.outwardDate
-      this.returnTrip = true;
-      if (this.maxTimeReturnCalcul != null ){
-        this.returnTime = this.maxTimeReturnCalcul
-        this.maxTimeFromOutward = this.maxTimeReturnCalcul
-      }
-      if (this.maxDateReturnCalcul != null ) {
-        this.returnDate = this.maxDateReturnCalcul
-        this.maxDateFromOutward = this.maxDateReturnCalcul
-
+    checkMinReturnTime(){
+      if (this.returnDate == this.outwardDate) {
+        this.minReturnTime = moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format("HH:mm");
+      } else { 
+        this.minReturnTime = null; 
       }
     },
+    checkIfTimeIsValid(){
+      if (moment(this.returnDate+' '+this.returnTime) < moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds')){
+        this.returnTimeIsValid = false;
+        this.change();
+      } else {
+        this.returnTimeIsValid = true;
+        this.change();
+      }
+    },
+    clearOtherFields(){
+      this.outwardTime = null;
+      this.returnDate = null;
+      this.returnTime = null;
+    },
+    
     blockTimeRegular(e,id){
       // test to allow return time to be set before outward time for regular work
       if(id !=0 && this.schedules[id-1]['returnTime'] === null) {
@@ -727,6 +735,18 @@ export default {
 
     clearOutwardDate() {
       this.outwardDate = null;
+      this.change();
+    },
+    clearOutwardTime() {
+      this.outwardTime = null;
+      this.change();
+    },
+    clearReturnDate() {
+      this.returnDate = null;
+      this.change();
+    },
+    clearReturnTime() {
+      this.returnTime = null;
       this.change();
     },
     closeOutwardTime(id) {

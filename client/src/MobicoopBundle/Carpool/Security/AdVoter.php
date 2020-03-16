@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Permission\Service\PermissionManager;
 
@@ -58,10 +59,9 @@ class AdVoter extends Voter
         }
 
         // only vote on Ad objects inside this voter
-        if (!$subject instanceof Ad) {
+        if (!$subject instanceof Ad && !$subject instanceof Proposal) {
             return false;
         }
-
         return true;
     }
 
@@ -92,20 +92,16 @@ class AdVoter extends Voter
         return true;
     }
 
-    private function canDeleteAd(Ad $ad, User $user)
+    private function canDeleteAd(Proposal $proposal, User $user)
     {
         // only registered users can delete ad
         if (!$user instanceof User) {
             return false;
         }
-        // only the author of the ad can delete the ad
-        if ($ad->getUser()->getId() !== $user->getId()) {
-            return false;
-        }
-        return $this->permissionManager->checkPermission('proposal_delete_self', $user);
+        return $this->permissionManager->checkPermission('ad_delete', $user, $proposal->getId());
     }
 
-    private function canPostad(User $user)
+    private function canPostAd(User $user)
     {
         // only registered users can post a ad
         if (!$user instanceof User) {
@@ -120,7 +116,7 @@ class AdVoter extends Voter
         if (!$user instanceof User) {
             return false;
         }
-        return $this->permissionManager->checkPermission('proposal_post_delegate', $user);
+        return $this->permissionManager->checkPermission('ad_create', $user);
     }
 
     private function canViewAdResults(Ad $ad, User $user)
@@ -129,11 +125,7 @@ class AdVoter extends Voter
         if (!$user instanceof User) {
             return false;
         }
-        // only the author of the ad or a dedicated user can view the results
-        if (($ad->getUserId() != $user->getId()) && (!$this->permissionManager->checkPermission('proposal_results_delegate', $user))) {
-            return false;
-        }
         
-        return $this->permissionManager->checkPermission('proposal_results', $user);
+        return $this->permissionManager->checkPermission('ad_results', $user, $ad->getId());
     }
 }

@@ -83,9 +83,9 @@ class CommunityVoter extends Voter
             case self::SHOW:
                 return $this->canShow($user);
             case self::JOIN:
-                return $this->canJoin($user);
+                return $this->canJoin($user, $subject);
             case self::LEAVE:
-                return $this->canLeave($user);
+                return $this->canLeave($user, $subject);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -106,13 +106,14 @@ class CommunityVoter extends Voter
         return $this->permissionManager->checkPermission('community_read', $user);
     }
     
-    private function canJoin(?User $user=null)
+    private function canJoin(?User $user=null, ?Community $community)
     {
-        return $this->permissionManager->checkPermission('community_join', $user);
+        return $this->permissionManager->checkPermission('community_join', $user, $community->getId());
     }
 
-    private function canLeave(?User $user=null)
+    private function canLeave(?User $user=null, ?Community $community)
     {
-        return $this->permissionManager->checkPermission('community_leave', $user);
+        // There is no community_leave. We are using community_join
+        return $this->permissionManager->checkPermission('community_join', $user, $community->getId());
     }
 }

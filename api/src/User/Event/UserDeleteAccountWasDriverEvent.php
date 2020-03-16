@@ -24,7 +24,7 @@
 namespace App\User\Event;
 
 use App\Carpool\Entity\Ask;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event sent when a user delete its account.

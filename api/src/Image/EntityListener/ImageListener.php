@@ -42,4 +42,10 @@ class ImageListener
     {
         $image->setVersions($this->imageManager->getVersions($image));
     }
+
+    /** @ORM\PostPersist */
+    public function postPersistHandler(Image $image, LifecycleEventArgs $args)
+    {
+        $image->setVersions($this->imageManager->generateVersions($image));
+    }
 }

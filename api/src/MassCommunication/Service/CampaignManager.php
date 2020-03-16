@@ -25,7 +25,9 @@ namespace App\MassCommunication\Service;
 
 use App\Communication\Entity\Medium;
 use App\MassCommunication\Entity\Campaign;
+use App\MassCommunication\Exception\CampaignNotFoundException;
 use App\MassCommunication\MassEmailProvider\MandrillProvider;
+use App\MassCommunication\Repository\CampaignRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Twig\Environment;
@@ -42,6 +44,7 @@ class CampaignManager
     private $massEmailApi;
     private $massSmsProvider;
     private $mailTemplate;
+    private $campaignRepository;
     private $translator;
 
     const MAIL_PROVIDER_MANDRILL = 'mandrill';
@@ -49,12 +52,12 @@ class CampaignManager
     /**
      * Constructor.
      */
-    public function __construct(Environment $templating, EntityManagerInterface $entityManager, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate, TranslatorInterface $translator)
+    public function __construct(Environment $templating, EntityManagerInterface $entityManager, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate, CampaignRepository $campaignRepository, TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
         $this->mailTemplate = $mailTemplate;
         $this->templating = $templating;
-
+        $this->campaignRepository = $campaignRepository;
         $this->translator = $translator;
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_MANDRILL:
@@ -252,5 +255,19 @@ class CampaignManager
         ];
 
         return $recipients;
+    }
+
+    /**
+     * Get the id of the owner of a campaign.
+     *
+     * @param integer $campaignId               The campaign id
+     * @return int|CampaignNotFoundException    The user id
+     */
+    public function getCampaignOwner(int $campaignId)
+    {
+        if ($campaign = $this->campaignRepository->find($campaignId)) {
+            return $campaign->getUser()->getId();
+        }
+        return new CampaignNotFoundException('Campaign not found');
     }
 }

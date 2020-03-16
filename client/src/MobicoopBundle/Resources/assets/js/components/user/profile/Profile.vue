@@ -12,27 +12,25 @@
         >
           <v-tab
             class="text-left justify-start ml-2 mr-5 title"
-            href="#myProposals"
+            href="#myAds"
           >
-            {{ $t("tabs.myProposals") }}
+            {{ $t("tabs.myAds") }}
           </v-tab>
-          <v-tab-item value="myProposals">
-            <MyProposals :proposals="proposals" />
+          <v-tab-item value="myAds">
+            <Ads :ads="ads" />
           </v-tab-item>
-          <!-- <v-tab
+          <v-tab
             class="text-left justify-start ml-2 mr-5 title"
             href="#carpoolsAccepted"
           >
             {{ $t("tabs.carpoolsAccepted") }}
           </v-tab>
           <v-tab-item value="carpoolsAccepted">
-            <v-alert
-              type="info"
-              class="text-center"
-            >
-              En cours de développement
-            </v-alert>
-          </v-tab-item> -->
+            <carpools
+              :accepted-carpools="acceptedCarpools"
+              :user="user"
+            />
+          </v-tab-item>
           <v-tab
             class="text-left justify-start ml-2 mr-5 title"
             href="#myProfile"
@@ -81,7 +79,8 @@
 </template>
 <script>
 import UpdateProfile from "@components/user/profile/UpdateProfile";
-import MyProposals from "@components/user/profile/proposal/MyProposals";
+import Ads from "@components/user/profile/ad/Ads";
+import Carpools from "@components/user/profile/carpool/Carpools";
 import Alerts from "@components/user/profile/Alerts";
 import CarpoolSettings from "@components/user/profile/CarpoolSettings";
 
@@ -97,9 +96,10 @@ export default {
   },
   components: {
     UpdateProfile,
-    MyProposals,
+    Ads,
     Alerts,
-    CarpoolSettings
+    CarpoolSettings,
+    Carpools
   },
   props: {
     user: {
@@ -138,7 +138,11 @@ export default {
       type: String,
       default: ""
     },
-    proposals: {
+    ads: {
+      type: Object,
+      default: () => {}
+    },
+    acceptedCarpools: {
       type: Object,
       default: () => {}
     },
@@ -149,7 +153,7 @@ export default {
   },
   data(){
     return{
-      modelTabs:(this.tabDefault!="") ? this.tabDefault : "myProposals"
+      modelTabs:(this.tabDefault !== "") ? this.tabDefault : "myAds"
     }
   }
 }

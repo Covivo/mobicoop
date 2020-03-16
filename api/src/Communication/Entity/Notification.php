@@ -39,7 +39,7 @@ use App\Communication\Entity\Medium;
  *
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
@@ -48,8 +48,8 @@ use App\Communication\Entity\Medium;
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "title"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(SearchFilter::class, properties={"title":"partial"})
+ * ApiFilter(OrderFilter::class, properties={"id", "title"}, arguments={"orderParameterName"="order"})
+ * ApiFilter(SearchFilter::class, properties={"title":"partial"})
  */
 class Notification
 {

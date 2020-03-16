@@ -24,13 +24,13 @@
 namespace App\Action\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
+// use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+// use ApiPlatform\Core\Annotation\ApiFilter;
+// use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use App\User\Entity\User;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Matching;
@@ -49,15 +49,23 @@ use App\MassCommunication\Entity\Campaign;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"readLog"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeLog"}}
  *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
+ *      collectionOperations={
+ *          "get"={
+ *              "security"="is_granted('logs_read',object)"
+ *          },
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('log_read',object)"
+ *          },
+ *      }
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "date"}, arguments={"orderParameterName"="order"})
+ * ApiFilter(OrderFilter::class, properties={"id", "date"}, arguments={"orderParameterName"="order"})
  */
 class Log
 {

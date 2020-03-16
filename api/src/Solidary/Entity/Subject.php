@@ -39,7 +39,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
@@ -182,7 +182,7 @@ class Subject
     {
         if (!$this->solidaries->contains($solidary)) {
             $this->solidaries->add($solidary);
-            $solidary->setStructure($this);
+            $solidary->setSubject($this);
         }
 
         return $this;
@@ -193,8 +193,8 @@ class Subject
         if ($this->solidaries->contains($solidary)) {
             $this->solidaries->removeElement($solidary);
             // set the owning side to null (unless already changed)
-            if ($solidary->getStructure() === $this) {
-                $solidary->setStructure(null);
+            if ($solidary->getSubject() === $this) {
+                $solidary->setSubject(null);
             }
         }
 

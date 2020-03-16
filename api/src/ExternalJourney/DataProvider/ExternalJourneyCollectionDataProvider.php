@@ -172,7 +172,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             if ($data!=="") {
                 if ($rawJson==1) {
                     // rawJson flag set. We return RDEX format.
-                    $aggregatedResults[] = json_decode($data, true);
+                    $aggregatedResults = json_decode($data, true);
                 } else {
                     // No rawJson flag set or set to 0. We return array of Carpool -> Result.
                     foreach ($this->createResultFromRDEX($data) as $currentResult) {

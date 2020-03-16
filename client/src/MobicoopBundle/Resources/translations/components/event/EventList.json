@@ -5,13 +5,11 @@
     "eventsPassed":"Événements passés",
     "createEvent" : "Créer un événement",
     "search":"Rechercher",
-    "all":"Tous",
     "linePerPage":"Nombre de lignes par page",
     "seeAds":"Voir les annonces",
     "all":"Tous",
     "startEvent" : "Début",
     "endEvent" : "Fin",
-
     "routes": {
       "event": "/evenement/{id}",
       "getList": "/evenements/getEventList"
@@ -25,7 +23,6 @@
     "all":"All",
     "linePerPage":"Nomber of line per page",
     "seeAds":"See the ads",
-
     "routes": {
       "event": "/event/{id}",
       "getList": "/events/getEventList"

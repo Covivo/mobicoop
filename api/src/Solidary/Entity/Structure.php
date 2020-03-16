@@ -40,7 +40,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
@@ -49,8 +49,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
+ * ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
+ * ApiFilter(SearchFilter::class, properties={"name":"partial"})
  */
 class Structure
 {

@@ -25,12 +25,12 @@ namespace App\User\Controller;
 
 use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
-use App\Right\Service\PermissionManager;
+use App\Auth\Service\PermissionManager;
 use Symfony\Component\HttpFoundation\Response;
 use App\Geography\Repository\TerritoryRepository;
-use App\Right\Repository\RightRepository;
+use App\Auth\Repository\RightRepository;
 use App\User\Repository\UserRepository;
-use App\Right\Entity\Permission;
+use App\Auth\Entity\Permission;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 

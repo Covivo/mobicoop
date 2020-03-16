@@ -30,7 +30,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * A section of an article.
  */
-class Section implements ResourceInterface
+class Section implements ResourceInterface, \JsonSerializable
 {
     const STATUS_PENDING = 0;
     const STATUS_PUBLISHED = 1;
@@ -195,5 +195,17 @@ class Section implements ResourceInterface
         }
 
         return $this;
+    }
+
+    // If you want more info from user you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+            'subTitle' => $this->getSubTitle(),
+            'paragraphs' => $this->getParagraphs(),
+        ];
     }
 }

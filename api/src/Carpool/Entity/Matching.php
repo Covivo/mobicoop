@@ -94,7 +94,7 @@ class Matching
      * @var Proposal The request proposal.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","results","threads","thread"})
      * @MaxDepth(1)

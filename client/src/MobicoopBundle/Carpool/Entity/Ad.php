@@ -35,6 +35,11 @@ class Ad implements ResourceInterface
     const ROLE_DRIVER = 1;
     const ROLE_PASSENGER = 2;
     const ROLE_DRIVER_OR_PASSENGER = 3;
+    const FREQUENCY_PUNCTUAL = 1;
+    const FREQUENCY_REGULAR = 2;
+    const TYPE_ONE_WAY = 1;
+    const TYPE_OUTWARD = 2;
+    const TYPE_RETURN = 3;
     const RESOURCE_NAME = "carpools";
 
     /**
@@ -340,6 +345,12 @@ class Ad implements ResourceInterface
     * @Groups({"post","put"})
     */
     private $proposalId;
+
+    /**
+     * @var int $potentialCarpoolers
+     * Potential carpoolers count
+     */
+    private $potentialCarpoolers;
 
     public function __construct($id=null)
     {
@@ -870,6 +881,17 @@ class Ad implements ResourceInterface
     {
         $this->proposalId = $proposalId;
 
+        return $this;
+    }
+
+    public function getPotentialCarpoolers(): ?int
+    {
+        return $this->potentialCarpoolers;
+    }
+
+    public function setPotentialCarpoolers(int $potentialCarpoolers): self
+    {
+        $this->potentialCarpoolers = $potentialCarpoolers;
         return $this;
     }
 }

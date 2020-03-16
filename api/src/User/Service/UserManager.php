@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,10 @@
 
 namespace App\User\Service;
 
+use App\Auth\Entity\AuthItem;
+use App\Auth\Entity\UserAuthAssignment;
+use App\Carpool\Entity\Ask;
+use App\Event\Entity\Event;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Service\AskManager;
@@ -37,9 +41,7 @@ use App\User\Event\UserPasswordChangedEvent;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use App\Right\Repository\RoleRepository;
-use App\Right\Entity\Role;
-use App\Right\Entity\UserRole;
+use App\Auth\Repository\AuthItemRepository;
 use App\Community\Repository\CommunityRepository;
 use App\Community\Entity\CommunityUser;
 use App\User\Event\UserRegisteredEvent;
@@ -55,18 +57,21 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\User\Event\UserUpdatedSelfEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\User\Repository\UserRepository;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use App\User\Exception\UserDeleteException;
 
 /**
  * User manager service.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class UserManager
 {
     private $entityManager;
     private $imageManager;
-    private $roleRepository;
+    private $authItemRepository;
     private $communityRepository;
     private $communityUserRepository;
     private $messageRepository;
@@ -79,6 +84,7 @@ class UserManager
     private $eventDispatcher;
     private $encoder;
     private $translator;
+    private $security;
 
     // Default carpool settings
     private $chat;
@@ -91,12 +97,12 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator)
+    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, AuthItemRepository $authItemRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator, Security $security)
     {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
         $this->logger = $logger;
-        $this->roleRepository = $roleRepository;
+        $this->authItemRepository = $authItemRepository;
         $this->communityRepository = $communityRepository;
         $this->communityUserRepository = $communityUserRepository;
         $this->messageRepository = $messageRepository;
@@ -105,6 +111,7 @@ class UserManager
         $this->eventDispatcher = $dispatcher;
         $this->encoder = $encoder;
         $this->translator = $translator;
+        $this->security = $security;
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
         $this->userRepository = $userRepository;
@@ -123,6 +130,16 @@ class UserManager
     {
         return $this->userRepository->find($id);
     }
+
+    /**
+     * Get a user by security token.
+     *
+     * @return User|null
+     */
+    public function getMe()
+    {
+        return $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+    }
     
     /**
      * Registers a user.
@@ -131,7 +148,7 @@ class UserManager
      * @param boolean   $encodePassword     True to encode password
      * @return User     The user created
      */
-    public function registerUser(User $user, bool $encodePassword=false)
+    public function registerUser(User $user, bool $encodePassword=true)
     {
         $user = $this->prepareUser($user);
 
@@ -171,12 +188,12 @@ class UserManager
      */
     public function prepareUser(User $user, bool $encodePassword=false)
     {
-        if (count($user->getUserRoles()) == 0) {
+        if (count($user->getUserAuthAssignments()) == 0) {
             // default role : user registered full
-            $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL);
-            $userRole = new UserRole();
-            $userRole->setRole($role);
-            $user->addUserRole($userRole);
+            $authItem = $this->authItemRepository->find(AuthItem::ROLE_USER_REGISTERED_FULL);
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
         }
 
         if ($encodePassword) {
@@ -267,12 +284,12 @@ class UserManager
     public function treatUser(User $user)
     {
         // we treat the role
-        if (count($user->getUserRoles()) == 0) {
-            // we have to add a role
-            $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL);
-            $userRole = new UserRole();
-            $userRole->setRole($role);
-            $user->addUserRole($userRole);
+        if (count($user->getUserAuthAssignments()) == 0) {
+            // default role : user registered full
+            $authItem = $this->authItemRepository->find(AuthItem::ROLE_USER_REGISTERED_FULL);
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
         }
 
         // we treat the notifications
@@ -687,96 +704,65 @@ class UserManager
 
 
     /**
-     * Anonymise the user
+     * Delete the user
      *
      */
-    public function anonymiseUser(User $user)
+    public function deleteUser(User $user)
     {
-
-        // L'utilisateur à posté des annonces de covoiturages -> on les supprimes
-        // User create ad : we delete them
-        // foreach ($user->getProposals() as $proposal) {
-        //     foreach ($proposal->getMatchingRequests() as $matching) {
-        //         //Check if there is ask on a proposal -> event for notifications
-        //         foreach ($matching->getAsks() as $ask) {
-        //             $event = new UserDeleteAccountWasDriverEvent($ask, $user->getId());
-        //             $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
-        //         }
-        //     }
-        //     //There is offers on the proposal -> we delete proposal + send email to passengers
-        //     foreach ($proposal->getMatchingOffers() as $matching) {
-        //         //TODO libérer les places sur les annonces réservées
-        //         foreach ($matching->getAsks() as $ask) {
-        //             $event = new UserDeleteAccountWasPassengerEvent($ask, $user->getId());
-        //             $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
-        //         }
-        //     }
-        //     //Set user at null and private on the proposal : we keep info for message, proposal cant be found
-        //     $proposal->setPrivate(1);
-        // }
-
-        //Anonymise content of message with a key
-        foreach ($user->getMessages() as $message) {
-            $message->setText('@mobicoop2020Message_supprimer');
+        // Check if the user is not the author of an event that is still valid
+        foreach ($user->getEvents() as $event) {
+            if (($event->getUser()->getId() == $user->getId()) && ($event->getToDate() >= new \DateTime())) {
+                // to do throw exception
+                throw new UserDeleteException("An Event of the user is still runing");
+            }
         }
-
-        return $this->setUserAtNull($user);
-    }
-
-    private function setUserAtNull(User $user)
-    {
-        $datenow = new DateTime();
-        //Replace all mandatory value by default value or token
-        $user->setEmail(uniqid().'@'.uniqid().'.fr');
-        $user->setGender(3);
-        $user->setStatus(3);
-        $user->setCreatedDate($datenow);
-        $user->setValidatedDate($datenow);
-        $user->setPhoneDisplay(1);
-
-        //Replace all value nullable by null
-        $user->setGivenName(null);
-        $user->setFamilyName(null);
-        $user->setPassword(null);
-        $user->setGivenName(null);
-        $user->setNationality(null);
-        $user->setBirthDate(null);
-        $user->setTelephone(null);
-        $user->setAnyRouteAsPassenger(null);
-        $user->setMultiTransportMode(null);
-        $user->setMaxDetourDistance(null);
-        $user->setMaxDetourDuration(null);
-        $user->setPwdToken(null);
-        $user->setGeoToken(null);
-        $user->setLanguage(null);
-        $user->setPwdToken(null);
-        $user->setValidatedDateToken(null);
-        $user->setFacebookId(null);
-        $user->setSmoke(null);
-        $user->setMusic(null);
-        $user->setMusicFavorites(null);
-        $user->setChat(null);
-        $user->setChatFavorites(null);
-        $user->setNewsSubscription(null);
-        $user->setPhoneToken(null);
-        $user->setIosAppId(null);
-        $user->setAndroidAppId(null);
-        $user->setPhoneValidatedDate(null);
-
-
-        $this->entityManager->persist($user);
+        // Check if the user is not the author of a community
+        foreach ($user->getCommunityUsers() as $communityUser) {
+            if ($communityUser->getCommunity()->getUser()->getId() == $user->getId()) {
+                // todo throw execption
+                throw new UserDeleteException("The user is a community owner");
+            } else {
+                //delete all community subscriptions
+                $this->deleteCommunityUsers($user);
+            }
+        }
+        // We check if the user have ads.
+        // If he have ads we check if a carpool is initiated if yes we send an email to the carpooler
+        foreach ($user->getProposals() as $proposal) {
+            if ($proposal->isPrivate()) {
+                continue;
+            }
+            foreach ($proposal->getMatchingRequests() as $matching) {
+                foreach ($matching->getAsks() as $ask) {
+                    // todo : find why class of $ask can be a proxy of Ask class
+                    if (get_class($ask) !== Ask::class) {
+                        continue;
+                    }
+                    $event = new UserDeleteAccountWasDriverEvent($ask, $user->getId());
+                    $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
+                }
+            }
+            foreach ($proposal->getMatchingOffers() as $matching) {
+                foreach ($matching->getAsks() as $ask) {
+                    // todo : find why class of $ask can be a proxy of Ask class
+                    if (get_class($ask) !== Ask::class) {
+                        continue;
+                    }
+                    $event = new UserDeleteAccountWasPassengerEvent($ask, $user->getId());
+                    $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
+                }
+            }
+            $this->entityManager->remove($proposal);
+        }
+        $this->deleteUserImages($user);
+        
+        $this->entityManager->remove($user);
         $this->entityManager->flush();
-       
-        $this->checkIfUserHaveImages($user);
-        $this->checkIfUserIsInCommunity($user);
-
-        return array();
     }
 
-
-    //Check if the delete account have image, and delete them
+    //Delete images associated to the user
     // deleteBase -> delete the base image and remove the entry
-    private function checkIfUserHaveImages(User $user)
+    private function deleteUserImages(User $user)
     {
         foreach ($user->getImages() as $image) {
             $this->imageManager->deleteVersions($image);
@@ -784,14 +770,13 @@ class UserManager
         }
     }
 
-
-    //Check if the delete account is in community, and delete the link between
-    private function checkIfUserIsInCommunity(User $user)
+    //Delete link between the delete account and his communities
+    private function deleteCommunityUsers(User $user)
     {
-        $myCommunities = $this->communityUserRepository->findBy(array('user'=>$user));
+        $myCommunityUsers = $this->communityUserRepository->findBy(array('user'=>$user));
 
-        foreach ($myCommunities as $myCommunity) {
-            $this->entityManager->remove($myCommunity);
+        foreach ($myCommunityUsers as $myCommunityUser) {
+            $this->entityManager->remove($myCommunityUser);
         }
         $this->entityManager->flush();
     }

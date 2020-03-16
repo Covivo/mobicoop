@@ -398,6 +398,8 @@
       <v-btn
         v-if="step == 2 && !lResult.return && outwardTrip.length>0 && lResult.pendingAsk == false && lResult.acceptedAsk == false"
         color="secondary"
+        :disabled="carpoolDisabled"
+        :loading="carpoolLoading"
         @click="driver ? carpool(1) : carpool(2)"
       >
         {{ $t('carpool') }}
@@ -407,6 +409,8 @@
       <v-btn
         v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0) && lResult.pendingAsk == false && lResult.acceptedAsk == false"
         color="secondary"
+        :disabled="carpoolDisabled"
+        :loading="carpoolLoading"
         @click="driver ? carpool(1) : carpool(2)"
       >
         {{ $t('carpool') }}
@@ -516,6 +520,10 @@ export default {
       default: null
     },
     hideContact: {
+      type: Boolean,
+      default: false
+    },
+    resetStep: {
       type: Boolean,
       default: false
     }
@@ -633,6 +641,12 @@ export default {
       this.fromDate = val.startDate ? val.startDate : null;
       this.toDate = val.toDate ? val.toDate : null;
       this.computeTimes();
+    },
+    resetStep(){
+      if(this.resetStep){
+        this.step = 1;
+        this.$emit('resetStepMatchingJourney');
+      }
     }
   },
   mounted() {
@@ -641,6 +655,9 @@ export default {
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
+    // We need to emit this event because the first time Matching has send the reset intruction,
+    // MatchingJourney was not created yet. So the watcher can't trigger and therefore, not send the event.
+    this.$emit('resetStepMatchingJourney');
   },
   methods: {
     computeMaxDate() {
