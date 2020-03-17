@@ -108,8 +108,39 @@ class VolunteerManager
             $volunteer->addProof($proof);
         }
 
-        $this->entityManager->persist($volunteer);
-        $this->entityManager->flush();
+        // Availabilities - Times
+        if(!is_null($exposedVolunteer->getMMinTime())) $volunteer->setMMinTime($exposedVolunteer->getMMinTime());
+        if(!is_null($exposedVolunteer->getMMaxTime())) $volunteer->setMMaxTime($exposedVolunteer->getMMaxTime());
+        if(!is_null($exposedVolunteer->getAMinTime())) $volunteer->setAMinTime($exposedVolunteer->getAMinTime());
+        if(!is_null($exposedVolunteer->getAMaxTime())) $volunteer->setAMaxTime($exposedVolunteer->getAMaxTime());
+        if(!is_null($exposedVolunteer->getEMinTime())) $volunteer->setEMinTime($exposedVolunteer->getEMinTime());
+        if(!is_null($exposedVolunteer->getEMaxTime())) $volunteer->setEMaxTime($exposedVolunteer->getEMaxTime());
+
+        // Availabilities - Days
+        if(!is_null($exposedVolunteer->hasMMon())) $volunteer->setMMon($exposedVolunteer->hasMMon());
+        if(!is_null($exposedVolunteer->hasAMon())) $volunteer->setAMon($exposedVolunteer->hasAMon());
+        if(!is_null($exposedVolunteer->hasEMon())) $volunteer->setEMon($exposedVolunteer->hasEMon());
+        if(!is_null($exposedVolunteer->hasMTue())) $volunteer->setMMon($exposedVolunteer->hasMTue());
+        if(!is_null($exposedVolunteer->hasATue())) $volunteer->setAMon($exposedVolunteer->hasATue());
+        if(!is_null($exposedVolunteer->hasETue())) $volunteer->setEMon($exposedVolunteer->hasETue());
+        if(!is_null($exposedVolunteer->hasMWed())) $volunteer->setMMon($exposedVolunteer->hasMWed());
+        if(!is_null($exposedVolunteer->hasAWed())) $volunteer->setAMon($exposedVolunteer->hasAWed());
+        if(!is_null($exposedVolunteer->hasEWed())) $volunteer->setEMon($exposedVolunteer->hasEWed());
+        if(!is_null($exposedVolunteer->hasMThu())) $volunteer->setMMon($exposedVolunteer->hasMThu());
+        if(!is_null($exposedVolunteer->hasAThu())) $volunteer->setAMon($exposedVolunteer->hasAThu());
+        if(!is_null($exposedVolunteer->hasEThu())) $volunteer->setEMon($exposedVolunteer->hasEThu());
+        if(!is_null($exposedVolunteer->hasMFri())) $volunteer->setMMon($exposedVolunteer->hasMFri());
+        if(!is_null($exposedVolunteer->hasAFri())) $volunteer->setAMon($exposedVolunteer->hasAFri());
+        if(!is_null($exposedVolunteer->hasEFri())) $volunteer->setEMon($exposedVolunteer->hasEFri());
+        if(!is_null($exposedVolunteer->hasMSat())) $volunteer->setMMon($exposedVolunteer->hasMSat());
+        if(!is_null($exposedVolunteer->hasASat())) $volunteer->setAMon($exposedVolunteer->hasASat());
+        if(!is_null($exposedVolunteer->hasESat())) $volunteer->setEMon($exposedVolunteer->hasESat());
+        if(!is_null($exposedVolunteer->hasMSun())) $volunteer->setMMon($exposedVolunteer->hasMSun());
+        if(!is_null($exposedVolunteer->hasASun())) $volunteer->setAMon($exposedVolunteer->hasASun());
+        if(!is_null($exposedVolunteer->hasESun())) $volunteer->setEMon($exposedVolunteer->hasESun());
+
+        // $this->entityManager->persist($volunteer);
+        // $this->entityManager->flush();
 
         return $exposedVolunteer;
     }
