@@ -43,7 +43,13 @@ use App\Solidary\Entity\Structure;
  *          "normalization_context"={"groups"={"readVolunteer"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeVolunteer"}}
  *      },
- *      collectionOperations={"get","post"},
+ *      collectionOperations={"get",
+ *          "post"={
+ *              "method"="POST",
+ *              "path"="/volunteers",
+ *              "security_post_denormalize"="is_granted('solidary_volunteer_create',object)"
+ *          }
+ *      },
  *      itemOperations={"get","put","delete"}
  * )
  */
