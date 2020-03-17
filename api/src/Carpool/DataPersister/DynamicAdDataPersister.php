@@ -25,12 +25,13 @@
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Carpool\Entity\Dynamic;
+use App\Carpool\Exception\DynamicException;
 use App\Carpool\Service\DynamicManager;
 use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
-final class DynamicDataPersister implements ContextAwareDataPersisterInterface
+final class DynamicAdDataPersister implements ContextAwareDataPersisterInterface
 {
     private $security;
     private $request;
@@ -58,6 +59,8 @@ final class DynamicDataPersister implements ContextAwareDataPersisterInterface
             // we check if the request is sent by a real user
             if ($this->security->getUser() instanceof User) {
                 $data->setUser($this->security->getUser());
+            } else {
+                throw new DynamicException("Operation not permited");
             }
             $data = $this->dynamicManager->createDynamic($data);
         } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {

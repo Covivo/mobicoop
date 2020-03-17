@@ -23,20 +23,24 @@
 
 namespace App\Carpool\Service;
 
+use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Dynamic;
+use App\Carpool\Entity\DynamicAsk;
 use App\Carpool\Entity\Position;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Exception\DynamicException;
+use App\Carpool\Repository\MatchingRepository;
+use App\Communication\Entity\Message;
+use App\Communication\Entity\Recipient;
+use App\Communication\Service\InternalMessageManager;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\GeoTools;
-use App\User\Exception\UserNotFoundException;
 use App\User\Service\UserManager;
-use CrEOF\Spatial\PHP\Types\Geography\LineString;
-use CrEOF\Spatial\PHP\Types\Geometry\Point;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -55,6 +59,8 @@ class DynamicManager
     private $geoRouter;
     private $params;
     private $logger;
+    private $matchingRepository;
+    private $internalMessageManager;
 
     /**
      * Constructor.
@@ -62,8 +68,18 @@ class DynamicManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, ResultManager $resultManager, GeoTools $geoTools, GeoRouter $geoRouter, array $params, LoggerInterface $logger)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ProposalManager $proposalManager,
+        UserManager $userManager,
+        ResultManager $resultManager,
+        GeoTools $geoTools,
+        GeoRouter $geoRouter,
+        array $params,
+        LoggerInterface $logger,
+        MatchingRepository $matchingRepository,
+        InternalMessageManager $internalMessageManager
+    ) {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
         $this->userManager = $userManager;
@@ -72,7 +88,16 @@ class DynamicManager
         $this->geoRouter = $geoRouter;
         $this->params = $params;
         $this->logger = $logger;
+        $this->matchingRepository = $matchingRepository;
+        $this->internalMessageManager = $internalMessageManager;
     }
+
+
+
+
+    /****************
+     *  DYNAMIC AD  *
+     ****************/
 
     /**
      * Get a dynamic ad.
@@ -103,17 +128,6 @@ class DynamicManager
     {
         // todo : check if the user has already a dynamic ad pending
 
-        // set User
-        if (is_null($dynamic->getUser())) {
-            // userId must be set
-            if (is_null($dynamic->getUserId())) {
-                throw new DynamicException('UserId must be provided');
-            }
-            if (!$user = $this->userManager->getUser($dynamic->getUserId())) {
-                throw new UserNotFoundException('User #' . $dynamic->getUserId() . ' not found');
-            }
-            $dynamic->setUser($user);
-        }
         // set Seats
         if (is_null($dynamic->getSeats())) {
             if ($dynamic->getRole() == Dynamic::ROLE_DRIVER) {
@@ -409,6 +423,43 @@ class DynamicManager
         $this->entityManager->persist($dynamic->getProposal());
         $this->entityManager->flush();
 
+        // we get the asks related to the dynamic ad
+        $asks = [];
+        if ($dynamic->getRole() == Dynamic::ROLE_DRIVER) {
+            // the user is driver, we search the matching requests
+            foreach ($dynamic->getProposal()->getMatchingRequests() as $matching) {
+                echo $matching->getId() . " ";
+                foreach ($matching->getAsks() as $ask) {
+                    // there's an ask, the initiator of the ask is the passenger => the user of the ask
+                    $asks[] = [
+                        'id' => $ask->getId(),
+                        'status' => $ask->getStatus(),
+                        'user' => [
+                            'givenName' => $ask->getUser()->getGivenName(),
+                            'shortFamilyName' => $ask->getUser()->getShortFamilyName(),
+                        ],
+                        'messages' => $this->getThread($ask)
+                    ];
+                }
+            }
+        } else {
+            // the user is driver, we search the matching offers
+            foreach ($dynamic->getProposal()->getMatchingOffers() as $matching) {
+                foreach ($matching->getAsks() as $ask) {
+                    // there's an ask, the recipient of the ask is the driver => the userRelated of the ask
+                    $asks[] = [
+                        'id' => $ask->getId(),
+                        'status' => $ask->getStatus(),
+                        'user' => [
+                            'givenName' => $ask->getUserRelated()->getGivenName(),
+                            'shortFamilyName' => $ask->getUserRelated()->getShortFamilyName(),
+                        ]
+                    ];
+                }
+            }
+        }
+        $dynamic->setAsks($asks);
+
         // we compute the results
 
         // default order
@@ -431,5 +482,105 @@ class DynamicManager
         );
 
         return $dynamic;
+    }
+
+
+
+
+    /****************
+     *  DYNAMIC ASK *
+     ****************/
+
+    /**
+     * Create an ask for a dynamic ad.
+     *
+     * @param DynamicAsk    $dynamic    The ask to create
+     * @return DynamicAsk               The created ask.
+     */
+    public function createDynamicAsk(DynamicAsk $dynamicAsk)
+    {
+        // todo : check that another ask is not already made
+
+        $ask = new Ask();
+        $ask->setStatus(Ask::STATUS_PENDING_AS_PASSENGER);
+        $ask->setType(Proposal::TYPE_ONE_WAY);
+        $ask->setUser($dynamicAsk->getUser());
+        $matching = $this->matchingRepository->find($dynamicAsk->getMatchingId());
+        $ask->setMatching($matching);
+        $ask->setUserRelated($matching->getProposalOffer()->getUser());
+
+        // we use the matching criteria
+        $criteria = clone $matching->getCriteria();
+        $ask->setCriteria($criteria);
+        
+        // we use the matching waypoints
+        $waypoints = $matching->getWaypoints();
+        foreach ($waypoints as $waypoint) {
+            $newWaypoint = clone $waypoint;
+            $ask->addWaypoint($newWaypoint);
+        }
+
+        // Ask History
+        $askHistory = new AskHistory();
+        $askHistory->setStatus($ask->getStatus());
+        $askHistory->setType($ask->getType());
+        $ask->addAskHistory($askHistory);
+
+        // message
+        if (!is_null($dynamicAsk->getMessage())) {
+            $message = new Message();
+            $message->setUser($dynamicAsk->getUser());
+            $message->setText($dynamicAsk->getMessage());
+            $recipient = new Recipient();
+            $recipient->setUser($ask->getUserRelated());
+            $recipient->setStatus(Recipient::STATUS_PENDING);
+            $message->addRecipient($recipient);
+            $this->entityManager->persist($message);
+            $askHistory->setMessage($message);
+        }
+
+        $this->entityManager->persist($ask);
+        $this->entityManager->flush($ask);
+        
+        // todo : dispatch en event ?
+        return $ask;
+    }
+
+    /**
+     * Update an ask for a dynamic ad
+     *
+     * @param int           $id         The id of the ask to update
+     * @param DynamicAsk    $dynamic    The ask data to make the update
+     * @return DynamicAsk   The updated ask.
+     */
+    public function updateDynamicAsk(int $id, DynamicAsk $dynamicAskData)
+    {
+    }
+
+    /**
+     * Get all the messages related to an ask
+     *
+     * @param Ask $ask  The ask
+     * @return array The messages
+     */
+    private function getThread(Ask $ask)
+    {
+        $thread = [];
+        if (!is_null($ask->getAskHistories()[0]->getMessage())) {
+            $messages = $this->internalMessageManager->getCompleteThread($ask->getAskHistories()[0]->getMessage()->getId());
+            foreach ($messages as $message) {
+                /**
+                 * @var Message $message
+                 */
+                $thread[] = [
+                    "text" => $message->getText(),
+                    "user" => [
+                        'givenName' => $message->getUser()->getGivenName(),
+                        'shortFamilyName' => $message->getUser()->getShortFamilyName(),
+                    ]
+                ];
+            }
+        }
+        return $thread;
     }
 }

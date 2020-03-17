@@ -25,11 +25,9 @@ namespace App\Carpool\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use App\Geography\Entity\Address;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\User\Entity\User;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Constraints\UserIdProvided;
 
 /**
  * Carpooling : an dynamic ad.
@@ -46,12 +44,7 @@ use App\User\Constraints\UserIdProvided;
  *              "method"="POST",
  *              "normalization_context"={"groups"={"writeDynamic","results"}},
  *              "security_post_denormalize"="is_granted('dynamic_ad_create',object)"
- *          },
- *          "post_ask"={
- *              "method"="POST",
- *              "path"="/dynamics/ask",
- *              "security_post_denormalize"="is_granted('dynamic_ask_create',object)"
- *          },
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
@@ -66,19 +59,7 @@ use App\User\Constraints\UserIdProvided;
  *              "denormalization_context"={"groups"={"updateDynamic"}},
  *              "validation_groups"={"updateDynamic"},
  *              "security"="is_granted('dynamic_ad_update',object)"
- *          },
- *          "put_ask"={
- *              "method"="PUT",
- *              "path"="/dynamics/ask/{id}",
- *              "read"=false,
- *              "security"="is_granted('dynamic_ask_update',object)"
- *          },
- *          "get_ask"={
- *              "method"="GET",
- *              "path"="/dynamics/ask/{id}",
- *              "read"=false,
- *              "security"="is_granted('dynamic_ask_read',object)"
- *          },
+ *          }
  *      }
  * )
  *
@@ -166,17 +147,7 @@ class Dynamic
     private $comment;
 
     /**
-     * @var int|null The user id of the dynamic ad owner.
-     *
-     * @UserIdProvided(groups={"writeDynamic"})
-     * @Groups("writeDynamic")
-     */
-    private $userId;
-
-    /**
      * @var User|null The ad owner.
-     *
-     * @Groups("readDynamic")
      */
     private $user;
     
@@ -188,39 +159,18 @@ class Dynamic
     private $results;
 
     /**
-     * @var int|null The dynamic ad id for which the current ad is an ask (used when creating an ask for a dynamic ad).
-     *
-     * @Groups("writeDynamic")
-     */
-    private $dynamicId;
-
-    /**
-     * @var int|null The matching id related to the above ad id (used when creating an ask for a dynamic ad).
-     *
-     * @Groups("writeDynamic")
-     */
-    private $matchingId;
-
-    /**
-     * @var int The ask status if the ad concerns a given ask.
-     *
-     * @Groups("writeDynamic")
-     */
-    private $askStatus;
-
-    /**
-     * @var int The ask id if the ad concerns a given ask.
-     *
-     * @Groups("writeDynamic")
-     */
-    private $askId;
-
-    /**
      * @var array|null The filters to apply to the results.
      *
      * @Groups("writeDynamic")
      */
     private $filters;
+
+    /**
+     * @var array|null The asks related to the ad.
+     *
+     * @Groups({"readDynamic","writeDynamic","updateDynamic"})
+     */
+    private $asks;
 
     /**
      * @var Proposal The proposal associated with the dynamic ad.
@@ -233,6 +183,7 @@ class Dynamic
         $this->waypoints = [];
         $this->results = [];
         $this->filters = [];
+        $this->asks = [];
     }
     
     public function getId(): ?int
@@ -347,18 +298,6 @@ class Dynamic
         return $this;
     }
 
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(?int $userId): self
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -367,6 +306,30 @@ class Dynamic
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getAsks(): array
+    {
+        return $this->asks;
+    }
+
+    public function setAsks(array $asks)
+    {
+        $this->asks = $asks;
+
+        return $this;
+    }
+
+    public function getFilters(): ?array
+    {
+        return $this->filters;
+    }
+
+    public function setFilters(?array $filters)
+    {
+        $this->filters = $filters;
 
         return $this;
     }
@@ -383,54 +346,6 @@ class Dynamic
         return $this;
     }
 
-    public function getDynamicId(): ?int
-    {
-        return $this->dynamicId;
-    }
-
-    public function setDynamicId(?int $dynamicId): self
-    {
-        $this->dynamicId = $dynamicId;
-
-        return $this;
-    }
-
-    public function getMatchingId(): ?int
-    {
-        return $this->matchingId;
-    }
-
-    public function setMatchingId(?int $matchingId): self
-    {
-        $this->matchingId = $matchingId;
-
-        return $this;
-    }
-
-    public function getAskStatus(): ?int
-    {
-        return $this->askStatus;
-    }
-
-    public function setAskStatus(int $askStatus): self
-    {
-        $this->askStatus = $askStatus;
-
-        return $this;
-    }
-
-    public function getAskId(): ?int
-    {
-        return $this->askId;
-    }
-
-    public function setAskId(int $askId): self
-    {
-        $this->askId = $askId;
-
-        return $this;
-    }
-
     public function getProposal(): ?Proposal
     {
         return $this->proposal;
@@ -439,18 +354,6 @@ class Dynamic
     public function setProposal(?Proposal $proposal): self
     {
         $this->proposal = $proposal;
-
-        return $this;
-    }
-
-    public function getFilters(): ?array
-    {
-        return $this->filters;
-    }
-
-    public function setFilters(?array $filters)
-    {
-        $this->filters = $filters;
 
         return $this;
     }

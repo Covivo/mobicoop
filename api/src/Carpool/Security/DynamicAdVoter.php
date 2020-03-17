@@ -31,17 +31,13 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
-class DynamicVoter extends Voter
+class DynamicAdVoter extends Voter
 {
-    const DYNAMIC_AD_READ = 'dynamic_ad_read';
     const DYNAMIC_AD_CREATE = 'dynamic_ad_create';
+    const DYNAMIC_AD_READ = 'dynamic_ad_read';
     const DYNAMIC_AD_UPDATE = 'dynamic_ad_update';
     const DYNAMIC_AD_DELETE = 'dynamic_ad_delete';
     const DYNAMIC_AD_LIST = 'dynamic_ad_list';
-    const DYNAMIC_ASK_READ = 'dynamic_ask_read';
-    const DYNAMIC_ASK_CREATE = 'dynamic_ask_create';
-    const DYNAMIC_ASK_UPDATE = 'dynamic_ask_update';
-    const DYNAMIC_ASK_DELETE = 'dynamic_ask_delete';
     
     private $security;
     private $request;
@@ -60,15 +56,11 @@ class DynamicVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::DYNAMIC_AD_READ,
             self::DYNAMIC_AD_CREATE,
+            self::DYNAMIC_AD_READ,
             self::DYNAMIC_AD_UPDATE,
             self::DYNAMIC_AD_DELETE,
-            self::DYNAMIC_AD_LIST,
-            self::DYNAMIC_ASK_READ,
-            self::DYNAMIC_ASK_CREATE,
-            self::DYNAMIC_ASK_UPDATE,
-            self::DYNAMIC_ASK_DELETE
+            self::DYNAMIC_AD_LIST
             ])) {
             return false;
         }
@@ -84,7 +76,7 @@ class DynamicVoter extends Voter
                 return $this->canCreateDynamicAd();
             case self::DYNAMIC_AD_READ:
                 if ($dynamic = $this->dynamicManager->getDynamic($this->request->get('id'))) {
-                    return $this->canReadDynamicAd($subject);
+                    return $this->canReadDynamicAd($dynamic);
                 }
                 return false;
             case self::DYNAMIC_AD_UPDATE:
@@ -94,28 +86,11 @@ class DynamicVoter extends Voter
                 return false;
             case self::DYNAMIC_AD_DELETE:
                 if ($dynamic = $this->dynamicManager->getDynamic($this->request->get('id'))) {
-                    return $this->canDeleteDynamicAd($subject);
+                    return $this->canDeleteDynamicAd($dynamic);
                 }
                 return false;
             case self::DYNAMIC_AD_LIST:
                 return $this->canListDynamicAd();
-            case self::DYNAMIC_ASK_CREATE:
-                return $this->canCreateDynamicAsk();
-            case self::DYNAMIC_ASK_READ:
-                if ($dynamic = $this->dynamicManager->getDynamic($this->request->get('id'))) {
-                    return $this->canReadDynamicAsk($subject);
-                }
-                return false;
-            case self::DYNAMIC_ASK_UPDATE:
-                if ($dynamic = $this->dynamicManager->getDynamic($this->request->get('id'))) {
-                    return $this->canUpdateDynamicAsk($subject);
-                }
-                return false;
-            case self::DYNAMIC_ASK_DELETE:
-                if ($dynamic = $this->dynamicManager->getDynamic($this->request->get('id'))) {
-                    return $this->canDeleteDynamicAsk($subject);
-                }
-                return false;
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -144,25 +119,5 @@ class DynamicVoter extends Voter
     private function canListDynamicAd()
     {
         return $this->authManager->isAuthorized(self::DYNAMIC_AD_LIST);
-    }
-
-    private function canCreateDynamicAsk()
-    {
-        return $this->authManager->isAuthorized(self::DYNAMIC_ASK_CREATE);
-    }
-
-    private function canReadDynamicAsk(Dynamic $dynamic)
-    {
-        return $this->authManager->isAuthorized(self::DYNAMIC_ASK_READ, ['dynamic' => $dynamic]);
-    }
-
-    private function canUpdateDynamicAsk(Dynamic $dynamic)
-    {
-        return $this->authManager->isAuthorized(self::DYNAMIC_ASK_UPDATE, ['dynamic' => $dynamic]);
-    }
-
-    private function canDeleteDynamicAsk(Dynamic $dynamic)
-    {
-        return $this->authManager->isAuthorized(self::DYNAMIC_ASK_DELETE, ['dynamic' => $dynamic]);
     }
 }
