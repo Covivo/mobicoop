@@ -283,7 +283,7 @@ class UserManager
     public function createUser(User $user)
     {
         $this->logger->info('User Creation | Start');
-        $response = $this->dataProvider->post($user);
+        $response = $this->dataProvider->postSpecial($user, null, 'register');
         if ($response->getCode() == 201) {
             $this->logger->info('User Creation | Ok');
         }
