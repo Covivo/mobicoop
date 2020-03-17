@@ -720,15 +720,16 @@ class AskManager
     }
 
     /**
-    * Get a simplified ask from an ad
-    * @param int $askId    The ask id
-    * @param int $userId   The user id of the user making the request
-    * @return Ad       The ad for the ask with the computed results
-    */
-    public function getSimpleAskFromAd(int $askId, int $userId)
+     * Get a simplified ask from an ad
+     * @param int $askId The ask id
+     * @param int $userId The user id of the user making the request
+     * @param Proposal|null $proposal - We can give a Proposal if we need these data in results,
+     * for example if my Ad is based on an ask and I need the proposal data in results
+     * @return Ad       The ad for the ask with the computed results
+     */
+    public function getSimpleAskFromAd(int $askId, int $userId, ?Proposal $proposal = null)
     {
         $ask = $this->askRepository->find($askId);
-//        dump($ask->getCriteria());die;
         $ad = new Ad();
         $ad->setUserId($userId);
         $ad->setAskId($askId);
@@ -745,7 +746,12 @@ class AskManager
                 break;
         }
         // we compute the results
-        $ad->setResults([$this->resultManager->createSimpleAskResults($ask, $userId, $ad->getRole())]);
+        if ($proposal) {
+            $results = array_merge([$this->resultManager->createSimpleAskResults($ask, $userId, $ad->getRole())], $this->resultManager->createAdResults($proposal));
+            $ad->setResults($results);
+        } else {
+            $ad->setResults([$this->resultManager->createSimpleAskResults($ask, $userId, $ad->getRole())]);
+        }
 
         return $ad;
     }

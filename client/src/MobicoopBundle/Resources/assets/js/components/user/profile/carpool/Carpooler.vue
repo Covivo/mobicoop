@@ -150,6 +150,11 @@ export default {
     user: {
       type: Object,
       default: null
+    },
+    // when the ad is based on an ask and the results are based on the proposal, we need to invert where data are taken
+    isInverted: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -176,6 +181,17 @@ export default {
     },
     isPassenger() {
       return this.ask.role === 2 || this.ask.role === 3
+    },
+    getResults () {
+      if (this.ask.role === 2 && !this.isInverted) {
+        return this.result.resultPassenger;
+      } else if (this.ask.role === 2 && this.isInverted) {
+        return this.result.resultDriver;
+      } else if (this.ask.role !== 2 && !this.isInverted) {
+        return this.result.resultDriver;
+      } else {
+        return this.result.resultPassenger;
+      }
     }
   },
   created() {
@@ -183,7 +199,7 @@ export default {
   },
   methods: {
     setCarpoolInfo() {
-      this.carpoolInfos = this.ask.role === 2 ? this.result.resultPassenger : this.result.resultDriver;
+      this.carpoolInfos = this.getResults;
       if (this.carpoolInfos !== null) {
         this.outwardTimes.push(
           this.carpoolInfos.outward.monTime,

@@ -53,9 +53,10 @@
             no-gutters
           >
             <carpooler
-              :result="ask.results[0]"
+              :result="ask.results[1] ? ask.results[1] : ask.results[0]"
               :ask="ask"
               :user="user"
+              :is-inverted="!empty(ask.results[1])"
             />
             <v-divider
               v-if="index < ad.asks.length - 1"
@@ -71,6 +72,7 @@
 <script>
 import Translations from "@translations/components/user/profile/carpool/CarpoolFooter.js";
 import Carpooler from '@components/user/profile/carpool/Carpooler.vue';
+import {isEmpty} from 'lodash';
 
 export default {
   i18n: {
@@ -109,6 +111,11 @@ export default {
     },
     showMessage() {
       return this.isDriver ? this.$t('passengers.show') : this.$t('driver.show');
+    }
+  },
+  methods: {
+    empty(obj) {
+      return isEmpty(obj);
     }
   }
 }

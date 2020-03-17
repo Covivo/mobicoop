@@ -26,6 +26,7 @@ namespace App\Carpool\Service;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
+use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Result;
 use App\Carpool\Entity\Waypoint;
@@ -40,6 +41,7 @@ use App\Carpool\Repository\CriteriaRepository;
 use App\User\Exception\UserNotFoundException;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\Types\Boolean;
 use Psr\Log\LoggerInterface;
 use App\Carpool\Service\ProposalMatcher;
 use App\Rdex\Entity\RdexError;
@@ -753,7 +755,6 @@ class AdManager
     private function makeAd($proposal, $userId, $hasAsks = false, ?Ad $askLinked = null)
     {
         $ad = new Ad();
-//        $criteria = $askLinked ? $askLinked->getResults() : $proposal->getCriteria();
         $ad->setId($proposal->getId());
         $ad->setProposalId($proposal->getId());
         $ad->setProposalLinkedId(!is_null($proposal->getProposalLinked()) ? $proposal->getProposalLinked()->getId() : null);
@@ -848,12 +849,14 @@ class AdManager
 
     public function getScheduleFromResults(Result $results, Proposal $proposal)
     {
-        if (!$proposal->getCriteria()->isDriver()) {
+        if (!$proposal->getCriteria()->isDriver() && $results->getResultDriver()) {
             $outward = $results->getResultDriver()->getOutward();
             $return = $results->getResultDriver()->getReturn();
-        } elseif (!$proposal->getCriteria()->isPassenger()) {
+        } elseif (!$proposal->getCriteria()->isPassenger() && $results->getResultPassenger()) {
             $outward = $results->getResultPassenger()->getOutward();
             $return = $results->getResultPassenger()->getReturn();
+        } else {
+            return [];
         }
 
         $schedule['mon'] = $outward->isMonCheck() || ($return ? $return->isMonCheck() : null);
@@ -1225,9 +1228,9 @@ class AdManager
        
         // We check for each proposal if he have matching
         /** @var Proposal $proposal */
-//        dump(count($proposals));
         foreach ($proposals as $proposal) {
             $askLinked = null;
+            /** @var Matching $matching */
             foreach ($proposal->getMatchingRequests() as $matching) {
                 // We check if the matching have an ask
                 /** @var Ask $ask */
@@ -1236,9 +1239,10 @@ class AdManager
                     if ($ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
                         // this ask is the ask with data we want to fill the Ad
                         if ($ask->getUser()->getId() && $ask->getUser()->getId() === $userId) {
-                            $askLinked = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
+                            $ask = $askLinked = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId, $matching->getProposalOffer());
+                        } else {
+                            $ask = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
                         }
-                        $ask = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
                         $asks[] = $ask;
                     }
                 }
@@ -1251,9 +1255,10 @@ class AdManager
                     if ($ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
                         // this ask is the ask with data we want to fill the Ad
                         if ($ask->getUser()->getId() && $ask->getUser()->getId() === $userId) {
-                            $askLinked = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
+                            $ask = $askLinked = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId, $matching->getProposalRequest());
+                        } else {
+                            $ask = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
                         }
-                        $ask = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
                         $asks[] = $ask;
                     }
                 }
