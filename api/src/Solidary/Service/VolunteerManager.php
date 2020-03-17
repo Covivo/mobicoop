@@ -24,16 +24,28 @@ namespace App\Solidary\Service;
 
 use App\Solidary\Entity\Volunteer;
 use App\Solidary\Entity\Exposed\Volunteer as ExposedVolunteer;
+use App\Solidary\Entity\Need;
+use App\Solidary\Entity\Proof;
+use App\Solidary\Entity\StructureProof;
+use App\Solidary\Repository\StructureProofRepository;
+use App\Solidary\Repository\StructureRepository;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 class VolunteerManager
 {
+    private $entityManager;
     private $userManager;
+    private $structureRepository;
+    private $structureProofRepository;
 
-    public function __construct(UserManager $userManager)
+    public function __construct(EntityManagerInterface $entityManager, UserManager $userManager, StructureRepository $structureRepository, StructureProofRepository $structureProofRepository)
     {
+        $this->entityManager = $entityManager;
         $this->userManager = $userManager;
+        $this->structureRepository = $structureRepository;
+        $this->structureProofRepository = $structureProofRepository;
     }
     
     /**
@@ -47,7 +59,7 @@ class VolunteerManager
         // First, we need to create a User behind this volonteer (if it doesn't exist)
 
         $preparedUser = $this->userManager->getUserByEmail($exposedVolunteer->getEmail());
-        if (empty($user)) {
+        if (empty($preparedUser)) {
             $user = new User();
             $user->setEmail($exposedVolunteer->getEmail());
             $user->setGivenName($exposedVolunteer->getGivenName());
@@ -57,9 +69,9 @@ class VolunteerManager
             $user->setPassword($exposedVolunteer->getPassword());
             $user->setPhoneDisplay($exposedVolunteer->getPhoneDisplay());
             $preparedUser = $this->userManager->prepareUser($user, true);
-            // We set the userId of the exposed volunteer, because we return it
-            $exposedVolunteer->setUserId($preparedUser->getId());
         }
+        // We set the userId of the exposed volunteer, because we return it
+        $exposedVolunteer->setUserId($preparedUser->getId());
 
         // Next, we need to create a true Volonteer
         $volunteer = new Volunteer();
@@ -69,19 +81,35 @@ class VolunteerManager
         $volunteer->setAddress($exposedVolunteer->getAddress());
         $volunteer->setMaxDistance($exposedVolunteer->getMaxDistance());
         (!is_null($exposedVolunteer->hasVehicle())) ? $volunteer->setVehicle($exposedVolunteer->hasVehicle()) : $volunteer->setVehicle(false);
-        $volunteer->setStructure($exposedVolunteer->getStructure());
+
+        //  Find the structure and set it
+        $structure = $this->structureRepository->find($exposedVolunteer->getStructure());
+        if (!empty($structure)) {
+            $volunteer->setStructure($structure);
+        }
+
+        
         $volunteer->setComment($exposedVolunteer->getComment());
         
         // Needs
         foreach ($exposedVolunteer->getNeeds() as $currentNeed) {
-            $volunteer->addNeed($need);
+            // TO DO : Handle the needs
+            // $need = new Need();
+            // $volunteer->addNeed($need);
         }
         // Proofs
         foreach ($exposedVolunteer->getProofs() as $currentProof) {
             $proof = new Proof();
+            $proof->setValue($currentProof['value']);
+            $structureProof = $this->structureProofRepository->find($currentProof['structureProof']);
+            if (!empty($structureProof)) {
+                $proof->setStructureProof($structureProof);
+            }
             $volunteer->addProof($proof);
         }
 
+        $this->entityManager->persist($volunteer);
+        $this->entityManager->flush();
 
         return $exposedVolunteer;
     }

@@ -49,7 +49,8 @@ use App\Solidary\Entity\Structure;
  */
 class Volunteer
 {
-    
+    const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this volunteer.
      *
@@ -57,7 +58,6 @@ class Volunteer
      * @Groups("readVolunteer")
      */
     private $id;
-
 
     /**
      * @var string The given name of this volunteer
@@ -124,7 +124,7 @@ class Volunteer
     private $vehicle;
 
     /**
-     * @var Structure Structure of the volunteer.
+     * @var int Structure of the volunteer.
      *
      * @Assert\NotBlank
      * @Groups({"readVolunteer","writeVolunteer"})
@@ -178,6 +178,7 @@ class Volunteer
 
     public function __construct()
     {
+        $this->id = self::DEFAULT_ID;
         $this->needs = [];
         $this->proofs = [];
     }
@@ -314,12 +315,12 @@ class Volunteer
         return $this;
     }
 
-    public function getStructure(): ?Structure
+    public function getStructure(): ?int
     {
         return $this->structure;
     }
 
-    public function setStructure(?Structure $structure): self
+    public function setStructure(?int $structure): self
     {
         $this->structure = $structure;
 
