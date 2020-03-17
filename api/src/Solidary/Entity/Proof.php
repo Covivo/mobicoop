@@ -99,7 +99,7 @@ class Proof
      * @var Volunteer Volunteer id if the proof concerns a volunteer.
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Volunteer", inversedBy="proofs")
-     * @Groups({"readSolidary","readVolunteer","writeVolunteer"})
+     * @Groups({"readSolidary","writeVolunteer"})
      * @MaxDepth(1)
      */
     private $volunteer;

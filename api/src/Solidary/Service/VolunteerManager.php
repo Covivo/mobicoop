@@ -29,6 +29,7 @@ use App\Solidary\Entity\Proof;
 use App\Solidary\Entity\StructureProof;
 use App\Solidary\Repository\StructureProofRepository;
 use App\Solidary\Repository\StructureRepository;
+use App\Solidary\Repository\VolunteerRepository;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,13 +40,15 @@ class VolunteerManager
     private $userManager;
     private $structureRepository;
     private $structureProofRepository;
+    private $volunteerRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, UserManager $userManager, StructureRepository $structureRepository, StructureProofRepository $structureProofRepository)
+    public function __construct(EntityManagerInterface $entityManager, UserManager $userManager, StructureRepository $structureRepository, StructureProofRepository $structureProofRepository, VolunteerRepository $volunteerRepository)
     {
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
         $this->structureRepository = $structureRepository;
         $this->structureProofRepository = $structureProofRepository;
+        $this->volunteerRepository = $volunteerRepository;
     }
     
     /**
@@ -195,6 +198,51 @@ class VolunteerManager
 
         // $this->entityManager->persist($volunteer);
         // $this->entityManager->flush();
+
+        return $exposedVolunteer;
+    }
+
+
+    /**
+     * Get a Volunteer (exposed)
+     *
+     * @param integer $id   Id of the volunteer
+     * @return ExposedVolunteer|null
+     */
+    public function getVolunteer(int $id)
+    {
+        $volunteer = $this->volunteerRepository->find($id);
+        
+        if (is_null($volunteer)) {
+            return null;
+        }
+        
+        return $this->buildExposedVolunteer($volunteer);
+    }
+
+    /**
+     * Build an exposed Volunteer from a Volunteer
+     *
+     * @param Volunteer $volunteer
+     * @return ExposedVolunteer
+     */
+    public function buildExposedVolunteer(Volunteer $volunteer)
+    {
+        $exposedVolunteer = new ExposedVolunteer();
+        $exposedVolunteer->setEmail($volunteer->getUser()->getEmail());
+        $exposedVolunteer->setGivenName($volunteer->getUser()->getGivenName());
+        $exposedVolunteer->setFamilyName($volunteer->getUser()->getFamilyName());
+        $exposedVolunteer->setGender($volunteer->getUser()->getGender());
+        $exposedVolunteer->setBirthDate($volunteer->getUser()->getBirthDate());
+        $exposedVolunteer->setPassword($volunteer->getUser()->getPassword());
+        $exposedVolunteer->setPhoneDisplay($volunteer->getUser()->getPhoneDisplay());
+        $exposedVolunteer->setMaxDistance($volunteer->getMaxDistance());
+        $exposedVolunteer->setVehicle($volunteer->hasVehicle());
+        $exposedVolunteer->setComment($volunteer->getComment());
+        $exposedVolunteer->setNeeds($volunteer->getNeeds());
+        $exposedVolunteer->setProofs($volunteer->getProofs());
+        $exposedVolunteer->setAddress($volunteer->getAddress());
+        $exposedVolunteer->setStructure($volunteer->getStructure()->getId());
 
         return $exposedVolunteer;
     }
