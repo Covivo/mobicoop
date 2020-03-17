@@ -24,9 +24,18 @@ namespace App\Solidary\Service;
 
 use App\Solidary\Entity\Volunteer;
 use App\Solidary\Entity\Exposed\Volunteer as ExposedVolunteer;
+use App\User\Entity\User;
+use App\User\Service\UserManager;
 
 class VolunteerManager
 {
+    private $userManager;
+
+    public function __construct(UserManager $userManager)
+    {
+        $this->userManager = $userManager;
+    }
+    
     /**
      * Create a Volunteer from an ExposedVolunteer with the User account if necessary
      *
@@ -35,10 +44,45 @@ class VolunteerManager
      */
     public function createVolunteer(ExposedVolunteer $exposedVolunteer)
     {
-        echo "nice";
-        die;
-//        $volunteer->setUser($this->userManager->prepareUser($volunteer->getUser(), true));
+        // First, we need to create a User behind this volonteer (if it doesn't exist)
 
-        return null;
+        $preparedUser = $this->userManager->getUserByEmail($exposedVolunteer->getEmail());
+        if (empty($user)) {
+            $user = new User();
+            $user->setEmail($exposedVolunteer->getEmail());
+            $user->setGivenName($exposedVolunteer->getGivenName());
+            $user->setFamilyName($exposedVolunteer->getFamilyName());
+            $user->setGender($exposedVolunteer->getGender());
+            $user->setBirthDate($exposedVolunteer->getBirthDate());
+            $user->setPassword($exposedVolunteer->getPassword());
+            $user->setPhoneDisplay($exposedVolunteer->getPhoneDisplay());
+            $preparedUser = $this->userManager->prepareUser($user, true);
+            // We set the userId of the exposed volunteer, because we return it
+            $exposedVolunteer->setUserId($preparedUser->getId());
+        }
+
+        // Next, we need to create a true Volonteer
+        $volunteer = new Volunteer();
+        // The prepared User
+        $volunteer->setUser($preparedUser);
+        // The classic params of a volunteer
+        $volunteer->setAddress($exposedVolunteer->getAddress());
+        $volunteer->setMaxDistance($exposedVolunteer->getMaxDistance());
+        (!is_null($exposedVolunteer->hasVehicle())) ? $volunteer->setVehicle($exposedVolunteer->hasVehicle()) : $volunteer->setVehicle(false);
+        $volunteer->setStructure($exposedVolunteer->getStructure());
+        $volunteer->setComment($exposedVolunteer->getComment());
+        
+        // Needs
+        foreach ($exposedVolunteer->getNeeds() as $currentNeed) {
+            $volunteer->addNeed($need);
+        }
+        // Proofs
+        foreach ($exposedVolunteer->getProofs() as $currentProof) {
+            $proof = new Proof();
+            $volunteer->addProof($proof);
+        }
+
+
+        return $exposedVolunteer;
     }
 }

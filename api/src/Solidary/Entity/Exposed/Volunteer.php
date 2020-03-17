@@ -156,6 +156,13 @@ class Volunteer
     private $proofs;
 
     /**
+     * @var int The user id attached to this volunteer.
+     *
+     * @Groups({"readVolunteer","writeVolunteer"})
+     */
+    private $userId;
+    
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @Groups({"readVolunteer"})
@@ -353,6 +360,18 @@ class Volunteer
     {
         $this->proofs = $proofs;
 
+        return $this;
+    }
+
+    public function getUserId(): ?int
+    {
+        return $this->userId;
+    }
+    
+    public function setUserId(int $userId): self
+    {
+        $this->userId = $userId;
+        
         return $this;
     }
 

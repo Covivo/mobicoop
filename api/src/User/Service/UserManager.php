@@ -140,7 +140,17 @@ class UserManager
     {
         return $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
     }
-    
+
+    /**
+     * Get a user by email.
+     *
+     * @return User|null
+     */
+    public function getUserByEmail(string $email)
+    {
+        return $this->userRepository->findOneBy(["email"=>$email]);
+    }
+
     /**
      * Registers a user.
      *
@@ -150,7 +160,7 @@ class UserManager
      */
     public function registerUser(User $user, bool $encodePassword=true)
     {
-        $user = $this->prepareUser($user);
+        $user = $this->prepareUser($user, $encodePassword);
 
         // persist the user
         $this->entityManager->persist($user);

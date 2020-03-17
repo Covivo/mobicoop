@@ -57,7 +57,7 @@ class UserDelegateRegistration
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
         }
-        $data = $this->userManager->registerUser($data, true);
+        $data = $this->userManager->registerUser($data);
         return $data;
     }
 }
