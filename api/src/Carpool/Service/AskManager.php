@@ -728,10 +728,12 @@ class AskManager
     public function getSimpleAskFromAd(int $askId, int $userId)
     {
         $ask = $this->askRepository->find($askId);
+//        dump($ask->getCriteria());die;
         $ad = new Ad();
         $ad->setUserId($userId);
         $ad->setAskId($askId);
         $ad->setAskStatus($ask->getStatus());
+        $ad->setOutwardLimitDate($ask->getCriteria()->getToDate());
 
         // first pass for role
         switch ($ask->getStatus()) {
