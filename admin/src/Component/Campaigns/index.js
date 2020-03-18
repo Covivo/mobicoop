@@ -1,6 +1,6 @@
 import EmailIcon from '@material-ui/icons/Email';
 
-import { CampaignsList } from './CampaignsList';
+import CampaignsList from './CampaignsList';
 
 export default {
     options: {

@@ -3,7 +3,7 @@
     fluid
     class="pa-0"
   >
-    <v-row>
+    <v-row :no-gutters="noGutters">
       <v-col
         v-if="isRegular && !hasSameReturnTimes && !hasSameOutwardTimes"
         align="right"
@@ -24,70 +24,66 @@
       </v-col>
       
       <v-col v-else>
-        <v-container
-          fluid
-          class="pa-0"
-        >
-          <v-row>
-            <!--Outward-->
-            <v-col
-              v-if="isOutward"
-              class="py-0"
-              :align="isRegular ? 'right' : 'left'"
+        <v-row>
+          <!--Outward-->
+          <v-col
+            v-if="isOutward"
+            cols="6"
+            class="py-0"
+            :class="isRefined || !isReturn ? 'text-left' : 'text-right'"
+          >
+            <span
+              v-if="!isRefined"
+              class="accent--text text--accent font-weight-bold body-1"
+            >{{ $t('outward') }}</span>
+
+            <v-icon
+              v-if="!isRefined"
+              class="accent--text text--accent font-weight-bold"
             >
-              <span
-                v-if="!isRefined"
-                class="accent--text text--accent font-weight-bold body-1"
-              >{{ $t('outward') }}</span>
+              mdi-arrow-right
+            </v-icon>
 
-              <v-icon
-                v-if="!isRefined"
-                class="accent--text text--accent font-weight-bold"
-              >
-                mdi-arrow-right
-              </v-icon>
-
-              <span
-                v-if="hasSameOutwardTimes"
-                class="primary--text text--darken-2 body-1 text-capitalize"
-              >
-                {{ formatTime(outwardTimes[0]) }}
-              </span>
-              <span
-                v-else
-                class="primary--text text--darken-2 body-1"
-              >
-                {{ $t('multipleTimesSlots') }}
-              </span>
-            </v-col>
-
-            <!--Return-->
-            <v-col
-              v-if="isReturn"
-              class="py-0"
-              :align="isRegular ? 'right' : 'left'"
+            <span
+              v-if="hasSameOutwardTimes"
+              class="primary--text text--darken-2 body-1 text-capitalize"
             >
-              <span class="accent--text  font-weight-bold body-1">{{ $t('return') }}</span>
+              {{ formatTime(outwardTimes ? outwardTimes[0] : outwardTime ? outwardTime : null) }}
+            </span>
+            <span
+              v-else
+              class="primary--text text--darken-2 body-1"
+            >
+              {{ $t('multipleTimesSlots') }}
+            </span>
+          </v-col>
 
-              <v-icon class="accent--text font-weight-bold">
-                mdi-arrow-left
-              </v-icon>
+          <!--Return-->
+          <v-col
+            v-if="isReturn"
+            class="py-0"
+            :align="isRegular ? 'right' : 'left'"
+          >
+            <span class="accent--text  font-weight-bold body-1">{{ $t('return') }}</span>
 
-              <span
-                v-if="hasSameReturnTimes"
-                class="primary--text text--darken-2 body-1 text-capitalize"
-              >
-                {{ formatTime(returnTimes[0]) }}
-              </span>
-              <span
-                v-else
-                class="primary--text text--darken-2 body-1"
-              >
-                {{ $t('multipleTimesSlots') }}
-              </span>
-            </v-col>
-          </v-row>
-        </v-container>
+            <v-icon class="accent--text font-weight-bold">
+              mdi-arrow-left
+            </v-icon>
+
+            <span
+              v-if="hasSameReturnTimes"
+              class="primary--text text--darken-2 body-1 text-capitalize"
+            >
+              {{ formatTime(returnTimes ? returnTimes[0] : returnTime ? returnTime : null) }}
+            </span>
+            <span
+              v-else
+              class="primary--text text--darken-2 body-1"
+            >
+              {{ $t('multipleTimesSlots') }}
+            </span>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </v-container>
@@ -102,13 +98,25 @@ export default {
     messages: Translations
   },
   props: {
+    // for multiple computed times eg my ads
     outwardTimes: {
       type: Array,
-      default: () => []
+      default: null
     },
+    // for multiple computed times
     returnTimes: {
       type: Array,
-      default: () => []
+      default: null
+    },
+    // for inline unique time by schedule eg my accepted carpools
+    outwardTime: {
+      type: String,
+      default: null
+    },
+    // for inline unique time by schedule
+    returnTime: {
+      type: String,
+      default: null
     },
     isRegular: {
       type: Boolean,
@@ -130,6 +138,10 @@ export default {
     isRefined: {
       type: Boolean,
       default: false
+    },
+    noGutters: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -140,32 +152,36 @@ export default {
   computed: {
     hasSameOutwardTimes () {
       let isSame = true;
-      const times = this.outwardTimes;
-      const days = times.length;
-      if (days < 2) {
-        return isSame;
-      }
-      // start to 1 because we don't compare index 0 with index 0
-      for (let i = 1; i < days; i++) {
-        isSame = moment.utc(times[0]).isSame(times[i]);
-        if (!isSame) {
-          break;
+      if (this.outwardTimes) {
+        const times = this.outwardTimes;
+        const days = times.length;
+        if (days < 2) {
+          return isSame;
+        }
+        // start to 1 because we don't compare index 0 with index 0
+        for (let i = 1; i < days; i++) {
+          isSame = moment.utc(times[0]).isSame(times[i]);
+          if (!isSame) {
+            break;
+          }
         }
       }
       return isSame;
     },
     hasSameReturnTimes () {
       let isSame = true;
-      const times = this.returnTimes;
-      const days = times.length;
-      if (days < 2) {
-        return isSame;
-      }
-      // start to 1 because we don't compare index 0 with index 0
-      for (let i = 1; i < days; i++) {
-        isSame = moment.utc(times[0]).isSame(times[i]);
-        if (!isSame) {
-          break;
+      if (this.returnTimes) {
+        const times = this.returnTimes;
+        const days = times.length;
+        if (days < 2) {
+          return isSame;
+        }
+        // start to 1 because we don't compare index 0 with index 0
+        for (let i = 1; i < days; i++) {
+          isSame = moment.utc(times[0]).isSame(times[i]);
+          if (!isSame) {
+            break;
+          }
         }
       }
       return isSame;

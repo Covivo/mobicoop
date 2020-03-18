@@ -6,7 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
 import { fetchUtils, FormDataConsumer, REDUX_FORM_NAME } from 'react-admin';
-import { useForm } from 'react-final-form';
+import { useForm, useField } from 'react-final-form';
 import useDebounce from './useDebounce';
 import { change } from 'redux-form';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
@@ -35,11 +35,16 @@ const fetchSuggestions = input => {
 const GeocompleteInput = props => {
     const { classes } = props;
 
-    const form = useForm();
+    const form  = useForm();
+    const field = useField('address');
 
     const [input, setInput] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const debouncedInput = useDebounce(input, 500);
+
+    const formState   = form.getState()
+    const errorMessage = props.validate(input)
+    const errorState  = formState.submitFailed && errorMessage
 
     useEffect(() => {
         if (debouncedInput) {
@@ -107,8 +112,12 @@ const GeocompleteInput = props => {
                         }) => (
                             <div className={classes.container}>
                                 <TextField
-                                    label="Adresse"
+                                    label={props.label || "Adresse"}
                                     className={classes.input}
+                                    variant="filled"
+                                    required
+                                    error={errorState}
+                                    helperText={errorState && errorMessage}
                                     InputProps={{
                                         ...getInputProps({
                                             placeholder: 'Entrer une adresse',
@@ -313,7 +322,7 @@ const styles = theme => ({
         height: theme.spacing(2),
     },
     input: {
-        width: '50%',   // Change this to style the autocomplete component
+        //width: '50%',   // Change this to style the autocomplete component
         flexGrow:1
     },
 });

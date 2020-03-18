@@ -56,7 +56,7 @@ class UserAuthAssignment
      * @Groups("authRead")
      */
     private $id;
-        
+
     /**
      * @var User The user.
      *
@@ -66,7 +66,7 @@ class UserAuthAssignment
      * @MaxDepth(1)
      */
     private $user;
-    
+
     /**
      * @var AuthItem The auth item.
      *
@@ -83,12 +83,12 @@ class UserAuthAssignment
      * @Groups({"authRead","authWrite"})
      */
     private $territory;
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-        
+
     public function getUser(): User
     {
         return $this->user;
@@ -97,10 +97,10 @@ class UserAuthAssignment
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
-    
+
     public function getAuthItem(): AuthItem
     {
         return $this->authItem;
@@ -109,7 +109,7 @@ class UserAuthAssignment
     public function setAuthItem(AuthItem $authItem): self
     {
         $this->authItem = $authItem;
-        
+
         return $this;
     }
 
@@ -121,7 +121,7 @@ class UserAuthAssignment
     public function setTerritory(?Territory $territory): self
     {
         $this->territory = $territory;
-        
+
         return $this;
     }
 }

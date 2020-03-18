@@ -94,7 +94,7 @@ export default {
   },
   computed: {
     hasReturn () {
-      return !this.ad.oneWay;
+      return !this.ad.oneWay && this.returnTimes.length > 0;
     },
     isRegular () {
       return this.ad.frequency === 2;

@@ -3,7 +3,7 @@
     <v-row>
       <schedules
         date-time-format="ui.i18n.date.format.shortDate"
-        :outward-times="[ad.outwardDate]"
+        :outward-time="ad.outwardDate"
         :is-refined="isRefined"
       />
     </v-row>

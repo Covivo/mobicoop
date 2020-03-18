@@ -2,7 +2,8 @@ import React from 'react';
 import { HydraAdmin } from '@api-platform/admin';
 
 import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/parseHydraDocumentation';
-import authProvider from './authProvider';
+import authProvider from './Auth/authProvider';
+import isAuthorized from './Auth/permissions'
 import { Redirect } from 'react-router-dom';
 
 import { Login, Resource } from 'react-admin';
@@ -25,11 +26,10 @@ import territories from './Component/Territory/index';
 import events from './Component/Event/index';
 import adresses from './Component/Address/index';
 import KibanaWidget from './Component/Dashboard/KibanaWidget'
-import {isAuthorized} from "./Component/Utilities/authorization";
 import {ResourceGuesser, ListGuesser} from '@api-platform/admin/lib';
 import ProposalList from './Component/Proposals/ProposalList';
 import myDataProvider from "./Component/Utilities/extendProviders";
-import campaigns from "./Component/Campaingns/index";
+import campaigns from "./Component/Campaigns/index";
 
 require('dotenv').config();
 
@@ -55,6 +55,13 @@ const theme = createMuiTheme({
         default: `#${process.env.REACT_APP_THEME_BACKGROUND_DEFAULT_COLOR}`
       }
     },
+    /*
+    overrides: {
+      MuiCardContent : {
+        root : { display:"flex", flexWrap:"wrap", justifyContent:"space-between"}
+      },
+    }
+    */
 });
 
 const i18nProvider = i18nProviderTranslations;
@@ -109,24 +116,23 @@ export default props => (
       {permissions => {
         return  [          
           <Resource name={'users'} {...users} />,
-        /* <Resource name={'proposals'} list={ProposalList} />, Uncomment when proposals will be ready*/
-          <Resource name={'campaigns'} {...campaigns} />,
-          <Resource name="addresses" {...adresses} />,
+          isAuthorized("community_manage")    ? <Resource name={'communities'} {...communities} /> : null,
+          isAuthorized("community_manage")    ? <Resource name={'community_users'} {...community_users} /> : null,
+          isAuthorized("mass_manage")         ? <Resource name={'campaigns'} {...campaigns} /> : null,
+          isAuthorized("event_manage")        ? <ResourceGuesser name={'events'} {...events} /> : null,
           isAuthorized("article_manage")      ? <Resource name={'articles'} {...articles} /> : null,
           isAuthorized("article_manage")      ? <Resource name={'sections'} {...sections} /> : null,
           isAuthorized("article_manage")      ? <Resource name={'paragraphs'} {...paragraphs} /> : null,
-          isAuthorized("community_manage")    ? <Resource name={'communities'} {...communities} /> : null,
-          isAuthorized("community_manage")    ? <Resource name={'community_users'} {...community_users} /> : null,
           isAuthorized("relay_point_manage")  ? <Resource name={'relay_points'} {...relay_points} /> : null,
           isAuthorized("relay_point_manage")  ? <Resource name={'relay_point_types'} {...relay_point_types} /> : null,
           isAuthorized("permission_manage")   ? <Resource name={'roles'} {...roles} /> : null,
           isAuthorized("permission_manage")   ? <Resource name={'rights'} {...rights} /> : null,
           /*  isAuthorized("territory_manage")    ? <Resource name={'territories'} {...territories} /> : null, */
-           isAuthorized("event_manage")        ? <ResourceGuesser name={'events'} {...events}  /> : null,
-           // <Resource name="addresses" edit={ AddressEdit} title="Adresses" options={{ label: 'Adresses' }} icon={MapIcon} />,
-           <Resource name="images" />,
-           <Resource name="roles" />,
-           <Resource name="territories" />
+          /* <Resource name={'proposals'} list={ProposalList} />, Uncomment when proposals will be ready*/
+          <Resource name="addresses" {...adresses} />,
+          <Resource name="images" />,
+          <Resource name="roles" />,
+          <Resource name="territories" />,
          ];
      }
        }

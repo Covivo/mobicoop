@@ -111,7 +111,7 @@ use App\Community\Entity\CommunityUser;
  *          "post"={
  *              "method"="POST",
  *              "path"="/users",
- *              "controller"=UserRegistration::class,
+ *              "controller"=UserDelegateRegistration::class,
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -160,7 +160,7 @@ use App\Community\Entity\CommunityUser;
  *          "delegateRegistration"={
  *              "method"="POST",
  *              "path"="/users/register",
- *              "controller"=UserDelegateRegistration::class,
+ *              "controller"=UserRegistration::class,
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -217,7 +217,7 @@ use App\Community\Entity\CommunityUser;
  *                      }
  *                  }
  *              },
- *              "security_post_denormalize"="is_granted('user_create',object)"
+ *              "security_post_denormalize"="is_granted('user_register',object)"
  *          },
  *          "checkSignUpValidationToken"={
  *              "method"="POST",
@@ -351,7 +351,7 @@ use App\Community\Entity\CommunityUser;
 class User implements UserInterface, EquatableInterface
 {
     const DEFAULT_ID = 999999999999;
-    
+
     const MAX_DETOUR_DURATION = 600;
     const MAX_DETOUR_DISTANCE = 10000;
 
@@ -518,7 +518,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","write","checkPhoneToken"})
      */
     private $telephone;
-    
+
     /**
      * @var string|null The telephone number of the user.
      * @Groups({"readUser", "write"})
@@ -804,7 +804,7 @@ class User implements UserInterface, EquatableInterface
      * @ApiSubresource(maxDepth=1)
      */
     private $images;
-    
+
     /**
      * @var ArrayCollection|null A user may have many auth assignments.
      *
@@ -816,6 +816,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @Groups({"readUser"})
+     * @MaxDepth(1)
      */
     private $roles;
 
@@ -1144,7 +1145,7 @@ class User implements UserInterface, EquatableInterface
     public function setPasswordSendType(?int $passwordSendType): self
     {
         $this->passwordSendType = $passwordSendType;
-        
+
         return $this;
     }
 
@@ -1214,10 +1215,10 @@ class User implements UserInterface, EquatableInterface
     public function setPhoneDisplay(?int $phoneDisplay): self
     {
         $this->phoneDisplay = $phoneDisplay;
-        
+
         return $this;
     }
-    
+
     public function getOldTelephone(): ?string
     {
         return $this->oldTelephone;
@@ -1433,7 +1434,7 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->language;
     }
- 
+
     public function setLanguage(?string $language): self
     {
         $this->language= $language;
@@ -1608,7 +1609,7 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    
+
 
     public function getAsksRelated()
     {
@@ -1810,17 +1811,17 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->recipients->getValues();
     }
-    
+
     public function addRecipient(Recipient $recipient): self
     {
         if (!$this->recipients->contains($recipient)) {
             $this->recipients[] = $recipient;
             $recipient->setUser($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeRecipient(Recipient $recipient): self
     {
         if ($this->recipients->contains($recipient)) {
@@ -1830,7 +1831,7 @@ class User implements UserInterface, EquatableInterface
                 $recipient->setUser(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -1838,17 +1839,17 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->notifieds->getValues();
     }
-    
+
     public function addNotified(Notified $notified): self
     {
         if (!$this->notifieds->contains($notified)) {
             $this->notifieds[] = $notified;
             $notified->setUser($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeNotified(Notified $notified): self
     {
         if ($this->notifieds->contains($notified)) {
@@ -1858,7 +1859,7 @@ class User implements UserInterface, EquatableInterface
                 $notified->setUser(null);
             }
         }
-        
+
         return $this;
     }
 
