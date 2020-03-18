@@ -54,6 +54,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Volunteer
 {
+    const SOLIDARY_TYPE = "volunteer";
     
     /**
      * @var int The id of this volunteer.

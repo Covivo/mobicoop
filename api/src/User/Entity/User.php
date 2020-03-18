@@ -112,7 +112,6 @@ use App\Community\Entity\CommunityUser;
  *          "post"={
  *              "method"="POST",
  *              "path"="/users",
- *              "controller"=UserRegistration::class,
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -161,7 +160,6 @@ use App\Community\Entity\CommunityUser;
  *          "delegateRegistration"={
  *              "method"="POST",
  *              "path"="/users/register",
- *              "controller"=UserDelegateRegistration::class,
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -238,6 +236,12 @@ use App\Community\Entity\CommunityUser;
  *              "normalization_context"={"groups"={"readUser"}},
  *              "method"="GET",
  *              "path"="/users/me",
+ *              "read"="false"
+ *          },
+ *          "solidaryUsers"={
+ *              "normalization_context"={"groups"={"solidaryUsers"}},
+ *              "method"="GET",
+ *              "path"="/users/solidary",
  *              "read"="false"
  *          },
  *      },
