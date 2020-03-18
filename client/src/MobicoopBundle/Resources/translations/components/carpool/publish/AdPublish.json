@@ -5,7 +5,11 @@
             "subtitle": "Commencer votre annonce"
         },
         "update" : {
-           "title": "Modifier votre annonce"
+           "title": "Modifier votre annonce",
+            "asks_popup": {
+                "title" : "Des demandes existent pour cette annonce",
+                "content" : "Une ou plusieurs demandes ont déjà été faites en lien avec cette annonce. Les détails de votre modification seront envoyées à tous les usagers ayant fait ces demandes. \n Confirmez-vous votre modification ?"
+            }
         },
         "stepper": {
             "header": {

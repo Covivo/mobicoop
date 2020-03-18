@@ -69,7 +69,7 @@ class AdManager
      * Get full ad data
      *
      * @param int $id
-     * @return array|object|null
+     * @return Ad|null
      */
     public function getFullAd(int $id)
     {
@@ -322,7 +322,7 @@ class AdManager
         }
 
         // one-way for regular
-        if (isset($data['regular'])) {
+        if (isset($data['regular']) && $data['regular'] && $data['schedules']) {
             $data['oneway'] = true;
             foreach ($data['schedules'] as $schedule) {
                 if (isset($schedule['returnTime']) && !is_null($schedule['returnTime'])) {

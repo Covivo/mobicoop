@@ -958,7 +958,7 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'oneWay' => $this->isOneWay(),
                 'outwardWaypoints' => $this->getOutwardWaypoints(),
                 'returnWaypoints' => $this->getReturnWaypoints(),
-                'outwardDate' => !is_null($this->getReturnDate()) ? $this->getOutwardDate()->format('Y-m-d') : null,
+                'outwardDate' => !is_null($this->getOutwardDate()) ? $this->getOutwardDate()->format('Y-m-d') : null,
                 'outwardLimitDate' => $this->getOutwardLimitDate(),
                 'returnDate' => !is_null($this->getReturnDate()) ? $this->getReturnDate()->format('Y-m-d') : null,
                 'returnLimitDate' => $this->getReturnLimitDate(),

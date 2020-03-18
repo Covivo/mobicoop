@@ -590,7 +590,7 @@
               color="secondary"
               style="margin-left: 30px;"
               align-center
-              @click="isUpdate ? updateAd() : postAd()"
+              @click="isUpdate ? (hasAsks ? dialog = true : updateAd()) : postAd()"
             >
               {{ isUpdate ? $t('stepper.buttons.update_ad', {id: ad.id}) : $t('stepper.buttons.publish_ad') }}
             </v-btn>
@@ -598,6 +598,38 @@
         </template>
         <span>{{ $t('stepper.buttons.notValid') }}</span>
       </v-tooltip>
+    </v-row>
+
+    <!-- DIALOG -->
+    <v-row justify="center">
+      <v-dialog
+        v-model="dialog"
+        persistent
+        max-width="550"
+      >
+        <v-card>
+          <v-card-title class="headline">
+            {{ $t('update.asks_popup.title') }}
+          </v-card-title>
+          <v-card-text>{{ $t('update.asks_popup.content') }}</v-card-text>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="secondary"
+              outlined
+              @click="dialog = false"
+            >
+              {{ $t('ui.common.no') }}
+            </v-btn>
+            <v-btn
+              color="secondary"
+              @click="updateAd"
+            >
+              {{ $t('ui.common.yes') }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-row>
   </v-container>
 </template>
@@ -704,6 +736,11 @@ export default {
     isUpdate: {
       type: Boolean,
       default: false
+    },
+    // for update popup
+    hasAsks: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -754,7 +791,8 @@ export default {
       returnTimeIsValid: true,
       initWaypoints: [],
       initSchedule: null,
-      role: null
+      role: null,
+      dialog: false
     }
   },
   computed: {
@@ -888,15 +926,15 @@ export default {
         this.returnDate = this.ad.returnDate;
         this.returnTime = this.ad.returnTime;
         this.initWaypoints = this.ad.outwardWaypoints.filter(point => {return point.address.id !== self.initOrigin.id && point.address.id !== self.initDestination.id});
-        this.initSchedule = this.ad.schedule;
-        this.seats = this.ad.seatsDriver; //todo: check
+        this.initSchedule = isEmpty(this.ad.schedule) ? {} : this.ad.schedule;
+        this.seats = this.ad.seatsDriver;
         this.luggage = this.ad.luggage;
         this.smoke = this.ad.smoke;
         this.bike = this.ad.bike;
         this.backSeats = this.ad.backSeats;
         this.music = this.ad.music;
         this.message = this.ad.message;
-        this.price = this.ad.outwardDriverPrice; //todo: check
+        this.price = this.ad.outwardDriverPrice;
         this.role = this.ad.role;
         this.driver = this.ad.role === 1 || this.ad.role === 3;
         this.passenger = this.ad.role === 2 || this.ad.role === 3;
@@ -1004,7 +1042,9 @@ export default {
     updateAd () {
       if (!this.isValidUpdate) {
         alert("Vous ne pouvez pas modifier cette annonce.");
+        return;
       }
+      this.dialog = false;
       let postObject = this.buildAdObject();
       this.loading = true;
       axios.put(this.buildUrl(this.$t('route.update', {id: this.ad.id})),postObject,{
