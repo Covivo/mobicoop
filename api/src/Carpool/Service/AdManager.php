@@ -41,12 +41,8 @@ use App\Carpool\Repository\CriteriaRepository;
 use App\User\Exception\UserNotFoundException;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
-use PhpOffice\PhpSpreadsheet\Calculation\DateTime;
-use phpDocumentor\Reflection\Types\Boolean;
 use Psr\Log\LoggerInterface;
-use App\Carpool\Service\ProposalMatcher;
 use App\Rdex\Entity\RdexError;
-use App\Carpool\Service\AskManager;
 
 /**
  * Ad manager service.
