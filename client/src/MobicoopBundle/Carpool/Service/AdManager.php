@@ -274,12 +274,13 @@ class AdManager
      * Update an Ad
      *
      * @param array $data
-     * @return Ad|null
+     * @param Ad|null $ad - the current ad before update
+     * @return array|object
      * @throws \Exception
      */
-    public function updateAd(array $data)
+    public function updateAd(array $data, Ad $ad = null)
     {
-        $ad = $this->mapAd($data);
+        $ad = $this->mapAd($data, $ad);
         if ($data = $this->dataProvider->put($ad)) {
             return $data->getValue();
         }
@@ -290,12 +291,16 @@ class AdManager
      * Map data json array to and Ad
      *
      * @param array $data
+     * @param Ad $ad - the current Ad before update
      * @return Ad
      * @throws \Exception
      */
-    public function mapAd(array $data): Ad
+    public function mapAd(array $data, Ad $ad = null): Ad
     {
-        $ad = new Ad();
+        if (is_null($ad)) {
+            $ad = new Ad();
+        }
+
         $poster = $this->security->getUser();
 
         if ($poster && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {

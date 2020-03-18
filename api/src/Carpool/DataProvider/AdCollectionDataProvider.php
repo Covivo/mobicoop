@@ -24,7 +24,9 @@
 namespace App\Carpool\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Service\AdManager;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -34,12 +36,12 @@ use Symfony\Component\Security\Core\Security;
  * Collection data provider for user's ads.
  *
  */
-final class AdCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class AdCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface, ItemDataProviderInterface
 {
     protected $request;
     protected $adManager;
     protected $security;
-    
+
     public function __construct(RequestStack $requestStack, AdManager $adManager, Security $security)
     {
         $this->request = $requestStack->getCurrentRequest();
@@ -55,5 +57,10 @@ final class AdCollectionDataProvider implements CollectionDataProviderInterface,
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return $this->adManager->getAds($this->security->getUser()->getId());
+    }
+
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    {
+        return $this->adManager->getFullAd($id);
     }
 }

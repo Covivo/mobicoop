@@ -843,9 +843,6 @@ export default {
 
       return true;
     },
-    urlToCall() {
-      return `${this.baseUrl}/${this.$t('route.publish')}`;
-    },
     pointEscapedPrice(){
       return this.price.replace(".",",");
     },
@@ -952,6 +949,9 @@ export default {
         
       return point;      
     },
+    buildUrl(route) {
+      return `${this.baseUrl}/${route}`;
+    },
     searchChanged: function(search) {
       this.passenger = search.passenger;
       this.driver = search.driver;
@@ -979,48 +979,9 @@ export default {
       this.selectedCommunities = route.communities ? route.communities : null;
     },
     postAd() {
-      let postObject = {
-        regular: this.regular,
-        driver: this.driver,
-        passenger: this.passenger,
-        origin: this.origin,
-        destination: this.destination,
-        solidaryExclusive: this.solidaryExclusive
-      };
-      if (this.userDelegated) postObject.userDelegated = this.userDelegated;
-      if (this.validWaypoints) postObject.waypoints = this.validWaypoints;
-      if (this.selectedCommunities) postObject.communities = this.selectedCommunities;
-      if (!this.regular) {
-        if (this.outwardDate) postObject.outwardDate = this.outwardDate;
-        if (this.outwardTime) postObject.outwardTime = this.outwardTime;
-        if (this.returnDate) postObject.returnDate = this.returnDate;
-        if (this.returnTime) postObject.returnTime = this.returnTime;
-      } else if (this.schedules) {
-        postObject.schedules = this.schedules;
-      }
-      // seats proposed as a driver (not handled yet for passengers)
-      if (this.driver && this.seats) postObject.seatsDriver = this.seats;
-      if (this.luggage) postObject.luggage = this.luggage;
-      if (this.bike) postObject.bike = this.bike;
-      if (this.backSeats) postObject.backSeats = this.backSeats;
-      // price chosen by the driver (not handled yet for passengers)
-      if (this.driver && this.price) {
-        // for now we just handle the outward price
-        postObject.outwardDriverPrice = this.solidaryExclusive ? 0 : this.price;
-      } 
-      if (this.pricePerKm) postObject.priceKm = this.solidaryExclusive ? 0 : this.pricePerKm;
-      if (this.message) postObject.message = this.message;
-      // the following parameters are not used yet but we keep them here for possible future use
-      if (this.regularLifetime) postObject.regularLifetime = this.regularLifetime;
-      if (this.strictDate) postObject.strictDate = this.strictDate;
-      if (this.strictRegular) postObject.strictRegular = this.strictRegular;
-      if (this.strictPunctual) postObject.strictPunctual = this.strictPunctual;
-      if (this.useTime) postObject.useTime = this.useTime;
-      if (this.anyRouteAsPassenger) postObject.anyRouteAsPassenger = this.anyRouteAsPassenger;
-
+      let postObject = this.buildAdObject();
       this.loading = true;
-      //var self = this;
-      axios.post(this.urlToCall,postObject,{
+      axios.post(this.buildUrl(this.$t('route.publish')),postObject,{
         headers:{
           'content-type': 'application/json'
         }
@@ -1037,11 +998,78 @@ export default {
           console.log(error);
         })
         .finally(function () {
-          // self.loading = false;
+          // this.loading = false;
         });
     },
     updateAd () {
-      console.log("update");
+      if (!this.isValidUpdate) {
+        alert("Vous ne pouvez pas modifier cette annonce.");
+      }
+      let postObject = this.buildAdObject();
+      this.loading = true;
+      axios.put(this.buildUrl(this.$t('route.update', {id: this.ad.id})),postObject,{
+        headers:{
+          'content-type': 'application/json'
+        }
+      })
+        .then(response => {
+          if (response.data && response.data.result.id) {
+            window.location.href = "/utilisateur/profil/modifier/mes-annonces";
+          } else {
+            alert('Une erreur est survenue.');
+            this.loading = false;
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          this.loading = false;
+        })
+        .finally(() => {
+          // this.loading = false;
+        });
+    },
+    buildAdObject () {
+      let postObject = {
+        regular: this.regular,
+        driver: this.driver,
+        passenger: this.passenger,
+        origin: this.origin,
+        destination: this.destination,
+        solidaryExclusive: this.solidaryExclusive
+      };
+      if (this.isValidUpdate) postObject.id = this.ad.id;
+      if (this.userDelegated) postObject.userDelegated = this.userDelegated;
+      if (this.validWaypoints) postObject.waypoints = this.validWaypoints;
+      if (this.selectedCommunities) postObject.communities = this.selectedCommunities;
+      if (!this.regular) {
+        if (this.outwardDate) postObject.outwardDate = this.outwardDate;
+        if (this.outwardTime) postObject.outwardTime = this.outwardTime;
+        if (this.returnDate) postObject.returnDate = this.returnDate;
+        if (this.returnTime) postObject.returnTime = this.returnTime;
+      } else if (this.schedules) {
+        postObject.schedules = this.schedules;
+      }
+      // seats proposed as a driver (not handled yet for passengers)
+      if (this.driver && this.seats) postObject.seatsDriver = this.seats;
+      if (this.luggage != null) postObject.luggage = this.luggage;
+      if (this.bike != null) postObject.bike = this.bike;
+      if (this.backSeats != null) postObject.backSeats = this.backSeats;
+      // price chosen by the driver (not handled yet for passengers)
+      if (this.driver && this.price) {
+        // for now we just handle the outward price
+        postObject.outwardDriverPrice = this.solidaryExclusive ? 0 : this.price;
+      }
+      if (this.pricePerKm) postObject.priceKm = this.solidaryExclusive ? 0 : this.pricePerKm;
+      if (this.message != null) postObject.message = this.message;
+      // the following parameters are not used yet but we keep them here for possible future use
+      if (this.regularLifetime) postObject.regularLifetime = this.regularLifetime;
+      if (this.strictDate) postObject.strictDate = this.strictDate;
+      if (this.strictRegular) postObject.strictRegular = this.strictRegular;
+      if (this.strictPunctual) postObject.strictPunctual = this.strictPunctual;
+      if (this.useTime) postObject.useTime = this.useTime;
+      if (this.anyRouteAsPassenger) postObject.anyRouteAsPassenger = this.anyRouteAsPassenger;
+
+      return postObject;
     },
     roundPrice (price, frequency, doneByUser = false) {
       if (price >= 0 && frequency > 0) {

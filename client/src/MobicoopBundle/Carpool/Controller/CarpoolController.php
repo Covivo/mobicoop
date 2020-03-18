@@ -96,7 +96,7 @@ class CarpoolController extends AbstractController
 
         if ($request->isMethod('PUT')) {
             $data = json_decode($request->getContent(), true);
-            return $this->json(['result'=>$adManager->updateAd($data)]);
+            return $this->json(['result'=>$adManager->updateAd($data, $ad)]);
         }
 
         return $this->render('@Mobicoop/carpool/update.html.twig', [

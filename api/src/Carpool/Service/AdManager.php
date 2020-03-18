@@ -41,6 +41,7 @@ use App\Carpool\Repository\CriteriaRepository;
 use App\User\Exception\UserNotFoundException;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
+use PhpOffice\PhpSpreadsheet\Calculation\DateTime;
 use phpDocumentor\Reflection\Types\Boolean;
 use Psr\Log\LoggerInterface;
 use App\Carpool\Service\ProposalMatcher;
@@ -1027,14 +1028,34 @@ class AdManager
     }
 
     /**
-    * Update an ad.
-    *
-    */
+     * Update an ad.
+     *  /!\ Only minor data can be updated
+     * @param Ad $ad
+     * @return Ad
+     */
     public function updateAd(Ad $ad)
     {
         $proposal = $this->proposalRepository->find($ad->getAdId());
         $proposal->setPaused($ad->isPaused());
+        $proposal->getCriteria()->setBike($ad->hasBike());
+        $proposal->getCriteria()->setBackSeats($ad->hasBackSeats());
+        $proposal->getCriteria()->setLuggage($ad->hasLuggage());
+        $proposal->getCriteria()->setSeatsDriver($ad->getSeatsDriver());
+        $proposal->setComment($ad->getComment());
+
         $this->entityManager->persist($proposal);
+
+        if ($proposal->getProposalLinked()) {
+            $linkedProposal = $proposal->getProposalLinked();
+            $linkedProposal->setPaused($ad->isPaused());
+            $linkedProposal->getCriteria()->setBike($ad->hasBike());
+            $linkedProposal->getCriteria()->setBackSeats($ad->hasBackSeats());
+            $linkedProposal->getCriteria()->setLuggage($ad->hasLuggage());
+            $linkedProposal->getCriteria()->setSeatsDriver($ad->getSeatsDriver());
+            $linkedProposal->setComment($ad->getComment());
+            $this->entityManager->persist($linkedProposal);
+        }
+
         $this->entityManager->flush();
 
         $ad = $this->makeAd($proposal, $proposal->getUser()->getId());
@@ -1276,7 +1297,7 @@ class AdManager
         $user = $this->userManager->getUser($userId);
         // We retrieve all the proposals of the user
         $proposals = $this->proposalRepository->findBy(['user'=>$user]);
-       
+
         // We check for each proposal if he have matching
         /** @var Proposal $proposal */
         foreach ($proposals as $proposal) {
