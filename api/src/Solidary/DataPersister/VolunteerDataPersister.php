@@ -48,14 +48,15 @@ final class VolunteerDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
+        // call your persistence layer to save $data
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Volunteer id is provided"));
+        }
+
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-            // call your persistence layer to save $data
-            if (is_null($data)) {
-                throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
-            }
-            
-            // We create the user
             $this->volunteerManager->createVolunteer($data);
+        } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
+            $this->volunteerManager->updateVolunteer($this->request->get("id"), $data);
         }
         return $data;
     }

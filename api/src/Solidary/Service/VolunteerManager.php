@@ -33,6 +33,7 @@ use App\Solidary\Repository\VolunteerRepository;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Solidary\Exception\SolidaryException;
 
 class VolunteerManager
 {
@@ -59,7 +60,13 @@ class VolunteerManager
      */
     public function createVolunteer(ExposedVolunteer $exposedVolunteer)
     {
-        // First, we need to create a User behind this volonteer (if it doesn't exist)
+        // First, we check if this volunteer already exists
+        $volunteer = $this->getVolunteerByEmail($exposedVolunteer->getEmail());
+        if (!is_null($volunteer)) {
+            throw new SolidaryException(SolidaryException::VOLUNTEER_ALREADY_EXISTS);
+        }
+        
+        // We need to create a User behind this volonteer (if it doesn't exist)
 
         $preparedUser = $this->userManager->getUserByEmail($exposedVolunteer->getEmail());
         if (empty($preparedUser)) {
@@ -76,10 +83,33 @@ class VolunteerManager
         // We set the userId of the exposed volunteer, because we return it
         $exposedVolunteer->setUserId($preparedUser->getId());
 
-        // Next, we need to create a true Volonteer
-        $volunteer = new Volunteer();
-        // The prepared User
-        $volunteer->setUser($preparedUser);
+
+        $volunteer = $this->buildVolunteer($preparedUser, $exposedVolunteer);
+
+        $this->entityManager->persist($volunteer);
+        $this->entityManager->flush();
+
+        return $exposedVolunteer;
+    }
+
+    /**
+     * Build a Volunter from an exposed Volunteer
+     *
+     * @param User $user
+     * @param ExposedVolunteer $exposedVolunteer
+     * @return void
+     */
+    public function buildVolunteer(User $user, ExposedVolunteer $exposedVolunteer)
+    {
+        // We look for a pre existing volunteer (in case of an update for exemple)
+        // If it does'nt exists (in case of a creation) we instanciate a new one
+        $volunteer = $this->volunteerRepository->find($exposedVolunteer->getId());
+        if (is_null($volunteer)) {
+            $volunteer = new Volunteer();
+        }
+        
+        $volunteer->setUser($user);
+
         // The classic params of a volunteer
         $volunteer->setAddress($exposedVolunteer->getAddress());
         $volunteer->setMaxDistance($exposedVolunteer->getMaxDistance());
@@ -103,8 +133,8 @@ class VolunteerManager
         // Proofs
         foreach ($exposedVolunteer->getProofs() as $currentProof) {
             $proof = new Proof();
-            $proof->setValue($currentProof['value']);
-            $structureProof = $this->structureProofRepository->find($currentProof['structureProof']);
+            $proof->setValue((is_array($currentProof)) ? $currentProof['value'] : $currentProof->getValue());
+            $structureProof = $this->structureProofRepository->find((is_array($currentProof)) ? $currentProof['structureProof'] : $currentProof->getStructureProof()->getId());
             if (!empty($structureProof)) {
                 $proof->setStructureProof($structureProof);
             }
@@ -196,13 +226,8 @@ class VolunteerManager
             $volunteer->setEMon($exposedVolunteer->hasESun());
         }
 
-        // $this->entityManager->persist($volunteer);
-        // $this->entityManager->flush();
-
-        return $exposedVolunteer;
+        return $volunteer;
     }
-
-
     /**
      * Get a Volunteer (exposed)
      *
@@ -221,6 +246,21 @@ class VolunteerManager
     }
 
     /**
+     * Get a Volunteer by its email
+     *
+     * @param string $email
+     * @return ExposedVolunteer|null
+     */
+    public function getVolunteerByEmail(string $email)
+    {
+        $volunteer = $this->volunteerRepository->findByEmail($email);
+        if (is_array($volunteer) && count($volunteer)>0) {
+            return $this->buildExposedVolunteer($volunteer[0]);
+        }
+        return null;
+    }
+
+    /**
      * Build an exposed Volunteer from a Volunteer
      *
      * @param Volunteer $volunteer
@@ -229,6 +269,7 @@ class VolunteerManager
     public function buildExposedVolunteer(Volunteer $volunteer)
     {
         $exposedVolunteer = new ExposedVolunteer();
+        $exposedVolunteer->setId($volunteer->getId());
         $exposedVolunteer->setEmail($volunteer->getUser()->getEmail());
         $exposedVolunteer->setGivenName($volunteer->getUser()->getGivenName());
         $exposedVolunteer->setFamilyName($volunteer->getUser()->getFamilyName());
@@ -244,6 +285,119 @@ class VolunteerManager
         $exposedVolunteer->setAddress($volunteer->getAddress());
         $exposedVolunteer->setStructure($volunteer->getStructure()->getId());
 
+        // Availabilities - Times
+        if (!is_null($volunteer->getMMinTime())) {
+            $exposedVolunteer->setMMinTime($volunteer->getMMinTime());
+        }
+        if (!is_null($volunteer->getMMaxTime())) {
+            $exposedVolunteer->setMMaxTime($volunteer->getMMaxTime());
+        }
+        if (!is_null($volunteer->getAMinTime())) {
+            $exposedVolunteer->setAMinTime($volunteer->getAMinTime());
+        }
+        if (!is_null($volunteer->getAMaxTime())) {
+            $exposedVolunteer->setAMaxTime($volunteer->getAMaxTime());
+        }
+        if (!is_null($volunteer->getEMinTime())) {
+            $exposedVolunteer->setEMinTime($volunteer->getEMinTime());
+        }
+        if (!is_null($volunteer->getEMaxTime())) {
+            $exposedVolunteer->setEMaxTime($volunteer->getEMaxTime());
+        }
+
+        // Availabilities - Days
+        if (!is_null($volunteer->hasMMon())) {
+            $exposedVolunteer->setMMon($volunteer->hasMMon());
+        }
+        if (!is_null($volunteer->hasAMon())) {
+            $exposedVolunteer->setAMon($volunteer->hasAMon());
+        }
+        if (!is_null($volunteer->hasEMon())) {
+            $exposedVolunteer->setEMon($volunteer->hasEMon());
+        }
+        if (!is_null($volunteer->hasMTue())) {
+            $exposedVolunteer->setMMon($volunteer->hasMTue());
+        }
+        if (!is_null($volunteer->hasATue())) {
+            $exposedVolunteer->setAMon($volunteer->hasATue());
+        }
+        if (!is_null($volunteer->hasETue())) {
+            $exposedVolunteer->setEMon($volunteer->hasETue());
+        }
+        if (!is_null($volunteer->hasMWed())) {
+            $exposedVolunteer->setMMon($volunteer->hasMWed());
+        }
+        if (!is_null($volunteer->hasAWed())) {
+            $exposedVolunteer->setAMon($volunteer->hasAWed());
+        }
+        if (!is_null($volunteer->hasEWed())) {
+            $exposedVolunteer->setEMon($volunteer->hasEWed());
+        }
+        if (!is_null($volunteer->hasMThu())) {
+            $exposedVolunteer->setMMon($volunteer->hasMThu());
+        }
+        if (!is_null($volunteer->hasAThu())) {
+            $exposedVolunteer->setAMon($volunteer->hasAThu());
+        }
+        if (!is_null($volunteer->hasEThu())) {
+            $exposedVolunteer->setEMon($volunteer->hasEThu());
+        }
+        if (!is_null($volunteer->hasMFri())) {
+            $exposedVolunteer->setMMon($volunteer->hasMFri());
+        }
+        if (!is_null($volunteer->hasAFri())) {
+            $exposedVolunteer->setAMon($volunteer->hasAFri());
+        }
+        if (!is_null($volunteer->hasEFri())) {
+            $exposedVolunteer->setEMon($volunteer->hasEFri());
+        }
+        if (!is_null($volunteer->hasMSat())) {
+            $exposedVolunteer->setMMon($volunteer->hasMSat());
+        }
+        if (!is_null($volunteer->hasASat())) {
+            $exposedVolunteer->setAMon($volunteer->hasASat());
+        }
+        if (!is_null($volunteer->hasESat())) {
+            $exposedVolunteer->setEMon($volunteer->hasESat());
+        }
+        if (!is_null($volunteer->hasMSun())) {
+            $exposedVolunteer->setMMon($volunteer->hasMSun());
+        }
+        if (!is_null($volunteer->hasASun())) {
+            $exposedVolunteer->setAMon($volunteer->hasASun());
+        }
+        if (!is_null($volunteer->hasESun())) {
+            $exposedVolunteer->setEMon($volunteer->hasESun());
+        }
+
+
+        return $exposedVolunteer;
+    }
+
+
+    /**
+     * Update a volunteer
+     *
+     * @param int $id                               Id of the true volunteer
+     * @param ExposedVolunteer $exposedVolunteer    The exposed volunter with data to update
+     * @return ExposedVolunteer
+     */
+    public function updateVolunteer(int $id, ExposedVolunteer $exposedVolunteer)
+    {
+        // Get the original Volunteer
+        $volunteer = $this->volunteerRepository->find($id);
+
+        //$volunteer = $this->buildVolunteer($volunteer->getUser(), $exposedVolunteer);
+
+        //$volunteer->setMaxDistance(1);
+
+        // TO DO : Circual reference error !
+
+
+
+        $this->entityManager->persist($volunteer);
+        //$this->entityManager->flush();
+        
         return $exposedVolunteer;
     }
 }

@@ -55,4 +55,25 @@ class VolunteerRepository
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
+
+    public function findOneBy(array $criteria): ?Volunteer
+    {
+        return $this->repository->findOneBy($criteria);
+    }
+
+    /**
+     * Get a Volunteer by its email
+     *
+     * @param string $email
+     * @return Volunteer|null
+     */
+    public function findByEmail(string $email)
+    {
+        $query = $this->repository->createQueryBuilder('v')
+        ->join('v.user', 'u')
+        ->where('u.email = :email')
+        ->setParameter('email', $email);
+
+        return $query->getQuery()->getResult();
+    }
 }

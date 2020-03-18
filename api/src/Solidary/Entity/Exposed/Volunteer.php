@@ -63,7 +63,12 @@ use App\Solidary\Entity\Structure;
  *              "path"="/volunteers/{id}",
  *              "security"="is_granted('solidary_volunteer_read',object)"
  *          },
- *          "put","delete"
+ *          "put"={
+ *              "method"="PUT",
+ *              "normalization_context"={"groups"={"writeVolunteer"}},
+ *              "path"="/volunteers/{id}"
+ *          }
+ *          ,"delete"
  *      }
  * )
  */
