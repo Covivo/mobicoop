@@ -45,28 +45,7 @@ import { fetchUtils } from 'react-admin';
 // function to search for a given permission
 export default (action) => {
 
-    const options = {}
-    let val = false;
-    const apiPermissions = process.env.REACT_APP_API+'/permissions';
-    const httpClient = fetchUtils.fetchJson;
-    if (!options.headers) {
-        options.headers = new Headers({ Accept: 'application/json' });
-    }
-    options.headers.set('Authorization', `Bearer ${localStorage.token}`);
-
-    httpClient(apiPermissions, {
-        method: 'GET',
-        headers : options.headers
-    }).then( retour => {
-        if (retour.status = '200') {
-            // On supprime l'ancienne image ?
-            let permissions = retour.json;
-            val =  Object.values(permissions).includes(action)
-            //console.info(permissions.includes(action))
-        }
-    });
-
-    return true;
-
+    let permissions = JSON.parse(localStorage.getItem('permissions'));
+    return permissions ? (Object.values(permissions).indexOf(action) > -1) : false;
 
 }

@@ -1,7 +1,7 @@
 import React from 'react';
-import { 
-    Show, 
-    Tab, TabbedShowLayout, 
+import {
+    Show,
+    Tab, TabbedShowLayout,
     List,
     Datagrid,
     BooleanField, TextField, DateField, RichTextField, SelectField, ReferenceArrayField, ReferenceField, FunctionField,BulkDeleteButton,useTranslate
@@ -48,7 +48,7 @@ const Aside = ({ record }) => (
             </ListItem>
             <ListItem >
                 <ListItemIcon><VerifiedUserIcon /></ListItemIcon>
-                <ListItemText primary={<Typography variant="body2">{validationChoices.find(e => e.id === record.validationType).name}</Typography>} />
+                <ListItemText primary={<Typography variant="body2">{validationChoices.find(e => e.id === (record.validationType || 0)).name }</Typography>} />
             </ListItem>
             <ListItem >
                 <ListItemIcon><TodayIcon /></ListItemIcon>
@@ -61,7 +61,7 @@ const Aside = ({ record }) => (
         </ListMaterial>
         }
 
-        
+
     </Card>
 );
 
@@ -83,7 +83,7 @@ export const CommunityShow = (props) => {
                 <TextField source="domain" label={translate('custom.label.community.domainName')} />
                 <TextField source="description" label={translate('custom.label.community.description')} />
                 <RichTextField source="fullDescription" label={translate('custom.label.community.descriptionFull')} />
-                
+
             </Tab>
             <Tab label={translate('custom.label.community.membersModerator')}>
 
@@ -101,7 +101,7 @@ export const CommunityShow = (props) => {
                             <DateField source="createdDate"  label={translate('custom.label.community.joinAt')} />
                             <DateField source="acceptedDate" label={translate('custom.label.community.acceptedAt')}/>
                             <DateField source="refusedDate" label={translate('custom.label.community.refusedAt')}/>
-                            { /* 
+                            { /*
                             Edit and Delete button should be in an Community Edit view
                             <EditButton />
                             <DeleteButton />
