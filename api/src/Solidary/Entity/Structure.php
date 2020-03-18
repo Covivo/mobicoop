@@ -334,12 +334,12 @@ class Structure
     private $structures;
 
     /**
-     * @var ArrayCollection|null The volunteers for this structure.
+     * @var ArrayCollection|null The solidary user for this structure.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Volunteer", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUser", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
      * @Groups("readSolidary")
      */
-    private $volunteers;
+    private $solidaryUsers;
 
     /**
      * @var ArrayCollection|null The subjects for this structure.
@@ -370,7 +370,7 @@ class Structure
     {
         $this->solidaries = new ArrayCollection();
         $this->structures = new ArrayCollection();
-        $this->volunteers = new ArrayCollection();
+        $this->solidaryUsers = new ArrayCollection();
         $this->subjects = new ArrayCollection();
         $this->needs = new ArrayCollection();
         $this->relayPoints = new ArrayCollection();
@@ -816,28 +816,28 @@ class Structure
         return $this;
     }
 
-    public function getVolunteers()
+    public function getSolidaryUsers()
     {
-        return $this->volunteers->getValues();
+        return $this->solidaryUsers->getValues();
     }
 
-    public function addVolunteer(Volunteer $volunteer): self
+    public function addSolidaryUsers(SolidaryUser $solidaryUser): self
     {
-        if (!$this->volunteers->contains($volunteer)) {
-            $this->volunteers->add($volunteer);
-            $volunteer->setStructure($this);
+        if (!$this->solidaryUsers->contains($solidaryUser)) {
+            $this->solidaryUsers->add($solidaryUser);
+            $solidaryUser->setStructure($this);
         }
 
         return $this;
     }
 
-    public function removeVolunteer(Volunteer $volunteer): self
+    public function removeSolidaryUser(SolidaryUser $solidaryUser): self
     {
-        if ($this->volunteers->contains($volunteer)) {
-            $this->volunteers->removeElement($volunteer);
+        if ($this->solidaryUsers->contains($solidaryUser)) {
+            $this->solidaryUsers->removeElement($solidaryUser);
             // set the owning side to null (unless already changed)
-            if ($volunteer->getStructure() === $this) {
-                $volunteer->setStructure(null);
+            if ($solidaryUser->getStructure() === $this) {
+                $solidaryUser->setStructure(null);
             }
         }
 

@@ -37,13 +37,13 @@ use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
- * A solidary proof related to a solidary record or a volunteer
+ * A solidary proof related to a solidary record or a solidaryUser
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"readSolidary","readVolunteer"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readSolidary","readSolidaryUser}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={"get","post"},
@@ -63,7 +63,7 @@ class Proof
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","readVolunteer"})
+     * @Groups({"readSolidary","readSolidaryUser"})
      */
     private $id;
 
@@ -71,7 +71,7 @@ class Proof
      * @var string The value entered by the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readSolidary","readVolunteer","writeVolunteer"})
+     * @Groups({"readSolidary","readSolidaryUser","writeSolidaryUser"})
      */
     private $value;
 
@@ -81,7 +81,7 @@ class Proof
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof", inversedBy="proofs")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","readVolunteer","writeVolunteer"})
+     * @Groups({"readSolidary","readSolidaryUser","writeSolidaryUser"})
      * @MaxDepth(1)
      */
     private $structureProof;
@@ -90,25 +90,25 @@ class Proof
      * @var Solidary Solidary record if the proof concerns a solidary requester.
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof", inversedBy="proofs")
-     * @Groups({"readSolidary","readVolunteer","writeVolunteer"})
+     * @Groups({"readSolidary","readSolidaryUser","writeSolidaryUser"})
      * @MaxDepth(1)
      */
     private $solidary;
 
     /**
-     * @var Volunteer Volunteer id if the proof concerns a volunteer.
+     * @var SolidaryUser if the proof concerns a solidary User.
      *
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Volunteer", inversedBy="proofs")
-     * @Groups({"readSolidary","writeVolunteer"})
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUser", inversedBy="proofs")
+     * @Groups({"readSolidary","writeSolidaryUser"})
      * @MaxDepth(1)
      */
-    private $volunteer;
+    private $solidaryUser;
 
     /**
      * @var string The final file name of the proof.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readSolidary","readVolunteer","writeVolunteer"})
+     * @Groups({"readSolidary","readSolidaryUser","writeSolidaryUser"})
      */
     private $fileName;
     
@@ -116,7 +116,7 @@ class Proof
      * @var string The original file name of the proof.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readSolidary","readVolunteer","writeVolunteer"})
+     * @Groups({"readSolidary","readSolidaryUser","writeSolidaryUser"})
      */
     private $originalName;
 
@@ -124,7 +124,7 @@ class Proof
      * @var int The size in bytes of the file.
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"readSolidary","readVolunteer","writeVolunteer"})
+     * @Groups({"readSolidary","readSolidaryUser","writeSolidaryUser"})
      */
     private $size;
     
@@ -132,7 +132,7 @@ class Proof
      * @var string The mime type of the file.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readSolidary","readVolunteer"})
+     * @Groups({"readSolidary","readSolidaryUser"})
      */
     private $mimeType;
 
@@ -146,7 +146,7 @@ class Proof
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","readVolunteer"})
+     * @Groups({"readSolidary","readSolidaryUser"})
      */
     private $createdDate;
 
@@ -154,7 +154,7 @@ class Proof
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","readVolunteer"})
+     * @Groups({"readSolidary","readSolidaryUser"})
      */
     private $updatedDate;
     
@@ -211,14 +211,14 @@ class Proof
         return $this;
     }
 
-    public function getVolunteer(): ?Volunteer
+    public function getSolidaryUser(): ?SolidaryUser
     {
-        return $this->volunteer;
+        return $this->solidaryUser;
     }
 
-    public function setVolunteer(?Volunteer $volunteer): self
+    public function setSolidaryUser(?SolidaryUser $solidaryUser): self
     {
-        $this->volunteer = $volunteer;
+        $this->solidaryUser = $solidaryUser;
 
         return $this;
     }

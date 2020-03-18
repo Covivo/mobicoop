@@ -31,7 +31,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Entity\Matching;
 
 /**
- * Matchings saved by an admin for a solidary record.
+ * Solutions for a Solidary
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -45,7 +45,7 @@ use App\Carpool\Entity\Matching;
  *      itemOperations={"get","put","delete"}
  * )
  */
-class SolidaryMatching
+class SolidarySolution
 {
     /**
      * @var int $id The id of this solidary matching.
@@ -78,12 +78,12 @@ class SolidaryMatching
     private $solidary;
 
     /**
-     * @var Volunteer The volunteer if needed.
+     * @var SolidaryUser The solidary User if needed.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Volunteer")
+     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidaryUser")
      * @Groups({"readSolidary","writeSolidary"})
      */
-    private $volunteer;
+    private $solidaryUser;
 
     /**
      * @var string A comment about the solidary matching.
@@ -138,14 +138,14 @@ class SolidaryMatching
         return $this;
     }
 
-    public function getVolunteer(): Volunteer
+    public function getSolidaryUser(): SolidaryUser
     {
-        return $this->volunteer;
+        return $this->solidaryUser;
     }
     
-    public function setVolunteer(?Volunteer $volunteer): self
+    public function setSolidaryUser(?SolidaryUser $solidaryUser): self
     {
-        $this->volunteer = $volunteer;
+        $this->solidaryUser = $solidaryUser;
         
         return $this;
     }
