@@ -29,6 +29,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Permission\Service\PermissionManager;
+use Symfony\Component\Security\Core\Security;
 
 class AdVoter extends Voter
 {
@@ -40,10 +41,17 @@ class AdVoter extends Voter
     const RESULTS = 'results_ad';
 
     private $permissionManager;
+    private $security;
 
-    public function __construct(PermissionManager $permissionManager)
+    /**
+     * AdVoter constructor.
+     * @param PermissionManager $permissionManager
+     * @param Security $security
+     */
+    public function __construct(PermissionManager $permissionManager, Security $security)
     {
         $this->permissionManager = $permissionManager;
+        $this->security = $security;
     }
 
     protected function supports($attribute, $subject)
@@ -78,7 +86,7 @@ class AdVoter extends Voter
             case self::DELETE_AD:
                 return $this->canDeleteAd($ad, $user);
             case self::UPDATE_AD:
-                return $this->canUpdateAd($ad, $user);
+                return $this->canUpdateAd($ad);
             case self::POST:
                 return $this->canPostAd($user);
             case self::POST_DELEGATE:
@@ -105,8 +113,10 @@ class AdVoter extends Voter
         return $this->permissionManager->checkPermission('ad_delete', $user, $proposal->getId());
     }
 
-    private function canUpdateAd(Ad $ad, User $user)
+    private function canUpdateAd(Ad $ad)
     {
+        $user = $this->security->getUser();
+
         // only registered users can update ad
         if (!$user instanceof User) {
             return false;

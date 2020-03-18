@@ -93,6 +93,7 @@ class CarpoolController extends AbstractController
     public function carpoolAdUpdate(int $id, AdManager $adManager, Request $request)
     {
         $ad = $adManager->getFullAd($id);
+        $this->denyAccessUnlessGranted('update_ad', $ad);
 
         if ($request->isMethod('PUT')) {
             $data = json_decode($request->getContent(), true);
