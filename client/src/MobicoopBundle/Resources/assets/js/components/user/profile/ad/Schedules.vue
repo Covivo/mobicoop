@@ -30,7 +30,7 @@
             v-if="isOutward"
             cols="6"
             class="py-0"
-            :class="isRefined ? 'text-left' : 'text-right'"
+            :class="isRefined || !isReturn ? 'text-left' : 'text-right'"
           >
             <span
               v-if="!isRefined"
