@@ -53,7 +53,7 @@
             no-gutters
           >
             <carpooler
-              :result="ask.results[1] ? ask.results[1] : ask.results[0]"
+              :result="getResults(ask)"
               :ask="ask"
               :user="user"
               :is-inverted="!empty(ask.results[1])"
@@ -116,6 +116,19 @@ export default {
   methods: {
     empty(obj) {
       return isEmpty(obj);
+    },
+    getResults (ask) {
+      let length = ask.results.length;
+      if (length === 1) {
+        return ask.results[0];
+      } else if (length > 1) {
+        for (let i = 1; i < length; i ++) {
+          if (ask.results[i].acceptedAsk === true) {
+            return ask.results[i];
+          }
+        }
+      }
+      return ask.results[0];
     }
   }
 }
