@@ -537,9 +537,9 @@
     <!-- </v-stepper-content> -->
 
     <!-- Buttons Previous and Next step -->
-    <v-layout
+    <v-row
       mt-5
-      justify-center
+      justify="center"
     >
       <v-btn
         v-if="step > 1"
@@ -598,7 +598,7 @@
         </template>
         <span>{{ $t('stepper.buttons.notValid') }}</span>
       </v-tooltip>
-    </v-layout>
+    </v-row>
   </v-container>
 </template>
 
