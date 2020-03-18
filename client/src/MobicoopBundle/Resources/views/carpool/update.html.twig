@@ -15,7 +15,8 @@
             :init-destination="{{ ad.destination | json_encode}}"
             :init-regular="{% if (ad.frequency == 2) %}true{% else %}false{% endif %}"
             :default-margin-time="{{ marginTime }}"
-            :has-asks="{% if (ad.results|length > 0) %}true{% else %}false{% endif %}"
+            :has-asks="{% if (hasAsks == true) %}true{% else %}false{% endif %}" {# renvoie des entiers sinon #}
+            :has-potential-ads="{% if (hasPotentialAds == true) %}true{% else %}false{% endif %}" {# renvoie des entiers sinon #}
     />
 
 {% endblock %}

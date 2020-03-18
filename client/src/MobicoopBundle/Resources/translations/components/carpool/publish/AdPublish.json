@@ -6,9 +6,19 @@
         },
         "update" : {
            "title": "Modifier votre annonce",
-            "asks_popup": {
-                "title" : "Des demandes existent pour cette annonce",
-                "content" : "Une ou plusieurs demandes ont déjà été faites en lien avec cette annonce. Les détails de votre modification seront envoyées à tous les usagers ayant fait ces demandes. \n Confirmez-vous votre modification ?"
+            "popup": {
+                "major_update_asks": {
+                    "title" : "Au moins une demande existe pour cette annonce",
+                    "content" : "Une ou plusieurs demandes ont déjà été faites en lien avec cette annonce. Votre modification sur des informations essentielles supprimera la version actuelle de votre annonce pour en créer une nouvelle et rejettera donc toutes les demandes en cours.<br>Si vous confirmez votre modification, quel message voulez-vous envoyer aux covoitureurs dont vous rejetez les demandes ?"
+                },
+                "major_update_ads": {
+                    "title" : "Un usager a déjà repéré votre annonce",
+                    "content" : "Un usager a déjà repéré votre annonce comme correspondant à un besoin et a pu en être alerté par SMS ou email. Votre modification supprimera la version actuelle de votre annonce pour en créer une nouvelle."
+                },
+                "minor_update_asks": {
+                    "title" : "Des demandes existent pour cette annonce",
+                    "content" : "Une ou plusieurs demandes ont déjà été faites en lien avec cette annonce. Les détails de votre modification seront envoyées à tous les usagers ayant fait ces demandes.<br>Confirmez-vous votre modification ?"
+                }
             }
         },
         "stepper": {

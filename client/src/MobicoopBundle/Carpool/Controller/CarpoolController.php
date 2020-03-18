@@ -90,10 +90,27 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function carpoolAdUpdate(int $id, AdManager $adManager, Request $request)
+    public function carpoolAdUpdate(int $id, AdManager $adManager, ProposalManager $proposalManager, Request $request)
     {
         $ad = $adManager->getFullAd($id);
+        $proposal = $proposalManager->getProposal($id);
         $this->denyAccessUnlessGranted('update_ad', $ad);
+
+        $hasAsks = false;
+        $hasPotentialAds = false;
+
+        foreach ($proposal["matchingOffers"] as $offer) {
+            $hasPotentialAds = true;
+            if (count($offer["asks"]) > 0) {
+                $hasAsks = true;
+            }
+        }
+        foreach ($proposal["matchingRequests"] as $request) {
+            $hasPotentialAds = true;
+            if (count($request["asks"]) > 0) {
+                $hasAsks = true;
+            }
+        }
 
         if ($request->isMethod('PUT')) {
             $data = json_decode($request->getContent(), true);
@@ -101,7 +118,9 @@ class CarpoolController extends AbstractController
         }
 
         return $this->render('@Mobicoop/carpool/update.html.twig', [
-            "ad" => $ad
+            "ad" => $ad,
+            "hasAsks" => $hasAsks,
+            "hasPotentialAds" => $hasPotentialAds
         ]);
     }
 

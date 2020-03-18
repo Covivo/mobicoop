@@ -590,7 +590,7 @@
               color="secondary"
               style="margin-left: 30px;"
               align-center
-              @click="isUpdate ? (hasAsks ? dialog = true : updateAd()) : postAd()"
+              @click="isUpdate ? (hasAsks || hasPotentialAds ? dialog = true : updateAd()) : postAd()"
             >
               {{ isUpdate ? $t('stepper.buttons.update_ad', {id: ad.id}) : $t('stepper.buttons.publish_ad') }}
             </v-btn>
@@ -608,10 +608,18 @@
         max-width="550"
       >
         <v-card>
-          <v-card-title class="headline">
-            {{ $t('update.asks_popup.title') }}
-          </v-card-title>
-          <v-card-text>{{ $t('update.asks_popup.content') }}</v-card-text>
+          <v-card-title
+            class="headline"
+            v-html="popupTitle"
+          />
+          <v-card-text v-html="popupContent" />
+          <v-container>
+            <v-textarea
+              v-if="isMajorUpdate && hasAsks"
+              v-model="cancellationMessage"
+            />
+          </v-container>
+
           <v-card-actions>
             <v-spacer />
             <v-btn
@@ -635,7 +643,7 @@
 </template>
 
 <script>
-import { merge, isEmpty } from "lodash";
+import { merge, isEmpty, isEqual } from "lodash";
 import Translations from "@translations/components/carpool/publish/AdPublish.json";
 import TranslationsClient from "@clientTranslations/components/carpool/publish/AdPublish.json";
 
@@ -737,8 +745,13 @@ export default {
       type: Boolean,
       default: false
     },
-    // for update popup
+    // for minor and major update popup
     hasAsks: {
+      type: Boolean,
+      default: false
+    },
+    // for major update popup only
+    hasPotentialAds: {
       type: Boolean,
       default: false
     }
@@ -792,7 +805,9 @@ export default {
       initWaypoints: [],
       initSchedule: null,
       role: null,
-      dialog: false
+      dialog: false,
+      oldUpdateObject: null,
+      cancellationMessage: ""
     }
   },
   computed: {
@@ -895,6 +910,30 @@ export default {
     },
     isValidUpdate () {
       return this.isUpdate && !isEmpty(this.ad);
+    },
+    isMajorUpdate () {
+      if (!this.isValidUpdate || isEmpty(this.oldUpdateObject)) return false;
+      let newUpdateObject = this.buildAdObject();
+      return newUpdateObject.regular !== this.oldUpdateObject.regular
+        || this.oldUpdateObject.driver !== newUpdateObject.driver
+        || this.oldUpdateObject.passenger !== newUpdateObject.passenger
+        || !isEqual(this.oldUpdateObject.origin, newUpdateObject.origin)
+        || !isEqual(this.oldUpdateObject.destination, newUpdateObject.destination)
+        || newUpdateObject.pricePerKm !== this.oldUpdateObject.pricePerKm
+        || !isEqual(this.oldUpdateObject.waypoints, newUpdateObject.waypoints)
+        || !isEqual(this.oldUpdateObject.schedules, newUpdateObject.schedules);
+    },
+    popupTitle () {
+      if (this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.major_update_asks.title');
+      else if (this.isMajorUpdate && this.hasPotentialAds) return this.$t('update.popup.major_update_ads.title');
+      else if (!this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.minor_update_asks.title');
+      return '';
+    },
+    popupContent () {
+      if (this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.major_update_asks.content');
+      else if (this.isMajorUpdate && this.hasPotentialAds) return this.$t('update.popup.major_update_ads.content');
+      else if (!this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.minor_update_asks.content');
+      return '';
     }
   },
   watch: {
@@ -938,6 +977,11 @@ export default {
         this.role = this.ad.role;
         this.driver = this.ad.role === 1 || this.ad.role === 3;
         this.passenger = this.ad.role === 2 || this.ad.role === 3;
+        // we set a timeout because waypoints and schedule need to be handle by their respective component before they are usable on this one
+        // if we dont set a timeout, old and new update objects are always different so it is always considered a major update
+        setTimeout(() => {
+          this.oldUpdateObject = this.buildAdObject();
+        }, 4000);
       }
     }
   },
@@ -967,7 +1011,7 @@ export default {
       this.directionWay.length = 0;
       let currentDirectionWay = {
         latLngs:this.route.direction.directPoints
-      }        
+      };
       this.directionWay.push(currentDirectionWay);
     },
     buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
@@ -975,7 +1019,7 @@ export default {
         title:title,
         latLng:L.latLng(lat, lng),
         icon: {}
-      }
+      };
 
       if(pictoUrl!==""){
         point.icon = {
