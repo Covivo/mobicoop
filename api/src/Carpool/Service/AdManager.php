@@ -750,9 +750,10 @@ class AdManager
      * @param integer $userId The userId who made the proposal
      * @param bool $hasAsks - if the ad has ask we do not return results since we return the ask with the ad
      * @param Ad $askLinked - the linked ask if proposal is private and get the correct data for Ad (like time and day checks)
+     * @param Matching $matching - the corresponding Matching
      * @return Ad
      */
-    private function makeAd($proposal, $userId, $hasAsks = false, ?Ad $askLinked = null)
+    private function makeAd($proposal, $userId, $hasAsks = false, ?Ad $askLinked = null, ?Matching $matching = null)
     {
         $ad = new Ad();
         $ad->setId($proposal->getId());
@@ -802,7 +803,10 @@ class AdManager
         if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
             $schedule = $askLinked
                ? $this->getScheduleFromResults($askLinked->getResults()[0], $proposal)
-               : $this->getScheduleFromCriteria($proposal->getCriteria(), $proposal);
+               : $this->getScheduleFromCriteria($proposal->getCriteria(), $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria() : null);
+            if ($ad->getRole() === Ad::ROLE_PASSENGER && !is_null($matching) && $matching->getPickUpDuration()) {
+                $schedule = $this->updateScheduleTimesWithPickUpDurations($schedule, $matching->getPickUpDuration(), $matching->getMatchingLinked() ? $matching->getMatchingLinked()->getPickUpDuration() : null);
+            }
         }
         $ad->setSchedule($schedule);
         $results = $this->resultManager->createAdResults($proposal);
@@ -814,35 +818,35 @@ class AdManager
         return $ad;
     }
 
-    public function getScheduleFromCriteria(Criteria $criteria, Proposal $proposal)
+    public function getScheduleFromCriteria(Criteria $criteria, ?Criteria $returnCriteria = null)
     {
-        $schedule['mon'] = $criteria->isMonCheck() || ($proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->isMonCheck() : false);
+        $schedule['mon'] = $criteria->isMonCheck() || ($returnCriteria ? $returnCriteria->isMonCheck() : false);
         $schedule['monOutwardTime'] = $criteria->getMonTime();
-        $schedule['monReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getMonTime() : null;
+        $schedule['monReturnTime'] = $returnCriteria ? $returnCriteria->getMonTime() : null;
 
-        $schedule['tue'] = $criteria->isTueCheck() || ($proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->isTueCheck() : false);
+        $schedule['tue'] = $criteria->isTueCheck() || ($returnCriteria ? $returnCriteria->isTueCheck() : false);
         $schedule['tueOutwardTime'] = $criteria->getTueTime();
-        $schedule['tueReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getTueTime() : null;
+        $schedule['tueReturnTime'] = $returnCriteria ? $returnCriteria->getTueTime() : null;
 
-        $schedule['wed'] = $criteria->isWedCheck() || ($proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->isWedCheck() : false);
+        $schedule['wed'] = $criteria->isWedCheck() || ($returnCriteria ? $returnCriteria->isWedCheck() : false);
         $schedule['wedOutwardTime'] = $criteria->getWedTime();
-        $schedule['wedReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getWedTime() : null;
+        $schedule['wedReturnTime'] = $returnCriteria ? $returnCriteria->getWedTime() : null;
 
-        $schedule['thu'] = $criteria->isThuCheck() || ($proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->isThuCheck() : false);
+        $schedule['thu'] = $criteria->isThuCheck() || ($returnCriteria ? $returnCriteria->isThuCheck() : false);
         $schedule['thuOutwardTime'] = $criteria->getThuTime();
-        $schedule['thuReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getThuTime() : null;
+        $schedule['thuReturnTime'] = $returnCriteria ? $returnCriteria->getThuTime() : null;
 
-        $schedule['fri'] = $criteria->isFriCheck() || ($proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->isFriCheck() : false);
+        $schedule['fri'] = $criteria->isFriCheck() || ($returnCriteria ? $returnCriteria->isFriCheck() : false);
         $schedule['friOutwardTime'] = $criteria->getFriTime();
-        $schedule['friReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getFriTime() : null;
+        $schedule['friReturnTime'] = $returnCriteria ? $returnCriteria->getFriTime() : null;
 
-        $schedule['sat'] = $criteria->isSatCheck() || ($proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->isSatCheck() : false);
+        $schedule['sat'] = $criteria->isSatCheck() || ($returnCriteria ? $returnCriteria->isSatCheck() : false);
         $schedule['satOutwardTime'] = $criteria->getSatTime();
-        $schedule['satReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getSatTime() : null;
+        $schedule['satReturnTime'] = $returnCriteria ? $returnCriteria->getSatTime() : null;
 
-        $schedule['sun'] = $criteria->isSunCheck() || ($proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->isSunCheck() : false);
+        $schedule['sun'] = $criteria->isSunCheck() || ($returnCriteria ? $returnCriteria->isSunCheck() : false);
         $schedule['sunOutwardTime'] = $criteria->getSunTime();
-        $schedule['sunReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getSunTime() : null;
+        $schedule['sunReturnTime'] = $returnCriteria ? $returnCriteria->getSunTime() : null;
 
         return $schedule;
     }
@@ -889,6 +893,32 @@ class AdManager
 
         return $schedule;
     }
+
+    /**
+     * Update a Schedule with pick up durations from a Matching
+     * Used when the Ad role is passenger
+     * @param array $schedule
+     * @param string $outwardPickUpDuration
+     * @param string|null $returnPickUpDuration
+     * @return array
+     * @throws \Exception
+     */
+    public function updateScheduleTimesWithPickUpDurations(array $schedule, string $outwardPickUpDuration, ?string $returnPickUpDuration = null)
+    {
+        $days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+
+        foreach ($days as $day) {
+            if ($schedule[$day . "OutwardTime"]) {
+                $schedule[$day . "OutwardTime"] =  $schedule[$day . "OutwardTime"]->add(new \DateInterval('PT' . $outwardPickUpDuration . 'S'));
+            }
+            if ($schedule[$day . "ReturnTime"] && $returnPickUpDuration) {
+                $schedule[$day . "ReturnTime"] = $schedule[$day . "ReturnTime"]->add(new \DateInterval('PT' . $returnPickUpDuration . 'S'));
+            }
+        }
+
+        return $schedule;
+    }
+
     /**
      * make an ad from a proposal
      *
@@ -1220,16 +1250,17 @@ class AdManager
         $ads = [];
         // temporary array
         $temp=[];
-        // array of asks
-        $asks = [];
+        // array of ads from asks
+        $askAds = [];
         $user = $this->userManager->getUser($userId);
-        // We retrive all the proposals of the user
+        // We retrieve all the proposals of the user
         $proposals = $this->proposalRepository->findBy(['user'=>$user]);
        
         // We check for each proposal if he have matching
         /** @var Proposal $proposal */
         foreach ($proposals as $proposal) {
-            $askLinked = null;
+            $askAdLinked = null;
+            $matchingLinked = null;
             /** @var Matching $matching */
             foreach ($proposal->getMatchingRequests() as $matching) {
                 // We check if the matching have an ask
@@ -1239,11 +1270,12 @@ class AdManager
                     if ($ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
                         // this ask is the ask with data we want to fill the Ad
                         if ($ask->getUser()->getId() && $ask->getUser()->getId() === $userId) {
-                            $ask = $askLinked = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId, $matching->getProposalOffer());
+                            $askAd = $askAdLinked = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId, $matching->getProposalOffer());
+                            $matchingLinked = $matching;
                         } else {
-                            $ask = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
+                            $askAd = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
                         }
-                        $asks[] = $ask;
+                        $askAds[] = $askAd;
                     }
                 }
             }
@@ -1255,24 +1287,25 @@ class AdManager
                     if ($ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
                         // this ask is the ask with data we want to fill the Ad
                         if ($ask->getUser()->getId() && $ask->getUser()->getId() === $userId) {
-                            $ask = $askLinked = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId, $matching->getProposalRequest());
+                            $askAd = $askAdLinked = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId, $matching->getProposalRequest());
+                            $matchingLinked = $matching;
                         } else {
-                            $ask = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
+                            $askAd = $this->askManager->getSimpleAskFromAd($ask->getId(), $userId);
                         }
-                        $asks[] = $ask;
+                        $askAds[] = $askAd;
                     }
                 }
             }
             // we check if the proposal have accepted asks
-            if (count($asks) > 0) {
+            if (count($askAds) > 0) {
                 // if yes we create an ad with the associated asks
                 // we pass the askLinked (Ad) to fill Ad with data from the ask if not null
-                $ad = $this->makeAd($proposal, $userId, true, $askLinked);
-                $ad->setAsks($asks);
+                $ad = $this->makeAd($proposal, $userId, true, $askAdLinked, $matchingLinked);
+                $ad->setAsks($askAds);
                 // we put the id of the proposals linked in the temporary array
-                $temp[]=$ad->getProposalLinkedId();
+                $temp[] = $ad->getProposalLinkedId();
                 // We reset the asks array for the next proposal
-                $asks=[];
+                $askAds = [];
                 // We check if the proposal is not a proposal linked of an other proposal and regular
                 if (in_array($ad->getProposalId(), $temp) && $ad->getFrequency() === Criteria::FREQUENCY_REGULAR) {
                     //  If yes we continue
