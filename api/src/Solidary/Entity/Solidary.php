@@ -167,15 +167,6 @@ class Solidary
      */
     private $solidarySolutions;
 
-    /**
-     * @var ArrayCollection|null Solidary proofs.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
-     * @MaxDepth(1)
-     */
-    private $proofs;
-
     public function __construct()
     {
         $this->needs = new ArrayCollection();
@@ -338,29 +329,6 @@ class Solidary
     {
         if ($this->solidarySolutions->contains($solidarySolution)) {
             $this->solidarySolutions->removeElement($solidarySolution);
-        }
-        
-        return $this;
-    }
-
-    public function getProves()
-    {
-        return $this->proofs->getValues();
-    }
-    
-    public function addProof(Proof $proof): self
-    {
-        if (!$this->proofs->contains($proof)) {
-            $this->proofs[] = $proof;
-        }
-        
-        return $this;
-    }
-    
-    public function removeProof(Proof $proof): self
-    {
-        if ($this->proofs->contains($proof)) {
-            $this->proofs->removeElement($proof);
         }
         
         return $this;

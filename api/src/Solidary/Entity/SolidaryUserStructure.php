@@ -26,6 +26,7 @@ namespace App\Solidary\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -61,10 +62,10 @@ class SolidaryUserStructure
     private $id;
     
     /**
-     * @var SolidaryUser Structure proof.
+     * @var SolidaryUser Solidary User linked to this structure
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUser")
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUser", inversedBy="solidaryUserStructures", cascade={"persist","remove"})
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
      * @MaxDepth(1)
@@ -72,15 +73,23 @@ class SolidaryUserStructure
     private $solidaryUser;
     
     /**
-     * @var Structure Structure proof.
+     * @var Structure Structure.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaryUserStructures", cascade={"persist","remove"})
      * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
      * @MaxDepth(1)
      */
     private $structure;
+
+    /**
+     * @var ArrayCollection The ask history items linked with the ask.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="solidaryUserStructure", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $proofs;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -117,6 +126,8 @@ class SolidaryUserStructure
     public function __construct($id=null)
     {
         $this->id = $id;
+        $this->proofs = new ArrayCollection();
+        $this->status = 0;
     }
 
     public function getId(): ?int
@@ -152,6 +163,34 @@ class SolidaryUserStructure
     {
         $this->structure = $structure;
         
+        return $this;
+    }
+
+    public function getProofs()
+    {
+        return $this->proofs->getValues();
+    }
+
+    public function addProof(Proof $proof): self
+    {
+        if (!$this->proofs->contains($proof)) {
+            $this->proofs->add($proof);
+            $proof->setSolidaryUserStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProof(Proof $proof): self
+    {
+        if ($this->proofs->contains($proof)) {
+            $this->proofs->removeElement($proof);
+            // set the owning side to null (unless already changed)
+            if ($proof->getSolidaryUser() === $this) {
+                $proof->setSolidaryUserStructure(null);
+            }
+        }
+
         return $this;
     }
 

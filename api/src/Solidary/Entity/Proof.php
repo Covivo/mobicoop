@@ -128,9 +128,9 @@ class Proof
      * @var SolidaryUserStructure SolidaryUser Structure relation
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure")
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="proofs", cascade={"persist","remove"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidaryUserStructure","readSolidary","readSolidaryUser","writeSolidaryUser"})
      * @MaxDepth(1)
      */
     private $solidaryUserStructure;

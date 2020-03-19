@@ -348,16 +348,6 @@ class SolidaryUser
     private $needs;
 
     /**
-     * @var ArrayCollection|null solidaryUser proofs.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="solidary_user", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
-     * @ApiSubresource
-     * @MaxDepth(1)
-     */
-    private $proofs;
-
-    /**
      * @var ArrayCollection|null The solidary records for this solidary user.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="solidaryUser", cascade={"remove"}, orphanRemoval=true)
@@ -366,6 +356,15 @@ class SolidaryUser
      * @Apisubresource
      */
     private $solidaries;
+
+    /**
+     * @var ArrayCollection The ask history items linked with the ask.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="solidaryUser", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $solidaryUserStructures;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -386,8 +385,8 @@ class SolidaryUser
     public function __construct()
     {
         $this->needs = new ArrayCollection();
-        $this->proofs = new ArrayCollection();
         $this->solidaries = new ArrayCollection();
+        $this->solidaryUserStructures = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -833,34 +832,6 @@ class SolidaryUser
         return $this;
     }
 
-    public function getProofs()
-    {
-        return $this->proofs->getValues();
-    }
-    
-    public function addProof(Proof $proof): self
-    {
-        if (!$this->proofs->contains($proof)) {
-            $this->proofs[] = $proof;
-            $proof->setSolidaryUser($this);
-        }
-        
-        return $this;
-    }
-    
-    public function removeProof(Proof $proof): self
-    {
-        if ($this->proofs->contains($proof)) {
-            $this->proofs->removeElement($proof);
-            // set the owning side to null (unless already changed)
-            if ($proof->getSolidaryUser() === $this) {
-                $proof->setSolidaryUser(null);
-            }
-        }
-        
-        return $this;
-    }
-
     public function getSolidaries()
     {
         return $this->solidaries->getValues();
@@ -883,6 +854,34 @@ class SolidaryUser
             // set the owning side to null (unless already changed)
             if ($solidary->getSolidaryUser() === $this) {
                 $solidary->setSolidaryUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getSolidaryUserStructures()
+    {
+        return $this->solidaryUserStructures->getValues();
+    }
+
+    public function addSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure): self
+    {
+        if (!$this->solidaryUserStructures->contains($solidaryUserStructure)) {
+            $this->solidaryUserStructures->add($solidaryUserStructure);
+            $solidaryUserStructure->setSolidaryUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure): self
+    {
+        if ($this->solidaryUserStructures->contains($solidaryUserStructure)) {
+            $this->solidaryUserStructures->removeElement($solidaryUserStructure);
+            // set the owning side to null (unless already changed)
+            if ($solidaryUserStructure->getSolidaryUser() === $this) {
+                $solidaryUserStructure->setSolidaryUser(null);
             }
         }
 

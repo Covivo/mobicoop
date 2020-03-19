@@ -336,10 +336,10 @@ class Structure
     /**
      * @var ArrayCollection|null The solidary user for this structure.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUser", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
      * @Groups("readSolidary")
      */
-    private $solidaryUsers;
+    private $solidaryUserStructures;
 
     /**
      * @var ArrayCollection|null The subjects for this structure.
@@ -366,11 +366,20 @@ class Structure
      */
     private $relayPoints;
 
+    /**
+     * @var ArrayCollection|null The solidary records for this structure.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\StructureProof", mappedBy="structure", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups("readSolidary")
+     * @MaxDepth(1)
+     */
+    private $structureProofs;
+
     public function __construct()
     {
         $this->solidaries = new ArrayCollection();
         $this->structures = new ArrayCollection();
-        $this->solidaryUsers = new ArrayCollection();
+        $this->solidaryUserStructures = new ArrayCollection();
         $this->subjects = new ArrayCollection();
         $this->needs = new ArrayCollection();
         $this->relayPoints = new ArrayCollection();
@@ -816,29 +825,25 @@ class Structure
         return $this;
     }
 
-    public function getSolidaryUsers()
+    public function getSolidaryUserStructures()
     {
-        return $this->solidaryUsers->getValues();
+        return $this->solidaryUserStructures->getValues();
     }
 
-    public function addSolidaryUsers(SolidaryUser $solidaryUser): self
+    public function addSolidaryUsers(SolidaryUserStructure $solidaryUserStructure): self
     {
-        if (!$this->solidaryUsers->contains($solidaryUser)) {
-            $this->solidaryUsers->add($solidaryUser);
-            $solidaryUser->setStructure($this);
+        if (!$this->solidaryUserStructures->contains($solidaryUserStructure)) {
+            $this->solidaryUserStructures->add($solidaryUserStructure);
+            $solidaryUserStructure->setStructure($this);
         }
 
         return $this;
     }
 
-    public function removeSolidaryUser(SolidaryUser $solidaryUser): self
+    public function removeSolidaryUser(SolidaryUserStructure $solidaryUserStructure): self
     {
-        if ($this->solidaryUsers->contains($solidaryUser)) {
-            $this->solidaryUsers->removeElement($solidaryUser);
-            // set the owning side to null (unless already changed)
-            if ($solidaryUser->getStructure() === $this) {
-                $solidaryUser->setStructure(null);
-            }
+        if ($this->solidaryUserStructures->contains($solidaryUserStructure)) {
+            $this->solidaryUserStructures->removeElement($solidaryUserStructure);
         }
 
         return $this;
@@ -920,6 +925,29 @@ class Structure
             }
         }
         
+        return $this;
+    }
+
+    public function getStructureProofs()
+    {
+        return $this->structureProofs->getValues();
+    }
+
+    public function addStructureProof(StructureProof $structureProof): self
+    {
+        if (!$this->structureProofs->contains($structureProof)) {
+            $this->structureProofs->add($structureProof);
+        }
+
+        return $this;
+    }
+
+    public function removeStructureProof(StructureProof $structureProof): self
+    {
+        if ($this->needs->contains($structureProof)) {
+            $this->needs->removeElement($structureProof);
+        }
+
         return $this;
     }
 
