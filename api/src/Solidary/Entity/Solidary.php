@@ -112,8 +112,7 @@ class Solidary
      * @var SolidaryUser The SolidaryUser related with the solidary record.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUser", inversedBy="solidaries")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUser", inversedBy="solidaries", cascade={"persist","remove"})
      * @Groups({"readSolidary", "writeSolidary"})
      * @MaxDepth(1)
      */
@@ -134,8 +133,7 @@ class Solidary
      * @var Structure Structure of the solidary record.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaries")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaries", cascade={"persist","remove"})
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $structure;

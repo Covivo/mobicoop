@@ -162,6 +162,24 @@ class UserManager
     {
         $user = $this->prepareUser($user, $encodePassword);
 
+
+        // Check if there is a SolidaryUser. If so, we need to check if the right role. If there is not, we add it.
+        if (!is_null($user->getSolidaryUser())) {
+            if ($user->getSolidaryUser()->isVolunteer()) {
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
+                $userAuthAssignment = new UserAuthAssignment();
+                $userAuthAssignment->setAuthItem($authItem);
+                $user->addUserAuthAssignment($userAuthAssignment);
+            }
+
+            if ($user->getSolidaryUser()->isBeneficiary()) {
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
+                $userAuthAssignment = new UserAuthAssignment();
+                $userAuthAssignment->setAuthItem($authItem);
+                $user->addUserAuthAssignment($userAuthAssignment);
+            }
+        }
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -262,6 +280,35 @@ class UserManager
         $time = $datetime->getTimestamp();
         $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         $user->setGeoToken($geoToken);
+
+
+        // Check if there is a SolidaryUser. If so, we need to check if the right role. If there is not, we add it.
+        if (!is_null($user->getSolidaryUser())) {
+            
+            //var_dump($user->getSolidaryUser()->getSolidaries()[0]);die;
+
+            // Get the authAssignments
+            $userAuthAssignments = $user->getUserAuthAssignments();
+            $authItems = [];
+            foreach ($userAuthAssignments as $userAuthAssignment) {
+                $authItems[] = $userAuthAssignment->getAuthItem()->getId();
+            }
+
+            if ($user->getSolidaryUser()->isVolunteer() && !in_array(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE, $authItems)) {
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
+                $userAuthAssignment = new UserAuthAssignment();
+                $userAuthAssignment->setAuthItem($authItem);
+                $user->addUserAuthAssignment($userAuthAssignment);
+            }
+
+            if ($user->getSolidaryUser()->isBeneficiary() && !in_array(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE, $authItems)) {
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
+                $userAuthAssignment = new UserAuthAssignment();
+                $userAuthAssignment->setAuthItem($authItem);
+                $user->addUserAuthAssignment($userAuthAssignment);
+            }
+        }
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();

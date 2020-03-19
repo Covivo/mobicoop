@@ -350,18 +350,17 @@ class SolidaryUser
     /**
      * @var ArrayCollection|null The solidary records for this solidary user.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="solidaryUser", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="solidaryUser", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readSolidaryUser","writeSolidaryUser"})
      * @MaxDepth(1)
-     * @Groups("readSolidaryUser")
-     * @Apisubresource
      */
     private $solidaries;
 
     /**
-     * @var ArrayCollection The ask history items linked with the ask.
+     * @var ArrayCollection The solidary user structure
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="solidaryUser", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","write"})
+     * @Groups({"readSolidaryUser","writeSolidaryUser"})
      * @MaxDepth(1)
      */
     private $solidaryUserStructures;

@@ -66,7 +66,6 @@ class SolidaryUserStructure
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUser", inversedBy="solidaryUserStructures", cascade={"persist","remove"})
-     * @ORM\JoinColumn(nullable=false)
      * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
      * @MaxDepth(1)
      */
@@ -77,7 +76,7 @@ class SolidaryUserStructure
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaryUserStructures", cascade={"persist","remove"})
-     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
+     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure","readSolidaryUser","writeSolidaryUser"})
      * @MaxDepth(1)
      */
     private $structure;
