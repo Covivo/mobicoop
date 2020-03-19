@@ -48,6 +48,7 @@ use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
+use App\Community\Entity\Community;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Entity\UserNotification;
 use App\User\Event\UserDelegateRegisteredEvent;
@@ -208,8 +209,21 @@ class UserManager
             }
         }
 
+        if(is_array($user->getCommunitiesId()) && count($user->getCommunitiesId()) > 0){    
+
+            foreach ($user->getCommunitiesId()as $community) {               
+                $communityUser = new CommunityUser();
+                $communityUser->setUser($user);
+                $communityUser->setCommunity($community);
+                $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
+            }
+            $this->entityManager->persist($communityUser);
+            $this->entityManager->flush();
+        }
+
         // return the user
         return $user;
+
     }
 
     /**

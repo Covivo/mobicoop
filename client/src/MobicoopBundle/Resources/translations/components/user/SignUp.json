@@ -12,6 +12,10 @@
             "link": "la charte de la plateforme et sa politique de protection des données",
             "route": "/cgu"
         },
+        "communities": {
+            "label": "Rejoindre une communauté",
+            "route": "/communaute/liste-des-communautes"
+        },
         "step":"Etape",
         "steps":{
             "1":"Identifiants",
@@ -33,6 +37,10 @@
             "text": "I accept ",
             "link": "the platform chart and its data protection policy",
             "route": "/cgu"
+        },
+        "communities": {
+            "label": "Join a community",
+            "route": "community/getCommunityList"
         },
         "step":"Step",
         "steps":{

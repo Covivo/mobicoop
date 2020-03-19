@@ -163,6 +163,7 @@ services:
             $facebook_appid: '%env(resolve:FACEBOOK_APPID)%'
             $required_home_address: '%env(resolve:REQUIRED_HOME_ADDRESS)%'
             $news_subscription: '%env(resolve:NEWS_SUBSCRIPTION)%'
+            $community_show: '%env(resolve:COMMUNITY_SHOW)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\User\Service\:
         resource: '@MobicoopBundle/User/Service/*'

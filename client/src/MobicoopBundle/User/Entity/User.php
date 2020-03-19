@@ -358,6 +358,24 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $facebookId;
 
     /**
+    * @var array|null Communities choose by a user
+    * @Groups({"readUser"})
+    */
+    private $communitiesId;
+
+    public function getCommunitiesId(): ?array
+    {
+    return $this->communitiesId;
+    }
+
+    public function setcommunitiesId(array $communitiesId): self
+    {
+    $this->communitiesId = $communitiesId;
+
+    return $this;
+    }
+
+    /**
      * @var string|null the unsubscribe message we return by api
      * @Groups({"post","put"})
      */
@@ -1087,6 +1105,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'phoneValidatedDate'    => $this->getPhoneValidatedDate(),
             'phoneToken'            => $this->getPhoneToken(),
             'unsubscribeMessage'    => $this->getUnsubscribeMessage(),
+            'communitiesId'         => $this->getCommunitiesId()
         ];
     }
 }

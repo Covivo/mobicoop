@@ -781,6 +781,26 @@ class User implements UserInterface, EquatableInterface
     private $communityUsers;
 
     /**
+    * @var array|null Communities choose by a user
+    * @Groups({"readUser"})
+    */
+    private $communitiesId;
+
+    public function getCommunitiesId(): ?array
+    {
+    return $this->communitiesId;
+    }
+
+    public function setcommunitiesId(array $communitiesId): self
+    {
+    $this->communitiesId = $communitiesId;
+
+    return $this;
+    }
+
+  
+
+    /**
      * @var ArrayCollection|null The asks made for this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="userRelated", cascade={"remove"}, orphanRemoval=true)
