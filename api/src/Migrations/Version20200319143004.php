@@ -23,17 +23,14 @@ final class Version20200319143004 extends AbstractMigration
         (172, NULL, 2, 'ROLE_SOLIDARY_BENEFICIARY_CANDIDATE', 'Solidary beneficiary candidate');
         ");
 
+        $this->addSql('UPDATE auth_item_child set parent_id=171 WHERE auth_item_child.parent_id=11 AND auth_item_child.child_id = 168');
+        $this->addSql('UPDATE auth_item_child set parent_id=172 WHERE auth_item_child.parent_id=12 AND auth_item_child.child_id = 170');
+
         $this->addSql('
         INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES
         (11, 171),
         (12, 172);
         ');
-
-        // $this->addSql('
-        // UPDATE `auth_item_child` SET parent_id=171 WHERE parent_id=11 AND child_id=168
-        // (11, 171),
-        // (12, 172);
-        // ');
     }
 
     public function down(Schema $schema) : void
