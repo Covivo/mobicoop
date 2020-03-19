@@ -1770,11 +1770,26 @@ class ResultManager
         $item = new ResultItem();
 
         $driverFromTime = null;
+
+        $filters = $ask->getFilters();
+        $pickupDuration = null;
+        foreach ($filters['route'] as $value) {
+            if ($value['candidate'] == 2 && $value['position'] == 0) {
+                $pickupDuration = (int)round($value['duration']);
+                break;
+            }
+        }
         if ($ask->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
             // the ask is punctual; for now the time are the same
             // todo : use the real requester time if it has only been copied from the carpooler time
             $item->setDate($ask->getCriteria()->getFromDate());
-            $item->setTime($ask->getCriteria()->getFromTime());
+            $time = $ask->getCriteria()->getFromTime();
+            if ($role == Ad::ROLE_DRIVER) {
+                $time = $time->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+            } else {
+                $time = $time->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+            }
+            $item->setTime($time);
         } else {
             // the ask is regular, the days depends on the ask status
             $item->setMonCheck($ask->getCriteria()->isMonCheck());
@@ -1819,14 +1834,6 @@ class ResultManager
                 $item->setSunTime($ask->getCriteria()->getSunTime());
                 $item->setTime($item->getSunTime());
                 $hasTime = true;
-            }
-            $filters = $ask->getFilters();
-            $pickupDuration = null;
-            foreach ($filters['route'] as $value) {
-                if ($value['candidate'] == 2 && $value['position'] == 0) {
-                    $pickupDuration = (int)round($value['duration']);
-                    break;
-                }
             }
             if (!$hasTime) {
                 // no time has been set, we have to compute them
@@ -1974,71 +1981,71 @@ class ResultManager
             }
             // we update times with pick up duration based on role
             else {
-//                if ($role == Ad::ROLE_DRIVER) {
-//                    if ($item->isMonCheck()
-//                        && !is_null($item->getMonTime())) {
-//                        $monTime = $item->getMonTime();
-//                        if ($pickupDuration) {
-//                            $monTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
-//                        }
-//                        $item->setMonTime($monTime);
-//                        $item->setTime($monTime);
-//                    }
-//                    if ($item->isTueCheck()
-//                        && !is_null($item->getTueTime())) {
-//                        $tueTime = $item->getTueTime();
-//                        if ($pickupDuration) {
-//                            $tueTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
-//                        }
-//                        $item->setTueTime($tueTime);
-//                        $item->setTime($tueTime);
-//                    }
-//                    if ($item->isWedCheck()
-//                        && !is_null($item->getWedTime())) {
-//                        $wedTime = $item->getWedTime();
-//                        if ($pickupDuration) {
-//                            $wedTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
-//                        }
-//                        $item->setWedTime($wedTime);
-//                        $item->setTime($wedTime);
-//                    }
-//                    if ($item->isThuCheck()
-//                        && !is_null($item->getThuTime())) {
-//                        $thuTime = $item->getThuTime();
-//                        if ($pickupDuration) {
-//                            $thuTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
-//                        }
-//                        $item->setThuTime($thuTime);
-//                        $item->setTime($thuTime);
-//                    }
-//                    if ($item->isFriCheck()
-//                        && !is_null($item->getFriTime())) {
-//                        $friTime = $item->getFriTime();
-//                        if ($pickupDuration) {
-//                            $friTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
-//                        }
-//                        $item->setFriTime($friTime);
-//                        $item->setTime($friTime);
-//                    }
-//                    if ($item->isSatCheck()
-//                        && !is_null($item->getSatTime())) {
-//                        $satTime = $item->getSatTime();
-//                        if ($pickupDuration) {
-//                            $satTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
-//                        }
-//                        $item->setSatTime($satTime);
-//                        $item->setTime($satTime);
-//                    }
-//                    if ($item->isSunCheck()
-//                        && !is_null($item->getSunTime())) {
-//                        $sunTime = $item->getSunTime();
-//                        if ($pickupDuration) {
-//                            $sunTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
-//                        }
-//                        $item->setSunTime($sunTime);
-//                        $item->setTime($sunTime);
-//                    }
-//                }
+                if ($role == Ad::ROLE_DRIVER) {
+                    if ($item->isMonCheck()
+                        && !is_null($item->getMonTime())) {
+                        $monTime = $item->getMonTime();
+                        if ($pickupDuration) {
+                            $monTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setMonTime($monTime);
+                        $item->setTime($monTime);
+                    }
+                    if ($item->isTueCheck()
+                        && !is_null($item->getTueTime())) {
+                        $tueTime = $item->getTueTime();
+                        if ($pickupDuration) {
+                            $tueTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setTueTime($tueTime);
+                        $item->setTime($tueTime);
+                    }
+                    if ($item->isWedCheck()
+                        && !is_null($item->getWedTime())) {
+                        $wedTime = $item->getWedTime();
+                        if ($pickupDuration) {
+                            $wedTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setWedTime($wedTime);
+                        $item->setTime($wedTime);
+                    }
+                    if ($item->isThuCheck()
+                        && !is_null($item->getThuTime())) {
+                        $thuTime = $item->getThuTime();
+                        if ($pickupDuration) {
+                            $thuTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setThuTime($thuTime);
+                        $item->setTime($thuTime);
+                    }
+                    if ($item->isFriCheck()
+                        && !is_null($item->getFriTime())) {
+                        $friTime = $item->getFriTime();
+                        if ($pickupDuration) {
+                            $friTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setFriTime($friTime);
+                        $item->setTime($friTime);
+                    }
+                    if ($item->isSatCheck()
+                        && !is_null($item->getSatTime())) {
+                        $satTime = $item->getSatTime();
+                        if ($pickupDuration) {
+                            $satTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setSatTime($satTime);
+                        $item->setTime($satTime);
+                    }
+                    if ($item->isSunCheck()
+                        && !is_null($item->getSunTime())) {
+                        $sunTime = $item->getSunTime();
+                        if ($pickupDuration) {
+                            $sunTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setSunTime($sunTime);
+                        $item->setTime($sunTime);
+                    }
+                }
                 if ($role == Ad::ROLE_PASSENGER) {
                     if ($item->isMonCheck()
                         && !is_null($item->getMonTime())) {
