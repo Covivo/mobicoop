@@ -245,7 +245,7 @@ class UserManager
     public function updateUser(User $user)
     {
 
-         // activate sms notification if phone validated
+        // activate sms notification if phone validated
         if ($user->getPhoneValidatedDate()) {
             $user = $this->activateSmsNotification($user);
         }

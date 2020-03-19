@@ -327,8 +327,8 @@ class SolidaryUser
      *
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist","remove"}, orphanRemoval=true, mappedBy="solidaryUser")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readUser","read", "write","readSolidaryUser","writeSolidaryUser"})
      * @ApiSubresource
      */
     private $user;

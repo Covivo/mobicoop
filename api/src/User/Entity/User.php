@@ -25,7 +25,6 @@ namespace App\User\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\PersistentCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -103,8 +102,8 @@ use App\Solidary\Entity\SolidaryUser;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readUser","mass"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"readUser","mass","readSolidaryUser"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"write","writeSolidaryUser"}}
  *      },
  *      collectionOperations={
  *          "get"={
@@ -311,7 +310,6 @@ use App\Solidary\Entity\SolidaryUser;
  *          "put"={
  *              "method"="PUT",
  *              "path"="/users/{id}",
- *              "controller"=UserUpdate::class,
  *              "security"="is_granted('user_update',object)"
  *          },
  *          "delete_user"={
@@ -389,7 +387,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","threads", "thread"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","threads", "thread", "readSolidaryUser", "writeSolidaryUser"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -989,8 +987,8 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * The SolidaryUser possibly linked to this User
-     * @OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user")
-     * @Groups("readSolidaryUser")
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user", cascade={"persist","remove"})
+     * @Groups({"readUser","write","readSolidaryUser","writeSolidaryUser"})
      */
     private $solidaryUser;
 
