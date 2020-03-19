@@ -28,6 +28,7 @@ use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Dynamic;
 use App\Carpool\Entity\DynamicAsk;
+use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Position;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
@@ -43,6 +44,10 @@ use App\Geography\Service\GeoTools;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use App\Carpool\Entity\Result;
+use App\Carpool\Repository\AskHistoryRepository;
+use App\Carpool\Repository\AskRepository;
+use App\Geography\Service\GeoSearcher;
 
 /**
  * Dynamic ad manager service.
@@ -57,9 +62,12 @@ class DynamicManager
     private $resultManager;
     private $geoTools;
     private $geoRouter;
+    private $geoSearcher;
     private $params;
     private $logger;
     private $matchingRepository;
+    private $askRespository;
+    private $askHistoryRepository;
     private $internalMessageManager;
 
     /**
@@ -75,9 +83,12 @@ class DynamicManager
         ResultManager $resultManager,
         GeoTools $geoTools,
         GeoRouter $geoRouter,
+        GeoSearcher $geoSearcher,
         array $params,
         LoggerInterface $logger,
         MatchingRepository $matchingRepository,
+        AskRepository $askRespository,
+        AskHistoryRepository $askHistoryRepository,
         InternalMessageManager $internalMessageManager
     ) {
         $this->entityManager = $entityManager;
@@ -86,9 +97,12 @@ class DynamicManager
         $this->resultManager = $resultManager;
         $this->geoTools = $geoTools;
         $this->geoRouter = $geoRouter;
+        $this->geoSearcher = $geoSearcher;
         $this->params = $params;
         $this->logger = $logger;
         $this->matchingRepository = $matchingRepository;
+        $this->askRespository = $askRespository;
+        $this->askHistoryRepository = $askHistoryRepository;
         $this->internalMessageManager = $internalMessageManager;
     }
 
@@ -186,6 +200,23 @@ class DynamicManager
         foreach ($dynamic->getWaypoints() as $waypointPosition => $point) {
             $waypoint = new Waypoint();
             $address = new Address();
+
+            // first we set the lat/lon
+            if (isset($point['latitude'])) {
+                $address->setLatitude($point['latitude']);
+            }
+            if (isset($point['longitude'])) {
+                $address->setLongitude($point['longitude']);
+            }
+
+            // then we reverse geocode, to get a full address if the other properties are not sent
+            if ($addresses = $this->geoSearcher->reverseGeoCode($address->getLatitude(), $address->getLongitude())) {
+                if (count($addresses)>0) {
+                    $address = $addresses[0];
+                }
+            }
+
+            // if other properties are sent we use them
             if (isset($point['houseNumber'])) {
                 $address->setHouseNumber($point['houseNumber']);
             }
@@ -225,12 +256,7 @@ class DynamicManager
             if (isset($point['countryCode'])) {
                 $address->setCountryCode($point['countryCode']);
             }
-            if (isset($point['latitude'])) {
-                $address->setLatitude($point['latitude']);
-            }
-            if (isset($point['longitude'])) {
-                $address->setLongitude($point['longitude']);
-            }
+            
             if (isset($point['elevation'])) {
                 $address->setElevation($point['elevation']);
             }
@@ -250,9 +276,10 @@ class DynamicManager
                 // we double this waypoint : it will be a floating waypoint that will reflect the current position of the user (useful for matching)
                 // the position of this waypoint will always be 0
                 $floatingWaypoint = clone $waypoint;
+                $floatingWaypoint->setFloating(true);
                 $proposal->addWaypoint($floatingWaypoint);
-                $position->setAddress(clone $address);
-                $position->setPoints([$position->getAddress()]);
+                $position->setWaypoint($floatingWaypoint);
+                $position->setPoints([$address]);
                 $waypoint->setReached(true);
 
                 // direction
@@ -334,16 +361,15 @@ class DynamicManager
         $dynamic->setLongitude($dynamicData->getLongitude());
 
         // update the address geographic coordinates
-        $dynamic->getProposal()->getPosition()->getAddress()->setLongitude($dynamic->getLongitude());
-        $dynamic->getProposal()->getPosition()->getAddress()->setLatitude($dynamic->getLatitude());
+        $dynamic->getProposal()->getPosition()->getWaypoint()->getAddress()->setLongitude($dynamic->getLongitude());
+        $dynamic->getProposal()->getPosition()->getWaypoint()->getAddress()->setLatitude($dynamic->getLatitude());
 
         // we search if we have reached a waypoint
         foreach ($dynamic->getProposal()->getWaypoints() as $waypoint) {
             /**
              * @var Waypoint $waypoint
              */
-            if (!$waypoint->isReached() && $waypoint->getPosition()>0) {
-                // position>0 to exclude the floating waypoint
+            if (!$waypoint->isReached() && !$waypoint->isFloating()) {
                 if ($this->geoTools->haversineGreatCircleDistance($dynamic->getLatitude(), $dynamic->getLongitude(), $waypoint->getAddress()->getLatitude(), $waypoint->getAddress()->getLongitude())<$this->params['dynamicReachedDistance']) {
                     $waypoint->setReached(true);
                     // destination ? stop the dynamic !
@@ -354,11 +380,34 @@ class DynamicManager
                     $this->entityManager->flush();
                 }
             }
-            if ($waypoint->getPosition() == 0) {
+            if ($waypoint->isFloating()) {
                 // update the floating waypoint address
-                $waypoint->getAddress()->setAddressLocality(""); // for now remove the locality just for testing purpose !
+                // we reverse geocode, to get a full address
+                if ($addresses = $this->geoSearcher->reverseGeoCode($dynamic->getLatitude(), $dynamic->getLongitude())) {
+                    if (count($addresses)>0) {
+                        $reversedGeocodeAddress = $addresses[0];
+                    }
+                }
                 $waypoint->getAddress()->setLongitude($dynamic->getLongitude());
                 $waypoint->getAddress()->setLatitude($dynamic->getLatitude());
+                if (isset($reversedGeocodeAddress)) {
+                    $waypoint->getAddress()->setStreetAddress($reversedGeocodeAddress->getStreetAddress());
+                    $waypoint->getAddress()->setPostalCode($reversedGeocodeAddress->getPostalCode());
+                    $waypoint->getAddress()->setAddressLocality($reversedGeocodeAddress->getAddressLocality());
+                    $waypoint->getAddress()->setAddressCountry($reversedGeocodeAddress->getAddressCountry());
+                    $waypoint->getAddress()->setElevation($reversedGeocodeAddress->getElevation());
+                    $waypoint->getAddress()->setHouseNumber($reversedGeocodeAddress->getHouseNumber());
+                    $waypoint->getAddress()->setStreet($reversedGeocodeAddress->getStreet());
+                    $waypoint->getAddress()->setSubLocality($reversedGeocodeAddress->getSubLocality());
+                    $waypoint->getAddress()->setLocalAdmin($reversedGeocodeAddress->getLocalAdmin());
+                    $waypoint->getAddress()->setCounty($reversedGeocodeAddress->getCounty());
+                    $waypoint->getAddress()->setMacroCounty($reversedGeocodeAddress->getMacroCounty());
+                    $waypoint->getAddress()->setRegion($reversedGeocodeAddress->getRegion());
+                    $waypoint->getAddress()->setMacroRegion($reversedGeocodeAddress->getMacroRegion());
+                    $waypoint->getAddress()->setCountryCode($reversedGeocodeAddress->getCountryCode());
+                    $waypoint->getAddress()->setVenue($reversedGeocodeAddress->getVenue());
+                }
+                
                 $this->entityManager->persist($waypoint);
                 $this->entityManager->flush();
             }
@@ -423,12 +472,35 @@ class DynamicManager
         $this->entityManager->persist($dynamic->getProposal());
         $this->entityManager->flush();
 
+        // we compute the results, if the ad is still active
+        // TODO : how to get the current driver position for the passenger ???
+        if ($dynamic->getProposal()->isActive()) {
+            // default order
+            $dynamic->setFilters([
+                'order'=>[
+                    'criteria'=>'date',
+                    'value'=>'ASC'
+                ]
+            
+            ]);
+
+            $dynamic->setResults(
+                $this->resultManager->orderResults(
+                    $this->resultManager->filterResults(
+                        $this->resultManager->createAdResults($dynamic->getProposal()),
+                        $dynamic->getFilters()
+                    ),
+                    $dynamic->getFilters()
+                )
+            );
+        }
+
         // we get the asks related to the dynamic ad
+        // we include the corresponding result
         $asks = [];
         if ($dynamic->getRole() == Dynamic::ROLE_DRIVER) {
             // the user is driver, we search the matching requests
             foreach ($dynamic->getProposal()->getMatchingRequests() as $matching) {
-                echo $matching->getId() . " ";
                 foreach ($matching->getAsks() as $ask) {
                     // there's an ask, the initiator of the ask is the passenger => the user of the ask
                     $asks[] = [
@@ -438,12 +510,15 @@ class DynamicManager
                             'givenName' => $ask->getUser()->getGivenName(),
                             'shortFamilyName' => $ask->getUser()->getShortFamilyName(),
                         ],
-                        'messages' => $this->getThread($ask)
+                        'result' => $this->getResult($matching, $dynamic->getResults()),
+                        'messages' => $this->getThread($ask),
+                        'priceKm' => $ask->getCriteria()->getPriceKm(),
+                        'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice()
                     ];
                 }
             }
         } else {
-            // the user is driver, we search the matching offers
+            // the user is passenger, we search the matching offers
             foreach ($dynamic->getProposal()->getMatchingOffers() as $matching) {
                 foreach ($matching->getAsks() as $ask) {
                     // there's an ask, the recipient of the ask is the driver => the userRelated of the ask
@@ -453,35 +528,45 @@ class DynamicManager
                         'user' => [
                             'givenName' => $ask->getUserRelated()->getGivenName(),
                             'shortFamilyName' => $ask->getUserRelated()->getShortFamilyName(),
-                        ]
+                        ],
+                        'result' => $this->getResult($matching, $dynamic->getResults()),
+                        'messages' => $this->getThread($ask),
+                        'priceKm' => $ask->getCriteria()->getPriceKm(),
+                        'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice()
                     ];
                 }
             }
         }
         $dynamic->setAsks($asks);
 
-        // we compute the results
-
-        // default order
-        $dynamic->setFilters([
-            'order'=>[
-                'criteria'=>'date',
-                'value'=>'ASC'
-            ]
-        
-        ]);
-
-        $dynamic->setResults(
-            $this->resultManager->orderResults(
-                $this->resultManager->filterResults(
-                    $this->resultManager->createAdResults($dynamic->getProposal()),
-                    $dynamic->getFilters()
-                ),
-                $dynamic->getFilters()
-            )
-        );
-
         return $dynamic;
+    }
+
+    /**
+     * Get a result from a Matching
+     *
+     * @param Matching $matching    The matching
+     * @param array $results        The array of results
+     * @return Result|null          The result found
+     */
+    private function getResult(Matching $matching, array $results)
+    {
+        foreach ($results as $result) {
+            /**
+             * @var Result $result
+             */
+            if (!is_null($result->getResultDriver()) && !is_null($result->getResultDriver()->getOutward())) {
+                if ($result->getResultDriver()->getOutward()->getMatchingId() == $matching->getId()) {
+                    return $result;
+                }
+            }
+            if (!is_null($result->getResultPassenger()) && !is_null($result->getResultPassenger()->getOutward())) {
+                if ($result->getResultPassenger()->getOutward()->getMatchingId() == $matching->getId()) {
+                    return $result;
+                }
+            }
+        }
+        return null;
     }
 
 
@@ -490,6 +575,27 @@ class DynamicManager
     /****************
      *  DYNAMIC ASK *
      ****************/
+
+
+    /**
+     * Get a dynamic ask.
+     *
+     * @param integer $id   The dynamic ask id.
+     * @return DynamicAsk   The dynamic ask.
+     */
+    public function getDynamicAsk(int $id)
+    {
+        if (!$ask = $this->askRespository->find($id)) {
+            throw new DynamicException("Dynamic ask not found");
+        }
+        $dynamicAsk = new DynamicAsk();
+        $dynamicAsk->setId($ask->getId());
+        $dynamicAsk->setUser($ask->getUser());
+        $dynamicAsk->setCarpooler($ask->getUserRelated());
+        $dynamicAsk->setMatchingId($ask->getMatching()->getId());
+        $dynamicAsk->setStatus($ask->getStatus());
+        return $dynamicAsk;
+    }
 
     /**
      * Create an ask for a dynamic ad.
@@ -540,14 +646,23 @@ class DynamicManager
         }
 
         $this->entityManager->persist($ask);
-        $this->entityManager->flush($ask);
+
+        // disable the passenger dynamic ad to avoid asks to other drivers
+        $matching->getProposalRequest()->setActive(false);
+        $this->entityManager->persist($matching->getProposalRequest());
+
+        $this->entityManager->flush();
         
         // todo : dispatch en event ?
-        return $ask;
+
+        $dynamicAsk->setId($ask->getId());
+        $dynamicAsk->setStatus($ask->getStatus());
+
+        return $dynamicAsk;
     }
 
     /**
-     * Update an ask for a dynamic ad
+     * Update an ask for a dynamic ad => only by the driver
      *
      * @param int           $id         The id of the ask to update
      * @param DynamicAsk    $dynamic    The ask data to make the update
@@ -555,6 +670,139 @@ class DynamicManager
      */
     public function updateDynamicAsk(int $id, DynamicAsk $dynamicAskData)
     {
+        // here the driver should only accept or decline the ask
+        if ($dynamicAskData->getStatus() != DynamicAsk::STATUS_ACCEPTED && $dynamicAskData->getStatus() != DynamicAsk::STATUS_DECLINED) {
+            throw new DynamicException("Only accept or decline are permitted.");
+        }
+
+        // get the ask
+        $ask = $this->askRespository->find($id);
+        $ask->setStatus($dynamicAskData->getStatus());
+        $dynamicAskData->setId($id);
+
+        // Ask History
+        $askHistory = new AskHistory();
+        $askHistory->setStatus($ask->getStatus());
+        $askHistory->setType($ask->getType());
+        $ask->addAskHistory($askHistory);
+
+        // message => the driver is the userRelated, the passenger is the user
+        if (!is_null($dynamicAskData->getMessage())) {
+            $message = new Message();
+            $message->setUser($ask->getUserRelated());
+            $message->setText($dynamicAskData->getMessage());
+            // we search the previous message if it exists
+            if ($lastAskHistoryWithMessage = $this->askHistoryRepository->findLastAskHistoryWithMessage($ask)) {
+                if (!is_null($lastAskHistoryWithMessage->getMessage()->getMessage())) {
+                    // the linked message has a parent => it is also the parent of our new message
+                    $message->setMessage($lastAskHistoryWithMessage->getMessage()->getMessage());
+                } else {
+                    // no parent => we use the message linked as parent for our new message
+                    $message->setMessage($lastAskHistoryWithMessage->getMessage());
+                }
+            }
+            $recipient = new Recipient();
+            $recipient->setUser($ask->getUser());
+            $recipient->setStatus(Recipient::STATUS_PENDING);
+            $message->addRecipient($recipient);
+            $this->entityManager->persist($message);
+            $askHistory->setMessage($message);
+        }
+
+        $this->entityManager->persist($ask);
+
+        if ($ask->getStatus() == DynamicAsk::STATUS_ACCEPTED) {
+            // dynamic carpooling accepted :
+            // - create a new ad with the driver remaining path including the passenger path
+            // - disable the old driver ad (set it to inactive and finished)
+
+            // create the new ad
+            $proposal = new Proposal();
+            $criteria = new Criteria();
+
+            $originalProposal = $ask->getMatching()->getProposalOffer();
+            $proposal->setUser($originalProposal->getUser());
+
+            // special dynamic properties
+            $proposal->setDynamic(true);
+            $proposal->setActive(true);
+            $proposal->setFinished(false);
+            $proposal->setType(Proposal::TYPE_ONE_WAY);
+
+            // comment
+            $proposal->setComment($originalProposal->getComment());
+            
+            // criteria
+
+            // driver / passenger / seats
+            $criteria->setDriver(true);
+            $criteria->setPassenger(false);
+            $criteria->setSeatsDriver($originalProposal->getCriteria()->getSeatsDriver());
+            $criteria->setSeatsPassenger(0);
+            
+            // prices
+            $criteria->setPriceKm($originalProposal->getCriteria()->getPriceKm());
+            $criteria->setDriverPrice($originalProposal->getCriteria()->getDriverPrice());
+
+            // dates and times
+
+            // we use the current date
+            $criteria->setFromDate(new \DateTime('UTC'));
+            $criteria->setFromTime($criteria->getFromDate());
+            $criteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+
+            // waypoints => we use the waypoints of the ask
+            foreach ($ask->getWaypoints() as $waypointPosition => $point) {
+                $waypoint = clone $point;
+                // we search in the original waypoints if the current waypoint has been reached by the driver
+                foreach ($originalProposal->getWaypoints() as $curWaypoint) {
+                    if (
+                        $curWaypoint->getAddress()->getLongitude() == $point->getAddress()->getLongitude() &&
+                        $curWaypoint->getAddress()->getLatitude() == $point->getAddress()->getLatitude()
+                        ) {
+                        if ($curWaypoint->isReached()) {
+                            $waypoint->setReached(true);
+                        }
+                        break;
+                    }
+                }
+                $proposal->addWaypoint($waypoint);
+            }
+
+            // we associate the current floating point of the driver to the new proposal
+            foreach ($originalProposal->getWaypoints() as $waypointPosition => $point) {
+                if ($point->isFloating()) {
+                    $proposal->addWaypoint($point);
+                    $this->entityManager->persist($point);
+                }
+            }
+            $proposal->setCriteria($criteria);
+
+            // todo : check the other asks ! they will be cancelled as the original proposal will be disabled...
+            
+            $proposal = $this->proposalManager->prepareProposal($proposal);
+            $this->logger->info("DynamicManager : end creating ad " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->entityManager->persist($proposal);
+            $this->logger->info("DynamicManager : end persisting ad " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            
+            $originalProposal->getPosition()->setProposal($proposal);
+
+            // disable original proposal
+            $originalProposal->setActive(false);
+            $originalProposal->setFinished(true);
+            $this->entityManager->persist($originalProposal->getPosition());
+            $this->entityManager->persist($originalProposal);
+        } else {
+            // dynamic carpooling refused !
+            // update the passenger ad to make it active again
+            $ask->getMatching()->getProposalRequest()->setActive(true);
+            $this->entityManager->persist($ask->getMatching()->getProposalRequest());
+        }
+
+        $this->entityManager->flush();
+
+        $dynamicAskData->setDynamicId($proposal->getId());
+        return $dynamicAskData;
     }
 
     /**

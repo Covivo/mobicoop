@@ -24,7 +24,6 @@
 namespace App\Carpool\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
 use Symfony\Component\Validator\Constraints as Assert;
 use CrEOF\Spatial\PHP\Types\Geometry\LineString;
@@ -56,13 +55,13 @@ class Position
     private $proposal;
         
     /**
-     * @var Address The address of the position.
+     * @var Waypoint The floating waypoint corresponding to the position.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Waypoint", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $address;
+    private $waypoint;
 
     /**
      * @var Direction|null Direction related to the dynamic carpool - updated at each position update.
@@ -114,14 +113,14 @@ class Position
         return $this;
     }
     
-    public function getAddress(): ?Address
+    public function getWaypoint(): ?Waypoint
     {
-        return $this->address;
+        return $this->waypoint;
     }
 
-    public function setAddress(?Address $address): self
+    public function setwaypoint(?Waypoint $waypoint): self
     {
-        $this->address = $address;
+        $this->waypoint = $waypoint;
 
         return $this;
     }

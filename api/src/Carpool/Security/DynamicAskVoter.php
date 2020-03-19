@@ -86,11 +86,12 @@ class DynamicAskVoter extends Voter
             //         return $this->canReadDynamicAsk($dynamic);
             //     }
             //     return false;
-            // case self::DYNAMIC_ASK_UPDATE:
-            //     if ($dynamic = $this->dynamicManager->getDynamic($this->request->get('id'))) {
-            //         return $this->canUpdateDynamicAsk($dynamic);
-            //     }
-            //     return false;
+            // no break
+            case self::DYNAMIC_ASK_UPDATE:
+                if ($dynamicAsk = $this->dynamicManager->getDynamicAsk($this->request->get('id'))) {
+                    return $this->canUpdateDynamicAsk($dynamicAsk);
+                }
+                return false;
             // case self::DYNAMIC_ASK_DELETE:
             //     if ($dynamic = $this->dynamicManager->getDynamic($this->request->get('id'))) {
             //         return $this->canDeleteDynamicAsk($dynamic);
@@ -111,10 +112,10 @@ class DynamicAskVoter extends Voter
     //     return $this->authManager->isAuthorized(self::DYNAMIC_ASK_READ, ['dynamic' => $dynamic]);
     // }
 
-    // private function canUpdateDynamicAsk(Dynamic $dynamic)
-    // {
-    //     return $this->authManager->isAuthorized(self::DYNAMIC_ASK_UPDATE, ['dynamic' => $dynamic]);
-    // }
+    private function canUpdateDynamicAsk(DynamicAsk $dynamicAsk)
+    {
+        return $this->authManager->isAuthorized(self::DYNAMIC_ASK_UPDATE, ['dynamicAsk' => $dynamicAsk]);
+    }
 
     // private function canDeleteDynamicAsk(Dynamic $dynamic)
     // {

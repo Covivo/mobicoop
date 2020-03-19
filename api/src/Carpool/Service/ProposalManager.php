@@ -478,8 +478,10 @@ class ProposalManager
         // set the directions
         $proposal = $this->updateDirection($proposal, $address);
         
-        // matching analyze
-        $proposal = $this->proposalMatcher->updateMatchingsForProposal($proposal);
+        // matching analyze, but exclude the inactive proposals : can happen after an ask from a passenger to a driver
+        if ($proposal->isActive()) {
+            $proposal = $this->proposalMatcher->updateMatchingsForProposal($proposal);
+        }
                 
         return $proposal;
     }

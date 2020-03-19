@@ -397,12 +397,11 @@ class UserManager
                 if ($message !== null) {
                     ($message->getMessage()!==null) ? $idMessage = $message->getMessage()->getId() :  $idMessage = $message->getId();
                 } else {
-                    $formerAskHistory = $this->askHistoryRepository->findLastAskHistoryWithMessage($ask);
-                    if (count($formerAskHistory)>0 && $formerAskHistory[0]->getMessage()) {
-                        if ($formerAskHistory[0]->getMessage()->getMessage()) {
-                            $idMessage = $formerAskHistory[0]->getMessage()->getMessage()->getId();
+                    if ($formerAskHistory = $this->askHistoryRepository->findLastAskHistoryWithMessage($ask)) {
+                        if ($formerAskHistory->getMessage()->getMessage()) {
+                            $idMessage = $formerAskHistory->getMessage()->getMessage()->getId();
                         } else {
-                            $idMessage = $formerAskHistory[0]->getMessage()->getId();
+                            $idMessage = $formerAskHistory->getMessage()->getId();
                         }
                     }
                 }

@@ -66,6 +66,12 @@ class AskHistoryRepository
         return $query->getQuery()->getResult();
     }
 
+    /**
+     * Find the last AskHistory having a linked message
+     *
+     * @param Ask $ask  The ask
+     * @return AskHistory|null  The ask history found
+     */
     public function findLastAskHistoryWithMessage(Ask $ask)
     {
         $query = $this->repository->createQueryBuilder('ah')
@@ -75,6 +81,6 @@ class AskHistoryRepository
         ->setParameter('ask', $ask)
         ->orderBy('ah.createdDate', 'DESC');
         
-        return $query->getQuery()->getResult();
+        return $query->getQuery()->getSingleResult();
     }
 }

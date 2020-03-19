@@ -76,14 +76,14 @@ class DynamicAsk
      * @var int The id of this dynamic ad ask.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readDynamic","updateDynamic"})
+     * @Groups({"readDynamic","writeDynamic","updateDynamic"})
      */
     private $id;
 
     /**
      * @var int Ask status (1 = pending, 2 = accepted; 3 = declined).
      *
-     * @Groups({"readDynamic","updateDynamic"})
+     * @Groups({"readDynamic","writeDynamic","updateDynamic"})
      */
     private $status;
 
@@ -100,6 +100,13 @@ class DynamicAsk
      * @Groups("readDynamic")
      */
     private $user;
+
+    /**
+     * @var User|null The carpooler (user related to the ask).
+     *
+     * @Groups("readDynamic")
+     */
+    private $carpooler;
     
     /**
      * @var int|null The matching id related to the ask.
@@ -107,6 +114,13 @@ class DynamicAsk
      * @Groups("writeDynamic")
      */
     private $matchingId;
+
+    /**
+     * @var int|null The dynamic ad id related to the ask. Can be useful on driver acceptation : a new dynamic ad is created !
+     *
+     * @Groups("writeDynamic")
+     */
+    private $dynamicId;
 
     public function __construct()
     {
@@ -161,6 +175,18 @@ class DynamicAsk
         return $this;
     }
 
+    public function getCarpooler(): ?User
+    {
+        return $this->carpooler;
+    }
+
+    public function setCarpooler(?User $carpooler): self
+    {
+        $this->carpooler = $carpooler;
+
+        return $this;
+    }
+
     public function getMatchingId(): ?int
     {
         return $this->matchingId;
@@ -169,6 +195,18 @@ class DynamicAsk
     public function setMatchingId(?int $matchingId): self
     {
         $this->matchingId = $matchingId;
+
+        return $this;
+    }
+
+    public function getDynamicId(): ?int
+    {
+        return $this->dynamicId;
+    }
+
+    public function setDynamicId(?int $dynamicId): self
+    {
+        $this->dynamicId = $dynamicId;
 
         return $this;
     }
