@@ -326,7 +326,7 @@ class SolidaryUser
      * @var User The user associated with the solidaryUser.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist","remove"}, orphanRemoval=true, mappedBy="solidaryUser")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"readSolidaryUser","writeSolidaryUser"})
      * @ApiSubresource
@@ -360,6 +360,16 @@ class SolidaryUser
     private $proofs;
 
     /**
+     * @var ArrayCollection|null The solidary records for this solidary user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="solidaryUser", cascade={"remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @Groups("readSolidaryUser")
+     * @Apisubresource
+     */
+    private $solidaries;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -379,6 +389,7 @@ class SolidaryUser
     {
         $this->needs = new ArrayCollection();
         $this->proofs = new ArrayCollection();
+        $this->solidaries = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -849,6 +860,34 @@ class SolidaryUser
             }
         }
         
+        return $this;
+    }
+
+    public function getSolidaries()
+    {
+        return $this->solidaries->getValues();
+    }
+
+    public function addSolidary(Solidary $solidary): self
+    {
+        if (!$this->solidaries->contains($solidary)) {
+            $this->solidaries->add($solidary);
+            $solidary->setSolidaryUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSolidary(Solidary $solidary): self
+    {
+        if ($this->solidaries->contains($solidary)) {
+            $this->solidaries->removeElement($solidary);
+            // set the owning side to null (unless already changed)
+            if ($solidary->getSolidaryUser() === $this) {
+                $solidary->setSolidaryUser(null);
+            }
+        }
+
         return $this;
     }
 

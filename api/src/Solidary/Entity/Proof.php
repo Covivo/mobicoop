@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"readSolidary","readSolidaryUser}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readSolidary","readSolidaryUser"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={"get","post"},
@@ -87,24 +87,6 @@ class Proof
     private $structureProof;
 
     /**
-     * @var Solidary Solidary record if the proof concerns a solidary requester.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof", inversedBy="proofs")
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidaryUser"})
-     * @MaxDepth(1)
-     */
-    private $solidary;
-
-    /**
-     * @var SolidaryUser if the proof concerns a solidary User.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUser", inversedBy="proofs")
-     * @Groups({"readSolidary","writeSolidaryUser"})
-     * @MaxDepth(1)
-     */
-    private $solidaryUser;
-
-    /**
      * @var string The final file name of the proof.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -141,6 +123,17 @@ class Proof
      * @Vich\UploadableField(mapping="proof", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType")
      */
     private $file;
+
+    /**
+     * @var SolidaryUserStructure SolidaryUser Structure relation
+     *
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readSolidary","readSolidaryUser","writeSolidaryUser"})
+     * @MaxDepth(1)
+     */
+    private $solidaryUserStructure;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -273,6 +266,16 @@ class Proof
     public function setFile(?File $file)
     {
         $this->file = $file;
+    }
+
+    public function getSolidaryUserStructure(): ?SolidaryUserStructure
+    {
+        return $this->solidaryUserStructure;
+    }
+    
+    public function setSolidaryUserStructure(?SolidaryUserStructure $solidaryUserStructure)
+    {
+        $this->solidaryUserStructure = $solidaryUserStructure;
     }
 
     public function getCreatedDate(): ?\DateTimeInterface

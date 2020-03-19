@@ -70,7 +70,7 @@ class SolidarySolution
      * @var Solidary The solidary record.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Solidary", inversedBy="solidaryMatchings")
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Solidary", inversedBy="solidarySolutions")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"readSolidary"})
      * @MaxDepth(1)
@@ -81,6 +81,7 @@ class SolidarySolution
      * @var SolidaryUser The solidary User if needed.
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidaryUser")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $solidaryUser;

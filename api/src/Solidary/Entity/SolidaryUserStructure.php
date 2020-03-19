@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -29,81 +29,71 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A special need for a solidary record.
+ * Relation between a Solidary User, a Structure and a Proof
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeSolidary"}}
+ *          "normalization_context"={"groups"={"readSolidaryUserStructure"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidaryUserStructure"}}
  *      },
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
  */
-class Need
+class SolidaryUserStructure
 {
     
     /**
-     * @var int The id of this need.
+     * @var int The id of this SolidaryStructureProof.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("readSolidary")
+     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
      */
     private $id;
-
+    
     /**
-     * @var string Label of the need.
+     * @var SolidaryUser Structure proof.
      *
      * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"readSolidary","writeSolidary"})
-     */
-    private $label;
-
-    /**
-     * @var bool The need is not publicly available.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
-     */
-    private $private;
-
-    /**
-     * @var Solidary Solidary if the need was created for a specific solidary record.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUser")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
      * @MaxDepth(1)
      */
-    private $solidary;
+    private $solidaryUser;
+    
+    /**
+     * @var Structure Structure proof.
+     *
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
+     * @MaxDepth(1)
+     */
+    private $structure;
 
     /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
      */
     private $createdDate;
 
-    /**
-     * @var \DateTimeInterface Updated date.
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $updatedDate;
-    
+
+    public function __construct($id=null)
+    {
+        $this->id = $id;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -116,39 +106,27 @@ class Need
         return $this;
     }
     
-    public function getLabel(): ?string
+    public function getSolidaryUser(): ?SolidaryUser
     {
-        return $this->label;
-    }
-
-    public function setLabel(string $label): self
-    {
-        $this->label = $label;
-
-        return $this;
-    }
-
-    public function isPrivate(): ?bool
-    {
-        return $this->private;
+        return $this->solidaryUser;
     }
     
-    public function setPrivate(?bool $isPrivate): self
+    public function setSolidaryUser(SolidaryUser $solidaryUser): self
     {
-        $this->private = $isPrivate;
+        $this->solidaryUser = $solidaryUser;
         
         return $this;
     }
-
-    public function getSolidary(): ?Solidary
+    
+    public function getStructure(): ?Structure
     {
-        return $this->solidary;
+        return $this->structure;
     }
-
-    public function setSolidary(?Solidary $solidary): self
+    
+    public function setStructure(Structure $structure): self
     {
-        $this->solidary = $solidary;
-
+        $this->structure = $structure;
+        
         return $this;
     }
 
@@ -163,19 +141,7 @@ class Need
 
         return $this;
     }
-
-    public function getUpdatedDate(): ?\DateTimeInterface
-    {
-        return $this->updatedDate;
-    }
-
-    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
-    {
-        $this->updatedDate = $updatedDate;
-
-        return $this;
-    }
-
+    
     // DOCTRINE EVENTS
     
     /**
@@ -186,15 +152,5 @@ class Need
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
-    }
-
-    /**
-     * Update date.
-     *
-     * @ORM\PreUpdate
-     */
-    public function setAutoUpdatedDate()
-    {
-        $this->setUpdatedDate(new \Datetime());
     }
 }

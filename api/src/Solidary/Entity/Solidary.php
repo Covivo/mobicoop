@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -29,9 +29,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Entity\Proposal;
-use App\User\Entity\User;
 use App\Solidary\Controller\SolidaryProposalPost;
 use Doctrine\Common\Collections\ArrayCollection;
+use App\Solidary\Entity\SolidaryUser;
 
 /**
  * A solidary record.
@@ -109,15 +109,15 @@ class Solidary
     private $updatedDate;
 
     /**
-     * @var User The user related with the solidary record.
+     * @var SolidaryUser The SolidaryUser related with the solidary record.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solidaries")
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUser", inversedBy="solidaries")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"readSolidary", "writeSolidary"})
      * @MaxDepth(1)
      */
-    private $user;
+    private $solidaryUser;
 
     /**
      * @var Proposal The proposal.
@@ -159,13 +159,13 @@ class Solidary
     private $needs;
 
     /**
-     * @var ArrayCollection|null Solidary matchings.
+     * @var ArrayCollection|null Solidary solutions.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
      * @Groups("readSolidary")
      * @MaxDepth(1)
      */
-    private $solidaryMatchings;
+    private $solidarySolutions;
 
     /**
      * @var ArrayCollection|null Solidary proofs.
@@ -179,7 +179,7 @@ class Solidary
     public function __construct()
     {
         $this->needs = new ArrayCollection();
-        $this->solidaryMatchings = new ArrayCollection();
+        $this->solidarySolutions = new ArrayCollection();
         $this->proofs = new ArrayCollection();
     }
 
@@ -248,14 +248,14 @@ class Solidary
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getSolidaryUser(): ?SolidaryUser
     {
-        return $this->user;
+        return $this->solidaryUser;
     }
 
-    public function setUser(?User $user): self
+    public function setSolidaryUser(?SolidaryUser $solidaryUser): self
     {
-        $this->user = $user;
+        $this->solidaryUser = $solidaryUser;
         
         return $this;
     }
@@ -320,24 +320,24 @@ class Solidary
         return $this;
     }
 
-    public function getSolidaryMatchings()
+    public function getSolidarySolutions()
     {
-        return $this->solidaryMatchings->getValues();
+        return $this->solidarySolutions->getValues();
     }
     
-    public function addSolidaryMatching(SolidaryMatching $solidaryMatching): self
+    public function addSolidarySolution(SolidarySolution $solidarySolution): self
     {
-        if (!$this->solidaryMatchings->contains($solidaryMatching)) {
-            $this->solidaryMatchings[] = $solidaryMatching;
+        if (!$this->solidarySolutions->contains($solidarySolution)) {
+            $this->solidarySolutions[] = $solidarySolution;
         }
         
         return $this;
     }
     
-    public function removeSolidaryMatching(SolidaryMatching $solidaryMatching): self
+    public function removeSolidarySolution(SolidarySolution $solidarySolution): self
     {
-        if ($this->solidaryMatchings->contains($solidaryMatching)) {
-            $this->solidaryMatchings->removeElement($solidaryMatching);
+        if ($this->solidarySolutions->contains($solidarySolution)) {
+            $this->solidarySolutions->removeElement($solidarySolution);
         }
         
         return $this;

@@ -25,6 +25,7 @@ namespace App\User\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\PersistentCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -89,6 +90,7 @@ use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
+use App\Solidary\Entity\SolidaryUser;
 
 /**
  * A user.
@@ -237,13 +239,7 @@ use App\Community\Entity\CommunityUser;
  *              "method"="GET",
  *              "path"="/users/me",
  *              "read"="false"
- *          },
- *          "solidaryUsers"={
- *              "normalization_context"={"groups"={"solidaryUsers"}},
- *              "method"="GET",
- *              "path"="/users/solidary",
- *              "read"="false"
- *          },
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
@@ -893,16 +889,6 @@ class User implements UserInterface, EquatableInterface
     private $diariesAdmin;
 
     /**
-     * @var ArrayCollection|null The solidary records for this user.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
-     * @MaxDepth(1)
-     * @Groups("readUser")
-     * @Apisubresource
-     */
-    private $solidaries;
-
-    /**
     * @var ArrayCollection|null A user may have many user notification preferences.
     *
     * @ORM\OneToMany(targetEntity="\App\User\Entity\UserNotification", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
@@ -1001,6 +987,13 @@ class User implements UserInterface, EquatableInterface
      */
     private $alreadyRegistered;
 
+    /**
+     * The SolidaryUser possibly linked to this User
+     * @OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user")
+     * @Groups("readSolidaryUser")
+     */
+    private $solidaryUser;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -1021,7 +1014,6 @@ class User implements UserInterface, EquatableInterface
         $this->logsAdmin = new ArrayCollection();
         $this->diaries = new ArrayCollection();
         $this->diariesAdmin = new ArrayCollection();
-        $this->solidaries = new ArrayCollection();
         $this->userNotifications = new ArrayCollection();
         $this->campaigns = new ArrayCollection();
         $this->deliveries = new ArrayCollection();
@@ -1980,34 +1972,6 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getSolidaries()
-    {
-        return $this->solidaries->getValues();
-    }
-
-    public function addSolidary(Solidary $solidary): self
-    {
-        if (!$this->solidaries->contains($solidary)) {
-            $this->solidaries->add($solidary);
-            $solidary->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSolidary(Solidary $solidary): self
-    {
-        if ($this->solidaries->contains($solidary)) {
-            $this->solidaries->removeElement($solidary);
-            // set the owning side to null (unless already changed)
-            if ($solidary->getUser() === $this) {
-                $solidary->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getUserNotifications()
     {
         return $this->userNotifications->getValues();
@@ -2330,6 +2294,17 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getSolidaryUser(): ?SolidaryUser
+    {
+        return $this->solidaryUser;
+    }
+
+    public function setSolidaryUser(?SolidaryUser $solidaryUser): self
+    {
+        $this->solidaryUser = $solidaryUser;
+
+        return $this;
+    }
 
     // DOCTRINE EVENTS
 
