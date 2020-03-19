@@ -46,6 +46,7 @@ class AdVoter extends Voter
     const AD_ASK_CREATE = 'ad_ask_create';
     const AD_ASK_READ = 'ad_ask_read';
     const AD_ASK_UPDATE = 'ad_ask_update';
+    const AD_SEARCH_CREATE = 'ad_search_create';
     
     private $request;
     private $authManager;
@@ -73,7 +74,8 @@ class AdVoter extends Voter
             self::AD_LIST,
             self::AD_ASK_CREATE,
             self::AD_ASK_READ,
-            self::AD_ASK_UPDATE
+            self::AD_ASK_UPDATE,
+            self::AD_SEARCH_CREATE
             ])) {
             return false;
         }
@@ -87,7 +89,8 @@ class AdVoter extends Voter
             self::AD_LIST,
             self::AD_ASK_CREATE,
             self::AD_ASK_READ,
-            self::AD_ASK_UPDATE
+            self::AD_ASK_UPDATE,
+            self::AD_SEARCH_CREATE
             ]) && !($subject instanceof Paginator) && !($subject instanceof Ad)) {
             return false;
         }
@@ -121,6 +124,8 @@ class AdVoter extends Voter
             case self::AD_ASK_UPDATE:
                 $ask = $this->askRepository->find($this->request->get('id'));
                 return $this->canUpdateAskFromAd($ask);
+            case self::AD_SEARCH_CREATE:
+                return $this->canCreateSearchAd();
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -165,5 +170,10 @@ class AdVoter extends Voter
     private function canUpdateAskFromAd(Ask $ask)
     {
         return $this->authManager->isAuthorized(self::AD_ASK_UPDATE, ['ask'=>$ask]);
+    }
+
+    private function canCreateSearchAd()
+    {
+        return $this->authManager->isAuthorized(self::AD_SEARCH_CREATE);
     }
 }
