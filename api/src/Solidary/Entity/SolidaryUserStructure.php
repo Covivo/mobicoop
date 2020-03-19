@@ -46,7 +46,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class SolidaryUserStructure
 {
-    
+    const STATUS_ACCEPTED = 1;
+    const STATUS_REFUSED = 1;
+
     /**
      * @var int The id of this SolidaryStructureProof.
      *
@@ -88,6 +90,29 @@ class SolidaryUserStructure
      */
     private $createdDate;
 
+    /**
+     * @var int Status of this Solidary User for this structure (0 : pending, 1 : accepted, 2 : refused)
+     *
+     * @ORM\Column(type="integer", options={"default" : 0})
+     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
+     */
+    private $status;
+
+    /**
+     * @var \DateTimeInterface Acceptation date of this Solidary User for this structure
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
+     */
+    private $acceptedDate;
+
+    /**
+     * @var \DateTimeInterface Refusal date of this Solidary User for this structure.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
+     */
+    private $refusedDate;
 
     public function __construct($id=null)
     {
@@ -141,7 +166,43 @@ class SolidaryUserStructure
 
         return $this;
     }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
     
+    public function setStatus(int $status): self
+    {
+        $this->status = $status;
+        
+        return $this;
+    }
+
+    public function getAcceptedDate(): ?\DateTimeInterface
+    {
+        return $this->acceptedDate;
+    }
+
+    public function setAcceptedDate(\DateTimeInterface $acceptedDate): self
+    {
+        $this->acceptedDate = $acceptedDate;
+
+        return $this;
+    }
+
+    public function getRefusedDate(): ?\DateTimeInterface
+    {
+        return $this->refusedDate;
+    }
+
+    public function setRefusedDate(\DateTimeInterface $refusedDate): self
+    {
+        $this->refusedDate = $refusedDate;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
     
     /**
