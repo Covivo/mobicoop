@@ -36,6 +36,7 @@ use App\Carpool\Event\MatchingNewEvent;
 use App\Carpool\Event\PassengerAskAdDeletedEvent;
 use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
 use App\Carpool\Event\ProposalCanceledEvent;
+use App\Carpool\Event\ProposalMinorUpdatedEvent;
 use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Communication\Service\NotificationManager;
@@ -74,7 +75,8 @@ class CarpoolSubscriber implements EventSubscriberInterface
             PassengerAskAdDeletedEvent::NAME => 'onPassengerAskAdDeleted',
             PassengerAskAdDeletedUrgentEvent::NAME => 'onPassengerAskAdDeletedUrgent',
             DriverAskAdDeletedEvent::NAME => 'onDriverAskAdDeleted',
-            DriverAskAdDeletedUrgentEvent::NAME => 'onDriverAskAdDeletedUrgent'
+            DriverAskAdDeletedUrgentEvent::NAME => 'onDriverAskAdDeletedUrgent',
+            ProposalMinorUpdatedEvent::NAME => 'onProposalMinorUpdated'
         ];
     }
     
@@ -270,6 +272,20 @@ class CarpoolSubscriber implements EventSubscriberInterface
             $this->notificationManager->notifies(DriverAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
         } else {
             $this->notificationManager->notifies(DriverAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+        }
+    }
+
+    public function onProposalMinorUpdated(ProposalMinorUpdatedEvent $event)
+    {
+        $object = (object) [
+            "old" => $event->getOldProposal(),
+            "new" => $event->getNewProposal(),
+            "user" => $event->getUser()
+        ];
+
+        foreach ($event->getAsks() as $ask) {
+            $object->ask = $ask;
+            $this->notificationManager->notifies(ProposalMinorUpdatedEvent::NAME, $ask->getUser(), $object);
         }
     }
 }

@@ -30,6 +30,7 @@ use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Result;
 use App\Carpool\Entity\Waypoint;
+use App\Carpool\Event\ProposalMinorUpdatedEvent;
 use App\Community\Exception\CommunityNotFoundException;
 use App\Community\Service\CommunityManager;
 use App\Event\Exception\EventNotFoundException;
@@ -43,6 +44,8 @@ use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Rdex\Entity\RdexError;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Ad manager service.
@@ -64,6 +67,8 @@ class AdManager
     private $criteriaRepository;
     private $proposalMatcher;
     private $askManager;
+    private $eventDispatcher;
+    private $security;
 
     /**
      * Constructor.
@@ -71,7 +76,7 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -85,6 +90,8 @@ class AdManager
         $this->criteriaRepository = $criteriaRepository;
         $this->proposalMatcher = $proposalMatcher;
         $this->askManager = $askManager;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->security = $security;
     }
     
     /**
@@ -1032,6 +1039,10 @@ class AdManager
     public function updateAd(Ad $ad)
     {
         $proposal = $this->proposalRepository->find($ad->getAdId());
+        $oldProposal = clone $proposal;
+        $oldProposal->setCriteria(clone $proposal->getCriteria());
+
+        // update minor data
         $proposal->setPaused($ad->isPaused());
         $proposal->getCriteria()->setBike($ad->hasBike());
         $proposal->getCriteria()->setBackSeats($ad->hasBackSeats());
@@ -1041,14 +1052,37 @@ class AdManager
 
         $this->entityManager->persist($proposal);
 
+        $proposalAsks = $this->askManager->getAsksFromProposal($proposal);
+
+        // check for prior necessity of event
+        if (count($proposalAsks) > 0) {
+            $oldCriteria = $oldProposal->getCriteria();
+            $newCriteria = $proposal->getCriteria();
+
+            // check for second necessity of event
+            if ($oldCriteria->hasBike() !== $newCriteria->hasBike()
+                || $oldCriteria->hasBackSeats() !== $newCriteria->hasBackSeats()
+                || $oldCriteria->hasLuggage() !== $newCriteria->hasLuggage()
+                || $oldCriteria->getSeatsDriver() !== $newCriteria->getSeatsDriver()
+                || $oldProposal->getComment() !== $proposal->getComment()
+            ) {
+                $event = new ProposalMinorUpdatedEvent($oldProposal, $proposal, $proposalAsks, $this->security->getUser());
+                $this->eventDispatcher->dispatch(ProposalMinorUpdatedEvent::NAME, $event);
+            }
+        }
+
+
         if ($proposal->getProposalLinked()) {
+            // same if there is linked proposal
             $linkedProposal = $proposal->getProposalLinked();
+
             $linkedProposal->setPaused($ad->isPaused());
             $linkedProposal->getCriteria()->setBike($ad->hasBike());
             $linkedProposal->getCriteria()->setBackSeats($ad->hasBackSeats());
             $linkedProposal->getCriteria()->setLuggage($ad->hasLuggage());
             $linkedProposal->getCriteria()->setSeatsDriver($ad->getSeatsDriver());
             $linkedProposal->setComment($ad->getComment());
+
             $this->entityManager->persist($linkedProposal);
         }
 

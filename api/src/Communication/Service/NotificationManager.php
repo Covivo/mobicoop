@@ -24,6 +24,7 @@
 namespace App\Communication\Service;
 
 use App\Carpool\Entity\Ad;
+use App\Carpool\Entity\Waypoint;
 use App\Communication\Interfaces\MessagerInterface;
 use App\Event\Entity\Event;
 use Psr\Log\LoggerInterface;
@@ -286,6 +287,27 @@ class NotificationManager
                         'journeyTime' => $time
                     ];
                 break;
+                default:
+                    if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->user)) {
+                        $outwardOrigin = null;
+                        $outwardDestination = null;
+                        /** @var Waypoint $waypoint */
+                        foreach ($object->ask->getWaypoints() as $waypoint) {
+                            if ($waypoint->getPosition() == 0) {
+                                $outwardOrigin = $waypoint;
+                            } elseif ($waypoint->isDestination()) {
+                                $outwardDestination = $waypoint;
+                            }
+                        }
+//                        dump($object->new->getCriteria(), $object->old->getCriteria());die;
+                        $bodyContext = [
+                            'user' => $recipient,
+                            'notification' => $notification,
+                            'object' => $object,
+                            'origin' => $outwardOrigin,
+                            'destination' => $outwardDestination
+                        ];
+                    }
             }
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
@@ -325,7 +347,7 @@ class NotificationManager
         if ($object) {
             switch (get_class($object)) {
                 case Proposal::class:
-                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
+                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'object' => $object];
                     break;
                 case Matching::class:
                     $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'matching'=> $object];
@@ -389,6 +411,26 @@ class NotificationManager
                 case User::class:
                     $bodyContext = ['user'=>$recipient];
                     break;
+                default:
+                    if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->user)) {
+                        $outwardOrigin = null;
+                        $outwardDestination = null;
+                        /** @var Waypoint $waypoint */
+                        foreach ($object->ask->getWaypoints() as $waypoint) {
+                            if ($waypoint->getPosition() == 0) {
+                                $outwardOrigin = $waypoint;
+                            } elseif ($waypoint->isDestination()) {
+                                $outwardDestination = $waypoint;
+                            }
+                        }
+                        $bodyContext = [
+                            'user' => $recipient,
+                            'notification' => $notification,
+                            'object' => $object,
+                            'origin' => $outwardOrigin,
+                            'destination' => $outwardDestination
+                        ];
+                    }
             }
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];

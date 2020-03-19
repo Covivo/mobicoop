@@ -1,0 +1,71 @@
+{% extends '/email/notification/base.html.twig' %}
+{% block body %}
+    {% set new = context.object.new %}
+    {% set old = context.object.old %}
+    {% set ask = context.object.ask %}
+    {% set sender = context.object.user %}
+    {% set recipient = context.user %}
+    {% set outwardOrigin = context.origin %}
+    {% set outwardDestination = context.destination %}
+
+    <table style="width:100%;font-family:{{ api_env('EMAILS_FONT') }}, sans-serif;">
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td>
+                            <p style="color:{{ api_env('EMAILS_COLOR_SECONDARY') }};font-size:30">
+                                <b>{{ "cancelledCarpool"|trans }}</b></p>
+                            <hr>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table style="width:100%;">
+                    <tr>
+                        <td style="width:70%">
+                            <p>{{ "hello"|trans }}<b
+                                        style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ recipient.givenName|capitalize }} {{ recipient.shortFamilyName|capitalize }}</b>
+                            </p>
+                            <p>{{ "yourCarpoolWith"|trans }}<b
+                                        style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ sender.givenName|capitalize }} {{ sender.shortFamilyName|capitalize }}</b> {{ "hasBeenCancelledBecause"|trans }}
+                                <b>{{ sender.givenName|capitalize }} {{ sender.shortFamilyName|capitalize }}</b> {{ "hasUpdatedHisAd"|trans }}
+                            </p>
+                        </td>
+                        <td style="width:30%">
+                            <img style="border-radius:50px" src="{{ sender.avatars[0] }}" alt="Avatar"/>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table style="width:70%;background-color:{{ api_env('EMAILS_COLOR_PRIMARY_LIGHT') }};margin-top:5px;margin-bottom:5px;margin-left:5px">
+                    <tr>
+                        <td style="width:10%;text-align:left">
+                            <img src="{{ api_env('EMAILS_PLATFORM_URL') }}{{ api_env('EMAILS_IMAGES_BASE_URL') }}{{ api_env('EMAILS_WAY_LOGO') }}"
+                                 alt="trajet"/>
+                        </td>
+                        <td style="width:90%;text-align:left">
+                            <p>
+                                <b style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}">{{ outwardOrigin.address.displayLabel[0] }}</b>
+                            </p>
+                            <p>
+                                <b style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ outwardDestination.address.displayLabel[0] }}</b>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <p>{{ "noPenaltyApplied"|trans|raw }}</p>
+        </tr>
+
+        </hr>
+    </table>
+{% endblock %}    

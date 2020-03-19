@@ -57,6 +57,24 @@ toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspond
 justPublished : "elle vient d'être publiée"
 
 
+# CARPOOL UPDATED
+carpoolProposalUpdated: "L'annonce liée à votre demande a été modifiée"
+updatedCarpool: "Covoiturage modifié"
+hasBeenUpdated: "a été modifié"
+updateFieldsListTitle: "Voici le détail des informations modifiées :"
+field: "Champ"
+bike: "Vélo"
+backSeats: "2 à l'arrière"
+luggage: "Bagages volumineux"
+seatsDriver: "Sièges disponibles"
+comment: "Commentaire"
+old: "Ancien"
+new: "Nouveau"
+yes: "Oui"
+no: "Non"
+hasBeenCancelledBecause: "a été annulé car"
+hasUpdatedHisAd: "a modifié son annonce."
+cancelledCarpool: "Covoiturage annulé"
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
