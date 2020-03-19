@@ -209,9 +209,8 @@ class UserManager
             }
         }
 
-        if(is_array($user->getCommunitiesId()) && count($user->getCommunitiesId()) > 0){    
-
-            foreach ($user->getCommunitiesId()as $community) {               
+        if (is_array($user->getCommunitiesId()) && count($user->getCommunitiesId()) > 0) {
+            foreach ($user->getCommunitiesId()as $community) {
                 $communityUser = new CommunityUser();
                 $communityUser->setUser($user);
                 $communityUser->setCommunity($community);
@@ -223,7 +222,6 @@ class UserManager
 
         // return the user
         return $user;
-
     }
 
     /**

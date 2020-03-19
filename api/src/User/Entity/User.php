@@ -788,14 +788,14 @@ class User implements UserInterface, EquatableInterface
 
     public function getCommunitiesId(): ?array
     {
-    return $this->communitiesId;
+        return $this->communitiesId;
     }
 
     public function setcommunitiesId(array $communitiesId): self
     {
-    $this->communitiesId = $communitiesId;
+        $this->communitiesId = $communitiesId;
 
-    return $this;
+        return $this;
     }
 
   

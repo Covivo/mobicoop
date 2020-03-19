@@ -72,7 +72,7 @@ class UserController extends AbstractController
      * Constructor
      * @param UserPasswordEncoderInterface $encoder
      */
-    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address, $news_subscription,$community_show)
+    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address, $news_subscription, $community_show)
     {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -161,7 +161,7 @@ class UserController extends AbstractController
             }
 
             
-            if(!is_null($data['communities'])) {               
+            if (!is_null($data['communities'])) {
                 $communityUser->setUser($user);
                 $communityUser->setCommunity($data['communities']);
                 $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
