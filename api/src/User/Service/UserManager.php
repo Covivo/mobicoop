@@ -48,7 +48,6 @@ use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
-use App\Solidary\Repository\VolunteerRepository;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Entity\UserNotification;
 use App\User\Event\UserDelegateRegisteredEvent;
@@ -61,7 +60,6 @@ use App\User\Repository\UserRepository;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\User\Exception\UserDeleteException;
-use App\Solidary\Entity\Volunteer;
 
 /**
  * User manager service.
@@ -82,7 +80,6 @@ class UserManager
     private $notificationRepository;
     private $userNotificationRepository;
     private $userRepository;
-    private $volunteerRepository;
     private $logger;
     private $eventDispatcher;
     private $encoder;
@@ -100,7 +97,7 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, AuthItemRepository $authItemRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator, Security $security, VolunteerRepository $volunteerRepository)
+    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, AuthItemRepository $authItemRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator, Security $security)
     {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -118,7 +115,6 @@ class UserManager
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
         $this->userRepository = $userRepository;
-        $this->volunteerRepository = $volunteerRepository;
         $this->chat = $chat;
         $this->music = $music;
         $this->smoke = $smoke;
@@ -870,41 +866,5 @@ class UserManager
 
 
         return $user;
-    }
-
-    /**
-     * Return all Users with solidary bounds (Volunteers, Beneficiary etc...)
-     *
-     * @param array $filters          Filters
-     * @param array $orderCriteria    The criteria to order the results
-     * @param array $order            Direction of the filter (ASC or DESC)
-     * @return array
-     */
-    public function getSolidaryUsers(array $filters = null, string $orderCriteria = null, string $order='ASC')
-    {
-        $solidaryUsers = [];
-        
-
-        // First we get the Volunteers
-        $volunteers = $this->volunteerRepository->findAll();
-
-        foreach ($volunteers as $volunteer) {
-            /**
-             * @var Volunteer $volunteer
-             */
-            $solidaryUsers[] = [
-                "id" => $volunteer->getId(),
-                "type" => Volunteer::SOLIDARY_TYPE,
-                "givenName" => $volunteer->getUser()->getGivenName(),
-                "lastName" => $volunteer->getUser()->getFamilyName(),
-                "role"=>implode(",", $volunteer->getUser()->getRoles()),
-                "newSubscription"=> (is_null($volunteer->getUser()->hasNewsSubscription())) ? false : $volunteer->getUser()->hasNewsSubscription(),
-                "createdDate"=>$volunteer->getCreatedDate()
-            ];
-        }
-
-        // We get the Users with solidary proposal
-
-        return $solidaryUsers;
     }
 }

@@ -399,7 +399,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","readCommunityUser","results","write","readVolunteer"})
+     * @Groups({"readUser","readCommunityUser","results","write","readSolidaryUser"})
      */
     private $status;
 
@@ -407,7 +407,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","readVolunteer","writeVolunteer"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","readSolidaryUser","writeSolidaryUser"})
      */
     private $givenName;
 
@@ -415,14 +415,14 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","readVolunteer","writeVolunteer"})
+     * @Groups({"readUser","write","readSolidaryUser","writeSolidaryUser"})
      */
     private $familyName;
 
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readVolunteer"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readSolidaryUser"})
      */
     private $shortFamilyName;
 
@@ -440,7 +440,7 @@ class User implements UserInterface, EquatableInterface
      * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate","readVolunteer","writeVolunteer"})
+     * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate","readSolidaryUser","writeSolidaryUser"})
      */
     private $email;
 
@@ -457,7 +457,7 @@ class User implements UserInterface, EquatableInterface
      * @var string The encoded password of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","passwordUpdate","writeVolunteer"})
+     * @Groups({"readUser","write","passwordUpdate","writeSolidaryUser"})
      */
     private $password;
 
@@ -479,7 +479,7 @@ class User implements UserInterface, EquatableInterface
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","results","write","externalJourney","readVolunteer","writeVolunteer"})
+     * @Groups({"readUser","results","write","externalJourney","readSolidaryUser","writeSolidaryUser"})
      */
     private $gender;
 
@@ -495,7 +495,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface|null The birth date of the user.
      *
      * @ORM\Column(type="date", nullable=true)
-     * @Groups({"readUser","write","readVolunteer","writeVolunteer"})
+     * @Groups({"readUser","write","readSolidaryUser","writeSolidaryUser"})
      *
      * @ApiProperty(
      *     attributes={
@@ -516,7 +516,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The telephone number of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","checkPhoneToken","readVolunteer","writeVolunteer"})
+     * @Groups({"readUser","write","checkPhoneToken","readSolidaryUser","writeSolidaryUser"})
      */
     private $telephone;
 
@@ -537,7 +537,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","write", "results","writeVolunteer"})
+     * @Groups({"readUser","write", "results","writeSolidaryUser"})
      */
     private $phoneDisplay;
 

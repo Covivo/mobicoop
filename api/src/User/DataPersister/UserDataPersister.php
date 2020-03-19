@@ -50,7 +50,7 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     {
         // call your persistence layer to save $data
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Volunteer id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans("bad user id is provided"));
         }
 
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {

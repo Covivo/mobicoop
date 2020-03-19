@@ -22,15 +22,15 @@
 
 namespace App\Solidary\Repository;
 
-use App\Solidary\Entity\Volunteer;
+use App\Solidary\Entity\SolidaryUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method Volunteer|null find($id, $lockMode = null, $lockVersion = null)
- * @method Volunteer|null findOneBy(array $criteria, array $orderBy = null)
+ * @method SolidaryUser|null find($id, $lockMode = null, $lockVersion = null)
+ * @method SolidaryUser|null findOneBy(array $criteria, array $orderBy = null)
  */
-class VolunteerRepository
+class SolidaryUserRepository
 {
     /**
      * @var EntityRepository
@@ -42,11 +42,11 @@ class VolunteerRepository
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(Volunteer::class);
+        $this->repository = $entityManager->getRepository(SolidaryUser::class);
     }
 
 
-    public function find(int $id): ?Volunteer
+    public function find(int $id): ?SolidaryUser
     {
         return $this->repository->find($id);
     }
@@ -62,16 +62,16 @@ class VolunteerRepository
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
-    public function findOneBy(array $criteria): ?Volunteer
+    public function findOneBy(array $criteria): ?SolidaryUser
     {
         return $this->repository->findOneBy($criteria);
     }
 
     /**
-     * Get a Volunteer by its email
+     * Get a SolidaryUser by its email
      *
      * @param string $email
-     * @return Volunteer|null
+     * @return SolidaryUser|null
      */
     public function findByEmail(string $email)
     {
