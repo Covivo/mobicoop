@@ -30,7 +30,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Action\Entity\Action;
 use App\Solidary\Entity\Solidary;
-use App\Solidary\Entity\SolidaryMatching;
+use App\Solidary\Entity\SolidarySolution;
 use App\User\Entity\User;
 
 /**
@@ -118,12 +118,12 @@ class Diary
     private $solidary;
 
     /**
-     * @var Solidary|null The solidary matching if the action concerns a solidary record matching.
+     * @var SolidarySolution|null The solidary solution if the action concerns a solidary record solution.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching")
+     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidarySolution")
      * @Groups({"read","write"})
      */
-    private $solidaryMatching;
+    private $solidarySolution;
 
     /**
      * @var \DateTimeInterface Creation date of the diary action.
@@ -220,14 +220,14 @@ class Diary
         return $this;
     }
 
-    public function getSolidaryMatching(): ?SolidaryMatching
+    public function getSolidarySolution(): ?SolidarySolution
     {
-        return $this->solidaryMatching;
+        return $this->solidarySolution;
     }
     
-    public function setSolidaryMatching(?SolidaryMatching $solidaryMatching): self
+    public function setSolidarySolution(?SolidarySolution $solidarySolution): self
     {
-        $this->solidaryMatching = $solidaryMatching;
+        $this->solidarySolution = $solidarySolution;
         
         return $this;
     }
