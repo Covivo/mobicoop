@@ -65,6 +65,7 @@
               :is-outward="scheduleHasOutward(schedule)"
               :is-regular="isRegular"
               :no-gutters="true"
+              :has-days="true"
             />
           </v-col>
         </v-row>
