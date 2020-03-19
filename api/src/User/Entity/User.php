@@ -157,7 +157,7 @@ use App\Solidary\Entity\SolidaryUser;
  *                      }
  *                  }
  *              },
- *              "security_post_denormalize"="is_granted('user_register',object)"
+ *              "security_post_denormalize"="is_granted('user_create',object)"
  *          },
  *          "delegateRegistration"={
  *              "method"="POST",
@@ -218,7 +218,7 @@ use App\Solidary\Entity\SolidaryUser;
  *                      }
  *                  }
  *              },
- *              "security_post_denormalize"="is_granted('user_create',object)"
+ *              "security_post_denormalize"="is_granted('user_register',object)"
  *          },
  *          "checkSignUpValidationToken"={
  *              "method"="POST",
