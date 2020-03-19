@@ -302,7 +302,7 @@ class SolidaryUser
      *
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readSolidaryUser","writeSolidaryUser"})
      */
     private $address;
@@ -327,9 +327,7 @@ class SolidaryUser
      *
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist","remove"}, orphanRemoval=true, mappedBy="solidaryUser")
-     * @ORM\JoinColumn(nullable=false)
      * @Groups({"readUser","read", "write","readSolidaryUser","writeSolidaryUser"})
-     * @ApiSubresource
      */
     private $user;
 

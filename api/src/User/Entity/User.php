@@ -387,7 +387,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","threads", "thread", "readSolidaryUser", "writeSolidaryUser"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","threads", "thread"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -397,7 +397,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","readCommunityUser","results","write","readSolidaryUser"})
+     * @Groups({"readUser","readCommunityUser","results","write"})
      */
     private $status;
 
@@ -405,7 +405,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate"})
      */
     private $givenName;
 
@@ -413,14 +413,14 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readUser","write"})
      */
     private $familyName;
 
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readSolidaryUser"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate"})
      */
     private $shortFamilyName;
 
@@ -438,7 +438,7 @@ class User implements UserInterface, EquatableInterface
      * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate"})
      */
     private $email;
 
@@ -455,7 +455,7 @@ class User implements UserInterface, EquatableInterface
      * @var string The encoded password of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","passwordUpdate","writeSolidaryUser"})
+     * @Groups({"readUser","write","passwordUpdate"})
      */
     private $password;
 
@@ -477,7 +477,7 @@ class User implements UserInterface, EquatableInterface
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","results","write","externalJourney","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readUser","results","write","externalJourney"})
      */
     private $gender;
 
@@ -493,7 +493,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface|null The birth date of the user.
      *
      * @ORM\Column(type="date", nullable=true)
-     * @Groups({"readUser","write","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readUser","write"})
      *
      * @ApiProperty(
      *     attributes={
@@ -514,7 +514,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The telephone number of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","checkPhoneToken","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readUser","write","checkPhoneToken"})
      */
     private $telephone;
 
@@ -535,7 +535,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","write", "results","writeSolidaryUser"})
+     * @Groups({"readUser","write", "results"})
      */
     private $phoneDisplay;
 
