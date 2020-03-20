@@ -860,6 +860,8 @@ export default {
       if(this.step==2 && this.regular && (this.schedules==null || this.schedules.length==0)) return false;
       // Price to high. Forbidden to post
       if(this.priceForbidden) return false;
+      // We are in update mode and initialization is not finished yet
+      if (this.isValidUpdate && this.oldUpdateObject == null) return false;
       // validation ok
       return true;
     },
