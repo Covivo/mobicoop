@@ -1223,7 +1223,7 @@ class ResultManager
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isMonCheck()) {
                             $monTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getMonTime();
                             $driverFromTime = clone $monTime;
-                            if ($pickupDuration && !$matching['offer']->getProposalOffer()->getCriteria()->isDriver()) {
+                            if ($pickupDuration) {
                                 $monTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
                             $item->setMonTime($monTime);
@@ -1233,7 +1233,7 @@ class ResultManager
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isTueCheck()) {
                             $tueTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getTueTime();
                             $driverFromTime = clone $tueTime;
-                            if ($pickupDuration && !$matching['offer']->getProposalOffer()->getCriteria()->isDriver()) {
+                            if ($pickupDuration) {
                                 $tueTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
                             $item->setTueTime($tueTime);
@@ -1243,7 +1243,7 @@ class ResultManager
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isWedCheck()) {
                             $wedTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getWedTime();
                             $driverFromTime = clone $wedTime;
-                            if ($pickupDuration && !$matching['offer']->getProposalOffer()->getCriteria()->isDriver()) {
+                            if ($pickupDuration) {
                                 $wedTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
                             $item->setWedTime($wedTime);
@@ -1253,7 +1253,7 @@ class ResultManager
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isThuCheck()) {
                             $thuTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getThuTime();
                             $driverFromTime = clone $thuTime;
-                            if ($pickupDuration && !$matching['offer']->getProposalOffer()->getCriteria()->isDriver()) {
+                            if ($pickupDuration) {
                                 $thuTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
                             $item->setThuTime($thuTime);
@@ -1263,7 +1263,7 @@ class ResultManager
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isFriCheck()) {
                             $friTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getFriTime();
                             $driverFromTime = clone $friTime;
-                            if ($pickupDuration && !$matching['offer']->getProposalOffer()->getCriteria()->isDriver()) {
+                            if ($pickupDuration) {
                                 $friTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
                             $item->setFriTime($friTime);
@@ -1273,7 +1273,7 @@ class ResultManager
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isSatCheck()) {
                             $satTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getSatTime();
                             $driverFromTime = clone $satTime;
-                            if ($pickupDuration && !$matching['offer']->getProposalOffer()->getCriteria()->isDriver()) {
+                            if ($pickupDuration) {
                                 $satTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
                             $item->setSatTime($satTime);
@@ -1283,7 +1283,7 @@ class ResultManager
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isSunCheck()) {
                             $sunTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getSunTime();
                             $driverFromTime = clone $sunTime;
-                            if ($pickupDuration && !$matching['offer']->getProposalOffer()->getCriteria()->isDriver()) {
+                            if ($pickupDuration) {
                                 $sunTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
                             $item->setSunTime($sunTime);
