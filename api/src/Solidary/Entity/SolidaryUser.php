@@ -45,11 +45,28 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readSolidary","readUser"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *         "get"={
+ *             "security"="is_granted('user_list',object)"
+ *          },
+ *          "post"={
+ *             "security_post_denormalize"="is_granted('user_create',object)"
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *             "security"="is_granted('user_read',object)"
+ *          },
+ *          "put"={
+ *             "security"="is_granted('user_update',object)"
+ *          },
+ *          "delete"={
+ *             "security"="is_granted('user_delete',object)"
+ *          }
+ *      }
  * )
  */
 class SolidaryUser
@@ -61,7 +78,7 @@ class SolidaryUser
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary","readUser"})
      */
     private $id;
 
@@ -69,7 +86,7 @@ class SolidaryUser
      * @var bool If this solidary user is a beneficiary
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary","readUser"})
      */
     private $beneficiary;
 
@@ -77,7 +94,7 @@ class SolidaryUser
      * @var bool If this solidary user is a volunteer
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary","readUser"})
      */
     private $volunteer;
 
