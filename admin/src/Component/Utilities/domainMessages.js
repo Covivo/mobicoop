@@ -20,6 +20,10 @@ const fr = {
                 buttonDisagree : "Je refuse"
             },
         },
+        alert : {
+            clearSelected : 'Réinitialiser la séléction',
+            fieldMandatory : 'Ce champ est obligatoire'
+        },
         label : {
             event :{
                 name : 'Nom',
@@ -76,6 +80,53 @@ const fr = {
                     archive: 'Archivé',
                 },
                 resumeCampaign : 'Reprendre la campagne'
+            },user : {
+              id : 'Id',
+              givenName: 'Prénom',
+              familyName: 'Nom',
+              email: 'Email',
+              accepteEmail: 'Accepte les emails',
+              accepteReceiveEmail: 'Accepte de recevoir les emails',
+              createdDate: 'Date de création',
+              solidary : "Solidaire",
+              territory : "Territoires",
+              gender : "Civilité",
+              password : "Mot de passe",
+              birthDate : "Date de naissance",
+              telephone: "Téléphone",
+              newsSubscription : "Recevoir les actualités du service  %{instanceName} (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)",
+              roles : "Droits d'accès",
+              adresse : "Adresse",
+              carpoolSetting : {
+                music :"En ce qui concerne la musique en voiture",
+                musicFavorites : "Radio et/musique préférées",
+                chat : "En ce qui concerne le bavardage en voiture",
+                chatFavorites :"Sujets préférés",
+                smoke : "En ce qui concerne le tabac en voiture"
+              },
+              choices : {
+                women : "Femme",
+                men : "Homme",
+                other : "Autre",
+                didntSmoke : 'Je ne fume pas',
+                didntSmokeCar : 'Je ne fume pas en voiture',
+                smoke :'Je fume',
+                withoutMusic : 'Je préfère rouler sans fond sonore',
+                withMusic :'J’écoute la radio ou de la musique',
+                dontTalk :'Je ne suis pas bavard',
+                talk :'Je discute'
+              },
+              indentity : "Identité",
+              preference : "Préférence",
+              title : {
+                edit : "Utilisateurs > Editer",
+                create  : "Utilisateurs > Créer"
+              },
+              errors : {
+                  upperPassword : 'Au minimum 1 majuscule',
+                  lowerPassword : 'Au minimum 1 minuscule',
+                  numberPassword : 'Au minimum 1 chiffre'
+              }
             }
         }
     }

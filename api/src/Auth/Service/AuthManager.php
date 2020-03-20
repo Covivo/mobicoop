@@ -91,14 +91,10 @@ class AuthManager
         if (!$item = $this->authItemRepository->findByName($itemName)) {
             throw new AuthItemNotFoundException('Auth item ' . $itemName . ' not found');
         }
-       
+
         // we get the requester
-        if (!is_null($this->user)) {
-            $requester = $this->user;
-        } else {
-            $requester = $this->tokenStorage->getToken()->getUser();
-        }
-       
+        $requester = $this->tokenStorage->getToken()->getUser();
+
         // check if the item is authorized for the requester
         return $this->isAssigned($requester, $item, $params);
     }
@@ -257,10 +253,17 @@ class AuthManager
     /**
      * Return the assigned AuthItem of the current user
      *
+     * @param integer|null $type    Limit to this type af Auth Item
+     * @param boolean|null $withId    If set to true, return also ROLE_ID
+     *
      * @return array The auth items
      */
-    public function getAuthItems()
+    public function getAuthItems(?int $type=null, bool $withId=false)
     {
+        if (is_null($type)) {
+            $type = AuthItem::TYPE_ITEM;
+        }
+
         $authItems = [];
 
         // we get the requester
@@ -272,29 +275,47 @@ class AuthManager
 
         if ($userAssignments = $this->userAuthAssignmentRepository->findByUser($requester)) {
             foreach ($userAssignments as $userAssignment) {
-                if ($userAssignment->getAuthItem()->getType() == AuthItem::TYPE_ITEM) {
-                    $authItems[] = $userAssignment->getAuthItem()->getName();
+                if ($userAssignment->getAuthItem()->getType() == $type) {
+                    if ($withId) {
+                        $authItems[] = [
+                         "id" => $userAssignment->getAuthItem(),
+                         "name" => $userAssignment->getAuthItem()->getName()
+                     ];
+                    } else {
+                        $authItems[] = $userAssignment->getAuthItem()->getName();
+                    }
                 }
-                $this->getChildrenNames($userAssignment->getAuthItem(), $authItems);
+                $this->getChildrenNames($userAssignment->getAuthItem(), $type, $authItems, $withId);
             }
         }
-        return array_unique($authItems);
+
+        return $withId ? array_map("unserialize", array_unique(array_map("serialize", $authItems))) : array_unique($authItems);
     }
+
 
     /**
      * Get the children names of an AuthItem (recursive)
      *
      * @param AuthItem  $authItem       The auth item
+     * @param integer $type    Limit to this type af Auth Item
      * @param array     $childrenNames  The array of names (passed by reference)
+     * @param boolean|null $withId    If set to true, return also ROLE_ID
      * @return void
      */
-    private function getChildrenNames(AuthItem $authItem, array &$childrenNames)
+    private function getChildrenNames(AuthItem $authItem, int $type, array &$childrenNames, bool $withId=false)
     {
         foreach ($authItem->getItems() as $child) {
-            if ($child->getType() == AuthItem::TYPE_ITEM) {
-                $childrenNames[] = $child->getName();
+            if ($child->getType() == $type) {
+                if ($withId) {
+                    $childrenNames[] = [
+                      "id" =>  $child,
+                      "name" =>  $child->getName()
+                  ];
+                } else {
+                    $childrenNames[] =  $child->getName();
+                }
             }
-            $this->getChildrenNames($child, $childrenNames);
+            $this->getChildrenNames($child, $type, $childrenNames, $withId);
         }
     }
 }

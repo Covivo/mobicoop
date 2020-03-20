@@ -50,7 +50,7 @@ export default (type, params) => {
                           headers : options.headers
                       }).then( retour => {
                           if (retour.status = '200') {
-                              localStorage.setItem('permissions', retour.body);
+                              localStorage.setItem('permission', retour.body);
                           }
                       });
 
@@ -61,7 +61,7 @@ export default (type, params) => {
             localStorage.removeItem('token');
             localStorage.removeItem('roles');
             localStorage.removeItem('id');
-            localStorage.removeItem('permissions');
+            localStorage.removeItem('permission');
             return Promise.resolve();
 
         case AUTH_ERROR:
@@ -69,7 +69,7 @@ export default (type, params) => {
                 localStorage.removeItem('token');
                 localStorage.removeItem('roles');
                 localStorage.removeItem('id');
-                localStorage.removeItem('permissions');
+                localStorage.removeItem('permission');
                 return Promise.reject();
             }
 

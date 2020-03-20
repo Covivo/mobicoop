@@ -25,15 +25,15 @@ namespace App\Auth\Controller;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use App\Auth\Entity\Permission;
+use App\Auth\Entity\AuthItem;
 use App\Auth\Service\AuthManager;
 
 /**
- * Controller class for permission list.
+ * Controller class for return roles that user can acess
  *
- * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class Permissions
+class PermissionsRoles
 {
     private $request;
     private $authManager;
@@ -45,13 +45,13 @@ class Permissions
     }
 
     /**
-     * This method is invoked when a permission list is asked.
+     * This method is invoked when a permission check is asked.
      *
      * @param array $data
      * @return Response
      */
     public function __invoke(array $data): ?array
     {
-        return $this->authManager->getAuthItems();
+        return $this->authManager->getAuthItems(AuthItem::TYPE_ROLE, true);
     }
 }
