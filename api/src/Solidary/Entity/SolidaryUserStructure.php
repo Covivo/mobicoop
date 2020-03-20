@@ -124,9 +124,17 @@ class SolidaryUserStructure
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary"})
      */
     private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Creation date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readSolidary"})
+     */
+    private $updatedDate;
 
     /**
      * @var int Status of this Solidary User for this structure (0 : pending, 1 : accepted, 2 : refused)
@@ -140,7 +148,7 @@ class SolidaryUserStructure
      * @var \DateTimeInterface Acceptation date of this Solidary User for this structure
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary"})
      */
     private $acceptedDate;
 
@@ -148,7 +156,7 @@ class SolidaryUserStructure
      * @var \DateTimeInterface Refusal date of this Solidary User for this structure.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary"})
      */
     private $refusedDate;
 
@@ -236,6 +244,18 @@ class SolidaryUserStructure
         return $this;
     }
 
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
     public function getStatus(): ?int
     {
         return $this->status;
@@ -310,6 +330,16 @@ class SolidaryUserStructure
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 
     /**
