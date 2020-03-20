@@ -37,12 +37,16 @@
               :key="0"
               href="#tab-cm"
               class="ma-0"
+
               ripple
               @click="reloadOnIcon()"
             >
               <v-icon class="display-1">
                 mdi-car
               </v-icon>
+              <v-text>
+                Covoiturage
+              </v-text>
             </v-tab>
             <v-tab
               :key="1"
@@ -54,6 +58,9 @@
               <v-icon class="display-1">
                 mdi-chat
               </v-icon>
+              <v-text>
+                Direct
+              </v-text>
             </v-tab>
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
