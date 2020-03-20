@@ -48,8 +48,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class SolidaryUserStructure
 {
+    const STATUS_PENDING = 0;
     const STATUS_ACCEPTED = 1;
-    const STATUS_REFUSED = 1;
+    const STATUS_REFUSED = 2;
 
     /**
      * @var int The id of this SolidaryStructureProof.
@@ -292,5 +293,19 @@ class SolidaryUserStructure
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Accepted/Refused date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoAcceptedRefusedDate()
+    {
+        if ($this->getStatus()==self::STATUS_ACCEPTED) {
+            $this->setAcceptedDate(new \Datetime());
+        } elseif ($this->getStatus()==self::STATUS_REFUSED) {
+            $this->setRefusedDate(new \Datetime());
+        }
     }
 }

@@ -24,5 +24,6 @@ namespace App\Solidary\Exception;
 
 class SolidaryException extends \LogicException
 {
-    const VOLUNTEER_ALREADY_EXISTS = "This volunteer already exists";
+    const NO_ROLE = "This SolidaryUser has no role";
+    const BAD_SOLIDARYUSERSTRUCTURE_STATUS = "Invalid status value for this SolidaryUserStructure";
 }

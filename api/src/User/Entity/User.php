@@ -1735,6 +1735,7 @@ class User implements UserInterface, EquatableInterface
 
     public function removeUserAuthAssignment(UserAuthAssignment $userAuthAssignment): self
     {
+        // This contains... does'nt seem to work
         if ($this->userAuthAssignments->contains($userAuthAssignment)) {
             $this->userAuthAssignments->removeElement($userAuthAssignment);
             // set the owning side to null (unless already changed)

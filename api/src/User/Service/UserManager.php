@@ -167,17 +167,13 @@ class UserManager
         if (!is_null($user->getSolidaryUser())) {
             if ($user->getSolidaryUser()->isVolunteer()) {
                 $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
-                $userAuthAssignment = new UserAuthAssignment();
-                $userAuthAssignment->setAuthItem($authItem);
-                $user->addUserAuthAssignment($userAuthAssignment);
             }
-
             if ($user->getSolidaryUser()->isBeneficiary()) {
                 $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
-                $userAuthAssignment = new UserAuthAssignment();
-                $userAuthAssignment->setAuthItem($authItem);
-                $user->addUserAuthAssignment($userAuthAssignment);
             }
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
         }
 
         // persist the user
@@ -294,17 +290,13 @@ class UserManager
 
             if ($user->getSolidaryUser()->isVolunteer() && !in_array(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE, $authItems)) {
                 $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
-                $userAuthAssignment = new UserAuthAssignment();
-                $userAuthAssignment->setAuthItem($authItem);
-                $user->addUserAuthAssignment($userAuthAssignment);
             }
-
             if ($user->getSolidaryUser()->isBeneficiary() && !in_array(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE, $authItems)) {
                 $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
-                $userAuthAssignment = new UserAuthAssignment();
-                $userAuthAssignment->setAuthItem($authItem);
-                $user->addUserAuthAssignment($userAuthAssignment);
             }
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
         }
 
         // persist the user
