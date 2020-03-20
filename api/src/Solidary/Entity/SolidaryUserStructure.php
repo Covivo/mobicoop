@@ -38,8 +38,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"readSolidaryUserStructure"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeSolidaryUserStructure"}}
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
@@ -57,7 +58,7 @@ class SolidaryUserStructure
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $id;
     
@@ -66,7 +67,7 @@ class SolidaryUserStructure
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUser", inversedBy="solidaryUserStructures", cascade={"persist","remove"})
-     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidaryUser;
@@ -76,7 +77,7 @@ class SolidaryUserStructure
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaryUserStructures", cascade={"persist","remove"})
-     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $structure;
@@ -85,16 +86,27 @@ class SolidaryUserStructure
      * @var ArrayCollection The ask history items linked with the ask.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="solidaryUserStructure", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $proofs;
+
+
+    /**
+     * @var ArrayCollection|null The solidary records for this solidary user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="solidaryUserStructure", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $solidaries;
+
 
     /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $createdDate;
 
@@ -102,7 +114,7 @@ class SolidaryUserStructure
      * @var int Status of this Solidary User for this structure (0 : pending, 1 : accepted, 2 : refused)
      *
      * @ORM\Column(type="integer", options={"default" : 0})
-     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $status;
 
@@ -110,7 +122,7 @@ class SolidaryUserStructure
      * @var \DateTimeInterface Acceptation date of this Solidary User for this structure
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $acceptedDate;
 
@@ -118,7 +130,7 @@ class SolidaryUserStructure
      * @var \DateTimeInterface Refusal date of this Solidary User for this structure.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidaryUserStructure","writeSolidaryUserStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $refusedDate;
 
@@ -127,6 +139,7 @@ class SolidaryUserStructure
         $this->id = $id;
         $this->proofs = new ArrayCollection();
         $this->status = 0;
+        $this->solidaries = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -146,7 +159,7 @@ class SolidaryUserStructure
         return $this->solidaryUser;
     }
     
-    public function setSolidaryUser(SolidaryUser $solidaryUser): self
+    public function setSolidaryUser(?SolidaryUser $solidaryUser): self
     {
         $this->solidaryUser = $solidaryUser;
         
@@ -185,7 +198,7 @@ class SolidaryUserStructure
         if ($this->proofs->contains($proof)) {
             $this->proofs->removeElement($proof);
             // set the owning side to null (unless already changed)
-            if ($proof->getSolidaryUser() === $this) {
+            if ($proof->getSolidaryUserStructure() === $this) {
                 $proof->setSolidaryUserStructure(null);
             }
         }
@@ -214,6 +227,34 @@ class SolidaryUserStructure
     {
         $this->status = $status;
         
+        return $this;
+    }
+
+    public function getSolidaries()
+    {
+        return $this->solidaries->getValues();
+    }
+
+    public function addSolidary(Solidary $solidary): self
+    {
+        if (!$this->solidaries->contains($solidary)) {
+            $this->solidaries->add($solidary);
+            $solidary->setSolidaryUserStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSolidary(Solidary $solidary): self
+    {
+        if ($this->solidaries->contains($solidary)) {
+            $this->solidaries->removeElement($solidary);
+            // set the owning side to null (unless already changed)
+            if ($solidary->getSolidaryUserStructure() === $this) {
+                $solidary->setSolidaryUserStructure(null);
+            }
+        }
+
         return $this;
     }
 

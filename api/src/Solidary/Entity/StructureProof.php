@@ -62,7 +62,7 @@ class StructureProof
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("readSolidary")
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $id;
 
@@ -71,7 +71,7 @@ class StructureProof
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $label;
 
@@ -80,7 +80,7 @@ class StructureProof
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $type;
 
@@ -89,7 +89,7 @@ class StructureProof
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $position;
 
@@ -97,7 +97,7 @@ class StructureProof
      * @var bool The proof is a checkbox.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $checkbox;
 
@@ -105,7 +105,7 @@ class StructureProof
      * @var bool The proof is a input.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $input;
 
@@ -113,7 +113,7 @@ class StructureProof
      * @var bool The proof is a select.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $selectbox;
 
@@ -121,7 +121,7 @@ class StructureProof
      * @var bool The proof is a radio button.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $radio;
 
@@ -129,7 +129,7 @@ class StructureProof
      * @var string Text options for radio or select (separated by semicolon, in the same order than values).
      *
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $options;
 
@@ -137,7 +137,7 @@ class StructureProof
      * @var string Values for radio or select (separated by semicolon, in the same order than options).
      *
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $acceptedValues;
 
@@ -145,7 +145,7 @@ class StructureProof
      * @var bool The proof is a file.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $file;
 
@@ -155,7 +155,7 @@ class StructureProof
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="structureProofs")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $structure;
@@ -180,7 +180,7 @@ class StructureProof
      * @var ArrayCollection|null The proofs using this structure proof.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="structureProof", cascade={"remove"}, orphanRemoval=true)
-     * @Groups("readSolidary")
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $proofs;

@@ -45,8 +45,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"readSolidaryUser"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeSolidaryUser"}}
+ *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
@@ -61,7 +61,7 @@ class SolidaryUser
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("readSolidaryUser")
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $id;
 
@@ -69,7 +69,7 @@ class SolidaryUser
      * @var bool If this solidary user is a beneficiary
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $beneficiary;
 
@@ -77,7 +77,7 @@ class SolidaryUser
      * @var bool If this solidary user is a volunteer
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $volunteer;
 
@@ -85,7 +85,7 @@ class SolidaryUser
      * @var \DateTimeInterface Morning min time.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMinTime;
     
@@ -93,7 +93,7 @@ class SolidaryUser
      * @var \DateTimeInterface Morning max time.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMaxTime;
     
@@ -101,7 +101,7 @@ class SolidaryUser
      * @var \DateTimeInterface Afternoon min time.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMinTime;
     
@@ -109,7 +109,7 @@ class SolidaryUser
      * @var \DateTimeInterface Afternoon max time.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMaxTime;
     
@@ -117,7 +117,7 @@ class SolidaryUser
      * @var \DateTimeInterface Evening min time.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMinTime;
     
@@ -125,7 +125,7 @@ class SolidaryUser
      * @var \DateTimeInterface Evening max time.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMaxTime;
     
@@ -133,7 +133,7 @@ class SolidaryUser
      * @var bool Available on monday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMon;
     
@@ -141,7 +141,7 @@ class SolidaryUser
      * @var bool Available on monday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMon;
     
@@ -149,7 +149,7 @@ class SolidaryUser
      * @var bool Available on monday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMon;
     
@@ -157,7 +157,7 @@ class SolidaryUser
      * @var bool Available on tuesday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mTue;
     
@@ -165,7 +165,7 @@ class SolidaryUser
      * @var bool Available on tuesday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aTue;
     
@@ -173,7 +173,7 @@ class SolidaryUser
      * @var bool Available on tuesday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eTue;
     
@@ -181,7 +181,7 @@ class SolidaryUser
      * @var bool Available on wednesday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mWed;
     
@@ -189,7 +189,7 @@ class SolidaryUser
      * @var bool Available on wednesday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aWed;
     
@@ -197,7 +197,7 @@ class SolidaryUser
      * @var bool Available on wednesday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eWed;
     
@@ -205,7 +205,7 @@ class SolidaryUser
      * @var bool Available on thursday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mThu;
     
@@ -213,7 +213,7 @@ class SolidaryUser
      * @var bool Available on thursday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aThu;
     
@@ -221,7 +221,7 @@ class SolidaryUser
      * @var bool Available on thursday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eThu;
     
@@ -229,7 +229,7 @@ class SolidaryUser
      * @var bool Available on friday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mFri;
     
@@ -237,7 +237,7 @@ class SolidaryUser
      * @var bool Available on friday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aFri;
     
@@ -245,7 +245,7 @@ class SolidaryUser
      * @var bool Available on friday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eFri;
     
@@ -253,7 +253,7 @@ class SolidaryUser
      * @var bool Available on saturday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mSat;
     
@@ -261,7 +261,7 @@ class SolidaryUser
      * @var bool Available on saturday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aSat;
     
@@ -269,7 +269,7 @@ class SolidaryUser
      * @var bool Available on saturday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eSat;
     
@@ -277,7 +277,7 @@ class SolidaryUser
      * @var bool Available on sunday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mSun;
     
@@ -285,7 +285,7 @@ class SolidaryUser
      * @var bool Available on sunday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aSun;
     
@@ -293,7 +293,7 @@ class SolidaryUser
      * @var bool Available on sunday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eSun;
 
@@ -303,14 +303,14 @@ class SolidaryUser
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $address;
 
     /**
      * @var int|null The maximum distance in metres allowed from the center address.
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $maxDistance;
 
@@ -318,7 +318,7 @@ class SolidaryUser
      * @var bool The solidaryUser has a vehicle.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $vehicle;
 
@@ -327,7 +327,7 @@ class SolidaryUser
      *
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist","remove"}, orphanRemoval=true, mappedBy="solidaryUser")
-     * @Groups({"readUser","read", "write","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $user;
 
@@ -335,7 +335,7 @@ class SolidaryUser
      * @var string A comment about the solidaryUser.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $comment;
 
@@ -343,24 +343,15 @@ class SolidaryUser
      * @var ArrayCollection|null The special needs proposed by the solidaryUser.
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $needs;
-
-    /**
-     * @var ArrayCollection|null The solidary records for this solidary user.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="solidaryUser", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
-     * @MaxDepth(1)
-     */
-    private $solidaries;
 
     /**
      * @var ArrayCollection The solidary user structure
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="solidaryUser", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidaryUserStructures;
@@ -369,7 +360,7 @@ class SolidaryUser
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidaryUser"})
+     * @Groups({"readSolidary"})
      */
     private $createdDate;
 
@@ -377,14 +368,13 @@ class SolidaryUser
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidaryUser"})
+     * @Groups({"readSolidary"})
      */
     private $updatedDate;
 
     public function __construct()
     {
         $this->needs = new ArrayCollection();
-        $this->solidaries = new ArrayCollection();
         $this->solidaryUserStructures = new ArrayCollection();
     }
     
@@ -826,34 +816,6 @@ class SolidaryUser
     {
         if ($this->needs->contains($need)) {
             $this->needs->removeElement($need);
-        }
-
-        return $this;
-    }
-
-    public function getSolidaries()
-    {
-        return $this->solidaries->getValues();
-    }
-
-    public function addSolidary(Solidary $solidary): self
-    {
-        if (!$this->solidaries->contains($solidary)) {
-            $this->solidaries->add($solidary);
-            $solidary->setSolidaryUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSolidary(Solidary $solidary): self
-    {
-        if ($this->solidaries->contains($solidary)) {
-            $this->solidaries->removeElement($solidary);
-            // set the owning side to null (unless already changed)
-            if ($solidary->getSolidaryUser() === $this) {
-                $solidary->setSolidaryUser(null);
-            }
         }
 
         return $this;

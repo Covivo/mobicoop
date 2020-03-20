@@ -43,7 +43,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"readSolidary","readSolidaryUser"}, "enable_max_depth"="true"},
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={"get","post"},
@@ -63,7 +64,7 @@ class Proof
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","readSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $id;
 
@@ -71,7 +72,7 @@ class Proof
      * @var string The value entered by the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $value;
 
@@ -81,7 +82,7 @@ class Proof
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof", inversedBy="proofs")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $structureProof;
@@ -90,7 +91,7 @@ class Proof
      * @var string The final file name of the proof.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $fileName;
     
@@ -98,7 +99,7 @@ class Proof
      * @var string The original file name of the proof.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $originalName;
 
@@ -106,7 +107,7 @@ class Proof
      * @var int The size in bytes of the file.
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"readSolidary","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $size;
     
@@ -114,7 +115,7 @@ class Proof
      * @var string The mime type of the file.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readSolidary","readSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mimeType;
 
@@ -130,7 +131,7 @@ class Proof
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="proofs", cascade={"persist","remove"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidaryUserStructure","readSolidary","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidaryUserStructure;
@@ -139,7 +140,7 @@ class Proof
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","readSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $createdDate;
 
@@ -147,7 +148,7 @@ class Proof
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","readSolidaryUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $updatedDate;
     
@@ -200,18 +201,6 @@ class Proof
     public function setSolidary(?Solidary $solidary): self
     {
         $this->solidary = $solidary;
-
-        return $this;
-    }
-
-    public function getSolidaryUser(): ?SolidaryUser
-    {
-        return $this->solidaryUser;
-    }
-
-    public function setSolidaryUser(?SolidaryUser $solidaryUser): self
-    {
-        $this->solidaryUser = $solidaryUser;
 
         return $this;
     }

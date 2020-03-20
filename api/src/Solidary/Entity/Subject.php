@@ -39,13 +39,14 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * ApiResource(
+ * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={"get","put"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
@@ -60,7 +61,7 @@ class Subject
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("readSolidary")
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $id;
 
@@ -104,7 +105,7 @@ class Subject
      * @var ArrayCollection|null The solidary records for this subject.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="subject", cascade={"remove"}, orphanRemoval=true)
-     * @Groups("readSolidary")
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $solidaries;
 

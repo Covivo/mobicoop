@@ -102,8 +102,8 @@ use App\Solidary\Entity\SolidaryUser;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readUser","mass","readSolidaryUser"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write","writeSolidaryUser"}}
+ *          "normalization_context"={"groups"={"readUser","mass","readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"write","writeSolidary"}}
  *      },
  *      collectionOperations={
  *          "get"={

@@ -63,7 +63,7 @@ class Solidary
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("readSolidary")
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $id;
 
@@ -79,7 +79,7 @@ class Solidary
     /**
      * @var string Detail for regular ask.
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", nullable=true, length=255)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $regularDetail;
@@ -88,7 +88,7 @@ class Solidary
      * @var \DateTimeInterface Deadline date of the solidary record.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("readSolidary")
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $deadlineDate;
 
@@ -96,7 +96,7 @@ class Solidary
      * @var \DateTimeInterface Creation date of the solidary record.
      *
      * @ORM\Column(type="datetime")
-     * @Groups("readSolidary")
+     * @Groups({"readSolidary"})
      */
     private $createdDate;
 
@@ -104,19 +104,19 @@ class Solidary
      * @var \DateTimeInterface Updated date of the solidary record.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("readSolidary")
+     * @Groups({"readSolidary"})
      */
     private $updatedDate;
 
     /**
-     * @var SolidaryUser The SolidaryUser related with the solidary record.
+     * @var SolidaryUserStructure The SolidaryUserStructure related with the solidary record.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUser", inversedBy="solidaries", cascade={"persist","remove"})
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="solidaries", cascade={"persist","remove"})
      * @Groups({"readSolidary", "writeSolidary"})
      * @MaxDepth(1)
      */
-    private $solidaryUser;
+    private $solidaryUserStructure;
 
     /**
      * @var Proposal The proposal.
@@ -142,7 +142,7 @@ class Solidary
      * @var Subject Subject of the solidary record.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="solidaries")
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="solidaries", cascade={"persist","remove"})
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -160,7 +160,7 @@ class Solidary
      * @var ArrayCollection|null Solidary solutions.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
-     * @Groups("readSolidary")
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidarySolutions;
@@ -237,14 +237,14 @@ class Solidary
         return $this;
     }
 
-    public function getSolidaryUser(): ?SolidaryUser
+    public function getSolidaryUserStructure(): ?SolidaryUserStructure
     {
-        return $this->solidaryUser;
+        return $this->solidaryUserStructure;
     }
 
-    public function setSolidaryUser(?SolidaryUser $solidaryUser): self
+    public function setSolidaryUserStructure(?SolidaryUserStructure $solidaryUserStructure): self
     {
-        $this->solidaryUser = $solidaryUser;
+        $this->solidaryUserStructure = $solidaryUserStructure;
         
         return $this;
     }

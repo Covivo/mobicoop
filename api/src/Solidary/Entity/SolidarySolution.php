@@ -53,7 +53,7 @@ class SolidarySolution
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("readSolidary")
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $id;
 
@@ -72,7 +72,7 @@ class SolidarySolution
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Solidary", inversedBy="solidarySolutions")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidary;
