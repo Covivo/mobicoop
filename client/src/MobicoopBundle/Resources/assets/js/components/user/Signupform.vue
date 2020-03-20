@@ -623,7 +623,6 @@ export default {
           address:this.form.homeAddress,
           idFacebook:this.form.idFacebook,
           communities:this.form.communities
-
         },{
           headers:{
             'content-type': 'application/json'

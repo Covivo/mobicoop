@@ -160,12 +160,11 @@ class UserController extends AbstractController
                 $user->setFacebookId($data['idFacebook']);
             }
 
-            
-            if (!is_null($data['communities'])) {
-                $communityUser->setUser($user);
-                $communityUser->setCommunity($data['communities']);
-                $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
+
+            if (is_array($data['communities']) && !is_null($data['communities'])) {
+                $user->setcommunitiesId($data['communities']);  
             }
+
 
             // create user in database
             $data = $userManager->createUser($user);

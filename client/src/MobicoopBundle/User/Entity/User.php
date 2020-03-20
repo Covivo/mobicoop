@@ -359,7 +359,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
     /**
     * @var array|null Communities choose by a user
-    * @Groups({"readUser"})
+    * @Groups({"post"})
     */
     private $communitiesId;
 

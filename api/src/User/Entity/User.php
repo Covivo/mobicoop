@@ -782,7 +782,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
     * @var array|null Communities choose by a user
-    * @Groups({"readUser"})
+    * @Groups({"readUser","write"})
     */
     private $communitiesId;
 

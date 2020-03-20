@@ -213,7 +213,7 @@ class UserManager
             foreach ($user->getCommunitiesId()as $community) {
                 $communityUser = new CommunityUser();
                 $communityUser->setUser($user);
-                $communityUser->setCommunity($community);
+                $communityUser->setCommunity($this->communityRepository->find($community));
                 $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
             }
             $this->entityManager->persist($communityUser);
