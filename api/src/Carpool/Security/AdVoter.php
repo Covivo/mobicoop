@@ -105,11 +105,14 @@ class AdVoter extends Voter
             case self::AD_CREATE:
                 return $this->canCreateAd();
             case self::AD_READ:
-                return $this->canReadAd();
+                $ad = $this->adManager->getAd($this->request->get('id'));
+                return $this->canReadAd($ad);
             case self::AD_UPDATE:
-                return $this->canUpdateAd($subject);
+                $ad = $this->adManager->getAd($this->request->get('id'));
+                return $this->canUpdateAd($ad);
             case self::AD_DELETE:
-                return $this->canDeleteAd($subject);
+                $ad = $this->adManager->getAd($this->request->get('id'));
+                return $this->canDeleteAd($ad);
             case self::AD_LIST:
                 return $this->canListAd();
             case self::AD_ASK_CREATE:
@@ -132,9 +135,9 @@ class AdVoter extends Voter
         return $this->authManager->isAuthorized(self::AD_CREATE);
     }
 
-    private function canReadAd()
+    private function canReadAd(Ad $ad)
     {
-        return $this->authManager->isAuthorized(self::AD_READ);
+        return $this->authManager->isAuthorized(self::AD_READ, ['ad'=>$ad]);
     }
 
     private function canUpdateAd(Ad $ad)
