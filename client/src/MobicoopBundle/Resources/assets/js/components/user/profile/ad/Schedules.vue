@@ -30,7 +30,7 @@
             v-if="isOutward"
             cols="6"
             class="py-0"
-            :class="isRefined || !isReturn ? 'text-left' : 'text-right'"
+            :class="isRefined || !hasDays ? 'text-left' : 'text-right'"
           >
             <span
               v-if="!isRefined"
@@ -140,6 +140,11 @@ export default {
       default: false
     },
     noGutters: {
+      type: Boolean,
+      default: false
+    },
+    // when schedule is placed near from RegularDaysSummary component
+    hasDays: {
       type: Boolean,
       default: false
     }

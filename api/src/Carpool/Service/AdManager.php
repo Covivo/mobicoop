@@ -826,10 +826,12 @@ class AdManager
         // set schedule if regular
         $schedule = [];
         if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+            // schedule needs data in asks results when the user that display the Ad is not the owner
             $schedule = $askLinked
                ? $this->getScheduleFromResults($askLinked->getResults()[0], $proposal)
                : $this->getScheduleFromCriteria($proposal->getCriteria(), $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria() : null);
-            if ($ad->getRole() === Ad::ROLE_PASSENGER && !is_null($matching) && $matching->getPickUpDuration()) {
+            // if schedule is based on results, we do not need to update pickup times because it's already done in results
+            if ($ad->getRole() === Ad::ROLE_PASSENGER && !is_null($matching) && $matching->getPickUpDuration() && !$askLinked) {
                 $schedule = $this->updateScheduleTimesWithPickUpDurations($schedule, $matching->getPickUpDuration(), $matching->getMatchingLinked() ? $matching->getMatchingLinked()->getPickUpDuration() : null);
             }
         }
@@ -845,33 +847,34 @@ class AdManager
 
     public function getScheduleFromCriteria(Criteria $criteria, ?Criteria $returnCriteria = null)
     {
+        // we clean up every days based on isDayCheck
         $schedule['mon'] = $criteria->isMonCheck() || ($returnCriteria ? $returnCriteria->isMonCheck() : false);
-        $schedule['monOutwardTime'] = $criteria->getMonTime();
-        $schedule['monReturnTime'] = $returnCriteria ? $returnCriteria->getMonTime() : null;
+        $schedule['monOutwardTime'] = $criteria->isMonCheck() ? $criteria->getMonTime() : null;
+        $schedule['monReturnTime'] = $returnCriteria && $returnCriteria->isMonCheck() ? $returnCriteria->getMonTime() : null;
 
         $schedule['tue'] = $criteria->isTueCheck() || ($returnCriteria ? $returnCriteria->isTueCheck() : false);
-        $schedule['tueOutwardTime'] = $criteria->getTueTime();
-        $schedule['tueReturnTime'] = $returnCriteria ? $returnCriteria->getTueTime() : null;
+        $schedule['tueOutwardTime'] = $criteria->isTueCheck() ? $criteria->getTueTime() : null;
+        $schedule['tueReturnTime'] = $returnCriteria && $returnCriteria->isTueCheck() ? $returnCriteria->getTueTime() : null;
 
         $schedule['wed'] = $criteria->isWedCheck() || ($returnCriteria ? $returnCriteria->isWedCheck() : false);
-        $schedule['wedOutwardTime'] = $criteria->getWedTime();
-        $schedule['wedReturnTime'] = $returnCriteria ? $returnCriteria->getWedTime() : null;
+        $schedule['wedOutwardTime'] = $criteria->isWedCheck() ? $criteria->getWedTime() : null;
+        $schedule['wedReturnTime'] = $returnCriteria && $returnCriteria->isWedCheck() ? $returnCriteria->getWedTime() : null;
 
         $schedule['thu'] = $criteria->isThuCheck() || ($returnCriteria ? $returnCriteria->isThuCheck() : false);
-        $schedule['thuOutwardTime'] = $criteria->getThuTime();
-        $schedule['thuReturnTime'] = $returnCriteria ? $returnCriteria->getThuTime() : null;
+        $schedule['thuOutwardTime'] = $criteria->isThuCheck() ? $criteria->getThuTime() : null;
+        $schedule['thuReturnTime'] = $returnCriteria && $returnCriteria->isThuCheck() ? $returnCriteria->getThuTime() : null;
 
         $schedule['fri'] = $criteria->isFriCheck() || ($returnCriteria ? $returnCriteria->isFriCheck() : false);
-        $schedule['friOutwardTime'] = $criteria->getFriTime();
-        $schedule['friReturnTime'] = $returnCriteria ? $returnCriteria->getFriTime() : null;
+        $schedule['friOutwardTime'] = $criteria->isFriCheck() ? $criteria->getFriTime() : null;
+        $schedule['friReturnTime'] = $returnCriteria && $returnCriteria->isFriCheck() ? $returnCriteria->getFriTime() : null;
 
         $schedule['sat'] = $criteria->isSatCheck() || ($returnCriteria ? $returnCriteria->isSatCheck() : false);
-        $schedule['satOutwardTime'] = $criteria->getSatTime();
-        $schedule['satReturnTime'] = $returnCriteria ? $returnCriteria->getSatTime() : null;
+        $schedule['satOutwardTime'] = $criteria->isSatCheck() ? $criteria->getSatTime() : null;
+        $schedule['satReturnTime'] = $returnCriteria && $returnCriteria->isSatCheck() ? $returnCriteria->getSatTime() : null;
 
         $schedule['sun'] = $criteria->isSunCheck() || ($returnCriteria ? $returnCriteria->isSunCheck() : false);
-        $schedule['sunOutwardTime'] = $criteria->getSunTime();
-        $schedule['sunReturnTime'] = $returnCriteria ? $returnCriteria->getSunTime() : null;
+        $schedule['sunOutwardTime'] = $criteria->isSunCheck() ? $criteria->getSunTime() : null;
+        $schedule['sunReturnTime'] = $returnCriteria && $returnCriteria->isSunCheck() ? $returnCriteria->getSunTime() : null;
 
         return $schedule;
     }
@@ -888,33 +891,34 @@ class AdManager
             return [];
         }
 
+        // we clean up every days based on isDayCheck
         $schedule['mon'] = $outward->isMonCheck() || ($return ? $return->isMonCheck() : null);
-        $schedule['monOutwardTime'] = $outward->getMonTime();
-        $schedule['monReturnTime'] = $return ? $return->getMonTime() : null;
+        $schedule['monOutwardTime'] = $outward->isMonCheck() ? $outward->getMonTime() : null;
+        $schedule['monReturnTime'] = $return && $return->isMonCheck() ? $return->getMonTime() : null;
 
         $schedule['tue'] = $outward->isTueCheck() || ($return ? $return->isTueCheck() : null);
-        $schedule['tueOutwardTime'] = $outward->getTueTime();
-        $schedule['tueReturnTime'] = $return ? $return->getTueTime() : null;
+        $schedule['tueOutwardTime'] = $outward->isTueCheck() ? $outward->getTueTime() : null;
+        $schedule['tueReturnTime'] = $return && $return->isTueCheck() ? $return->getTueTime() : null;
 
         $schedule['wed'] = $outward->isWedCheck() || ($return ? $return->isWedCheck() : null);
-        $schedule['wedOutwardTime'] = $outward->getWedTime();
-        $schedule['wedReturnTime'] = $return ? $return->getWedTime() : null;
+        $schedule['wedOutwardTime'] = $outward->isWedCheck() ? $outward->getWedTime() : null;
+        $schedule['wedReturnTime'] = $return && $return->isWedCheck() ? $return->getWedTime() : null;
 
         $schedule['thu'] = $outward->isThuCheck() || ($return ? $return->isThuCheck() : null);
-        $schedule['thuOutwardTime'] = $outward->getThuTime();
-        $schedule['thuReturnTime'] = $return ? $return->getThuTime() : null;
+        $schedule['thuOutwardTime'] = $outward->isThuCheck() ? $outward->getThuTime() : null;
+        $schedule['thuReturnTime'] = $return && $return->isThuCheck() ? $return->getThuTime() : null;
 
         $schedule['fri'] = $outward->isFriCheck() || ($return ? $return->isFriCheck() : null);
-        $schedule['friOutwardTime'] = $outward->getFriTime();
-        $schedule['friReturnTime'] = $return ? $return->getFriTime() : null;
+        $schedule['friOutwardTime'] = $outward->isFriCheck() ? $outward->getFriTime() : null;
+        $schedule['friReturnTime'] = $return && $return->isFriCheck() ? $return->getFriTime() : null;
 
         $schedule['sat'] = $outward->isSatCheck() || ($return ? $return->isSatCheck() : null);
-        $schedule['satOutwardTime'] = $outward->getSatTime();
-        $schedule['satReturnTime'] = $return ? $return->getSatTime() : null;
+        $schedule['satOutwardTime'] = $outward->isSatCheck() ? $outward->getSatTime() : null;
+        $schedule['satReturnTime'] = $return && $return->isSatCheck() ? $return->getSatTime() : null;
 
         $schedule['sun'] = $outward->isSunCheck() || ($return ? $return->isSunCheck() : null);
-        $schedule['sunOutwardTime'] = $outward->getSunTime();
-        $schedule['sunReturnTime'] = $return ? $return->getSunTime() : null;
+        $schedule['sunOutwardTime'] = $outward->isSunCheck() ? $outward->getSunTime() : null;
+        $schedule['sunReturnTime'] = $return && $return->isSunCheck() ? $return->getSunTime() : null;
 
         return $schedule;
     }

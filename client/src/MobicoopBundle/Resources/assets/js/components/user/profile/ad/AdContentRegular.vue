@@ -23,6 +23,7 @@
           :return-times="returnTimes"
           :is-return="hasReturn"
           :is-regular="isRegular"
+          :has-days="true"
         />
       </v-col>
     </v-row>
