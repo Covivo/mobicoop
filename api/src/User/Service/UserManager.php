@@ -151,7 +151,7 @@ class UserManager
     {
         return $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
     }
-    
+
     /**
      * Registers a user.
      *
@@ -243,7 +243,7 @@ class UserManager
             // deactivate sms notification since the phone is new
             $user = $this->deActivateSmsNotification($user);
         }
-       
+
         // update of the geotoken
         $datetime = new DateTime();
         $time = $datetime->getTimestamp();
@@ -313,7 +313,7 @@ class UserManager
         return [];
     }
 
-    
+
     /**
      * Build messages threads considering the type (Direct or Carpool)
      * @param User $user    The User involved
@@ -329,7 +329,7 @@ class UserManager
         } else {
             return [];
         }
-        
+
         if (!$threads) {
             return [];
         } else {
@@ -344,7 +344,7 @@ class UserManager
             return $messages;
         }
     }
-    
+
     public function parseThreadsDirectMessages(User $user, array $threads)
     {
         $messages = [];
@@ -383,7 +383,7 @@ class UserManager
 
         foreach ($threads as $ask) {
             $askHistories = $this->askHistoryRepository->findLastAskHistory($ask);
-            
+
             // Only the Ask with at least one AskHistory
             // Only one-way or outward of a round trip.
             if (count($askHistories)>0 && ($ask->getType()==1 || $ask->getType()==2)) {
@@ -457,7 +457,7 @@ class UserManager
     {
         return $this->getThreadsMessages($user, "Carpool");
     }
-    
+
     /**
        * User password change request.
        *
@@ -468,7 +468,7 @@ class UserManager
     {
         // Get the user
         $user = $this->userRepository->findOneBy(["email"=>$data->getEmail()]);
-        
+
         if (!is_null($user)) {
             $datetime = new DateTime();
             $time = $datetime->getTimestamp();
@@ -488,7 +488,7 @@ class UserManager
         }
         return new JsonResponse();
     }
- 
+
     /**
        * User password change confirmation.
        *
@@ -740,7 +740,7 @@ class UserManager
             $this->entityManager->remove($proposal);
         }
         $this->deleteUserImages($user);
-        
+
         $this->entityManager->remove($user);
         $this->entityManager->flush();
     }
@@ -784,7 +784,7 @@ class UserManager
     public function checkValidatedDateToken($data)
     {
         $userFound = $this->userRepository->findOneBy(["validatedDateToken"=>$data->getValidatedDateToken()]);
-        
+
         if (!is_null($userFound)) {
             if ($data->getEmail()===$userFound->getEmail()) {
                 // User found by token match with the given email. We update de validated date, persist, then return the user found
@@ -806,7 +806,7 @@ class UserManager
     public function checkPhoneToken($data)
     {
         $userFound = $this->userRepository->findOneBy(["phoneToken"=>$data->getPhoneToken()]);
-        
+
         if (!is_null($userFound)) {
             if ($data->getTelephone()===$userFound->getTelephone()) {
                 // User found by token match with the given Telephone. We update de validated date, persist, then return the user found

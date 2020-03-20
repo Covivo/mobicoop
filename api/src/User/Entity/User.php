@@ -1106,7 +1106,7 @@ class User implements UserInterface, EquatableInterface
         return $this->proEmail;
     }
 
-    public function setProEmail(string $proEmail): self
+    public function setProEmail(?string $proEmail): self
     {
         $this->proEmail = $proEmail;
 
@@ -2128,7 +2128,7 @@ class User implements UserInterface, EquatableInterface
         return $this->validatedDate;
     }
 
-    public function setValidatedDate(\DateTimeInterface $validatedDate): self
+    public function setValidatedDate(?\DateTimeInterface $validatedDate): self
     {
         $this->validatedDate = $validatedDate;
 

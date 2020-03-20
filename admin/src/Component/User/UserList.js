@@ -1,6 +1,6 @@
 import React from 'react';
 import isAuthorized from '../../Auth/permissions'
-import { defaultExporter,Button } from 'react-admin';
+import { defaultExporter,Button,useTranslate } from 'react-admin';
 //import bcrypt from 'bcryptjs';
 
 import {
@@ -15,7 +15,10 @@ import {
 import EmailComposeButton from '../Email/EmailComposeButton';
 import ResetButton from '../Utilities/ResetButton';
 
-export const UserList = (props) => {
+
+const UserList = (props) => {
+
+  const translate = useTranslate();
 
   const UserBulkActionButtons = props => (
       <>
@@ -27,13 +30,13 @@ export const UserList = (props) => {
   );
   const UserFilter = (props) => (
       <Filter {...props}>
-          <TextInput source="givenName" label="Prénom" />
-          <TextInput source="familyName" label="Nom" alwaysOn />
-          <TextInput source="email" label="Email" alwaysOn />
-          <BooleanInput source="solidary" label="Solidaire" allowEmpty={false} defaultValue={true} />
+          <TextInput source="givenName" label={translate('custom.label.user.givenName')} />
+          <TextInput source="familyName" label={translate('custom.label.user.familyName')} alwaysOn />
+          <TextInput source="email" label={translate('custom.label.user.email')} alwaysOn />
+          <BooleanInput source="solidary" label={translate('custom.label.user.solidary')} allowEmpty={false} defaultValue={true} />
           <ReferenceInput
               source="homeAddressODTerritory"
-              label="Territoire"
+              label={translate('custom.label.user.territory')}
               reference="territories"
               allowEmpty={false}
               resettable>
@@ -54,12 +57,12 @@ export const UserList = (props) => {
           hasCreate={isAuthorized('user_create')}
     >
         <Datagrid rowClick="show">
-            <TextField source="originId" label="ID" sortBy="id"/>
-            <TextField source="givenName" label="Prénom"/>
-            <TextField source="familyName" label="Nom"/>
-            <EmailField source="email" label="Email" />
-            <BooleanField source="newsSubscription" label="Accepte les emails"/>
-            <DateField source="createdDate" label="Date de création"/>
+            <TextField source="originId" label={translate('custom.label.user.id')} sortBy="id"/>
+            <TextField source="givenName" label={translate('custom.label.user.givenName')}  />
+            <TextField source="familyName" label={translate('custom.label.user.familyName')} />
+            <EmailField source="email" label={translate('custom.label.user.email')} />
+            <BooleanField source="newsSubscription" label={translate('custom.label.user.accepteEmail')}/>
+            <DateField source="createdDate" label={translate('custom.label.user.createdDate')}/>
             {isAuthorized("user_update") &&
             <EditButton />
             }
@@ -67,3 +70,5 @@ export const UserList = (props) => {
     </List>
   )
 };
+
+export default UserList;
