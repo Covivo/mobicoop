@@ -165,7 +165,7 @@
                         class="text-center"
                       >
                         <v-btn
-                          v-if="!hideContact && lResult.pendingAsk == false && lResult.acceptedAsk == false"
+                          v-if="!hideContact && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
                           color="primary"
                           :disabled="contactDisabled"
                           :loading="contactLoading"
