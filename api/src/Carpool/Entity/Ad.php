@@ -96,6 +96,7 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "path"="/carpools/{id}/full",
  *              "controller"=AdGetFull::class,
  *              "read"=false,
+ *              "security"="is_granted('ad_read')"
  *          },
  *          "put_ask"={
  *              "method"="PUT",
@@ -115,6 +116,7 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "path"="/carpools/{id}",
  *              "controller"=AdPut::class,
  *              "read"=false,
+ *              "security"="is_granted('ad_update', object)"
  *          },
  *      }
  * )

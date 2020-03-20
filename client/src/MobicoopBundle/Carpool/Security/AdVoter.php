@@ -30,6 +30,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Permission\Service\PermissionManager;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class AdVoter extends Voter
 {
@@ -118,7 +119,7 @@ class AdVoter extends Voter
         $user = $this->security->getUser();
 
         // only registered users can update ad
-        if (!$user instanceof User) {
+        if (!$user instanceof UserInterface) {
             return false;
         }
 
