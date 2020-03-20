@@ -21,41 +21,31 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Controller;
+namespace App\App\Repository;
 
-use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\Response;
-use App\User\Entity\User;
-use App\User\Service\UserManager;
+use App\App\Entity\App;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
-/**
- * Controller class for user threads (list of messages as sender or recipient).
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
- */
-class UserThreadsDirectMessages
+class AppRepository
 {
-    use TranslatorTrait;
-    private $userManager;
-
-    public function __construct(UserManager $userManager)
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->userManager = $userManager;
+        $this->repository = $entityManager->getRepository(App::class);
+    }
+    
+    public function find(int $id): ?App
+    {
+        return $this->repository->find($id);
     }
 
-    /**
-     * This method is invoked when the list of messages is asked.
-     *
-     * @param User $data
-     * @return Response
-     */
-    public function __invoke(User $data): ?User
+    public function findOneBy(array $criteria): ?App
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
-        }
-        // we search the direct messages
-        $data->setThreads($this->userManager->getThreadsDirectMessages($data));
-        return $data;
+        return $this->repository->findOneBy($criteria);
     }
 }

@@ -46,6 +46,8 @@ class AuthManager
     private $userAuthAssignmentRepository;
     private $tokenStorage;
 
+    private $user;
+
     /**
      * Constructor.
      */
@@ -57,6 +59,19 @@ class AuthManager
         $this->authItemRepository = $authItemRepository;
         $this->userAuthAssignmentRepository = $userAuthAssignmentRepository;
         $this->tokenStorage = $tokenStorage;
+        $this->user = null;
+    }
+
+    /**
+     * Set the user for whom we want to check the authorization.
+     * /!\ useful only for specific case like token refresh /!\
+     *
+     * @param User $user    The user
+     * @return void
+     */
+    public function setUser(User $user)
+    {
+        $this->user = $user;
     }
 
     /**
@@ -78,7 +93,11 @@ class AuthManager
         }
        
         // we get the requester
-        $requester = $this->tokenStorage->getToken()->getUser();
+        if (!is_null($this->user)) {
+            $requester = $this->user;
+        } else {
+            $requester = $this->tokenStorage->getToken()->getUser();
+        }
        
         // check if the item is authorized for the requester
         return $this->isAssigned($requester, $item, $params);
@@ -164,7 +183,11 @@ class AuthManager
         }
 
         // we get the requester
-        $requester = $this->tokenStorage->getToken()->getUser();
+        if (!is_null($this->user)) {
+            $requester = $this->user;
+        } else {
+            $requester = $this->tokenStorage->getToken()->getUser();
+        }
 
         $territories = [];
 
@@ -241,7 +264,11 @@ class AuthManager
         $authItems = [];
 
         // we get the requester
-        $requester = $this->tokenStorage->getToken()->getUser();
+        if (!is_null($this->user)) {
+            $requester = $this->user;
+        } else {
+            $requester = $this->tokenStorage->getToken()->getUser();
+        }
 
         if ($userAssignments = $this->userAuthAssignmentRepository->findByUser($requester)) {
             foreach ($userAssignments as $userAssignment) {

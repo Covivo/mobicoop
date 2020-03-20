@@ -48,6 +48,7 @@ class LogoutListener implements LogoutSuccessHandlerInterface
     public function onLogoutSuccess(Request $request)
     {
         $this->session->remove('apiToken');
+        $this->session->remove('apiRefreshToken');
         $routeToCall = $this->tokenStorage->getToken()->getUser() == 'anon.' ?
             $this->router->generate('home_logout', [], UrlGenerator::ABSOLUTE_PATH) :
             $this->router->generate('home', [], UrlGenerator::ABSOLUTE_PATH);
