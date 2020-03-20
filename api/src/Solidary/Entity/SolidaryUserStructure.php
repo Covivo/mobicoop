@@ -42,8 +42,25 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *         "get"={
+ *             "security"="is_granted('solidary_structure_list',object)"
+ *          },
+ *          "post"={
+ *             "security_post_denormalize"="is_granted('solidary_structure_create',object)"
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *             "security"="is_granted('solidary_structure_read',object)"
+ *          },
+ *          "put"={
+ *             "security"="is_granted('solidary_structure_update',object)"
+ *          },
+ *          "delete"={
+ *             "security"="is_granted('solidary_structure_delete',object)"
+ *          }
+ *      }
  * )
  */
 class SolidaryUserStructure

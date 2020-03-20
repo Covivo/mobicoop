@@ -47,8 +47,25 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *          "get"={
+ *             "security"="is_granted('proof_list',object)"
+ *          },
+ *          "post"={
+ *             "security_post_denormalize"="is_granted('proof_create',object)"
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *             "security"="is_granted('proof_read',object)"
+ *          },
+ *          "put"={
+ *             "security"="is_granted('proof_update',object)"
+ *          },
+ *          "delete"={
+ *             "security"="is_granted('proof_delete',object)"
+ *          }
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"label":"partial"})

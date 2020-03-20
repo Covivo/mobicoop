@@ -45,8 +45,25 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put"}
+ *      collectionOperations={
+ *          "get"={
+ *             "security"="is_granted('subject_list',object)"
+ *          },
+ *          "post"={
+ *             "security_post_denormalize"="is_granted('subject_create',object)"
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *             "security"="is_granted('subject_read',object)"
+ *          },
+ *          "put"={
+ *             "security"="is_granted('subject_update',object)"
+ *          },
+ *          "delete"={
+ *             "security"="is_granted('subject_delete',object)"
+ *          }
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
