@@ -29,9 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Entity\Proposal;
-use App\Solidary\Controller\SolidaryProposalPost;
 use Doctrine\Common\Collections\ArrayCollection;
-use App\Solidary\Entity\SolidaryUser;
 
 /**
  * A solidary record.
@@ -44,14 +42,7 @@ use App\Solidary\Entity\SolidaryUser;
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}},
  *      },
- *      collectionOperations={
- *     "get",
- *     "post"={
- *              "method"="POST",
- *              "path"="/solidaries",
- *              "controller"=SolidaryProposalPost::class,
- *          },
- *     },
+ *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
  */

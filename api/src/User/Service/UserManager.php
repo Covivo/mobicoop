@@ -285,8 +285,6 @@ class UserManager
         // Check if there is a SolidaryUser. If so, we need to check if the right role. If there is not, we add it.
         if (!is_null($user->getSolidaryUser())) {
             
-            //var_dump($user->getSolidaryUser()->getSolidaries()[0]);die;
-
             // Get the authAssignments
             $userAuthAssignments = $user->getUserAuthAssignments();
             $authItems = [];
