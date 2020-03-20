@@ -238,6 +238,11 @@ class App implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getRefresh()
+    {
+        return $this->username;
+    }
+
     // DOCTRINE EVENTS
     
     /**

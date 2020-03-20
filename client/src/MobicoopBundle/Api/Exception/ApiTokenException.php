@@ -21,37 +21,8 @@
  *    LICENSE
  **************************/
 
-namespace App\Auth\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Api\Exception;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
-use App\Auth\Entity\Permission;
-use App\Auth\Service\AuthManager;
-
-/**
- * Controller class for permission check.
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
- */
-class PermissionCheck
+class ApiTokenException extends \LogicException
 {
-    private $request;
-    private $authManager;
-
-    public function __construct(RequestStack $requestStack, AuthManager $authManager)
-    {
-        $this->request = $requestStack->getCurrentRequest();
-        $this->authManager = $authManager;
-    }
-
-    /**
-     * This method is invoked when a permission check is asked.
-     *
-     * @param array $data
-     * @return Response
-     */
-    public function __invoke(array $data): ?Permission
-    {
-        return $this->authManager->getPermissionForAuthItem($this->request->get('item'), ['id'=>$this->request->get("id")]);
-    }
 }
