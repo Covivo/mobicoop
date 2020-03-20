@@ -472,28 +472,23 @@ class DynamicManager
         $this->entityManager->persist($dynamic->getProposal());
         $this->entityManager->flush();
 
-        // we compute the results, if the ad is still active
-        // TODO : how to get the current driver position for the passenger ???
-        if ($dynamic->getProposal()->isActive()) {
-            // default order
-            $dynamic->setFilters([
-                'order'=>[
-                    'criteria'=>'date',
-                    'value'=>'ASC'
-                ]
-            
-            ]);
+        // default order
+        $dynamic->setFilters([
+            'order'=>[
+                'criteria'=>'date',
+                'value'=>'ASC'
+            ]
+        ]);
 
-            $dynamic->setResults(
-                $this->resultManager->orderResults(
-                    $this->resultManager->filterResults(
-                        $this->resultManager->createAdResults($dynamic->getProposal()),
-                        $dynamic->getFilters()
-                    ),
+        $dynamic->setResults(
+            $this->resultManager->orderResults(
+                $this->resultManager->filterResults(
+                    $this->resultManager->createAdResults($dynamic->getProposal()),
                     $dynamic->getFilters()
-                )
-            );
-        }
+                ),
+                $dynamic->getFilters()
+            )
+        );
 
         // we get the asks related to the dynamic ad
         // we include the corresponding result
@@ -505,10 +500,11 @@ class DynamicManager
                     // there's an ask, the initiator of the ask is the passenger => the user of the ask
                     $asks[] = [
                         'id' => $ask->getId(),
-                        'status' => $ask->getStatus(),
+                        'status' => $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER ? DynamicAsk::STATUS_PENDING : ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER ? DynamicAsk::STATUS_ACCEPTED : DynamicAsk::STATUS_DECLINED),
                         'user' => [
                             'givenName' => $ask->getUser()->getGivenName(),
                             'shortFamilyName' => $ask->getUser()->getShortFamilyName(),
+                            'position' => $matching->getProposalRequest()->getPosition()->getWaypoint()->getAddress()
                         ],
                         'result' => $this->getResult($matching, $dynamic->getResults()),
                         'messages' => $this->getThread($ask),
@@ -524,10 +520,11 @@ class DynamicManager
                     // there's an ask, the recipient of the ask is the driver => the userRelated of the ask
                     $asks[] = [
                         'id' => $ask->getId(),
-                        'status' => $ask->getStatus(),
+                        'status' => $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER ? DynamicAsk::STATUS_PENDING : ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER ? DynamicAsk::STATUS_ACCEPTED : DynamicAsk::STATUS_DECLINED),
                         'user' => [
                             'givenName' => $ask->getUserRelated()->getGivenName(),
                             'shortFamilyName' => $ask->getUserRelated()->getShortFamilyName(),
+                            'position' => $matching->getProposalOffer()->getPosition()->getWaypoint()->getAddress()
                         ],
                         'result' => $this->getResult($matching, $dynamic->getResults()),
                         'messages' => $this->getThread($ask),
@@ -713,49 +710,18 @@ class DynamicManager
 
         if ($ask->getStatus() == DynamicAsk::STATUS_ACCEPTED) {
             // dynamic carpooling accepted :
-            // - create a new ad with the driver remaining path including the passenger path
-            // - disable the old driver ad (set it to inactive and finished)
+            // - update the ad to include the passenger path
 
-            // create the new ad
-            $proposal = new Proposal();
-            $criteria = new Criteria();
+            $proposal = $ask->getMatching()->getProposalOffer();
 
-            $originalProposal = $ask->getMatching()->getProposalOffer();
-            $proposal->setUser($originalProposal->getUser());
-
-            // special dynamic properties
-            $proposal->setDynamic(true);
-            $proposal->setActive(true);
-            $proposal->setFinished(false);
-            $proposal->setType(Proposal::TYPE_ONE_WAY);
-
-            // comment
-            $proposal->setComment($originalProposal->getComment());
-            
-            // criteria
-
-            // driver / passenger / seats
-            $criteria->setDriver(true);
-            $criteria->setPassenger(false);
-            $criteria->setSeatsDriver($originalProposal->getCriteria()->getSeatsDriver());
-            $criteria->setSeatsPassenger(0);
-            
-            // prices
-            $criteria->setPriceKm($originalProposal->getCriteria()->getPriceKm());
-            $criteria->setDriverPrice($originalProposal->getCriteria()->getDriverPrice());
-
-            // dates and times
-
-            // we use the current date
-            $criteria->setFromDate(new \DateTime('UTC'));
-            $criteria->setFromTime($criteria->getFromDate());
-            $criteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
-
-            // waypoints => we use the waypoints of the ask
-            foreach ($ask->getWaypoints() as $waypointPosition => $point) {
+            // waypoints :
+            // - we remove all the previous waypoints
+            // - we use the waypoints of the ask
+            $newWaypoints = [];
+            foreach ($ask->getWaypoints() as $point) {
                 $waypoint = clone $point;
                 // we search in the original waypoints if the current waypoint has been reached by the driver
-                foreach ($originalProposal->getWaypoints() as $curWaypoint) {
+                foreach ($proposal->getWaypoints() as $curWaypoint) {
                     if (
                         $curWaypoint->getAddress()->getLongitude() == $point->getAddress()->getLongitude() &&
                         $curWaypoint->getAddress()->getLatitude() == $point->getAddress()->getLatitude()
@@ -766,32 +732,29 @@ class DynamicManager
                         break;
                     }
                 }
+                $newWaypoints[] = $waypoint;
+            }
+            foreach ($proposal->getWaypoints() as $waypoint) {
+                if (!$waypoint->isFloating()) {
+                    $proposal->removeWaypoint($waypoint);
+                }
+            }
+            foreach ($newWaypoints as $waypoint) {
                 $proposal->addWaypoint($waypoint);
             }
 
-            // we associate the current floating point of the driver to the new proposal
-            foreach ($originalProposal->getWaypoints() as $waypointPosition => $point) {
-                if ($point->isFloating()) {
-                    $proposal->addWaypoint($point);
-                    $this->entityManager->persist($point);
+            // for now, we cancel the other asks
+            foreach ($proposal->getMatchingRequests() as $matching) {
+                if ($matching->getId() != $ask->getMatching()->getId()) {
+                    foreach ($matching->getAsks() as $ask) {
+                        if ($ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
+                            $ask->setStatus(Ask::STATUS_DECLINED_AS_DRIVER);
+                            $this->entityManager->persist($ask);
+                        }
+                    }
                 }
             }
-            $proposal->setCriteria($criteria);
-
-            // todo : check the other asks ! they will be cancelled as the original proposal will be disabled...
-            
-            $proposal = $this->proposalManager->prepareProposal($proposal);
-            $this->logger->info("DynamicManager : end creating ad " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $this->entityManager->persist($proposal);
-            $this->logger->info("DynamicManager : end persisting ad " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            
-            $originalProposal->getPosition()->setProposal($proposal);
-
-            // disable original proposal
-            $originalProposal->setActive(false);
-            $originalProposal->setFinished(true);
-            $this->entityManager->persist($originalProposal->getPosition());
-            $this->entityManager->persist($originalProposal);
         } else {
             // dynamic carpooling refused !
             // update the passenger ad to make it active again
@@ -801,7 +764,6 @@ class DynamicManager
 
         $this->entityManager->flush();
 
-        $dynamicAskData->setDynamicId($proposal->getId());
         return $dynamicAskData;
     }
 

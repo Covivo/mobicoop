@@ -115,13 +115,6 @@ class DynamicAsk
      */
     private $matchingId;
 
-    /**
-     * @var int|null The dynamic ad id related to the ask. Can be useful on driver acceptation : a new dynamic ad is created !
-     *
-     * @Groups("writeDynamic")
-     */
-    private $dynamicId;
-
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -195,18 +188,6 @@ class DynamicAsk
     public function setMatchingId(?int $matchingId): self
     {
         $this->matchingId = $matchingId;
-
-        return $this;
-    }
-
-    public function getDynamicId(): ?int
-    {
-        return $this->dynamicId;
-    }
-
-    public function setDynamicId(?int $dynamicId): self
-    {
-        $this->dynamicId = $dynamicId;
 
         return $this;
     }
