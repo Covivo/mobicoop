@@ -528,9 +528,9 @@ export default {
   data() {
     return {
       outwardDate: this.initOutwardDate,
-      outwardTime: this.initOutwardTime ? moment(this.initOutwardTime).format('HH:mm') : null,
+      outwardTime: this.initOutwardTime ? moment(this.initOutwardTime).utc().format('HH:mm') : null,
       returnDate: this.initReturnDate,
-      returnTime: this.initReturnTime ? moment(this.initReturnTime).format('HH:mm') : null,
+      returnTime: this.initReturnTime ? moment(this.initReturnTime).utc().format('HH:mm') : null,
       menuOutwardDate: false,
       menuOutwardTime: false,
       menuReturnDate: false,
@@ -586,7 +586,7 @@ export default {
     },
   },
   created:function(){
-    moment.locale(this.locale); // DEFINE DATE LANGUAGE
+    // moment.locale(this.locale); // DEFINE DATE LANGUAGE
     this.setData();
   },
 
@@ -750,8 +750,8 @@ export default {
             fri: days.some(day => {return day.day === 'fri'}),
             sat: days.some(day => {return day.day === 'sat'}),
             sun: days.some(day => {return day.day === 'sun'}),
-            outwardTime: moment(tempSchedules[i].outwardTime).isValid() ? moment(tempSchedules[i].outwardTime).format("HH:mm") : null,
-            returnTime: moment(tempSchedules[i].returnTime).isValid() ? moment(tempSchedules[i].returnTime).format("HH:mm") : null,
+            outwardTime: moment(tempSchedules[i].outwardTime).isValid() ? moment(tempSchedules[i].outwardTime).utc().format("HH:mm") : null,
+            returnTime: moment(tempSchedules[i].returnTime).isValid() ? moment(tempSchedules[i].returnTime).utc().format("HH:mm") : null,
             menuOutwardTime: false,
             menuReturnTime: false,
             outwardDisabled: false,
