@@ -58,7 +58,7 @@ class DynamicManager
 {
     private $entityManager;
     private $proposalManager;
-    private $userManager;
+    private $askManager;
     private $resultManager;
     private $geoTools;
     private $geoRouter;
@@ -79,7 +79,7 @@ class DynamicManager
     public function __construct(
         EntityManagerInterface $entityManager,
         ProposalManager $proposalManager,
-        UserManager $userManager,
+        AskManager $askManager,
         ResultManager $resultManager,
         GeoTools $geoTools,
         GeoRouter $geoRouter,
@@ -93,7 +93,7 @@ class DynamicManager
     ) {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
-        $this->userManager = $userManager;
+        $this->askManager = $askManager;
         $this->resultManager = $resultManager;
         $this->geoTools = $geoTools;
         $this->geoRouter = $geoRouter;
@@ -140,7 +140,10 @@ class DynamicManager
      */
     public function createDynamic(Dynamic $dynamic)
     {
-        // todo : check if the user has already a dynamic ad pending
+        // first we check if the user has already a dynamic ad pending
+        if ($this->proposalManager->hasPendingDynamic($dynamic->getUser())) {
+            throw new DynamicException("This user has already a pending dynamic ad");
+        }
 
         // set Seats
         if (is_null($dynamic->getSeats())) {
@@ -602,13 +605,21 @@ class DynamicManager
      */
     public function createDynamicAsk(DynamicAsk $dynamicAsk)
     {
-        // todo : check that another ask is not already made
+        // only the passenger can create an ask
+        $matching = $this->matchingRepository->find($dynamicAsk->getMatchingId());
+        if ($dynamicAsk->getUser()->getId() != $matching->getProposalRequest()->getUser()->getId()) {
+            throw new DynamicException("Only the passenger can create the dynamic ask");
+        }
+
+        // check that another ask is not already made
+        if ($this->askManager->hasPendingDynamicAsk($dynamicAsk->getUser())) {
+            throw new DynamicException("This user has already a pending dynamic ask");
+        }
 
         $ask = new Ask();
         $ask->setStatus(Ask::STATUS_PENDING_AS_PASSENGER);
         $ask->setType(Proposal::TYPE_ONE_WAY);
         $ask->setUser($dynamicAsk->getUser());
-        $matching = $this->matchingRepository->find($dynamicAsk->getMatchingId());
         $ask->setMatching($matching);
         $ask->setUserRelated($matching->getProposalOffer()->getUser());
 
@@ -667,14 +678,20 @@ class DynamicManager
      */
     public function updateDynamicAsk(int $id, DynamicAsk $dynamicAskData)
     {
+        // get the ask
+        $ask = $this->askRespository->find($id);
+
+        // only the driver can update an ask
+        if ($ask->getUserRelated()->getId() != $dynamicAskData->getUser()->getId()) {
+            throw new DynamicException("Only the driver can update the dynamic ask");
+        }
+
         // here the driver should only accept or decline the ask
         if ($dynamicAskData->getStatus() != DynamicAsk::STATUS_ACCEPTED && $dynamicAskData->getStatus() != DynamicAsk::STATUS_DECLINED) {
             throw new DynamicException("Only accept or decline are permitted.");
         }
-
-        // get the ask
-        $ask = $this->askRespository->find($id);
-        $ask->setStatus($dynamicAskData->getStatus());
+        
+        $ask->setStatus($dynamicAskData->getStatus() == DynamicAsk::STATUS_ACCEPTED ? Ask::STATUS_ACCEPTED_AS_DRIVER : Ask::STATUS_DECLINED_AS_DRIVER);
         $dynamicAskData->setId($id);
 
         // Ask History
@@ -708,9 +725,8 @@ class DynamicManager
 
         $this->entityManager->persist($ask);
 
-        if ($ask->getStatus() == DynamicAsk::STATUS_ACCEPTED) {
-            // dynamic carpooling accepted :
-            // - update the ad to include the passenger path
+        if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER) {
+            // dynamic carpooling accepted : update the ad to include the passenger path
 
             $proposal = $ask->getMatching()->getProposalOffer();
 
@@ -756,8 +772,7 @@ class DynamicManager
             }
             $this->entityManager->persist($proposal);
         } else {
-            // dynamic carpooling refused !
-            // update the passenger ad to make it active again
+            // dynamic carpooling refused : update the passenger ad to make it active again
             $ask->getMatching()->getProposalRequest()->setActive(true);
             $this->entityManager->persist($ask->getMatching()->getProposalRequest());
         }

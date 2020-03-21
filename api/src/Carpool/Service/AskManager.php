@@ -40,6 +40,7 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
+use App\User\Entity\User;
 
 /**
  * Ask manager service.
@@ -717,5 +718,31 @@ class AskManager
     public function isAskUserPassenger(Ask $ask)
     {
         return $ask->getUser()->getId() === $ask->getMatching()->getProposalRequest()->getUser()->getId();
+    }
+
+
+
+
+    /************
+    *   DYNAMIC *
+    *************/
+
+    /**
+     * Check if a user has a pending dynamic ad ask.
+     *
+     * @param User $user The user
+     * @return boolean
+     */
+    public function hasPendingDynamicAsk(User $user)
+    {
+        // first we get all the asks initiated by the user
+        $asks = $this->askRepository->findBy(['user'=>$user,'status'=>[Ask::STATUS_PENDING_AS_PASSENGER,Ask::STATUS_ACCEPTED_AS_DRIVER]]);
+        // now we check if one of these asks is related to a dynamic ad, not finished
+        foreach ($asks as $ask) {
+            // if the user is passenger
+            if ($ask->getUser()->getId() == $user->getId() && $ask->getMatching()->getProposalRequest()->isDynamic() && !$ask->getMatching()->getProposalRequest()->isFinished()) return true;
+            // if the user is driver
+            if ($ask->getUserRelated()->getId() == $user->getId() && $ask->getMatching()->getProposalOffer()->isDynamic() && !$ask->getMatching()->getProposalOffer()->isFinished()) return true;
+        }
     }
 }

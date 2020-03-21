@@ -54,14 +54,14 @@ final class DynamicAdDataPersister implements ContextAwareDataPersisterInterface
         /**
          * @var Dynamic $data
          */
+        // we check if the request is sent by a real user
+        if ($this->security->getUser() instanceof User) {
+            $data->setUser($this->security->getUser());
+        } else {
+            throw new DynamicException("Operation not permited");
+        }
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
             // CREATE
-            // we check if the request is sent by a real user
-            if ($this->security->getUser() instanceof User) {
-                $data->setUser($this->security->getUser());
-            } else {
-                throw new DynamicException("Operation not permited");
-            }
             $data = $this->dynamicManager->createDynamic($data);
         } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
             // UPDATE

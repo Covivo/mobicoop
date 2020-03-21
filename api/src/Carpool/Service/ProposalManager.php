@@ -55,6 +55,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use App\Import\Entity\UserImport;
+use App\User\Entity\User;
 
 /**
  * Proposal manager service.
@@ -465,6 +466,17 @@ class ProposalManager
     /************
     *   DYNAMIC *
     *************/
+
+    /**
+     * Check if a user has a pending dynamic ad.
+     *
+     * @param User $user The user
+     * @return boolean
+     */
+    public function hasPendingDynamic(User $user)
+    {
+        return count($this->proposalRepository->findBy(['user'=>$user,'dynamic'=>true,'active'=>true]))>0;
+    }
 
     /**
      * Update matchings for a proposal
