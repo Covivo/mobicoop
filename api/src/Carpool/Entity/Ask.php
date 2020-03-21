@@ -226,12 +226,12 @@ class Ask
     private $askHistories;
 
     /**
-     * @var ArrayCollection The proofs related to the ask.
+     * @var CarpoolProof|null The proof related to the ask.
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\CarpoolProof", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\CarpoolProof", inversedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      */
-    private $carpoolProofs;
+    private $carpoolProof;
 
     /**
      * @var Matching|null Related matching for a round trip (return or outward journey).
@@ -257,7 +257,6 @@ class Ask
     {
         $this->waypoints = new ArrayCollection();
         $this->askHistories = new ArrayCollection();
-        $this->carpoolProofs = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -483,34 +482,17 @@ class Ask
         return $this;
     }
 
-    public function getCarpoolProofs()
+    public function getCarpoolProof(): ?CarpoolProof
     {
-        return $this->carpoolProofs->getValues();
-    }
-    
-    public function addCarpoolProof(CarpoolProof $carpoolProof): self
-    {
-        if (!$this->carpoolProofs->contains($carpoolProof)) {
-            $this->carpoolProofs[] = $carpoolProof;
-            $carpoolProof->setAsk($this);
-        }
-        
-        return $this;
-    }
-    
-    public function removeCarpoolProof(CarpoolProof $carpoolProof): self
-    {
-        if ($this->carpoolProofs->contains($carpoolProof)) {
-            $this->carpoolProofs->removeElement($carpoolProof);
-            // set the owning side to null (unless already changed)
-            if ($carpoolProof->getAsk() === $this) {
-                $carpoolProof->setAsk(null);
-            }
-        }
-        
-        return $this;
+        return $this->carpoolProof;
     }
 
+    public function setCarpoolProof(?CarpoolProof $carpoolProof): self
+    {
+        $this->carpoolProof = $carpoolProof;
+
+        return $this;
+    }
     public function getMatchingRelated(): ?Matching
     {
         return $this->matchingRelated;

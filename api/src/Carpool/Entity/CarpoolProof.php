@@ -48,9 +48,7 @@ class CarpoolProof
     /**
      * @var Ask The ask related to the proof.
      *
-     * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="carpoolProofs")
-     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", mappedBy="carpoolProof")
      */
     private $ask;
         

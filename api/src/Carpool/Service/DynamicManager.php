@@ -58,6 +58,7 @@ class DynamicManager
 {
     private $entityManager;
     private $proposalManager;
+    private $proposalMatcher;
     private $askManager;
     private $resultManager;
     private $geoTools;
@@ -79,6 +80,7 @@ class DynamicManager
     public function __construct(
         EntityManagerInterface $entityManager,
         ProposalManager $proposalManager,
+        ProposalMatcher $proposalMatcher,
         AskManager $askManager,
         ResultManager $resultManager,
         GeoTools $geoTools,
@@ -93,6 +95,7 @@ class DynamicManager
     ) {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
+        $this->proposalMatcher = $proposalMatcher;
         $this->askManager = $askManager;
         $this->resultManager = $resultManager;
         $this->geoTools = $geoTools;
@@ -501,6 +504,18 @@ class DynamicManager
             foreach ($dynamic->getProposal()->getMatchingRequests() as $matching) {
                 foreach ($matching->getAsks() as $ask) {
                     // there's an ask, the initiator of the ask is the passenger => the user of the ask
+                    // if the pickup hasn't been made yet, we compute the direction between the driver and the passenger
+                    $pickUpDuration = null;
+                    $pickUpDistance = null;
+                    if (is_null($ask->getCarpoolProof())) {
+                        $addresses = [];
+                        $addresses[] = $matching->getProposalOffer()->getPosition()->getWaypoint()->getAddress();
+                        $addresses[] = $matching->getProposalRequest()->getPosition()->getWaypoint()->getAddress();
+                        if ($routes = $this->geoRouter->getRoutes($addresses)) {
+                            $pickUpDuration = $routes[0]->getDuration();
+                            $pickUpDistance = $routes[0]->getDistance();
+                        }
+                    }
                     $asks[] = [
                         'id' => $ask->getId(),
                         'status' => $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER ? DynamicAsk::STATUS_PENDING : ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER ? DynamicAsk::STATUS_ACCEPTED : DynamicAsk::STATUS_DECLINED),
@@ -512,7 +527,10 @@ class DynamicManager
                         'result' => $this->getResult($matching, $dynamic->getResults()),
                         'messages' => $this->getThread($ask),
                         'priceKm' => $ask->getCriteria()->getPriceKm(),
-                        'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice()
+                        'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice(),
+                        'duration' => $matching->getDropOffDuration()-$matching->getPickUpDuration(),
+                        'pickUpDuration' => $pickUpDuration,
+                        'pickUpDistance' => $pickUpDistance
                     ];
                 }
             }
@@ -521,6 +539,18 @@ class DynamicManager
             foreach ($dynamic->getProposal()->getMatchingOffers() as $matching) {
                 foreach ($matching->getAsks() as $ask) {
                     // there's an ask, the recipient of the ask is the driver => the userRelated of the ask
+                    // if the pickup hasn't been made yet, we compute the direction between the driver and the passenger
+                    $pickUpDuration = null;
+                    $pickUpDistance = null;
+                    if (is_null($ask->getCarpoolProof())) {
+                        $addresses = [];
+                        $addresses[] = $matching->getProposalOffer()->getPosition()->getWaypoint()->getAddress();
+                        $addresses[] = $matching->getProposalRequest()->getPosition()->getWaypoint()->getAddress();
+                        if ($routes = $this->geoRouter->getRoutes($addresses)) {
+                            $pickUpDuration = $routes[0]->getDuration();
+                            $pickUpDistance = $routes[0]->getDistance();
+                        }
+                    }
                     $asks[] = [
                         'id' => $ask->getId(),
                         'status' => $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER ? DynamicAsk::STATUS_PENDING : ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER ? DynamicAsk::STATUS_ACCEPTED : DynamicAsk::STATUS_DECLINED),
@@ -532,7 +562,10 @@ class DynamicManager
                         'result' => $this->getResult($matching, $dynamic->getResults()),
                         'messages' => $this->getThread($ask),
                         'priceKm' => $ask->getCriteria()->getPriceKm(),
-                        'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice()
+                        'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice(),
+                        'duration' => $matching->getDropOffDuration()-$matching->getPickUpDuration(),
+                        'pickUpDuration' => $pickUpDuration,
+                        'pickUpDistance' => $pickUpDistance
                     ];
                 }
             }
@@ -770,6 +803,10 @@ class DynamicManager
                     }
                 }
             }
+            // update the matchings
+            $this->proposalMatcher->updateMatchingsForProposal($proposal);
+
+            // persist the updates
             $this->entityManager->persist($proposal);
         } else {
             // dynamic carpooling refused : update the passenger ad to make it active again
@@ -808,4 +845,11 @@ class DynamicManager
         }
         return $thread;
     }
+
+
+
+
+    /******************
+     *  DYNAMIC PROOF *
+     ******************/
 }
