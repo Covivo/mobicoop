@@ -796,7 +796,7 @@ export default {
       returnTrip:null,
       route: null,
       price: null,
-      pricePerKm: this.defaultPriceKm,
+      pricePerKm: this.isUpdate && this.ad ? this.ad.priceKm : this.defaultPriceKm,
       message: null,
       baseUrl: window.location.origin,
       loading: false,
@@ -911,7 +911,7 @@ export default {
       }
 
       // Step 2 punctual : you have to set the outward time
-      if(this.step==2 && ((!this.regular && !(this.outwardDate && this.outwardTime)) || !this.returnTimeIsValid)) return false;
+      if(this.step==2 && ((!this.regular && !(this.outwardDate && this.outwardTime)) || this.returnTimeIsValid === false)) return false;
       // Step 2 punctual, round-trip chosen : you have to set the outward date & time
       if(this.step==2 && !this.regular && this.returnTrip && !(this.returnDate && this.returnTime)) return false;
 
@@ -964,7 +964,7 @@ export default {
   },
   watch: {
     price() {
-      this.pricePerKm = (this.distance>0 ? Math.round(parseFloat(this.price) / this.distance * 100)/100 : this.defaultPriceKm);
+      this.pricePerKm = (this.distance>0 ? Math.round(parseFloat(this.price) / this.distance * 100)/100 : this.pricePerKm);
       (this.pricePerKm>this.pricesRanges.forbidden) ? this.priceForbidden = true : this.priceForbidden = false;
     },
     distance() {
@@ -1000,6 +1000,7 @@ export default {
         this.music = this.ad.music;
         this.message = this.ad.message;
         this.price = this.ad.outwardDriverPrice;
+        this.pricePerKm = this.ad.priceKm;
         this.role = this.ad.role;
         this.driver = this.ad.role === 1 || this.ad.role === 3;
         this.passenger = this.ad.role === 2 || this.ad.role === 3;
