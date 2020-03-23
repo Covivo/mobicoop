@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,38 +21,29 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Controller;
+namespace App\Auth\Rule;
 
-use App\Solidary\Entity\Solidary;
-use App\Solidary\Service\SolidaryManager;
-use App\TranslatorTrait;
+use App\Auth\Interfaces\AuthRuleInterface;
+use App\Solidary\Entity\Proof;
 
-class SolidaryProposalPost
+/**
+ *  Check that the requester is the author of the related Ad
+ */
+class ProofOwner implements AuthRuleInterface
 {
-    use TranslatorTrait;
-
     /**
-     * @var SolidaryManager
+     * {@inheritdoc}
      */
-    private $solidaryManager;
-
-    public function __construct(SolidaryManager $solidaryManager)
+    public function execute($requester, $item, $params)
     {
-        $this->solidaryManager = $solidaryManager;
-    }
-
-    /**
-     * This method is invoked when a new ask is posted.
-     *
-     * @param Solidary $data
-     * @return Solidary
-     */
-    public function __invoke(Solidary $data): Solidary
-    {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Solidary id is provided"));
+        if (!isset($params['proof'])) {
+            return false;
         }
-//        $data = $this->solidaryManager->createSolidary($data);
-        return $data;
+        
+        /**
+         * @var Proof $proof
+         */
+        $proof = $params['proof'];
+        return $proof->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getId() == $requester->getId();
     }
 }

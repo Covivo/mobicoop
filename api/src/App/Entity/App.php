@@ -27,7 +27,6 @@ use App\Auth\Entity\AuthItem;
 use Doctrine\ORM\Mapping as ORM;
 // use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Auth\Entity\Role;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;

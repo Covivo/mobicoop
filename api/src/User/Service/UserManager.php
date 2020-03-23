@@ -161,6 +161,58 @@ class UserManager
      */
     public function registerUser(User $user, bool $encodePassword=true)
     {
+        $user = $this->prepareUser($user, $encodePassword);
+
+
+        // Check if there is a SolidaryUser. If so, we need to check if the right role. If there is not, we add it.
+        if (!is_null($user->getSolidaryUser())) {
+            if ($user->getSolidaryUser()->isVolunteer()) {
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
+            }
+            if ($user->getSolidaryUser()->isBeneficiary()) {
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
+            }
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
+        }
+
+        // persist the user
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        // creation of the alert preferences
+        $user = $this->createAlerts($user);
+
+        // dispatch en event
+        if (is_null($user->getUserDelegate())) {
+            // registration by the user itself
+            $event = new UserRegisteredEvent($user);
+            $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
+        } else {
+            // delegate registration
+            $event = new UserDelegateRegisteredEvent($user);
+            $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
+            // send password ?
+            if ($user->getPasswordSendType() == User::PWD_SEND_TYPE_SMS) {
+                $event = new UserDelegateRegisteredPasswordSendEvent($user);
+                $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
+            }
+        }
+
+        // return the user
+        return $user;
+    }
+
+    /**
+     * Prepare a user for registration : set default values
+     *
+     * @param User      $user               The user to prepare
+     * @param boolean   $encodePassword     True to encode password
+     * @return User     The prepared user
+     */
+    public function prepareUser(User $user, bool $encodePassword=false)
+    {
         if (count($user->getUserAuthAssignments()) == 0) {
             // default role : user registered full
             $authItem = $this->authItemRepository->find(AuthItem::ROLE_USER_REGISTERED_FULL);
@@ -196,30 +248,6 @@ class UserManager
         $unsubscribeToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         $user->setUnsubscribeToken($unsubscribeToken);
 
-        // persist the user
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-
-        // creation of the alert preferences
-        $user = $this->createAlerts($user);
-
-        // dispatch en event
-        if (is_null($user->getUserDelegate())) {
-            // registration by the user itself
-            $event = new UserRegisteredEvent($user);
-            $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
-        } else {
-            // delegate registration
-            $event = new UserDelegateRegisteredEvent($user);
-            $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
-            // send password ?
-            if ($user->getPasswordSendType() == User::PWD_SEND_TYPE_SMS) {
-                $event = new UserDelegateRegisteredPasswordSendEvent($user);
-                $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
-            }
-        }
-
-        // return the user
         return $user;
     }
 
@@ -232,7 +260,7 @@ class UserManager
     public function updateUser(User $user)
     {
 
-         // activate sms notification if phone validated
+        // activate sms notification if phone validated
         if ($user->getPhoneValidatedDate()) {
             $user = $this->activateSmsNotification($user);
         }
@@ -249,6 +277,29 @@ class UserManager
         $time = $datetime->getTimestamp();
         $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         $user->setGeoToken($geoToken);
+
+
+        // Check if there is a SolidaryUser. If so, we need to check if the right role. If there is not, we add it.
+        if (!is_null($user->getSolidaryUser())) {
+            
+            // Get the authAssignments
+            $userAuthAssignments = $user->getUserAuthAssignments();
+            $authItems = [];
+            foreach ($userAuthAssignments as $userAuthAssignment) {
+                $authItems[] = $userAuthAssignment->getAuthItem()->getId();
+            }
+
+            if ($user->getSolidaryUser()->isVolunteer() && !in_array(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE, $authItems)) {
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
+            }
+            if ($user->getSolidaryUser()->isBeneficiary() && !in_array(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE, $authItems)) {
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
+            }
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
+        }
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -257,6 +308,18 @@ class UserManager
         $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
         // return the user
         return $user;
+    }
+
+    /**
+     * Encode a password for a user
+     *
+     * @param User $user        The user
+     * @param string $password  The password to encode
+     * @return string           The encoded password
+     */
+    public function encodePassword(User $user, string $password)
+    {
+        return $this->encoder->encodePassword($user, $password);
     }
 
     /**
