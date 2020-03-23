@@ -23,6 +23,7 @@
           :return-times="returnTimes"
           :is-return="hasReturn"
           :is-regular="isRegular"
+          :has-days="true"
         />
       </v-col>
     </v-row>
@@ -94,7 +95,7 @@ export default {
   },
   computed: {
     hasReturn () {
-      return !this.ad.oneWay;
+      return !this.ad.oneWay && this.returnTimes.length > 0;
     },
     isRegular () {
       return this.ad.frequency === 2;

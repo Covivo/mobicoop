@@ -14,11 +14,11 @@
         <span v-else-if="!isDriver && seats && seats > 0">{{ bookedSeats }}&nbsp;{{ $tc('seat.booked', bookedSeats) }}</span>
       </v-col>
       <v-col
-        v-if="!isDriver && ad.outwardPassengerPrice"
+        v-if="!isDriver && ad.asks[0].results[0].roundedPrice"
         cols="2"
         class="font-weight-bold primary--text headline text-right"
       >
-        {{ ad.outwardPassengerPrice }}€
+        {{ ad.asks[0].results[0].roundedPrice }}€
       </v-col>
     </v-row>
     <v-expansion-panels
@@ -48,17 +48,18 @@
             class="primary extra-divider"
           />
           <v-row
-            v-for="(result, index) in ad.results"
+            v-for="(ask, index) in ad.asks"
             :key="index"
             no-gutters
           >
             <carpooler
-              :result="result"
-              :ad="ad"
+              :result="getResults(ask)"
+              :ask="ask"
               :user="user"
+              :is-inverted="!empty(ask.results[1])"
             />
             <v-divider
-              v-if="index < ad.results.length - 1"
+              v-if="index < ad.asks.length - 1"
               class="primary lighten-5 ma-1"
             />
           </v-row>
@@ -71,6 +72,7 @@
 <script>
 import Translations from "@translations/components/user/profile/carpool/CarpoolFooter.js";
 import Carpooler from '@components/user/profile/carpool/Carpooler.vue';
+import {isEmpty} from 'lodash';
 
 export default {
   i18n: {
@@ -96,7 +98,7 @@ export default {
   },
   computed: {
     bookedSeats() {
-      return this.ad.results.length
+      return this.ad.asks.length
     },
     seats() {
       return this.isDriver ? this.ad.seatsDriver : this.ad.seatsPassenger
@@ -109,6 +111,24 @@ export default {
     },
     showMessage() {
       return this.isDriver ? this.$t('passengers.show') : this.$t('driver.show');
+    }
+  },
+  methods: {
+    empty(obj) {
+      return isEmpty(obj);
+    },
+    getResults (ask) {
+      let length = ask.results.length;
+      if (length === 1) {
+        return ask.results[0];
+      } else if (length > 1) {
+        for (let i = 1; i < length; i ++) {
+          if (ask.results[i].acceptedAsk === true) {
+            return ask.results[i];
+          }
+        }
+      }
+      return ask.results[0];
     }
   }
 }

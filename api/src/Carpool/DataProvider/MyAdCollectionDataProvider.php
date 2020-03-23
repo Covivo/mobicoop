@@ -34,7 +34,7 @@ use Symfony\Component\Security\Core\Security;
  * Collection data provider for user's ads.
  *
  */
-final class AdCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class MyAdCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
     protected $adManager;
@@ -49,11 +49,11 @@ final class AdCollectionDataProvider implements CollectionDataProviderInterface,
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Ad::class === $resourceClass && $operationName === "get";
+        return Ad::class === $resourceClass && $operationName === "getMyCarpools";
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->adManager->getAds($this->security->getUser()->getId());
+        return $this->adManager->getUserAcceptedCarpools($this->security->getUser()->getId());
     }
 }

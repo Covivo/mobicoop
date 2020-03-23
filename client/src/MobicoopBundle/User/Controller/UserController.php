@@ -332,7 +332,7 @@ class UserController extends AbstractController
             'alerts' => $userManager->getAlerts($user)['alerts'],
             'tabDefault' => $tabDefault,
             'ads' => $userManager->getAds($user),
-            'acceptedCarpools' => $userManager->getAds($user, true)
+            'acceptedCarpools' => $userManager->getMyAcceptedProposals($user)
         ]);
     }
 
@@ -976,5 +976,16 @@ class UserController extends AbstractController
             }
         }
         return new JsonResponse($userCreatedEvents);
+    }
+
+    /**
+     * Get all proposals with an accepted ask
+     * Ajax
+     */
+    public function userProposalsAccepted(UserManager $userManager)
+    {
+        $user = $userManager->getLoggedUser();
+
+        return new JsonResponse($userManager->getMyAcceptedProposals($user));
     }
 }

@@ -718,4 +718,41 @@ class AskManager
     {
         return $ask->getUser()->getId() === $ask->getMatching()->getProposalRequest()->getUser()->getId();
     }
+
+    /**
+     * Get a simplified ask from an ad
+     * @param int $askId The ask id
+     * @param int $userId The user id of the user making the request
+     * @param Proposal|null $proposal - We can give a Proposal if we need these data in results,
+     * for example if my Ad is based on an ask and I need the proposal data in results
+     * @return Ad       The ad for the ask with the computed results
+     */
+    public function getSimpleAskFromAd(int $askId, int $userId, ?Proposal $proposal = null)
+    {
+        $ask = $this->askRepository->find($askId);
+        $ad = new Ad();
+        $ad->setUserId($userId);
+        $ad->setAskId($askId);
+        $ad->setAskStatus($ask->getStatus());
+        $ad->setOutwardLimitDate($ask->getCriteria()->getToDate());
+
+        // first pass for role
+        switch ($ask->getStatus()) {
+            case Ask::STATUS_ACCEPTED_AS_DRIVER:
+                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_DRIVER : Ad::ROLE_PASSENGER);
+                break;
+            case Ask::STATUS_ACCEPTED_AS_PASSENGER:
+                $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_PASSENGER : Ad::ROLE_DRIVER);
+                break;
+        }
+        // we compute the results
+        if ($proposal) {
+            $results = array_merge([$this->resultManager->createSimpleAskResults($ask, $userId, $ad->getRole())], $this->resultManager->createAdResults($proposal));
+            $ad->setResults($results);
+        } else {
+            $ad->setResults([$this->resultManager->createSimpleAskResults($ask, $userId, $ad->getRole())]);
+        }
+
+        return $ad;
+    }
 }

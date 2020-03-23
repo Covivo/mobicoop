@@ -10,8 +10,8 @@
               class="py-0"
             >
               <route-summary
-                :origin="result.origin"
-                :destination="result.destination"
+                :origin="ask.role === 2 ? carpoolInfos.outward.originPassenger : carpoolInfos.outward.originDriver"
+                :destination="ask.role === 2 ? carpoolInfos.outward.destinationPassenger : carpoolInfos.outward.destinationDriver"
                 :type="result.frequency"
                 :time="!isRegular ? result.time : null"
                 :regular="isRegular"
@@ -24,28 +24,51 @@
         </v-container>
       </v-col>
     </v-row>
-    <v-row v-if="isRegular">
-      <v-col cols="5">
-        <regular-days-summary
-          :mon-active="hasMonday"
-          :tue-active="hasTuesday"
-          :wed-active="hasWednesday"
-          :thu-active="hasThursday"
-          :fri-active="hasFriday"
-          :sat-active="hasSaturday"
-          :sun-active="hasSunday"
-          :date-start-of-validity="result.fromDate"
-          :date-end-of-validity="result.toDate"
-        />
-      </v-col>
+    <v-row
+      v-if="isRegular"
+      align="center"
+    >
+      <v-col
+        v-for="(schedule, index) in schedules"
+        :key="index"
+        cols="12"
+        class="pb-0 px-0"
+      >
+        <v-row
+          no-gutters
+          align="start"
+        >
+          <v-col
+            cols="5"
+            class="pa-0"
+          >
+            <regular-days-summary
+              :mon-active="schedule.mon"
+              :tue-active="schedule.tue"
+              :wed-active="schedule.wed"
+              :thu-active="schedule.thu"
+              :fri-active="schedule.fri"
+              :sat-active="schedule.sat"
+              :sun-active="schedule.sun"
+              :date-start-of-validity="index === schedules.length -1 ? carpoolInfos.outward.fromDate : null"
+              :date-end-of-validity="index === schedules.length -1 ? carpoolInfos.outward.toDate : null"
+            />
+          </v-col>
 
-      <v-col class="py-0">
-        <schedules
-          :outward-times="outwardTimes"
-          :return-times="returnTimes"
-          :is-return="hasReturn"
-          :is-regular="isRegular"
-        />
+          <v-col
+            class="pa-0"
+          >
+            <schedules
+              :outward-time="schedule.outwardTime"
+              :return-time="schedule.returnTime"
+              :is-return="scheduleHasReturn(schedule)"
+              :is-outward="scheduleHasOutward(schedule)"
+              :is-regular="isRegular"
+              :no-gutters="true"
+              :has-days="true"
+            />
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
     <v-row
@@ -65,7 +88,7 @@
         <!--display phone is always true when ask is accepted-->
         <carpooler-contact
           :carpooler="result.carpooler"
-          :ask-id="result.askId"
+          :ask-id="ask.askId"
           :display-phone="true"
           :display-mail-box="true"
           :user="user"
@@ -86,7 +109,7 @@
       <!--        </v-btn>-->
       <!--      </v-col>-->
       <v-col
-        v-if="isDriver"
+        v-if="isPassenger"
         cols="2"
         class="font-weight-bold primary--text headline text-right"
       >
@@ -117,7 +140,7 @@ export default {
     Schedules
   },
   props: {
-    ad: {
+    ask: {
       type: Object,
       required: true
     },
@@ -128,66 +151,134 @@ export default {
     user: {
       type: Object,
       default: null
+    },
+    // when the ad is based on an ask and the results are based on the proposal, we need to invert where data are taken
+    isInverted: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
-      //todo: use correct times from result/result schedule object when it's developed
-      outwardTimes: this.ad ? [
-        this.ad.schedule.monOutwardTime,
-        this.ad.schedule.tueOutwardTime,
-        this.ad.schedule.wedOutwardTime,
-        this.ad.schedule.thuOutwardTime,
-        this.ad.schedule.friOutwardTime,
-        this.ad.schedule.satOutwardTime,
-        this.ad.schedule.sunOutwardTime
-      ].filter(Boolean) : [],
-      returnTimes: this.ad ? [
-        this.ad.schedule.monReturnTime,
-        this.ad.schedule.tueReturnTime,
-        this.ad.schedule.wedReturnTime,
-        this.ad.schedule.thuReturnTime,
-        this.ad.schedule.friReturnTime,
-        this.ad.schedule.satReturnTime,
-        this.ad.schedule.sunReturnTime
-      ].filter(Boolean) : []
+      carpoolInfos: null,
+      outwardTimes:[],
+      returnTimes:[],
+      hasReturn: null,
+      isRegular: null,
+      hasMonday: null,
+      hasTuesday: null,
+      hasWednesday: null,
+      hasThursday: null,
+      hasFriday: null,
+      hasSaturday: null,
+      hasSunday: null,
+      arrayDay: ["mon", "tue", "wed", "thu", "fri", "sat", "sun"],
+      schedules: []
     }
   },
   computed: {
     isDriver() {
-      return this.ad.role === 1 || this.ad.role === 3
+      return this.ask.role === 1 || this.ask.role === 3
     },
     isPassenger() {
-      return this.ad.role === 2 || this.ad.role === 3
+      return this.ask.role === 2 || this.ask.role === 3
     },
-    hasReturn () {
-      return !this.ad.oneWay;
-    },
-    isRegular () {
-      return this.ad.frequency === 2;
-    },
-    hasMonday () {
-      return this.result && this.result.monCheck;
-    },
-    hasTuesday () {
-      return this.result && this.result.tueCheck;
-    },
-    hasWednesday () {
-      return this.result && this.result.wedCheck;
-    },
-    hasThursday () {
-      return this.result && this.result.thuCheck;
-    },
-    hasFriday () {
-      return this.result && this.result.friCheck;
-    },
-    hasSaturday () {
-      return this.result && this.result.satCheck;
-    },
-    hasSunday () {
-      return this.result && this.result.sunCheck;
+    getResults () {
+      if (this.ask.role === 2 && !this.isInverted) {
+        return this.result.resultPassenger;
+      } else if (this.ask.role === 2 && this.isInverted) {
+        return this.result.resultDriver;
+      } else if (this.ask.role !== 2 && !this.isInverted) {
+        return this.result.resultDriver;
+      } else {
+        return this.result.resultPassenger;
+      }
     }
   },
+  created() {
+    this.setCarpoolInfo();
+  },
+  methods: {
+    setCarpoolInfo() {
+      this.carpoolInfos = this.getResults;
+      if (this.carpoolInfos !== null) {
+        this.outwardTimes.push(
+          this.carpoolInfos.outward.monTime,
+          this.carpoolInfos.outward.tueTime,
+          this.carpoolInfos.outward.wedTime,
+          this.carpoolInfos.outward.thuTime,
+          this.carpoolInfos.outward.friTime,
+          this.carpoolInfos.outward.satTime,
+          this.carpoolInfos.outward.sunTime
+        );
+        if (this.carpoolInfos.return !== null) {
+          this.returnTimes.push(
+            this.carpoolInfos.return.monTime,
+            this.carpoolInfos.return.tueTime,
+            this.carpoolInfos.return.wedTime,
+            this.carpoolInfos.return.thuTime,
+            this.carpoolInfos.return.friTime,
+            this.carpoolInfos.return.satTime,
+            this.carpoolInfos.return.sunTime
+          );
+        }
+
+        this.hasReturn = !!this.carpoolInfos.return;
+        this.hasMonday = this.carpoolInfos.outward.monCheck || this.carpoolInfos.return && this.carpoolInfos.return.monCheck;
+        this.hasTuesday = this.carpoolInfos.outward.tueCheck || this.carpoolInfos.return && this.carpoolInfos.return.tueCheck;
+        this.hasWednesday = this.carpoolInfos.outward.wedCheck || this.carpoolInfos.return && this.carpoolInfos.return.wedCheck;
+        this.hasThursday = this.carpoolInfos.outward.thuCheck || this.carpoolInfos.return && this.carpoolInfos.return.thuCheck;
+        this.hasFriday = this.carpoolInfos.outward.friCheck || this.carpoolInfos.return && this.carpoolInfos.return.friCheck;
+        this.hasSaturday = this.carpoolInfos.outward.satCheck || this.carpoolInfos.return && this.carpoolInfos.return.satCheck;
+        this.hasSunday = this.carpoolInfos.outward.sunCheck || this.carpoolInfos.return && this.carpoolInfos.return.sunCheck;
+
+        // let schedule = this.initSchedule;
+        let tempSchedules = [];
+
+        this.arrayDay.forEach(day => {
+          if (this.carpoolInfos.outward[day + "Check"] === true || this.carpoolInfos.return && this.carpoolInfos.return[day + "Check"] === true) {
+            tempSchedules.push({
+              day: day,
+              outwardTime: this.carpoolInfos.outward && this.carpoolInfos.outward[day + 'Check'] ? this.carpoolInfos.outward[day + 'Time'] : null,
+              returnTime: this.carpoolInfos.return && this.carpoolInfos.return[day + 'Check'] ? this.carpoolInfos.return[day + 'Time'] : null
+            });
+          }
+        });
+
+        let schedulesLength = tempSchedules.length;
+        let daysDone = [];
+        for (let i = 0; i < schedulesLength; i++) {
+          if (tempSchedules.length === 0) break;
+          if (daysDone.includes(tempSchedules[i].day)) continue;
+          let days = tempSchedules.filter(elem => {return elem.outwardTime === tempSchedules[i].outwardTime && elem.returnTime === tempSchedules[i].returnTime});
+
+          this.schedules.push({
+            mon: days.some(day => {return day.day === 'mon'}),
+            tue: days.some(day => {return day.day === 'tue'}),
+            wed: days.some(day => {return day.day === 'wed'}),
+            thu: days.some(day => {return day.day === 'thu'}),
+            fri: days.some(day => {return day.day === 'fri'}),
+            sat: days.some(day => {return day.day === 'sat'}),
+            sun: days.some(day => {return day.day === 'sun'}),
+            outwardTime: tempSchedules[i].outwardTime,
+            returnTime: tempSchedules[i].returnTime
+          });
+
+          days.forEach(day => {
+            daysDone.push(day.day)
+          })
+        }
+      }
+
+      this.isRegular = this.result.frequency === 2;
+    },
+    scheduleHasReturn (schedule) {
+      return schedule.returnTime !== null;
+    },
+    scheduleHasOutward (schedule) {
+      return schedule.outwardTime !== null;
+    }
+  }
 }
 </script>
 

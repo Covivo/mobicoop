@@ -75,7 +75,12 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "method"="GET",
  *              "path"="/carpools/updateCarpoolsLimits",
  *              "controller"=UpdateCarpoolsLimits::class,
- *          }
+ *          },
+ *          "getMyCarpools"={
+ *              "method"="GET",
+ *              "path"="/carpools/accepted",
+ *              "security_post_denormalize"="is_granted('ad_list',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -83,7 +88,7 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "path"="/carpools/{id}",
  *              "controller"=AdGet::class,
  *              "read"=false,
- *              "security"="is_granted('ad_read',object)"
+ *              "security"="is_granted('ad_read', object)"
  *          },
  *          "put_ask"={
  *              "method"="PUT",
@@ -443,6 +448,13 @@ class Ad
     private $proposalId;
 
     /**
+     * @var int The Id of the proposalLinked associated to the ad.
+     *
+     * @Groups({"read","write"})
+     */
+    private $proposalLinkedId;
+
+    /**
      * @var int $potentialCarpoolers
      * Potential carpoolers count
      * @Groups({"read","write"})
@@ -456,6 +468,13 @@ class Ad
      */
     private $external;
 
+    /**
+     * @var array|null The asks associated to the ad
+     *
+     * @Groups({"read","write"})
+     */
+    private $asks;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -465,6 +484,7 @@ class Ad
         $this->communities = [];
         $this->results = [];
         $this->filters = [];
+        $this->asks = [];
     }
     
     public function getId(): ?int
@@ -1009,6 +1029,18 @@ class Ad
         return $this;
     }
 
+    public function getProposalLinkedId(): ?int
+    {
+        return $this->proposalLinkedId;
+    }
+
+    public function setProposalLinkedId(?int $proposalLinkedId): self
+    {
+        $this->proposalLinkedId = $proposalLinkedId;
+
+        return $this;
+    }
+
     public function getPotentialCarpoolers(): ?int
     {
         return $this->potentialCarpoolers;
@@ -1028,6 +1060,18 @@ class Ad
     public function setExternal(?string $external): self
     {
         $this->external = $external;
+
+        return $this;
+    }
+
+    public function getAsks(): ?array
+    {
+        return $this->asks;
+    }
+
+    public function setAsks(?array $asks)
+    {
+        $this->asks = $asks;
 
         return $this;
     }
