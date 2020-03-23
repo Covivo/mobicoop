@@ -535,7 +535,6 @@ export default {
           // We build the content of the popup
           currentProposal.desc = "<p style='text-align:center;'><strong>"+infosForPopUp.carpoolerFirstName+" "+infosForPopUp.carpoolerLastName+"</strong></p>"
 
-
           proposal.waypoints.forEach((waypoint, index) => {
             currentProposal.latLngs.push(waypoint.latLng);
             if(index==0){
