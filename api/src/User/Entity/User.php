@@ -77,6 +77,7 @@ use App\User\Filter\HomeAddressWaypointTerritoryFilter;
 use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\SolidaryFilter;
+use App\User\Filter\SolidaryCandidateFilter;
 use App\User\Filter\ValidatedDateTokenFilter;
 use App\User\Filter\UnsubscribeTokenFilter;
 use App\Communication\Entity\Notified;
@@ -347,6 +348,7 @@ use App\Solidary\Entity\SolidaryUser;
  * @ApiFilter(ValidatedDateTokenFilter::class, properties={"validatedDateToken"})
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
  * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary"})
+ * @ApiFilter(SolidaryCandidateFilter::class, properties={"solidaryCandidate"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
