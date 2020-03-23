@@ -82,7 +82,7 @@ class Diary
      * @var int|null The progression in percent if the action can be related to a solidary record.
      * Duplicated from the action entity, to keep the original value if the progression changes in the action entity.
      *
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
      * @Groups({"read","write"})
      */
     private $progression;
@@ -172,12 +172,12 @@ class Diary
         return $this;
     }
 
-    public function getProgression(): ?int
+    public function getProgression(): ?string
     {
         return $this->progression;
     }
 
-    public function setProgression(?int $progression): self
+    public function setProgression(?string $progression): self
     {
         $this->progression = $progression;
 
