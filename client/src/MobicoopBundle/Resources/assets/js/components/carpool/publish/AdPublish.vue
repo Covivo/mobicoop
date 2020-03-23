@@ -1,5 +1,21 @@
 <template>
   <v-container fluid>
+    <!--prevent user to update data before full initialization-->
+    <v-row
+      v-if="isValidUpdate && !bodyIsFullyLoaded"
+      id="loading-screen"
+      justify="center"
+      align="center"
+    >
+      <div class="text-center">
+        <v-progress-circular
+          :indeterminate="true"
+          :rotate="0"
+          :size="48"
+          color="primary"
+        />
+      </div>
+    </v-row>
     <v-snackbar
       v-model="snackbar"
       color="success"
@@ -16,7 +32,7 @@
     </v-snackbar>
 
     <!-- Title and subtitle -->
-    <v-row 
+    <v-row
       justify="center"
     >
       <v-col
@@ -75,7 +91,7 @@
       </v-col>
     </v-row>
     <!-- Stepper -->
-    <v-row 
+    <v-row
       justify="center"
     >
       <v-col
@@ -545,7 +561,7 @@
         v-if="step > 1"
         rounded
         outlined
-        color="secondary" 
+        color="secondary"
         align-center
         @click="--step"
       >
@@ -803,11 +819,13 @@ export default {
       priceForbidden: false,
       returnTimeIsValid: true,
       initWaypoints: [],
+      initWaypointsCount: this.countWaypoints(),
       initSchedule: null,
       role: null,
       dialog: false,
       oldUpdateObject: null,
-      cancellationMessage: ""
+      cancellationMessage: "",
+      bodyIsFullyLoaded: false
     }
   },
   computed: {
@@ -966,7 +984,7 @@ export default {
         this.outwardTime = this.ad.outwardTime;
         this.returnDate = this.ad.returnDate;
         this.returnTime = this.ad.returnTime;
-        this.initWaypoints = this.ad.outwardWaypoints.filter(point => {return point.address.id !== self.initOrigin.id && point.address.id !== self.initDestination.id});
+        this.initWaypoints = this.ad.outwardWaypoints.filter(point => {if (point.address.id !== self.initOrigin.id && point.address.id !== self.initDestination.id) {this.initWaypointsCount++; return true;}});
         this.initSchedule = isEmpty(this.ad.schedule) ? {} : this.ad.schedule;
         this.seats = this.ad.seatsDriver;
         this.luggage = this.ad.luggage;
@@ -979,11 +997,6 @@ export default {
         this.role = this.ad.role;
         this.driver = this.ad.role === 1 || this.ad.role === 3;
         this.passenger = this.ad.role === 2 || this.ad.role === 3;
-        // we set a timeout because waypoints and schedule need to be handle by their respective component before they are usable on this one
-        // if we dont set a timeout, old and new update objects are always different so it is always considered a major update
-        setTimeout(() => {
-          this.oldUpdateObject = this.buildAdObject();
-        }, 4000);
       }
     }
   },
@@ -1055,6 +1068,14 @@ export default {
       this.returnTimeIsValid = planification.returnTimeIsValid;
     },
     routeChanged(route) {
+      if (this.isValidUpdate && this.initWaypointsCount && this.initWaypointsCount > 0) {
+        this.initWaypointsCount--;
+        if (this.initWaypointsCount === 0) {
+          console.log("loaded");
+          this.bodyIsFullyLoaded = true;
+          this.oldUpdateObject = this.buildAdObject();
+        }
+      }
       this.route = route;
       this.origin = route.origin;
       this.destination = route.destination;
@@ -1092,6 +1113,9 @@ export default {
       }
       this.dialog = false;
       let postObject = this.buildAdObject();
+      if (this.isMajorUpdate) {
+        postObject.cancellationMessage = this.cancellationMessage;
+      }
       this.loading = true;
       axios.put(this.buildUrl(this.$t('route.update', {id: this.ad.id})),postObject,{
         headers:{
@@ -1100,7 +1124,7 @@ export default {
       })
         .then(response => {
           if (response.data && response.data.result.id) {
-            window.location.href = "/utilisateur/profil/modifier/mes-annonces";
+            // window.location.href = "/utilisateur/profil/modifier/mes-annonces";
           } else {
             alert('Une erreur est survenue.');
             this.loading = false;
@@ -1111,7 +1135,7 @@ export default {
           this.loading = false;
         })
         .finally(() => {
-          // this.loading = false;
+          this.loading = false;
         });
     },
     buildAdObject () {
@@ -1178,9 +1202,26 @@ export default {
           this.disableNextButton = false;
         })
       }
+    },
+    countWaypoints () {
+      if (!isEmpty(this.initOrigin) && !isEmpty(this.initDestination)) {
+        return 2;
+      } else if (!isEmpty(this.initOrigin) || !isEmpty(this.initDestination)) {
+        return 1;
+      } else return 0;
     }
   }
 };
 </script>
 <style scoped lang="scss">
+#loading-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.8;
+  z-index: 1000;
+  background: lightgray;
+}
 </style>
