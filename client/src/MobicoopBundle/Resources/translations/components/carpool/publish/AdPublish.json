@@ -5,7 +5,7 @@
             "subtitle": "Commencer votre annonce"
         },
         "update" : {
-           "title": "Modifier votre annonce",
+            "title": "Modifier votre annonce",
             "popup": {
                 "major_update_asks": {
                     "title" : "Au moins une demande existe pour cette annonce",
@@ -19,7 +19,9 @@
                     "title" : "Des demandes existent pour cette annonce",
                     "content" : "Une ou plusieurs demandes ont déjà été faites en lien avec cette annonce. Les détails de votre modification seront envoyées à tous les usagers ayant fait ces demandes.<br>Confirmez-vous votre modification ?"
                 }
-            }
+            },
+            "success": "Votre annonce a été modifiée avec succès.",
+            "error": "Une erreur est survenue lors de la modification de votre annonce."
         },
         "stepper": {
             "header": {

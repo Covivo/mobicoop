@@ -21,7 +21,7 @@
       color="success"
       top
     >
-      {{ alert }}
+      {{ snackbarMessage }}
       <v-btn
         color="white"
         text
@@ -817,7 +817,7 @@ export default {
       numberSeats : [ 1,2,3,4],
       seats : 3,
       snackbar: false,
-      alert: this.$t('messageRoundedPrice'),
+      snackbarMessage: "",
       priceForbidden: false,
       returnTimeIsValid: true,
       initWaypoints: [],
@@ -1131,11 +1131,13 @@ export default {
       })
         .then(response => {
           if (response.data && response.data.result.id) {
+            this.snackbarMessage = this.$t('update.success');
             window.location.href = "/utilisateur/profil/modifier/mes-annonces";
           } else {
-            alert('Une erreur est survenue.');
+            alert(this.$t('update.error'));
             this.loading = false;
           }
+          this.snackbar = true;
         })
         .catch(error => {
           console.log(error);
@@ -1198,6 +1200,7 @@ export default {
           if(this.price !== resp.data.value) {
             this.price = resp.data.value;
             if (doneByUser === true) {
+              this.snackbarMessage = this.$t('messageRoundedPrice');
               this.snackbar = true;
             }
           }
