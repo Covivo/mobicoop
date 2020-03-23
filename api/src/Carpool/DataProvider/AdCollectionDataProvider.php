@@ -26,7 +26,6 @@ namespace App\Carpool\DataProvider;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Service\AdManager;
 use Symfony\Component\HttpFoundation\RequestStack;

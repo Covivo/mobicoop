@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -28,9 +28,8 @@ use App\Carpool\Entity\Ad;
 use App\TranslatorTrait;
 
 /**
- * Controller class for ask post.
+ * Controller class for ad put.
  *
- * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class AdPut
 {
@@ -44,7 +43,7 @@ class AdPut
     }
 
     /**
-     * This method is invoked when a new ask is posted.
+     * This method is invoked when an Ad is updated.
      *
      * @param Ad $data
      * @return Ad
