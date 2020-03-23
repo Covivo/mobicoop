@@ -44,14 +44,14 @@ class ProposalMinorUpdatedEvent extends Event
     /**
      * @var UserInterface
      */
-    private $user;
+    private $sender;
 
-    public function __construct(Proposal $old, Proposal $new, array $asks, UserInterface $user)
+    public function __construct(Proposal $old, Proposal $new, array $asks, UserInterface $sender)
     {
         $this->old = $old;
         $this->new = $new;
         $this->asks = $asks;
-        $this->user = $user;
+        $this->sender = $sender;
     }
 
     /**
@@ -81,8 +81,8 @@ class ProposalMinorUpdatedEvent extends Event
     /**
      * @return UserInterface
      */
-    public function getUser(): UserInterface
+    public function getSender(): UserInterface
     {
-        return $this->user;
+        return $this->sender;
     }
 }

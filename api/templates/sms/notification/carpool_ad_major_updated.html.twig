@@ -1,12 +1,12 @@
 {% set new = context.object.new %}
 {% set old = context.object.old %}
 {% set ask = context.object.ask %}
-{% set sender = context.object.user %}
+{% set sender = context.object.sender %}
 {% set recipient = context.user %}
 {% set outwardOrigin = context.origin %}
 {% set outwardDestination = context.destination %}
 
-{{"hello"|trans|raw}} {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}
+{{"hello"|trans|raw}} {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
 
 {{ "cancelledCarpool"|trans }}
 

@@ -25,6 +25,7 @@ namespace App\Carpool\Event;
 
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -40,12 +41,17 @@ class ProposalMajorUpdatedEvent extends Event
      * @var Ask[]
      */
     private $asks;
+    /**
+     * @var UserInterface
+     */
+    private $sender;
 
-    public function __construct(Proposal $old, Proposal $new, array $asks)
+    public function __construct(Proposal $old, Proposal $new, array $asks, UserInterface $sender)
     {
         $this->old = $old;
         $this->new = $new;
         $this->asks = $asks;
+        $this->sender = $sender;
     }
 
     /**
@@ -70,5 +76,13 @@ class ProposalMajorUpdatedEvent extends Event
     public function getAsks(): array
     {
         return $this->asks;
+    }
+
+    /**
+     * @return UserInterface
+     */
+    public function getSender(): UserInterface
+    {
+        return $this->sender;
     }
 }

@@ -3,7 +3,7 @@
     {% set new = context.object.new %}
     {% set old = context.object.old %}
     {% set ask = context.object.ask %}
-    {% set sender = context.object.user %}
+    {% set sender = context.object.sender %}
     {% set recipient = context.user %}
     {% set outwardOrigin = context.origin %}
     {% set outwardDestination = context.destination %}
@@ -63,7 +63,10 @@
             </td>
         </tr>
         <tr>
-            <p>{{ "noPenaltyApplied"|trans|raw }}</p>
+            <td>
+                <p>{{ "noPenaltyApplied"|trans|raw }}</p>
+            </td>
+
         </tr>
 
         </hr>
