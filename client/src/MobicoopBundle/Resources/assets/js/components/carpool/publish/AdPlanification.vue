@@ -476,7 +476,7 @@
 
 <script>
 import moment from "moment";
-import { merge, isEmpty, remove } from "lodash";
+import { merge, isEmpty, remove, clone } from "lodash";
 import Translations from "@translations/components/carpool/publish/AdPlanification.json";
 import TranslationsClient from "@clientTranslations/components/carpool/publish/AdPlanification.json";
 
@@ -724,7 +724,7 @@ export default {
       if (!isEmpty(this.initSchedule)) {
         let schedule = this.initSchedule;
         let tempSchedules = [];
-
+        let days = clone(this.arrayDay);
         this.arrayDay.forEach(day => {
           if (schedule[day] === true) {
             tempSchedules.push({
@@ -738,19 +738,19 @@ export default {
         let schedulesLength = tempSchedules.length;
 
         for (let i = 0; i < schedulesLength; i++) {
-          if (tempSchedules.length === 0) break;
-          let days = tempSchedules.filter(elem => {return elem.outwardTime === tempSchedules[i].outwardTime && elem.returnTime === tempSchedules[i].returnTime});
+          if (!days.includes(tempSchedules[i].day)) continue;
+          let tempDays = tempSchedules.filter(elem => {return elem.outwardTime === tempSchedules[i].outwardTime && elem.returnTime === tempSchedules[i].returnTime});
 
           this.schedules.push({
             id: i,
             visible: true,
-            mon: days.some(day => {return day.day === 'mon'}),
-            tue: days.some(day => {return day.day === 'tue'}),
-            wed: days.some(day => {return day.day === 'wed'}),
-            thu: days.some(day => {return day.day === 'thu'}),
-            fri: days.some(day => {return day.day === 'fri'}),
-            sat: days.some(day => {return day.day === 'sat'}),
-            sun: days.some(day => {return day.day === 'sun'}),
+            mon: tempDays.some(day => {return day.day === 'mon'}),
+            tue: tempDays.some(day => {return day.day === 'tue'}),
+            wed: tempDays.some(day => {return day.day === 'wed'}),
+            thu: tempDays.some(day => {return day.day === 'thu'}),
+            fri: tempDays.some(day => {return day.day === 'fri'}),
+            sat: tempDays.some(day => {return day.day === 'sat'}),
+            sun: tempDays.some(day => {return day.day === 'sun'}),
             outwardTime: moment(tempSchedules[i].outwardTime).isValid() ? moment(tempSchedules[i].outwardTime).utc().format("HH:mm") : null,
             returnTime: moment(tempSchedules[i].returnTime).isValid() ? moment(tempSchedules[i].returnTime).utc().format("HH:mm") : null,
             menuOutwardTime: false,
@@ -760,9 +760,9 @@ export default {
             maxTimeFromOutwardRegular: null
           });
 
-          days.forEach(day => {
-            remove(tempSchedules, el => {
-              return el.day === day.day;
+          tempDays.forEach(el => {
+            remove(days, day => {
+              return el === day.day;
             })
           })
         }
