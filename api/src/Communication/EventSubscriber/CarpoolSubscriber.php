@@ -36,7 +36,8 @@ use App\Carpool\Event\MatchingNewEvent;
 use App\Carpool\Event\PassengerAskAdDeletedEvent;
 use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
 use App\Carpool\Event\ProposalCanceledEvent;
-use App\Carpool\Event\ProposalMinorUpdatedEvent;
+use App\Carpool\Event\AdMajorUpdatedEvent;
+use App\Carpool\Event\AdMinorUpdatedEvent;
 use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Communication\Service\NotificationManager;
@@ -76,7 +77,8 @@ class CarpoolSubscriber implements EventSubscriberInterface
             PassengerAskAdDeletedUrgentEvent::NAME => 'onPassengerAskAdDeletedUrgent',
             DriverAskAdDeletedEvent::NAME => 'onDriverAskAdDeleted',
             DriverAskAdDeletedUrgentEvent::NAME => 'onDriverAskAdDeletedUrgent',
-            ProposalMinorUpdatedEvent::NAME => 'onProposalMinorUpdated'
+            AdMinorUpdatedEvent::NAME => 'onAdMinorUpdated',
+            AdMajorUpdatedEvent::NAME => 'onAdMajorUpdated'
         ];
     }
     
@@ -275,17 +277,31 @@ class CarpoolSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function onProposalMinorUpdated(ProposalMinorUpdatedEvent $event)
+    public function onAdMinorUpdated(AdMinorUpdatedEvent $event)
     {
         $object = (object) [
-            "old" => $event->getOldProposal(),
-            "new" => $event->getNewProposal(),
-            "user" => $event->getUser()
+            "old" => $event->getOldAd(),
+            "new" => $event->getNewAd(),
+            "sender" => $event->getSender()
         ];
 
         foreach ($event->getAsks() as $ask) {
             $object->ask = $ask;
-            $this->notificationManager->notifies(ProposalMinorUpdatedEvent::NAME, $ask->getUser(), $object);
+            $this->notificationManager->notifies(AdMinorUpdatedEvent::NAME, $ask->getUser(), $object);
+        }
+    }
+
+    public function onAdMajorUpdated(AdMajorUpdatedEvent $event)
+    {
+        $object = (object) [
+            "old" => $event->getOldAd(),
+            "new" => $event->getNewAd(),
+            "sender" => $event->getSender()
+        ];
+
+        foreach ($event->getAsks() as $ask) {
+            $object->ask = $ask;
+            $this->notificationManager->notifies(AdMajorUpdatedEvent::NAME, $ask->getUser(), $object);
         }
     }
 }

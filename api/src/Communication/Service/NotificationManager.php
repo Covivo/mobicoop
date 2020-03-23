@@ -299,7 +299,6 @@ class NotificationManager
                                 $outwardDestination = $waypoint;
                             }
                         }
-//                        dump($object->new->getCriteria(), $object->old->getCriteria());die;
                         $bodyContext = [
                             'user' => $recipient,
                             'notification' => $notification,
@@ -412,7 +411,7 @@ class NotificationManager
                     $bodyContext = ['user'=>$recipient];
                     break;
                 default:
-                    if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->user)) {
+                    if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
                         $outwardOrigin = null;
                         $outwardDestination = null;
                         /** @var Waypoint $waypoint */

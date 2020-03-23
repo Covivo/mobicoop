@@ -24,16 +24,16 @@
 namespace App\Carpool\Event;
 
 use App\Carpool\Entity\Ask;
-use App\Carpool\Entity\Proposal;
+use App\Carpool\Entity\Ad;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when there is a major Proposal update and that there are asks.
+ * Event sent when there is a major Ad update and that there are asks.
  */
-class ProposalMajorUpdatedEvent extends Event
+class AdMajorUpdatedEvent extends Event
 {
-    public const NAME = 'carpool_proposal_major_updated';
+    public const NAME = 'carpool_ad_major_updated';
 
     private $old;
     private $new;
@@ -46,7 +46,7 @@ class ProposalMajorUpdatedEvent extends Event
      */
     private $sender;
 
-    public function __construct(Proposal $old, Proposal $new, array $asks, UserInterface $sender)
+    public function __construct(Ad $old, Ad $new, array $asks, UserInterface $sender)
     {
         $this->old = $old;
         $this->new = $new;
@@ -55,17 +55,17 @@ class ProposalMajorUpdatedEvent extends Event
     }
 
     /**
-     * @return Proposal
+     * @return Ad
      */
-    public function getOldProposal(): Proposal
+    public function getOldAd(): Ad
     {
         return $this->old;
     }
 
     /**
-     * @return Proposal
+     * @return Ad
      */
-    public function getNewProposal(): Proposal
+    public function getNewAd(): Ad
     {
         return $this->new;
     }
