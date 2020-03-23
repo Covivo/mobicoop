@@ -90,6 +90,7 @@ use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
 use App\Solidary\Entity\SolidaryUser;
+use App\User\Controller\UserCanUseEmail;
 
 /**
  * A user.
@@ -109,6 +110,12 @@ use App\Solidary\Entity\SolidaryUser;
  *          "get"={
  *              "normalization_context"={"groups"={"readUser"}},
  *              "security"="is_granted('user_list',object)"
+ *          },
+ *          "checkEmail"={
+ *              "method"="GET",
+ *              "path"="/users/checkEmail",
+ *              "controller"=UserCanUseEmail::class,
+ *              "security_post_denormalize"="is_granted('user_register',object)"
  *          },
  *          "post"={
  *              "method"="POST",

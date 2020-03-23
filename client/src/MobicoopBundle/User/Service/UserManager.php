@@ -164,7 +164,7 @@ class UserManager
      */
     public function findByEmail(string $email, bool $sendEmailRecovery = false)
     {
-        $response = $this->dataProvider->getCollection(['email' => $email]);
+        $response = $this->dataProvider->getSpecialCollection('checkEmail', ['email' => $email]);
         if ($response->getCode() == 200) {
             /** @var Hydra $user */
             $user = $response->getValue();
@@ -175,7 +175,6 @@ class UserManager
                 if ($sendEmailRecovery) {
                     $this->updateUserToken($user->getMember()[0]);
                 }
-                
                 return current($user->getMember());
             }
         }
