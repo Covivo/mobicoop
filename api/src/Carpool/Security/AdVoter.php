@@ -105,8 +105,7 @@ class AdVoter extends Voter
             case self::AD_CREATE:
                 return $this->canCreateAd();
             case self::AD_READ:
-                $ad = $this->adManager->getAd($this->request->get('id'));
-                return $this->canReadAd($ad);
+                return $this->canReadAd();
             case self::AD_UPDATE:
                 $ad = $this->adManager->getAd($this->request->get('id'));
                 return $this->canUpdateAd($ad);
@@ -135,9 +134,9 @@ class AdVoter extends Voter
         return $this->authManager->isAuthorized(self::AD_CREATE);
     }
 
-    private function canReadAd(Ad $ad)
+    private function canReadAd()
     {
-        return $this->authManager->isAuthorized(self::AD_READ, ['ad'=>$ad]);
+        return $this->authManager->isAuthorized(self::AD_READ);
     }
 
     private function canUpdateAd(Ad $ad)
