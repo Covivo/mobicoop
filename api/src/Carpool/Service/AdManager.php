@@ -30,7 +30,8 @@ use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Result;
 use App\Carpool\Entity\Waypoint;
-use App\Carpool\Event\ProposalMinorUpdatedEvent;
+use App\Carpool\Event\AdMajorUpdatedEvent;
+use App\Carpool\Event\AdMinorUpdatedEvent;
 use App\Community\Exception\CommunityNotFoundException;
 use App\Community\Service\CommunityManager;
 use App\Event\Exception\EventNotFoundException;
@@ -789,6 +790,7 @@ class AdManager
         $ad->setLuggage($proposal->getCriteria()->hasLuggage());
         $ad->setBackSeats($proposal->getCriteria()->hasBackSeats());
         $ad->setComment($proposal->getComment());
+        $ad->setPriceKm($proposal->getCriteria()->getPriceKm());
 
         if ($matching && $matching->getProposalOffer()->getCriteria()->getFromTime()) {
             $ad->setOutwardTime($ad->getOutwardDate()->format('Y-m-d').' '.$matching->getProposalOffer()->getCriteria()->getFromTime()->format('H:i:s'));
@@ -1037,57 +1039,77 @@ class AdManager
     /**
      * Update an ad.
      *  /!\ Only minor data can be updated
+     * Otherwwise we delete and create new Ad
      * @param Ad $ad
      * @return Ad
      */
     public function updateAd(Ad $ad)
     {
         $proposal = $this->proposalRepository->find($ad->getAdId());
+        $oldAd = $this->makeAd($proposal, $ad->getUserId());
         $oldProposal = clone $proposal;
         $oldProposal->setCriteria(clone $proposal->getCriteria());
 
-        // update minor data
-        $proposal->setPaused($ad->isPaused());
-        $proposal->getCriteria()->setBike($ad->hasBike());
-        $proposal->getCriteria()->setBackSeats($ad->hasBackSeats());
-        $proposal->getCriteria()->setLuggage($ad->hasLuggage());
-        $proposal->getCriteria()->setSeatsDriver($ad->getSeatsDriver());
-        $proposal->setComment($ad->getComment());
-
-        $this->entityManager->persist($proposal);
-
         $proposalAsks = $this->askManager->getAsksFromProposal($proposal);
 
-        // check for prior necessity of event
-        if (count($proposalAsks) > 0) {
-            $oldCriteria = $oldProposal->getCriteria();
-            $newCriteria = $proposal->getCriteria();
-
-            // check for second necessity of event
-            if ($oldCriteria->hasBike() !== $newCriteria->hasBike()
-                || $oldCriteria->hasBackSeats() !== $newCriteria->hasBackSeats()
-                || $oldCriteria->hasLuggage() !== $newCriteria->hasLuggage()
-                || $oldCriteria->getSeatsDriver() !== $newCriteria->getSeatsDriver()
-                || $oldProposal->getComment() !== $proposal->getComment()
-            ) {
-                $event = new ProposalMinorUpdatedEvent($oldProposal, $proposal, $proposalAsks, $this->security->getUser());
-                $this->eventDispatcher->dispatch(ProposalMinorUpdatedEvent::NAME, $event);
+        // major update
+        if ($oldAd->getPriceKm() !== $ad->getPriceKm()
+            || $oldAd->getFrequency() !== $ad->getFrequency()
+            || $oldAd->getRole() !== $ad->getRole()
+            || !$this->compareSchedules($oldAd->getSchedule(), $ad->getSchedule())
+            || !$this->compareWaypoints($oldAd->getOutwardWaypoints(), $ad->getOutwardWaypoints())
+        ) {
+            // We use event to send notifications if Ad has asks
+            if (count($proposalAsks) > 0) {
+                $event = new AdMajorUpdatedEvent($oldAd, $ad, $proposalAsks, $this->security->getUser());
+                $this->eventDispatcher->dispatch(AdMajorUpdatedEvent::NAME, $event);
             }
+
+            // todo delete old and create new
+
+            // minor update
+        } elseif ($oldAd->hasBike() !== $ad->hasBike()
+            || $oldAd->hasBackSeats() !== $ad->hasBackSeats()
+            || $oldAd->hasLuggage() !== $ad->hasLuggage()
+            || $oldAd->getSeatsDriver() !== $ad->getSeatsDriver()
+            || $oldAd->getComment() !== $ad->getComment()
+        ) {
+            $proposal->getCriteria()->setBike($ad->hasBike());
+            $proposal->getCriteria()->setBackSeats($ad->hasBackSeats());
+            $proposal->getCriteria()->setLuggage($ad->hasLuggage());
+            $proposal->getCriteria()->setSeatsDriver($ad->getSeatsDriver());
+            $proposal->setComment($ad->getComment());
+
+            if ($proposal->getProposalLinked()) {
+                // same if there is linked proposal
+                $linkedProposal = $proposal->getProposalLinked();
+
+                $linkedProposal->setPaused($ad->isPaused());
+                $linkedProposal->getCriteria()->setBike($ad->hasBike());
+                $linkedProposal->getCriteria()->setBackSeats($ad->hasBackSeats());
+                $linkedProposal->getCriteria()->setLuggage($ad->hasLuggage());
+                $linkedProposal->getCriteria()->setSeatsDriver($ad->getSeatsDriver());
+                $linkedProposal->setComment($ad->getComment());
+
+                $this->entityManager->persist($linkedProposal);
+            }
+
+
+            if (count($proposalAsks) > 0) {
+                $event = new AdMinorUpdatedEvent($oldAd, $ad, $proposalAsks, $this->security->getUser());
+                $this->eventDispatcher->dispatch(AdMinorUpdatedEvent::NAME, $event);
+            }
+
+            $this->entityManager->persist($proposal);
         }
 
-
-        if ($proposal->getProposalLinked()) {
-            // same if there is linked proposal
-            $linkedProposal = $proposal->getProposalLinked();
-
-            $linkedProposal->setPaused($ad->isPaused());
-            $linkedProposal->getCriteria()->setBike($ad->hasBike());
-            $linkedProposal->getCriteria()->setBackSeats($ad->hasBackSeats());
-            $linkedProposal->getCriteria()->setLuggage($ad->hasLuggage());
-            $linkedProposal->getCriteria()->setSeatsDriver($ad->getSeatsDriver());
-            $linkedProposal->setComment($ad->getComment());
-
-            $this->entityManager->persist($linkedProposal);
+        // Pause is apart and do not needs notifications by now
+        if ($ad->isPaused() !== $oldAd->isPaused()) {
+            $proposal->setPaused($ad->isPaused());
+            if ($proposal->getProposalLinked()) {
+                $proposal->getProposalLinked()->setPaused($ad->isPaused());
+            }
+            $this->entityManager->persist($proposal);
         }
 
         $this->entityManager->flush();
@@ -1095,6 +1117,61 @@ class AdManager
         $ad = $this->makeAd($proposal, $proposal->getUser()->getId());
         return $ad;
     }
+
+    /**
+     * Compare Schedules
+     * array_diff, array_udiff etc provide strange behavior probably due to datetime, even with callback function
+     * @param $a
+     * @param $b
+     * @return bool
+     * @throws \Exception
+     */
+    public function compareSchedules($a, $b)
+    {
+        if (!is_array($a) || !is_array($b) || count($a) !== count($b)) {
+            return false;
+        }
+
+        $a = array_values($a);
+        $b = array_values($b);
+
+        for ($i = 0; $i < count($a); $i++) {
+            if (!$a[$i] && !$b[$i]) {
+                continue;
+            } elseif (is_a($a[$i], \DateTime::class)) {
+                $bDateTime = new \DateTime($b[$i]);
+                if ($a[$i]->format('Y-m-d H:i:s') !== $bDateTime->format('Y-m-d H:i:s')) {
+                    return false;
+                }
+            } elseif ($a[$i] !== $b[$i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Compare if new Waypoints are different from the old ones
+     * @param $a - Waypoints object from a Proposal
+     * @param $b - waypoint array from front
+     * @return bool
+     */
+    public function compareWaypoints($a, $b)
+    {
+        if (!is_array($a) || !is_array($b) || count($a) !== count($b)) {
+            return false;
+        }
+
+        for ($i = 0; $i < count($a); $i++) {
+            if (!$a[$i] && !$b[$i]) {
+                continue;
+            } elseif (!isset($a[$i]) || !isset($b[$i]) || $a[$i]->getAddress()->getId() !== $b[$i]["id"]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     /**
      * Update all carpools limits (i.e max_detour_duration, max_detour_distance...)
