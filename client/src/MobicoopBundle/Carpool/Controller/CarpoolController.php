@@ -71,6 +71,7 @@ class CarpoolController extends AbstractController
     public function carpoolAdPost(AdManager $adManager, Request $request)
     {
         $ad = new Ad();
+        $this->denyAccessUnlessGranted('create_ad', $ad);
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);

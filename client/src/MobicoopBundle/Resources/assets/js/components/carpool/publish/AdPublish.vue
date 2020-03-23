@@ -659,11 +659,13 @@
 </template>
 
 <script>
-import { merge, isEmpty, isEqual } from "lodash";
 import Translations from "@translations/components/carpool/publish/AdPublish.json";
 import TranslationsClient from "@clientTranslations/components/carpool/publish/AdPublish.json";
 
 import axios from "axios";
+import { merge, isEmpty, isEqual } from "lodash";
+import moment from 'moment';
+
 import SearchJourney from "@components/carpool/search/SearchJourney";
 import AdPlanification from "@components/carpool/publish/AdPlanification";
 import AdRoute from "@components/carpool/publish/AdRoute";
@@ -936,6 +938,10 @@ export default {
       let newUpdateObject = this.buildAdObject();
       return newUpdateObject.regular !== this.oldUpdateObject.regular
         || this.oldUpdateObject.driver !== newUpdateObject.driver
+        || this.oldUpdateObject.returnDate !== newUpdateObject.returnDate
+        || this.oldUpdateObject.returnTime !== newUpdateObject.returnTime
+        || this.oldUpdateObject.outwardDate !== newUpdateObject.outwardDate
+        || this.oldUpdateObject.outwardTime !== newUpdateObject.outwardTime
         || this.oldUpdateObject.passenger !== newUpdateObject.passenger
         || !isEqual(this.oldUpdateObject.origin, newUpdateObject.origin)
         || !isEqual(this.oldUpdateObject.destination, newUpdateObject.destination)
@@ -981,10 +987,10 @@ export default {
         const self = this;
         this.origin = this.ad.origin;
         this.outwardDate = this.ad.outwardDate;
-        this.outwardTime = this.ad.outwardTime;
+        this.outwardTime = moment(this.ad.outwardTime).format();
         this.returnDate = this.ad.returnDate;
-        this.returnTime = this.ad.returnTime;
-        this.initWaypoints = this.ad.outwardWaypoints.filter(point => {if (point.address.id !== self.initOrigin.id && point.address.id !== self.initDestination.id) {this.initWaypointsCount++; return true;}});
+        this.returnTime = moment(this.ad.returnTime).isValid() ? moment(this.ad.returnTime).format() : null;
+        this.initWaypoints = this.ad.outwardWaypoints.filter(point => {return point.address.id !== self.initOrigin.id && point.address.id !== self.initDestination.id;});
         this.initSchedule = isEmpty(this.ad.schedule) ? {} : this.ad.schedule;
         this.seats = this.ad.seatsDriver;
         this.luggage = this.ad.luggage;
@@ -1010,7 +1016,7 @@ export default {
       }
       // Set all the waypoints (default icon for now)
       this.route.waypoints.forEach((waypoint, index) => {
-        if(waypoint.address !== null){
+        if(waypoint.address != null){
           let currentWaypoint = this.buildPoint(waypoint.address.latitude,waypoint.address.longitude,waypoint.address.displayLabel);
           this.pointsToMap.push(currentWaypoint);
         }
@@ -1124,7 +1130,7 @@ export default {
       })
         .then(response => {
           if (response.data && response.data.result.id) {
-            // window.location.href = "/utilisateur/profil/modifier/mes-annonces";
+            window.location.href = "/utilisateur/profil/modifier/mes-annonces";
           } else {
             alert('Une erreur est survenue.');
             this.loading = false;
@@ -1135,7 +1141,7 @@ export default {
           this.loading = false;
         })
         .finally(() => {
-          this.loading = false;
+          // this.loading = false;
         });
     },
     buildAdObject () {
