@@ -316,17 +316,17 @@ class AdManager
         }
         if (isset($data['returnDate']) && $data['returnDate'] != '') {
             $data['returnDate'] = \DateTime::createFromFormat('Y-m-d', $data['returnDate']);
-            $data['oneway'] = true; // only for punctual journey
-        } else {
             $data['oneway'] = false; // only for punctual journey
+        } else {
+            $data['oneway'] = true; // only for punctual journey
         }
 
         // one-way for regular
         if (isset($data['regular']) && $data['regular'] && $data['schedules']) {
-            $data['oneway'] = true;
+            $data['oneway'] = false;
             foreach ($data['schedules'] as $schedule) {
                 if (isset($schedule['returnTime']) && !is_null($schedule['returnTime'])) {
-                    $data['oneway'] = false;
+                    $data['oneway'] = true;
                 }
             }
         }
