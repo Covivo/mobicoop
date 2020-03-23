@@ -119,7 +119,7 @@ class AdVoter extends Voter
         $user = $this->security->getUser();
 
         // only registered users can update ad
-        if (!$user instanceof UserInterface) {
+        if (!$user instanceof User) {
             return false;
         }
 
