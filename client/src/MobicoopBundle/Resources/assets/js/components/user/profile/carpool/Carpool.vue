@@ -92,7 +92,7 @@ export default {
   methods: {
     checkAsks() {
       this.ad.results.forEach(result => {
-        if (result.pendingAsk) {
+        if (result.pendingAsk || result.initiatedAsk) {
           this.hasAtLeastOneAsk = true;
         }
         if (result.acceptedAsk) {

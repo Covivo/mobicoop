@@ -7,6 +7,11 @@
     "carpoolAsDriver": "Covoiturer comme conducteur",
     "carpoolAsPassenger": "Covoiturer comme passager",
     "alreadyAskCarpool":"Vous avez déjà fait une demande sur cette annonce.",
+    "alreadyInitiatedCarpool": "Vous avez déjà pris contact sur cette annonce.",
+    "seeMessages": {
+      "label": "Voir messages",
+      "route": "/utilisateur/messages"
+    },
     "birthYears": "ans",
     "contact": "Contacter",
     "outward": "Choisir les allers",
