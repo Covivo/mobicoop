@@ -132,6 +132,7 @@ services:
             $params:
                 defaultSeatsDriver: '%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%'
                 defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
+                dynamicProofDistance: '%env(int:DYNAMIC_CARPOOL_PROOF_DISTANCE)%'
                 dynamicReachedDistance: '%env(int:DYNAMIC_CARPOOL_REACHED_DISTANCE)%'
                 
         tags:

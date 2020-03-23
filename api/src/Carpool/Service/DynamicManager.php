@@ -25,9 +25,11 @@ namespace App\Carpool\Service;
 
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\AskHistory;
+use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Dynamic;
 use App\Carpool\Entity\DynamicAsk;
+use App\Carpool\Entity\DynamicProof;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Position;
 use App\Carpool\Entity\Proposal;
@@ -47,6 +49,7 @@ use Psr\Log\LoggerInterface;
 use App\Carpool\Entity\Result;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Carpool\Repository\AskRepository;
+use App\Carpool\Repository\CarpoolProofRepository;
 use App\Geography\Service\GeoSearcher;
 
 /**
@@ -69,6 +72,7 @@ class DynamicManager
     private $matchingRepository;
     private $askRespository;
     private $askHistoryRepository;
+    private $carpoolProofRepository;
     private $internalMessageManager;
 
     /**
@@ -91,6 +95,7 @@ class DynamicManager
         MatchingRepository $matchingRepository,
         AskRepository $askRespository,
         AskHistoryRepository $askHistoryRepository,
+        CarpoolProofRepository $carpoolProofRepository,
         InternalMessageManager $internalMessageManager
     ) {
         $this->entityManager = $entityManager;
@@ -106,6 +111,7 @@ class DynamicManager
         $this->matchingRepository = $matchingRepository;
         $this->askRespository = $askRespository;
         $this->askHistoryRepository = $askHistoryRepository;
+        $this->carpoolProofRepository = $carpoolProofRepository;
         $this->internalMessageManager = $internalMessageManager;
     }
 
@@ -205,73 +211,7 @@ class DynamicManager
         // waypoints
         foreach ($dynamic->getWaypoints() as $waypointPosition => $point) {
             $waypoint = new Waypoint();
-            $address = new Address();
-
-            // first we set the lat/lon
-            if (isset($point['latitude'])) {
-                $address->setLatitude($point['latitude']);
-            }
-            if (isset($point['longitude'])) {
-                $address->setLongitude($point['longitude']);
-            }
-
-            // then we reverse geocode, to get a full address if the other properties are not sent
-            if ($addresses = $this->geoSearcher->reverseGeoCode($address->getLatitude(), $address->getLongitude())) {
-                if (count($addresses)>0) {
-                    $address = $addresses[0];
-                }
-            }
-
-            // if other properties are sent we use them
-            if (isset($point['houseNumber'])) {
-                $address->setHouseNumber($point['houseNumber']);
-            }
-            if (isset($point['street'])) {
-                $address->setStreet($point['street']);
-            }
-            if (isset($point['streetAddress'])) {
-                $address->setStreetAddress($point['streetAddress']);
-            }
-            if (isset($point['postalCode'])) {
-                $address->setPostalCode($point['postalCode']);
-            }
-            if (isset($point['subLocality'])) {
-                $address->setSubLocality($point['subLocality']);
-            }
-            if (isset($point['addressLocality'])) {
-                $address->setAddressLocality($point['addressLocality']);
-            }
-            if (isset($point['localAdmin'])) {
-                $address->setLocalAdmin($point['localAdmin']);
-            }
-            if (isset($point['county'])) {
-                $address->setCounty($point['county']);
-            }
-            if (isset($point['macroCounty'])) {
-                $address->setMacroCounty($point['macroCounty']);
-            }
-            if (isset($point['region'])) {
-                $address->setRegion($point['region']);
-            }
-            if (isset($point['macroRegion'])) {
-                $address->setMacroRegion($point['macroRegion']);
-            }
-            if (isset($point['addressCountry'])) {
-                $address->setAddressCountry($point['addressCountry']);
-            }
-            if (isset($point['countryCode'])) {
-                $address->setCountryCode($point['countryCode']);
-            }
-            
-            if (isset($point['elevation'])) {
-                $address->setElevation($point['elevation']);
-            }
-            if (isset($point['name'])) {
-                $address->setName($point['name']);
-            }
-            if (isset($point['home'])) {
-                $address->setHome($point['home']);
-            }
+            $address = $this->getAddressByPartialAddressArray($point);
             $waypoint->setAddress($address);
             $waypoint->setPosition($waypointPosition);
             $waypoint->setDestination($waypointPosition == count($dynamic->getWaypoints())-1);
@@ -338,8 +278,8 @@ class DynamicManager
     /**
      * Update a dynamic ad => update the current position
      *
-     * @param int $id           The id of the dynamic ad to update
-     * @param Dynamic $dynamic  The dynamic ad data to make the update
+     * @param int $id               The id of the dynamic ad to update
+     * @param Dynamic $dynamicData  The dynamic ad data to make the update
      * @return Dynamic      The updated Dynamic ad.
      */
     public function updateDynamic(int $id, Dynamic $dynamicData)
@@ -520,6 +460,7 @@ class DynamicManager
                         'id' => $ask->getId(),
                         'status' => $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER ? DynamicAsk::STATUS_PENDING : ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER ? DynamicAsk::STATUS_ACCEPTED : DynamicAsk::STATUS_DECLINED),
                         'user' => [
+                            'id' => $ask->getUser()->getId(),
                             'givenName' => $ask->getUser()->getGivenName(),
                             'shortFamilyName' => $ask->getUser()->getShortFamilyName(),
                             'position' => $matching->getProposalRequest()->getPosition()->getWaypoint()->getAddress()
@@ -555,6 +496,7 @@ class DynamicManager
                         'id' => $ask->getId(),
                         'status' => $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER ? DynamicAsk::STATUS_PENDING : ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER ? DynamicAsk::STATUS_ACCEPTED : DynamicAsk::STATUS_DECLINED),
                         'user' => [
+                            'id' => $ask->getUserRelated()->getId(),
                             'givenName' => $ask->getUserRelated()->getGivenName(),
                             'shortFamilyName' => $ask->getUserRelated()->getShortFamilyName(),
                             'position' => $matching->getProposalOffer()->getPosition()->getWaypoint()->getAddress()
@@ -633,7 +575,7 @@ class DynamicManager
     /**
      * Create an ask for a dynamic ad.
      *
-     * @param DynamicAsk    $dynamic    The ask to create
+     * @param DynamicAsk    $dynamicAsk The ask to create
      * @return DynamicAsk               The created ask.
      */
     public function createDynamicAsk(DynamicAsk $dynamicAsk)
@@ -647,6 +589,11 @@ class DynamicManager
         // check that another ask is not already made
         if ($this->askManager->hasPendingDynamicAsk($dynamicAsk->getUser())) {
             throw new DynamicException("This user has already a pending dynamic ask");
+        }
+
+        // check that another ask has not been made on this particular ad
+        if ($this->askManager->hasRefusedDynamicAsk($dynamicAsk->getUser(), $matching)) {
+            throw new DynamicException("This user has already a refused dynamic ask on this matching");
         }
 
         $ask = new Ask();
@@ -697,7 +644,7 @@ class DynamicManager
         // todo : dispatch en event ?
 
         $dynamicAsk->setId($ask->getId());
-        $dynamicAsk->setStatus($ask->getStatus());
+        $dynamicAsk->setStatus(DynamicAsk::STATUS_PENDING);
 
         return $dynamicAsk;
     }
@@ -705,8 +652,8 @@ class DynamicManager
     /**
      * Update an ask for a dynamic ad => only by the driver
      *
-     * @param int           $id         The id of the ask to update
-     * @param DynamicAsk    $dynamic    The ask data to make the update
+     * @param int           $id             The id of the ask to update
+     * @param DynamicAsk    $dynamicAskData The ask data to make the update
      * @return DynamicAsk   The updated ask.
      */
     public function updateDynamicAsk(int $id, DynamicAsk $dynamicAskData)
@@ -837,6 +784,7 @@ class DynamicManager
                 $thread[] = [
                     "text" => $message->getText(),
                     "user" => [
+                        'id' => $message->getUser()->getId(),
                         'givenName' => $message->getUser()->getGivenName(),
                         'shortFamilyName' => $message->getUser()->getShortFamilyName(),
                     ]
@@ -852,4 +800,274 @@ class DynamicManager
     /******************
      *  DYNAMIC PROOF *
      ******************/
+
+    
+    /**
+     * Create a proof for a dynamic ask.
+     *
+     * @param DynamicProof    $dynamicProof The proof to create
+     * @return DynamicProof                 The created proof.
+     */
+    public function createDynamicProof(DynamicProof $dynamicProof)
+    {
+        // search the ask
+        if (!$ask = $this->askRespository->find($dynamicProof->getDynamicAskId())) {
+            throw new DynamicException("Dynamic ask not found");
+        }
+
+        // check that the ask is accepted
+        if (!$ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER) {
+            throw new DynamicException("Dynamic ask not accepted");
+        }
+
+        // check if a proof already exists
+        if (!is_null($ask->getCarpoolProof())) {
+            // the proof already exists, it's an update
+            return $this->updateDynamicProof($ask->getCarpoolProof()->getId(), $dynamicProof);
+        }
+
+        $carpoolProof = new CarpoolProof();
+        $carpoolProof->setAsk($ask);
+
+        // search the role of the current user
+        if ($ask->getUser()->getId() == $dynamicProof->getUser()->getId()) {
+            // the user is passenger
+            $carpoolProof->setPickUpPassengerDate(new \DateTime('UTC'));
+            $carpoolProof->setPickUpPassengerAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProof->getLatitude(),'longitude'=>$dynamicProof->getLongitude()]));
+        } else {
+            // the user is driver
+            $carpoolProof->setPickUpDriverDate(new \DateTime('UTC'));
+            $carpoolProof->setPickUpDriverAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProof->getLatitude(),'longitude'=>$dynamicProof->getLongitude()]));
+        }
+
+        $this->entityManager->persist($carpoolProof);
+        $this->entityManager->flush();
+
+        $dynamicProof->setId($carpoolProof->getId());
+
+        return $dynamicProof;
+    }
+
+    /**
+     * Update a dynamic proof.
+     *
+     * @param integer $id                       The id of the dynamic proof to update
+     * @param DynamicProof $dynamicProofData    The data to update the dynamic proof
+     * @return DynamicProof The dynamic proof updated
+     */
+    public function updateDynamicProof(int $id, DynamicProof $dynamicProofData)
+    {
+        // search the proof
+        if (!$carpoolProof = $this->carpoolProofRepository->find($id)) {
+            throw new DynamicException("Dynamic proof not found");
+        }
+
+        // search the role of the current user
+        $actor = null;
+        if ($carpoolProof->getAsk()->getUser()->getId() == $dynamicProofData->getUser()->getId()) {
+            // the user is passenger
+            $actor = CarpoolProof::ACTOR_PASSENGER;
+        } else {
+            // the user is driver
+            $actor = CarpoolProof::ACTOR_DRIVER;
+        }
+
+        // TODO : set the new origin and destination waypoints for the passenger => pickup and dropoff !!
+
+        // we perform different actions depending on the role and the moment
+        switch ($actor) {
+            case CarpoolProof::ACTOR_DRIVER:
+                if (!is_null($carpoolProof->getPickUpDriverAddress()) && is_null($carpoolProof->getPickUpPassengerAddress())) {
+                    // the driver can't set the dropoff while the passenger has not certified its pickup
+                    throw new DynamicException("The passenger has not sent its pickup certification yet");
+                }
+                if (!is_null($carpoolProof->getPickUpDriverAddress())) {
+                    // the driver has set its pickup
+                    if (!is_null($carpoolProof->getDropOffDriverAddress())) {
+                        // the driver has already certified its pickup and dropoff
+                        throw new DynamicException("The driver has already sent its dropoff certification");
+                    }
+                    if (is_null($carpoolProof->getDropOffPassengerAddress())) {
+                        // the passenger has not set its dropoff
+                        $carpoolProof->setDropOffDriverDate(new \DateTime('UTC'));
+                        $carpoolProof->setDropOffDriverAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProofData->getLatitude(),'longitude'=>$dynamicProofData->getLongitude()]));
+                    } else {
+                        // the passenger has set its dropoff, we have to check the positions
+                        if ($this->geoTools->haversineGreatCircleDistance(
+                            $dynamicProofData->getLatitude(),
+                            $dynamicProofData->getLongitude(),
+                            $carpoolProof->getDropOffPassengerAddress()->getLatitude(),
+                            $carpoolProof->getDropOffPassengerAddress()->getLongitude()
+                        )<=$this->params['dynamicProofDistance']) {
+                            // drop off driver
+                            $carpoolProof->setDropOffDriverDate(new \DateTime('UTC'));
+                            $carpoolProof->setDropOffDriverAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProofData->getLatitude(),'longitude'=>$dynamicProofData->getLongitude()]));
+                        // driver direction will be set when the dynamic ad of the driver will be finished
+                        } else {
+                            throw new DynamicException("Driver dropoff certification failed : the passenger certified address is too far");
+                        }
+                    }
+                } elseif (!is_null($carpoolProof->getPickUpPassengerAddress())) {
+                    // the driver has not sent its pickup but the passenger has
+                    if ($this->geoTools->haversineGreatCircleDistance(
+                        $dynamicProofData->getLatitude(),
+                        $dynamicProofData->getLongitude(),
+                        $carpoolProof->getPickUpPassengerAddress()->getLatitude(),
+                        $carpoolProof->getPickUpPassengerAddress()->getLongitude()
+                    )<=$this->params['dynamicProofDistance']) {
+                        $carpoolProof->setPickupDriverDate(new \DateTime('UTC'));
+                        $carpoolProof->setPickUpDriverAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProofData->getLatitude(),'longitude'=>$dynamicProofData->getLongitude()]));
+                    } else {
+                        throw new DynamicException("Driver pickup certification failed : the passenger certified address is too far");
+                    }
+                } else {
+                    // the passenger has not set its pickup
+                    $carpoolProof->setPickUpDriverDate(new \DateTime('UTC'));
+                    $carpoolProof->setPickUpDriverAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProofData->getLatitude(),'longitude'=>$dynamicProofData->getLongitude()]));
+                }
+                break;
+            case CarpoolProof::ACTOR_PASSENGER:
+                if (!is_null($carpoolProof->getPickUpPassengerAddress()) && is_null($carpoolProof->getPickUpDriverAddress())) {
+                    // the passenger can't set the dropoff while the driver has not certified its pickup
+                    throw new DynamicException("The driver has not sent its pickup certification yet");
+                }
+                if (!is_null($carpoolProof->getPickUpPassengerAddress())) {
+                    // the passenger has set its pickup
+                    if (!is_null($carpoolProof->getDropOffPassengerAddress())) {
+                        // the passenger has already certified its pickup and dropoff
+                        throw new DynamicException("The passenger has already sent its dropoff certification");
+                    }
+                    if (is_null($carpoolProof->getDropOffDriverAddress())) {
+                        // the driver has not set its dropoff
+                        $carpoolProof->setDropOffPassengerDate(new \DateTime('UTC'));
+                        $carpoolProof->setDropOffPassengerAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProofData->getLatitude(),'longitude'=>$dynamicProofData->getLongitude()]));
+                    } else {
+                        // the driver has set its dropoff, we have to check the positions
+                        if ($this->geoTools->haversineGreatCircleDistance(
+                            $dynamicProofData->getLatitude(),
+                            $dynamicProofData->getLongitude(),
+                            $carpoolProof->getDropOffDriverAddress()->getLatitude(),
+                            $carpoolProof->getDropOffDriverAddress()->getLongitude()
+                        )<=$this->params['dynamicProofDistance']) {
+                            // drop off passenger
+                            $carpoolProof->setDropOffPassengerDate(new \DateTime('UTC'));
+                            $carpoolProof->setDropOffPassengerAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProofData->getLatitude(),'longitude'=>$dynamicProofData->getLongitude()]));
+                        // set passenger direction
+                        } else {
+                            throw new DynamicException("Passenger dropoff certification failed : the driver certified address is too far");
+                        }
+                    }
+                } elseif (!is_null($carpoolProof->getPickUpDriverAddress())) {
+                    // the passenger has not sent its pickup but the driver has
+                    if ($this->geoTools->haversineGreatCircleDistance(
+                        $dynamicProofData->getLatitude(),
+                        $dynamicProofData->getLongitude(),
+                        $carpoolProof->getPickUpDriverAddress()->getLatitude(),
+                        $carpoolProof->getPickUpDriverAddress()->getLongitude()
+                    )<=$this->params['dynamicProofDistance']) {
+                        $carpoolProof->setPickupPassengerDate(new \DateTime('UTC'));
+                        $carpoolProof->setPickUpPassengerAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProofData->getLatitude(),'longitude'=>$dynamicProofData->getLongitude()]));
+                    } else {
+                        throw new DynamicException("Passenger pickup certification failed : the driver certified address is too far");
+                    }
+                } else {
+                    // the driver has not set its pickup
+                    $carpoolProof->setPickupPassengerDate(new \DateTime('UTC'));
+                    $carpoolProof->setPickUpPassengerAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProofData->getLatitude(),'longitude'=>$dynamicProofData->getLongitude()]));
+                }
+                break;
+        }
+
+        $this->entityManager->persist($carpoolProof);
+        $this->entityManager->flush();
+
+        $dynamicProofData->setId($carpoolProof->getId());
+        return $dynamicProofData;
+    }
+
+
+
+
+    /***********
+     *  COMMON *
+     ***********/
+
+
+    /**
+     * Get an address using an array. The array may contain only some informations like latitude or longitude.
+     *
+     * @param array $point  The point
+     * @return Address
+     */
+    private function getAddressByPartialAddressArray(array $point)
+    {
+        $address = new Address();
+
+        // first we set the lat/lon
+        if (isset($point['latitude'])) {
+            $address->setLatitude($point['latitude']);
+        }
+        if (isset($point['longitude'])) {
+            $address->setLongitude($point['longitude']);
+        }
+
+        // then we reverse geocode, to get a full address if the other properties are not sent
+        if ($addresses = $this->geoSearcher->reverseGeoCode($address->getLatitude(), $address->getLongitude())) {
+            if (count($addresses)>0) {
+                $address = $addresses[0];
+            }
+        }
+
+        // if other properties are sent we use them
+        if (isset($point['houseNumber'])) {
+            $address->setHouseNumber($point['houseNumber']);
+        }
+        if (isset($point['street'])) {
+            $address->setStreet($point['street']);
+        }
+        if (isset($point['streetAddress'])) {
+            $address->setStreetAddress($point['streetAddress']);
+        }
+        if (isset($point['postalCode'])) {
+            $address->setPostalCode($point['postalCode']);
+        }
+        if (isset($point['subLocality'])) {
+            $address->setSubLocality($point['subLocality']);
+        }
+        if (isset($point['addressLocality'])) {
+            $address->setAddressLocality($point['addressLocality']);
+        }
+        if (isset($point['localAdmin'])) {
+            $address->setLocalAdmin($point['localAdmin']);
+        }
+        if (isset($point['county'])) {
+            $address->setCounty($point['county']);
+        }
+        if (isset($point['macroCounty'])) {
+            $address->setMacroCounty($point['macroCounty']);
+        }
+        if (isset($point['region'])) {
+            $address->setRegion($point['region']);
+        }
+        if (isset($point['macroRegion'])) {
+            $address->setMacroRegion($point['macroRegion']);
+        }
+        if (isset($point['addressCountry'])) {
+            $address->setAddressCountry($point['addressCountry']);
+        }
+        if (isset($point['countryCode'])) {
+            $address->setCountryCode($point['countryCode']);
+        }
+        
+        if (isset($point['elevation'])) {
+            $address->setElevation($point['elevation']);
+        }
+        if (isset($point['name'])) {
+            $address->setName($point['name']);
+        }
+        if (isset($point['home'])) {
+            $address->setHome($point['home']);
+        }
+        return $address;
+    }
 }

@@ -21,35 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\DataProvider;
+namespace App\Carpool\Repository;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Carpool\Entity\Dynamic;
-use App\Carpool\Service\DynamicManager;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Carpool\Entity\CarpoolProof;
 
-/**
- * Item data provider for dynamic ad.
- *
- */
-final class DynamicItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+class CarpoolProofRepository
 {
-    protected $request;
+    private $repository;
     
-    public function __construct(RequestStack $requestStack, DynamicManager $dynamicManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->request = $requestStack->getCurrentRequest();
-        $this->dynamicManager = $dynamicManager;
+        $this->repository = $entityManager->getRepository(CarpoolProof::class);
     }
-    
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+
+    public function find(int $id): ?CarpoolProof
     {
-        return Dynamic::class === $resourceClass;
+        return $this->repository->find($id);
     }
-    
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Dynamic
+
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
-        return $this->dynamicManager->getDynamic($id);
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 }

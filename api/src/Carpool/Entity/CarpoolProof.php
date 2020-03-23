@@ -36,6 +36,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class CarpoolProof
 {
+    const STATUS_PENDING = 0;
+    const STATUS_SENT = 1;
+    const STATUS_ERROR = 2;
+
+    const ACTOR_DRIVER = 1;
+    const ACTOR_PASSENGER = 2;
+
     /**
      * @var int The id of this proof.
      *
@@ -46,19 +53,55 @@ class CarpoolProof
     private $id;
 
     /**
+     * @var int Proof status (0 = pending, 1 = sent to the register; 2 = error while sending to the register).
+     *
+     * @Assert\NotBlank
+     * @ORM\Column(type="smallint")
+     */
+    private $status;
+
+    /**
      * @var Ask The ask related to the proof.
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", mappedBy="carpoolProof")
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", mappedBy="carpoolProof", cascade={"persist"})
      */
     private $ask;
-        
+
+    /**
+     * @var \DateTimeInterface Passenger pickup certification date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $pickUpPassengerDate;
+
+    /**
+     * @var \DateTimeInterface Driver pickup certification date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $pickUpDriverDate;
+
+    /**
+     * @var \DateTimeInterface Passenger dropoff certification date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $dropOffPassengerDate;
+
+    /**
+     * @var \DateTimeInterface Driver dropoff certification date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $dropOffDriverDate;
+
     /**
      * @var Address Position of the passenger when pickup certification is asked.
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
-    private $pickupPassengerAddress;
+    private $pickUpPassengerAddress;
 
     /**
      * @var Address Position of the driver when pickup certification is asked.
@@ -66,7 +109,7 @@ class CarpoolProof
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
-    private $pickupDriverAddress;
+    private $pickUpDriverAddress;
 
     /**
      * @var Address Position of the passenger when dropoff certification is asked.
@@ -74,7 +117,7 @@ class CarpoolProof
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
-    private $dropoffPassengerAddress;
+    private $dropOffPassengerAddress;
 
     /**
      * @var Address Position of the driver when dropoff certification is asked.
@@ -82,15 +125,23 @@ class CarpoolProof
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
-    private $dropoffDriverAddress;
+    private $dropOffDriverAddress;
 
     /**
-     * @var Direction|null Direction related to the dynamic carpool - updated at each position update.
+     * @var Direction|null Driver direction.
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
-    private $direction;
+    private $directionDriver;
+
+    /**
+     * @var Direction|null Passenger direction.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     */
+    private $directionPassenger;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -111,6 +162,18 @@ class CarpoolProof
         return $this->id;
     }
 
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(int $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function getAsk(): ?Ask
     {
         return $this->ask;
@@ -119,66 +182,128 @@ class CarpoolProof
     public function setAsk(?Ask $ask): self
     {
         $this->ask = $ask;
+        // set the owning side
+        $ask->setCarpoolProof($this);
+
+        return $this;
+    }
+
+    public function getPickUpPassengerDate(): ?\DateTimeInterface
+    {
+        return $this->pickUpPassengerDate;
+    }
+
+    public function setPickUpPassengerDate(\DateTimeInterface $pickUpPassengerDate): self
+    {
+        $this->pickUpPassengerDate = $pickUpPassengerDate;
+
+        return $this;
+    }
+
+    public function getPickUpDriverDate(): ?\DateTimeInterface
+    {
+        return $this->pickUpDriverDate;
+    }
+
+    public function setPickUpDriverDate(\DateTimeInterface $pickUpDriverDate): self
+    {
+        $this->pickUpDriverDate = $pickUpDriverDate;
+
+        return $this;
+    }
+
+    public function getDropOffPassengerDate(): ?\DateTimeInterface
+    {
+        return $this->dropOffPassengerDate;
+    }
+
+    public function setDropOffPassengerDate(\DateTimeInterface $dropOffPassengerDate): self
+    {
+        $this->dropOffPassengerDate = $dropOffPassengerDate;
+
+        return $this;
+    }
+
+    public function getDropOffDriverDate(): ?\DateTimeInterface
+    {
+        return $this->dropOffDriverDate;
+    }
+
+    public function setDropOffDriverDate(\DateTimeInterface $dropOffDriverDate): self
+    {
+        $this->dropOffDriverDate = $dropOffDriverDate;
 
         return $this;
     }
     
-    public function getPickupPassengerAddress(): ?Address
+    public function getPickUpPassengerAddress(): ?Address
     {
-        return $this->pickupPassengerAddress;
+        return $this->pickUpPassengerAddress;
     }
 
-    public function setPickupPassengerAddress(?Address $pickupPassengerAddress): self
+    public function setPickUpPassengerAddress(?Address $pickUpPassengerAddress): self
     {
-        $this->pickupPassengerAddress = $pickupPassengerAddress;
+        $this->pickUpPassengerAddress = $pickUpPassengerAddress;
 
         return $this;
     }
 
-    public function getPickupDriverAddress(): ?Address
+    public function getPickUpDriverAddress(): ?Address
     {
-        return $this->pickupDriverAddress;
+        return $this->pickUpDriverAddress;
     }
 
-    public function setPickupDriverAddress(?Address $pickupDriverAddress): self
+    public function setPickUpDriverAddress(?Address $pickUpDriverAddress): self
     {
-        $this->pickupDriverAddress = $pickupDriverAddress;
+        $this->pickUpDriverAddress = $pickUpDriverAddress;
 
         return $this;
     }
 
-    public function getDropoffPassengerAddress(): ?Address
+    public function getDropOffPassengerAddress(): ?Address
     {
-        return $this->dropoffPassengerAddress;
+        return $this->dropOffPassengerAddress;
     }
 
-    public function setDropoffPassengerAddress(?Address $dropoffPassengerAddress): self
+    public function setDropOffPassengerAddress(?Address $dropOffPassengerAddress): self
     {
-        $this->dropoffPassengerAddress = $dropoffPassengerAddress;
+        $this->dropOffPassengerAddress = $dropOffPassengerAddress;
 
         return $this;
     }
 
-    public function getDropoffDriverAddress(): ?Address
+    public function getDropOffDriverAddress(): ?Address
     {
-        return $this->dropoffDriverAddress;
+        return $this->dropOffDriverAddress;
     }
 
-    public function setDropoffDriverAddress(?Address $dropoffDriverAddress): self
+    public function setDropOffDriverAddress(?Address $dropOffDriverAddress): self
     {
-        $this->dropoffDriverAddress = $dropoffDriverAddress;
+        $this->dropOffDriverAddress = $dropOffDriverAddress;
 
         return $this;
     }
 
-    public function getDirection(): ?Direction
+    public function getDirectionDriver(): ?Direction
     {
-        return $this->direction;
+        return $this->directionDriver;
     }
     
-    public function setDirection(?Direction $direction): self
+    public function setDirectionDriver(?Direction $directionDriver): self
     {
-        $this->direction = $direction;
+        $this->directionDriver = $directionDriver;
+        
+        return $this;
+    }
+    
+    public function getDirectionPassenger(): ?Direction
+    {
+        return $this->directionPassenger;
+    }
+    
+    public function setDirectionPassenger(?Direction $directionPassenger): self
+    {
+        $this->directionPassenger = $directionPassenger;
         
         return $this;
     }
@@ -209,6 +334,16 @@ class CarpoolProof
 
     // DOCTRINE EVENTS
     
+    /**
+     * Status.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoStatus()
+    {
+        $this->setStatus(self::STATUS_PENDING);
+    }
+
     /**
      * Creation date.
      *

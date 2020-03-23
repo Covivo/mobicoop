@@ -26,11 +26,11 @@ namespace App\Carpool\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\User\Entity\User;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\User\Entity\User;
 
 /**
- * Carpooling : an ask for a dynamic ad.
+ * Carpooling : a proof for a dynamic ad.
  *
  * @ApiResource(
  *      attributes={
@@ -41,8 +41,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      collectionOperations={
  *          "post"={
  *              "method"="POST",
- *              "normalization_context"={"groups"={"writeDynamic","results"}},
- *              "security_post_denormalize"="is_granted('dynamic_ask_create',object)"
+ *              "normalization_context"={"groups"={"writeDynamic"}},
+ *              "security_post_denormalize"="is_granted('dynamic_proof_create',object)"
  *          }
  *      },
  *      itemOperations={
@@ -53,22 +53,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "normalization_context"={"groups"={"updateDynamic"}},
  *              "denormalization_context"={"groups"={"updateDynamic"}},
  *              "validation_groups"={"updateDynamic"},
- *              "security"="is_granted('dynamic_ask_update',object)"
+ *              "security"="is_granted('dynamic_proof_update',object)"
  *          }
  *      }
  * )
  *
  */
-class DynamicAsk
+class DynamicProof
 {
     const DEFAULT_ID = 999999999999;
     
-    const STATUS_PENDING = 1;
-    const STATUS_ACCEPTED = 2;
-    const STATUS_DECLINED = 3;
-
     /**
-     * @var int The id of this dynamic ad ask.
+     * @var int The id of this dynamic ad proof.
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readDynamic","writeDynamic","updateDynamic"})
@@ -76,39 +72,35 @@ class DynamicAsk
     private $id;
 
     /**
-     * @var int Ask status (1 = pending, 2 = accepted; 3 = declined).
-     *
-     * @Groups({"readDynamic","writeDynamic","updateDynamic"})
-     */
-    private $status;
-
-    /**
-     * @var string|null A message to send to the carpooler.
-     *
-     * @Groups({"readDynamic","writeDynamic","updateDynamic"})
-     */
-    private $message;
-
-    /**
-     * @var User|null The ask owner.
+     * @var User|null The current user.
      *
      * @Groups("readDynamic")
      */
     private $user;
 
     /**
-     * @var User|null The carpooler (user related to the ask).
+     * @var string The latitude.
      *
-     * @Groups("readDynamic")
+     * @Groups({"writeDynamic","updateDynamic"})
+     * @Assert\NotBlank(groups={"writeDynamic","updateDynamic"})
      */
-    private $carpooler;
-    
+    private $latitude;
+
     /**
-     * @var int|null The matching id related to the ask.
+     * @var string The longitude.
      *
+     * @Groups({"writeDynamic","updateDynamic"})
+     * @Assert\NotBlank(groups={"writeDynamic","updateDynamic"})
+     */
+    private $longitude;
+
+    /**
+     * @var int|null The ask id related to the proof.
+     *
+     * @Assert\NotBlank(groups={"writeDynamic"})
      * @Groups("writeDynamic")
      */
-    private $matchingId;
+    private $dynamicAskId;
 
     public function __construct()
     {
@@ -127,30 +119,6 @@ class DynamicAsk
         return $this;
     }
 
-    public function getStatus(): ?int
-    {
-        return $this->status;
-    }
-
-    public function setStatus(int $status): self
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    public function getMessage(): ?string
-    {
-        return $this->message;
-    }
-    
-    public function setMessage(?string $message): self
-    {
-        $this->message = $message;
-        
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -163,26 +131,34 @@ class DynamicAsk
         return $this;
     }
 
-    public function getCarpooler(): ?User
+    public function getLatitude()
     {
-        return $this->carpooler;
+        return $this->latitude;
     }
 
-    public function setCarpooler(?User $carpooler): self
+    public function setLatitude($latitude)
     {
-        $this->carpooler = $carpooler;
-
-        return $this;
+        $this->latitude = $latitude;
     }
 
-    public function getMatchingId(): ?int
+    public function getLongitude()
     {
-        return $this->matchingId;
+        return $this->longitude;
     }
 
-    public function setMatchingId(?int $matchingId): self
+    public function setLongitude($longitude)
     {
-        $this->matchingId = $matchingId;
+        $this->longitude = $longitude;
+    }
+
+    public function getDynamicAskId(): ?int
+    {
+        return $this->dynamicAskId;
+    }
+
+    public function setDynamicAskId(?int $dynamicAskId): self
+    {
+        $this->dynamicAskId = $dynamicAskId;
 
         return $this;
     }

@@ -39,7 +39,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "validation_groups"={"writeDynamic"}
  *      },
  *      collectionOperations={
- *          "get",
  *          "post"={
  *              "method"="POST",
  *              "normalization_context"={"groups"={"writeDynamic","results"}},

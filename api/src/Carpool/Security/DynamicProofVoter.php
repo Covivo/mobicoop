@@ -24,63 +24,65 @@
 namespace App\Carpool\Security;
 
 use App\Auth\Service\AuthManager;
-use App\Carpool\Entity\DynamicAsk;
-use App\Carpool\Entity\Matching;
-use App\Carpool\Repository\MatchingRepository;
+use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\DynamicProof;
+use App\Carpool\Repository\AskRepository;
+use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Service\DynamicManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
-class DynamicAskVoter extends Voter
+class DynamicProofVoter extends Voter
 {
-    const DYNAMIC_ASK_CREATE = 'dynamic_ask_create';
-    const DYNAMIC_ASK_UPDATE = 'dynamic_ask_update';
+    const DYNAMIC_PROOF_CREATE = 'dynamic_proof_create';
+    const DYNAMIC_PROOF_UPDATE = 'dynamic_proof_update';
     
     private $security;
     private $request;
     private $authManager;
-    private $dynamicManager;
-    private $matchingRepository;
+    private $askRepository;
+    private $carpoolProofRepository;
 
-    public function __construct(RequestStack $requestStack, Security $security, AuthManager $authManager, DynamicManager $dynamicManager, MatchingRepository $matchingRepository)
+    public function __construct(RequestStack $requestStack, Security $security, AuthManager $authManager, AskRepository $askRepository, CarpoolProofRepository $carpoolProofRepository)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->security = $security;
         $this->authManager = $authManager;
-        $this->dynamicManager = $dynamicManager;
-        $this->matchingRepository = $matchingRepository;
+        $this->askRepository = $askRepository;
+        $this->carpoolProofRepository = $carpoolProofRepository;
     }
 
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::DYNAMIC_ASK_CREATE,
-            self::DYNAMIC_ASK_UPDATE,
+            self::DYNAMIC_PROOF_CREATE,
+            self::DYNAMIC_PROOF_UPDATE
             ])) {
             return false;
         }
 
-        // Dynamic is a 'virtual' resource, we can't check its class
+        // Dynamic Proof is a 'virtual' resource, we can't check its class
         return true;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         switch ($attribute) {
-            case self::DYNAMIC_ASK_CREATE:
+            case self::DYNAMIC_PROOF_CREATE:
                 /**
-                 * @var DynamicAsk $subject
+                 * @var DynamicProof $subject
                  */
-                if ($matching = $this->matchingRepository->find($subject->getMatchingId())) {
-                    return $this->canCreateDynamicAsk($matching);
+                if ($ask = $this->askRepository->find($subject->getDynamicAskId())) {
+                    return $this->canCreateDynamicProof($ask);
                 }
                 return false;
-            case self::DYNAMIC_ASK_UPDATE:
-                if ($dynamicAsk = $this->dynamicManager->getDynamicAsk($this->request->get('id'))) {
-                    return $this->canUpdateDynamicAsk($dynamicAsk);
+            case self::DYNAMIC_PROOF_UPDATE:
+                if ($carpoolProof = $this->carpoolProofRepository->find($this->request->get('id'))) {
+                    return $this->canUpdateDynamicProof($carpoolProof);
                 }
                 return false;
         }
@@ -88,13 +90,13 @@ class DynamicAskVoter extends Voter
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canCreateDynamicAsk(Matching $matching)
+    private function canCreateDynamicProof(Ask $ask)
     {
-        return $this->authManager->isAuthorized(self::DYNAMIC_ASK_CREATE, ['matching' => $matching]);
+        return $this->authManager->isAuthorized(self::DYNAMIC_PROOF_CREATE, ['ask' => $ask]);
     }
 
-    private function canUpdateDynamicAsk(DynamicAsk $dynamicAsk)
+    private function canUpdateDynamicProof(CarpoolProof $carpoolProof)
     {
-        return $this->authManager->isAuthorized(self::DYNAMIC_ASK_UPDATE, ['dynamicAsk' => $dynamicAsk]);
+        return $this->authManager->isAuthorized(self::DYNAMIC_PROOF_UPDATE, ['ask' => $carpoolProof->getAsk()]);
     }
 }

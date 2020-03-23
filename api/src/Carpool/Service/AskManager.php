@@ -748,5 +748,25 @@ class AskManager
                 return true;
             }
         }
+        return false;
+    }
+
+    /**
+     * Check if a user has a refused dynamic ad ask related to a given matching.
+     *
+     * @param User $user The user
+     * @return boolean
+     */
+    public function hasRefusedDynamicAsk(User $user, Matching $matching)
+    {
+        // first we get all the asks initiated by the user and refused by the carpooler
+        $asks = $this->askRepository->findBy(['user'=>$user,'status'=>[Ask::STATUS_DECLINED_AS_DRIVER]]);
+        // now we check if one of these asks is related to the given matching
+        foreach ($asks as $ask) {
+            if ($ask->getMatching()->getId() == $matching->getId()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
