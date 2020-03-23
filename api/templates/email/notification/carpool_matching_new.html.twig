@@ -1,5 +1,25 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-<p>{{ "newCarpoolAdMatchingYourCommute"|trans }}  {{ (context.matching.waypoints|first).address.addressLocality }} {{ "and"|trans }} {{ (context.matching.waypoints|last).address.addressLocality }}, {{ "justPublished"|trans }}.</p>
-<p>{{ "seeYouIn"|trans }} <a href="{{ api_env('EMAILS_PLATFORM_URL') }}{{ "linkMyAds"|trans }} ">"{{ "myAds"|trans }}"</a> {{ "toConsultCorrespondingAdsAndMakeContact"|trans }}.</p>
+<table align="center" style="border-spacing:0;text-align:left;vertical-align:top;width:100%;margin-top:20px;font-family:Roboto, sans-serif;">
+    <tr>
+        <td>
+            <p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b>.</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>{{ "newCarpoolAdMatchingYourCommute"|trans }} <span style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}"> {{ (context.matching.waypoints|first).address.addressLocality }}</span> {{ "and"|trans }} <span style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">{{ (context.matching.waypoints|last).address.addressLocality }}</span> {{ "justPublished"|trans }}.</p>
+        </td>
+    </tr> 
+    <tr>
+        <td>  
+           <p>{{ "seeYouIn"|trans }} <a href="{{ api_env('EMAILS_PLATFORM_URL') }}{{ "linkMyAds"|trans }} ">"{{ "myAds"|trans }}"</a> {{ "toConsultCorrespondingAdsAndMakeContact"|trans }}.</p>
+        </td>
+    </tr> 
+    <tr>
+        <td>
+            <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+        </td>
+    </tr>
+    </table>    
 {% endblock %}
