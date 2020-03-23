@@ -43,7 +43,7 @@
               :min="nowDate"
               first-day-of-week="1"
               @input="menuOutwardDate = false"
-              @change="change(),clearOtherFields(),checkMinReturnTime(),checkIfTimeIsValid()"
+              @change="changeDate()"
             />
           </v-menu>
         </v-col>
@@ -56,7 +56,6 @@
             ref="menuOutwardTime"
             v-model="menuOutwardTime"
             :close-on-content-click="false"
-            :return-value.sync="outwardTime"
             transition="scale-transition"
             offset-y
             max-width="290px"
@@ -79,8 +78,7 @@
               format="24hr"
               :min="maxTimeIfToday"
               header-color="secondary"
-              @click:minute="$refs.menuOutwardTime.save(outwardTime)"
-              @change="change(), checkMinReturnTime(), checkIfTimeIsValid()"
+              @click:minute="changeTime()"
             />
           </v-menu>
         </v-col>
@@ -119,7 +117,7 @@
             :label="$t('returnTrip.label')"
             color="primary"
             hide-details
-            @change="checkReturnDesactivate($event),change()"
+            @change="checkReturnDesactivate($event)"
           />
         </v-col>
 
@@ -158,7 +156,7 @@
               first-day-of-week="1"
               :min="outwardDate"
               @input="menuReturnDate = false"
-              @change="checkDateReturn($event),change(), checkMinReturnTime(), checkIfTimeIsValid()"
+              @change="checkDateReturn($event)"
             />
           </v-menu>
         </v-col>
@@ -194,8 +192,7 @@
               format="24hr"
               header-color="secondary"
               :min="minReturnTime"
-              @click:minute="$refs.menuReturnTime.save(returnTime)"
-              @change="checkDateReturn($event),change(),checkIfTimeIsValid()"
+              @click:minute="checkDateReturn($event)"
             />
           </v-menu>
         </v-col>
@@ -252,43 +249,43 @@
                 label="L"
                 color="primary"
                 :disabled="false"
-                @change="change(), getValueCheckbox($event,item,'mon')"
+                @change="getValueCheckbox($event,item,'mon')"
               />
               <v-checkbox
                 v-model="item.tue"
                 label="Ma"
                 color="primary"
-                @change="change(), getValueCheckbox($event,item,'tue')"
+                @change="getValueCheckbox($event,item,'tue')"
               />
               <v-checkbox
                 v-model="item.wed"
                 label="Me"
                 color="primary"
-                @change="change(), getValueCheckbox($event,item,'wed')"
+                @change="getValueCheckbox($event,item,'wed')"
               />
               <v-checkbox
                 v-model="item.thu"
                 label="J"
                 color="primary"
-                @change="change(), getValueCheckbox($event,item,'thu')"
+                @change="getValueCheckbox($event,item,'thu')"
               />
               <v-checkbox
                 v-model="item.fri"
                 label="V"
                 color="primary"
-                @change="change(), getValueCheckbox($event,item,'fri')"
+                @change="getValueCheckbox($event,item,'fri')"
               />
               <v-checkbox
                 v-model="item.sat"
                 label="S"
                 color="primary"
-                @change="change(), getValueCheckbox($event,item,'sat')"
+                @change="getValueCheckbox($event,item,'sat')"
               />
               <v-checkbox
                 v-model="item.sun"
                 label="D"
                 color="primary"
-                @change="change(), getValueCheckbox($event,item,'sun')"
+                @change="getValueCheckbox($event,item,'sun')"
               />
             </v-row>
 
@@ -338,7 +335,7 @@
                     header-color="secondary"
                     :disabled="item.outwardDisabled"
                     @click:minute="closeOutwardTime(item.id)"
-                    @change="change(),blockTimeRegular($event,item.id)"
+                    @change="blockTimeRegular($event,item.id)"
                   />
                 </v-menu>
               </v-col>
@@ -543,9 +540,7 @@ export default {
       maxDateFromOutward : null,
       maxTimeFromOutward : null,
       maxTimeIfToday : null,
-      nowDate : new Date().toISOString().slice(0,10),
-      minReturnTime : null,
-      returnTimeIsValid : true,
+      nowDate : new Date().toISOString().slice(0,10)
     };
   },
   computed: {
@@ -579,6 +574,16 @@ export default {
       }
       return true;
     },
+    returnTimeIsValid (){
+      return moment(this.returnDate + ' ' + this.returnTime).isValid()
+        ? moment(this.returnDate + ' ' + this.returnTime) >= moment(this.outwardDate + ' ' + this.outwardTime).add(this.route.direction.duration, 'seconds')
+        : null;
+    },
+    minReturnTime() {
+      return this.returnDate === this.outwardDate
+        ? moment(this.outwardDate + ' ' + this.outwardTime).add(this.route.direction.duration, 'seconds').format("HH:mm")
+        : null;
+    }
   },
   watch: {
     initOutwardDate() {
@@ -617,44 +622,39 @@ export default {
         returnTimeIsValid: this.returnTimeIsValid,
       });
     },
+    changeDate() {
+      this.clearOtherFields();
+      this.change();
+    },
+    changeTime() {
+      this.$refs.menuOutwardTime.save(this.outwardTime);
+      this.change();
+    },
     checkDateReturn(e){
-      this.returnTrip = e ? true : false;
-    },
-    checkMinReturnTime(){
-      if (this.returnDate == this.outwardDate) {
-        this.minReturnTime = moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format("HH:mm");
-      } else { 
-        this.minReturnTime = null; 
-      }
-    },
-    checkIfTimeIsValid(){
-      if (moment(this.returnDate+' '+this.returnTime) < moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds')){
-        this.returnTimeIsValid = false;
-        this.change();
-      } else {
-        this.returnTimeIsValid = true;
-        this.change();
-      }
+      this.returnTrip = !!e;
+      this.$refs.menuReturnTime.save(this.returnTime);
+      this.change();
     },
     clearOtherFields(){
       this.outwardTime = null;
       this.returnDate = null;
       this.returnTime = null;
     },
-    
     blockTimeRegular(e,id){
       // test to allow return time to be set before outward time for regular work
-      if(id !=0 && this.schedules[id-1]['returnTime'] === null) {
+      if(id !== 0 && this.schedules[id-1]['returnTime'] === null) {
         // console.error("");
-      }else {
+      } else {
         this.schedules[id].maxTimeFromOutwardRegular = e;
       }
+      this.change();
     },
     checkReturnDesactivate(e){
       if (!e) {
-        this.returnDate = null
-        this.returnTime = null
+        this.returnDate = null;
+        this.returnTime = null;
         this.returnTrip = false;
+        this.change();
       }
     },
     getValueCheckbox(event,item,day){
@@ -676,6 +676,7 @@ export default {
         }
 
       }
+      this.change();
     },
 
     verifCurrentdDayInAllSchedules(day,currentSchedule){
@@ -685,15 +686,15 @@ export default {
         var c = this.activeSchedules[j];
 
         // Check if not active shcedule , then loop for check if other schedule have same day check
-        if (c.id != currentSchedule) {
+        if (c.id !== currentSchedule) {
 
-          if (c.mon && day == 'mon') this.checkOutwardReturnAndDisabled(c);
-          if (c.tue && day == 'tue') this.checkOutwardReturnAndDisabled(c);
-          if (c.wed && day == 'wed') this.checkOutwardReturnAndDisabled(c);
-          if (c.thu && day == 'thu') this.checkOutwardReturnAndDisabled(c);
-          if (c.fri && day == 'fri') this.checkOutwardReturnAndDisabled(c);
-          if (c.sat && day == 'sat') this.checkOutwardReturnAndDisabled(c);
-          if (c.sun && day == 'sun') this.checkOutwardReturnAndDisabled(c);
+          if (c.mon && day === 'mon') this.checkOutwardReturnAndDisabled(c);
+          if (c.tue && day === 'tue') this.checkOutwardReturnAndDisabled(c);
+          if (c.wed && day === 'wed') this.checkOutwardReturnAndDisabled(c);
+          if (c.thu && day === 'thu') this.checkOutwardReturnAndDisabled(c);
+          if (c.fri && day === 'fri') this.checkOutwardReturnAndDisabled(c);
+          if (c.sat && day === 'sat') this.checkOutwardReturnAndDisabled(c);
+          if (c.sun && day === 'sun') this.checkOutwardReturnAndDisabled(c);
 
         }
       }
@@ -702,7 +703,7 @@ export default {
       if (c.outwardTime) {
         for (var k in this.activeSchedules) {
           var v = this.activeSchedules[k];
-          if (v.id != c.id) {
+          if (v.id !== c.id) {
             this.activeSchedules[k].outwardDisabled = true;
             this.activeSchedules[k].outwardTime = null;
           }
@@ -711,7 +712,7 @@ export default {
       if (c.returnTime) {
         for (var l in this.activeSchedules) {
           var b = this.activeSchedules[l];
-          if (b.id != c.id) {
+          if (b.id !== c.id) {
             this.activeSchedules[l].returnDisabled = true;
             this.activeSchedules[l].returnTime = null;
           }
