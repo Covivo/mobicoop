@@ -14,7 +14,7 @@
                 <table>
                     <tr>
                         <td>
-                            <p style="color:{{ api_env('EMAILS_COLOR_SECONDARY') }};font-size:30">
+                            <p style="color:{{ api_env('EMAILS_COLOR_SECONDARY') }};font-size:30px">
                                 <b>{{ "cancelledCarpool"|trans }}</b></p>
                             <hr>
                         </td>
@@ -62,11 +62,30 @@
                 </table>
             </td>
         </tr>
+        {% if new.cancellationMessage %}
+            <tr>
+                <td>
+                    <table style="width:100%;">
+                        <tr>
+                            <td style="width:70%">
+                                <p>{{ "ownerMessage"|trans|raw}}</p>
+                                <p>{{ new.cancellationMessage }}
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p></p>
+                </td>
+            </tr>
+        {% endif %}
         <tr>
             <td>
                 <p>{{ "noPenaltyApplied"|trans|raw }}</p>
             </td>
-
         </tr>
 
         </hr>

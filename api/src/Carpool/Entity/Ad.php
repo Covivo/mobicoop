@@ -89,14 +89,12 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "path"="/carpools/{id}",
  *              "controller"=AdGet::class,
  *              "read"=false,
- *              "security"="is_granted('ad_read', object)"
  *          },
  *          "get_full"={
  *              "method"="GET",
  *              "path"="/carpools/{id}/full",
  *              "controller"=AdGetFull::class,
  *              "read"=false,
- *              "security"="is_granted('ad_read')"
  *          },
  *          "put_ask"={
  *              "method"="PUT",
@@ -116,7 +114,6 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "path"="/carpools/{id}",
  *              "controller"=AdPut::class,
  *              "read"=false,
- *              "security"="is_granted('ad_update', object)"
  *          },
  *      }
  * )
@@ -482,6 +479,13 @@ class Ad
      * @Groups({"read","write"})
      */
     private $asks;
+
+    /**
+     * @var string|null The message if Ad owner is making major updates to his Ad
+     *
+     * @Groups({"write"})
+     */
+    private $cancellationMessage;
 
     public function __construct()
     {
@@ -1081,6 +1085,17 @@ class Ad
     {
         $this->asks = $asks;
 
+        return $this;
+    }
+
+    public function getCancellationMessage(): ?string
+    {
+        return $this->cancellationMessage;
+    }
+
+    public function setCancellationMessage(?string $cancellationMessage): Ad
+    {
+        $this->cancellationMessage = $cancellationMessage;
         return $this;
     }
 }

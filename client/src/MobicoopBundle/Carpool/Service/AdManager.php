@@ -498,6 +498,10 @@ class AdManager
             $ad->setFilters($data['filters']);
         }
 
+        if (isset($data['cancellationMessage'])) {
+            $ad->setCancellationMessage($data['cancellationMessage']);
+        }
+
         return $ad;
     }
 }

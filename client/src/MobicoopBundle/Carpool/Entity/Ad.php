@@ -363,6 +363,13 @@ class Ad implements ResourceInterface, \JsonSerializable
      */
     private $music;
 
+    /**
+     * @var string|null The message if Ad owner is making major updates to his Ad
+     *
+     * @Groups({"post", "put"})
+     */
+    private $cancellationMessage;
+
     public function __construct($id=null)
     {
         $this->outwardWaypoints = [];
@@ -947,6 +954,17 @@ class Ad implements ResourceInterface, \JsonSerializable
         return !empty($this->getOutwardWaypoints()) && isset($this->getOutwardWaypoints()[count($this->getOutwardWaypoints()) - 1]["address"])
             ? $this->getOutwardWaypoints()[count($this->getOutwardWaypoints()) - 1]["address"]
             : null;
+    }
+
+    public function getCancellationMessage(): ?string
+    {
+        return $this->cancellationMessage;
+    }
+
+    public function setCancellationMessage(?string $cancellationMessage): Ad
+    {
+        $this->cancellationMessage = $cancellationMessage;
+        return $this;
     }
 
     public function jsonSerialize()
