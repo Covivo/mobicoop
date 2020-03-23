@@ -50,7 +50,8 @@ final class Version20200320144000 extends AbstractMigration
         (198, NULL, 1, 'subject_update', 'Update a subject'),
         (199, NULL, 1, 'subject_delete', 'Delete a subject'),
         (200, NULL, 1, 'subject_list', 'List the subjects'),
-        (201, NULL, 1, 'subject_manage', 'Manage the subjects');
+        (201, NULL, 1, 'subject_manage', 'Manage the subjects'),
+        (202, 4, 1, 'ad_read_self', 'View its own Ad');
         ");
 
 
@@ -95,7 +96,9 @@ final class Version20200320144000 extends AbstractMigration
         (201,198),
         (201,199),
         (201,200),
-        (10,201);
+        (10,201),
+        (4,202),
+        (202,34);
         ');
     }
 
