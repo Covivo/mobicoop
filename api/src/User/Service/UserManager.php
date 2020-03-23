@@ -210,13 +210,13 @@ class UserManager
         }
 
         if (is_array($user->getCommunitiesId()) && count($user->getCommunitiesId()) > 0) {
-            foreach ($user->getCommunitiesId()as $community) {
+            foreach ($user->getCommunitiesId() as $community) {
                 $communityUser = new CommunityUser();
                 $communityUser->setUser($user);
                 $communityUser->setCommunity($this->communityRepository->find($community));
                 $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
+                $this->entityManager->persist($communityUser);
             }
-            $this->entityManager->persist($communityUser);
             $this->entityManager->flush();
         }
 

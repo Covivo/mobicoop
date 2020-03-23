@@ -786,20 +786,6 @@ class User implements UserInterface, EquatableInterface
     */
     private $communitiesId;
 
-    public function getCommunitiesId(): ?array
-    {
-        return $this->communitiesId;
-    }
-
-    public function setcommunitiesId(array $communitiesId): self
-    {
-        $this->communitiesId = $communitiesId;
-
-        return $this;
-    }
-
-  
-
     /**
      * @var ArrayCollection|null The asks made for this user.
      *
@@ -1739,6 +1725,18 @@ class User implements UserInterface, EquatableInterface
                 $communityUser->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCommunitiesId(): ?array
+    {
+        return $this->communitiesId;
+    }
+
+    public function setcommunitiesId(array $communitiesId): self
+    {
+        $this->communitiesId = $communitiesId;
 
         return $this;
     }

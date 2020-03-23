@@ -82,16 +82,17 @@
 
             <!--STEP 3 Community-->
             <v-stepper-step
+              v-if="communityShow"
               :step="3"
               editable
               edit-icon
             />
-            <v-divider />
+            <v-divider v-if="communityShow" />
 
 
             <!--STEP 4 hometown-->
             <v-stepper-step
-              :step="4"
+              :step="(communityShow) ? 4 : 3"
               editable
               edit-icon
             />
@@ -106,7 +107,7 @@
               ref="step 1"
               v-model="step1"
               class="pb-2"
-              @submit.prevent="submit"
+              @submit.prevent
             >
               <v-text-field
                 id="email"
@@ -169,7 +170,7 @@
               ref="step 2"
               v-model="step2"
               class="pb-2"
-              @submit.prevent="submit"
+              @submit.prevent
             >
               <v-text-field
                 v-model="form.givenName"
@@ -254,6 +255,7 @@
           <!--STEP 3 Community-->
         
           <v-stepper-content
+            v-if="communityShow"
             step="3"
           >
             <v-row
@@ -266,7 +268,7 @@
               ref="form"
               v-model="step3"
               class="pb-2"
-              @submit.prevent="submit"
+              @submit.prevent
             >
               <v-row
                 align="center"
@@ -274,7 +276,6 @@
                 class="mt-2"
               >
                 <v-col
-                  v-if="communityShow"
                   cols="12"
                 >
                   <v-autocomplete
@@ -332,7 +333,6 @@
                       class="my-13"
                       color="secondary"
                       type="submit"
-
                       @click="nextStep(3)"
                     >
                       {{ $t('ui.button.next') }}
@@ -345,16 +345,15 @@
           
 
           <!--STEP 4 hometown-->
-        
           <v-stepper-content
-            step="4"
+            :step="(communityShow) ? 4 : 3"
           >
             <v-form
               id="step4"
               ref="form"
               v-model="step4"
               class="pb-2"
-              @submit.prevent="submit"
+              @submit.prevent
             >
               <GeoComplete
                 name="homeAddress"
@@ -554,9 +553,9 @@ export default {
         idFacebook:null,
         communities:[]
       },
+  
       selectedCommunities: this.communities,
       locale: this.$i18n.locale
-
     };
   },
   computed : {
@@ -595,7 +594,6 @@ export default {
     //get scroll target
     this.container = document.getElementById ( "scroll-target" ),
     this.getCommunities()
-
   },
   methods: {
     maxDate() {
@@ -622,7 +620,7 @@ export default {
           birthDay:this.form.date,
           address:this.form.homeAddress,
           idFacebook:this.form.idFacebook,
-          communities:this.form.communities
+          communities:this.selectedCommunities
         },{
           headers:{
             'content-type': 'application/json'
@@ -650,7 +648,6 @@ export default {
       this.form.givenName = data.first_name;
       this.form.familyName = data.last_name;
       this.form.idFacebook = data.id;
-      this.form.communities = data.id;
 
     },
     checkAdult (value) {

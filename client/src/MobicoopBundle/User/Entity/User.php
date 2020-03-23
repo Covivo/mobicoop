@@ -363,18 +363,6 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     */
     private $communitiesId;
 
-    public function getCommunitiesId(): ?array
-    {
-        return $this->communitiesId;
-    }
-
-    public function setcommunitiesId(array $communitiesId): self
-    {
-        $this->communitiesId = $communitiesId;
-
-        return $this;
-    }
-
     /**
      * @var string|null the unsubscribe message we return by api
      * @Groups({"post","put"})
@@ -1042,6 +1030,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     public function setFacebookId(?string $facebookId): self
     {
         $this->facebookId = $facebookId;
+        return $this;
+    }
+
+    public function getCommunitiesId(): ?array
+    {
+        return $this->communitiesId;
+    }
+
+    public function setcommunitiesId(array $communitiesId): self
+    {
+        $this->communitiesId = $communitiesId;
+
         return $this;
     }
 

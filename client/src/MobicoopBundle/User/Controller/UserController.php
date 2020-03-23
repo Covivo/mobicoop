@@ -117,7 +117,6 @@ class UserController extends AbstractController
 
         $user = new User();
         $address = new Address();
-        $communityUser = new CommunityUser();
 
         $error = false;
 
@@ -159,12 +158,11 @@ class UserController extends AbstractController
             if (!is_null($data['idFacebook'])) {
                 $user->setFacebookId($data['idFacebook']);
             }
+            
 
-
-            if (is_array($data['communities']) && !is_null($data['communities'])) {
-                $user->setcommunitiesId($data['communities']);  
+            if (is_array($data['communities'])){
+                $user->setcommunitiesId($data['communities'] );
             }
-
 
             // create user in database
             $data = $userManager->createUser($user);
@@ -183,9 +181,9 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * User registration email validation
-     */
+    // /**
+    //  * User registration email validation
+    //  */
     public function userSignUpValidation($token, $email, UserManager $userManager, Request $request)
     {
         $error = "";
