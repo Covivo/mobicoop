@@ -575,7 +575,7 @@ export default {
       return true;
     },
     returnTimeIsValid (){
-      return moment(this.returnDate + ' ' + this.returnTime).isValid()
+      return moment(this.returnDate + ' ' + this.returnTime).isValid() && moment(this.outwardDate + ' ' + this.outwardTime) && !isEmpty(this.route)
         ? moment(this.returnDate + ' ' + this.returnTime) >= moment(this.outwardDate + ' ' + this.outwardTime).add(this.route.direction.duration, 'seconds')
         : null;
     },
