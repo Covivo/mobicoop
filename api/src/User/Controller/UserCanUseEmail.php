@@ -46,16 +46,16 @@ class UserCanUseEmail
         $this->request = $request->getCurrentRequest();
     }
 
-   /**
-    * This method is invoked whan we check if the email is already used.
-    *
-    * @return void
-    */
+    /**
+     * This method is invoked whan we check if the email is already used.
+     *
+     * @return void
+     */
     public function __invoke()
     {
         if ($this->userManager->getUserByEmail($this->request->get('email'))) {
             throw new \InvalidArgumentException($this->translator->trans("Email already in use"));
         }
-       return null;
-    }   
+        return null;
+    }
 }

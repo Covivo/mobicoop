@@ -719,7 +719,7 @@ class UserManager
      *
      * @param string $email
      * @return void
-     */ 
+     */
     public function checkEmail(string $email)
     {
         $response = $this->dataProvider->getSpecialCollection('checkEmail', ['email' => $email]);
