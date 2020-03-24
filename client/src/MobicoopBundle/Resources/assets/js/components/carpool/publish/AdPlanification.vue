@@ -399,6 +399,7 @@
                     format="24hr"
                     header-color="secondary"
                     :disabled="item.returnDisabled"
+                    :min="item.minReturnTime ? item.minReturnTime : null"
                     @click:minute="closeReturnTime(item.id)"
                     @change="change()"
                   />
@@ -643,6 +644,9 @@ export default {
       this.returnTime = null;
     },
     blockTimeRegular(e,id){
+      let timeSplitted = e.split(':');
+      this.schedules[id]["minReturnTime"] = moment().hours(timeSplitted[0]).minutes(timeSplitted[1]).add(this.route.direction.duration, 'seconds').format("HH:mm");
+
       // test to allow return time to be set before outward time for regular work
       if(id !== 0 && this.schedules[id-1]['returnTime'] === null) {
         // console.error("");
@@ -828,6 +832,7 @@ export default {
           break;
         }
       }
+      this.change();
     },
     removeSchedule(id) {
       for (var i in this.schedules) {
