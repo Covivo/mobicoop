@@ -26,7 +26,10 @@ namespace App\Carpool\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
+use App\User\Entity\User;
 use Symfony\Component\Validator\Constraints as Assert;
+use CrEOF\Spatial\PHP\Types\Geometry\LineString;
+use CrEOF\Spatial\PHP\Types\Geometry\Point;
 
 /**
  * Carpooling : carpool proof.
@@ -128,20 +131,34 @@ class CarpoolProof
     private $dropOffDriverAddress;
 
     /**
-     * @var Direction|null Driver direction.
+     * @var Direction|null The direction related with the proof.
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
-    private $directionDriver;
+    private $direction;
 
     /**
-     * @var Direction|null Passenger direction.
-     *
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @var string History of geographic points as a linestring, used to compute the direction. Updated at each new position. Can be emptied when the carpool is finished.
+     * @ORM\Column(type="linestring", nullable=true)
      */
-    private $directionPassenger;
+    private $geoJsonPoints;
+
+    /**
+     * @var User|null The driver, used to keep a link to the driver if the passenger deletes its ad (the ask may be deleted aswell).
+     *
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="carpoolProofsAsDriver")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $driver;
+
+    /**
+     * @var User|null The driver, used to keep a link to the driver if the passenger deletes its ad (the ask may be deleted aswell).
+     *
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="carpoolProofsAsPassenger")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $passenger;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -156,6 +173,11 @@ class CarpoolProof
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedDate;
+
+    /**
+     * @var array|null The array of points as Address objects. Used to create the geoJsonPoints.
+     */
+    private $points;
 
     public function getId(): ?int
     {
@@ -284,27 +306,51 @@ class CarpoolProof
         return $this;
     }
 
-    public function getDirectionDriver(): ?Direction
+    public function getDirection(): ?Direction
     {
-        return $this->directionDriver;
+        return $this->direction;
     }
     
-    public function setDirectionDriver(?Direction $directionDriver): self
+    public function setDirection(?Direction $direction): self
     {
-        $this->directionDriver = $directionDriver;
+        $this->direction = $direction;
         
         return $this;
     }
     
-    public function getDirectionPassenger(): ?Direction
+    public function getGeoJsonPoints()
     {
-        return $this->directionPassenger;
+        return $this->geoJsonPoints;
     }
     
-    public function setDirectionPassenger(?Direction $directionPassenger): self
+    public function setGeoJsonPoints($geoJsonPoints): self
     {
-        $this->directionPassenger = $directionPassenger;
+        $this->geoJsonPoints = $geoJsonPoints;
         
+        return $this;
+    }
+
+    public function getDriver(): ?User
+    {
+        return $this->driver;
+    }
+
+    public function setDriver(?User $driver): self
+    {
+        $this->driver = $driver;
+
+        return $this;
+    }
+
+    public function getPassenger(): ?User
+    {
+        return $this->passenger;
+    }
+
+    public function setPassenger(?User $passenger): self
+    {
+        $this->passenger = $passenger;
+
         return $this;
     }
 
@@ -329,6 +375,18 @@ class CarpoolProof
     {
         $this->updatedDate = $updatedDate;
 
+        return $this;
+    }
+
+    public function getPoints(): ?array
+    {
+        return $this->points;
+    }
+    
+    public function setPoints(array $points): self
+    {
+        $this->points = $points;
+        
         return $this;
     }
 
@@ -362,5 +420,22 @@ class CarpoolProof
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \Datetime());
+    }
+
+    /**
+     * GeoJson representation of the points.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function setAutoGeoJsonPoints()
+    {
+        if (!is_null($this->getPoints())) {
+            $arrayPoints = [];
+            foreach ($this->getPoints() as $address) {
+                $arrayPoints[] = new Point($address->getLongitude(), $address->getLatitude());
+            }
+            $this->setGeoJsonPoints(new LineString($arrayPoints));
+        }
     }
 }

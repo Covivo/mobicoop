@@ -84,6 +84,7 @@ use App\Import\Entity\UserImport;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Entity\Delivery;
 use App\Auth\Entity\UserAuthAssignment;
+use App\Carpool\Entity\CarpoolProof;
 use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
@@ -969,6 +970,20 @@ class User implements UserInterface, EquatableInterface
     private $userDelegate;
 
     /**
+     * @var ArrayCollection|null The carpool proofs of the user as a driver.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\CarpoolProof", mappedBy="driver")
+     */
+    private $carpoolProofsAsDriver;
+
+    /**
+     * @var ArrayCollection|null The carpool proofs of the user as a driver.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\CarpoolProof", mappedBy="passenger")
+     */
+    private $carpoolProofsAsPassenger;
+
+    /**
      * @var string|null Token for unsubscribee the user from receiving email
      *
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -1020,6 +1035,8 @@ class User implements UserInterface, EquatableInterface
         $this->userNotifications = new ArrayCollection();
         $this->campaigns = new ArrayCollection();
         $this->deliveries = new ArrayCollection();
+        $this->carpoolProofsAsDriver = new ArrayCollection();
+        $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->roles = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
@@ -2081,6 +2098,62 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($delivery->getUser() === $this) {
                 $delivery->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCarpoolProofsAsDriver()
+    {
+        return $this->carpoolProofsAsDriver->getValues();
+    }
+
+    public function addCarpoolProofsAsDriver(CarpoolProof $carpoolProofAsDriver): self
+    {
+        if (!$this->carpoolProofsAsDriver->contains($carpoolProofAsDriver)) {
+            $this->carpoolProofsAsDriver->add($carpoolProofAsDriver);
+            $carpoolProofAsDriver->setDriver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCarpoolProofsAsDriver(CarpoolProof $carpoolProofAsDriver): self
+    {
+        if ($this->carpoolProofsAsDriver->contains($carpoolProofAsDriver)) {
+            $this->carpoolProofsAsDriver->removeElement($carpoolProofAsDriver);
+            // set the owning side to null (unless already changed)
+            if ($carpoolProofAsDriver->getDriver() === $this) {
+                $carpoolProofAsDriver->setDriver(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCarpoolProofsAsPassenger()
+    {
+        return $this->carpoolProofsAsPassenger->getValues();
+    }
+
+    public function addCarpoolProofsAsPassenger(CarpoolProof $carpoolProofAsPassenger): self
+    {
+        if (!$this->carpoolProofsAsPassenger->contains($carpoolProofAsPassenger)) {
+            $this->carpoolProofsAsPassenger->add($carpoolProofAsPassenger);
+            $carpoolProofAsPassenger->setPassenger($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCarpoolProofsAsPassenger(CarpoolProof $carpoolProofAsPassenger): self
+    {
+        if ($this->carpoolProofsAsPassenger->contains($carpoolProofAsPassenger)) {
+            $this->carpoolProofsAsPassenger->removeElement($carpoolProofAsPassenger);
+            // set the owning side to null (unless already changed)
+            if ($carpoolProofAsPassenger->getPassenger() === $this) {
+                $carpoolProofAsPassenger->setPassenger(null);
             }
         }
 

@@ -43,7 +43,6 @@ use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\GeoTools;
-use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Carpool\Entity\Result;
@@ -414,6 +413,9 @@ class DynamicManager
         // (and update the proposal direction (= direction from the current point to the destination))
         $dynamic->setProposal($this->proposalManager->updateMatchingsForProposal($dynamic->getProposal(), $address));
 
+        // update the proof if there's one pending
+        $this->updateProofsDirectionForDynamic($dynamic);
+
         // persist the updates
         $this->entityManager->persist($dynamic->getProposal());
         $this->entityManager->flush();
@@ -471,7 +473,9 @@ class DynamicManager
                         'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice(),
                         'duration' => $matching->getDropOffDuration()-$matching->getPickUpDuration(),
                         'pickUpDuration' => $pickUpDuration,
-                        'pickUpDistance' => $pickUpDistance
+                        'pickUpDistance' => $pickUpDistance,
+                        'detourDistance' => $matching->getDetourDistance(),
+                        'detourDuration' => $matching->getDetourDuration()
                     ];
                 }
             }
@@ -507,7 +511,9 @@ class DynamicManager
                         'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice(),
                         'duration' => $matching->getDropOffDuration()-$matching->getPickUpDuration(),
                         'pickUpDuration' => $pickUpDuration,
-                        'pickUpDistance' => $pickUpDistance
+                        'pickUpDistance' => $pickUpDistance,
+                        'detourDistance' => $matching->getDetourDistance(),
+                        'detourDuration' => $matching->getDetourDuration()
                     ];
                 }
             }
@@ -828,17 +834,32 @@ class DynamicManager
 
         $carpoolProof = new CarpoolProof();
         $carpoolProof->setAsk($ask);
+        $carpoolProof->setDriver($ask->getUserRelated());
+        $carpoolProof->setPassenger($ask->getUser());
+
+        // direction
+        $direction = new Direction();
+        $direction->setDistance(0);
+        $direction->setDuration(0);
+        $direction->setDetail("");
+        $direction->setSnapped("");
+        $direction->setFormat("Dynamic");
 
         // search the role of the current user
         if ($ask->getUser()->getId() == $dynamicProof->getUser()->getId()) {
             // the user is passenger
             $carpoolProof->setPickUpPassengerDate(new \DateTime('UTC'));
             $carpoolProof->setPickUpPassengerAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProof->getLatitude(),'longitude'=>$dynamicProof->getLongitude()]));
+            $carpoolProof->setPoints([$carpoolProof->getPickUpPassengerAddress()]);
+            $direction->setPoints([$carpoolProof->getPickUpPassengerAddress()]);
         } else {
             // the user is driver
             $carpoolProof->setPickUpDriverDate(new \DateTime('UTC'));
             $carpoolProof->setPickUpDriverAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProof->getLatitude(),'longitude'=>$dynamicProof->getLongitude()]));
+            $carpoolProof->setPoints([$carpoolProof->getPickUpDriverAddress()]);
+            $direction->setPoints([$carpoolProof->getPickUpDriverAddress()]);
         }
+        $carpoolProof->setDirection($direction);
 
         $this->entityManager->persist($carpoolProof);
         $this->entityManager->flush();
@@ -873,6 +894,7 @@ class DynamicManager
         }
 
         // TODO : set the new origin and destination waypoints for the passenger => pickup and dropoff !!
+
 
         // we perform different actions depending on the role and the moment
         switch ($actor) {
@@ -985,6 +1007,115 @@ class DynamicManager
         return $dynamicProofData;
     }
 
+    /**
+     * Update the direction of the related proofs of a dynamic ad (if it exists).
+     * For now we only update the direction using the driver position updates to avoid mismatches.
+     *
+     * @param Dynamic $dynamic  The dynamic ad
+     * @return void
+     */
+    private function updateProofsDirectionForDynamic(Dynamic $dynamic)
+    {
+        // first we search if there are asks related to the dynamic ad
+        if ($dynamic->getRole() == Dynamic::ROLE_DRIVER) {
+            // the user is driver
+            foreach ($dynamic->getProposal()->getMatchingRequests() as $matching) {
+                /**
+                 * @var Matching $matching
+                 */
+                foreach ($matching->getAsks() as $ask) {
+                    /**
+                     * @var Ask $ask
+                     */
+                    if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER && !is_null($ask->getCarpoolProof()) && !is_null($ask->getCarpoolProof()->getPickUpDriverAddress())) {
+                        // we update the direction if the driver has made its pickup certification
+                        $this->updateProofDirection($ask->getCarpoolProof(), $dynamic->getLongitude(), $dynamic->getLatitude());
+                    }
+                }
+            }
+        }
+        // uncomment the following to use also the passenger position
+        // } else {
+        //     // the user is passenger
+        //     foreach ($dynamic->getProposal()->getMatchingOffers() as $matching) {
+        //         /**
+        //          * @var Matching $matching
+        //          */
+        //         foreach ($matching->getAsks() as $ask) {
+        //             /**
+        //              * @var Ask $ask
+        //              */
+        //             if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER && !is_null($ask->getCarpoolProof()) && !is_null($ask->getCarpoolProof()->getPickUpPassengerAddress())) {
+        //                 $this->updateProofDirection($ask->getCarpoolProof(),$dynamic->getLongitude(), $dynamic->getLatitude());
+        //             }
+        //         }
+        //     }
+        // }
+    }
+
+    /**
+     * Update a carpool proof direction
+     *
+     * @param CarpoolProof $carpoolProof    The carpool proof
+     * @param float $longitude              The longitude of the new point
+     * @param float $latitude               The latitude of the new point
+     * @return void
+     */
+    private function updateProofDirection(CarpoolProof $carpoolProof, float $longitude, float $latitude)
+    {
+        // first we get all the past points that are stored as a linestring in the geoJsonPoints property
+        $points = $carpoolProof->getGeoJsonPoints()->getPoints();
+        // then we add the last point (must be an object that have longitude and latitude properties, like an Address)
+        $address = new Address();
+        $address->setLatitude($latitude);
+        $address->setLongitude($longitude);
+        $points[] = $address;
+        $carpoolProof->setPoints($points);
+        // here we force the update because maybe none of the properties from the entity could be updated, but we need to compute GeoJson
+        $carpoolProof->setAutoUpdatedDate();
+
+        // we create an array of Addresses to compute the real direction using the georouter
+        $addresses = [];
+        foreach ($points as $point) {
+            $waypoint = new Address();
+            $waypoint->setLatitude($point->getLatitude());
+            $waypoint->setLongitude($point->getLongitude());
+            $addresses[] = $waypoint;
+        }
+        if ($routes = $this->geoRouter->getRoutes($addresses)) {
+            // we have a direction
+            /**
+             * @var Direction $newDirection
+             */
+            $newDirection = $routes[0];
+            $carpoolProof->getDirection()->setDistance($newDirection->getDistance());
+            $carpoolProof->getDirection()->setDuration($newDirection->getDuration());
+            $carpoolProof->getDirection()->setAscend($newDirection->getAscend());
+            $carpoolProof->getDirection()->setDescend($newDirection->getDescend());
+            $carpoolProof->getDirection()->setBboxMinLon($newDirection->getBboxMinLon());
+            $carpoolProof->getDirection()->setBboxMinLat($newDirection->getBboxMinLat());
+            $carpoolProof->getDirection()->setBboxMaxLon($newDirection->getBboxMaxLon());
+            $carpoolProof->getDirection()->setBboxMaxLat($newDirection->getBboxMaxLat());
+            $carpoolProof->getDirection()->setDetail($newDirection->getDetail());
+            $carpoolProof->getDirection()->setFormat($newDirection->getFormat());
+            $carpoolProof->getDirection()->setSnapped($newDirection->getSnapped());
+            $carpoolProof->getDirection()->setBearing($newDirection->getBearing());
+            // the following is needed to compute the geoJson in the direction automatic update trigger
+            $carpoolProof->getDirection()->setPoints($routes[0]->getPoints());
+            $carpoolProof->getDirection()->setSaveGeoJson(true);
+            $carpoolProof->getDirection()->setDetailUpdatable(true);
+            // here we force the update because maybe none of the properties from the entity could be updated, but we need to compute GeoJson
+            $carpoolProof->getDirection()->setAutoUpdatedDate();
+        } else {
+            // the last point introduced an error as we couldn't compute the direction !
+            // we send an exeption...
+            throw new DynamicException("Bad geographic position... Point ignored !");
+        }
+
+        $this->entityManager->persist($carpoolProof);
+        $this->entityManager->flush();
+    }
+
 
 
 
@@ -995,6 +1126,7 @@ class DynamicManager
 
     /**
      * Get an address using an array. The array may contain only some informations like latitude or longitude.
+     * The other informations are retrieved from the GeoSearcher.
      *
      * @param array $point  The point
      * @return Address
