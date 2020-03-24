@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -29,8 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Entity\Proposal;
-use App\User\Entity\User;
-use App\Solidary\Controller\SolidaryProposalPost;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A solidary record.
@@ -40,17 +39,10 @@ use App\Solidary\Controller\SolidaryProposalPost;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidary"}},
  *      },
- *      collectionOperations={
- *     "get",
- *     "post"={
- *              "method"="POST",
- *              "path"="/solidaries",
- *              "controller"=SolidaryProposalPost::class,
- *          },
- *     },
+ *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
  */
@@ -62,7 +54,7 @@ class Solidary
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $id;
 
@@ -71,62 +63,31 @@ class Solidary
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $status;
 
     /**
-     * @var bool Social assist.
+     * @var string Detail for regular ask.
      *
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @ORM\Column(type="string", nullable=true, length=255)
+     * @Groups({"readSolidary","writeSolidary"})
      */
-    private $assisted;
+    private $regularDetail;
 
     /**
-     * @var string Structure of the solidary record.
+     * @var \DateTimeInterface Deadline date of the solidary record.
      *
-     * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readSolidary","writeSolidary"})
      */
-    private $structure;
-
-    /**
-     * @var string Subject of the solidary record.
-     *
-     * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
-     */
-    private $subject;
-
-    /**
-     * @var Proposal The proposal.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     */
-    private $proposal;
-
-    /**
-     * @var User The user related with the solidary record.
-     *
-     * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solidaries")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read", "write"})
-     * @MaxDepth(1)
-     */
-    private $user;
+    private $deadlineDate;
 
     /**
      * @var \DateTimeInterface Creation date of the solidary record.
      *
      * @ORM\Column(type="datetime")
-     * @Groups("read")
+     * @Groups({"readSolidary"})
      */
     private $createdDate;
 
@@ -134,9 +95,73 @@ class Solidary
      * @var \DateTimeInterface Updated date of the solidary record.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("read")
+     * @Groups({"readSolidary"})
      */
     private $updatedDate;
+
+    /**
+     * @var SolidaryUserStructure The SolidaryUserStructure related with the solidary record.
+     *
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="solidaries", cascade={"persist","remove"})
+     * @Groups({"readSolidary", "writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $solidaryUserStructure;
+
+    /**
+     * @var Proposal The proposal.
+     *
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $proposal;
+
+    /**
+     * @var Structure Structure of the solidary record.
+     *
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaries", cascade={"persist","remove"})
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $structure;
+
+    /**
+     * @var Subject Subject of the solidary record.
+     *
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="solidaries", cascade={"persist","remove"})
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $subject;
+
+    /**
+     * @var ArrayCollection|null The special needs for this solidary record.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $needs;
+
+    /**
+     * @var ArrayCollection|null Solidary solutions.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $solidarySolutions;
+
+    public function __construct()
+    {
+        $this->needs = new ArrayCollection();
+        $this->solidarySolutions = new ArrayCollection();
+        $this->proofs = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -155,63 +180,27 @@ class Solidary
         return $this;
     }
 
-    public function isAssisted(): ?bool
+    public function getRegularDetail(): ?string
     {
-        return $this->assisted;
-    }
-    
-    public function setAssisted(bool $isAssisted): self
-    {
-        $this->assisted = $isAssisted;
-        
-        return $this;
+        return $this->regularDetail;
     }
 
-    public function getStructure(): ?string
+    public function setRegularDetail(string $regularDetail): self
     {
-        return $this->structure;
-    }
-
-    public function setStructure(string $structure): self
-    {
-        $this->structure = $structure;
+        $this->regularDetail = $regularDetail;
 
         return $this;
     }
 
-    public function getSubject(): ?string
+    public function getDeadlineDate(): ?\DateTimeInterface
     {
-        return $this->subject;
+        return $this->deadlineDate;
     }
 
-    public function setSubject(string $subject): self
+    public function setDeadlineDate(\DateTimeInterface $deadlineDate): self
     {
-        $this->subject = $subject;
+        $this->deadlineDate = $deadlineDate;
 
-        return $this;
-    }
-
-    public function getProposal(): Proposal
-    {
-        return $this->proposal;
-    }
-    
-    public function setProposal(?Proposal $proposal): self
-    {
-        $this->proposal = $proposal;
-        
-        return $this;
-    }
-    
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-        
         return $this;
     }
 
@@ -236,6 +225,101 @@ class Solidary
     {
         $this->updatedDate = $updatedDate;
 
+        return $this;
+    }
+
+    public function getSolidaryUserStructure(): ?SolidaryUserStructure
+    {
+        return $this->solidaryUserStructure;
+    }
+
+    public function setSolidaryUserStructure(?SolidaryUserStructure $solidaryUserStructure): self
+    {
+        $this->solidaryUserStructure = $solidaryUserStructure;
+        
+        return $this;
+    }
+
+    public function getProposal(): Proposal
+    {
+        return $this->proposal;
+    }
+    
+    public function setProposal(?Proposal $proposal): self
+    {
+        $this->proposal = $proposal;
+        
+        return $this;
+    }
+
+
+    public function getStructure(): ?Structure
+    {
+        return $this->structure;
+    }
+
+    public function setStructure(?Structure $structure): self
+    {
+        $this->structure = $structure;
+
+        return $this;
+    }
+
+    public function getSubject(): ?Subject
+    {
+        return $this->subject;
+    }
+
+    public function setSubject(?Subject $subject): self
+    {
+        $this->subject = $subject;
+
+        return $this;
+    }
+
+    public function getNeeds()
+    {
+        return $this->needs->getValues();
+    }
+
+    public function addNeed(Need $need): self
+    {
+        if (!$this->needs->contains($need)) {
+            $this->needs->add($need);
+        }
+
+        return $this;
+    }
+
+    public function removeNeed(Need $need): self
+    {
+        if ($this->needs->contains($need)) {
+            $this->needs->removeElement($need);
+        }
+
+        return $this;
+    }
+
+    public function getSolidarySolutions()
+    {
+        return $this->solidarySolutions->getValues();
+    }
+    
+    public function addSolidarySolution(SolidarySolution $solidarySolution): self
+    {
+        if (!$this->solidarySolutions->contains($solidarySolution)) {
+            $this->solidarySolutions[] = $solidarySolution;
+        }
+        
+        return $this;
+    }
+    
+    public function removeSolidarySolution(SolidarySolution $solidarySolution): self
+    {
+        if ($this->solidarySolutions->contains($solidarySolution)) {
+            $this->solidarySolutions->removeElement($solidarySolution);
+        }
+        
         return $this;
     }
 

@@ -47,6 +47,7 @@ use GuzzleHttp\HandlerStack;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\JwtMiddleware;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\JwtToken;
+use Mobicoop\Bundle\MobicoopBundle\Api\Exception\ApiTokenException;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\JwtManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Strategy\Auth\JsonAuthStrategy;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -88,6 +89,7 @@ class DataProvider
     private $password;
     private $authPath;
     private $loginPath;
+    private $refreshPath;
     private $tokenId;
     private $authLoginPath;
     private $session;
@@ -96,6 +98,7 @@ class DataProvider
      * @var JWTToken $jwtToken
      */
     private $jwtToken;
+    private $refreshToken;
 
     private $client;
     private $resource;
@@ -117,13 +120,14 @@ class DataProvider
      * @param Deserializer $deserializer    The deserializer
      * @param SessionInterface  $session    The session
      */
-    public function __construct(string $uri, string $username, string $password, string $authPath, string $loginPath, string $tokenId, Deserializer $deserializer, SessionInterface $session)
+    public function __construct(string $uri, string $username, string $password, string $authPath, string $loginPath, string $refreshPath, string $tokenId, Deserializer $deserializer, SessionInterface $session)
     {
         $this->uri = $uri;
         $this->username = $username;
         $this->password = $password;
         $this->authPath = $authPath;
         $this->loginPath = $loginPath;
+        $this->refreshPath = $refreshPath;
         $this->tokenId = $tokenId;
         $this->authLoginPath = $authPath;
         $this->session = $session;
@@ -132,12 +136,20 @@ class DataProvider
 
         // check an existing jwt token
         if ($apiToken = $this->session->get('apiToken')) {
-            // there's an api token in session, we use it !
-            if (!$apiToken->isValid()) {
-                $this->session->remove('apiToken');
-            } else {
+            // there's an api token in session
+            if ($apiToken->isValid()) {
+                // the token is still valid, we use it !
                 $this->jwtToken = $apiToken;
                 $this->private = true;
+            } else {
+                // the token is invalid, we remove it from session
+                $this->session->remove('apiToken');
+                // is there a refresh token ?
+                if ($refreshToken = $this->session->get('apiRefreshToken')) {
+                    // there's a refresh token in session
+                    $this->refreshToken = $refreshToken;
+                    $this->private = true;
+                }
             }
         } else {
             // check if there's a global api token in system cache
@@ -153,6 +165,11 @@ class DataProvider
                     // clear cache
                     $this->cache->deleteItem($this->tokenId.'.jwt.token');
                 }
+            }
+            // check if there's a global api refresh token in system cache
+            $cachedRefreshToken = $this->cache->getItem($this->tokenId.'.jwt.refresh.token');
+            if ($cachedRefreshToken->isHit()) {
+                $this->refreshToken = $cachedRefreshToken->get();
             }
         }
         
@@ -191,7 +208,7 @@ class DataProvider
     }
 
     /**
-     * Set the authentication to private (for user authentication : change the epi login path and the token storage system)
+     * Set the authentication to private (for user authentication : change the api login path and the token storage system)
      *
      * @param boolean $private  True to set to private
      * @return void
@@ -202,6 +219,7 @@ class DataProvider
         if ($private) {
             $this->authLoginPath = $this->loginPath;
             $this->jwtToken = null;
+            $this->refreshToken = null;
         } else {
             $this->authLoginPath = $this->authPath;
         }
@@ -217,11 +235,20 @@ class DataProvider
     private function getHeaders(array $headers=[])
     {
         if (is_null($this->jwtToken)) {
-            $token = $this->getJwtToken();
+            $tokens = $this->getJwtToken();
+            
+            if (is_null($tokens) || !is_array($tokens)) {
+                throw new ApiTokenException("Empty API token.");
+            }
+
+            if (!isset($tokens['token']) || !isset($tokens['refreshToken'])) {
+                throw new ApiTokenException("Empty API or refresh token.");
+            }
+            
             $expiration = null;
 
             // decode token to get the expiration
-            if (count($jwtParts = explode('.', $token)) === 3
+            if (count($jwtParts = explode('.', $tokens['token'])) === 3
                 && is_array($payload = json_decode(base64_decode($jwtParts[1]), true))
                 // https://tools.ietf.org/html/rfc7519.html#section-4.1.4
                 && array_key_exists('exp', $payload)
@@ -230,16 +257,21 @@ class DataProvider
                 $expiration = new \DateTime('@' . $payload['exp'], new \DateTimeZone('UTC'));
             }
 
-            $this->jwtToken = new JWTToken($this->getJwtToken(), $expiration);
+            $this->jwtToken = new JWTToken($tokens['token'], $expiration);
+            $this->refreshToken = $tokens['refreshToken'];
 
             if ($this->private) {
                 // private request, store in session
                 $this->session->set('apiToken', $this->jwtToken);
+                $this->session->set('apiRefreshToken', $this->refreshToken);
             } else {
                 // public request, store in system cache
                 $cachedToken = $this->cache->getItem($this->tokenId.'.jwt.token');
                 $cachedToken->set($this->jwtToken);
+                $cachedRefreshToken = $this->cache->getItem($this->tokenId.'.jwt.refresh.token');
+                $cachedRefreshToken->set($this->refreshToken);
                 $this->cache->save($cachedToken);
+                $this->cache->save($cachedRefreshToken);
             }
         }
 
@@ -260,26 +292,48 @@ class DataProvider
     /**
      * Call for an api jwt token
      *
-     * @return string|null  The token retrieved
+     * @return array|null  The token and refreshToken retrieved
      */
     private function getJwtToken()
     {
         $value = null;
-        try {
-            $clientResponse = $this->client->post($this->authLoginPath, [
-                        'headers' => ['accept' => 'application/json'],
-                        RequestOptions::JSON => [
-                            "username" => $this->username,
-                            "password" => $this->password
-                        ]
-                ]);
-            $value = json_decode((string) $clientResponse->getBody(), true);
-        } catch (ServerException $e) {
-            return null;
-        } catch (ClientException $e) {
-            return null;
+
+        // is there a refresh token ?
+        if ($this->refreshToken) {
+            try {
+                $clientResponse = $this->client->post($this->refreshPath, [
+                            'headers' => ['accept' => 'application/json'],
+                            RequestOptions::JSON => [
+                                "refreshToken" => $this->refreshToken
+                            ]
+                    ]);
+                $value = json_decode((string) $clientResponse->getBody(), true);
+            } catch (ServerException $e) {
+                throw new ApiTokenException("Unable to get an API token from refresh.");
+            } catch (ClientException $e) {
+                throw new ApiTokenException("Unable to get an API token from refresh.");
+            }
         }
-        return $value["token"];
+
+        if (is_null($value)) {
+            // no refresh token or refresh token expired
+            try {
+                $clientResponse = $this->client->post($this->authLoginPath, [
+                            'headers' => ['accept' => 'application/json'],
+                            RequestOptions::JSON => [
+                                "username" => $this->username,
+                                "password" => $this->password
+                            ]
+                    ]);
+                $value = json_decode((string) $clientResponse->getBody(), true);
+            } catch (ServerException $e) {
+                throw new ApiTokenException("Unable to get an API token.");
+            } catch (ClientException $e) {
+                throw new ApiTokenException("Unable to get an API token.");
+            }
+        }
+
+        return $value;
     }
 
     /**

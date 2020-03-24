@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,145 +21,121 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Entity;
+namespace App\Solidary\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-// use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Action\Entity\Action;
-use App\Solidary\Entity\Solidary;
-use App\Solidary\Entity\SolidaryMatching;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Animation action diary for a user.
+ * A special need for a solidary record.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * ApiResource(
+ * @ApiResource(
  *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
+ * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
  */
-class Diary
+class Need
 {
+    
     /**
-     * @var int $id The id of this diary action.
+     * @var int The id of this need.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @ApiProperty(identifier=true)
+     * @Groups("readSolidary")
      */
     private $id;
 
     /**
-     * @var Action The action.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Action\Entity\Action")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     */
-    private $action;
-        
-    /**
-     * @var User The user related with the action.
+     * @var string Label of the need.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="diaries")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read"})
-     * @MaxDepth(1)
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"readSolidary","writeSolidary"})
      */
-    private $user;
+    private $label;
 
     /**
-     * @var User The admin that makes the action.
+     * @var bool The need is not publicly available.
      *
-     * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="diariesAdmin")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read"})
-     * @MaxDepth(1)
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"readSolidary","writeSolidary"})
      */
-    private $admin;
+    private $private;
 
     /**
-     * @var Solidary|null The solidary record if the action concerns a solidary record.
+     * @var Solidary Solidary if the need was created for a specific solidary record.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Solidary")
-     * @Groups({"read","write"})
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof")
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $solidary;
 
     /**
-     * @var Solidary|null The solidary matching if the action concerns a solidary record matching.
+     * @var \DateTimeInterface Creation date.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching")
-     * @Groups({"read","write"})
-     */
-    private $solidaryMatching;
-
-    /**
-     * @var \DateTimeInterface Creation date of the diary action.
-     *
-     * @ORM\Column(type="datetime")
-     * @Groups("read")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the diary action.
+     * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("read")
      */
     private $updatedDate;
-
-    public function getId(): int
+    
+    public function getId(): ?int
     {
         return $this->id;
     }
-
-    public function getAction(): Action
-    {
-        return $this->action;
-    }
     
-    public function setAction(?Action $action): self
+    public function setId(int $id): self
     {
-        $this->action = $action;
+        $this->id = $id;
         
         return $this;
     }
     
-    public function getUser(): ?User
+    public function getLabel(): ?string
     {
-        return $this->user;
+        return $this->label;
     }
 
-    public function setUser(?User $user): self
+    public function setLabel(string $label): self
     {
-        $this->user = $user;
-        
+        $this->label = $label;
+
         return $this;
     }
 
-    public function getAdmin(): ?User
+    public function isPrivate(): ?bool
     {
-        return $this->admin;
+        return $this->private;
     }
-
-    public function setAdmin(?User $admin): self
+    
+    public function setPrivate(?bool $isPrivate): self
     {
-        $this->admin = $admin;
+        $this->private = $isPrivate;
         
         return $this;
     }
@@ -168,23 +144,11 @@ class Diary
     {
         return $this->solidary;
     }
-    
+
     public function setSolidary(?Solidary $solidary): self
     {
         $this->solidary = $solidary;
-        
-        return $this;
-    }
 
-    public function getSolidaryMatching(): ?SolidaryMatching
-    {
-        return $this->solidaryMatching;
-    }
-    
-    public function setSolidaryMatching(?SolidaryMatching $solidaryMatching): self
-    {
-        $this->solidaryMatching = $solidaryMatching;
-        
         return $this;
     }
 
@@ -213,7 +177,7 @@ class Diary
     }
 
     // DOCTRINE EVENTS
-
+    
     /**
      * Creation date.
      *

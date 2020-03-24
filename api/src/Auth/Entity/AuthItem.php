@@ -69,6 +69,8 @@ class AuthItem
     const ROLE_SOLIDARY_VOLUNTEER = 11;
     const ROLE_SOLIDARY_BENEFICIARY = 12;
     const ROLE_COMMUNICATION_MANAGER = 13;
+    const ROLE_SOLIDARY_VOLUNTEER_CANDIDATE = 171;
+    const ROLE_SOLIDARY_BENEFICIARY_CANDIDATE = 172;
     
     /**
      * @var int The id of this item.

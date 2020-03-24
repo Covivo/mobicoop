@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,38 +21,37 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Controller;
+namespace App\Auth\Controller;
 
-use App\Solidary\Entity\Solidary;
-use App\Solidary\Service\SolidaryManager;
-use App\TranslatorTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
+use App\Auth\Entity\AuthItem;
+use App\Auth\Service\AuthManager;
 
-class SolidaryProposalPost
+/**
+ * Controller class for return roles that user can acess
+ *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ */
+class PermissionsRoles
 {
-    use TranslatorTrait;
+    private $request;
+    private $authManager;
 
-    /**
-     * @var SolidaryManager
-     */
-    private $solidaryManager;
-
-    public function __construct(SolidaryManager $solidaryManager)
+    public function __construct(RequestStack $requestStack, AuthManager $authManager)
     {
-        $this->solidaryManager = $solidaryManager;
+        $this->request = $requestStack->getCurrentRequest();
+        $this->authManager = $authManager;
     }
 
     /**
-     * This method is invoked when a new ask is posted.
+     * This method is invoked when a permission check is asked.
      *
-     * @param Solidary $data
-     * @return Solidary
+     * @param array $data
+     * @return Response
      */
-    public function __invoke(Solidary $data): Solidary
+    public function __invoke(array $data): ?array
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Solidary id is provided"));
-        }
-//        $data = $this->solidaryManager->createSolidary($data);
-        return $data;
+        return $this->authManager->getAuthItems(AuthItem::TYPE_ROLE, true);
     }
 }

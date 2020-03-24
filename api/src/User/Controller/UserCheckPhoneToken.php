@@ -24,10 +24,7 @@
 namespace App\User\Controller;
 
 use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\RequestStack;
-use App\Auth\Service\PermissionManager;
 use Symfony\Component\HttpFoundation\Response;
-use App\Auth\Entity\Permission;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 

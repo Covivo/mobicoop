@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,40 +21,29 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Controller;
+namespace App\Auth\Rule;
 
-use App\TranslatorTrait;
-use App\User\Service\UserManager;
-use App\User\Entity\User;
+use App\Auth\Interfaces\AuthRuleInterface;
+use App\Solidary\Entity\Proof;
 
 /**
- * Controller class for user registration.
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ *  Check that the requester is the author of the related Ad
  */
-class UserRegistration
+class ProofOwner implements AuthRuleInterface
 {
-    use TranslatorTrait;
-    private $userManager;
-
-    public function __construct(UserManager $userManager)
-    {
-        $this->userManager = $userManager;
-    }
-
     /**
-     * This method is invoked when a new user registers.
-     * It returns the new user created.
-     *
-     * @param User $data
-     * @return User
+     * {@inheritdoc}
      */
-    public function __invoke(User $data): User
+    public function execute($requester, $item, $params)
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+        if (!isset($params['proof'])) {
+            return false;
         }
-        $data = $this->userManager->registerUser($data, true);
-        return $data;
+        
+        /**
+         * @var Proof $proof
+         */
+        $proof = $params['proof'];
+        return $proof->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getId() == $requester->getId();
     }
 }

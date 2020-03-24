@@ -45,7 +45,7 @@ import { fetchUtils } from 'react-admin';
 // function to search for a given permission
 export default (action) => {
 
-    let permissions = JSON.parse(localStorage.getItem('permissions'));
+    let permissions = JSON.parse(localStorage.getItem('permission'));
     return permissions ? (Object.values(permissions).indexOf(action) > -1) : false;
 
 }

@@ -26,8 +26,6 @@ namespace App\Security\EventListener;
 use App\User\Entity\User;
 use App\App\Entity\App;
 use App\Auth\Service\AuthManager;
-use App\User\Service\UserManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 use Symfony\Component\Security\Core\Security;
 
@@ -38,12 +36,12 @@ use Symfony\Component\Security\Core\Security;
 class JWTCreatedListener
 {
     private $authManager;
-    private $entityManager;
+    private $security;
 
-    public function __construct(AuthManager $authManager, EntityManagerInterface $entityManager)
+    public function __construct(AuthManager $authManager, Security $security)
     {
         $this->authManager = $authManager;
-        $this->entityManager = $entityManager;
+        $this->security = $security;
     }
 
     /**
@@ -54,19 +52,23 @@ class JWTCreatedListener
     public function onJWTCreated(JWTCreatedEvent $event)
     {
         $payload = $event->getData();
-
         /**
          * @var User|App $user
          */
         $user = $event->getUser();
         $payload['id'] = $user->getId();
         if ($user instanceof User) {
+            if (is_null($this->security->getUser())) {
+                // anonymous connection => maybe a refresh request
+                // we set the authManager user to the user related with the refreshed token
+                $this->authManager->setUser($user);
+            }
             $payload['admin'] = $this->authManager->isAuthorized('access_admin');
         }
         $event->setData($payload);
+        
         $header = $event->getHeader();
         $header['cty'] = 'JWT';
-
         $event->setHeader($header);
     }
 }
