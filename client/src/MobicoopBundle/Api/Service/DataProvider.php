@@ -311,7 +311,7 @@ class DataProvider
             } catch (ServerException $e) {
                 throw new ApiTokenException("Unable to get an API token from refresh.");
             } catch (ClientException $e) {
-              $this->cache->deleteItem($this->tokenId.'.jwt.refresh.token');
+                $this->cache->deleteItem($this->tokenId.'.jwt.refresh.token');
                 //throw new ApiTokenException("Unable to get an API token from refresh.");
             }
         }
