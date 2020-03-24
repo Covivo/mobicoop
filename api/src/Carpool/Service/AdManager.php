@@ -215,7 +215,7 @@ class AdManager
         $outwardCriteria->setFromDate($ad->getOutwardDate() ? $ad->getOutwardDate() : new \DateTime());
         if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
-            $outwardCriteria->setToDate($ad->getOutwardLimitDate() ? \DateTime::createFromFormat('Y-m-d', $ad->getOutwardLimitDate()) : null);
+            $outwardCriteria->setToDate($ad->getOutwardLimitDate() ? $ad->getOutwardLimitDate() : null);
             $hasSchedule = false;
             foreach ($ad->getSchedule() as $schedule) {
                 if ($schedule['outwardTime'] != '') {
@@ -406,7 +406,7 @@ class AdManager
             $returnCriteria->setFromDate($ad->getReturnDate() ? $ad->getReturnDate() : $outwardCriteria->getFromDate());
             if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
-                $returnCriteria->setToDate($ad->getReturnLimitDate() ? \DateTime::createFromFormat('Y-m-d', $ad->getReturnLimitDate()) : null);
+                $returnCriteria->setToDate($ad->getReturnLimitDate() ? $ad->getReturnLimitDate() : null);
                 $hasSchedule = false;
                 foreach ($ad->getSchedule() as $schedule) {
                     if (isset($schedule['returnTime']) && $schedule['returnTime'] != '') {
@@ -1053,21 +1053,18 @@ class AdManager
         $proposalAsks = $this->askManager->getAsksFromProposal($proposal);
 
         // major update
-        if ($oldAd->getPriceKm() !== $ad->getPriceKm()
-            || $oldAd->getFrequency() !== $ad->getFrequency()
-            || $oldAd->getRole() !== $ad->getRole()
-            || !$this->compareSchedules($oldAd->getSchedule(), $ad->getSchedule())
-            || !$this->compareWaypoints($oldAd->getOutwardWaypoints(), $ad->getOutwardWaypoints())
-        ) {
+        if ($this->checkForMajorUpdate($oldAd, $ad)) {
             // We use event to send notifications if Ad has asks
             if (count($proposalAsks) > 0) {
                 $event = new AdMajorUpdatedEvent($oldAd, $ad, $proposalAsks, $this->security->getUser());
                 $this->eventDispatcher->dispatch(AdMajorUpdatedEvent::NAME, $event);
             }
 
-            // todo delete old and create new
+            //todo: inverser
+            $ad = $this->createAd($ad);
+            $this->proposalManager->deleteProposal($proposal);
 
-            // minor update
+        // minor update
         } elseif ($oldAd->hasBike() !== $ad->hasBike()
             || $oldAd->hasBackSeats() !== $ad->hasBackSeats()
             || $oldAd->hasLuggage() !== $ad->hasLuggage()
@@ -1101,10 +1098,11 @@ class AdManager
             }
 
             $this->entityManager->persist($proposal);
+            $ad = $this->makeAd($proposal, $proposal->getUser()->getId());
         }
 
         // Pause is apart and do not needs notifications by now
-        if ($ad->isPaused() !== $oldAd->isPaused()) {
+        elseif ($ad->isPaused() !== $oldAd->isPaused()) {
             $proposal->setPaused($ad->isPaused());
             if ($proposal->getProposalLinked()) {
                 $proposal->getProposalLinked()->setPaused($ad->isPaused());
@@ -1114,36 +1112,137 @@ class AdManager
 
         $this->entityManager->flush();
 
-        $ad = $this->makeAd($proposal, $proposal->getUser()->getId());
+
         return $ad;
     }
 
     /**
-     * Compare Schedules
-     * array_diff, array_udiff etc provide strange behavior probably due to datetime, even with callback function
-     * @param $a
-     * @param $b
+     * Check if Ad update needs a major update and so, deleting then creating a new one
+     * @param Ad $oldAd
+     * @param Ad $newAd
      * @return bool
      * @throws \Exception
      */
-    public function compareSchedules($a, $b)
+    public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
-        if (!is_array($a) || !is_array($b) || count($a) !== count($b)) {
+
+        // checks for regular and punctual
+        if ($oldAd->getPriceKm() !== $newAd->getPriceKm()
+            || $oldAd->getFrequency() !== $newAd->getFrequency()
+            || $oldAd->getRole() !== $newAd->getRole()
+            || !$this->compareWaypoints($oldAd->getOutwardWaypoints(), $newAd->getOutwardWaypoints())) {
+            return true;
+        }
+
+        // checks for regular only
+        if ($newAd->getFrequency() === Criteria::FREQUENCY_REGULAR
+            && !$this->compareSchedules($oldAd->getSchedule(), $newAd->getSchedule())) {
+            return true;
+        }
+
+        // checks for regular only
+        if ($newAd->getFrequency() === Criteria::FREQUENCY_PUNCTUAL
+            && !$this->compareDateTimes($oldAd, $newAd)) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Compare Schedules
+     * array_diff, array_udiff etc provide strange behavior probably due to datetime, even with callback function
+     * @param $old
+     * @param $new
+     * @return bool
+     * @throws \Exception
+     */
+    public function compareSchedules($old, $new)
+    {
+        $adSchedule = [];
+//        we create schedule temporary cause we need to keep new Ad clean to be able to create a new proposal easily if needed
+        foreach ($new as $schedule) {
+            if (isset($schedule['mon']) && $schedule['mon']) {
+                $adSchedule['mon'] = true;
+                $adSchedule['monOutwardTime'] = $schedule['outwardTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
+                $adSchedule['monReturnTime'] = $schedule['returnTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
+            } elseif (!isset($adSchedule['mon'])) {
+                $adSchedule['mon'] = false;
+                $adSchedule['monOutwardTime'] = null;
+                $adSchedule['monReturnTime'] = null;
+            }
+            if (isset($schedule['tue']) && $schedule['tue']) {
+                $adSchedule['tue'] = true;
+                $adSchedule['tueOutwardTime'] = $schedule['outwardTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
+                $adSchedule['tueReturnTime'] = $schedule['returnTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
+            } elseif (!isset($adSchedule['tue'])) {
+                $adSchedule['tue'] = false;
+                $adSchedule['tueOutwardTime'] = null;
+                $adSchedule['tueReturnTime'] = null;
+            }
+            if (isset($schedule['wed']) && $schedule['wed']) {
+                $adSchedule['wed'] = true;
+                $adSchedule['wedOutwardTime'] = $schedule['outwardTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
+                $adSchedule['wedReturnTime'] = $schedule['returnTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
+            } elseif (!isset($adSchedule['wed'])) {
+                $adSchedule['wed'] = false;
+                $adSchedule['wedOutwardTime'] = null;
+                $adSchedule['wedReturnTime'] = null;
+            }
+            if (isset($schedule['thu']) && $schedule['thu']) {
+                $adSchedule['thu'] = true;
+                $adSchedule['thuOutwardTime'] = $schedule['outwardTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
+                $adSchedule['thuReturnTime'] = $schedule['returnTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
+            } elseif (!isset($adSchedule['thu'])) {
+                $adSchedule['thu'] = false;
+                $adSchedule['thuOutwardTime'] = null;
+                $adSchedule['thuReturnTime'] = null;
+            }
+            if (isset($schedule['fri']) && $schedule['fri']) {
+                $adSchedule['fri'] = true;
+                $adSchedule['friOutwardTime'] = $schedule['outwardTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
+                $adSchedule['friReturnTime'] = $schedule['returnTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
+            } elseif (!isset($adSchedule['fri'])) {
+                $adSchedule['fri'] = false;
+                $adSchedule['friOutwardTime'] = null;
+                $adSchedule['friReturnTime'] = null;
+            }
+            if (isset($schedule['sat']) && $schedule['sat']) {
+                $adSchedule['sat'] = true;
+                $adSchedule['satOutwardTime'] = $schedule['outwardTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
+                $adSchedule['satReturnTime'] = $schedule['returnTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
+            } elseif (!isset($adSchedule['sat'])) {
+                $adSchedule['sat'] = false;
+                $adSchedule['satOutwardTime'] = null;
+                $adSchedule['satReturnTime'] = null;
+            }
+            if (isset($schedule['sun']) && $schedule['sun']) {
+                $adSchedule['sun'] = true;
+                $adSchedule['sunOutwardTime'] = $schedule['outwardTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
+                $adSchedule['sunReturnTime'] = $schedule['returnTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
+            } elseif (!isset($adSchedule['sun'])) {
+                $adSchedule['sun'] = false;
+                $adSchedule['sunOutwardTime'] = null;
+                $adSchedule['sunReturnTime'] = null;
+            }
+        }
+
+        if (!is_array($old) || !is_array($adSchedule) || count($old) !== count($adSchedule)) {
             return false;
         }
 
-        $a = array_values($a);
-        $b = array_values($b);
+        $old = array_values($old);
+        $new = array_values($adSchedule);
 
-        for ($i = 0; $i < count($a); $i++) {
-            if (!$a[$i] && !$b[$i]) {
+        for ($i = 0; $i < count($old); $i++) {
+            if (!$old[$i] && !$new[$i]) {
                 continue;
-            } elseif (is_a($a[$i], \DateTime::class)) {
-                $bDateTime = new \DateTime($b[$i]);
-                if ($a[$i]->format('Y-m-d H:i:s') !== $bDateTime->format('Y-m-d H:i:s')) {
+            } elseif (is_a($old[$i], \DateTime::class)) {
+                if ($old[$i]->format('Y-m-d H:i:s') !== $new[$i]->format('Y-m-d H:i:s')) {
                     return false;
                 }
-            } elseif ($a[$i] !== $b[$i]) {
+            } elseif ($old[$i] !== $new[$i]) {
                 return false;
             }
         }
@@ -1152,26 +1251,67 @@ class AdManager
 
     /**
      * Compare if new Waypoints are different from the old ones
-     * @param $a - Waypoints object from a Proposal
-     * @param $b - waypoint array from front
+     * @param $old - Waypoints object from a Proposal
+     * @param $new - waypoint array from front
      * @return bool
      */
-    public function compareWaypoints($a, $b)
+    public function compareWaypoints($old, $new)
     {
-        if (!is_array($a) || !is_array($b) || count($a) !== count($b)) {
+        if (!is_array($old) || !is_array($new) || count($old) !== count($new)) {
             return false;
         }
 
-        for ($i = 0; $i < count($a); $i++) {
-            if (!$a[$i] && !$b[$i]) {
+        for ($i = 0; $i < count($old); $i++) {
+            if (!$old[$i] && !$new[$i]) {
                 continue;
-            } elseif (!isset($a[$i]) || !isset($b[$i]) || $a[$i]->getAddress()->getId() !== $b[$i]["id"]) {
+            } elseif (!isset($old[$i]) || !isset($new[$i]) || $old[$i]->getAddress()->getId() !== $new[$i]["id"]) {
                 return false;
             }
         }
         return true;
     }
 
+    /**
+     * Compare Date and time for Outward and Returns
+     * @param Ad $old
+     * @param Ad $new
+     * @return bool
+     * @throws \Exception
+     */
+    public function compareDateTimes(Ad $old, Ad $new)
+    {
+        $oldOutwardTime = new \DateTime($old->getOutwardTime());
+
+        // formats are different when Ad is returned by api makeAd or from front serialization
+        if ($oldOutwardTime->format('H:i') !== $new->getOutwardTime()) {
+            return false;
+        }
+
+        if ($old->getOutwardDate()->format('Y-m-d') !== $new->getOutwardDate()->format('Y-m-d')) {
+            return false;
+        }
+
+        if (!is_null($old->getReturnTime()) && is_null($new->getReturnTime())
+            || !is_null($new->getReturnTime()) && is_null($old->getReturnTime())) {
+            return false;
+        } elseif ($old->getReturnTime()) {
+            $oldReturnTime = new \DateTime($old->getReturnTime());
+            if ($oldReturnTime->format('H:i') !== $new->getReturnTime()) {
+                return false;
+            }
+        }
+
+        if (!is_null($old->getReturnDate()) && is_null($new->getReturnDate())
+            || !is_null($new->getReturnDate()) && is_null($old->getReturnDate())) {
+            return false;
+        } elseif ($old->getReturnDate()) {
+            if ($old->getReturnDate()->format('Y-m-d') !== $new->getReturnDate()->format('Y-m-d')) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     /**
      * Update all carpools limits (i.e max_detour_duration, max_detour_distance...)
