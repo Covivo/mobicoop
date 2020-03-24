@@ -904,4 +904,17 @@ class UserManager
 
         return $user;
     }
+
+    /**
+     * Update the activity of an user
+     *
+     * @param User      $user               The user to update
+     */
+    public function updateActivity(User $user)
+    {
+        $user->setLastActivityDate(new DateTime());
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+    }
 }
