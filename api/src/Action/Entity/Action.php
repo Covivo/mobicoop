@@ -59,7 +59,20 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Action
 {
-    
+    const TYPE_ACTION_AUTO = 0;
+    const TYPE_ACTION_TAKING_ACCOUNT_ASK = 1;
+    const TYPE_ACTION_SOLUTION_FINDING = 2;
+    const TYPE_ACTION_FOLLOW_UP_CARPOOL = 3;
+    const TYPE_ACTION_CLOSING_ASK = 4;
+
+    const ACTION_TYPE_NAME = [
+        self::TYPE_ACTION_AUTO => "Automatique",
+        self::TYPE_ACTION_TAKING_ACCOUNT_ASK => "Prise en compte de la demande",
+        self::TYPE_ACTION_SOLUTION_FINDING => "Recherche de solution",
+        self::TYPE_ACTION_FOLLOW_UP_CARPOOL => "Suivi du covoiturage",
+        self::TYPE_ACTION_CLOSING_ASK => "Clôture de la demande"
+    ];
+
     /**
      * @var int The id of this action.
      *
@@ -79,6 +92,20 @@ class Action
      * @Groups({"read","write"})
      */
     private $name;
+
+    /**
+     * @var int The type of this action.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups("read")
+     */
+    private $type;
+
+    /**
+     * @var string The name of the type of this action.
+     * @Groups("read")
+     */
+    private $typeName;
 
     /**
      * @var bool The action has to be logged in the log system.
@@ -150,6 +177,30 @@ class Action
     {
         $this->name = $name;
 
+        return $this;
+    }
+
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+    
+    public function setType(int $type): self
+    {
+        $this->type = $type;
+        
+        return $this;
+    }
+
+    public function getTypeName(): ?string
+    {
+        return self::ACTION_TYPE_NAME[$this->getType()];
+    }
+    
+    public function setTypeName(string $typeName): self
+    {
+        $this->type = $typeName;
+        
         return $this;
     }
 
