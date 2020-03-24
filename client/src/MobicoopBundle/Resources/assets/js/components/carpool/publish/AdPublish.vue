@@ -1132,12 +1132,12 @@ export default {
         .then(response => {
           if (response.data && response.data.result.id) {
             this.snackbarMessage = this.$t('update.success');
+            this.snackbar = true;
             window.location.href = "/utilisateur/profil/modifier/mes-annonces";
           } else {
             alert(this.$t('update.error'));
             this.loading = false;
           }
-          this.snackbar = true;
         })
         .catch(error => {
           console.log(error);

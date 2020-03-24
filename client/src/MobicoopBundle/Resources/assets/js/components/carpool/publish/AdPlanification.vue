@@ -375,10 +375,12 @@
                       v-model="item.returnTime"
                       :label="$t('regularReturnTime.label')"
                       :hint="$t('ui.form.optional')"
+                      clearable
                       persistent-hint
                       prepend-icon=""
                       readonly
                       v-on="on"
+                      @blur="change"
                     >
                       <v-icon
                         slot="prepend"
@@ -762,7 +764,7 @@ export default {
 
           tempDays.forEach(el => {
             remove(days, day => {
-              return el === day.day;
+              return el.day === day;
             })
           })
         }
