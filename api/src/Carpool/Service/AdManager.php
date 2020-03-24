@@ -1052,8 +1052,15 @@ class AdManager
 
         $proposalAsks = $this->askManager->getAsksFromProposal($proposal);
 
-        // major update
-        if ($this->checkForMajorUpdate($oldAd, $ad)) {
+        // Pause is apart and do not needs notifications by now
+        if ($ad->isPaused() !== $oldAd->isPaused()) {
+            $proposal->setPaused($ad->isPaused());
+            if ($proposal->getProposalLinked()) {
+                $proposal->getProposalLinked()->setPaused($ad->isPaused());
+            }
+            $this->entityManager->persist($proposal);
+        } // major update
+        elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
             // We use event to send notifications if Ad has asks
             if (count($proposalAsks) > 0) {
                 $event = new AdMajorUpdatedEvent($oldAd, $ad, $proposalAsks, $this->security->getUser());
@@ -1101,15 +1108,6 @@ class AdManager
             $ad = $this->makeAd($proposal, $proposal->getUser()->getId());
         }
 
-        // Pause is apart and do not needs notifications by now
-        elseif ($ad->isPaused() !== $oldAd->isPaused()) {
-            $proposal->setPaused($ad->isPaused());
-            if ($proposal->getProposalLinked()) {
-                $proposal->getProposalLinked()->setPaused($ad->isPaused());
-            }
-            $this->entityManager->persist($proposal);
-        }
-
         $this->entityManager->flush();
 
 
@@ -1125,6 +1123,7 @@ class AdManager
      */
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
+
 
         // checks for regular and punctual
         if ($oldAd->getPriceKm() !== $newAd->getPriceKm()
