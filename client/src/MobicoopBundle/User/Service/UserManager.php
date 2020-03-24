@@ -713,4 +713,16 @@ class UserManager
         }
         return $adsSanitized;
     }
+
+    /**
+     * Check if the email is already in use
+     *
+     * @param string $email
+     * @return void
+     */
+    public function checkEmail(string $email)
+    {
+        $response = $this->dataProvider->getSpecialCollection('checkEmail', ['email' => $email]);
+        return $response->getValue();
+    }
 }
