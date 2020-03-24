@@ -311,10 +311,10 @@ class AdManager
         }
         if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
             $data['outwardDate'] = new \DateTime();
-        } else {
+        } elseif (is_string($data['outwardDate'])) {
             $data['outwardDate'] = \DateTime::createFromFormat('Y-m-d', $data['outwardDate']);
         }
-        if (isset($data['returnDate']) && $data['returnDate'] != '') {
+        if (isset($data['returnDate']) && is_string($data['returnDate']) && $data['returnDate'] != '') {
             $data['returnDate'] = \DateTime::createFromFormat('Y-m-d', $data['returnDate']);
             $ad->setOneWay(false); // only for punctual journey
         } else {
