@@ -21,22 +21,23 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Controller;
+namespace App\User\DataProvider;
 
-use App\TranslatorTrait;
 use App\User\Entity\User;
-use Symfony\Component\HttpFoundation\RequestStack;
+use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Service\UserManager;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
+ * Item data provider for User me.
  *
- * @author Remi Wortemann <remi.wortemann@mobicoop.org>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ *
  */
-class UserCanUseEmail
+final class UserCheckEmailCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    use TranslatorTrait;
     private $userManager;
     private $request;
     
@@ -46,15 +47,15 @@ class UserCanUseEmail
         $this->request = $request->getCurrentRequest();
     }
 
-    /**
-     * This method is invoked whan we check if the email is already used.
-     *
-     * @return void
-     */
-    public function __invoke()
+    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    {
+        return User::class === $resourceClass && $operationName === "checkEmail";
+    }
+    
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): ?\InvalidArgumentException
     {
         if ($this->userManager->getUserByEmail($this->request->get('email'))) {
-            throw new \InvalidArgumentException($this->translator->trans("Email already in use"));
+            throw new \InvalidArgumentException("Email already used");
         }
         return null;
     }

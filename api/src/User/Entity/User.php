@@ -114,7 +114,6 @@ use App\User\Controller\UserCanUseEmail;
  *          "checkEmail"={
  *              "method"="GET",
  *              "path"="/users/checkEmail",
- *              "controller"=UserCanUseEmail::class,
  *              "security_post_denormalize"="is_granted('user_register',object)"
  *          },
  *          "post"={

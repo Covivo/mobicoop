@@ -914,7 +914,7 @@ class UserController extends AbstractController
                 if (is_null($check->getDescription())) {
                     return new JsonResponse(['error'=>false, 'message'=>'']);
                 } else {
-                    return new JsonResponse(['error'=>false, 'message'=>'already in use']);
+                    return new JsonResponse(['error'=>false, 'message'=>'Email already used']);
                 }
             } else {
                 return new JsonResponse(['error'=>true, 'message'=>'empty email']);
