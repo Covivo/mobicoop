@@ -172,7 +172,7 @@ class DataProvider
                 $this->refreshToken = $cachedRefreshToken->get();
             }
         }
-        
+
         $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
 
         $encoders = array(new JsonEncoder());
@@ -236,7 +236,7 @@ class DataProvider
     {
         if (is_null($this->jwtToken)) {
             $tokens = $this->getJwtToken();
-            
+
             if (is_null($tokens) || !is_array($tokens)) {
                 throw new ApiTokenException("Empty API token.");
             }
@@ -244,7 +244,7 @@ class DataProvider
             if (!isset($tokens['token']) || !isset($tokens['refreshToken'])) {
                 throw new ApiTokenException("Empty API or refresh token.");
             }
-            
+
             $expiration = null;
 
             // decode token to get the expiration
@@ -311,7 +311,8 @@ class DataProvider
             } catch (ServerException $e) {
                 throw new ApiTokenException("Unable to get an API token from refresh.");
             } catch (ClientException $e) {
-                throw new ApiTokenException("Unable to get an API token from refresh.");
+              $this->cache->deleteItem($this->tokenId.'.jwt.refresh.token');
+                //throw new ApiTokenException("Unable to get an API token from refresh.");
             }
         }
 
@@ -740,7 +741,7 @@ class DataProvider
         if (is_null($groups)) {
             $groups = ['put'];
         }
-        
+
         try {
             if (!$reverseOperationId) {
                 $uri = $this->resource."/".$object->getId()."/".$operation;
@@ -750,7 +751,7 @@ class DataProvider
             // var_dump("put special");
             // var_dump($uri);
             // var_dump($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]));die;
-            
+
             $headers = $this->getHeaders();
             $clientResponse = $this->client->put($uri, [
                     'headers' => $headers,
