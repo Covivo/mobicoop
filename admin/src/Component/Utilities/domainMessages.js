@@ -88,6 +88,7 @@ const fr = {
               accepteEmail: 'Accepte les emails',
               accepteReceiveEmail: 'Accepte de recevoir les emails',
               createdDate: 'Date de création',
+              lastActivityDate: 'Date de dernière connection',
               solidary : "Solidaire",
               territory : "Territoires",
               gender : "Civilité",
