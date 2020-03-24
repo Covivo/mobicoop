@@ -164,7 +164,7 @@ class UserManager
      */
     public function findByEmail(string $email, bool $sendEmailRecovery = false)
     {
-        $response = $this->dataProvider->getSpecialCollection('checkEmail', ['email' => $email]);
+        $response = $this->dataProvider->getCollection(['email' => $email]);
         if ($response->getCode() == 200) {
             /** @var Hydra $user */
             $user = $response->getValue();
@@ -175,6 +175,7 @@ class UserManager
                 if ($sendEmailRecovery) {
                     $this->updateUserToken($user->getMember()[0]);
                 }
+                
                 return current($user->getMember());
             }
         }
@@ -711,5 +712,17 @@ class UserManager
             $adsSanitized[$key][$ad["id"]] = $ad;
         }
         return $adsSanitized;
+    }
+
+    /**
+     * Check if the email is already in use
+     *
+     * @param string $email
+     * @return void
+     */ 
+    public function checkEmail(string $email)
+    {
+        $response = $this->dataProvider->getSpecialCollection('checkEmail', ['email' => $email]);
+        return $response->getValue();
     }
 }

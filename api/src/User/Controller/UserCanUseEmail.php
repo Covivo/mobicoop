@@ -24,8 +24,10 @@
 namespace App\User\Controller;
 
 use App\TranslatorTrait;
+use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
 use App\User\Service\UserManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -44,16 +46,16 @@ class UserCanUseEmail
         $this->request = $request->getCurrentRequest();
     }
 
-    /**
-     * This method is invoked when the alert preferences are updated for a user.
-     *
-     * @return Response
-     */
+   /**
+    * This method is invoked whan we check if the email is already used.
+    *
+    * @return void
+    */
     public function __invoke()
     {
         if ($this->userManager->getUserByEmail($this->request->get('email'))) {
-            return false;
+            throw new \InvalidArgumentException($this->translator->trans("Email already in use"));
         }
-        return true;
-    }
+       return null;
+    }   
 }
