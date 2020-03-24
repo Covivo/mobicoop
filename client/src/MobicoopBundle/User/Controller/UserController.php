@@ -150,7 +150,9 @@ class UserController extends AbstractController
             $user->setBirthDate(new DateTime($data['birthDay']));
             //$user->setNewsSubscription by default
             $user->setNewsSubscription(($this->news_subscription==="true") ? true : false);
-
+            //$user phone display preference by default
+            $user->setPhoneDisplay(1);
+            
             if (!is_null($data['idFacebook'])) {
                 $user->setFacebookId($data['idFacebook']);
             }
@@ -908,11 +910,11 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             if (isset($data['email']) && $data['email']!=="") {
-                $user = $userManager->findByEmail($data['email']);
-                if (!is_null($user)) {
-                    return new JsonResponse(['error'=>false, 'message'=>$user->getId()]);
-                } else {
+                $check = $userManager->checkEmail($data['email']);
+                if (is_null($check->getDescription())) {
                     return new JsonResponse(['error'=>false, 'message'=>'']);
+                } else {
+                    return new JsonResponse(['error'=>false, 'message'=>'Email already used']);
                 }
             } else {
                 return new JsonResponse(['error'=>true, 'message'=>'empty email']);
