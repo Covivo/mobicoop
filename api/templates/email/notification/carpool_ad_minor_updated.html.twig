@@ -14,7 +14,7 @@
                 <table>
                     <tr>
                         <td>
-                            <p style="color:{{ api_env('EMAILS_COLOR_SECONDARY') }};font-size:30">
+                            <p style="color:{{ api_env('EMAILS_COLOR_SECONDARY') }};font-size:30px">
                                 <b>{{ "updatedCarpool"|trans }}</b></p>
                             <hr>
                         </td>
@@ -72,32 +72,32 @@
                         <td><p>{{ "old" | trans }}</p></td>
                         <td><p>{{ "new" | trans }}</p></td>
                     </tr>
-                    {% if old.criteria.bike != new.criteria.bike %}
+                    {% if old.bike != new.bike %}
                         <tr>
                             <td><p>{{ "bike"|trans }}</p></td>
-                            <td><p style="color: red">{% if old.criteria.bike == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
-                            <td><p style="color: green">{% if new.criteria.bike == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
+                            <td><p style="color: red">{% if old.bike == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
+                            <td><p style="color: green">{% if new.bike == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
                         </tr>
                     {% endif %}
-                    {% if old.criteria.backSeats != new.criteria.backSeats %}
+                    {% if old.backSeats != new.backSeats %}
                         <tr>
                             <td><p>{{ "backSeats"|trans|raw }}</p></td>
-                            <td><p style="color: red">{% if old.criteria.backSeats == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
-                            <td><p style="color: green">{% if new.criteria.backSeats == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
+                            <td><p style="color: red">{% if old.backSeats == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
+                            <td><p style="color: green">{% if new.backSeats == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
                         </tr>
                     {% endif %}
-                    {% if old.criteria.luggage != new.criteria.luggage %}
+                    {% if old.luggage != new.luggage %}
                         <tr>
                             <td><p>{{ "luggage"|trans }}</p></td>
-                            <td><p style="color: red">{% if old.criteria.luggage == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
-                            <td><p style="color: green">{% if new.criteria.luggage == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
+                            <td><p style="color: red">{% if old.luggage == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
+                            <td><p style="color: green">{% if new.luggage == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
                         </tr>
                     {% endif %}
-                    {% if old.criteria.seatsDriver != new.criteria.seatsDriver %}
+                    {% if old.seatsDriver != new.seatsDriver %}
                         <tr>
                             <td><p>{{ "seatsDriver"|trans }}</p></td>
-                            <td><p style="color: red">{% if old.criteria.seatsDriver == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
-                            <td><p style="color: green">{% if new.criteria.seatsDriver == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
+                            <td><p style="color: red">{% if old.seatsDriver == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
+                            <td><p style="color: green">{% if new.seatsDriver == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
                         </tr>
                     {% endif %}
                     {% if old.comment != new.comment %}

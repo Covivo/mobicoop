@@ -281,7 +281,7 @@ class AdManager
     public function updateAd(array $data, Ad $ad = null)
     {
         $ad = $this->mapAd($data, $ad);
-        if ($data = $this->dataProvider->put($ad)) {
+        if ($data = $this->dataProvider->put($ad, null, ["mail_search_link" => $data["mailSearchLink"]])) {
             return $data->getValue();
         }
         return null;
@@ -303,10 +303,10 @@ class AdManager
 
         $poster = $this->security->getUser();
 
-        if ($poster && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
+        if (!is_null($poster) && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
             $data['userId'] = $data['userDelegated'];
             $data['posterId'] = $poster->getId();
-        } else {
+        } elseif (!is_null($poster)) {
             $data['userId'] = $poster->getId();
         }
         if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
@@ -322,7 +322,7 @@ class AdManager
         }
 
         // one-way for regular
-        if (isset($data['regular']) && $data['regular'] && $data['schedules']) {
+        if (isset($data['regular']) && $data['regular'] && isset($data['schedules'])) {
             $ad->setOneWay(true);
             foreach ($data['schedules'] as $schedule) {
                 if (isset($schedule['returnTime'])) {

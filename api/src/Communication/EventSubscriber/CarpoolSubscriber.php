@@ -296,7 +296,8 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $object = (object) [
             "old" => $event->getOldAd(),
             "new" => $event->getNewAd(),
-            "sender" => $event->getSender()
+            "sender" => $event->getSender(),
+            "searchLink" => $event->getMailSearchLink()
         ];
 
         foreach ($event->getAsks() as $ask) {

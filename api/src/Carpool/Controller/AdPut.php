@@ -26,6 +26,7 @@ namespace App\Carpool\Controller;
 use App\Carpool\Service\AdManager;
 use App\Carpool\Entity\Ad;
 use App\TranslatorTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Controller class for ad put.
@@ -36,10 +37,12 @@ class AdPut
     use TranslatorTrait;
     
     private $adManager;
-    
-    public function __construct(AdManager $adManager)
+    private $request;
+
+    public function __construct(AdManager $adManager, RequestStack $requestStack)
     {
         $this->adManager = $adManager;
+        $this->request = $requestStack->getCurrentRequest();
     }
 
     /**
@@ -53,7 +56,7 @@ class AdPut
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
         }
-        $data = $this->adManager->updateAd($data);
+        $data = $this->adManager->updateAd($data, $this->request->get('mail_search_link'));
         return $data;
     }
 }

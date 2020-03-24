@@ -34,6 +34,32 @@
                                         style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ sender.givenName|capitalize }} {{ sender.shortFamilyName|capitalize }}</b> {{ "hasBeenCancelledBecause"|trans }}
                                 <b>{{ sender.givenName|capitalize }} {{ sender.shortFamilyName|capitalize }}</b> {{ "hasUpdatedHisAd"|trans }}
                             </p>
+                            {% if context.object.searchLink %}
+
+                                {% set origin = null %}
+                                {% set destination = null %}
+                                {% set regular = false %}
+                                {% set date = null %}
+
+                                {% if ask.criteria.frequency == 2 %}
+                                    {% set regular = true %}
+                                {% else %}
+                                    {% set date = ask.criteria.outwardDate %}
+                                {% endif %}
+
+                                {% for waypoint in ask.waypoints %}
+                                    {% if waypoint.position == 0 %}
+                                        {% set origin = waypoint.address.id %}
+                                    {% elseif waypoint.destination == true %}
+                                        {% set destination = waypoint.address.id %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                <a href="{{ context.object.searchLink ~ "?" ~ {'origin': origin, 'destination': destination, 'regular': regular, 'date': date|date("Y-m-d")}| url_encode }}">
+                                    {{ "clickNewSearch"|trans }} {{ outwardOrigin.address.displayLabel[0] }} => {{ outwardDestination.address.displayLabel[0] }}
+                                </a>
+
+                            {% endif %}
                         </td>
                         <td style="width:30%">
                             <img style="border-radius:50px" src="{{ sender.avatars[0] }}" alt="Avatar"/>

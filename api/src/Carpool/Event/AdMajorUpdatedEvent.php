@@ -45,13 +45,18 @@ class AdMajorUpdatedEvent extends Event
      * @var UserInterface
      */
     private $sender;
+    /**
+     * @var string|null
+     */
+    private $mailSearchLink;
 
-    public function __construct(Ad $old, Ad $new, array $asks, UserInterface $sender)
+    public function __construct(Ad $old, Ad $new, array $asks, UserInterface $sender, string $mailSearchLink = null)
     {
         $this->old = $old;
         $this->new = $new;
         $this->asks = $asks;
         $this->sender = $sender;
+        $this->mailSearchLink = $mailSearchLink;
     }
 
     /**
@@ -84,5 +89,13 @@ class AdMajorUpdatedEvent extends Event
     public function getSender(): UserInterface
     {
         return $this->sender;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMailSearchLink(): ?string
+    {
+        return $this->mailSearchLink;
     }
 }

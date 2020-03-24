@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 
 use DateTime;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,6 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Controller class for carpooling related actions.
@@ -115,6 +117,7 @@ class CarpoolController extends AbstractController
 
         if ($request->isMethod('PUT')) {
             $data = json_decode($request->getContent(), true);
+            $data["mailSearchLink"] = $this->generateUrl("carpool_search_result_get", [], UrlGeneratorInterface::ABSOLUTE_URL);
             return $this->json(['result'=>$adManager->updateAd($data, $ad)]);
         }
 
@@ -282,6 +285,29 @@ class CarpoolController extends AbstractController
             'time' =>  $request->request->get('time'),
             'regular' => $request->request->get('regular'),
             'communityId' => $request->request->get('communityId'),
+            'user' => $userManager->getLoggedUser(),
+            'platformName' => $this->platformName,
+            'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
+            'defaultRole'=>$this->defaultRole
+        ]);
+    }
+
+    /**
+     * Simple search results.
+     * (GET)
+     */
+    public function carpoolSearchResultGET(Request $request, UserManager $userManager, AddressManager $addressManager)
+    {
+        $origin = $addressManager->getAddress($request->get('origin'));
+        $destination = $addressManager->getAddress($request->get('destination'));
+        $date = $request->get('date');
+        $regular = (bool) $request->get('regular');
+
+        return $this->render('@Mobicoop/carpool/results.html.twig', [
+            'origin' => json_encode($origin),
+            'destination' => json_encode($destination),
+            'date' =>  $date,
+            'regular' => $regular,
             'user' => $userManager->getLoggedUser(),
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,

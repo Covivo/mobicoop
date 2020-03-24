@@ -1039,11 +1039,13 @@ class AdManager
     /**
      * Update an ad.
      *  /!\ Only minor data can be updated
-     * Otherwwise we delete and create new Ad
+     * Otherwise we delete and create new Ad
      * @param Ad $ad
+     * @param string|null $mailSearchLink
      * @return Ad
+     * @throws \Exception
      */
-    public function updateAd(Ad $ad)
+    public function updateAd(Ad $ad, ?string $mailSearchLink = null)
     {
         $proposal = $this->proposalRepository->find($ad->getAdId());
         $oldAd = $this->makeAd($proposal, $ad->getUserId());
@@ -1063,7 +1065,7 @@ class AdManager
         elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
             // We use event to send notifications if Ad has asks
             if (count($proposalAsks) > 0) {
-                $event = new AdMajorUpdatedEvent($oldAd, $ad, $proposalAsks, $this->security->getUser());
+                $event = new AdMajorUpdatedEvent($oldAd, $ad, $proposalAsks, $this->security->getUser(), $mailSearchLink);
                 $this->eventDispatcher->dispatch(AdMajorUpdatedEvent::NAME, $event);
             }
 
@@ -1102,13 +1104,11 @@ class AdManager
                 $event = new AdMinorUpdatedEvent($oldAd, $ad, $proposalAsks, $this->security->getUser());
                 $this->eventDispatcher->dispatch(AdMinorUpdatedEvent::NAME, $event);
             }
-
             $this->entityManager->persist($proposal);
             $ad = $this->makeAd($proposal, $proposal->getUser()->getId());
         }
 
         $this->entityManager->flush();
-
 
         return $ad;
     }

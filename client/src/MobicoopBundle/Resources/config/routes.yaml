@@ -345,6 +345,15 @@ carpool_search_result:
         en: /carpool/search
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResult
 
+# search results (GET)
+carpool_search_result_get:
+    methods: [GET]
+    path:
+        fr: /covoiturage/recherche
+        en: /carpool/search
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultGET
+
+
 # search matching (AJAX POST)
 carpool_search_matching:
     methods: [POST]
