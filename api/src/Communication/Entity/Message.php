@@ -119,7 +119,7 @@ class Message
     /**
      * @var SolidaryAskHistory|null The solidary ask history item if the message is related to an ask.
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\AskHistory", mappedBy="message")
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAskHistory", mappedBy="message")
      * @Groups({"read","write","threads","thread"})
      * @MaxDepth(1)
      */
