@@ -882,6 +882,9 @@ export default {
       if(this.priceForbidden) return false;
       // We are in update mode and initialization is not finished yet
       if (this.isValidUpdate && this.oldUpdateObject == null) return false;
+      // update mode and there are no changes
+      if (!this.isUpdated ) return false;
+
       // validation ok
       return true;
     },
@@ -933,9 +936,12 @@ export default {
     isValidUpdate () {
       return this.isUpdate && !isEmpty(this.ad);
     },
+    isUpdated () {
+      return this.isValidUpdate && !isEqual(this.oldUpdateObject, this.newUpdateObject);
+    },
     isMajorUpdate () {
       if (!this.isValidUpdate || isEmpty(this.oldUpdateObject)) return false;
-      let newUpdateObject = this.buildAdObject();
+      let newUpdateObject = this.newUpdateObject;
       return newUpdateObject.regular !== this.oldUpdateObject.regular
         || this.oldUpdateObject.driver !== newUpdateObject.driver
         || this.oldUpdateObject.returnDate !== newUpdateObject.returnDate
@@ -948,6 +954,9 @@ export default {
         || newUpdateObject.pricePerKm !== this.oldUpdateObject.pricePerKm
         || !isEqual(this.oldUpdateObject.waypoints, newUpdateObject.waypoints)
         || !isEqual(this.oldUpdateObject.schedules, newUpdateObject.schedules);
+    },
+    newUpdateObject () {
+      return this.buildAdObject();
     },
     popupTitle () {
       if (this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.major_update_asks.title');
@@ -999,8 +1008,8 @@ export default {
         this.backSeats = this.ad.backSeats;
         this.music = this.ad.music;
         this.message = this.ad.message;
-        this.price = this.ad.outwardDriverPrice;
-        this.pricePerKm = this.ad.priceKm;
+        this.price = parseFloat(this.ad.outwardDriverPrice);
+        this.pricePerKm = parseFloat(this.ad.priceKm);
         this.role = this.ad.role;
         this.driver = this.ad.role === 1 || this.ad.role === 3;
         this.passenger = this.ad.role === 2 || this.ad.role === 3;
