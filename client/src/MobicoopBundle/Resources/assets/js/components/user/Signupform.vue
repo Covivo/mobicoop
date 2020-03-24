@@ -387,15 +387,31 @@
                   </div>:
                 </template>
               </v-checkbox>
-              <v-btn
-                color="secondary"
-                rounded
-                class="mr-4 mb-100 mt-12"
-                :loading="loading"
-                @click="validate"
+              <v-row
+                justify="center"
+                align="center"
+                class="mb-40"
               >
-                {{ $t('ui.button.register') }}
-              </v-btn>
+                <v-btn
+                  ref="button"
+                  rounded
+                  class="my-13 mr-12 mt-12 "
+                  color="secondary"
+                  @click="--step"
+                >
+                  {{ $t('ui.button.previous') }}
+                </v-btn>
+                <v-btn
+                  color="secondary"
+                  rounded
+                  class="mr-4 mb-100 mt-12"
+                  :loading="loading"
+                  :disabled="!step4 || !step3 || !step2 || !step1 || loading || isDisable"
+                  @click="validate"
+                >
+                  {{ $t('ui.button.register') }}
+                </v-btn>
+              </v-row>
             </v-form>
           </v-stepper-content>
         </v-stepper>
@@ -553,7 +569,6 @@ export default {
         idFacebook:null,
         communities:[]
       },
-  
       selectedCommunities: this.communities,
       locale: this.$i18n.locale
     };
