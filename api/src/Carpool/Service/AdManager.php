@@ -1067,9 +1067,8 @@ class AdManager
                 $this->eventDispatcher->dispatch(AdMajorUpdatedEvent::NAME, $event);
             }
 
-            //todo: inverser
-            $ad = $this->createAd($ad);
             $this->proposalManager->deleteProposal($proposal);
+            $ad = $this->createAd($ad);
 
         // minor update
         } elseif ($oldAd->hasBike() !== $ad->hasBike()
@@ -1237,12 +1236,12 @@ class AdManager
         for ($i = 0; $i < count($old); $i++) {
             if (!$old[$i] && !$new[$i]) {
                 continue;
+            } elseif ($old[$i] !== $new[$i]) {
+                return false;
             } elseif (is_a($old[$i], \DateTime::class)) {
                 if ($old[$i]->format('Y-m-d H:i:s') !== $new[$i]->format('Y-m-d H:i:s')) {
                     return false;
                 }
-            } elseif ($old[$i] !== $new[$i]) {
-                return false;
             }
         }
         return true;
