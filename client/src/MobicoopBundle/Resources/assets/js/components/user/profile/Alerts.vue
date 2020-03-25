@@ -28,6 +28,13 @@
         />
       </v-col>
     </v-row>
+    <v-row class="mt-12 mb-n12 ml-4">
+      <v-col class="grey--text">
+        <p>
+          {{ $t("asterisk") }}
+        </p>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 <script>
