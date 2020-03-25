@@ -452,18 +452,24 @@ class CommunityController extends AbstractController
             }
             $this->denyAccessUnlessGranted('show', $community);
 
+            $referrer = $community->getUser();
             $users = [];
+
             //test if the community has members
             if (count($community->getCommunityUsers()) > 0) {
                 foreach ($community->getCommunityUsers() as $communityUser) {
-                    if ($communityUser->getStatus() == 1 || $communityUser->getStatus() == 2) {
+                    // community referrer is always accepted
+                    if ($communityUser->getUser()->getId() === $referrer->getId()) {
+                        $user = $communityUser->getUser();
+                        $user->setIsCommunityReferrer(true);
+                        array_unshift($users, $user);
+                    } elseif ($communityUser->getStatus() == 1 || $communityUser->getStatus() == 2) {
                         // get all community Users accepted_as_member or accepted_as_moderator
                         array_push($users, $communityUser->getUser());
                     }
                 }
             }
             $totalItems = count($users);
-
 
             return new JsonResponse([
                 "users"=>$users,
