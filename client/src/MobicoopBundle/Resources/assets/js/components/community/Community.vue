@@ -556,6 +556,9 @@ export default {
           currentProposal.desc += "<strong>"+this.$t('map.destination')+"</strong> : "+infosForPopUp.destination+"<br />";
           if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em>";
 
+          // We add link to make the same search
+          currentProposal.desc += "<p><a href='" + proposal.searchLink + "'>" + this.$t('map.search.label') + "</a></p>";
+
           // And now the content of a tooltip (same as popup but without the button)
           currentProposal.title = currentProposal.desc;
                 
