@@ -183,7 +183,7 @@ class Ad
     /**
      * @var \DateTimeInterface|null The date for the outward if the frequency is punctual, the start date of the outward if the frequency is regular.
      *
-     * @Groups({"read","write"})
+     * @Groups({"read","write", "readCommunity"})
      */
     private $outwardDate;
 
