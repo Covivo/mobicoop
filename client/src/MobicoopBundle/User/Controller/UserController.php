@@ -150,7 +150,9 @@ class UserController extends AbstractController
             $user->setBirthDate(new DateTime($data['birthDay']));
             //$user->setNewsSubscription by default
             $user->setNewsSubscription(($this->news_subscription==="true") ? true : false);
-
+            // set phone display by default
+            $user->setPhoneDisplay(1);
+            
             if (!is_null($data['idFacebook'])) {
                 $user->setFacebookId($data['idFacebook']);
             }
