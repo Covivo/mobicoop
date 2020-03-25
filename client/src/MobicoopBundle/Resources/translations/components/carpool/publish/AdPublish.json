@@ -21,7 +21,8 @@
                 }
             },
             "success": "Votre annonce a été modifiée avec succès.",
-            "error": "Une erreur est survenue lors de la modification de votre annonce."
+            "error": "Une erreur est survenue lors de la modification de votre annonce.",
+            "unavailable": "Vous ne pouvez pas modifier cette annonce."
         },
         "stepper": {
             "header": {

@@ -17,15 +17,15 @@
       </div>
     </v-row>
     <v-snackbar
-      v-model="snackbar"
-      color="success"
+      v-model="snackbar.show"
+      :color="snackbar.color"
       top
     >
-      {{ snackbarMessage }}
+      {{ snackbar.message }}
       <v-btn
         color="white"
         text
-        @click="snackbar = false"
+        @click="snackbar.show = false"
       >
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
@@ -816,8 +816,11 @@ export default {
       solidaryExclusive: this.solidaryExclusiveAd,
       numberSeats : [ 1,2,3,4],
       seats : 3,
-      snackbar: false,
-      snackbarMessage: "",
+      snackbar: {
+        show: false,
+        message: "",
+        color: "success"
+      },
       priceForbidden: false,
       returnTimeIsValid: true,
       initWaypoints: [],
@@ -1123,8 +1126,13 @@ export default {
         });
     },
     updateAd () {
+      // double check
       if (!this.isValidUpdate) {
-        alert("Vous ne pouvez pas modifier cette annonce.");
+        this.snackbar = {
+          message: this.$t('update.unavailable'),
+          color: "error",
+          show: true
+        };
         return;
       }
       this.dialog = false;
@@ -1140,16 +1148,28 @@ export default {
       })
         .then(response => {
           if (response.data && response.data.result.id) {
-            this.snackbarMessage = this.$t('update.success');
-            this.snackbar = true;
+            this.snackbar = {
+              message: this.$t('update.success'),
+              color: "success",
+              show: true
+            };
             window.location.href = "/utilisateur/profil/modifier/mes-annonces";
           } else {
-            alert(this.$t('update.error'));
+            this.snackbar = {
+              message: this.$t('update.error'),
+              color: "error",
+              show: true
+            };
             this.loading = false;
           }
         })
         .catch(error => {
           console.log(error);
+          this.snackbar = {
+            message: this.$t('update.error'),
+            color: "error",
+            show: true
+          };
           this.loading = false;
         })
         .finally(() => {
@@ -1209,8 +1229,11 @@ export default {
           if(this.price !== resp.data.value) {
             this.price = resp.data.value;
             if (doneByUser === true) {
-              this.snackbarMessage = this.$t('messageRoundedPrice');
-              this.snackbar = true;
+              this.snackbar = {
+                message: this.$t('messageRoundedPrice'),
+                color: "success",
+                show: true
+              };
             }
           }
         }).catch(error => {
