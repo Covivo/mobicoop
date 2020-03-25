@@ -311,7 +311,7 @@
                           :input-value="data.selected"
                           close
                           @click="data.select"
-                          @click:close="removeCommunity(data.item)"
+                          @click:close="toggleSelected"
                         >
                           {{ data.item.name }}
                         </v-chip>
@@ -499,7 +499,7 @@ export default {
       snackbar: false,
       errorUpdate: false,
       textSnackbar: null,
-      // textSnackOk: this.form.communities.validationType == 1? this.$t("snackbar.joinCommunity.textOkManualValidation") : this.$t("snackbar.joinCommunity.textOkAutoValidation"),
+      textSnackOk: this.$t("snackbar.joinCommunity.textOkAutoValidation"),
 
       //step validators
       step1: true,
@@ -733,16 +733,15 @@ export default {
     },
     emitEvent: function() {
       this.$emit("change", {
-        community: this.selectedCommunity
+        communities: this.selectedCommunity
       });
     },
-    removeCommunity(item) {
-      const index = this.selectedCommunity.indexOf(item.id);
-      if (index >= 0) {
-        this.selectedCommunity.splice(index, 1);
-        this.emitEvent();
-      }
+
+    // remove selected community
+    toggleSelected(){
+      this.selectedCommunity = !this.selectedCommunity;
     },
+    
     // should be get all communities
     getCommunities() {
       axios.post(this.$t("communities.route"))
