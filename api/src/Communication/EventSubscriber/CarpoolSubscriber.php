@@ -24,6 +24,7 @@
 namespace App\Communication\EventSubscriber;
 
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\Waypoint;
 use App\Carpool\Event\AdRenewalEvent;
 use App\Carpool\Event\AskAcceptedEvent;
 use App\Carpool\Event\AskAdDeletedEvent;
@@ -45,6 +46,7 @@ use App\TranslatorTrait;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CarpoolSubscriber implements EventSubscriberInterface
 {
@@ -53,12 +55,14 @@ class CarpoolSubscriber implements EventSubscriberInterface
     private $notificationManager;
     private $askHistoryRepository;
     private $logger;
-    
-    public function __construct(NotificationManager $notificationManager, AskHistoryRepository $askHistoryRepository, LoggerInterface $logger)
+    private $router;
+
+    public function __construct(NotificationManager $notificationManager, AskHistoryRepository $askHistoryRepository, LoggerInterface $logger, UrlGeneratorInterface $router)
     {
         $this->notificationManager = $notificationManager;
         $this->askHistoryRepository = $askHistoryRepository;
         $this->logger = $logger;
+        $this->router = $router;
     }
     
     public static function getSubscribedEvents()
@@ -296,12 +300,38 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $object = (object) [
             "old" => $event->getOldAd(),
             "new" => $event->getNewAd(),
-            "sender" => $event->getSender(),
-            "searchLink" => $event->getMailSearchLink()
+            "sender" => $event->getSender()
         ];
 
         foreach ($event->getAsks() as $ask) {
             $object->ask = $ask;
+            $origin = null;
+            $destination = null;
+            $regular = false;
+            $date = null;
+
+            if ($ask->getCriteria()->getFrequency() === 2) {
+                $regular = true;
+            } else {
+                $date = $ask->getCriteria()->getFromDate();
+                !is_null($date) ? $date = $date->format('Y-m-d') : null;
+            }
+            /** @var Waypoint $waypoint */
+            foreach ($ask->getWaypoints() as $waypoint) {
+                if ($waypoint->getPosition() === 0) {
+                    $origin = clone $waypoint->getAddress();
+                } elseif ($waypoint->isDestination()) {
+                    $destination = clone $waypoint->getAddress();
+                }
+            }
+
+            $routeParams = [
+                "origin" => json_encode($origin),
+                "destination" => json_encode($destination),
+                "regular" => $regular,
+                "date" => $date
+            ];
+            $object->searchLink = $event->getMailSearchLink() . "?" . http_build_query($routeParams);
             $this->notificationManager->notifies(AdMajorUpdatedEvent::NAME, $ask->getUser(), $object);
         }
     }

@@ -296,18 +296,13 @@ class CarpoolController extends AbstractController
      * Simple search results.
      * (GET)
      */
-    public function carpoolSearchResultGET(Request $request, UserManager $userManager, AddressManager $addressManager)
+    public function carpoolSearchResultGET(Request $request, UserManager $userManager)
     {
-        $origin = $addressManager->getAddress($request->get('origin'));
-        $destination = $addressManager->getAddress($request->get('destination'));
-        $date = $request->get('date');
-        $regular = (bool) $request->get('regular');
-
         return $this->render('@Mobicoop/carpool/results.html.twig', [
-            'origin' => json_encode($origin),
-            'destination' => json_encode($destination),
-            'date' =>  $date,
-            'regular' => $regular,
+            'origin' => $request->get('origin'),
+            'destination' => $request->get('destination'),
+            'date' => $request->get('date'),
+            'regular' => (bool) $request->get('regular'),
             'user' => $userManager->getLoggedUser(),
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,

@@ -76,6 +76,7 @@ hasBeenCancelledBecause: "a été annulé car"
 hasUpdatedHisAd: "a modifié son annonce."
 cancelledCarpool: "Covoiturage annulé"
 ownerMessage: "Voici le message du propriétaire de l'annonce :"
+clickNewSearch: "Vous pouvez cliquer sur ce lien afin de relancer votre recherche"
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
