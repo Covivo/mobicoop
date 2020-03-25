@@ -142,7 +142,7 @@ import EventReport from "@components/event/EventReport";
 import Search from "@components/carpool/search/Search";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
-import moment, { now } from "moment";
+import moment from "moment";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
