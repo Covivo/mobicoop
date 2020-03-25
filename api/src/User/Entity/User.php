@@ -891,10 +891,10 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A user may have many diary action logs.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="admin", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="author", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"write"})
      */
-    private $diariesAdmin;
+    private $diariesAuthor;
 
     /**
     * @var ArrayCollection|null A user may have many user notification preferences.
@@ -1953,28 +1953,28 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getDiariesAdmin()
+    public function getDiariesAuthor()
     {
-        return $this->diariesAdmin->getValues();
+        return $this->diariesAuthor->getValues();
     }
 
-    public function addDiaryAdmin(Diary $diaryAdmin): self
+    public function addDiaryAuthor(Diary $diaryAuthor): self
     {
-        if (!$this->diariesAdmin->contains($diaryAdmin)) {
-            $this->diariesAdmin->add($diaryAdmin);
-            $diaryAdmin->setAdmin($this);
+        if (!$this->diariesAuthor->contains($diaryAuthor)) {
+            $this->diariesAuthor->add($diaryAuthor);
+            $diaryAuthor->setAuthor($this);
         }
 
         return $this;
     }
 
-    public function removeDiaryAdmin(Diary $diaryAdmin): self
+    public function removeDiaryAuthor(Diary $diaryAdmin): self
     {
-        if ($this->diariesAdmin->contains($diaryAdmin)) {
-            $this->diariesAdmin->removeElement($diaryAdmin);
+        if ($this->diariesAuthor->contains($diaryAdmin)) {
+            $this->diariesAuthor->removeElement($diaryAdmin);
             // set the owning side to null (unless already changed)
-            if ($diaryAdmin->getAdmin() === $this) {
-                $diaryAdmin->setAdmin(null);
+            if ($diaryAdmin->getAuthor() === $this) {
+                $diaryAdmin->setAuthor(null);
             }
         }
 

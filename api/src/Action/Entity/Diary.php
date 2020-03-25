@@ -99,16 +99,16 @@ class Diary
     private $user;
 
     /**
-     * @var User The admin that makes the action.
-     * Can be the user itself and not and admin (i.e. register from front)
+     * @var User The Author of the action.
+     * Can be the user itself or an admin (i.e. register from front)
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="diariesAdmin")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="diariesAuthor")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)
      */
-    private $admin;
+    private $author;
 
     /**
      * @var Solidary|null The solidary record if the action concerns a solidary record.
@@ -199,14 +199,14 @@ class Diary
         return $this;
     }
 
-    public function getAdmin(): ?User
+    public function getAuthor(): ?User
     {
-        return $this->admin;
+        return $this->author;
     }
 
-    public function setAdmin(?User $admin): self
+    public function setAuthor(?User $author): self
     {
-        $this->admin = $admin;
+        $this->author = $author;
         
         return $this;
     }

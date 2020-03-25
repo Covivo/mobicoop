@@ -55,7 +55,7 @@ class DiaryManager
         $diary = new Diary();
         $diary->setAction($action);
         $diary->setUser($user);
-        $diary->setAdmin($admin);
+        $diary->setAuthor($admin);
     
         if (!is_null($comment)) {
             $diary->setComment($comment);

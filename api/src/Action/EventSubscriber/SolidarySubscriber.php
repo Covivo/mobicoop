@@ -21,8 +21,9 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\EventSubscriber;
+namespace App\Action\EventSubscriber;
 
+use App\Action\Service\ActionManager;
 use App\Solidary\Event\SolidaryCreated;
 use App\Solidary\Event\SolidaryUpdated;
 use App\Solidary\Event\SolidaryUserCreated;
@@ -30,15 +31,14 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Solidary\Event\SolidaryUserStructureAccepted;
 use App\Solidary\Event\SolidaryUserStructureRefused;
 use App\Solidary\Event\SolidaryUserUpdated;
-use App\Solidary\Service\SolidaryEventManager;
 
 class SolidarySubscriber implements EventSubscriberInterface
 {
-    private $solidaryEventManager;
+    private $actionManager;
 
-    public function __construct(SolidaryEventManager $solidaryEventManager)
+    public function __construct(ActionManager $actionManager)
     {
-        $this->solidaryEventManager = $solidaryEventManager;
+        $this->actionManager = $actionManager;
     }
 
     public static function getSubscribedEvents()
@@ -55,31 +55,31 @@ class SolidarySubscriber implements EventSubscriberInterface
 
     public function onSolidaryUserStructureAccepted(SolidaryUserStructureAccepted $event)
     {
-        $this->solidaryEventManager->handleEvent(SolidaryUserStructureAccepted::NAME, $event);
+        $this->actionManager->handleEvent(SolidaryUserStructureAccepted::NAME, $event);
     }
 
     public function onSolidaryUserStructureRefused(SolidaryUserStructureRefused $event)
     {
-        $this->solidaryEventManager->handleEvent(SolidaryUserStructureRefused::NAME, $event);
+        $this->actionManager->handleEvent(SolidaryUserStructureRefused::NAME, $event);
     }
 
     public function onSolidaryUserCreated(SolidaryUserCreated $event)
     {
-        $this->solidaryEventManager->handleEvent(SolidaryUserCreated::NAME, $event);
+        $this->actionManager->handleEvent(SolidaryUserCreated::NAME, $event);
     }
 
     public function onSolidaryUserUpdated(SolidaryUserUpdated $event)
     {
-        $this->solidaryEventManager->handleEvent(SolidaryUserUpdated::NAME, $event);
+        $this->actionManager->handleEvent(SolidaryUserUpdated::NAME, $event);
     }
 
     public function onSolidaryCreated(SolidaryCreated $event)
     {
-        $this->solidaryEventManager->handleEvent(SolidaryCreated::NAME, $event);
+        $this->actionManager->handleEvent(SolidaryCreated::NAME, $event);
     }
 
     public function onSolidaryUpdated(SolidaryUpdated $event)
     {
-        $this->solidaryEventManager->handleEvent(SolidaryUpdated::NAME, $event);
+        $this->actionManager->handleEvent(SolidaryUpdated::NAME, $event);
     }
 }
