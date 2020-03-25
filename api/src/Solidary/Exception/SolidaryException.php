@@ -26,4 +26,5 @@ class SolidaryException extends \LogicException
 {
     const NO_ROLE = "This SolidaryUser has no role";
     const BAD_SOLIDARYUSERSTRUCTURE_STATUS = "Invalid status value for this SolidaryUserStructure";
+    const BAD_SOLIDARY_ACTION = "Unknown action";
 }

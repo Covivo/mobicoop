@@ -23,30 +23,18 @@
 
 namespace App\Solidary\EventSubscriber;
 
-use App\Action\Repository\ActionRepository;
-use App\Action\Service\DiaryManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use App\Communication\Service\NotificationManager;
 use App\Solidary\Event\SolidaryUserStructureAccepted;
 use App\Solidary\Event\SolidaryUserStructureRefused;
-use App\Solidary\Service\SolidaryUserStructureManager;
-use Symfony\Component\Security\Core\Security;
+use App\Solidary\Service\SolidaryEventManager;
 
 class SolidaryUserStructureSubscriber implements EventSubscriberInterface
 {
-    private $notificationManager;
-    private $solidaryUserStructureManager;
-    private $diaryManager;
-    private $actionRepository;
-    private $security;
+    private $solidaryEventManager;
 
-    public function __construct(NotificationManager $notificationManager, SolidaryUserStructureManager $solidaryUserStructureManager, DiaryManager $diaryManager, ActionRepository $actionRepository, Security $security)
+    public function __construct(SolidaryEventManager $solidaryEventManager)
     {
-        $this->notificationManager = $notificationManager;
-        $this->solidaryUserStructureManager = $solidaryUserStructureManager;
-        $this->diaryManager = $diaryManager;
-        $this->actionRepository = $actionRepository;
-        $this->security = $security;
+        $this->solidaryEventManager = $solidaryEventManager;
     }
 
     public static function getSubscribedEvents()
@@ -59,17 +47,11 @@ class SolidaryUserStructureSubscriber implements EventSubscriberInterface
 
     public function onSolidaryUserStructureAccepted(SolidaryUserStructureAccepted $event)
     {
-        $action = $this->actionRepository->findOneBy(['name'=>SolidaryUserStructureAccepted::NAME]);
-        $user = $event->getSolidaryUserStructure()->getSolidaryUser()->getUser();
-        $admin = $this->security->getUser();
-        $this->diaryManager->addDiaryEntry($action, $user, $admin);
+        $this->solidaryEventManager->handleEvent(SolidaryUserStructureAccepted::NAME, $event);
     }
 
     public function onSolidaryUserStructureRefused(SolidaryUserStructureRefused $event)
     {
-        $action = $this->actionRepository->findOneBy(['name'=>SolidaryUserStructureRefused::NAME]);
-        $user = $event->getSolidaryUserStructure()->getSolidaryUser()->getUser();
-        $admin = $this->security->getUser();
-        $this->diaryManager->addDiaryEntry($action, $user, $admin);
+        $this->solidaryEventManager->handleEvent(SolidaryUserStructureRefused::NAME, $event);
     }
 }
