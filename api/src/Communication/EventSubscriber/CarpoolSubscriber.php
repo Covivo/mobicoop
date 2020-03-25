@@ -331,6 +331,13 @@ class CarpoolSubscriber implements EventSubscriberInterface
                 "regular" => $regular,
                 "date" => $date
             ];
+            // todo: use if we can keep the proposal (request or offer) if we delete the matched one
+//            if ($ask->getCriteria()->isDriver()) {
+//                $proposalId = $ask->getMatching()->getProposalOffer()->getId();
+//            } else {
+//                $proposalId = $ask->getMatching()->getProposalRequest()->getId();
+//            }
+//            $routeParams = ["pid" => $proposalId];
             $object->searchLink = $event->getMailSearchLink() . "?" . http_build_query($routeParams);
             $this->notificationManager->notifies(AdMajorUpdatedEvent::NAME, $ask->getUser(), $object);
         }

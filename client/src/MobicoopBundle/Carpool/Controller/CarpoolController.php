@@ -299,6 +299,8 @@ class CarpoolController extends AbstractController
     public function carpoolSearchResultGET(Request $request, UserManager $userManager)
     {
         return $this->render('@Mobicoop/carpool/results.html.twig', [
+            // todo: use if we can keep the proposal (request or offer) if we delete the matched one - cf CarpoolSubscriber
+//            'proposalId' => $request->get('pid'),
             'origin' => $request->get('origin'),
             'destination' => $request->get('destination'),
             'date' => $request->get('date'),
