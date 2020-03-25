@@ -27,15 +27,17 @@ const CampaignsList = (props) => {
                 let users = [];
                 Promise.all(data.deliveries.map(element =>
                     dataProvider.getOne('deliveries',{id: element} )
-                      .then( ({ data }) => {
-                          users.push(data.user)
-                      })
+                      .then( ({ data }) => data )
+                        //  users.push(data.user)
                       .catch( error => {
                           console.log("Erreur lors de la campagne d'emailing:", error)
                       })
-                ));
-                setSelectedIdsFormat(users)
-                setOpen(true)
+                )).then(
+                  data =>  {
+                    setSelectedIdsFormat(data);
+                    setOpen(true);
+                  }
+                );
             })
             .catch( error => {
                 console.log("Erreur lors de la campagne d'emailing:", error)
@@ -48,6 +50,7 @@ const CampaignsList = (props) => {
 
          }
       });
+
 
 
     const ButtonCampaign = (props) => {
