@@ -174,6 +174,7 @@ class Solidary
 
     public function __construct()
     {
+        $this->id = self::DEFAULT_ID;
         $this->needs = new ArrayCollection();
         $this->solidarySolutions = new ArrayCollection();
         $this->proofs = new ArrayCollection();
@@ -181,7 +182,6 @@ class Solidary
 
     public function getId(): int
     {
-        $this->id = self::DEFAULT_ID;
         return $this->id;
     }
 
