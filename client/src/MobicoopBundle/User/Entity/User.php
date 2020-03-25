@@ -358,10 +358,10 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $facebookId;
 
     /**
-    * @var array|null Communities choose by a user
+    * @var int|null Community choose by a user
     * @Groups({"post"})
     */
-    private $communitiesId;
+    private $communityId;
 
     /**
      * @var string|null the unsubscribe message we return by api
@@ -1033,16 +1033,14 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
-    public function getCommunitiesId(): ?array
+    public function getCommunityId(): ?int
     {
-        return $this->communitiesId;
+        return $this->communityId;
     }
-
-    public function setcommunitiesId(array $communitiesId): self
+    
+    public function setCommunityId($communityId)
     {
-        $this->communitiesId = $communitiesId;
-
-        return $this;
+        $this->communityId = $communityId;
     }
 
     /**
@@ -1105,7 +1103,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'phoneValidatedDate'    => $this->getPhoneValidatedDate(),
             'phoneToken'            => $this->getPhoneToken(),
             'unsubscribeMessage'    => $this->getUnsubscribeMessage(),
-            'communitiesId'         => $this->getCommunitiesId()
+            'communityId'         => $this->getCommunityId()
         ];
     }
 }

@@ -781,10 +781,10 @@ class User implements UserInterface, EquatableInterface
     private $communityUsers;
 
     /**
-    * @var array|null Communities choose by a user
+    * @var int|null Community choose by a user
     * @Groups({"readUser","write"})
     */
-    private $communitiesId;
+    private $communityId;
 
     /**
      * @var ArrayCollection|null The asks made for this user.
@@ -1729,16 +1729,14 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getCommunitiesId(): ?array
+    public function getCommunityId(): ?int
     {
-        return $this->communitiesId;
+        return $this->communityId;
     }
-
-    public function setcommunitiesId(array $communitiesId): self
+    
+    public function setCommunityId($communityId)
     {
-        $this->communitiesId = $communitiesId;
-
-        return $this;
+        $this->communityId = $communityId;
     }
 
     public function getUserAuthAssignments()

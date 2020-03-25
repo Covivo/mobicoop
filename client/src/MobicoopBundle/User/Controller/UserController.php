@@ -160,8 +160,8 @@ class UserController extends AbstractController
             }
             
 
-            if (isset($data['communities']) && !is_null($data['communities'])) {
-                $user->setcommunitiesId($data['communities']);
+            if (!is_null($data['community'])) {
+                $user->setcommunityId($data['community']);
             }
 
             // create user in database

@@ -19,405 +19,422 @@
 <!--**************************-->
 
 <template>
-  <v-container
-    id="scroll-target"
-    fluid
-  >
-    <v-row
-      justify="center"
-    >
-      <v-col
-        cols="12"
-        md="8"
-        xl="6"
-        align="center"
-      >
-        <h1>{{ $t('title') }}</h1>
-      </v-col>
-    </v-row>
-    <v-row
-      v-if="showFacebookSignUp"
-      justify="center"
-      class="text-center"
-    >
-      <v-col class="col-4">
-        <m-facebook-auth
-          :app-id="facebookLoginAppId"
-          :sign-up="true"
-          @fillForm="fillForm"
-        />
-      </v-col>
-    </v-row>
+  <div>
+    <!--SnackBar-->
 
-    <v-row
-      justify="center"
-      align="center"
+    <v-snackbar
+      v-model="snackbar"
+      :color="(errorUpdate)?'error': (form.communities.validationType == 1 ? 'warning' : 'success')"
+      top
     >
-      <v-col
-        cols="8"
-        align="center"
+      {{ textSnackbar }}
+      <v-btn
+        color="white"
+        text
+        @click="snackbar = false"
       >
-        <v-stepper 
-          v-model="step"
-          non-linear
+        <v-icon>mdi-close-circle-outline</v-icon>
+      </v-btn>
+    </v-snackbar>
+    <v-container
+      id="scroll-target"
+      fluid
+    >
+      <v-row
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
+          align="center"
         >
-          <v-stepper-header
-            class="elevation-0"
+          <h1>{{ $t('title') }}</h1>
+        </v-col>
+      </v-row>
+      <v-row
+        v-if="showFacebookSignUp"
+        justify="center"
+        class="text-center"
+      >
+        <v-col class="col-4">
+          <m-facebook-auth
+            :app-id="facebookLoginAppId"
+            :sign-up="true"
+            @fillForm="fillForm"
+          />
+        </v-col>
+      </v-row>
+
+      <v-row
+        justify="center"
+        align="center"
+      >
+        <v-col
+          cols="8"
+          align="center"
+        >
+          <v-stepper 
+            v-model="step"
+            non-linear
           >
+            <v-stepper-header
+              class="elevation-0"
+            >
+              <!--STEP 1 User identification-->
+              <v-stepper-step
+                :step="1"
+                editable
+                edit-icon
+              />
+              <v-divider />
+
+              <!--STEP 2 Name - Gender - Birthyear-->
+              <v-stepper-step
+                :step="2"
+                editable
+                edit-icon
+              />
+              <v-divider />
+
+              <!--STEP 3 Community-->
+              <v-stepper-step
+                v-if="communityShow"
+                :step="3"
+                editable
+                edit-icon
+              />
+              <v-divider v-if="communityShow" />
+
+
+              <!--STEP 4 hometown-->
+              <v-stepper-step
+                :step="(communityShow) ? 4 : 3"
+                editable
+                edit-icon
+              />
+            </v-stepper-header>
+
             <!--STEP 1 User identification-->
-            <v-stepper-step
-              :step="1"
-              editable
-              edit-icon
-            />
-            <v-divider />
-
-            <!--STEP 2 Name - Gender - Birthyear-->
-            <v-stepper-step
-              :step="2"
-              editable
-              edit-icon
-            />
-            <v-divider />
-
-            <!--STEP 3 Community-->
-            <v-stepper-step
-              v-if="communityShow"
-              :step="3"
-              editable
-              edit-icon
-            />
-            <v-divider v-if="communityShow" />
-
-
-            <!--STEP 4 hometown-->
-            <v-stepper-step
-              :step="(communityShow) ? 4 : 3"
-              editable
-              edit-icon
-            />
-          </v-stepper-header>
-
-          <!--STEP 1 User identification-->
         
-          <v-stepper-content
-            step="1"
-          >
-            <v-form
-              ref="step 1"
-              v-model="step1"
-              class="pb-2"
-              @submit.prevent
+            <v-stepper-content
+              step="1"
             >
-              <v-text-field
-                id="email"
-                v-model="form.email"
-                :rules="form.emailRules"
-                :label="$t('models.user.email.placeholder')+` *`"
-                name="email"
-                required
-                :loading="loadingCheckEmailAldreadyTaken"
-                @focusout="checkEmail"
-                @focusin="emailAlreadyTaken = false"
-              />
-              <v-alert
-                v-if="emailAlreadyTaken"
-                type="error"
+              <v-form
+                ref="step 1"
+                v-model="step1"
+                class="pb-2"
+                @submit.prevent
               >
-                {{ $t('checkEmail.error') }}
-              </v-alert>
-
-              <v-text-field
-                v-model="form.telephone"
-                :label="$t('models.user.phone.placeholder')+` *`"
-                required
-                :rules="form.telephoneRules"
-                name="telephone"
-                @keypress="isNumber(event)"
-              />
-              <v-text-field
-                v-model="form.password"
-                :append-icon="form.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                :rules="[form.passWordRules.required,form.passWordRules.min, form.passWordRules.checkUpper,form.passWordRules.checkLower,form.passWordRules.checkNumber]"
-                :type="form.showPassword ? 'text' : 'password'"
-                name="password"
-                :label="$t('models.user.password.placeholder')+` *`"
-                required
-                @click:append="form.showPassword = !form.showPassword"
-              />
-              <v-btn
-                ref="button"
-                rounded
-                class="my-13"
-                color="secondary"
-                type="submit"
-                @click="nextStep(1)"
-              >
-                {{ $t('ui.button.next') }}
-              </v-btn>
-            </v-form>
-          </v-stepper-content>
-          
-
-
-          <!--STEP 2 Name - Gender - Birthyear-->
-        
-          <v-stepper-content
-            step="2"
-          >
-            <v-form
-              id="step2"
-              ref="step 2"
-              v-model="step2"
-              class="pb-2"
-              @submit.prevent
-            >
-              <v-text-field
-                v-model="form.givenName"
-                :rules="form.givenNameRules"
-                :label="$t('models.user.givenName.placeholder')+` *`"
-                class="givenName"
-                required
-              />
-              <v-text-field
-                v-model="form.familyName"
-                :rules="form.familyNameRules"
-                :label="$t('models.user.familyName.placeholder')+` *`"
-                class="familyName"
-                required
-              />
-
-              <v-select
-                v-model="form.gender"
-                :items="form.genderItems"
-                item-text="genderItem"
-                item-value="genderValue"
-                :rules="form.genderRules"
-                :label="$t('models.user.gender.placeholder')+` *`"
-                required
-              />
-              <v-menu
-                ref="menu"
-                v-model="menu"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                min-width="290px"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    v-model="form.date"
-                    :label="$t('models.user.birthYear.placeholder')+` *`"
-                    readonly
-                    :rules="[ form.birthdayRules.checkIfAdult, form.birthdayRules.required ]"
-                    required
-                    v-on="on"
-                  />
-                </template>
-                <v-date-picker
-                  ref="picker"
-                  v-model="form.date"
-                  :max="maxDate()"
-                  :locale="locale"
-                  first-day-of-week="1"
-                  @change="save"
+                <v-text-field
+                  id="email"
+                  v-model="form.email"
+                  :rules="form.emailRules"
+                  :label="$t('models.user.email.placeholder')+` *`"
+                  name="email"
+                  required
+                  :loading="loadingCheckEmailAldreadyTaken"
+                  @focusout="checkEmail"
+                  @focusin="emailAlreadyTaken = false"
                 />
-              </v-menu>
-              <v-row
-                justify="center"
-                align="center"
-                class="mb-25"
-              >
-                <v-btn
-                  ref="button"
-                  rounded
-                  class="my-13 mr-12"
-                  color="secondary"
-                  @click="previousStep(2)"
+                <v-alert
+                  v-if="emailAlreadyTaken"
+                  type="error"
                 >
-                  {{ $t('ui.button.previous') }}
-                </v-btn>
+                  {{ $t('checkEmail.error') }}
+                </v-alert>
+
+                <v-text-field
+                  v-model="form.telephone"
+                  :label="$t('models.user.phone.placeholder')+` *`"
+                  required
+                  :rules="form.telephoneRules"
+                  name="telephone"
+                  @keypress="isNumber(event)"
+                />
+                <v-text-field
+                  v-model="form.password"
+                  :append-icon="form.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                  :rules="[form.passWordRules.required,form.passWordRules.min, form.passWordRules.checkUpper,form.passWordRules.checkLower,form.passWordRules.checkNumber]"
+                  :type="form.showPassword ? 'text' : 'password'"
+                  name="password"
+                  :label="$t('models.user.password.placeholder')+` *`"
+                  required
+                  @click:append="form.showPassword = !form.showPassword"
+                />
                 <v-btn
                   ref="button"
                   rounded
                   class="my-13"
                   color="secondary"
                   type="submit"
-                  @click="nextStep(2)"
+                  @click="nextStep(1)"
                 >
                   {{ $t('ui.button.next') }}
                 </v-btn>
-              </v-row>
-            </v-form>
-          </v-stepper-content>
+              </v-form>
+            </v-stepper-content>
           
 
-          <!--STEP 3 Community-->
+
+            <!--STEP 2 Name - Gender - Birthyear-->
         
-          <v-stepper-content
-            v-if="communityShow"
-            step="3"
-          >
-            <v-row
-              class="text-justify pb-5"
+            <v-stepper-content
+              step="2"
             >
-              <community-help />
-            </v-row>
-            <v-form
-              id="step3"
-              ref="form"
-              v-model="step3"
-              class="pb-2"
-              @submit.prevent
-            >
-              <v-row
-                align="center"
-                justify="center"
-                class="mt-2"
+              <v-form
+                id="step2"
+                ref="step 2"
+                v-model="step2"
+                class="pb-2"
+                @submit.prevent
               >
-                <v-col
-                  cols="12"
-                >
-                  <v-autocomplete
-                    v-model="selectedCommunities"
-                    :items="form.communities.communities"
-                    outlined
-                    chips
-                    :label="$t('communities.label')"
-                    item-text="name"
-                    item-value="id"
-                    multiple
-                    @change="emitEvent"
-                  >
-                    <template v-slot:selection="data">
-                      <v-chip
-                        v-bind="data.attrs"
-                        :input-value="data.selected"
-                        close
-                        @click="data.select"
-                        @click:close="removeCommunity(data.item)"
-                      >
-                        {{ data.item.name }}
-                      </v-chip>
-                    </template>
-                    <template v-slot:item="data">
-                      <template v-if="typeof data.item !== 'object'">
-                        <v-list-item-content v-text="data.item" />
-                      </template>
-                      <template v-else>
-                        <v-list-item-content>
-                          <v-list-item-title v-html="data.item.name" />
-                          <v-list-item-subtitle v-html="data.item.description" />
-                        </v-list-item-content>
-                      </template>
-                    </template>
-                  </v-autocomplete>
-                  <v-row
-                    justify="center"
-                    align="center"
-                    class="mb-40"
-                  >
-                    <v-btn
-                      ref="button"
-                      rounded
-                      class="my-13 mr-12"
-                      color="secondary"
+                <v-text-field
+                  v-model="form.givenName"
+                  :rules="form.givenNameRules"
+                  :label="$t('models.user.givenName.placeholder')+` *`"
+                  class="givenName"
+                  required
+                />
+                <v-text-field
+                  v-model="form.familyName"
+                  :rules="form.familyNameRules"
+                  :label="$t('models.user.familyName.placeholder')+` *`"
+                  class="familyName"
+                  required
+                />
 
-                      @click="previousStep(3)"
-                    >
-                      {{ $t('ui.button.previous') }}
-                    </v-btn>
-                    <v-btn
-                      ref="button"
-                      rounded
-                      class="my-13"
-                      color="secondary"
-                      type="submit"
-                      @click="nextStep(3)"
-                    >
-                      {{ $t('ui.button.next') }}
-                    </v-btn>
-                  </v-row>
-                </v-col>
-              </v-row>
-            </v-form>
-          </v-stepper-content>
+                <v-select
+                  v-model="form.gender"
+                  :items="form.genderItems"
+                  item-text="genderItem"
+                  item-value="genderValue"
+                  :rules="form.genderRules"
+                  :label="$t('models.user.gender.placeholder')+` *`"
+                  required
+                />
+                <v-menu
+                  ref="menu"
+                  v-model="menu"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="form.date"
+                      :label="$t('models.user.birthYear.placeholder')+` *`"
+                      readonly
+                      :rules="[ form.birthdayRules.checkIfAdult, form.birthdayRules.required ]"
+                      required
+                      v-on="on"
+                    />
+                  </template>
+                  <v-date-picker
+                    ref="picker"
+                    v-model="form.date"
+                    :max="maxDate()"
+                    :locale="locale"
+                    first-day-of-week="1"
+                    @change="save"
+                  />
+                </v-menu>
+                <v-row
+                  justify="center"
+                  align="center"
+                  class="mb-25"
+                >
+                  <v-btn
+                    ref="button"
+                    rounded
+                    class="my-13 mr-12"
+                    color="secondary"
+                    @click="previousStep(2)"
+                  >
+                    {{ $t('ui.button.previous') }}
+                  </v-btn>
+                  <v-btn
+                    ref="button"
+                    rounded
+                    class="my-13"
+                    color="secondary"
+                    type="submit"
+                    @click="nextStep(2)"
+                  >
+                    {{ $t('ui.button.next') }}
+                  </v-btn>
+                </v-row>
+              </v-form>
+            </v-stepper-content>
           
 
-          <!--STEP 4 hometown-->
-          <v-stepper-content
-            :step="(communityShow) ? 4 : 3"
-          >
-            <v-form
-              id="step4"
-              ref="form"
-              v-model="step4"
-              class="pb-2"
-              @submit.prevent
+            <!--STEP 3 Community-->
+        
+            <v-stepper-content
+              v-if="communityShow"
+              step="3"
             >
-              <GeoComplete
-                name="homeAddress"
-                :label="$t('models.user.homeTown.placeholder')"
-                :url="geoSearchUrl"
-                :hint="requiredHomeAddress ? $t('models.user.homeTown.required.hint') : $t('models.user.homeTown.hint')"
-                persistent-hint
-                :required="requiredHomeAddress"
-                @address-selected="selectedGeo"
-              />
-              <v-checkbox
-                v-model="form.validation"
-                class="check mt-12"
-                color="primary"
-                :rules="form.checkboxRules"
-                required
-              >
-                <template
-                  v-slot:label
-                  v-slot:activator="{ on }"
-                >
-                  <div>
-                    {{ $t('chart.text') }}
-                    <a
-                      class="primary--text"
-                      target="_blank"
-                      :href="$t('chart.route')"
-                      @click.stop
-                    >{{ $t('chart.link') }}
-                    </a>
-                  </div>:
-                </template>
-              </v-checkbox>
               <v-row
-                justify="center"
-                align="center"
-                class="mb-40"
+                class="text-justify pb-5"
               >
-                <v-btn
-                  ref="button"
-                  rounded
-                  class="my-13 mr-12 mt-12 "
-                  color="secondary"
-                  @click="--step"
-                >
-                  {{ $t('ui.button.previous') }}
-                </v-btn>
-                <v-btn
-                  color="secondary"
-                  rounded
-                  class="mr-4 mb-100 mt-12"
-                  :loading="loading"
-                  :disabled="!step4 || !step3 || !step2 || !step1 || loading || isDisable"
-                  @click="validate"
-                >
-                  {{ $t('ui.button.register') }}
-                </v-btn>
+                <community-help />
               </v-row>
-            </v-form>
-          </v-stepper-content>
-        </v-stepper>
-      </v-col>
-    </v-row>
-  </v-container>
+              <v-form
+                id="step3"
+                ref="form"
+                v-model="step3"
+                class="pb-2"
+                @submit.prevent
+              >
+                <v-row
+                  align="center"
+                  justify="center"
+                  class="mt-2"
+                >
+                  <v-col
+                    cols="12"
+                  >
+                    <v-autocomplete
+                      v-model="selectedCommunity"
+                      :items="form.communities.communities"
+                      outlined
+                      chips
+                      :label="$t('communities.label')"
+                      item-text="name"
+                      item-value="id"
+                      @change="emitEvent"
+                    >
+                      <template v-slot:selection="data">
+                        <v-chip
+                          v-bind="data.attrs"
+                          :input-value="data.selected"
+                          close
+                          @click="data.select"
+                          @click:close="removeCommunity(data.item)"
+                        >
+                          {{ data.item.name }}
+                        </v-chip>
+                      </template>
+                      <template v-slot:item="data">
+                        <template v-if="typeof data.item !== 'object'">
+                          <v-list-item-content v-text="data.item" />
+                        </template>
+                        <template v-else>
+                          <v-list-item-content>
+                            <v-list-item-title v-html="data.item.name" />
+                            <v-list-item-subtitle v-html="data.item.description" />
+                          </v-list-item-content>
+                        </template>
+                      </template>
+                    </v-autocomplete>
+                    <v-row
+                      justify="center"
+                      align="center"
+                      class="mb-40"
+                    >
+                      <v-btn
+                        ref="button"
+                        rounded
+                        class="my-13 mr-12"
+                        color="secondary"
+
+                        @click="previousStep(3)"
+                      >
+                        {{ $t('ui.button.previous') }}
+                      </v-btn>
+                      <v-btn
+                        ref="button"
+                        rounded
+                        class="my-13"
+                        color="secondary"
+                        type="submit"
+                        @click="nextStep(3)"
+                      >
+                        {{ $t('ui.button.next') }}
+                      </v-btn>
+                    </v-row>
+                  </v-col>
+                </v-row>
+              </v-form>
+            </v-stepper-content>
+          
+
+            <!--STEP 4 hometown-->
+            <v-stepper-content
+              :step="(communityShow) ? 4 : 3"
+            >
+              <v-form
+                id="step4"
+                ref="form"
+                v-model="step4"
+                class="pb-2"
+                @submit.prevent
+              >
+                <GeoComplete
+                  name="homeAddress"
+                  :label="$t('models.user.homeTown.placeholder')"
+                  :url="geoSearchUrl"
+                  :hint="requiredHomeAddress ? $t('models.user.homeTown.required.hint') : $t('models.user.homeTown.hint')"
+                  persistent-hint
+                  :required="requiredHomeAddress"
+                  @address-selected="selectedGeo"
+                />
+                <v-checkbox
+                  v-model="form.validation"
+                  class="check mt-12"
+                  color="primary"
+                  :rules="form.checkboxRules"
+                  required
+                >
+                  <template
+                    v-slot:label
+                    v-slot:activator="{ on }"
+                  >
+                    <div>
+                      {{ $t('chart.text') }}
+                      <a
+                        class="primary--text"
+                        target="_blank"
+                        :href="$t('chart.route')"
+                        @click.stop
+                      >{{ $t('chart.link') }}
+                      </a>
+                    </div>:
+                  </template>
+                </v-checkbox>
+                <v-row
+                  justify="center"
+                  align="center"
+                  class="mb-40"
+                >
+                  <v-btn
+                    ref="button"
+                    rounded
+                    class="my-13 mr-12 mt-12 "
+                    color="secondary"
+                    @click="--step"
+                  >
+                    {{ $t('ui.button.previous') }}
+                  </v-btn>
+                  <v-btn
+                    color="secondary"
+                    rounded
+                    class="mr-4 mb-100 mt-12"
+                    :loading="loading"
+                    :disabled="!step4 || !step3 || !step2 || !step1 || loading || isDisable"
+                    @click="validate"
+                  >
+                    {{ $t('ui.button.register') }}
+                  </v-btn>
+                </v-row>
+              </v-form>
+            </v-stepper-content>
+          </v-stepper>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
 </template>
 
 <script>
@@ -479,6 +496,10 @@ export default {
       step: 1,
       event: null,
       loading: false,
+      snackbar: false,
+      errorUpdate: false,
+      textSnackbar: null,
+      // textSnackOk: this.form.communities.validationType == 1? this.$t("snackbar.joinCommunity.textOkManualValidation") : this.$t("snackbar.joinCommunity.textOkAutoValidation"),
 
       //step validators
       step1: true,
@@ -569,7 +590,7 @@ export default {
         idFacebook:null,
         communities:[]
       },
-      selectedCommunities: this.communities,
+      selectedCommunity: this.communities,
       locale: this.$i18n.locale
     };
   },
@@ -635,7 +656,7 @@ export default {
           birthDay:this.form.date,
           address:this.form.homeAddress,
           idFacebook:this.form.idFacebook,
-          communities:this.selectedCommunities
+          community:this.selectedCommunity
         },{
           headers:{
             'content-type': 'application/json'
@@ -643,6 +664,9 @@ export default {
         })
         .then(response=>{
           window.location.href = this.$t('urlRedirectAfterSignUp',{"email":this.form.email});
+          this.textSnackbar = (this.errorUpdate) ? this.$t("snackbar.joinCommunity.textError") : this.textSnackOk;
+          this.snackbar = true;
+
           //console.log(response);
         })
         .catch(function (error) {
@@ -709,13 +733,13 @@ export default {
     },
     emitEvent: function() {
       this.$emit("change", {
-        communities: this.selectedCommunities
+        community: this.selectedCommunity
       });
     },
     removeCommunity(item) {
-      const index = this.selectedCommunities.indexOf(item.id);
+      const index = this.selectedCommunity.indexOf(item.id);
       if (index >= 0) {
-        this.selectedCommunities.splice(index, 1);
+        this.selectedCommunity.splice(index, 1);
         this.emitEvent();
       }
     },
