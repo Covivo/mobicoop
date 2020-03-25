@@ -45,9 +45,9 @@
               <!-- button  -->
               <div>
                 <v-btn
+                  v-if="!eventPassed"
                   color="secondary"
                   rounded
-                
                   @click="publish"
                 >
                   {{ $t('buttons.publish.label') }}
@@ -99,6 +99,7 @@
       </v-row>
       <!-- search journey -->
       <v-row
+        v-if="!eventPassed"
         justify="center"
       >
         <v-col
@@ -114,6 +115,7 @@
         </v-col>
       </v-row>
       <v-row
+        v-if="!eventPassed"
         class="text-center"
         justify="center"
       >
@@ -125,7 +127,6 @@
           :regular="regular"
           :hide-publish="true"
           :default-destination="defaultDestination"
-          :disable-search="disableSearch"
         />
       </v-row>
     </v-container>
@@ -226,16 +227,11 @@ export default {
       params: { 'eventId' : this.event.id },
       defaultDestination: this.initDestination,
       regular: false,
+      eventPassed: false,
     }
   },
   computed: {
-    disableSearch() {
-      let now = moment();
-      if (now > moment(this.event.toDate.date))
-        return true;
-      else
-        return false;
-    }
+    
   // Link the event in the adresse
   },
   created: function () {
@@ -245,6 +241,7 @@ export default {
   },
   mounted() {
     this.showEventProposals();
+    this.checkIfEventIsPassed();
   },
   methods:{
     searchChanged: function (search) {
@@ -383,7 +380,15 @@ export default {
         }
       }
       return point;
+    },
+
+    checkIfEventIsPassed() {
+      let now = moment();
+      if (now > moment(this.event.toDate.date)) {
+        this.eventPassed = true;
+      }  
     }
+
   }
 }
 </script>
