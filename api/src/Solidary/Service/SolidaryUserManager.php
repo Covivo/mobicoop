@@ -23,31 +23,25 @@
 namespace App\Solidary\Service;
 
 use App\Solidary\Entity\SolidaryUser;
-use App\Solidary\Entity\Need;
-use App\Solidary\Entity\Proof;
-use App\Solidary\Entity\StructureProof;
-use App\Solidary\Repository\StructureProofRepository;
-use App\Solidary\Repository\StructureRepository;
-use App\Solidary\Repository\SolidaryUserRepository;
-use App\User\Entity\User;
-use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Solidary\Exception\SolidaryException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Solidary\Event\SolidaryUserUpdated;
 
 class SolidaryUserManager
 {
     private $entityManager;
-    private $userManager;
-    private $structureRepository;
-    private $structureProofRepository;
-    private $solidaryUserRepository;
+    private $eventDispatcher;
 
-    public function __construct(EntityManagerInterface $entityManager, UserManager $userManager, StructureRepository $structureRepository, StructureProofRepository $structureProofRepository, SolidaryUserRepository $solidaryUserRepository)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher)
     {
         $this->entityManager = $entityManager;
-        $this->userManager = $userManager;
-        $this->structureRepository = $structureRepository;
-        $this->structureProofRepository = $structureProofRepository;
-        $this->solidaryUserRepository = $solidaryUserRepository;
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    public function updateSolidaryUser(SolidaryUser $solidaryUser)
+    {
+        // We trigger the event
+        $event = new SolidaryUserUpdated($solidaryUser);
+        $this->eventDispatcher->dispatch(SolidaryUserUpdated::NAME, $event);
     }
 }

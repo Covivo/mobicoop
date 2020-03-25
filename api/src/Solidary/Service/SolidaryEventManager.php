@@ -103,7 +103,9 @@ class SolidaryEventManager
         $user = $event->getUser();
         $admin = $this->security->getUser();
         // If it's an App, it means that this User registered himself from the front
-        if($admin instanceof App) $admin = $user;
+        if ($admin instanceof App) {
+            $admin = $user;
+        }
         $this->diaryManager->addDiaryEntry($action, $user, $admin);
     }
 

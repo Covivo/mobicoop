@@ -68,5 +68,4 @@ class SolidaryUserStructureSubscriber implements EventSubscriberInterface
     {
         $this->solidaryEventManager->handleEvent(SolidaryUserUpdated::NAME, $event);
     }
-
 }
