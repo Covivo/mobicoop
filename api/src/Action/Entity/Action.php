@@ -40,7 +40,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\HasLifecycleCallbacks
  * ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","readUser"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
@@ -89,7 +89,7 @@ class Action
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","readUser"})
      */
     private $name;
 
@@ -127,7 +127,7 @@ class Action
      * @var int|null The progression if the action can be related to a process (like for solidary records). It's a numeric value, so it can be a percent, a step...
      *
      * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","readUser"})
      */
     private $progression;
 

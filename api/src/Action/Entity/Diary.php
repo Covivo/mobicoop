@@ -41,7 +41,7 @@ use App\User\Entity\User;
  * ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","readSolidary","readUser"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={"get","post"},
@@ -56,7 +56,7 @@ class Diary
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read","readUser"})
      */
     private $id;
 
@@ -65,7 +65,7 @@ class Diary
      *
      * @ORM\ManyToOne(targetEntity="\App\Action\Entity\Action")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","readUser"})
      * @MaxDepth(1)
      */
     private $action;
@@ -74,7 +74,7 @@ class Diary
      * @var string A comment about the action.
      *
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","readUser"})
      */
     private $comment;
 
@@ -83,7 +83,7 @@ class Diary
      * Duplicated from the action entity, to keep the original value if the progression changes in the action entity.
      *
      * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","readUser"})
      */
     private $progression;
         

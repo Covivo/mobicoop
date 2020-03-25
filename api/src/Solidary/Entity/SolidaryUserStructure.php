@@ -44,21 +44,21 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      collectionOperations={
  *         "get"={
- *             "security"="is_granted('solidary_structure_list',object)"
+ *             "security"="is_granted('solidary_user_structure_list',object)"
  *          },
  *          "post"={
- *             "security_post_denormalize"="is_granted('solidary_structure_create',object)"
+ *             "security_post_denormalize"="is_granted('solidary_user_structure_create',object)"
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('solidary_structure_read',object)"
+ *             "security"="is_granted('solidary_user_structure_read',object)"
  *          },
  *          "put"={
- *             "security"="is_granted('solidary_structure_update',object)"
+ *             "security"="is_granted('solidary_user_structure_update',object)"
  *          },
  *          "delete"={
- *             "security"="is_granted('solidary_structure_delete',object)"
+ *             "security"="is_granted('solidary_user_structure_delete',object)"
  *          }
  *      }
  * )

@@ -892,7 +892,7 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null A user may have many diary action logs.
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="admin", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"write"})
      */
     private $diariesAdmin;
 
