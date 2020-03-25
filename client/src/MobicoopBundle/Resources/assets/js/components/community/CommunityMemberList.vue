@@ -44,7 +44,7 @@
       @update:options="updateOptions"
     >
       <template v-slot:item.member="{ item }">
-        {{ item.givenName +' '+ item.shortFamilyName }}
+        {{ displayUserName(item) }} - <b>{{ displayReferrer(item) }}</b>
       </template> 
       <template v-slot:item.action="{ item }">
         <v-tooltip top>
@@ -152,6 +152,14 @@ export default {
       let startItem = data.itemsPerPage*(page-1);
       let endItem = startItem+data.itemsPerPage;
       this.usersShowned = this.users.slice(startItem,endItem);
+    },
+    displayUserName(user) {
+      return  user.givenName + ' ' + user.shortFamilyName;
+    },
+    displayReferrer(user) {
+      if (user.isCommunityReferrer) {
+        return this.$t('referrer');
+      }
     }
   }
 }
