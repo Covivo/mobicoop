@@ -27,22 +27,25 @@ use App\Solidary\Event\SolidaryCreated;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Solidary\Event\SolidaryUpdated;
+use Symfony\Component\Security\Core\Security;
 
 class SolidaryManager
 {
     private $entityManager;
     private $eventDispatcher;
+    private $security;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->security = $security;
     }
 
     public function createSolidary(Solidary $solidary)
     {
         // We trigger the event
-        $event = new SolidaryCreated($solidary);
+        $event = new SolidaryCreated($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser());
         $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
 
         $this->entityManager->persist($solidary);

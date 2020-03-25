@@ -23,7 +23,9 @@
 
 namespace App\Solidary\Event;
 
+use App\App\Entity\App;
 use Symfony\Contracts\EventDispatcher\Event;
+use App\User\Entity\User;
 
 /**
  * Event sent when a solidary is created
@@ -32,17 +34,26 @@ class SolidaryCreated extends Event
 {
     public const NAME = 'solidary_create';
 
-    // Just an object because sometimes it's a User, sometimes it's a Solidary
-    // We check it in SolidaryEventManager->handleEvent()
-    protected $object;
+    protected $user;
+    protected $author;
 
-    public function __construct(Object $object)
+    public function __construct(User $user, $author)
     {
-        $this->object = $object;
+        $this->user = $user;
+        $this->author = $author;
+        // If it's an App, it means that this User registered himself from the front
+        if ($author instanceof App) {
+            $this->author = $user;
+        }
     }
 
-    public function getObject()
+    public function getUser()
     {
-        return $this->object;
+        return $this->user;
+    }
+
+    public function getAuthor()
+    {
+        return $this->author;
     }
 }

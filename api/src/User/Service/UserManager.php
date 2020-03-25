@@ -205,9 +205,9 @@ class UserManager
 
         // dispatch SolidaryUser event
         if (!is_null($user->getSolidaryUser())) {
-            $event = new SolidaryUserCreated($user);
+            $event = new SolidaryUserCreated($user, $this->security->getUser());
             $this->eventDispatcher->dispatch(SolidaryUserCreated::NAME, $event);
-            $event = new SolidaryCreated($user);
+            $event = new SolidaryCreated($user, $this->security->getUser());
             $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
         }
 
@@ -318,9 +318,9 @@ class UserManager
         $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
         // dispatch SolidaryUser event
         if (!is_null($user->getSolidaryUser())) {
-            $event = new SolidaryUserCreated($user);
+            $event = new SolidaryUserCreated($user, $this->security->getUser());
             $this->eventDispatcher->dispatch(SolidaryUserCreated::NAME, $event);
-            $event = new SolidaryCreated($user);
+            $event = new SolidaryCreated($user, $this->security->getUser());
             $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
         }
         

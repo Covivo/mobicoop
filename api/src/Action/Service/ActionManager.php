@@ -106,13 +106,7 @@ class ActionManager
 
     private function onSolidaryUserCreated(Action $action, SolidaryUserCreated $event)
     {
-        $user = $event->getUser();
-        $admin = $this->security->getUser();
-        // If it's an App, it means that this User registered himself from the front
-        if ($admin instanceof App) {
-            $admin = $user;
-        }
-        $this->diaryManager->addDiaryEntry($action, $user, $admin);
+        $this->diaryManager->addDiaryEntry($action, $event->getUser(), $event->getAuthor());
     }
 
     private function onSolidaryUserUpdated(Action $action, SolidaryUserUpdated $event)
@@ -124,18 +118,8 @@ class ActionManager
 
     private function onSolidaryCreated(Action $action, SolidaryCreated $event)
     {
-        $object = $event->getObject();
-        if (!($object instanceof User) && !($object instanceof Solidary)) {
-            throw new SolidaryException(SolidaryException::INVALID_DATA_PROVIDED);
-        }
-        ($object instanceof User) ? $user = $object : $user = $object->getSolidaryUserStructure()->getSolidaryUser()->getUser();
-        $admin = $this->security->getUser();
-        // If it's an App, it means that this User registered himself from the front
-        if ($admin instanceof App) {
-            $admin = $user;
-        }
         // To do : The solidary is not persisted yet so we can't pass it to addDiaryEntrey... But it would be cool :)
-        $this->diaryManager->addDiaryEntry($action, $user, $admin);
+        $this->diaryManager->addDiaryEntry($action, $event->getUser(), $event->getAuthor());
     }
 
     private function onSolidaryUpdated(Action $action, SolidaryUpdated $event)
