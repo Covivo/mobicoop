@@ -100,6 +100,7 @@ class Diary
 
     /**
      * @var User The admin that makes the action.
+     * Can be the user itself and not and admin (i.e. register from front)
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="diariesAdmin")

@@ -23,9 +23,11 @@
 
 namespace App\Solidary\EventSubscriber;
 
+use App\Solidary\Event\SolidaryUserCreated;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Solidary\Event\SolidaryUserStructureAccepted;
 use App\Solidary\Event\SolidaryUserStructureRefused;
+use App\Solidary\Event\SolidaryUserUpdated;
 use App\Solidary\Service\SolidaryEventManager;
 
 class SolidaryUserStructureSubscriber implements EventSubscriberInterface
@@ -42,6 +44,8 @@ class SolidaryUserStructureSubscriber implements EventSubscriberInterface
         return [
             SolidaryUserStructureAccepted::NAME => 'onSolidaryUserStructureAccepted',
             SolidaryUserStructureRefused::NAME => 'onSolidaryUserStructureRefused',
+            SolidaryUserCreated::NAME => 'onSolidaryUserCreated',
+            SolidaryUserUpdated::NAME => 'onSolidaryUserUpdated'
         ];
     }
 
@@ -54,4 +58,15 @@ class SolidaryUserStructureSubscriber implements EventSubscriberInterface
     {
         $this->solidaryEventManager->handleEvent(SolidaryUserStructureRefused::NAME, $event);
     }
+
+    public function onSolidaryUserCreated(SolidaryUserCreated $event)
+    {
+        $this->solidaryEventManager->handleEvent(SolidaryUserCreated::NAME, $event);
+    }
+
+    public function onSolidaryUserUpdated(SolidaryUserUpdated $event)
+    {
+        $this->solidaryEventManager->handleEvent(SolidaryUserUpdated::NAME, $event);
+    }
+
 }

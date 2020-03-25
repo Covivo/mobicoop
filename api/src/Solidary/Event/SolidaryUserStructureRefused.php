@@ -33,7 +33,7 @@ class SolidaryUserStructureRefused extends Event
 {
     public const NAME = 'solidary_user_refused';
 
-    protected $user;
+    protected $solidaryUserStructure;
 
     public function __construct(SolidaryUserStructure $solidaryUserStructure)
     {

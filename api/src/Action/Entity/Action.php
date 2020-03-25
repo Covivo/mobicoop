@@ -127,7 +127,7 @@ class Action
      * @var int|null The progression if the action can be related to a process (like for solidary records). It's a numeric value, so it can be a percent, a step...
      *
      * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
-     * @Groups({"read","write","readUser"})
+     * @Groups({"read","write"})
      */
     private $progression;
 

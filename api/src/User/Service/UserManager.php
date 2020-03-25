@@ -48,6 +48,8 @@ use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
+use App\Solidary\Event\SolidaryUserCreated;
+use App\Solidary\Event\SolidaryUserUpdated;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Entity\UserNotification;
 use App\User\Event\UserDelegateRegisteredEvent;
@@ -200,6 +202,12 @@ class UserManager
             }
         }
 
+        // dispatch SolidaryUser event
+        if (!is_null($user->getSolidaryUser())) {
+            $event = new SolidaryUserCreated($user);
+            $this->eventDispatcher->dispatch(SolidaryUserCreated::NAME, $event);
+        }
+
         // return the user
         return $user;
     }
@@ -281,7 +289,6 @@ class UserManager
 
         // Check if there is a SolidaryUser. If so, we need to check if the right role. If there is not, we add it.
         if (!is_null($user->getSolidaryUser())) {
-            
             // Get the authAssignments
             $userAuthAssignments = $user->getUserAuthAssignments();
             $authItems = [];
@@ -306,6 +313,12 @@ class UserManager
         // dispatch an event
         $event = new UserUpdatedSelfEvent($user);
         $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
+        // dispatch SolidaryUser event
+        if (!is_null($user->getSolidaryUser())) {
+            $event = new SolidaryUserCreated($user);
+            $this->eventDispatcher->dispatch(SolidaryUserCreated::NAME, $event);
+        }
+        
         // return the user
         return $user;
     }

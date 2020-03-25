@@ -26,9 +26,12 @@ namespace App\Solidary\Service;
 use App\Action\Entity\Action;
 use App\Action\Repository\ActionRepository;
 use App\Action\Service\DiaryManager;
+use App\App\Entity\App;
 use App\Communication\Service\NotificationManager;
+use App\Solidary\Event\SolidaryUserCreated;
 use App\Solidary\Event\SolidaryUserStructureAccepted;
 use App\Solidary\Event\SolidaryUserStructureRefused;
+use App\Solidary\Event\SolidaryUserUpdated;
 use App\Solidary\Exception\SolidaryException;
 use Symfony\Component\Security\Core\Security;
 
@@ -73,10 +76,13 @@ class SolidaryEventManager
                 break;
             case SolidaryUserStructureRefused::NAME:$this->onSolidaryUserStructureRefused($action, $object);
                 break;
+            case SolidaryUserCreated::NAME:$this->onSolidaryUserCreated($action, $object);
+                break;
+            case SolidaryUserUpdated::NAME:$this->onSolidaryUserUpdated($action, $object);
+                break;
             default:
         }
     }
-
 
     private function onSolidaryUserStructureAccepted(Action $action, SolidaryUserStructureAccepted $event)
     {
@@ -88,6 +94,22 @@ class SolidaryEventManager
     private function onSolidaryUserStructureRefused(Action $action, SolidaryUserStructureRefused $event)
     {
         $user = $event->getSolidaryUserStructure()->getSolidaryUser()->getUser();
+        $admin = $this->security->getUser();
+        $this->diaryManager->addDiaryEntry($action, $user, $admin);
+    }
+
+    private function onSolidaryUserCreated(Action $action, SolidaryUserCreated $event)
+    {
+        $user = $event->getUser();
+        $admin = $this->security->getUser();
+        // If it's an App, it means that this User registered himself from the front
+        if($admin instanceof App) $admin = $user;
+        $this->diaryManager->addDiaryEntry($action, $user, $admin);
+    }
+
+    private function onSolidaryUserUpdated(Action $action, SolidaryUserUpdated $event)
+    {
+        $user = $event->getSolidaryUser()->getUser();
         $admin = $this->security->getUser();
         $this->diaryManager->addDiaryEntry($action, $user, $admin);
     }

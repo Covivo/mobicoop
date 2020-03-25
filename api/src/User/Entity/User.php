@@ -998,7 +998,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * The SolidaryUser possibly linked to this User
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user", cascade={"persist","remove"})
-     * @Groups({"readUser","write","readSolidaryUser","writeSolidaryUser"})
+     * @Groups({"readUser","write","readSolidary","writeSolidary"})
      */
     private $solidaryUser;
 

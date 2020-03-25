@@ -23,25 +23,25 @@
 
 namespace App\Solidary\Event;
 
-use App\Solidary\Entity\SolidaryUserStructure;
+use App\Solidary\Entity\SolidaryUser;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event sent when a solidary user structure is accepted
  */
-class SolidaryUserStructureAccepted extends Event
+class SolidaryUserUpdated extends Event
 {
-    public const NAME = 'solidary_user_accepted';
+    public const NAME = 'solidary_user_update';
 
-    protected $solidaryUserStructure;
+    protected $solidaryUser;
 
-    public function __construct(SolidaryUserStructure $solidaryUserStructure)
+    public function __construct(SolidaryUser $solidaryUser)
     {
-        $this->solidaryUserStructure = $solidaryUserStructure;
+        $this->solidaryUser = $solidaryUser;
     }
 
-    public function getSolidaryUserStructure()
+    public function getSolidaryUser()
     {
-        return $this->solidaryUserStructure;
+        return $this->solidaryUser;
     }
 }
