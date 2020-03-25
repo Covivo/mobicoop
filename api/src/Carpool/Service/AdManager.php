@@ -1159,12 +1159,12 @@ class AdManager
     public function compareSchedules($old, $new)
     {
         $adSchedule = [];
-//        we create schedule temporary cause we need to keep new Ad clean to be able to create a new proposal easily if needed
+        // we create temporary schedule cause we need to keep new Ad clean to be able to create a new proposal easily if needed
         foreach ($new as $schedule) {
             if (isset($schedule['mon']) && $schedule['mon']) {
                 $adSchedule['mon'] = true;
-                $adSchedule['monOutwardTime'] = $schedule['outwardTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
-                $adSchedule['monReturnTime'] = $schedule['returnTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
+                $adSchedule['monOutwardTime'] = !empty($schedule['outwardTime']) ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
+                $adSchedule['monReturnTime'] = !empty($schedule['returnTime']) ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
             } elseif (!isset($adSchedule['mon'])) {
                 $adSchedule['mon'] = false;
                 $adSchedule['monOutwardTime'] = null;
@@ -1172,8 +1172,8 @@ class AdManager
             }
             if (isset($schedule['tue']) && $schedule['tue']) {
                 $adSchedule['tue'] = true;
-                $adSchedule['tueOutwardTime'] = $schedule['outwardTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
-                $adSchedule['tueReturnTime'] = $schedule['returnTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
+                $adSchedule['tueOutwardTime'] = !empty($schedule['outwardTime']) ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
+                $adSchedule['tueReturnTime'] = !empty($schedule['returnTime']) ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
             } elseif (!isset($adSchedule['tue'])) {
                 $adSchedule['tue'] = false;
                 $adSchedule['tueOutwardTime'] = null;
@@ -1181,8 +1181,8 @@ class AdManager
             }
             if (isset($schedule['wed']) && $schedule['wed']) {
                 $adSchedule['wed'] = true;
-                $adSchedule['wedOutwardTime'] = $schedule['outwardTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
-                $adSchedule['wedReturnTime'] = $schedule['returnTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
+                $adSchedule['wedOutwardTime'] = !empty($schedule['outwardTime']) ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
+                $adSchedule['wedReturnTime'] = !empty($schedule['returnTime']) ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
             } elseif (!isset($adSchedule['wed'])) {
                 $adSchedule['wed'] = false;
                 $adSchedule['wedOutwardTime'] = null;
@@ -1190,8 +1190,8 @@ class AdManager
             }
             if (isset($schedule['thu']) && $schedule['thu']) {
                 $adSchedule['thu'] = true;
-                $adSchedule['thuOutwardTime'] = $schedule['outwardTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
-                $adSchedule['thuReturnTime'] = $schedule['returnTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
+                $adSchedule['thuOutwardTime'] = !empty($schedule['outwardTime']) ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
+                $adSchedule['thuReturnTime'] = !empty($schedule['returnTime']) ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
             } elseif (!isset($adSchedule['thu'])) {
                 $adSchedule['thu'] = false;
                 $adSchedule['thuOutwardTime'] = null;
@@ -1199,8 +1199,8 @@ class AdManager
             }
             if (isset($schedule['fri']) && $schedule['fri']) {
                 $adSchedule['fri'] = true;
-                $adSchedule['friOutwardTime'] = $schedule['outwardTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
-                $adSchedule['friReturnTime'] = $schedule['returnTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
+                $adSchedule['friOutwardTime'] = !empty($schedule['outwardTime']) ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
+                $adSchedule['friReturnTime'] = !empty($schedule['returnTime']) ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
             } elseif (!isset($adSchedule['fri'])) {
                 $adSchedule['fri'] = false;
                 $adSchedule['friOutwardTime'] = null;
@@ -1208,8 +1208,8 @@ class AdManager
             }
             if (isset($schedule['sat']) && $schedule['sat']) {
                 $adSchedule['sat'] = true;
-                $adSchedule['satOutwardTime'] = $schedule['outwardTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
-                $adSchedule['satReturnTime'] = $schedule['returnTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
+                $adSchedule['satOutwardTime'] = !empty($schedule['outwardTime']) ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
+                $adSchedule['satReturnTime'] = !empty($schedule['returnTime']) ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
             } elseif (!isset($adSchedule['sat'])) {
                 $adSchedule['sat'] = false;
                 $adSchedule['satOutwardTime'] = null;
@@ -1217,8 +1217,8 @@ class AdManager
             }
             if (isset($schedule['sun']) && $schedule['sun']) {
                 $adSchedule['sun'] = true;
-                $adSchedule['sunOutwardTime'] = $schedule['outwardTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
-                $adSchedule['sunReturnTime'] = $schedule['returnTime'] !== '' ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
+                $adSchedule['sunOutwardTime'] = !empty($schedule['outwardTime']) ? \DateTime::createFromFormat('H:i', $schedule['outwardTime']) : null;
+                $adSchedule['sunReturnTime'] = !empty($schedule['returnTime']) ? \DateTime::createFromFormat('H:i', $schedule['returnTime']) : null;
             } elseif (!isset($adSchedule['sun'])) {
                 $adSchedule['sun'] = false;
                 $adSchedule['sunOutwardTime'] = null;
@@ -1234,11 +1234,12 @@ class AdManager
         $new = array_values($adSchedule);
 
         for ($i = 0; $i < count($old); $i++) {
-            if (!$old[$i] && !$new[$i]) {
-                continue;
-            } elseif ($old[$i] !== $new[$i]) {
+            if (is_bool($old[$i]) && is_bool($new[$i]) && $old[$i] !== $new[$i]) {
                 return false;
-            } elseif (is_a($old[$i], \DateTime::class)) {
+            } elseif (is_a($old[$i], \DateTime::class) && is_null($new[$i])
+                || is_a($new[$i], \DateTime::class) && is_null($old[$i])) {
+                return false;
+            } elseif (is_a($old[$i], \DateTime::class) && is_a($new[$i], \DateTime::class)) {
                 if ($old[$i]->format('Y-m-d H:i:s') !== $new[$i]->format('Y-m-d H:i:s')) {
                     return false;
                 }
