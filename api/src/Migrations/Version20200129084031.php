@@ -61,10 +61,10 @@ final class Version20200129084031 extends AbstractMigration
         $this->addSql('ALTER TABLE ptjourney CHANGE distance distance INT DEFAULT NULL, CHANGE duration duration VARCHAR(100) DEFAULT NULL, CHANGE price price NUMERIC(4, 2) DEFAULT NULL');
         $this->addSql('ALTER TABLE relay_point_type CHANGE icon_id icon_id INT DEFAULT NULL, CHANGE created_date created_date DATETIME DEFAULT NULL, CHANGE updated_date updated_date DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE relay_point CHANGE community_id community_id INT DEFAULT NULL, CHANGE private private TINYINT(1) DEFAULT NULL, CHANGE places places SMALLINT DEFAULT NULL, CHANGE places_disabled places_disabled SMALLINT DEFAULT NULL, CHANGE free free TINYINT(1) DEFAULT NULL, CHANGE secured secured TINYINT(1) DEFAULT NULL, CHANGE official official TINYINT(1) DEFAULT NULL, CHANGE suggested suggested TINYINT(1) DEFAULT NULL, CHANGE permalink permalink VARCHAR(255) DEFAULT NULL, CHANGE updated_date updated_date DATETIME DEFAULT NULL');
-        // $this->addSql('ALTER TABLE uright CHANGE parent_id parent_id INT DEFAULT NULL, CHANGE description description VARCHAR(255) DEFAULT NULL');
-        // $this->addSql('ALTER TABLE role CHANGE parent_id parent_id INT DEFAULT NULL');
-        // $this->addSql('ALTER TABLE user_right CHANGE territory_id territory_id INT DEFAULT NULL');
-        // $this->addSql('ALTER TABLE user_role CHANGE territory_id territory_id INT DEFAULT NULL');
+        $this->addSql('ALTER TABLE uright CHANGE parent_id parent_id INT DEFAULT NULL, CHANGE description description VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE role CHANGE parent_id parent_id INT DEFAULT NULL');
+        $this->addSql('ALTER TABLE user_right CHANGE territory_id territory_id INT DEFAULT NULL');
+        $this->addSql('ALTER TABLE user_role CHANGE territory_id territory_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE solidary_matching CHANGE updated_date updated_date DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE structure CHANGE created_date created_date DATETIME DEFAULT NULL, CHANGE updated_date updated_date DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE solidary CHANGE assisted assisted TINYINT(1) DEFAULT NULL, CHANGE updated_date updated_date DATETIME DEFAULT NULL');

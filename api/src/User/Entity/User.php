@@ -995,6 +995,15 @@ class User implements UserInterface, EquatableInterface
      */
     private $alreadyRegistered;
 
+
+    /**
+     * @var \DateTimeInterface Last user activity date
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readUser","write"})
+     */
+    private $lastActivityDate;
+
     /**
      * The SolidaryUser possibly linked to this User
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user", cascade={"persist","remove"})
@@ -2314,10 +2323,22 @@ class User implements UserInterface, EquatableInterface
 
         return $this;
     }
-    
+
     public function getRefresh()
     {
         return $this->email;
+    }
+
+    public function getLastActivityDate(): ?\DateTimeInterface
+    {
+        return $this->lastActivityDate;
+    }
+
+    public function setLastActivityDate(?\DateTimeInterface $lastActivityDate): self
+    {
+        $this->lastActivityDate = $lastActivityDate;
+
+        return $this;
     }
 
     // DOCTRINE EVENTS
