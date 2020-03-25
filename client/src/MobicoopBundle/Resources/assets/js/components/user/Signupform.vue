@@ -22,9 +22,12 @@
   <div>
     <!--SnackBar-->
 
+    <!-- :color="(errorUpdate)?'error': (form.communities.validationType == 1 ? 'warning' : 'success')" -->
+
+
     <v-snackbar
       v-model="snackbar"
-      :color="(errorUpdate)?'error': (form.communities.validationType == 1 ? 'warning' : 'success')"
+      :color="'success'"
       top
     >
       {{ textSnackbar }}
@@ -295,9 +298,9 @@
                   <v-col
                     cols="12"
                   >
-                    <v-autocomplete
+                    <v-autocomplete                  
                       v-model="selectedCommunity"
-                      :items="form.communities.communities"
+                      :items="communities.communities"
                       outlined
                       chips
                       :label="$t('communities.label')"
@@ -306,7 +309,7 @@
                       @change="emitEvent"
                     >
                       <template v-slot:selection="data">
-                        <v-chip
+                        <v-chip                      
                           v-bind="data.attrs"
                           :input-value="data.selected"
                           close
@@ -499,7 +502,8 @@ export default {
       snackbar: false,
       errorUpdate: false,
       textSnackbar: null,
-      textSnackOk: this.$t("snackbar.joinCommunity.textOkAutoValidation"),
+      // textSnackOk: this.form.communities.validationType == 1 ? this.$t("snackbar.joinCommunity.textOkManualValidation") : this.$t("snackbar.joinCommunity.textOkAutoValidation"),
+      textSnackOk: this.$t("snackbar.joinCommunity.textOkManualValidation"),
 
       //step validators
       step1: true,
@@ -587,9 +591,9 @@ export default {
         checkboxRules: [
           v => !!v || this.$t("ui.pages.signup.chart.errors.required")
         ],
-        idFacebook:null,
-        communities:[]
+        idFacebook:null
       },
+      communities:[],
       selectedCommunity: this.communities,
       locale: this.$i18n.locale
     };
@@ -746,7 +750,7 @@ export default {
     getCommunities() {
       axios.post(this.$t("communities.route"))
         .then(res => {
-          this.form.communities = res.data;
+          this.communities = res.data;
         });
     }
   }

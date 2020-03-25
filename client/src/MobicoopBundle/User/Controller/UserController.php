@@ -159,7 +159,7 @@ class UserController extends AbstractController
                 $user->setFacebookId($data['idFacebook']);
             }
             
-
+            // join a community
             if (!is_null($data['community'])) {
                 $user->setcommunityId($data['community']);
             }
