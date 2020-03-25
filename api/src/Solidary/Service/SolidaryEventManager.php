@@ -28,11 +28,15 @@ use App\Action\Repository\ActionRepository;
 use App\Action\Service\DiaryManager;
 use App\App\Entity\App;
 use App\Communication\Service\NotificationManager;
+use App\Solidary\Entity\Solidary;
+use App\Solidary\Event\SolidaryCreated;
+use App\Solidary\Event\SolidaryUpdated;
 use App\Solidary\Event\SolidaryUserCreated;
 use App\Solidary\Event\SolidaryUserStructureAccepted;
 use App\Solidary\Event\SolidaryUserStructureRefused;
 use App\Solidary\Event\SolidaryUserUpdated;
 use App\Solidary\Exception\SolidaryException;
+use App\User\Entity\User;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -80,6 +84,10 @@ class SolidaryEventManager
                 break;
             case SolidaryUserUpdated::NAME:$this->onSolidaryUserUpdated($action, $object);
                 break;
+            case SolidaryCreated::NAME:$this->onSolidaryCreated($action, $object);
+                break;
+            case SolidaryUpdated::NAME:$this->onSolidaryUpdated($action, $object);
+                break;
             default:
         }
     }
@@ -114,5 +122,28 @@ class SolidaryEventManager
         $user = $event->getSolidaryUser()->getUser();
         $admin = $this->security->getUser();
         $this->diaryManager->addDiaryEntry($action, $user, $admin);
+    }
+
+    private function onSolidaryCreated(Action $action, SolidaryCreated $event)
+    {
+        $object = $event->getObject();
+        if (!($object instanceof User) && !($object instanceof Solidary)) {
+            throw new SolidaryException(SolidaryException::INVALID_DATA_PROVIDED);
+        }
+        ($object instanceof User) ? $user = $object : $user = $object->getSolidaryUserStructure()->getSolidaryUser()->getUser();
+        $admin = $this->security->getUser();
+        // If it's an App, it means that this User registered himself from the front
+        if ($admin instanceof App) {
+            $admin = $user;
+        }
+        // To do : The solidary is not persisted yet so we can't pass it to addDiaryEntrey... But it would be cool :)
+        $this->diaryManager->addDiaryEntry($action, $user, $admin);
+    }
+
+    private function onSolidaryUpdated(Action $action, SolidaryUpdated $event)
+    {
+        $user = $event->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
+        $admin = $this->security->getUser();
+        $this->diaryManager->addDiaryEntry($action, $user, $admin, null, $event->getSolidary());
     }
 }

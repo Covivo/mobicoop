@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,12 +21,28 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Exception;
+namespace App\Solidary\Event;
 
-class SolidaryException extends \LogicException
+use Symfony\Contracts\EventDispatcher\Event;
+
+/**
+ * Event sent when a solidary is created
+ */
+class SolidaryCreated extends Event
 {
-    const INVALID_DATA_PROVIDED = "Invalid data provided";
-    const NO_ROLE = "This SolidaryUser has no role";
-    const BAD_SOLIDARYUSERSTRUCTURE_STATUS = "Invalid status value for this SolidaryUserStructure";
-    const BAD_SOLIDARY_ACTION = "Unknown action";
+    public const NAME = 'solidary_create';
+
+    // Just an object because sometimes it's a User, sometimes it's a Solidary
+    // We check it in SolidaryEventManager->handleEvent()
+    protected $object;
+
+    public function __construct(Object $object)
+    {
+        $this->object = $object;
+    }
+
+    public function getObject()
+    {
+        return $this->object;
+    }
 }

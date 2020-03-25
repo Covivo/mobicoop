@@ -115,6 +115,7 @@ class Diary
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Solidary")
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $solidary;
 
@@ -123,6 +124,7 @@ class Diary
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidarySolution")
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $solidarySolution;
 

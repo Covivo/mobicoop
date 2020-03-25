@@ -48,6 +48,7 @@ use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
+use App\Solidary\Event\SolidaryCreated;
 use App\Solidary\Event\SolidaryUserCreated;
 use App\Solidary\Event\SolidaryUserUpdated;
 use App\User\Repository\UserNotificationRepository;
@@ -206,6 +207,8 @@ class UserManager
         if (!is_null($user->getSolidaryUser())) {
             $event = new SolidaryUserCreated($user);
             $this->eventDispatcher->dispatch(SolidaryUserCreated::NAME, $event);
+            $event = new SolidaryCreated($user);
+            $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
         }
 
         // return the user
@@ -317,6 +320,8 @@ class UserManager
         if (!is_null($user->getSolidaryUser())) {
             $event = new SolidaryUserCreated($user);
             $this->eventDispatcher->dispatch(SolidaryUserCreated::NAME, $event);
+            $event = new SolidaryCreated($user);
+            $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
         }
         
         // return the user
