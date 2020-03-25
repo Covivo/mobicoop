@@ -940,7 +940,8 @@ export default {
       return this.isUpdate && !isEmpty(this.ad);
     },
     isUpdated () {
-      return this.isValidUpdate && !isEqual(this.oldUpdateObject, this.newUpdateObject);
+      if (!this.isUpdate) return true;
+      else return this.isValidUpdate && !isEqual(this.oldUpdateObject, this.newUpdateObject);
     },
     isMajorUpdate () {
       if (!this.isValidUpdate || isEmpty(this.oldUpdateObject)) return false;
