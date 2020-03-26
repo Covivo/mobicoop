@@ -50,9 +50,14 @@
 </template>
 
 <script>
+import Translations from "@translations/components/carpool/utilities/CarpoolerSummary.json";
+
 import formData from "../../../utils/request";
 
 export default {
+  i18n: {
+    messages: Translations
+  },
   props: {
     carpooler: {
       type: Object,
@@ -88,7 +93,7 @@ export default {
       let lParams = {
         idAsk: this.askId
       };
-      formData("/utilisateur/messages", lParams);
+      formData(this.$t('route.user.message'), lParams);
     }
   }
 }
