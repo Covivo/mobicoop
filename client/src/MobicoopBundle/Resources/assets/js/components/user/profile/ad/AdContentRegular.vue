@@ -39,8 +39,8 @@
             >
               <route-summary
                 :compact="true"
-                :origin="ad.outwardWaypoints[0].address"
-                :destination="ad.outwardWaypoints[ad.outwardWaypoints.length - 1].address"
+                :origin="origin"
+                :destination="destination"
                 :type="ad.frequency"
                 :regular="isRegular"
                 text-color-class="primary--text text--darken-2"
@@ -120,6 +120,12 @@ export default {
     },
     hasSunday () {
       return this.ad && this.ad.schedule.sun;
+    },
+    origin () {
+      return this.ad.outwardWaypoints.find(el => el.position === 0)["address"];
+    },
+    destination () {
+      return this.ad.outwardWaypoints.find(el => el.destination === true)["address"];
     }
   }
 }

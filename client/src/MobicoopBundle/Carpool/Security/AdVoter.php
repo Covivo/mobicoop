@@ -29,20 +29,30 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Permission\Service\PermissionManager;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class AdVoter extends Voter
 {
     const CREATE_AD = 'create_ad';
     const DELETE_AD = 'delete_ad';
+    const UPDATE_AD = 'update_ad';
     const POST = 'post';
     const POST_DELEGATE = 'post_delegate';
     const RESULTS = 'results_ad';
 
     private $permissionManager;
+    private $security;
 
-    public function __construct(PermissionManager $permissionManager)
+    /**
+     * AdVoter constructor.
+     * @param PermissionManager $permissionManager
+     * @param Security $security
+     */
+    public function __construct(PermissionManager $permissionManager, Security $security)
     {
         $this->permissionManager = $permissionManager;
+        $this->security = $security;
     }
 
     protected function supports($attribute, $subject)
@@ -51,6 +61,7 @@ class AdVoter extends Voter
         if (!in_array($attribute, [
             self::CREATE_AD,
             self::DELETE_AD,
+            self::UPDATE_AD,
             self::POST,
             self::POST_DELEGATE,
             self::RESULTS
@@ -75,6 +86,8 @@ class AdVoter extends Voter
                 return $this->canCreateAd();
             case self::DELETE_AD:
                 return $this->canDeleteAd($ad, $user);
+            case self::UPDATE_AD:
+                return $this->canUpdateAd($ad);
             case self::POST:
                 return $this->canPostAd($user);
             case self::POST_DELEGATE:
@@ -99,6 +112,23 @@ class AdVoter extends Voter
             return false;
         }
         return $this->permissionManager->checkPermission('ad_delete', $user, $proposal->getId());
+    }
+
+    private function canUpdateAd(Ad $ad)
+    {
+        $user = $this->security->getUser();
+
+        // only registered users can update ad
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        // only the author of the proposal can delete the proposal
+        if ($ad->getUserId() !== $user->getId()) {
+            return false;
+        }
+
+        return $this->permissionManager->checkPermission('ad_update_self', $user, $ad->getId());
     }
 
     private function canPostAd(User $user)

@@ -113,6 +113,7 @@ class AuthManager
         if ($this->checkRule($requester, $authItem, $params)) {
             // we check if the item is directly assigned to the user
             if ($requester instanceof User) {
+//                echo $requester->getId();die;
                 if ($this->userAuthAssignmentRepository->findByAuthItemAndUser($authItem, $requester)) {
                     // the item is found
                     return true;

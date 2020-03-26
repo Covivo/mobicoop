@@ -268,13 +268,13 @@ class UserController extends AbstractController
      */
     public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault)
     {
+        $this->denyAccessUnlessGranted('update', $userManager->getLoggedUser());
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
         $reponseofmanager= $this->handleManagerReturnValue($user);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
-        $this->denyAccessUnlessGranted('update', $user);
 
         // get the homeAddress
         $homeAddress = $user->getHomeAddress();

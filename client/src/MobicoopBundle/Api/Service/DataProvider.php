@@ -704,7 +704,7 @@ class DataProvider
      *
      * @return Response The response of the operation.
      */
-    public function put(ResourceInterface $object, ?array $groups=null): Response
+    public function put(ResourceInterface $object, ?array $groups=null, ?array $params = null): Response
     {
         if (is_null($groups)) {
             $groups = ['put'];
@@ -716,7 +716,8 @@ class DataProvider
             $headers = $this->getHeaders();
             $clientResponse = $this->client->put($this->resource."/".$object->getId(), [
                     'headers' => $headers,
-                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true)
+                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true),
+                    'query' => $params
             ]);
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
