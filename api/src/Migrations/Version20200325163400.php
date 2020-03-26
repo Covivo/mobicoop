@@ -19,4 +19,8 @@ final class Version20200309120000 extends AbstractMigration
         // we remove all user_notification with media=internal_message
         $this->addSql('DELETE FROM `user_notification` WHERE `notification_id` IN (SELECT `id` FROM `notification` WHERE `medium_id` = 1');
     }
+    
+    public function down(Schema $schema) : void
+    {
+    }
 }
