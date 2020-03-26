@@ -42,12 +42,31 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}},
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *          "get"={
+ *             "security"="is_granted('solidary_list',object)"
+ *          },
+ *          "post"={
+ *             "security_post_denormalize"="is_granted('solidary_create',object)"
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *             "security"="is_granted('solidary_read',object)"
+ *          },
+ *          "put"={
+ *             "security"="is_granted('solidary_update',object)"
+ *          },
+ *          "delete"={
+ *             "security"="is_granted('solidary_delete',object)"
+ *          }
+ *      }
  * )
  */
 class Solidary
 {
+    const DEFAULT_ID = 999999999999;
+
     /**
      * @var int $id The id of this solidary record.
      *
@@ -102,7 +121,6 @@ class Solidary
     /**
      * @var SolidaryUserStructure The SolidaryUserStructure related with the solidary record.
      *
-     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="solidaries", cascade={"persist","remove"})
      * @Groups({"readSolidary", "writeSolidary"})
      * @MaxDepth(1)
@@ -112,7 +130,6 @@ class Solidary
     /**
      * @var Proposal The proposal.
      *
-     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"readSolidary","writeSolidary"})
@@ -123,7 +140,6 @@ class Solidary
     /**
      * @var Structure Structure of the solidary record.
      *
-     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaries", cascade={"persist","remove"})
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -165,6 +181,7 @@ class Solidary
 
     public function getId(): int
     {
+        $this->id = self::DEFAULT_ID;
         return $this->id;
     }
 

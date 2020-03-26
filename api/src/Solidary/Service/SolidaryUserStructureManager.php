@@ -26,18 +26,23 @@ use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
 use App\Solidary\Entity\SolidaryUserStructure;
+use App\Solidary\Event\SolidaryUserStructureAccepted;
+use App\Solidary\Event\SolidaryUserStructureRefused;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Solidary\Exception\SolidaryException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SolidaryUserStructureManager
 {
     private $entityManager;
     private $authItemRepository;
+    private $eventDispatcher;
 
-    public function __construct(EntityManagerInterface $entityManager, AuthItemRepository $authItemRepository)
+    public function __construct(EntityManagerInterface $entityManager, AuthItemRepository $authItemRepository, EventDispatcherInterface $eventDispatcher)
     {
         $this->entityManager = $entityManager;
         $this->authItemRepository = $authItemRepository;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -65,9 +70,14 @@ class SolidaryUserStructureManager
             $user->addUserAuthAssignment($userAuthAssignment);
             $this->entityManager->persist($user);
             $this->entityManager->flush();
+
+            // dispatch the event
+            $event = new SolidaryUserStructureAccepted($solidaryUserStructure);
+            $this->eventDispatcher->dispatch(SolidaryUserStructureAccepted::NAME, $event);
         } elseif ($solidaryUserStructure->getStatus() == SolidaryUserStructure::STATUS_REFUSED) {
-            // TO DO
-            // What do we do ?
+            // just dispatch the event
+            $event = new SolidaryUserStructureRefused($solidaryUserStructure);
+            $this->eventDispatcher->dispatch(SolidaryUserStructureRefused::NAME, $event);
         } elseif ($solidaryUserStructure->getStatus() == SolidaryUserStructure::STATUS_PENDING) {
             // TO DO
             // What do we do ?

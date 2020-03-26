@@ -20,28 +20,46 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Service;
+namespace App\Action\Repository;
 
-use App\Solidary\Entity\SolidaryUser;
+use App\Action\Entity\Action;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use App\Solidary\Event\SolidaryUserUpdated;
+use Doctrine\ORM\EntityRepository;
 
-class SolidaryUserManager
+class ActionRepository
 {
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
+    
     private $entityManager;
-    private $eventDispatcher;
-
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher)
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->repository = $entityManager->getRepository(Action::class);
     }
 
-    public function updateSolidaryUser(SolidaryUser $solidaryUser)
+
+    public function find(int $id): ?Action
     {
-        // We trigger the event
-        $event = new SolidaryUserUpdated($solidaryUser);
-        $this->eventDispatcher->dispatch(SolidaryUserUpdated::NAME, $event);
+        return $this->repository->find($id);
+    }
+
+    public function findAll(): ?array
+    {
+        return $this->repository->findAll();
+    }
+
+
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    {
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findOneBy(array $criteria): ?Action
+    {
+        return $this->repository->findOneBy($criteria);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,28 +21,39 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Service;
+namespace App\Solidary\Event;
 
-use App\Solidary\Entity\SolidaryUser;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use App\Solidary\Event\SolidaryUserUpdated;
+use App\App\Entity\App;
+use App\User\Entity\User;
+use Symfony\Contracts\EventDispatcher\Event;
 
-class SolidaryUserManager
+/**
+ * Event sent when a solidary user structure is accepted
+ */
+class SolidaryUserCreated extends Event
 {
-    private $entityManager;
-    private $eventDispatcher;
+    public const NAME = 'solidary_user_create';
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher)
+    protected $user;
+    protected $author;
+
+    public function __construct(User $user, $author)
     {
-        $this->entityManager = $entityManager;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->user = $user;
+        $this->author = $author;
+        // If it's an App, it means that this User registered himself from the front
+        if ($author instanceof App) {
+            $this->author = $user;
+        }
     }
 
-    public function updateSolidaryUser(SolidaryUser $solidaryUser)
+    public function getUser()
     {
-        // We trigger the event
-        $event = new SolidaryUserUpdated($solidaryUser);
-        $this->eventDispatcher->dispatch(SolidaryUserUpdated::NAME, $event);
+        return $this->user;
+    }
+
+    public function getAuthor()
+    {
+        return $this->author;
     }
 }

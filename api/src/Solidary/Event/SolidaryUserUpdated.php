@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,28 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Service;
+namespace App\Solidary\Event;
 
 use App\Solidary\Entity\SolidaryUser;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use App\Solidary\Event\SolidaryUserUpdated;
+use Symfony\Contracts\EventDispatcher\Event;
 
-class SolidaryUserManager
+/**
+ * Event sent when a solidary user structure is accepted
+ */
+class SolidaryUserUpdated extends Event
 {
-    private $entityManager;
-    private $eventDispatcher;
+    public const NAME = 'solidary_user_update';
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher)
+    protected $solidaryUser;
+
+    public function __construct(SolidaryUser $solidaryUser)
     {
-        $this->entityManager = $entityManager;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->solidaryUser = $solidaryUser;
     }
 
-    public function updateSolidaryUser(SolidaryUser $solidaryUser)
+    public function getSolidaryUser()
     {
-        // We trigger the event
-        $event = new SolidaryUserUpdated($solidaryUser);
-        $this->eventDispatcher->dispatch(SolidaryUserUpdated::NAME, $event);
+        return $this->solidaryUser;
     }
 }

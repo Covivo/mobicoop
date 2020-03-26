@@ -22,26 +22,43 @@
 
 namespace App\Solidary\Service;
 
-use App\Solidary\Entity\SolidaryUser;
+use App\Solidary\Entity\Solidary;
+use App\Solidary\Event\SolidaryCreated;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use App\Solidary\Event\SolidaryUserUpdated;
+use App\Solidary\Event\SolidaryUpdated;
+use Symfony\Component\Security\Core\Security;
 
-class SolidaryUserManager
+class SolidaryManager
 {
     private $entityManager;
     private $eventDispatcher;
+    private $security;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->security = $security;
     }
 
-    public function updateSolidaryUser(SolidaryUser $solidaryUser)
+    public function createSolidary(Solidary $solidary)
     {
         // We trigger the event
-        $event = new SolidaryUserUpdated($solidaryUser);
-        $this->eventDispatcher->dispatch(SolidaryUserUpdated::NAME, $event);
+        $event = new SolidaryCreated($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser());
+        $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
+
+        $this->entityManager->persist($solidary);
+        $this->entityManager->flush();
+    }
+
+    public function updateSolidary(Solidary $solidary)
+    {
+        // We trigger the event
+        $event = new SolidaryUpdated($solidary);
+        $this->eventDispatcher->dispatch(SolidaryUpdated::NAME, $event);
+
+        $this->entityManager->persist($solidary);
+        $this->entityManager->flush();
     }
 }
