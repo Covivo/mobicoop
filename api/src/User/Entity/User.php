@@ -790,6 +790,12 @@ class User implements UserInterface, EquatableInterface
     private $communityUsers;
 
     /**
+    * @var int|null Community choose by a user
+    * @Groups({"readUser","write"})
+    */
+    private $communityId;
+
+    /**
      * @var ArrayCollection|null The asks made for this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="userRelated", cascade={"remove"}, orphanRemoval=true)
@@ -1735,6 +1741,16 @@ class User implements UserInterface, EquatableInterface
         }
 
         return $this;
+    }
+
+    public function getCommunityId(): ?int
+    {
+        return $this->communityId;
+    }
+    
+    public function setCommunityId($communityId)
+    {
+        $this->communityId = $communityId;
     }
 
     public function getUserAuthAssignments()

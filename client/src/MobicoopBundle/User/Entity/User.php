@@ -358,6 +358,12 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $facebookId;
 
     /**
+    * @var int|null Community choose by a user
+    * @Groups({"post"})
+    */
+    private $communityId;
+
+    /**
      * @var string|null the unsubscribe message we return by api
      * @Groups({"post","put"})
      */
@@ -1032,6 +1038,16 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    public function getCommunityId(): ?int
+    {
+        return $this->communityId;
+    }
+    
+    public function setCommunityId($communityId)
+    {
+        $this->communityId = $communityId;
+    }
+
     /**
      * get the native language of the client.
      *
@@ -1108,7 +1124,8 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'phoneDisplay'          => $this->getPhoneDisplay(),
             'phoneValidatedDate'    => $this->getPhoneValidatedDate(),
             'phoneToken'            => $this->getPhoneToken(),
-            'unsubscribeMessage'    => $this->getUnsubscribeMessage()
+            'unsubscribeMessage'    => $this->getUnsubscribeMessage(),
+            'communityId'         => $this->getCommunityId()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {
