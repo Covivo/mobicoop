@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -24,26 +24,22 @@
 namespace App\Carpool\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Service\AdManager;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
  * Collection data provider for user's ads.
  *
  */
-final class AdCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface, ItemDataProviderInterface
+final class AdCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
     protected $adManager;
     protected $security;
 
-    public function __construct(RequestStack $requestStack, AdManager $adManager, Security $security)
+    public function __construct(AdManager $adManager, Security $security)
     {
-        $this->request = $requestStack->getCurrentRequest();
         $this->adManager = $adManager;
         $this->security = $security;
     }
@@ -56,10 +52,5 @@ final class AdCollectionDataProvider implements CollectionDataProviderInterface,
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return $this->adManager->getAds($this->security->getUser()->getId());
-    }
-
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
-    {
-        return $this->adManager->getFullAd($id);
     }
 }
