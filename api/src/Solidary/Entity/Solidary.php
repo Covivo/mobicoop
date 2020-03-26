@@ -172,6 +172,12 @@ class Solidary
      */
     private $solidarySolutions;
 
+    /**
+     * @var float Progression of this solidary
+     * @Groups({"readSolidary"})
+     */
+    private $progression;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -337,6 +343,18 @@ class Solidary
             $this->solidarySolutions->removeElement($solidarySolution);
         }
         
+        return $this;
+    }
+
+    public function getProgression(): ?string
+    {
+        return $this->progression;
+    }
+
+    public function setProgression(?string $progression): self
+    {
+        $this->progression = $progression;
+
         return $this;
     }
 
