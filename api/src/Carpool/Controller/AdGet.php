@@ -39,6 +39,7 @@ class AdGet
     use TranslatorTrait;
     
     private $adManager;
+    private $request;
     
     public function __construct(RequestStack $requestStack, AdManager $adManager)
     {

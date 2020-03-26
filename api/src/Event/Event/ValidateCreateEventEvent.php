@@ -23,7 +23,7 @@
 
 namespace App\Event\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use App\Event\Entity\Event as EventEntity;
 
 /**

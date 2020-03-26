@@ -32,14 +32,8 @@ use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
-use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -76,17 +70,17 @@ class CarpoolController extends AbstractController
      */
     public function carpoolAdPost(AdManager $adManager, UserManager $userManager, Request $request)
     {
-        $proposal = new Proposal();
+        $ad = new Ad();
         $poster = $userManager->getLoggedUser();
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             if ($poster && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
-                $this->denyAccessUnlessGranted('post_delegate', $proposal);
+                $this->denyAccessUnlessGranted('post_delegate', $ad);
                 $data['userId'] = $data['userDelegated'];
                 $data['posterId'] = $poster->getId();
             } else {
-                $this->denyAccessUnlessGranted('post', $proposal);
+                $this->denyAccessUnlessGranted('post', $ad);
                 $data['userId'] = $poster->getId();
             }
             if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
@@ -114,7 +108,7 @@ class CarpoolController extends AbstractController
             return $this->json(['result'=>$adManager->createAd($data)]);
         }
 
-        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        $this->denyAccessUnlessGranted('create_ad', $ad);
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
             "pricesRange" => [
                 "mid" => $this->midPrice,
@@ -130,8 +124,9 @@ class CarpoolController extends AbstractController
      */
     public function carpoolFirstAdPost()
     {
-        $proposal = new Proposal();
-        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        $ad = new Ad();
+        $this->denyAccessUnlessGranted('create_ad', $ad);
+        
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
             "firstAd" => true,
             "pricesRange" => [
@@ -148,8 +143,9 @@ class CarpoolController extends AbstractController
     */
     public function carpoolSolidaryExclusiveAdPost()
     {
-        $proposal = new Proposal();
-        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        $ad = new Ad();
+        $this->denyAccessUnlessGranted('create_ad', $ad);
+
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
@@ -170,9 +166,9 @@ class CarpoolController extends AbstractController
      */
     public function carpoolAdPostFromSearch(Request $request)
     {
-        $proposal = new Proposal();
-
-        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        $ad = new Ad();
+        $this->denyAccessUnlessGranted('create_ad', $ad);
+        
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
@@ -202,17 +198,17 @@ class CarpoolController extends AbstractController
         if ($request->isMethod('DELETE')) {
             $data = json_decode($request->getContent(), true);
 
-            if (!isset($data['proposalId'])) {
+            if (!isset($data['adId'])) {
                 return new JsonResponse([
                     'message' => 'error'
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
-            $proposal = $proposalManager->getProposal($data['proposalId']);
-            
+            $proposal = $proposalManager->getProposal($data['adId']);
             $this->denyAccessUnlessGranted('delete_ad', $proposal);
+
             // add the id of the deleter
             $data['deleterId'] = $userManager->getLoggedUser()->getId();
-            if ($response = $proposalManager->deleteProposal($data['proposalId'], $data)) {
+            if ($response = $proposalManager->deleteProposal($data['adId'], $data)) {
                 return new JsonResponse(
                     ["message" => "delete.success"],
                     \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
@@ -234,7 +230,7 @@ class CarpoolController extends AbstractController
      * Ad results.
      * (POST)
      */
-    public function carpoolAdResults($id, AdManager $adManager, ProposalManager $proposalManager)
+    public function carpoolAdResults($id, AdManager $adManager)
     {
         $ad = $adManager->getAd($id);
         $this->denyAccessUnlessGranted('results_ad', $ad);
@@ -344,8 +340,8 @@ class CarpoolController extends AbstractController
         if ($request->isMethod('PUT')) {
             $data = json_decode($request->getContent(), true);
             $ad = new Ad();
-            $ad->setId($data['proposalId']);
-            $ad->setProposalId($data['proposalId']);
+            $ad->setId($data['adId']);
+            $ad->setProposalId($data['adId']);
             $ad->setPaused($data['paused']);
             if ($return = $adManager->updateAd($ad)) {
                 return new JsonResponse(
@@ -410,7 +406,6 @@ class CarpoolController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            //$data['provider'] = "mobicoopV1"; // To Do : Really usefull ? The API should handle this
             return $this->json($externalJourneyManager->getExternalJourney($data, DataProvider::RETURN_JSON));
         }
 

@@ -48,17 +48,25 @@ class PermissionManager
     /**
      * Check if the user has a given permission
      *
-     * @param string $action
-     * @param User $user
+     * @param string $action    The action to check
+     * @param User $user|null   The user that does the action
+     * @param integer|null $id  The id of the related object
      * @return bool
      */
-    public function checkPermission(string $action, ?User $user = null)
+    public function checkPermission(string $action, ?User $user, ?int $id=null)
     {
+        // TEMPORARY FIX. The Security is only API side for now
+        return true;
+
         $this->dataProvider->setFormat($this->dataProvider::RETURN_ARRAY);
-        $response = $this->dataProvider->getCollection([
-            'action' => $action,
-            'user' => $user ? $user->getId() : null
-        ]);
+        $params['action'] = $action;
+        if (!is_null($user)) {
+            $params['user'] = $user->getId();
+        }
+        if (!is_null($id)) {
+            $params['id'] = $id;
+        }
+        $response = $this->dataProvider->getCollection($params);
         if ($response->getCode() == 200) {
             $permission = $response->getValue();
             return $permission['granted'];

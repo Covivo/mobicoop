@@ -7,7 +7,9 @@
         "fri": "V",
         "sat": "S",
         "sun": "D",
-        "dateValid": "Valide jusqu'au"
+        "dateValid": "Valide jusqu'au",
+        "valid": "Validité :",
+        "dateValidUntil": "jusqu'au"
     },
     "en": {
         "mon": "M",
@@ -17,6 +19,8 @@
         "fri": "F",
         "sat": "S",
         "sun": "Su",
-        "dateValid": "Valid until the"
+        "dateValid": "Valid until the",
+        "valid": "Validity :",
+        "dateValidUntil": "until the"
     }
 }

@@ -38,7 +38,6 @@ class UnregisteredUserVoter extends Voter
         if (!in_array($attribute, [self::LOGIN, self::REGISTER])) {
             return false;
         }
-
         return true;
     }
 
@@ -51,7 +50,5 @@ class UnregisteredUserVoter extends Voter
             return false;
         }
         return true;
-
-        throw new \LogicException('This code should not be reached!');
     }
 }

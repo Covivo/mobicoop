@@ -25,9 +25,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**
  * Ad management service.
@@ -86,7 +83,7 @@ class AdManager
         }
 
         // frequency
-        $ad->setFrequency($data['regular'] ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL);
+        $ad->setFrequency($data['regular'] ? Ad::FREQUENCY_REGULAR : Ad::FREQUENCY_PUNCTUAL);
 
         // outward waypoints
         $outwardsWaypoints[] = $data['origin'];
@@ -99,7 +96,7 @@ class AdManager
         $ad->setOutwardWaypoints($outwardsWaypoints);
 
         // date and time
-        if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+        if ($ad->getFrequency() == Ad::FREQUENCY_REGULAR) {
             if (isset($data['fromDate'])) {
                 $ad->setOutwardDate(\DateTime::createFromFormat('Y-m-d', $data['fromDate']));
             } else {
@@ -329,152 +326,29 @@ class AdManager
                 return null;
             }
             $schedule  = [];
-            if (isset($params['outwardSchedule']['monTime']) && !is_null($params['outwardSchedule']['monTime'])) {
-                if (isset($params['returnSchedule']['monTime']) && !is_null($params['returnSchedule']['monTime'])) {
+            $days = ["mon","tue","wed","thu","fri","sat","sun"];
+            foreach ($days as $day) {
+                if (isset($params['outwardSchedule'][$day.'Time']) && !is_null($params['outwardSchedule'][$day.'Time'])) {
+                    if (isset($params['returnSchedule'][$day.'Time']) && !is_null($params['returnSchedule'][$day.'Time'])) {
+                        $schedule[] = [
+                            'outwardTime' => $params['outwardSchedule'][$day.'Time'],
+                            'returnTime' => $params['returnSchedule'][$day.'Time'],
+                            $day => true
+                        ];
+                    } else {
+                        $schedule[] = [
+                            'outwardTime' => $params['outwardSchedule'][$day.'Time'],
+                            'returnTime' => '',
+                            $day => true
+                        ];
+                    }
+                } elseif (isset($params['returnSchedule'][$day.'Time']) && !is_null($params['returnSchedule'][$day.'Time'])) {
                     $schedule[] = [
-                        'outwardTime' => $params['outwardSchedule']['monTime'],
-                        'returnTime' => $params['returnSchedule']['monTime'],
-                        'mon' => true
-                    ];
-                } else {
-                    $schedule[] = [
-                        'outwardTime' => $params['outwardSchedule']['monTime'],
-                        'returnTime' => '',
-                        'mon' => true
-                    ];
-                }
-            } elseif (isset($params['returnSchedule']['monTime']) && !is_null($params['returnSchedule']['monTime'])) {
-                $schedule[] = [
-                    'outwardTime' => '',
-                    'returnTime' => $params['returnSchedule']['monTime'],
-                    'mon' => true
-                ];
-            }
-            if (isset($params['outwardSchedule']['tueTime']) && !is_null($params['outwardSchedule']['tueTime'])) {
-                if (isset($params['returnSchedule']['tueTime']) && !is_null($params['returnSchedule']['tueTime'])) {
-                    $schedule[] = [
-                        'outwardTime' => $params['outwardSchedule']['tueTime'],
-                        'returnTime' => $params['returnSchedule']['tueTime'],
-                        'tue' => true
-                    ];
-                } else {
-                    $schedule[] = [
-                        'outwardTime' => $params['outwardSchedule']['tueTime'],
-                        'returnTime' => '',
-                        'tue' => true
+                        'outwardTime' => '',
+                        'returnTime' => $params['returnSchedule'][$day.'Time'],
+                        $day => true
                     ];
                 }
-            } elseif (isset($params['returnSchedule']['tueTime']) && !is_null($params['returnSchedule']['tueTime'])) {
-                $schedule[] = [
-                    'outwardTime' => '',
-                    'returnTime' => $params['returnSchedule']['tueTime'],
-                    'tue' => true
-                ];
-            }
-            if (isset($params['outwardSchedule']['wedTime']) && !is_null($params['outwardSchedule']['wedTime'])) {
-                if (isset($params['returnSchedule']['wedTime']) && !is_null($params['returnSchedule']['wedTime'])) {
-                    $schedule[] = [
-                        'outwardTime' => $params['outwardSchedule']['wedTime'],
-                        'returnTime' => $params['returnSchedule']['wedTime'],
-                        'wed' => true
-                    ];
-                } else {
-                    $schedule[] = [
-                        'outwardTime' => $params['outwardSchedule']['wedTime'],
-                        'returnTime' => '',
-                        'wed' => true
-                    ];
-                }
-            } elseif (isset($params['returnSchedule']['wedTime']) && !is_null($params['returnSchedule']['wedTime'])) {
-                $schedule[] = [
-                    'outwardTime' => '',
-                    'returnTime' => $params['returnSchedule']['wedTime'],
-                    'wed' => true
-                ];
-            }
-            if (isset($params['outwardSchedule']['thuTime']) && !is_null($params['outwardSchedule']['thuTime'])) {
-                if (isset($params['returnSchedule']['thuTime']) && !is_null($params['returnSchedule']['thuTime'])) {
-                    $schedule[] = [
-                        'outwardTime' => $params['outwardSchedule']['thuTime'],
-                        'returnTime' => $params['returnSchedule']['thuTime'],
-                        'thu' => true
-                    ];
-                } else {
-                    $schedule[] = [
-                        'outwardTime' => $params['outwardSchedule']['thuTime'],
-                        'returnTime' => '',
-                        'thu' => true
-                    ];
-                }
-            } elseif (isset($params['returnSchedule']['thuTime']) && !is_null($params['returnSchedule']['thuTime'])) {
-                $schedule[] = [
-                    'outwardTime' => '',
-                    'returnTime' => $params['returnSchedule']['thuTime'],
-                    'thu' => true
-                ];
-            }
-            if (isset($params['outwardSchedule']['friTime']) && !is_null($params['outwardSchedule']['friTime'])) {
-                if (isset($params['returnSchedule']['friTime']) && !is_null($params['returnSchedule']['friTime'])) {
-                    $schedule[] = [
-                        'outwardTime' => $params['outwardSchedule']['friTime'],
-                        'returnTime' => $params['returnSchedule']['friTime'],
-                        'fri' => true
-                    ];
-                } else {
-                    $schedule[] = [
-                        'outwardTime' => $params['outwardSchedule']['friTime'],
-                        'returnTime' => '',
-                        'fri' => true
-                    ];
-                }
-            } elseif (isset($params['returnSchedule']['friTime']) && !is_null($params['returnSchedule']['friTime'])) {
-                $schedule[] = [
-                    'outwardTime' => '',
-                    'returnTime' => $params['returnSchedule']['friTime'],
-                    'fri' => true
-                ];
-            }
-            if (isset($params['outwardSchedule']['satTime']) && !is_null($params['outwardSchedule']['satTime'])) {
-                if (isset($params['returnSchedule']['satTime']) && !is_null($params['returnSchedule']['satTime'])) {
-                    $schedule[] = [
-                        'outwardTime' => $params['outwardSchedule']['satTime'],
-                        'returnTime' => $params['returnSchedule']['satTime'],
-                        'sat' => true
-                    ];
-                } else {
-                    $schedule[] = [
-                        'outwardTime' => $params['outwardSchedule']['satTime'],
-                        'returnTime' => '',
-                        'sat' => true
-                    ];
-                }
-            } elseif (isset($params['returnSchedule']['satTime']) && !is_null($params['returnSchedule']['satTime'])) {
-                $schedule[] = [
-                    'outwardTime' => '',
-                    'returnTime' => $params['returnSchedule']['satTime'],
-                    'sat' => true
-                ];
-            }
-            if (isset($params['outwardSchedule']['sunTime']) && !is_null($params['outwardSchedule']['sunTime'])) {
-                if (isset($params['returnSchedule']['sunTime']) && !is_null($params['returnSchedule']['sunTime'])) {
-                    $schedule[] = [
-                        'outwardTime' => $params['outwardSchedule']['sunTime'],
-                        'returnTime' => $params['returnSchedule']['sunTime'],
-                        'sun' => true
-                    ];
-                } else {
-                    $schedule[] = [
-                        'outwardTime' => $params['outwardSchedule']['sunTime'],
-                        'returnTime' => '',
-                        'sun' => true
-                    ];
-                }
-            } elseif (isset($params['returnSchedule']['sunTime']) && !is_null($params['returnSchedule']['sunTime'])) {
-                $schedule[] = [
-                    'outwardTime' => '',
-                    'returnTime' => $params['returnSchedule']['sunTime'],
-                    'sun' => true
-                ];
             }
             $ad->setSchedule($schedule);
             $ad->setOutwardDate(\DateTime::createFromFormat('Y-m-d', $params['fromDate']));
@@ -482,7 +356,7 @@ class AdManager
         } else {
             // punctual or contact ask
         }
-
+        
         // creation of the ad ask
         if ($formal) {
             $response = $this->dataProvider->post($ad, 'ask');

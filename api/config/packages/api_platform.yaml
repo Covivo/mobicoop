@@ -29,6 +29,7 @@ api_platform:
             '%kernel.project_dir%/src/Entity',
             '%kernel.project_dir%/src/Action/Entity',
             '%kernel.project_dir%/src/App/Entity',
+            '%kernel.project_dir%/src/Auth/Entity',
             '%kernel.project_dir%/src/Article/Entity',
             '%kernel.project_dir%/src/Carpool/Entity',
             '%kernel.project_dir%/src/Communication/Entity',
@@ -46,13 +47,13 @@ api_platform:
             '%kernel.project_dir%/src/Travel/Entity',
             '%kernel.project_dir%/src/User/Entity',
             '%kernel.project_dir%/src/Rdex/Entity',
-            '%kernel.project_dir%/src/Right/Entity',
             '%kernel.project_dir%/src/Price/Entity']
             
     resource_class_directories:
         - '%kernel.project_dir%/src/Entity'
         - '%kernel.project_dir%/src/Action/Entity'
         - '%kernel.project_dir%/src/App/Entity'
+        - '%kernel.project_dir%/src/Auth/Entity'
         - '%kernel.project_dir%/src/Article/Entity'
         - '%kernel.project_dir%/src/Carpool/Entity'
         - '%kernel.project_dir%/src/Communication/Entity'
@@ -67,7 +68,6 @@ api_platform:
         - '%kernel.project_dir%/src/PublicTransport/Entity'
         - '%kernel.project_dir%/src/RelayPoint/Entity'
         - '%kernel.project_dir%/src/Rdex/Entity'
-        - '%kernel.project_dir%/src/Right/Entity'
         - '%kernel.project_dir%/src/Solidary/Entity'
         - '%kernel.project_dir%/src/Travel/Entity'
         - '%kernel.project_dir%/src/User/Entity'

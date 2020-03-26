@@ -23,8 +23,6 @@
 
 namespace App\Carpool\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Geography\Entity\Address;
@@ -37,7 +35,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
@@ -74,7 +72,7 @@ class Waypoint
      *
      * @Assert\NotBlank
      * @ORM\Column(type="boolean")
-     * @Groups({"read","results","write","threads","thread"})
+     * @Groups({"read","results","write","threads","thread","readCommunity","readEvent"})
      */
     private $destination;
 
@@ -105,7 +103,7 @@ class Waypoint
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Groups({"read","results","write","threads","thread"})
+     * @Groups({"read","results","write","threads","thread","readCommunity","readEvent"})
      * @MaxDepth(1)
      */
     private $address;

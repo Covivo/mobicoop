@@ -31,7 +31,7 @@ use Mobicoop\Bundle\MobicoopBundle\Permission\Service\PermissionManager;
 
 class ArticleVoter extends Voter
 {
-    const SHOW = 'show';
+    const SHOW = 'article_show';
     
     private $permissionManager;
 
@@ -49,7 +49,7 @@ class ArticleVoter extends Voter
             return false;
         }
 
-        // only vote on Ad objects inside this voter
+        // only vote on Article objects inside this voter
         if (!$subject instanceof Article) {
             return false;
         }
@@ -59,12 +59,11 @@ class ArticleVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        return true;
         $user = $token->getUser();
         if (!$user instanceof User) {
             $user = null;
         }
-
-        $article = $subject;
 
         switch ($attribute) {
             case self::SHOW:
@@ -74,7 +73,7 @@ class ArticleVoter extends Voter
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canShow(?User $user=null)
+    private function canShow(?User $user)
     {
         return $this->permissionManager->checkPermission('article_read', $user);
     }

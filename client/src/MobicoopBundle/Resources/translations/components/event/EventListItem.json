@@ -17,7 +17,7 @@
         "event": "/event/{id}"
       }
     },
-    "eventDetails":"Evennt details",
+    "eventDetails":"Event details",
     "join":"Join the event",
     "date": {
       "from":"From",

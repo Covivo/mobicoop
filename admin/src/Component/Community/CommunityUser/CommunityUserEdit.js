@@ -3,36 +3,35 @@ import {
     Edit,
     SimpleForm, 
     ReferenceInput, SelectInput,
-    ReferenceField, FunctionField, TextField
+    required
 } from 'react-admin';
+import { makeStyles } from '@material-ui/core/styles'
+import { UserRenderer } from '../../Utilities/renderers'
+import { statusChoices } from '../Community/communityChoices'
 
-const userOptionRenderer = choice => `${choice.givenName} ${choice.familyName}`;
+const useStyles = makeStyles({
+    title : {fontSize:"1.5rem", fontWeight:"bold", width:"100%", marginBottom:"1rem"}
+})
 
-const choices = [
-    { id: 0, name: 'En attente' },
-    { id: 1, name: 'Membre' },
-    { id: 2, name: 'Modérateur' },
-    { id: 3, name: 'Refusé' },
-];
 export const CommunityUserEdit = (props) => {
-    
-    const redirect = `/communities/`;
-
+    const classes   =  useStyles()
+    const redirect  =  props.location.backTo || '/communities/'
+    console.log("CommunityUserEdit props :", props)
     return (
     <Edit { ...props } title="Communautés > éditer un membre">
         <SimpleForm
             redirect={redirect}
         >
-            <ReferenceInput label="Administrateur" source="admin" reference="users">
-                <SelectInput optionText={userOptionRenderer}/>
+            <ReferenceInput fullWidth label="Communauté" source="community" reference="communities" validate={required()} formClassName={classes.title}>
+                <SelectInput optionText="name"/>
             </ReferenceInput>
-            <ReferenceField label="Membre" source="user" reference="users" linkType="" >
-                <FunctionField render={userOptionRenderer} />
-            </ReferenceField>
-            <ReferenceField label="Communauté" source="community" reference="communities" linkType="" >
-                <TextField source="name"/>
-            </ReferenceField>
-            <SelectInput label="Statut" source="status" choices={choices} />
+
+            <ReferenceInput label="Nouveau Membre" source="user" reference="users" validate={required()} >
+                <SelectInput optionText={<UserRenderer />}/>
+            </ReferenceInput>
+
+            <SelectInput label="Statut" source="status" choices={statusChoices} defaultValue={1} validate={required()} />
+
         </SimpleForm>
     </Edit>
     );

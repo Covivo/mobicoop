@@ -31,6 +31,7 @@
           src="/images/avatarsDefault/avatar.svg"
           aspect-ratio="1"
           class="grey lighten-2"
+          contain
           max-width="200"
           max-height="200"
         />
@@ -154,6 +155,9 @@ export default {
   },
   methods:{
     linkToCommunityShow: function (item) {
+      if(item.isSecured && !item.isMember){
+        return this.$t('routes.communitySecuredRegister', {id:item.id})
+      }
       return this.$t('routes.community', {id:item.id});
     },
     postLeavingRequest() {

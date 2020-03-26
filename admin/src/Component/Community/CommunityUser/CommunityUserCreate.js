@@ -3,43 +3,54 @@ import {
     Create,
     SimpleForm, 
     required,
-    ReferenceInput, SelectInput
+    ReferenceInput, SelectInput, AutocompleteInput
 } from 'react-admin';
+import { makeStyles } from '@material-ui/core/styles'
 import { parse } from "query-string";
+import { statusChoices } from '../Community/communityChoices'
+import FullNameField from '../../User/FullNameField'
 
-const userOptionRenderer = choice => `${choice.givenName} ${choice.familyName}`;
-const userId = `/users/${localStorage.getItem('id')}`;
+const useStyles = makeStyles({
+    halfwidth: { width:"50%", marginBottom:"1rem" },
+    title : {fontSize:"1.5rem", fontWeight:"bold", width:"100%", marginBottom:"1rem"}
+})
 
-const choices = [
-    { id: 0, name: 'En attente' },
-    { id: 1, name: 'Membre' },
-    { id: 2, name: 'Modérateur' },
-    { id: 3, name: 'Refusé' },
-];
+
 
 export const CommunityUserCreate = (props) => {
+    const classes = useStyles()
     const { community: community_string } = parse(props.location.search);
-    const community = community_string ? parseInt(community_string, 10) : '';
-    const community_uri = encodeURIComponent(community_string);
-    const redirect = community_uri ? `/communities/${community_uri}/show/members` : 'show';
+    const community = `/communities/${community_string}`
 
-    
+    const community_uri = encodeURIComponent(community);
+    const redirect = community_uri ? `/communities/${community_uri}` : 'show';
+
+    const inputText = choice => {
+        console.log("Choice inputText", choice)
+        return `${choice.givenName} ${choice.familyName || choice.shortFamilyName}`
+    }
+
     return (
     <Create { ...props } title="Communautés > ajouter un membre">
         <SimpleForm
             defaultValue={{ community }}
             redirect={redirect}
         >
-            <ReferenceInput label="Administrateur" source="admin" reference="users" defaultValue={userId} validate={required()}>
-                <SelectInput optionText={userOptionRenderer}/>
-            </ReferenceInput>
-            <ReferenceInput label="Membre" source="user" reference="users" validate={required()}>
-                <SelectInput optionText={userOptionRenderer}/>
-            </ReferenceInput>
-            <ReferenceInput label="Communauté" source="community" reference="communities" validate={required()}>
+            <ReferenceInput fullWidth label="Communauté" source="community" reference="communities" validate={required()} formClassName={classes.title}>
                 <SelectInput optionText="name"/>
             </ReferenceInput>
-            <SelectInput label="Statut" source="status" choices={choices} defaultValue={1} validate={required()}/>
+
+            <ReferenceInput label="Nouveau Membre" source="user" reference="users" validate={required()} formClassName={classes.halfwidth}>
+                {/* Should be like that : 
+                    <AutocompleteInput inputText={inputText} optionValue="id" optionText={<FullNameField />} matchSuggestion={(filterValue, suggestion) => true} allowEmpty={false}/>
+                    But https://github.com/marmelab/react-admin/pull/4367
+                    So waiting for the next release of react-admin 
+                */}
+                <AutocompleteInput optionValue="id" optionText={inputText} allowEmpty={false}/>
+
+            </ReferenceInput>
+
+            <SelectInput label="Statut" source="status" choices={statusChoices} defaultValue={1} validate={required()} formClassName={classes.halfwidth}/>
         </SimpleForm>
     </Create>
     );

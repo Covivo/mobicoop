@@ -24,8 +24,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\Communication\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider as MobicoopDataProvider;
-use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
 
@@ -35,17 +33,15 @@ use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
 class InternalMessageManager
 {
     private $dataProvider;
-    private $userManager;
 
     /**
     * Constructor.
     * @param DataProvider $dataProvider The data provider that provides the Message
     */
-    public function __construct(DataProvider $dataProvider, UserManager $userManager)
+    public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Message::class);
-        $this->userManager = $userManager;
     }
 
     /**

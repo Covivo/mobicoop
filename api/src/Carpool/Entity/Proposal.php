@@ -25,9 +25,7 @@ namespace App\Carpool\Entity;
 
 use App\Event\Entity\Event;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
@@ -300,6 +298,13 @@ class Proposal
      * @MaxDepth(1)
      */
     private $event;
+
+    /**
+     * @var string The external origin of this proposal
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $external;
         
     public function __construct($id=null)
     {
@@ -314,6 +319,8 @@ class Proposal
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
+        $this->setPrivate(false);
+        $this->setPaused(false);
         $this->results = [];
     }
     
@@ -705,6 +712,18 @@ class Proposal
     public function setResults($results)
     {
         $this->results = $results;
+
+        return $this;
+    }
+
+    public function getExternal(): ?String
+    {
+        return $this->external;
+    }
+
+    public function setExternal(?string $external): self
+    {
+        $this->external = $external;
 
         return $this;
     }

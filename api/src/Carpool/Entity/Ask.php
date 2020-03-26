@@ -210,7 +210,7 @@ class Ask
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write","threads","thread"})
      * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
+     * ApiSubresource(maxDepth=1)
      */
     private $waypoints;
 
@@ -221,7 +221,7 @@ class Ask
      * @ORM\OrderBy({"id" = "ASC"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
+     * ApiSubresource(maxDepth=1)
      */
     private $askHistories;
 

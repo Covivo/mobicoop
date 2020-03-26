@@ -24,6 +24,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Event\Controller;
 
 use GuzzleHttp\RequestOptions;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
@@ -141,30 +142,23 @@ class EventController extends AbstractController
         $this->denyAccessUnlessGranted('show', $event);
 
         // get event's proposals
-        $proposals = $eventManager->getProposals($id);
-
+        $ads = $eventManager->getAds($id);
         $ways = [];
-        if (null !== $proposals) {
-            foreach ($proposals as $proposal) {
-                $currentProposal = [
-                    "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
-                    "frequency"=>($proposal["criteria"]["frequency"]==Criteria::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
-                    "carpoolerFirstName" => $proposal["user"]["givenName"],
-                    "carpoolerLastName" => $proposal["user"]["shortFamilyName"],
-                    "waypoints"=>[]
+        foreach ($ads as $ad) {
+            $currentAd = [
+                "frequency"=>($ad["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
+                "carpoolerFirstName" => $ad["user"]["givenName"],
+                "carpoolerLastName" => $ad["user"]["shortFamilyName"],
+                "waypoints"=>[]
+            ];
+            foreach ($ad["outwardWaypoints"] as $waypoint) {
+                $currentAd["waypoints"][] = [
+                    "title"=>$waypoint["address"]["addressLocality"],
+                    "destination"=>$waypoint['destination'],
+                    "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
                 ];
-                foreach ($proposal["waypoints"] as $waypoint) {
-                    if (!$waypoint['destination']) {
-                        $currentProposal["waypoints"][] = [
-                            // "title"=>(is_array($waypoint["address"]["displayLabel"])) ? implode(", ", $waypoint["address"]["displayLabel"]) : $waypoint["address"]["displayLabel"],
-                            "title"=>$waypoint["address"]["addressLocality"],
-                            "destination"=>$waypoint['destination'],
-                            "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
-                        ];
-                    }
-                }
-                $ways[] = $currentProposal;
             }
+            $ways[] = $currentAd;
         }
         
         // retreive logged user

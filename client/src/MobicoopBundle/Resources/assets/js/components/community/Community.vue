@@ -528,47 +528,44 @@ export default {
             carpoolerLastName:""
           };
 
-          if(proposal.type !== 'return'){ // We show only outward or one way proposals
 
-            infosForPopUp.carpoolerFirstName = proposal.carpoolerFirstName;
-            infosForPopUp.carpoolerLastName = proposal.carpoolerLastName;
+          infosForPopUp.carpoolerFirstName = proposal.carpoolerFirstName;
+          infosForPopUp.carpoolerLastName = proposal.carpoolerLastName;
 
-            // We build the content of the popup
-            currentProposal.desc = "<p style='text-align:center;'><strong>"+infosForPopUp.carpoolerFirstName+" "+infosForPopUp.carpoolerLastName+"</strong></p>"
+          // We build the content of the popup
+          currentProposal.desc = "<p style='text-align:center;'><strong>"+infosForPopUp.carpoolerFirstName+" "+infosForPopUp.carpoolerLastName+"</strong></p>"
 
-
-            proposal.waypoints.forEach((waypoint, index) => {
-              currentProposal.latLngs.push(waypoint.latLng);
-              if(index==0){
-                infosForPopUp.origin = waypoint.title;
-                infosForPopUp.originLat = waypoint.latLng.lat;
-                infosForPopUp.originLon = waypoint.latLng.lon;
-              }
-              else if(waypoint.destination){
-                infosForPopUp.destination = waypoint.title;
-                infosForPopUp.destinationLat = waypoint.latLng.lat;
-                infosForPopUp.destinationLon = waypoint.latLng.lon;
-              }
-              this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,currentProposal.desc,"",[],[],"<p>"+waypoint.title+"</p>"));
-            });
+          proposal.waypoints.forEach((waypoint, index) => {
+            currentProposal.latLngs.push(waypoint.latLng);
+            if(index==0){
+              infosForPopUp.origin = waypoint.title;
+              infosForPopUp.originLat = waypoint.latLng.lat;
+              infosForPopUp.originLon = waypoint.latLng.lon;
+            }
+            else if(waypoint.destination){
+              infosForPopUp.destination = waypoint.title;
+              infosForPopUp.destinationLat = waypoint.latLng.lat;
+              infosForPopUp.destinationLon = waypoint.latLng.lon;
+            }
+            this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,currentProposal.desc,"",[],[],"<p>"+waypoint.title+"</p>"));
+          });
 
 
-            currentProposal.desc += "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
-            currentProposal.desc += "<strong>"+this.$t('map.destination')+"</strong> : "+infosForPopUp.destination+"<br />";
-            if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em>";
+          currentProposal.desc += "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
+          currentProposal.desc += "<strong>"+this.$t('map.destination')+"</strong> : "+infosForPopUp.destination+"<br />";
+          if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em>";
 
-            // And now the content of a tooltip (same as popup but without the button)
-            currentProposal.title = currentProposal.desc;
+          // And now the content of a tooltip (same as popup but without the button)
+          currentProposal.title = currentProposal.desc;
                 
-            // We add the button to the popup (To Do: Button isn't functionnal. Find a good way to launch a research)
-            //currentProposal.desc += "<br /><button type='button' class='v-btn v-btn--contained v-btn--rounded theme--light v-size--small secondary overline'>"+this.$t('map.findMatchings')+"</button>";
+          // We add the button to the popup (To Do: Button isn't functionnal. Find a good way to launch a research)
+          //currentProposal.desc += "<br /><button type='button' class='v-btn v-btn--contained v-btn--rounded theme--light v-size--small secondary overline'>"+this.$t('map.findMatchings')+"</button>";
 
-            // We are closing the two p
-            currentProposal.title += "</p>";
-            currentProposal.desc += "</p>";
-            this.directionWay.push(currentProposal);
+          // We are closing the two p
+          currentProposal.title += "</p>";
+          currentProposal.desc += "</p>";
+          this.directionWay.push(currentProposal);
 
-          }
         });
       }
       this.$refs.mmap.redrawMap();

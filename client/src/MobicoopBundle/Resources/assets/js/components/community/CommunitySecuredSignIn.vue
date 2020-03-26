@@ -30,7 +30,7 @@
           ref="form"
           v-model="valid"
           lazy-validation
-          :action="$t('urlSignIn')+communityId"
+          :action="$t('urlSignIn', {id:communityId})"
           method="POST"
         >
           <v-text-field

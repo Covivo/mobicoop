@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -27,25 +27,29 @@ use App\MassCommunication\Entity\Campaign;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * @method Campaign|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Campaign|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Campaign[]    findAll()
+ * @method Campaign[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class CampaignRepository
 {
     /**
      * @var EntityRepository
      */
     private $repository;
+
+    private $entityManager;
     
     public function __construct(EntityManagerInterface $entityManager)
     {
+        $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Campaign::class);
     }
-    
+
     public function find(int $id): ?Campaign
     {
         return $this->repository->find($id);
-    }
-
-    public function findOneBy(array $criteria): ?Campaign
-    {
-        return $this->repository->findOneBy($criteria);
     }
 }

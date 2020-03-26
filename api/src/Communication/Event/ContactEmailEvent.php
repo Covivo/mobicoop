@@ -24,7 +24,7 @@
 namespace App\Communication\Event;
 
 use App\Communication\Entity\Contact;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event sent when a contact message is sent.

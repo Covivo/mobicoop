@@ -43,6 +43,8 @@ class Community implements ResourceInterface, \JsonSerializable
     const MANUAL_VALIDATION = 1;
     const DOMAIN_VALIDATION = 2;
 
+    const SESSION_VAR_NAME = 'userCommunities';
+
     /**
      * @var int The id of this community.
      */

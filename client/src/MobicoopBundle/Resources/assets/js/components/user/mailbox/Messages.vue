@@ -37,12 +37,14 @@
               :key="0"
               href="#tab-cm"
               class="ma-0"
+
               ripple
               @click="reloadOnIcon()"
             >
               <v-icon class="display-1">
                 mdi-car
               </v-icon>
+              <v-text>{{ $t("headersCategories.titleCarpool") }}</v-text>
             </v-tab>
             <v-tab
               :key="1"
@@ -54,6 +56,7 @@
               <v-icon class="display-1">
                 mdi-chat
               </v-icon>
+              <v-text>{{ $t("headersCategories.titleLive") }}</v-text>
             </v-tab>
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
@@ -211,8 +214,8 @@ export default {
         this.modelTabs="tab-dm";
         this.idRecipient = this.newThread.idRecipient;
       }
-      
     }
+    if(this.givenIdAsk) this.refreshActions = true;
   },
   methods: {
     updateDetails(data){
@@ -284,7 +287,8 @@ export default {
         .then(response => {
           //console.error(response.data);
           this.refreshActions = true;
-          this.loadingBtnAction = false;
+          // buttons become usable before the whole component is updated and so user can accept or refused multiple times, creating multiple proposals
+          // this.loadingBtnAction = false;
         })
         .catch(function (error) {
           console.error(error);

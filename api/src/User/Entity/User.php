@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -43,9 +43,7 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Ask;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
-use App\Right\Entity\UserRole;
 use App\Match\Entity\Mass;
-use App\Right\Entity\UserRight;
 use App\Image\Entity\Image;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
@@ -62,10 +60,11 @@ use App\User\Controller\UserThreadsCarpoolMessages;
 use App\User\Controller\UserUpdatePassword;
 use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserUpdate;
-use App\User\Controller\UserAnonymise;
+use App\User\Controller\UserDelete;
 use App\User\Controller\UserCheckSignUpValidationToken;
 use App\User\Controller\UserCheckPhoneToken;
 use App\User\Controller\UserUnsubscribeFromEmail;
+use App\User\Controller\UserMe;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\HomeAddressDirectionTerritoryFilter;
@@ -80,16 +79,19 @@ use App\User\Filter\ValidatedDateTokenFilter;
 use App\User\Filter\UnsubscribeTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
+use App\Auth\Entity\AuthItem;
 use App\Import\Entity\UserImport;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Entity\Delivery;
+use App\Auth\Entity\UserAuthAssignment;
 use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
+use App\Event\Entity\Event;
+use App\Community\Entity\CommunityUser;
 
 /**
  * A user.
  *
- * Users should not be fully removed, if a user wants to remove its account it should be anonymized, unless he has no interactions with other users.
  * Note : force eager is set to false to avoid max number of nested relations (can occure despite of maxdepth... https://github.com/api-platform/core/issues/1910)
  *
  * @ORM\Entity
@@ -104,6 +106,7 @@ use App\User\EntityListener\UserListener;
  *      collectionOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"readUser"}},
+ *              "security"="is_granted('user_list',object)"
  *          },
  *          "post"={
  *              "method"="POST",
@@ -151,12 +154,13 @@ use App\User\EntityListener\UserListener;
  *                          "description" = "User's birthdate"
  *                      }
  *                  }
- *              }
+ *              },
+ *              "security_post_denormalize"="is_granted('user_create',object)"
  *          },
  *          "delegateRegistration"={
  *              "method"="POST",
  *              "path"="/users/register",
- *              "controller"=UserDelegateRegistration::class,
+ *              "controller"=UserRegistration::class,
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -212,7 +216,8 @@ use App\User\EntityListener\UserListener;
  *                          "description" = "Password send type (0 : none, 1 : sms, 2 : email)"
  *                      }
  *                  }
- *              }
+ *              },
+ *              "security_post_denormalize"="is_granted('user_register',object)"
  *          },
  *          "checkSignUpValidationToken"={
  *              "method"="POST",
@@ -227,11 +232,18 @@ use App\User\EntityListener\UserListener;
  *              "normalization_context"={"groups"={"readUser"}},
  *              "path"="/users/checkPhoneToken",
  *              "controller"=UserCheckPhoneToken::class
- *          }
+ *          },
+ *          "me"={
+ *              "normalization_context"={"groups"={"readUser"}},
+ *              "method"="GET",
+ *              "path"="/users/me",
+ *              "read"="false"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"readUser"}},
+ *              "security"="is_granted('user_read',object)"
  *          },
  *          "password_update_request"={
  *              "method"="POST",
@@ -241,6 +253,7 @@ use App\User\EntityListener\UserListener;
  *              "read"=false,
  *              "denormalization_context"={"groups"={"passwordUpdateRequest"}},
  *              "normalization_context"={"groups"={"passwordUpdateRequest"}},
+ *              "security"="is_granted('user_password',object)"
  *          },
  *          "password_update"={
  *              "method"="POST",
@@ -250,34 +263,20 @@ use App\User\EntityListener\UserListener;
  *              "read"=false,
  *              "denormalization_context"={"groups"={"passwordUpdate"}},
  *              "normalization_context"={"groups"={"passwordUpdate"}},
+ *              "security"="is_granted('user_password',object)"
  *          },
  *          "generate_phone_token"={
  *              "method"="GET",
  *              "path"="/users/{id}/generate_phone_token",
  *              "controller"=UserGeneratePhoneToken::class,
- *          },
- *          "permissions"={
- *              "method"="GET",
- *              "normalization_context"={"groups"={"permissions"}},
- *              "controller"=UserPermissions::class,
- *              "path"="/users/{id}/permissions",
- *              "swagger_context"={
- *                  "parameters"={
- *                      {
- *                          "name" = "territory",
- *                          "in" = "query",
- *                          "type" = "number",
- *                          "format" = "integer",
- *                          "description" = "The territory id"
- *                      },
- *                  }
- *              }
+ *              "security"="is_granted('user_update',object)"
  *          },
  *          "alerts"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"alerts"}},
  *              "controller"=UserAlerts::class,
  *              "path"="/users/{id}/alerts",
+ *              "security"="is_granted('user_read',object)"
  *          },
  *          "putAlerts"={
  *              "method"="PUT",
@@ -285,39 +284,46 @@ use App\User\EntityListener\UserListener;
  *              "denormalization_context"={"groups"={"alerts"}},
  *              "path"="/users/{id}/alerts",
  *              "controller"=UserAlertsUpdate::class,
+ *              "security"="is_granted('user_update',object)"
  *          },
- *          "threads"={
+ *          "threadsOBSOLETE20200311"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
  *              "controller"=UserThreads::class,
- *              "path"="/users/{id}/threads"
+ *              "path"="/users/{id}/threads",
+ *              "security"="is_granted('user_read',object)"
  *          },
  *          "threadsDirectMessages"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
  *              "controller"=UserThreadsDirectMessages::class,
- *              "path"="/users/{id}/threadsDirectMessages"
+ *              "path"="/users/{id}/threadsDirectMessages",
+ *              "security"="is_granted('user_read',object)"
  *          },
  *          "threadsCarpoolMessages"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
  *              "controller"=UserThreadsCarpoolMessages::class,
- *              "path"="/users/{id}/threadsCarpoolMessages"
+ *              "path"="/users/{id}/threadsCarpoolMessages",
+ *              "security"="is_granted('user_read',object)"
  *          },
  *          "put"={
  *              "method"="PUT",
  *              "path"="/users/{id}",
- *              "controller"=UserUpdate::class
+ *              "controller"=UserUpdate::class,
+ *              "security"="is_granted('user_update',object)"
  *          },
- *          "anonymise_user"={
- *              "method"="PUT",
- *              "path"="/users/{id}/anonymise_user",
- *              "controller"=UserAnonymise::class
+ *          "delete_user"={
+ *              "method"="DELETE",
+ *              "path"="/users/{id}",
+ *              "controller"=UserDelete::class,
+ *              "security"="is_granted('user_delete',object)"
  *          },
  *          "asks"={
  *              "method"="GET",
  *              "path"="/users/{id}/asks",
- *              "controller"=UserAsks::class
+ *              "controller"=UserAsks::class,
+ *              "security"="is_granted('user_read',object)"
  *          },
  *          "unsubscribe_user"={
  *              "method"="PUT",
@@ -345,7 +351,7 @@ use App\User\EntityListener\UserListener;
 class User implements UserInterface, EquatableInterface
 {
     const DEFAULT_ID = 999999999999;
-    
+
     const MAX_DETOUR_DURATION = 600;
     const MAX_DETOUR_DISTANCE = 10000;
 
@@ -400,7 +406,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate"})
      */
     private $givenName;
 
@@ -415,7 +421,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate"})
      */
     private $shortFamilyName;
 
@@ -423,7 +429,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The name of the user in a professional context.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $proName;
 
@@ -442,7 +448,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readUser","write"})
      */
     private $proEmail;
 
@@ -512,7 +518,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","write","checkPhoneToken"})
      */
     private $telephone;
-    
+
     /**
      * @var string|null The telephone number of the user.
      * @Groups({"readUser", "write"})
@@ -761,6 +767,20 @@ class User implements UserInterface, EquatableInterface
     private $asks;
 
     /**
+     * @var ArrayCollection|null The events made by this user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Event\Entity\Event", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     */
+    private $events;
+
+    /**
+    * @var ArrayCollection|null The communityUser associated to this user
+    *
+    * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+    */
+    private $communityUsers;
+
+    /**
      * @var ArrayCollection|null The asks made for this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="userRelated", cascade={"remove"}, orphanRemoval=true)
@@ -784,22 +804,21 @@ class User implements UserInterface, EquatableInterface
      * @ApiSubresource(maxDepth=1)
      */
     private $images;
-    
-    /**
-     * @var ArrayCollection|null A user may have many roles.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRole", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups("write")
-     * @MaxDepth(1)
-     */
-    private $userRoles;
 
     /**
-     * @var ArrayCollection|null A user may have many specific rights.
+     * @var ArrayCollection|null A user may have many auth assignments.
      *
-     * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRight", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Auth\Entity\UserAuthAssignment", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readUser","write"})
+     * @MaxDepth(1)
      */
-    private $userRights;
+    private $userAuthAssignments;
+
+    /**
+     * @Groups({"readUser"})
+     * @MaxDepth(1)
+     */
+    private $roles;
 
     /**
      * @var ArrayCollection|null The mass import files of the user.
@@ -825,7 +844,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @MaxDepth(1)
-     * @ApiSubresource
+     * ApiSubresource
      */
     private $recipients;
 
@@ -971,6 +990,12 @@ class User implements UserInterface, EquatableInterface
      */
     private $unsubscribeMessage;
 
+    /**
+     * @var bool|null used to indicate a attempt to import this already registered user.
+     * @Groups({"massMigrate"})
+     */
+    private $alreadyRegistered;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -981,8 +1006,7 @@ class User implements UserInterface, EquatableInterface
         $this->asks = new ArrayCollection();
         $this->asksRelated = new ArrayCollection();
         $this->asksDelegate = new ArrayCollection();
-        $this->userRoles = new ArrayCollection();
-        $this->userRights = new ArrayCollection();
+        $this->userAuthAssignments = new ArrayCollection();
         $this->masses = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->messages = new ArrayCollection();
@@ -996,10 +1020,12 @@ class User implements UserInterface, EquatableInterface
         $this->userNotifications = new ArrayCollection();
         $this->campaigns = new ArrayCollection();
         $this->deliveries = new ArrayCollection();
+        $this->roles = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
         $this->setStatus($status);
+        $this->setAlreadyRegistered(false);
     }
 
     public function getId(): ?int
@@ -1119,7 +1145,7 @@ class User implements UserInterface, EquatableInterface
     public function setPasswordSendType(?int $passwordSendType): self
     {
         $this->passwordSendType = $passwordSendType;
-        
+
         return $this;
     }
 
@@ -1189,10 +1215,10 @@ class User implements UserInterface, EquatableInterface
     public function setPhoneDisplay(?int $phoneDisplay): self
     {
         $this->phoneDisplay = $phoneDisplay;
-        
+
         return $this;
     }
-    
+
     public function getOldTelephone(): ?string
     {
         return $this->oldTelephone;
@@ -1408,7 +1434,7 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->language;
     }
- 
+
     public function setLanguage(?string $language): self
     {
         $this->language= $language;
@@ -1583,6 +1609,8 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+
+
     public function getAsksRelated()
     {
         return $this->asksRelated->getValues();
@@ -1639,59 +1667,87 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getUserRoles()
+    public function getEvents()
     {
-        return $this->userRoles->getValues();
+        return $this->events->getValues();
     }
 
-    public function addUserRole(UserRole $userRole): self
+    public function addEvent(Event $event): self
     {
-        if (!$this->userRoles->contains($userRole)) {
-            $this->userRoles->add($userRole);
-            $userRole->setUser($this);
+        if (!$this->events->contains($event)) {
+            $this->events->add($event);
+            $event->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeUserRole(UserRole $userRole): self
+    public function removeEvent(Event $event): self
     {
-        if ($this->userRoles->contains($userRole)) {
-            $this->userRoles->removeElement($userRole);
+        if ($this->events->contains($event)) {
+            $this->events->removeElement($event);
             // set the owning side to null (unless already changed)
-            if ($userRole->getUser() === $this) {
-                $userRole->setUser(null);
+            if ($event->getUser() === $this) {
+                $event->setUser(null);
             }
         }
 
         return $this;
     }
 
-    public function getUserRights()
+    public function getCommunityUsers()
     {
-        return $this->userRights->getValues();
+        return $this->communityUsers->getValues();
     }
-    
-    public function addUserRight(UserRight $userRight): self
+
+    public function addCommunityUser(CommunityUser $communityUser): self
     {
-        if (!$this->userRights->contains($userRight)) {
-            $this->userRights->add($userRight);
-            $userRight->setUser($this);
+        if (!$this->events->contains($communityUser)) {
+            $this->events->add($communityUser);
+            $communityUser->setUser($this);
         }
-        
+
         return $this;
     }
-    
-    public function removeUserRight(UserRight $userRight): self
+
+    public function removeCommunityUser(CommunityUser $communityUser): self
     {
-        if ($this->userRights->contains($userRight)) {
-            $this->userRights->removeElement($userRight);
+        if ($this->events->contains($communityUser)) {
+            $this->events->removeElement($communityUser);
             // set the owning side to null (unless already changed)
-            if ($userRight->getUser() === $this) {
-                $userRight->setUser(null);
+            if ($communityUser->getUser() === $this) {
+                $communityUser->setUser(null);
             }
         }
-        
+
+        return $this;
+    }
+
+    public function getUserAuthAssignments()
+    {
+        return $this->userAuthAssignments->getValues();
+    }
+
+    public function addUserAuthAssignment(UserAuthAssignment $userAuthAssignment): self
+    {
+        if (!$this->userAuthAssignments->contains($userAuthAssignment)) {
+            $this->userAuthAssignments->add($userAuthAssignment);
+            $userAuthAssignment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserAuthAssignment(UserAuthAssignment $userAuthAssignment): self
+    {
+        if ($this->userAuthAssignments->contains($userAuthAssignment)) {
+            $this->userAuthAssignments->removeElement($userAuthAssignment);
+            // set the owning side to null (unless already changed)
+            if ($userAuthAssignment->getUser() === $this) {
+                $userAuthAssignment->setUser(null);
+            }
+        }
+
         return $this;
     }
 
@@ -1755,17 +1811,17 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->recipients->getValues();
     }
-    
+
     public function addRecipient(Recipient $recipient): self
     {
         if (!$this->recipients->contains($recipient)) {
             $this->recipients[] = $recipient;
             $recipient->setUser($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeRecipient(Recipient $recipient): self
     {
         if ($this->recipients->contains($recipient)) {
@@ -1775,7 +1831,7 @@ class User implements UserInterface, EquatableInterface
                 $recipient->setUser(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -1783,17 +1839,17 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->notifieds->getValues();
     }
-    
+
     public function addNotified(Notified $notified): self
     {
         if (!$this->notifieds->contains($notified)) {
             $this->notifieds[] = $notified;
             $notified->setUser($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeNotified(Notified $notified): self
     {
         if ($this->notifieds->contains($notified)) {
@@ -1803,7 +1859,7 @@ class User implements UserInterface, EquatableInterface
                 $notified->setUser(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -2090,19 +2146,16 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getRoles()
+    public function getRoles(): array
     {
         // we return an array of ROLE_***
-        // we only return the global roles, not the territory-specific roles
-        $roles = [];
-        foreach ($this->userRoles as $userRole) {
-            if (is_null($userRole->getTerritory())) {
-                $roles[] = $userRole->getRole()->getName();
+        foreach ($this->userAuthAssignments as $userAuthAssignment) {
+            if ($userAuthAssignment->getAuthItem()->getType() == AuthItem::TYPE_ROLE) {
+                $this->roles[] = $userAuthAssignment->getAuthItem()->getName();
             }
         }
-        return $roles;
+        return array_unique($this->roles);
     }
-
 
     public function getSalt()
     {
@@ -2260,6 +2313,17 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function isAlreadyRegistered(): ?bool
+    {
+        return $this->alreadyRegistered;
+    }
+
+    public function setAlreadyRegistered(?bool $alreadyRegistered): self
+    {
+        $this->alreadyRegistered = $alreadyRegistered;
+
+        return $this;
+    }
 
 
     // DOCTRINE EVENTS

@@ -23,11 +23,12 @@
 
 namespace App\App\Entity;
 
+use App\Auth\Entity\AuthItem;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
+// use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
-use App\Right\Entity\Role;
+use App\Auth\Entity\Role;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 
@@ -36,7 +37,7 @@ use Symfony\Component\Security\Core\User\EquatableInterface;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"}
  *      },
@@ -84,12 +85,12 @@ class App implements UserInterface, EquatableInterface
     private $password;
 
     /**
-     * @var ArrayCollection|null The roles granted to the app.
+     * @var ArrayCollection|null The auth assignments for the app.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Role")
+     * @ORM\ManyToMany(targetEntity="\App\Auth\Entity\AuthItem")
      * @Groups({"read","write"})
      */
-    private $roles;
+    private $authItems;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -109,7 +110,7 @@ class App implements UserInterface, EquatableInterface
     
     public function __construct()
     {
-        $this->roles = new ArrayCollection();
+        $this->authItems = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -157,27 +158,33 @@ class App implements UserInterface, EquatableInterface
     {
         // we return an array of ROLE_***
         $roles = [];
-        foreach ($this->roles as $role) {
-            $roles[] = $role->getName();
+        foreach ($this->authItems as $authItem) {
+            if ($authItem->getType() == AuthItem::TYPE_ROLE) {
+                $roles[] = $authItem->getName();
+            }
         }
         return $roles;
     }
     
-    public function addRole(Role $role): self
+    public function getAuthItems()
     {
-        if (!$this->roles->contains($role)) {
-            $this->roles[] = $role;
+        return $this->authItems->getValues();
+    }
+
+    public function addAuthItem(AuthItem $authItem): self
+    {
+        if (!$this->authItems->contains($authItem)) {
+            $this->authItems[] = $authItem;
         }
         
         return $this;
     }
     
-    public function removeRole(Role $role): self
+    public function removeAuthItem(AuthItem $authItem): self
     {
-        if ($this->roles->contains($role)) {
-            $this->roles->removeElement($role);
+        if ($this->authItems->contains($authItem)) {
+            $this->authItems->removeElement($authItem);
         }
-        
         return $this;
     }
 

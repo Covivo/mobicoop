@@ -32,6 +32,7 @@ use App\Carpool\Controller\AdAskPost;
 use App\Carpool\Controller\AdAskPut;
 use App\Carpool\Controller\AdPut;
 use App\Carpool\Controller\AdAskGet;
+use App\User\Entity\User;
 use App\Carpool\Controller\UpdateCarpoolsLimits;
 
 /**
@@ -47,24 +48,28 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *          "get"={
  *              "method"="GET",
  *              "path"="/carpools",
+ *              "security_post_denormalize"="is_granted('ad_list',object)"
  *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/carpools",
  *              "normalization_context"={"groups"={"results"}},
  *              "controller"=AdPost::class,
+ *              "security_post_denormalize"="is_granted('ad_search_create',object)"
  *          },
  *          "post_ask"={
  *              "method"="POST",
  *              "path"="/carpools/ask",
  *              "controller"=AdAskPost::class,
- *              "defaults"={"type"="ask"}
+ *              "defaults"={"type"="ask"},
+ *              "security_post_denormalize"="is_granted('ad_ask_create',object)"
  *          },
  *          "post_contact"={
  *              "method"="POST",
  *              "path"="/carpools/contact",
  *              "controller"=AdAskPost::class,
- *              "defaults"={"type"="contact"}
+ *              "defaults"={"type"="contact"},
+ *              "security_post_denormalize"="is_granted('ad_ask_create',object)"
  *          },
  *          "updateCarpoolsLimits"={
  *              "method"="GET",
@@ -77,25 +82,28 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "method"="GET",
  *              "path"="/carpools/{id}",
  *              "controller"=AdGet::class,
- *              "read"=false
+ *              "read"=false,
+ *              "security"="is_granted('ad_read',object)"
  *          },
  *          "put_ask"={
  *              "method"="PUT",
  *              "path"="/carpools/ask/{id}",
- *              "controller"=AdAskPut::class,
- *              "read"=false
+ *              "read"=false,
+ *              "security"="is_granted('ad_ask_update',object)"
  *          },
  *          "get_ask"={
  *              "method"="GET",
  *              "path"="/carpools/ask/{id}",
  *              "controller"=AdAskGet::class,
- *              "read"=false
+ *              "read"=false,
+ *              "security"="is_granted('ad_ask_read',object)"
  *          },
  *          "put"={
  *              "method"="PUT",
  *              "path"="/carpools/{id}",
  *              "controller"=AdPut::class,
- *              "read"=false
+ *              "read"=false,
+ *              "security"="is_granted('ad_update',object)"
  *          },
  *      }
  * )
@@ -141,14 +149,14 @@ class Ad
     /**
      * @var int|null The frequency for this ad.
      *
-     * @Groups({"read","write"})
+     * @Groups({"read","write","readCommunity","readEvent"})
      */
     private $frequency;
 
     /**
      * @var array|null The waypoints for the outward.
      *
-     * @Groups({"read","write","results"})
+     * @Groups({"read","write","results","readCommunity","readEvent"})
      */
     private $outwardWaypoints;
 
@@ -336,6 +344,13 @@ class Ad
     private $comment;
 
     /**
+     * @var User|null The ad owner. Null for an anonymous search.
+     *
+     * @Groups({"readCommunity","readEvent"})
+     */
+    private $user;
+    
+    /**
      * @var int|null The user id of the ad owner. Null for an anonymous search.
      *
      * @Groups({"read","write"})
@@ -427,6 +442,20 @@ class Ad
      */
     private $proposalId;
 
+    /**
+     * @var int $potentialCarpoolers
+     * Potential carpoolers count
+     * @Groups({"read","write"})
+     */
+    private $potentialCarpoolers;
+
+    /**
+     * @var string The external origin of this Ad
+     *
+     * @Groups({"read","write"})
+     */
+    private $external;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -462,7 +491,7 @@ class Ad
         return $this;
     }
     
-    public function getRole(): int
+    public function getRole(): ?int
     {
         return $this->role;
     }
@@ -848,6 +877,18 @@ class Ad
         return $this;
     }
 
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
     public function getPosterId(): ?int
     {
         return $this->posterId;
@@ -964,6 +1005,29 @@ class Ad
     public function setProposalId(?int $proposalId): self
     {
         $this->proposalId = $proposalId;
+
+        return $this;
+    }
+
+    public function getPotentialCarpoolers(): ?int
+    {
+        return $this->potentialCarpoolers;
+    }
+
+    public function setPotentialCarpoolers(int $potentialCarpoolers): self
+    {
+        $this->potentialCarpoolers = $potentialCarpoolers;
+        return $this;
+    }
+
+    public function getExternal(): ?String
+    {
+        return $this->external;
+    }
+
+    public function setExternal(?string $external): self
+    {
+        $this->external = $external;
 
         return $this;
     }

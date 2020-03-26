@@ -165,7 +165,7 @@
                         class="text-center"
                       >
                         <v-btn
-                          v-if="!hideContact && lResult.pendingAsk == false && lResult.acceptedAsk == false"
+                          v-if="!hideContact && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
                           color="primary"
                           :disabled="contactDisabled"
                           :loading="contactLoading"
@@ -334,7 +334,7 @@
       <v-spacer />
       <!-- Carpool (driver xor passenger) -->
       <v-btn
-        v-if="(driver ^ passenger) && step == 1 && lResult.pendingAsk == false && lResult.acceptedAsk == false"
+        v-if="(driver ^ passenger) && step == 1 && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
@@ -345,7 +345,7 @@
 
       <!-- Carpool (driver) --> 
       <v-btn
-        v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false"
+        v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
@@ -356,7 +356,7 @@
 
       <!-- Carpool (passenger) --> 
       <v-btn
-        v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false"
+        v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
@@ -364,7 +364,7 @@
       >
         {{ $t('carpoolAsPassenger') }}
       </v-btn>
-
+      <!-- if an ask is pending or accepted -->
       <p
         v-if="lResult.pendingAsk == true || lResult.acceptedAsk == true"
         class="warning--text font-weight-bold"
@@ -374,6 +374,42 @@
         </v-icon>
         {{ $t('alreadyAskCarpool') }}
       </p>
+
+      <!-- if an ask is initiated -->
+      <v-row
+        v-if="lResult.initiatedAsk == true"
+      >
+        <v-col
+          cols="8"
+          align-self="end"
+          class="text-right"
+        >
+          <p
+            class="warning--text font-weight-bold mb-n1"
+          >
+            <v-icon color="warning">
+              mdi-alert
+            </v-icon>
+            {{ $t('alreadyInitiatedCarpool') }}
+          </p>
+        </v-col>
+        <v-col
+          cols="3"
+          align-self="end"
+          class="text-right"
+        >
+          <a
+            :href="this.$t('seeMessages.route')"
+            style="text-decoration:none;"
+          >
+            <v-btn
+              color="secondary"
+            >
+              {{ $t('seeMessages.label') }}
+            </v-btn>
+          </a>
+        </v-col>
+      </v-row>
 
       <!-- Step 2 or 3 (previous) --> 
       <v-btn
@@ -396,7 +432,7 @@
 
       <!-- Step 2 (regular outward, no return) --> 
       <v-btn
-        v-if="step == 2 && !lResult.return && outwardTrip.length>0 && lResult.pendingAsk == false && lResult.acceptedAsk == false"
+        v-if="step == 2 && !lResult.return && outwardTrip.length>0 && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
@@ -407,7 +443,7 @@
 
       <!-- Step 3 (regular return) --> 
       <v-btn
-        v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0) && lResult.pendingAsk == false && lResult.acceptedAsk == false"
+        v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0) && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
@@ -520,6 +556,10 @@ export default {
       default: null
     },
     hideContact: {
+      type: Boolean,
+      default: false
+    },
+    resetStep: {
       type: Boolean,
       default: false
     }
@@ -637,6 +677,12 @@ export default {
       this.fromDate = val.startDate ? val.startDate : null;
       this.toDate = val.toDate ? val.toDate : null;
       this.computeTimes();
+    },
+    resetStep(){
+      if(this.resetStep){
+        this.step = 1;
+        this.$emit('resetStepMatchingJourney');
+      }
     }
   },
   mounted() {
@@ -645,6 +691,9 @@ export default {
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
+    // We need to emit this event because the first time Matching has send the reset intruction,
+    // MatchingJourney was not created yet. So the watcher can't trigger and therefore, not send the event.
+    this.$emit('resetStepMatchingJourney');
   },
   methods: {
     computeMaxDate() {

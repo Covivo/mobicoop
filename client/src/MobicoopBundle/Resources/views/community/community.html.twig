@@ -7,14 +7,6 @@
     {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}community/community") }}#}
 {% endblock %}
 {% block main %}
-{% if community.secured and communityUser == null %}
-    <community-secured-sign-in
-        :community-id="{{community.id}}"
-        community-name="{{community.name}}"
-        :user-id="{{(user is not null) ? user.id : 'null'}}"
-        :error="{{ error|json_encode }}"
-    ></community-secured-sign-in>
-{% else %}
     <community
         :community="{{ community|json_encode }}" 
         :geodata="{{ {'geocompleteuri':geoCompleteUri, 'searchroute':searchRoute}|json_encode }}"
@@ -30,6 +22,4 @@
         :last-users="{{ lastUsers|json_encode }}"
         :user-community-status="{{ communityUserStatus }}"
     ></community>
-{% endif %}
-
 {% endblock %}

@@ -23,23 +23,12 @@
 
 namespace App\Carpool\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\User\Entity\User;
 use App\Geography\Entity\Address;
 
 /**
- * Carpooling : result resource for an ad.
- *
- * @ApiResource(
- *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
- * )
+ * Carpooling : result for an ad.
  */
 class Result
 {
@@ -47,7 +36,6 @@ class Result
     
     /**
      * @var int The id of this result.
-     * @ApiProperty(identifier=true)
      * @Groups("results")
      */
     private $id;
@@ -257,6 +245,12 @@ class Result
     private $communities;
 
     /**
+     * @var boolean If the Result has an initiated Ask
+     * @Groups("results")
+     */
+    private $initiatedAsk;
+
+    /**
      * @var boolean If the Result has a pending Ask
      * @Groups("results")
      */
@@ -285,6 +279,12 @@ class Result
      * @Groups("externalJourney")
      */
     private $externalOrigin;
+
+    /**
+     * @var int|null
+     * @Groups("results")
+     */
+    private $askId;
 
     public function __construct()
     {
@@ -707,6 +707,18 @@ class Result
         return $this;
     }
 
+    public function hasInitiatedAsk(): ?bool
+    {
+        return $this->initiatedAsk;
+    }
+
+    public function setInitiatedAsk(?bool $initiatedAsk): self
+    {
+        $this->initiatedAsk = $initiatedAsk;
+
+        return $this;
+    }
+
     public function hasPendingAsk(): ?bool
     {
         return $this->pendingAsk;
@@ -764,6 +776,17 @@ class Result
     {
         $this->externalOrigin = $externalOrigin;
 
+        return $this;
+    }
+
+    public function getAskId(): ?int
+    {
+        return $this->askId;
+    }
+
+    public function setAskId(?int $askId): Result
+    {
+        $this->askId = $askId;
         return $this;
     }
 }

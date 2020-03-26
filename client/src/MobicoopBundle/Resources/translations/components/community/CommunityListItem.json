@@ -18,7 +18,8 @@
       }
     },
     "routes": {
-      "community": "/communaute/{id}"
+      "community": "/communaute/{id}",
+      "communitySecuredRegister": "/communaute/{id}/securisee/inscription"
     },
     "communityDetails":"Voir communauté",
     "join":"Rejoindre la communauté",
@@ -36,7 +37,8 @@
       }
     },
     "routes": {
-        "community": "/communaute/{id}"
+        "community": "/communaute/{id}",
+        "communitySecuredRegister": "/community/{id}/secured/register"
       }
     },
     "communityDetails":"Community details",

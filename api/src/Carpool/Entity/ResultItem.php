@@ -23,22 +23,11 @@
 
 namespace App\Carpool\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Geography\Entity\Address;
 
 /**
  * Carpooling : result item for an ad.
- *
- * @ApiResource(
- *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
- * )
  */
 class ResultItem
 {
@@ -46,7 +35,6 @@ class ResultItem
     
     /**
      * @var int The id of this result item.
-     * @ApiProperty(identifier=true)
      */
     private $id;
 
@@ -73,6 +61,12 @@ class ResultItem
      * @Groups("results")
      */
     private $time;
+
+    /**
+     * @var int Accepted margin duration for punctual journey in seconds.
+     * @Groups("results")
+     */
+    private $marginDuration;
 
     /**
      * @var \DateTimeInterface The min date for a regular journey.
@@ -213,6 +207,48 @@ class ResultItem
     private $sunTime;
 
     /**
+     * @var int Accepted margin for monday starting time in seconds.
+     * @Groups("results")
+     */
+    private $monMarginDuration;
+
+    /**
+     * @var int Accepted margin for tuesday starting time in seconds.
+     * @Groups("results")
+     */
+    private $tueMarginDuration;
+
+    /**
+     * @var int Accepted margin for wednesday starting time in seconds.
+     * @Groups("results")
+     */
+    private $wedMarginDuration;
+
+    /**
+     * @var int Accepted margin for thurdays starting time in seconds.
+     * @Groups("results")
+     */
+    private $thuMarginDuration;
+
+    /**
+     * @var int Accepted margin for friday starting time in seconds.
+     * @Groups("results")
+     */
+    private $friMarginDuration;
+
+    /**
+     * @var int Accepted margin for saturday starting time in seconds.
+     * @Groups("results")
+     */
+    private $satMarginDuration;
+
+    /**
+     * @var int Accepted margin for sunday starting time in seconds.
+     * @Groups("results")
+     */
+    private $sunMarginDuration;
+
+    /**
      * @var boolean|null Multiple times are used for the days.
      * @Groups("results")
      */
@@ -321,6 +357,12 @@ class ResultItem
     private $commonDistance;
 
     /**
+     * @var boolean If the ResultItem has a initiated Ask
+     * @Groups("results")
+     */
+    private $initiatedAsk;
+
+    /**
      * @var boolean If the ResultItem has a pending Ask
      * @Groups("results")
      */
@@ -387,6 +429,18 @@ class ResultItem
     public function setTime(?\DateTimeInterface $time): self
     {
         $this->time = $time;
+
+        return $this;
+    }
+
+    public function getMarginDuration(): ?int
+    {
+        return $this->marginDuration;
+    }
+
+    public function setMarginDuration(?int $marginDuration): self
+    {
+        $this->marginDuration = $marginDuration;
 
         return $this;
     }
@@ -687,6 +741,91 @@ class ResultItem
         return $this;
     }
 
+    public function getMonMarginDuration(): ?int
+    {
+        return $this->monMarginDuration;
+    }
+    
+    public function setMonMarginDuration(?int $monMarginDuration): self
+    {
+        $this->monMarginDuration = $monMarginDuration;
+        
+        return $this;
+    }
+
+    public function getTueMarginDuration(): ?int
+    {
+        return $this->tueMarginDuration;
+    }
+    
+    public function setTueMarginDuration(?int $tueMarginDuration): self
+    {
+        $this->tueMarginDuration = $tueMarginDuration;
+        
+        return $this;
+    }
+
+    public function getWedMarginDuration(): ?int
+    {
+        return $this->wedMarginDuration;
+    }
+    
+    public function setWedMarginDuration(?int $wedMarginDuration): self
+    {
+        $this->wedMarginDuration = $wedMarginDuration;
+        
+        return $this;
+    }
+
+    public function getThuMarginDuration(): ?int
+    {
+        return $this->thuMarginDuration;
+    }
+    
+    public function setThuMarginDuration(?int $thuMarginDuration): self
+    {
+        $this->thuMarginDuration = $thuMarginDuration;
+        
+        return $this;
+    }
+
+    public function getFriMarginDuration(): ?int
+    {
+        return $this->friMarginDuration;
+    }
+    
+    public function setFriMarginDuration(?int $friMarginDuration): self
+    {
+        $this->friMarginDuration = $friMarginDuration;
+        
+        return $this;
+    }
+
+    public function getSatMarginDuration(): ?int
+    {
+        return $this->satMarginDuration;
+    }
+    
+    public function setSatMarginDuration(?int $satMarginDuration): self
+    {
+        $this->satMarginDuration = $satMarginDuration;
+        
+        return $this;
+    }
+
+    public function getSunMarginDuration(): ?int
+    {
+        return $this->sunMarginDuration;
+    }
+    
+    public function setSunMarginDuration(?int $sunMarginDuration): self
+    {
+        $this->sunMarginDuration = $sunMarginDuration;
+        
+        return $this;
+    }
+
+
     public function hasMultipleTimes(): ?bool
     {
         return $this->multipleTimes;
@@ -909,6 +1048,18 @@ class ResultItem
     public function setCommonDistance(int $commonDistance): self
     {
         $this->commonDistance = $commonDistance;
+
+        return $this;
+    }
+
+    public function hasInitiatedAsk(): ?bool
+    {
+        return $this->initiatedAsk;
+    }
+
+    public function setInitiatedAsk(?bool $initiatedAsk): self
+    {
+        $this->initiatedAsk = $initiatedAsk;
 
         return $this;
     }

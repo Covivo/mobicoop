@@ -165,7 +165,12 @@ export default {
     user: {
       type: Object,
       default: null
+    },
+    contactTypes: {
+      type: Object,
+      default: null
     }
+
   },
   data () {
     return {
@@ -192,16 +197,21 @@ export default {
         website: "", // honey pot data
       },
       // You need to use values corrresponding to your potential .env settings in CONTACT_TYPES 
-      // By default, contact type is used
-      demandItems: [
-        {text:this.$t('demand.items.infos'), value:'infos'},
-        {text:this.$t('demand.items.technicalIssues'), value:'technicalIssues'},
-        {text:this.$t('demand.items.partnership'), value:'partnership'}
-      ],      
+      // By default, contact type is used    
       alert: {
         type: "success",
         message: ""
       }
+    }
+  },
+  computed: {
+    demandItems(){
+      let contactTypes = [];
+      for (let [key, value] of Object.entries(this.contactTypes)) {
+        contactTypes.push({text:this.$t('demand.items.'+key), value:key});
+        console.error(this.$t('demand.items.'+value));
+      }
+      return contactTypes;
     }
   },
   methods: {
