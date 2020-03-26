@@ -51,7 +51,10 @@
       "findMatchings":"<strong>Chercher les annonces correspondant</strong>",
       "origin":"Départ",
       "destination":"Destination",
-      "regular":"Trajet régulier"
+      "regular":"Trajet régulier",
+      "search": {
+       "label": "Chercher les covoiturages correspondant"
+      }
     },
     "urlCommunityUser":"/community-user"
     

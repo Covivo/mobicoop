@@ -954,7 +954,7 @@ class AdManager
      * make an ad from a proposal
      *
      * @param Proposal $proposal Base Proposal of the Ad
-     * @return void
+     * @return Ad
      */
     private function makeAdForCommunityOrEvent(Proposal $proposal)
     {
@@ -1003,33 +1003,7 @@ class AdManager
         // set schedule if regular
         $schedule = [];
         if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
-            $schedule['mon'] = $proposal->getCriteria()->isMonCheck();
-            $schedule['monOutwardTime'] = $proposal->getCriteria()->getMonTime();
-            $schedule['monReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getMonTime() : null;
-            
-            $schedule['tue'] = $proposal->getCriteria()->isTueCheck();
-            $schedule['tueOutwardTime'] = $proposal->getCriteria()->getTueTime();
-            $schedule['tueReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getTueTime() : null;
-
-            $schedule['wed'] = $proposal->getCriteria()->isWedCheck();
-            $schedule['wedOutwardTime'] = $proposal->getCriteria()->getWedTime();
-            $schedule['wedReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getWedTime() : null;
-
-            $schedule['thu'] = $proposal->getCriteria()->isThuCheck();
-            $schedule['thuOutwardTime'] = $proposal->getCriteria()->getThuTime();
-            $schedule['thuReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getThuTime() : null;
-
-            $schedule['fri'] = $proposal->getCriteria()->isFriCheck();
-            $schedule['friOutwardTime'] = $proposal->getCriteria()->getFriTime();
-            $schedule['friReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getFriTime() : null;
-
-            $schedule['sat'] = $proposal->getCriteria()->isSatCheck();
-            $schedule['satOutwardTime'] = $proposal->getCriteria()->getSatTime();
-            $schedule['satReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getSatTime() : null;
-
-            $schedule['sun'] = $proposal->getCriteria()->isSunCheck();
-            $schedule['sunOutwardTime'] = $proposal->getCriteria()->getSunTime();
-            $schedule['sunReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getSunTime() : null;
+            $schedule = $this->getScheduleFromCriteria($proposal->getCriteria(), $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria() : null);
         }
         $ad->setSchedule($schedule);
 

@@ -305,6 +305,7 @@ class CarpoolController extends AbstractController
             'destination' => $request->get('destination'),
             'date' => $request->get('date'),
             'regular' => (bool) $request->get('regular'),
+            'communityId' => $request->get('cid'),
             'user' => $userManager->getLoggedUser(),
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,

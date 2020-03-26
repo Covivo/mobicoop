@@ -38,6 +38,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Controller class for community related actions.
@@ -237,19 +238,43 @@ class CommunityController extends AbstractController
 
         $ways = [];
         foreach ($ads as $ad) {
+            $origin = null;
+            $destination = null;
+            $isRegular = null;
+            $date = null;
+
+            if ($ad["frequency"] === Ad::FREQUENCY_REGULAR) {
+                $isRegular = true;
+            } else {
+                $date = new \DateTime($ad["outwardDate"]);
+                $date = $date->format('Y-m-d');
+            }
             $currentAd = [
-                "frequency"=>($ad["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
+                "frequency"=>($ad["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'punctual' : 'regular',
                 "carpoolerFirstName" => $ad["user"]["givenName"],
                 "carpoolerLastName" => $ad["user"]["shortFamilyName"],
                 "waypoints"=>[]
             ];
             foreach ($ad["outwardWaypoints"] as $waypoint) {
+                if ($waypoint['position'] === 0) {
+                    $origin = $waypoint["address"];
+                } elseif ($waypoint['destination']) {
+                    $destination = $waypoint["address"];
+                }
                 $currentAd["waypoints"][] = [
                     "title"=>$waypoint["address"]["addressLocality"],
                     "destination"=>$waypoint['destination'],
                     "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
                 ];
             }
+            $searchLinkParams = [
+                "origin" => json_encode($origin),
+                "destination" => json_encode($destination),
+                "regular" => $isRegular,
+                "date" => $date,
+                "cid" => $community->getId()
+            ];
+            $currentAd["searchLink"] = $this->generateUrl("carpool_search_result_get", $searchLinkParams, UrlGeneratorInterface::ABSOLUTE_URL);
             $ways[] = $currentAd;
         }
 
