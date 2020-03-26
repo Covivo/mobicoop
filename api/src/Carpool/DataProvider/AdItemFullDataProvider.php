@@ -21,42 +21,32 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Controller;
+namespace App\Carpool\DataProvider;
 
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Service\AdManager;
-use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Controller class for ad get.
- * We return the Ad with its results.
+ * Item data provider for full Ad.
  */
-class AdGetFull
+final class AdItemFullDataProvider implements RestrictedDataProviderInterface, ItemDataProviderInterface
 {
-    use TranslatorTrait;
-    
-    private $adManager;
-    private $request;
-    
-    public function __construct(RequestStack $requestStack, AdManager $adManager)
+    protected $adManager;
+
+    public function __construct(AdManager $adManager)
     {
-        $this->request = $requestStack->getCurrentRequest();
         $this->adManager = $adManager;
     }
-
-    /**
-     * This method is invoked when a new ad is asked.
-     *
-     * @param Ad $data
-     * @return Ad
-     */
-    public function __invoke(Ad $data): Ad
+    
+    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
-        }
-        $data = $this->adManager->getFullAd($this->request->get("id"));
-        return $data;
+        return Ad::class === $resourceClass && $operationName === "get_full";
+    }
+
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    {
+        return $this->adManager->getFullAd($id);
     }
 }

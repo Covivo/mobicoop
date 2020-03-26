@@ -102,15 +102,15 @@ class CarpoolController extends AbstractController
         $hasAsks = false;
         $hasPotentialAds = false;
 
-        foreach ($proposal["matchingOffers"] as $matchingOffer) {
+        foreach ($proposal->getMatchingOffers() as $matchingOffer) {
             $hasPotentialAds = true;
-            if (count($matchingOffer["asks"]) > 0) {
+            if (count($matchingOffer->getAsks()) > 0) {
                 $hasAsks = true;
             }
         }
-        foreach ($proposal["matchingRequests"] as $matchingRequest) {
+        foreach ($proposal->getMatchingRequests() as $matchingRequest) {
             $hasPotentialAds = true;
-            if (count($matchingRequest["asks"]) > 0) {
+            if (count($matchingRequest->getAsks()) > 0) {
                 $hasAsks = true;
             }
         }
