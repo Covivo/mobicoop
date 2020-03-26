@@ -49,6 +49,11 @@ const UserCreate = props => {
         {id : true, name : translate('custom.label.user.choices.talk')},
     ];
 
+    const phoneDisplay = [
+        {id : 0, name : translate('custom.label.user.phoneDisplay.forAll')},
+        {id : 1, name : translate('custom.label.user.phoneDisplay.forCarpooler')},
+    ];
+
     const validateRequired = [required()];
     const paswwordRules = [required(),minPassword(),upperPassword,lowerPassword,numberPassword];
     const emailRules = [required(), email() ];
@@ -69,6 +74,8 @@ const UserCreate = props => {
                     <TextInput required source="telephone" label={translate('custom.label.user.telephone')} validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
 
                     <BooleanInput fullWidth label={translate('custom.label.user.newsSubscription',{ instanceName: instance })} source="news_subscription" formClassName={classes.spacedHalfwidth} />
+
+                    <SelectInput fullWidth source="phoneDisplay" label={translate('custom.label.user.phoneDisplay.visibility')} choices={phoneDisplay}  formClassName={classes.spacedHalfwidth}/>
 
                     <GeocompleteInput fullWidth source="addresses" label={translate('custom.label.user.adresse')} validate={required("L'adresse est obligatoire")}/>
 
