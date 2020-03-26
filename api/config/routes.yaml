@@ -8,3 +8,7 @@ api_login_check_user:
 swagger_ui:
     path: /doc
     controller: api_platform.swagger.action.ui
+# api token refresh
+gesdinet_jwt_refresh_token:
+    path: /token/refresh
+    controller: gesdinet.jwtrefreshtoken::refresh

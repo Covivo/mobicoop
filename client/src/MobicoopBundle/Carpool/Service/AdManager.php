@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Ad management service.
@@ -32,16 +33,21 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 class AdManager
 {
     private $dataProvider;
-    
+
+    private $security;
+
     /**
      * Constructor.
      *
      * @param DataProvider $dataProvider
+     * @param Security $security
+     * @throws \ReflectionException
      */
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(DataProvider $dataProvider, Security $security)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
+        $this->security = $security;
     }
 
     /**
@@ -60,6 +66,20 @@ class AdManager
     }
 
     /**
+     * Get full ad data
+     *
+     * @param int $id
+     * @return Ad|null
+     */
+    public function getFullAd(int $id)
+    {
+        if ($data = $this->dataProvider->getSpecialItem($id, 'full')) {
+            return $data->getValue();
+        }
+        return null;
+    }
+
+    /**
      * Create an ad. The ad can be a search.
      *
      * @param array $data   The data used to create the ad
@@ -67,157 +87,7 @@ class AdManager
      */
     public function createAd(array $data)
     {
-        $ad = new Ad();
-        
-        // the ad is a search ?
-        if (isset($data['search']) && $data['search']) {
-            $ad->setSearch(true);
-        }
-
-        // role
-        $ad->setRole($data['driver'] ? ($data['passenger'] ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
-
-        // oneway ?
-        if (isset($data['oneway']) && $data['oneway']) {
-            $ad->setOneWay(true);
-        }
-
-        // frequency
-        $ad->setFrequency($data['regular'] ? Ad::FREQUENCY_REGULAR : Ad::FREQUENCY_PUNCTUAL);
-
-        // outward waypoints
-        $outwardsWaypoints[] = $data['origin'];
-        foreach ($data['waypoints'] as $waypoint) {
-            if ($waypoint['visible']) {
-                $outwardsWaypoints[] = $waypoint['address'];
-            }
-        }
-        $outwardsWaypoints[] = $data['destination'];
-        $ad->setOutwardWaypoints($outwardsWaypoints);
-
-        // date and time
-        if ($ad->getFrequency() == Ad::FREQUENCY_REGULAR) {
-            if (isset($data['fromDate'])) {
-                $ad->setOutwardDate(\DateTime::createFromFormat('Y-m-d', $data['fromDate']));
-            } else {
-                $ad->setOutwardDate(new \Datetime());
-            }
-            if (isset($data['toDate'])) {
-                $ad->setOutwardLimitdate(\DateTime::createFromFormat('Y-m-d', $data['toDate']));
-            }
-            if (isset($data['schedules'])) {
-                $ad->setSchedule($data['schedules']);
-            }
-        } else {
-            $ad->setOutwardDate($data['outwardDate']);
-            $ad->setOutwardTime(isset($data['outwardTime']) ? $data['outwardTime'] : null);
-            if (isset($data['returnDate']) && isset($data['returnTime'])) {
-                $ad->setOneWay(false);
-                $ad->setReturnDate($data['returnDate']);
-                $ad->setReturnTime($data['returnTime']);
-            }
-        }
-
-        if (isset($data["strictDate"])) {
-            $ad->setStrictDate($data["strictDate"]);
-        }
-        if (isset($data["strictPunctual"])) {
-            $ad->setStrictPunctual($data["strictPunctual"]);
-        }
-        if (isset($data["strictRegular"])) {
-            $ad->setStrictRegular($data["strictRegular"]);
-        }
-
-        // prices
-        if (isset($data['priceKm'])) {
-            $ad->setPriceKm($data['priceKm']);
-        }
-        if (isset($data['outwardDriverPrice'])) {
-            $ad->setOutwardDriverPrice($data['outwardDriverPrice']);
-        }
-        if (isset($data['returnDriverPrice'])) {
-            $ad->setReturnDriverPrice($data['returnDriverPrice']);
-        }
-        if (isset($data['outwardPassengerPrice'])) {
-            $ad->setOutwardPassengerPrice($data['outwardPassengerPrice']);
-        }
-        if (isset($data['returnPassengerPrice'])) {
-            $ad->setReturnPassengerPrice($data['returnPassengerPrice']);
-        }
-
-        // seats
-        if (isset($data['seatsDriver'])) {
-            $ad->setSeatsDriver($data['seatsDriver']);
-        }
-        if (isset($data['seatsPassenger'])) {
-            $ad->setSeatsPassenger($data['seatsPassenger']);
-        }
-
-        // luggage
-        if (isset($data['luggage'])) {
-            $ad->setLuggage($data['luggage']);
-        }
-
-        // bike
-        if (isset($data['bike'])) {
-            $ad->setBike($data['bike']);
-        }
-
-        // backseats
-        if (isset($data['backSeats'])) {
-            $ad->setBackSeats($data['backSeats']);
-        }
-        // solidary
-        if (isset($data['solidary'])) {
-            $ad->setSolidary($data['solidary']);
-        }
-
-        // solidary exclusive
-        if (isset($data['solidaryExclusive'])) {
-            $ad->setSolidaryExclusive($data['solidaryExclusive']);
-        }
-
-        // avoid motorway
-        if (isset($data['avoidMotorway'])) {
-            $ad->setSolidary($data['avoidMotorway']);
-        }
-
-        // avoid toll
-        if (isset($data['avoidToll'])) {
-            $ad->setSolidary($data['avoidToll']);
-        }
-        
-        // message
-        if (isset($data['message'])) {
-            $ad->setComment($data['message']);
-        }
-
-        // user
-        if (isset($data['userId'])) {
-            $ad->setUserId($data['userId']);
-        }
-        // we check if the ad is posted for another user (delegation)
-        if (isset($data['posterId'])) {
-            $ad->setPosterId($data['posterId']);
-        }
-
-        // communities
-        if (isset($data['communities'])) {
-            $ad->setCommunities($data['communities']);
-        }
-
-        //Gestion events : If an event is set as destination or arrival, we set the event in proposal
-        if ((isset($data['origin']['event']) && $data['origin']['event'] != null) || (isset($data['destination']['event']) && $data['destination']['event'] != null)) {
-            $event = $data['origin']['event']  != null ? $data['origin']['event'] : $data['destination']['event'];
-            $ad->setEventId($event['id']);
-        }
-
-
-        // filters
-        if (isset($data['filters'])) {
-            $ad->setFilters($data['filters']);
-        }
-        
+        $ad = $this->mapAd($data);
         // creation of the ad
         $response = $this->dataProvider->post($ad);
         if ($response->getCode() != 201) {
@@ -401,17 +271,239 @@ class AdManager
     }
 
     /**
-     * Paused an Ad
+     * Update an Ad
      *
-     * @param int $ad   The ad to update
-     * @param int $userId  The user that make the request
-     * @return Ad|null
+     * @param array $data
+     * @param Ad|null $ad - the current ad before update
+     * @return array|object
+     * @throws \Exception
      */
-    public function updateAd(Ad $ad)
+    public function updateAd(array $data, Ad $ad = null)
     {
-        if ($data = $this->dataProvider->put($ad)) {
+        $ad = $this->mapAd($data, $ad);
+        if ($data = $this->dataProvider->put($ad, null, ["mail_search_link" => $data["mailSearchLink"]])) {
             return $data->getValue();
         }
         return null;
+    }
+
+    /**
+     * Map data json array to and Ad
+     *
+     * @param array $data
+     * @param Ad $ad - the current Ad before update
+     * @return Ad
+     * @throws \Exception
+     */
+    public function mapAd(array $data, Ad $ad = null): Ad
+    {
+        if (is_null($ad)) {
+            $ad = new Ad();
+        }
+
+        $poster = $this->security->getUser();
+
+        if (!is_null($poster) && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
+            $data['userId'] = $data['userDelegated'];
+            $data['posterId'] = $poster->getId();
+        } elseif (!is_null($poster)) {
+            $data['userId'] = $poster->getId();
+        }
+        if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
+            $data['outwardDate'] = new \DateTime();
+        } elseif (is_string($data['outwardDate'])) {
+            $data['outwardDate'] = \DateTime::createFromFormat('Y-m-d', $data['outwardDate']);
+        }
+        if (isset($data['returnDate']) && is_string($data['returnDate']) && $data['returnDate'] != '') {
+            $data['returnDate'] = \DateTime::createFromFormat('Y-m-d', $data['returnDate']);
+            $ad->setOneWay(false); // only for punctual journey
+        } else {
+            $ad->setOneWay(true); // only for punctual journey
+        }
+
+        // one-way for regular
+        if (isset($data['regular']) && $data['regular'] && isset($data['schedules'])) {
+            $ad->setOneWay(true);
+            foreach ($data['schedules'] as $schedule) {
+                if (isset($schedule['returnTime'])) {
+                    $ad->setOneWay(false);
+                }
+            }
+        }
+
+        if (isset($data["id"])) {
+            $ad->setId($data["id"]);
+            $ad->setAdId($data["id"]);
+            $ad->setProposalId($data["id"]);
+        }
+
+        if (isset($data["paused"])) {
+            $ad->setPaused($data["paused"]);
+        }
+
+        // the ad is a search ?
+        if (isset($data['search'])) {
+            $ad->setSearch($data['search']);
+        }
+
+        // role
+        if (isset($data['driver']) || isset($data['passenger'])) {
+            $ad->setRole(isset($data['driver']) && $data['driver']
+                ? isset($data['passenger']) && $data['passenger']
+                    ? Ad::ROLE_DRIVER_OR_PASSENGER
+                    : Ad::ROLE_DRIVER
+                : Ad::ROLE_PASSENGER);
+        }
+        // oneway ?
+//        if (isset($data['oneway'])) {
+//            $ad->setOneWay($data['oneway']);
+//        }
+
+        // frequency
+        if (isset($data['regular'])) {
+            $ad->setFrequency($data['regular'] ? Ad::FREQUENCY_REGULAR : Ad::FREQUENCY_PUNCTUAL);
+        }
+
+        // outward waypoints
+        if (isset($data['origin']) && isset($data['waypoints'])) {
+            $outwardsWaypoints[] = $data['origin'];
+            foreach ($data['waypoints'] as $waypoint) {
+                if ($waypoint['visible']) {
+                    $outwardsWaypoints[] = $waypoint['address'];
+                }
+            }
+            $outwardsWaypoints[] = $data['destination'];
+            $ad->setOutwardWaypoints($outwardsWaypoints);
+        }
+
+        // date and time
+        if ($ad->getFrequency() == Ad::FREQUENCY_REGULAR) {
+            if (isset($data['fromDate'])) {
+                $ad->setOutwardDate(\DateTime::createFromFormat('Y-m-d', $data['fromDate']));
+            } else {
+                $ad->setOutwardDate(new \Datetime());
+            }
+            if (isset($data['toDate'])) {
+                $ad->setOutwardLimitdate(\DateTime::createFromFormat('Y-m-d', $data['toDate']));
+            }
+            if (isset($data['schedules'])) {
+                $ad->setSchedule($data['schedules']);
+            }
+        } elseif (isset($data['outwardDate'])) {
+            $ad->setOutwardDate($data['outwardDate']);
+            $ad->setOutwardTime(isset($data['outwardTime']) ? $data['outwardTime'] : null);
+            if (isset($data['returnDate']) && isset($data['returnTime'])) {
+                $ad->setOneWay(false);
+                $ad->setReturnDate($data['returnDate']);
+                $ad->setReturnTime($data['returnTime']);
+            }
+        }
+
+        if (isset($data["strictDate"])) {
+            $ad->setStrictDate($data["strictDate"]);
+        }
+        if (isset($data["strictPunctual"])) {
+            $ad->setStrictPunctual($data["strictPunctual"]);
+        }
+        if (isset($data["strictRegular"])) {
+            $ad->setStrictRegular($data["strictRegular"]);
+        }
+
+        // prices
+        if (isset($data['priceKm'])) {
+            $ad->setPriceKm($data['priceKm']);
+        }
+        if (isset($data['outwardDriverPrice'])) {
+            $ad->setOutwardDriverPrice($data['outwardDriverPrice']);
+        }
+        if (isset($data['returnDriverPrice'])) {
+            $ad->setReturnDriverPrice($data['returnDriverPrice']);
+        }
+        if (isset($data['outwardPassengerPrice'])) {
+            $ad->setOutwardPassengerPrice($data['outwardPassengerPrice']);
+        }
+        if (isset($data['returnPassengerPrice'])) {
+            $ad->setReturnPassengerPrice($data['returnPassengerPrice']);
+        }
+
+        // seats
+        if (isset($data['seatsDriver'])) {
+            $ad->setSeatsDriver($data['seatsDriver']);
+        }
+        if (isset($data['seatsPassenger'])) {
+            $ad->setSeatsPassenger($data['seatsPassenger']);
+        }
+
+        // luggage
+        if (isset($data['luggage'])) {
+            $ad->setLuggage($data['luggage']);
+        }
+
+        // bike
+        if (isset($data['bike'])) {
+            $ad->setBike($data['bike']);
+        }
+
+        // backseats
+        if (isset($data['backSeats'])) {
+            $ad->setBackSeats($data['backSeats']);
+        }
+        // solidary
+        if (isset($data['solidary'])) {
+            $ad->setSolidary($data['solidary']);
+        }
+
+        // solidary exclusive
+        if (isset($data['solidaryExclusive'])) {
+            $ad->setSolidaryExclusive($data['solidaryExclusive']);
+        }
+
+        // avoid motorway
+        if (isset($data['avoidMotorway'])) {
+            $ad->setSolidary($data['avoidMotorway']);
+        }
+
+        // avoid toll
+        if (isset($data['avoidToll'])) {
+            $ad->setSolidary($data['avoidToll']);
+        }
+
+        // message
+        if (isset($data['message'])) {
+            $ad->setComment($data['message']);
+        }
+
+        // user
+        if (isset($data['userId'])) {
+            $ad->setUserId($data['userId']);
+        }
+        // we check if the ad is posted for another user (delegation)
+        if (isset($data['posterId'])) {
+            $ad->setPosterId($data['posterId']);
+        }
+
+        // communities
+        if (isset($data['communities'])) {
+            $ad->setCommunities($data['communities']);
+        }
+
+        //Gestion events : If an event is set as destination or arrival, we set the event in proposal
+        if ((isset($data['origin']['event']) && $data['origin']['event'] != null) || (isset($data['destination']['event']) && $data['destination']['event'] != null)) {
+            $event = $data['origin']['event']  != null ? $data['origin']['event'] : $data['destination']['event'];
+            $ad->setEventId($event['id']);
+        }
+
+        // filters
+        if (isset($data['filters'])) {
+            $ad->setFilters($data['filters']);
+        }
+
+        if (isset($data['cancellationMessage'])) {
+            $ad->setCancellationMessage($data['cancellationMessage']);
+        }
+
+//        dump($ad);die;
+
+        return $ad;
     }
 }

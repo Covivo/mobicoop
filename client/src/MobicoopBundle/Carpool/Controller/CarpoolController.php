@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 
 use DateTime;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,6 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Controller class for carpooling related actions.
@@ -68,47 +70,16 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function carpoolAdPost(AdManager $adManager, UserManager $userManager, Request $request)
+    public function carpoolAdPost(AdManager $adManager, Request $request)
     {
         $ad = new Ad();
-        $poster = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('create_ad', $ad);
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            if ($poster && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
-                $this->denyAccessUnlessGranted('post_delegate', $ad);
-                $data['userId'] = $data['userDelegated'];
-                $data['posterId'] = $poster->getId();
-            } else {
-                $this->denyAccessUnlessGranted('post', $ad);
-                $data['userId'] = $poster->getId();
-            }
-            if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
-                $data['outwardDate'] = new \DateTime();
-            } else {
-                $data['outwardDate'] = \DateTime::createFromFormat('Y-m-d', $data['outwardDate']);
-            }
-            if (isset($data['returnDate']) && $data['returnDate'] != '') {
-                $data['returnDate'] = \DateTime::createFromFormat('Y-m-d', $data['returnDate']);
-                $data['oneway'] = true; // only for punctual journey
-            } else {
-                $data['oneway'] = false; // only for punctual journey
-            }
-
-            // one-way for regular
-            if ($data['regular']) {
-                $data['oneway'] = true;
-                foreach ($data['schedules'] as $schedule) {
-                    if (isset($schedule['returnTime']) && !is_null($schedule['returnTime'])) {
-                        $data['oneway'] = false;
-                    }
-                }
-            }
 
             return $this->json(['result'=>$adManager->createAd($data)]);
         }
-
-        $this->denyAccessUnlessGranted('create_ad', $ad);
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
             "pricesRange" => [
                 "mid" => $this->midPrice,
@@ -120,12 +91,50 @@ class CarpoolController extends AbstractController
     }
 
     /**
+     * Create a carpooling ad.
+     */
+    public function carpoolAdUpdate(int $id, AdManager $adManager, ProposalManager $proposalManager, Request $request)
+    {
+        $ad = $adManager->getFullAd($id);
+        $proposal = $proposalManager->getProposal($id);
+        $this->denyAccessUnlessGranted('update_ad', $ad);
+
+        $hasAsks = false;
+        $hasPotentialAds = false;
+
+        foreach ($proposal->getMatchingOffers() as $matchingOffer) {
+            $hasPotentialAds = true;
+            if (count($matchingOffer->getAsks()) > 0) {
+                $hasAsks = true;
+            }
+        }
+        foreach ($proposal->getMatchingRequests() as $matchingRequest) {
+            $hasPotentialAds = true;
+            if (count($matchingRequest->getAsks()) > 0) {
+                $hasAsks = true;
+            }
+        }
+
+        if ($request->isMethod('PUT')) {
+            $data = json_decode($request->getContent(), true);
+            $data["mailSearchLink"] = $this->generateUrl("carpool_search_result_get", [], UrlGeneratorInterface::ABSOLUTE_URL);
+            return $this->json(['result'=>$adManager->updateAd($data, $ad)]);
+        }
+
+        return $this->render('@Mobicoop/carpool/update.html.twig', [
+            "ad" => $ad,
+            "hasAsks" => $hasAsks,
+            "hasPotentialAds" => $hasPotentialAds
+        ]);
+    }
+
+    /**
      * Create the first carpooling ad.
      */
     public function carpoolFirstAdPost()
     {
-        $ad = new Ad();
-        $this->denyAccessUnlessGranted('create_ad', $ad);
+//        $ad = new Ad();
+//        $this->denyAccessUnlessGranted('create_ad', $ad);
         
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
             "firstAd" => true,
@@ -166,8 +175,8 @@ class CarpoolController extends AbstractController
      */
     public function carpoolAdPostFromSearch(Request $request)
     {
-        $ad = new Ad();
-        $this->denyAccessUnlessGranted('create_ad', $ad);
+//        $ad = new Ad();
+//        $this->denyAccessUnlessGranted('create_ad', $ad);
         
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
@@ -284,6 +293,27 @@ class CarpoolController extends AbstractController
     }
 
     /**
+     * Simple search results.
+     * (GET)
+     */
+    public function carpoolSearchResultGET(Request $request, UserManager $userManager)
+    {
+        return $this->render('@Mobicoop/carpool/results.html.twig', [
+            // todo: use if we can keep the proposal (request or offer) if we delete the matched one - cf CarpoolSubscriber
+//            'proposalId' => $request->get('pid'),
+            'origin' => $request->get('origin'),
+            'destination' => $request->get('destination'),
+            'date' => $request->get('date'),
+            'regular' => (bool) $request->get('regular'),
+            'communityId' => $request->get('cid'),
+            'user' => $userManager->getLoggedUser(),
+            'platformName' => $this->platformName,
+            'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
+            'defaultRole'=>$this->defaultRole
+        ]);
+    }
+
+    /**
      * Matching Search
      * (AJAX POST)
      */
@@ -329,37 +359,6 @@ class CarpoolController extends AbstractController
 
         return $this->json($result);
     }
-
-
-    /**
-     * PausedAd
-     * (AJAX POST)
-     */
-    public function pauseAd(Request $request, AdManager $adManager, UserManager $userManager)
-    {
-        if ($request->isMethod('PUT')) {
-            $data = json_decode($request->getContent(), true);
-            $ad = new Ad();
-            $ad->setId($data['adId']);
-            $ad->setProposalId($data['adId']);
-            $ad->setPaused($data['paused']);
-            if ($return = $adManager->updateAd($ad)) {
-                return new JsonResponse(
-                    ["message" => "success"],
-                    \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
-                );
-            }
-            return new JsonResponse(
-                ["message" => "error"],
-                \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
-            );
-        }
-        return new JsonResponse(
-            ["message" => "error"],
-            \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN
-        );
-    }
-
 
     /**
      * Initiate contact from carpool results

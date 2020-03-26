@@ -253,6 +253,15 @@ user_created_events:
         en: /user/events/created
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCreatedEvents   
 
+# Get proposals with accepted asks (AJAX)
+user_get_accepted_proposals:
+    methods: [GET]
+    path:
+        fr: /user/proposals/accepted
+        en: /user/proposals/accepted 
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposalsAccepted   
+      
+
 ##################
 # carpool routes #
 ##################
@@ -263,6 +272,20 @@ carpool_ad_post:
         fr: /covoiturage/annonce/poster
         en: /carpool/ad/post/
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
+
+# update an ad
+carpool_ad_update:
+    path:
+        fr: /covoiturage/annonce/{id}/modifier
+        en: /carpool/ad/{id}/update/
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdUpdate
+
+# delete an ad (AJAX)
+carpool_ad_delete:
+    path:
+        fr: /covoiturage/annonce/supprimer
+        en: /carpool/ad/delete
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDelete
 
 # post a first ad
 carpool_first_ad_post:
@@ -322,6 +345,15 @@ carpool_search_result:
         en: /carpool/search
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResult
 
+# search results (GET)
+carpool_search_result_get:
+    methods: [GET]
+    path:
+        fr: /covoiturage/recherche
+        en: /carpool/search
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultGET
+
+
 # search matching (AJAX POST)
 carpool_search_matching:
     methods: [POST]
@@ -360,20 +392,6 @@ rdex_journey:
         fr: /covoiturage/rdexJourney
         en: /carpool/rdexJourney
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney
-
-# delete an ad (AJAX)
-carpool_ad_delete:
-    path:
-        fr: /covoiturage/annonce/supprimer
-        en: /carpool/ad/delete
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDelete
-
-# pause an ad (AJAX)
-carpool_ad_pause:
-    path:
-        fr: /covoiturage/annonce/pause
-        en: /carpool/ad/pause
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::pauseAd    
 
 ####################
 # community routes #

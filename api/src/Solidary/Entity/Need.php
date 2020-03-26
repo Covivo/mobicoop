@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -25,93 +25,121 @@ namespace App\Solidary\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Carpool\Entity\Matching;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Matchings saved by an admin for a solidary record.
+ * A special need for a solidary record.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * ApiResource(
+ * @ApiResource(
  *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
+ * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
  */
-class SolidaryMatching
+class Need
 {
+    
     /**
-     * @var int $id The id of this solidary matching.
+     * @var int The id of this need.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @ApiProperty(identifier=true)
+     * @Groups("readSolidary")
      */
     private $id;
 
     /**
-     * @var Matching The matching.
+     * @var string Label of the need.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"readSolidary","writeSolidary"})
      */
-    private $matching;
-        
+    private $label;
+
     /**
-     * @var Solidary The solidary record.
+     * @var bool The need is not publicly available.
      *
-     * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Solidary")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read"})
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $private;
+
+    /**
+     * @var Solidary Solidary if the need was created for a specific solidary record.
+     *
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof")
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidary;
 
     /**
-     * @var \DateTimeInterface Creation date of the solidary record.
+     * @var \DateTimeInterface Creation date.
      *
-     * @ORM\Column(type="datetime")
-     * @Groups("read")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the solidary record.
+     * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("read")
      */
     private $updatedDate;
-
-    public function getId(): int
+    
+    public function getId(): ?int
     {
         return $this->id;
     }
-
-    public function getMatching(): Matching
-    {
-        return $this->matching;
-    }
     
-    public function setMatching(?Matching $matching): self
+    public function setId(int $id): self
     {
-        $this->matching = $matching;
+        $this->id = $id;
         
         return $this;
     }
     
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(string $label): self
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
+    public function isPrivate(): ?bool
+    {
+        return $this->private;
+    }
+    
+    public function setPrivate(?bool $isPrivate): self
+    {
+        $this->private = $isPrivate;
+        
+        return $this;
+    }
+
     public function getSolidary(): ?Solidary
     {
         return $this->solidary;
@@ -120,7 +148,7 @@ class SolidaryMatching
     public function setSolidary(?Solidary $solidary): self
     {
         $this->solidary = $solidary;
-        
+
         return $this;
     }
 
@@ -149,7 +177,7 @@ class SolidaryMatching
     }
 
     // DOCTRINE EVENTS
-
+    
     /**
      * Creation date.
      *

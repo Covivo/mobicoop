@@ -27,26 +27,46 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A solidary subject.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * ApiResource(
+ * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
+ *      collectionOperations={
+ *          "get"={
+ *             "security"="is_granted('subject_list',object)"
+ *          },
+ *          "post"={
+ *             "security_post_denormalize"="is_granted('subject_create',object)"
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *             "security"="is_granted('subject_read',object)"
+ *          },
+ *          "put"={
+ *             "security"="is_granted('subject_update',object)"
+ *          },
+ *          "delete"={
+ *             "security"="is_granted('subject_delete',object)"
+ *          }
+ *      }
  * )
- * ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
- * ApiFilter(SearchFilter::class, properties={"name":"partial"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
  */
 class Subject
 {
@@ -58,7 +78,7 @@ class Subject
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("read")
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $id;
 
@@ -67,15 +87,26 @@ class Subject
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $label;
+
+    /**
+     * @var Structure Structure of the subject.
+     *
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="subjects")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $structure;
 
     /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read"})
+     * @Groups({"readSolidary"})
      */
     private $createdDate;
 
@@ -83,9 +114,22 @@ class Subject
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read"})
+     * @Groups({"readSolidary"})
      */
     private $updatedDate;
+
+    /**
+     * @var ArrayCollection|null The solidary records for this subject.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="subject", cascade={"remove"}, orphanRemoval=true)
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $solidaries;
+
+    public function __construct()
+    {
+        $this->solidaries = new ArrayCollection();
+    }
     
     public function getId(): ?int
     {
@@ -111,6 +155,18 @@ class Subject
         return $this;
     }
 
+    public function getStructure(): ?Structure
+    {
+        return $this->structure;
+    }
+
+    public function setStructure(?Structure $structure): self
+    {
+        $this->structure = $structure;
+
+        return $this;
+    }
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -131,6 +187,34 @@ class Subject
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getSolidaries()
+    {
+        return $this->solidaries->getValues();
+    }
+
+    public function addSolidary(Solidary $solidary): self
+    {
+        if (!$this->solidaries->contains($solidary)) {
+            $this->solidaries->add($solidary);
+            $solidary->setSubject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSolidary(Solidary $solidary): self
+    {
+        if ($this->solidaries->contains($solidary)) {
+            $this->solidaries->removeElement($solidary);
+            // set the owning side to null (unless already changed)
+            if ($solidary->getSubject() === $this) {
+                $solidary->setSubject(null);
+            }
+        }
 
         return $this;
     }

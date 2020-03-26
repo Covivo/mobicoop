@@ -154,7 +154,9 @@ class UserController extends AbstractController
             $user->setBirthDate(new DateTime($data['birthDay']));
             //$user->setNewsSubscription by default
             $user->setNewsSubscription(($this->news_subscription==="true") ? true : false);
-
+            //$user phone display preference by default
+            $user->setPhoneDisplay(1);
+            
             if (!is_null($data['idFacebook'])) {
                 $user->setFacebookId($data['idFacebook']);
             }
@@ -276,13 +278,13 @@ class UserController extends AbstractController
      */
     public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault)
     {
+        $this->denyAccessUnlessGranted('update', $userManager->getLoggedUser());
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
         $reponseofmanager= $this->handleManagerReturnValue($user);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
-        $this->denyAccessUnlessGranted('update', $user);
 
         // get the homeAddress
         $homeAddress = $user->getHomeAddress();
@@ -342,7 +344,7 @@ class UserController extends AbstractController
             'alerts' => $userManager->getAlerts($user)['alerts'],
             'tabDefault' => $tabDefault,
             'ads' => $userManager->getAds($user),
-            'acceptedCarpools' => $userManager->getAds($user, true)
+            'acceptedCarpools' => $userManager->getMyAcceptedProposals($user)
         ]);
     }
 
@@ -918,11 +920,11 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             if (isset($data['email']) && $data['email']!=="") {
-                $user = $userManager->findByEmail($data['email']);
-                if (!is_null($user)) {
-                    return new JsonResponse(['error'=>false, 'message'=>$user->getId()]);
-                } else {
+                $check = $userManager->checkEmail($data['email']);
+                if (is_null($check->getDescription())) {
                     return new JsonResponse(['error'=>false, 'message'=>'']);
+                } else {
+                    return new JsonResponse(['error'=>false, 'message'=>'Email already used']);
                 }
             } else {
                 return new JsonResponse(['error'=>true, 'message'=>'empty email']);
@@ -986,5 +988,16 @@ class UserController extends AbstractController
             }
         }
         return new JsonResponse($userCreatedEvents);
+    }
+
+    /**
+     * Get all proposals with an accepted ask
+     * Ajax
+     */
+    public function userProposalsAccepted(UserManager $userManager)
+    {
+        $user = $userManager->getLoggedUser();
+
+        return new JsonResponse($userManager->getMyAcceptedProposals($user));
     }
 }

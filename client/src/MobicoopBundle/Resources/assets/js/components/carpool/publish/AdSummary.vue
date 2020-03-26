@@ -695,23 +695,31 @@ export default {
     },
     computedOutwardTimeFormat() {
       return (this.outwardDate && this.outwardTime)
-        ? moment(this.outwardDate+' '+this.outwardTime).format(this.$t("ui.i18n.time.format.hourMinute"))
+        ? moment(this.outwardDate+' '+this.outwardTime).isValid()
+          ? moment(this.outwardDate+' '+this.outwardTime).format(this.$t("ui.i18n.time.format.hourMinute"))
+          : moment(this.outwardTime).format(this.$t("ui.i18n.time.format.hourMinute"))
         : null;
     },
     computedDestinationTime() {
       if (this.route && this.route.direction && this.outwardDate && this.outwardTime) {
-        return moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"));
+        return moment(this.outwardDate+' '+this.outwardTime).isValid()
+          ? moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"))
+          : moment(this.outwardTime).add(this.route.direction.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute")) ;
       }
       return null;
     },
     computedReturnOutwardTimeFormat() {
       return (this.hasReturn)
-        ? moment(this.returnDate+' '+this.returnTime).format(this.$t("ui.i18n.time.format.hourMinute"))
+        ? moment(this.returnDate+' '+this.returnTime).isValid()
+          ? moment(this.returnDate+' '+this.returnTime).format(this.$t("ui.i18n.time.format.hourMinute"))
+          : moment(this.returnTime).format(this.$t("ui.i18n.time.format.hourMinute"))
         : null;
     },
     computedReturnDestinationTime() {
       if (this.route && this.route.direction && this.hasReturn) {
-        return moment(this.returnDate+' '+this.returnTime).add(this.route.direction.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"));
+        return moment(this.returnDate+' '+this.returnTime).isValid()
+          ? moment(this.returnDate+' '+this.returnTime).add(this.route.direction.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"))
+          : moment(this.returnTime).add(this.route.direction.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"));
       }
       return null;
     },

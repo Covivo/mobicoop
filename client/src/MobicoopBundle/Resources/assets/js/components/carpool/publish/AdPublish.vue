@@ -1,22 +1,38 @@
 <template>
   <v-container fluid>
+    <!--prevent user to update data before full initialization-->
+    <v-row
+      v-if="isValidUpdate && !bodyIsFullyLoaded"
+      id="loading-screen"
+      justify="center"
+      align="center"
+    >
+      <div class="text-center">
+        <v-progress-circular
+          :indeterminate="true"
+          :rotate="0"
+          :size="48"
+          color="primary"
+        />
+      </div>
+    </v-row>
     <v-snackbar
-      v-model="snackbar"
-      color="success"
+      v-model="snackbar.show"
+      :color="snackbar.color"
       top
     >
-      {{ alert }}
+      {{ snackbar.message }}
       <v-btn
         color="white"
         text
-        @click="snackbar = false"
+        @click="snackbar.show = false"
       >
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
     </v-snackbar>
 
     <!-- Title and subtitle -->
-    <v-row 
+    <v-row
       justify="center"
     >
       <v-col
@@ -24,9 +40,9 @@
         xl="8"
         align="center"
       >
-        <h1>{{ $t('title') }}</h1>
+        <h1>{{ $t( isUpdate ? 'update.title' : 'create.title') }}</h1>
         <h3 style="height: 30px">
-          {{ step === 1 ? $t('subtitle') : "" }}
+          {{ step === 1 && !isUpdate ? $t('create.subtitle') : "" }}
         </h3>
       </v-col>
     </v-row>
@@ -75,7 +91,7 @@
       </v-col>
     </v-row>
     <!-- Stepper -->
-    <v-row 
+    <v-row
       justify="center"
     >
       <v-col
@@ -90,7 +106,7 @@
         >
           <!-- Stepper Header -->
           <v-stepper-header
-            v-show="step!==1"
+            v-show="step!==1 || isUpdate"
             class="elevation-0"
           >
             <!-- Step 1 : search journey -->
@@ -179,6 +195,7 @@
                 :init-origin="origin"
                 :init-destination="destination"
                 :init-regular="regular"
+                :init-role="role"
                 @change="searchChanged"
               />
             </v-stepper-content>
@@ -188,8 +205,11 @@
               <ad-planification
                 :init-outward-date="outwardDate"
                 :init-outward-time="outwardTime"
+                :init-return-date="returnDate"
+                :init-return-time="returnTime"
                 :regular="regular"
                 :default-margin-time="defaultMarginTime"
+                :init-schedule="initSchedule"
                 :route="route"
                 @change="planificationChanged"
               />
@@ -205,6 +225,7 @@
                     :user="user"
                     :init-origin="origin"
                     :init-destination="destination"
+                    :init-waypoints="initWaypoints"
                     :community-ids="communityIds"
                     @change="routeChanged"
                   />
@@ -532,15 +553,15 @@
     <!-- </v-stepper-content> -->
 
     <!-- Buttons Previous and Next step -->
-    <v-layout
+    <v-row
       mt-5
-      justify-center
+      justify="center"
     >
       <v-btn
         v-if="step > 1"
         rounded
         outlined
-        color="secondary" 
+        color="secondary"
         align-center
         @click="--step"
       >
@@ -585,24 +606,66 @@
               color="secondary"
               style="margin-left: 30px;"
               align-center
-              @click="postAd"
+              @click="isUpdate ? (hasAsks || hasPotentialAds ? dialog = true : updateAd()) : postAd()"
             >
-              {{ $t('stepper.buttons.publish_ad') }}
+              {{ isUpdate ? $t('stepper.buttons.update_ad', {id: ad.id}) : $t('stepper.buttons.publish_ad') }}
             </v-btn>
           </div>
         </template>
         <span>{{ $t('stepper.buttons.notValid') }}</span>
       </v-tooltip>
-    </v-layout>
+    </v-row>
+
+    <!-- DIALOG -->
+    <v-row justify="center">
+      <v-dialog
+        v-model="dialog"
+        persistent
+        max-width="550"
+      >
+        <v-card>
+          <v-card-title
+            class="headline"
+            v-html="popupTitle"
+          />
+          <v-card-text v-html="popupContent" />
+          <v-container>
+            <v-textarea
+              v-if="isMajorUpdate && hasAsks"
+              v-model="cancellationMessage"
+            />
+          </v-container>
+
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="secondary"
+              outlined
+              @click="dialog = false"
+            >
+              {{ $t('ui.common.no') }}
+            </v-btn>
+            <v-btn
+              color="secondary"
+              @click="updateAd"
+            >
+              {{ $t('ui.common.yes') }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
   </v-container>
 </template>
 
 <script>
-import { merge } from "lodash";
 import Translations from "@translations/components/carpool/publish/AdPublish.json";
 import TranslationsClient from "@clientTranslations/components/carpool/publish/AdPublish.json";
 
 import axios from "axios";
+import { merge, isEmpty, isEqual } from "lodash";
+import moment from 'moment';
+
 import SearchJourney from "@components/carpool/search/SearchJourney";
 import AdPlanification from "@components/carpool/publish/AdPlanification";
 import AdRoute from "@components/carpool/publish/AdRoute";
@@ -691,8 +754,25 @@ export default {
     defaultPricesRanges:{
       type: Object,
       default: null
+    },
+    ad: {
+      type: Object,
+      default: null
+    },
+    isUpdate: {
+      type: Boolean,
+      default: false
+    },
+    // for minor and major update popup
+    hasAsks: {
+      type: Boolean,
+      default: false
+    },
+    // for major update popup only
+    hasPotentialAds: {
+      type: Boolean,
+      default: false
     }
-
   },
   data() {
     return {
@@ -716,7 +796,7 @@ export default {
       returnTrip:null,
       route: null,
       price: null,
-      pricePerKm: this.defaultPriceKm,
+      pricePerKm: this.isUpdate && this.ad ? this.ad.priceKm : this.defaultPriceKm,
       message: null,
       baseUrl: window.location.origin,
       loading: false,
@@ -736,10 +816,21 @@ export default {
       solidaryExclusive: this.solidaryExclusiveAd,
       numberSeats : [ 1,2,3,4],
       seats : 3,
-      snackbar: false,
-      alert: this.$t('messageRoundedPrice'),
+      snackbar: {
+        show: false,
+        message: "",
+        color: "success"
+      },
       priceForbidden: false,
       returnTimeIsValid: true,
+      initWaypoints: [],
+      initWaypointsCount: this.countWaypoints(),
+      initSchedule: null,
+      role: null,
+      dialog: false,
+      oldUpdateObject: null,
+      cancellationMessage: "",
+      bodyIsFullyLoaded: false
     }
   },
   computed: {
@@ -792,6 +883,11 @@ export default {
       if(this.step==2 && this.regular && (this.schedules==null || this.schedules.length==0)) return false;
       // Price to high. Forbidden to post
       if(this.priceForbidden) return false;
+      // We are in update mode and initialization is not finished yet
+      if (this.isValidUpdate && this.oldUpdateObject == null) return false;
+      // update mode and there are no changes
+      if (!this.isUpdated ) return false;
+
       // validation ok
       return true;
     },
@@ -821,15 +917,12 @@ export default {
       }
 
       // Step 2 punctual : you have to set the outward time
-      if(this.step==2 && ((!this.regular && !(this.outwardDate && this.outwardTime)) || !this.returnTimeIsValid)) return false;
+      if(this.step==2 && ((!this.regular && !(this.outwardDate && this.outwardTime)) || this.returnTimeIsValid === false)) return false;
       // Step 2 punctual, round-trip chosen : you have to set the outward date & time
       if(this.step==2 && !this.regular && this.returnTrip && !(this.returnDate && this.returnTime)) return false;
 
 
       return true;
-    },
-    urlToCall() {
-      return `${this.baseUrl}/${this.$t('route.publish')}`;
     },
     pointEscapedPrice(){
       return this.price.replace(".",",");
@@ -842,11 +935,49 @@ export default {
       } else {
         return "error";
       }
+    },
+    isValidUpdate () {
+      return this.isUpdate && !isEmpty(this.ad);
+    },
+    isUpdated () {
+      if (!this.isUpdate) return true;
+      else return this.isValidUpdate && !isEqual(this.oldUpdateObject, this.newUpdateObject);
+    },
+    isMajorUpdate () {
+      if (!this.isValidUpdate || isEmpty(this.oldUpdateObject)) return false;
+      let newUpdateObject = this.newUpdateObject;
+      return newUpdateObject.regular !== this.oldUpdateObject.regular
+        || this.oldUpdateObject.driver !== newUpdateObject.driver
+        || this.oldUpdateObject.returnDate !== newUpdateObject.returnDate
+        || this.oldUpdateObject.returnTime !== newUpdateObject.returnTime
+        || this.oldUpdateObject.outwardDate !== newUpdateObject.outwardDate
+        || this.oldUpdateObject.outwardTime !== newUpdateObject.outwardTime
+        || this.oldUpdateObject.passenger !== newUpdateObject.passenger
+        || !isEqual(this.oldUpdateObject.origin, newUpdateObject.origin)
+        || !isEqual(this.oldUpdateObject.destination, newUpdateObject.destination)
+        || newUpdateObject.pricePerKm !== this.oldUpdateObject.pricePerKm
+        || !isEqual(this.oldUpdateObject.waypoints, newUpdateObject.waypoints)
+        || !isEqual(this.oldUpdateObject.schedules, newUpdateObject.schedules);
+    },
+    newUpdateObject () {
+      return this.buildAdObject();
+    },
+    popupTitle () {
+      if (this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.major_update_asks.title');
+      else if (this.isMajorUpdate && this.hasPotentialAds) return this.$t('update.popup.major_update_ads.title');
+      else if (!this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.minor_update_asks.title');
+      return '';
+    },
+    popupContent () {
+      if (this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.major_update_asks.content');
+      else if (this.isMajorUpdate && this.hasPotentialAds) return this.$t('update.popup.major_update_ads.content');
+      else if (!this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.minor_update_asks.content');
+      return '';
     }
   },
   watch: {
     price() {
-      this.pricePerKm = (this.distance>0 ? Math.round(parseFloat(this.price) / this.distance * 100)/100 : this.defaultPriceKm);
+      this.pricePerKm = (this.distance>0 ? Math.round(parseFloat(this.price) / this.distance * 100)/100 : this.pricePerKm);
       (this.pricePerKm>this.pricesRanges.forbidden) ? this.priceForbidden = true : this.priceForbidden = false;
     },
     distance() {
@@ -862,6 +993,31 @@ export default {
     step(){
       this.$refs.mmapSummary.redrawMap();
       this.$refs.mmapRoute.redrawMap();
+    },
+    ad: {
+      immediate: true,
+      handler () {
+        const self = this;
+        this.origin = this.ad.origin;
+        this.outwardDate = this.ad.outwardDate;
+        this.outwardTime = moment(this.ad.outwardTime).format();
+        this.returnDate = this.ad.returnDate;
+        this.returnTime = moment(this.ad.returnTime).isValid() ? moment(this.ad.returnTime).format() : null;
+        this.initWaypoints = this.ad.outwardWaypoints.filter(point => {return point.address.id !== self.initOrigin.id && point.address.id !== self.initDestination.id;});
+        this.initSchedule = isEmpty(this.ad.schedule) ? {} : this.ad.schedule;
+        this.seats = this.ad.seatsDriver;
+        this.luggage = this.ad.luggage;
+        this.smoke = this.ad.smoke;
+        this.bike = this.ad.bike;
+        this.backSeats = this.ad.backSeats;
+        this.music = this.ad.music;
+        this.message = this.ad.message;
+        this.price = parseFloat(this.ad.outwardDriverPrice);
+        this.pricePerKm = parseFloat(this.ad.priceKm);
+        this.role = this.ad.role;
+        this.driver = this.ad.role === 1 || this.ad.role === 3;
+        this.passenger = this.ad.role === 2 || this.ad.role === 3;
+      }
     }
   },
   methods: {
@@ -874,7 +1030,7 @@ export default {
       }
       // Set all the waypoints (default icon for now)
       this.route.waypoints.forEach((waypoint, index) => {
-        if(waypoint.address !== null){
+        if(waypoint.address != null){
           let currentWaypoint = this.buildPoint(waypoint.address.latitude,waypoint.address.longitude,waypoint.address.displayLabel);
           this.pointsToMap.push(currentWaypoint);
         }
@@ -890,7 +1046,7 @@ export default {
       this.directionWay.length = 0;
       let currentDirectionWay = {
         latLngs:this.route.direction.directPoints
-      }        
+      };
       this.directionWay.push(currentDirectionWay);
     },
     buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
@@ -898,7 +1054,7 @@ export default {
         title:title,
         latLng:L.latLng(lat, lng),
         icon: {}
-      }
+      };
 
       if(pictoUrl!==""){
         point.icon = {
@@ -909,6 +1065,9 @@ export default {
       }
         
       return point;      
+    },
+    buildUrl(route) {
+      return `${this.baseUrl}/${route}`;
     },
     searchChanged: function(search) {
       this.passenger = search.passenger;
@@ -929,6 +1088,14 @@ export default {
       this.returnTimeIsValid = planification.returnTimeIsValid;
     },
     routeChanged(route) {
+      if (this.isValidUpdate && this.initWaypointsCount && this.initWaypointsCount > 0) {
+        this.initWaypointsCount--;
+        if (this.initWaypointsCount === 0) {
+          console.log("loaded");
+          this.bodyIsFullyLoaded = true;
+          this.oldUpdateObject = this.buildAdObject();
+        }
+      }
       this.route = route;
       this.origin = route.origin;
       this.destination = route.destination;
@@ -937,48 +1104,9 @@ export default {
       this.selectedCommunities = route.communities ? route.communities : null;
     },
     postAd() {
-      let postObject = {
-        regular: this.regular,
-        driver: this.driver,
-        passenger: this.passenger,
-        origin: this.origin,
-        destination: this.destination,
-        solidaryExclusive: this.solidaryExclusive
-      };
-      if (this.userDelegated) postObject.userDelegated = this.userDelegated;
-      if (this.validWaypoints) postObject.waypoints = this.validWaypoints;
-      if (this.selectedCommunities) postObject.communities = this.selectedCommunities;
-      if (!this.regular) {
-        if (this.outwardDate) postObject.outwardDate = this.outwardDate;
-        if (this.outwardTime) postObject.outwardTime = this.outwardTime;
-        if (this.returnDate) postObject.returnDate = this.returnDate;
-        if (this.returnTime) postObject.returnTime = this.returnTime;
-      } else if (this.schedules) {
-        postObject.schedules = this.schedules;
-      }
-      // seats proposed as a driver (not handled yet for passengers)
-      if (this.driver && this.seats) postObject.seatsDriver = this.seats;
-      if (this.luggage) postObject.luggage = this.luggage;
-      if (this.bike) postObject.bike = this.bike;
-      if (this.backSeats) postObject.backSeats = this.backSeats;
-      // price chosen by the driver (not handled yet for passengers)
-      if (this.driver && this.price) {
-        // for now we just handle the outward price
-        postObject.outwardDriverPrice = this.solidaryExclusive ? 0 : this.price;
-      } 
-      if (this.pricePerKm) postObject.priceKm = this.solidaryExclusive ? 0 : this.pricePerKm;
-      if (this.message) postObject.message = this.message;
-      // the following parameters are not used yet but we keep them here for possible future use
-      if (this.regularLifetime) postObject.regularLifetime = this.regularLifetime;
-      if (this.strictDate) postObject.strictDate = this.strictDate;
-      if (this.strictRegular) postObject.strictRegular = this.strictRegular;
-      if (this.strictPunctual) postObject.strictPunctual = this.strictPunctual;
-      if (this.useTime) postObject.useTime = this.useTime;
-      if (this.anyRouteAsPassenger) postObject.anyRouteAsPassenger = this.anyRouteAsPassenger;
-
+      let postObject = this.buildAdObject();
       this.loading = true;
-      //var self = this;
-      axios.post(this.urlToCall,postObject,{
+      axios.post(this.buildUrl(this.$t('route.publish')),postObject,{
         headers:{
           'content-type': 'application/json'
         }
@@ -995,8 +1123,102 @@ export default {
           console.log(error);
         })
         .finally(function () {
-          // self.loading = false;
+          // this.loading = false;
         });
+    },
+    updateAd () {
+      // double check
+      if (!this.isValidUpdate) {
+        this.snackbar = {
+          message: this.$t('update.unavailable'),
+          color: "error",
+          show: true
+        };
+        return;
+      }
+      this.dialog = false;
+      let postObject = this.buildAdObject();
+      if (this.isMajorUpdate) {
+        postObject.cancellationMessage = this.cancellationMessage;
+      }
+      this.loading = true;
+      axios.put(this.buildUrl(this.$t('route.update', {id: this.ad.id})),postObject,{
+        headers:{
+          'content-type': 'application/json'
+        }
+      })
+        .then(response => {
+          if (response.data && response.data.result.id) {
+            this.snackbar = {
+              message: this.$t('update.success'),
+              color: "success",
+              show: true
+            };
+            window.location.href = "/utilisateur/profil/modifier/mes-annonces";
+          } else {
+            this.snackbar = {
+              message: this.$t('update.error'),
+              color: "error",
+              show: true
+            };
+            this.loading = false;
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          this.snackbar = {
+            message: this.$t('update.error'),
+            color: "error",
+            show: true
+          };
+          this.loading = false;
+        })
+        .finally(() => {
+          // this.loading = false;
+        });
+    },
+    buildAdObject () {
+      let postObject = {
+        regular: this.regular,
+        driver: this.driver,
+        passenger: this.passenger,
+        origin: this.origin,
+        destination: this.destination,
+        solidaryExclusive: this.solidaryExclusive
+      };
+      if (this.isValidUpdate) postObject.id = this.ad.id;
+      if (this.userDelegated) postObject.userDelegated = this.userDelegated;
+      if (this.validWaypoints) postObject.waypoints = this.validWaypoints;
+      if (this.selectedCommunities) postObject.communities = this.selectedCommunities;
+      if (!this.regular) {
+        if (this.outwardDate) postObject.outwardDate = this.outwardDate;
+        if (this.outwardTime) postObject.outwardTime = this.outwardTime;
+        if (this.returnDate) postObject.returnDate = this.returnDate;
+        if (this.returnTime) postObject.returnTime = this.returnTime;
+      } else if (this.schedules) {
+        postObject.schedules = this.schedules;
+      }
+      // seats proposed as a driver (not handled yet for passengers)
+      if (this.driver && this.seats) postObject.seatsDriver = this.seats;
+      if (this.luggage != null) postObject.luggage = this.luggage;
+      if (this.bike != null) postObject.bike = this.bike;
+      if (this.backSeats != null) postObject.backSeats = this.backSeats;
+      // price chosen by the driver (not handled yet for passengers)
+      if (this.driver && this.price) {
+        // for now we just handle the outward price
+        postObject.outwardDriverPrice = this.solidaryExclusive ? 0 : this.price;
+      }
+      if (this.pricePerKm) postObject.priceKm = this.solidaryExclusive ? 0 : this.pricePerKm;
+      if (this.message != null) postObject.message = this.message;
+      // the following parameters are not used yet but we keep them here for possible future use
+      if (this.regularLifetime) postObject.regularLifetime = this.regularLifetime;
+      if (this.strictDate) postObject.strictDate = this.strictDate;
+      if (this.strictRegular) postObject.strictRegular = this.strictRegular;
+      if (this.strictPunctual) postObject.strictPunctual = this.strictPunctual;
+      if (this.useTime) postObject.useTime = this.useTime;
+      if (this.anyRouteAsPassenger) postObject.anyRouteAsPassenger = this.anyRouteAsPassenger;
+
+      return postObject;
     },
     roundPrice (price, frequency, doneByUser = false) {
       if (price >= 0 && frequency > 0) {
@@ -1008,20 +1230,41 @@ export default {
           if(this.price !== resp.data.value) {
             this.price = resp.data.value;
             if (doneByUser === true) {
-              this.snackbar = true;
+              this.snackbar = {
+                message: this.$t('messageRoundedPrice'),
+                color: "success",
+                show: true
+              };
             }
           }
         }).catch(error => {
-          // if and error occurred we set the original price
+          // if an error occurred we set the original price
           this.price = price;
         }).finally(() => {
           this.loadingPrice = false;
           this.disableNextButton = false;
         })
       }
+    },
+    countWaypoints () {
+      if (!isEmpty(this.initOrigin) && !isEmpty(this.initDestination)) {
+        return 2;
+      } else if (!isEmpty(this.initOrigin) || !isEmpty(this.initDestination)) {
+        return 1;
+      } else return 0;
     }
   }
 };
 </script>
 <style scoped lang="scss">
+#loading-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.8;
+  z-index: 1000;
+  background: lightgray;
+}
 </style>

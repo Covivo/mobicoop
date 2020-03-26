@@ -3,7 +3,7 @@
     <v-row>
       <schedules
         date-time-format="ui.i18n.date.format.shortDate"
-        :outward-times="[ad.outwardDate]"
+        :outward-time="ad.outwardDate"
         :is-refined="isRefined"
       />
     </v-row>
@@ -73,10 +73,10 @@ export default {
       return !this.ad.oneWay;
     },
     origin () {
-      return this.ad.outwardWaypoints[0].address;
+      return this.ad.outwardWaypoints.find(el => el.position === 0)["address"];
     },
     destination () {
-      return this.ad.outwardWaypoints[this.ad.outwardWaypoints.length - 1].address;
+      return this.ad.outwardWaypoints.find(el => el.destination === true)["address"];
     }
   }
 }

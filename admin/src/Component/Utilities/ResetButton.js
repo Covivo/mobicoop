@@ -16,7 +16,7 @@ const ResetButton = (props) => {
   }
 
   return (  <Button
-            label={translate('custom.label.campaign.statusCampaign.init')}
+            label={translate('custom.alert.clearSelected')}
             color="secondary"
             onClick={handleReset}
         >

@@ -4,7 +4,12 @@
         "carpool": "Covoiturer",
         "externalUrl":"S'y rendre",
         "needTobeConnected": "Vous devez être connecté pour effectuer cette action.",
-        "inDev": "En cours de développement."
+        "inDev": "En cours de développement.",
+        "route": {
+            "user": {
+                "message": "/utilisateur/messages"
+            }
+        }
     },
     "en": {
         "birthYears": "years",

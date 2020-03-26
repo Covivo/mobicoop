@@ -30,7 +30,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * Carpooling : an ad.
  * All actions related to a carpooling should be related to this entity.
  */
-class Ad implements ResourceInterface
+class Ad implements ResourceInterface, \JsonSerializable
 {
     const ROLE_DRIVER = 1;
     const ROLE_PASSENGER = 2;
@@ -340,7 +340,6 @@ class Ad implements ResourceInterface
 
     /**
     * @var int|null proposalId.
-    * A paused ad can't be the found in the result of a search, and can be unpaused at any moment.
     *
     * @Groups({"post","put"})
     */
@@ -351,6 +350,23 @@ class Ad implements ResourceInterface
      * Potential carpoolers count
      */
     private $potentialCarpoolers;
+
+    /**
+     * @var boolean
+     */
+    private $smoke;
+
+    /**
+     * @var boolean
+     */
+    private $music;
+
+    /**
+     * @var string|null The message if Ad owner is making major updates to his Ad
+     *
+     * @Groups({"post", "put"})
+     */
+    private $cancellationMessage;
 
     public function __construct($id=null)
     {
@@ -692,6 +708,35 @@ class Ad implements ResourceInterface
         return $this;
     }
 
+    public function isSmoke(): ?bool
+    {
+        return $this->smoke;
+    }
+
+    public function setSmoke(?bool $smoke): ?bool
+    {
+        $this->smoke = $smoke;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasMusic(): ?bool
+    {
+        return $this->music;
+    }
+
+    /**
+     * @param bool $music
+     * @return Ad
+     */
+    public function setMusic(?bool $music): Ad
+    {
+        $this->music = $music;
+        return $this;
+    }
+
     public function hasBackSeats(): ?bool
     {
         return $this->backSeats;
@@ -893,5 +938,62 @@ class Ad implements ResourceInterface
     {
         $this->potentialCarpoolers = $potentialCarpoolers;
         return $this;
+    }
+
+    public function getOrigin()
+    {
+        if (!empty($this->getOutwardWaypoints())) {
+            return $this->getOutwardWaypoints()[array_search(0, array_column($this->getOutwardWaypoints(), 'position'))]['address'];
+        }
+        return null;
+    }
+
+    public function getDestination()
+    {
+        if (!empty($this->getOutwardWaypoints())) {
+            return $this->getOutwardWaypoints()[array_search(true, array_column($this->getOutwardWaypoints(), 'destination'))]['address'];
+        }
+        return null;
+    }
+
+    public function getCancellationMessage(): ?string
+    {
+        return $this->cancellationMessage;
+    }
+
+    public function setCancellationMessage(?string $cancellationMessage): Ad
+    {
+        $this->cancellationMessage = $cancellationMessage;
+        return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+            [
+                'id' => $this->getId(),
+                'role' => $this->getRole(),
+                'oneWay' => $this->isOneWay(),
+                'outwardWaypoints' => $this->getOutwardWaypoints(),
+                'returnWaypoints' => $this->getReturnWaypoints(),
+                'outwardDate' => !is_null($this->getOutwardDate()) ? $this->getOutwardDate()->format('Y-m-d') : null,
+                'outwardLimitDate' => $this->getOutwardLimitDate(),
+                'returnDate' => !is_null($this->getReturnDate()) ? $this->getReturnDate()->format('Y-m-d') : null,
+                'returnLimitDate' => $this->getReturnLimitDate(),
+                'outwardTime' => $this->getOutwardTime(),
+                'returnTime' => $this->getReturnTime(),
+                'priceKm' => $this->getPriceKm(),
+                'outwardDriverPrice' => $this->getOutwardDriverPrice(),
+                'seatsDriver' => $this->getSeatsDriver(),
+                'seatsPassenger' => $this->getSeatsPassenger(),
+                'luggage' => $this->hasLuggage(),
+                'bike' => $this->hasBike(),
+                'backSeats' => $this->hasBackSeats(),
+                'message' => $this->getComment(),
+                'origin' => $this->getOrigin(),
+                'destination' => $this->getDestination(),
+                'schedule' => $this->getSchedule(),
+                'paused' => $this->isPaused()
+            ];
     }
 }
