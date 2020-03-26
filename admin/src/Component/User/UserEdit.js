@@ -44,7 +44,10 @@ const UserEdit = props => {
         {id : false, name : translate('custom.label.user.choices.dontTalk')},
         {id : true, name : translate('custom.label.user.choices.talk')},
     ];
-
+    const phoneDisplay = [
+        {id : 0, name : translate('custom.label.user.phoneDisplay.forAll')},
+        {id : 1, name : translate('custom.label.user.phoneDisplay.forCarpooler')},
+    ];
 
     const validateRequired = [required()];
     const emailRules = [required(), email() ];
@@ -63,6 +66,8 @@ const UserEdit = props => {
                 <TextInput required source="telephone" label={translate('custom.label.user.telephone')} validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
 
                 <BooleanInput fullWidth label={translate('custom.label.user.newsSubscription',{ instanceName: instance })} source="news_subscription" formClassName={classes.spacedHalfwidth} />
+
+                <SelectInput fullWidth source="phoneDisplay" label={translate('custom.label.user.phoneDisplay.visibility')} choices={phoneDisplay}  formClassName={classes.spacedHalfwidth}/>
 
                 <ReferenceArrayInput required label={translate('custom.label.user.roles')} source="rolesIds" reference="permissions/roles" validate={ validateRequired } formClassName={classes.footer}>
                     <SelectArrayInput optionText="name" />

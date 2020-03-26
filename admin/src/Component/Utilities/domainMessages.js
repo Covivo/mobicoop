@@ -127,6 +127,11 @@ const fr = {
                   upperPassword : 'Au minimum 1 majuscule',
                   lowerPassword : 'Au minimum 1 minuscule',
                   numberPassword : 'Au minimum 1 chiffre'
+              },
+              phoneDisplay : {
+                visibility : "Visibilité de mon numéro de téléphone",
+                forCarpooler : "Visible seulement après acceptation du covoiturage, uniquement par les participants.",
+                forAll : "Visible dès la publication de l'annonce, par tous les inscrits."
               }
             }
         }
