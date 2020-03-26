@@ -25,6 +25,9 @@ namespace App\Action\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\Solidary\Entity\Solidary;
+use App\Solidary\Entity\SolidarySolution;
+use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -33,14 +36,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read","readUser"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"readAnimation"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeAnimation"}}
  *      },
  *      collectionOperations={
- *          "get","post",
- *      },
- *      itemOperations={
- *          "get","post"
+ *          "post"
  *      }
  * )
  */
@@ -51,21 +51,54 @@ class Animation
     /**
      * @var int The id of this animation action.
      * @ApiProperty(identifier=true)
-     * @Groups("readSolidary")
+     * @Groups("readAnimation")
      */
     private $id;
 
     /**
      * @var string Name of the animation action.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Assert\NotBlank
+     * @Groups({"readAnimation","writeAnimation"})
      */
     private $name;
 
     /**
      * @var string Comment of the animation action
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readAnimation","writeAnimation"})
      */
     private $comment;
+
+    /**
+     * @var User The user related with the animation action.
+     * @Assert\NotBlank
+     * @Groups({"readAnimation","writeAnimation"})
+     */
+    private $user;
+
+    /**
+     * @var User The author of the animation action.
+     * @Groups({"readAnimation","writeAnimation"})
+     */
+    private $author;
+
+    /**
+     * @var int|null The progression if the action can be related to a process (like for solidary records). It's a numeric value, so it can be a percent, a step...
+     * @Groups({"readAnimation","writeAnimation"})
+     */
+    private $progression;
+
+    /**
+     * @var Solidary|null The solidary record if the action concerns a solidary record.
+     * @Groups({"readAnimation","writeAnimation"})
+     */
+    private $solidary;
+
+    /**
+     * @var SolidarySolution|null The solidary solution if the action concerns a solidary record solution.
+     * @Groups({"readAnimation","writeAnimation"})
+     */
+    private $solidarySolution;
+
 
     public function __construct()
     {
@@ -105,6 +138,66 @@ class Animation
     {
         $this->comment = $comment;
 
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        
+        return $this;
+    }
+
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $author): self
+    {
+        $this->author = $author;
+        
+        return $this;
+    }
+
+    public function getProgression(): ?string
+    {
+        return $this->progression;
+    }
+
+    public function setProgression(?string $progression): self
+    {
+        $this->progression = $progression;
+
+        return $this;
+    }
+
+    public function getSolidary(): ?Solidary
+    {
+        return $this->solidary;
+    }
+    
+    public function setSolidary(?Solidary $solidary): self
+    {
+        $this->solidary = $solidary;
+        
+        return $this;
+    }
+
+    public function getSolidarySolution(): ?SolidarySolution
+    {
+        return $this->solidarySolution;
+    }
+    
+    public function setSolidarySolution(?SolidarySolution $solidarySolution): self
+    {
+        $this->solidarySolution = $solidarySolution;
+        
         return $this;
     }
 }

@@ -55,31 +55,31 @@ class SolidarySubscriber implements EventSubscriberInterface
 
     public function onSolidaryUserStructureAccepted(SolidaryUserStructureAccepted $event)
     {
-        $this->actionManager->handleEvent(SolidaryUserStructureAccepted::NAME, $event);
+        $this->actionManager->handleAction(SolidaryUserStructureAccepted::NAME, $event);
     }
 
     public function onSolidaryUserStructureRefused(SolidaryUserStructureRefused $event)
     {
-        $this->actionManager->handleEvent(SolidaryUserStructureRefused::NAME, $event);
+        $this->actionManager->handleAction(SolidaryUserStructureRefused::NAME, $event);
     }
 
     public function onSolidaryUserCreated(SolidaryUserCreated $event)
     {
-        $this->actionManager->handleEvent(SolidaryUserCreated::NAME, $event);
+        $this->actionManager->handleAction(SolidaryUserCreated::NAME, $event);
     }
 
     public function onSolidaryUserUpdated(SolidaryUserUpdated $event)
     {
-        $this->actionManager->handleEvent(SolidaryUserUpdated::NAME, $event);
+        $this->actionManager->handleAction(SolidaryUserUpdated::NAME, $event);
     }
 
     public function onSolidaryCreated(SolidaryCreated $event)
     {
-        $this->actionManager->handleEvent(SolidaryCreated::NAME, $event);
+        $this->actionManager->handleAction(SolidaryCreated::NAME, $event);
     }
 
     public function onSolidaryUpdated(SolidaryUpdated $event)
     {
-        $this->actionManager->handleEvent(SolidaryUpdated::NAME, $event);
+        $this->actionManager->handleAction(SolidaryUpdated::NAME, $event);
     }
 }

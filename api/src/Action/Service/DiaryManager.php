@@ -43,19 +43,19 @@ class DiaryManager
      *
      * @param Action $action                        Action related to this entry
      * @param User $user                            User related to this entry
-     * @param User $admin                           Admin creating this entry
+     * @param User $author                          Author creating this entry (admin or user itself)
      * @param string $comment                       Comment about this entry
      * @param Solidary $solidary                    If this entry is related to a Solidary
      * @param SolidarySolution $solidarySolution    If this entry is related to a SolidarySolution
      * @param float $progression                    Custom progression If it's null, we take the default progression of the action
      * @return void
      */
-    public function addDiaryEntry(Action $action, User $user, User $admin, string $comment=null, Solidary $solidary=null, SolidarySolution $solidarySolution=null, float $progression=null)
+    public function addDiaryEntry(Action $action, User $user, User $author, string $comment=null, Solidary $solidary=null, SolidarySolution $solidarySolution=null, float $progression=null)
     {
         $diary = new Diary();
         $diary->setAction($action);
         $diary->setUser($user);
-        $diary->setAuthor($admin);
+        $diary->setAuthor($author);
     
         if (!is_null($comment)) {
             $diary->setComment($comment);
@@ -67,7 +67,7 @@ class DiaryManager
             $diary->setSolidarySolution($solidarySolution);
         }
 
-        (!is_null($progression)) ? $diary->setProgression($$progression) : $diary->setProgression($action->getProgression());
+        (!is_null($progression)) ? $diary->setProgression($progression) : $diary->setProgression($action->getProgression());
 
         $this->entityManager->persist($diary);
         $this->entityManager->flush();
