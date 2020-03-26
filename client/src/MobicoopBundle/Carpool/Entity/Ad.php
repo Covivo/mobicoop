@@ -24,8 +24,6 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
-use phpDocumentor\Reflection\Types\Boolean;
-use PhpOffice\PhpSpreadsheet\Calculation\DateTime;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -354,12 +352,12 @@ class Ad implements ResourceInterface, \JsonSerializable
     private $potentialCarpoolers;
 
     /**
-     * @var Boolean
+     * @var boolean
      */
     private $smoke;
 
     /**
-     * @var Boolean
+     * @var boolean
      */
     private $music;
 

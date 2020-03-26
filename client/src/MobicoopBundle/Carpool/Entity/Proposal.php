@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -23,15 +23,16 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
+use App\Carpool\Entity\Criteria;
+use App\Carpool\Entity\IndividualStop;
+use App\Carpool\Entity\Matching;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Http\Message\Authentication\Matching;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
 
 /**
