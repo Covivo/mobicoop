@@ -274,12 +274,12 @@ class UserManager
     }
 
     /**
-     * Create a user
-     *
-     * @param User $user The user to create
-     *
-     * @return User|null The user created or null if error.
-     */
+    * Create a user
+    *
+    * @param User $user The user to create
+    *
+    * @return User|null The user created or null if error.
+    */
     public function createUser(User $user)
     {
         $this->logger->info('User Creation | Start');

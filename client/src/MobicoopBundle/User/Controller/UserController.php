@@ -153,8 +153,9 @@ class UserController extends AbstractController
             //$user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
             $user->setBirthDate(new DateTime($data['birthDay']));
             //$user->setNewsSubscription by default
+            
             $user->setNewsSubscription(($this->news_subscription==="true") ? true : false);
-            //$user phone display preference by default
+            // set phone display by default
             $user->setPhoneDisplay(1);
             
             if (!is_null($data['idFacebook'])) {

@@ -56,7 +56,7 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "path"="/carpools",
  *              "normalization_context"={"groups"={"results"}},
  *              "controller"=AdPost::class,
- *              "security_post_denormalize"="is_granted('ad_create',object)"
+ *              "security_post_denormalize"="is_granted('ad_search_create',object)"
  *          },
  *          "post_ask"={
  *              "method"="POST",

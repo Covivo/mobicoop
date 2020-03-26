@@ -284,12 +284,12 @@ class UserManager
         }
 
         if (!is_null($user->getCommunityId())) {
-                $communityUser = new CommunityUser();
-                $communityUser->setUser($user);
-                $communityUser->setCommunity($this->communityRepository->find($user->getCommunityId()));
-                $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
-                $this->entityManager->persist($communityUser);
-                $this->entityManager->flush();
+            $communityUser = new CommunityUser();
+            $communityUser->setUser($user);
+            $communityUser->setCommunity($this->communityRepository->find($user->getCommunityId()));
+            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
+            $this->entityManager->persist($communityUser);
+            $this->entityManager->flush();
         }
 
         // return the user

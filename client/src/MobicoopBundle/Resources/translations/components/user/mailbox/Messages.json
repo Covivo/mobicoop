@@ -6,7 +6,11 @@
             "context":"Annonce"
         },
         "urlSend":"/utilisateur/messages/envoyer",
-        "urlUpdateAsk":"/utilisateur/messages/updateAsk"
+        "urlUpdateAsk":"/utilisateur/messages/updateAsk",
+        "headersCategories": {
+            "titleCarpool":"Covoiturage",
+            "titleLive":"Direct"
+        }
     },
     "en": {
         "title":"Mailbox",
