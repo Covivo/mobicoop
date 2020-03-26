@@ -1,7 +1,8 @@
 {
     "fr": {
         "urlUpdate":"/utilisateur/alerte/changement",
-        "errorUpdateAlert":"Suite à un problème technique, le changement n'a pas pu être enregistré"
+        "errorUpdateAlert":"Suite à un problème technique, le changement n'a pas pu être enregistré",
+        "asterisk":"* un email est toujours envoyé en cas d'annulation d'un covoiturage."
     },    
     "en": {
         "urlUpdate":"/user/alert/update",
