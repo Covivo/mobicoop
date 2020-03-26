@@ -21,13 +21,9 @@
 <template>
   <div>
     <!--SnackBar-->
-
-    <!-- :color="(errorUpdate)?'error': (form.communities.validationType == 1 ? 'warning' : 'success')" -->
-
-
     <v-snackbar
       v-model="snackbar"
-      :color="'success'"
+      :color="(errorUpdate)?'error': (communities.validationType == 1 ? 'warning' : 'success')"
       top
     >
       {{ textSnackbar }}
@@ -499,11 +495,11 @@ export default {
       step: 1,
       event: null,
       loading: false,
+      //snackbar
       snackbar: false,
       errorUpdate: false,
       textSnackbar: null,
-      // textSnackOk: this.form.communities.validationType == 1 ? this.$t("snackbar.joinCommunity.textOkManualValidation") : this.$t("snackbar.joinCommunity.textOkAutoValidation"),
-      textSnackOk: this.$t("snackbar.joinCommunity.textOkManualValidation"),
+      textSnackOk: this.communities.validationType == 1 ? this.$t("snackbar.joinCommunity.textOkManualValidation") : this.$t("snackbar.joinCommunity.textOkAutoValidation"),
 
       //step validators
       step1: true,
@@ -666,12 +662,13 @@ export default {
             'content-type': 'application/json'
           }
         })
-        .then(response=>{
+        .then(res=>{
           window.location.href = this.$t('urlRedirectAfterSignUp',{"email":this.form.email});
+          this.errorUpdate = res.data.state;
           this.textSnackbar = (this.errorUpdate) ? this.$t("snackbar.joinCommunity.textError") : this.textSnackOk;
           this.snackbar = true;
-
-          //console.log(response);
+      
+          console.error(res);
         })
         .catch(function (error) {
           console.log(error);
@@ -750,7 +747,7 @@ export default {
     getCommunities() {
       axios.post(this.$t("communities.route"))
         .then(res => {
-          this.communities = res.data;
+          this.communities = res.data; 
         });
     }
   }

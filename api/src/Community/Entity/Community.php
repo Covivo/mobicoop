@@ -202,7 +202,7 @@ class Community
      * @var int|null The type of validation (automatic/manual/domain).
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"readCommunity","write"})
+     * @Groups({"readCommunity","write", "communities"})
      */
     private $validationType;
 

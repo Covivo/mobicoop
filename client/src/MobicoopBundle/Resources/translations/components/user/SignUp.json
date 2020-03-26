@@ -46,7 +46,6 @@
             "route": "/cgu"
         },
         "communities": {
-            "label": "Join a community",
             "route": "community/getCommunityList"
         },
         "step":"Step",
