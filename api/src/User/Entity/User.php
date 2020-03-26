@@ -155,12 +155,12 @@ use App\Community\Entity\CommunityUser;
  *                      }
  *                  }
  *              },
- *              "security_post_denormalize"="is_granted('user_register',object)"
+ *              "security_post_denormalize"="is_granted('user_create',object)"
  *          },
  *          "delegateRegistration"={
  *              "method"="POST",
  *              "path"="/users/register",
- *              "controller"=UserDelegateRegistration::class,
+ *              "controller"=UserRegistration::class,
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -217,7 +217,7 @@ use App\Community\Entity\CommunityUser;
  *                      }
  *                  }
  *              },
- *              "security_post_denormalize"="is_granted('user_create',object)"
+ *              "security_post_denormalize"="is_granted('user_register',object)"
  *          },
  *          "checkSignUpValidationToken"={
  *              "method"="POST",
