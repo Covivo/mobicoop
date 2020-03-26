@@ -23,7 +23,7 @@
     <!--SnackBar-->
     <v-snackbar
       v-model="snackbar"
-      :color="(errorUpdate)?'error': (communities.validationType == 1 ? 'warning' : 'success')"
+      :color="(errorUpdate)?'error': (communities && communities.validationType == 1 ? 'warning' : 'success')"
       top
     >
       {{ textSnackbar }}
@@ -499,7 +499,7 @@ export default {
       snackbar: false,
       errorUpdate: false,
       textSnackbar: null,
-      textSnackOk: this.communities.validationType == 1 ? this.$t("snackbar.joinCommunity.textOkManualValidation") : this.$t("snackbar.joinCommunity.textOkAutoValidation"),
+      textSnackOk:null,
 
       //step validators
       step1: true,
@@ -590,7 +590,7 @@ export default {
         idFacebook:null
       },
       communities:[],
-      selectedCommunity: this.communities,
+      selectedCommunity: null,
       locale: this.$i18n.locale
     };
   },
@@ -625,6 +625,13 @@ export default {
     menu (val) {
       val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
     },
+    selectedCommunity(){
+      this.communities.communities.forEach((community, index) => {
+        if(community.id==this.selectedCommunity){
+          this.textSnackOk = (community.validationType == 1) ? this.$t("snackbar.joinCommunity.textOkManualValidation") : this.$t("snackbar.joinCommunity.textOkAutoValidation");
+        }
+      });      
+    }
   },
   mounted: function () {
     //get scroll target
@@ -656,19 +663,19 @@ export default {
           birthDay:this.form.date,
           address:this.form.homeAddress,
           idFacebook:this.form.idFacebook,
-          community:this.selectedCommunity
+          community:(this.selectedCommunity) ? this.selectedCommunity : null
         },{
           headers:{
             'content-type': 'application/json'
           }
         })
         .then(res=>{
-          window.location.href = this.$t('urlRedirectAfterSignUp',{"email":this.form.email});
           this.errorUpdate = res.data.state;
           this.textSnackbar = (this.errorUpdate) ? this.$t("snackbar.joinCommunity.textError") : this.textSnackOk;
           this.snackbar = true;
-      
-          console.error(res);
+          var urlRedirect = this.$t('urlRedirectAfterSignUp',{"email":this.form.email});
+          setTimeout(function(){ window.location.href = urlRedirect; }, 2000);
+          //console.error(res);
         })
         .catch(function (error) {
           console.log(error);
@@ -740,7 +747,7 @@ export default {
 
     // remove selected community
     toggleSelected(){
-      this.selectedCommunity = !this.selectedCommunity;
+      this.selectedCommunity = null;
     },
     
     // should be get all communities
