@@ -73,10 +73,10 @@ export default {
       return !this.ad.oneWay;
     },
     origin () {
-      return this.ad.outwardWaypoints[0].address;
+      return this.ad.outwardWaypoints.find(el => el.position === 0)["address"];
     },
     destination () {
-      return this.ad.outwardWaypoints[this.ad.outwardWaypoints.length - 1].address;
+      return this.ad.outwardWaypoints.find(el => el.destination === true)["address"];
     }
   }
 }

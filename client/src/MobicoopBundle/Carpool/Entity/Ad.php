@@ -942,16 +942,18 @@ class Ad implements ResourceInterface, \JsonSerializable
 
     public function getOrigin()
     {
-        return !empty($this->getOutwardWaypoints()) && isset($this->getOutwardWaypoints()[0]["address"])
-            ? $this->getOutwardWaypoints()[0]["address"]
-            : null;
+        if (!empty($this->getOutwardWaypoints())) {
+            return $this->getOutwardWaypoints()[array_search(0, array_column($this->getOutwardWaypoints(), 'position'))]['address'];
+        }
+        return null;
     }
 
     public function getDestination()
     {
-        return !empty($this->getOutwardWaypoints()) && isset($this->getOutwardWaypoints()[count($this->getOutwardWaypoints()) - 1]["address"])
-            ? $this->getOutwardWaypoints()[count($this->getOutwardWaypoints()) - 1]["address"]
-            : null;
+        if (!empty($this->getOutwardWaypoints())) {
+            return $this->getOutwardWaypoints()[array_search(true, array_column($this->getOutwardWaypoints(), 'destination'))]['address'];
+        }
+        return null;
     }
 
     public function getCancellationMessage(): ?string
