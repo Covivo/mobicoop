@@ -357,6 +357,12 @@ class ResultItem
     private $commonDistance;
 
     /**
+     * @var boolean If the ResultItem has a initiated Ask
+     * @Groups("results")
+     */
+    private $initiatedAsk;
+
+    /**
      * @var boolean If the ResultItem has a pending Ask
      * @Groups("results")
      */
@@ -1042,6 +1048,18 @@ class ResultItem
     public function setCommonDistance(int $commonDistance): self
     {
         $this->commonDistance = $commonDistance;
+
+        return $this;
+    }
+
+    public function hasInitiatedAsk(): ?bool
+    {
+        return $this->initiatedAsk;
+    }
+
+    public function setInitiatedAsk(?bool $initiatedAsk): self
+    {
+        $this->initiatedAsk = $initiatedAsk;
 
         return $this;
     }

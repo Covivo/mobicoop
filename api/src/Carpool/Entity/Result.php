@@ -245,6 +245,12 @@ class Result
     private $communities;
 
     /**
+     * @var boolean If the Result has an initiated Ask
+     * @Groups("results")
+     */
+    private $initiatedAsk;
+
+    /**
      * @var boolean If the Result has a pending Ask
      * @Groups("results")
      */
@@ -698,6 +704,18 @@ class Result
     {
         $this->communities = $communities;
         
+        return $this;
+    }
+
+    public function hasInitiatedAsk(): ?bool
+    {
+        return $this->initiatedAsk;
+    }
+
+    public function setInitiatedAsk(?bool $initiatedAsk): self
+    {
+        $this->initiatedAsk = $initiatedAsk;
+
         return $this;
     }
 

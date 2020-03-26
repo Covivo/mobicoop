@@ -838,7 +838,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     public function setBirthYear(?int $birthYear)
     {
         $this->birthYear = $birthYear;
-        $this->birthDate = DateTime::createFromFormat('Y-m-d', $birthYear . '-1-1');
+        //$this->birthDate = DateTime::createFromFormat('Y-m-d', $birthYear . '-1-1');
     }
 
     public function getConditions(): ?int
@@ -1112,6 +1112,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'telephone'             => $this->getTelephone(),
             'geoToken'              => $this->getGeoToken(),
             'birthYear'             => $this->getBirthYear(),
+            'birthDate'             => $this->getBirthDate(),
             'homeAddress'           => $this->getHomeAddress(),
             'images'                => $this->getImages(),
             'avatars'               => $this->getAvatars(),

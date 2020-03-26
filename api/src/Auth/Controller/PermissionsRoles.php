@@ -53,5 +53,10 @@ class PermissionsRoles
     public function __invoke(array $data): ?array
     {
         return $this->authManager->getAuthItems(AuthItem::TYPE_ROLE, true);
+        // if (is_null($data)) {
+        //     throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+        // }
+        // $data = $this->userManager->registerUser($data, true);
+        // return $data;
     }
 }

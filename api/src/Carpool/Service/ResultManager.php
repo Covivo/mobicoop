@@ -342,8 +342,12 @@ class ResultManager
         // pending or accepted ask linked ?
         $result->setPendingAsk(false);
         $result->setAcceptedAsk(false);
+        $result->setInitiatedAsk(false);
         if ($result->getResultDriver()) {
             if ($result->getResultDriver()->getOutward()) {
+                if ($result->getResultDriver()->getOutward()->hasInitiatedAsk()) {
+                    $result->setInitiatedAsk(true);
+                }
                 if ($result->getResultDriver()->getOutward()->hasPendingAsk()) {
                     $result->setPendingAsk(true);
                 }
@@ -352,6 +356,9 @@ class ResultManager
                 }
             }
             if ($result->getResultDriver()->getReturn()) {
+                if ($result->getResultDriver()->getReturn()->hasInitiatedAsk()) {
+                    $result->setInitiatedAsk(true);
+                }
                 if ($result->getResultDriver()->getReturn()->hasPendingAsk()) {
                     $result->setPendingAsk(true);
                 }
@@ -362,6 +369,9 @@ class ResultManager
         }
         if ($result->getResultPassenger()) {
             if ($result->getResultPassenger()->getOutward()) {
+                if ($result->getResultPassenger()->getOutward()->hasInitiatedAsk()) {
+                    $result->setInitiatedAsk(true);
+                }
                 if ($result->getResultPassenger()->getOutward()->hasPendingAsk()) {
                     $result->setPendingAsk(true);
                 }
@@ -370,6 +380,9 @@ class ResultManager
                 }
             }
             if ($result->getResultPassenger()->getReturn()) {
+                if ($result->getResultPassenger()->getReturn()->hasInitiatedAsk()) {
+                    $result->setInitiatedAsk(true);
+                }
                 if ($result->getResultPassenger()->getReturn()->hasPendingAsk()) {
                     $result->setPendingAsk(true);
                 }
@@ -948,10 +961,13 @@ class ResultManager
             // check if an ask exists
             $item->setPendingAsk(false);
             $item->setAcceptedAsk(false);
+            $item->setInitiatedAsk(false);
             if (count($matching['request']->getAsks())) {
                 foreach ($matching['request']->getAsks() as $ask) {
                     switch ($ask->getStatus()) {
                         case Ask::STATUS_INITIATED:
+                            $item->setInitiatedAsk(true);
+                            break;
                         case Ask::STATUS_PENDING_AS_DRIVER:
                         case Ask::STATUS_PENDING_AS_PASSENGER:
                             $item->setPendingAsk(true);
@@ -980,6 +996,8 @@ class ResultManager
                         foreach ($asks as $ask) {
                             switch ($ask->getStatus()) {
                                     case Ask::STATUS_INITIATED:
+                                        $item->setInitiatedAsk(true);
+                                        break;
                                     case Ask::STATUS_PENDING_AS_DRIVER:
                                     case Ask::STATUS_PENDING_AS_PASSENGER:
                                         $item->setPendingAsk(true);
@@ -1484,10 +1502,13 @@ class ResultManager
             // check if an ask exists
             $item->setPendingAsk(false);
             $item->setAcceptedAsk(false);
+            $item->setInitiatedAsk(false);
             if (count($matching['offer']->getAsks())) {
                 foreach ($matching['offer']->getAsks() as $ask) {
                     switch ($ask->getStatus()) {
                         case Ask::STATUS_INITIATED:
+                            $item->setInitiatedAsk(true);
+                            break;
                         case Ask::STATUS_PENDING_AS_DRIVER:
                         case Ask::STATUS_PENDING_AS_PASSENGER:
                             $item->setPendingAsk(true);
@@ -1516,6 +1537,8 @@ class ResultManager
                         foreach ($asks as $ask) {
                             switch ($ask->getStatus()) {
                                     case Ask::STATUS_INITIATED:
+                                        $item->setInitiatedAsk(true);
+                                        break;
                                     case Ask::STATUS_PENDING_AS_DRIVER:
                                     case Ask::STATUS_PENDING_AS_PASSENGER:
                                         $item->setPendingAsk(true);

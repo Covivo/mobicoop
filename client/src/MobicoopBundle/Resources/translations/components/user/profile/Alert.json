@@ -7,7 +7,7 @@
             "carpool_ask_accepted":"Covoiturage accepté",
             "carpool_ask_refused":"Covoiturage refusé",
             "carpool_ad_renewal":"Renouveller mes trajets en fin de validité",
-            "carpool_proposal_canceled":"Annulation d'un covoiturage",
+            "carpool_proposal_canceled":"Annulation d'un covoiturage *",
             "*******":"Incitation à évaluer mon covoitureur",
             "carpool_ask_linked_ad_deleted":"Suppression de l'annonce sujet de ma demande",
             "passenger_carpool_linked_ad_deleted":"Suppression de l'annonce liée à un covoiturage accepté comme passager",

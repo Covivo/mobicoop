@@ -91,8 +91,14 @@ export default {
   },
   methods: {
     checkAsks() {
-      this.hasAtLeastOneAsk = true;
-      this.hasAtLeastOneAcceptedAsk = true;
+      this.ad.results.forEach(result => {
+        if (result.pendingAsk || result.initiatedAsk) {
+          this.hasAtLeastOneAsk = true;
+        }
+        if (result.acceptedAsk) {
+          this.hasAtLeastOneAcceptedAsk = true;
+        }
+      });
     }
   }
 }
