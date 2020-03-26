@@ -20,4 +20,8 @@ final class Version20200325144401 extends AbstractMigration
         // we remove that notification of all user since she's user editable anymore
         $this->addSql('DELETE FROM `user_notification` WHERE notification_id=24');
     }
+
+    public function down(Schema $schema) : void
+    {
+    }
 }
