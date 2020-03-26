@@ -363,6 +363,11 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      */
     private $unsubscribeMessage;
 
+    /**
+     * @var bool|null used for community member list to know who is the referrer
+     */
+    private $isCommunityReferrer;
+
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -1059,11 +1064,28 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    /**
+     * @return bool|null
+     */
+    public function getIsCommunityReferrer(): ?bool
+    {
+        return $this->isCommunityReferrer;
+    }
+
+    /**
+     * @param bool|null $isCommunityReferrer
+     * @return User
+     */
+    public function setIsCommunityReferrer(?bool $isCommunityReferrer): User
+    {
+        $this->isCommunityReferrer = $isCommunityReferrer;
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
-        return
-        [
+        $userSerialized = [
             'id'                    => $this->getId(),
             'givenName'             => $this->getGivenName(),
             'familyName'            => $this->getFamilyName(),
@@ -1086,7 +1108,13 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'phoneDisplay'          => $this->getPhoneDisplay(),
             'phoneValidatedDate'    => $this->getPhoneValidatedDate(),
             'phoneToken'            => $this->getPhoneToken(),
-            'unsubscribeMessage'    => $this->getUnsubscribeMessage(),
+            'unsubscribeMessage'    => $this->getUnsubscribeMessage()
         ];
+
+        if (!is_null($this->getIsCommunityReferrer())) {
+            $userSerialized["isCommunityReferrer"] = $this->getIsCommunityReferrer();
+        }
+
+        return $userSerialized;
     }
 }
