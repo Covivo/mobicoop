@@ -24,14 +24,14 @@
  namespace App\Carpool\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Carpool\Entity\Dynamic;
+use App\Carpool\Entity\DynamicAsk;
 use App\Carpool\Exception\DynamicException;
 use App\Carpool\Service\DynamicManager;
 use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
-final class DynamicAdDataPersister implements ContextAwareDataPersisterInterface
+final class DynamicAskPutDataPersister implements ContextAwareDataPersisterInterface
 {
     private $security;
     private $request;
@@ -46,13 +46,13 @@ final class DynamicAdDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Dynamic;
+        return $data instanceof DynamicAsk && isset($context['item_operation_name']) && $context['item_operation_name'] == 'put';
     }
 
     public function persist($data, array $context = [])
     {
         /**
-         * @var Dynamic $data
+         * @var DynamicAsk $data
          */
         // we check if the request is sent by a real user
         if ($this->security->getUser() instanceof User) {
@@ -60,14 +60,7 @@ final class DynamicAdDataPersister implements ContextAwareDataPersisterInterface
         } else {
             throw new DynamicException("Operation not permited");
         }
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-            // CREATE
-            $data = $this->dynamicManager->createDynamic($data);
-        } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
-            // UPDATE
-            $data = $this->dynamicManager->updateDynamic($this->request->get("id"), $data);
-        }
-        return $data;
+        return $this->dynamicManager->updateDynamicAsk($this->request->get("id"), $data);
     }
 
     public function remove($data, array $context = [])

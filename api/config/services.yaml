@@ -134,7 +134,9 @@ services:
                 defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
                 dynamicProofDistance: '%env(int:DYNAMIC_CARPOOL_PROOF_DISTANCE)%'
                 dynamicReachedDistance: '%env(int:DYNAMIC_CARPOOL_REACHED_DISTANCE)%'
-                
+                dynamicDestinationDistance: '%env(int:DYNAMIC_CARPOOL_DESTINATION_DISTANCE)%'
+                dynamicMaxSpeed: '%env(int:DYNAMIC_CARPOOL_MAX_SPEED)%'
+                dynamicEnableMaxSpeed: '%env(bool:DYNAMIC_CARPOOL_ENABLE_MAX_SPEED)%'
         tags:
             - { name: monolog.logger, channel: carpool }
 

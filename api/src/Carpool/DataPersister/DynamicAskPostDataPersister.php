@@ -31,7 +31,7 @@ use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
-final class DynamicAskDataPersister implements ContextAwareDataPersisterInterface
+final class DynamicAskPostDataPersister implements ContextAwareDataPersisterInterface
 {
     private $security;
     private $request;
@@ -46,7 +46,7 @@ final class DynamicAskDataPersister implements ContextAwareDataPersisterInterfac
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof DynamicAsk;
+        return $data instanceof DynamicAsk && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post';
     }
 
     public function persist($data, array $context = [])
@@ -60,14 +60,7 @@ final class DynamicAskDataPersister implements ContextAwareDataPersisterInterfac
         } else {
             throw new DynamicException("Operation not permited");
         }
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-            // CREATE
-            $data = $this->dynamicManager->createDynamicAsk($data);
-        } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
-            // UPDATE
-            $data = $this->dynamicManager->updateDynamicAsk($this->request->get("id"), $data);
-        }
-        return $data;
+        return $this->dynamicManager->createDynamicAsk($data);
     }
 
     public function remove($data, array $context = [])

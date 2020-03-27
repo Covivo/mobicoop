@@ -159,15 +159,13 @@ class Dynamic
 
     /**
      * @var array|null The filters to apply to the results.
-     *
-     * @Groups("writeDynamic")
      */
     private $filters;
 
     /**
      * @var array|null The asks related to the ad.
      *
-     * @Groups({"readDynamic","writeDynamic","updateDynamic"})
+     * @Groups({"readDynamic","updateDynamic"})
      */
     private $asks;
 
@@ -175,6 +173,21 @@ class Dynamic
      * @var Proposal The proposal associated with the dynamic ad.
      */
     private $proposal;
+
+    /**
+     * @var boolean The destination is reached.
+     *
+     * @Groups({"updateDynamic"})
+     */
+    private $destination;
+
+    /**
+     * @var boolean The ad is finished.
+     *
+     * @Groups({"updateDynamic"})
+     */
+    private $finished;
+
 
     public function __construct()
     {
@@ -355,5 +368,25 @@ class Dynamic
         $this->proposal = $proposal;
 
         return $this;
+    }
+
+    public function isDestination(): bool
+    {
+        return $this->destination === true ? true : false;
+    }
+
+    public function setDestination(bool $destination)
+    {
+        $this->destination = $destination;
+    }
+
+    public function isFinished(): bool
+    {
+        return $this->finished === true ? true : false;
+    }
+
+    public function setFinished(bool $finished)
+    {
+        $this->finished = $finished;
     }
 }

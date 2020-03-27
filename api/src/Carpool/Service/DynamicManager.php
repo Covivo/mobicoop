@@ -249,6 +249,12 @@ class DynamicManager
         $this->entityManager->persist($position);
         $this->entityManager->flush();
 
+        if ($dynamic->getRole() == Dynamic::ROLE_DRIVER) {
+            $dynamic->setPrice($proposal->getCriteria()->getDriverComputedRoundedPrice());
+        } else {
+            $dynamic->setPrice($proposal->getCriteria()->getPassengerComputedRoundedPrice());
+        }
+
         // we compute the results
         
         // default order
@@ -291,15 +297,39 @@ class DynamicManager
             throw new DynamicException('This ad is not dynamic !');
         }
 
-        // not finished ?
+        // not already finished ?
         if ($dynamic->getProposal()->isFinished()) {
             throw new DynamicException('This ad is finished !');
         }
 
-        // TODO : check if the position is valid :
-        // - valid coordinates
-        // - not too far from the last point
-        // - etc...
+        // the user indicates that the ad is finished
+        if ($dynamicData->isFinished()) {
+            $dynamic->getProposal()->setFinished(true);
+            $dynamic->getProposal()->setActive(false);
+        }
+
+        // last point check
+        if ($this->params['dynamicEnableMaxSpeed']) {
+            // we compute the direction between the 2 last points to get the average speed
+            // => we exclude the point if the speed is too high (can happen with bad GPS coordinates, eg. bad way guessing on motorways)
+            $now = new \DateTime('UTC');
+            $newAddress = new Address();
+            $newAddress->setLongitude($dynamicData->getLongitude());
+            $newAddress->setLatitude($dynamicData->getLatitude());
+            $addresses = [
+                $dynamic->getProposal()->getPosition()->getWaypoint()->getAddress(),
+                $newAddress
+            ];
+            if ($routes = $this->geoRouter->getRoutes($addresses)) {
+                // we have a direction
+                $distance = $routes[0]->getDistance();
+                $interval = $now->diff($dynamic->getProposal()->getPosition()->getUpdatedDate());
+                $seconds = ((($interval->format("%a") * 24) + $interval->format("%H")) * 60 + $interval->format("%i")) * 60 + $interval->format("%s");
+                if (($distance/$seconds)>$this->params['dynamicMaxSpeed']) {
+                    throw new DynamicException('Speed too high since the last point (' . round($distance/$seconds*3.6) . ' kmh) ignoring last point');
+                }
+            }
+        }
 
         // we update the position
         $dynamic->setLatitude($dynamicData->getLatitude());
@@ -317,13 +347,12 @@ class DynamicManager
             if (!$waypoint->isReached() && !$waypoint->isFloating()) {
                 if ($this->geoTools->haversineGreatCircleDistance($dynamic->getLatitude(), $dynamic->getLongitude(), $waypoint->getAddress()->getLatitude(), $waypoint->getAddress()->getLongitude())<$this->params['dynamicReachedDistance']) {
                     $waypoint->setReached(true);
-                    // destination ? stop the dynamic !
-                    if ($waypoint->isDestination()) {
-                        $dynamic->getProposal()->setFinished(true);
-                    }
                     $this->entityManager->persist($waypoint);
                     $this->entityManager->flush();
                 }
+            }
+            if ($waypoint->isDestination() && $waypoint->isReached() && $this->geoTools->haversineGreatCircleDistance($dynamic->getLatitude(), $dynamic->getLongitude(), $waypoint->getAddress()->getLatitude(), $waypoint->getAddress()->getLongitude())<$this->params['dynamicDestinationDistance']) {
+                $dynamic->setDestination(true);
             }
             if ($waypoint->isFloating()) {
                 // update the floating waypoint address
@@ -445,6 +474,9 @@ class DynamicManager
             // the user is driver, we search the matching requests
             foreach ($dynamic->getProposal()->getMatchingRequests() as $matching) {
                 foreach ($matching->getAsks() as $ask) {
+                    /**
+                     * @var Ask $ask
+                     */
                     // there's an ask, the initiator of the ask is the passenger => the user of the ask
                     // if the pickup hasn't been made yet, we compute the direction between the driver and the passenger
                     $pickUpDuration = null;
@@ -456,6 +488,16 @@ class DynamicManager
                         if ($routes = $this->geoRouter->getRoutes($addresses)) {
                             $pickUpDuration = $routes[0]->getDuration();
                             $pickUpDistance = $routes[0]->getDistance();
+                        }
+                    }
+                    // check if there's a proof pending
+                    $proof = null;
+                    if (!is_null($ask->getCarpoolProof())) {
+                        $proof['id'] = $ask->getCarpoolProof()->getId();
+                        if (is_null($ask->getCarpoolProof()->getPickUpDriverAddress()) && !is_null($ask->getCarpoolProof()->getPickUpPassengerAddress())) {
+                            $proof['needed'] = 'pickUp';
+                        } elseif (is_null($ask->getCarpoolProof()->getDropOffDriverAddress()) && !is_null($ask->getCarpoolProof()->getDropOffPassengerAddress())) {
+                            $proof['needed'] = 'dropOff';
                         }
                     }
                     $asks[] = [
@@ -475,7 +517,8 @@ class DynamicManager
                         'pickUpDuration' => $pickUpDuration,
                         'pickUpDistance' => $pickUpDistance,
                         'detourDistance' => $matching->getDetourDistance(),
-                        'detourDuration' => $matching->getDetourDuration()
+                        'detourDuration' => $matching->getDetourDuration(),
+                        'proof' => $proof
                     ];
                 }
             }
@@ -483,6 +526,9 @@ class DynamicManager
             // the user is passenger, we search the matching offers
             foreach ($dynamic->getProposal()->getMatchingOffers() as $matching) {
                 foreach ($matching->getAsks() as $ask) {
+                    /**
+                     * @var Ask $ask
+                     */
                     // there's an ask, the recipient of the ask is the driver => the userRelated of the ask
                     // if the pickup hasn't been made yet, we compute the direction between the driver and the passenger
                     $pickUpDuration = null;
@@ -494,6 +540,16 @@ class DynamicManager
                         if ($routes = $this->geoRouter->getRoutes($addresses)) {
                             $pickUpDuration = $routes[0]->getDuration();
                             $pickUpDistance = $routes[0]->getDistance();
+                        }
+                    }
+                    // check if there's a proof pending
+                    $proof = null;
+                    if (!is_null($ask->getCarpoolProof())) {
+                        $proof['id'] = $ask->getCarpoolProof()->getId();
+                        if (!is_null($ask->getCarpoolProof()->getPickUpDriverAddress()) && is_null($ask->getCarpoolProof()->getPickUpPassengerAddress())) {
+                            $proof['needed'] = 'pickUp';
+                        } elseif (!is_null($ask->getCarpoolProof()->getDropOffDriverAddress()) && is_null($ask->getCarpoolProof()->getDropOffPassengerAddress())) {
+                            $proof['needed'] = 'dropOff';
                         }
                     }
                     $asks[] = [
@@ -513,7 +569,8 @@ class DynamicManager
                         'pickUpDuration' => $pickUpDuration,
                         'pickUpDistance' => $pickUpDistance,
                         'detourDistance' => $matching->getDetourDistance(),
-                        'detourDuration' => $matching->getDetourDuration()
+                        'detourDuration' => $matching->getDetourDuration(),
+                        'proof' => $proof
                     ];
                 }
             }
@@ -722,6 +779,10 @@ class DynamicManager
             $newWaypoints = [];
             foreach ($ask->getWaypoints() as $point) {
                 $waypoint = clone $point;
+                if ($waypoint->getPosition()==0) {
+                    // the first waypoint was the driver floating waypoint when the passenger made the ask, it wasn't reached, but we set it as reached anyway
+                    $waypoint->setReached(true);
+                }
                 // we search in the original waypoints if the current waypoint has been reached by the driver
                 foreach ($proposal->getWaypoints() as $curWaypoint) {
                     if (
@@ -893,9 +954,6 @@ class DynamicManager
             $actor = CarpoolProof::ACTOR_DRIVER;
         }
 
-        // TODO : set the new origin and destination waypoints for the passenger => pickup and dropoff !!
-
-
         // we perform different actions depending on the role and the moment
         switch ($actor) {
             case CarpoolProof::ACTOR_DRIVER:
@@ -963,6 +1021,9 @@ class DynamicManager
                         // the driver has not set its dropoff
                         $carpoolProof->setDropOffPassengerDate(new \DateTime('UTC'));
                         $carpoolProof->setDropOffPassengerAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProofData->getLatitude(),'longitude'=>$dynamicProofData->getLongitude()]));
+                        // set the dynamic ad to finished !
+                        $carpoolProof->getAsk()->getMatching()->getProposalRequest()->setFinished(true);
+                        $this->entityManager->persist($carpoolProof->getAsk()->getMatching()->getProposalRequest());
                     } else {
                         // the driver has set its dropoff, we have to check the positions
                         if ($this->geoTools->haversineGreatCircleDistance(
@@ -974,7 +1035,9 @@ class DynamicManager
                             // drop off passenger
                             $carpoolProof->setDropOffPassengerDate(new \DateTime('UTC'));
                             $carpoolProof->setDropOffPassengerAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProofData->getLatitude(),'longitude'=>$dynamicProofData->getLongitude()]));
-                        // set passenger direction
+                            // set the dynamic ad to finished !
+                            $carpoolProof->getAsk()->getMatching()->getProposalRequest()->setFinished(true);
+                            $this->entityManager->persist($carpoolProof->getAsk()->getMatching()->getProposalRequest());
                         } else {
                             throw new DynamicException("Passenger dropoff certification failed : the driver certified address is too far");
                         }
@@ -1148,6 +1211,14 @@ class DynamicManager
             if (count($addresses)>0) {
                 $address = $addresses[0];
             }
+        }
+
+        // we set again the lat/lon to keep the original values !
+        if (isset($point['latitude'])) {
+            $address->setLatitude($point['latitude']);
+        }
+        if (isset($point['longitude'])) {
+            $address->setLongitude($point['longitude']);
         }
 
         // if other properties are sent we use them
