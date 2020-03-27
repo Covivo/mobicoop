@@ -515,7 +515,7 @@ class UserManager
             "ongoing" => [],
             "archived" => []
         ];
-        
+//        dump($ads);die;
         foreach ($ads as $ad) {
             $isAlreadyInArray = false;
             
