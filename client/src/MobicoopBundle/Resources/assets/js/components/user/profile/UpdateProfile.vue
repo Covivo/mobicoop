@@ -230,14 +230,31 @@
             item-value="value"
           />
 
-          <!--birthyear-->
-          <v-select
-            id="birthYear"
-            v-model="birthYear"
-            :items="years"
-            :label="$t('models.user.birthYear.label')"
-            class="birthYear"
-          />
+          <v-menu
+            ref="menu"
+            v-model="menu"
+            :close-on-content-click="false"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+          >
+            <template v-slot:activator="{ on }">
+              <v-text-field
+              :value ="birthDay.date"
+              :label="$t('models.user.birthDay.label')"
+              :rules="[ birthdayRules.checkIfAdult, birthdayRules.required ]"
+              readonly
+              v-on="on"
+              />
+            </template>
+            <v-date-picker
+              ref="picker"
+              v-model ="birthDay.date"
+              :max="maxDate()"
+              :locale="locale"
+              first-day-of-week="1"
+            />
+          </v-menu>
 
           <!--NewsSubscription-->
           <v-row>
@@ -483,11 +500,14 @@ export default {
       telephone: this.user.telephone,
       givenName: this.user.givenName,
       familyName: this.user.familyName,
-      birthYear: this.user.birthYear,
+      birthDay: this.user.birthDate,
       homeAddress: this.user.homeAddress ? this.user.homeAddress : null,
       phoneToken: this.user.phoneToken,
       phoneValidatedDate: this.user.phoneValidatedDate,
       token: null,
+      menu : false,
+
+
       genders:[
         { value: 1, gender: this.$t('models.user.gender.values.female')},
         { value: 2, gender: this.$t('models.user.gender.values.male')},
@@ -510,6 +530,19 @@ export default {
       telephoneRules: [
           v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("models.user.phone.errors.valid")
       ],
+      birthdayRules : {
+        required:  v => !!v || this.$t("models.user.birthDay.errors.required"),
+        checkIfAdult : value =>{
+          var d1 = new Date();
+          var d2 = new Date(value);
+
+          var diff =(d1.getTime() - d2.getTime()) / 1000;
+          diff /= (60 * 60 * 24);
+
+          var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
+          return diffYears >= 16 || this.$t("models.user.birthDay.errors.notadult")
+        }
+      },
       newsSubscription: this.user && this.user.newsSubscription !== null ? this.user.newsSubscription : null,
       urlAvatar: this.user.avatars[this.user.avatars.length-1],
       displayFileUpload: (this.user.images[0]) ? false : true,
@@ -525,6 +558,8 @@ export default {
       hasOwnedCommunities: false,
       disabledOwnedCommunities: false,
       disabledCreatedEvents: false,
+      locale: this.$i18n.locale
+
 
     };
   },
@@ -534,7 +569,7 @@ export default {
       const ageMin = Number(this.ageMin);
       const ageMax = Number(this.ageMax);
       return Array.from({length: ageMax - ageMin}, (value, index) => (currentYear - ageMin) - index)
-    },
+    }
   },
   mounted() {
     this.checkVerifiedPhone();
@@ -559,7 +594,7 @@ export default {
       updateUser.append("gender", this.gender);
       updateUser.append("givenName", this.givenName);
       updateUser.append("telephone", this.telephone);
-      updateUser.append("birthYear", this.birthYear);
+      updateUser.append("birthDay", this.birthDay.date);
       updateUser.append("avatar", this.avatar);
       updateUser.append("newsSubscription", this.newsSubscription);
       updateUser.append("phoneDisplay", this.phoneDisplay.value);
@@ -705,7 +740,12 @@ export default {
           }
           this.disabledCreatedEvents = false;
         });
-    }
+    },
+    maxDate() {
+      let maxDate = new Date();
+      maxDate.setFullYear (maxDate.getFullYear() - this.ageMin);
+      return maxDate.toISOString().substr(0, 10);
+    },
   }
 }
 </script>

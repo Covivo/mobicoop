@@ -309,7 +309,7 @@ class UserController extends AbstractController
             $user->setGivenName($data->get('givenName'));
             $user->setFamilyName($data->get('familyName'));
             $user->setGender((int)($data->get('gender')));
-            $user->setBirthYear($data->get('birthYear'));
+            $user->setBirthDate(new DateTime($data->get('birthDay')));
             // cause we use FormData to post data
             $user->setNewsSubscription($data->get('newsSubscription') === "true" ? true : false);
             
