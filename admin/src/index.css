@@ -10,9 +10,6 @@ header svg{
 #logoBo{
     height: 50px;
 }
-.MuiAppBar-colorSecondary{
-    background-color:#4f4f58!important;
-}
 
 .MuiTable-root tr:nth-child(even) {
   background-color: #f2f2f2!important;
