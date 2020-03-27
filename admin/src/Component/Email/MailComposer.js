@@ -85,6 +85,7 @@ const MailComposer = ({isOpen, selectedIds, onClose, resource, basePath, filterV
     const [loadingTest, setLoadingTest] = useState(false);
     const token = localStorage.getItem('token');
     const unselectAll = useUnselectAll();
+    const [removeUnsuscribe, setRemoveUnsuscribe] = useState(0);
 
     // Impose de sauvegarder la campagne AVANT d'envoyer un mail
     const dispatchAndReset = values => {
@@ -94,12 +95,23 @@ const MailComposer = ({isOpen, selectedIds, onClose, resource, basePath, filterV
 
     // Sélection des destinataires à partir d'un filtre éventuel
     useEffect(() => {
+
         if (shouldFetch) {
             setLoading(true)
             dataProvider.getList(resource, {filter:filterValues, pagination:{ page: 1 , perPage: limit }, sort: { field: 'id', order: 'ASC' }, })
                 .then(({ data }) => {
-                    setIds(data.map(d => d.id));
+                  console.info(data)
+                  var goodArray = [];
+                  data.map(d => {
+                      if (d.newsSubscription != false){
+                        goodArray.push(d)
+                      }else{
+                        setRemoveUnsuscribe(removeUnsuscribe + 1);
+                      }
+                  })
+                    setIds(goodArray.map(d => d.id));
                     setLoading(false);
+
                 })
                 .catch(error => {
                     setCompteRendu("Erreur lors de la sélection de tous les destinataires");
@@ -112,7 +124,11 @@ const MailComposer = ({isOpen, selectedIds, onClose, resource, basePath, filterV
         if (loading) {
             setCompteRendu("Chargement...")
         } else {
-            setCompteRendu(`Votre mail va concerner ${ids.length} utilisateur${ids.length>1 ? "s" : ""}.`);
+
+          removeUnsuscribe ==  0 ?
+            setCompteRendu(`Votre mail va concerner ${ids.length} utilisateur${ids.length>1 ? "s" : ""}.`)
+            :
+              setCompteRendu(`Votre mail va concerner ${ids.length} utilisateur${ids.length>1 ? "s" : ""}, ${removeUnsuscribe} utilisateur${removeUnsuscribe>1 ? "s" : ""} ignoré${removeUnsuscribe>1 ? "es" : ""} `)
         }
     }, [ids, loading] )
 
