@@ -38,6 +38,7 @@ use Symfony\Component\Security\Core\Security;
 class DynamicProofVoter extends Voter
 {
     const DYNAMIC_PROOF_CREATE = 'dynamic_proof_create';
+    const DYNAMIC_PROOF_READ = 'dynamic_proof_read';
     const DYNAMIC_PROOF_UPDATE = 'dynamic_proof_update';
     
     private $security;
@@ -60,6 +61,7 @@ class DynamicProofVoter extends Voter
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
             self::DYNAMIC_PROOF_CREATE,
+            self::DYNAMIC_PROOF_READ,
             self::DYNAMIC_PROOF_UPDATE
             ])) {
             return false;
@@ -80,6 +82,11 @@ class DynamicProofVoter extends Voter
                     return $this->canCreateDynamicProof($ask);
                 }
                 return false;
+            case self::DYNAMIC_PROOF_READ:
+                if ($carpoolProof = $this->carpoolProofRepository->find($this->request->get('id'))) {
+                    return $this->canReadDynamicProof($carpoolProof);
+                }
+                return false;
             case self::DYNAMIC_PROOF_UPDATE:
                 if ($carpoolProof = $this->carpoolProofRepository->find($this->request->get('id'))) {
                     return $this->canUpdateDynamicProof($carpoolProof);
@@ -93,6 +100,11 @@ class DynamicProofVoter extends Voter
     private function canCreateDynamicProof(Ask $ask)
     {
         return $this->authManager->isAuthorized(self::DYNAMIC_PROOF_CREATE, ['ask' => $ask]);
+    }
+
+    private function canReadDynamicProof(CarpoolProof $carpoolProof)
+    {
+        return $this->authManager->isAuthorized(self::DYNAMIC_PROOF_READ, ['ask' => $carpoolProof->getAsk()]);
     }
 
     private function canUpdateDynamicProof(CarpoolProof $carpoolProof)

@@ -306,6 +306,7 @@ class DynamicManager
         if ($dynamicData->isFinished()) {
             $dynamic->getProposal()->setFinished(true);
             $dynamic->getProposal()->setActive(false);
+            $dynamic->setFinished(true);
         }
 
         // last point check
@@ -500,9 +501,17 @@ class DynamicManager
                             $proof['needed'] = 'dropOff';
                         }
                     }
+                    $status = DynamicAsk::STATUS_PENDING;
+                    if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER) {
+                        $status = DynamicAsk::STATUS_ACCEPTED;
+                    } elseif ($ask->getStatus() == Ask::STATUS_DECLINED_AS_DRIVER) {
+                        $status = DynamicAsk::STATUS_DECLINED;
+                    } elseif ($ask->getStatus() == Ask::STATUS_DECLINED_AS_PASSENGER) {
+                        $status = DynamicAsk::STATUS_CANCELLED;
+                    }
                     $asks[] = [
                         'id' => $ask->getId(),
-                        'status' => $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER ? DynamicAsk::STATUS_PENDING : ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER ? DynamicAsk::STATUS_ACCEPTED : DynamicAsk::STATUS_DECLINED),
+                        'status' => $status,
                         'user' => [
                             'id' => $ask->getUser()->getId(),
                             'givenName' => $ask->getUser()->getGivenName(),
@@ -552,9 +561,17 @@ class DynamicManager
                             $proof['needed'] = 'dropOff';
                         }
                     }
+                    $status = DynamicAsk::STATUS_PENDING;
+                    if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER) {
+                        $status = DynamicAsk::STATUS_ACCEPTED;
+                    } elseif ($ask->getStatus() == Ask::STATUS_DECLINED_AS_DRIVER) {
+                        $status = DynamicAsk::STATUS_DECLINED;
+                    } elseif ($ask->getStatus() == Ask::STATUS_DECLINED_AS_PASSENGER) {
+                        $status = DynamicAsk::STATUS_CANCELLED;
+                    }
                     $asks[] = [
                         'id' => $ask->getId(),
-                        'status' => $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER ? DynamicAsk::STATUS_PENDING : ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER ? DynamicAsk::STATUS_ACCEPTED : DynamicAsk::STATUS_DECLINED),
+                        'status' => $status,
                         'user' => [
                             'id' => $ask->getUserRelated()->getId(),
                             'givenName' => $ask->getUserRelated()->getGivenName(),
@@ -713,7 +730,9 @@ class DynamicManager
     }
 
     /**
-     * Update an ask for a dynamic ad => only by the driver
+     * Update an ask for a dynamic ad :
+     * - by the driver to accept / refuse an ask
+     * - by the passenger to cancel an ask (before the driver has accepted only !)
      *
      * @param int           $id             The id of the ask to update
      * @param DynamicAsk    $dynamicAskData The ask data to make the update
@@ -724,17 +743,27 @@ class DynamicManager
         // get the ask
         $ask = $this->askRespository->find($id);
 
-        // only the driver can update an ask
-        if ($ask->getUserRelated()->getId() != $dynamicAskData->getUser()->getId()) {
-            throw new DynamicException("Only the driver can update the dynamic ask");
-        }
-
-        // here the driver should only accept or decline the ask
-        if ($dynamicAskData->getStatus() != DynamicAsk::STATUS_ACCEPTED && $dynamicAskData->getStatus() != DynamicAsk::STATUS_DECLINED) {
+        // the driver should only accept or decline the ask
+        if ($ask->getUserRelated()->getId() == $dynamicAskData->getUser()->getId() && $dynamicAskData->getStatus() != DynamicAsk::STATUS_ACCEPTED && $dynamicAskData->getStatus() != DynamicAsk::STATUS_DECLINED) {
             throw new DynamicException("Only accept or decline are permitted.");
         }
-        
-        $ask->setStatus($dynamicAskData->getStatus() == DynamicAsk::STATUS_ACCEPTED ? Ask::STATUS_ACCEPTED_AS_DRIVER : Ask::STATUS_DECLINED_AS_DRIVER);
+
+        // the driver should only accept or decline a pending ask
+        if ($ask->getUserRelated()->getId() == $dynamicAskData->getUser()->getId() && $ask->getStatus() == Ask::STATUS_DECLINED_AS_PASSENGER) {
+            throw new DynamicException("The ask has been cancelled.");
+        }
+
+        // the passenger can only cancel an ask
+        if ($ask->getUser()->getId() == $dynamicAskData->getUser()->getId()) {
+            if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER) {
+                throw new DynamicException("Update forbidden : the driver has already accepted the carpooling.");
+            }
+            if ($dynamicAskData->getStatus() != DynamicAsk::STATUS_CANCELLED) {
+                throw new DynamicException("Only cancel is permitted.");
+            }
+        }
+
+        $ask->setStatus($dynamicAskData->getStatus() == DynamicAsk::STATUS_ACCEPTED ? Ask::STATUS_ACCEPTED_AS_DRIVER : ($dynamicAskData->getStatus() == DynamicAsk::STATUS_DECLINED ? Ask::STATUS_DECLINED_AS_DRIVER : Ask::STATUS_DECLINED_AS_PASSENGER));
         $dynamicAskData->setId($id);
 
         // Ask History
@@ -746,7 +775,6 @@ class DynamicManager
         // message => the driver is the userRelated, the passenger is the user
         if (!is_null($dynamicAskData->getMessage())) {
             $message = new Message();
-            $message->setUser($ask->getUserRelated());
             $message->setText($dynamicAskData->getMessage());
             // we search the previous message if it exists
             if ($lastAskHistoryWithMessage = $this->askHistoryRepository->findLastAskHistoryWithMessage($ask)) {
@@ -759,7 +787,15 @@ class DynamicManager
                 }
             }
             $recipient = new Recipient();
-            $recipient->setUser($ask->getUser());
+            if ($ask->getUser()->getId() == $dynamicAskData->getUser()->getId()) {
+                // the passenger sends a message
+                $message->setUser($ask->getUser());
+                $recipient->setUser($ask->getUserRelated());
+            } else {
+                // the driver sends a message
+                $message->setUser($ask->getUserRelated());
+                $recipient->setUser($ask->getUser());
+            }
             $recipient->setStatus(Recipient::STATUS_PENDING);
             $message->addRecipient($recipient);
             $this->entityManager->persist($message);
@@ -806,24 +842,25 @@ class DynamicManager
                 $proposal->addWaypoint($waypoint);
             }
 
-            // for now, we cancel the other asks
-            foreach ($proposal->getMatchingRequests() as $matching) {
-                if ($matching->getId() != $ask->getMatching()->getId()) {
-                    foreach ($matching->getAsks() as $ask) {
-                        if ($ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
-                            $ask->setStatus(Ask::STATUS_DECLINED_AS_DRIVER);
-                            $this->entityManager->persist($ask);
-                        }
-                    }
-                }
-            }
+            // uncomment to cancel the other asks arbitrary as the path has changed
+            // foreach ($proposal->getMatchingRequests() as $matching) {
+            //     if ($matching->getId() != $ask->getMatching()->getId()) {
+            //         foreach ($matching->getAsks() as $ask) {
+            //             if ($ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
+            //                 $ask->setStatus(Ask::STATUS_DECLINED_AS_DRIVER);
+            //                 $this->entityManager->persist($ask);
+            //             }
+            //         }
+            //     }
+            // }
+
             // update the matchings
             $this->proposalMatcher->updateMatchingsForProposal($proposal);
 
             // persist the updates
             $this->entityManager->persist($proposal);
         } else {
-            // dynamic carpooling refused : update the passenger ad to make it active again
+            // dynamic carpooling refused or cancelled : update the passenger ad to make it active again
             $ask->getMatching()->getProposalRequest()->setActive(true);
             $this->entityManager->persist($ask->getMatching()->getProposalRequest());
         }

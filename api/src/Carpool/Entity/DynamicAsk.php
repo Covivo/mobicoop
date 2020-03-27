@@ -46,7 +46,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      },
  *      itemOperations={
- *          "get",
+ *          "get"={
+ *              "security"="is_granted('dynamic_ask_read',object)"
+ *          },
  *          "put"={
  *              "method"="PUT",
  *              "read"=false,
@@ -66,6 +68,7 @@ class DynamicAsk
     const STATUS_PENDING = 1;
     const STATUS_ACCEPTED = 2;
     const STATUS_DECLINED = 3;
+    const STATUS_CANCELLED = 4;
 
     /**
      * @var int The id of this dynamic ad ask.
@@ -76,7 +79,7 @@ class DynamicAsk
     private $id;
 
     /**
-     * @var int Ask status (1 = pending, 2 = accepted; 3 = declined).
+     * @var int Ask status (1 = pending, 2 = accepted; 3 = declined; 4 = cancelled).
      *
      * @Groups({"readDynamic","writeDynamic","updateDynamic"})
      */

@@ -46,7 +46,9 @@ use App\User\Entity\User;
  *          }
  *      },
  *      itemOperations={
- *          "get",
+ *          "get"={
+ *              "security"="is_granted('dynamic_proof_read',object)"
+ *          },
  *          "put"={
  *              "method"="PUT",
  *              "read"=false,

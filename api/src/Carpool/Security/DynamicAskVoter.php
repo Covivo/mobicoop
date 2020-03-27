@@ -36,6 +36,7 @@ use Symfony\Component\Security\Core\Security;
 class DynamicAskVoter extends Voter
 {
     const DYNAMIC_ASK_CREATE = 'dynamic_ask_create';
+    const DYNAMIC_ASK_READ = 'dynamic_ask_read';
     const DYNAMIC_ASK_UPDATE = 'dynamic_ask_update';
     
     private $security;
@@ -58,6 +59,7 @@ class DynamicAskVoter extends Voter
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
             self::DYNAMIC_ASK_CREATE,
+            self::DYNAMIC_ASK_READ,
             self::DYNAMIC_ASK_UPDATE,
             ])) {
             return false;
@@ -78,6 +80,11 @@ class DynamicAskVoter extends Voter
                     return $this->canCreateDynamicAsk($matching);
                 }
                 return false;
+            case self::DYNAMIC_ASK_READ:
+                if ($dynamicAsk = $this->dynamicManager->getDynamicAsk($this->request->get('id'))) {
+                    return $this->canReadDynamicAsk($dynamicAsk);
+                }
+                return false;
             case self::DYNAMIC_ASK_UPDATE:
                 if ($dynamicAsk = $this->dynamicManager->getDynamicAsk($this->request->get('id'))) {
                     return $this->canUpdateDynamicAsk($dynamicAsk);
@@ -91,6 +98,11 @@ class DynamicAskVoter extends Voter
     private function canCreateDynamicAsk(Matching $matching)
     {
         return $this->authManager->isAuthorized(self::DYNAMIC_ASK_CREATE, ['matching' => $matching]);
+    }
+
+    private function canReadDynamicAsk(DynamicAsk $dynamicAsk)
+    {
+        return $this->authManager->isAuthorized(self::DYNAMIC_ASK_READ, ['dynamicAsk' => $dynamicAsk]);
     }
 
     private function canUpdateDynamicAsk(DynamicAsk $dynamicAsk)

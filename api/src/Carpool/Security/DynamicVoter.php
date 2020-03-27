@@ -31,7 +31,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
-class DynamicAdVoter extends Voter
+class DynamicVoter extends Voter
 {
     const DYNAMIC_AD_CREATE = 'dynamic_ad_create';
     const DYNAMIC_AD_READ = 'dynamic_ad_read';
