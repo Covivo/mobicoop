@@ -26,19 +26,13 @@ namespace App\Carpool\DataPersister;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Service\AdManager;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 
 final class AdPostDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $request;
-    private $security;
     private $adManager;
 
-    public function __construct(AdManager $adManager, RequestStack $requestStack, Security $security)
+    public function __construct(AdManager $adManager)
     {
-        $this->request = $requestStack->getCurrentRequest();
-        $this->security = $security;
         $this->adManager = $adManager;
     }
   

@@ -69,6 +69,8 @@ class AdVoter extends Voter
             return false;
         }
 
+        dump($subject);
+        die;
         // only vote on Ad objects inside this voter
         if (!$subject instanceof Ad && !$subject instanceof Proposal) {
             return false;
@@ -85,7 +87,7 @@ class AdVoter extends Voter
             case self::CREATE_AD:
                 return $this->canCreateAd();
             case self::DELETE_AD:
-                return $this->canDeleteAd($ad, $user);
+                return $this->canDeleteAd($ad);
             case self::UPDATE_AD:
                 return $this->canUpdateAd($ad);
             case self::POST:
@@ -105,13 +107,14 @@ class AdVoter extends Voter
         return true;
     }
 
-    private function canDeleteAd(Proposal $proposal, User $user)
+    private function canDeleteAd($adId)
     {
+        $user = $this->security->getUser();
         // only registered users can delete ad
         if (!$user instanceof User) {
             return false;
         }
-        return $this->permissionManager->checkPermission('ad_delete', $user, $proposal->getId());
+        return $this->permissionManager->checkPermission('ad_delete', $user, $adId);
     }
 
     private function canUpdateAd(Ad $ad)

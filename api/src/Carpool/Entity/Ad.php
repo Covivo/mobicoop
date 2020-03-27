@@ -109,6 +109,11 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "path"="/carpools/{id}",
  *              "security"="is_granted('ad_update',object)"
  *          },
+ *          "delete"={
+ *              "method"="DELETE",
+ *              "path"="/carpools/{id}",
+ *              "security"="is_granted('ad_delete',object)"
+ *          }
  *      }
  * )
  *
@@ -480,6 +485,20 @@ class Ad
      * @Groups({"write"})
      */
     private $cancellationMessage;
+
+    /**
+     * @var string|null The user id of deleter
+     *
+     * @Groups({"write"})
+     */
+    private $deleterId;
+
+    /**
+     * @var string|null The message if ad is deleted
+     *
+     * @Groups({"write"})
+     */
+    private $deletionMessage;
 
     public function __construct()
     {
@@ -1090,6 +1109,28 @@ class Ad
     public function setCancellationMessage(?string $cancellationMessage): Ad
     {
         $this->cancellationMessage = $cancellationMessage;
+        return $this;
+    }
+
+    public function getDeleterId(): ?string
+    {
+        return $this->deleterId;
+    }
+
+    public function setDeleterId(?string $deleterId): Ad
+    {
+        $this->deleterId = $deleterId;
+        return $this;
+    }
+
+    public function getDeletionMessage(): ?string
+    {
+        return $this->deletionMessage;
+    }
+
+    public function setDeletionMessage(?string $deletionMessage): Ad
+    {
+        $this->deletionMessage = $deletionMessage;
         return $this;
     }
 }

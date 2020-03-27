@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,40 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Controller;
+namespace App\Carpool\DataPersister;
 
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\Carpool\Entity\Ad;
 use App\Carpool\Service\ProposalManager;
-use App\Carpool\Entity\Proposal;
-use App\TranslatorTrait;
 
-/**
- * Controller class for proposal post.
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
- */
-class ProposalPost
+final class AdDeleteDataPersister implements ContextAwareDataPersisterInterface
 {
-    use TranslatorTrait;
+    /**
+     * @var ProposalManager
+     */
     private $proposalManager;
 
     public function __construct(ProposalManager $proposalManager)
     {
         $this->proposalManager = $proposalManager;
     }
-
-    /**
-     * This method is invoked when a new proposal is posted.
-     * It returns the new proposal created, with its matchings as subresources.
-     *
-     * @param Proposal $data
-     * @return Proposal
-     */
-    public function __invoke(Proposal $data): Proposal
+  
+    public function supports($data, array $context = []): bool
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad proposal id is provided"));
-        }
-        $data = $this->proposalManager->prepareProposal($data);
-        return $data;
+        return $data instanceof Ad && isset($context['item_operation_name']) && $context['item_operation_name'] === 'delete';
+    }
+
+    public function persist($data, array $context = [])
+    {
+    }
+
+    public function remove($data, array $context = [])
+    {
+        return $this->proposalManager->deleteProposal($data);
     }
 }

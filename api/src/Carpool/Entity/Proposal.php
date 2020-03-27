@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -26,9 +26,7 @@ namespace App\Carpool\Entity;
 use App\Event\Entity\Event;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
@@ -36,8 +34,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Carpool\Controller\ProposalPost;
-use App\Carpool\Controller\ProposalDelete;
 use App\Travel\Entity\TravelMode;
 use App\Community\Entity\Community;
 use App\User\Entity\User;
@@ -56,21 +52,11 @@ use App\Communication\Entity\Notified;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get",
- *          "post"={
- *              "method"="POST",
- *              "path"="/proposals",
- *              "controller"=ProposalPost::class,
- *          },
+ *          "get"
  *      },
  *      itemOperations={
  *          "get",
- *          "put",
- *          "delete"={
- *              "method"="DELETE",
- *              "path"="/proposals/{id}",
- *              "controller"=ProposalDelete::class
- *          }
+ *          "put"
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"proposalType"})

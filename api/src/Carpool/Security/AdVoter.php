@@ -82,7 +82,7 @@ class AdVoter extends Voter
             return false;
         }
 
-        // only vote on Event objects inside this voter
+        // only vote on Ad objects inside this voter
         if (!in_array($attribute, [
             self::AD_CREATE,
             self::AD_READ,
@@ -96,7 +96,7 @@ class AdVoter extends Voter
             ]) && !($subject instanceof Paginator) && !($subject instanceof Ad)) {
             return false;
         }
-                
+
         // Ad is a 'virtual' resource, we can't check its class
         return true;
     }

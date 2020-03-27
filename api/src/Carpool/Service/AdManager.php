@@ -539,9 +539,9 @@ class AdManager
      */
     public function createTimesFromSchedule($schedules, Criteria $criteria, bool $isObject)
     {
-        if ($fromUpdate) {
-
-        }
+//        if ($fromUpdate) {
+//
+//        }
         foreach ($schedules as $schedule) {
             if ($schedule['outwardTime'] != '') {
                 if (isset($schedule['mon']) && $schedule['mon']) {
@@ -605,6 +605,10 @@ class AdManager
     {
         $ad = new Ad();
         $proposal = $this->proposalManager->get($id);
+        if (is_null($proposal)) {
+            return null;
+        }
+
         $ad->setId($id);
         $ad->setFrequency($proposal->getCriteria()->getFrequency());
         $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);

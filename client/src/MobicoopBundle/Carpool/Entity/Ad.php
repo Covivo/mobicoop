@@ -368,6 +368,20 @@ class Ad implements ResourceInterface, \JsonSerializable
      */
     private $cancellationMessage;
 
+    /**
+     * @var string|null The user id of deleter
+     *
+     * @Groups({"delete", "post"})
+     */
+    private $deleterId;
+
+    /**
+     * @var string|null The message if ad is deleted
+     *
+     * @Groups({"delete", "post"})
+     */
+    private $deletionMessage;
+
     public function __construct($id=null)
     {
         $this->outwardWaypoints = [];
@@ -977,6 +991,28 @@ class Ad implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getDeleterId(): ?string
+    {
+        return $this->deleterId;
+    }
+
+    public function setDeleterId(?string $deleterId): Ad
+    {
+        $this->deleterId = $deleterId;
+        return $this;
+    }
+
+    public function getDeletionMessage(): ?string
+    {
+        return $this->deletionMessage;
+    }
+
+    public function setDeletionMessage(?string $deletionMessage): Ad
+    {
+        $this->deletionMessage = $deletionMessage;
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -1003,7 +1039,8 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'origin' => $this->getOrigin(),
                 'destination' => $this->getDestination(),
                 'schedule' => $this->getSchedule(),
-                'paused' => $this->isPaused()
+                'paused' => $this->isPaused(),
+                'results' => $this->getResults()
             ];
     }
 }
