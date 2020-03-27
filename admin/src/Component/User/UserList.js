@@ -1,6 +1,11 @@
-import React from 'react';
+import React , {Fragment,useState} from 'react';
 import isAuthorized from '../../Auth/permissions'
+import BlockIcon from '@material-ui/icons/Block';
 import { defaultExporter,Button,useTranslate } from 'react-admin';
+
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
+import Checkbox from '@material-ui/core/Checkbox';
 //import bcrypt from 'bcryptjs';
 
 import {
@@ -8,7 +13,7 @@ import {
     Datagrid,
     TextInput, SelectInput, ReferenceInput, BooleanInput,
     TextField, EmailField, DateField,
-    EditButton, BulkDeleteButton,BooleanField,
+    EditButton, BulkDeleteButton,BooleanField,DatagridBody,
     Filter
 } from 'react-admin';
 
@@ -19,15 +24,56 @@ import MyDatagrid from '../Utilities/MyDatagrid';
 const UserList = (props) => {
 
   const translate = useTranslate();
+  const [count, setCount] = useState(0);
 
-  const UserBulkActionButtons = props => (
-      <>
-          {isAuthorized("mass_create") && <EmailComposeButton label="Email" {...props} /> }
+  const checkValue = ({selected,record } ) => {
+
+  //  if (record.newsSubscription === false) setCount( selected == false ? count  + 1 :count - 1);
+
+  }
+
+  const MyDatagridRow = ({ record, resource, id, onToggleItem, children, selected, basePath }) => {
+
+    if (selected && record.newsSubscription === false) setCount(1)
+
+
+    return (
+        <TableRow key={id} hover={true}>
+            {/* first column: selection checkbox */}
+            <TableCell padding="none">
+                <Checkbox
+                    checked={selected}
+                    onClick={() => { onToggleItem(id);checkValue({selected,record}); } }
+                />
+            </TableCell>
+            {/* data columns based on children */}
+            {React.Children.map(children, field => (
+                <TableCell key={`${id}-${field.props.source}`}>
+                    {React.cloneElement(field, {
+                        record,
+                        basePath,
+                        resource,
+                    })}
+                </TableCell>
+            ))}
+        </TableRow>
+      )
+    }
+  const MyDatagridBody = props => <DatagridBody {...props} row={<MyDatagridRow />} />;
+  const MyDatagridUser = props => <Datagrid {...props} body={<MyDatagridBody />} />;
+
+  const UserBulkActionButtons = props => {
+
+    return (
+      <Fragment>
+
+          { (isAuthorized("mass_create") && count == 0 ) ? <EmailComposeButton label="Email" {...props} /> :   <Button label={translate('custom.email.texte.blockUnsubscribe')} startIcon={<BlockIcon />} /> }
           <ResetButton label="Reset email" {...props} />
           {/* default bulk delete action */}
             {/* <BulkDeleteButton {...props} /> */}
-      </>
-  );
+      </Fragment>
+    )
+  };
   const UserFilter = (props) => (
       <Filter {...props}>
           <TextInput source="givenName" label={translate('custom.label.user.givenName')} />
@@ -48,7 +94,7 @@ const UserList = (props) => {
   return (
     <List {...props}
           title="Utilisateurs > liste"
-          perPage={ 25 }
+          perPage={ 10 }
           filters={<UserFilter />}
           sort={{ field: 'id', order: 'ASC' }}
           bulkActionButtons={<UserBulkActionButtons />}
