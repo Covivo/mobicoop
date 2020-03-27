@@ -23,34 +23,30 @@
 
 namespace App\Carpool\DataProvider;
 
-use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Service\AdManager;
-use Symfony\Component\Security\Core\Security;
 
 /**
- * Collection data provider for user's ads.
- *
+ * Item data provider for put Ad.
  */
-final class MyAdCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class AdPutDataProvider implements RestrictedDataProviderInterface, ItemDataProviderInterface
 {
     protected $adManager;
-    protected $security;
-    
-    public function __construct(AdManager $adManager, Security $security)
+
+    public function __construct(AdManager $adManager)
     {
         $this->adManager = $adManager;
-        $this->security = $security;
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Ad::class === $resourceClass && $operationName === "getMyCarpools";
+        return Ad::class === $resourceClass && $operationName === "put";
     }
-    
-    public function getCollection(string $resourceClass, string $operationName = null): ?array
+
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
     {
-        return $this->adManager->getUserAcceptedCarpools($this->security->getUser()->getId());
+        return $this->adManager->updateAd($this->adManager->getFullAd($id));
     }
 }

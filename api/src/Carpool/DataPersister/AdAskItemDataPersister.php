@@ -22,18 +22,17 @@ final class AdAskItemDataPersister implements ContextAwareDataPersisterInterface
   
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Ad;
+        return $data instanceof Ad && isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put_ask';
     }
 
     public function persist($data, array $context = [])
     {
-        if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put_ask') {
-            // call your persistence layer to save $data
-            if (is_null($data)) {
-                throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
-            }
-            $data = $this->askManager->updateAskFromAd($data, $this->request->get("id"), $this->security->getUser()->getId());
+        // call your persistence layer to save $data
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
         }
+        $data = $this->askManager->updateAskFromAd($data, $this->request->get("id"), $this->security->getUser()->getId());
+
         return $data;
     }
 

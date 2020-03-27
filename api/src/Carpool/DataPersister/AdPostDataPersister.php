@@ -21,36 +21,39 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\DataProvider;
+namespace App\Carpool\DataPersister;
 
-use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Service\AdManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
-/**
- * Collection data provider for user's ads.
- *
- */
-final class MyAdCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class AdPostDataPersister implements ContextAwareDataPersisterInterface
 {
-    protected $adManager;
-    protected $security;
-    
-    public function __construct(AdManager $adManager, Security $security)
+    private $request;
+    private $security;
+    private $adManager;
+
+    public function __construct(AdManager $adManager, RequestStack $requestStack, Security $security)
     {
-        $this->adManager = $adManager;
+        $this->request = $requestStack->getCurrentRequest();
         $this->security = $security;
+        $this->adManager = $adManager;
     }
-    
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+  
+    public function supports($data, array $context = []): bool
     {
-        return Ad::class === $resourceClass && $operationName === "getMyCarpools";
+        return $data instanceof Ad && isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'post';
     }
-    
-    public function getCollection(string $resourceClass, string $operationName = null): ?array
+
+    public function persist($data, array $context = [])
     {
-        return $this->adManager->getUserAcceptedCarpools($this->security->getUser()->getId());
+        return $this->adManager->createAd($data);
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }

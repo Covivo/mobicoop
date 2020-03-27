@@ -94,16 +94,18 @@ class AdManager
         $this->eventDispatcher = $eventDispatcher;
         $this->security = $security;
     }
-    
+
     /**
      * Create an ad.
      * This method creates a proposal, and its linked proposal for a return trip.
      * It returns the ad created, with its outward and return results.
      *
-     * @param Ad $ad            The ad to create
+     * @param Ad $ad The ad to create
+     * @param bool $fromUpdate - When we create an Ad in update case, waypoints are Object and not Array
      * @return Ad
+     * @throws \Exception
      */
-    public function createAd(Ad $ad)
+    public function createAd(Ad $ad, bool $fromUpdate = false)
     {
         $this->logger->info("AdManager : start " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -294,62 +296,7 @@ class AdManager
         // waypoints
         foreach ($ad->getOutwardWaypoints() as $position => $point) {
             $waypoint = new Waypoint();
-            $address = new Address();
-            if (isset($point['houseNumber'])) {
-                $address->setHouseNumber($point['houseNumber']);
-            }
-            if (isset($point['street'])) {
-                $address->setStreet($point['street']);
-            }
-            if (isset($point['streetAddress'])) {
-                $address->setStreetAddress($point['streetAddress']);
-            }
-            if (isset($point['postalCode'])) {
-                $address->setPostalCode($point['postalCode']);
-            }
-            if (isset($point['subLocality'])) {
-                $address->setSubLocality($point['subLocality']);
-            }
-            if (isset($point['addressLocality'])) {
-                $address->setAddressLocality($point['addressLocality']);
-            }
-            if (isset($point['localAdmin'])) {
-                $address->setLocalAdmin($point['localAdmin']);
-            }
-            if (isset($point['county'])) {
-                $address->setCounty($point['county']);
-            }
-            if (isset($point['macroCounty'])) {
-                $address->setMacroCounty($point['macroCounty']);
-            }
-            if (isset($point['region'])) {
-                $address->setRegion($point['region']);
-            }
-            if (isset($point['macroRegion'])) {
-                $address->setMacroRegion($point['macroRegion']);
-            }
-            if (isset($point['addressCountry'])) {
-                $address->setAddressCountry($point['addressCountry']);
-            }
-            if (isset($point['countryCode'])) {
-                $address->setCountryCode($point['countryCode']);
-            }
-            if (isset($point['latitude'])) {
-                $address->setLatitude($point['latitude']);
-            }
-            if (isset($point['longitude'])) {
-                $address->setLongitude($point['longitude']);
-            }
-            if (isset($point['elevation'])) {
-                $address->setElevation($point['elevation']);
-            }
-            if (isset($point['name'])) {
-                $address->setName($point['name']);
-            }
-            if (isset($point['home'])) {
-                $address->setHome($point['home']);
-            }
-            $waypoint->setAddress($address);
+            $waypoint->setAddress($this->createAddressFromPoint($point, $fromUpdate));
             $waypoint->setPosition($position);
             $waypoint->setDestination($position == count($ad->getOutwardWaypoints())-1);
             $outwardProposal->addWaypoint($waypoint);
@@ -489,62 +436,7 @@ class AdManager
             }
             foreach ($ad->getReturnWaypoints() as $position => $point) {
                 $waypoint = new Waypoint();
-                $address = new Address();
-                if (isset($point['houseNumber'])) {
-                    $address->setHouseNumber($point['houseNumber']);
-                }
-                if (isset($point['street'])) {
-                    $address->setStreet($point['street']);
-                }
-                if (isset($point['streetAddress'])) {
-                    $address->setStreetAddress($point['streetAddress']);
-                }
-                if (isset($point['postalCode'])) {
-                    $address->setPostalCode($point['postalCode']);
-                }
-                if (isset($point['subLocality'])) {
-                    $address->setSubLocality($point['subLocality']);
-                }
-                if (isset($point['addressLocality'])) {
-                    $address->setAddressLocality($point['addressLocality']);
-                }
-                if (isset($point['localAdmin'])) {
-                    $address->setLocalAdmin($point['localAdmin']);
-                }
-                if (isset($point['county'])) {
-                    $address->setCounty($point['county']);
-                }
-                if (isset($point['macroCounty'])) {
-                    $address->setMacroCounty($point['macroCounty']);
-                }
-                if (isset($point['region'])) {
-                    $address->setRegion($point['region']);
-                }
-                if (isset($point['macroRegion'])) {
-                    $address->setMacroRegion($point['macroRegion']);
-                }
-                if (isset($point['addressCountry'])) {
-                    $address->setAddressCountry($point['addressCountry']);
-                }
-                if (isset($point['countryCode'])) {
-                    $address->setCountryCode($point['countryCode']);
-                }
-                if (isset($point['latitude'])) {
-                    $address->setLatitude($point['latitude']);
-                }
-                if (isset($point['longitude'])) {
-                    $address->setLongitude($point['longitude']);
-                }
-                if (isset($point['elevation'])) {
-                    $address->setElevation($point['elevation']);
-                }
-                if (isset($point['name'])) {
-                    $address->setName($point['name']);
-                }
-                if (isset($point['home'])) {
-                    $address->setHome($point['home']);
-                }
-                $waypoint->setAddress($address);
+                $waypoint->setAddress($this->createAddressFromPoint($point, $fromUpdate));
                 $waypoint->setPosition($position);
                 $waypoint->setDestination($position == count($ad->getReturnWaypoints())-1);
                 $returnProposal->addWaypoint($waypoint);
@@ -604,6 +496,85 @@ class AdManager
         // we set the ad id to the outward proposal id
         $ad->setId($outwardProposal->getId());
         return $ad;
+    }
+
+    /**
+     * Map address
+     *
+     * @param Waypoint|array $point
+     * @param bool $isObject
+     * @return Address
+     */
+    public function createAddressFromPoint($point, bool $isObject = false)
+    {
+        $address = new Address();
+
+        if (!$isObject) {
+            if (isset($point['houseNumber'])) {
+                $address->setHouseNumber($point['houseNumber']);
+            }
+            if (isset($point['street'])) {
+                $address->setStreet($point['street']);
+            }
+            if (isset($point['streetAddress'])) {
+                $address->setStreetAddress($point['streetAddress']);
+            }
+            if (isset($point['postalCode'])) {
+                $address->setPostalCode($point['postalCode']);
+            }
+            if (isset($point['subLocality'])) {
+                $address->setSubLocality($point['subLocality']);
+            }
+            if (isset($point['addressLocality'])) {
+                $address->setAddressLocality($point['addressLocality']);
+            }
+            if (isset($point['localAdmin'])) {
+                $address->setLocalAdmin($point['localAdmin']);
+            }
+            if (isset($point['county'])) {
+                $address->setCounty($point['county']);
+            }
+            if (isset($point['macroCounty'])) {
+                $address->setMacroCounty($point['macroCounty']);
+            }
+            if (isset($point['region'])) {
+                $address->setRegion($point['region']);
+            }
+            if (isset($point['macroRegion'])) {
+                $address->setMacroRegion($point['macroRegion']);
+            }
+            if (isset($point['addressCountry'])) {
+                $address->setAddressCountry($point['addressCountry']);
+            }
+            if (isset($point['countryCode'])) {
+                $address->setCountryCode($point['countryCode']);
+            }
+            if (isset($point['latitude'])) {
+                $address->setLatitude($point['latitude']);
+            }
+            if (isset($point['longitude'])) {
+                $address->setLongitude($point['longitude']);
+            }
+            if (isset($point['elevation'])) {
+                $address->setElevation($point['elevation']);
+            }
+            if (isset($point['name'])) {
+                $address->setName($point['name']);
+            }
+            if (isset($point['home'])) {
+                $address->setHome($point['home']);
+            }
+//            foreach ($point as $key => $value) {
+//                $setter = Deserializer::SETTER_PREFIX.ucwords($key);
+//                if (isset($point[$key])) {
+//                    $address->$setter($value);
+//                }
+//            }
+        } else {
+            $address = clone $point->getAddress();
+        }
+
+        return $address;
     }
 
     /**
@@ -793,11 +764,11 @@ class AdManager
         $ad->setPriceKm($proposal->getCriteria()->getPriceKm());
 
         if ($matching && $matching->getProposalOffer()->getCriteria()->getFromTime()) {
-            $ad->setOutwardTime($ad->getOutwardDate()->format('Y-m-d').' '.$matching->getProposalOffer()->getCriteria()->getFromTime()->format('H:i:s'));
+            $matching->getProposalOffer()->getCriteria()->getFromTime()->format('H:i');
         } elseif ($matching && $matching->getProposalRequest()->getCriteria()->getFromTime()) {
-            $ad->setOutwardTime($ad->getOutwardDate()->format('Y-m-d').' '.$matching->getProposalRequest()->getCriteria()->getFromTime()->format('H:i:s'));
+            $matching->getProposalRequest()->getCriteria()->getFromTime()->format('H:i');
         } elseif ($proposal->getCriteria()->getFromTime()) {
-            $ad->setOutwardTime($ad->getOutwardDate()->format('Y-m-d').' '.$proposal->getCriteria()->getFromTime()->format('H:i:s'));
+            $proposal->getCriteria()->getFromTime()->format('H:i');
         } else {
             $ad->setOutwardTime(null);
         }
@@ -814,7 +785,7 @@ class AdManager
             $ad->setReturnDate($proposal->getProposalLinked()->getCriteria()->getFromDate());
             
             if ($proposal->getProposalLinked()->getCriteria()->getFromTime()) {
-                $ad->setReturnTime($ad->getReturnDate()->format('Y-m-d').' '.$proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i:s'));
+                $ad->setReturnTime($proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i'));
             } else {
                 $ad->setReturnTime(null);
             }
@@ -1021,7 +992,7 @@ class AdManager
      */
     public function updateAd(Ad $ad, ?string $mailSearchLink = null)
     {
-        $proposal = $this->proposalRepository->find($ad->getAdId());
+        $proposal = $this->proposalRepository->find($ad->getId());
         $oldAd = $this->makeAd($proposal, $ad->getUserId());
         $oldProposal = clone $proposal;
         $oldProposal->setCriteria(clone $proposal->getCriteria());
@@ -1044,7 +1015,7 @@ class AdManager
             }
 
             $this->proposalManager->deleteProposal($proposal);
-            $ad = $this->createAd($ad);
+            $ad = $this->createAd($ad, true);
 
         // minor update
         } elseif ($oldAd->hasBike() !== $ad->hasBike()
@@ -1225,7 +1196,7 @@ class AdManager
     /**
      * Compare if new Waypoints are different from the old ones
      * @param $old - Waypoints object from a Proposal
-     * @param $new - waypoint array from front
+     * @param $new - waypoint|address object from front
      * @return bool
      */
     public function compareWaypoints($old, $new)
@@ -1237,7 +1208,7 @@ class AdManager
         for ($i = 0; $i < count($old); $i++) {
             if (!$old[$i] && !$new[$i]) {
                 continue;
-            } elseif (!isset($old[$i]) || !isset($new[$i]) || $old[$i]->getAddress()->getId() !== $new[$i]["id"]) {
+            } elseif (!isset($old[$i]) || !isset($new[$i]) || $old[$i]->getAddress()->getId() !== $new[$i]->getId()) {
                 return false;
             }
         }
