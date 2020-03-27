@@ -48,6 +48,10 @@ use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
+use App\Community\Entity\Community;
+use App\Solidary\Event\SolidaryCreated;
+use App\Solidary\Event\SolidaryUserCreated;
+use App\Solidary\Event\SolidaryUserUpdated;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Entity\UserNotification;
 use App\User\Event\UserDelegateRegisteredEvent;
@@ -132,6 +136,17 @@ class UserManager
     }
 
     /**
+     * Get a user by its email.
+     *
+     * @param string $email
+     * @return User|null
+     */
+    public function getUserByEmail(string $email)
+    {
+        return $this->userRepository->findOneBy(["email"=>$email]);
+    }
+
+    /**
      * Get a user by security token.
      *
      * @return User|null
@@ -140,7 +155,7 @@ class UserManager
     {
         return $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
     }
-    
+
     /**
      * Registers a user.
      *
@@ -149,6 +164,66 @@ class UserManager
      * @return User     The user created
      */
     public function registerUser(User $user, bool $encodePassword=true)
+    {
+        $user = $this->prepareUser($user, $encodePassword);
+
+
+        // Check if there is a SolidaryUser. If so, we need to check if the right role. If there is not, we add it.
+        if (!is_null($user->getSolidaryUser())) {
+            if ($user->getSolidaryUser()->isVolunteer()) {
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
+            }
+            if ($user->getSolidaryUser()->isBeneficiary()) {
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
+            }
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
+        }
+
+        // persist the user
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        // creation of the alert preferences
+        $user = $this->createAlerts($user);
+
+        // dispatch en event
+        if (is_null($user->getUserDelegate())) {
+            // registration by the user itself
+            $event = new UserRegisteredEvent($user);
+            $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
+        } else {
+            // delegate registration
+            $event = new UserDelegateRegisteredEvent($user);
+            $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
+            // send password ?
+            if ($user->getPasswordSendType() == User::PWD_SEND_TYPE_SMS) {
+                $event = new UserDelegateRegisteredPasswordSendEvent($user);
+                $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
+            }
+        }
+
+        // dispatch SolidaryUser event
+        if (!is_null($user->getSolidaryUser())) {
+            $event = new SolidaryUserCreated($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryUserCreated::NAME, $event);
+            $event = new SolidaryCreated($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
+        }
+
+        // return the user
+        return $user;
+    }
+
+    /**
+     * Prepare a user for registration : set default values
+     *
+     * @param User      $user               The user to prepare
+     * @param boolean   $encodePassword     True to encode password
+     * @return User     The prepared user
+     */
+    public function prepareUser(User $user, bool $encodePassword=false)
     {
         if (count($user->getUserAuthAssignments()) == 0) {
             // default role : user registered full
@@ -184,7 +259,7 @@ class UserManager
 
         $unsubscribeToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         $user->setUnsubscribeToken($unsubscribeToken);
-
+        
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -208,6 +283,15 @@ class UserManager
             }
         }
 
+        if (!is_null($user->getCommunityId())) {
+            $communityUser = new CommunityUser();
+            $communityUser->setUser($user);
+            $communityUser->setCommunity($this->communityRepository->find($user->getCommunityId()));
+            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
+            $this->entityManager->persist($communityUser);
+            $this->entityManager->flush();
+        }
+
         // return the user
         return $user;
     }
@@ -221,7 +305,7 @@ class UserManager
     public function updateUser(User $user)
     {
 
-         // activate sms notification if phone validated
+        // activate sms notification if phone validated
         if ($user->getPhoneValidatedDate()) {
             $user = $this->activateSmsNotification($user);
         }
@@ -232,20 +316,62 @@ class UserManager
             // deactivate sms notification since the phone is new
             $user = $this->deActivateSmsNotification($user);
         }
-       
+
         // update of the geotoken
         $datetime = new DateTime();
         $time = $datetime->getTimestamp();
         $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         $user->setGeoToken($geoToken);
+
+
+        // Check if there is a SolidaryUser. If so, we need to check if the right role. If there is not, we add it.
+        if (!is_null($user->getSolidaryUser())) {
+            // Get the authAssignments
+            $userAuthAssignments = $user->getUserAuthAssignments();
+            $authItems = [];
+            foreach ($userAuthAssignments as $userAuthAssignment) {
+                $authItems[] = $userAuthAssignment->getAuthItem()->getId();
+            }
+
+            if ($user->getSolidaryUser()->isVolunteer() && !in_array(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE, $authItems)) {
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
+            }
+            if ($user->getSolidaryUser()->isBeneficiary() && !in_array(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE, $authItems)) {
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
+            }
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
+        }
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         // dispatch an event
         $event = new UserUpdatedSelfEvent($user);
         $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
+        // dispatch SolidaryUser event
+        if (!is_null($user->getSolidaryUser())) {
+            $event = new SolidaryUserCreated($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryUserCreated::NAME, $event);
+            $event = new SolidaryCreated($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
+        }
+        
         // return the user
         return $user;
+    }
+
+    /**
+     * Encode a password for a user
+     *
+     * @param User $user        The user
+     * @param string $password  The password to encode
+     * @return string           The encoded password
+     */
+    public function encodePassword(User $user, string $password)
+    {
+        return $this->encoder->encodePassword($user, $password);
     }
 
     /**
@@ -302,7 +428,7 @@ class UserManager
         return [];
     }
 
-    
+
     /**
      * Build messages threads considering the type (Direct or Carpool)
      * @param User $user    The User involved
@@ -318,7 +444,7 @@ class UserManager
         } else {
             return [];
         }
-        
+
         if (!$threads) {
             return [];
         } else {
@@ -333,7 +459,7 @@ class UserManager
             return $messages;
         }
     }
-    
+
     public function parseThreadsDirectMessages(User $user, array $threads)
     {
         $messages = [];
@@ -372,7 +498,7 @@ class UserManager
 
         foreach ($threads as $ask) {
             $askHistories = $this->askHistoryRepository->findLastAskHistory($ask);
-            
+
             // Only the Ask with at least one AskHistory
             // Only one-way or outward of a round trip.
             if (count($askHistories)>0 && ($ask->getType()==1 || $ask->getType()==2)) {
@@ -445,7 +571,7 @@ class UserManager
     {
         return $this->getThreadsMessages($user, "Carpool");
     }
-    
+
     /**
        * User password change request.
        *
@@ -456,7 +582,7 @@ class UserManager
     {
         // Get the user
         $user = $this->userRepository->findOneBy(["email"=>$data->getEmail()]);
-        
+
         if (!is_null($user)) {
             $datetime = new DateTime();
             $time = $datetime->getTimestamp();
@@ -476,7 +602,7 @@ class UserManager
         }
         return new JsonResponse();
     }
- 
+
     /**
        * User password change confirmation.
        *
@@ -728,7 +854,7 @@ class UserManager
             $this->entityManager->remove($proposal);
         }
         $this->deleteUserImages($user);
-        
+
         $this->entityManager->remove($user);
         $this->entityManager->flush();
     }
@@ -772,7 +898,7 @@ class UserManager
     public function checkValidatedDateToken($data)
     {
         $userFound = $this->userRepository->findOneBy(["validatedDateToken"=>$data->getValidatedDateToken()]);
-        
+
         if (!is_null($userFound)) {
             if ($data->getEmail()===$userFound->getEmail()) {
                 // User found by token match with the given email. We update de validated date, persist, then return the user found
@@ -794,7 +920,7 @@ class UserManager
     public function checkPhoneToken($data)
     {
         $userFound = $this->userRepository->findOneBy(["phoneToken"=>$data->getPhoneToken()]);
-        
+
         if (!is_null($userFound)) {
             if ($data->getTelephone()===$userFound->getTelephone()) {
                 // User found by token match with the given Telephone. We update de validated date, persist, then return the user found
@@ -827,7 +953,19 @@ class UserManager
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-
         return $user;
+    }
+
+    /**
+     * Update the activity of an user
+     *
+     * @param User      $user               The user to update
+     */
+    public function updateActivity(User $user)
+    {
+        $user->setLastActivityDate(new DateTime());
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
     }
 }

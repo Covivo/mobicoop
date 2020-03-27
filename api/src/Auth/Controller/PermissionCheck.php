@@ -23,18 +23,10 @@
 
 namespace App\Auth\Controller;
 
-use App\Geography\Exception\TerritoryNotFoundException;
 use Symfony\Component\HttpFoundation\RequestStack;
-use App\Auth\Service\PermissionManager;
 use Symfony\Component\HttpFoundation\Response;
-use App\Geography\Repository\TerritoryRepository;
-use App\User\Repository\UserRepository;
 use App\Auth\Entity\Permission;
-use App\Auth\Exception\AuthItemException;
-use App\Auth\Exception\AuthItemNotFoundException;
-use App\Auth\Repository\AuthItemRepository;
 use App\Auth\Service\AuthManager;
-use App\User\Exception\UserNotFoundException;
 
 /**
  * Controller class for permission check.

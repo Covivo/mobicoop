@@ -114,7 +114,7 @@ export default props => (
         layout={MyLayout}
     >
       {permissions => {
-        return  [          
+        return  [
           <Resource name={'users'} {...users} />,
           isAuthorized("community_manage")    ? <Resource name={'communities'} {...communities} /> : null,
           isAuthorized("community_manage")    ? <Resource name={'community_users'} {...community_users} /> : null,
@@ -129,9 +129,9 @@ export default props => (
           isAuthorized("permission_manage")   ? <Resource name={'rights'} {...rights} /> : null,
           /*  isAuthorized("territory_manage")    ? <Resource name={'territories'} {...territories} /> : null, */
           /* <Resource name={'proposals'} list={ProposalList} />, Uncomment when proposals will be ready*/
-          <Resource name="addresses" {...adresses} />,
+          <Resource name="addresses" />,
           <Resource name="images" />,
-          <Resource name="roles" />,
+          <Resource name="permissions/roles" />,
           <Resource name="territories" />,
          ];
      }

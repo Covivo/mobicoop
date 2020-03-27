@@ -43,6 +43,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -65,18 +66,20 @@ class UserController extends AbstractController
     private $facebook_appid;
     private $required_home_address;
     private $news_subscription;
+    private $communityShow;
 
     /**
      * Constructor
      * @param UserPasswordEncoderInterface $encoder
      */
-    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address, $news_subscription)
+    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address, $news_subscription, $community_show)
     {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
         $this->facebook_appid = $facebook_appid;
         $this->required_home_address = $required_home_address;
         $this->news_subscription = $news_subscription;
+        $this->community_show = $community_show;
     }
 
     /***********
@@ -114,6 +117,7 @@ class UserController extends AbstractController
 
         $user = new User();
         $address = new Address();
+
         $error = false;
 
         if ($request->isMethod('POST')) {
@@ -149,10 +153,18 @@ class UserController extends AbstractController
             //$user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
             $user->setBirthDate(new DateTime($data['birthDay']));
             //$user->setNewsSubscription by default
+            
             $user->setNewsSubscription(($this->news_subscription==="true") ? true : false);
-
+            // set phone display by default
+            $user->setPhoneDisplay(1);
+            
             if (!is_null($data['idFacebook'])) {
                 $user->setFacebookId($data['idFacebook']);
+            }
+            
+            // join a community
+            if (!is_null($data['community'])) {
+                $user->setcommunityId($data['community']);
             }
 
             // create user in database
@@ -168,12 +180,13 @@ class UserController extends AbstractController
                 "facebook_show"=>($this->facebook_show==="true") ? true : false,
                 "facebook_appid"=>$this->facebook_appid,
                 "required_home_address"=>($this->required_home_address==="true") ? true : false,
+                "community_show"=>($this->community_show==="true") ? true : false
         ]);
     }
 
-    /**
-     * User registration email validation
-     */
+    // /**
+    //  * User registration email validation
+    //  */
     public function userSignUpValidation($token, $email, UserManager $userManager, Request $request)
     {
         $error = "";
@@ -266,13 +279,13 @@ class UserController extends AbstractController
      */
     public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault)
     {
+        $this->denyAccessUnlessGranted('update', $userManager->getLoggedUser());
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
         $reponseofmanager= $this->handleManagerReturnValue($user);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
-        $this->denyAccessUnlessGranted('update', $user);
 
         // get the homeAddress
         $homeAddress = $user->getHomeAddress();
@@ -332,7 +345,7 @@ class UserController extends AbstractController
             'alerts' => $userManager->getAlerts($user)['alerts'],
             'tabDefault' => $tabDefault,
             'ads' => $userManager->getAds($user),
-            'acceptedCarpools' => $userManager->getAds($user, true)
+            'acceptedCarpools' => $userManager->getMyAcceptedProposals($user)
         ]);
     }
 
@@ -908,11 +921,11 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             if (isset($data['email']) && $data['email']!=="") {
-                $user = $userManager->findByEmail($data['email']);
-                if (!is_null($user)) {
-                    return new JsonResponse(['error'=>false, 'message'=>$user->getId()]);
-                } else {
+                $check = $userManager->checkEmail($data['email']);
+                if (is_null($check->getDescription())) {
                     return new JsonResponse(['error'=>false, 'message'=>'']);
+                } else {
+                    return new JsonResponse(['error'=>false, 'message'=>'Email already used']);
                 }
             } else {
                 return new JsonResponse(['error'=>true, 'message'=>'empty email']);
@@ -976,5 +989,16 @@ class UserController extends AbstractController
             }
         }
         return new JsonResponse($userCreatedEvents);
+    }
+
+    /**
+     * Get all proposals with an accepted ask
+     * Ajax
+     */
+    public function userProposalsAccepted(UserManager $userManager)
+    {
+        $user = $userManager->getLoggedUser();
+
+        return new JsonResponse($userManager->getMyAcceptedProposals($user));
     }
 }

@@ -21,43 +21,42 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Controller;
+namespace App\Auth\Controller;
 
-use App\TranslatorTrait;
-use App\User\Service\UserManager;
-use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
+use App\Auth\Entity\AuthItem;
+use App\Auth\Service\AuthManager;
 
 /**
- * Controller class for user delegate registration (password is sent in clear, encoding is made on api side).
+ * Controller class for return roles that user can acess
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class UserDelegateRegistration
+class PermissionsRoles
 {
-    use TranslatorTrait;
-    private $userManager;
     private $request;
+    private $authManager;
 
-    public function __construct(RequestStack $requestStack, UserManager $userManager)
+    public function __construct(RequestStack $requestStack, AuthManager $authManager)
     {
         $this->request = $requestStack->getCurrentRequest();
-        $this->userManager = $userManager;
+        $this->authManager = $authManager;
     }
 
     /**
-     * This method is invoked when a new user registers.
-     * It returns the new user created.
+     * This method is invoked when a permission check is asked.
      *
-     * @param User $data
-     * @return User
+     * @param array $data
+     * @return Response
      */
-    public function __invoke(User $data): User
+    public function __invoke(array $data): ?array
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
-        }
-        $data = $this->userManager->registerUser($data, true);
-        return $data;
+        return $this->authManager->getAuthItems(AuthItem::TYPE_ROLE, true);
+        // if (is_null($data)) {
+        //     throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+        // }
+        // $data = $this->userManager->registerUser($data, true);
+        // return $data;
     }
 }

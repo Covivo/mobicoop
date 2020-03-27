@@ -226,6 +226,13 @@ class ProposalRepository
         $zoneDriverWhere = '';
         $zonePassengerWhere = '';
         if ($proposal->getCriteria()->isDriver()) {
+            // sometimes when updating an Ad (major update, deletion - creation), linked proposal doesnt seem to have DirectionDriver setup while the owner is Driver
+            // and the linkedCriteria isDriver seems to be set to true
+            if (is_null($proposal->getCriteria()->getDirectionDriver())
+                && !is_null($proposal->getProposalLinked())
+                && !is_null($proposal->getProposalLinked()->getCriteria()->getDirectionDriver())) {
+                $proposal->getCriteria()->setDirectionDriver($proposal->getProposalLinked()->getCriteria()->getDirectionDriver());
+            }
             $zonePassengerWhere = "";
             if (self::USE_ZONES) {
                 $precision = $this->getPrecision($proposal->getCriteria()->getDirectionDriver());

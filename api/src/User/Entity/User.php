@@ -33,7 +33,9 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use App\Action\Entity\Diary;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -75,6 +77,7 @@ use App\User\Filter\HomeAddressWaypointTerritoryFilter;
 use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\SolidaryFilter;
+use App\User\Filter\SolidaryCandidateFilter;
 use App\User\Filter\ValidatedDateTokenFilter;
 use App\User\Filter\UnsubscribeTokenFilter;
 use App\Communication\Entity\Notified;
@@ -89,6 +92,8 @@ use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
+use App\Solidary\Entity\SolidaryUser;
+use App\User\Controller\UserCanUseEmail;
 
 /**
  * A user.
@@ -101,18 +106,22 @@ use App\Community\Entity\CommunityUser;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readUser","mass"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"readUser","mass","readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"write","writeSolidary"}}
  *      },
  *      collectionOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"readUser"}},
  *              "security"="is_granted('user_list',object)"
  *          },
+ *          "checkEmail"={
+ *              "method"="GET",
+ *              "path"="/users/checkEmail",
+ *              "security_post_denormalize"="is_granted('user_register',object)"
+ *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/users",
- *              "controller"=UserRegistration::class,
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -156,12 +165,11 @@ use App\Community\Entity\CommunityUser;
  *                      }
  *                  }
  *              },
- *              "security_post_denormalize"="is_granted('user_register',object)"
+ *              "security_post_denormalize"="is_granted('user_create',object)"
  *          },
  *          "delegateRegistration"={
  *              "method"="POST",
  *              "path"="/users/register",
- *              "controller"=UserDelegateRegistration::class,
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -218,7 +226,7 @@ use App\Community\Entity\CommunityUser;
  *                      }
  *                  }
  *              },
- *              "security_post_denormalize"="is_granted('user_create',object)"
+ *              "security_post_denormalize"="is_granted('user_register',object)"
  *          },
  *          "checkSignUpValidationToken"={
  *              "method"="POST",
@@ -239,7 +247,7 @@ use App\Community\Entity\CommunityUser;
  *              "method"="GET",
  *              "path"="/users/me",
  *              "read"="false"
- *          },
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
@@ -311,7 +319,6 @@ use App\Community\Entity\CommunityUser;
  *          "put"={
  *              "method"="PUT",
  *              "path"="/users/{id}",
- *              "controller"=UserUpdate::class,
  *              "security"="is_granted('user_update',object)"
  *          },
  *          "delete_user"={
@@ -347,6 +354,8 @@ use App\Community\Entity\CommunityUser;
  * @ApiFilter(UnsubscribeTokenFilter::class, properties={"unsubscribeToken"})
  * @ApiFilter(ValidatedDateTokenFilter::class, properties={"validatedDateToken"})
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
+ * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary"})
+ * @ApiFilter(SolidaryCandidateFilter::class, properties={"solidaryCandidate"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
@@ -782,6 +791,12 @@ class User implements UserInterface, EquatableInterface
     private $communityUsers;
 
     /**
+    * @var int|null Community choose by a user
+    * @Groups({"readUser","write"})
+    */
+    private $communityId;
+
+    /**
      * @var ArrayCollection|null The asks made for this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="userRelated", cascade={"remove"}, orphanRemoval=true)
@@ -875,7 +890,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A user may have many action logs.
      *
-     * @ORM\OneToMany(targetEntity="\App\User\Entity\Diary", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"readUser","write"})
      */
     private $diaries;
@@ -883,20 +898,10 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A user may have many diary action logs.
      *
-     * @ORM\OneToMany(targetEntity="\App\User\Entity\Diary", mappedBy="admin", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readUser","write"})
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="author", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"write"})
      */
-    private $diariesAdmin;
-
-    /**
-     * @var ArrayCollection|null The solidary records for this user.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
-     * @MaxDepth(1)
-     * @Groups("readUser")
-     * @Apisubresource
-     */
-    private $solidaries;
+    private $diariesAuthor;
 
     /**
     * @var ArrayCollection|null A user may have many user notification preferences.
@@ -1011,6 +1016,22 @@ class User implements UserInterface, EquatableInterface
      */
     private $alreadyRegistered;
 
+
+    /**
+     * @var \DateTimeInterface Last user activity date
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readUser","write"})
+     */
+    private $lastActivityDate;
+
+    /**
+     * The SolidaryUser possibly linked to this User
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user", cascade={"persist","remove"})
+     * @Groups({"readUser","write","readSolidary","writeSolidary"})
+     */
+    private $solidaryUser;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -1031,7 +1052,6 @@ class User implements UserInterface, EquatableInterface
         $this->logsAdmin = new ArrayCollection();
         $this->diaries = new ArrayCollection();
         $this->diariesAdmin = new ArrayCollection();
-        $this->solidaries = new ArrayCollection();
         $this->userNotifications = new ArrayCollection();
         $this->campaigns = new ArrayCollection();
         $this->deliveries = new ArrayCollection();
@@ -1123,7 +1143,7 @@ class User implements UserInterface, EquatableInterface
         return $this->proEmail;
     }
 
-    public function setProEmail(string $proEmail): self
+    public function setProEmail(?string $proEmail): self
     {
         $this->proEmail = $proEmail;
 
@@ -1740,6 +1760,16 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getCommunityId(): ?int
+    {
+        return $this->communityId;
+    }
+    
+    public function setCommunityId($communityId)
+    {
+        $this->communityId = $communityId;
+    }
+
     public function getUserAuthAssignments()
     {
         return $this->userAuthAssignments->getValues();
@@ -1757,6 +1787,7 @@ class User implements UserInterface, EquatableInterface
 
     public function removeUserAuthAssignment(UserAuthAssignment $userAuthAssignment): self
     {
+        // This contains... does'nt seem to work
         if ($this->userAuthAssignments->contains($userAuthAssignment)) {
             $this->userAuthAssignments->removeElement($userAuthAssignment);
             // set the owning side to null (unless already changed)
@@ -1964,56 +1995,28 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getDiariesAdmin()
+    public function getDiariesAuthor()
     {
-        return $this->diariesAdmin->getValues();
+        return $this->diariesAuthor->getValues();
     }
 
-    public function addDiaryAdmin(Diary $diaryAdmin): self
+    public function addDiaryAuthor(Diary $diaryAuthor): self
     {
-        if (!$this->diariesAdmin->contains($diaryAdmin)) {
-            $this->diariesAdmin->add($diaryAdmin);
-            $diaryAdmin->setAdmin($this);
+        if (!$this->diariesAuthor->contains($diaryAuthor)) {
+            $this->diariesAuthor->add($diaryAuthor);
+            $diaryAuthor->setAuthor($this);
         }
 
         return $this;
     }
 
-    public function removeDiaryAdmin(Diary $diaryAdmin): self
+    public function removeDiaryAuthor(Diary $diaryAdmin): self
     {
-        if ($this->diariesAdmin->contains($diaryAdmin)) {
-            $this->diariesAdmin->removeElement($diaryAdmin);
+        if ($this->diariesAuthor->contains($diaryAdmin)) {
+            $this->diariesAuthor->removeElement($diaryAdmin);
             // set the owning side to null (unless already changed)
-            if ($diaryAdmin->getAdmin() === $this) {
-                $diaryAdmin->setAdmin(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getSolidaries()
-    {
-        return $this->solidaries->getValues();
-    }
-
-    public function addSolidary(Solidary $solidary): self
-    {
-        if (!$this->solidaries->contains($solidary)) {
-            $this->solidaries->add($solidary);
-            $solidary->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSolidary(Solidary $solidary): self
-    {
-        if ($this->solidaries->contains($solidary)) {
-            $this->solidaries->removeElement($solidary);
-            // set the owning side to null (unless already changed)
-            if ($solidary->getUser() === $this) {
-                $solidary->setUser(null);
+            if ($diaryAdmin->getAuthor() === $this) {
+                $diaryAdmin->setAuthor(null);
             }
         }
 
@@ -2201,7 +2204,7 @@ class User implements UserInterface, EquatableInterface
         return $this->validatedDate;
     }
 
-    public function setValidatedDate(\DateTimeInterface $validatedDate): self
+    public function setValidatedDate(?\DateTimeInterface $validatedDate): self
     {
         $this->validatedDate = $validatedDate;
 
@@ -2398,6 +2401,34 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getSolidaryUser(): ?SolidaryUser
+    {
+        return $this->solidaryUser;
+    }
+
+    public function setSolidaryUser(?SolidaryUser $solidaryUser): self
+    {
+        $this->solidaryUser = $solidaryUser;
+
+        return $this;
+    }
+
+    public function getRefresh()
+    {
+        return $this->email;
+    }
+
+    public function getLastActivityDate(): ?\DateTimeInterface
+    {
+        return $this->lastActivityDate;
+    }
+
+    public function setLastActivityDate(?\DateTimeInterface $lastActivityDate): self
+    {
+        $this->lastActivityDate = $lastActivityDate;
+
+        return $this;
+    }
 
     // DOCTRINE EVENTS
 

@@ -19,6 +19,8 @@ user:
 carpool:
     ad_create:
         title: 'Publier une annonce de covoiturage'
+    ad_update:
+        title: 'Modifier votre annonce de covoiturage'
     results:
         title: 'Résultats de covoiturage'
 contact:

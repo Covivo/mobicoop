@@ -41,6 +41,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use App\Carpool\Entity\Proposal;
 use App\Community\Controller\JoinAction;
+use App\RelayPoint\Entity\RelayPoint;
 
 /**
  * A community : a group of users sharing common interests.
@@ -202,7 +203,7 @@ class Community
      * @var int|null The type of validation (automatic/manual/domain).
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"readCommunity","write"})
+     * @Groups({"readCommunity","write", "communities"})
      */
     private $validationType;
 
@@ -312,6 +313,16 @@ class Community
      * @ApiSubresource(maxDepth=1)
      */
     private $communitySecurities;
+
+    /**
+     * @var ArrayCollection|null The relay points related to the community.
+     *
+     * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readCommunity","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $relayPoints;
     
     /**
      * @var boolean|null If the current user asking is member of the community
@@ -326,6 +337,7 @@ class Community
         $this->proposals = new ArrayCollection();
         $this->communityUsers = new ArrayCollection();
         $this->communitySecurities = new ArrayCollection();
+        $this->relayPoints = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -573,6 +585,34 @@ class Community
             // set the owning side to null (unless already changed)
             if ($communitySecurity->getCommunity() === $this) {
                 $communitySecurity->setCommunity(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getRelayPoints()
+    {
+        return $this->relayPoints->getValues();
+    }
+    
+    public function addRelayPoint(RelayPoint $relayPoint): self
+    {
+        if (!$this->relayPoints->contains($relayPoint)) {
+            $this->relayPoint[] = $relayPoint;
+            $relayPoint->setCommunity($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeRelayPoint(RelayPoint $relayPoint): self
+    {
+        if ($this->relayPoint->contains($relayPoint)) {
+            $this->relayPoint->removeElement($relayPoint);
+            // set the owning side to null (unless already changed)
+            if ($relayPoint->getCommunity() === $this) {
+                $relayPoint->setCommunity(null);
             }
         }
         

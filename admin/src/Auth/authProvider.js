@@ -29,13 +29,14 @@ export default (type, params) => {
                     return response.json();
                 })
                 .then(({ token }) => {
+
                     const decodedToken = decodeJwt(token);
                     if (!decodedToken.admin) throw new Error('Unauthorized');
                     localStorage.setItem('token', token);
                     localStorage.setItem('roles', decodedToken.roles);
                     localStorage.setItem('id', decodedToken.id);
                     const options = {}
-                    let val = false;
+
                     const apiPermissions = process.env.REACT_APP_API+'/permissions';
                     const httpClient = fetchUtils.fetchJson;
                     if (!options.headers) {
@@ -43,25 +44,23 @@ export default (type, params) => {
                     }
                     options.headers.set('Authorization', `Bearer ${localStorage.token}`);
 
-
-
-                    const callPermissions =  httpClient(apiPermissions, {
+                    return httpClient(apiPermissions, {
                           method: 'GET',
                           headers : options.headers
                       }).then( retour => {
                           if (retour.status = '200') {
-                              localStorage.setItem('permissions', retour.body);
+                              localStorage.setItem('permission', retour.body);
                           }
-                      });
+                      })
 
-                   return {id: decodedToken.id, token};
+
                 });
 
         case AUTH_LOGOUT:
             localStorage.removeItem('token');
             localStorage.removeItem('roles');
             localStorage.removeItem('id');
-            localStorage.removeItem('permissions');
+            localStorage.removeItem('permission');
             return Promise.resolve();
 
         case AUTH_ERROR:
@@ -69,7 +68,7 @@ export default (type, params) => {
                 localStorage.removeItem('token');
                 localStorage.removeItem('roles');
                 localStorage.removeItem('id');
-                localStorage.removeItem('permissions');
+                localStorage.removeItem('permission');
                 return Promise.reject();
             }
 

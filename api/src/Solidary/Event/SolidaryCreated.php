@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,38 +21,39 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Controller;
+namespace App\Solidary\Event;
 
-use App\Solidary\Entity\Solidary;
-use App\Solidary\Service\SolidaryManager;
-use App\TranslatorTrait;
+use App\App\Entity\App;
+use Symfony\Contracts\EventDispatcher\Event;
+use App\User\Entity\User;
 
-class SolidaryProposalPost
+/**
+ * Event sent when a solidary is created
+ */
+class SolidaryCreated extends Event
 {
-    use TranslatorTrait;
+    public const NAME = 'solidary_create';
 
-    /**
-     * @var SolidaryManager
-     */
-    private $solidaryManager;
+    protected $user;
+    protected $author;
 
-    public function __construct(SolidaryManager $solidaryManager)
+    public function __construct(User $user, $author)
     {
-        $this->solidaryManager = $solidaryManager;
+        $this->user = $user;
+        $this->author = $author;
+        // If it's an App, it means that this User registered himself from the front
+        if ($author instanceof App) {
+            $this->author = $user;
+        }
     }
 
-    /**
-     * This method is invoked when a new ask is posted.
-     *
-     * @param Solidary $data
-     * @return Solidary
-     */
-    public function __invoke(Solidary $data): Solidary
+    public function getUser()
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Solidary id is provided"));
-        }
-//        $data = $this->solidaryManager->createSolidary($data);
-        return $data;
+        return $this->user;
+    }
+
+    public function getAuthor()
+    {
+        return $this->author;
     }
 }

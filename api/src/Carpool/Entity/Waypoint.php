@@ -63,7 +63,7 @@ class Waypoint
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","results","write","threads","thread"})
+     * @Groups({"read","results","write","threads","thread", "readCommunity"})
      */
     private $position;
 

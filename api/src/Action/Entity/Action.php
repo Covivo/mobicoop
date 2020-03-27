@@ -40,7 +40,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\HasLifecycleCallbacks
  * ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","readUser"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
@@ -59,7 +59,20 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Action
 {
-    
+    const TYPE_ACTION_AUTO = 0;
+    const TYPE_ACTION_TAKING_ACCOUNT_ASK = 1;
+    const TYPE_ACTION_SOLUTION_FINDING = 2;
+    const TYPE_ACTION_FOLLOW_UP_CARPOOL = 3;
+    const TYPE_ACTION_CLOSING_ASK = 4;
+
+    const ACTION_TYPE_NAME = [
+        self::TYPE_ACTION_AUTO => "Automatique",
+        self::TYPE_ACTION_TAKING_ACCOUNT_ASK => "Prise en compte de la demande",
+        self::TYPE_ACTION_SOLUTION_FINDING => "Recherche de solution",
+        self::TYPE_ACTION_FOLLOW_UP_CARPOOL => "Suivi du covoiturage",
+        self::TYPE_ACTION_CLOSING_ASK => "Clôture de la demande"
+    ];
+
     /**
      * @var int The id of this action.
      *
@@ -76,9 +89,23 @@ class Action
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","readUser"})
      */
     private $name;
+
+    /**
+     * @var int The type of this action.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups("read")
+     */
+    private $type;
+
+    /**
+     * @var string The name of the type of this action.
+     * @Groups("read")
+     */
+    private $typeName;
 
     /**
      * @var bool The action has to be logged in the log system.
@@ -97,9 +124,9 @@ class Action
     private $inDiary;
 
     /**
-     * @var int|null The progression in percent if the action can be related to a solidary record.
+     * @var int|null The progression if the action can be related to a process (like for solidary records). It's a numeric value, so it can be a percent, a step...
      *
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
      * @Groups({"read","write"})
      */
     private $progression;
@@ -114,6 +141,7 @@ class Action
 
     /**
      * @var \DateTimeInterface Creation date.
+     * Nullable for now as actions are manually inserted.
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -152,6 +180,30 @@ class Action
         return $this;
     }
 
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+    
+    public function setType(int $type): self
+    {
+        $this->type = $type;
+        
+        return $this;
+    }
+
+    public function getTypeName(): ?string
+    {
+        return self::ACTION_TYPE_NAME[$this->getType()];
+    }
+    
+    public function setTypeName(string $typeName): self
+    {
+        $this->type = $typeName;
+        
+        return $this;
+    }
+
     public function isInLog(): ?bool
     {
         return $this->inLog;
@@ -176,12 +228,12 @@ class Action
         return $this;
     }
 
-    public function getProgression(): ?int
+    public function getProgression(): ?string
     {
         return $this->progression;
     }
 
-    public function setProgression(?int $progression): self
+    public function setProgression(?string $progression): self
     {
         $this->progression = $progression;
 

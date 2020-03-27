@@ -80,11 +80,10 @@ export const CommunityEdit = (props) => {
                         <List {...props}
                             perPage={ 50 }
                             actions={null}
-                            sort={{ field: 'id', order: 'ASC' }}
                             title=": composition"
                         >
                             <Datagrid>
-                                <UserReferenceField label={translate('custom.label.community.member')} source="user" reference="users" />
+                                <UserReferenceField label={translate('custom.label.community.member')} source="user" sortBy="user.givenName" reference="users" />
                                 <SelectField source="status" label={translate('custom.label.community.status')} choices={statusChoices} />
                                 <EditButtonWithBackLink backTo={'/communities/' + encodeURIComponent(communityId) } />
                                 <DeleteButton onClick={()=> redirect('edit', '/communities', encodeURIComponent(communityId))} />

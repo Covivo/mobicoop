@@ -26,6 +26,7 @@ namespace App\User\Security;
 use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use App\User\Entity\User;
+use App\Solidary\Entity\SolidaryUser;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -70,7 +71,7 @@ class UserVoter extends Voter
             self::USER_LIST,
             self::USER_PASSWORD,
             self::USER_REGISTER
-            ]) && !($subject instanceof Paginator) && !($subject instanceof User)) {
+            ]) && !($subject instanceof Paginator) && !($subject instanceof User || $subject instanceof SolidaryUser)) {
             return false;
         }
         return true;
@@ -82,11 +83,14 @@ class UserVoter extends Voter
             case self::USER_CREATE:
                 return $this->canCreateUser();
             case self::USER_READ:
-                return $this->canReadUser($subject);
+                ($subject instanceof SolidaryUser) ? $user = $subject->getUser() : $user = $subject;
+                return $this->canReadUser($user);
             case self::USER_UPDATE:
-                return $this->canUpdateUser($subject);
+                ($subject instanceof SolidaryUser) ? $user = $subject->getUser() : $user = $subject;
+                return $this->canUpdateUser($user);
             case self::USER_DELETE:
-                return $this->canDeleteUser($subject);
+                ($subject instanceof SolidaryUser) ? $user = $subject->getUser() : $user = $subject;
+                return $this->canDeleteUser($user);
             case self::USER_LIST:
                 return $this->canListUser();
             case self::USER_PASSWORD:

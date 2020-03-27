@@ -76,16 +76,15 @@ class ResultManager
      * Create "user-friendly" results from the matchings of an ad proposal
      *
      * @param Proposal $proposal    The proposal with its matchings
-     * @param bool $acceptedAsks    If we want to get private ads where there is at least one accepted ask
      * @return array                The array of results
      */
-    public function createAdResults(Proposal $proposal, bool $acceptedAsks = null)
+    public function createAdResults(Proposal $proposal)
     {
         // the outward results are the base results
-        $results = $this->createProposalResults($proposal, false, $acceptedAsks);
+        $results = $this->createProposalResults($proposal, false);
         $returnResults = [];
         if ($proposal->getProposalLinked()) {
-            $returnResults = $this->createProposalResults($proposal->getProposalLinked(), true, $acceptedAsks);
+            $returnResults = $this->createProposalResults($proposal->getProposalLinked(), true);
         }
 
         // the outward results are the base
@@ -141,7 +140,7 @@ class ResultManager
      *
      * @param Result $result
      * @param array $waypoints
-     * @return void
+     * @return Result
      */
     private function createGlobalResult(Result $result, array $waypoints)
     {
@@ -343,8 +342,12 @@ class ResultManager
         // pending or accepted ask linked ?
         $result->setPendingAsk(false);
         $result->setAcceptedAsk(false);
+        $result->setInitiatedAsk(false);
         if ($result->getResultDriver()) {
             if ($result->getResultDriver()->getOutward()) {
+                if ($result->getResultDriver()->getOutward()->hasInitiatedAsk()) {
+                    $result->setInitiatedAsk(true);
+                }
                 if ($result->getResultDriver()->getOutward()->hasPendingAsk()) {
                     $result->setPendingAsk(true);
                 }
@@ -353,6 +356,9 @@ class ResultManager
                 }
             }
             if ($result->getResultDriver()->getReturn()) {
+                if ($result->getResultDriver()->getReturn()->hasInitiatedAsk()) {
+                    $result->setInitiatedAsk(true);
+                }
                 if ($result->getResultDriver()->getReturn()->hasPendingAsk()) {
                     $result->setPendingAsk(true);
                 }
@@ -363,6 +369,9 @@ class ResultManager
         }
         if ($result->getResultPassenger()) {
             if ($result->getResultPassenger()->getOutward()) {
+                if ($result->getResultPassenger()->getOutward()->hasInitiatedAsk()) {
+                    $result->setInitiatedAsk(true);
+                }
                 if ($result->getResultPassenger()->getOutward()->hasPendingAsk()) {
                     $result->setPendingAsk(true);
                 }
@@ -371,6 +380,9 @@ class ResultManager
                 }
             }
             if ($result->getResultPassenger()->getReturn()) {
+                if ($result->getResultPassenger()->getReturn()->hasInitiatedAsk()) {
+                    $result->setInitiatedAsk(true);
+                }
                 if ($result->getResultPassenger()->getReturn()->hasPendingAsk()) {
                     $result->setPendingAsk(true);
                 }
@@ -388,10 +400,9 @@ class ResultManager
      *
      * @param Proposal $proposal The proposal
      * @param boolean $return The result is for the return trip
-     * @param bool $handleAcceptedAsks Do not exclude private proposal if there is an accepted ask in matchings
      * @return array
      */
-    private function createProposalResults(Proposal $proposal, bool $return = false, bool $handleAcceptedAsks = null)
+    private function createProposalResults(Proposal $proposal, bool $return = false)
     {
         $results = [];
         // we group the matchings by matching proposalId to merge potential driver and/or passenger candidates
@@ -399,23 +410,10 @@ class ResultManager
         // we search the matchings as an offer
         /** @var Matching $request */
         foreach ($proposal->getMatchingRequests() as $request) {
-            if ($handleAcceptedAsks) {
-                $acceptedAsks = array_filter($request->getAsks(), function ($ask) {
-                    return $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || Ask::STATUS_ACCEPTED_AS_PASSENGER;
-                });
-                $hasAcceptedAsks = count($acceptedAsks) > 0;
-
-                // we exclude the private proposals if there is no accepted asks
-                if (!$hasAcceptedAsks && ($request->getProposalRequest()->isPrivate() || $request->getProposalRequest()->isPaused())) {
-                    continue;
-                }
-            } else {
-                // we exclude the private proposals
-                if ($request->getProposalRequest()->isPrivate() || $request->getProposalRequest()->isPaused()) {
-                    continue;
-                }
+            // we exclude the private proposals
+            if ($request->getProposalRequest()->isPrivate() || $request->getProposalRequest()->isPaused()) {
+                continue;
             }
-
             // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
             if (is_null($request->getFilters() && is_null($request->getPickUpDuration()))) {
                 $request->setFilters($this->proposalMatcher->getMatchingFilters($request));
@@ -424,22 +422,10 @@ class ResultManager
         }
         // we search the matchings as a request
         foreach ($proposal->getMatchingOffers() as $offer) {
-            if ($handleAcceptedAsks) {
-                $acceptedAsks = array_filter($offer->getAsks(), function ($ask) {
-                    return $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || Ask::STATUS_ACCEPTED_AS_PASSENGER;
-                });
-                $hasAcceptedAsks = count($acceptedAsks) > 0;
-                // we exclude the private proposals if there is no accepted asks
-                if (!$hasAcceptedAsks && $offer->getProposalOffer()->isPrivate() || $offer->getProposalOffer()->isPaused()) {
-                    continue;
-                }
-            } else {
-                // we exclude the private proposals
-                if ($offer->getProposalOffer()->isPrivate() || $offer->getProposalOffer()->isPaused()) {
-                    continue;
-                }
+            // we exclude the private proposals
+            if ($offer->getProposalOffer()->isPrivate() || $offer->getProposalOffer()->isPaused()) {
+                continue;
             }
-
             // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
             if (is_null($offer->getFilters() && is_null($offer->getPickUpDuration()))) {
                 $offer->setFilters($this->proposalMatcher->getMatchingFilters($offer));
@@ -978,10 +964,13 @@ class ResultManager
             // check if an ask exists
             $item->setPendingAsk(false);
             $item->setAcceptedAsk(false);
+            $item->setInitiatedAsk(false);
             if (count($matching['request']->getAsks())) {
                 foreach ($matching['request']->getAsks() as $ask) {
                     switch ($ask->getStatus()) {
                         case Ask::STATUS_INITIATED:
+                            $item->setInitiatedAsk(true);
+                            break;
                         case Ask::STATUS_PENDING_AS_DRIVER:
                         case Ask::STATUS_PENDING_AS_PASSENGER:
                             $item->setPendingAsk(true);
@@ -1010,6 +999,8 @@ class ResultManager
                         foreach ($asks as $ask) {
                             switch ($ask->getStatus()) {
                                     case Ask::STATUS_INITIATED:
+                                        $item->setInitiatedAsk(true);
+                                        break;
                                     case Ask::STATUS_PENDING_AS_DRIVER:
                                     case Ask::STATUS_PENDING_AS_PASSENGER:
                                         $item->setPendingAsk(true);
@@ -1519,10 +1510,13 @@ class ResultManager
             // check if an ask exists
             $item->setPendingAsk(false);
             $item->setAcceptedAsk(false);
+            $item->setInitiatedAsk(false);
             if (count($matching['offer']->getAsks())) {
                 foreach ($matching['offer']->getAsks() as $ask) {
                     switch ($ask->getStatus()) {
                         case Ask::STATUS_INITIATED:
+                            $item->setInitiatedAsk(true);
+                            break;
                         case Ask::STATUS_PENDING_AS_DRIVER:
                         case Ask::STATUS_PENDING_AS_PASSENGER:
                             $item->setPendingAsk(true);
@@ -1551,6 +1545,8 @@ class ResultManager
                         foreach ($asks as $ask) {
                             switch ($ask->getStatus()) {
                                     case Ask::STATUS_INITIATED:
+                                        $item->setInitiatedAsk(true);
+                                        break;
                                     case Ask::STATUS_PENDING_AS_DRIVER:
                                     case Ask::STATUS_PENDING_AS_PASSENGER:
                                         $item->setPendingAsk(true);
@@ -1805,11 +1801,26 @@ class ResultManager
         $item = new ResultItem();
 
         $driverFromTime = null;
+
+        $filters = $ask->getFilters();
+        $pickupDuration = null;
+        foreach ($filters['route'] as $value) {
+            if ($value['candidate'] == 2 && $value['position'] == 0) {
+                $pickupDuration = (int)round($value['duration']);
+                break;
+            }
+        }
         if ($ask->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
             // the ask is punctual; for now the time are the same
             // todo : use the real requester time if it has only been copied from the carpooler time
             $item->setDate($ask->getCriteria()->getFromDate());
-            $item->setTime($ask->getCriteria()->getFromTime());
+            $time = $ask->getCriteria()->getFromTime();
+            if ($role == Ad::ROLE_DRIVER) {
+                $time = $time->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+            } else {
+                $time = $time->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+            }
+            $item->setTime($time);
         } else {
             // the ask is regular, the days depends on the ask status
             $item->setMonCheck($ask->getCriteria()->isMonCheck());
@@ -1860,16 +1871,9 @@ class ResultManager
                 // it can be the case after a regular search, as the times are not asked
                 if ($role == Ad::ROLE_DRIVER) {
                     // we calculate the starting time so that the driver will get the carpooler on the carpooler time
-                    $filters = $ask->getFilters();
-                    $pickupDuration = null;
-                    foreach ($filters['route'] as $value) {
-                        if ($value['candidate'] == 2 && $value['position'] == 0) {
-                            $pickupDuration = (int)round($value['duration']);
-                            break;
-                        }
-                    }
                     // we init the time to the one of the carpooler
-                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isMonCheck()) {
+                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isMonCheck()
+                        && !is_null($ask->getMatching()->getProposalRequest()->getCriteria()->getMonTime())) {
                         $monTime = clone $ask->getMatching()->getProposalRequest()->getCriteria()->getMonTime();
                         if ($pickupDuration) {
                             $monTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
@@ -1877,7 +1881,8 @@ class ResultManager
                         $item->setMonTime($monTime);
                         $item->setTime($monTime);
                     }
-                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isTueCheck()) {
+                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isTueCheck()
+                        && !is_null($ask->getMatching()->getProposalRequest()->getCriteria()->getTueTime())) {
                         $tueTime = clone $ask->getMatching()->getProposalRequest()->getCriteria()->getTueTime();
                         if ($pickupDuration) {
                             $tueTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
@@ -1885,7 +1890,8 @@ class ResultManager
                         $item->setTueTime($tueTime);
                         $item->setTime($tueTime);
                     }
-                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isWedCheck()) {
+                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isWedCheck()
+                        && !is_null($ask->getMatching()->getProposalRequest()->getCriteria()->getWedTime())) {
                         $wedTime = clone $ask->getMatching()->getProposalRequest()->getCriteria()->getWedTime();
                         if ($pickupDuration) {
                             $wedTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
@@ -1893,7 +1899,8 @@ class ResultManager
                         $item->setWedTime($wedTime);
                         $item->setTime($wedTime);
                     }
-                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isThuCheck()) {
+                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isThuCheck()
+                        && !is_null($ask->getMatching()->getProposalRequest()->getCriteria()->getThuTime())) {
                         $thuTime = clone $ask->getMatching()->getProposalRequest()->getCriteria()->getThuTime();
                         if ($pickupDuration) {
                             $thuTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
@@ -1901,7 +1908,8 @@ class ResultManager
                         $item->setThuTime($thuTime);
                         $item->setTime($thuTime);
                     }
-                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isFriCheck()) {
+                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isFriCheck()
+                        && !is_null($ask->getMatching()->getProposalRequest()->getCriteria()->getFriTime())) {
                         $friTime = clone $ask->getMatching()->getProposalRequest()->getCriteria()->getFriTime();
                         if ($pickupDuration) {
                             $friTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
@@ -1909,7 +1917,8 @@ class ResultManager
                         $item->setFriTime($friTime);
                         $item->setTime($friTime);
                     }
-                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isSatCheck()) {
+                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isSatCheck()
+                        && !is_null($ask->getMatching()->getProposalRequest()->getCriteria()->getSatTime())) {
                         $satTime = clone $ask->getMatching()->getProposalRequest()->getCriteria()->getSatTime();
                         if ($pickupDuration) {
                             $satTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
@@ -1917,7 +1926,8 @@ class ResultManager
                         $item->setSatTime($satTime);
                         $item->setTime($satTime);
                     }
-                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isSunCheck()) {
+                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isSunCheck()
+                        && !is_null($ask->getMatching()->getProposalRequest()->getCriteria()->getSunTime())) {
                         $sunTime = clone $ask->getMatching()->getProposalRequest()->getCriteria()->getSunTime();
                         if ($pickupDuration) {
                             $sunTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
@@ -1926,17 +1936,10 @@ class ResultManager
                         $item->setTime($sunTime);
                     }
                 } else {
-                    $filters = $ask->getFilters();
-                    $pickupDuration = null;
-                    foreach ($filters['route'] as $value) {
-                        if ($value['candidate'] == 2 && $value['position'] == 0) {
-                            $pickupDuration = (int)round($value['duration']);
-                            break;
-                        }
-                    }
                     // we init the time to the one of the carpooler
                     // as the times are not set, it means the offer times are not set, that's why we use the request times !
-                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isMonCheck()) {
+                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isMonCheck()
+                        && !is_null($ask->getMatching()->getProposalRequest()->getCriteria()->getMonTime())) {
                         $monTime = clone $ask->getMatching()->getProposalRequest()->getCriteria()->getMonTime();
                         $driverFromTime = clone $monTime;
                         if ($pickupDuration) {
@@ -1945,7 +1948,8 @@ class ResultManager
                         $item->setMonTime($monTime);
                         $item->setTime($monTime);
                     }
-                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isTueCheck()) {
+                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isTueCheck()
+                        && !is_null($ask->getMatching()->getProposalRequest()->getCriteria()->getTueTime())) {
                         $tueTime = clone $ask->getMatching()->getProposalRequest()->getCriteria()->getTueTime();
                         $driverFromTime = clone $tueTime;
                         if ($pickupDuration) {
@@ -1954,7 +1958,8 @@ class ResultManager
                         $item->setTueTime($tueTime);
                         $item->setTime($tueTime);
                     }
-                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isWedCheck()) {
+                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isWedCheck()
+                        && !is_null($ask->getMatching()->getProposalRequest()->getCriteria()->getWedTime())) {
                         $wedTime = clone $ask->getMatching()->getProposalRequest()->getCriteria()->getWedTime();
                         $driverFromTime = clone $wedTime;
                         if ($pickupDuration) {
@@ -1963,7 +1968,8 @@ class ResultManager
                         $item->setWedTime($wedTime);
                         $item->setTime($wedTime);
                     }
-                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isThuCheck()) {
+                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isThuCheck()
+                        && !is_null($ask->getMatching()->getProposalRequest()->getCriteria()->getThuTime())) {
                         $thuTime = clone $ask->getMatching()->getProposalRequest()->getCriteria()->getThuTime();
                         $driverFromTime = clone $thuTime;
                         if ($pickupDuration) {
@@ -1972,7 +1978,8 @@ class ResultManager
                         $item->setThuTime($thuTime);
                         $item->setTime($thuTime);
                     }
-                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isFriCheck()) {
+                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isFriCheck()
+                        && !is_null($ask->getMatching()->getProposalRequest()->getCriteria()->getFriTime())) {
                         $friTime = clone $ask->getMatching()->getProposalRequest()->getCriteria()->getFriTime();
                         $driverFromTime = clone $friTime;
                         if ($pickupDuration) {
@@ -1981,7 +1988,8 @@ class ResultManager
                         $item->setFriTime($friTime);
                         $item->setTime($friTime);
                     }
-                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isSatCheck()) {
+                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isSatCheck()
+                        && !is_null($ask->getMatching()->getProposalRequest()->getCriteria()->getSatTime())) {
                         $satTime = clone $ask->getMatching()->getProposalRequest()->getCriteria()->getSatTime();
                         $driverFromTime = clone $satTime;
                         if ($pickupDuration) {
@@ -1990,9 +1998,150 @@ class ResultManager
                         $item->setSatTime($satTime);
                         $item->setTime($satTime);
                     }
-                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isSunCheck()) {
+                    if ($ask->getMatching()->getProposalRequest()->getCriteria()->isSunCheck()
+                        && !is_null($ask->getMatching()->getProposalRequest()->getCriteria()->getSunTime())) {
                         $sunTime = clone $ask->getMatching()->getProposalRequest()->getCriteria()->getSunTime();
                         $driverFromTime = clone $sunTime;
+                        if ($pickupDuration) {
+                            $sunTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setSunTime($sunTime);
+                        $item->setTime($sunTime);
+                    }
+                }
+            }
+            // we update times with pick up duration based on role
+            else {
+                if ($role == Ad::ROLE_DRIVER) {
+                    if ($item->isMonCheck()
+                        && !is_null($item->getMonTime())) {
+                        $monTime = $item->getMonTime();
+                        if ($pickupDuration) {
+                            $monTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setMonTime($monTime);
+                        $item->setTime($monTime);
+                    }
+                    if ($item->isTueCheck()
+                        && !is_null($item->getTueTime())) {
+                        $tueTime = $item->getTueTime();
+                        if ($pickupDuration) {
+                            $tueTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setTueTime($tueTime);
+                        $item->setTime($tueTime);
+                    }
+                    if ($item->isWedCheck()
+                        && !is_null($item->getWedTime())) {
+                        $wedTime = $item->getWedTime();
+                        if ($pickupDuration) {
+                            $wedTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setWedTime($wedTime);
+                        $item->setTime($wedTime);
+                    }
+                    if ($item->isThuCheck()
+                        && !is_null($item->getThuTime())) {
+                        $thuTime = $item->getThuTime();
+                        if ($pickupDuration) {
+                            $thuTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setThuTime($thuTime);
+                        $item->setTime($thuTime);
+                    }
+                    if ($item->isFriCheck()
+                        && !is_null($item->getFriTime())) {
+                        $friTime = $item->getFriTime();
+                        if ($pickupDuration) {
+                            $friTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setFriTime($friTime);
+                        $item->setTime($friTime);
+                    }
+                    if ($item->isSatCheck()
+                        && !is_null($item->getSatTime())) {
+                        $satTime = $item->getSatTime();
+                        if ($pickupDuration) {
+                            $satTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setSatTime($satTime);
+                        $item->setTime($satTime);
+                    }
+                    if ($item->isSunCheck()
+                        && !is_null($item->getSunTime())) {
+                        $sunTime = $item->getSunTime();
+                        if ($pickupDuration) {
+                            $sunTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setSunTime($sunTime);
+                        $item->setTime($sunTime);
+                    }
+                }
+                if ($role == Ad::ROLE_PASSENGER) {
+                    if ($item->isMonCheck()
+                        && !is_null($item->getMonTime())) {
+                        $monTime = $item->getMonTime();
+                        $driverFromTime = $monTime;
+                        if ($pickupDuration) {
+                            $monTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setMonTime($monTime);
+                        $item->setTime($monTime);
+                    }
+                    if ($item->isTueCheck()
+                        && !is_null($item->getTueTime())) {
+                        $tueTime = $item->getTueTime();
+                        $driverFromTime = $tueTime;
+                        if ($pickupDuration) {
+                            $tueTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setTueTime($tueTime);
+                        $item->setTime($tueTime);
+                    }
+                    if ($item->isWedCheck()
+                        && !is_null($item->getWedTime())) {
+                        $wedTime = $item->getWedTime();
+                        $driverFromTime = $wedTime;
+                        if ($pickupDuration) {
+                            $wedTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setWedTime($wedTime);
+                        $item->setTime($wedTime);
+                    }
+                    if ($item->isThuCheck()
+                        && !is_null($item->getThuTime())) {
+                        $thuTime = $item->getThuTime();
+                        $driverFromTime = $thuTime;
+                        if ($pickupDuration) {
+                            $thuTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setThuTime($thuTime);
+                        $item->setTime($thuTime);
+                    }
+                    if ($item->isFriCheck()
+                        && !is_null($item->getFriTime())) {
+                        $friTime = $item->getFriTime();
+                        $driverFromTime = $friTime;
+                        if ($pickupDuration) {
+                            $friTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setFriTime($friTime);
+                        $item->setTime($friTime);
+                    }
+                    if ($item->isSatCheck()
+                        && !is_null($item->getSatTime())) {
+                        $satTime = $item->getSatTime();
+                        $driverFromTime = $satTime;
+                        if ($pickupDuration) {
+                            $satTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                        }
+                        $item->setSatTime($satTime);
+                        $item->setTime($satTime);
+                    }
+                    if ($item->isSunCheck()
+                        && !is_null($item->getSunTime())) {
+                        $sunTime = $item->getSunTime();
+                        $driverFromTime = $sunTime;
                         if ($pickupDuration) {
                             $sunTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                         }
@@ -2016,30 +2165,30 @@ class ResultManager
         } else {
             $time = $driverFromTime ? clone $driverFromTime : null;
         }
-        
+
         // we will have to compute the number of steps for each candidate
         $steps = [
             'requester' => 0,
             'carpooler' => 0
         ];
         // first pass to get the maximum position fo each candidate
-        foreach ($ask->getFilters()['route'] as $key=>$waypoint) {
+        foreach ($ask->getFilters()['route'] as $key => $waypoint) {
             if ($role == Ad::ROLE_DRIVER) {
-                if ($waypoint['candidate'] == 1 && (int)$waypoint['position']>$steps['requester']) {
+                if ($waypoint['candidate'] == 1 && (int)$waypoint['position'] > $steps['requester']) {
                     $steps['requester'] = (int)$waypoint['position'];
-                } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position']>$steps['carpooler']) {
+                } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position'] > $steps['carpooler']) {
                     $steps['carpooler'] = (int)$waypoint['position'];
                 }
             } else {
-                if ($waypoint['candidate'] == 1 && (int)$waypoint['position']>$steps['carpooler']) {
+                if ($waypoint['candidate'] == 1 && (int)$waypoint['position'] > $steps['carpooler']) {
                     $steps['carpooler'] = (int)$waypoint['position'];
-                } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position']>$steps['requester']) {
+                } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position'] > $steps['requester']) {
                     $steps['requester'] = (int)$waypoint['position'];
                 }
             }
         }
         // second pass to fill the waypoints array
-        foreach ($ask->getFilters()['route'] as $key=>$waypoint) {
+        foreach ($ask->getFilters()['route'] as $key => $waypoint) {
             $curTime = null;
             if ($time) {
                 $curTime = clone $time;
@@ -2052,7 +2201,7 @@ class ResultManager
                     'id' => $key,
                     'person' => $waypoint['candidate'] == 1 ? 'requester' : 'carpooler',
                     'role' => $waypoint['candidate'] == 1 ? 'driver' : 'passenger',
-                    'time' =>  $curTime,
+                    'time' => $curTime,
                     'address' => $waypoint['address'],
                     'type' => $waypoint['position'] == '0' ? 'origin' :
                         (
@@ -2065,7 +2214,7 @@ class ResultManager
                     'id' => $key,
                     'person' => $waypoint['candidate'] == 1 ? 'carpooler' : 'requester',
                     'role' => $waypoint['candidate'] == 1 ? 'driver' : 'passenger',
-                    'time' =>  $curTime,
+                    'time' => $curTime,
                     'address' => $waypoint['address'],
                     'type' => $waypoint['position'] == '0' ? 'origin' :
                         (
@@ -2102,7 +2251,7 @@ class ResultManager
             }
         }
         $item->setWaypoints($waypoints);
-        
+
         // statistics
         $item->setOriginalDistance($ask->getFilters()['originalDistance']);
         $item->setAcceptedDetourDistance($ask->getFilters()['acceptedDetourDistance']);
@@ -2126,5 +2275,43 @@ class ResultManager
         $item->setComputedRoundedPrice($ask->getCriteria()->getPassengerComputedRoundedPrice());
 
         return $item;
+    }
+
+    /**
+     * Create "user-friendly" results for the asks of an ad
+     * An Ad can have multiple asks, all linked (as a driver, as a passenger, each for outward and return)
+     * The results are different if they are computed for the driver or the passenger
+     * In that case, since the carpool is accepted we know the role so we only need the result of that role.
+     *
+     * @param Ask $ask The master ask
+     * @param int $userId The id of the user that makes the request
+     * @param int $role
+     * @return Result|void The array of results
+     */
+    public function createSimpleAskResults(Ask $ask, int $userId, int $role)
+    {
+        $result = new Result();
+        $result->setId($ask->getId());
+
+        $resultDriver = null;
+        $resultPassenger = null;
+
+        if ($role == Ad::ROLE_DRIVER) {
+            $resultDriver = $this->createAskResultRole($ask, $role);
+        } else {
+            $resultPassenger = $this->createAskResultRole($ask, $role);
+        }
+        
+        $result->setResultDriver($resultDriver);
+        $result->setResultPassenger($resultPassenger);
+        
+        // create the global result
+        $result->setCarpooler($ask->getUser()->getId() == $userId ? $ask->getUserRelated() : $ask->getUser());
+        $result->setFrequency($ask->getCriteria()->getFrequency());
+        $result->setFrequencyResult($ask->getCriteria()->getFrequency());
+        $result = $this->createGlobalResult($result, $ask->getWaypoints());
+
+        // return the result
+        return $result;
     }
 }

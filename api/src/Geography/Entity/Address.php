@@ -101,7 +101,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})
  */
 
-class Address
+class Address implements \JsonSerializable
 {
     const DEFAULT_ID = 999999999999;
     const HOME_ADDRESS = "homeAddress";
@@ -705,5 +705,34 @@ class Address
         $this->community = $community;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+            [
+                'id'                   => $this->getId(),
+                'houseNumber'          => $this->getHouseNumber(),
+                'street'               => $this->getStreet(),
+                'streetAddress'        => $this->getStreetAddress(),
+                'postalCode'           => $this->getPostalCode(),
+                'addressLocality'      => $this->getAddressLocality(),
+                'name'                 => $this->getName(),
+                'addressCountry'       => $this->getAddressCountry(),
+                'countryCode'          => $this->getCountryCode(),
+                'county'               => $this->getCounty(),
+                'latitude'             => $this->getLatitude(),
+                'localAdmin'           => $this->getLocalAdmin(),
+                'longitude'            => $this->getLongitude(),
+                'macroCounty'          => $this->getMacroCounty(),
+                'macroRegion'          => $this->getMacroRegion(),
+                'region'               => $this->getRegion(),
+                'subLocality'          => $this->getSubLocality(),
+                'displayLabel'         => $this->getDisplayLabel(),
+                'home'                 => $this->isHome(),
+                'icon'                 => $this->getIcon(),
+                'venue'                => $this->getVenue(),
+                'event'                => $this->getEvent()
+            ];
     }
 }
