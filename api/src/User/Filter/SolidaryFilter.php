@@ -24,6 +24,7 @@ namespace App\User\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\Auth\Entity\AuthItem;
 use Doctrine\ORM\QueryBuilder;
 use App\Solidary\Entity\Solidary;
 
@@ -37,40 +38,11 @@ final class SolidaryFilter extends AbstractContextAwareFilter
 
         // we will create a new querybuilder for retrieving the solidary users, to avoid modifying the one used for the original query
         $em = $queryBuilder->getEntityManager();
-        $sr = $em->getRepository(Solidary::class);
 
-        if ($value === "true") {
-            $value = 1;
-        } elseif ($value === "false") {
-            $value = 0;
-        }
-
-        // /!\ boolean filters return a string value, like 'true' or 'false' /!\
-        if ($value == 1) {
-            $queryBuilder
-                ->andWhere(
-                    $queryBuilder->expr()->in(
-                        'u.id',
-                        $sr->createQueryBuilder('qbs')
-                        ->select('IDENTITY(s.user)')
-                        ->distinct()
-                        ->from('\App\Solidary\entity\Solidary', 's')
-                        ->getDQL()
-                    )
-                );
-        } elseif ($value == 0) {
-            $queryBuilder
-                ->andWhere(
-                    $queryBuilder->expr()->notIn(
-                        'u.id',
-                        $sr->createQueryBuilder('qbs')
-                        ->select('IDENTITY(s.user)')
-                        ->distinct()
-                        ->from('\App\Solidary\entity\Solidary', 's')
-                        ->getDQL()
-                    )
-                );
-        }
+        $queryBuilder
+        ->leftJoin('u.userAuthAssignments', 'uaa')
+        ->leftJoin('uaa.authItem', 'ai')
+        ->andWhere('ai.id in ('.AuthItem::ROLE_SOLIDARY_BENEFICIARY.','.AuthItem::ROLE_SOLIDARY_VOLUNTEER.')');
 
         return;
     }
