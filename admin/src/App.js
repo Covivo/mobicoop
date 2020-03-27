@@ -53,7 +53,7 @@ const theme = createMuiTheme({
       background: {
         paper: `#${process.env.REACT_APP_THEME_BACKGROUND_PAPER_COLOR}`,
         default: `#${process.env.REACT_APP_THEME_BACKGROUND_DEFAULT_COLOR}`
-      }
+      },
     },
     /*
     overrides: {
