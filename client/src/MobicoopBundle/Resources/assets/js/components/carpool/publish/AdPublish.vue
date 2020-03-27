@@ -563,6 +563,7 @@
         outlined
         color="secondary"
         align-center
+        style="margin-bottom: 30px;"
         @click="--step"
       >
         {{ $t('stepper.buttons.previous') }}

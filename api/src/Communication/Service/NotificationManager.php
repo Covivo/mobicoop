@@ -410,6 +410,9 @@ class NotificationManager
                 case User::class:
                     $bodyContext = ['user'=>$recipient];
                     break;
+                case Message::class:
+                    $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
+                    break;
                 default:
                     if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
                         $outwardOrigin = null;

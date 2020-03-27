@@ -219,52 +219,7 @@ class AdManager
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
             $outwardCriteria->setToDate($ad->getOutwardLimitDate() ? $ad->getOutwardLimitDate() : null);
             $hasSchedule = false;
-            foreach ($ad->getSchedule() as $schedule) {
-                if ($schedule['outwardTime'] != '') {
-                    if (isset($schedule['mon']) && $schedule['mon']) {
-                        $hasSchedule = true;
-                        $outwardCriteria->setMonCheck(true);
-                        $outwardCriteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $outwardCriteria->setMonMarginDuration($this->params['defaultMarginTime']);
-                    }
-                    if (isset($schedule['tue']) && $schedule['tue']) {
-                        $hasSchedule = true;
-                        $outwardCriteria->setTueCheck(true);
-                        $outwardCriteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $outwardCriteria->setTueMarginDuration($this->params['defaultMarginTime']);
-                    }
-                    if (isset($schedule['wed']) && $schedule['wed']) {
-                        $hasSchedule = true;
-                        $outwardCriteria->setWedCheck(true);
-                        $outwardCriteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $outwardCriteria->setWedMarginDuration($this->params['defaultMarginTime']);
-                    }
-                    if (isset($schedule['thu']) && $schedule['thu']) {
-                        $hasSchedule = true;
-                        $outwardCriteria->setThuCheck(true);
-                        $outwardCriteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $outwardCriteria->setThuMarginDuration($this->params['defaultMarginTime']);
-                    }
-                    if (isset($schedule['fri']) && $schedule['fri']) {
-                        $hasSchedule = true;
-                        $outwardCriteria->setFriCheck(true);
-                        $outwardCriteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $outwardCriteria->setFriMarginDuration($this->params['defaultMarginTime']);
-                    }
-                    if (isset($schedule['sat']) && $schedule['sat']) {
-                        $hasSchedule = true;
-                        $outwardCriteria->setSatCheck(true);
-                        $outwardCriteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $outwardCriteria->setSatMarginDuration($this->params['defaultMarginTime']);
-                    }
-                    if (isset($schedule['sun']) && $schedule['sun']) {
-                        $hasSchedule = true;
-                        $outwardCriteria->setSunCheck(true);
-                        $outwardCriteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $outwardCriteria->setSunMarginDuration($this->params['defaultMarginTime']);
-                    }
-                }
-            }
+            $this->createTimesFromSchedule($ad->getSchedule(), $outwardCriteria, $fromUpdate);
             if (!$hasSchedule && !$ad->isSearch()) {
                 // for a post, we need aschedule !
                 throw new AdException('At least one day should be selected for a regular trip');
@@ -289,7 +244,8 @@ class AdManager
             // punctual
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
             // if the time is not set we use the current time for an ad post, and null for a search
-            $outwardCriteria->setFromTime($ad->getOutwardTime() ? \DateTime::createFromFormat('H:i', $ad->getOutwardTime()) : (!$ad->isSearch() ? new \DateTime() : null));
+            $format = $fromUpdate ? 'Y-m-d H:i:s' : 'H:i';
+            $outwardCriteria->setFromTime($ad->getOutwardTime() ? \DateTime::createFromFormat($format, $ad->getOutwardTime()) : (!$ad->isSearch() ? new \DateTime() : null));
             $outwardCriteria->setMarginDuration($this->params['defaultMarginTime']);
         }
 
@@ -578,6 +534,65 @@ class AdManager
     }
 
     /**
+     * @param $schedule
+     * @param bool $isObject
+     */
+    public function createTimesFromSchedule($schedules, Criteria $criteria, bool $isObject)
+    {
+        if ($fromUpdate) {
+
+        }
+        foreach ($schedules as $schedule) {
+            if ($schedule['outwardTime'] != '') {
+                if (isset($schedule['mon']) && $schedule['mon']) {
+                    $hasSchedule = true;
+                    $criteria->setMonCheck(true);
+                    $criteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
+                    $criteria->setMonMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (isset($schedule['tue']) && $schedule['tue']) {
+                    $hasSchedule = true;
+                    $criteria->setTueCheck(true);
+                    $criteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
+                    $criteria->setTueMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (isset($schedule['wed']) && $schedule['wed']) {
+                    $hasSchedule = true;
+                    $criteria->setWedCheck(true);
+                    $criteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
+                    $criteria->setWedMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (isset($schedule['thu']) && $schedule['thu']) {
+                    $hasSchedule = true;
+                    $criteria->setThuCheck(true);
+                    $criteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
+                    $criteria->setThuMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (isset($schedule['fri']) && $schedule['fri']) {
+                    $hasSchedule = true;
+                    $criteria->setFriCheck(true);
+                    $criteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
+                    $criteria->setFriMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (isset($schedule['sat']) && $schedule['sat']) {
+                    $hasSchedule = true;
+                    $criteria->setSatCheck(true);
+                    $criteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
+                    $criteria->setSatMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (isset($schedule['sun']) && $schedule['sun']) {
+                    $hasSchedule = true;
+                    $criteria->setSunCheck(true);
+                    $criteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
+                    $criteria->setSunMarginDuration($this->params['defaultMarginTime']);
+                }
+            }
+        }
+
+        return $criteria;
+    }
+
+    /**
      * Get an ad.
      * Returns the ad, with its outward and return results.
      *
@@ -698,9 +713,13 @@ class AdManager
         $refIdProposals = [];
         foreach ($community->getProposals() as $proposal) {
             if (!in_array($proposal->getId(), $refIdProposals) && !$proposal->isPrivate()) {
-                $ads[] = $this->makeAdForCommunityOrEvent($proposal);
-                if (!is_null($proposal->getProposalLinked())) {
-                    $refIdProposals[$proposal->getId()] = $proposal->getProposalLinked()->getId();
+                // we check if the proposal is still valid if yes we retrieve the proposal
+                $LimitDate = $proposal->getCriteria()->getToDate() ? $proposal->getCriteria()->getToDate() : $proposal->getCriteria()->getFromDate();
+                if ($LimitDate >= new \DateTime()) {
+                    $ads[] = $this->makeAdForCommunityOrEvent($proposal);
+                    if (!is_null($proposal->getProposalLinked())) {
+                        $refIdProposals[$proposal->getId()] = $proposal->getProposalLinked()->getId();
+                    }
                 }
             }
         }
@@ -754,7 +773,6 @@ class AdManager
         $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
         $ad->setUserId($userId);
         $ad->setOutwardWaypoints($proposal->getWaypoints());
-        $ad->setOutwardDate($proposal->getCriteria()->getFromDate());
         $ad->setPaused($proposal->isPaused());
         $ad->setOutwardDriverPrice($proposal->getCriteria()->getDriverComputedRoundedPrice());
         $ad->setBike($proposal->getCriteria()->hasBike());
@@ -764,12 +782,19 @@ class AdManager
         $ad->setPriceKm($proposal->getCriteria()->getPriceKm());
 
         if ($matching && $matching->getProposalOffer()->getCriteria()->getFromTime()) {
-            $matching->getProposalOffer()->getCriteria()->getFromTime()->format('H:i');
+            $date = $matching->getProposalOffer()->getCriteria()->getFromDate();
+            $ad->setOutwardDate($date);
+            $ad->setOutwardTime($date->format('Y-m-d').' '.$matching->getProposalOffer()->getCriteria()->getFromTime()->format('H:i:s'));
         } elseif ($matching && $matching->getProposalRequest()->getCriteria()->getFromTime()) {
-            $matching->getProposalRequest()->getCriteria()->getFromTime()->format('H:i');
+            $date = $matching->getProposalRequest()->getCriteria()->getFromDate();
+            $ad->setOutwardDate($date);
+            $ad->setOutwardTime($date->format('Y-m-d').' '.$matching->getProposalRequest()->getCriteria()->getFromTime()->format('H:i:s'));
         } elseif ($proposal->getCriteria()->getFromTime()) {
-            $proposal->getCriteria()->getFromTime()->format('H:i');
+            $date = $proposal->getCriteria()->getFromDate();
+            $ad->setOutwardDate($date);
+            $ad->setOutwardTime($date->format('Y-m-d').' '.$proposal->getCriteria()->getFromTime()->format('H:i:s'));
         } else {
+            $ad->setOutwardDate($proposal->getCriteria()->getFromDate());
             $ad->setOutwardTime(null);
         }
 
@@ -930,7 +955,6 @@ class AdManager
     private function makeAdForCommunityOrEvent(Proposal $proposal)
     {
         $ad = new Ad();
-                
         $ad->setId($proposal->getId());
         $ad->setUser($proposal->getUser());
         $ad->setFrequency($proposal->getCriteria()->getFrequency());
@@ -940,37 +964,27 @@ class AdManager
         $ad->setOutwardWaypoints($proposal->getWaypoints());
         $ad->setOutwardDate($proposal->getCriteria()->getFromDate());
         $ad->setPaused($proposal->isPaused());
-
         if ($proposal->getCriteria()->getFromTime()) {
             $ad->setOutwardTime($ad->getOutwardDate()->format('Y-m-d').' '.$proposal->getCriteria()->getFromTime()->format('H:i:s'));
         } else {
             $ad->setOutwardTime(null);
         }
-
-
         $ad->setOutwardLimitDate($proposal->getCriteria()->getToDate());
         $ad->setOneWay(true);
         $ad->setSolidary($proposal->getCriteria()->isSolidary());
         $ad->setSolidaryExclusive($proposal->getCriteria()->isSolidaryExclusive());
-
-        
         // set return if twoWays ad
         if ($proposal->getProposalLinked()) {
             $ad->setReturnWaypoints($proposal->getProposalLinked()->getWaypoints());
             $ad->setReturnDate($proposal->getProposalLinked()->getCriteria()->getFromDate());
-            
             if ($proposal->getProposalLinked()->getCriteria()->getFromTime()) {
                 $ad->setReturnTime($ad->getReturnDate()->format('Y-m-d').' '.$proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i:s'));
             } else {
                 $ad->setReturnTime(null);
             }
-
-
-
             $ad->setReturnLimitDate($proposal->getProposalLinked()->getCriteria()->getToDate());
             $ad->setOneWay(false);
         }
-
         // set schedule if regular
         $schedule = [];
         if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
@@ -1014,7 +1028,7 @@ class AdManager
                 $this->eventDispatcher->dispatch(AdMajorUpdatedEvent::NAME, $event);
             }
 
-            $this->proposalManager->deleteProposal($proposal);
+//            $this->proposalManager->deleteProposal($proposal);
             $ad = $this->createAd($ad, true);
 
         // minor update
@@ -1054,6 +1068,31 @@ class AdManager
         }
 
         $this->entityManager->flush();
+
+
+        $schedule['mon'] = $proposal->getCriteria()->isMonCheck();
+        $schedule['monOutwardTime'] = $proposal->getCriteria()->getMonTime();
+        $schedule['monReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getMonTime() : null;
+        $schedule['tue'] = $proposal->getCriteria()->isTueCheck();
+        $schedule['tueOutwardTime'] = $proposal->getCriteria()->getTueTime();
+        $schedule['tueReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getTueTime() : null;
+        $schedule['wed'] = $proposal->getCriteria()->isWedCheck();
+        $schedule['wedOutwardTime'] = $proposal->getCriteria()->getWedTime();
+        $schedule['wedReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getWedTime() : null;
+        $schedule['thu'] = $proposal->getCriteria()->isThuCheck();
+        $schedule['thuOutwardTime'] = $proposal->getCriteria()->getThuTime();
+        $schedule['thuReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getThuTime() : null;
+        $schedule['fri'] = $proposal->getCriteria()->isFriCheck();
+        $schedule['friOutwardTime'] = $proposal->getCriteria()->getFriTime();
+        $schedule['friReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getFriTime() : null;
+        $schedule['sat'] = $proposal->getCriteria()->isSatCheck();
+        $schedule['satOutwardTime'] = $proposal->getCriteria()->getSatTime();
+        $schedule['satReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getSatTime() : null;
+        $schedule['sun'] = $proposal->getCriteria()->isSunCheck();
+        $schedule['sunOutwardTime'] = $proposal->getCriteria()->getSunTime();
+        $schedule['sunReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getSunTime() : null;
+
+        $ad->setSchedule($schedule);
 
         return $ad;
     }

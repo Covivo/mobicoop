@@ -415,7 +415,7 @@ community_list:
 community_get_list:
     methods: [POST]
     path:
-        fr: /community/getCommunityList
+        fr: /communaute/liste-des-communautes
         en: /community/getCommunityList
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityList
 

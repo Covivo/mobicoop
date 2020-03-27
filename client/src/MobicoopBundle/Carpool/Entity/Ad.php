@@ -942,7 +942,6 @@ class Ad implements ResourceInterface, \JsonSerializable
 
     public function getOrigin()
     {
-//        dump($this->getOutwardWaypoints());die;
         if (!empty($this->getOutwardWaypoints())) {
             $origin = $this->getOutwardWaypoints()[array_search(0, array_column($this->getOutwardWaypoints(), 'position'))];
             if (isset($origin['@type']) && $origin["@type"] === "Address") {

@@ -43,6 +43,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -65,18 +66,20 @@ class UserController extends AbstractController
     private $facebook_appid;
     private $required_home_address;
     private $news_subscription;
+    private $communityShow;
 
     /**
      * Constructor
      * @param UserPasswordEncoderInterface $encoder
      */
-    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address, $news_subscription)
+    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address, $news_subscription, $community_show)
     {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
         $this->facebook_appid = $facebook_appid;
         $this->required_home_address = $required_home_address;
         $this->news_subscription = $news_subscription;
+        $this->community_show = $community_show;
     }
 
     /***********
@@ -114,6 +117,7 @@ class UserController extends AbstractController
 
         $user = new User();
         $address = new Address();
+
         $error = false;
 
         if ($request->isMethod('POST')) {
@@ -149,12 +153,18 @@ class UserController extends AbstractController
             //$user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
             $user->setBirthDate(new DateTime($data['birthDay']));
             //$user->setNewsSubscription by default
+            
             $user->setNewsSubscription(($this->news_subscription==="true") ? true : false);
-            //$user phone display preference by default
+            // set phone display by default
             $user->setPhoneDisplay(1);
             
             if (!is_null($data['idFacebook'])) {
                 $user->setFacebookId($data['idFacebook']);
+            }
+            
+            // join a community
+            if (!is_null($data['community'])) {
+                $user->setcommunityId($data['community']);
             }
 
             // create user in database
@@ -170,12 +180,13 @@ class UserController extends AbstractController
                 "facebook_show"=>($this->facebook_show==="true") ? true : false,
                 "facebook_appid"=>$this->facebook_appid,
                 "required_home_address"=>($this->required_home_address==="true") ? true : false,
+                "community_show"=>($this->community_show==="true") ? true : false
         ]);
     }
 
-    /**
-     * User registration email validation
-     */
+    // /**
+    //  * User registration email validation
+    //  */
     public function userSignUpValidation($token, $email, UserManager $userManager, Request $request)
     {
         $error = "";
@@ -333,8 +344,8 @@ class UserController extends AbstractController
             'error' => $error,
             'alerts' => $userManager->getAlerts($user)['alerts'],
             'tabDefault' => $tabDefault,
-            'ads' => $userManager->getAds($user),
-            'acceptedCarpools' => $userManager->getMyAcceptedProposals($user)
+            'ads' => $userManager->getAds(),
+            'acceptedCarpools' => $userManager->getAds(true)
         ]);
     }
 

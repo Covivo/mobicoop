@@ -14,7 +14,7 @@ import {
 
 import EmailComposeButton from '../Email/EmailComposeButton';
 import ResetButton from '../Utilities/ResetButton';
-
+import MyDatagrid from '../Utilities/MyDatagrid';
 
 const UserList = (props) => {
 
@@ -32,6 +32,7 @@ const UserList = (props) => {
       <Filter {...props}>
           <TextInput source="givenName" label={translate('custom.label.user.givenName')} />
           <TextInput source="familyName" label={translate('custom.label.user.familyName')} alwaysOn />
+          <TextInput source="email" label={translate('custom.label.user.email')} alwaysOn />
           <BooleanInput source="solidary" label={translate('custom.label.user.solidary')} allowEmpty={false} defaultValue={true} />
           <ReferenceInput
               source="homeAddressODTerritory"
@@ -55,17 +56,17 @@ const UserList = (props) => {
           exporter={false}
           hasCreate={isAuthorized('user_create')}
     >
-        <Datagrid rowClick="show">
+        <MyDatagrid  rowClick="show">
             <TextField source="originId" label={translate('custom.label.user.id')} sortBy="id"/>
             <TextField source="givenName" label={translate('custom.label.user.givenName')}  />
             <TextField source="familyName" label={translate('custom.label.user.familyName')} />
+            <EmailField source="email" label={translate('custom.label.user.email')} />
             <BooleanField source="newsSubscription" label={translate('custom.label.user.accepteEmail')}/>
             <DateField source="createdDate" label={translate('custom.label.user.createdDate')}/>
-            <DateField source="lastActivityDate" label={translate('custom.label.user.lastActivityDate')}/>
             {isAuthorized("user_update") &&
             <EditButton />
             }
-        </Datagrid>
+        </MyDatagrid>
     </List>
   )
 };

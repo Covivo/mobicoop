@@ -52,5 +52,10 @@ final class MyAdCollectionDataProvider implements CollectionDataProviderInterfac
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return $this->adManager->getUserAcceptedCarpools($this->security->getUser()->getId());
+        // if (is_null($data)) {
+        //     throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+        // }
+        // $data = $this->userManager->registerUser($data, false);
+        // return $data;
     }
 }

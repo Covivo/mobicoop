@@ -31,6 +31,7 @@
           src="/images/avatarsDefault/avatar.svg"
           aspect-ratio="1"
           class="grey lighten-2"
+          contain
           max-width="200"
           max-height="200"
         />
