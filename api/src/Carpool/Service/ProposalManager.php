@@ -236,22 +236,26 @@ class ProposalManager
             $this->logger->info("ProposalManager : end persist " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
         
-        // TODO : see which events send !!!
-
-        // $matchingOffers = $proposal->getMatchingOffers();
-        // $matchingRequests = $proposal->getMatchingRequests();
-        // $matchings=[];
-        // while (($item = array_shift($matchingOffers)) !== null && array_push($matchings, $item));
-        // while (($item = array_shift($matchingRequests)) !== null && array_push($matchings, $item));
-        // if ($persist) {
-        //     $matchingForEvent = null;
-        //     foreach ($matchings as $matching) {
-        //         $matchingForEvent = $matching; // TO DO : Choose the right matching for the event
-        //         // dispatch en event
-        //         // maybe send a unique event for all matchings ?
-        //         $event = new MatchingNewEvent($matching, $proposal->getUser());
-        //         $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
-        //     }
+        
+        if (!$proposal->isPrivate() || !$proposal->isPaused()) {
+            // TODO : see which events send !!!
+            $matchingOffers = [];
+            $matchingRequests = [];
+            if ($proposal->getCriteria()->isDriver()) {
+                $matchingOffers = $proposal->getMatchingOffers();
+            } else {
+                $matchingRequests = $proposal->getMatchingRequests();
+            }
+            $matchings=[];
+            while (($item = array_shift($matchingOffers)) !== null && array_push($matchings, $item));
+            while (($item = array_shift($matchingRequests)) !== null && array_push($matchings, $item));
+            if ($persist) {
+                foreach ($matchings as $matching) {
+                    $event = new MatchingNewEvent($matching, $proposal->getUser());
+                    $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
+                }
+            }
+        }
 
         //     // dispatch en event
         //     $event = new ProposalPostedEvent($proposal);
@@ -1294,7 +1298,7 @@ class ProposalManager
      * @return Response
      * @throws \Exception
      */
-    public function deleteProposal(Proposal $proposal, ?array $body)
+    public function deleteProposal(Proposal $proposal, ?array $body = null)
     {
         $asks = $this->askManager->getAsksFromProposal($proposal);
         if (count($asks) > 0) {

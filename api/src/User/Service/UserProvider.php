@@ -59,7 +59,7 @@ class UserProvider implements UserProviderInterface
         } elseif ($app = $this->appManager->getAppByUsername($username)) {
             return $app;
         }
-    
+
         throw new UsernameNotFoundException(
             sprintf('Username "%s" does not exist.', $username)
         );

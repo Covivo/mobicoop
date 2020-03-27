@@ -48,6 +48,7 @@ use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
+use App\Community\Entity\Community;
 use App\Solidary\Event\SolidaryCreated;
 use App\Solidary\Event\SolidaryUserCreated;
 use App\Solidary\Event\SolidaryUserUpdated;
@@ -258,7 +259,40 @@ class UserManager
 
         $unsubscribeToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         $user->setUnsubscribeToken($unsubscribeToken);
+        
+        // persist the user
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
+        // creation of the alert preferences
+        $user = $this->createAlerts($user);
+
+        // dispatch en event
+        if (is_null($user->getUserDelegate())) {
+            // registration by the user itself
+            $event = new UserRegisteredEvent($user);
+            $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
+        } else {
+            // delegate registration
+            $event = new UserDelegateRegisteredEvent($user);
+            $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
+            // send password ?
+            if ($user->getPasswordSendType() == User::PWD_SEND_TYPE_SMS) {
+                $event = new UserDelegateRegisteredPasswordSendEvent($user);
+                $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
+            }
+        }
+
+        if (!is_null($user->getCommunityId())) {
+            $communityUser = new CommunityUser();
+            $communityUser->setUser($user);
+            $communityUser->setCommunity($this->communityRepository->find($user->getCommunityId()));
+            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
+            $this->entityManager->persist($communityUser);
+            $this->entityManager->flush();
+        }
+
+        // return the user
         return $user;
     }
 
@@ -921,5 +955,18 @@ class UserManager
         $this->entityManager->flush();
 
         return $user;
+    }
+
+    /**
+     * Update the activity of an user
+     *
+     * @param User      $user               The user to update
+     */
+    public function updateActivity(User $user)
+    {
+        $user->setLastActivityDate(new DateTime());
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
     }
 }

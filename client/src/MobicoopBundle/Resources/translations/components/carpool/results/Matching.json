@@ -9,7 +9,7 @@
     "externalJourneyUrl": "/covoiturage/rdexJourney",
     "search": "Recherche en cours...",
     "newSearch": "Nouvelle recherche",
-    "AskNewSearch": "Réessayer avec une autre date?",
+    "AskNewSearch": "Réessayer en modifiant votre recherche ? Un autre itinéraire ?",
     "matchingNumber": "Aucune annonce en covoiturage trouvée... | {number} annonce en covoiturage trouvée | {number} annonces en covoiturage trouvées",
     "includePassengers":"Voir aussi les annonces passager",
     "alsoIncludePassengers":"Cette recherche contient également les annonces passager",

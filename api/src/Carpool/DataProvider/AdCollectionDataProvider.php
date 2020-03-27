@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,6 @@ use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Service\AdManager;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -36,13 +35,11 @@ use Symfony\Component\Security\Core\Security;
  */
 final class AdCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
     protected $adManager;
     protected $security;
-    
-    public function __construct(RequestStack $requestStack, AdManager $adManager, Security $security)
+
+    public function __construct(AdManager $adManager, Security $security)
     {
-        $this->request = $requestStack->getCurrentRequest();
         $this->adManager = $adManager;
         $this->security = $security;
     }

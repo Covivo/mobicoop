@@ -88,6 +88,7 @@ const fr = {
               accepteEmail: 'Accepte les emails',
               accepteReceiveEmail: 'Accepte de recevoir les emails',
               createdDate: 'Date de création',
+              lastActivityDate: 'Date de dernière connection',
               solidary : "Solidaire",
               territory : "Territoires",
               gender : "Civilité",
@@ -126,6 +127,11 @@ const fr = {
                   upperPassword : 'Au minimum 1 majuscule',
                   lowerPassword : 'Au minimum 1 minuscule',
                   numberPassword : 'Au minimum 1 chiffre'
+              },
+              phoneDisplay : {
+                visibility : "Visibilité de mon numéro de téléphone",
+                forCarpooler : "Visible seulement après acceptation du covoiturage, uniquement par les participants.",
+                forAll : "Visible dès la publication de l'annonce, par tous les inscrits."
               }
             }
         }

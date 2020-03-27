@@ -29,13 +29,14 @@ export default (type, params) => {
                     return response.json();
                 })
                 .then(({ token }) => {
+
                     const decodedToken = decodeJwt(token);
                     if (!decodedToken.admin) throw new Error('Unauthorized');
                     localStorage.setItem('token', token);
                     localStorage.setItem('roles', decodedToken.roles);
                     localStorage.setItem('id', decodedToken.id);
                     const options = {}
-                    let val = false;
+
                     const apiPermissions = process.env.REACT_APP_API+'/permissions';
                     const httpClient = fetchUtils.fetchJson;
                     if (!options.headers) {
@@ -43,18 +44,16 @@ export default (type, params) => {
                     }
                     options.headers.set('Authorization', `Bearer ${localStorage.token}`);
 
-
-
-                    const callPermissions =  httpClient(apiPermissions, {
+                    return httpClient(apiPermissions, {
                           method: 'GET',
                           headers : options.headers
                       }).then( retour => {
                           if (retour.status = '200') {
                               localStorage.setItem('permission', retour.body);
                           }
-                      });
+                      })
 
-                   return {id: decodedToken.id, token};
+
                 });
 
         case AUTH_LOGOUT:

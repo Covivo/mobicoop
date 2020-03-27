@@ -57,7 +57,6 @@ function reducer(state, action) {
             return [...state, {image:""}]
         case 'update' :
             let retourUpdate = [...state]
-            console.log("action.valeur : ", action.valeur)
             retourUpdate[action.indice] = { [action.nature] : action.valeur }
             return retourUpdate
         default :

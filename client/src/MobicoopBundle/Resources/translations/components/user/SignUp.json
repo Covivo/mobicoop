@@ -12,6 +12,10 @@
             "link": "la charte de la plateforme et sa politique de protection des données",
             "route": "/cgu"
         },
+        "communities": {
+            "label": "Rejoindre une communauté",
+            "route": "/communaute/liste-des-communautes"
+        },
         "step":"Etape",
         "steps":{
             "1":"Identifiants",
@@ -19,7 +23,14 @@
             "3":"Genre",
             "4":"Date de naissance",
             "5":"Ville de résidence"
-        }
+        },
+        "snackbar": {
+            "joinCommunity": {
+              "textOkManualValidation" : "Votre demande d'adhésion est bien envoyée au référent. Vous serez informé par email.",
+              "textOkAutoValidation": "Votre demande d'adhésion est validée.",
+              "textError": "Une erreur est survenue veuillez essayer à nouveau."
+            }
+        }  
     },
     "en":{
         "title":"Sign Up",
@@ -33,6 +44,9 @@
             "text": "I accept ",
             "link": "the platform chart and its data protection policy",
             "route": "/cgu"
+        },
+        "communities": {
+            "route": "community/getCommunityList"
         },
         "step":"Step",
         "steps":{

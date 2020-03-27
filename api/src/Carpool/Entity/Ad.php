@@ -28,6 +28,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Carpool\Controller\AdPost;
 use App\Carpool\Controller\AdGet;
+use App\Carpool\Controller\AdGetFull;
 use App\Carpool\Controller\AdAskPost;
 use App\Carpool\Controller\AdAskPut;
 use App\Carpool\Controller\AdPut;
@@ -55,7 +56,7 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "path"="/carpools",
  *              "normalization_context"={"groups"={"results"}},
  *              "controller"=AdPost::class,
- *              "security_post_denormalize"="is_granted('ad_create',object)"
+ *              "security_post_denormalize"="is_granted('ad_search_create',object)"
  *          },
  *          "post_ask"={
  *              "method"="POST",
@@ -88,7 +89,12 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "path"="/carpools/{id}",
  *              "controller"=AdGet::class,
  *              "read"=false,
- *              "security"="is_granted('ad_read', object)"
+ *              "security"="is_granted('ad_read_self',object)"
+ *          },
+ *          "get_full"={
+ *              "method"="GET",
+ *              "path"="/carpools/{id}/full",
+ *              "security"="is_granted('ad_read_self',object)"
  *          },
  *          "put_ask"={
  *              "method"="PUT",
@@ -175,7 +181,7 @@ class Ad
     /**
      * @var \DateTimeInterface|null The date for the outward if the frequency is punctual, the start date of the outward if the frequency is regular.
      *
-     * @Groups({"read","write"})
+     * @Groups({"read","write", "readCommunity"})
      */
     private $outwardDate;
 
@@ -474,6 +480,13 @@ class Ad
      * @Groups({"read","write"})
      */
     private $asks;
+
+    /**
+     * @var string|null The message if Ad owner is making major updates to his Ad
+     *
+     * @Groups({"write"})
+     */
+    private $cancellationMessage;
 
     public function __construct()
     {
@@ -1073,6 +1086,17 @@ class Ad
     {
         $this->asks = $asks;
 
+        return $this;
+    }
+
+    public function getCancellationMessage(): ?string
+    {
+        return $this->cancellationMessage;
+    }
+
+    public function setCancellationMessage(?string $cancellationMessage): Ad
+    {
+        $this->cancellationMessage = $cancellationMessage;
         return $this;
     }
 }

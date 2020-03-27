@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
         top:'10%',
         left:'10%',
         width: '80%',
-        maxHeight: '90vh',
+        maxHeight: '80vh',
         overflowY: 'scroll',
         backgroundColor: theme.palette.background.paper,
         border: '2px solid #000',

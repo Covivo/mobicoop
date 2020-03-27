@@ -790,6 +790,12 @@ class User implements UserInterface, EquatableInterface
     private $communityUsers;
 
     /**
+    * @var int|null Community choose by a user
+    * @Groups({"readUser","write"})
+    */
+    private $communityId;
+
+    /**
      * @var ArrayCollection|null The asks made for this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="userRelated", cascade={"remove"}, orphanRemoval=true)
@@ -994,6 +1000,15 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"massMigrate"})
      */
     private $alreadyRegistered;
+
+
+    /**
+     * @var \DateTimeInterface Last user activity date
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readUser","write"})
+     */
+    private $lastActivityDate;
 
     /**
      * The SolidaryUser possibly linked to this User
@@ -1728,6 +1743,16 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getCommunityId(): ?int
+    {
+        return $this->communityId;
+    }
+    
+    public function setCommunityId($communityId)
+    {
+        $this->communityId = $communityId;
+    }
+
     public function getUserAuthAssignments()
     {
         return $this->userAuthAssignments->getValues();
@@ -2314,10 +2339,22 @@ class User implements UserInterface, EquatableInterface
 
         return $this;
     }
-    
+
     public function getRefresh()
     {
         return $this->email;
+    }
+
+    public function getLastActivityDate(): ?\DateTimeInterface
+    {
+        return $this->lastActivityDate;
+    }
+
+    public function setLastActivityDate(?\DateTimeInterface $lastActivityDate): self
+    {
+        $this->lastActivityDate = $lastActivityDate;
+
+        return $this;
     }
 
     // DOCTRINE EVENTS

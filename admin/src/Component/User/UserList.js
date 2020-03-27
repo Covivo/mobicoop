@@ -14,7 +14,7 @@ import {
 
 import EmailComposeButton from '../Email/EmailComposeButton';
 import ResetButton from '../Utilities/ResetButton';
-
+import MyDatagrid from '../Utilities/MyDatagrid';
 
 const UserList = (props) => {
 
@@ -56,7 +56,7 @@ const UserList = (props) => {
           exporter={false}
           hasCreate={isAuthorized('user_create')}
     >
-        <Datagrid rowClick="show">
+        <MyDatagrid  rowClick="show">
             <TextField source="originId" label={translate('custom.label.user.id')} sortBy="id"/>
             <TextField source="givenName" label={translate('custom.label.user.givenName')}  />
             <TextField source="familyName" label={translate('custom.label.user.familyName')} />
@@ -66,7 +66,7 @@ const UserList = (props) => {
             {isAuthorized("user_update") &&
             <EditButton />
             }
-        </Datagrid>
+        </MyDatagrid>
     </List>
   )
 };

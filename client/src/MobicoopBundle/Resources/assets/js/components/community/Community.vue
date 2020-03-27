@@ -535,7 +535,6 @@ export default {
           // We build the content of the popup
           currentProposal.desc = "<p style='text-align:center;'><strong>"+infosForPopUp.carpoolerFirstName+" "+infosForPopUp.carpoolerLastName+"</strong></p>"
 
-
           proposal.waypoints.forEach((waypoint, index) => {
             currentProposal.latLngs.push(waypoint.latLng);
             if(index==0){
@@ -555,6 +554,9 @@ export default {
           currentProposal.desc += "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
           currentProposal.desc += "<strong>"+this.$t('map.destination')+"</strong> : "+infosForPopUp.destination+"<br />";
           if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em>";
+
+          // We add link to make the same search
+          currentProposal.desc += "<p><a href='" + proposal.searchLink + "'>" + this.$t('map.search.label') + "</a></p>";
 
           // And now the content of a tooltip (same as popup but without the button)
           currentProposal.title = currentProposal.desc;

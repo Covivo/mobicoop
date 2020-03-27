@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -26,25 +26,27 @@ namespace App\Carpool\Controller;
 use App\Carpool\Service\AdManager;
 use App\Carpool\Entity\Ad;
 use App\TranslatorTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Controller class for ask post.
+ * Controller class for ad put.
  *
- * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class AdPut
 {
     use TranslatorTrait;
     
     private $adManager;
-    
-    public function __construct(AdManager $adManager)
+    private $request;
+
+    public function __construct(AdManager $adManager, RequestStack $requestStack)
     {
         $this->adManager = $adManager;
+        $this->request = $requestStack->getCurrentRequest();
     }
 
     /**
-     * This method is invoked when a new ask is posted.
+     * This method is invoked when an Ad is updated.
      *
      * @param Ad $data
      * @return Ad
@@ -54,7 +56,7 @@ class AdPut
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
         }
-        $data = $this->adManager->updateAd($data);
+        $data = $this->adManager->updateAd($data, $this->request->get('mail_search_link'));
         return $data;
     }
 }
