@@ -241,9 +241,6 @@ class CarpoolController extends AbstractController
      */
     public function carpoolAdResults($id, AdManager $adManager)
     {
-        $ad = $adManager->getAd($id);
-        $this->denyAccessUnlessGranted('results_ad', $ad);
-
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             'proposalId' => $id,
             'platformName' => $this->platformName,
