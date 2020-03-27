@@ -787,7 +787,6 @@ class AdManager
         $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
         $ad->setUserId($userId);
         $ad->setOutwardWaypoints($proposal->getWaypoints());
-        $ad->setOutwardDate($proposal->getCriteria()->getFromDate());
         $ad->setPaused($proposal->isPaused());
         $ad->setOutwardDriverPrice($proposal->getCriteria()->getDriverComputedRoundedPrice());
         $ad->setBike($proposal->getCriteria()->hasBike());
@@ -797,12 +796,19 @@ class AdManager
         $ad->setPriceKm($proposal->getCriteria()->getPriceKm());
 
         if ($matching && $matching->getProposalOffer()->getCriteria()->getFromTime()) {
-            $ad->setOutwardTime($ad->getOutwardDate()->format('Y-m-d').' '.$matching->getProposalOffer()->getCriteria()->getFromTime()->format('H:i:s'));
+            $date = $matching->getProposalOffer()->getCriteria()->getFromDate();
+            $ad->setOutwardDate($date);
+            $ad->setOutwardTime($date->format('Y-m-d').' '.$matching->getProposalOffer()->getCriteria()->getFromTime()->format('H:i:s'));
         } elseif ($matching && $matching->getProposalRequest()->getCriteria()->getFromTime()) {
-            $ad->setOutwardTime($ad->getOutwardDate()->format('Y-m-d').' '.$matching->getProposalRequest()->getCriteria()->getFromTime()->format('H:i:s'));
+            $date = $matching->getProposalRequest()->getCriteria()->getFromDate();
+            $ad->setOutwardDate($date);
+            $ad->setOutwardTime($date->format('Y-m-d').' '.$matching->getProposalRequest()->getCriteria()->getFromTime()->format('H:i:s'));
         } elseif ($proposal->getCriteria()->getFromTime()) {
-            $ad->setOutwardTime($ad->getOutwardDate()->format('Y-m-d').' '.$proposal->getCriteria()->getFromTime()->format('H:i:s'));
+            $date = $proposal->getCriteria()->getFromDate();
+            $ad->setOutwardDate($date);
+            $ad->setOutwardTime($date->format('Y-m-d').' '.$proposal->getCriteria()->getFromTime()->format('H:i:s'));
         } else {
+            $ad->setOutwardDate($proposal->getCriteria()->getFromDate());
             $ad->setOutwardTime(null);
         }
 
