@@ -515,7 +515,7 @@ class UserManager
             "ongoing" => [],
             "archived" => []
         ];
-        
+
         foreach ($ads as $ad) {
             $isAlreadyInArray = false;
             
@@ -536,11 +536,7 @@ class UserManager
             }
             // Carpool punctual
             else {
-                $fromDate = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
-                //dump($fromDate);
-                // $linkedDate = isset($proposal["proposalLinked"]) ? new DateTime($proposal["proposalLinked"]["criteria"]["fromDate"]) : null;
-                // $date = isset($linkedDate) && $linkedDate > $fromDate ? $linkedDate : $fromDate;
-                $date = $fromDate;
+                $date = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
             }
 
             $key = $date < $now ? 'archived' : 'ongoing';
@@ -674,8 +670,6 @@ class UserManager
 
         $ads = $response->getValue();
 
-//        dump($ads);die;
-
         $adsSanitized = [
             "ongoing" => [],
             "archived" => []
@@ -701,11 +695,7 @@ class UserManager
             }
             // Carpool punctual
             else {
-                $fromDate = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
-                //dump($fromDate);
-                // $linkedDate = isset($proposal["proposalLinked"]) ? new DateTime($proposal["proposalLinked"]["criteria"]["fromDate"]) : null;
-                // $date = isset($linkedDate) && $linkedDate > $fromDate ? $linkedDate : $fromDate;
-                $date = $fromDate;
+                $date = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
             }
 
             $key = $date < $now ? 'archived' : 'ongoing';

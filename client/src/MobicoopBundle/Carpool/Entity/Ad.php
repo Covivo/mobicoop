@@ -943,7 +943,12 @@ class Ad implements ResourceInterface, \JsonSerializable
     public function getOrigin()
     {
         if (!empty($this->getOutwardWaypoints())) {
-            return $this->getOutwardWaypoints()[array_search(0, array_column($this->getOutwardWaypoints(), 'position'))]['address'];
+            $origin = $this->getOutwardWaypoints()[array_search(0, array_column($this->getOutwardWaypoints(), 'position'))];
+            if (isset($origin['@type']) && $origin["@type"] === "Address") {
+                return $origin;
+            } elseif (isset($origin['address'])) {
+                return $origin["address"];
+            }
         }
         return null;
     }
@@ -951,7 +956,12 @@ class Ad implements ResourceInterface, \JsonSerializable
     public function getDestination()
     {
         if (!empty($this->getOutwardWaypoints())) {
-            return $this->getOutwardWaypoints()[array_search(true, array_column($this->getOutwardWaypoints(), 'destination'))]['address'];
+            $destination = $this->getOutwardWaypoints()[array_search(true, array_column($this->getOutwardWaypoints(), 'destination'))];
+            if (isset($destination['@type']) && $destination["@type"] === "Address") {
+                return $destination;
+            } elseif (isset($destination['address'])) {
+                return $destination["address"];
+            }
         }
         return null;
     }

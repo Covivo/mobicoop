@@ -22,7 +22,8 @@ const fr = {
         },
         alert : {
             clearSelected : 'Réinitialiser la séléction',
-            fieldMandatory : 'Ce champ est obligatoire'
+            fieldMandatory : 'Ce champ est obligatoire',
+            valueSaved : 'Modification éffectuée'
         },
         label : {
             event :{
@@ -64,6 +65,7 @@ const fr = {
                 joinAt : 'Rejoint le',
                 acceptedAt : 'Accepté le',
                 refusedAt : 'Refusé le',
+                newStatus : 'Changer le statut'
             },
             campaign : {
                 object : 'Sujet',
