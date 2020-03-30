@@ -23,6 +23,8 @@ final class SolidaryAskDataPersister implements ContextAwareDataPersisterInterfa
     {
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
             $data = $this->solidaryAskManager->createSolidaryAsk($data);
+        } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
+            $data = $this->solidaryAskManager->updateSolidaryAsk($data);
         }
         return $data;
     }

@@ -60,6 +60,26 @@ class SolidaryAskManager
     }
 
     /**
+     * Update a solidary Ask
+     *
+     * @param SolidaryAsk $solidaryAsk
+     * @return SolidaryAsk|null
+     */
+    public function updateSolidaryAsk(SolidaryAsk $solidaryAsk): ?SolidaryAsk
+    {
+        
+        // We create the associated SolidaryAskHistory
+        $solidaryAsk = $this->createAssociatedSolidaryAskHistory($solidaryAsk);
+
+        // If it's a Carpool Ask type we need to update the related Ask
+        if (!is_null($solidaryAsk->getSolidarySolution()->getMatching())) {
+            // update the carpool Ask
+        }
+
+        return $solidaryAsk;
+    }
+
+    /**
      * Create the associated SolidaryAskHistory of a SolidaryAsk
      *
      * @param SolidaryAsk $solidaryAsk
