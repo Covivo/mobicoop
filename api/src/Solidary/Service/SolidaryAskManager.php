@@ -22,6 +22,7 @@
 
 namespace App\Solidary\Service;
 
+use App\Carpool\Entity\Ask;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Exception\SolidaryException;
@@ -54,6 +55,8 @@ class SolidaryAskManager
         // If it's a Carpool Ask type we need to create the related Ask
         if (!is_null($solidaryAsk->getSolidarySolution()->getMatching())) {
             // create the carpool Ask
+            $ask = new Ask();
+            $ask->setStatus(Ask::STATUS_PENDING_AS_PASSENGER);
         }
 
         return $solidaryAsk;
