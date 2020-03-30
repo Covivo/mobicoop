@@ -998,9 +998,9 @@ class UserManager
     }
 
     /**
-     * Get the solidaries of a user
+     * Get the structures of a user
      *
-     * @param int $userId    The user id we want to get the solidaries
+     * @param int $userId    The user id we want to get the structures
      * @return User|null
      */
     public function getStructures(int $userId)
