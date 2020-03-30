@@ -24,6 +24,7 @@
 namespace App\Solidary\Repository;
 
 use App\Solidary\Entity\Structure;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -55,5 +56,23 @@ class StructureRepository
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    /**
+     * Find the structures of a User
+     *
+     * @param User $user    The user
+     * @return array|null
+     */
+    public function findByUser(User $user): ?array
+    {
+        $query = $this->repository->createQueryBuilder('s')
+        ->join('s.solidaryUserStructures', 'sus')
+        ->join('sus.solidaryUser', 'su')
+        ->join('su.user', 'u')
+        ->where('u.id = :user')
+        ->setParameter('user', $user->getId());
+
+        return $query->getQuery()->getResult();
     }
 }
