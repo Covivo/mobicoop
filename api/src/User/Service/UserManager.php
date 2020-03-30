@@ -52,6 +52,7 @@ use App\Community\Entity\Community;
 use App\Solidary\Event\SolidaryCreated;
 use App\Solidary\Event\SolidaryUserCreated;
 use App\Solidary\Event\SolidaryUserUpdated;
+use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\StructureRepository;
 use App\User\Repository\UserNotificationRepository;
@@ -984,6 +985,9 @@ class UserManager
     public function getSolidaries(int $userId)
     {
         $user = $this->userRepository->find($userId);
+        if (empty($user)) {
+            throw new SolidaryException(SolidaryException::UNKNOWN_USER);
+        }
 
         $solidaries = $this->solidaryRepository->findByUser($user);
         if (!empty($solidaries)) {
@@ -1002,6 +1006,9 @@ class UserManager
     public function getStructures(int $userId)
     {
         $user = $this->userRepository->find($userId);
+        if (empty($user)) {
+            throw new SolidaryException(SolidaryException::UNKNOWN_USER);
+        }
 
         $structures = $this->structureRepository->findByUser($user);
         if (!empty($structures)) {
