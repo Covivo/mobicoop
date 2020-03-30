@@ -52,6 +52,7 @@ use App\Community\Entity\Community;
 use App\Solidary\Event\SolidaryCreated;
 use App\Solidary\Event\SolidaryUserCreated;
 use App\Solidary\Event\SolidaryUserUpdated;
+use App\Solidary\Repository\SolidaryRepository;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Entity\UserNotification;
 use App\User\Event\UserDelegateRegisteredEvent;
@@ -84,6 +85,7 @@ class UserManager
     private $notificationRepository;
     private $userNotificationRepository;
     private $userRepository;
+    private $solidaryRepository;
     private $logger;
     private $eventDispatcher;
     private $encoder;
@@ -101,7 +103,7 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, AuthItemRepository $authItemRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator, Security $security)
+    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, AuthItemRepository $authItemRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator, Security $security, SolidaryRepository $solidaryRepository)
     {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -119,6 +121,7 @@ class UserManager
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
         $this->userRepository = $userRepository;
+        $this->solidaryRepository = $solidaryRepository;
         $this->chat = $chat;
         $this->music = $music;
         $this->smoke = $smoke;
@@ -968,5 +971,24 @@ class UserManager
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+    }
+
+
+    /**
+     * Get the solidaries of a user
+     *
+     * @param int $userId    The user id we want to get the solidaries
+     * @return User|null
+     */
+    public function getSolidaries(int $userId)
+    {
+        $user = $this->userRepository->find($userId);
+
+        $solidaries = $this->solidaryRepository->findByUser($user);
+        if (!empty($solidaries)) {
+            $user->setSolidaries($solidaries);
+        }
+
+        return $user;
     }
 }

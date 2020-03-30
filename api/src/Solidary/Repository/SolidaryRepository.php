@@ -24,6 +24,7 @@ namespace App\Solidary\Repository;
 
 use App\Action\Entity\Diary;
 use App\Solidary\Entity\Solidary;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -78,6 +79,24 @@ class SolidaryRepository
         ->where('d.solidary = :solidary')
         ->setParameter('solidary', $solidary)
         ->orderBy('d.createdDate', 'DESC');
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find the solidaries of a User
+     *
+     * @param User $user    The user
+     * @return array|null
+     */
+    public function findByUser(User $user): ?array
+    {
+        $query = $this->repository->createQueryBuilder('s')
+        ->join('s.solidaryUserStructure', 'sus')
+        ->join('sus.solidaryUser', 'su')
+        ->join('su.user', 'u')
+        ->where('u.id = :user')
+        ->setParameter('user', $user->getId());
 
         return $query->getQuery()->getResult();
     }

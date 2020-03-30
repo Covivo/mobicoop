@@ -22,9 +22,10 @@
 
 namespace App\User\DataProvider;
 
-use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use App\User\Entity\User;
 use App\User\Service\UserManager;
 
 /**
@@ -33,7 +34,7 @@ use App\User\Service\UserManager;
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  *
  */
-final class UserSolidaryUsersCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class UserSolidaryCollectionDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     private $userManager;
     
@@ -44,25 +45,11 @@ final class UserSolidaryUsersCollectionDataProvider implements CollectionDataPro
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return $operationName === "solidaryUsers";
+        return User::class === $resourceClass;
     }
-    
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): array
+
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User
     {
-        $filters = [];
-        $orderCriteria = "familyName";
-        $order = "ASC";
-        if (isset($context['filters'])) {
-            if (isset($context['filters']['filters'])) {
-                $filters = $context['filters']['filters'];
-            }
-            if (isset($context['filters']['orderCriteria'])) {
-                $orderCriteria = $context['filters']['orderCriteria'];
-            }
-            if (isset($context['filters']['order'])) {
-                $order = $context['filters']['order'];
-            }
-        }
-        return $this->userManager->getSolidaryUsers($filters, $orderCriteria, $order);
+        return $this->userManager->getSolidaries($id);
     }
 }

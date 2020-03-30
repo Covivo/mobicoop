@@ -336,7 +336,13 @@ use App\User\Controller\UserCanUseEmail;
  *              "method"="PUT",
  *              "path"="/users/{id}/unsubscribe_user",
  *              "controller"=UserUnsubscribeFromEmail::class
- *          }
+ *          },
+ *          "solidaries"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/solidaries",
+ *              "normalization_context"={"groups"={"readSolidary"}},
+ *              "security"="is_granted('solidary_list',object)"
+ *          },
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})
@@ -1016,6 +1022,12 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","write","readSolidary","writeSolidary"})
      */
     private $solidaryUser;
+
+    /**
+     * @var array|null used to get the solidaries of a user
+     * @Groups({"readSolidary"})
+     */
+    private $solidaries;
 
     public function __construct($status = null)
     {
@@ -2353,6 +2365,18 @@ class User implements UserInterface, EquatableInterface
     public function setLastActivityDate(?\DateTimeInterface $lastActivityDate): self
     {
         $this->lastActivityDate = $lastActivityDate;
+
+        return $this;
+    }
+
+    public function getSolidaries()
+    {
+        return $this->solidaries;
+    }
+
+    public function setSolidaries(?array $solidaries): self
+    {
+        $this->solidaries = $solidaries;
 
         return $this;
     }

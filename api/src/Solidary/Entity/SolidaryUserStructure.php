@@ -39,7 +39,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readSolidary","readSolidaryUserStructure"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={
@@ -95,7 +95,7 @@ class SolidaryUserStructure
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaryUserStructures", cascade={"persist","remove"})
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidaryUserStructure","writeSolidary"})
      * @MaxDepth(1)
      */
     private $structure;
@@ -104,7 +104,7 @@ class SolidaryUserStructure
      * @var ArrayCollection The ask history items linked with the ask.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="solidaryUserStructure", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidaryUserStructure","writeSolidary"})
      * @MaxDepth(1)
      */
     private $proofs;
