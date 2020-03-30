@@ -240,7 +240,7 @@
           >
             <template v-slot:activator="{ on }">
               <v-text-field
-              :value ="birthDay.date"
+              :value ="computedBirthdateFormat"
               :label="$t('models.user.birthDay.label')"
               :rules="[ birthdayRules.checkIfAdult, birthdayRules.required ]"
               readonly
@@ -569,6 +569,12 @@ export default {
       const ageMin = Number(this.ageMin);
       const ageMax = Number(this.ageMax);
       return Array.from({length: ageMax - ageMin}, (value, index) => (currentYear - ageMin) - index)
+    },
+    computedBirthdateFormat () {
+       if (this.birthDay.date) {
+        return moment.utc(this.birthDay.date).format("YYYY-MM-DD");
+      }
+      return null;
     }
   },
   mounted() {
