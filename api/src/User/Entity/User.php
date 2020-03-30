@@ -106,7 +106,7 @@ use App\User\Controller\UserCanUseEmail;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readUser","mass","readSolidary"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readUser","mass","readSolidary","userStructure"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write","writeSolidary"}}
  *      },
  *      collectionOperations={
@@ -337,6 +337,18 @@ use App\User\Controller\UserCanUseEmail;
  *              "method"="PUT",
  *              "path"="/users/{id}/unsubscribe_user",
  *              "controller"=UserUnsubscribeFromEmail::class
+ *          },
+ *          "solidaries"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/solidaries",
+ *              "normalization_context"={"groups"={"readSolidary"}},
+ *              "security"="is_granted('solidary_list',object)"
+ *          },
+ *          "structures"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/structures",
+ *              "normalization_context"={"groups"={"userStructure"}},
+ *              "security"="is_granted('solidary_list',object)"
  *          }
  *      }
  * )
@@ -398,7 +410,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","threads", "thread"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","threads", "thread","userStructure"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -1031,6 +1043,18 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","write","readSolidary","writeSolidary"})
      */
     private $solidaryUser;
+
+    /**
+     * @var array|null used to get the solidaries of a user
+     * @Groups({"readSolidary"})
+     */
+    private $solidaries;
+
+    /**
+     * @var array|null used to get the structures of a user
+     * @Groups({"userStructure"})
+     */
+    private $structures;
 
     public function __construct($status = null)
     {
@@ -2426,6 +2450,30 @@ class User implements UserInterface, EquatableInterface
     public function setLastActivityDate(?\DateTimeInterface $lastActivityDate): self
     {
         $this->lastActivityDate = $lastActivityDate;
+
+        return $this;
+    }
+
+    public function getSolidaries()
+    {
+        return $this->solidaries;
+    }
+
+    public function setSolidaries(?array $solidaries): self
+    {
+        $this->solidaries = $solidaries;
+
+        return $this;
+    }
+
+    public function getStructures()
+    {
+        return $this->structures;
+    }
+
+    public function setStructures(?array $structures): self
+    {
+        $this->structures = $structures;
 
         return $this;
     }

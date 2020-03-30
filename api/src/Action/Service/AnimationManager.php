@@ -20,13 +20,25 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Exception;
+namespace App\Action\Service;
 
-class SolidaryException extends \LogicException
+use App\Action\Entity\Animation;
+use App\Action\Service\ActionManager;
+use Doctrine\ORM\EntityManagerInterface;
+
+class AnimationManager
 {
-    const INVALID_DATA_PROVIDED = "Invalid data provided";
-    const NO_ROLE = "This SolidaryUser has no role";
-    const BAD_SOLIDARYUSERSTRUCTURE_STATUS = "Invalid status value for this SolidaryUserStructure";
-    const BAD_SOLIDARY_ACTION = "Unknown action";
-    const UNKNOWN_USER = "Unknown User";
+    private $entityManager;
+    private $actionManager;
+
+    public function __construct(EntityManagerInterface $entityManager, ActionManager $actionManager)
+    {
+        $this->entityManager = $entityManager;
+        $this->actionManager = $actionManager;
+    }
+
+    public function treatAnimation(Animation $animation)
+    {
+        $this->actionManager->handleAction($animation->getName(), $animation);
+    }
 }

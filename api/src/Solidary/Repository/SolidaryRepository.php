@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -23,16 +22,13 @@
 
 namespace App\Solidary\Repository;
 
-use App\Solidary\Entity\Structure;
+use App\Action\Entity\Diary;
+use App\Solidary\Entity\Solidary;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
-/**
- * @method Structure|null find($id, $lockMode = null, $lockVersion = null)
- * @method Structure|null findOneBy(array $criteria, array $orderBy = null)
- */
-class StructureRepository
+class SolidaryRepository
 {
     /**
      * @var EntityRepository
@@ -44,22 +40,51 @@ class StructureRepository
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(Structure::class);
+        $this->repository = $entityManager->getRepository(Solidary::class);
     }
 
 
-    public function find(int $id): ?Structure
+    public function find(int $id): ?Solidary
     {
         return $this->repository->find($id);
     }
+
+    public function findAll(): ?array
+    {
+        return $this->repository->findAll();
+    }
+
 
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
+    public function findOneBy(array $criteria): ?Solidary
+    {
+        return $this->repository->findOneBy($criteria);
+    }
+
     /**
-     * Find the structures of a User
+     * Get the Diaries entries of a Solidary
+     *
+     * @param Solidary $solidary   The Solidary
+     * @return float
+     */
+    public function getDiaries(Solidary $solidary)
+    {
+        $diaryRepository = $this->entityManager->getRepository(Diary::class);
+
+        $query = $diaryRepository->createQueryBuilder('d')
+        ->where('d.solidary = :solidary')
+        ->setParameter('solidary', $solidary)
+        ->orderBy('d.createdDate', 'DESC');
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find the solidaries of a User
      *
      * @param User $user    The user
      * @return array|null
@@ -67,7 +92,7 @@ class StructureRepository
     public function findByUser(User $user): ?array
     {
         $query = $this->repository->createQueryBuilder('s')
-        ->join('s.solidaryUserStructures', 'sus')
+        ->join('s.solidaryUserStructure', 'sus')
         ->join('sus.solidaryUser', 'su')
         ->join('su.user', 'u')
         ->where('u.id = :user')
