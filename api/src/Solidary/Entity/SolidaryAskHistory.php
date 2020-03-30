@@ -84,6 +84,7 @@ class SolidaryAskHistory implements MessagerInterface
      * @var \DateTimeInterface Creation date of the history item.
      *
      * @ORM\Column(type="datetime")
+     * @Groups({"readSolidary"})
      */
     private $createdDate;
 
@@ -91,6 +92,7 @@ class SolidaryAskHistory implements MessagerInterface
      * @var \DateTimeInterface Updated date of the history item.
      *
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readSolidary"})
      */
     private $updatedDate;
 
