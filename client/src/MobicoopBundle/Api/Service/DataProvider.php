@@ -136,7 +136,7 @@ class DataProvider
 
         // check an existing jwt token
         if ($apiToken = $this->session->get('apiToken')) {
-            // there's an api token in session
+            // there's an api token in session => private connection, it's a real human user
             if ($apiToken->isValid()) {
                 // the token is still valid, we use it !
                 $this->jwtToken = $apiToken;
@@ -152,7 +152,7 @@ class DataProvider
                 }
             }
         } else {
-            // check if there's a global api token in system cache
+            // check if there's a global api token in system cache => public connection (app)
             $cachedToken = $this->cache->getItem($this->tokenId.'.jwt.token');
             if ($cachedToken->isHit()) {
                 /**
@@ -309,15 +309,16 @@ class DataProvider
                     ]);
                 $value = json_decode((string) $clientResponse->getBody(), true);
             } catch (ServerException $e) {
-                throw new ApiTokenException("Unable to get an API token from refresh.");
+                throw new ApiTokenException("Server error : unable to get an API token from refresh.");
             } catch (ClientException $e) {
+                // todo : check the exception to test the different cases
+                // invalid credentials
                 $this->cache->deleteItem($this->tokenId.'.jwt.refresh.token');
-                //throw new ApiTokenException("Unable to get an API token from refresh.");
             }
         }
 
         if (is_null($value)) {
-            // no refresh token or refresh token expired
+            // no refresh token, or refresh token expired, or refresh token deleted
             try {
                 $clientResponse = $this->client->post($this->authLoginPath, [
                             'headers' => ['accept' => 'application/json'],
@@ -330,7 +331,9 @@ class DataProvider
             } catch (ServerException $e) {
                 throw new ApiTokenException("Unable to get an API token.");
             } catch (ClientException $e) {
-                throw new ApiTokenException("Unable to get an API token.");
+                // todo : check the exception to test the different cases
+                // invalid credentials
+                throw new ApiTokenException("Unable to get an API token : invalid credentials.");
             }
         }
 

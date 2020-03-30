@@ -21,28 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace App\Auth\Rule;
+namespace App\Carpool\DataProvider;
 
-use App\Auth\Interfaces\AuthRuleInterface;
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Carpool\Entity\Dynamic;
+use App\Carpool\Service\DynamicManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- *  Check that the requester is the author of the related dynamic ad
+ * Item data provider for dynamic ad.
+ *
  */
-class DynamicAuthor implements AuthRuleInterface
+final class DynamicItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function execute($requester, $item, $params)
+    protected $request;
+    
+    public function __construct(RequestStack $requestStack, DynamicManager $dynamicManager)
     {
-        if (!isset($params['dynamic'])) {
-            return false;
-        }
-        /**
-         * @var Dynamic $dynamic
-         */
-        $dynamic = $params['dynamic'];
-        return $dynamic->getUser()->getId() == $requester->getId();
+        $this->request = $requestStack->getCurrentRequest();
+        $this->dynamicManager = $dynamicManager;
+    }
+    
+    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    {
+        return Dynamic::class === $resourceClass;
+    }
+    
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Dynamic
+    {
+        return $this->dynamicManager->getDynamic($id);
     }
 }

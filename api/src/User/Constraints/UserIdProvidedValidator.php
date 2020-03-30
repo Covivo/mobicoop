@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,22 +21,30 @@
  *    LICENSE
  **************************/
 
-namespace App\Auth\Rule;
+ namespace App\User\Constraints;
 
-use App\Auth\Interfaces\AuthRuleInterface;
-use App\Carpool\Entity\Ask;
+use App\User\Entity\User;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidator;
 
 /**
- *  Check that the requester is a mobile user
+ * @Annotation
  */
-class MobileUser implements AuthRuleInterface
+final class UserIdProvidedValidator extends ConstraintValidator
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function execute($requester, $item, $params)
+    private $security;
+    
+    public function __construct(Security $security)
     {
-        // a user is a mobile user if an ios or android app id is related to his account
-        return (!is_null($requester->getIosAppId()) || !is_null($requester->getAndroidAppId()));
+        $this->security = $security;
+    }
+
+    public function validate($value, Constraint $constraint): void
+    {
+        // we check if the request is sent by a real user or if a userId has been provided
+        if (!$this->security->getUser() instanceof User && is_null($value)) {
+            $this->context->buildViolation($constraint->message)->addViolation();
+        }
     }
 }

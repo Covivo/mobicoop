@@ -91,7 +91,7 @@ class Proposal
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","results","threads","thread"})
+     * @Groups({"read","results","threads","thread",})
      */
     private $id;
 
@@ -106,10 +106,41 @@ class Proposal
     
     /**
      * @var string A comment about the proposal.
+     *
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"read","write","results","threads","thread"})
+     * @Groups({"read","write","results","threads","thread",})
      */
     private $comment;
+
+    /**
+     * @var boolean Dynamic proposal.
+     * A dynamic proposal is a real-time proposal : used for dynamic carpooling.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread",})
+     */
+    private $dynamic;
+
+    /**
+     * @var boolean Active proposal.
+     * Used for dynamic carpooling, only active proposal can be matched.
+     * A passenger proposal is set to inactive when an ask is accepted, a driver proposal is set to inactive when no more passenger can be involved.
+     * An inactive ad can still be updated, to keep the positions till the destination.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread",})
+     */
+    private $active;
+
+    /**
+     * @var boolean Finished proposal.
+     * Used for dynamic carpooling, only unfinished proposal can be matched.
+     * An ad is set to finished when it is manually stopped, or when the destination is reached.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread",})
+     */
+    private $finished;
 
     /**
      * @var boolean Private proposal.
@@ -133,7 +164,7 @@ class Proposal
      * @var \DateTimeInterface Creation date of the proposal.
      *
      * @ORM\Column(type="datetime")
-     * @Groups({"read","threads","thread"})
+     * @Groups({"read","threads","thread",})
      */
     private $createdDate;
 
@@ -141,7 +172,7 @@ class Proposal
      * @var \DateTimeInterface Updated date of the proposal.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read","threads","thread"})
+     * @Groups({"read","threads","thread",})
      */
     private $updatedDate;
 
@@ -160,7 +191,7 @@ class Proposal
      * Can be null for an anonymous search.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
-     * @Groups({"read","results","write"})
+     * @Groups({"read","results","write",})
      * @MaxDepth(1)
      */
     private $user;
@@ -180,7 +211,7 @@ class Proposal
      * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","write"})
+     * @Groups({"read","write",})
      * @MaxDepth(1)
      */
     private $waypoints;
@@ -198,7 +229,7 @@ class Proposal
      * @var ArrayCollection|null The communities related to the proposal.
      *
      * @ORM\ManyToMany(targetEntity="\App\Community\Entity\Community", inversedBy="proposals")
-     * @Groups({"read","results","write"})
+     * @Groups({"read","results","write",})
      * @MaxDepth(1)
      */
     private $communities;
@@ -207,7 +238,7 @@ class Proposal
      * @var ArrayCollection|null The matchings of the proposal (if proposal is a request).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","results"})
+     * @Groups({"read","results",})
      * @MaxDepth(1)
      */
     private $matchingOffers;
@@ -216,7 +247,7 @@ class Proposal
      * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","results"})
+     * @Groups({"read","results",})
      * @MaxDepth(1)
      */
     private $matchingRequests;
@@ -232,7 +263,7 @@ class Proposal
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
-     * @Groups({"read","results","write","thread"})
+     * @Groups({"read","results","write","thread",})
      * @MaxDepth(1)
      */
     private $criteria;
@@ -256,13 +287,6 @@ class Proposal
     private $notifieds;
 
     /**
-     * @var Proposal|null The proposal we want to force matching with (we assume the corresponding matching doesn't exist yet).
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     */
-    private $matchingProposal;
-
-    /**
      * @var Matching|null The matching of the linked proposal (used for regular return trips).
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -277,18 +301,11 @@ class Proposal
     private $askLinked;
 
     /**
-     * @var boolean Create a formal ask after posting the proposal.
-     * @Groups({"read","write"})
-     */
-    private $formalAsk;
-
-    /**
      * @var array|null The carpool results for the proposal.
      * Results are taken from the matchings, but returned in a more user-friendly way.
      * @Groups("results")
      */
     private $results;
-
 
     /**
      * @var Event related for the proposal
@@ -298,6 +315,14 @@ class Proposal
      * @MaxDepth(1)
      */
     private $event;
+
+    /**
+     * @var Position The last position given for dynamic carpooling.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Position", mappedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @Groups({"read","results","write","thread",})
+     */
+    private $position;
 
     /**
      * @var string The external origin of this proposal
@@ -362,6 +387,42 @@ class Proposal
     {
         $this->comment = $comment;
         
+        return $this;
+    }
+
+    public function isDynamic(): bool
+    {
+        return $this->dynamic ? true : false;
+    }
+
+    public function setDynamic(?bool $dynamic): self
+    {
+        $this->dynamic = $dynamic;
+
+        return $this;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active ? true : false;
+    }
+
+    public function setActive(?bool $active): self
+    {
+        $this->active = $active;
+
+        return $this;
+    }
+
+    public function isFinished(): bool
+    {
+        return $this->finished ? true : false;
+    }
+
+    public function setFinished(?bool $finished): self
+    {
+        $this->finished = $finished;
+
         return $this;
     }
 
@@ -661,30 +722,6 @@ class Proposal
         return $this;
     }
     
-    public function hasFormalAsk(): ?bool
-    {
-        return $this->formalAsk;
-    }
-
-    public function setFormalAsk(?bool $formalAsk): self
-    {
-        $this->formalAsk = $formalAsk;
-
-        return $this;
-    }
-
-    public function getMatchingProposal(): ?Proposal
-    {
-        return $this->matchingProposal;
-    }
-
-    public function setMatchingProposal(?Proposal $matchingProposal): self
-    {
-        $this->matchingProposal = $matchingProposal;
-
-        return $this;
-    }
-
     public function getMatchingLinked(): ?Matching
     {
         return $this->matchingLinked;
@@ -721,6 +758,21 @@ class Proposal
         return $this;
     }
 
+    public function getPosition(): ?Position
+    {
+        return $this->position;
+    }
+
+    public function setPosition(Position $position): self
+    {
+        if ($position->getProposal() !== $this) {
+            $position->setProposal($this);
+        }
+        $this->position = $position;
+
+        return $this;
+    }
+        
     public function getExternal(): ?String
     {
         return $this->external;

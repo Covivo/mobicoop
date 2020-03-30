@@ -21,22 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace App\Auth\Rule;
+namespace App\Carpool\Repository;
 
-use App\Auth\Interfaces\AuthRuleInterface;
-use App\Carpool\Entity\Ask;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Carpool\Entity\CarpoolProof;
 
-/**
- *  Check that the requester is a mobile user
- */
-class MobileUser implements AuthRuleInterface
+class CarpoolProofRepository
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function execute($requester, $item, $params)
+    private $repository;
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        // a user is a mobile user if an ios or android app id is related to his account
-        return (!is_null($requester->getIosAppId()) || !is_null($requester->getAndroidAppId()));
+        $this->repository = $entityManager->getRepository(CarpoolProof::class);
+    }
+
+    public function find(int $id): ?CarpoolProof
+    {
+        return $this->repository->find($id);
+    }
+
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    {
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 }
