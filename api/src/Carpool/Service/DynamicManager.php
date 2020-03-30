@@ -435,7 +435,7 @@ class DynamicManager
             $dynamic->getProposal()->getPosition()->getDirection()->setAutoUpdatedDate();
         } else {
             // the last point introduced an error as we couldn't compute the direction !
-            // we send an exeption...
+            // we send an exception...
             throw new DynamicException("Bad geographic position... Point ignored !");
         }
 
