@@ -22,12 +22,13 @@
 
 namespace App\Solidary\Service;
 
-use App\Solidary\Entity\SolidarySolution;
+use App\Solidary\Entity\SolidaryAsk;
+use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Exception\SolidaryException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
-class SolidarySolutionManager
+class SolidaryAskManager
 {
     private $entityManager;
     private $security;
@@ -39,24 +40,41 @@ class SolidarySolutionManager
     }
 
     /**
-     * Create a SolidarySolution
+     * Create a solidary Ask
      *
-     * @param SolidarySolution $solidarySolution
-     * @return SolidarySolution|null
+     * @param SolidaryAsk $solidaryAsk
+     * @return SolidaryAsk|null
      */
-    public function createSolidarySolution(SolidarySolution $solidarySolution): ?SolidarySolution
+    public function createSolidaryAsk(SolidaryAsk $solidaryAsk): ?SolidaryAsk
     {
-        // The SolidaryUser has to be a volunteer
-        if (!is_null($solidarySolution->getSolidaryUser()) && !$solidarySolution->getSolidaryUser()->isVolunteer()) {
-            throw new SolidaryException(SolidaryException::IS_NOT_VOLUNTEER);
-        }
-        // Can't have both matching et solidaryUser
-        if (!is_null($solidarySolution->getSolidaryUser()) && !is_null($solidarySolution->getMatching())) {
-            throw new SolidaryException(SolidaryException::CANT_HAVE_BOTH);
+        
+        // We create the associated SolidaryAskHistory
+        $solidaryAsk = $this->createAssociatedSolidaryAskHistory($solidaryAsk);
+
+        // If it's a Carpool Ask type we need to create the related Ask
+        if (!is_null($solidaryAsk->getSolidarySolution()->getMatching())) {
+            // create the carpool Ask
         }
 
-        $this->entityManager->persist($solidarySolution);
+        return $solidaryAsk;
+    }
+
+    /**
+     * Create the associated SolidaryAskHistory of a SolidaryAsk
+     *
+     * @param SolidaryAsk $solidaryAsk
+     * @return SolidaryAsk|null
+     */
+    private function createAssociatedSolidaryAskHistory(SolidaryAsk $solidaryAsk): ?SolidaryAsk
+    {
+        $solidaryAskHistory = new SolidaryAskHistory();
+        
+        $solidaryAskHistory->setStatus($solidaryAsk->getStatus());
+        $solidaryAskHistory->setSolidaryAsk($solidaryAsk);
+
+        $this->entityManager->persist($solidaryAskHistory);
         $this->entityManager->flush();
-        return $solidarySolution;
+
+        return $solidaryAsk;
     }
 }

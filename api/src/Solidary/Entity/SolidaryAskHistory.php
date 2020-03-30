@@ -42,11 +42,11 @@ use App\Communication\Entity\Notified;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
@@ -54,13 +54,12 @@ use App\Communication\Entity\Notified;
  */
 class SolidaryAskHistory implements MessagerInterface
 {
-    const STATUS_INITIATED = 1;
-    const STATUS_PENDING_AS_DRIVER = 2;
-    const STATUS_PENDING_AS_PASSENGER = 3;
-    const STATUS_ACCEPTED_AS_DRIVER = 4;
-    const STATUS_ACCEPTED_AS_PASSENGER = 5;
-    const STATUS_DECLINED_AS_DRIVER = 6;
-    const STATUS_DECLINED_AS_PASSENGER = 7; // asked by remi
+    const STATUS_ASKED = 0;
+    const STATUS_REFUSED = 1;
+    const STATUS_PENDING = 2;
+    const STATUS_LOOKING_FOR_SOLUTION = 3;
+    const STATUS_FOLLOW_UP = 4;
+    const STATUS_CLOSED = 5;
     
     /**
      * @var int The id of this ask history item.
@@ -68,7 +67,7 @@ class SolidaryAskHistory implements MessagerInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read"})
+     * @Groups({"readSolidary"})
      */
     private $id;
 
@@ -77,7 +76,7 @@ class SolidaryAskHistory implements MessagerInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $status;
 
@@ -98,8 +97,8 @@ class SolidaryAskHistory implements MessagerInterface
     /**
      * @var SolidaryAsk|null The linked solidary ask.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", inversedBy="solidaryAskHistories")
-     * @Groups({"read","write"})
+     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", inversedBy="solidaryAskHistories", cascade={"persist","remove"})
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidaryAsk;
@@ -108,7 +107,7 @@ class SolidaryAskHistory implements MessagerInterface
      * @var Message|null The message linked the solidary ask history item.
      *
      * @ORM\OneToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="solidaryAskHistory", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $message;

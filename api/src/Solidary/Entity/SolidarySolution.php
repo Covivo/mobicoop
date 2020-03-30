@@ -41,8 +41,8 @@ use App\Carpool\Entity\Matching;
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={"post"},
+ *      itemOperations={"get"}
  * )
  */
 class SolidarySolution
