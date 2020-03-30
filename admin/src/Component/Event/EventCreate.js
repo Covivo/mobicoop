@@ -1,9 +1,9 @@
 import React from 'react'
-import { 
+import {
     Create, SimpleForm,
     TextInput,
     DateTimeInput, ReferenceInput, SelectInput, BooleanInput,
-    FormDataConsumer, 
+    FormDataConsumer,
     ReferenceField, FunctionField,useTranslate
 } from 'react-admin'
 import RichTextInput from 'ra-input-rich-text';
@@ -37,7 +37,7 @@ export const EventCreate = (props) => {
                 <EventImageUpload formClassName={classes.fullwidth}/>
                 <TextInput fullWidth source="description" label={translate('custom.label.event.resume')}  validate={required()} formClassName={classes.fullwidth}/>
                 <RichTextInput variant="filled" source="fullDescription" label={translate('custom.label.event.resumefull')}  validate={required()} formClassName={classes.richtext} />
-                
+
                 <TextInput fullWidth source="url" type="url" label={translate('custom.label.event.site')}  formClassName={classes.fullwidth}/>
                 <GeocompleteInput source="address" label={translate('custom.label.event.adresse')}  validate={required()} formClassName={classes.fullwidth}/>
 
@@ -50,10 +50,10 @@ export const EventCreate = (props) => {
                 ]} formClassName={classes.inlineBlock}/>
 
                 <CurrentUserInput source="user" label={translate('custom.label.event.createur')} />
-                
-                
-                
-                
+
+
+
+
             </SimpleForm>
         </Create>
     )

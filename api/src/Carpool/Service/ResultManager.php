@@ -1812,14 +1812,20 @@ class ResultManager
         }
         if ($ask->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
             // the ask is punctual; for now the time are the same
-            // todo : use the real requester time if it has only been copied from the carpooler time
-            $item->setDate($ask->getCriteria()->getFromDate());
-            $time = $ask->getCriteria()->getFromTime();
+            // if the proposal is private we use matching proposal date and time
+            $matching = $ask->getMatching();
+            $date = !$matching->getProposalOffer()->isPrivate()
+                ? $matching->getProposalOffer()->getCriteria()->getFromDate()
+                : $matching->getProposalRequest()->getCriteria()->getFromDate();
+            $time = !$matching->getProposalOffer()->isPrivate()
+                ? $matching->getProposalOffer()->getCriteria()->getFromTime()
+                : $matching->getProposalRequest()->getCriteria()->getFromTime();
             if ($role == Ad::ROLE_DRIVER) {
                 $time = $time->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
             } else {
                 $time = $time->add(new \DateInterval('PT' . $pickupDuration . 'S'));
             }
+            $item->setDate($date);
             $item->setTime($time);
         } else {
             // the ask is regular, the days depends on the ask status
