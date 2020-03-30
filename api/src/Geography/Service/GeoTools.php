@@ -37,7 +37,7 @@ class InvalidParameterException extends \Exception
 class GeoTools
 {
     const METERS_BY_DEGREE = 111319;
-    const RDP_EPSILON = 0.01;             // Ramer-Douglas-Peucker Epsilon : maximum perpendicular distance for any point from the line between two adjacent points.
+    const RDP_EPSILON = 0.005;             // Ramer-Douglas-Peucker Epsilon : maximum perpendicular distance for any point from the line between two adjacent points.
 
     private $params;
 

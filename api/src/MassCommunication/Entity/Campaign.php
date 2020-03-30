@@ -147,7 +147,6 @@ class Campaign
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Medium")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read_campaign","write_campaign"})
-     * @MaxDepth(1)
      */
     private $medium;
 
@@ -198,6 +197,7 @@ class Campaign
      * @var ArrayCollection The images of the campaign.
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="campaign", cascade="remove", orphanRemoval=true)
+     * @Groups({"read_campaign","write_campaign"})
      */
     private $images;
     

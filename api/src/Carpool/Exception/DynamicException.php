@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,22 +21,8 @@
  *    LICENSE
  **************************/
 
-namespace App\Auth\Rule;
+namespace App\Carpool\Exception;
 
-use App\Auth\Interfaces\AuthRuleInterface;
-use App\Carpool\Entity\Ask;
-
-/**
- *  Check that the requester is a mobile user
- */
-class MobileUser implements AuthRuleInterface
+class DynamicException extends \LogicException
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function execute($requester, $item, $params)
-    {
-        // a user is a mobile user if an ios or android app id is related to his account
-        return (!is_null($requester->getIosAppId()) || !is_null($requester->getAndroidAppId()));
-    }
 }
