@@ -11,6 +11,14 @@
         }
       }
     },
+    "joinCommunity": {
+      "popup": {
+        "title": "Demande de confirmation",
+        "content": {
+          "printPhoneNumberWarning": "Votre numéro de téléphone sera visible par le référent de la communauté.<br>Confirmez-vous ?"
+        }
+      }
+    },
     "buttons": {
       "publish": {
           "label": "Publier une annonce",
