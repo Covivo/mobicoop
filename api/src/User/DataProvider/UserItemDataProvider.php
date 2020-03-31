@@ -54,6 +54,8 @@ final class UserItemDataProvider implements ItemDataProviderInterface, Restricte
             return $this->userManager->getSolidaries($id);
         } elseif ($operationName=="structures") {
             return $this->userManager->getStructures($id);
+        } else {
+            return $this->userManager->getUser($id);
         }
     }
 }
