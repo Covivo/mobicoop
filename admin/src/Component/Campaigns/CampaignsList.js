@@ -34,10 +34,12 @@ const CampaignsList = (props) => {
                       })
                 )).then(
                   data =>  {
-                    setSelectedIdsFormat(data);
+                    setSelectedIdsFormat(data.map( v => v.user));
                     setOpen(true);
+
                   }
                 );
+
             })
             .catch( error => {
                 console.log("Erreur lors de la campagne d'emailing:", error)

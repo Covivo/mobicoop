@@ -191,7 +191,7 @@ const MailComposer = ({isOpen, selectedIds, onClose, resource, basePath, filterV
 
     };
 
-    // Envoi du mail de masse (si la campagne est sauvegardée)
+    // Envoi du mail de masse (si le mail de test en envoyé)
     const handleClickEnvoiMasse = () => {
         setLoading(true);
         const options = {}
@@ -208,8 +208,14 @@ const MailComposer = ({isOpen, selectedIds, onClose, resource, basePath, filterV
         setEtat(etats.MAIL_MASSE_ENVOYE);
         setLoading(false);
         onClose();
-       unselectAll(resource);
+        unselectAll(resource);
     };
+
+    // Clean data if we cancel or close the modal
+    const handleEmptyOnClose = () => {
+      dispatch([])
+        onClose();
+    }
 
     // Fonction utile à la modification d'un élément du mail
     const modifieLigneCorpsMail = (indice, nature) => e => {
@@ -225,13 +231,13 @@ const MailComposer = ({isOpen, selectedIds, onClose, resource, basePath, filterV
             open={isOpen}
         >
             <div className={classes.main_container}>
-               <CloseIcon className={classes.closeIcon} onClick={() => onClose()}/>
+               <CloseIcon className={classes.closeIcon} onClick={() => handleEmptyOnClose() }/>
                 <Grid container direction="column" justify="flex-start" alignItems="stretch">
                     <Grid container direction="row" justify="space-between" alignItems="center">
                         <Grid item><h1>Nouvel envoi en masse</h1></Grid>
                         <Grid item>
                             <CreateCampaignButton campagne={campaignCreateParameters} oldCampaign={campagne} disabled={!objetMail} enregistrementSuccess={apresEnregistrementCampagne} >Enregistrer</CreateCampaignButton> &nbsp;
-                            <Button variant="contained" color="secondary" onClick={() => onClose()}>Annuler</Button> &nbsp;
+                            <Button variant="contained" color="secondary" onClick={() => handleEmptyOnClose() }>Annuler</Button> &nbsp;
 
                             <Button variant="contained" disabled={etat<etats.CAMPAGNE_ENREGISTREE} onClick={handleClickEnvoiTest}>Envoyer Mail de test</Button> &nbsp;
                             <Button variant="contained" color="primary" disabled={etat<etats.MAIL_TEST_ENVOYE} onClick={handleClickEnvoiMasse}>Envoyer aux {ids.length || 0} destinataires</Button>&nbsp;
