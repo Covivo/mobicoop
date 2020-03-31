@@ -164,7 +164,7 @@ class UserController extends AbstractController
             
             // join a community
             if (!is_null($data['community'])) {
-                $user->setcommunityId($data['community']);
+                $user->setCommunityId($data['community']);
             }
 
             // create user in database
