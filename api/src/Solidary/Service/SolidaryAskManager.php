@@ -23,6 +23,7 @@
 namespace App\Solidary\Service;
 
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\AskHistory;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Exception\SolidaryException;
@@ -57,6 +58,47 @@ class SolidaryAskManager
             // create the carpool Ask
             $ask = new Ask();
             $ask->setStatus(Ask::STATUS_PENDING_AS_PASSENGER);
+
+            $solidaryProposal = $solidaryAsk->getSolidarySolution()->getSolidary()->getProposal();
+
+            // We get the Poposal
+            $ask->setType($solidaryProposal->getType());
+            $ask->setUser($solidaryAsk->getSolidarySolution()->getSolidaryUser()->getUser());
+
+            // We get the matching to have all criterias
+            $matching = $solidaryAsk->getSolidarySolution()->getMatching();
+            $ask->setMatching($matching);
+            $ask->setUserRelated($matching->getProposalOffer()->getUser());
+            $criteria = clone $matching->getCriteria();
+            $ask->setCriteria($criteria);
+
+            // we use the matching waypoints
+            $waypoints = $matching->getWaypoints();
+            foreach ($waypoints as $waypoint) {
+                $newWaypoint = clone $waypoint;
+                $ask->addWaypoint($newWaypoint);
+            }
+
+            // We create the associated Ask History
+            $askHistory = new AskHistory();
+            $askHistory->setStatus($ask->getStatus());
+            $askHistory->setType($ask->getType());
+            $ask->addAskHistory($askHistory);
+            
+            // // message
+            // if (!is_null($dynamicAsk->getMessage())) {
+            //     $message = new Message();
+            //     $message->setUser($dynamicAsk->getUser());
+            //     $message->setText($dynamicAsk->getMessage());
+            //     $recipient = new Recipient();
+            //     $recipient->setUser($ask->getUserRelated());
+            //     $recipient->setStatus(Recipient::STATUS_PENDING);
+            //     $message->addRecipient($recipient);
+            //     $this->entityManager->persist($message);
+            //     $askHistory->setMessage($message);
+            // }
+            
+            // $this->entityManager->persist($ask);
         }
 
         return $solidaryAsk;
