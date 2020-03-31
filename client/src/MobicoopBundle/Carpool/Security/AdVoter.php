@@ -69,8 +69,6 @@ class AdVoter extends Voter
             return false;
         }
 
-        dump($subject);
-        die;
         // only vote on Ad objects inside this voter
         if (!$subject instanceof Ad && !$subject instanceof Proposal) {
             return false;

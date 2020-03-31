@@ -1116,7 +1116,7 @@ export default {
           if (response.data) {
             // uncomment when results page activated
             //var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
-            // window.location.href = "/utilisateur/profil/modifier/mes-annonces";
+            window.location.href = "/utilisateur/profil/modifier/mes-annonces";
           }
           //console.log(response);
         })
@@ -1124,7 +1124,7 @@ export default {
           console.log(error);
         })
         .finally(() => {
-          this.loading = false;
+          // this.loading = false;
         });
     },
     updateAd () {
@@ -1155,7 +1155,7 @@ export default {
               color: "success",
               show: true
             };
-            // window.location.href = "/utilisateur/profil/modifier/mes-annonces";
+            window.location.href = "/utilisateur/profil/modifier/mes-annonces";
           } else {
             this.snackbar = {
               message: this.$t('update.error'),
@@ -1175,7 +1175,7 @@ export default {
           this.loading = false;
         })
         .finally(() => {
-          this.loading = false;
+          // this.loading = false;
         });
     },
     buildAdObject () {

@@ -29,6 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use App\Carpool\Controller\AdGet;
 use App\Carpool\Controller\AdAskPost;
 use App\Carpool\Controller\AdAskGet;
+use App\Carpool\Controller\ProposalDelete;
 use App\User\Entity\User;
 use App\Carpool\Controller\UpdateCarpoolsLimits;
 
@@ -110,6 +111,8 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *          "delete"={
  *              "method"="DELETE",
  *              "path"="/carpools/{id}",
+ *              "controller"=ProposalDelete::class,
+ *              "read"=false,
  *              "security"="is_granted('ad_delete',object)"
  *          }
  *      }

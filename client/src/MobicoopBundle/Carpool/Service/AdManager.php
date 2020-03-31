@@ -129,6 +129,7 @@ class AdManager
         ?int $communityId = null,
         ?array $filters = null
     ) {
+        $this->dataProvider->setFormat(DataProvider::RETURN_OBJECT);
         // we set the params
         $params = [
             "origin" => $origin,

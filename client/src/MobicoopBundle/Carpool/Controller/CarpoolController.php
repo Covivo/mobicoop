@@ -199,8 +199,9 @@ class CarpoolController extends AbstractController
 
     /**
      * Delete a carpooling ad.
-     * @param ProposalManager $proposalManager
+     * @param AdManager $adManager
      * @param Request $request
+     * @param UserManager $userManager
      * @return JsonResponse
      */
     public function carpoolAdDelete(AdManager $adManager, Request $request, UserManager $userManager)
@@ -213,30 +214,11 @@ class CarpoolController extends AbstractController
                     'message' => 'error'
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
-//            $ad = $adManager->getAd($data['adId']);
-//            dump($ad);die;
-//            $this->denyAccessUnlessGranted(AdVoter::DELETE_AD, $ad);
-
             // add the id of the deleter
             $data['deleterId'] = $userManager->getLoggedUser()->getId();
-            dump($adManager->deleteAd($data['adId'], $data));
-            die;
-            return $this->json($response = $adManager->deleteAd($data['adId'], $data));
-//                return new JsonResponse(
-//                    ["message" => "delete.success"],
-//                    \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
-//                );
-//            }
-//            return new JsonResponse(
-//                ["message" => "delete.error"],
-//                \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
-//            );
-        }
 
-        return new JsonResponse(
-            ["message" => "delete.error"],
-            \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN
-        );
+            return $this->json($response = $adManager->deleteAd($data['adId'], $data));
+        }
     }
 
     /**
