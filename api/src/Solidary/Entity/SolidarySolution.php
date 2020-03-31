@@ -83,7 +83,6 @@ class SolidarySolution
      * @var SolidaryUser The solidary User if needed.
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidaryUser")
-     * @ORM\JoinColumn(nullable=false)
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
@@ -147,7 +146,7 @@ class SolidarySolution
         return $this;
     }
 
-    public function getSolidaryUser(): SolidaryUser
+    public function getSolidaryUser(): ?SolidaryUser
     {
         return $this->solidaryUser;
     }

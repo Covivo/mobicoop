@@ -63,7 +63,7 @@ class SolidaryAskManager
 
             // We get the Poposal
             $ask->setType($solidaryProposal->getType());
-            $ask->setUser($solidaryAsk->getSolidarySolution()->getSolidaryUser()->getUser());
+            $ask->setUser($solidaryAsk->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser());
 
             // We get the matching to have all criterias
             $matching = $solidaryAsk->getSolidarySolution()->getMatching();
@@ -98,7 +98,8 @@ class SolidaryAskManager
             //     $askHistory->setMessage($message);
             // }
             
-            // $this->entityManager->persist($ask);
+            $this->entityManager->persist($ask);
+            $this->entityManager->flush();
         }
 
         return $solidaryAsk;
