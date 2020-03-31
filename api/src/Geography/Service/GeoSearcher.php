@@ -258,7 +258,7 @@ class GeoSearcher
      *
      * @param float $lat     The latitude
      * @param float $lon     The longitude
-     * @return Address            The results
+     * @return array         The array of addresses found
      */
     public function reverseGeoCode(float $lat, float $lon)
     {

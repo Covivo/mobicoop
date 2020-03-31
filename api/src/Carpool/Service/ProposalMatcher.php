@@ -72,6 +72,7 @@ class ProposalMatcher
     private $geoRouter;
     private $logger;
     private $formatDataManager;
+    private $params;
     
     /**
      * Constructor.
@@ -80,7 +81,7 @@ class ProposalMatcher
      * @param ProposalRepository $proposalRepository
      * @param GeoMatcher $geoMatcher
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, GeoMatcher $geoMatcher, GeoRouter $geoRouter, LoggerInterface $logger, FormatDataManager $formatDataManager)
+    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, GeoMatcher $geoMatcher, GeoRouter $geoRouter, LoggerInterface $logger, FormatDataManager $formatDataManager, array $params)
     {
         $this->entityManager = $entityManager;
         $this->proposalRepository = $proposalRepository;
@@ -88,6 +89,7 @@ class ProposalMatcher
         $this->geoMatcher = $geoMatcher;
         $this->logger = $logger;
         $this->formatDataManager = $formatDataManager;
+        $this->params = $params;
     }
 
     /**
@@ -273,6 +275,7 @@ class ProposalMatcher
                         [
                             'position'=>$proposalFound['position'],
                             'destination'=>$proposalFound['destination'],
+                            'reached'=>$proposalFound['reached'],
                             'latitude'=>$proposalFound['latitude'],
                             'longitude'=>$proposalFound['longitude'],
                             'streetAddress'=>$proposalFound['streetAddress'],
@@ -296,6 +299,7 @@ class ProposalMatcher
                 $element = [
                     'position'=>$proposalFound['position'],
                     'destination'=>$proposalFound['destination'],
+                    'reached'=>$proposalFound['reached'],
                     'latitude'=>$proposalFound['latitude'],
                     'longitude'=>$proposalFound['longitude'],
                     'streetAddress'=>$proposalFound['streetAddress'],
@@ -333,7 +337,9 @@ class ProposalMatcher
         }
         $addresses = [];
         foreach ($proposal->getWaypoints() as $waypoint) {
-            $addresses[] = $waypoint->getAddress();
+            if (!$waypoint->isReached()) {
+                $addresses[] = $waypoint->getAddress();
+            }
         }
         $candidateProposal->setAddresses($addresses);
         
@@ -359,24 +365,26 @@ class ProposalMatcher
                     return $a['position'] <=> $b['position'];
                 });
                 foreach ($proposalToMatch['addresses'] as $waypoint) {
-                    $address = new Address();
-                    $address->setLatitude($waypoint['latitude']);
-                    $address->setLongitude($waypoint['longitude']);
-                    $address->setStreetAddress($waypoint['streetAddress']);
-                    $address->setPostalCode($waypoint['postalCode']);
-                    $address->setAddressLocality($waypoint['addressLocality']);
-                    $address->setAddressCountry($waypoint['addressCountry']);
-                    $address->setElevation($waypoint['elevation']);
-                    $address->setHouseNumber($waypoint['houseNumber']);
-                    $address->setStreetAddress($waypoint['street']);
-                    $address->setSubLocality($waypoint['subLocality']);
-                    $address->setLocalAdmin($waypoint['localAdmin']);
-                    $address->setCounty($waypoint['county']);
-                    $address->setMacroCounty($waypoint['macroCounty']);
-                    $address->setRegion($waypoint['region']);
-                    $address->setMacroRegion($waypoint['macroRegion']);
-                    $address->setCountryCode($waypoint['countryCode']);
-                    $addressesCandidate[] = $address;
+                    if (!$waypoint['reached']) {
+                        $address = new Address();
+                        $address->setLatitude($waypoint['latitude']);
+                        $address->setLongitude($waypoint['longitude']);
+                        $address->setStreetAddress($waypoint['streetAddress']);
+                        $address->setPostalCode($waypoint['postalCode']);
+                        $address->setAddressLocality($waypoint['addressLocality']);
+                        $address->setAddressCountry($waypoint['addressCountry']);
+                        $address->setElevation($waypoint['elevation']);
+                        $address->setHouseNumber($waypoint['houseNumber']);
+                        $address->setStreetAddress($waypoint['street']);
+                        $address->setSubLocality($waypoint['subLocality']);
+                        $address->setLocalAdmin($waypoint['localAdmin']);
+                        $address->setCounty($waypoint['county']);
+                        $address->setMacroCounty($waypoint['macroCounty']);
+                        $address->setRegion($waypoint['region']);
+                        $address->setMacroRegion($waypoint['macroRegion']);
+                        $address->setCountryCode($waypoint['countryCode']);
+                        $addressesCandidate[] = $address;
+                    }
                 }
                 $candidate->setAddresses($addressesCandidate);
                 $candidate->setDuration($proposalToMatch["dpduration"]);
@@ -415,24 +423,26 @@ class ProposalMatcher
                     return $a['position'] <=> $b['position'];
                 });
                 foreach ($proposalToMatch['addresses'] as $waypoint) {
-                    $address = new Address();
-                    $address->setLatitude($waypoint['latitude']);
-                    $address->setLongitude($waypoint['longitude']);
-                    $address->setStreetAddress($waypoint['streetAddress']);
-                    $address->setPostalCode($waypoint['postalCode']);
-                    $address->setAddressLocality($waypoint['addressLocality']);
-                    $address->setAddressCountry($waypoint['addressCountry']);
-                    $address->setElevation($waypoint['elevation']);
-                    $address->setHouseNumber($waypoint['houseNumber']);
-                    $address->setStreetAddress($waypoint['street']);
-                    $address->setSubLocality($waypoint['subLocality']);
-                    $address->setLocalAdmin($waypoint['localAdmin']);
-                    $address->setCounty($waypoint['county']);
-                    $address->setMacroCounty($waypoint['macroCounty']);
-                    $address->setRegion($waypoint['region']);
-                    $address->setMacroRegion($waypoint['macroRegion']);
-                    $address->setCountryCode($waypoint['countryCode']);
-                    $addressesCandidate[] = $address;
+                    if (!$waypoint['reached']) {
+                        $address = new Address();
+                        $address->setLatitude($waypoint['latitude']);
+                        $address->setLongitude($waypoint['longitude']);
+                        $address->setStreetAddress($waypoint['streetAddress']);
+                        $address->setPostalCode($waypoint['postalCode']);
+                        $address->setAddressLocality($waypoint['addressLocality']);
+                        $address->setAddressCountry($waypoint['addressCountry']);
+                        $address->setElevation($waypoint['elevation']);
+                        $address->setHouseNumber($waypoint['houseNumber']);
+                        $address->setStreetAddress($waypoint['street']);
+                        $address->setSubLocality($waypoint['subLocality']);
+                        $address->setLocalAdmin($waypoint['localAdmin']);
+                        $address->setCounty($waypoint['county']);
+                        $address->setMacroCounty($waypoint['macroCounty']);
+                        $address->setRegion($waypoint['region']);
+                        $address->setMacroRegion($waypoint['macroRegion']);
+                        $address->setCountryCode($waypoint['countryCode']);
+                        $addressesCandidate[] = $address;
+                    }
                 }
                 $candidate->setAddresses($addressesCandidate);
                 $candidate->setDuration($proposalToMatch["ddduration"]);
@@ -778,7 +788,6 @@ class ProposalMatcher
         
         return $matchings;
     }
-    
 
     /**
      * Callback function for array sort
@@ -1304,6 +1313,171 @@ class ProposalMatcher
         }
         return [$pickUp,$dropOff];
     }
+
+
+
+
+
+
+    /************
+    *   DYNAMIC *
+    *************/
+
+    /**
+     * Update Matching proposal entities for a proposal.
+     *
+     * @param Proposal $proposal    The proposal for which we want the matchings
+     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
+     * @return Proposal The proposal with the matchings
+     */
+    public function updateMatchingsForProposal(Proposal $proposal, bool $excludeProposalUser=true)
+    {
+        $this->logger->info("ProposalMatcher : updateMatchingsForProposal #" . $proposal->getId() . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        set_time_limit(360);
+
+        // we search the matchings
+        $matchings = $this->findMatchingProposals($proposal, $excludeProposalUser);
+
+        $this->logger->info("ProposalMatcher : matchings for #" . $proposal->getId() . " : " . count($matchings) . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        
+        // first, we will check if existing matchings are still valid
+        // for matchings as request
+        foreach ($proposal->getMatchingOffers() as $matchingOffer) {
+            // here, $proposal == matchingOffer->getProposalRequest()
+            $found = false;
+            foreach ($matchings as $matching) {
+                if ($matching->getProposalOffer()->getId() == $matchingOffer->getProposalOffer()->getId()) {
+                    // this matching already exists => it is still valid
+                    $found = true;
+                    // update the matching
+                    $this->updateMatchingWithMatching($matching, $matchingOffer);
+                    break;
+                }
+            }
+            if (!$found) {
+                // the matching was not found => it is now invalid, we remove it unless there's a related ask
+                if (!$this->checkRelatedAskForMatching($matchingOffer)) {
+                    $proposal->removeMatchingOffer($matchingOffer);
+                }
+            }
+        }
+        // for matchings as offer
+        foreach ($proposal->getMatchingRequests() as $matchingRequest) {
+            // here, $proposal == matchingRequest->getProposalOffer()
+            $found = false;
+            foreach ($matchings as $matching) {
+                if ($matching->getProposalRequest()->getId() == $matchingRequest->getProposalRequest()->getId()) {
+                    // this matching already exists => it is still valid
+                    $found = true;
+                    // update the matching
+                    $this->updateMatchingWithMatching($matching, $matchingRequest);
+                    break;
+                }
+            }
+            if (!$found) {
+                // the matching was not found => it is now invalid, we remove it unless there's a related ask
+                if (!$this->checkRelatedAskForMatching($matchingRequest)) {
+                    $proposal->removeMatchingRequest($matchingRequest);
+                }
+            }
+        }
+
+        // second, we add the new matchings
+        foreach ($matchings as $matching) {
+            $found = false;
+            if ($matching->getProposalOffer() === $proposal) {
+                foreach ($proposal->getMatchingRequests() as $matchingRequest) {
+                    if ($matchingRequest->getProposalRequest()->getId() == $matching->getProposalRequest()->getId()) {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    $proposal->addMatchingRequest($matching);
+                }
+            } else {
+                foreach ($proposal->getMatchingOffers() as $matchingOffer) {
+                    if ($matchingOffer->getProposalOffer()->getId() == $matching->getProposalOffer()->getId()) {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    $proposal->addMatchingOffer($matching);
+                }
+            }
+        }
+                
+        return $proposal;
+    }
+
+    /**
+     * Check if there's a related ask to a matching. This method could be useless (we just need to count getAsks !) but here we also update the status if needed.
+     *
+     * @param Matching $matching The matching
+     * @return bool The result
+     */
+    private function checkRelatedAskForMatching(Matching $matching)
+    {
+        foreach ($matching->getAsks() as $ask) {
+            /**
+             * @var Ask $ask
+             */
+            // if the passenger has made an ask
+            if ($ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
+                // check the validity of the ask => must be less than DYNAMIC_CARPOOL_MAX_PENDING_TIME seconds
+                $limit = clone $ask->getCreatedDate();
+                $limit->add(new \DateInterval('PT' . $this->params['dynamicMaxPendingTime'] . 'S'));
+                $now = new \DateTime('UTC');
+                if ($limit<$now) {
+                    $ask->setStatus(Ask::STATUS_DECLINED_AS_DRIVER);
+                    $this->entityManager->persist($ask);
+                    $this->entityManager->flush();
+                }
+            }
+        }
+        return (count($matching->getAsks())>0);
+    }
+
+    /**
+     * Copy informations between a matching to another.
+     * Useful for updating a matching with new data.
+     *
+     * @param Matching $sourceMatching      The source matching
+     * @param Matching $destinationMatching The destination matching
+     * @return Matching The updated matching
+     */
+    private function updateMatchingWithMatching(Matching $sourceMatching, Matching $destinationMatching)
+    {
+        // matching properties
+        $destinationMatching->setOriginalDistance($sourceMatching->getOriginalDistance());
+        $destinationMatching->setAcceptedDetourDistance($sourceMatching->getAcceptedDetourDistance());
+        $destinationMatching->setNewDistance($sourceMatching->getNewDistance());
+        $destinationMatching->setDetourDistance($sourceMatching->getDetourDistance());
+        $destinationMatching->setDetourDistancePercent($sourceMatching->getDetourDistancePercent());
+        $destinationMatching->setOriginalDuration($sourceMatching->getOriginalDuration());
+        $destinationMatching->setAcceptedDetourDuration($sourceMatching->getAcceptedDetourDuration());
+        $destinationMatching->setNewDuration($sourceMatching->getNewDuration());
+        $destinationMatching->setDetourDuration($sourceMatching->getDetourDuration());
+        $destinationMatching->setDetourDurationPercent($sourceMatching->getDetourDurationPercent());
+        $destinationMatching->setCommonDistance($sourceMatching->getCommonDistance());
+        $destinationMatching->setPickUpDuration($sourceMatching->getPickUpDuration());
+        $destinationMatching->setDropOffDuration($sourceMatching->getDropOffDuration());
+
+        // matching waypoints
+        foreach ($destinationMatching->getWaypoints() as $waypoint) {
+            $destinationMatching->removeWaypoint($waypoint);
+        }
+        foreach ($sourceMatching->getWaypoints() as $waypoint) {
+            $destinationMatching->addWaypoint(clone $waypoint);
+        }
+
+        $this->entityManager->persist($destinationMatching);
+        $this->entityManager->flush();
+    }
+
+
 
 
 

@@ -3,7 +3,6 @@ import { AppBar } from 'react-admin';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-import logo from './logo.png'
 
 const useStyles = makeStyles({
     title: {
@@ -17,7 +16,9 @@ const useStyles = makeStyles({
     },
 });
 
+
 const MyAppBar = props => {
+    const logo = process.env.REACT_APP_THEME_URL_LOGO;
     const classes = useStyles();
     return (
         <AppBar {...props}>

@@ -172,8 +172,15 @@ class Solidary
      */
     private $solidarySolutions;
 
+    /**
+     * @var float Progression of this solidary
+     * @Groups({"readSolidary"})
+     */
+    private $progression;
+
     public function __construct()
     {
+        $this->id = self::DEFAULT_ID;
         $this->needs = new ArrayCollection();
         $this->solidarySolutions = new ArrayCollection();
         $this->proofs = new ArrayCollection();
@@ -181,7 +188,6 @@ class Solidary
 
     public function getId(): int
     {
-        $this->id = self::DEFAULT_ID;
         return $this->id;
     }
 
@@ -337,6 +343,18 @@ class Solidary
             $this->solidarySolutions->removeElement($solidarySolution);
         }
         
+        return $this;
+    }
+
+    public function getProgression(): ?string
+    {
+        return $this->progression;
+    }
+
+    public function setProgression(?string $progression): self
+    {
+        $this->progression = $progression;
+
         return $this;
     }
 

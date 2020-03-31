@@ -226,6 +226,14 @@ class Ask
     private $askHistories;
 
     /**
+     * @var CarpoolProof|null The proof related to the ask.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\CarpoolProof", inversedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
+     */
+    private $carpoolProof;
+
+    /**
      * @var Matching|null Related matching for a round trip (return or outward journey).
      * Not persisted : used only to get the return trip information.
      * @Groups("write")
@@ -474,6 +482,17 @@ class Ask
         return $this;
     }
 
+    public function getCarpoolProof(): ?CarpoolProof
+    {
+        return $this->carpoolProof;
+    }
+
+    public function setCarpoolProof(?CarpoolProof $carpoolProof): self
+    {
+        $this->carpoolProof = $carpoolProof;
+
+        return $this;
+    }
     public function getMatchingRelated(): ?Matching
     {
         return $this->matchingRelated;

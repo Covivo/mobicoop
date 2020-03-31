@@ -82,8 +82,6 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *          "get"={
  *              "method"="GET",
  *              "path"="/carpools/{id}",
- *              "controller"=AdGet::class,
- *              "read"=false,
  *              "security"="is_granted('ad_read_self',object)"
  *          },
  *          "get_full"={

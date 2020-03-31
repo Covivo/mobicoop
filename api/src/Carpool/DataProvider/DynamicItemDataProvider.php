@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,44 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Controller;
+namespace App\Carpool\DataProvider;
 
-use App\Carpool\Entity\Ad;
-use App\Carpool\Service\AdManager;
-use App\TranslatorTrait;
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use App\Carpool\Entity\Dynamic;
+use App\Carpool\Service\DynamicManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Controller class for ad get.
- * We return the Ad with its results.
+ * Item data provider for dynamic ad.
  *
- * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-class AdGet
+final class DynamicItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    use TranslatorTrait;
+    protected $request;
     
-    private $adManager;
-    private $request;
-    
-    public function __construct(RequestStack $requestStack, AdManager $adManager)
+    public function __construct(RequestStack $requestStack, DynamicManager $dynamicManager)
     {
         $this->request = $requestStack->getCurrentRequest();
-        $this->adManager = $adManager;
+        $this->dynamicManager = $dynamicManager;
     }
-
-    /**
-     * This method is invoked when a new ad is asked.
-     *
-     * @param Ad $data
-     * @return Ad
-     */
-    public function __invoke(Ad $data): Ad
+    
+    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
-        }
-        $data = $this->adManager->getAd($this->request->get("id"), $this->request->query->get('filters'), $this->request->query->get('order'));
-        return $data;
+        return Dynamic::class === $resourceClass;
+    }
+    
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Dynamic
+    {
+        return $this->dynamicManager->getDynamic($id);
     }
 }

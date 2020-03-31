@@ -83,7 +83,7 @@ export const CommunityShow = (props) => {
                 <TextField source="domain" label={translate('custom.label.community.domainName')} />
                 <TextField source="description" label={translate('custom.label.community.description')} />
                 <RichTextField source="fullDescription" label={translate('custom.label.community.descriptionFull')} />
-
+                <FunctionField label={translate('custom.label.community.numberMember')}  render={record => console.info(record) } />
             </Tab>
             <Tab label={translate('custom.label.community.membersModerator')}>
 

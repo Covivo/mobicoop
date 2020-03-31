@@ -27,6 +27,7 @@ use App\Solidary\Event\SolidaryCreated;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Solidary\Event\SolidaryUpdated;
+use App\Solidary\Repository\SolidaryRepository;
 use Symfony\Component\Security\Core\Security;
 
 class SolidaryManager
@@ -34,12 +35,25 @@ class SolidaryManager
     private $entityManager;
     private $eventDispatcher;
     private $security;
+    private $solidaryRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->security = $security;
+        $this->solidaryRepository = $solidaryRepository;
+    }
+
+    public function getSolidary($id): ?Solidary
+    {
+        $solidary = $this->solidaryRepository->find($id);
+
+        // We find the last entry of diary for this solidary to get the progression
+        $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
+        (count($diariesEntires)>0) ? $solidary->setProgression($diariesEntires[0]->getProgression()) : $solidary->setProgression(0);
+
+        return $solidary;
     }
 
     public function createSolidary(Solidary $solidary)

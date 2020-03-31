@@ -87,6 +87,7 @@ use App\Import\Entity\UserImport;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Entity\Delivery;
 use App\Auth\Entity\UserAuthAssignment;
+use App\Carpool\Entity\CarpoolProof;
 use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
@@ -105,7 +106,7 @@ use App\User\Controller\UserCanUseEmail;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readUser","mass","readSolidary"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readUser","mass","readSolidary","userStructure"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write","writeSolidary"}}
  *      },
  *      collectionOperations={
@@ -336,6 +337,18 @@ use App\User\Controller\UserCanUseEmail;
  *              "method"="PUT",
  *              "path"="/users/{id}/unsubscribe_user",
  *              "controller"=UserUnsubscribeFromEmail::class
+ *          },
+ *          "solidaries"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/solidaries",
+ *              "normalization_context"={"groups"={"readSolidary"}},
+ *              "security"="is_granted('solidary_list',object)"
+ *          },
+ *          "structures"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/structures",
+ *              "normalization_context"={"groups"={"userStructure"}},
+ *              "security"="is_granted('solidary_list',object)"
  *          }
  *      }
  * )
@@ -397,7 +410,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","threads", "thread"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","threads", "thread","userStructure"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -974,6 +987,20 @@ class User implements UserInterface, EquatableInterface
     private $userDelegate;
 
     /**
+     * @var ArrayCollection|null The carpool proofs of the user as a driver.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\CarpoolProof", mappedBy="driver")
+     */
+    private $carpoolProofsAsDriver;
+
+    /**
+     * @var ArrayCollection|null The carpool proofs of the user as a driver.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\CarpoolProof", mappedBy="passenger")
+     */
+    private $carpoolProofsAsPassenger;
+
+    /**
      * @var string|null Token for unsubscribee the user from receiving email
      *
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -1017,6 +1044,18 @@ class User implements UserInterface, EquatableInterface
      */
     private $solidaryUser;
 
+    /**
+     * @var array|null used to get the solidaries of a user
+     * @Groups({"readSolidary"})
+     */
+    private $solidaries;
+
+    /**
+     * @var array|null used to get the structures of a user
+     * @Groups({"userStructure"})
+     */
+    private $structures;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -1040,6 +1079,8 @@ class User implements UserInterface, EquatableInterface
         $this->userNotifications = new ArrayCollection();
         $this->campaigns = new ArrayCollection();
         $this->deliveries = new ArrayCollection();
+        $this->carpoolProofsAsDriver = new ArrayCollection();
+        $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->roles = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
@@ -2090,6 +2131,62 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getCarpoolProofsAsDriver()
+    {
+        return $this->carpoolProofsAsDriver->getValues();
+    }
+
+    public function addCarpoolProofsAsDriver(CarpoolProof $carpoolProofAsDriver): self
+    {
+        if (!$this->carpoolProofsAsDriver->contains($carpoolProofAsDriver)) {
+            $this->carpoolProofsAsDriver->add($carpoolProofAsDriver);
+            $carpoolProofAsDriver->setDriver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCarpoolProofsAsDriver(CarpoolProof $carpoolProofAsDriver): self
+    {
+        if ($this->carpoolProofsAsDriver->contains($carpoolProofAsDriver)) {
+            $this->carpoolProofsAsDriver->removeElement($carpoolProofAsDriver);
+            // set the owning side to null (unless already changed)
+            if ($carpoolProofAsDriver->getDriver() === $this) {
+                $carpoolProofAsDriver->setDriver(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCarpoolProofsAsPassenger()
+    {
+        return $this->carpoolProofsAsPassenger->getValues();
+    }
+
+    public function addCarpoolProofsAsPassenger(CarpoolProof $carpoolProofAsPassenger): self
+    {
+        if (!$this->carpoolProofsAsPassenger->contains($carpoolProofAsPassenger)) {
+            $this->carpoolProofsAsPassenger->add($carpoolProofAsPassenger);
+            $carpoolProofAsPassenger->setPassenger($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCarpoolProofsAsPassenger(CarpoolProof $carpoolProofAsPassenger): self
+    {
+        if ($this->carpoolProofsAsPassenger->contains($carpoolProofAsPassenger)) {
+            $this->carpoolProofsAsPassenger->removeElement($carpoolProofAsPassenger);
+            // set the owning side to null (unless already changed)
+            if ($carpoolProofAsPassenger->getPassenger() === $this) {
+                $carpoolProofAsPassenger->setPassenger(null);
+            }
+        }
+
+        return $this;
+    }
+
     public function getImport(): ?UserImport
     {
         return $this->import;
@@ -2353,6 +2450,30 @@ class User implements UserInterface, EquatableInterface
     public function setLastActivityDate(?\DateTimeInterface $lastActivityDate): self
     {
         $this->lastActivityDate = $lastActivityDate;
+
+        return $this;
+    }
+
+    public function getSolidaries()
+    {
+        return $this->solidaries;
+    }
+
+    public function setSolidaries(?array $solidaries): self
+    {
+        $this->solidaries = $solidaries;
+
+        return $this;
+    }
+
+    public function getStructures()
+    {
+        return $this->structures;
+    }
+
+    public function setStructures(?array $structures): self
+    {
+        $this->structures = $structures;
 
         return $this;
     }

@@ -165,7 +165,7 @@ class Community
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
      * @var string The name of the community.
      *
@@ -214,7 +214,7 @@ class Community
      * @Groups({"readCommunity","write"})
      */
     private $domain;
-    
+
     /**
      * @var string The short description of the community.
      *
@@ -223,7 +223,7 @@ class Community
      * @Groups({"readCommunity","write","communities"})
      */
     private $description;
-    
+
     /**
      * @var string The full description of the community.
      *
@@ -232,7 +232,7 @@ class Community
      * @Groups({"readCommunity","write","communities"})
      */
     private $fullDescription;
-    
+
     /**
     * @var \DateTimeInterface Creation date of the community.
     *
@@ -248,7 +248,7 @@ class Community
      * @Groups({"readCommunity","communities"})
      */
     private $updatedDate;
-    
+
     /**
      * @var User The creator of the community.
      *
@@ -256,7 +256,7 @@ class Community
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readCommunity","write"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities"})
      */
     private $user;
 
@@ -271,7 +271,7 @@ class Community
      * @MaxDepth(1)
      */
     private $address;
-    
+
     /**
      * @var ArrayCollection|null The images of the community.
      *
@@ -298,7 +298,7 @@ class Community
      *
      * @ApiProperty(push=true)
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readCommunity","write"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -323,7 +323,7 @@ class Community
      * @ApiSubresource(maxDepth=1)
      */
     private $relayPoints;
-    
+
     /**
      * @var boolean|null If the current user asking is member of the community
      * @Groups({"readCommunity","communities"})
@@ -339,22 +339,22 @@ class Community
         $this->communitySecurities = new ArrayCollection();
         $this->relayPoints = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId($id)
     {
         $this->id = $id;
     }
-    
+
     public function getName(): string
     {
         return $this->name;
     }
-    
+
     public function setName(string $name)
     {
         $this->name = $name;
@@ -376,7 +376,7 @@ class Community
     {
         return $this->membersHidden;
     }
-    
+
     public function setMembersHidden(?bool $isMembersHidden): self
     {
         $this->membersHidden = $isMembersHidden;
@@ -388,7 +388,7 @@ class Community
     {
         return $this->proposalsHidden;
     }
-    
+
     public function setProposalsHidden(?bool $isProposalsHidden): self
     {
         $this->proposalsHidden = boolval($isProposalsHidden);
@@ -400,7 +400,7 @@ class Community
     {
         return $this->validationType;
     }
-    
+
     public function setValidationType(?int $validationType)
     {
         $this->validationType = $validationType;
@@ -410,41 +410,41 @@ class Community
     {
         return $this->domain;
     }
-    
+
     public function setDomain(?string $domain)
     {
         $this->domain = $domain;
     }
-    
+
     public function getDescription(): string
     {
         return $this->description;
     }
-    
+
     public function setDescription(string $description)
     {
         $this->description = $description;
     }
-    
+
     public function getFullDescription(): string
     {
         return $this->fullDescription;
     }
-    
+
     public function setFullDescription(string $fullDescription)
     {
         $this->fullDescription = $fullDescription;
     }
-    
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
     }
-    
+
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
-        
+
         return $this;
     }
 
@@ -459,16 +459,16 @@ class Community
 
         return $this;
     }
-    
+
     public function getUser(): User
     {
         return $this->user;
     }
-    
+
     public function setUser(User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -476,29 +476,29 @@ class Community
     {
         return $this->address;
     }
-    
+
     public function setAddress(?Address $address): self
     {
         $this->address = $address;
-        
+
         return $this;
     }
-    
+
     public function getImages()
     {
         return $this->images->getValues();
     }
-    
+
     public function addImage(Image $image): self
     {
         if (!$this->images->contains($image)) {
             $this->images[] = $image;
             $image->setCommunity($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeImage(Image $image): self
     {
         if ($this->images->contains($image)) {
@@ -508,7 +508,7 @@ class Community
                 $image->setCommunity(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -516,22 +516,22 @@ class Community
     {
         return $this->proposals->getValues();
     }
-    
+
     public function addProposal(Proposal $proposal): self
     {
         if (!$this->proposals->contains($proposal)) {
             $this->proposals[] = $proposal;
         }
-        
+
         return $this;
     }
-    
+
     public function removeProposal(Proposal $proposal): self
     {
         if ($this->proposals->contains($proposal)) {
             $this->proposals->removeElement($proposal);
         }
-        
+
         return $this;
     }
 
@@ -539,17 +539,17 @@ class Community
     {
         return $this->communityUsers->getValues();
     }
-    
+
     public function addCommunityUser(CommunityUser $communityUser): self
     {
         if (!$this->communityUsers->contains($communityUser)) {
             $this->communityUsers[] = $communityUser;
             $communityUser->setCommunity($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeCommunityUser(CommunityUser $communityUser): self
     {
         if ($this->communityUsers->contains($communityUser)) {
@@ -559,7 +559,7 @@ class Community
                 $communityUser->setCommunity(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -567,17 +567,17 @@ class Community
     {
         return $this->communitySecurities->getValues();
     }
-    
+
     public function addCommunitySecurity(CommunitySecurity $communitySecurity): self
     {
         if (!$this->communitySecurities->contains($communitySecurity)) {
             $this->communitySecurities[] = $communitySecurity;
             $communitySecurity->setCommunity($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeCommunitySecurity(CommunityUser $communitySecurity): self
     {
         if ($this->communitySecurities->contains($communitySecurity)) {
@@ -587,7 +587,7 @@ class Community
                 $communitySecurity->setCommunity(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -595,17 +595,17 @@ class Community
     {
         return $this->relayPoints->getValues();
     }
-    
+
     public function addRelayPoint(RelayPoint $relayPoint): self
     {
         if (!$this->relayPoints->contains($relayPoint)) {
             $this->relayPoint[] = $relayPoint;
             $relayPoint->setCommunity($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeRelayPoint(RelayPoint $relayPoint): self
     {
         if ($this->relayPoint->contains($relayPoint)) {
@@ -615,24 +615,24 @@ class Community
                 $relayPoint->setCommunity(null);
             }
         }
-        
+
         return $this;
     }
-    
+
     public function isMember(): ?bool
     {
         return $this->member;
     }
-    
+
     public function setMember(?bool $member): self
     {
         $this->member = $member;
 
         return $this;
     }
-    
+
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *
@@ -643,7 +643,7 @@ class Community
         $this->setCreatedDate(new \Datetime());
     }
 
-      
+
     /**
      * Validation type.
      *

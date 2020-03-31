@@ -35,6 +35,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Communication\Entity\Message;
 use App\Communication\Interfaces\MessagerInterface;
 use App\Solidary\Entity\SolidaryAsk;
+use App\Communication\Entity\Notified;
 
 /**
  * Carpooling : a history item for an solidaryAsk
