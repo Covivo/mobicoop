@@ -34,7 +34,7 @@ use App\User\Service\UserManager;
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  *
  */
-final class UserItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+final class UserStructuresItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     private $userManager;
     
@@ -45,17 +45,11 @@ final class UserItemDataProvider implements ItemDataProviderInterface, Restricte
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass;
+        return User::class === $resourceClass && $operationName=="structures";
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User
     {
-        if ($operationName=="solidaries") {
-            return $this->userManager->getSolidaries($id);
-        } elseif ($operationName=="structures") {
-            return $this->userManager->getStructures($id);
-        } else {
-            return $this->userManager->getUser($id);
-        }
+        return $this->userManager->getStructures($id);
     }
 }
