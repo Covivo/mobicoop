@@ -52,6 +52,7 @@ final class AdDeleteDataProvider implements RestrictedDataProviderInterface, Ite
     {
         // it seems api platform pass there to give AdPostDataPersister the Ad to delete and then pass there again to return something to front
         // so it returns null to front after deletion
+        // todo : find a way to return something better than null after deletion
         return $this->proposalManager->get($id);
     }
 }
