@@ -39,9 +39,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"readAnimation"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeAnimation"}}
  *      },
- *      collectionOperations={
- *          "post"
- *      }
+ *      collectionOperations={"get","post"},
  * )
  */
 class Animation
@@ -109,14 +107,14 @@ class Animation
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getName(): ?string
     {
         return $this->name;
@@ -149,7 +147,7 @@ class Animation
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -161,7 +159,7 @@ class Animation
     public function setAuthor(?User $author): self
     {
         $this->author = $author;
-        
+
         return $this;
     }
 
@@ -181,11 +179,11 @@ class Animation
     {
         return $this->solidary;
     }
-    
+
     public function setSolidary(?Solidary $solidary): self
     {
         $this->solidary = $solidary;
-        
+
         return $this;
     }
 
@@ -193,11 +191,11 @@ class Animation
     {
         return $this->solidarySolution;
     }
-    
+
     public function setSolidarySolution(?SolidarySolution $solidarySolution): self
     {
         $this->solidarySolution = $solidarySolution;
-        
+
         return $this;
     }
 }

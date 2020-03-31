@@ -43,7 +43,7 @@ use App\User\Entity\User;
  *              "method"="POST",
  *              "normalization_context"={"groups"={"writeDynamic"}},
  *              "security_post_denormalize"="is_granted('dynamic_proof_create',object)"
- *          }
+ *          },"get"
  *      },
  *      itemOperations={
  *          "get"={
@@ -64,7 +64,7 @@ use App\User\Entity\User;
 class DynamicProof
 {
     const DEFAULT_ID = 999999999999;
-    
+
     /**
      * @var int The id of this dynamic ad proof.
      *
@@ -108,7 +108,7 @@ class DynamicProof
     {
         $this->id = self::DEFAULT_ID;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;

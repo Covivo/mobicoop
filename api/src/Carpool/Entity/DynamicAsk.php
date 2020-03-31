@@ -43,7 +43,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "method"="POST",
  *              "normalization_context"={"groups"={"writeDynamic","results"}},
  *              "security_post_denormalize"="is_granted('dynamic_ask_create',object)"
- *          }
+ *          },"get"
  *      },
  *      itemOperations={
  *          "get"={
@@ -64,7 +64,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class DynamicAsk
 {
     const DEFAULT_ID = 999999999999;
-    
+
     const STATUS_PENDING = 1;
     const STATUS_ACCEPTED = 2;
     const STATUS_DECLINED = 3;
@@ -105,7 +105,7 @@ class DynamicAsk
      * @Groups("readDynamic")
      */
     private $carpooler;
-    
+
     /**
      * @var int|null The matching id related to the ask.
      *
@@ -117,7 +117,7 @@ class DynamicAsk
     {
         $this->id = self::DEFAULT_ID;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -146,11 +146,11 @@ class DynamicAsk
     {
         return $this->message;
     }
-    
+
     public function setMessage(?string $message): self
     {
         $this->message = $message;
-        
+
         return $this;
     }
 
