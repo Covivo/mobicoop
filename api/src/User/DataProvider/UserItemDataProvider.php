@@ -37,7 +37,7 @@ use App\User\Service\UserManager;
 final class UserItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     private $userManager;
-    
+
     public function __construct(UserManager $userManager)
     {
         $this->userManager = $userManager;
@@ -45,15 +45,17 @@ final class UserItemDataProvider implements ItemDataProviderInterface, Restricte
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass;
+        return User::class === $resourceClass  && ( $operationName === "solidaries" ) ;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User
-    {
-        if ($operationName=="solidaries") {
-            return $this->userManager->getSolidaries($id);
-        } elseif ($operationName=="structures") {
-            return $this->userManager->getStructures($id);
-        }
-    }
+       {
+           if ($operationName=="solidaries") {
+               return $this->userManager->getSolidaries($id);
+           } elseif ($operationName=="structures") {
+               return $this->userManager->getStructures($id);
+           } else {
+               return $this->userManager->getUser($id);
+           }
+       }
 }

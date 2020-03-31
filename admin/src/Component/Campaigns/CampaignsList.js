@@ -45,13 +45,6 @@ const CampaignsList = (props) => {
 
     }
 
-      useEffect(() => {
-         if (selectedIdsFormat[0] && selectedIdsFormat.length > 0) {
-
-         }
-      });
-
-
 
     const ButtonCampaign = (props) => {
       //We dont show button if campaign is already send

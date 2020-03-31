@@ -1788,7 +1788,7 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->communityId;
     }
-    
+
     public function setCommunityId($communityId)
     {
         $this->communityId = $communityId;
