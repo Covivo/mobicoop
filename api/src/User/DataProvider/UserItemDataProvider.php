@@ -29,7 +29,7 @@ use App\User\Entity\User;
 use App\User\Service\UserManager;
 
 /**
- * Item data provider for Solidary Users.
+ * Item data provider for Users.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  *
