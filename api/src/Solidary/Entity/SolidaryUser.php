@@ -369,7 +369,7 @@ class SolidaryUser
      * @var ArrayCollection The solidary user structure
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="solidaryUser", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readUser","readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidaryUserStructures;
