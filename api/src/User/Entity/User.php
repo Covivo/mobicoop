@@ -410,7 +410,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","threads", "thread","userStructure"})
+     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","userStructure"})
      * @ApiProperty(identifier=true)
      */
     private $id;
