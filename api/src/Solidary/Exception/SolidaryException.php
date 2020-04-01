@@ -29,4 +29,11 @@ class SolidaryException extends \LogicException
     const BAD_SOLIDARYUSERSTRUCTURE_STATUS = "Invalid status value for this SolidaryUserStructure";
     const BAD_SOLIDARY_ACTION = "Unknown action";
     const UNKNOWN_USER = "Unknown User";
+
+    // SolidarySolution
+    const IS_NOT_VOLUNTEER = "The SolidaryUser is not a volunteer";
+    const CANT_HAVE_BOTH = "A SolidarySolution can't have both a Matching and a SolidaryUser";
+
+    // SolidaryManager
+    const INVALID_HOUR_SLOT = "Hour slot invalid";
 }

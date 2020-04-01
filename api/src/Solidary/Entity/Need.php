@@ -60,7 +60,7 @@ class Need
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("readSolidary")
+     * @Groups({"readUser","readSolidary"})
      */
     private $id;
 
@@ -69,7 +69,7 @@ class Need
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readUser","readSolidary","writeSolidary"})
      */
     private $label;
 
@@ -77,7 +77,7 @@ class Need
      * @var bool The need is not publicly available.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readUser","readSolidary","writeSolidary"})
      */
     private $private;
 
@@ -85,7 +85,7 @@ class Need
      * @var Solidary Solidary if the need was created for a specific solidary record.
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readUser","readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidary;

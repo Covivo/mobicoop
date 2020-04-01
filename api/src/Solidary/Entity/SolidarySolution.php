@@ -35,18 +35,20 @@ use App\Carpool\Entity\Matching;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * ApiResource(
+ * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={"post"},
+ *      itemOperations={"get"}
  * )
  */
 class SolidarySolution
 {
+    const DEFAULT_ID = 999999999999;
+
     /**
      * @var int $id The id of this solidary matching.
      *
@@ -81,15 +83,15 @@ class SolidarySolution
      * @var SolidaryUser The solidary User if needed.
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidaryUser")
-     * @ORM\JoinColumn(nullable=false)
      * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $solidaryUser;
 
     /**
      * @var string A comment about the solidary matching.
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $comment;
@@ -109,6 +111,11 @@ class SolidarySolution
      * @Groups("readSolidary")
      */
     private $updatedDate;
+
+    public function __construct()
+    {
+        $this->id = self::DEFAULT_ID;
+    }
 
     public function getId(): int
     {
@@ -139,7 +146,7 @@ class SolidarySolution
         return $this;
     }
 
-    public function getSolidaryUser(): SolidaryUser
+    public function getSolidaryUser(): ?SolidaryUser
     {
         return $this->solidaryUser;
     }
