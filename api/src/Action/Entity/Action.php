@@ -199,7 +199,7 @@ class Action
     
     public function setTypeName(string $typeName): self
     {
-        $this->type = $typeName;
+        $this->typeName = $typeName;
         
         return $this;
     }

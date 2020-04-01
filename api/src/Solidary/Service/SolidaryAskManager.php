@@ -98,6 +98,8 @@ class SolidaryAskManager
             //     $askHistory->setMessage($message);
             // }
             
+            // SMS
+
             $this->entityManager->persist($ask);
             $this->entityManager->flush();
         }
