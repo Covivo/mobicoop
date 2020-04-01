@@ -22,6 +22,7 @@
   <div>
     <!--SnackBar-->
     <v-snackbar
+      v-if="selectedCommunity"
       v-model="snackbar"
       :color="(errorUpdate)?'error': (communities && communities.validationType == 1 ? 'warning' : 'success')"
       top

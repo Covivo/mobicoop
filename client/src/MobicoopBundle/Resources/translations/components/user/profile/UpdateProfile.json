@@ -61,8 +61,23 @@
             "token": {
                 "route": "/utilisateur/telephone/token",
                 "inputError": "Le code de validation est composé de 4 chiffres."
+            },
+            "i18n": {
+                "date": {
+                  "format": {
+                    "fullDate": "ddd Do MMMM YYYY",
+                    "shortDate": "DD/MM/YYYY",
+                    "computeDate": "YYYY-MM-DD"
+                  }
+                },
+                "time": {
+                  "format": {
+                    "hourMinute": "HH[h]mm"
+                  }
+                }
             }
         },
+   
         "dialog" : {
             "titles": {
                 "deleteAccount":"Suppression de votre compte",
@@ -94,6 +109,7 @@
         "events" : {
             "route": "/user/events/created"
         }
+  
     },
     "en":{
         "titles": {
