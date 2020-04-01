@@ -28,6 +28,8 @@ bazinga_geocoder:
         - PeliasAutocomplete
       options:
         uri: '%env(SIG_GEOCODER_URI)%'
+      plugins:
+        - "Georouter.query_data_plugin"
 
     pelias_search:
       factory: App\Geography\ProviderFactory\PeliasSearchFactory
@@ -38,10 +40,13 @@ bazinga_geocoder:
         - PeliasSearch
       options:
         uri: '%env(SIG_GEOCODER_URI)%'
+      plugins:
+        - "Georouter.query_data_plugin"
 
     # List of providers
     chain:
       factory: Bazinga\GeocoderBundle\ProviderFactory\ChainFactory
       options:
         # This is the order in which Providers will be called. Note that it stops its iteration when a provider returns a result.
-        services: ['@PeliasAutocomplete','@PeliasSearch','@LocationIQ','@GMaps']
+        #services: ['@PeliasAutocomplete','@PeliasSearch','@LocationIQ','@GMaps']
+        services: ['@PeliasAutocomplete']

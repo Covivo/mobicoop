@@ -104,12 +104,34 @@ class GeoSearcher
 
         // if we have a token, we search for the corresponding user
         $user = null;
+        $userPrioritize = null;
         if ($token) {
-            $user = $this->userRepository->findOneBy(['geoToken'=>$token]);
+            if ($user = $this->userRepository->findOneBy(['geoToken'=>$token])) {
+                // we search its home address
+                foreach ($user->getAddresses() as $address) {
+                    if ($address->isHome()) {
+                        $userPrioritize = [
+                            'latitude' => $address->getLatitude(),
+                            'longitude' => $address->getLongitude()
+                        ];
+                        break;
+                    }
+                }
+            }
         }
 
         // 1 - sig addresses
-        $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input)->withLimit($this->defaultSigResultNumber))->all();
+        if (!is_null($userPrioritize)) {
+            $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input)
+            ->withLimit($this->defaultSigResultNumber)
+            ->withData('userPrioritize', $userPrioritize))
+            ->all();
+        } else {
+            $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input)
+            ->withLimit($this->defaultSigResultNumber))
+            ->all();
+        }
+        
         foreach ($geoResults as $geoResult) {
             // ?? todo : exclude all results that doesn't include any input word at all
             $address = new Address();

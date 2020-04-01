@@ -37,12 +37,17 @@ use Http\Client\HttpClient;
 /**
  * @author Sylvain Briat
  */
-final class PeliasSearch extends AbstractHttpProvider implements Provider
+final class PeliasSearch extends AbstractHttpProvider implements Provider, PeliasProvider
 {
     /**
      * @var string
      */
     const GEOCODE_ENDPOINT_URL = 'search?text=%s&size=%d&lang=%s';
+    
+    /**
+     * @var string
+     */
+    const GEOCODE_ENDPOINT_PRIORITIZATION = '&focus.point.lat=%f&focus.point.lon=%f';
 
     /**
      * @var string
@@ -58,12 +63,24 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
     private $uri;
 
     /**
+     * @var float
+     */
+    private $prioritizeLatitude;
+
+    /**
+     * @var float
+     */
+    private $prioritizeLongitude;
+
+    /**
      * @param HttpClient $client an HTTP adapter
      * @param string     $uri the api uri
      */
     public function __construct(HttpClient $client, string $uri=null)
     {
         $this->uri = $uri;
+        $this->prioritizeLongitude = null;
+        $this->prioritizeLatitude = null;
         parent::__construct($client);
     }
 
@@ -74,6 +91,9 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
     {
         $address = $query->getText();
         $url = sprintf($this->uri.self::GEOCODE_ENDPOINT_URL, urlencode($address), $query->getLimit(), $query->getLocale());
+        if (!is_null($this->prioritizeLatitude) && !is_null($this->prioritizeLongitude)) {
+            $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $this->prioritizeLatitude, $this->prioritizeLongitude);
+        }
         return $this->executeQuery($url);
     }
     /**
@@ -94,6 +114,7 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
     {
         return 'pelias_search';
     }
+
     /**
      * @param $url
      *
@@ -209,5 +230,18 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
             }
         }
         return null;
+    }
+
+    /**
+     * Setter for coordinates prioritization
+     *
+     * @param float $latitude   The latitude
+     * @param float $longitude  The longitude
+     * @return void
+     */
+    public function setPrioritizeCoordinates(float $latitude, float $longitude)
+    {
+        $this->prioritizeLatitude = $latitude;
+        $this->prioritizeLongitude = $longitude;
     }
 }

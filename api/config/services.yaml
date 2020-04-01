@@ -252,6 +252,11 @@ services:
     # Geocoder; alias to allow this type to be autowired
     Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
 
+    # Georouter, add prioritization
+    Georouter.query_data_plugin:
+        class: Geocoder\Plugin\Plugin\QueryDataPlugin
+        arguments:
+            - '%env(json:SIG_GEOCODER_PRIORITIZE_COORDINATES)%'
     # Geography
     App\Geography\Controller\:
         resource: '../src/Geography/Controller'
