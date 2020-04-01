@@ -120,6 +120,18 @@ class SolidaryAsk
      */
     private $solidaryAskHistories;
 
+    /**
+     * @var string The internal message to sent to the volunteer
+     * @Groups({"writeSolidary"})
+     */
+    private $message;
+
+    /**
+     * @var string The sms to sent to the volunteer
+     * @Groups({"writeSolidary"})
+     */
+    private $sms;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -204,6 +216,30 @@ class SolidaryAsk
             }
         }
         
+        return $this;
+    }
+
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    public function setMessage(string $message): self
+    {
+        $this->message = $message;
+
+        return $this;
+    }
+
+    public function getSms(): ?string
+    {
+        return $this->sms;
+    }
+
+    public function setSms(string $sms): self
+    {
+        $this->sms = $sms;
+
         return $this;
     }
 

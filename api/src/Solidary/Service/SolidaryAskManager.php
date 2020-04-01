@@ -24,6 +24,8 @@ namespace App\Solidary\Service;
 
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\AskHistory;
+use App\Communication\Entity\Message;
+use App\Communication\Entity\Recipient;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Exception\SolidaryException;
@@ -61,14 +63,22 @@ class SolidaryAskManager
 
             $solidaryProposal = $solidaryAsk->getSolidarySolution()->getSolidary()->getProposal();
 
+            // The User who make the Ask
+            $user = $solidaryAsk->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
+
             // We get the Poposal
             $ask->setType($solidaryProposal->getType());
-            $ask->setUser($solidaryAsk->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser());
+            $ask->setUser($user);
 
             // We get the matching to have all criterias
             $matching = $solidaryAsk->getSolidarySolution()->getMatching();
+
+            // The User related to the Ask
+            $userRelated = $matching->getProposalOffer()->getUser();
+
+
             $ask->setMatching($matching);
-            $ask->setUserRelated($matching->getProposalOffer()->getUser());
+            $ask->setUserRelated($userRelated);
             $criteria = clone $matching->getCriteria();
             $ask->setCriteria($criteria);
 
@@ -85,20 +95,23 @@ class SolidaryAskManager
             $askHistory->setType($ask->getType());
             $ask->addAskHistory($askHistory);
             
-            // // message
-            // if (!is_null($dynamicAsk->getMessage())) {
-            //     $message = new Message();
-            //     $message->setUser($dynamicAsk->getUser());
-            //     $message->setText($dynamicAsk->getMessage());
-            //     $recipient = new Recipient();
-            //     $recipient->setUser($ask->getUserRelated());
-            //     $recipient->setStatus(Recipient::STATUS_PENDING);
-            //     $message->addRecipient($recipient);
-            //     $this->entityManager->persist($message);
-            //     $askHistory->setMessage($message);
-            // }
+            // message
+            if (!is_null($solidaryAsk->getMessage())) {
+                $message = new Message();
+                $message->setUser($user);
+                $message->setText($solidaryAsk->getMessage());
+                $recipient = new Recipient();
+                $recipient->setUser($userRelated);
+                $recipient->setStatus(Recipient::STATUS_PENDING);
+                $message->addRecipient($recipient);
+                $this->entityManager->persist($message);
+                $askHistory->setMessage($message);
+            }
             
             // SMS
+            if (!is_null($solidaryAsk->getSms())) {
+                // To do : Send the SMS
+            }
 
             $this->entityManager->persist($ask);
             $this->entityManager->flush();
