@@ -218,8 +218,10 @@ class AdManager
         if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
             $outwardCriteria->setToDate($ad->getOutwardLimitDate() ? $ad->getOutwardLimitDate() : null);
-            $hasSchedule = false;
-            $this->createTimesFromSchedule($ad->getSchedule(), $outwardCriteria, $fromUpdate);
+            $outwardCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $outwardCriteria, $fromUpdate);
+            $hasSchedule = $outwardCriteria->isMonCheck() || $outwardCriteria->isTueCheck()
+                || $outwardCriteria->isWedCheck() || $outwardCriteria->isFriCheck() || $outwardCriteria->isThuCheck()
+                || $outwardCriteria->isSatCheck() || $outwardCriteria->isSunCheck();
             if (!$hasSchedule && !$ad->isSearch()) {
                 // for a post, we need aschedule !
                 throw new AdException('At least one day should be selected for a regular trip');
@@ -310,53 +312,10 @@ class AdManager
             if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
                 $returnCriteria->setToDate($ad->getReturnLimitDate() ? $ad->getReturnLimitDate() : null);
-                $hasSchedule = false;
-                foreach ($ad->getSchedule() as $schedule) {
-                    if (isset($schedule['returnTime']) && $schedule['returnTime'] != '') {
-                        if (isset($schedule['mon']) && $schedule['mon']) {
-                            $hasSchedule = true;
-                            $returnCriteria->setMonCheck(true);
-                            $returnCriteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $returnCriteria->setMonMarginDuration($this->params['defaultMarginTime']);
-                        }
-                        if (isset($schedule['tue']) && $schedule['tue']) {
-                            $hasSchedule = true;
-                            $returnCriteria->setTueCheck(true);
-                            $returnCriteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $returnCriteria->setTueMarginDuration($this->params['defaultMarginTime']);
-                        }
-                        if (isset($schedule['wed']) && $schedule['wed']) {
-                            $hasSchedule = true;
-                            $returnCriteria->setWedCheck(true);
-                            $returnCriteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $returnCriteria->setWedMarginDuration($this->params['defaultMarginTime']);
-                        }
-                        if (isset($schedule['thu']) && $schedule['thu']) {
-                            $hasSchedule = true;
-                            $returnCriteria->setThuCheck(true);
-                            $returnCriteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $returnCriteria->setThuMarginDuration($this->params['defaultMarginTime']);
-                        }
-                        if (isset($schedule['fri']) && $schedule['fri']) {
-                            $hasSchedule = true;
-                            $returnCriteria->setFriCheck(true);
-                            $returnCriteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $returnCriteria->setFriMarginDuration($this->params['defaultMarginTime']);
-                        }
-                        if (isset($schedule['sat']) && $schedule['sat']) {
-                            $hasSchedule = true;
-                            $returnCriteria->setSatCheck(true);
-                            $returnCriteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $returnCriteria->setSatMarginDuration($this->params['defaultMarginTime']);
-                        }
-                        if (isset($schedule['sun']) && $schedule['sun']) {
-                            $hasSchedule = true;
-                            $returnCriteria->setSunCheck(true);
-                            $returnCriteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $returnCriteria->setSunMarginDuration($this->params['defaultMarginTime']);
-                        }
-                    }
-                }
+                $returnCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $outwardCriteria, $fromUpdate);
+                $hasSchedule = $returnCriteria->isMonCheck() || $returnCriteria->isTueCheck()
+                    || $returnCriteria->isWedCheck() || $returnCriteria->isFriCheck() || $returnCriteria->isThuCheck()
+                    || $returnCriteria->isSatCheck() || $returnCriteria->isSunCheck();
                 if (!$hasSchedule && !$ad->isSearch()) {
                     // for a post, we need a schedule !
                     throw new AdException('At least one day should be selected for a regular trip');

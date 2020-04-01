@@ -1023,9 +1023,9 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'outwardWaypoints' => $this->getOutwardWaypoints(),
                 'returnWaypoints' => $this->getReturnWaypoints(),
                 'outwardDate' => !is_null($this->getOutwardDate()) ? $this->getOutwardDate()->format('Y-m-d') : null,
-                'outwardLimitDate' => $this->getOutwardLimitDate(),
+                'outwardLimitDate' => !is_null($this->getOutwardLimitDate()) ? $this->getOutwardLimitDate()->format('Y-m-d') : null,
                 'returnDate' => !is_null($this->getReturnDate()) ? $this->getReturnDate()->format('Y-m-d') : null,
-                'returnLimitDate' => $this->getReturnLimitDate(),
+                'returnLimitDate' => !is_null($this->getReturnLimitDate()) ? $this->getReturnLimitDate()->format('Y-m-d') : null,
                 'outwardTime' => $this->getOutwardTime(),
                 'returnTime' => $this->getReturnTime(),
                 'priceKm' => $this->getPriceKm(),
@@ -1040,7 +1040,8 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'destination' => $this->getDestination(),
                 'schedule' => $this->getSchedule(),
                 'paused' => $this->isPaused(),
-                'results' => $this->getResults()
+                'results' => $this->getResults(),
+                'frequency' => $this->getFrequency()
             ];
     }
 }

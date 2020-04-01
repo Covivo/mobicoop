@@ -88,6 +88,7 @@ class AdManager
      */
     public function createAd(array $data)
     {
+        $this->dataProvider->setFormat(DataProvider::RETURN_OBJECT);
         $ad = $this->mapAd($data);
         // creation of the ad
         $response = $this->dataProvider->post($ad);
