@@ -94,6 +94,7 @@ export const CommunityShow = (props) => {
                           actions={null}
                           sort={{ field: 'id', order: 'ASC' }}
                           title=": composition"
+                          filter={{ is_published: true }}
                     >
                         <Datagrid>
                             <UserReferenceField label={translate('custom.label.community.member')}  source="user" reference="users" />

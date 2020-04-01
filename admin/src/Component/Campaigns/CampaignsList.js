@@ -81,7 +81,7 @@ const CampaignsList = (props) => {
                 </Datagrid>
             </List>
 
-            <MailComposer
+            { open && <MailComposer
                 isOpen={open}
                 selectedIds={selectedIdsFormat}
                 onClose={()=>setOpen(false)}
@@ -91,7 +91,7 @@ const CampaignsList = (props) => {
                 filterValues={{}}
                 campagneReprise = {campaign}
 
-            />
+            /> }
         </Fragment>
     )
 };
