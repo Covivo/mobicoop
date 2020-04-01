@@ -361,7 +361,7 @@ class SolidaryUser
      * @var ArrayCollection|null The special needs proposed by the solidaryUser.
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readUser","readSolidary","writeSolidary"})
      */
     private $needs;
 
