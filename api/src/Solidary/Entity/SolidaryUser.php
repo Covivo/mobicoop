@@ -102,7 +102,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Morning min time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMinTime;
@@ -110,7 +110,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Morning max time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMaxTime;
@@ -118,7 +118,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Afternoon min time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMinTime;
@@ -126,7 +126,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Afternoon max time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMaxTime;
@@ -134,7 +134,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Evening min time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMinTime;
@@ -142,7 +142,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Evening max time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMaxTime;

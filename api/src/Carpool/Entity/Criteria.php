@@ -53,7 +53,7 @@ class Criteria
     
     const FREQUENCY_PUNCTUAL = 1;
     const FREQUENCY_REGULAR = 2;
-    
+
     /**
      * @var int The id of this criteria.
      *
@@ -1762,6 +1762,15 @@ class Criteria
         // $directionDriverId . $delimiter .
         // $directionPassengerId . $delimiter .
         // ($this->createdDate ? $this->createdDate->format('Y-m-d H:i:s') : '') . $delimiter;
+    }
+
+    public static function getHoursSlots(): array
+    {
+        return [
+            "m" => ["min" => new \DateTime("00:00:00"),"max" => new \DateTime("12:00:00")],
+            "a" => ["min" => new \DateTime("12:00:01"),"max" => new \DateTime("18:00:00")],
+            "e" => ["min" => new \DateTime("18:00:01"),"max" => new \DateTime("23:59:59")]
+        ];
     }
 
     // DOCTRINE EVENTS
