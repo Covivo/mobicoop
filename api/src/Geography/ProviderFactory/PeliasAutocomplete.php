@@ -77,12 +77,11 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
      */
     public function geocodeQuery(GeocodeQuery $query): Collection
     {
-        var_dump($query);
-        exit;
         $address = $query->getText();
         $url = sprintf($this->uri.self::GEOCODE_ENDPOINT_URL, urlencode($address), $query->getLimit(), $query->getLocale());
         if (!is_null($query->getData('userPrioritize'))) {
-            $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $query->getData('userLatitude'), $query->getData('userLongitude'));
+            $userPrioritize = $query->getData('userPrioritize');
+            $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $userPrioritize['latitude'], $userPrioritize['longitude']);
         } elseif (!is_null($query->getData('latitude')) && !is_null($query->getData('longitude'))) {
             $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $query->getData('latitude'), $query->getData('longitude'));
         }

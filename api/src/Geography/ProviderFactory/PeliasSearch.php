@@ -37,7 +37,7 @@ use Http\Client\HttpClient;
 /**
  * @author Sylvain Briat
  */
-final class PeliasSearch extends AbstractHttpProvider implements Provider, PeliasProvider
+final class PeliasSearch extends AbstractHttpProvider implements Provider
 {
     /**
      * @var string
@@ -55,22 +55,12 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider, Pelia
     const REVERSE_ENDPOINT_URL = 'reverse?point.lat=%f&point.lon=%f&size=%d&lang=%s';
 
     // minimum confidence to consider a result as pertinent
-    const MIN_CONFIDENCE = 0.8;
+    const MIN_CONFIDENCE = 0.85;
 
     /**
      * @var string
      */
     private $uri;
-
-    /**
-     * @var float
-     */
-    private $prioritizeLatitude;
-
-    /**
-     * @var float
-     */
-    private $prioritizeLongitude;
 
     /**
      * @param HttpClient $client an HTTP adapter
@@ -79,8 +69,6 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider, Pelia
     public function __construct(HttpClient $client, string $uri=null)
     {
         $this->uri = $uri;
-        $this->prioritizeLongitude = null;
-        $this->prioritizeLatitude = null;
         parent::__construct($client);
     }
 
@@ -91,8 +79,11 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider, Pelia
     {
         $address = $query->getText();
         $url = sprintf($this->uri.self::GEOCODE_ENDPOINT_URL, urlencode($address), $query->getLimit(), $query->getLocale());
-        if (!is_null($this->prioritizeLatitude) && !is_null($this->prioritizeLongitude)) {
-            $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $this->prioritizeLatitude, $this->prioritizeLongitude);
+        if (!is_null($query->getData('userPrioritize'))) {
+            $userPrioritize = $query->getData('userPrioritize');
+            $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $userPrioritize['latitude'], $userPrioritize['longitude']);
+        } elseif (!is_null($query->getData('latitude')) && !is_null($query->getData('longitude'))) {
+            $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $query->getData('latitude'), $query->getData('longitude'));
         }
         return $this->executeQuery($url);
     }
@@ -230,18 +221,5 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider, Pelia
             }
         }
         return null;
-    }
-
-    /**
-     * Setter for coordinates prioritization
-     *
-     * @param float $latitude   The latitude
-     * @param float $longitude  The longitude
-     * @return void
-     */
-    public function setPrioritizeCoordinates(float $latitude, float $longitude)
-    {
-        $this->prioritizeLatitude = $latitude;
-        $this->prioritizeLongitude = $longitude;
     }
 }
