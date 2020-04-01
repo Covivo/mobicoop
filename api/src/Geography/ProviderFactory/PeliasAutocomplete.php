@@ -47,6 +47,11 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
     /**
      * @var string
      */
+    const GEOCODE_ENDPOINT_PRIORITIZATION = '&focus.point.lat=%f&focus.point.lon=%f';
+
+    /**
+     * @var string
+     */
     const REVERSE_ENDPOINT_URL = 'reverse?point.lat=%f&point.lon=%f&size=%d&lang=%s';
 
     /**
@@ -74,6 +79,12 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
     {
         $address = $query->getText();
         $url = sprintf($this->uri.self::GEOCODE_ENDPOINT_URL, urlencode($address), $query->getLimit(), $query->getLocale());
+        if (!is_null($query->getData('userPrioritize'))) {
+            $userPrioritize = $query->getData('userPrioritize');
+            $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $userPrioritize['latitude'], $userPrioritize['longitude']);
+        } elseif (!is_null($query->getData('latitude')) && !is_null($query->getData('longitude'))) {
+            $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $query->getData('latitude'), $query->getData('longitude'));
+        }
         return $this->executeQuery($url);
     }
     /**
@@ -111,7 +122,6 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
             return new AddressCollection([]);
         }
         $results = [];
-        //var_dump($locations);exit;
         foreach ($locations as $location) {
             $props = $location['properties'];
 
