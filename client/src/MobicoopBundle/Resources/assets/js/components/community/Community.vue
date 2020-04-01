@@ -55,6 +55,7 @@
                       <v-btn
                         rounded
                         disabled
+                        @click="joinCommunityDialog = true"
                       >
                         {{ $t('buttons.join.label') }}
                       </v-btn>
@@ -143,7 +144,7 @@
                         rounded
                         :loading="loading || (checkValidation && isLogged) "
                         :disabled="!isLogged || checkValidation"
-                        @click="joinCommunity"
+                        @click="joinCommunityDialog=true"
                       >
                         {{ $t('buttons.join.label') }}
                       </v-btn>
@@ -245,7 +246,7 @@
         />
       </v-row>
 
-      <!--Confirmation Popup-->
+      <!--Confirmation Popup for LeaveCommunity-->
       <v-dialog
         v-model="leaveCommunityDialog"
         persistent
@@ -271,6 +272,39 @@
               color="secondary darken-1"
               text
               @click="leaveCommunityDialog=false; postLeavingRequest()"
+            >
+              {{ $t('ui.common.yes') }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!--Confirmation Popup for JoinCommunity-->
+      <v-dialog
+        v-model="joinCommunityDialog"
+        persistent
+        max-width="500"
+      >
+        <v-card>
+          <v-card-title class="headline">
+            {{ $t('joinCommunity.popup.title') }}
+          </v-card-title>
+          <v-card-text
+            v-html="$t('joinCommunity.popup.content.printPhoneNumberWarning')"
+          />
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="primary darken-1"
+              text
+              @click="joinCommunityDialog=false"
+            >
+              {{ $t('ui.common.no') }}
+            </v-btn>
+            <v-btn
+              color="secondary darken-1"
+              text
+              @click="joinCommunityDialog=false; joinCommunity()"
             >
               {{ $t('ui.common.yes') }}
             </v-btn>
@@ -372,6 +406,7 @@ export default {
       pointsToMap:[],
       directionWay:[],
       leaveCommunityDialog: false,
+      joinCommunityDialog: false,
       loading: false,
       snackbar: false,
       textSnackbar: null,

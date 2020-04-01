@@ -174,7 +174,6 @@ class UserManager
     {
         $user = $this->prepareUser($user, $encodePassword);
 
-
         // Check if there is a SolidaryUser. If so, we need to check if the right role. If there is not, we add it.
         if (!is_null($user->getSolidaryUser())) {
             if ($user->getSolidaryUser()->isVolunteer()) {
@@ -209,6 +208,15 @@ class UserManager
                 $event = new UserDelegateRegisteredPasswordSendEvent($user);
                 $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
             }
+        }
+
+        if (!is_null($user->getCommunityId())) {
+            $communityUser = new CommunityUser();
+            $communityUser->setUser($user);
+            $communityUser->setCommunity($this->communityRepository->find($user->getCommunityId()));
+            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
+            $this->entityManager->persist($communityUser);
+            $this->entityManager->flush();
         }
 
         // dispatch SolidaryUser event
@@ -253,7 +261,6 @@ class UserManager
         $user->setMusic($this->music);
         $user->setSmoke($this->smoke);
 
-
         // Create geotoken
         $user->setGeoToken($this->createToken($user));
 
@@ -263,38 +270,6 @@ class UserManager
         // Create token to unscubscribe from the instance news
         $user->setUnsubscribeToken($this->createToken($user));
         
-        // persist the user
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-
-        // creation of the alert preferences
-        $user = $this->createAlerts($user);
-
-        // dispatch en event
-        if (is_null($user->getUserDelegate())) {
-            // registration by the user itself
-            $event = new UserRegisteredEvent($user);
-            $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
-        } else {
-            // delegate registration
-            $event = new UserDelegateRegisteredEvent($user);
-            $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
-            // send password ?
-            if ($user->getPasswordSendType() == User::PWD_SEND_TYPE_SMS) {
-                $event = new UserDelegateRegisteredPasswordSendEvent($user);
-                $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
-            }
-        }
-
-        if (!is_null($user->getCommunityId())) {
-            $communityUser = new CommunityUser();
-            $communityUser->setUser($user);
-            $communityUser->setCommunity($this->communityRepository->find($user->getCommunityId()));
-            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
-            $this->entityManager->persist($communityUser);
-            $this->entityManager->flush();
-        }
-
         // return the user
         return $user;
     }
