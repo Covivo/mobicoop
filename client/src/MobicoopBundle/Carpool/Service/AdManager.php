@@ -74,6 +74,7 @@ class AdManager
      */
     public function getFullAd(int $id)
     {
+        $this->dataProvider->setFormat(DataProvider::RETURN_OBJECT);
         if ($data = $this->dataProvider->getSpecialItem($id, 'full')) {
             return $data->getValue();
         }
