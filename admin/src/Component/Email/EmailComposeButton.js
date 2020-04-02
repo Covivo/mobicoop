@@ -45,7 +45,6 @@ const EmailComposeButton = ({ selectedIds, resource, basePath, filterValues}) =>
     } : {}
     const handleClick = () => {
         if (rgpdAgree) {
-          console.info(campaignCreateParameters)
             mutate({
                 type: 'create',
                 resource: 'campaigns',
