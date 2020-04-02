@@ -18,7 +18,7 @@ const EmailComposeButton = ({ selectedIds, resource, basePath, filterValues}) =>
     const translate = useTranslate();
 
     useEffect( () => {  localStorage.getItem('id') &&
-        dataProvider.getOne('users',{id: "/users/"+localStorage.getItem('id')} )
+        dataProvider.getOne('users',{id: localStorage.getItem('id')} )
             .then( ({ data }) => {
                 const senderConnecte = ({replyTo:data.email, fromName: data.givenName + " " + data.familyName, id:data.id})
                 setSender( [ senderConnecte] )

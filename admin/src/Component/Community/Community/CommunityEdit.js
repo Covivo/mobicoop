@@ -77,19 +77,14 @@ export const CommunityEdit = (props) => {
                 </FormTab>
                 <FormTab label={translate('custom.label.community.members')}>
                     <AddNewMemberButton />
-                    <ReferenceArrayField fullWidth source="communityUsers" reference="community_users" addLabel={false}>
-                        <List {...props}
-                            perPage={ 50 }
-                            actions={null}
-                            title=": composition"
-                        >
-                            <Datagrid>
-                                <UserReferenceField label={translate('custom.label.community.member')} source="user" sortBy="user.givenName" reference="users" />
+                    <ReferenceArrayField fullWidth source="communityUsers" reference="community_users" label="Tags">
+                          <Datagrid>
+                              <UserReferenceField label={translate('custom.label.community.member')} source="user" sortBy="user.givenName" reference="users" />
 
-                                <SelectNewStatus label={translate('custom.label.community.newStatus')} />
-                                <DeleteButton onClick={()=> redirect('edit', '/communities', encodeURIComponent(communityId))} />
-                            </Datagrid>
-                        </List>
+                              <SelectNewStatus label={translate('custom.label.community.newStatus')} />
+                              <DeleteButton onClick={()=> redirect('edit', '/communities', encodeURIComponent(communityId))} />
+                          </Datagrid>
+
                     </ReferenceArrayField>
 
                 </FormTab>

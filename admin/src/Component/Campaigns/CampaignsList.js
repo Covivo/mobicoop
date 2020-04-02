@@ -34,23 +34,18 @@ const CampaignsList = (props) => {
                       })
                 )).then(
                   data =>  {
-                    setSelectedIdsFormat(data);
+                    setSelectedIdsFormat(data.map( v => v.user));
                     setOpen(true);
+
                   }
                 );
+
             })
             .catch( error => {
                 console.log("Erreur lors de la campagne d'emailing:", error)
             })
 
     }
-
-      useEffect(() => {
-         if (selectedIdsFormat[0] && selectedIdsFormat.length > 0) {
-
-         }
-      });
-
 
 
     const ButtonCampaign = (props) => {
@@ -86,7 +81,7 @@ const CampaignsList = (props) => {
                 </Datagrid>
             </List>
 
-            <MailComposer
+            { open && <MailComposer
                 isOpen={open}
                 selectedIds={selectedIdsFormat}
                 onClose={()=>setOpen(false)}
@@ -96,7 +91,7 @@ const CampaignsList = (props) => {
                 filterValues={{}}
                 campagneReprise = {campaign}
 
-            />
+            /> }
         </Fragment>
     )
 };

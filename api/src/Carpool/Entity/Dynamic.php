@@ -43,7 +43,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "method"="POST",
  *              "normalization_context"={"groups"={"writeDynamic","results"}},
  *              "security_post_denormalize"="is_granted('dynamic_ad_create',object)"
- *          }
+ *          },"get"
  *      },
  *      itemOperations={
  *          "get"={
@@ -66,7 +66,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Dynamic
 {
     const DEFAULT_ID = 999999999999;
-    
+
     const ROLE_DRIVER = 1;
     const ROLE_PASSENGER = 2;
 
@@ -149,7 +149,7 @@ class Dynamic
      * @var User|null The ad owner.
      */
     private $user;
-    
+
     /**
      * @var array|null The carpool results.
      *
@@ -197,7 +197,7 @@ class Dynamic
         $this->filters = [];
         $this->asks = [];
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -209,7 +209,7 @@ class Dynamic
 
         return $this;
     }
-    
+
     public function getRole(): int
     {
         return $this->role;
@@ -226,11 +226,11 @@ class Dynamic
     {
         return $this->waypoints;
     }
-    
+
     public function setWaypoints(array $waypoints): self
     {
         $this->waypoints = $waypoints;
-        
+
         return $this;
     }
 
@@ -270,7 +270,7 @@ class Dynamic
     {
         return $this->priceKm;
     }
-    
+
     public function setPriceKm(?string $priceKm)
     {
         $this->priceKm = $priceKm;
@@ -280,7 +280,7 @@ class Dynamic
     {
         return $this->price;
     }
-    
+
     public function setPrice(?string $price)
     {
         $this->price = $price;
@@ -302,11 +302,11 @@ class Dynamic
     {
         return $this->comment;
     }
-    
+
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-        
+
         return $this;
     }
 
