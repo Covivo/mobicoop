@@ -1767,9 +1767,9 @@ class Criteria
     public static function getHoursSlots(): array
     {
         return [
-            "m" => ["min" => new \DateTime("00:00:00"),"max" => new \DateTime("12:00:00")],
-            "a" => ["min" => new \DateTime("12:00:01"),"max" => new \DateTime("18:00:00")],
-            "e" => ["min" => new \DateTime("18:00:01"),"max" => new \DateTime("23:59:59")]
+            "m" => ["min" => new \DateTime("06:00:00"),"max" => new \DateTime("12:00:00")],
+            "a" => ["min" => new \DateTime("12:00:01"),"max" => new \DateTime("19:00:00")],
+            "e" => ["min" => new \DateTime("19:00:01"),"max" => new \DateTime("23:00:00")]
         ];
     }
 
