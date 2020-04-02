@@ -23,11 +23,13 @@
 namespace App\Solidary\Service;
 
 use App\Solidary\Entity\Solidary;
+use App\Solidary\Entity\SolidaryTransportSearch;
 use App\Solidary\Event\SolidaryCreated;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Solidary\Event\SolidaryUpdated;
 use App\Solidary\Repository\SolidaryRepository;
+use App\Solidary\Repository\SolidaryUserRepository;
 use Symfony\Component\Security\Core\Security;
 
 class SolidaryManager
@@ -36,13 +38,15 @@ class SolidaryManager
     private $eventDispatcher;
     private $security;
     private $solidaryRepository;
+    private $solidaryUserRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository, SolidaryUserRepository $solidaryUserRepository)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->security = $security;
         $this->solidaryRepository = $solidaryRepository;
+        $this->solidaryUserRepository = $solidaryUserRepository;
     }
 
     public function getSolidary($id): ?Solidary
@@ -74,5 +78,18 @@ class SolidaryManager
 
         $this->entityManager->persist($solidary);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Get the results for a SolidaryTransportSearch
+     *
+     * @param SolidaryTransportSearch $solidaryTransportSearch
+     * @return SolidaryTransportSearch
+     */
+    public function getSolidaryTransportSearchResults(SolidaryTransportSearch $solidaryTransportSearch): SolidaryTransportSearch
+    {
+        $solidaryTransportSearch->setResults($this->solidaryUserRepository->findForASolidaryTransportSearch($solidaryTransportSearch));
+        
+        return $solidaryTransportSearch;
     }
 }

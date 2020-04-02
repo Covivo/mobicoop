@@ -45,6 +45,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readSolidary","readUser"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
@@ -101,7 +102,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Morning min time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMinTime;
@@ -109,7 +110,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Morning max time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMaxTime;
@@ -117,7 +118,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Afternoon min time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMinTime;
@@ -125,7 +126,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Afternoon max time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMaxTime;
@@ -133,7 +134,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Evening min time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMinTime;
@@ -141,7 +142,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Evening max time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMaxTime;
@@ -360,7 +361,7 @@ class SolidaryUser
      * @var ArrayCollection|null The special needs proposed by the solidaryUser.
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readUser","readSolidary","writeSolidary"})
      */
     private $needs;
 
@@ -368,7 +369,7 @@ class SolidaryUser
      * @var ArrayCollection The solidary user structure
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="solidaryUser", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readUser","readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidaryUserStructures;
