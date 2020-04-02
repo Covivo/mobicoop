@@ -62,11 +62,12 @@ class GeoSearcher
     private $defaultNamedResultNumber;
     private $defaultRelayPointResultNumber;
     private $defaultEventResultNumber;
+    private $geoDataFixes;
 
     /**
      * Constructor.
      */
-    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, IconRepository $iconRepository, string $iconPath, string $dataPath, string $defaultSigResultNumber, string $defaultNamedResultNumber, string $defaultRelayPointResultNumber, string $defaultEventResultNumber)
+    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, IconRepository $iconRepository, string $iconPath, string $dataPath, string $defaultSigResultNumber, string $defaultNamedResultNumber, string $defaultRelayPointResultNumber, string $defaultEventResultNumber, array $geoDataFixes)
     {
         $this->geocoder = $geocoder;
         $this->geoTools = $geoTools;
@@ -81,6 +82,7 @@ class GeoSearcher
         $this->defaultNamedResultNumber = $defaultNamedResultNumber;
         $this->defaultRelayPointResultNumber = $defaultRelayPointResultNumber;
         $this->defaultEventResultNumber = $defaultEventResultNumber;
+        $this->geoDataFixes = $geoDataFixes;
     }
 
     /**
@@ -104,13 +106,39 @@ class GeoSearcher
 
         // if we have a token, we search for the corresponding user
         $user = null;
+        $userPrioritize = null;
         if ($token) {
-            $user = $this->userRepository->findOneBy(['geoToken'=>$token]);
+            if ($user = $this->userRepository->findOneBy(['geoToken'=>$token])) {
+                // we search its home address
+                foreach ($user->getAddresses() as $address) {
+                    if ($address->isHome()) {
+                        $userPrioritize = [
+                            'latitude' => $address->getLatitude(),
+                            'longitude' => $address->getLongitude()
+                        ];
+                        break;
+                    }
+                }
+            }
         }
 
         // 1 - sig addresses
-        $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input)->withLimit($this->defaultSigResultNumber))->all();
+        if (!is_null($userPrioritize)) {
+            $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input)
+            ->withLimit($this->defaultSigResultNumber)
+            ->withData('userPrioritize', $userPrioritize))
+            ->all();
+        } else {
+            $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input)
+            ->withLimit($this->defaultSigResultNumber))
+            ->all();
+        }
+        
         foreach ($geoResults as $geoResult) {
+            /**
+             * @var PeliasAddress $geoResult
+             */
+            
             // ?? todo : exclude all results that doesn't include any input word at all
             $address = new Address();
             // set address icon
@@ -159,7 +187,6 @@ class GeoSearcher
             if ((method_exists($geoResult, 'getEstablishment')) && ($geoResult->getEstablishment() != null)) {
                 $address->setVenue($geoResult->getEstablishment());
             }
-
             if ((method_exists($geoResult, 'getPointOfInterest')) && ($geoResult->getPointOfInterest() != null)) {
                 $address->setVenue($geoResult->getPointOfInterest());
             }
@@ -169,8 +196,14 @@ class GeoSearcher
             if ($address->getVenue()) {
                 $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_VENUE)->getFileName());
             }
-            
+
+            // add id and fix result if handled by the provider
+            if (method_exists($geoResult, 'getId')) {
+                $address = $this->fixAddress($geoResult->getId(), $address);
+            }
+
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+
             $result[] = $address;
         }
         
@@ -318,6 +351,12 @@ class GeoSearcher
                 if ($address->getVenue()) {
                     $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_VENUE)->getFileName());
                 }
+
+                // add id and fix result if handled by the provider
+                if (method_exists($geoResult, 'getId')) {
+                    $address = $this->fixAddress($geoResult->getId(), $address);
+                }
+
                 $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
 
                 $addresses[] = $address;
@@ -325,5 +364,26 @@ class GeoSearcher
             return $addresses;
         }
         return false;
+    }
+
+    /**
+     * Fix potential wrong addresses.
+     *
+     * @param string $id        The id of the source data
+     * @param Address $address  The address to fix
+     * @return Address The address fixed
+     */
+    private function fixAddress(string $id, Address $address)
+    {
+        // we search in the fixes if there's one corresponding to the id
+        if (array_key_exists($id, $this->geoDataFixes)) {
+            foreach ($this->geoDataFixes[$id] as $property=>$value) {
+                if (method_exists($address, 'set'.ucfirst($property))) {
+                    $method = 'set'.ucfirst($property);
+                    $address->$method($value);
+                }
+            }
+        }
+        return $address;
     }
 }

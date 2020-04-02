@@ -81,6 +81,6 @@ class AskHistoryRepository
         ->setParameter('ask', $ask)
         ->orderBy('ah.createdDate', 'DESC');
         
-        return $query->getQuery()->getSingleResult();
+        return $query->getQuery()->getOneOrNullResult();
     }
 }
