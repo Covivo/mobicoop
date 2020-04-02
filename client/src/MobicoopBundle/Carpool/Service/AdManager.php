@@ -47,7 +47,7 @@ class AdManager
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
-        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $this->dataProvider->setFormat(DataProvider::RETURN_OBJECT);
         $this->security = $security;
     }
 
@@ -74,7 +74,6 @@ class AdManager
      */
     public function getFullAd(int $id)
     {
-        $this->dataProvider->setFormat(DataProvider::RETURN_OBJECT);
         if ($data = $this->dataProvider->getSpecialItem($id, 'full')) {
             return $data->getValue();
         }
@@ -89,7 +88,6 @@ class AdManager
      */
     public function createAd(array $data)
     {
-        $this->dataProvider->setFormat(DataProvider::RETURN_OBJECT);
         $ad = $this->mapAd($data);
         // creation of the ad
         $response = $this->dataProvider->post($ad);
@@ -131,7 +129,6 @@ class AdManager
         ?int $communityId = null,
         ?array $filters = null
     ) {
-        $this->dataProvider->setFormat(DataProvider::RETURN_OBJECT);
         // we set the params
         $params = [
             "origin" => $origin,
