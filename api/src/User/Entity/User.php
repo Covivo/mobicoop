@@ -261,7 +261,7 @@ use App\User\Controller\UserCanUseEmail;
  *              "read"=false,
  *              "denormalization_context"={"groups"={"passwordUpdateRequest"}},
  *              "normalization_context"={"groups"={"passwordUpdateRequest"}},
- *              "security"="is_granted('user_password',object)"
+ *              "security"="is_granted('user_register',object)"
  *          },
  *          "password_update"={
  *              "method"="POST",
@@ -271,7 +271,7 @@ use App\User\Controller\UserCanUseEmail;
  *              "read"=false,
  *              "denormalization_context"={"groups"={"passwordUpdate"}},
  *              "normalization_context"={"groups"={"passwordUpdate"}},
- *              "security"="is_granted('user_password',object)"
+ *              "security"="is_granted('user_register',object)"
  *          },
  *          "generate_phone_token"={
  *              "method"="GET",
