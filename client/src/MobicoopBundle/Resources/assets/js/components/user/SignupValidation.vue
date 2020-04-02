@@ -68,6 +68,7 @@
           method="POST"
         >
           <v-text-field
+            id="token"
             v-model="token"
             :rules="tokenRules"
             :label="$t('token')"

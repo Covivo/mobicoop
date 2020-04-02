@@ -19,78 +19,63 @@ const baseUrl = Cypress.env("baseUrl");
 
 Cypress.Commands.add('addProposal', () => {
 
-  /* Share a proposal */
-  // cy.contains('Partager une annonce')
-  cy.get('.buttons > .is-dark')
-    .click()
-  cy.wait(600)
-  cy.url().should('include', baseUrl + 'covoiturage/annonce/poster')
+  /* Share a proposal PONCTUAL - DRIVER - ONE WAY homepage*/
 
-  /* Passenger or Driver */
-  cy.get(':nth-child(3) > .b-radio').contains('Passager ou Conducteur')
-    .click()
+  cy.get('.v-toolbar__content > .v-btn--contained > .v-btn__content').click()
 
-  /* Next */
-  cy.get('.wizard-btn')
-    .click()
+  /* From */
+ cy.get('#from > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > #address')
+    .type('Nancy');
+  cy.get('[aria-labelledby="list-item-281-0"] > .v-list > #content')
+    .contains('Nancy').click();
+  cy.wait(2500); 
 
-  /* One way */
-  cy.get('#Trajet2 > .fieldsContainer > :nth-child(1) > .b-radio')
-    .contains('Aller')
-    .click()
-  cy.get('.control > #origin')
-    .should('have.attr', 'placeholder', 'Depuis')
-    .type('Metz')
-  cy.wait(3000)
-  cy.get('[data-v-12259723]')
-    .contains('Metz')
-    .click()
+    
 
   /* To */
-  cy.get('#destination')
-    .should('have.attr', 'placeholder', 'Vers')
-    .type('Marseille')
-  cy.wait(3000)
-  cy.get('[data-v-12259723]')
-    .contains('Marseille')
-    .click()
+  cy.get('#to > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > #address')
+    .type('Metz');
+  cy.get('[aria-labelledby="list-item-328-0"] > .v-list > #content')
+    .contains('Metz').click();
+  cy.wait(2500);
+  
+  /* Date */
+  cy.get('#date').click({force:true});
+
+  /* Month Year*/
+  cy.get(':nth-child(3) > :nth-child(1) > .v-btn > .v-btn__content').click();
+
+  /* Redirection */
+  cy.url().should('include', baseUrl + 'covoiturage/annonce/poster');
 
   /* Next */
-  cy.get('.wizard-footer-right > span > .wizard-btn')
-    .click()
+  cy.get('[mt-5=""] > .v-btn > .v-btn__content').click();
+  
+  /* Departure time */
+  cy.get('#outwartTime').click({force:true});
+  cy.get('.v-time-picker-clock__item--active > span').trigger('mouseenter') 
+    .first().click();
+  cy.get('.v-time-picker-clock__item--active > span')
+    .last().click();
 
-  /* Ponctual */
-  cy.get('#Fréquence4 > .fieldsContainer > :nth-child(1) > .b-radio')
-    .click()
+  /* Next */
+  cy.get('[mt-5=""] > .v-btn--contained > .v-btn__content').click();
 
-  /* One way - Date */
-  cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-trigger > .control > .input')
-    .should('have.attr', 'placeholder', 'Date de départ...')
-    .click()
-  cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > :nth-child(1) > .pagination > .pagination-list > .field > :nth-child(1) > .select > select').select('Juin')
-  cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > :nth-child(1) > .pagination > .pagination-list > .field > :nth-child(2) > .select > select').select('2022')
-  cy.get(':nth-child(5) > :nth-child(4)').contains('30')
-    .click()
+  /* Next */
+  cy.get('[mt-5=""] > .v-btn--contained > .v-btn__content').click();
 
-  // in order to close the window datepicker
-  cy.get('.title')
-    .click({ force: true })
+  /* Next */
+  cy.get('[mt-5=""] > .v-btn--contained > .v-btn__content').click();
 
-  /* One way - Time */
-  cy.get('.timepicker > .dropdown > .dropdown-trigger > .control > .input')
-    .should('have.attr', 'placeholder', 'Heure de départ...')
-    .click()
-  cy.get('.timepicker-footer > .is-primary')
-    .click()
+  /* Next */
+  cy.get('[mt-5=""] > .v-btn--contained > .v-btn__content').click();
 
-  // in order to close the window timepicker
-  cy.get('.title')
-    .click({ force: true })
+  /* Next */
+  cy.get('[mt-5=""] > .v-btn--contained > .v-btn__content').click();
 
-  /* Margin */
-  cy.get(':nth-child(3) > .columns > .is-4 > .select > select').select('5')
+  /* Publish */
+  cy.get('[mt-5=""] > :nth-child(3) > .v-btn > .v-btn__content').click();
 
-  /* I share my ad */
-  cy.get('.wizard-footer-right > span > .wizard-btn')
-    .click()
+  /* Redirection */
+  cy.url().should('include', baseUrl + 'utilisateur/profil/modifier/mes-annonces');
 });

@@ -63,6 +63,7 @@
           >
             <template v-slot:activator="{ on }">
               <v-text-field
+                id="outwartTime"
                 v-model="outwardTime"
                 :label="$t('outwardTime.label')"
                 prepend-icon=""

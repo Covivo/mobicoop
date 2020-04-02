@@ -37,6 +37,7 @@
           method="POST"
         >
           <v-text-field
+            id="email"
             v-model="email"
             :rules="emailRules"
             :label="$t('models.user.email.placeholder')"
@@ -45,6 +46,7 @@
           />
 
           <v-text-field
+            id="password"
             v-model="password"
             :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
             :rules="passwordRules"

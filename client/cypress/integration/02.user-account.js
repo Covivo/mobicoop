@@ -24,112 +24,112 @@ describe('User account', () => {
   const baseUrl = Cypress.env("baseUrl");
 
   beforeEach(() => {
-    cy.visit(baseUrl)
+    cy.visit(baseUrl);
   });
 
   // afterEach(()=> {
   //     cy.logout()
   // })
 
-  it('An user logged updates his password', () => {
-    let email = `johndoe@fakemail.com`
-    let password = "OldPassord!*$"
-    let newPassword = "NewPassword$**"
+  // it('An user logged updates his password', () => {
+  //   let email = `johndoe@fakemail.com`
+  //   let password = "OldPassord!*$"
+  //   let newPassword = "NewPassword$**"
 
-    cy.loginWith(email, password)
+  //   cy.loginWith(email, password)
 
-    cy.percySnapshot('user_logged');
+  //   cy.percySnapshot('user_logged');
 
-    cy.wait(2500)
-    cy.percySnapshot('login')
+  //   cy.wait(2500)
+  //   cy.percySnapshot('login')
 
-    /* Account */
-    cy.contains('Mon profil')
-      .click()
-    cy.url().should('include', baseUrl + 'utilisateur/profil')
+  //   /* Account */
+  //   cy.contains('Mon profil')
+  //     .click()
+  //   cy.url().should('include', baseUrl + 'utilisateur/profil')
 
-    cy.percySnapshot('user_profile');
-
-
-    /* Password */
-    cy.contains('Mot de passe')
-      .click()
-    cy.url().should('include', baseUrl + 'utilisateur/mot-de-passe/modifier')
-
-    /* Change password */
-    cy.get('#user_form_password_first')
-      .should('have.attr', 'placeholder', 'Saisissez votre mot de passe')
-      .type(newPassword)
-
-    /* Password */
-    cy.get('#user_form_password_second')
-      .should('have.attr', 'placeholder', 'Confirmez votre mot de passe')
-      .type(newPassword)
-
-    /* Submit */
-    cy.get('#user_form_submit')
-      .click()
-
-    cy.logout()
-    cy.wait(2500)
-  });
-
-  it('An user logged updates his account', () => {
-
-    let email = `johndoe@fakemail.com`
-    let newPassword = "NewPassword$**"
-    let password = newPassword
-
-    cy.loginWith(email, password)
-
-    /* Account */
-    cy.contains('Mon profil').click()
-    cy.url().should('include', baseUrl + 'utilisateur/profil')
-    cy.wait(2500)
-
-    /* Update */
-    cy.get('.column > input').click()
-    cy.url().should('include', baseUrl + 'utilisateur/profil/modifier')
-
-    /* Gender */
-    cy.get(':nth-child(3) > .field > .control > .select > select')
-      .select('2')
-      .should('have.value', '2')
-
-    // Change phone number
-    cy.get('.contact > .phone > .field > .control > .input').clear()
-      .should('have.attr', 'placeholder', 'Numéro de téléphone')
-      .type('0610111214')
-
-    cy.get('.save > .column > .button').click()
-    cy.url().should('include', baseUrl) // should be redirected to home
-
-    cy.logout()
-  });
-
-  it('An user goes to his account and click to Mes annonces', () => {
-    let email = "johndoe@fakemail.com"
-    let password = "NewPassword$**"
-
-    cy.loginWith(email, password)
+  //   cy.percySnapshot('user_profile');
 
 
-    /* Profil */
-    cy.contains('Mon profil').click()
-    cy.url().should('include', baseUrl + 'utilisateur/profil')
+  //   /* Password */
+  //   cy.contains('Mot de passe')
+  //     .click()
+  //   cy.url().should('include', baseUrl + 'utilisateur/mot-de-passe/modifier')
 
-    /* My proposals */
-    cy.contains('Mes annonces').click()
-    cy.url().should('include', baseUrl + 'utilisateur/annonces')
-    cy.percySnapshot('user_my_ad');
+  //   /* Change password */
+  //   cy.get('#user_form_password_first')
+  //     .should('have.attr', 'placeholder', 'Saisissez votre mot de passe')
+  //     .type(newPassword)
 
-  });
+  //   /* Password */
+  //   cy.get('#user_form_password_second')
+  //     .should('have.attr', 'placeholder', 'Confirmez votre mot de passe')
+  //     .type(newPassword)
 
-  it('An user goes to his account and deletes it', () => {
-    let email = "johndoe@fakemail.com"
-    let password = "NewPassword$**"
+  //   /* Submit */
+  //   cy.get('#user_form_submit')
+  //     .click()
 
-    cy.loginWith(email, password)
-    cy.delete()
-  });
+  //   cy.logout()
+  //   cy.wait(2500)
+  // });
+
+  // it('An user logged updates his account', () => {
+
+  //   let email = `johndoe@fakemail.com`
+  //   let newPassword = "NewPassword$**"
+  //   let password = newPassword
+
+  //   cy.loginWith(email, password)
+
+  //   /* Account */
+  //   cy.contains('Mon profil').click()
+  //   cy.url().should('include', baseUrl + 'utilisateur/profil')
+  //   cy.wait(2500)
+
+  //   /* Update */
+  //   cy.get('.column > input').click()
+  //   cy.url().should('include', baseUrl + 'utilisateur/profil/modifier')
+
+  //   /* Gender */
+  //   cy.get(':nth-child(3) > .field > .control > .select > select')
+  //     .select('2')
+  //     .should('have.value', '2')
+
+  //   // Change phone number
+  //   cy.get('.contact > .phone > .field > .control > .input').clear()
+  //     .should('have.attr', 'placeholder', 'Numéro de téléphone')
+  //     .type('0610111214')
+
+  //   cy.get('.save > .column > .button').click()
+  //   cy.url().should('include', baseUrl) // should be redirected to home
+
+  //   cy.logout()
+  // });
+
+  // it('An user goes to his account and click to Mes annonces', () => {
+  //   let email = "johndoe@fakemail.com"
+  //   let password = "NewPassword$**"
+
+  //   cy.loginWith(email, password)
+
+
+  //   /* Profil */
+  //   cy.contains('Mon profil').click()
+  //   cy.url().should('include', baseUrl + 'utilisateur/profil')
+
+  //   /* My proposals */
+  //   cy.contains('Mes annonces').click()
+  //   cy.url().should('include', baseUrl + 'utilisateur/annonces')
+  //   cy.percySnapshot('user_my_ad');
+
+  // });
+
+  // it('An user goes to his account and deletes it', () => {
+  //   let email = "johndoe@fakemail.com"
+  //   let password = "NewPassword$**"
+
+  //   cy.loginWith(email, password)
+  //   cy.delete()
+  // });
 });

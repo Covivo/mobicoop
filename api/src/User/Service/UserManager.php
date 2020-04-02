@@ -261,7 +261,7 @@ class UserManager
         $user->setMusic($this->music);
         $user->setSmoke($this->smoke);
 
-        // Create geotoken
+        // Create geotoken        
         $user->setGeoToken($this->createToken($user));
 
         // Create token to validate inscription
@@ -992,7 +992,14 @@ class UserManager
         $datetime = new DateTime();
         $time = $datetime->getTimestamp();
         // note : we replace the '/' by an arbitrary 'a' as the token could be used in a url
-        return $this->sanitizeString(hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
+
+        if ($user->getEmail() == $_ENV['FAKE_FIRST_MAIL']) {
+            return $_ENV['FAKE_FIRST_TOKEN'];
+        } else if ($user->getEmail() == $_ENV['FAKE_SECOND_MAIL']) {
+            return $_ENV['FAKE_SECOND_TOKEN'];
+        } else {
+            return $this->sanitizeString(hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
+        }
     }
 
     /**
