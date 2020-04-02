@@ -72,6 +72,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class SolidaryUser
 {
+    const DEFAULT_MAX_DISTANCE = 20; // km
+
     /**
      * @var int The id of this solidary user.
      *
@@ -394,6 +396,7 @@ class SolidaryUser
     {
         $this->needs = new ArrayCollection();
         $this->solidaryUserStructures = new ArrayCollection();
+        $this->setMaxDistance(self::DEFAULT_MAX_DISTANCE);
     }
     
     public function getId(): ?int

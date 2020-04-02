@@ -103,9 +103,8 @@ class SolidaryUserRepository
 
         // Only the volunteer
         $query = $this->repository->createQueryBuilder('su')
+                ->join('su.address', 'a')
                 ->where('su.volunteer = 1');
-
-        //$queryString = "select from App\Solidary\Entity\SolidaryUser su";
 
         if ($criteria->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
             // Punctual journey
@@ -158,8 +157,14 @@ class SolidaryUserRepository
                 $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getSunMaxTime()->format("H:i:s").'\'');
             }
         }
+
+        // Geographic criteria
+        // The origin of the Proposal used in this search must be under the maxDistance of the SolidaryUser volunteer
+        $waypoints = $solidaryTransportSearch->getSolidary()->getProposal()->getWaypoints();
+        $sqlDistance = '(6378 * acos(cos(radians(' . $waypoints[0]->getAddress()->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $waypoints[0]->getAddress()->getLongitude() . ')) + sin(radians(' . $waypoints[0]->getAddress()->getLatitude() . ')) * sin(radians(a.latitude))))';
+        $query->andWhere($sqlDistance . " <= su.maxDistance");
+
         return $query->getQuery()->getResult();
-        ;
     }
 
 
