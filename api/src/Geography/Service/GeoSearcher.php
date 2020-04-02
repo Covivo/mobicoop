@@ -187,7 +187,6 @@ class GeoSearcher
             if ((method_exists($geoResult, 'getEstablishment')) && ($geoResult->getEstablishment() != null)) {
                 $address->setVenue($geoResult->getEstablishment());
             }
-
             if ((method_exists($geoResult, 'getPointOfInterest')) && ($geoResult->getPointOfInterest() != null)) {
                 $address->setVenue($geoResult->getPointOfInterest());
             }
@@ -197,7 +196,11 @@ class GeoSearcher
             if ($address->getVenue()) {
                 $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_VENUE)->getFileName());
             }
-            $address = $this->fixAddress($geoResult->getId(), $address);
+
+            // add id and fix result if handled by the provider
+            if (method_exists($geoResult, 'getId')) {
+                $address = $this->fixAddress($geoResult->getId(), $address);
+            }
 
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
 
