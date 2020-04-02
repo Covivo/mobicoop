@@ -539,7 +539,6 @@ class UserManager
                     }
                 }
                 $currentThread['idMessage'] = $idMessage;
-
                 $waypoints = $ask->getMatching()->getWaypoints();
                 $criteria = $ask->getCriteria();
                 $currentThread["carpoolInfos"] = [
