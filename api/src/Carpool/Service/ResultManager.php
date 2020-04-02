@@ -1779,6 +1779,7 @@ class ResultManager
         }
         
         // we return the result
+        
         $resultRole->setOutward($outward);
         $resultRole->setReturn($return);
         return $resultRole;
@@ -1821,9 +1822,9 @@ class ResultManager
                 ? $matching->getProposalOffer()->getCriteria()->getFromTime()
                 : $matching->getProposalRequest()->getCriteria()->getFromTime();
             if ($role == Ad::ROLE_DRIVER) {
-                $time = $time->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                $time = ($time == null) ? null : $time->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
             } else {
-                $time = $time->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                $time = ($time == null) ? null : $time->add(new \DateInterval('PT' . $pickupDuration . 'S'));
             }
             $item->setDate($date);
             $item->setTime($time);
@@ -2279,7 +2280,7 @@ class ResultManager
         // to check...
         $item->setComputedPrice($ask->getCriteria()->getPassengerComputedPrice());
         $item->setComputedRoundedPrice($ask->getCriteria()->getPassengerComputedRoundedPrice());
-
+                
         return $item;
     }
 

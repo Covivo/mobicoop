@@ -494,6 +494,7 @@ class AskManager
         $ad->setUserId($userId);
         $ad->setAskId($askId);
         $ad->setAskStatus($ask->getStatus());
+        $ad->setMatchingId($ask->getMatching()->getId());
 
         // first pass for role
         switch ($ask->getStatus()) {
