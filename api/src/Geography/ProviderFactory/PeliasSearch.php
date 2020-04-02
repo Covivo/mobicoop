@@ -132,10 +132,13 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
             }
 
             // we check if the search has an id
+            // we search first the locality id, then other ids
             $id = null;
-            if (isset($props['id'])) {
+            if (isset($props['locality_gid'])) {
+                $id = preg_replace('/[^0-9]/', '', $props['locality_gid']);
+            } elseif (isset($props['id'])) {
                 $id = $props['id'];
-            }
+            } // todo : complete with other ids if needed
 
             // we check if the search is a venue
             $venue = null;

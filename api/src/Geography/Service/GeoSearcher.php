@@ -351,6 +351,12 @@ class GeoSearcher
                 if ($address->getVenue()) {
                     $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_VENUE)->getFileName());
                 }
+
+                // add id and fix result if handled by the provider
+                if (method_exists($geoResult, 'getId')) {
+                    $address = $this->fixAddress($geoResult->getId(), $address);
+                }
+
                 $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
 
                 $addresses[] = $address;
