@@ -206,7 +206,7 @@ use App\User\Controller\UserCanUseEmail;
  *                          "name" = "password",
  *                          "type" = "string",
  *                          "required" = true,
- *                          "description" = "Encoded version of the password (i.e. bcrypt)"
+ *                          "description" = "Clear version of the password"
  *                      },
  *                      {
  *                          "name" = "gender",
