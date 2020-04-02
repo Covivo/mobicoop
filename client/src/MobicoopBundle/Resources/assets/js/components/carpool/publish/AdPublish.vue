@@ -1001,7 +1001,7 @@ export default {
         const self = this;
         this.origin = this.ad.origin;
         this.outwardDate = this.ad.outwardDate;
-        this.outwardTime = moment(this.ad.outwardTime).format();
+        this.outwardTime = moment(this.ad.outwardTime).utc().format();
         this.returnDate = this.ad.returnDate;
         this.returnTime = moment(this.ad.returnTime).isValid() ? moment(this.ad.returnTime).format() : null;
         this.initWaypoints = this.ad.outwardWaypoints.filter(point => {return point.address.id !== self.initOrigin.id && point.address.id !== self.initDestination.id;});

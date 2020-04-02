@@ -21,42 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Controller;
+namespace App\Carpool\DataPersister;
 
-use App\Carpool\Service\AdManager;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Carpool\Entity\Ad;
-use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\RequestStack;
+use App\Carpool\Service\AdManager;
 
-/**
- * Controller class for ad put.
- *
- */
-class AdPut
+final class AdPutDataPersister implements ContextAwareDataPersisterInterface
 {
-    use TranslatorTrait;
-    
     private $adManager;
-    private $request;
 
-    public function __construct(AdManager $adManager, RequestStack $requestStack)
+    public function __construct(AdManager $adManager)
     {
         $this->adManager = $adManager;
-        $this->request = $requestStack->getCurrentRequest();
+    }
+  
+    public function supports($data, array $context = []): bool
+    {
+        return $data instanceof Ad && isset($context['item_operation_name']) && $context['item_operation_name'] === 'put';
     }
 
-    /**
-     * This method is invoked when an Ad is updated.
-     *
-     * @param Ad $data
-     * @return Ad
-     */
-    public function __invoke(Ad $data): Ad
+    public function persist($data, array $context = [])
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
-        }
-        $data = $this->adManager->updateAd($data, $this->request->get('mail_search_link'));
-        return $data;
+        return $this->adManager->updateAd($data);
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }

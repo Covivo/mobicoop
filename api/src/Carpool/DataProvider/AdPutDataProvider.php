@@ -47,6 +47,6 @@ final class AdPutDataProvider implements RestrictedDataProviderInterface, ItemDa
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
     {
-        return $this->adManager->updateAd($this->adManager->getFullAd($id));
+        return $this->adManager->getFullAd($id);
     }
 }
