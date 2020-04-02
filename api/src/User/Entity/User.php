@@ -145,54 +145,6 @@ use App\User\Controller\UserCanUseEmail;
  *                          "name" = "password",
  *                          "type" = "string",
  *                          "required" = true,
- *                          "description" = "Encoded version of the password (i.e. bcrypt)"
- *                      },
- *                      {
- *                          "name" = "gender",
- *                          "type" = "int",
- *                          "enum" = {1,2,3},
- *                          "required" = true,
- *                          "description" = "User's gender (1 : female, 2 : male, 3 : other)"
- *                      },
- *                      {
- *                          "name" = "birthDate",
- *                          "type" = "string",
- *                          "format" = "date",
- *                          "required" = true,
- *                          "example" = "1997-08-14T00:00:00+00:00",
- *                          "description" = "User's birthdate"
- *                      }
- *                  }
- *              },
- *              "security_post_denormalize"="is_granted('user_create',object)"
- *          },
- *          "delegateRegistration"={
- *              "method"="POST",
- *              "path"="/users/register",
- *              "swagger_context" = {
- *                  "parameters" = {
- *                      {
- *                          "name" = "givenName",
- *                          "type" = "string",
- *                          "required" = true,
- *                          "description" = "User's given name"
- *                      },
- *                      {
- *                          "name" = "familyName",
- *                          "type" = "string",
- *                          "required" = true,
- *                          "description" = "User's family name"
- *                      },
- *                      {
- *                          "name" = "email",
- *                          "type" = "string",
- *                          "required" = true,
- *                          "description" = "User's email"
- *                      },
- *                      {
- *                          "name" = "password",
- *                          "type" = "string",
- *                          "required" = true,
  *                          "description" = "Clear version of the password"
  *                      },
  *                      {
@@ -222,6 +174,54 @@ use App\User\Controller\UserCanUseEmail;
  *                          "enum" = {0,1,2},
  *                          "required" = true,
  *                          "description" = "Password send type (0 : none, 1 : sms, 2 : email)"
+ *                      }
+ *                  }
+ *              },
+ *              "security_post_denormalize"="is_granted('user_create',object)"
+ *          },
+ *          "userRegistration"={
+ *              "method"="POST",
+ *              "path"="/users/register",
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "givenName",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's given name"
+ *                      },
+ *                      {
+ *                          "name" = "familyName",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's family name"
+ *                      },
+ *                      {
+ *                          "name" = "email",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's email"
+ *                      },
+ *                      {
+ *                          "name" = "password",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "Encoded version of the password (i.e. bcrypt)"
+ *                      },
+ *                      {
+ *                          "name" = "gender",
+ *                          "type" = "int",
+ *                          "enum" = {1,2,3},
+ *                          "required" = true,
+ *                          "description" = "User's gender (1 : female, 2 : male, 3 : other)"
+ *                      },
+ *                      {
+ *                          "name" = "birthDate",
+ *                          "type" = "string",
+ *                          "format" = "date",
+ *                          "required" = true,
+ *                          "example" = "1997-08-14T00:00:00+00:00",
+ *                          "description" = "User's birthdate"
  *                      }
  *                  }
  *              },
