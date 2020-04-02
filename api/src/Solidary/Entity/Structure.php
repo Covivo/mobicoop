@@ -390,7 +390,7 @@ class Structure
      * @var ArrayCollection|null The solidary records for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\StructureProof", mappedBy="structure", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readUser","readSolidary","writeSolidary"})
+     * @Groups({"readUser","readSolidary","writeSolidary","userStructure"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
