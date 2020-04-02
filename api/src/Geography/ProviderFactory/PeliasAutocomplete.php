@@ -42,7 +42,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
     /**
      * @var string
      */
-    const GEOCODE_ENDPOINT_URL = 'autocomplete?text=%s&size=%d&lang=%s';
+    const GEOCODE_ENDPOINT_URL = 'autocomplete?text=%s&size=%d&lang=%s&layers=locality';
 
     /**
      * @var string
@@ -130,6 +130,15 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
             //     continue;
             // }
 
+            // we check if the search has an id
+            // we search first the locality id, then other ids
+            $id = null;
+            if (isset($props['locality_gid'])) {
+                $id = preg_replace('/[^0-9]/', '', $props['locality_gid']);
+            } elseif (isset($props['id'])) {
+                $id = $props['id'];
+            } // todo : complete with other ids if needed
+
             // we check if the search is a venue
             $venue = null;
             if ($props['layer'] == "venue") {
@@ -171,6 +180,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
                 'country' => isset($props['country']) ? $props['country'] : null,
                 'countryCode' => isset($props['country_a']) ? strtoupper($props['country_a']) : null
             ]);
+            $result->setId($id);
             $result->setVenue($venue);
             $results[] = $result;
         }

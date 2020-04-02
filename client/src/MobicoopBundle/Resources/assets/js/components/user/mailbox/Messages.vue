@@ -44,7 +44,7 @@
               <v-icon class="display-1">
                 mdi-car
               </v-icon>
-              {{ $t("headersCategories.titleCarpool") }}
+              <p>{{ $t("headersCategories.titleCarpool") }}</p>
             </v-tab>
             <v-tab
               :key="1"
@@ -56,7 +56,9 @@
               <v-icon class="display-1">
                 mdi-chat
               </v-icon>
-              {{ $t("headersCategories.titleLive") }}
+              <p>
+                {{ $t("headersCategories.titleLive") }}
+              </p>
             </v-tab>
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
