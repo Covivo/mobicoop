@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,43 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Controller;
+namespace App\Carpool\DataPersister;
 
-use App\Carpool\Service\ProposalManager;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Carpool\Entity\Proposal;
-use App\DataProvider\Entity\Response;
-use App\TranslatorTrait;
+use App\Carpool\Service\ProposalManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-/**
- * Controller class for proposal delete.
- *
- */
-class ProposalDelete
+final class AdDeleteDataPersister implements ContextAwareDataPersisterInterface
 {
-    use TranslatorTrait;
-    private $proposalManager;
     private $request;
+    private $proposalManager;
 
     public function __construct(ProposalManager $proposalManager, RequestStack $requestStack)
     {
-        $this->proposalManager = $proposalManager;
         $this->request = $requestStack->getCurrentRequest();
+        $this->proposalManager = $proposalManager;
+    }
+  
+    public function supports($data, array $context = []): bool
+    {
+        return $data instanceof Proposal && isset($context['item_operation_name']) && $context['item_operation_name'] === 'delete';
     }
 
-    /**
-     * This method is invoked when a proposal is deleted.
-     *
-     * @param Proposal $data
-     * @return Response
-     * @throws \Exception
-     */
-    public function __invoke(Proposal $data)
+    public function persist($data, array $context = [])
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad proposal id is provided"));
-        }
-        $data = $this->proposalManager->deleteProposal($data, json_decode($this->request->getContent(), true));
-        return $data;
+    }
+
+    public function remove($data, array $context = [])
+    {
+        return $this->proposalManager->deleteProposal($data, json_decode($this->request->getContent(), true));
     }
 }

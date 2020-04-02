@@ -26,10 +26,8 @@ namespace App\Carpool\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Carpool\Controller\AdGet;
 use App\Carpool\Controller\AdAskPost;
 use App\Carpool\Controller\AdAskGet;
-use App\Carpool\Controller\ProposalDelete;
 use App\User\Entity\User;
 use App\Carpool\Controller\UpdateCarpoolsLimits;
 
@@ -111,8 +109,6 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *          "delete"={
  *              "method"="DELETE",
  *              "path"="/carpools/{id}",
- *              "controller"=ProposalDelete::class,
- *              "read"=false,
  *              "security"="is_granted('ad_delete',object)"
  *          }
  *      }
@@ -486,20 +482,6 @@ class Ad
      * @Groups({"write"})
      */
     private $cancellationMessage;
-
-    /**
-     * @var string|null The user id of deleter
-     *
-     * @Groups({"write"})
-     */
-    private $deleterId;
-
-    /**
-     * @var string|null The message if ad is deleted
-     *
-     * @Groups({"write"})
-     */
-    private $deletionMessage;
 
     public function __construct()
     {
@@ -1110,28 +1092,6 @@ class Ad
     public function setCancellationMessage(?string $cancellationMessage): Ad
     {
         $this->cancellationMessage = $cancellationMessage;
-        return $this;
-    }
-
-    public function getDeleterId(): ?string
-    {
-        return $this->deleterId;
-    }
-
-    public function setDeleterId(?string $deleterId): Ad
-    {
-        $this->deleterId = $deleterId;
-        return $this;
-    }
-
-    public function getDeletionMessage(): ?string
-    {
-        return $this->deletionMessage;
-    }
-
-    public function setDeletionMessage(?string $deletionMessage): Ad
-    {
-        $this->deletionMessage = $deletionMessage;
         return $this;
     }
 }
