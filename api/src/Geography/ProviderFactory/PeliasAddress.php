@@ -36,7 +36,28 @@ class PeliasAddress extends Address
     /**
      * @var string|null
      */
+    private $id;
+
+    /**
+     * @var string|null
+     */
     private $venue;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setId(?string $id)
+    {
+        $this->id = $id;
+    }
 
     /**
      * {@inheritdoc}
