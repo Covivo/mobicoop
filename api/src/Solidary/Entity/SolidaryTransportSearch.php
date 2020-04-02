@@ -68,6 +68,15 @@ class SolidaryTransportSearch
     private $solidary;
 
     /**
+    * @var string If it's a search on outward or return
+    * @Assert\NotBlank
+    * @Assert\Choice({"outward", "return"})
+    * @Groups({"readSolidary","writeSolidary"})
+    * @MaxDepth(1)
+    */
+    private $direction;
+
+    /**
     * @var array The results for this search (array of SolidaryUser)
     * @Groups({"readSolidary"})
     */
@@ -99,6 +108,18 @@ class SolidaryTransportSearch
     public function setSolidary(Solidary $solidary): self
     {
         $this->solidary = $solidary;
+        
+        return $this;
+    }
+
+    public function getDirection(): ?string
+    {
+        return $this->direction;
+    }
+    
+    public function setDirection(string $direction): self
+    {
+        $this->direction = $direction;
         
         return $this;
     }

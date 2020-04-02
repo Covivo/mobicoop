@@ -99,13 +99,19 @@ class SolidaryUserRepository
      */
     public function findForASolidaryTransportSearch(SolidaryTransportSearch $solidaryTransportSearch): ?array
     {
-        // For my tests
-        // regular solidary : 20 - Proposal 9 - Criteria 12
-        // punctual solidary : 18 - Proposal 1 - Criteria 1
+
+        // Get the outward or return proposal
+
+        if ($solidaryTransportSearch->getDirection()=="outward") {
+            $proposal = $solidaryTransportSearch->getSolidary()->getProposal();
+        } else {
+            $proposal = $solidaryTransportSearch->getSolidary()->getProposal()->getProposalLinked();
+            if (is_null($proposal)) {
+                throw new SolidaryException(SolidaryException::NO_RETURN_PROPOSAL);
+            }
+        }
         
-
-
-        $criteria = $solidaryTransportSearch->getSolidary()->getProposal()->getCriteria();
+        $criteria = $proposal->getCriteria();
 
         // Only the volunteer
         $query = $this->repository->createQueryBuilder('su')
