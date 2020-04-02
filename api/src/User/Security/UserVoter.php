@@ -129,7 +129,7 @@ class UserVoter extends Voter
 
     private function canChangePassword(User $user)
     {
-        return $this->authManager->isAuthorized(self::USER_LIST, ['user'=>$user]);
+        return $this->authManager->isAuthorized(self::USER_PASSWORD, ['user'=>$user]);
     }
 
     private function canRegister()
