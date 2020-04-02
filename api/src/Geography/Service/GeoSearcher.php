@@ -62,11 +62,12 @@ class GeoSearcher
     private $defaultNamedResultNumber;
     private $defaultRelayPointResultNumber;
     private $defaultEventResultNumber;
+    private $geoDataFixes;
 
     /**
      * Constructor.
      */
-    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, IconRepository $iconRepository, string $iconPath, string $dataPath, string $defaultSigResultNumber, string $defaultNamedResultNumber, string $defaultRelayPointResultNumber, string $defaultEventResultNumber)
+    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, IconRepository $iconRepository, string $iconPath, string $dataPath, string $defaultSigResultNumber, string $defaultNamedResultNumber, string $defaultRelayPointResultNumber, string $defaultEventResultNumber, array $geoDataFixes)
     {
         $this->geocoder = $geocoder;
         $this->geoTools = $geoTools;
@@ -81,6 +82,7 @@ class GeoSearcher
         $this->defaultNamedResultNumber = $defaultNamedResultNumber;
         $this->defaultRelayPointResultNumber = $defaultRelayPointResultNumber;
         $this->defaultEventResultNumber = $defaultEventResultNumber;
+        $this->geoDataFixes = $geoDataFixes;
     }
 
     /**
@@ -133,6 +135,10 @@ class GeoSearcher
         }
         
         foreach ($geoResults as $geoResult) {
+            /**
+             * @var PeliasAddress $geoResult
+             */
+            
             // ?? todo : exclude all results that doesn't include any input word at all
             $address = new Address();
             // set address icon
@@ -191,8 +197,10 @@ class GeoSearcher
             if ($address->getVenue()) {
                 $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_VENUE)->getFileName());
             }
-            
+            $address = $this->fixAddress($geoResult->getId(), $address);
+
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+
             $result[] = $address;
         }
         
@@ -347,5 +355,26 @@ class GeoSearcher
             return $addresses;
         }
         return false;
+    }
+
+    /**
+     * Fix potential wrong addresses.
+     *
+     * @param string $id        The id of the source data
+     * @param Address $address  The address to fix
+     * @return Address The address fixed
+     */
+    private function fixAddress(string $id, Address $address)
+    {
+        // we search in the fixes if there's one corresponding to the id
+        if (array_key_exists($id, $this->geoDataFixes)) {
+            foreach ($this->geoDataFixes[$id] as $property=>$value) {
+                if (method_exists($address, 'set'.ucfirst($property))) {
+                    $method = 'set'.ucfirst($property);
+                    $address->$method($value);
+                }
+            }
+        }
+        return $address;
     }
 }

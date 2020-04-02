@@ -131,6 +131,12 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
                 continue;
             }
 
+            // we check if the search has an id
+            $id = null;
+            if (isset($props['id'])) {
+                $id = $props['id'];
+            }
+
             // we check if the search is a venue
             $venue = null;
             if ($props['layer'] == "venue") {
@@ -172,6 +178,7 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
                 'country' => isset($props['country']) ? $props['country'] : null,
                 'countryCode' => isset($props['country_a']) ? strtoupper($props['country_a']) : null
             ]);
+            $result->setId($id);
             $result->setVenue($venue);
             $results[] = $result;
         }
