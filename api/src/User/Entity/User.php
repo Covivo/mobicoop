@@ -146,7 +146,7 @@ use App\User\Controller\UserCanUseEmail;
  *                          "name" = "password",
  *                          "type" = "string",
  *                          "required" = true,
- *                          "description" = "Encoded version of the password (i.e. bcrypt)"
+ *                          "description" = "Clear version of the password"
  *                      },
  *                      {
  *                          "name" = "gender",
@@ -162,12 +162,25 @@ use App\User\Controller\UserCanUseEmail;
  *                          "required" = true,
  *                          "example" = "1997-08-14T00:00:00+00:00",
  *                          "description" = "User's birthdate"
+ *                      },
+ *                      {
+ *                          "name" = "userDelegate",
+ *                          "type" = "string",
+ *                          "required" = false,
+ *                          "description" = "User IRI that creates the new user"
+ *                      },
+ *                      {
+ *                          "name" = "passwordSendtype",
+ *                          "type" = "int",
+ *                          "enum" = {0,1,2},
+ *                          "required" = true,
+ *                          "description" = "Password send type (0 : none, 1 : sms, 2 : email)"
  *                      }
  *                  }
  *              },
  *              "security_post_denormalize"="is_granted('user_create',object)"
  *          },
- *          "delegateRegistration"={
+ *          "userRegistration"={
  *              "method"="POST",
  *              "path"="/users/register",
  *              "swagger_context" = {
@@ -210,19 +223,6 @@ use App\User\Controller\UserCanUseEmail;
  *                          "required" = true,
  *                          "example" = "1997-08-14T00:00:00+00:00",
  *                          "description" = "User's birthdate"
- *                      },
- *                      {
- *                          "name" = "userDelegate",
- *                          "type" = "string",
- *                          "required" = false,
- *                          "description" = "User IRI that creates the new user"
- *                      },
- *                      {
- *                          "name" = "passwordSendtype",
- *                          "type" = "int",
- *                          "enum" = {0,1,2},
- *                          "required" = true,
- *                          "description" = "Password send type (0 : none, 1 : sms, 2 : email)"
  *                      }
  *                  }
  *              },
@@ -262,7 +262,7 @@ use App\User\Controller\UserCanUseEmail;
  *              "read"=false,
  *              "denormalization_context"={"groups"={"passwordUpdateRequest"}},
  *              "normalization_context"={"groups"={"passwordUpdateRequest"}},
- *              "security"="is_granted('user_password',object)"
+ *              "security"="is_granted('user_register',object)"
  *          },
  *          "password_update"={
  *              "method"="POST",
@@ -272,7 +272,7 @@ use App\User\Controller\UserCanUseEmail;
  *              "read"=false,
  *              "denormalization_context"={"groups"={"passwordUpdate"}},
  *              "normalization_context"={"groups"={"passwordUpdate"}},
- *              "security"="is_granted('user_password',object)"
+ *              "security"="is_granted('user_register',object)"
  *          },
  *          "generate_phone_token"={
  *              "method"="GET",
