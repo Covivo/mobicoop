@@ -35,6 +35,11 @@ use Doctrine\ORM\EntityRepository;
  */
 class SolidaryUserRepository
 {
+    const USE_DAY_RESTRICTION = true; // Restriction by the time range slot by slot (m,a,e) of a SolidaryVolunteer in matching
+    const USE_TIME_RESTRICTION = true; // Restriction by the time range slot by slot (m,a,e) of a SolidaryVolunteer in matching
+    const USE_GEOGRAPHIC_RESTRICTION = true; // Restriction by the maxDistance of a SolidaryVolunteer in matching
+
+
     /**
      * @var EntityRepository
      */
@@ -95,7 +100,8 @@ class SolidaryUserRepository
     public function findForASolidaryTransportSearch(SolidaryTransportSearch $solidaryTransportSearch): ?array
     {
         // For my tests
-        // solidary : 20 - Proposal 9 - Criteria 12
+        // regular solidary : 20 - Proposal 9 - Criteria 12
+        // punctual solidary : 18 - Proposal 1 - Criteria 1
         
 
 
@@ -108,6 +114,28 @@ class SolidaryUserRepository
 
         if ($criteria->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
             // Punctual journey
+
+            // Date
+
+            // MinTime and MaxTime
+            $slot = $this->getHourSlot($criteria->getMinTime(), $criteria->getMaxTime());
+            // We need to determine the weekday of the fromDate and take only the volunteer available that day on the slot
+            if (self::USE_DAY_RESTRICTION) {
+                $weekDay = $criteria->getFromDate()->format('w');
+                switch ($weekDay) {
+                    case 0:$query->andWhere('su.'.$slot.'Sun = 1');break;
+                    case 1: $query->andWhere('su.'.$slot.'Mon = 1');break;
+                    case 2: $query->andWhere('su.'.$slot.'Tue = 1');break;
+                    case 3: $query->andWhere('su.'.$slot.'Wed = 1');break;
+                    case 4: $query->andWhere('su.'.$slot.'Thu = 1');break;
+                    case 5: $query->andWhere('su.'.$slot.'Fri = 1');break;
+                    case 6: $query->andWhere('su.'.$slot.'Sat = 1');break;
+                }
+            }
+            if (self::USE_TIME_RESTRICTION) {
+                $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getMinTime()->format("H:i:s").'\'');
+                $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getMaxTime()->format("H:i:s").'\'');
+            }
         } else {
 
             // Regular journey
@@ -116,54 +144,83 @@ class SolidaryUserRepository
             // We look also if the SolidaryUser has set a maching min and max time for the maching hour slot
             if ($criteria->isMonCheck()) {
                 $slot = $this->getHourSlot($criteria->getMonMinTime(), $criteria->getMonMaxTime());
-                $query->andWhere('su.'.$slot.'Mon = 1');
-                $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getMonMinTime()->format("H:i:s").'\'');
-                $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getMonMaxTime()->format("H:i:s").'\'');
+                if (self::USE_DAY_RESTRICTION) {
+                    $query->andWhere('su.'.$slot.'Mon = 1');
+                }
+                if (self::USE_TIME_RESTRICTION) {
+                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getMonMinTime()->format("H:i:s").'\'');
+                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getMonMaxTime()->format("H:i:s").'\'');
+                }
             }
             if ($criteria->isTueCheck()) {
                 $slot = $this->getHourSlot($criteria->getTueMinTime(), $criteria->getTueMaxTime());
-                $query->andWhere('su.'.$slot.'Tue = 1');
-                $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getTueMinTime()->format("H:i:s").'\'');
-                $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getTueMaxTime()->format("H:i:s").'\'');
+                if (self::USE_DAY_RESTRICTION) {
+                    $query->andWhere('su.'.$slot.'Tue = 1');
+                }
+                if (self::USE_TIME_RESTRICTION) {
+                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getTueMinTime()->format("H:i:s").'\'');
+                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getTueMaxTime()->format("H:i:s").'\'');
+                }
             }
             if ($criteria->isWedCheck()) {
                 $slot = $this->getHourSlot($criteria->getWedMinTime(), $criteria->getWedMaxTime());
-                $query->andWhere('su.'.$slot.'Wed = 1');
-                $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getWedMinTime()->format("H:i:s").'\'');
-                $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getWedMaxTime()->format("H:i:s").'\'');
+                if (self::USE_DAY_RESTRICTION) {
+                    $query->andWhere('su.'.$slot.'Wed = 1');
+                }
+                if (self::USE_TIME_RESTRICTION) {
+                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getWedMinTime()->format("H:i:s").'\'');
+                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getWedMaxTime()->format("H:i:s").'\'');
+                }
             }
             if ($criteria->isThuCheck()) {
                 $slot = $this->getHourSlot($criteria->getThuMinTime(), $criteria->getThuMaxTime());
-                $query->andWhere('su.'.$slot.'Thu = 1');
-                $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getThuMinTime()->format("H:i:s").'\'');
-                $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getThuMaxTime()->format("H:i:s").'\'');
+                if (self::USE_DAY_RESTRICTION) {
+                    $query->andWhere('su.'.$slot.'Thu = 1');
+                }
+                if (self::USE_TIME_RESTRICTION) {
+                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getThuMinTime()->format("H:i:s").'\'');
+                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getThuMaxTime()->format("H:i:s").'\'');
+                }
             }
             if ($criteria->isFriCheck()) {
                 $slot = $this->getHourSlot($criteria->getFriMinTime(), $criteria->getFriMinTime());
-                $query->andWhere('su.'.$slot.'Fri = 1');
-                $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getFriMinTime()->format("H:i:s").'\'');
-                $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getFriMaxTime()->format("H:i:s").'\'');
+                if (self::USE_DAY_RESTRICTION) {
+                    $query->andWhere('su.'.$slot.'Fri = 1');
+                }
+                if (self::USE_TIME_RESTRICTION) {
+                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getFriMinTime()->format("H:i:s").'\'');
+                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getFriMaxTime()->format("H:i:s").'\'');
+                }
             }
             if ($criteria->isSatCheck()) {
                 $slot = $this->getHourSlot($criteria->getSatMinTime(), $criteria->getSatMaxTime());
-                $query->andWhere('su.'.$slot.'Sat = 1');
-                $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getSatMinTime()->format("H:i:s").'\'');
-                $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getSatMaxTime()->format("H:i:s").'\'');
+                if (self::USE_DAY_RESTRICTION) {
+                    $query->andWhere('su.'.$slot.'Sat = 1');
+                }
+                if (self::USE_TIME_RESTRICTION) {
+                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getSatMinTime()->format("H:i:s").'\'');
+                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getSatMaxTime()->format("H:i:s").'\'');
+                }
             }
             if ($criteria->isSunCheck()) {
                 $slot = $this->getHourSlot($criteria->getSunMinTime(), $criteria->getSunMaxTime());
-                $query->andWhere('su.'.$slot.'Sun = 1');
-                $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getSunMinTime()->format("H:i:s").'\'');
-                $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getSunMaxTime()->format("H:i:s").'\'');
+                if (self::USE_DAY_RESTRICTION) {
+                    $query->andWhere('su.'.$slot.'Sun = 1');
+                }
+                if (self::USE_TIME_RESTRICTION) {
+                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getSunMinTime()->format("H:i:s").'\'');
+                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getSunMaxTime()->format("H:i:s").'\'');
+                }
             }
-        }
+        }// end if punctual/regular
 
         // Geographic criteria
         // The origin of the Proposal used in this search must be under the maxDistance of the SolidaryUser volunteer
-        $waypoints = $solidaryTransportSearch->getSolidary()->getProposal()->getWaypoints();
-        $sqlDistance = '(6378 * acos(cos(radians(' . $waypoints[0]->getAddress()->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $waypoints[0]->getAddress()->getLongitude() . ')) + sin(radians(' . $waypoints[0]->getAddress()->getLatitude() . ')) * sin(radians(a.latitude))))';
-        $query->andWhere($sqlDistance . " <= su.maxDistance");
-
+        if (self::USE_GEOGRAPHIC_RESTRICTION) {
+            $waypoints = $solidaryTransportSearch->getSolidary()->getProposal()->getWaypoints();
+            $sqlDistance = '(6378 * acos(cos(radians(' . $waypoints[0]->getAddress()->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $waypoints[0]->getAddress()->getLongitude() . ')) + sin(radians(' . $waypoints[0]->getAddress()->getLatitude() . ')) * sin(radians(a.latitude))))';
+            $query->andWhere($sqlDistance . " <= su.maxDistance");
+        }
         return $query->getQuery()->getResult();
     }
 
