@@ -35,6 +35,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\AskPost;
 use App\Carpool\Controller\AskPut;
+use App\Solidary\Entity\SolidaryAsk;
 
 /**
  * Carpooling : ask from/to a driver and/or a passenger (after a matching between an offer and a request).
@@ -252,6 +253,14 @@ class Ask
      * @Groups({"read","write"})
      */
     private $filters;
+
+    /**
+     * @var SolidaryAsk|null The SolidaryAsk possibly linked to this Ask
+     * 
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", mappedBy="ask", cascade={"persist","remove"})
+     * @Groups({"read"})
+     */
+    private $solidaryAsk;    
     
     public function __construct()
     {
@@ -529,6 +538,18 @@ class Ask
         return $this;
     }
     
+    public function getSolidaryAsk(): ?SolidaryAsk
+    {
+        return $this->solidaryAsk;
+    }
+
+    public function setSolidaryAsk(SolidaryAsk $solidaryAsk): self
+    {
+        $this->solidaryAsk = $solidaryAsk;
+
+        return $this;
+    
+
     // DOCTRINE EVENTS
     
     /**

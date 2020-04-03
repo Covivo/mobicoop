@@ -1038,7 +1038,7 @@ class User implements UserInterface, EquatableInterface
     private $lastActivityDate;
 
     /**
-     * The SolidaryUser possibly linked to this User
+     * @var SolidaryUser|null The SolidaryUser possibly linked to this User
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user", cascade={"persist","remove"})
      * @Groups({"readUser","write","readSolidary","writeSolidary"})
      */

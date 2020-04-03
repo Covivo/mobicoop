@@ -29,6 +29,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use App\Carpool\Entity\Ask;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -131,6 +132,14 @@ class SolidaryAsk
      * @Groups({"writeSolidary"})
      */
     private $sms;
+
+    /**
+     * @var Ask|null The Ask possibly linked to this SolidaryAsk
+     *
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="solidaryAsk", cascade={"persist","remove"})
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $ask;
 
     public function __construct()
     {
@@ -239,6 +248,18 @@ class SolidaryAsk
     public function setSms(string $sms): self
     {
         $this->sms = $sms;
+
+        return $this;
+    }
+
+    public function getAsk(): ?Ask
+    {
+        return $this->ask;
+    }
+
+    public function setAsk(Ask $ask): self
+    {
+        $this->ask = $ask;
 
         return $this;
     }
