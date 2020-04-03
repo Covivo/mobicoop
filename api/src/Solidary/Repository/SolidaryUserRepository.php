@@ -23,6 +23,7 @@
 namespace App\Solidary\Repository;
 
 use App\Carpool\Entity\Criteria;
+use App\Solidary\Entity\SolidaryCarpoolSearch;
 use App\Solidary\Entity\SolidaryTransportSearch;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Exception\SolidaryException;
@@ -228,6 +229,17 @@ class SolidaryUserRepository
             $query->andWhere($sqlDistance . " <= su.maxDistance");
         }
         return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find the matching SolidaryUser for a SolidaryCarpoolSearch when there is no Destination
+     *
+     * @param SolidaryCarpoolSearch $solidaryCarpoolSearch
+     * @return array|null
+     */
+    public function findForASolidaryCarpoolSearchWithoutDestination(SolidaryCarpoolSearch $solidaryCarpoolSearch): ?array
+    {
+        return null;
     }
 
 

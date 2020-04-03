@@ -23,6 +23,7 @@
 namespace App\Solidary\Service;
 
 use App\Solidary\Entity\Solidary;
+use App\Solidary\Entity\SolidaryCarpoolSearch;
 use App\Solidary\Entity\SolidaryTransportSearch;
 use App\Solidary\Event\SolidaryCreated;
 use Doctrine\ORM\EntityManagerInterface;
@@ -91,5 +92,24 @@ class SolidaryManager
         $solidaryTransportSearch->setResults($this->solidaryUserRepository->findForASolidaryTransportSearch($solidaryTransportSearch));
         
         return $solidaryTransportSearch;
+    }
+
+    public function getSolidaryCarpoolSearchSearchResults(SolidaryCarpoolSearch $solidaryCarpoolSearch): SolidaryCarpoolSearch
+    {
+        $waypoints = $solidaryCarpoolSearch->getSolidary()->getProposal()->getWaypoints();
+        $withoutDestination = false;
+        foreach ($waypoints as $waypoint) {
+            if ($waypoint->isDestination()) {
+                $withoutDestination=true;
+            }
+        }
+        
+        if ($withoutDestination) {
+            $solidaryCarpoolSearch->setResults($this->solidaryUserRepository->findForASolidaryCarpoolSearchWithoutDestination($solidaryCarpoolSearch));
+        } else {
+            // Call the classic matching algo
+        }
+        
+        return $solidaryCarpoolSearch;
     }
 }
