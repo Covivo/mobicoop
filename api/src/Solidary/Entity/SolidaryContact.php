@@ -25,6 +25,7 @@ namespace App\Solidary\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\Communication\Entity\Medium;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -77,7 +78,7 @@ class SolidaryContact
 
     /**
     * @var ArrayCollection List of the Medium of this contact
-    * @Groups({"readSolidary"})
+    * @Groups({"readSolidary","writeSolidary"})
     */
     private $media;
 
@@ -105,7 +106,7 @@ class SolidaryContact
         return $this->solidarySolution;
     }
     
-    public function setSolidary(SolidarySolution $solidarySolution): self
+    public function setSolidarySolution(SolidarySolution $solidarySolution): self
     {
         $this->solidarySolution = $solidarySolution;
         
@@ -124,15 +125,26 @@ class SolidaryContact
         return $this;
     }
 
-    public function getMedia(): ?ArrayCollection
+    public function getMedia()
     {
-        return $this->media;
+        return $this->media->getValues();
     }
-    
-    public function setMedia(ArrayCollection $media): self
+
+    public function addMedium(Medium $medium): self
     {
-        $this->media = $media;
-        
+        if (!$this->media->contains($medium)) {
+            $this->media[] = $medium;
+        }
+
+        return $this;
+    }
+
+    public function removeMedium(Medium $medium): self
+    {
+        if ($this->media->contains($medium)) {
+            $this->media->removeElement($medium);
+        }
+
         return $this;
     }
 }

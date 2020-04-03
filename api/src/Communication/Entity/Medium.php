@@ -62,7 +62,7 @@ class Medium
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"read","readSolidary","writeSolidary"})
+     * @Groups({"read"})
      */
     private $id;
 
@@ -71,7 +71,7 @@ class Medium
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write","readSolidary","writeSolidary"})
+     * @Groups({"read","write"})
      */
     private $name;
 
