@@ -23,8 +23,7 @@
 namespace App\Solidary\Repository;
 
 use App\Carpool\Entity\Criteria;
-use App\Solidary\Entity\SolidaryCarpoolSearch;
-use App\Solidary\Entity\SolidaryTransportSearch;
+use App\Solidary\Entity\SolidarySearch;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Exception\SolidaryException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -93,12 +92,12 @@ class SolidaryUserRepository
     }
 
     /**
-     * Find the matching SolidaryUser for a SolidaryTransportSearch
+     * Find the matching SolidaryUser for a Solidary Transport Search
      *
-     * @param SolidaryTransportSearch $solidaryTransportSearch
+     * @param SolidarySearch $solidaryTransportSearch
      * @return array|null
      */
-    public function findForASolidaryTransportSearch(SolidaryTransportSearch $solidaryTransportSearch): ?array
+    public function findForASolidaryTransportSearch(SolidarySearch $solidaryTransportSearch): array
     {
 
         // Get the outward or return proposal
@@ -232,14 +231,14 @@ class SolidaryUserRepository
     }
 
     /**
-     * Find the matching SolidaryUser for a SolidaryCarpoolSearch when there is no Destination
+     * Find the matching SolidaryUser for a Solidary carpool search when there is no Destination
      *
-     * @param SolidaryCarpoolSearch $solidaryCarpoolSearch
+     * @param SolidarySearch $solidarySearch
      * @return array|null
      */
-    public function findForASolidaryCarpoolSearchWithoutDestination(SolidaryCarpoolSearch $solidaryCarpoolSearch): ?array
+    public function findForASolidaryCarpoolSearchWithoutDestination(SolidarySearch $solidarySearch): array
     {
-        return null;
+        return [];
     }
 
 

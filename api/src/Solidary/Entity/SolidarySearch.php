@@ -31,7 +31,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A solidary transport search.
+ * A solidary search (transport or carpool)
  *
  * @ApiResource(
  *      attributes={
@@ -40,14 +40,22 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={
- *          "get","post"
+ *          "get",
+ *          "transport"={
+ *              "method"="POST",
+ *              "path"="/solidary_searches/transport"
+ *          },
+ *          "carpool"={
+ *              "method"="POST",
+ *              "path"="/solidary_searches/carpool"
+ *          }
  *      },
  *      itemOperations={
  *          "get"
  *      }
  * )
  */
-class SolidaryTransportSearch
+class SolidarySearch
 {
     const DEFAULT_ID = 999999999999;
     

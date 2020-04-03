@@ -23,8 +23,7 @@
 namespace App\Solidary\Service;
 
 use App\Solidary\Entity\Solidary;
-use App\Solidary\Entity\SolidaryCarpoolSearch;
-use App\Solidary\Entity\SolidaryTransportSearch;
+use App\Solidary\Entity\SolidarySearch;
 use App\Solidary\Event\SolidaryCreated;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -82,21 +81,27 @@ class SolidaryManager
     }
 
     /**
-     * Get the results for a SolidaryTransportSearch
+     * Get the results for a Solidary Transport Search
      *
-     * @param SolidaryTransportSearch $solidaryTransportSearch
-     * @return SolidaryTransportSearch
+     * @param SolidarySearch $solidarySearch
+     * @return SolidarySearch
      */
-    public function getSolidaryTransportSearchResults(SolidaryTransportSearch $solidaryTransportSearch): SolidaryTransportSearch
+    public function getSolidaryTransportSearchResults(SolidarySearch $solidarySearch): SolidarySearch
     {
-        $solidaryTransportSearch->setResults($this->solidaryUserRepository->findForASolidaryTransportSearch($solidaryTransportSearch));
+        $solidarySearch->setResults($this->solidaryUserRepository->findForASolidaryTransportSearch($solidarySearch));
         
-        return $solidaryTransportSearch;
+        return $solidarySearch;
     }
 
-    public function getSolidaryCarpoolSearchSearchResults(SolidaryCarpoolSearch $solidaryCarpoolSearch): SolidaryCarpoolSearch
+    /**
+     * Get the results for a Solidary Carpool Search
+     *
+     * @param SolidarySearch $solidarySearch
+     * @return SolidarySearch
+     */
+    public function getSolidaryCarpoolSearchSearchResults(SolidarySearch $solidarySearch): SolidarySearch
     {
-        $waypoints = $solidaryCarpoolSearch->getSolidary()->getProposal()->getWaypoints();
+        $waypoints = $solidarySearch->getSolidary()->getProposal()->getWaypoints();
         $withoutDestination = false;
         foreach ($waypoints as $waypoint) {
             if ($waypoint->isDestination()) {
@@ -105,11 +110,11 @@ class SolidaryManager
         }
         
         if ($withoutDestination) {
-            $solidaryCarpoolSearch->setResults($this->solidaryUserRepository->findForASolidaryCarpoolSearchWithoutDestination($solidaryCarpoolSearch));
+            $solidarySearch->setResults($this->solidaryUserRepository->findForASolidaryCarpoolSearchWithoutDestination($solidarySearch));
         } else {
             // Call the classic matching algo
         }
         
-        return $solidaryCarpoolSearch;
+        return $solidarySearch;
     }
 }
