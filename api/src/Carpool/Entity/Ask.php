@@ -256,11 +256,11 @@ class Ask
 
     /**
      * @var SolidaryAsk|null The SolidaryAsk possibly linked to this Ask
-     * 
+     *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", mappedBy="ask", cascade={"persist","remove"})
      * @Groups({"read"})
      */
-    private $solidaryAsk;    
+    private $solidaryAsk;
     
     public function __construct()
     {
@@ -548,8 +548,8 @@ class Ask
         $this->solidaryAsk = $solidaryAsk;
 
         return $this;
+    }
     
-
     // DOCTRINE EVENTS
     
     /**

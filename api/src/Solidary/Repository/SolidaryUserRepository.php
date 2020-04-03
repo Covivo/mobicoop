@@ -100,18 +100,8 @@ class SolidaryUserRepository
     public function findForASolidaryTransportSearch(SolidarySearch $solidaryTransportSearch): array
     {
 
-        // Get the outward or return proposal
-
-        if ($solidaryTransportSearch->getDirection()=="outward") {
-            $proposal = $solidaryTransportSearch->getSolidary()->getProposal();
-        } else {
-            $proposal = $solidaryTransportSearch->getSolidary()->getProposal()->getProposalLinked();
-            if (is_null($proposal)) {
-                throw new SolidaryException(SolidaryException::NO_RETURN_PROPOSAL);
-            }
-        }
-        
-        $criteria = $proposal->getCriteria();
+        // Get the criteria of the beneficiary's proposal
+        $criteria = $solidaryTransportSearch->getSolidary()->getProposal()->getCriteria();
 
         // Only the volunteer
         $query = $this->repository->createQueryBuilder('su')
@@ -221,10 +211,24 @@ class SolidaryUserRepository
         }// end if punctual/regular
 
         // Geographic criteria
-        // The origin of the Proposal used in this search must be under the maxDistance of the SolidaryUser volunteer
         if (self::USE_GEOGRAPHIC_RESTRICTION) {
+            // The origin of the Proposal used in this search must be under the maxDistance of the SolidaryUser volunteer
+            // If the search is on the return, we use the destination instead
             $waypoints = $solidaryTransportSearch->getSolidary()->getProposal()->getWaypoints();
-            $sqlDistance = '(6378 * acos(cos(radians(' . $waypoints[0]->getAddress()->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $waypoints[0]->getAddress()->getLongitude() . ')) + sin(radians(' . $waypoints[0]->getAddress()->getLatitude() . ')) * sin(radians(a.latitude))))';
+            $address = null;
+            if ($solidaryTransportSearch->getDirection()=="outward") {
+                $address = $waypoints[0]->getAddress();
+            } else {
+                foreach ($waypoints as $waypoint) {
+                    if ($waypoint->isDestination()) {
+                        $address = $waypoint->getAddress();
+                    }
+                }
+            }
+            if (is_null($address)) {
+                throw new SolidaryException(SolidaryException::NO_VALID_ADDRESS);
+            }
+            $sqlDistance = '(6378 * acos(cos(radians(' . $address->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $address->getLongitude() . ')) + sin(radians(' . $address->getLatitude() . ')) * sin(radians(a.latitude))))';
             $query->andWhere($sqlDistance . " <= su.maxDistance");
         }
         return $query->getQuery()->getResult();

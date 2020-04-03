@@ -37,4 +37,5 @@ class SolidaryException extends \LogicException
     // Solidary matching
     const INVALID_HOUR_SLOT = "Hour slot invalid";
     const NO_RETURN_PROPOSAL = "There is no return proposal";
+    const NO_VALID_ADDRESS = "No valid address";
 }
