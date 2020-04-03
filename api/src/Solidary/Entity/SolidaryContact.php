@@ -77,7 +77,7 @@ class SolidaryContact
     private $content;
 
     /**
-    * @var ArrayCollection List of the Medium of this contact
+    * @var array List of the Medium of this contact
     * @Groups({"readSolidary","writeSolidary"})
     */
     private $media;
@@ -127,24 +127,29 @@ class SolidaryContact
 
     public function getMedia()
     {
-        return $this->media->getValues();
+        return $this->media;
     }
 
-    public function addMedium(Medium $medium): self
+    // public function addMedium(Medium $medium): self
+    // {
+    //     if (!$this->media->contains($medium)) {
+    //         $this->media[] = $medium;
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeMedium(Medium $medium): self
+    // {
+    //     if ($this->media->contains($medium)) {
+    //         $this->media->removeElement($medium);
+    //     }
+
+    //     return $this;
+    // }
+
+    public function setMedia(array $array)
     {
-        if (!$this->media->contains($medium)) {
-            $this->media[] = $medium;
-        }
-
-        return $this;
-    }
-
-    public function removeMedium(Medium $medium): self
-    {
-        if ($this->media->contains($medium)) {
-            $this->media->removeElement($medium);
-        }
-
-        return $this;
+        $this->media = $array;
     }
 }
