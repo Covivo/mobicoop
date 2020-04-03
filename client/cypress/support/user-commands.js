@@ -95,12 +95,12 @@ Cypress.Commands.add('signUp', (email, password, lastname, name, phone) => {
   cy.get('#step2 > .row > [type="submit"] > .v-btn__content')
     .click();
 
-  // /* HomeTown */
-  // cy.get('#address')
-  //   .type('Nancy');
-  // cy.get('#content')
-  //     .contains('Nancy').click();
-  // cy.wait(2500);
+  /* HomeTown */
+  cy.get('#address')
+    .type('Nancy');
+  cy.get('#content')
+      .contains('Nancy').click();
+  cy.wait(2500); // error when we delete a user, if no homeadress there is no problem
 
 
   /* Validation condition (confirmation) */
@@ -134,7 +134,7 @@ cy.url().should('include', baseUrl + 'utilisateur/profil/modifier/mon-profil');
 cy.get('.v-card__actions > a.v-btn > .v-btn__content')
   .click();
 cy.get('.v-snack__content')
-  .contains ('Votre compte à été supprimé avec succès.')
+  .contains ('Votre compte à été supprimé avec succès.') // error because the user chooses a homeadress during signup
 
 // cy.url().should('include', baseUrl);
 });

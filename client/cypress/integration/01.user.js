@@ -43,26 +43,30 @@ describe('Visitor / home', () => {
     cy.get('#token').click()
       .type('b0d5528165ec74fb4f9afd8772a2549fe24c57892cd9642cf991bbdf43ef6529');
     cy.get('#formLoginValidation > .v-btn > .v-btn__content').click();
-    // cy.get('.v-alert__content > :nth-child(1)')     
-    //   .contains('Bravo Robert !');
+    cy.get('.v-alert__content > :nth-child(1)')     
+      .contains('Bravo John !');
+
+    cy.wait(3000); // error no redirection to home
+
   });
 
-  it('A user log in and add a proposal', () => {
+  it('A user logs in and add a proposal', () => {
     let email = "first_user_mobicoop@yopmail.com";
     let password = "Mobicoop54";
+
     cy.loginWith(email, password);
     cy.wait(600);
 
     // cy.percySnapshot('logged_home');
+
     cy.addProposal();
+
     cy.wait(600);
   });
 
   // CREATE AN OTHER USER
-  it('A new  user is created', () => {
+  it('A second  user is created', () => {
     // In order to have a proposal in database
-    // let randNb = Math.floor(Math.random() * 3000) + 1
-    // let email = `mobicoop-${randNb}@fakemail.com`
     let email = 'second_user_mobicoop@yopmail.com'
     let password = 'Mobicoop54'
     let lastname = 'John'
@@ -74,9 +78,11 @@ describe('Visitor / home', () => {
     cy.get('#token').click()
       .type('b0d5528165ec74fb4f9afd7654a6543fe24c57892cd9642cf991bbdf43ef9878');
     cy.get('#formLoginValidation > .v-btn > .v-btn__content').click();
-    // cy.get('.v-alert__content > :nth-child(1)')     
-  });
+    cy.get('.v-alert__content > :nth-child(1)')     
+      .contains('Bravo John !');
 
+    cy.wait(3000); // error no redirection to home  });
+  });
 
    it('A user log in, add a proposal and find a result', () => {
     let email = "second_user_mobicoop@yopmail.com";
@@ -114,10 +120,6 @@ describe('Visitor / home', () => {
 
     cy.url().should('include', baseUrl + 'utilisateur/messages');
     cy.wait(6000);
-
-
-
-
   });
 
   it('A User goes to his account and deletes it ', () => {
@@ -133,9 +135,9 @@ describe('Visitor / home', () => {
     let password = "Mobicoop54"
 
     cy.loginWith(email, password);
+
     cy.delete();
   });
-
 })
 
 
