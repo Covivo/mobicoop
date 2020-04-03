@@ -96,23 +96,15 @@ class CarpoolController extends AbstractController
     public function carpoolAdUpdate(int $id, AdManager $adManager, ProposalManager $proposalManager, Request $request)
     {
         $ad = $adManager->getFullAd($id);
-        $proposal = $proposalManager->getProposal($id);
         $this->denyAccessUnlessGranted('update_ad', $ad);
 
         $hasAsks = false;
         $hasPotentialAds = false;
-
-        foreach ($proposal->getMatchingOffers() as $matchingOffer) {
+        if ($ad->getPotentialCarpoolers() > 0) {
             $hasPotentialAds = true;
-            if (count($matchingOffer->getAsks()) > 0) {
-                $hasAsks = true;
-            }
         }
-        foreach ($proposal->getMatchingRequests() as $matchingRequest) {
-            $hasPotentialAds = true;
-            if (count($matchingRequest->getAsks()) > 0) {
-                $hasAsks = true;
-            }
+        if (count($ad->getAsks()) > 0) {
+            $hasAsks = true;
         }
 
         if ($request->isMethod('PUT')) {
