@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,38 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
+namespace App\Carpool\DataPersister;
 
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\Carpool\Entity\Ad;
+use App\Carpool\Service\AdManager;
 
-/**
- * Proposal management service.
- */
-class ProposalManager
+final class AdPostDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $dataProvider;
+    private $adManager;
 
-    /**
-     * Constructor.
-     *
-     * @param DataProvider $dataProvider
-     */
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(AdManager $adManager)
     {
-        $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(Proposal::class);
+        $this->adManager = $adManager;
     }
- 
-    /**
-     * Get a proposal for a user
-     *
-     * @param int $id
-     * @return Proposal|null The proposal found or null if not found.
-     */
-    public function getProposal(int $id)
+  
+    public function supports($data, array $context = []): bool
     {
-        $response = $this->dataProvider->getItem($id);
-        return $response->getValue();
+        return $data instanceof Ad && isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'post';
+    }
+
+    public function persist($data, array $context = [])
+    {
+        return $this->adManager->createAd($data);
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }

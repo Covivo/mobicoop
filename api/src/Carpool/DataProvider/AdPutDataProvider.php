@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,40 +21,32 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Controller;
+namespace App\Carpool\DataProvider;
 
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Service\AdManager;
-use App\TranslatorTrait;
 
 /**
- * Controller class for ad post.
- *
- * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * Item data provider for put Ad.
  */
-class AdPost
+final class AdPutDataProvider implements RestrictedDataProviderInterface, ItemDataProviderInterface
 {
-    use TranslatorTrait;
-    
-    private $adManager;
-    
+    protected $adManager;
+
     public function __construct(AdManager $adManager)
     {
         $this->adManager = $adManager;
     }
-
-    /**
-     * This method is invoked when a new ad is posted.
-     *
-     * @param Ad $data
-     * @return Ad
-     */
-    public function __invoke(Ad $data): Ad
+    
+    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
-        }
-        $data = $this->adManager->createAd($data);
-        return $data;
+        return Ad::class === $resourceClass && $operationName === "put";
+    }
+
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    {
+        return $this->adManager->getFullAd($id);
     }
 }

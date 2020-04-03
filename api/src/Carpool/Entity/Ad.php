@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -26,9 +26,7 @@ namespace App\Carpool\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Carpool\Controller\AdPost;
 use App\Carpool\Controller\AdAskPost;
-use App\Carpool\Controller\AdPut;
 use App\Carpool\Controller\AdAskGet;
 use App\User\Entity\User;
 use App\Carpool\Controller\UpdateCarpoolsLimits;
@@ -52,7 +50,6 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "method"="POST",
  *              "path"="/carpools",
  *              "normalization_context"={"groups"={"results"}},
- *              "controller"=AdPost::class,
  *              "security_post_denormalize"="is_granted('ad_search_create',object)"
  *          },
  *          "post_ask"={
@@ -107,10 +104,13 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *          "put"={
  *              "method"="PUT",
  *              "path"="/carpools/{id}",
- *              "controller"=AdPut::class,
- *              "read"=false,
  *              "security"="is_granted('ad_update',object)"
  *          },
+ *          "delete"={
+ *              "method"="DELETE",
+ *              "path"="/carpools/{id}",
+ *              "security"="is_granted('ad_delete',object)"
+ *          }
  *      }
  * )
  *

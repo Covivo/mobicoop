@@ -497,50 +497,53 @@ class UserManager
     }
 
     /**
-     * Get the proposals of an user
+     * Get the ads of an user
      *
      * @param User $user
-     * @param bool $isValidatedCarpool
+     * @param bool $isAcceptedCarpools
      * @return array|object
      * @throws \ReflectionException
      */
-    public function getAds(User $user)
+    public function getAds(bool $isAcceptedCarpools = false)
     {
-        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_OBJECT);
         $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
-        $response = $this->dataProvider->getCollection();
-        $ads = $response->getValue();
-       
+        $response = $isAcceptedCarpools ? $this->dataProvider->getSpecialCollection("accepted") : $this->dataProvider->getCollection();
+
+        $ads = $response->getValue()->getMember();
+
+//        dump($ads);die;
+
         $adsSanitized = [
             "ongoing" => [],
             "archived" => []
         ];
-
+        /** @var Ad $ad */
         foreach ($ads as $ad) {
             $isAlreadyInArray = false;
-            
-            if (isset($adsSanitized["ongoing"][$ad["id"]]) ||
-                isset($adsSanitized["archived"][$ad["id"]])) {
+
+            if (isset($adsSanitized["ongoing"][$ad->getId()]) ||
+                isset($adsSanitized["archived"][$ad->getId()])) {
                 $isAlreadyInArray = true;
             }
-            
+
             if ($isAlreadyInArray) {
                 continue;
             }
 
-            $now = new DateTime();
-            
+            $now = new DateTime('tomorrow');
+
             // Carpool regular
-            if ($ad["frequency"] === Ad::FREQUENCY_REGULAR) {
-                $date = new DateTime($ad["outwardLimitDate"]);
+            if ($ad->getFrequency() === Ad::FREQUENCY_REGULAR) {
+                $date = $ad->getOutwardLimitDate();
             }
             // Carpool punctual
             else {
-                $date = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
+                $date = $ad->getReturnDate() ? $ad->getReturnDate() : $ad->getOutwardDate();
             }
 
             $key = $date < $now ? 'archived' : 'ongoing';
-            $adsSanitized[$key][$ad["id"]] = $ad;
+            $adsSanitized[$key][$ad->getId()] = $ad;
         }
         return $adsSanitized;
     }
@@ -653,55 +656,6 @@ class UserManager
         $response = $this->dataProvider->putSpecial($user, null, "unsubscribe_user");
 
         return $response->getValue();
-    }
-
-    /**
-     * Get the proposals of an user
-     *
-     * @param User $user
-     * @return array|object
-     * @throws \ReflectionException
-     */
-    public function getMyAcceptedProposals(User $user)
-    {
-        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
-        $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
-        $response = $this->dataProvider->getSpecialCollection("accepted");
-
-        $ads = $response->getValue();
-
-        $adsSanitized = [
-            "ongoing" => [],
-            "archived" => []
-        ];
-        
-        foreach ($ads as $ad) {
-            $isAlreadyInArray = false;
-            
-            if (isset($adsSanitized["ongoing"][$ad["id"]]) ||
-                isset($adsSanitized["archived"][$ad["id"]])) {
-                $isAlreadyInArray = true;
-            }
-            
-            if ($isAlreadyInArray) {
-                continue;
-            }
-
-            $now = new DateTime();
-            
-            // Carpool regular
-            if ($ad["frequency"] === Ad::FREQUENCY_REGULAR) {
-                $date = new DateTime($ad["outwardLimitDate"]);
-            }
-            // Carpool punctual
-            else {
-                $date = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
-            }
-
-            $key = $date < $now ? 'archived' : 'ongoing';
-            $adsSanitized[$key][$ad["id"]] = $ad;
-        }
-        return $adsSanitized;
     }
 
     /**

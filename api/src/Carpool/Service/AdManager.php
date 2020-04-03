@@ -94,16 +94,18 @@ class AdManager
         $this->eventDispatcher = $eventDispatcher;
         $this->security = $security;
     }
-    
+
     /**
      * Create an ad.
      * This method creates a proposal, and its linked proposal for a return trip.
      * It returns the ad created, with its outward and return results.
      *
-     * @param Ad $ad            The ad to create
+     * @param Ad $ad The ad to create
+     * @param bool $fromUpdate - When we create an Ad in update case, waypoints are Object and not Array
      * @return Ad
+     * @throws \Exception
      */
-    public function createAd(Ad $ad)
+    public function createAd(Ad $ad, bool $fromUpdate = false)
     {
         $this->logger->info("AdManager : start " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -216,53 +218,10 @@ class AdManager
         if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
             $outwardCriteria->setToDate($ad->getOutwardLimitDate() ? $ad->getOutwardLimitDate() : null);
-            $hasSchedule = false;
-            foreach ($ad->getSchedule() as $schedule) {
-                if ($schedule['outwardTime'] != '') {
-                    if (isset($schedule['mon']) && $schedule['mon']) {
-                        $hasSchedule = true;
-                        $outwardCriteria->setMonCheck(true);
-                        $outwardCriteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $outwardCriteria->setMonMarginDuration($this->params['defaultMarginTime']);
-                    }
-                    if (isset($schedule['tue']) && $schedule['tue']) {
-                        $hasSchedule = true;
-                        $outwardCriteria->setTueCheck(true);
-                        $outwardCriteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $outwardCriteria->setTueMarginDuration($this->params['defaultMarginTime']);
-                    }
-                    if (isset($schedule['wed']) && $schedule['wed']) {
-                        $hasSchedule = true;
-                        $outwardCriteria->setWedCheck(true);
-                        $outwardCriteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $outwardCriteria->setWedMarginDuration($this->params['defaultMarginTime']);
-                    }
-                    if (isset($schedule['thu']) && $schedule['thu']) {
-                        $hasSchedule = true;
-                        $outwardCriteria->setThuCheck(true);
-                        $outwardCriteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $outwardCriteria->setThuMarginDuration($this->params['defaultMarginTime']);
-                    }
-                    if (isset($schedule['fri']) && $schedule['fri']) {
-                        $hasSchedule = true;
-                        $outwardCriteria->setFriCheck(true);
-                        $outwardCriteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $outwardCriteria->setFriMarginDuration($this->params['defaultMarginTime']);
-                    }
-                    if (isset($schedule['sat']) && $schedule['sat']) {
-                        $hasSchedule = true;
-                        $outwardCriteria->setSatCheck(true);
-                        $outwardCriteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $outwardCriteria->setSatMarginDuration($this->params['defaultMarginTime']);
-                    }
-                    if (isset($schedule['sun']) && $schedule['sun']) {
-                        $hasSchedule = true;
-                        $outwardCriteria->setSunCheck(true);
-                        $outwardCriteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule['outwardTime']));
-                        $outwardCriteria->setSunMarginDuration($this->params['defaultMarginTime']);
-                    }
-                }
-            }
+            $outwardCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $outwardCriteria, 'outwardTime');
+            $hasSchedule = $outwardCriteria->isMonCheck() || $outwardCriteria->isTueCheck()
+                || $outwardCriteria->isWedCheck() || $outwardCriteria->isFriCheck() || $outwardCriteria->isThuCheck()
+                || $outwardCriteria->isSatCheck() || $outwardCriteria->isSunCheck();
             if (!$hasSchedule && !$ad->isSearch()) {
                 // for a post, we need aschedule !
                 throw new AdException('At least one day should be selected for a regular trip');
@@ -294,62 +253,7 @@ class AdManager
         // waypoints
         foreach ($ad->getOutwardWaypoints() as $position => $point) {
             $waypoint = new Waypoint();
-            $address = new Address();
-            if (isset($point['houseNumber'])) {
-                $address->setHouseNumber($point['houseNumber']);
-            }
-            if (isset($point['street'])) {
-                $address->setStreet($point['street']);
-            }
-            if (isset($point['streetAddress'])) {
-                $address->setStreetAddress($point['streetAddress']);
-            }
-            if (isset($point['postalCode'])) {
-                $address->setPostalCode($point['postalCode']);
-            }
-            if (isset($point['subLocality'])) {
-                $address->setSubLocality($point['subLocality']);
-            }
-            if (isset($point['addressLocality'])) {
-                $address->setAddressLocality($point['addressLocality']);
-            }
-            if (isset($point['localAdmin'])) {
-                $address->setLocalAdmin($point['localAdmin']);
-            }
-            if (isset($point['county'])) {
-                $address->setCounty($point['county']);
-            }
-            if (isset($point['macroCounty'])) {
-                $address->setMacroCounty($point['macroCounty']);
-            }
-            if (isset($point['region'])) {
-                $address->setRegion($point['region']);
-            }
-            if (isset($point['macroRegion'])) {
-                $address->setMacroRegion($point['macroRegion']);
-            }
-            if (isset($point['addressCountry'])) {
-                $address->setAddressCountry($point['addressCountry']);
-            }
-            if (isset($point['countryCode'])) {
-                $address->setCountryCode($point['countryCode']);
-            }
-            if (isset($point['latitude'])) {
-                $address->setLatitude($point['latitude']);
-            }
-            if (isset($point['longitude'])) {
-                $address->setLongitude($point['longitude']);
-            }
-            if (isset($point['elevation'])) {
-                $address->setElevation($point['elevation']);
-            }
-            if (isset($point['name'])) {
-                $address->setName($point['name']);
-            }
-            if (isset($point['home'])) {
-                $address->setHome($point['home']);
-            }
-            $waypoint->setAddress($address);
+            $waypoint->setAddress($this->createAddressFromPoint($point));
             $waypoint->setPosition($position);
             $waypoint->setDestination($position == count($ad->getOutwardWaypoints())-1);
             $outwardProposal->addWaypoint($waypoint);
@@ -407,53 +311,10 @@ class AdManager
             if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
                 $returnCriteria->setToDate($ad->getReturnLimitDate() ? $ad->getReturnLimitDate() : null);
-                $hasSchedule = false;
-                foreach ($ad->getSchedule() as $schedule) {
-                    if (isset($schedule['returnTime']) && $schedule['returnTime'] != '') {
-                        if (isset($schedule['mon']) && $schedule['mon']) {
-                            $hasSchedule = true;
-                            $returnCriteria->setMonCheck(true);
-                            $returnCriteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $returnCriteria->setMonMarginDuration($this->params['defaultMarginTime']);
-                        }
-                        if (isset($schedule['tue']) && $schedule['tue']) {
-                            $hasSchedule = true;
-                            $returnCriteria->setTueCheck(true);
-                            $returnCriteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $returnCriteria->setTueMarginDuration($this->params['defaultMarginTime']);
-                        }
-                        if (isset($schedule['wed']) && $schedule['wed']) {
-                            $hasSchedule = true;
-                            $returnCriteria->setWedCheck(true);
-                            $returnCriteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $returnCriteria->setWedMarginDuration($this->params['defaultMarginTime']);
-                        }
-                        if (isset($schedule['thu']) && $schedule['thu']) {
-                            $hasSchedule = true;
-                            $returnCriteria->setThuCheck(true);
-                            $returnCriteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $returnCriteria->setThuMarginDuration($this->params['defaultMarginTime']);
-                        }
-                        if (isset($schedule['fri']) && $schedule['fri']) {
-                            $hasSchedule = true;
-                            $returnCriteria->setFriCheck(true);
-                            $returnCriteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $returnCriteria->setFriMarginDuration($this->params['defaultMarginTime']);
-                        }
-                        if (isset($schedule['sat']) && $schedule['sat']) {
-                            $hasSchedule = true;
-                            $returnCriteria->setSatCheck(true);
-                            $returnCriteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $returnCriteria->setSatMarginDuration($this->params['defaultMarginTime']);
-                        }
-                        if (isset($schedule['sun']) && $schedule['sun']) {
-                            $hasSchedule = true;
-                            $returnCriteria->setSunCheck(true);
-                            $returnCriteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule['returnTime']));
-                            $returnCriteria->setSunMarginDuration($this->params['defaultMarginTime']);
-                        }
-                    }
-                }
+                $returnCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $returnCriteria, 'returnTime');
+                $hasSchedule = $returnCriteria->isMonCheck() || $returnCriteria->isTueCheck()
+                    || $returnCriteria->isWedCheck() || $returnCriteria->isFriCheck() || $returnCriteria->isThuCheck()
+                    || $returnCriteria->isSatCheck() || $returnCriteria->isSunCheck();
                 if (!$hasSchedule && !$ad->isSearch()) {
                     // for a post, we need a schedule !
                     throw new AdException('At least one day should be selected for a regular trip');
@@ -489,62 +350,7 @@ class AdManager
             }
             foreach ($ad->getReturnWaypoints() as $position => $point) {
                 $waypoint = new Waypoint();
-                $address = new Address();
-                if (isset($point['houseNumber'])) {
-                    $address->setHouseNumber($point['houseNumber']);
-                }
-                if (isset($point['street'])) {
-                    $address->setStreet($point['street']);
-                }
-                if (isset($point['streetAddress'])) {
-                    $address->setStreetAddress($point['streetAddress']);
-                }
-                if (isset($point['postalCode'])) {
-                    $address->setPostalCode($point['postalCode']);
-                }
-                if (isset($point['subLocality'])) {
-                    $address->setSubLocality($point['subLocality']);
-                }
-                if (isset($point['addressLocality'])) {
-                    $address->setAddressLocality($point['addressLocality']);
-                }
-                if (isset($point['localAdmin'])) {
-                    $address->setLocalAdmin($point['localAdmin']);
-                }
-                if (isset($point['county'])) {
-                    $address->setCounty($point['county']);
-                }
-                if (isset($point['macroCounty'])) {
-                    $address->setMacroCounty($point['macroCounty']);
-                }
-                if (isset($point['region'])) {
-                    $address->setRegion($point['region']);
-                }
-                if (isset($point['macroRegion'])) {
-                    $address->setMacroRegion($point['macroRegion']);
-                }
-                if (isset($point['addressCountry'])) {
-                    $address->setAddressCountry($point['addressCountry']);
-                }
-                if (isset($point['countryCode'])) {
-                    $address->setCountryCode($point['countryCode']);
-                }
-                if (isset($point['latitude'])) {
-                    $address->setLatitude($point['latitude']);
-                }
-                if (isset($point['longitude'])) {
-                    $address->setLongitude($point['longitude']);
-                }
-                if (isset($point['elevation'])) {
-                    $address->setElevation($point['elevation']);
-                }
-                if (isset($point['name'])) {
-                    $address->setName($point['name']);
-                }
-                if (isset($point['home'])) {
-                    $address->setHome($point['home']);
-                }
-                $waypoint->setAddress($address);
+                $waypoint->setAddress($this->createAddressFromPoint($point));
                 $waypoint->setPosition($position);
                 $waypoint->setDestination($position == count($ad->getReturnWaypoints())-1);
                 $returnProposal->addWaypoint($waypoint);
@@ -607,6 +413,125 @@ class AdManager
     }
 
     /**
+     * Map address
+     *
+     * @param array $point
+     * @return Address
+     */
+    public function createAddressFromPoint($point)
+    {
+        $address = new Address();
+
+        if (isset($point['houseNumber'])) {
+            $address->setHouseNumber($point['houseNumber']);
+        }
+        if (isset($point['street'])) {
+            $address->setStreet($point['street']);
+        }
+        if (isset($point['streetAddress'])) {
+            $address->setStreetAddress($point['streetAddress']);
+        }
+        if (isset($point['postalCode'])) {
+            $address->setPostalCode($point['postalCode']);
+        }
+        if (isset($point['subLocality'])) {
+            $address->setSubLocality($point['subLocality']);
+        }
+        if (isset($point['addressLocality'])) {
+            $address->setAddressLocality($point['addressLocality']);
+        }
+        if (isset($point['localAdmin'])) {
+            $address->setLocalAdmin($point['localAdmin']);
+        }
+        if (isset($point['county'])) {
+            $address->setCounty($point['county']);
+        }
+        if (isset($point['macroCounty'])) {
+            $address->setMacroCounty($point['macroCounty']);
+        }
+        if (isset($point['region'])) {
+            $address->setRegion($point['region']);
+        }
+        if (isset($point['macroRegion'])) {
+            $address->setMacroRegion($point['macroRegion']);
+        }
+        if (isset($point['addressCountry'])) {
+            $address->setAddressCountry($point['addressCountry']);
+        }
+        if (isset($point['countryCode'])) {
+            $address->setCountryCode($point['countryCode']);
+        }
+        if (isset($point['latitude'])) {
+            $address->setLatitude($point['latitude']);
+        }
+        if (isset($point['longitude'])) {
+            $address->setLongitude($point['longitude']);
+        }
+        if (isset($point['elevation'])) {
+            $address->setElevation($point['elevation']);
+        }
+        if (isset($point['name'])) {
+            $address->setName($point['name']);
+        }
+        if (isset($point['home'])) {
+            $address->setHome($point['home']);
+        }
+
+        return $address;
+    }
+
+    /**
+     * @param $schedules
+     * @param Criteria $criteria
+     * @param string $key - outwardTime or returnTime
+     * @return Criteria
+     */
+    public function createTimesFromSchedule($schedules, Criteria $criteria, string $key)
+    {
+        foreach ($schedules as $schedule) {
+            if ($schedule[$key] != '') {
+                if (isset($schedule['mon']) && $schedule['mon']) {
+                    $criteria->setMonCheck(true);
+                    $criteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
+                    $criteria->setMonMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (isset($schedule['tue']) && $schedule['tue']) {
+                    $criteria->setTueCheck(true);
+                    $criteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
+                    $criteria->setTueMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (isset($schedule['wed']) && $schedule['wed']) {
+                    $criteria->setWedCheck(true);
+                    $criteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
+                    $criteria->setWedMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (isset($schedule['thu']) && $schedule['thu']) {
+                    $criteria->setThuCheck(true);
+                    $criteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
+                    $criteria->setThuMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (isset($schedule['fri']) && $schedule['fri']) {
+                    $criteria->setFriCheck(true);
+                    $criteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
+                    $criteria->setFriMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (isset($schedule['sat']) && $schedule['sat']) {
+                    $criteria->setSatCheck(true);
+                    $criteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
+                    $criteria->setSatMarginDuration($this->params['defaultMarginTime']);
+                }
+                if (isset($schedule['sun']) && $schedule['sun']) {
+                    $criteria->setSunCheck(true);
+                    $criteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
+                    $criteria->setSunMarginDuration($this->params['defaultMarginTime']);
+                }
+            }
+        }
+
+        return $criteria;
+    }
+
+    /**
      * Get an ad.
      * Returns the ad, with its outward and return results.
      *
@@ -619,6 +544,10 @@ class AdManager
     {
         $ad = new Ad();
         $proposal = $this->proposalManager->get($id);
+        if (is_null($proposal)) {
+            return null;
+        }
+
         $ad->setId($id);
         $ad->setFrequency($proposal->getCriteria()->getFrequency());
         $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
@@ -824,7 +753,7 @@ class AdManager
             $ad->setReturnDate($proposal->getProposalLinked()->getCriteria()->getFromDate());
             
             if ($proposal->getProposalLinked()->getCriteria()->getFromTime()) {
-                $ad->setReturnTime($ad->getReturnDate()->format('Y-m-d').' '.$proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i:s'));
+                $ad->setReturnTime($proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i'));
             } else {
                 $ad->setReturnTime(null);
             }
@@ -1020,11 +949,10 @@ class AdManager
      */
     public function updateAd(Ad $ad, ?string $mailSearchLink = null)
     {
-        $proposal = $this->proposalRepository->find($ad->getAdId());
+        $proposal = $this->proposalRepository->find($ad->getId());
         $oldAd = $this->makeAd($proposal, $ad->getUserId());
         $oldProposal = clone $proposal;
         $oldProposal->setCriteria(clone $proposal->getCriteria());
-
         $proposalAsks = $this->askManager->getAsksFromProposal($proposal);
 
         // Pause is apart and do not needs notifications by now
@@ -1041,9 +969,8 @@ class AdManager
                 $event = new AdMajorUpdatedEvent($oldAd, $ad, $proposalAsks, $this->security->getUser(), $mailSearchLink);
                 $this->eventDispatcher->dispatch(AdMajorUpdatedEvent::NAME, $event);
             }
-
             $this->proposalManager->deleteProposal($proposal);
-            $ad = $this->createAd($ad);
+            $ad = $this->createAd($ad, true);
 
         // minor update
         } elseif ($oldAd->hasBike() !== $ad->hasBike()
@@ -1083,31 +1010,6 @@ class AdManager
 
         $this->entityManager->flush();
 
-
-        $schedule['mon'] = $proposal->getCriteria()->isMonCheck();
-        $schedule['monOutwardTime'] = $proposal->getCriteria()->getMonTime();
-        $schedule['monReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getMonTime() : null;
-        $schedule['tue'] = $proposal->getCriteria()->isTueCheck();
-        $schedule['tueOutwardTime'] = $proposal->getCriteria()->getTueTime();
-        $schedule['tueReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getTueTime() : null;
-        $schedule['wed'] = $proposal->getCriteria()->isWedCheck();
-        $schedule['wedOutwardTime'] = $proposal->getCriteria()->getWedTime();
-        $schedule['wedReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getWedTime() : null;
-        $schedule['thu'] = $proposal->getCriteria()->isThuCheck();
-        $schedule['thuOutwardTime'] = $proposal->getCriteria()->getThuTime();
-        $schedule['thuReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getThuTime() : null;
-        $schedule['fri'] = $proposal->getCriteria()->isFriCheck();
-        $schedule['friOutwardTime'] = $proposal->getCriteria()->getFriTime();
-        $schedule['friReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getFriTime() : null;
-        $schedule['sat'] = $proposal->getCriteria()->isSatCheck();
-        $schedule['satOutwardTime'] = $proposal->getCriteria()->getSatTime();
-        $schedule['satReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getSatTime() : null;
-        $schedule['sun'] = $proposal->getCriteria()->isSunCheck();
-        $schedule['sunOutwardTime'] = $proposal->getCriteria()->getSunTime();
-        $schedule['sunReturnTime'] = $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria()->getSunTime() : null;
-        
-        $ad->setSchedule($schedule);
-
         return $ad;
     }
 
@@ -1136,7 +1038,7 @@ class AdManager
             return true;
         }
 
-        // checks for regular only
+        // checks for punctual only
         if ($newAd->getFrequency() === Criteria::FREQUENCY_PUNCTUAL
             && !$this->compareDateTimes($oldAd, $newAd)) {
             return true;
@@ -1249,7 +1151,7 @@ class AdManager
     /**
      * Compare if new Waypoints are different from the old ones
      * @param $old - Waypoints object from a Proposal
-     * @param $new - waypoint array from front
+     * @param $new - waypoint|address object from front
      * @return bool
      */
     public function compareWaypoints($old, $new)
