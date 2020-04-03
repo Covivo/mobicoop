@@ -82,7 +82,7 @@ class SolidarySearch
     * @Groups({"readSolidary","writeSolidary"})
     * @MaxDepth(1)
     */
-    private $direction;
+    private $way;
 
     /**
     * @var array The results for this search (array of SolidaryUser)
@@ -120,14 +120,14 @@ class SolidarySearch
         return $this;
     }
 
-    public function getDirection(): ?string
+    public function getWay(): ?string
     {
-        return $this->direction;
+        return $this->way;
     }
     
-    public function setDirection(string $direction): self
+    public function setWay(string $way): self
     {
-        $this->direction = $direction;
+        $this->way = $way;
         
         return $this;
     }

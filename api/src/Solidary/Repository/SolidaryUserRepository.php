@@ -216,7 +216,7 @@ class SolidaryUserRepository
             // If the search is on the return, we use the destination instead
             $waypoints = $solidaryTransportSearch->getSolidary()->getProposal()->getWaypoints();
             $address = null;
-            if ($solidaryTransportSearch->getDirection()=="outward") {
+            if ($solidaryTransportSearch->getWay()=="outward") {
                 $address = $waypoints[0]->getAddress();
             } else {
                 foreach ($waypoints as $waypoint) {
