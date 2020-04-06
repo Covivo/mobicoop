@@ -830,6 +830,11 @@ class UserManager
             }
             $this->entityManager->remove($proposal);
         }
+        // we remove all user's addresses
+        foreach ($user->getAddresses() as $address) {
+            $this->entityManager->remove($address);
+            $this->entityManager->flush();
+        }
         $this->deleteUserImages($user);
 
         $this->entityManager->remove($user);
