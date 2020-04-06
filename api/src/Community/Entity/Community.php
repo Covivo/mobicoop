@@ -42,6 +42,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use App\Carpool\Entity\Proposal;
 use App\Community\Controller\JoinAction;
 use App\RelayPoint\Entity\RelayPoint;
+use App\Community\Filter\TerritoryFilter;
 
 /**
  * A community : a group of users sharing common interests.
@@ -148,6 +149,7 @@ use App\RelayPoint\Entity\RelayPoint;
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  * @ApiFilter(NumericFilter::class, properties={"communityUsers.user.id"})
+ * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  */
 class Community
 {
