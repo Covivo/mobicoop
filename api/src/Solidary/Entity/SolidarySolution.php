@@ -72,7 +72,7 @@ class SolidarySolution
     /**
      * @var SolidaryMatching|null SolidaryMatching of this SolidarySolution
      *
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", inversedBy="solidarySolution", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", inversedBy="solidarySolution", cascade={"persist","remove"})
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $solidaryMatching;
