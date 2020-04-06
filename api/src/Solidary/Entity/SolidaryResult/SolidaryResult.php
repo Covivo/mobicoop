@@ -68,13 +68,6 @@ class SolidaryResult
     private $solidaryResultTransport;
 
     /**
-     * @var SolidaryResultFlexibleCarpool if the SolidaryResult is a SolidaryResultFlexibleCarpool
-     *
-     * @Groups({"readSolidarySearch"})
-     */
-    private $solidaryResultFlexibleCarpool;
-
-    /**
      * @var SolidaryResultCarpool if the SolidaryResult is a SolidaryResultCarpool
      *
      * @Groups({"readSolidarySearch"})
@@ -113,18 +106,6 @@ class SolidaryResult
     public function setSolidaryResultTransport(SolidaryResultTransport $solidaryResultTransport): self
     {
         $this->solidaryResultTransport = $solidaryResultTransport;
-        
-        return $this;
-    }
-
-    public function getSolidaryResultFlexibleCarpool(): ?SolidaryResultFlexibleCarpool
-    {
-        return $this->solidaryResultFlexibleCarpool;
-    }
-    
-    public function setSolidaryResultFlexibleCarpool(SolidaryResultFlexibleCarpool $solidaryResultFlexibleCarpool): self
-    {
-        $this->solidaryResultFlexibleCarpool = $solidaryResultFlexibleCarpool;
         
         return $this;
     }
