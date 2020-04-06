@@ -53,7 +53,7 @@ class NotificationRepository
     {
         $query = $this->repository->createQueryBuilder('n')
         ->join('n.action', 'a')
-        ->where('a.name = :action and n.active=1')
+        ->where('a.name = :action and n.active=1 and n.userEditable=0')
         ->setParameter('action', $action)
         ;
         return $query->getQuery()->getResult();
