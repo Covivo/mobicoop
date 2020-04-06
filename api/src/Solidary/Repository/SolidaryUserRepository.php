@@ -314,6 +314,10 @@ class SolidaryUserRepository
 
         $solidaryResult->setSolidaryResultTransport($solidaryResultTransport);
 
+        // We set the source solidaryMatching
+        $solidaryResult->setSolidaryMatching($solidaryMatching);
+
+
         return $solidaryResult;
     }
 

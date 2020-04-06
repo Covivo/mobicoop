@@ -25,6 +25,7 @@ namespace App\Solidary\Entity\SolidaryResult;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\Solidary\Entity\SolidaryMatching;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -36,8 +37,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  * ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readSolidary","readSolidarySearch"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeSolidary"}}
+ *          "normalization_context"={"groups"={"readSolidarySearch"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidarySearch"}}
  *      },
  *      collectionOperations={
  *          "get"
@@ -55,30 +56,37 @@ class SolidaryResult
      * @var int The id of this subject.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
+     * @Groups({"readSolidarySearch"})
      */
     private $id;
 
     /**
      * @var SolidaryResultTransport if the SolidaryResult is a SolidaryResultTransport
      *
-     * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
+     * @Groups({"readSolidarySearch"})
      */
     private $solidaryResultTransport;
 
     /**
      * @var SolidaryResultFlexibleCarpool if the SolidaryResult is a SolidaryResultFlexibleCarpool
      *
-     * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
+     * @Groups({"readSolidarySearch"})
      */
     private $solidaryResultFlexibleCarpool;
 
     /**
      * @var SolidaryResultCarpool if the SolidaryResult is a SolidaryResultCarpool
      *
-     * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
+     * @Groups({"readSolidarySearch"})
      */
     private $solidaryResultCarpool;
+
+    /**
+     * @var SolidaryMatching The source SolidaryMatching of this result
+     *
+     * @Groups({"readSolidarySearch"})
+     */
+    private $solidaryMatching;
 
     public function __construct()
     {
@@ -129,6 +137,18 @@ class SolidaryResult
     public function setSolidaryResultCarpool(SolidaryResultCarpool $solidaryResultCarpool): self
     {
         $this->solidaryResultCarpool = $solidaryResultCarpool;
+        
+        return $this;
+    }
+
+    public function getSolidaryMatching(): ?SolidaryMatching
+    {
+        return $this->solidaryMatching;
+    }
+    
+    public function setSolidaryMatching(SolidaryMatching $solidaryMatching): self
+    {
+        $this->solidaryMatching = $solidaryMatching;
         
         return $this;
     }

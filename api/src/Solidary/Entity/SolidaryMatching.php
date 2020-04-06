@@ -64,7 +64,7 @@ class SolidaryMatching
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
      */
     private $id;
 
