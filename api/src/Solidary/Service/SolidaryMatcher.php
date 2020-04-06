@@ -73,6 +73,10 @@ class SolidaryMatcher
                 $solidaryMatching = new SolidaryMatching();
                 $solidaryMatching->setSolidaryUser($solidaryUser);
                 $solidaryMatching->setSolidary($solidary);
+                // We use the Criteria of the Proposal of the Matching
+                $criteria = clone $solidary->getProposal()->getCriteria();
+                $solidaryMatching->setCriteria($criteria);
+
                 $this->entityManager->persist($solidaryMatching);
                 $this->entityManager->flush();
                 // We add the matching the return list

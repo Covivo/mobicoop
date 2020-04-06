@@ -98,6 +98,7 @@ class SolidaryMatching
     /**
      * @var Criteria|null Criteria of this SolidaryAsk
      *
+     * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="solidaryMatching", cascade={"persist","remove"})
      * @Groups({"readSolidary","writeSolidary"})
      */
