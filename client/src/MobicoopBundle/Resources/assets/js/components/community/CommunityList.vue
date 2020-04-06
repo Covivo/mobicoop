@@ -5,7 +5,10 @@
         v-if="canCreate"
         cols="6"
       >
-        <a :href="paths.community_create">
+        <a
+          v-if="loggedUserId"
+          :href="paths.community_create"
+        >
           <v-btn
             type="button"
             color="secondary"
@@ -174,6 +177,10 @@ export default {
     itemsPerPageDefault: {
       type: Number,
       default: 1
+    },
+    loggedUserId: {
+      type: Number,
+      default: null
     }
   },
   data () {

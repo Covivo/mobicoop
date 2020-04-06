@@ -15,6 +15,7 @@
             <community-list
                     :paths="{{ {'community_create':path('community_create'), 'community_ad_post':path('carpool_ad_post')}|json_encode }}"
                     :items-per-page-default="{{ defaultItemsPerPage }}"
+                    :logged-user-id="{{ (app.user ? app.user.id : null)|json_encode }}"
             ></community-list>
             <br/><br/>
         </div>
