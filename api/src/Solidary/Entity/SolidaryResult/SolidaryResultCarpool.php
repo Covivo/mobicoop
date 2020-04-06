@@ -35,8 +35,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeSolidary"}}
+ *          "normalization_context"={"groups"={"readSolidarySearch"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidarySearch"}}
  *      },
  *      collectionOperations={
  *          "get"
@@ -55,10 +55,53 @@ class SolidaryResultCarpool
      * @var int The id of this subject.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidarySearch"})
      */
     private $id;
 
+    /**
+     * @var string Name of the author
+     * @Groups({"readSolidarySearch"})
+     */
+    private $author;
+
+    /**
+     * @var string Journey's origin
+     * @Groups({"readSolidarySearch"})
+     */
+    private $origin;
+
+    /**
+     * @var string Journey's destination
+     * @Groups({"readSolidarySearch"})
+     */
+    private $destination;
+
+    /**
+     * @var array Journey's schedule
+     * @Groups({"readSolidarySearch"})
+     */
+    private $schedule;
+
+    /**
+     * @var int The proposal frequency (1 = punctual; 2 = regular)
+     * Based on Criteria's constants
+     * @Groups({"readSolidarySearch"})
+     */
+    private $frequency;
+
+    /**
+     * @var int The role (Driver : 1, Passenger : 2, Both : 3)
+     * Based on Ad's constants
+     * @Groups({"readSolidarySearch"})
+     */
+    private $role;
+
+    /**
+     * @var boolean If it's a solidary exclusive proposal
+     * @Groups({"readSolidarySearch"})
+     */
+    private $solidaryExlusive;
 
     public function __construct()
     {
@@ -73,6 +116,90 @@ class SolidaryResultCarpool
     public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
+    }
+
+    public function getAuthor(): ?string
+    {
+        return $this->author;
+    }
+    
+    public function setAuthor(string $author): self
+    {
+        $this->author = $author;
+        
+        return $this;
+    }
+
+    public function getOrigin(): ?string
+    {
+        return $this->origin;
+    }
+    
+    public function setOrigin(string $origin): self
+    {
+        $this->origin = $origin;
+        
+        return $this;
+    }
+    
+    public function getDestination(): ?string
+    {
+        return $this->destination;
+    }
+    
+    public function setDestination(string $destination): self
+    {
+        $this->destination = $destination;
+        
+        return $this;
+    }
+
+    public function getSchedule(): ?array
+    {
+        return $this->schedule;
+    }
+    
+    public function setSchedule(array $schedule): self
+    {
+        $this->schedule = $schedule;
+        
+        return $this;
+    }
+
+    public function getFrequency(): ?int
+    {
+        return $this->frequency;
+    }
+    
+    public function setFrequency(int $frequency): self
+    {
+        $this->frequency = $frequency;
+        
+        return $this;
+    }
+
+    public function getRole(): ?int
+    {
+        return $this->role;
+    }
+    
+    public function setRole(int $role): self
+    {
+        $this->role = $role;
+        
+        return $this;
+    }
+
+    public function isSolidaryExlusive(): ?bool
+    {
+        return $this->solidaryExlusive;
+    }
+    
+    public function setSolidaryExlusive(bool $solidaryExlusive): self
+    {
+        $this->solidaryExlusive = $solidaryExlusive;
         
         return $this;
     }
