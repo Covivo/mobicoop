@@ -84,6 +84,9 @@ services:
         resource: '@MobicoopBundle/Community/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Community\Security\:
         resource: '@MobicoopBundle/Community/Security/*'
+    Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager:
+        arguments:
+            $territoryFilter: '%env(json:COMMUNITY_TERRITORY_FILTER)%'
 
     # DataProvider
     Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider :
@@ -104,6 +107,9 @@ services:
         resource: '@MobicoopBundle/Event/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Event\Security\:
         resource: '@MobicoopBundle/Event/Security/*'
+    Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager:
+        arguments:
+            $territoryFilter: '%env(json:EVENT_TERRITORY_FILTER)%'
 
     # Event Listener
     Mobicoop\Bundle\MobicoopBundle\EventListener\ExceptionListener:

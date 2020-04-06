@@ -42,6 +42,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Event\Controller\ReportAction;
+use App\Event\Filter\TerritoryFilter;
 
 /**
  * An event : a social occasion or activity.
@@ -134,6 +135,7 @@ use App\Event\Controller\ReportAction;
  * @ApiFilter(OrderFilter::class, properties={"id", "fromDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(DateFilter::class, properties={"toDate"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
+ * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  */
 class Event
 {

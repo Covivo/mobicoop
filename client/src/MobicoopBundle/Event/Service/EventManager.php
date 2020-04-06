@@ -34,16 +34,18 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 class EventManager
 {
     private $dataProvider;
+    private $territoryFilter;
     
     /**
      * Constructor.
      *
      * @param DataProvider $dataProvider
      */
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(DataProvider $dataProvider, array $territoryFilter)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Event::class);
+        $this->territoryFilter = $territoryFilter;
     }
     
     /**
@@ -142,6 +144,9 @@ class EventManager
         }
         if ($page) {
             $params['page'] = $page;
+        }
+        if (count($this->territoryFilter)>0) {
+            $params['territory'] = $this->territoryFilter;
         }
         if (count($search)>0) {
             foreach ($search as $key => $value) {
