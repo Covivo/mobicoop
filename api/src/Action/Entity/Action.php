@@ -194,7 +194,10 @@ class Action
 
     public function getTypeName(): ?string
     {
-        return self::ACTION_TYPE_NAME[$this->getType()];
+        if ($this->getType() !== null) {
+            return self::ACTION_TYPE_NAME[$this->getType()];
+        }
+        return null;
     }
     
     public function setTypeName(string $typeName): self
