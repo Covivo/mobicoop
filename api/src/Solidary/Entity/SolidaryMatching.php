@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -25,12 +25,16 @@ namespace App\Solidary\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use App\Carpool\Entity\Criteria;
+use App\Carpool\Entity\Matching;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Solutions for a Solidary
+ * A solidary matching
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -40,58 +44,72 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
- *      collectionOperations={"post"},
- *      itemOperations={"get"}
+ *      collectionOperations={
+ *          "get","post"
+ *
+ *      },
+ *      itemOperations={
+ *          "get"
+ *      }
  * )
  */
-class SolidarySolution
+class SolidaryMatching
 {
     const DEFAULT_ID = 999999999999;
-
+    
     /**
-     * @var int $id The id of this solidary matching.
+     * @var int The id of this subject.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @ApiProperty(identifier=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $id;
 
     /**
-     * @var Solidary The solidary record.
+     * @var Matching|null The carpool matching if there is any
      *
-     * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Solidary", inversedBy="solidarySolutions")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="solidaryMatching", cascade={"persist","remove"})
+     * @Groups({"read","results",})
+     * @MaxDepth(1)
+     */
+    private $matching;
+
+    /**
+     * @var SolidaryUser The solidary User if needed.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="solidaryMatchings")
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $solidaryUser;
+
+    /**
+     * @var Solidary The solidary User if needed.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Solidary", inversedBy="solidaryMatchings")
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidary;
 
     /**
-     * @var SolidaryMatching|null SolidaryMatching of this SolidarySolution
+     * @var Criteria|null Criteria of this SolidaryAsk
      *
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", inversedBy="solidarySolution", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="solidaryMatching", cascade={"persist","remove"})
      * @Groups({"readSolidary","writeSolidary"})
      */
-    private $solidaryMatching;
+    private $criteria;
 
     /**
-     * @var SolidaryAsk The solidary Ask for this solidarySolution
+     * @var SolidarySolution|null SolidarySolution of this SolidaryMatching
      *
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", mappedBy="solidarySolution")
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidaryMatching", cascade={"persist","remove"})
      * @Groups({"readSolidary","writeSolidary"})
      */
-    private $solidaryAsk;
-
-    /**
-     * @var string A comment about the solidary matching.
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
-     */
-    private $comment;
+    private $solidarySolution;
 
     /**
      * @var \DateTimeInterface Creation date of the solidary record.
@@ -113,17 +131,46 @@ class SolidarySolution
     {
         $this->id = self::DEFAULT_ID;
     }
-
-    public function getId(): int
+    
+    public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function getMatching(): ?Matching
+    {
+        return $this->matching;
+    }
+
+    public function setMatching(Matching $matching): self
+    {
+        $this->matching = $matching;
+
+        return $this;
+    }
+
+    public function getSolidaryUser(): ?SolidaryUser
+    {
+        return $this->solidaryUser;
+    }
+    
+    public function setSolidaryUser(?SolidaryUser $solidaryUser): self
+    {
+        $this->solidaryUser = $solidaryUser;
+        
+        return $this;
     }
 
     public function getSolidary(): ?Solidary
     {
         return $this->solidary;
     }
-
+    
     public function setSolidary(?Solidary $solidary): self
     {
         $this->solidary = $solidary;
@@ -131,39 +178,27 @@ class SolidarySolution
         return $this;
     }
 
-    public function getSolidaryMatching(): ?SolidaryMatching
+    public function getSolidarySolution(): ?SolidarySolution
     {
-        return $this->solidaryMatching;
-    }
-
-    public function setSolidaryMatching(?SolidaryMatching $solidaryMatching): self
-    {
-        $this->solidaryMatching = $solidaryMatching;
-        
-        return $this;
-    }
-
-    public function getSolidaryAsk(): ?SolidaryAsk
-    {
-        return $this->solidaryAsk;
-    }
-
-    public function setSolidaryAsk(?SolidaryAsk $solidaryAsk): self
-    {
-        $this->solidaryAsk = $solidaryAsk;
-        
-        return $this;
-    }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
+        return $this->solidarySolution;
     }
     
-    public function setComment(?string $comment): self
+    public function setSolidarySolution(?SolidarySolution $solidarySolution): self
     {
-        $this->comment = $comment;
+        $this->solidarySolution = $solidarySolution;
         
+        return $this;
+    }
+
+    public function getCriteria(): ?Criteria
+    {
+        return $this->criteria;
+    }
+
+    public function setCriteria(Criteria $criteria): self
+    {
+        $this->criteria = $criteria;
+
         return $this;
     }
 

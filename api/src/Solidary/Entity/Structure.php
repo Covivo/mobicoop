@@ -110,9 +110,57 @@ class Structure
     private $updatedDate;
 
     /**
+     * @var \DateTimeInterface Morning min range time.
+     *
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     */
+    private $mMinRangeTime;
+
+    /**
+     * @var \DateTimeInterface Morning max range time.
+     *
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     */
+    private $mMaxRangeTime;
+
+    /**
+     * @var \DateTimeInterface Afternoon min range time.
+     *
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     */
+    private $aMinRangeTime;
+
+    /**
+     * @var \DateTimeInterface Afternoon max range time.
+     *
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     */
+    private $aMaxRangeTime;
+
+    /**
+     * @var \DateTimeInterface Evening min range time.
+     *
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     */
+    private $eMinRangeTime;
+
+    /**
+     * @var \DateTimeInterface Evening max range time.
+     *
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     */
+    private $eMaxRangeTime;
+
+    /**
      * @var \DateTimeInterface Morning min time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
     private $mMinTime;
@@ -120,7 +168,7 @@ class Structure
     /**
      * @var \DateTimeInterface Morning max time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
     private $mMaxTime;
@@ -128,7 +176,7 @@ class Structure
     /**
      * @var \DateTimeInterface Afternoon min time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
     private $aMinTime;
@@ -136,7 +184,7 @@ class Structure
     /**
      * @var \DateTimeInterface Afternoon max time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
     private $aMaxTime;
@@ -144,7 +192,7 @@ class Structure
     /**
      * @var \DateTimeInterface Evening min time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
     private $eMinTime;
@@ -152,7 +200,7 @@ class Structure
     /**
      * @var \DateTimeInterface Evening max time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
     private $eMaxTime;
@@ -451,6 +499,78 @@ class Structure
     {
         $this->updatedDate = $updatedDate;
         
+        return $this;
+    }
+
+    public function getMMinRangeTime(): ?\DateTimeInterface
+    {
+        return $this->mMinRangeTime;
+    }
+
+    public function setMMinRangeTime(\DateTimeInterface $mMinRangeTime): self
+    {
+        $this->mMinRangeTime = $mMinRangeTime;
+
+        return $this;
+    }
+
+    public function getMMaxRangeTime(): ?\DateTimeInterface
+    {
+        return $this->mMaxRangeTime;
+    }
+
+    public function setMMaxRangeTime(\DateTimeInterface $mMaxRangeTime): self
+    {
+        $this->mMaxRangeTime = $mMaxRangeTime;
+
+        return $this;
+    }
+
+    public function getAMinRangeTime(): ?\DateTimeInterface
+    {
+        return $this->aMinRangeTime;
+    }
+
+    public function setAMinRangeTime(\DateTimeInterface $aMinRangeTime): self
+    {
+        $this->aMinRangeTime = $aMinRangeTime;
+
+        return $this;
+    }
+
+    public function getAMaxRangeTime(): ?\DateTimeInterface
+    {
+        return $this->aMaxRangeTime;
+    }
+
+    public function setAMaxRangeTime(\DateTimeInterface $aMaxRangeTime): self
+    {
+        $this->aMaxRangeTime = $aMaxRangeTime;
+
+        return $this;
+    }
+
+    public function getEMinRangeTime(): ?\DateTimeInterface
+    {
+        return $this->eMinRangeTime;
+    }
+
+    public function setEMinRangeTime(\DateTimeInterface $eMinRangeTime): self
+    {
+        $this->eMinRangeTime = $eMinRangeTime;
+
+        return $this;
+    }
+
+    public function getEMaxRangeTime(): ?\DateTimeInterface
+    {
+        return $this->eMaxRangeTime;
+    }
+
+    public function setEMaxRangeTime(\DateTimeInterface $eMaxRangeTime): self
+    {
+        $this->eMaxRangeTime = $eMaxRangeTime;
+
         return $this;
     }
 

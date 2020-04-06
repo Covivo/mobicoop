@@ -378,6 +378,15 @@ class SolidaryUser
     private $solidaryUserStructures;
 
     /**
+     * @var ArrayCollection|null Solidary matchings.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="solidaryUser", cascade={"remove"}, orphanRemoval=true)
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $solidaryMatchings;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -874,6 +883,29 @@ class SolidaryUser
             }
         }
 
+        return $this;
+    }
+
+    public function getSolidaryMatchings()
+    {
+        return $this->solidaryMatchings->getValues();
+    }
+    
+    public function addSolidaryMatching(SolidaryMatching $solidaryMatching): self
+    {
+        if (!$this->solidaryMatchings->contains($solidaryMatching)) {
+            $this->solidaryMatchings[] = $solidaryMatching;
+        }
+        
+        return $this;
+    }
+    
+    public function removeSolidaryMatching(SolidarySolution $solidaryMatching): self
+    {
+        if ($this->solidaryMatchings->contains($solidaryMatching)) {
+            $this->solidaryMatchings->removeElement($solidaryMatching);
+        }
+        
         return $this;
     }
 

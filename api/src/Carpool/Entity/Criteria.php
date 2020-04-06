@@ -31,6 +31,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\User\Entity\Car;
 use App\Geography\Entity\Direction;
 use App\PublicTransport\Entity\PTJourney;
+use App\Solidary\Entity\SolidaryAsk;
+use App\Solidary\Entity\SolidaryMatching;
 
 /**
  * Carpooling : criteria (restriction for an offer / selection for a request).
@@ -623,6 +625,22 @@ class Criteria
      * @Groups({"read","write","thread"})
      */
     private $solidaryExclusive;
+
+    /**
+     * @var SolidaryAsk The SolidaryAsk that uses this criteria.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", mappedBy="criteria")
+     * @Groups({"read","write"})
+     */
+    private $solidaryAsk;
+
+    /**
+     * @var SolidaryMatching The SolidaryMatching that uses this criteria.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="criteria")
+     * @Groups({"read","write"})
+     */
+    private $solidaryMatching;
 
     /**
      * @var boolean Avoid motorway.
@@ -1564,6 +1582,30 @@ class Criteria
     public function setSolidaryExclusive(?bool $isSolidaryExclusive): self
     {
         $this->solidaryExclusive = $isSolidaryExclusive;
+        
+        return $this;
+    }
+
+    public function getSolidaryAsk(): ?SolidaryAsk
+    {
+        return $this->solidaryAsk;
+    }
+    
+    public function setSolidaryAsk(?SolidaryAsk $solidaryAsk): self
+    {
+        $this->solidaryAsk = $solidaryAsk;
+        
+        return $this;
+    }
+
+    public function getSolidaryMatching(): ?SolidaryMatching
+    {
+        return $this->solidaryMatching;
+    }
+    
+    public function setSolidaryMatching(?SolidaryMatching $solidaryMatching): self
+    {
+        $this->solidaryMatching = $solidaryMatching;
         
         return $this;
     }

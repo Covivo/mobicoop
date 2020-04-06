@@ -30,6 +30,7 @@ use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\Criteria;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -104,7 +105,7 @@ class SolidaryAsk
      * @var SolidarySolution The solidary solution this Ask is for.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidarySolution")
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", inversedBy="solidaryAsk")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -140,6 +141,16 @@ class SolidaryAsk
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $ask;
+
+    /**
+     * @var Criteria|null Criteria of this SolidaryAsk
+     *
+     * @Assert\NotBlank
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="solidaryAsk", cascade={"persist","remove"})
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $criteria;
 
     public function __construct()
     {
@@ -260,6 +271,18 @@ class SolidaryAsk
     public function setAsk(Ask $ask): self
     {
         $this->ask = $ask;
+
+        return $this;
+    }
+
+    public function getCriteria(): ?Criteria
+    {
+        return $this->criteria;
+    }
+
+    public function setCriteria(Criteria $criteria): self
+    {
+        $this->criteria = $criteria;
 
         return $this;
     }

@@ -173,6 +173,15 @@ class Solidary
     private $solidarySolutions;
 
     /**
+     * @var ArrayCollection|null Solidary matchings.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $solidaryMatchings;
+
+    /**
      * @var float Progression of this solidary
      * @Groups({"readSolidary"})
      */
@@ -341,6 +350,29 @@ class Solidary
     {
         if ($this->solidarySolutions->contains($solidarySolution)) {
             $this->solidarySolutions->removeElement($solidarySolution);
+        }
+        
+        return $this;
+    }
+
+    public function getSolidaryMatchings()
+    {
+        return $this->solidaryMatchings->getValues();
+    }
+    
+    public function addSolidaryMatching(SolidaryMatching $solidaryMatching): self
+    {
+        if (!$this->solidaryMatchings->contains($solidaryMatching)) {
+            $this->solidaryMatchings[] = $solidaryMatching;
+        }
+        
+        return $this;
+    }
+    
+    public function removeSolidaryMatching(SolidarySolution $solidaryMatching): self
+    {
+        if ($this->solidaryMatchings->contains($solidaryMatching)) {
+            $this->solidaryMatchings->removeElement($solidaryMatching);
         }
         
         return $this;
