@@ -382,15 +382,6 @@ class Structure
     private $structure;
 
     /**
-     * @var ArrayCollection|null The solidary records for this structure.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
-     * @MaxDepth(1)
-     */
-    private $solidaries;
-
-    /**
      * @var ArrayCollection|null Child structures.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Structure", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
@@ -906,34 +897,6 @@ class Structure
     public function setStructure(?Structure $structure): self
     {
         $this->structure = $structure;
-
-        return $this;
-    }
-
-    public function getSolidaries()
-    {
-        return $this->solidaries->getValues();
-    }
-
-    public function addSolidary(Solidary $solidary): self
-    {
-        if (!$this->solidaries->contains($solidary)) {
-            $this->solidaries->add($solidary);
-            $solidary->setStructure($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSolidary(Solidary $solidary): self
-    {
-        if ($this->solidaries->contains($solidary)) {
-            $this->solidaries->removeElement($solidary);
-            // set the owning side to null (unless already changed)
-            if ($solidary->getStructure() === $this) {
-                $solidary->setStructure(null);
-            }
-        }
 
         return $this;
     }

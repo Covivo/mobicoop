@@ -139,14 +139,6 @@ class Solidary
     private $proposal;
 
     /**
-     * @var Structure Structure of the solidary record.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaries", cascade={"persist","remove"})
-     * @Groups({"readSolidary","writeSolidary"})
-     */
-    private $structure;
-
-    /**
      * @var Subject Subject of the solidary record.
      *
      * @Assert\NotBlank
@@ -194,6 +186,7 @@ class Solidary
         $this->id = self::DEFAULT_ID;
         $this->needs = new ArrayCollection();
         $this->solidarySolutions = new ArrayCollection();
+        $this->solidaryMatchings = new ArrayCollection();
         $this->proofs = new ArrayCollection();
     }
 
@@ -283,19 +276,6 @@ class Solidary
     {
         $this->proposal = $proposal;
         
-        return $this;
-    }
-
-
-    public function getStructure(): ?Structure
-    {
-        return $this->structure;
-    }
-
-    public function setStructure(?Structure $structure): self
-    {
-        $this->structure = $structure;
-
         return $this;
     }
 

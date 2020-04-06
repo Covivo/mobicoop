@@ -254,18 +254,6 @@ class SolidaryUserRepository
     }
 
     /**
-     * Find the matching SolidaryUser for a Solidary carpool search when there is no Destination
-     *
-     * @param SolidarySearch $solidarySearch
-     * @return array|null
-     */
-    public function findForASolidaryCarpoolSearchWithoutDestination(SolidarySearch $solidarySearch): array
-    {
-        return [];
-    }
-
-
-    /**
      * Get the hour slot of this time
      * m : morning, a : afternoon, e : evening
      *
