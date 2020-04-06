@@ -298,6 +298,11 @@ class Ad implements ResourceInterface, \JsonSerializable
     private $results;
 
     /**
+     * @var array|null The carpool asks.
+     */
+    private $asks;
+
+    /**
      * @var int|null The ad id for which the current ad is an ask.
      *
      * @Groups({"post","put"})
@@ -376,6 +381,7 @@ class Ad implements ResourceInterface, \JsonSerializable
         $this->communities = [];
         $this->results = [];
         $this->filters = [];
+        $this->asks = [];
         if (!is_null($id)) {
             $this->id = $id;
         }
@@ -841,6 +847,18 @@ class Ad implements ResourceInterface, \JsonSerializable
     public function setResults(array $results)
     {
         $this->results = $results;
+
+        return $this;
+    }
+
+    public function getAsks(): ?array
+    {
+        return $this->asks;
+    }
+
+    public function setAsks(?array $asks)
+    {
+        $this->asks = $asks;
 
         return $this;
     }
