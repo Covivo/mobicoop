@@ -23,11 +23,13 @@
 namespace App\Solidary\Repository;
 
 use App\Carpool\Entity\Criteria;
+use App\Solidary\Entity\SolidaryMatching;
 use App\Solidary\Entity\SolidarySearch;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Entity\SolidaryResult\SolidaryResult;
 use App\Solidary\Entity\SolidaryResult\SolidaryResultTransport;
+use App\Solidary\Service\SolidaryMatcher;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -48,11 +50,13 @@ class SolidaryUserRepository
     private $repository;
     
     private $entityManager;
-    
-    public function __construct(EntityManagerInterface $entityManager)
+    private $solidaryMatcher;
+
+    public function __construct(EntityManagerInterface $entityManager, SolidaryMatcher $solidaryMatcher)
     {
         $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(SolidaryUser::class);
+        $this->solidaryMatcher = $solidaryMatcher;
     }
 
 
@@ -236,10 +240,14 @@ class SolidaryUserRepository
         
         $queryResults = $query->getQuery()->getResult();
 
+        
+        // We need to build and persist all the new results as SolidaryMatching.
+        $solidaryMatchings = $this->solidaryMatcher->buildSolidaryMatchings($solidaryTransportSearch->getSolidary(), $queryResults);
+
         // We build the array of SolidaryResult
         $results = [];
-        foreach ($queryResults as $queryResult) {
-            $results[] = $this->buildSolidaryResultTransport($queryResult);
+        foreach ($solidaryMatchings as $solidaryMatching) {
+            $results[] = $this->buildSolidaryResultTransport($solidaryMatching);
         }
 
         return $results;
@@ -279,21 +287,21 @@ class SolidaryUserRepository
 
 
     /**
-     * Build a SolidaryResult with a SolidaryResultTransport from a SolidaryUser
+     * Build a SolidaryResult with a SolidaryResultTransport from a SolidaryMatching
      *
-     * @param SolidaryUser $solidaryUser    The Solidary User
+     * @param SolidaryMatching $solidaryUser    The Solidary User
      * @return SolidaryResult
      */
-    public function buildSolidaryResultTransport(SolidaryUser $solidaryUser): SolidaryResult
+    public function buildSolidaryResultTransport(SolidaryMatching $solidaryMatching): SolidaryResult
     {
         $solidaryResult = new SolidaryResult();
         $solidaryResultTransport = new SolidaryResultTransport();
         
         // The volunteer
-        $solidaryResultTransport->setVolunteer($solidaryUser->getUser()->getGivenName()." ".$solidaryUser->getUser()->getFamilyName());
+        $solidaryResultTransport->setVolunteer($solidaryMatching->getSolidaryUser()->getUser()->getGivenName()." ".$solidaryMatching->getSolidaryUser()->getUser()->getFamilyName());
 
         // Home address of the volunteer
-        $addresses = $solidaryUser->getUser()->getAddresses();
+        $addresses = $solidaryMatching->getSolidaryUser()->getUser()->getAddresses();
         foreach ($addresses as $address) {
             if ($address->isHome()) {
                 $solidaryResultTransport->setHome($address->getAddressLocality());
@@ -302,7 +310,7 @@ class SolidaryUserRepository
         }
         
         // Schedule of the volunteer
-        $solidaryResultTransport->setSchedule($this->getBuildedSchedule($solidaryUser));
+        $solidaryResultTransport->setSchedule($this->getBuildedSchedule($solidaryMatching->getSolidaryUser()));
 
         $solidaryResult->setSolidaryResultTransport($solidaryResultTransport);
 

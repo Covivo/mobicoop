@@ -72,7 +72,7 @@ class SolidarySearch
     /**
     * @var Solidary The solidary this search is for.
     * @Assert\NotBlank
-    * @Groups({"readSolidary","writeSolidary"})
+    * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
     * @MaxDepth(1)
     */
     private $solidary;

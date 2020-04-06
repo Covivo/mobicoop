@@ -73,7 +73,7 @@ class Solidary
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
      */
     private $id;
 
