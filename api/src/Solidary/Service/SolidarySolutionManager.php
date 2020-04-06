@@ -46,12 +46,12 @@ class SolidarySolutionManager
      */
     public function createSolidarySolution(SolidarySolution $solidarySolution): ?SolidarySolution
     {
-        // The SolidaryUser has to be a volunteer
-        if (!is_null($solidarySolution->getSolidaryUser()) && !$solidarySolution->getSolidaryUser()->isVolunteer()) {
+        // If there is a SolidaryUser, it has to be a volunteer
+        if (!is_null($solidarySolution->getSolidaryMatching()->getSolidaryUser()) && !$solidarySolution->getSolidaryMatching()->getSolidaryUser()->isVolunteer()) {
             throw new SolidaryException(SolidaryException::IS_NOT_VOLUNTEER);
         }
         // Can't have both matching et solidaryUser
-        if (!is_null($solidarySolution->getSolidaryUser()) && !is_null($solidarySolution->getMatching())) {
+        if (!is_null($solidarySolution->getSolidaryMatching()->getSolidaryUser()) && !is_null($solidarySolution->getSolidaryMatching()->getMatching())) {
             throw new SolidaryException(SolidaryException::CANT_HAVE_BOTH);
         }
 

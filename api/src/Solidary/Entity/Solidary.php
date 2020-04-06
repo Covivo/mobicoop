@@ -25,6 +25,7 @@ namespace App\Solidary\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -169,6 +170,7 @@ class Solidary
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
      */
     private $solidarySolutions;
 
