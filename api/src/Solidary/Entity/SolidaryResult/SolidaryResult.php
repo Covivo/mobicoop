@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Entity;
+namespace App\Solidary\Entity\SolidaryResult;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -31,33 +31,23 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A solidary search (transport or carpool)
+ * A solidary Result after a Solidary Search (transport or carpool)
  *
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readSolidary","readSolidarySearch"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={
- *          "get",
- *          "transport"={
- *              "method"="POST",
- *              "path"="/solidary_searches/transport",
- *              "normalization_context"={"groups"={"readSolidarySearch"}}
- *          },
- *          "carpool"={
- *              "method"="POST",
- *              "path"="/solidary_searches/carpool",
- *              "normalization_context"={"groups"={"readSolidarySearch"}}
- *          }
+ *          "get"
  *      },
  *      itemOperations={
  *          "get"
  *      }
  * )
  */
-class SolidarySearch
+class SolidaryResult
 {
     const DEFAULT_ID = 999999999999;
     
@@ -65,34 +55,30 @@ class SolidarySearch
      * @var int The id of this subject.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
      */
     private $id;
 
     /**
-    * @var Solidary The solidary this search is for.
-    * @Assert\NotBlank
-    * @Groups({"readSolidary","writeSolidary"})
-    * @MaxDepth(1)
-    */
-    private $solidary;
+     * @var SolidaryResultTransport if the SolidaryResult is a SolidaryResultTransport
+     *
+     * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
+     */
+    private $solidaryResultTransport;
 
     /**
-    * @var string If it's a search on outward or return
-    * @Assert\NotBlank
-    * @Assert\Choice({"outward", "return"})
-    * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
-    * @MaxDepth(1)
-    */
-    private $way;
+     * @var SolidaryResultFlexibleCarpool if the SolidaryResult is a SolidaryResultFlexibleCarpool
+     *
+     * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
+     */
+    private $solidaryResultFlexibleCarpool;
 
     /**
-    * @var array The results for this search (array of SolidaryUser)
-    * Array of SolidaryResult
-    * @Groups({"readSolidary","readSolidarySearch"})
-    */
-    private $results;
-
+     * @var SolidaryResultCarpool if the SolidaryResult is a SolidaryResultCarpool
+     *
+     * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
+     */
+    private $solidaryResultCarpool;
 
     public function __construct()
     {
@@ -111,38 +97,38 @@ class SolidarySearch
         return $this;
     }
 
-    public function getSolidary(): ?Solidary
+    public function getSolidaryResultTransport(): ?SolidaryResultTransport
     {
-        return $this->solidary;
+        return $this->solidaryResultTransport;
     }
     
-    public function setSolidary(Solidary $solidary): self
+    public function setSolidaryResultTransport(SolidaryResultTransport $solidaryResultTransport): self
     {
-        $this->solidary = $solidary;
+        $this->solidaryResultTransport = $solidaryResultTransport;
         
         return $this;
     }
 
-    public function getWay(): ?string
+    public function getSolidaryResultFlexibleCarpool(): ?SolidaryResultFlexibleCarpool
     {
-        return $this->way;
+        return $this->solidaryResultFlexibleCarpool;
     }
     
-    public function setWay(string $way): self
+    public function setSolidaryResultFlexibleCarpool(SolidaryResultFlexibleCarpool $solidaryResultFlexibleCarpool): self
     {
-        $this->way = $way;
+        $this->solidaryResultFlexibleCarpool = $solidaryResultFlexibleCarpool;
         
         return $this;
     }
 
-    public function getResults(): ?array
+    public function getSolidaryResultCarpool(): ?SolidaryResultCarpool
     {
-        return $this->results;
+        return $this->solidaryResultCarpool;
     }
     
-    public function setResults(array $results): self
+    public function setSolidaryResultCarpool(SolidaryResultCarpool $solidaryResultCarpool): self
     {
-        $this->results = $results;
+        $this->solidaryResultCarpool = $solidaryResultCarpool;
         
         return $this;
     }

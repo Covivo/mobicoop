@@ -21,43 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Entity;
+namespace App\Solidary\Entity\SolidaryResult;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A solidary search (transport or carpool)
+ * A solidary Result Transport
  *
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readSolidary","readSolidarySearch"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readSolidarySearch"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={
- *          "get",
- *          "transport"={
- *              "method"="POST",
- *              "path"="/solidary_searches/transport",
- *              "normalization_context"={"groups"={"readSolidarySearch"}}
- *          },
- *          "carpool"={
- *              "method"="POST",
- *              "path"="/solidary_searches/carpool",
- *              "normalization_context"={"groups"={"readSolidarySearch"}}
- *          }
+ *          "get"
  *      },
  *      itemOperations={
  *          "get"
  *      }
  * )
  */
-class SolidarySearch
+
+class SolidaryResultTransport
 {
     const DEFAULT_ID = 999999999999;
     
@@ -65,34 +55,27 @@ class SolidarySearch
      * @var int The id of this subject.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidarySearch"})
      */
     private $id;
 
     /**
-    * @var Solidary The solidary this search is for.
-    * @Assert\NotBlank
-    * @Groups({"readSolidary","writeSolidary"})
-    * @MaxDepth(1)
-    */
-    private $solidary;
+     * @var string FamilyName and GivenName of the volunteer
+     * @Groups({"readSolidarySearch"})
+     */
+    private $volunteer;
 
     /**
-    * @var string If it's a search on outward or return
-    * @Assert\NotBlank
-    * @Assert\Choice({"outward", "return"})
-    * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
-    * @MaxDepth(1)
-    */
-    private $way;
+     * @var string Home town of the volunteer
+     * @Groups({"readSolidarySearch"})
+     */
+    private $home;
 
     /**
-    * @var array The results for this search (array of SolidaryUser)
-    * Array of SolidaryResult
-    * @Groups({"readSolidary","readSolidarySearch"})
-    */
-    private $results;
-
+     * @var array Schedule of availability of the volunteer
+     * @Groups({"readSolidarySearch"})
+     */
+    private $schedule;
 
     public function __construct()
     {
@@ -111,38 +94,38 @@ class SolidarySearch
         return $this;
     }
 
-    public function getSolidary(): ?Solidary
+    public function getVolunteer(): ?string
     {
-        return $this->solidary;
+        return $this->volunteer;
     }
     
-    public function setSolidary(Solidary $solidary): self
+    public function setVolunteer(string $volunteer): self
     {
-        $this->solidary = $solidary;
+        $this->volunteer = $volunteer;
         
         return $this;
     }
-
-    public function getWay(): ?string
+    
+    public function getHome(): ?string
     {
-        return $this->way;
+        return $this->home;
     }
     
-    public function setWay(string $way): self
+    public function setHome(string $home): self
     {
-        $this->way = $way;
+        $this->home = $home;
         
         return $this;
     }
-
-    public function getResults(): ?array
+    
+    public function getSchedule(): ?array
     {
-        return $this->results;
+        return $this->schedule;
     }
     
-    public function setResults(array $results): self
+    public function setSchedule(array $schedule): self
     {
-        $this->results = $results;
+        $this->schedule = $schedule;
         
         return $this;
     }

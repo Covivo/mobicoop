@@ -26,6 +26,8 @@ use App\Carpool\Entity\Criteria;
 use App\Solidary\Entity\SolidarySearch;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Exception\SolidaryException;
+use App\Solidary\Entity\SolidaryResult\SolidaryResult;
+use App\Solidary\Entity\SolidaryResult\SolidaryResultTransport;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -231,7 +233,16 @@ class SolidaryUserRepository
             $sqlDistance = '(6378 * acos(cos(radians(' . $address->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $address->getLongitude() . ')) + sin(radians(' . $address->getLatitude() . ')) * sin(radians(a.latitude))))';
             $query->andWhere($sqlDistance . " <= su.maxDistance");
         }
-        return $query->getQuery()->getResult();
+        
+        $queryResults = $query->getQuery()->getResult();
+
+        // We build the array of SolidaryResult
+        $results = [];
+        foreach ($queryResults as $queryResult) {
+            $results[] = $this->buildSolidaryResultTransport($queryResult);
+        }
+
+        return $results;
     }
 
     /**
@@ -264,5 +275,70 @@ class SolidaryUserRepository
         //should not append
         throw new SolidaryException(SolidaryException::INVALID_HOUR_SLOT);
         return "";
+    }
+
+
+    /**
+     * Build a SolidaryResult with a SolidaryResultTransport from a SolidaryUser
+     *
+     * @param SolidaryUser $solidaryUser    The Solidary User
+     * @return SolidaryResult
+     */
+    public function buildSolidaryResultTransport(SolidaryUser $solidaryUser): SolidaryResult
+    {
+        $solidaryResult = new SolidaryResult();
+        $solidaryResultTransport = new SolidaryResultTransport();
+        
+        // The volunteer
+        $solidaryResultTransport->setVolunteer($solidaryUser->getUser()->getGivenName()." ".$solidaryUser->getUser()->getFamilyName());
+
+        // Home address of the volunteer
+        $addresses = $solidaryUser->getUser()->getAddresses();
+        foreach ($addresses as $address) {
+            if ($address->isHome()) {
+                $solidaryResultTransport->setHome($address->getAddressLocality());
+                break;
+            }
+        }
+        
+        // Schedule of the volunteer
+        $solidaryResultTransport->setSchedule($this->getBuildedSchedule($solidaryUser));
+
+        $solidaryResult->setSolidaryResultTransport($solidaryResultTransport);
+
+        return $solidaryResult;
+    }
+
+    /**
+     * Get the builded schedule of a SolidaryUser
+     *
+     * @param SolidaryUser $solidaryUser
+     * @return array
+     */
+    public function getBuildedSchedule(SolidaryUser $solidaryUser): array
+    {
+        ($solidaryUser->hasMMon()) ? $schedule['mon']['m'] = true : $schedule['mon']['m'] = false;
+        ($solidaryUser->hasMTue()) ? $schedule['tue']['m'] = true : $schedule['tue']['m'] = false;
+        ($solidaryUser->hasMWed()) ? $schedule['wed']['m'] = true : $schedule['wed']['m'] = false;
+        ($solidaryUser->hasMThu()) ? $schedule['thu']['m'] = true : $schedule['thu']['m'] = false;
+        ($solidaryUser->hasMFri()) ? $schedule['fri']['m'] = true : $schedule['fri']['m'] = false;
+        ($solidaryUser->hasMSat()) ? $schedule['sat']['m'] = true : $schedule['sat']['m'] = false;
+        ($solidaryUser->hasMSun()) ? $schedule['sun']['m'] = true : $schedule['sun']['m'] = false;
+        ($solidaryUser->hasAMon()) ? $schedule['mon']['a'] = true : $schedule['mon']['a'] = false;
+        ($solidaryUser->hasATue()) ? $schedule['tue']['a'] = true : $schedule['tue']['a'] = false;
+        ($solidaryUser->hasAWed()) ? $schedule['wed']['a'] = true : $schedule['wed']['a'] = false;
+        ($solidaryUser->hasAThu()) ? $schedule['thu']['a'] = true : $schedule['thu']['a'] = false;
+        ($solidaryUser->hasAFri()) ? $schedule['fri']['a'] = true : $schedule['fri']['a'] = false;
+        ($solidaryUser->hasASat()) ? $schedule['sat']['a'] = true : $schedule['sat']['a'] = false;
+        ($solidaryUser->hasASun()) ? $schedule['sun']['a'] = true : $schedule['sun']['a'] = false;
+        ($solidaryUser->hasEMon()) ? $schedule['mon']['e'] = true : $schedule['mon']['e'] = false;
+        ($solidaryUser->hasETue()) ? $schedule['tue']['e'] = true : $schedule['tue']['e'] = false;
+        ($solidaryUser->hasEWed()) ? $schedule['wed']['e'] = true : $schedule['wed']['e'] = false;
+        ($solidaryUser->hasEThu()) ? $schedule['thu']['e'] = true : $schedule['thu']['e'] = false;
+        ($solidaryUser->hasEFri()) ? $schedule['fri']['e'] = true : $schedule['fri']['e'] = false;
+        ($solidaryUser->hasESat()) ? $schedule['sat']['e'] = true : $schedule['sat']['e'] = false;
+        ($solidaryUser->hasESun()) ? $schedule['sun']['e'] = true : $schedule['sun']['e'] = false;
+
+        return $schedule;
     }
 }
