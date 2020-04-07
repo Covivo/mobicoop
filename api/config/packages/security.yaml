@@ -1,7 +1,7 @@
 security:
 
     encoders:
-        Symfony\Component\Security\Core\User\User: 
+        Symfony\Component\Security\Core\User\User:
             algorithm: auto
         App\App\Entity\App:
             algorithm: auto
@@ -17,24 +17,25 @@ security:
                 providers: [servers, users]
                 # providers: [jwt, servers, users]
         # provider for apps authentication (eg. frontend)
-        servers: 
+        servers:
             entity:
                 class: 'App\App\Entity\App'
                 property: 'username'
         # provider for users authentication (eg. mobile apps, admin)
-        users: 
+        users:
             entity:
                 class: 'App\User\Entity\User'
                 property: 'email'
-        # provider for refresh token 
+
+        # provider for refresh token
         refresh_token_user_provider:
             id: App\User\Service\UserProvider
-            
+
         # provider for logged users or app (eg. with a valid token)
         # /!\ this is the database-less provider, it avoids loading the user for each api call, so if you need the user information don't use this provider ! /!\
         # /!\ the user is generally needed in every request because of permission management... /!\
         # jwt:
-            # lexik_jwt: ~    
+            # lexik_jwt: ~
 
     # firewalls
     firewalls:
@@ -49,7 +50,15 @@ security:
                 check_path: /auth
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-        
+
+        # firewall for users authentication with only validated token
+        login_user_token:
+            pattern:  ^/login-token
+            provider: users
+            guard:
+                authenticators:
+                    - App\Security\TokenAuthenticator
+
         # firewall for user to server authentication
         login_user:
             pattern:  ^/login
@@ -93,7 +102,7 @@ security:
         reverse:
             pattern:  ^/addresses/reverse
             stateless: true
-            anonymous: true    
+            anonymous: true
 
         # firewall for RDEX external requests
         rdexExternalRequests:
@@ -111,7 +120,7 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        
+
         # firewall for any other route
         main:
             pattern:   ^/

@@ -26,16 +26,16 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use Doctrine\ORM\QueryBuilder;
 
-final class ValidatedDateTokenFilter extends AbstractContextAwareFilter
+final class EmailTokenFilter extends AbstractContextAwareFilter
 {
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ($property != "validatedDateToken") {
+        if ($property != "emailToken") {
             return;
         }
-        
+
         $queryBuilder
-            ->andWhere('u.validatedDateToken = \'' .$value . '\'');
+            ->andWhere('u.emailToken = \'' .$value . '\'');
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
@@ -53,7 +53,7 @@ final class ValidatedDateTokenFilter extends AbstractContextAwareFilter
                 'required' => false,
                 'swagger' => [
                     'description' => 'Filter for sign up validation purpose',
-                    'name' => 'validatedDateToken',
+                    'name' => 'emailToken',
                     'type' => 'string',
                 ],
             ];

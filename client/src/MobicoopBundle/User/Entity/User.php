@@ -42,7 +42,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 {
     const MAX_DEVIATION_TIME = 600;
     const MAX_DEVIATION_DISTANCE = 10000;
-    
+
     const STATUS_ACTIVE = 1;
     const STATUS_DISABLED = 2;
     const STATUS_ANONYMIZED = 3;
@@ -59,33 +59,33 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
     const PHONE_DISPLAY_RESTRICTED = 1;
     const PHONE_DISPLAY_ALL = 2;
-    
+
     const HOME_ADDRESS_NAME = 'homeAddress';
-    
+
     /**
      * @var int The id of this user.
      */
     private $id;
-    
+
     /**
      * @var string|null The iri of this user.
      *
      * @Groups({"post","put","password"})
      */
     private $iri;
-    
+
     /**
      * @var int User status (1 = active; 2 = disabled; 3 = anonymized).
      */
     private $status;
-    
+
     /**
      * @var string|null The first name of the user.
      *
      * @Groups({"get","post","put"})
      */
     private $givenName;
-    
+
     /**
      * @var string|null The family name of the user.
      *
@@ -107,7 +107,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * @Assert\Email()
      */
     private $email;
-    
+
     /**
      * @var string|null The encoded password of the user.
      *
@@ -116,21 +116,21 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * @Assert\NotBlank(groups={"signUp","password"})
      */
     private $password;
-    
+
     /**
      * @var int|null The gender of the user.
      *
      * @Groups({"post","put"})
      */
     private $gender;
-    
+
     /**
      * @var string|null The nationality of the user.
      *
      * @Groups({"post","put"})
      */
     private $nationality;
-    
+
     /**
      * @var \DateTimeInterface|null The birth date of the user.
      *
@@ -138,7 +138,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      *
      */
     private $birthDate;
-    
+
     /**
      * @var string|null The telephone number of the user.
      *
@@ -153,21 +153,21 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * @Groups({"post","put"})
      */
     private $phoneDisplay;
-    
+
     /**
      * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
      *
      * @Groups({"post","put"})
      */
     private $maxDeviationTime;
-    
+
     /**
      * @var int|null The maximum deviation distance (in metres) as a driver to accept a request proposal.
      *
      * @Groups({"post","put"})
      */
     private $maxDeviationDistance;
-    
+
     /**
      * @var boolean The user accepts any route as a passenger from its origin to the destination.
      *
@@ -236,22 +236,22 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      *
      * @Groups({"post","put","checkValidationToken"})
      */
-    private $validatedDateToken;
-    
+    private $emailToken;
+
     /**
      * @var boolean The user accepts any transportation mode.
      *
      * @Groups({"post","put"})
      */
     private $multiTransportMode;
-    
+
     /**
      * @var Address[]|null A user may have many addresses.
      *
      * @Groups({"post","put"})
      */
     private $addresses;
-    
+
     /**
      * @var Car[]|null A user may have many cars.
      */
@@ -268,7 +268,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * @Groups({"post","put"})
      */
     private $images;
-    
+
     /**
      * @var Array|null The images of the user.
      */
@@ -342,7 +342,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * @Groups({"post","put"})
      */
     private $androidAppId;
- 
+
     /**
      * Language de l'utilisateur.
      *
@@ -350,7 +350,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * @Groups({"put","post", "api"})
      */
     private $language= 'fr_FR';
-        
+
     /**
      * @var string|null Facebook ID of the user
      * @Groups({"post"})
@@ -393,17 +393,17 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         }
         $this->setStatus($status);
     }
-        
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id)
     {
         $this->id = $id;
     }
-    
+
     public function getIri()
     {
         return $this->iri;
@@ -413,40 +413,40 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         $this->iri = $iri;
     }
-    
+
     public function getStatus(): int
     {
         return $this->status;
     }
-    
+
     public function setStatus(int $status): self
     {
         $this->status = $status;
-        
+
         return $this;
     }
-    
+
     public function getGivenName(): ?string
     {
         return $this->givenName;
     }
-    
+
     public function setGivenName(?string $givenName): self
     {
         $this->givenName = $givenName;
-        
+
         return $this;
     }
-    
+
     public function getFamilyName(): ?string
     {
         return $this->familyName;
     }
-    
+
     public function setFamilyName(?string $familyName): self
     {
         $this->familyName = $familyName;
-        
+
         return $this;
     }
 
@@ -454,11 +454,11 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         return $this->shortFamilyName;
     }
-        
+
     public function setShortFamilyName(?string $shortFamilyName): self
     {
         $this->shortFamilyName = $shortFamilyName;
-        
+
         return $this;
     }
 
@@ -466,71 +466,71 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         return $this->email;
     }
-    
+
     public function setEmail(?string $email): self
     {
         $this->email = $email;
-        
+
         return $this;
     }
-    
+
     public function getPassword(): ?string
     {
         return $this->password;
     }
-    
+
     public function setPassword(?string $password): self
     {
         $this->password = $password;
-        
+
         return $this;
     }
-    
+
     public function getGender(): ?int
     {
         return $this->gender;
     }
-    
+
     public function setGender(?int $gender): self
     {
         $this->gender = $gender;
-        
+
         return $this;
     }
-    
+
     public function getNationality(): ?string
     {
         return $this->nationality;
     }
-    
+
     public function setNationality(?string $nationality): self
     {
         $this->nationality = $nationality;
-        
+
         return $this;
     }
-    
+
     public function getBirthDate(): ?\DateTimeInterface
     {
         return $this->birthDate;
     }
-    
+
     public function setBirthDate(?\DateTimeInterface $birthDate): self
     {
         $this->birthDate = $birthDate;
-        
+
         return $this;
     }
-    
+
     public function getTelephone(): ?string
     {
         return $this->telephone;
     }
-    
+
     public function setTelephone(?string $telephone): self
     {
         $this->telephone = $telephone;
-        
+
         return $this;
     }
 
@@ -545,40 +545,40 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
         return $this;
     }
-    
+
     public function getMaxDeviationTime(): int
     {
         return (!is_null($this->maxDeviationTime) ? $this->maxDeviationTime : self::MAX_DEVIATION_TIME);
     }
-    
+
     public function setMaxDeviationTime(?int $maxDeviationTime): self
     {
         $this->maxDeviationTime = $maxDeviationTime;
-        
+
         return $this;
     }
-    
+
     public function getMaxDeviationDistance(): int
     {
         return (!is_null($this->maxDeviationDistance) ? $this->maxDeviationDistance : self::MAX_DEVIATION_DISTANCE);
     }
-    
+
     public function setMaxDeviationDistance(?int $maxDeviationDistance): self
     {
         $this->maxDeviationDistance = $maxDeviationDistance;
-        
+
         return $this;
     }
-    
+
     public function getAnyRouteAsPassenger(): bool
     {
         return !is_null($this->anyRouteAsPassenger) ? $this->anyRouteAsPassenger : false;
     }
-    
+
     public function setAnyRouteAsPassenger(bool $anyRouteAsPassenger): self
     {
         $this->anyRouteAsPassenger = $anyRouteAsPassenger;
-        
+
         return $this;
     }
 
@@ -665,15 +665,15 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
         return $this;
     }
-    
-    public function getValidatedDateToken(): ?string
+
+    public function getEmailToken(): ?string
     {
-        return $this->validatedDateToken;
+        return $this->emailToken;
     }
 
-    public function setValidatedDateToken(?string $validatedDateToken): self
+    public function setEmailToken(?string $emailToken): self
     {
-        $this->validatedDateToken = $validatedDateToken;
+        $this->emailToken = $emailToken;
         return $this;
     }
 
@@ -681,29 +681,29 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         return !is_null($this->multiTransportMode) ? $this->multiTransportMode : false;
     }
-    
+
     public function setMultiTransportMode(bool $multiTransportMode): self
     {
         $this->multiTransportMode = $multiTransportMode;
-        
+
         return $this;
     }
-    
+
     public function getAddresses(): Collection
     {
         return $this->addresses;
     }
-    
+
     public function addAddress(Address $address): self
     {
         if (!$this->addresses->contains($address)) {
             $this->addresses->add($address);
             $address->setUser($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeAddress(Address $address): self
     {
         if ($this->addresses->contains($address)) {
@@ -713,25 +713,25 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
                 $address->setUser(null);
             }
         }
-        
+
         return $this;
     }
-    
+
     public function getCars(): Collection
     {
         return $this->cars;
     }
-    
+
     public function addCar(Car $car): self
     {
         if (!$this->cars->contains($car)) {
             $this->cars->add($car);
             $car->setUser($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeCar(Car $car): self
     {
         if ($this->cars->contains($car)) {
@@ -741,25 +741,25 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
                 $car->setUser(null);
             }
         }
-        
+
         return $this;
     }
-    
+
     public function getProposals(): Collection
     {
         return $this->proposals;
     }
-    
+
     public function addProposal(Proposal $proposal): self
     {
         if (!$this->proposals->contains($proposal)) {
             $this->proposals->add($proposal);
             $proposal->setUser($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeProposal(Proposal $proposal): self
     {
         if ($this->proposals->contains($proposal)) {
@@ -769,10 +769,10 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
                 $proposal->setUser(null);
             }
         }
-        
+
         return $this;
     }
-    
+
     /**
      *
      * @return Collection|Image[]
@@ -781,17 +781,17 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         return $this->images->getValues();
     }
-    
+
     public function addImage(Image $image): self
     {
         if (!$this->images->contains($image)) {
             $this->images[] = $image;
             $image->setUser($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeImage(Image $image): self
     {
         if ($this->images->contains($image)) {
@@ -801,20 +801,20 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
                 $image->setUser(null);
             }
         }
-        
+
         return $this;
     }
-        
-        
+
+
     public function getAvatars(): ?array
     {
         return $this->avatars;
     }
-    
+
     public function setAvatars(?array $avatars): self
     {
         $this->avatars = $avatars;
-        
+
         return $this;
     }
 
@@ -822,7 +822,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         return $this->alerts;
     }
-    
+
     public function setAlerts(?array $alerts): self
     {
         $this->alerts = $alerts;
@@ -891,7 +891,6 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         if ($this->email !== $user->getUsername()) {
             return false;
         }
-
         return true;
     }
 
@@ -1026,7 +1025,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         $this->androidAppId = $androidAppId;
         return $this;
     }
-        
+
     public function getFacebookId(): ?string
     {
         return $this->facebookId;
@@ -1042,7 +1041,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         return $this->communityId;
     }
-    
+
     public function setCommunityId($communityId)
     {
         $this->communityId = $communityId;
@@ -1057,7 +1056,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         return $this->language;
     }
-        
+
     /**
      * Set the native language of the client.
      *

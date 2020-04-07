@@ -1,4 +1,5 @@
 gesdinet_jwt_refresh_token:
+    # We use this value in TokenAuthenticator, let this value in secondes!
     ttl: 2592000
     user_identity_field: refresh
     user_provider: security.user.provider.concrete.refresh_token_user_provider
