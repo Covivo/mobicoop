@@ -55,8 +55,9 @@ class CarpoolController extends AbstractController
     private $defaultRegular;
     private $platformName;
     private $carpoolRDEXJourneys;
+    private $userManager;
 
-    public function __construct($midPrice, $highPrice, $forbiddenPrice, $defaultRole, bool $defaultRegular, string $platformName, bool $carpoolRDEXJourneys)
+    public function __construct($midPrice, $highPrice, $forbiddenPrice, $defaultRole, bool $defaultRegular, string $platformName, bool $carpoolRDEXJourneys, UserManager $userManager)
     {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -65,6 +66,7 @@ class CarpoolController extends AbstractController
         $this->defaultRegular = $defaultRegular;
         $this->platformName = $platformName;
         $this->carpoolRDEXJourneys = $carpoolRDEXJourneys;
+        $this->userManager = $userManager;
     }
     
     /**
@@ -125,8 +127,8 @@ class CarpoolController extends AbstractController
      */
     public function carpoolFirstAdPost()
     {
-//        $ad = new Ad();
-//        $this->denyAccessUnlessGranted('create_ad', $ad);
+        $user = $this->userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('post_delegate', $user);
         
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
             "firstAd" => true,
