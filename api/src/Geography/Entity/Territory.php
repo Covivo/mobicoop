@@ -28,6 +28,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Geography\Controller\TerritoryPost;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * A geographical territory, represented by a geojson multipolygon.
@@ -45,14 +47,30 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *              "method"="POST",
  *              "path"="/territories",
  *              "controller"=TerritoryPost::class,
- *          }
+ *          },
+*             "search"={
+*              "method"="GET",
+*              "path"="/territories/search",
+*              "swagger_context"={
+*                  "parameters"={
+*                     {
+*                         "name" = "q",
+*                         "in" = "query",
+*                         "required" = "true",
+*                         "type" = "string",
+*                         "description" = "The query"
+*                     },
+*                  }
+*              }
+*          },
  *      },
  *      itemOperations={"get","put","delete"}
  * )
+ * @ApiFilter(SearchFilter::class, properties={"name": "partial"})
  */
 class Territory
 {
-    
+
     /**
      * @var int The id of this territory.
      *
@@ -62,7 +80,7 @@ class Territory
      * @Groups("read")
      */
     private $id;
-            
+
     /**
      * @var string The name of the territory.
      *
@@ -94,21 +112,21 @@ class Territory
      * @Groups({"read"})
      */
     private $updatedDate;
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-            
+
     public function getName(): ?string
     {
         return $this->name;
     }
-    
+
     public function setName(?string $name): self
     {
         $this->name = $name;
-        
+
         return $this;
     }
 
@@ -116,11 +134,11 @@ class Territory
     {
         return $this->geoJsonDetail;
     }
-    
+
     public function setGeoJsonDetail($geoJsonDetail): self
     {
         $this->geoJsonDetail = $geoJsonDetail;
-        
+
         return $this;
     }
 
@@ -149,7 +167,7 @@ class Territory
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

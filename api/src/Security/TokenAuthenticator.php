@@ -21,7 +21,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     private $refreshTokenManager;
     private $params;
 
-    public function __construct(EntityManagerInterface $em, JWTTokenManagerInterface $jwtTokenManagerInterface, RefreshTokenManagerInterface $refreshTokenManager,ParameterBagInterface $params)
+    public function __construct(EntityManagerInterface $em, JWTTokenManagerInterface $jwtTokenManagerInterface, RefreshTokenManagerInterface $refreshTokenManager, ParameterBagInterface $params)
     {
         $this->em = $em;
         $this->jwtTokenManagerInterface = $jwtTokenManagerInterface;
