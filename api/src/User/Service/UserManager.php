@@ -196,6 +196,7 @@ class UserManager
 
         // dispatch en event
         if (is_null($user->getUserDelegate())) {
+            
             // registration by the user itself
             $event = new UserRegisteredEvent($user);
             $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
@@ -265,7 +266,7 @@ class UserManager
         $user->setGeoToken($this->createToken($user));
 
         // Create token to validate inscription
-        $user->setValidatedDateToken($this->createToken($user));
+        $user->setEmailToken($this->createToken($user));
 
         // Create token to unscubscribe from the instance news
         $user->setUnsubscribeToken($this->createToken($user));
