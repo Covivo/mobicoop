@@ -137,9 +137,8 @@ class SolidaryManager
             }
             throw new SolidaryException(SolidaryException::NO_RETURN_PROPOSAL);
         }
-        
         $ad = $this->adManager->makeAd($proposal, $proposal->getUser()->getId());
-
+        // echo count($ad->getResults());die;
         // We need to build and persist all the new results as SolidaryMatching.
         $solidaryMatchings = $this->solidaryMatcher->buildSolidaryMatchingsForCarpool($solidarySearch->getSolidary(), $ad->getResults());
 

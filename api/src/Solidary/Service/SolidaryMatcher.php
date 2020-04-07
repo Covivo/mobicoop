@@ -150,11 +150,6 @@ class SolidaryMatcher
                 $criteria = clone $solidary->getProposal()->getCriteria();
                 $solidaryMatching->setCriteria($criteria);
 
-                // We store in the object the Origin and Destination to avoid determine it when we build the SolidaryResult
-                // Not database persisted
-                $solidaryMatching->setCarpoolOrigin($resultItem->getOrigin()->getAddressLocality());
-                $solidaryMatching->setCarpoolDestination($resultItem->getDestination()->getAddressLocality());
-
                 $this->entityManager->persist($solidaryMatching);
                 $this->entityManager->flush();
                 // We add the matching the return list
@@ -165,10 +160,6 @@ class SolidaryMatcher
 
                 // There is no Ask, we can add this solidaryMatching to the return
                 if (is_null($solidaryAsk)) {
-                    // We store in the object Origin, Destination and Role to avoid determine it when we build the SolidaryResult
-                    // Not database persisted
-                    $solidaryMatching->setCarpoolOrigin($resultItem->getOrigin()->getAddressLocality());
-                    $solidaryMatching->setCarpoolDestination($resultItem->getDestination()->getAddressLocality());
                     $solidaryMatchings[] = $solidaryMatching;
                 }
             }
@@ -224,17 +215,36 @@ class SolidaryMatcher
     {
         $solidaryResult = new SolidaryResult();
         $solidaryResultCarpool = new SolidaryResultCarpool();
-
+        
         // We get the Proposal Offer with all the infos
         
         // The author
         $solidaryResultCarpool->setAuthor($solidaryMatching->getMatching()->getProposalOffer()->getUser()->getGivenName()." ".$solidaryMatching->getMatching()->getProposalOffer()->getUser()->getShortFamilyName());
 
         // O/D
-        $solidaryResultCarpool->setOrigin($solidaryMatching->getCarpoolOrigin());
-        $solidaryResultCarpool->setDestination($solidaryMatching->getCarpoolDestination());
+        $waypoints = $solidaryMatching->getMatching()->getWaypoints();
+        $origin = $waypoints[0]->getAddress()->getAddressLocality();
+        $destination = "";
+        foreach ($waypoints as $waypoint) {
+            if ($waypoint->isDestination()) {
+                $destination = $waypoint->getAddress()->getAddressLocality();
+                break;
+            }
+        }
+
+        $solidaryResultCarpool->setOrigin($origin);
+        $solidaryResultCarpool->setDestination($destination);
         // The frequency
-        $solidaryResultCarpool->setFrequency($solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getFrequency());
+        $solidaryResultCarpool->setFrequency($solidaryMatching->getMatching()->getCriteria()->getFrequency());
+
+
+        // Date and schedule
+        $solidaryResultCarpool->setDate($solidaryMatching->getMatching()->getCriteria()->getFromDate());
+        if ($solidaryResultCarpool->getFrequency()==2) {
+            // Schedule only for Regular
+            $solidaryResultCarpool->setSchedule($this->getBuildedScheduleRegularCarpool($solidaryMatching->getMatching()->getCriteria()));
+        }
+
         // Is the Proposal solidaryExclusive ?
         $solidaryResultCarpool->setSolidaryExlusive($solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->isSolidaryExclusive());
 
@@ -305,6 +315,48 @@ class SolidaryMatcher
         ($solidaryUser->hasEFri()) ? $schedule['fri']['e'] = true : $schedule['fri']['e'] = false;
         ($solidaryUser->hasESat()) ? $schedule['sat']['e'] = true : $schedule['sat']['e'] = false;
         ($solidaryUser->hasESun()) ? $schedule['sun']['e'] = true : $schedule['sun']['e'] = false;
+
+        return $schedule;
+    }
+
+    /**
+     * Get the builded schedule of a Criteria
+     *
+     * @param Criteria $criteria
+     * @return array
+     */
+    public function getBuildedScheduleRegularCarpool(Criteria $criteria): ?array
+    {
+        $schedule = [];
+
+        if ($criteria->isMonCheck()) {
+            $schedule['mon']['minTime'] = $criteria->getMonMinTime();
+            $schedule['mon']['maxTime'] = $criteria->getMonMaxTime();
+        }
+        if ($criteria->isTueCheck()) {
+            $schedule['tue']['minTime'] = $criteria->getTueMinTime();
+            $schedule['tue']['maxTime'] = $criteria->getTueMaxTime();
+        }
+        if ($criteria->isWedCheck()) {
+            $schedule['wed']['minTime'] = $criteria->getWedMinTime();
+            $schedule['wed']['maxTime'] = $criteria->getWedMaxTime();
+        }
+        if ($criteria->isThuCheck()) {
+            $schedule['thu']['minTime'] = $criteria->getThuMinTime();
+            $schedule['thu']['maxTime'] = $criteria->getThuMaxTime();
+        }
+        if ($criteria->isFriCheck()) {
+            $schedule['fri']['minTime'] = $criteria->getFriMinTime();
+            $schedule['fri']['maxTime'] = $criteria->getFriMaxTime();
+        }
+        if ($criteria->isSatCheck()) {
+            $schedule['sat']['minTime'] = $criteria->getSatMinTime();
+            $schedule['sat']['maxTime'] = $criteria->getSatMaxTime();
+        }
+        if ($criteria->isSunCheck()) {
+            $schedule['sun']['minTime'] = $criteria->getSunMinTime();
+            $schedule['sun']['maxTime'] = $criteria->getSunMaxTime();
+        }
 
         return $schedule;
     }
