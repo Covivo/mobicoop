@@ -73,7 +73,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class SolidaryUser
 {
-    const DEFAULT_MAX_DISTANCE = 20; // km
+    const DEFAULT_MAX_DISTANCE = 20000; // meters
 
     /**
      * @var int The id of this solidary user.

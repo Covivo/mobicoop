@@ -234,7 +234,7 @@ class SolidaryUserRepository
             if (is_null($address)) {
                 throw new SolidaryException(SolidaryException::NO_VALID_ADDRESS);
             }
-            $sqlDistance = '(6378 * acos(cos(radians(' . $address->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $address->getLongitude() . ')) + sin(radians(' . $address->getLatitude() . ')) * sin(radians(a.latitude))))';
+            $sqlDistance = '(6378000 * acos(cos(radians(' . $address->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $address->getLongitude() . ')) + sin(radians(' . $address->getLatitude() . ')) * sin(radians(a.latitude))))';
             $query->andWhere($sqlDistance . " <= su.maxDistance");
         }
         
