@@ -22,36 +22,46 @@
 
 namespace App\Solidary\Service;
 
+use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryMatching;
+use App\Solidary\Entity\SolidaryResult\SolidaryResult;
+use App\Solidary\Entity\SolidaryResult\SolidaryResultCarpool;
+use App\Solidary\Entity\SolidaryResult\SolidaryResultTransport;
+use App\Solidary\Entity\SolidaryUser;
+use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryMatchingRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Carpool\Entity\Result;
+use App\Carpool\Repository\MatchingRepository;
 
 class SolidaryMatcher
 {
     private $solidaryMatchingRepository;
     private $entityManager;
+    private $matchingRepository;
 
-    public function __construct(SolidaryMatchingRepository $solidaryMatchingRepository, EntityManagerInterface $entityManager)
+    public function __construct(SolidaryMatchingRepository $solidaryMatchingRepository, EntityManagerInterface $entityManager, MatchingRepository $matchingRepository)
     {
         $this->solidaryMatchingRepository = $solidaryMatchingRepository;
         $this->entityManager = $entityManager;
+        $this->matchingRepository = $matchingRepository;
     }
 
     /**
-     * Build and persist the solidary matchings for a Solidary based on a set of solidary search results
+     * Build and persist the solidary matchings for a Solidary based on a set of solidary search Transport results
      *
      * @param Solidary $solidary    The solidary
      * @param array $results        The results of a solidary search
      * @return array|null
      */
-    public function buildSolidaryMatchings(Solidary $solidary, array $results): ?array
+    public function buildSolidaryMatchingsForTransport(Solidary $solidary, array $results): ?array
     {
         $solidaryMatchings = [];
         
         // We get the previous SolidaryMatchings of this solidary
-        $previousMatchings = $this->solidaryMatchingRepository->findSolidaryMatchingOfSolidary($solidary);
+        $previousMatchings = $this->solidaryMatchingRepository->findSolidaryMatchingTransportOfSolidary($solidary);
 
         foreach ($results as $solidaryUser) {
 
@@ -93,5 +103,209 @@ class SolidaryMatcher
         }
 
         return $solidaryMatchings;
+    }
+
+    /**
+     * Build and persist the solidary matchings for a Solidary based on a set of solidary search Carpool results
+     *
+     * @param Solidary $solidary    The solidary
+     * @param array $results        The results of an Ad
+     * @return array|null
+     */
+    public function buildSolidaryMatchingsForCarpool(Solidary $solidary, array $results): ?array
+    {
+        $solidaryMatchings = [];
+
+        // We get the previous SolidaryMatchings of this solidary
+        $previousMatchings = $this->solidaryMatchingRepository->findSolidaryMatchingCarpoolOfSolidary($solidary);
+
+        foreach ($results as $result) {
+            
+            /**
+             * @var Result $result
+             */
+
+            // We get the ResultItem
+            $resultItem = $result->getResultPassenger()->getOutward();
+
+            // We check if the matching already exists
+            $matchingAlreadyExists = false;
+            foreach ($previousMatchings as $previousMatching) {
+                if ($previousMatching->getMatching()->getId() == $resultItem->getMatchingId() &&
+                $previousMatching->getSolidary()->getId() == $solidary->getId()
+                ) {
+                    $matchingAlreadyExists = true;
+                    // We keep the previous matching
+                    $solidaryMatching = $previousMatching;
+                    break;
+                }
+            }
+
+            // If this matching doesn't already exists we persist it and we add it to the return
+            if (!$matchingAlreadyExists) {
+                $solidaryMatching = new SolidaryMatching();
+                $solidaryMatching->setMatching($this->matchingRepository->find($resultItem->getMatchingId()));
+                $solidaryMatching->setSolidary($solidary);
+                // We use the Criteria of the Proposal of the Matching
+                $criteria = clone $solidary->getProposal()->getCriteria();
+                $solidaryMatching->setCriteria($criteria);
+
+                // We store in the object the Origin and Destination to avoid determine it when we build the SolidaryResult
+                // Not database persisted
+                $solidaryMatching->setCarpoolOrigin($resultItem->getOrigin()->getAddressLocality());
+                $solidaryMatching->setCarpoolDestination($resultItem->getDestination()->getAddressLocality());
+
+                $this->entityManager->persist($solidaryMatching);
+                $this->entityManager->flush();
+                // We add the matching the return list
+                $solidaryMatchings[] = $solidaryMatching;
+            } else {
+                // We check if there already is a SolidaryAsk for this matching
+                $solidaryAsk = $this->solidaryMatchingRepository->findAskOfSolidaryMatching($solidaryMatching);
+
+                // There is no Ask, we can add this solidaryMatching to the return
+                if (is_null($solidaryAsk)) {
+                    // We store in the object Origin, Destination and Role to avoid determine it when we build the SolidaryResult
+                    // Not database persisted
+                    $solidaryMatching->setCarpoolOrigin($resultItem->getOrigin()->getAddressLocality());
+                    $solidaryMatching->setCarpoolDestination($resultItem->getDestination()->getAddressLocality());
+                    $solidaryMatchings[] = $solidaryMatching;
+                }
+            }
+        }
+
+
+        return $solidaryMatchings;
+    }
+
+
+    /**
+     * Build a SolidaryResult with a SolidaryResultTransport from a SolidaryMatching
+     *
+     * @param SolidaryMatching $solidaryUser    The Solidary User
+     * @return SolidaryResult
+     */
+    public function buildSolidaryResultTransport(SolidaryMatching $solidaryMatching): SolidaryResult
+    {
+        $solidaryResult = new SolidaryResult();
+        $solidaryResultTransport = new SolidaryResultTransport();
+        
+        // The volunteer
+        $solidaryResultTransport->setVolunteer($solidaryMatching->getSolidaryUser()->getUser()->getGivenName()." ".$solidaryMatching->getSolidaryUser()->getUser()->getFamilyName());
+
+        // Home address of the volunteer
+        $addresses = $solidaryMatching->getSolidaryUser()->getUser()->getAddresses();
+        foreach ($addresses as $address) {
+            if ($address->isHome()) {
+                $solidaryResultTransport->setHome($address->getAddressLocality());
+                break;
+            }
+        }
+        
+        // Schedule of the volunteer
+        $solidaryResultTransport->setSchedule($this->getBuildedSchedule($solidaryMatching->getSolidaryUser()));
+
+        $solidaryResult->setSolidaryResultTransport($solidaryResultTransport);
+
+        // We set the source solidaryMatching
+        $solidaryResult->setSolidaryMatching($solidaryMatching);
+
+
+        return $solidaryResult;
+    }
+
+    /**
+     * Build a SolidaryResult with a SolidaryResultCarpool from a SolidaryMatching
+     *
+     * @param SolidaryMatching $solidaryUser    The Solidary User
+     * @return SolidaryResult
+     */
+    public function buildSolidaryResultCarpool(SolidaryMatching $solidaryMatching): SolidaryResult
+    {
+        $solidaryResult = new SolidaryResult();
+        $solidaryResultCarpool = new SolidaryResultCarpool();
+
+        // We get the Proposal Offer with all the infos
+        
+        // The author
+        $solidaryResultCarpool->setAuthor($solidaryMatching->getMatching()->getProposalOffer()->getUser()->getGivenName()." ".$solidaryMatching->getMatching()->getProposalOffer()->getUser()->getShortFamilyName());
+
+        // O/D
+        $solidaryResultCarpool->setOrigin($solidaryMatching->getCarpoolOrigin());
+        $solidaryResultCarpool->setDestination($solidaryMatching->getCarpoolDestination());
+        // The frequency
+        $solidaryResultCarpool->setFrequency($solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getFrequency());
+        // Is the Proposal solidaryExclusive ?
+        $solidaryResultCarpool->setSolidaryExlusive($solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->isSolidaryExclusive());
+
+        // Role of the owner of the Proposal
+        if ($solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->isDriver() && $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->isPassenger()) {
+            $solidaryResultCarpool->setRole(3);
+        } elseif ($solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->isDriver()) {
+            $solidaryResultCarpool->setRole(1);
+        } else {
+            throw new SolidaryException(SolidaryException::NOT_A_DRIVER);
+        }
+
+        $solidaryResult->setSolidaryResultCarpool($solidaryResultCarpool);
+        
+
+        // We set the source solidaryMatching
+        $solidaryResult->setSolidaryMatching($solidaryMatching);
+
+        return $solidaryResult;
+    }
+
+    /**
+     * Get the hour slot of this time
+     * m : morning, a : afternoon, e : evening
+     *
+     * @param \DateTimeInterface $time
+     * @return string
+     */
+    public function getHourSlot(\DateTimeInterface $mintime, \DateTimeInterface $maxtime): string
+    {
+        $hoursSlots = Criteria::getHoursSlots();
+        foreach ($hoursSlots as $slot => $hoursSlot) {
+            if ($hoursSlot['min']<=$mintime && $maxtime<=$hoursSlot['max']) {
+                return $slot;
+            }
+        }
+        //should not append
+        throw new SolidaryException(SolidaryException::INVALID_HOUR_SLOT);
+        return "";
+    }
+
+    /**
+     * Get the builded schedule of a SolidaryUser
+     *
+     * @param SolidaryUser $solidaryUser
+     * @return array
+     */
+    public function getBuildedSchedule(SolidaryUser $solidaryUser): array
+    {
+        ($solidaryUser->hasMMon()) ? $schedule['mon']['m'] = true : $schedule['mon']['m'] = false;
+        ($solidaryUser->hasMTue()) ? $schedule['tue']['m'] = true : $schedule['tue']['m'] = false;
+        ($solidaryUser->hasMWed()) ? $schedule['wed']['m'] = true : $schedule['wed']['m'] = false;
+        ($solidaryUser->hasMThu()) ? $schedule['thu']['m'] = true : $schedule['thu']['m'] = false;
+        ($solidaryUser->hasMFri()) ? $schedule['fri']['m'] = true : $schedule['fri']['m'] = false;
+        ($solidaryUser->hasMSat()) ? $schedule['sat']['m'] = true : $schedule['sat']['m'] = false;
+        ($solidaryUser->hasMSun()) ? $schedule['sun']['m'] = true : $schedule['sun']['m'] = false;
+        ($solidaryUser->hasAMon()) ? $schedule['mon']['a'] = true : $schedule['mon']['a'] = false;
+        ($solidaryUser->hasATue()) ? $schedule['tue']['a'] = true : $schedule['tue']['a'] = false;
+        ($solidaryUser->hasAWed()) ? $schedule['wed']['a'] = true : $schedule['wed']['a'] = false;
+        ($solidaryUser->hasAThu()) ? $schedule['thu']['a'] = true : $schedule['thu']['a'] = false;
+        ($solidaryUser->hasAFri()) ? $schedule['fri']['a'] = true : $schedule['fri']['a'] = false;
+        ($solidaryUser->hasASat()) ? $schedule['sat']['a'] = true : $schedule['sat']['a'] = false;
+        ($solidaryUser->hasASun()) ? $schedule['sun']['a'] = true : $schedule['sun']['a'] = false;
+        ($solidaryUser->hasEMon()) ? $schedule['mon']['e'] = true : $schedule['mon']['e'] = false;
+        ($solidaryUser->hasETue()) ? $schedule['tue']['e'] = true : $schedule['tue']['e'] = false;
+        ($solidaryUser->hasEWed()) ? $schedule['wed']['e'] = true : $schedule['wed']['e'] = false;
+        ($solidaryUser->hasEThu()) ? $schedule['thu']['e'] = true : $schedule['thu']['e'] = false;
+        ($solidaryUser->hasEFri()) ? $schedule['fri']['e'] = true : $schedule['fri']['e'] = false;
+        ($solidaryUser->hasESat()) ? $schedule['sat']['e'] = true : $schedule['sat']['e'] = false;
+        ($solidaryUser->hasESun()) ? $schedule['sun']['e'] = true : $schedule['sun']['e'] = false;
+
+        return $schedule;
     }
 }

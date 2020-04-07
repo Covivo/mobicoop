@@ -113,6 +113,18 @@ class SolidaryMatching
     private $solidarySolution;
 
     /**
+     * @var string The origin of a Carpool when we generate this SolidaryMatching
+     * @Groups("readSolidary")
+     */
+    private $carpoolOrigin;
+
+    /**
+     * @var string The destination of a Carpool when we generate this SolidaryMatching
+     * @Groups("readSolidary")
+     */
+    private $carpoolDestination;
+
+    /**
      * @var \DateTimeInterface Creation date of the solidary record.
      *
      * @ORM\Column(type="datetime")
@@ -199,6 +211,30 @@ class SolidaryMatching
     public function setCriteria(Criteria $criteria): self
     {
         $this->criteria = $criteria;
+
+        return $this;
+    }
+
+    public function getCarpoolOrigin(): ?string
+    {
+        return $this->carpoolOrigin;
+    }
+
+    public function setCarpoolOrigin(string $carpoolOrigin): self
+    {
+        $this->carpoolOrigin = $carpoolOrigin;
+
+        return $this;
+    }
+
+    public function getCarpoolDestination(): ?string
+    {
+        return $this->carpoolDestination;
+    }
+
+    public function setCarpoolDestination(string $carpoolDestination): self
+    {
+        $this->carpoolDestination = $carpoolDestination;
 
         return $this;
     }
