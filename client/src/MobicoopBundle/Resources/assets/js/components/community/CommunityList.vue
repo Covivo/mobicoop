@@ -6,7 +6,7 @@
         cols="6"
       >
         <a
-          v-if="loggedUserId"
+          v-if="isLogged"
           :href="paths.community_create"
         >
           <v-btn
@@ -178,9 +178,9 @@ export default {
       type: Number,
       default: 1
     },
-    loggedUserId: {
-      type: Number,
-      default: null
+    isLogged: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
