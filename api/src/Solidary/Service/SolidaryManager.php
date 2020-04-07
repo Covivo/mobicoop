@@ -22,8 +22,9 @@
 
 namespace App\Solidary\Service;
 
+use App\Carpool\Service\AdManager;
 use App\Solidary\Entity\Solidary;
-use App\Solidary\Entity\SolidaryTransportSearch;
+use App\Solidary\Entity\SolidarySearch;
 use App\Solidary\Event\SolidaryCreated;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -39,14 +40,16 @@ class SolidaryManager
     private $security;
     private $solidaryRepository;
     private $solidaryUserRepository;
+    private $adManager;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository, SolidaryUserRepository $solidaryUserRepository)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository, SolidaryUserRepository $solidaryUserRepository, AdManager $adManager)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->security = $security;
         $this->solidaryRepository = $solidaryRepository;
         $this->solidaryUserRepository = $solidaryUserRepository;
+        $this->adManager = $adManager;
     }
 
     public function getSolidary($id): ?Solidary
@@ -81,15 +84,54 @@ class SolidaryManager
     }
 
     /**
-     * Get the results for a SolidaryTransportSearch
+     * Get the results for a Solidary Transport Search
      *
-     * @param SolidaryTransportSearch $solidaryTransportSearch
-     * @return SolidaryTransportSearch
+     * @param SolidarySearch $solidarySearch
+     * @return SolidarySearch
      */
-    public function getSolidaryTransportSearchResults(SolidaryTransportSearch $solidaryTransportSearch): SolidaryTransportSearch
+    public function getSolidaryTransportSearchResults(SolidarySearch $solidarySearch): SolidarySearch
     {
-        $solidaryTransportSearch->setResults($this->solidaryUserRepository->findForASolidaryTransportSearch($solidaryTransportSearch));
+        $solidarySearch->setResults($this->solidaryUserRepository->findForASolidaryTransportSearch($solidarySearch));
         
-        return $solidaryTransportSearch;
+        return $solidarySearch;
+    }
+
+    /**
+     * Get the results for a Solidary Carpool Search
+     *
+     * @param SolidarySearch $solidarySearch
+     * @return SolidarySearch
+     */
+    public function getSolidaryCarpoolSearchSearchResults(SolidarySearch $solidarySearch): SolidarySearch
+    {
+
+        // Maybe i don't need this. If there is no destination, i just add a destination point = to origin point later
+
+        //$waypoints = $solidarySearch->getSolidary()->getProposal()->getWaypoints();
+        // $withDestination = false;
+        // foreach ($waypoints as $waypoint) {
+        //     if ($waypoint->isDestination()) {
+        //         $withDestination=true;
+        //     }
+        // }
+        
+        // if ($withDestination) {
+        //     // Call the classic matching algo
+        // } else {
+        //     $solidarySearch->setResults($this->solidaryUserRepository->findForASolidaryCarpoolSearchWithoutDestination($solidarySearch));
+        // }
+        
+        // $solidarySearch->setResults($this->solidaryUserRepository->findForASolidaryCarpoolSearch($solidarySearch));
+        
+        // We make an Ad from the proposal linked to the solidary
+        // I'll have the results directly in the Ad
+        $proposal = $solidarySearch->getSolidary()->getProposal();
+        $ad = $this->adManager->makeAd($proposal, $proposal->getUser()->getId());
+        var_dump($ad->getResults());
+        die;
+
+        // We make Solidary Results out of the Ad's results
+
+        return $solidarySearch;
     }
 }

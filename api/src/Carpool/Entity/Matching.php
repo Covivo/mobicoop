@@ -33,6 +33,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Communication\Entity\Notified;
+use App\Solidary\Entity\SolidaryMatching;
 
 /**
  * Carpooling : matching between an offer and a request.
@@ -42,7 +43,7 @@ use App\Communication\Entity\Notified;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={"get"},
@@ -59,7 +60,7 @@ class Matching
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","threads","thread"})
+     * @Groups({"read","threads","thread","readSolidary"})
      */
     private $id;
 
@@ -263,6 +264,15 @@ class Matching
      * @Groups({"read","write","results"})
      */
     private $dropOffDuration;
+
+    /**
+     * @var SolidaryMatching|null The solidary matching if there is any
+     *
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="matching", cascade={"persist","remove"})
+     * @Groups({"read","results","readSolidary"})
+     * @MaxDepth(1)
+     */
+    private $solidaryMatching;
 
     public function __construct()
     {
@@ -651,6 +661,18 @@ class Matching
     public function setDropOffDuration(int $dropOffDuration): self
     {
         $this->dropOffDuration = $dropOffDuration;
+
+        return $this;
+    }
+
+    public function getSolidaryMatching(): ?SolidaryMatching
+    {
+        return $this->solidaryMatching;
+    }
+
+    public function setSolidaryMatching(SolidaryMatching $solidaryMatching): self
+    {
+        $this->solidaryMatching = $solidaryMatching;
 
         return $this;
     }

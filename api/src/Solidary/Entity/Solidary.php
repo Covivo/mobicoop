@@ -25,6 +25,7 @@ namespace App\Solidary\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -73,7 +74,7 @@ class Solidary
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
      */
     private $id;
 
@@ -138,14 +139,6 @@ class Solidary
     private $proposal;
 
     /**
-     * @var Structure Structure of the solidary record.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaries", cascade={"persist","remove"})
-     * @Groups({"readSolidary","writeSolidary"})
-     */
-    private $structure;
-
-    /**
      * @var Subject Subject of the solidary record.
      *
      * @Assert\NotBlank
@@ -169,8 +162,18 @@ class Solidary
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
      */
     private $solidarySolutions;
+
+    /**
+     * @var ArrayCollection|null Solidary matchings.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $solidaryMatchings;
 
     /**
      * @var float Progression of this solidary
@@ -183,6 +186,7 @@ class Solidary
         $this->id = self::DEFAULT_ID;
         $this->needs = new ArrayCollection();
         $this->solidarySolutions = new ArrayCollection();
+        $this->solidaryMatchings = new ArrayCollection();
         $this->proofs = new ArrayCollection();
     }
 
@@ -275,19 +279,6 @@ class Solidary
         return $this;
     }
 
-
-    public function getStructure(): ?Structure
-    {
-        return $this->structure;
-    }
-
-    public function setStructure(?Structure $structure): self
-    {
-        $this->structure = $structure;
-
-        return $this;
-    }
-
     public function getSubject(): ?Subject
     {
         return $this->subject;
@@ -341,6 +332,29 @@ class Solidary
     {
         if ($this->solidarySolutions->contains($solidarySolution)) {
             $this->solidarySolutions->removeElement($solidarySolution);
+        }
+        
+        return $this;
+    }
+
+    public function getSolidaryMatchings()
+    {
+        return $this->solidaryMatchings->getValues();
+    }
+    
+    public function addSolidaryMatching(SolidaryMatching $solidaryMatching): self
+    {
+        if (!$this->solidaryMatchings->contains($solidaryMatching)) {
+            $this->solidaryMatchings[] = $solidaryMatching;
+        }
+        
+        return $this;
+    }
+    
+    public function removeSolidaryMatching(SolidaryMatching $solidaryMatching): self
+    {
+        if ($this->solidaryMatchings->contains($solidaryMatching)) {
+            $this->solidaryMatchings->removeElement($solidaryMatching);
         }
         
         return $this;

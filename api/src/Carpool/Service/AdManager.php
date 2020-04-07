@@ -704,7 +704,7 @@ class AdManager
      * @param Matching $matching - the corresponding Matching
      * @return Ad
      */
-    private function makeAd($proposal, $userId, $hasAsks = false, ?Ad $askLinked = null, ?Matching $matching = null)
+    public function makeAd($proposal, $userId, $hasAsks = false, ?Ad $askLinked = null, ?Matching $matching = null)
     {
         $ad = new Ad();
         $ad->setId($proposal->getId());

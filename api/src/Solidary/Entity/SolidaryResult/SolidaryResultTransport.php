@@ -21,33 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Entity;
+namespace App\Solidary\Entity\SolidaryResult;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A solidary transport search.
+ * A solidary Result Transport
  *
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readSolidarySearch"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={
- *          "get","post"
+ *          "get"
  *      },
  *      itemOperations={
  *          "get"
  *      }
  * )
  */
-class SolidaryTransportSearch
+
+class SolidaryResultTransport
 {
     const DEFAULT_ID = 999999999999;
     
@@ -55,24 +55,27 @@ class SolidaryTransportSearch
      * @var int The id of this subject.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidarySearch"})
      */
     private $id;
 
     /**
-    * @var Solidary The solidary this search is for.
-    * @Assert\NotBlank
-    * @Groups({"readSolidary","writeSolidary"})
-    * @MaxDepth(1)
-    */
-    private $solidary;
+     * @var string FamilyName and GivenName of the volunteer
+     * @Groups({"readSolidarySearch"})
+     */
+    private $volunteer;
 
     /**
-    * @var array The results for this search (array of SolidaryUser)
-    * @Groups({"readSolidary"})
-    */
-    private $results;
+     * @var string Home town of the volunteer
+     * @Groups({"readSolidarySearch"})
+     */
+    private $home;
 
+    /**
+     * @var array Schedule of availability of the volunteer
+     * @Groups({"readSolidarySearch"})
+     */
+    private $schedule;
 
     public function __construct()
     {
@@ -91,26 +94,38 @@ class SolidaryTransportSearch
         return $this;
     }
 
-    public function getSolidary(): ?Solidary
+    public function getVolunteer(): ?string
     {
-        return $this->solidary;
+        return $this->volunteer;
     }
     
-    public function setSolidary(Solidary $solidary): self
+    public function setVolunteer(string $volunteer): self
     {
-        $this->solidary = $solidary;
+        $this->volunteer = $volunteer;
         
         return $this;
     }
-
-    public function getResults(): ?array
+    
+    public function getHome(): ?string
     {
-        return $this->results;
+        return $this->home;
     }
     
-    public function setResults(array $results): self
+    public function setHome(string $home): self
     {
-        $this->results = $results;
+        $this->home = $home;
+        
+        return $this;
+    }
+    
+    public function getSchedule(): ?array
+    {
+        return $this->schedule;
+    }
+    
+    public function setSchedule(array $schedule): self
+    {
+        $this->schedule = $schedule;
         
         return $this;
     }
