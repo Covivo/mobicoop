@@ -351,7 +351,7 @@ class Solidary
         return $this;
     }
     
-    public function removeSolidaryMatching(SolidarySolution $solidaryMatching): self
+    public function removeSolidaryMatching(SolidaryMatching $solidaryMatching): self
     {
         if ($this->solidaryMatchings->contains($solidaryMatching)) {
             $this->solidaryMatchings->removeElement($solidaryMatching);
