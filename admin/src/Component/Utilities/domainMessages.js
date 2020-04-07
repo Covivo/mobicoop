@@ -65,7 +65,14 @@ const fr = {
                 joinAt : 'Rejoint le',
                 acceptedAt : 'Accepté le',
                 refusedAt : 'Refusé le',
-                newStatus : 'Changer le statut'
+                newStatus : 'Changer le statut',
+                memberHidden : 'Membres cachés',
+                memberVisible : 'Membres Visible',
+                announceHidden : 'Annonces cachées',
+                announceVisible : 'Annonces visibles',
+                createdAt : 'Créée le ',
+                updatedAt : 'Mise à jour le ',
+                neverUpdate : 'Jamais mis à jour'
             },
             campaign : {
                 object : 'Sujet',

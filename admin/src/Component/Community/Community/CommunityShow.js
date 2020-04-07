@@ -33,37 +33,40 @@ const UserBulkActionButtons = props => (
     </>
 );
 
-const Aside = ({ record }) => (
-    <Card style={{ width: 300, marginLeft:'1rem' }} >
-        <CardHeader title={<Typography variant="button">Paramètres</Typography>} />
-        { record &&
-        <ListMaterial>
-            <ListItem >
-                <ListItemIcon><AccountBoxIcon /></ListItemIcon>
-                <ListItemText primary={<Typography variant="body2">{record.membersHidden ? "Membres cachés" : "Membres visibles"}</Typography>} />
-            </ListItem>
-            <ListItem >
-                <ListItemIcon><DriveEtaIcon /></ListItemIcon>
-                <ListItemText primary={<Typography variant="body2">{record.membersHidden ? "Annonces cachées" : "Annonces visibles"}</Typography>} />
-            </ListItem>
-            <ListItem >
-                <ListItemIcon><VerifiedUserIcon /></ListItemIcon>
-                <ListItemText primary={<Typography variant="body2">{validationChoices.find(e => e.id === (record.validationType || 0)).name }</Typography>} />
-            </ListItem>
-            <ListItem >
-                <ListItemIcon><TodayIcon /></ListItemIcon>
-                <ListItemText primary={<Typography variant="body2">{"Créée le " + new Date(record.createdDate).toLocaleDateString()}</Typography>} />
-            </ListItem>
-            <ListItem >
-                <ListItemIcon><EventAvailableIcon /></ListItemIcon>
-                <ListItemText primary={<Typography variant="body2">{"Mise à jour le " + new Date(record.updatedDate).toLocaleDateString()}</Typography>} />
-            </ListItem>
-        </ListMaterial>
-        }
+const Aside = ({ record }) => {
+  const translate = useTranslate();
+      return (
+        <Card style={{ width: 300, marginLeft:'1rem' }} >
+            <CardHeader title={<Typography variant="button">Paramètres</Typography>} />
+            { record &&
+            <ListMaterial>
+                <ListItem >
+                    <ListItemIcon><AccountBoxIcon /></ListItemIcon>
+                    <ListItemText primary={<Typography variant="body2">{record.membersHidden ? translate('custom.label.community.memberHidden') : translate('custom.label.community.memberVisible')}</Typography>} />
+                </ListItem>
+                <ListItem >
+                    <ListItemIcon><DriveEtaIcon /></ListItemIcon>
+                    <ListItemText primary={<Typography variant="body2">{record.membersHidden ? translate('custom.label.community.announceHidden') : translate('custom.label.community.announceVisible')}</Typography>} />
+                </ListItem>
+                <ListItem >
+                    <ListItemIcon><VerifiedUserIcon /></ListItemIcon>
+                    <ListItemText primary={<Typography variant="body2">{validationChoices.find(e => e.id === (record.validationType || 0)).name }</Typography>} />
+                </ListItem>
+                <ListItem >
+                    <ListItemIcon><TodayIcon /></ListItemIcon>
+                    <ListItemText primary={<Typography variant="body2">{translate('custom.label.community.createdAt') + new Date(record.createdDate).toLocaleDateString()}</Typography>} />
+                </ListItem>
+                <ListItem >
+                    <ListItemIcon><EventAvailableIcon /></ListItemIcon>
+                    <ListItemText primary={<Typography variant="body2">{record.updatedDate ? translate('custom.label.community.updatedAt') + new Date(record.updatedDate).toLocaleDateString() : translate('custom.label.community.neverUpdate')}</Typography>} />
+                </ListItem>
+            </ListMaterial>
+            }
 
 
-    </Card>
-);
+        </Card>
+      )
+};
 
 const CommunityTitle = ({ record }) => {
     return <span>Communauté {record ? `"${record.name}"` : ''}</span>;
