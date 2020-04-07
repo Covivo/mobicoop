@@ -316,6 +316,7 @@
                       prepend-icon=""
                       readonly
                       v-on="on"
+                      @blur="change"
                     >
                       <v-icon
                         slot="prepend"
