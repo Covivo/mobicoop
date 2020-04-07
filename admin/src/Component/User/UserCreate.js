@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState,useCallback} from 'react';
+import { useForm } from 'react-final-form';
 import GeocompleteInput from "../Utilities/geocomplete";
 import TerritoryInput from "../Utilities/territory";
 
@@ -6,7 +7,10 @@ import {
     Create,
     TabbedForm, FormTab,
     TextInput, SelectInput, DateInput,
-    email, regex, ReferenceArrayInput, SelectArrayInput,BooleanInput,ReferenceInput,useTranslate
+    email, regex, ReferenceArrayInput, SelectArrayInput,BooleanInput,ReferenceInput,useTranslate, Toolbar,  SaveButton,
+    useCreate,
+    useRedirect,
+    useNotify,
 } from 'react-admin';
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -19,6 +23,8 @@ const UserCreate = props => {
     const classes = useStyles()
     const translate = useTranslate();
     const instance = process.env.REACT_APP_INSTANCE_NAME;
+
+    const [fields, setFields] = useState([{ value: null }]);
 
     const required = (message = translate('custom.alert.fieldMandatory') ) =>
             value => value ? undefined : message;
@@ -55,6 +61,53 @@ const UserCreate = props => {
         {id : 1, name : translate('custom.label.user.phoneDisplay.forCarpooler')},
     ];
 
+    function handleChange(i, event) {
+      const values = [...fields];
+      values[i].value = event.target.value;
+      setFields(values);
+    }
+
+    function handleAdd() {
+      console.info(fields)
+      const values = [...fields];
+      values.push({ value: null });
+      setFields(values);
+    }
+
+    function handleRemove(i) {
+      const values = [...fields];
+      values.splice(i, 1);
+      setFields(values);
+    }
+
+    const SaveWithNoteButton = ({ handleSubmitWithRedirect, ...props }) => {
+        const [create] = useCreate('posts');
+        const redirectTo = useRedirect();
+        const notify = useNotify();
+        const { basePath, redirect } = props;
+        const form = useForm();
+        const handleClick = useCallback(() => {
+
+          console.info(fields)
+            // change the average_note field value
+            form.change('average_note', 10);
+            handleSubmitWithRedirect('edit');
+        }, [form]);
+        // override handleSubmitWithRedirect with custom logic
+        return <SaveButton {...props} handleSubmitWithRedirect={handleClick} />;
+    };
+
+
+    const PostCreateToolbar = props => (
+          <Toolbar {...props}>
+            <SaveWithNoteButton
+                label="post.action.save_and_show"
+                redirect="show"
+                submitOnEnter={true}
+            />
+          </Toolbar>
+      );
+
     const validateRequired = [required()];
     const paswwordRules = [required(),minPassword(),upperPassword,lowerPassword,numberPassword];
     const emailRules = [required(), email() ];
@@ -62,7 +115,7 @@ const UserCreate = props => {
 
     return (
         <Create { ...props } title={translate('custom.label.user.title.create')}>
-            <TabbedForm validate={validateUserCreation} initialValues={{news_subscription:true}} >
+            <TabbedForm validate={validateUserCreation} initialValues={{newsSubscription:true}} toolbar={<PostCreateToolbar />} >
                 <FormTab label={translate('custom.label.user.indentity')}>
                     <TextInput fullWidth required source="email" label={translate('custom.label.user.email')} validate={ emailRules } formClassName={classes.spacedHalfwidth} />
                     <TextInput fullWidth required source="password" label={translate('custom.label.user.password')} type="password" validate={ paswwordRules } formClassName={classes.spacedHalfwidth}/>
@@ -74,18 +127,11 @@ const UserCreate = props => {
 
                     <TextInput required source="telephone" label={translate('custom.label.user.telephone')} validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
 
-                    <BooleanInput fullWidth label={translate('custom.label.user.newsSubscription',{ instanceName: instance })} source="news_subscription" formClassName={classes.spacedHalfwidth} />
+                    <BooleanInput fullWidth label={translate('custom.label.user.newsSubscription',{ instanceName: instance })} source="newsSubscription" formClassName={classes.spacedHalfwidth} />
 
                     <SelectInput fullWidth source="phoneDisplay" label={translate('custom.label.user.phoneDisplay.visibility')} choices={phoneDisplay}  formClassName={classes.spacedHalfwidth}/>
 
                     <GeocompleteInput fullWidth source="addresses" label={translate('custom.label.user.adresse')} validate={required("L'adresse est obligatoire")}/>
-
-                    <ReferenceArrayInput required label={translate('custom.label.user.roles')} source="userAuthAssignments" reference="permissions/roles" validate={ validateRequired } formClassName={classes.footer}>
-                        <SelectArrayInput optionText="name" />
-                    </ReferenceArrayInput>
-
-      
-                    <TerritoryInput fullWidth source="userTerritories" label={translate('custom.label.user.territory')} validate={required("L'adresse est obligatoire")}/>
 
                     <BooleanInput initialValue={true} label={translate('custom.label.user.accepteReceiveEmail')} source="newsSubscription" />
 
@@ -97,6 +143,35 @@ const UserCreate = props => {
                 <TextInput fullWidth source="chatFavorites" label={translate('custom.label.user.carpoolSetting.chatFavorites')} formClassName={classes.spacedHalfwidth}/>
                 <SelectInput fullWidth source="smoke" label={translate('custom.label.user.carpoolSetting.smoke')} choices={smoke} formClassName={classes.spacedHalfwidth}/>
                 </FormTab>
+
+                  <FormTab label={translate('custom.label.user.manageRoles')}>
+
+                        <button type="button" onClick={() => handleAdd()}>
+                          +
+                        </button>
+
+                        {fields.map((field, idx) => {
+                          return (
+                            <div key={`div-${field}-${idx}`} fullwidth="true">
+
+                              <ReferenceArrayInput key={`role-${field}-${idx}`} required label={translate('custom.label.user.roles')}
+                                source="userAuthAssignments" reference="permissions/roles" validate={ validateRequired }
+                                formClassName={classes.spacedHalfwidth}>
+                                  <SelectArrayInput optionText="name" />
+                              </ReferenceArrayInput>
+
+                              <TerritoryInput key={`territory-${field}-${idx}`} source="userTerritories"
+                                label={translate('custom.label.user.territory')} value={field.value}  formClassName={classes.spacedHalfwidth}
+                                validate={required("L'adresse est obligatoire")}/>
+
+                              <button type="button" onClick={() => handleRemove(idx)}>
+                                X
+                              </button>
+                            </div>
+                          );
+                        })}
+
+                  </FormTab>
 
 
             </TabbedForm>

@@ -89,7 +89,8 @@ const fr = {
                     archive: 'Archivé',
                 },
                 resumeCampaign : 'Reprendre la campagne'
-            },user : {
+            },
+            user : {
               id : 'Id',
               givenName: 'Prénom',
               familyName: 'Nom',
@@ -107,6 +108,7 @@ const fr = {
               newsSubscription : "Recevoir les actualités du service  %{instanceName} (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)",
               roles : "Droits d'accès",
               adresse : "Adresse",
+              manageRoles : 'Modification des rôles',
               carpoolSetting : {
                 music :"En ce qui concerne la musique en voiture",
                 musicFavorites : "Radio et/musique préférées",

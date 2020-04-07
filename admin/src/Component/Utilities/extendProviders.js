@@ -57,6 +57,8 @@ const myDataProvider = {
             }
             options.headers.set('Authorization', `Bearer ${token}`);
 
+            console.info(params)
+
             /* Rewrite roles for fit with api */
             let territories =  params.data.userTerritories;
             let newRoles = []

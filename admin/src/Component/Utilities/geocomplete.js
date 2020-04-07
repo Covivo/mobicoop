@@ -50,8 +50,6 @@ const GeocompleteInput = props => {
     useEffect(() => {
         if (debouncedInput) {
             fetchSuggestions(debouncedInput).then(results => {
-
-                console.info(results)
                 setSuggestions(
                     results
                         .filter(

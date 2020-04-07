@@ -60,7 +60,6 @@ const TerritoryInput = props => {
     useEffect(() => {
         if (debouncedInput) {
             fetchSuggestions(debouncedInput).then(results => {
-              console.info(results)
                 setSuggestions(
                     results
                         .filter(
@@ -91,9 +90,7 @@ const TerritoryInput = props => {
                             const territory = suggestions.find(
                                 element => element.name === selectedItem,
                             );
-                            console.info(territory)
                             if (territory) {
-                              console.info(territory);
                                 form.change('territory', null)
                                 form.change('territory.id', territory.id)
 
