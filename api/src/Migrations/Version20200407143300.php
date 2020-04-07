@@ -18,6 +18,7 @@ final class Version20200407143300 extends AbstractMigration
         $this->addSql('UPDATE `notification` SET user_active_default=1, user_editable=0 WHERE id=1');
         $this->addSql('UPDATE `notification` SET user_active_default=1, user_editable=0 WHERE id=2');
         $this->addSql('UPDATE `notification` SET user_active_default=1, user_editable=0 WHERE id=3');
+        $this->addSql('UPDATE `notification` SET user_active_default=1, user_editable=0 WHERE id=83');
         $this->addSql('UPDATE `notification` SET user_active_default=1, user_editable=0 WHERE id=84');
         $this->addSql('UPDATE `notification` SET user_active_default=1, user_editable=0 WHERE id=85');
         $this->addSql('UPDATE `notification` SET user_active_default=1, user_editable=0 WHERE id=86');
