@@ -269,7 +269,7 @@ class UserManager
 
         // Create token to unscubscribe from the instance news
         $user->setUnsubscribeToken($this->createToken($user));
-        
+
         // return the user
         return $user;
     }
@@ -332,7 +332,7 @@ class UserManager
             $event = new SolidaryCreated($user, $this->security->getUser());
             $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
         }
-        
+
         // return the user
         return $user;
     }
@@ -867,28 +867,6 @@ class UserManager
             return $arrayAsks;
         }
         return [];
-    }
-
-    public function checkValidatedDateToken($data)
-    {
-        $userFound = $this->userRepository->findOneBy(["validatedDateToken"=>$data->getValidatedDateToken()]);
-
-        if (!is_null($userFound)) {
-            if ($data->getEmail()===$userFound->getEmail()) {
-                // User found by token match with the given email. We update de validated date, persist, then return the user found
-                $userFound->setValidatedDate(new \Datetime());
-                $this->entityManager->persist($userFound);
-                $this->entityManager->flush();
-                return $userFound;
-            } else {
-                // User found by token doesn't match with the given email. We return nothing.
-                return new JsonResponse();
-            }
-        } else {
-            // No user found. We return nothing.
-            return new JsonResponse();
-        }
-        return new JsonResponse();
     }
 
     public function checkPhoneToken($data)

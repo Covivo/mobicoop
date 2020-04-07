@@ -54,24 +54,31 @@
     >
       <v-col class="col-4 text-center">
         <v-alert
-          v-if="error!==''"
+          v-if="errorDisplay!==''"
           type="error"
+          class="text-left"
         >
-          {{ $t(error) }}
+          {{ errorDisplay }}
         </v-alert>
         <v-form
           id="formLoginValidation"
           ref="form"
           v-model="valid"
           lazy-validation
-          :action="$t('urlPost',{'token':token,'email':email})"
+          action="/utilisateur/login-token"
           method="POST"
         >
+          <input
+            type="hidden"
+            name="email"
+            :value="email"
+          >
+
           <v-text-field
             v-model="token"
             :rules="tokenRules"
             :label="$t('token')"
-            name="token"
+            name="emailToken"
             required
             @change="token = token.replace(/\s/g, '')"
           />
@@ -111,7 +118,7 @@ export default {
       default: ""
     }
   },
-  data() {
+  data() { 
     return {
       valid:true,
       token:this.urlToken,
@@ -119,12 +126,11 @@ export default {
       tokenRules: [
         v => !!v || this.$t("tokenRequired")
       ],
+      errorDisplay: "",
     }
   },
   mounted(){
-    if(this.error !== ""){
-      console.error(this.error);
-    }
+    if(this.error !== "") this.treatErrorMessage(this.error);
   },
   methods:{
     validate(){
@@ -132,9 +138,21 @@ export default {
       if (this.$refs.form.validate()) {
         document.getElementById("formLoginValidation").submit();
       }
-    }
+    },
+    treatErrorMessage(error) {
 
-  }
+      console.info(error)
+      if (error === "Bad credentials.") {
+        this.errorDisplay = this.$t("errorCredentials");
+        this.loading = false;
+      }
+      else{
+        this.errorDisplay = this.$t(error);
+        this.loading = false;
+      }
+    }
+  },
+
 
 };
 </script>

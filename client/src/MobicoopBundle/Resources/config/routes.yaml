@@ -31,6 +31,12 @@ user_login:
         en: /user/login
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
 
+user_login_token:
+    path:
+        fr: /utilisateur/login-token
+        en: /user/login-token
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidationCheck
+
 # logout
 user_logout:
     path: /user/logout
@@ -48,14 +54,14 @@ user_sign_up_validation:
         en: /user/signup/validation/{email}/{token}
     defaults:
         token: ""
-        email: ""
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
+
 
 # user update address
 user_homeAddress_update:
     path:
         fr: /utilisateur/profil/modifier/adresse
-        en: /user/profile/update/address   
+        en: /user/profile/update/address
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::UserAddressUpdate
 
 # profile update
@@ -243,7 +249,7 @@ user_communities_owned:
     path:
         fr: /user/communities/owned
         en: /user/communities/owned
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userOwnedCommunities  
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userOwnedCommunities
 
 # Get events created by a user (POST)
 user_created_events:
@@ -251,16 +257,16 @@ user_created_events:
     path:
         fr: /user/events/created
         en: /user/events/created
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCreatedEvents   
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCreatedEvents
 
 # Get proposals with accepted asks (AJAX)
 user_get_accepted_proposals:
     methods: [GET]
     path:
         fr: /user/proposals/accepted
-        en: /user/proposals/accepted 
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposalsAccepted   
-      
+        en: /user/proposals/accepted
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposalsAccepted
+
 
 ##################
 # carpool routes #
@@ -556,15 +562,15 @@ insurance_policy:
     path:
         fr: /assurance
         en: /insurance
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showInsurancePolicy    
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showInsurancePolicy
 
 # display history page
 history:
     path:
         fr: /historique
         en: /history
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showHistroy    
-    
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showHistroy
+
 # display actors page
 actors:
     path:
@@ -577,14 +583,14 @@ solidary_carpool:
     path:
         fr: /covoiturage-solidaire
         en: /solidary-carpool
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showSolidaryCarpool    
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showSolidaryCarpool
 
 # display become a partner page
 become_partner:
     path:
         fr: /devenir-partenaire
         en: /become-partner
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showBecomePartner    
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showBecomePartner
 
 # display FAQ page
 FAQ:
@@ -598,7 +604,7 @@ ToolBox:
     path:
         fr: /boite-a-outils
         en: /toolBox
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showToolbox        
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showToolbox
 
 # display CommunityInfos page
 CommunityInfos:
@@ -634,7 +640,7 @@ LastExternalArticles:
     path:
         fr: /articles/derniers/externes
         en: /articles/last/extern
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::lastExternalArticles 
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::lastExternalArticles
 
 ####################
 # geography routes #

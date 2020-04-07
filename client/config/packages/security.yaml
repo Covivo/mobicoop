@@ -2,26 +2,17 @@ security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         webservice:
-            id: Mobicoop\Bundle\MobicoopBundle\User\Service\UserProvider
+              id: Mobicoop\Bundle\MobicoopBundle\User\Service\UserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             anonymous: true
-
-            # activate different ways to authenticate
-
-            # http_basic: true
-            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-
-            form_login:
-                login_path: user_login
-                check_path: user_login
-                username_parameter: email
-                password_parameter: password
+            guard:
+                authenticators:
+                    - Mobicoop\Bundle\MobicoopBundle\User\Security\TokenAuthenticator
             # https://symfony.com/doc/current/security/form_login_setup.html
-
             logout:
                 path: /user/logout
                 target: /

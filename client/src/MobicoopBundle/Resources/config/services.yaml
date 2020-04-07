@@ -35,7 +35,7 @@ services:
     # Api
     Mobicoop\Bundle\MobicoopBundle\Api\Service\:
         resource: '@MobicoopBundle/Api/Service/*'
-    
+
     Mobicoop\Bundle\MobicoopBundle\Api\Serializer\:
         resource: '@MobicoopBundle/Api/Serializer/*'
 
@@ -97,6 +97,7 @@ services:
             $authPath: '%env(resolve:API_AUTH_PATH)%'
             $loginPath: '%env(resolve:API_LOGIN_PATH)%'
             $refreshPath: '%env(resolve:API_REFRESH_PATH)%'
+            $loginTokenPath: '%env(resolve:API_LOGIN_TOKEN_PATH)%'
             $tokenId: '%env(resolve:API_TOKEN_ID)%'
         shared: false
 
@@ -143,7 +144,7 @@ services:
     # Permission
     Mobicoop\Bundle\MobicoopBundle\Permission\Service\:
         resource: '@MobicoopBundle/Permission/Service/*'
-    
+
     # Price
     Mobicoop\Bundle\MobicoopBundle\Price\Controller\:
         resource: '@MobicoopBundle/Price/Controller/*'
