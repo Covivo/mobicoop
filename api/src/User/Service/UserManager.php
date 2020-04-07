@@ -265,7 +265,7 @@ class UserManager
         $user->setGeoToken($this->createToken($user));
 
         // Create token to validate inscription
-        $user->setValidatedDateToken($this->createToken($user));
+        $user->setEmailToken($this->createToken($user));
 
         // Create token to unscubscribe from the instance news
         $user->setUnsubscribeToken($this->createToken($user));

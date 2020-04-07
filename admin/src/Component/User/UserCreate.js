@@ -1,5 +1,6 @@
 import React from 'react';
 import GeocompleteInput from "../Utilities/geocomplete";
+import TerritoryInput from "../Utilities/territory";
 
 import {
     Create,
@@ -83,9 +84,8 @@ const UserCreate = props => {
                         <SelectArrayInput optionText="name" />
                     </ReferenceArrayInput>
 
-                    <ReferenceInput label={translate('custom.label.user.territory')} source="userTerritories" reference="territories">
-                        <SelectInput optionText="name" />
-                    </ReferenceInput>
+      
+                    <TerritoryInput fullWidth source="userTerritories" label={translate('custom.label.user.territory')} validate={required("L'adresse est obligatoire")}/>
 
                     <BooleanInput initialValue={true} label={translate('custom.label.user.accepteReceiveEmail')} source="newsSubscription" />
 

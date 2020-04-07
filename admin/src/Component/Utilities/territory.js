@@ -11,6 +11,9 @@ import useDebounce from './useDebounce';
 import { change } from 'redux-form';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
+const token = localStorage.getItem('token');
+const httpClient = fetchUtils.fetchJson;
+
 const queryString = require('query-string');
 
 const fetchSuggestions = input => {
@@ -18,25 +21,33 @@ const fetchSuggestions = input => {
         return new Promise((resolve, reject) => resolve([]));
     }
 
-    const apiUrl = process.env.REACT_APP_API+process.env.REACT_APP_GEOSEARCH_RESOURCE;
+    const options = {}
+    if (!options.headers) {
+        options.headers = new Headers({ Accept: 'application/json' });
+    }
+    options.headers.set('Authorization', `Bearer ${token}`);
+
+    const apiUrl = process.env.REACT_APP_API+process.env.REACT_APP_TERRITORY_SEARCH_RESOURCE;
     const parameters = {
-        q: `${input}`,
+        name: `${input}`,
     };
     const urlWithParameters = `${apiUrl}?${queryString.stringify(parameters)}`;
-    return fetchUtils
-        .fetchJson(urlWithParameters)
-        .then(response => response.json)
-        .catch(error => {
-            console.error(error);
-            return [];
-        });
+
+    return httpClient(`${urlWithParameters}`, {
+            method: 'GET',
+            headers : options.headers
+        })
+      .then(response => response.json)
+      .catch(error => {
+          console.error(error);
+          return [];
+    });
 };
 
 const TerritoryInput = props => {
     const { classes } = props;
-
     const form  = useForm();
-    const field = useField('address');
+    const field = useField('userTerritories');
 
     const [input, setInput] = useState('');
     const [suggestions, setSuggestions] = useState([]);
@@ -49,15 +60,16 @@ const TerritoryInput = props => {
     useEffect(() => {
         if (debouncedInput) {
             fetchSuggestions(debouncedInput).then(results => {
+              console.info(results)
                 setSuggestions(
                     results
                         .filter(
                             element =>
                                 element &&
-                                element.displayLabel &&
-                                element.displayLabel.length > 0,
+                                element.name &&
+                                element.name.length > 0,
                         )
-                        .slice(0, 10),
+                        .slice(0, 20),
                 );
             });
         } else {
@@ -76,30 +88,15 @@ const TerritoryInput = props => {
                             setInput(inputValue ? inputValue.trim() : '')
                         }
                         onSelect={(selectedItem, stateAndHelpers) => {
-                            const address = suggestions.find(
-                                element => element.displayLabel === selectedItem,
+                            const territory = suggestions.find(
+                                element => element.name === selectedItem,
                             );
-                            if (address) {
-                                form.change('address', null)
-                                form.change('address.streetAddress', address.streetAddress)
-                                form.change('address.postalCode', address.postalCode)
-                                form.change('address.addressLocality', address.addressLocality)
-                                form.change('address.addressCountry', address.addressCountry)
-                                form.change('address.latitude', address.latitude)
-                                form.change('address.longitude', address.longitude)
-                                form.change('address.elevation', address.elevation)
-                                form.change('address.name', address.name)
-                                form.change('address.houseNumber', address.houseNumber)
-                                form.change('address.street', address.street)
-                                form.change('address.subLocality', address.subLocality)
-                                form.change('address.localAdmin', address.localAdmin)
-                                form.change('address.county', address.county)
-                                form.change('address.macroCounty', address.macroCounty)
-                                form.change('address.region', address.region)
-                                form.change('address.macroRegion', address.macroRegion)
-                                form.change('address.countryCode', address.countryCode)
-                                form.change('address.home', address.home)
-                                form.change('address.venue', address.venue)
+                            console.info(territory)
+                            if (territory) {
+                              console.info(territory);
+                                form.change('territory', null)
+                                form.change('territory.id', territory.id)
+
                             }
                         }}
                     >
@@ -132,21 +129,21 @@ const TerritoryInput = props => {
                                         {suggestions.map((suggestion, index) => (
                                             <MenuItem
                                                 {...getItemProps({
-                                                    item: suggestion.displayLabel,
+                                                    item: suggestion.name,
                                                 })}
-                                                key={suggestion.displayLabel}
+                                                key={suggestion.name}
                                                 selected={highlightedIndex === index}
                                                 component="div"
                                                 style={{
                                                     fontWeight: isSelected(
                                                         selectedItem,
-                                                        suggestion.displayLabel,
+                                                        suggestion.name,
                                                     )
                                                         ? 500
                                                         : 400,
                                                 }}
                                             >
-                                                {suggestion.displayLabel.join(' ')}
+                                                {suggestion.name}
                                             </MenuItem>
                                         ))}
                                     </Paper>
@@ -160,7 +157,7 @@ const TerritoryInput = props => {
     );
 };
 
-GeocompleteInput.propTypes = {
+TerritoryInput.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
