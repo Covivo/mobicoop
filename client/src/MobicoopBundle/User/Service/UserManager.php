@@ -175,7 +175,7 @@ class UserManager
                 if ($sendEmailRecovery) {
                     $this->updateUserToken($user->getMember()[0]);
                 }
-                
+
                 return current($user->getMember());
             }
         }
@@ -340,7 +340,7 @@ class UserManager
         $user->setPassword($this->encoder->encodePassword($user, $password));
         return $this->dataProvider->postSpecial($user, ['passwordUpdate'], "password_update")->getValue();
     }
-    
+
     /**
      * Delete a user
      *
@@ -603,24 +603,6 @@ class UserManager
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSubCollection($user->getId(), 'ask', 'asks');
-        return $response->getValue();
-    }
-
-    /**
-     * Validation email
-     *
-     * @param string $token
-     * @param string $email
-     *
-     * @return User|null The user found or null if not found.
-     */
-    public function validSignUpByToken(string $token, string $email)
-    {
-        $user = new User();
-        $user->setEmail($email);
-        $user->setValidatedDateToken($token);
-        $response = $this->dataProvider->postSpecial($user, ["checkValidationToken"], "checkSignUpValidationToken");
-
         return $response->getValue();
     }
 

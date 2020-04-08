@@ -63,7 +63,6 @@ use App\User\Controller\UserUpdatePassword;
 use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserUpdate;
 use App\User\Controller\UserDelete;
-use App\User\Controller\UserCheckSignUpValidationToken;
 use App\User\Controller\UserCheckPhoneToken;
 use App\User\Controller\UserUnsubscribeFromEmail;
 use App\User\Controller\UserMe;
@@ -78,7 +77,7 @@ use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\SolidaryFilter;
 use App\User\Filter\SolidaryCandidateFilter;
-use App\User\Filter\ValidatedDateTokenFilter;
+use App\User\Filter\EmailTokenFilter;
 use App\User\Filter\UnsubscribeTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
@@ -228,13 +227,6 @@ use App\User\Controller\UserCanUseEmail;
  *              },
  *              "security_post_denormalize"="is_granted('user_register',object)"
  *          },
- *          "checkSignUpValidationToken"={
- *              "method"="POST",
- *              "denormalization_context"={"groups"={"checkValidationToken"}},
- *              "normalization_context"={"groups"={"readUser"}},
- *              "path"="/users/checkSignUpValidationToken",
- *              "controller"=UserCheckSignUpValidationToken::class
- *          },
  *          "checkPhoneToken"={
  *              "method"="POST",
  *              "denormalization_context"={"groups"={"checkPhoneToken"}},
@@ -364,7 +356,7 @@ use App\User\Controller\UserCanUseEmail;
  * @ApiFilter(LoginFilter::class, properties={"login"})
  * @ApiFilter(PwdTokenFilter::class, properties={"pwdToken"})
  * @ApiFilter(UnsubscribeTokenFilter::class, properties={"unsubscribeToken"})
- * @ApiFilter(ValidatedDateTokenFilter::class, properties={"validatedDateToken"})
+ * @ApiFilter(EmailTokenFilter::class, properties={"emailToken"})
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
  * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary"})
  * @ApiFilter(SolidaryCandidateFilter::class, properties={"solidaryCandidate"})
@@ -671,7 +663,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","checkValidationToken"})
      */
-    private $validatedDateToken;
+    private $emailToken;
 
     /**
      * @var \DateTimeInterface Updated date of the user.
@@ -2235,14 +2227,14 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getValidatedDateToken(): ?string
+    public function getEmailToken(): ?string
     {
-        return $this->validatedDateToken;
+        return $this->emailToken;
     }
 
-    public function setValidatedDateToken(?string $validatedDateToken): self
+    public function setEmailToken(?string $emailToken): self
     {
-        $this->validatedDateToken = $validatedDateToken;
+        $this->emailToken = $emailToken;
         return $this;
     }
 

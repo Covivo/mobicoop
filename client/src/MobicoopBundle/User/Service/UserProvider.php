@@ -35,6 +35,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class UserProvider implements UserProviderInterface
 {
     const USER_LOGIN_ROUTE = "user_login";
+    const USER_LOGIN_TOKEN_ROUTE = "user_sign_up_validation";
 
     private $dataProvider;
     private $router;
@@ -65,6 +66,14 @@ class UserProvider implements UserProviderInterface
             // we want to login, we set the credentials for the dataProvider
             $this->dataProvider->setUsername($this->request->get('email'));
             $this->dataProvider->setPassword($this->request->get('password'));
+            // we set the dataProvider to private => will discard the current JWT token
+            $this->dataProvider->setPrivate(true);
+        } elseif ($this->request->get('_route') == self::USER_LOGIN_TOKEN_ROUTE && $this->request->get('emailToken')) {
+
+            // we want to login with token, we set the credentials for the dataProvider
+            $this->dataProvider->setPassword(null);
+            $this->dataProvider->setUsername($this->request->get('email'));
+            $this->dataProvider->setEmailToken($this->request->get('emailToken'));
             // we set the dataProvider to private => will discard the current JWT token
             $this->dataProvider->setPrivate(true);
         }
@@ -100,6 +109,8 @@ class UserProvider implements UserProviderInterface
     private function fetchUser($username)
     {
         $response = $this->dataProvider->getSpecialCollection("me");
+
+
         if ($response->getCode() == 200) {
             $userData = $response->getValue();
 
@@ -107,7 +118,7 @@ class UserProvider implements UserProviderInterface
                 return $userData->getMember()[0];
             }
         }
-    
+
         throw new UsernameNotFoundException(
             sprintf('Username "%s" does not exist.', $username)
         );

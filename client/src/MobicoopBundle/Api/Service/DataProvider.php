@@ -38,6 +38,7 @@ use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
@@ -87,9 +88,12 @@ class DataProvider
     private $uri;
     private $username;
     private $password;
+    private $emailToken;
+    private $passwordToken;
     private $authPath;
     private $loginPath;
     private $refreshPath;
+    private $loginTokenPath;
     private $tokenId;
     private $authLoginPath;
     private $session;
@@ -114,20 +118,26 @@ class DataProvider
      * @param string $uri                   The api uri
      * @param string $username              The default api username
      * @param string $password              The default api password
+     * @param string $emailToken            The email token for authentification
+     * @param string $passwordToken         The reset password token for authentification
      * @param string $authPath              The api path for default authentication
      * @param string $loginPath             The api path for user authentication
+     * @param string $loginTokenPath        The api path for user authentication with only validate token
      * @param string $tokenId               The token id
      * @param Deserializer $deserializer    The deserializer
      * @param SessionInterface  $session    The session
      */
-    public function __construct(string $uri, string $username, string $password, string $authPath, string $loginPath, string $refreshPath, string $tokenId, Deserializer $deserializer, SessionInterface $session)
+    public function __construct(string $uri, string $username, string $emailToken = null, string $passwordToken = null, string $password, string $authPath, string $loginPath, string $refreshPath, string $loginTokenPath, string $tokenId, Deserializer $deserializer, SessionInterface $session)
     {
         $this->uri = $uri;
         $this->username = $username;
         $this->password = $password;
+        $this->emailToken = $emailToken;
+        $this->passwordToken = $passwordToken;
         $this->authPath = $authPath;
         $this->loginPath = $loginPath;
         $this->refreshPath = $refreshPath;
+        $this->loginTokenPath = $loginTokenPath;
         $this->tokenId = $tokenId;
         $this->authLoginPath = $authPath;
         $this->session = $session;
@@ -172,7 +182,6 @@ class DataProvider
                 $this->refreshToken = $cachedRefreshToken->get();
             }
         }
-
         $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
 
         $encoders = array(new JsonEncoder());
@@ -197,12 +206,35 @@ class DataProvider
     }
 
     /**
+     * Set the email token (for user authentication with email token)
+     *
+     * @param string $emailToken  The token
+     * @return void
+     */
+    public function setEmailToken(string $emailToken)
+    {
+        $this->emailToken = $emailToken;
+    }
+
+    /**
+     * Set the reset password token (for user authentication with reset password token)
+     *
+     * @param string $passwordToken  The token
+     * @return void
+     */
+    public function setPasswordToken(string $passwordToken)
+    {
+        $this->passwordToken = $passwordToken;
+    }
+
+
+    /**
      * Set the password (for user authentication)
      *
      * @param string $password  The password
      * @return void
      */
-    public function setPassword(string $password)
+    public function setPassword($password)
     {
         $this->password = $password;
     }
@@ -217,7 +249,11 @@ class DataProvider
     {
         $this->private = $private;
         if ($private) {
-            $this->authLoginPath = $this->loginPath;
+            if ($this->emailToken || $this->passwordToken) {
+                $this->authLoginPath = $this->loginTokenPath;
+            } else {
+                $this->authLoginPath = $this->loginPath;
+            }
             $this->jwtToken = null;
             $this->refreshToken = null;
         } else {
@@ -236,9 +272,8 @@ class DataProvider
     {
         if (is_null($this->jwtToken)) {
             $tokens = $this->getJwtToken();
-
             if (is_null($tokens) || !is_array($tokens)) {
-                throw new ApiTokenException("Empty API token.");
+                return ("bad-credentials-api");
             }
 
             if (!isset($tokens['token']) || !isset($tokens['refreshToken'])) {
@@ -286,6 +321,7 @@ class DataProvider
                     break;
             }
         }
+
         return $headers;
     }
 
@@ -316,27 +352,70 @@ class DataProvider
                 $this->cache->deleteItem($this->tokenId.'.jwt.refresh.token');
             }
         }
-
+        // no refresh token or refresh token expired
         if (is_null($value)) {
-            // no refresh token, or refresh token expired, or refresh token deleted
-            try {
-                $clientResponse = $this->client->post($this->authLoginPath, [
-                            'headers' => ['accept' => 'application/json'],
-                            RequestOptions::JSON => [
-                                "username" => $this->username,
-                                "password" => $this->password
-                            ]
-                    ]);
-                $value = json_decode((string) $clientResponse->getBody(), true);
-            } catch (ServerException $e) {
-                throw new ApiTokenException("Unable to get an API token.");
-            } catch (ClientException $e) {
-                // todo : check the exception to test the different cases
-                // invalid credentials
-                throw new ApiTokenException("Unable to get an API token : invalid credentials.");
+            // We have a username and emailToken
+            if (!is_null($this->emailToken)) {
+                try {
+                    $clientResponse = $this->client->post($this->authLoginPath, [
+                                  'headers' => ['accept' => 'application/json'],
+                                  RequestOptions::JSON => [
+                                      "email" => $this->username,
+                                      "emailToken" => $this->emailToken
+                                  ]
+                          ]);
+                    $value = json_decode((string) $clientResponse->getBody(), true);
+                } catch (ServerException $e) {
+                    throw new ApiTokenException("Unable to get an API token.");
+                } catch (ClientException $e) {
+                    if ($e->getCode() == '401') {
+                        return new JsonResponse('bad-credentials-api');
+                    }
+                    throw new ApiTokenException("Unable to get an API token.");
+                }
+                // We have a reset password token
+            } elseif (!is_null($this->passwordToken)) {
+                try {
+                    $clientResponse = $this->client->post($this->authLoginPath, [
+                                'headers' => ['accept' => 'application/json'],
+                                RequestOptions::JSON => [
+                                    "passwordToken" => $this->passwordToken
+                                ]
+                        ]);
+                    $value = json_decode((string) $clientResponse->getBody(), true);
+                } catch (ServerException $e) {
+                    throw new ApiTokenException("Unable to get an API token.");
+                } catch (ClientException $e) {
+                    dump($e);
+                    die();
+                    //Wrong credentials
+                    if ($e->getCode() == '401') {
+                        return new JsonResponse('bad-credentials-api');
+                    }
+                    throw new ApiTokenException("Unable to get an API token.");
+                }
+            } else {
+                // we have a username and password
+                try {
+                    $clientResponse = $this->client->post($this->authLoginPath, [
+                                'headers' => ['accept' => 'application/json'],
+                                RequestOptions::JSON => [
+                                    "username" => $this->username,
+                                    "password" => $this->password
+                                ]
+                        ]);
+                    $value = json_decode((string) $clientResponse->getBody(), true);
+                } catch (ServerException $e) {
+                    throw new ApiTokenException("Unable to get an API token.");
+                } catch (ClientException $e) {
+                    //Wrong credentials
+                    if ($e->getCode() == '401') {
+                        return new JsonResponse('bad-credentials-api');
+                    }
+                    throw new ApiTokenException("Unable to get an API token.");
+                }
             }
         }
-
         return $value;
     }
 
@@ -495,6 +574,9 @@ class DataProvider
                 $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params, 'headers' => $headers]);
             } else {
                 $headers = $this->getHeaders();
+                if ($headers == "bad-credentials-api") {
+                    return new Response(401, 'bad-credentials-api');
+                }
                 $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params, 'headers' => $headers]);
             }
             if ($clientResponse->getStatusCode() == 200) {

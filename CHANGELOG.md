@@ -6,7 +6,9 @@
 * JSON file to fix wrong geographic data
 * Improvement of Geosearcher : Pelias Autocomplete for localities only, then Pelias Search for full search
 * New territory filters for communities and events
+* Add acces for log in with email or password token
 
 ## CLIENT
 
 * Automatic territory filtering for communities and events
+* Changes authentification for login, reset token and reset password
