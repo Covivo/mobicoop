@@ -108,24 +108,6 @@ class SolidaryManager
     public function getSolidaryCarpoolSearchSearchResults(SolidarySearch $solidarySearch): SolidarySearch
     {
 
-        // Maybe i don't need this. If there is no destination, i just add a destination point = to origin point later
-
-        //$waypoints = $solidarySearch->getSolidary()->getProposal()->getWaypoints();
-        // $withDestination = false;
-        // foreach ($waypoints as $waypoint) {
-        //     if ($waypoint->isDestination()) {
-        //         $withDestination=true;
-        //     }
-        // }
-        
-        // if ($withDestination) {
-        //     // Call the classic matching algo
-        // } else {
-        //     $solidarySearch->setResults($this->solidaryUserRepository->findForASolidaryCarpoolSearchWithoutDestination($solidarySearch));
-        // }
-        
-        // $solidarySearch->setResults($this->solidaryUserRepository->findForASolidaryCarpoolSearch($solidarySearch));
-        
         // We make an Ad from the proposal linked to the solidary (if it's on the return, we take the ProposalLinked)
         // I'll have the results directly in the Ad
         
@@ -137,6 +119,22 @@ class SolidaryManager
             }
             throw new SolidaryException(SolidaryException::NO_RETURN_PROPOSAL);
         }
+
+        // If the proposal doesn't have any destination, we duplicate the origin waypoint
+        $waypoints = $proposal->getWaypoints();
+        $withDestination = false;
+        foreach ($waypoints as $waypoint) {
+            if ($waypoint->isDestination()) {
+                $withDestination=true;
+            }
+        }
+        if (!$withDestination) {
+            // We clone the first waypoint and we use it as destination
+            $newDestination = clone $waypoints[0];
+            $newDestination->setDestination(true);
+            $proposal->addWaypoint(clone $newDestination);
+        }
+
         $ad = $this->adManager->makeAd($proposal, $proposal->getUser()->getId());
         // echo count($ad->getResults());die;
         // We need to build and persist all the new results as SolidaryMatching.
