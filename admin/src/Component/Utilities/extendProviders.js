@@ -65,7 +65,6 @@ const myDataProvider = {
                     v != null ?  newRoles.push({"authItem": r, "territory": territory}) :   newRoles.push({"authItem": r});
                   });
             });
-            console.info(newRoles);
             params.data.userAuthAssignments = newRoles
             /* Rewrite roles for fit with api */
 

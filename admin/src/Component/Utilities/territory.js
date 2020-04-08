@@ -44,7 +44,7 @@ const fetchSuggestions = input => {
     });
 };
 
-const TerritoryInput = ( {setTerritory} ) => {
+const TerritoryInput = props => {
     const form  = useForm();
     const field = useField('userTerritories');
 
@@ -93,7 +93,7 @@ const TerritoryInput = ( {setTerritory} ) => {
                             if (territory) {
                                 form.change('territory', null)
                                 form.change('territory.id', territory.id)
-                                setTerritory(territory)
+                                props.setTerritory(territory)
                             }
                         }}
                     >

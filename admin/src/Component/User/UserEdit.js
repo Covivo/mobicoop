@@ -1,13 +1,16 @@
-import React from 'react';
+import React, {useState} from 'react';
 import GeocompleteInput from "../Utilities/geocomplete";
 import { UserRenderer, addressRenderer } from '../Utilities/renderers'
-//import bcrypt from 'bcryptjs';
+import TerritoryInput from "../Utilities/territory";
+
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import {
     Edit,
     TabbedForm, FormTab,
     TextInput, SelectInput, DateInput,
-    email, regex, ReferenceArrayInput, SelectArrayInput,BooleanInput,ReferenceInput,ReferenceField, FunctionField,useTranslate
+    email, regex, ReferenceArrayInput, SelectArrayInput,BooleanInput,ReferenceInput,ReferenceField, FunctionField,useTranslate,useDataProvider
 } from 'react-admin';
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -18,6 +21,26 @@ const useStyles = makeStyles({
 
 
 const UserEdit = props => {
+
+  const Test = ({record}) =>  {
+    console.info(record)
+  /*  dataProvider.getOne('users',{id:localStorage.getItem('id')} )
+        .then( ({ data }) => setUser(data) )
+    return null;*/
+    return null;
+  }
+    const dataProvider = useDataProvider();
+
+    const [territory, setTerritory] = useState();
+    const [roles, setRoles] = useState([]);
+    const [fields, setFields] = useState([{'roles' : [], 'territory' : null}]);
+
+
+    dataProvider.getList('permissions/roles', {pagination:{ page: 1 , perPage: 1000 }, sort: { field: 'id', order: 'ASC' }, })
+      .then( ({ data }) => {
+        console.info(data)
+        setRoles(data)
+      });
 
     const classes = useStyles();
     const translate = useTranslate();
@@ -52,8 +75,30 @@ const UserEdit = props => {
     const validateRequired = [required()];
     const emailRules = [required(), email() ];
 
+    function handleAdd() {
+      const values = [...fields];
+      values.push({'roles' : [], 'territory' : null});
+      setFields(values);
+    }
+
+    function handleRemove(i) {
+      const values = [...fields];
+      values.splice(i, 1);
+      setFields(values);
+    }
+
+
+    const handleAddPair = (indice, nature) => e => {
+        const values = [...fields];
+        if (nature == 'roles')   values[indice]['roles'] = e.target.value;
+        else  values[indice]['territory'] = '/territories/'+e.id;
+        setFields(values);
+    }
+
     return (
         <Edit { ...props } title={translate('custom.label.user.title.edit')}>
+
+
         <TabbedForm initialValues={{news_subscription:true}} >
             <FormTab label={translate('custom.label.user.indentity')}>
                 <TextInput fullWidth required source="email" label={translate('custom.label.user.email')} validate={ emailRules }  />
@@ -69,13 +114,7 @@ const UserEdit = props => {
 
                 <SelectInput fullWidth source="phoneDisplay" label={translate('custom.label.user.phoneDisplay.visibility')} choices={phoneDisplay}  formClassName={classes.spacedHalfwidth}/>
 
-                <ReferenceArrayInput required label={translate('custom.label.user.roles')} source="rolesIds" reference="permissions/roles" validate={ validateRequired } formClassName={classes.footer}>
-                    <SelectArrayInput optionText="name" />
-                </ReferenceArrayInput>
 
-                <ReferenceInput label={translate('custom.label.user.territory')} source="userTerritories" reference="territories">
-                    <SelectInput optionText="name" />
-                </ReferenceInput>
 
                 <BooleanInput initialValue={true} label={translate('custom.label.user.accepteReceiveEmail')} source="newsSubscription" />
 
@@ -88,6 +127,38 @@ const UserEdit = props => {
                 <SelectInput fullWidth source="smoke" label={translate('custom.label.user.carpoolSetting.smoke')} choices={smoke} formClassName={classes.spacedHalfwidth}/>
             </FormTab>
 
+                  <FormTab label={translate('custom.label.user.manageRoles')}>
+
+                          <Test />
+                        <div type="button" onClick={() => handleAdd()}>
+                          +
+                        </div>
+
+                        {fields.map((field, i) => {
+
+                          return (
+                            <div key={`div-${i}`} fullwidth="true">
+
+                              <Select
+                                   multiple
+                                   onChange={handleAddPair(i, 'roles')}
+                                   value={field['roles']}
+                                 >
+                                  { roles.map( d =>  <MenuItem value={d.id}>{d.name}</MenuItem> ) }
+                                 </Select>
+
+                              <TerritoryInput key={`territory-${i}`} source="userTerritories"
+                                label={translate('custom.label.user.territory')}  setTerritory={handleAddPair(i, 'territory')}
+                                formClassName={classes.spacedHalfwidth} validate={required("L'adresse est obligatoire")}/>
+
+                              <button type="button" onClick={() => handleRemove(i)}>
+                                X
+                              </button>
+                            </div>
+                          );
+                        })}
+
+                  </FormTab>
 
         </TabbedForm>
         </Edit>
