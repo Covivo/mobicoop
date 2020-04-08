@@ -57,14 +57,15 @@ const myDataProvider = {
             }
             options.headers.set('Authorization', `Bearer ${token}`);
 
-            console.info(params)
-
             /* Rewrite roles for fit with api */
-            let territories =  params.data.userTerritories;
             let newRoles = []
-            params.data.userAuthAssignments.forEach(function(v){
-                newRoles.push({"authItem": v, "territory": territories})
+            params.data.fields.forEach(function(v){
+                  var territory = v.territory;
+                  v.roles.forEach(function(r){
+                    v != null ?  newRoles.push({"authItem": r, "territory": territory}) :   newRoles.push({"authItem": r});
+                  });
             });
+            console.info(newRoles);
             params.data.userAuthAssignments = newRoles
             /* Rewrite roles for fit with api */
 

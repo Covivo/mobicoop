@@ -44,8 +44,7 @@ const fetchSuggestions = input => {
     });
 };
 
-const TerritoryInput = props => {
-    const { classes } = props;
+const TerritoryInput = ( {setTerritory} ) => {
     const form  = useForm();
     const field = useField('userTerritories');
 
@@ -54,8 +53,9 @@ const TerritoryInput = props => {
     const debouncedInput = useDebounce(input, 500);
 
     const formState   = form.getState()
-    const errorMessage = props.validate(input)
+    const errorMessage = 'non'
     const errorState  = formState.submitFailed && errorMessage
+
 
     useEffect(() => {
         if (debouncedInput) {
@@ -81,7 +81,7 @@ const TerritoryInput = props => {
     return (
         <FormDataConsumer>
             {({ dispatch, ...rest }) => (
-                <div className={classes.root}>
+                <div>
                     <Downshift
                         onInputValueChange={(inputValue, stateAndHelpers) =>
                             setInput(inputValue ? inputValue.trim() : '')
@@ -93,7 +93,7 @@ const TerritoryInput = props => {
                             if (territory) {
                                 form.change('territory', null)
                                 form.change('territory.id', territory.id)
-
+                                setTerritory(territory)
                             }
                         }}
                     >
@@ -104,10 +104,9 @@ const TerritoryInput = props => {
                             selectedItem,
                             highlightedIndex,
                         }) => (
-                            <div className={classes.container}>
+                            <div >
                                 <TextField
-                                    label={props.label || "Territoire"}
-                                    className={classes.input}
+                                    label={"Territoire"}
                                     variant="filled"
                                     required
                                     error={errorState}
@@ -122,7 +121,7 @@ const TerritoryInput = props => {
                                 />
 
                                 {isOpen ? (
-                                    <Paper className={classes.paper} square>
+                                    <Paper square>
                                         {suggestions.map((suggestion, index) => (
                                             <MenuItem
                                                 {...getItemProps({
@@ -155,7 +154,6 @@ const TerritoryInput = props => {
 };
 
 TerritoryInput.propTypes = {
-    classes: PropTypes.object.isRequired,
 };
 
 const styles = theme => ({

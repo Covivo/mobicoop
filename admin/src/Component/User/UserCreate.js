@@ -3,6 +3,9 @@ import { useForm } from 'react-final-form';
 import GeocompleteInput from "../Utilities/geocomplete";
 import TerritoryInput from "../Utilities/territory";
 
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+
 import {
     Create,
     TabbedForm, FormTab,
@@ -10,7 +13,7 @@ import {
     email, regex, ReferenceArrayInput, SelectArrayInput,BooleanInput,ReferenceInput,useTranslate, Toolbar,  SaveButton,
     useCreate,
     useRedirect,
-    useNotify,
+    useNotify,useDataProvider
 } from 'react-admin';
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -24,7 +27,18 @@ const UserCreate = props => {
     const translate = useTranslate();
     const instance = process.env.REACT_APP_INSTANCE_NAME;
 
-    const [fields, setFields] = useState([{ value: null }]);
+    const dataProvider = useDataProvider();
+    const [territory, setTerritory] = useState();
+    const [roles, setRoles] = useState([]);
+    const [fields, setFields] = useState([{'roles' : [], 'territory' : null}]);
+
+
+        dataProvider.getList('permissions/roles', {pagination:{ page: 1 , perPage: 1000 }, sort: { field: 'id', order: 'ASC' }, })
+            .then( ({ data }) => {
+              console.info(data)
+              setRoles(data)
+            });
+
 
     const required = (message = translate('custom.alert.fieldMandatory') ) =>
             value => value ? undefined : message;
@@ -61,17 +75,12 @@ const UserCreate = props => {
         {id : 1, name : translate('custom.label.user.phoneDisplay.forCarpooler')},
     ];
 
-    function handleChange(i, event) {
-      const values = [...fields];
-      values[i].value = event.target.value;
-      setFields(values);
-    }
-
     function handleAdd() {
-      console.info(fields)
       const values = [...fields];
-      values.push({ value: null });
+
+      values.push({'roles' : [], 'territory' : null});
       setFields(values);
+
     }
 
     function handleRemove(i) {
@@ -79,6 +88,7 @@ const UserCreate = props => {
       values.splice(i, 1);
       setFields(values);
     }
+
 
     const SaveWithNoteButton = ({ handleSubmitWithRedirect, ...props }) => {
         const [create] = useCreate('posts');
@@ -90,7 +100,7 @@ const UserCreate = props => {
 
           console.info(fields)
             // change the average_note field value
-            form.change('average_note', 10);
+            form.change('fields', fields);
             handleSubmitWithRedirect('edit');
         }, [form]);
         // override handleSubmitWithRedirect with custom logic
@@ -107,6 +117,14 @@ const UserCreate = props => {
             />
           </Toolbar>
       );
+
+      // Fonction utile à la modification d'un élément du mail
+      const modifieLigneCorpsMail = (indice, nature) => e => {
+          const values = [...fields];
+          if (nature == 'roles')   values[indice]['roles'] = e.target.value;
+          else  values[indice]['territory'] = '/territories/'+e.id;
+          setFields(values);
+      }
 
     const validateRequired = [required()];
     const paswwordRules = [required(),minPassword(),upperPassword,lowerPassword,numberPassword];
@@ -146,25 +164,28 @@ const UserCreate = props => {
 
                   <FormTab label={translate('custom.label.user.manageRoles')}>
 
-                        <button type="button" onClick={() => handleAdd()}>
+                        <div type="button" onClick={() => handleAdd()}>
                           +
-                        </button>
+                        </div>
 
-                        {fields.map((field, idx) => {
+                        {fields.map((field, i) => {
+
                           return (
-                            <div key={`div-${field}-${idx}`} fullwidth="true">
+                            <div key={`div-${i}`} fullwidth="true">
 
-                              <ReferenceArrayInput key={`role-${field}-${idx}`} required label={translate('custom.label.user.roles')}
-                                source="userAuthAssignments" reference="permissions/roles" validate={ validateRequired }
-                                formClassName={classes.spacedHalfwidth}>
-                                  <SelectArrayInput optionText="name" />
-                              </ReferenceArrayInput>
+                              <Select
+                                   multiple
+                                   onChange={modifieLigneCorpsMail(i, 'roles')}
+                                   value={field['roles']}
+                                 >
+                                  { roles.map( d =>  <MenuItem value={d.id}>{d.name}</MenuItem> ) }
+                                 </Select>
 
-                              <TerritoryInput key={`territory-${field}-${idx}`} source="userTerritories"
-                                label={translate('custom.label.user.territory')} value={field.value}  formClassName={classes.spacedHalfwidth}
-                                validate={required("L'adresse est obligatoire")}/>
+                              <TerritoryInput key={`territory-${i}`} source="userTerritories"
+                                label={translate('custom.label.user.territory')}  setTerritory={modifieLigneCorpsMail(i, 'territory')}
+                                formClassName={classes.spacedHalfwidth} validate={required("L'adresse est obligatoire")}/>
 
-                              <button type="button" onClick={() => handleRemove(idx)}>
+                              <button type="button" onClick={() => handleRemove(i)}>
                                 X
                               </button>
                             </div>
