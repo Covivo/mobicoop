@@ -359,8 +359,10 @@ class AdManager
         }
 
         // the ad is a search ?
+        // by defaut a search is a round trip
         if (isset($data['search'])) {
             $ad->setSearch($data['search']);
+            $ad->setOneWay(false);
         }
 
         // role
