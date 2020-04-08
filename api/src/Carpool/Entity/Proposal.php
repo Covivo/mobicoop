@@ -99,6 +99,15 @@ class Proposal
     private $comment;
 
     /**
+     * @var boolean Exposed proposal.
+     * An exposed proposal is a search proposal that can be publicly visible via an url link.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread",})
+     */
+    private $exposed;
+
+    /**
      * @var boolean Dynamic proposal.
      * A dynamic proposal is a real-time proposal : used for dynamic carpooling.
      *
@@ -332,6 +341,7 @@ class Proposal
         $this->notifieds = new ArrayCollection();
         $this->setPrivate(false);
         $this->setPaused(false);
+        $this->setExposed(false);
         $this->results = [];
     }
     
@@ -373,6 +383,18 @@ class Proposal
     {
         $this->comment = $comment;
         
+        return $this;
+    }
+
+    public function isExposed(): bool
+    {
+        return $this->exposed ? true : false;
+    }
+
+    public function setExposed(?bool $exposed): self
+    {
+        $this->exposed = $exposed;
+
         return $this;
     }
 
