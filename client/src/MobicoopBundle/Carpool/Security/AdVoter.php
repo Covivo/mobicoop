@@ -70,7 +70,7 @@ class AdVoter extends Voter
         }
 
         // only vote on Ad objects inside this voter
-        if (!$subject instanceof Ad && !$subject instanceof Proposal) {
+        if (!$subject instanceof Ad && !$subject instanceof Proposal && !$subject instanceof User) {
             return false;
         }
         return true;
@@ -79,21 +79,20 @@ class AdVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         $user = $token->getUser();
-        $ad = $subject;
 
         switch ($attribute) {
             case self::CREATE_AD:
                 return $this->canCreateAd();
             case self::DELETE_AD:
-                return $this->canDeleteAd($ad, $user);
+                return $this->canDeleteAd($subject, $user);
             case self::UPDATE_AD:
-                return $this->canUpdateAd($ad);
+                return $this->canUpdateAd($subject);
             case self::POST:
-                return $this->canPostAd($user);
+                return $this->canPostAd($subject);
             case self::POST_DELEGATE:
                 return $this->canPostDelegateAd($user);
             case self::RESULTS:
-                return $this->canViewAdResults($ad, $user);
+                return $this->canViewAdResults($subject, $user);
         }
 
         throw new \LogicException('This code should not be reached!');
