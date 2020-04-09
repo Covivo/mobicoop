@@ -95,7 +95,7 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function carpoolAdUpdate(int $id, AdManager $adManager, ProposalManager $proposalManager, Request $request)
+    public function carpoolAdUpdate(int $id, AdManager $adManager, Request $request)
     {
         $ad = $adManager->getFullAd($id);
         $this->denyAccessUnlessGranted('update_ad', $ad);
@@ -127,8 +127,8 @@ class CarpoolController extends AbstractController
      */
     public function carpoolFirstAdPost()
     {
-        $user = $this->userManager->getLoggedUser();
-        $this->denyAccessUnlessGranted('post', $user);
+        $ad = new Ad();
+        $this->denyAccessUnlessGranted('create_first_ad', $ad);
         
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
             "firstAd" => true,
