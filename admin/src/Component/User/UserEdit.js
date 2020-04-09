@@ -1,10 +1,4 @@
-import React, {useState} from 'react';
-import {useDataProvider} from 'react-admin';
-
-import GeocompleteInput from "../Utilities/geocomplete";
-import {UserRenderer, addressRenderer} from '../Utilities/renderers'
-//import bcrypt from 'bcryptjs';
-
+import React, {Fragment,useState} from 'react';
 import {
     Edit,
     TabbedForm,
@@ -14,19 +8,15 @@ import {
     DateInput,
     email,
     Button,
-    regex,
     ReferenceArrayInput,
     SelectArrayInput,
     BooleanInput,
     ReferenceInput,
-    ReferenceField,
-    FunctionField,
-    useTranslate
+    useTranslate,
+    useDataProvider
 } from 'react-admin';
-import Close from '@material-ui/icons/Close';
-import Check from '@material-ui/icons/Check';
 import {makeStyles} from '@material-ui/core/styles'
-
+require('dotenv').config();
 const useStyles = makeStyles({
     spacedHalfwidth: {width: "45%", marginBottom: "1rem", display: 'inline-flex', marginRight: '1rem'},
     footer: {marginTop: "2rem"},
@@ -35,20 +25,17 @@ const useStyles = makeStyles({
 
 const DynamicForm = ({record}) => {
 
-        const classes = useStyles();
+        const dataProvider = useDataProvider();
+        const [structId, updateStructId] =  React.useState([]);
         const [checkbox, updateCheckbox] = React.useState([]);
         const [input, updateInput] = React.useState([]);
         const [selectBox, updateSelectBox] = React.useState([]);
         const [radio, updateRadio] = React.useState([]);
-        const apiUrl = process.env.REACT_APP_API;
-
-
-        const [user, setUser] = useState(null);
-        const dataProvider = useDataProvider();
-
+        const entrypoint = process.env.REACT_APP_API;
+        console.log(record)
         React.useEffect(function effectFunction() {
             const token = localStorage.getItem('token');
-            fetch(apiUrl+'/users/1/structures', {
+            fetch(entrypoint + '/users/' + record.originId + '/structures', {
                 headers: new Headers({
                     'Authorization': 'Bearer ' + token
                 })
@@ -57,6 +44,7 @@ const DynamicForm = ({record}) => {
                 .then(
                     (result) => {
                         result.structures.map(struct => {
+                            updateStructId([...structId, struct.id]);
                             struct.structureProofs.map(proof => {
                                 if (proof.checkbox) {
                                     updateCheckbox([...checkbox, proof]);
@@ -91,11 +79,34 @@ const DynamicForm = ({record}) => {
                     }
                 )
         }, []);
-        console.log(checkbox);
+        const useStyles = makeStyles({
+            acceptButton: { background: '#13a569', color: '#fff' , float: 'left'},
+            rejectButton: { background: 'red', color: '#fff' }
+        });
         const float = {
-            float: "left",
-            width: "78px"
+            float: 'left',
+            width: 'auto',
+            paddingRight: '16px'
         }
+
+        const handleClickAccept = () => {
+            dataProvider.update('solidary_user_structures', {
+                id: '/solidary_user_structures/'+structId,
+                data: { status: 1 },
+            });
+            console.log('Clicked')
+
+        }
+
+        const handleClickReject = () => {
+            dataProvider.update('solidary_user_structures', {
+                id: '/solidary_user_structures/'+structId,
+                data: { status: 0 },
+            });
+            console.log('Click Rejected')
+
+        }
+        const buttonClasses = useStyles();
         return (
             <FormTab label={''}>
                 {
@@ -114,7 +125,7 @@ const DynamicForm = ({record}) => {
                     selectBox.map((value, index) =>
                         <SelectInput required source={value.label} label={value.label}
                                      choices={value.options}
-                                     formClassName={classes.spacedHalfwidth}/>
+                        />
                     )
 
                 }
@@ -130,25 +141,17 @@ const DynamicForm = ({record}) => {
 
                 }
                 {
-                    <div style={float}>
-                        <Button
-                            label={'Accept'}
-                            color="secondary"
-                            onClick={''}
-                        >
-                            <Check/>
-                        </Button>
-                    </div>
+                    <Fragment>
+                        <div style={float}>
+                            <Button label="Accept" variant="contained" color="secondary" onClick={() => handleClickAccept()}></Button>
+                        </div>
+                    </Fragment>
+
                 }
                 {
-                    <Button
-                        label={'Reject'}
-                        color="secondary"
-                        onClick={''}
-                    >
-                        <Close/>
-                    </Button>
-
+                    <div>
+                        <Button label="Reject" variant="contained" color="secondary" onClick={() => handleClickReject()}></Button>
+                    </div>
                 }
             </FormTab>
         )
