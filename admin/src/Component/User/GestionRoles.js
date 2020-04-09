@@ -32,14 +32,13 @@ const GestionRoles = ({record}) => {
   useEffect(() => {
     if (record.rolesTerritory) {
       const values = [...fields];
-      console.info(values)
-      const cpt = 0;
+      let cpt = 0;
       for (const territory in record.rolesTerritory) {
+          values[cpt] = [];
           values[cpt]['roles'] = record.rolesTerritory[territory]
           values[cpt]['territory'] = territory
-
+          cpt ++;
       }
-            console.info(values)
         setFields(values);
     }
   }, [record]);
