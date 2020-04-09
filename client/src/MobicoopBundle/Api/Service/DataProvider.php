@@ -134,6 +134,11 @@ class DataProvider
         $this->private = false;
         $this->cache = new FilesystemAdapter();
 
+        // use the following for debugging token related problems !
+        // $this->cache->deleteItem($this->tokenId.'.jwt.token');
+        // $this->session->remove('apiToken');
+        // $this->session->remove('apiRefreshToken');
+
         // check an existing jwt token
         if ($apiToken = $this->session->get('apiToken')) {
             // there's an api token in session

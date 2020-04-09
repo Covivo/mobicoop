@@ -47,6 +47,7 @@ use Psr\Log\LoggerInterface;
 use App\Rdex\Entity\RdexError;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
+use App\Auth\Service\AuthManager;
 
 /**
  * Ad manager service.
@@ -70,6 +71,7 @@ class AdManager
     private $askManager;
     private $eventDispatcher;
     private $security;
+    private $authManager;
 
     /**
      * Constructor.
@@ -77,7 +79,7 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -93,6 +95,7 @@ class AdManager
         $this->askManager = $askManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->security = $security;
+        $this->authManager = $authManager;
     }
     
     /**
@@ -132,6 +135,14 @@ class AdManager
                 $outwardProposal->setUserDelegate($poster);
             } else {
                 throw new UserNotFoundException('Poster ' . $ad->getPosterId() . ' not found');
+            }
+        }
+
+        // SOLIDARY TEMPORARY FIX
+        // if the poster is solidary manager, we assume the Ad is solidary
+        if ($user) {
+            if ($this->authManager->isAuthorized('ROLE_SOLIDARY_MANAGER')) {
+                $ad->setSolidary(true);
             }
         }
 

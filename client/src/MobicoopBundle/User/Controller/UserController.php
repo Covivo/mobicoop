@@ -296,7 +296,6 @@ class UserController extends AbstractController
             $data = $request->request;
             $file = $request->files->get('avatar');
             
-           
             // check if the phone number is new and if so change token and validationdate
             if ($user->getTelephone() != $data->get('telephone')) {
                 $user->setTelephone($data->get('telephone'));
@@ -339,7 +338,7 @@ class UserController extends AbstractController
         if ($tabDefault == 'mon-profil') {
             $tabDefault = 'myProfile';
         }
-
+        
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
             'error' => $error,
             'alerts' => $userManager->getAlerts($user)['alerts'],
