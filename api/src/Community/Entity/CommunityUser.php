@@ -74,7 +74,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  * )
  * @ApiFilter(NumericFilter::class, properties={"user.id","community.id","status"})
  * @ApiFilter(SearchFilter::class, properties={"community":"exact","user":"exact"})
- * @ApiFilter(OrderFilter::class, properties={"acceptedDate"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id","status","user.givenName","acceptedDate"}, arguments={"orderParameterName"="order"})
  */
 class CommunityUser
 {
@@ -92,7 +92,7 @@ class CommunityUser
      * @Groups({"readCommunity","readCommunityUser"})
      */
     private $id;
-        
+
     /**
      * @var Community The community.
      *
@@ -124,7 +124,7 @@ class CommunityUser
      * @Groups({"readCommunity","readCommunityUser","write"})
      */
     private $status;
-    
+
     /**
      * @var User The user that validates/invalidates the registration.
      *
@@ -182,7 +182,7 @@ class CommunityUser
      * @Groups("readCommunityUser")
      */
     private $creator;
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -196,10 +196,10 @@ class CommunityUser
     public function setCommunity(?Community $community): self
     {
         $this->community = $community;
-        
+
         return $this;
     }
-        
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -208,15 +208,15 @@ class CommunityUser
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
-    
+
     public function getStatus(): ?int
     {
         return $this->status;
     }
-    
+
     public function setStatus(?int $status)
     {
         $this->status = $status;
@@ -230,7 +230,7 @@ class CommunityUser
     public function setAdmin(?User $admin): self
     {
         $this->admin = $admin;
-        
+
         return $this;
     }
 
@@ -238,11 +238,11 @@ class CommunityUser
     {
         return $this->createdDate;
     }
-    
+
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
-        
+
         return $this;
     }
 
@@ -262,11 +262,11 @@ class CommunityUser
     {
         return $this->acceptedDate;
     }
-    
+
     public function setAcceptedDate(?\DateTimeInterface $acceptedDate): self
     {
         $this->acceptedDate = $acceptedDate;
-        
+
         return $this;
     }
 
@@ -274,11 +274,11 @@ class CommunityUser
     {
         return $this->refusedDate;
     }
-    
+
     public function setRefusedDate(?\DateTimeInterface $refusedDate): self
     {
         $this->refusedDate = $refusedDate;
-        
+
         return $this;
     }
 
@@ -286,7 +286,7 @@ class CommunityUser
     {
         return $this->login;
     }
-    
+
     public function setLogin(?string $login): self
     {
         $this->login = $login;
@@ -298,7 +298,7 @@ class CommunityUser
     {
         return $this->password;
     }
-    
+
     public function setPassword(?string $password): self
     {
         $this->password = $password;
@@ -310,7 +310,7 @@ class CommunityUser
     {
         return $this->creator;
     }
-    
+
     public function setCreator(?bool $isCreator): self
     {
         $this->creator = boolval($isCreator);
@@ -319,7 +319,7 @@ class CommunityUser
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

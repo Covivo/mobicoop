@@ -274,6 +274,10 @@ export default {
     imageSwap:{
       type:String,
       default:""
+    },
+    initRole: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -282,7 +286,7 @@ export default {
       outwardDateClicked: false,
       menu: false,
       regular: this.initRegular,
-      role: this.solidaryExclusiveAd ? 1 : 3,
+      role: this.initRole ? this.initRole : (this.solidaryExclusiveAd ? 1 : 3),
       passenger: true,
       driver: true,
       labelOrigin: this.$t("origin.label"),

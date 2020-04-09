@@ -1298,7 +1298,7 @@ class ProposalManager
      * @return Response
      * @throws \Exception
      */
-    public function deleteProposal(Proposal $proposal, ?array $body)
+    public function deleteProposal(Proposal $proposal, ?array $body = null)
     {
         $asks = $this->askManager->getAsksFromProposal($proposal);
         if (count($asks) > 0) {

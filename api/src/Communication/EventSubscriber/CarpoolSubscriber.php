@@ -24,6 +24,7 @@
 namespace App\Communication\EventSubscriber;
 
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\Waypoint;
 use App\Carpool\Event\AdRenewalEvent;
 use App\Carpool\Event\AskAcceptedEvent;
 use App\Carpool\Event\AskAdDeletedEvent;
@@ -36,6 +37,8 @@ use App\Carpool\Event\MatchingNewEvent;
 use App\Carpool\Event\PassengerAskAdDeletedEvent;
 use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
 use App\Carpool\Event\ProposalCanceledEvent;
+use App\Carpool\Event\AdMajorUpdatedEvent;
+use App\Carpool\Event\AdMinorUpdatedEvent;
 use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Communication\Service\NotificationManager;
@@ -43,6 +46,7 @@ use App\TranslatorTrait;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CarpoolSubscriber implements EventSubscriberInterface
 {
@@ -51,12 +55,14 @@ class CarpoolSubscriber implements EventSubscriberInterface
     private $notificationManager;
     private $askHistoryRepository;
     private $logger;
-    
-    public function __construct(NotificationManager $notificationManager, AskHistoryRepository $askHistoryRepository, LoggerInterface $logger)
+    private $router;
+
+    public function __construct(NotificationManager $notificationManager, AskHistoryRepository $askHistoryRepository, LoggerInterface $logger, UrlGeneratorInterface $router)
     {
         $this->notificationManager = $notificationManager;
         $this->askHistoryRepository = $askHistoryRepository;
         $this->logger = $logger;
+        $this->router = $router;
     }
     
     public static function getSubscribedEvents()
@@ -74,7 +80,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
             PassengerAskAdDeletedEvent::NAME => 'onPassengerAskAdDeleted',
             PassengerAskAdDeletedUrgentEvent::NAME => 'onPassengerAskAdDeletedUrgent',
             DriverAskAdDeletedEvent::NAME => 'onDriverAskAdDeleted',
-            DriverAskAdDeletedUrgentEvent::NAME => 'onDriverAskAdDeletedUrgent'
+            DriverAskAdDeletedUrgentEvent::NAME => 'onDriverAskAdDeletedUrgent',
+            AdMinorUpdatedEvent::NAME => 'onAdMinorUpdated',
+            AdMajorUpdatedEvent::NAME => 'onAdMajorUpdated'
         ];
     }
     
@@ -270,6 +278,68 @@ class CarpoolSubscriber implements EventSubscriberInterface
             $this->notificationManager->notifies(DriverAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
         } else {
             $this->notificationManager->notifies(DriverAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+        }
+    }
+
+    public function onAdMinorUpdated(AdMinorUpdatedEvent $event)
+    {
+        $object = (object) [
+            "old" => $event->getOldAd(),
+            "new" => $event->getNewAd(),
+            "sender" => $event->getSender()
+        ];
+
+        foreach ($event->getAsks() as $ask) {
+            $object->ask = $ask;
+            $this->notificationManager->notifies(AdMinorUpdatedEvent::NAME, $ask->getUser(), $object);
+        }
+    }
+
+    public function onAdMajorUpdated(AdMajorUpdatedEvent $event)
+    {
+        $object = (object) [
+            "old" => $event->getOldAd(),
+            "new" => $event->getNewAd(),
+            "sender" => $event->getSender()
+        ];
+
+        foreach ($event->getAsks() as $ask) {
+            $object->ask = $ask;
+            $origin = null;
+            $destination = null;
+            $regular = false;
+            $date = null;
+
+            if ($ask->getCriteria()->getFrequency() === 2) {
+                $regular = true;
+            } else {
+                $date = $ask->getCriteria()->getFromDate();
+                !is_null($date) ? $date = $date->format('Y-m-d') : null;
+            }
+            /** @var Waypoint $waypoint */
+            foreach ($ask->getWaypoints() as $waypoint) {
+                if ($waypoint->getPosition() === 0) {
+                    $origin = clone $waypoint->getAddress();
+                } elseif ($waypoint->isDestination()) {
+                    $destination = clone $waypoint->getAddress();
+                }
+            }
+
+            $routeParams = [
+                "origin" => json_encode($origin),
+                "destination" => json_encode($destination),
+                "regular" => $regular,
+                "date" => $date
+            ];
+            // todo: use if we can keep the proposal (request or offer) if we delete the matched one
+//            if ($ask->getCriteria()->isDriver()) {
+//                $proposalId = $ask->getMatching()->getProposalOffer()->getId();
+//            } else {
+//                $proposalId = $ask->getMatching()->getProposalRequest()->getId();
+//            }
+//            $routeParams = ["pid" => $proposalId];
+            $object->searchLink = $event->getMailSearchLink() . "?" . http_build_query($routeParams);
+            $this->notificationManager->notifies(AdMajorUpdatedEvent::NAME, $ask->getUser(), $object);
         }
     }
 }

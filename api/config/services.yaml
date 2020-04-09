@@ -346,11 +346,6 @@ services:
         resource: '../src/Rdex/Controller'
         tags: ['controller.service_arguments']
     
-    # Solidary
-    App\Solidary\Controller\:
-        resource: '../src/Solidary/Controller'
-        tags: ['controller.service_arguments']
-
     # User
     App\User\Controller\:
         resource: '../src/User/Controller'

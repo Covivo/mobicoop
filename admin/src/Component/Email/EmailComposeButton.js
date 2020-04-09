@@ -1,12 +1,11 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import MailIcon from '@material-ui/icons/Mail';
-import BlockIcon from '@material-ui/icons/Block';
 import { Button, useTranslate, useMutation,useDataProvider  } from 'react-admin';
 import MailComposer from './MailComposer'
 import RgpdConsent from './RgpdConsent'
 
 
-const EmailComposeButton = ({ selectedIds, resource, basePath, filterValues,countChecked = 0 }) => {
+const EmailComposeButton = ({ selectedIds, resource, basePath, filterValues}) => {
 
     const [open, setOpen] = useState(false);    // State of the mail modal
     const [openRgpd, setOpenRgpd] = useState(false);    // State of the RGPD modal
@@ -73,7 +72,6 @@ const EmailComposeButton = ({ selectedIds, resource, basePath, filterValues,coun
 
     const selectedIdsFormat = selectedIds.map(x => x.replace('community_users', 'users'));
 
-    if (countChecked == 0){
         return (
             <Fragment>
                 <Button label={shouldFetch ? translate('custom.email.texte.emailTous')  : translate('custom.email.texte.emailSelect') } onClick={handleClick} startIcon={<MailIcon />} />
@@ -98,32 +96,7 @@ const EmailComposeButton = ({ selectedIds, resource, basePath, filterValues,coun
             </Fragment>
 
         );
-    }else{
-        return (
-            <Fragment>
-                <Button label={translate('custom.email.texte.blockUnsubscribe')} startIcon={<BlockIcon />} />
-                { open &&
-                <MailComposer
-                    isOpen={open}
-                    selectedIds={selectedIdsFormat}
-                    onClose={()=>setOpen(false)}
-                    shouldFetch={ shouldFetch }
-                    resource={resource}
-                    basePath={basePath}
-                    filterValues={filterValues}
-                    campagneInit = {campagneInit}
 
-                />
-                }
-                <RgpdConsent
-                    isOpen={openRgpd}
-                    onClose={()=>setOpenRgpd(false)}
-                    iAgree={()=>setRgpdAgree(true)}
-                />
-            </Fragment>
-
-        );
-    }
 
 }
 

@@ -38,6 +38,7 @@ use App\Community\Entity\Community;
 use App\Geography\Entity\Address;
 use App\RelayPoint\Entity\RelayPointType;
 use App\Image\Entity\Image;
+use App\Solidary\Entity\Structure;
 
 /**
  * A relay point.
@@ -84,7 +85,7 @@ class RelayPoint
     private $name;
 
     /**
-     * @var boolean|null The relay point is private to a community.
+     * @var boolean|null The relay point is private to a community or a solidary structure.
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
@@ -216,6 +217,15 @@ class RelayPoint
      * @Groups({"read","write"})
      */
     private $community;
+
+    /**
+     * @var Structure|null The solidary structure of the relay point.
+     *
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure")
+     * @ORM\JoinColumn(nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $structure;
 
     /**
      * @var ArrayCollection|null The relay point types.
@@ -409,6 +419,18 @@ class RelayPoint
     public function setCommunity(?Community $community): self
     {
         $this->community = $community;
+        
+        return $this;
+    }
+
+    public function getStructure(): ?Structure
+    {
+        return $this->structure;
+    }
+    
+    public function setStructure(?Structure $structure): self
+    {
+        $this->structure = $structure;
         
         return $this;
     }

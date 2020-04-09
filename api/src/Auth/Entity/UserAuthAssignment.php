@@ -62,7 +62,7 @@ class UserAuthAssignment
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="userAuthAssignments")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"authRead","authWrite"})
+     * @Groups({"authRead","authWrite","write"})
      * @MaxDepth(1)
      */
     private $user;
@@ -72,7 +72,7 @@ class UserAuthAssignment
      *
      * @ORM\ManyToOne(targetEntity="\App\Auth\Entity\AuthItem")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"authRead","authWrite"})
+     * @Groups({"authRead","authWrite","write"})
      */
     private $authItem;
 
@@ -80,7 +80,7 @@ class UserAuthAssignment
      * @var Territory|null The territory associated with the assignment.
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Territory")
-     * @Groups({"authRead","authWrite"})
+     * @Groups({"authRead","authWrite","write"})
      */
     private $territory;
 

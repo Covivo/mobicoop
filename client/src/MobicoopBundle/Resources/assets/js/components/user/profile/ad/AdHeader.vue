@@ -69,7 +69,7 @@
       <v-spacer />
       <v-col
         v-if="!isCarpool"
-        cols="8"
+        cols="7"
         class="text-center"
       >
         <p
@@ -81,20 +81,9 @@
       </v-col>
       <v-col
         v-if="!isCarpool"
-        cols="2"
+        cols="3"
         class="text-right"
       >
-        <v-btn
-          v-if="isPausable && !isArchived && !paused"
-          class="secondary my-1 mr-1"
-          icon
-          :loading="loading"
-          @click="pauseAd"
-        >
-          <v-icon class="white--text">
-            mdi-pause
-          </v-icon>
-        </v-btn>
         <v-btn
           v-if="isPausable && !isArchived && paused"
           class="success my-1 mr-1"
@@ -119,17 +108,29 @@
             mdi-delete-outline
           </v-icon>
         </v-btn>
+        <v-btn
+          v-if="!isArchived"
+          class="secondary ma-1"
+          icon
+          :loading="loading"
+          @click="updateAd"
+        >
+          <v-icon class="white--text">
+            mdi-pencil
+          </v-icon>
+        </v-btn>
+        <v-btn
+          v-if="isPausable && !isArchived && !paused"
+          class="secondary my-1 mr-1"
+          icon
+          :loading="loading"
+          @click="pauseAd"
+        >
+          <v-icon class="white--text">
+            mdi-pause
+          </v-icon>
+        </v-btn>
       </v-col>
-      <!-- <v-btn
-        v-if="!isArchived"
-        class="secondary ma-1"
-        icon
-        :loading="loading"
-      >
-        <v-icon class="white--text">
-          mdi-pencil
-        </v-icon>
-      </v-btn> -->
     </v-row>
     
     <!--DIALOG-->
@@ -177,6 +178,7 @@
 
 <script>
 import axios from "axios";
+import formData from "../../../../utils/request";
 
 import Translations from "@translations/components/user/profile/ad/MyAds.js";
 
@@ -237,8 +239,7 @@ export default {
         textarea: true
       },
       deleteMessage: "",
-      paused: this.isPaused,
-      ad: {}
+      paused: this.isPaused
     }
   },
   methods: {
@@ -276,27 +277,31 @@ export default {
           self.dialogActive = false;
         })
     },
+    updateAd () {
+      formData(this.$t('update.route', {id : this.adId}), null, 'GET');
+    },
     pauseAd () {
       this.paused = !this.paused;
       this.loading = true;
-      this.ad.adId = this.adId;
-      this.ad.paused = this.paused;
+      let ad = {
+        id: this.adId,
+        paused: this.paused
+      };
       axios
-        .put(this.$t('pause.route'), this.ad,
+        .put(this.$t('update.route', {id : this.adId}), ad,
           {
             headers:{
               'content-type': 'application/json'
             }
           })
         .then(res => {
-          if (res.data && res.data.message === "success") {
+          if (res.data && res.data.result.id) {
             this.alert = {
               type: "success",
-              message: this.paused ? this.$t("pause.success.pause") : this.$t("pause.success.unpause")
+              message: res.data.result.paused ? this.$t("pause.success.pause") : this.$t("pause.success.unpause")
             };
-            this.$emit('pause-ad', this.ad.paused);
-          }
-          if (res.data && res.data.message === "error") {
+            this.$emit('pause-ad', res.data.result.paused);
+          } else {
             this.alert = {
               type: "error",
               message: this.paused ? this.$t("pause.error.pause") : this.$t("pause.error.unpause")

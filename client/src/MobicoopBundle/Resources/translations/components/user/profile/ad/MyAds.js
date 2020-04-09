@@ -10,7 +10,6 @@ export default {
       },
     },
     pause: {
-      route: "/covoiturage/annonce/pause",
       error: {
         pause: "Une erreur est survenue votre annonce n'a pas été mise en pause.",
         unpause: "Une erreur est survenue votre annonce n'a pas été activée"
@@ -43,6 +42,9 @@ export default {
         cancel: "Annuler",
         validate: "Confirmer"
       }
+    },
+    update: {
+      route: "/covoiturage/annonce/{id}/modifier"
     }
   },
   en: {
@@ -54,6 +56,9 @@ export default {
       route: "/carpool/ad/delete",
       success: "Your ad had been deleted with success.",
       error: "An error happened."
+    },
+    update: {
+      route: "/carpool/ad/{id}/update"
     }
   }
 }

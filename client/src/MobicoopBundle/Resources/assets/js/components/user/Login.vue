@@ -148,7 +148,7 @@ export default {
       this.treatErrorMessage({'value':data})
     },
     treatErrorMessage(errorMessage) {
-      if (errorMessage.value === "Bad credentials.") {
+      if (errorMessage.value === "Unable to get an API token.") {
         this.errorDisplay = this.$t("errorCredentials");
         this.loading = false;
       }

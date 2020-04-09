@@ -23,15 +23,9 @@
 
 namespace App\Auth\Security;
 
-use App\App\Entity\App;
 use App\Auth\Service\AuthManager;
-use App\Auth\Service\PermissionManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\User\Exception\UserNotFoundException;
-use App\User\Repository\UserRepository;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class PermissionVoter extends Voter
 {

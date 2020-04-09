@@ -40,6 +40,7 @@ class AdVoter extends Voter
 {
     const AD_CREATE = 'ad_create';
     const AD_READ = 'ad_read';
+    const AD_READ_SELF = 'ad_read_self';
     const AD_UPDATE = 'ad_update';
     const AD_DELETE = 'ad_delete';
     const AD_LIST = 'ad_list';
@@ -69,6 +70,7 @@ class AdVoter extends Voter
         if (!in_array($attribute, [
             self::AD_CREATE,
             self::AD_READ,
+            self::AD_READ_SELF,
             self::AD_UPDATE,
             self::AD_DELETE,
             self::AD_LIST,
@@ -109,10 +111,15 @@ class AdVoter extends Voter
                 return $this->canCreateAd();
             case self::AD_READ:
                 return $this->canReadAd();
+            case self::AD_READ_SELF:
+                $ad = $this->adManager->getAd($this->request->get('id'));
+                return $this->canReadSelfAd($ad);
             case self::AD_UPDATE:
-                return $this->canUpdateAd($subject);
+                $ad = $this->adManager->getAd($this->request->get('id'));
+                return $this->canUpdateAd($ad);
             case self::AD_DELETE:
-                return $this->canDeleteAd($subject);
+                $ad = $this->adManager->getAd($this->request->get('id'));
+                return $this->canDeleteAd($ad);
             case self::AD_LIST:
                 return $this->canListAd();
             case self::AD_ASK_CREATE:
@@ -140,6 +147,11 @@ class AdVoter extends Voter
     private function canReadAd()
     {
         return $this->authManager->isAuthorized(self::AD_READ);
+    }
+
+    private function canReadSelfAd(Ad $ad)
+    {
+        return $this->authManager->isAuthorized(self::AD_READ_SELF, ['ad'=>$ad]);
     }
 
     private function canUpdateAd(Ad $ad)

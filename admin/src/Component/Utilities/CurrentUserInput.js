@@ -13,11 +13,11 @@ const CurrentUserInput = props => {
     const dataProvider  = useDataProvider()
     const [currentUserName, setCurrentUserName] = useState("...")
 
-    useEffect( () => {  localStorage.getItem('id') && 
-                        dataProvider.getOne('users',{id: "/users/"+localStorage.getItem('id')} )
+    useEffect( () => {  localStorage.getItem('id') &&
+                        dataProvider.getOne('users',{id:localStorage.getItem('id')} )
                             .then( ({ data }) => {
                                 setCurrentUserName(data.givenName + " " + data.familyName)
-                                onChange(data.id) 
+                                onChange(data.id)
                             })
                             .catch( error => {
                                 notify("Erreur lors de la recherche de l'utilisateur courant", 'warning')

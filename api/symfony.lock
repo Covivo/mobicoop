@@ -125,6 +125,9 @@
     "geocoder-php/plugin": {
         "version": "1.1.0"
     },
+    "gesdinet/jwt-refresh-token-bundle": {
+        "version": "v0.9.1"
+    },
     "guzzlehttp/guzzle": {
         "version": "6.3.3"
     },

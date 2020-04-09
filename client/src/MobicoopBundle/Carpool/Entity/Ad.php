@@ -30,7 +30,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * Carpooling : an ad.
  * All actions related to a carpooling should be related to this entity.
  */
-class Ad implements ResourceInterface
+class Ad implements ResourceInterface, \JsonSerializable
 {
     const ROLE_DRIVER = 1;
     const ROLE_PASSENGER = 2;
@@ -298,6 +298,11 @@ class Ad implements ResourceInterface
     private $results;
 
     /**
+     * @var array|null The carpool asks.
+     */
+    private $asks;
+
+    /**
      * @var int|null The ad id for which the current ad is an ask.
      *
      * @Groups({"post","put"})
@@ -340,7 +345,6 @@ class Ad implements ResourceInterface
 
     /**
     * @var int|null proposalId.
-    * A paused ad can't be the found in the result of a search, and can be unpaused at any moment.
     *
     * @Groups({"post","put"})
     */
@@ -352,6 +356,23 @@ class Ad implements ResourceInterface
      */
     private $potentialCarpoolers;
 
+    /**
+     * @var boolean
+     */
+    private $smoke;
+
+    /**
+     * @var boolean
+     */
+    private $music;
+
+    /**
+     * @var string|null The message if Ad owner is making major updates to his Ad
+     *
+     * @Groups({"post", "put"})
+     */
+    private $cancellationMessage;
+
     public function __construct($id=null)
     {
         $this->outwardWaypoints = [];
@@ -360,6 +381,7 @@ class Ad implements ResourceInterface
         $this->communities = [];
         $this->results = [];
         $this->filters = [];
+        $this->asks = [];
         if (!is_null($id)) {
             $this->id = $id;
         }
@@ -692,6 +714,35 @@ class Ad implements ResourceInterface
         return $this;
     }
 
+    public function isSmoke(): ?bool
+    {
+        return $this->smoke;
+    }
+
+    public function setSmoke(?bool $smoke): ?bool
+    {
+        $this->smoke = $smoke;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasMusic(): ?bool
+    {
+        return $this->music;
+    }
+
+    /**
+     * @param bool $music
+     * @return Ad
+     */
+    public function setMusic(?bool $music): Ad
+    {
+        $this->music = $music;
+        return $this;
+    }
+
     public function hasBackSeats(): ?bool
     {
         return $this->backSeats;
@@ -800,6 +851,18 @@ class Ad implements ResourceInterface
         return $this;
     }
 
+    public function getAsks(): ?array
+    {
+        return $this->asks;
+    }
+
+    public function setAsks(?array $asks)
+    {
+        $this->asks = $asks;
+
+        return $this;
+    }
+
     public function getAdId(): ?int
     {
         return $this->adId;
@@ -893,5 +956,72 @@ class Ad implements ResourceInterface
     {
         $this->potentialCarpoolers = $potentialCarpoolers;
         return $this;
+    }
+
+    public function getOrigin()
+    {
+        if (!empty($this->getOutwardWaypoints())) {
+            $origin = $this->getOutwardWaypoints()[array_search(0, array_column($this->getOutwardWaypoints(), 'position'))];
+            if (isset($origin['@type']) && $origin["@type"] === "Address") {
+                return $origin;
+            } elseif (isset($origin['address'])) {
+                return $origin["address"];
+            }
+        }
+        return null;
+    }
+
+    public function getDestination()
+    {
+        if (!empty($this->getOutwardWaypoints())) {
+            $destination = $this->getOutwardWaypoints()[array_search(true, array_column($this->getOutwardWaypoints(), 'destination'))];
+            if (isset($destination['@type']) && $destination["@type"] === "Address") {
+                return $destination;
+            } elseif (isset($destination['address'])) {
+                return $destination["address"];
+            }
+        }
+        return null;
+    }
+
+    public function getCancellationMessage(): ?string
+    {
+        return $this->cancellationMessage;
+    }
+
+    public function setCancellationMessage(?string $cancellationMessage): Ad
+    {
+        $this->cancellationMessage = $cancellationMessage;
+        return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+            [
+                'id' => $this->getId(),
+                'role' => $this->getRole(),
+                'oneWay' => $this->isOneWay(),
+                'outwardWaypoints' => $this->getOutwardWaypoints(),
+                'returnWaypoints' => $this->getReturnWaypoints(),
+                'outwardDate' => !is_null($this->getOutwardDate()) ? $this->getOutwardDate()->format('Y-m-d') : null,
+                'outwardLimitDate' => $this->getOutwardLimitDate(),
+                'returnDate' => !is_null($this->getReturnDate()) ? $this->getReturnDate()->format('Y-m-d') : null,
+                'returnLimitDate' => $this->getReturnLimitDate(),
+                'outwardTime' => $this->getOutwardTime(),
+                'returnTime' => $this->getReturnTime(),
+                'priceKm' => $this->getPriceKm(),
+                'outwardDriverPrice' => $this->getOutwardDriverPrice(),
+                'seatsDriver' => $this->getSeatsDriver(),
+                'seatsPassenger' => $this->getSeatsPassenger(),
+                'luggage' => $this->hasLuggage(),
+                'bike' => $this->hasBike(),
+                'backSeats' => $this->hasBackSeats(),
+                'message' => $this->getComment(),
+                'origin' => $this->getOrigin(),
+                'destination' => $this->getDestination(),
+                'schedule' => $this->getSchedule(),
+                'paused' => $this->isPaused()
+            ];
     }
 }

@@ -16,6 +16,7 @@ import { UserRenderer, addressRenderer } from '../../Utilities/renderers'
 import GeocompleteInput from '../../Utilities/geocomplete';
 import {validationChoices, statusChoices } from './communityChoices'
 import UserReferenceField from '../../User/UserReferenceField'
+import SelectNewStatus from '../CommunityUser/SelectNewStatus'
 import EditButtonWithBackLink from '../../Utilities/EditButtonWithBackLink'
 
 const useStyles = makeStyles({
@@ -80,13 +81,12 @@ export const CommunityEdit = (props) => {
                         <List {...props}
                             perPage={ 50 }
                             actions={null}
-                            sort={{ field: 'id', order: 'ASC' }}
                             title=": composition"
                         >
                             <Datagrid>
-                                <UserReferenceField label={translate('custom.label.community.member')} source="user" reference="users" />
-                                <SelectField source="status" label={translate('custom.label.community.status')} choices={statusChoices} />
-                                <EditButtonWithBackLink backTo={'/communities/' + encodeURIComponent(communityId) } />
+                                <UserReferenceField label={translate('custom.label.community.member')} source="user" sortBy="user.givenName" reference="users" />
+
+                                <SelectNewStatus label={translate('custom.label.community.newStatus')} />
                                 <DeleteButton onClick={()=> redirect('edit', '/communities', encodeURIComponent(communityId))} />
                             </Datagrid>
                         </List>

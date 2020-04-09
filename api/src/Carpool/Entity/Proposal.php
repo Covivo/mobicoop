@@ -460,6 +460,11 @@ class Proposal
         return $this->waypoints->getValues();
     }
 
+    public function getWaypointById(int $id): ?Waypoint
+    {
+        return array_search($id, array_column($this->getWaypoints(), 'id'));
+    }
+
     public function addWaypoint(Waypoint $waypoint): self
     {
         if (!$this->waypoints->contains($waypoint)) {

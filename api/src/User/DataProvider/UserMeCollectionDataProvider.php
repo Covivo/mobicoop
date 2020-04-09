@@ -38,7 +38,7 @@ use App\User\Service\UserManager;
 final class UserMeCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $userManager;
-    
+
     public function __construct(UserManager $userManager)
     {
         $this->userManager = $userManager;
@@ -48,10 +48,11 @@ final class UserMeCollectionDataProvider implements CollectionDataProviderInterf
     {
         return User::class === $resourceClass && $operationName === "me";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): array
     {
         if ($user = $this->userManager->getMe()) {
+            $this->userManager->updateActivity($user);
             return [$user];
         }
         return [];

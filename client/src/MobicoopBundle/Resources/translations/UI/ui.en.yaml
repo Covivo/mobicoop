@@ -19,6 +19,8 @@ user:
 carpool:
     ad_create:
         title: 'Post a carpool ad'
+    ad_update:
+        title: 'Update your carpool ad'
     results:
         title: 'Carpool results'
 contact:

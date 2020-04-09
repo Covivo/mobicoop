@@ -12,7 +12,8 @@
         }
     },
     "hidden": "La liste n'est visible que par les membres de la communauté",
-    "urlMembersList":"/community/memberList"
+    "urlMembersList":"/community/memberList",
+    "referrer": "Référent"
   },
   "en": { 
     "title": "Members list",
@@ -27,6 +28,7 @@
         }
     },
     "hidden": "The list is only visible for the community's members",
-    "urlMembersList":"/community/memberList"
+    "urlMembersList":"/community/memberList",
+    "referrer": "Referrer"
   }
 }

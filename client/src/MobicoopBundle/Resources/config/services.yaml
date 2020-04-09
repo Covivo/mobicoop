@@ -93,6 +93,7 @@ services:
             $password: '%env(resolve:API_PASSWORD)%'
             $authPath: '%env(resolve:API_AUTH_PATH)%'
             $loginPath: '%env(resolve:API_LOGIN_PATH)%'
+            $refreshPath: '%env(resolve:API_REFRESH_PATH)%'
             $tokenId: '%env(resolve:API_TOKEN_ID)%'
         shared: false
 
@@ -163,6 +164,7 @@ services:
             $facebook_appid: '%env(resolve:FACEBOOK_APPID)%'
             $required_home_address: '%env(resolve:REQUIRED_HOME_ADDRESS)%'
             $news_subscription: '%env(resolve:NEWS_SUBSCRIPTION)%'
+            $community_show: '%env(resolve:COMMUNITY_SHOW)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\User\Service\:
         resource: '@MobicoopBundle/User/Service/*'

@@ -160,6 +160,7 @@ carpoolAskAccepted: "Covoiturage confirmé avec "
 askYouCarpoolRegular: "vous propose un covoiturage régulier de "
 findTheProposalIn: "Acceptez ou refusez la demande dans 'Mes Messages' sur "
 askYouCarpool: "vous propose un covoiturage de"
+clickHereToValidate: "Cliquez ici pour répondre à cette demande de covoiturage via votre messagerie"
 
 # CARPOOL_ASK_REFUSED
 

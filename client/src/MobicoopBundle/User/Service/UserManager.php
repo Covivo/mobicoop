@@ -504,16 +504,11 @@ class UserManager
      * @return array|object
      * @throws \ReflectionException
      */
-    public function getAds(User $user, bool $isValidatedCarpool = false)
+    public function getAds(User $user)
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
-
-        $params = ["userId"=>$user->getId(), "acceptedAsks" => true];
-        $isValidatedCarpool ? $params = array_merge($params, ["anyAds" => true]) : null;
-
-        $response = $this->dataProvider->getCollection($params);
-        
+        $response = $this->dataProvider->getCollection();
         $ads = $response->getValue();
        
         $adsSanitized = [
@@ -522,15 +517,6 @@ class UserManager
         ];
 
         foreach ($ads as $ad) {
-            if ($isValidatedCarpool) {
-                $acceptedAsks = array_filter($ad["results"], function ($result) {
-                    return $result["acceptedAsk"] === true;
-                });
-                if (count($acceptedAsks) === 0) {
-                    continue;
-                }
-            }
-
             $isAlreadyInArray = false;
             
             if (isset($adsSanitized["ongoing"][$ad["id"]]) ||
@@ -554,24 +540,10 @@ class UserManager
             }
 
             $key = $date < $now ? 'archived' : 'ongoing';
-
             $adsSanitized[$key][$ad["id"]] = $ad;
         }
-        usort($adsSanitized['ongoing'], function ($a, $b) {
-            return $a["outwardTime"] > $b["outwardTime"];
-        });
-
-        usort($adsSanitized['archived'], function ($a, $b) {
-            return $a["outwardTime"] > $b["outwardTime"];
-        });
         return $adsSanitized;
     }
-
-    public function getAcceptedCarpools(User $user)
-    {
-//        $ads = $this->adManager->
-    }
-
 
     /**
      * Cleaning the Matchings related to private Proposals
@@ -680,6 +652,67 @@ class UserManager
         $user = $this->findByUnsubscribeToken($token);
         $response = $this->dataProvider->putSpecial($user, null, "unsubscribe_user");
 
+        return $response->getValue();
+    }
+
+    /**
+     * Get the proposals of an user
+     *
+     * @param User $user
+     * @return array|object
+     * @throws \ReflectionException
+     */
+    public function getMyAcceptedProposals(User $user)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
+        $response = $this->dataProvider->getSpecialCollection("accepted");
+
+        $ads = $response->getValue();
+
+        $adsSanitized = [
+            "ongoing" => [],
+            "archived" => []
+        ];
+        
+        foreach ($ads as $ad) {
+            $isAlreadyInArray = false;
+            
+            if (isset($adsSanitized["ongoing"][$ad["id"]]) ||
+                isset($adsSanitized["archived"][$ad["id"]])) {
+                $isAlreadyInArray = true;
+            }
+            
+            if ($isAlreadyInArray) {
+                continue;
+            }
+
+            $now = new DateTime();
+            
+            // Carpool regular
+            if ($ad["frequency"] === Ad::FREQUENCY_REGULAR) {
+                $date = new DateTime($ad["outwardLimitDate"]);
+            }
+            // Carpool punctual
+            else {
+                $date = $ad["returnTime"] != null ? new DateTime($ad["returnTime"]): new DateTime($ad["outwardTime"]);
+            }
+
+            $key = $date < $now ? 'archived' : 'ongoing';
+            $adsSanitized[$key][$ad["id"]] = $ad;
+        }
+        return $adsSanitized;
+    }
+
+    /**
+     * Check if the email is already in use
+     *
+     * @param string $email
+     * @return void
+     */
+    public function checkEmail(string $email)
+    {
+        $response = $this->dataProvider->getSpecialCollection('checkEmail', ['email' => $email]);
         return $response->getValue();
     }
 }

@@ -17,6 +17,7 @@
         "geocoder-php/google-maps-provider": "^4.2",
         "geocoder-php/here-provider": "^0.1.0",
         "geocoder-php/open-cage-provider": "^4.0",
+        "gesdinet/jwt-refresh-token-bundle": "^0.9.1",
         "halaxa/json-machine": "^0.3.2",
         "lexik/jwt-authentication-bundle": "^2.6",
         "liip/imagine-bundle": "^2.1",

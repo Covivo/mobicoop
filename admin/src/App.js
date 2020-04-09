@@ -53,7 +53,7 @@ const theme = createMuiTheme({
       background: {
         paper: `#${process.env.REACT_APP_THEME_BACKGROUND_PAPER_COLOR}`,
         default: `#${process.env.REACT_APP_THEME_BACKGROUND_DEFAULT_COLOR}`
-      }
+      },
     },
     /*
     overrides: {
@@ -114,8 +114,8 @@ export default props => (
         layout={MyLayout}
     >
       {permissions => {
-        return  [          
-          <Resource name={'users'} {...users} />,
+        return  [
+          isAuthorized("user_read")    ? <Resource name={'users'} {...users} /> : null,
           isAuthorized("community_manage")    ? <Resource name={'communities'} {...communities} /> : null,
           isAuthorized("community_manage")    ? <Resource name={'community_users'} {...community_users} /> : null,
           isAuthorized("mass_manage")         ? <Resource name={'campaigns'} {...campaigns} /> : null,
@@ -124,14 +124,14 @@ export default props => (
           isAuthorized("article_manage")      ? <Resource name={'sections'} {...sections} /> : null,
           isAuthorized("article_manage")      ? <Resource name={'paragraphs'} {...paragraphs} /> : null,
           isAuthorized("relay_point_manage")  ? <Resource name={'relay_points'} {...relay_points} /> : null,
-          isAuthorized("relay_point_manage")  ? <Resource name={'relay_point_types'} {...relay_point_types} /> : null,
+          isAuthorized("relay_point_manage")  ? <Resource name={'relay_point_types'} />  : null,
           isAuthorized("permission_manage")   ? <Resource name={'roles'} {...roles} /> : null,
           isAuthorized("permission_manage")   ? <Resource name={'rights'} {...rights} /> : null,
           /*  isAuthorized("territory_manage")    ? <Resource name={'territories'} {...territories} /> : null, */
           /* <Resource name={'proposals'} list={ProposalList} />, Uncomment when proposals will be ready*/
-          <Resource name="addresses" {...adresses} />,
+          <Resource name="addresses" />,
           <Resource name="images" />,
-          <Resource name="roles" />,
+          <Resource name="permissions/roles" />,
           <Resource name="territories" />,
          ];
      }

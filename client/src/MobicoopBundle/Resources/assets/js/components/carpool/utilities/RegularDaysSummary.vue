@@ -44,12 +44,12 @@
     </v-chip>
     <p
       v-if="dateStartOfValidity && dateEndOfValidity"
-      class="font-italic mt-1"
+      class="font-italic mt-1 caption"
     >
       {{ $t('valid') }}&nbsp;{{ formattedDateStartOfValidity }}&nbsp;{{ $t('dateValidUntil') }}&nbsp;{{ formattedDateEndOfValidity }}
     </p>
     <p
-      v-if="dateEndOfValidity"
+      v-else-if="dateEndOfValidity"
       class="font-italic mt-1"
     >
       {{ $t('dateValid') }}&nbsp;{{ formattedDateEndOfValidity }}

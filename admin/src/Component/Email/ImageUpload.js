@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import {IconButton, CircularProgress} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
@@ -58,18 +58,23 @@ const ImageUpload = ({imageSrc, imageId, setImage,campaignId}) => {
             body: data,
             headers : options.headers
         }).then( retour => {
-            if (retour.status = '201') setImage({'src' : retour.json.versions.max, 'id' : retour.json.id  })
+            if (retour.status = '201'){
+                setImage({'src' : retour.json.versions.max, 'id' : retour.json.id  })
+                setLoading(false);
+            }
             else setErreur("Impossible de charge l'image. Erreur : " + retour.error)
         })
+
     }
 
     return (
         <div className={classes.container} onMouseEnter={()=>setAfficheUpload(true)} onMouseLeave={()=>setAfficheUpload(false)}>
+          { loading ?   <CircularProgress /> : null}
             {imageSrc && <img className={classes.img} src={imageSrc} data-id={imageId} alt={imageSrc} /> }
             {erreur && <p>Erreur : {erreur} </p> }
-            { (afficheUpload || !imageSrc) && 
+            { (afficheUpload || !imageSrc) &&
                 <div className={classes.upload}>
-                    <input accept="image/*" className={classes.input} id="icon-button-file" type="file" onChange={ event => chargeImage(event.target.files[0]) } />
+                    <input accept="image/*" className={classes.input} id="icon-button-file" type="file" onChange={ event => chargeImage(event.target.files[0]) } onClick={() => setLoading(true) } />
                     <label htmlFor="icon-button-file">
                         <IconButton color="primary" aria-label="upload picture" component="span">
                         { loading ?  <CircularProgress /> : <PhotoCamera /> }

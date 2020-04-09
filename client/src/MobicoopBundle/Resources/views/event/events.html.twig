@@ -16,6 +16,7 @@
                     :url-tiles="{{ urlTiles|json_encode }}"
                     :attribution-copyright="{{ attributionCopyright|json_encode }}"
                     :items-per-page-default="{{ defaultItemsPerPage }}"
+                    :is-logged="{{ (app.user ? true : false)|json_encode }}"
             ></event-list>
             <br/><br/>
         </div>

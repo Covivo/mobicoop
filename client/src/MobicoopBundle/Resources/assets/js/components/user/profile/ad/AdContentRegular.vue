@@ -23,6 +23,7 @@
           :return-times="returnTimes"
           :is-return="hasReturn"
           :is-regular="isRegular"
+          :has-days="true"
         />
       </v-col>
     </v-row>
@@ -38,8 +39,8 @@
             >
               <route-summary
                 :compact="true"
-                :origin="ad.outwardWaypoints[0].address"
-                :destination="ad.outwardWaypoints[ad.outwardWaypoints.length - 1].address"
+                :origin="origin"
+                :destination="destination"
                 :type="ad.frequency"
                 :regular="isRegular"
                 text-color-class="primary--text text--darken-2"
@@ -94,7 +95,7 @@ export default {
   },
   computed: {
     hasReturn () {
-      return !this.ad.oneWay;
+      return !this.ad.oneWay && this.returnTimes.length > 0;
     },
     isRegular () {
       return this.ad.frequency === 2;
@@ -119,6 +120,12 @@ export default {
     },
     hasSunday () {
       return this.ad && this.ad.schedule.sun;
+    },
+    origin () {
+      return this.ad.outwardWaypoints.find(el => el.position === 0)["address"];
+    },
+    destination () {
+      return this.ad.outwardWaypoints.find(el => el.destination === true)["address"];
     }
   }
 }

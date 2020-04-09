@@ -1,4 +1,4 @@
-import { AUTH_LOGIN, AUTH_LOGOUT, AUTH_ERROR, AUTH_CHECK } from 'react-admin';
+import { AUTH_LOGIN, AUTH_LOGOUT, AUTH_ERROR, AUTH_CHECK ,fetchUtils} from 'react-admin';
 import decodeJwt from 'jwt-decode';
 import { AUTH_GET_PERMISSIONS } from 'ra-core';
 import isAuthorized from './permissions';
@@ -29,20 +29,38 @@ export default (type, params) => {
                     return response.json();
                 })
                 .then(({ token }) => {
+
                     const decodedToken = decodeJwt(token);
-                    console.info(decodedToken)
                     if (!decodedToken.admin) throw new Error('Unauthorized');
                     localStorage.setItem('token', token);
                     localStorage.setItem('roles', decodedToken.roles);
                     localStorage.setItem('id', decodedToken.id);
-                    return {id: decodedToken.id, token};
+                    const options = {}
+
+                    const apiPermissions = process.env.REACT_APP_API+'/permissions';
+                    const httpClient = fetchUtils.fetchJson;
+                    if (!options.headers) {
+                        options.headers = new Headers({ Accept: 'application/json' });
+                    }
+                    options.headers.set('Authorization', `Bearer ${localStorage.token}`);
+
+                    return httpClient(apiPermissions, {
+                          method: 'GET',
+                          headers : options.headers
+                      }).then( retour => {
+                          if (retour.status = '200') {
+                              localStorage.setItem('permission', retour.body);
+                          }
+                      })
+
+
                 });
 
         case AUTH_LOGOUT:
             localStorage.removeItem('token');
             localStorage.removeItem('roles');
             localStorage.removeItem('id');
-            localStorage.removeItem('permissions');
+            localStorage.removeItem('permission');
             return Promise.resolve();
 
         case AUTH_ERROR:
@@ -50,7 +68,7 @@ export default (type, params) => {
                 localStorage.removeItem('token');
                 localStorage.removeItem('roles');
                 localStorage.removeItem('id');
-                localStorage.removeItem('permissions');
+                localStorage.removeItem('permission');
                 return Promise.reject();
             }
 

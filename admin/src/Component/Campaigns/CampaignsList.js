@@ -3,7 +3,7 @@ import {
     List,
     Datagrid,
     DateField,
-    TextField,FieldGuesser,useTranslate,FunctionField,SelectField,Button,useDataProvider,useMutation
+    TextField,FieldGuesser,useTranslate,FunctionField,SelectField,Button,useDataProvider,useMutation,EditButton
 } from 'react-admin';
 
 import UserReferenceField from "../User/UserReferenceField";
@@ -25,33 +25,39 @@ const CampaignsList = (props) => {
             .then( ({ data }) => {
                 setCampaign(data)
                 let users = [];
-
                 Promise.all(data.deliveries.map(element =>
-
                     dataProvider.getOne('deliveries',{id: element} )
-                      .then( ({ data }) => {
-                          users.push(data.user)
-                      })
+                      .then( ({ data }) => data )
+                        //  users.push(data.user)
                       .catch( error => {
-                          console.log("Erreur lors de la de la campagne d'emailing:", error)
+                          console.log("Erreur lors de la campagne d'emailing:", error)
                       })
-
-                ));
-                setSelectedIdsFormat(users);
-                setOpen(true);
-
+                )).then(
+                  data =>  {
+                    setSelectedIdsFormat(data);
+                    setOpen(true);
+                  }
+                );
             })
             .catch( error => {
-                console.log("Erreur lors de la de la campagne d'emailing:", error)
+                console.log("Erreur lors de la campagne d'emailing:", error)
             })
+
     }
+
+      useEffect(() => {
+         if (selectedIdsFormat[0] && selectedIdsFormat.length > 0) {
+
+         }
+      });
+
 
 
     const ButtonCampaign = (props) => {
       //We dont show button if campaign is already send
       if (  props.record.status != 3 && props.record.deliveries.length > 0 ){
         return (
-             <Button onClick={ () => HandleModalData(props.record.id) } label={translate('custom.label.campaign.resumeCampaign')} />
+             <EditButton basePath={'/campaigns/get-on-campaign'} onClick={ () => HandleModalData(props.record.id) } />
          )
        }else return null
     }
@@ -76,8 +82,6 @@ const CampaignsList = (props) => {
                     <DateField source="createdDate" label={translate('custom.label.campaign.sendDate')}/>
 
                      <ButtonCampaign label={translate('custom.label.campaign.resumeCampaign')} />
-
-
 
                 </Datagrid>
             </List>

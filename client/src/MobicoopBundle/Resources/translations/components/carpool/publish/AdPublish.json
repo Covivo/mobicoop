@@ -1,7 +1,29 @@
 {
     "fr": {
-        "title": "Publier une annonce",
-        "subtitle": "Commencer votre annonce",
+        "create": {
+            "title": "Publier une annonce",
+            "subtitle": "Commencer votre annonce"
+        },
+        "update" : {
+            "title": "Modifier votre annonce",
+            "popup": {
+                "major_update_asks": {
+                    "title" : "Au moins une demande existe pour cette annonce",
+                    "content" : "Une ou plusieurs demandes ont déjà été faites en lien avec cette annonce. Votre modification sur des informations essentielles supprimera la version actuelle de votre annonce pour en créer une nouvelle et rejettera donc toutes les demandes en cours.<br>Si vous confirmez votre modification, quel message voulez-vous envoyer aux covoitureurs dont vous rejetez les demandes ?"
+                },
+                "major_update_ads": {
+                    "title" : "Un usager a déjà repéré votre annonce",
+                    "content" : "Un usager a déjà repéré votre annonce comme correspondant à un besoin et a pu en être alerté par SMS ou email. Votre modification supprimera la version actuelle de votre annonce pour en créer une nouvelle."
+                },
+                "minor_update_asks": {
+                    "title" : "Des demandes existent pour cette annonce",
+                    "content" : "Une ou plusieurs demandes ont déjà été faites en lien avec cette annonce. Les détails de votre modification seront envoyées à tous les usagers ayant fait ces demandes.<br>Confirmez-vous votre modification ?"
+                }
+            },
+            "success": "Votre annonce a été modifiée avec succès.",
+            "error": "Une erreur est survenue lors de la modification de votre annonce.",
+            "unavailable": "Vous ne pouvez pas modifier cette annonce."
+        },
         "stepper": {
             "header": {
                 "search_journey": "Commencer votre annonce",
@@ -52,6 +74,7 @@
                 "next": "Suivant",
                 "previous": "Précédent",
                 "publish_ad": "Publier mon annonce",
+                "update_ad": "Modifier mon annonce",
                 "notValid" : "Vous devez être loggué pour publier une annonce et avoir fournis toutes les informations du trajet"
             }
         },
@@ -73,6 +96,7 @@
         "messageRoundedPrice": "Nous avons arrondi le tarif de votre annonce afin d'améliorer votre expérience et celle des autres usagers. Merci de votre compréhension.",
         "route": {
             "publish": "covoiturage/annonce/poster",
+            "update": "covoiturage/annonce/{id}/modifier",
             "myAds": "/utilisateur/profil/modifier/mes-annonces",
             "roundPrice": "/prix/arrondir"
         }

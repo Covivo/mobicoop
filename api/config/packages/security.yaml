@@ -26,11 +26,15 @@ security:
             entity:
                 class: 'App\User\Entity\User'
                 property: 'email'
+        # provider for refresh token 
+        refresh_token_user_provider:
+            id: App\User\Service\UserProvider
+            
         # provider for logged users or app (eg. with a valid token)
         # /!\ this is the database-less provider, it avoids loading the user for each api call, so if you need the user information don't use this provider ! /!\
         # /!\ the user is generally needed in every request because of permission management... /!\
         # jwt:
-            # lexik_jwt: ~
+            # lexik_jwt: ~    
 
     # firewalls
     firewalls:
@@ -56,6 +60,12 @@ security:
                 check_path: /login
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+        # firewall for token refresh
+        refresh:
+            pattern:  ^/token/refresh
+            stateless: true
+            anonymous: true
 
         # firewall for documentation
         doc:
@@ -122,4 +132,5 @@ security:
         - { path: ^/addresses/reverse, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rdex/journeys, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rdex/connections, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

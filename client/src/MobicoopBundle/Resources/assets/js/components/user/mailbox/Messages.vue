@@ -235,6 +235,7 @@ export default {
         idAsk: this.currentIdAsk
       };
       axios.post(this.$t("urlSend"), messageToSend).then(res => {
+        //console.error(res.data);
         this.idMessage = (res.data.message !== null) ? res.data.message.id : res.data.id;
         this.loadingTypeText = false;
         // Update the threads list

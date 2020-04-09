@@ -35,6 +35,7 @@ use App\User\Entity\User;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\DataProvider\ThreadCollectionDataProvider;
 use App\Communication\Controller\SendAction;
+use App\Solidary\Entity\SolidaryAskHistory;
 
 /**
  * A message sent from a user to other users.
@@ -116,11 +117,27 @@ class Message
     private $askHistory;
 
     /**
+     * @var SolidaryAskHistory|null The solidary ask history item if the message is related to an ask.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAskHistory", mappedBy="message")
+     * @Groups({"read","write","threads","thread"})
+     * @MaxDepth(1)
+     */
+    private $solidaryAskHistory;
+
+    /**
      * @var int|null Id of an Ask if this message is related to an Ask
      *
      * @Groups({"read","write"})
      */
     private $idAsk;
+
+    /**
+     * @var int|null Id of a Solidary Ask if this message is related to a Solidary Ask
+     *
+     * @Groups({"read","write"})
+     */
+    private $idSolidaryAsk;
 
     /**
      * @var Message|null The original message if the message is a reply to another message.
@@ -234,6 +251,18 @@ class Message
         return $this;
     }
 
+    public function getSolidaryAskHistory(): ?SolidaryAskHistory
+    {
+        return $this->solidaryAskHistory;
+    }
+
+    public function setSolidaryAskHistory(?SolidaryAskHistory $solidaryAskHistory): self
+    {
+        $this->solidaryAskHistory = $solidaryAskHistory;
+
+        return $this;
+    }
+
     public function getIdAsk(): ?int
     {
         if (!is_null($this->getAskHistory())) {
@@ -245,6 +274,21 @@ class Message
     public function setIdAsk(?int $idAsk): self
     {
         $this->idAsk = $idAsk;
+
+        return $this;
+    }
+
+    public function getIdSolidaryAsk(): ?int
+    {
+        if (!is_null($this->getSolidaryAskHistory())) {
+            return $this->getSolidaryAskHistory()->getSolidaryAsk()->getId();
+        }
+        return $this->idSolidaryAsk;
+    }
+
+    public function setIdSolidaryAsk(?int $idSolidaryAsk): self
+    {
+        $this->idSolidaryAsk = $idSolidaryAsk;
 
         return $this;
     }
