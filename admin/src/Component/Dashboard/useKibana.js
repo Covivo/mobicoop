@@ -6,7 +6,7 @@ const useKibana = () => {
     useEffect( () => {
         const token         = localStorage.getItem('token')
         const instanceName  = process.env.REACT_APP_INSTANCE_NAME
-        const kibanaAuthenticationApi = process.env.REACT_APP_KIBANA_URL +':5602/login/' + instanceName
+        const kibanaAuthenticationApi = process.env.REACT_APP_KIBANA_URL +'/login/' + instanceName
         console.log("kibanaAuthenticationApi:", kibanaAuthenticationApi)
 
         const getKibanaCookie = async () => {
@@ -25,7 +25,10 @@ const useKibana = () => {
                 setStatus(false)
             })
         }
-        getKibanaCookie()
+        if (token && instanceName && kibanaAuthenticationApi) {
+            getKibanaCookie()
+        }
+        
     },[]
     )
 
