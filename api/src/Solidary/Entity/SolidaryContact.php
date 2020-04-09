@@ -82,6 +82,12 @@ class SolidaryContact
     */
     private $media;
 
+    /**
+     * @var SolidaryAsk If this contact is linked to an Ask, we return it after a contact
+     * @Groups({"readSolidary"})
+     */
+    private $solidaryAsk;
+
 
     public function __construct()
     {
@@ -145,6 +151,18 @@ class SolidaryContact
             $this->media->removeElement($medium);
         }
 
+        return $this;
+    }
+
+    public function getSolidaryAsk(): ?SolidaryAsk
+    {
+        return $this->solidaryAsk;
+    }
+    
+    public function setSolidaryAsk(SolidaryAsk $solidaryAsk): self
+    {
+        $this->solidaryAsk = $solidaryAsk;
+        
         return $this;
     }
 }

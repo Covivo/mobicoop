@@ -24,6 +24,7 @@ namespace App\Solidary\Repository;
 
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryMatching;
+use App\Solidary\Entity\SolidarySolution;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -62,5 +63,21 @@ class SolidaryAskRepository
     public function findOneBy(array $criteria): ?SolidaryAsk
     {
         return $this->repository->findOneBy($criteria);
+    }
+
+    /**
+     * Return the SolidaryAsk of a SolidarySolution if it exists
+     *
+     * @param SolidarySolution $solidarySolution
+     * @return array
+     */
+    public function findBySolidarySolution(SolidarySolution $solidarySolution)
+    {
+        $query = $this->repository->createQueryBuilder('sa')
+        ->join('sa.solidarySolution', 'ss')
+        ->where('sa.solidarySolution = :solidarySolution')
+        ->setParameter('solidarySolution', $solidarySolution);
+
+        return $query->getQuery()->getResult();
     }
 }

@@ -1,0 +1,65 @@
+<?php
+/**
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * This project is dual licensed under AGPL and proprietary licence.
+ ***************************
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Affero General Public License as
+ *    published by the Free Software Foundation, either version 3 of the
+ *    License, or (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <gnu.org/licenses>.
+ ***************************
+ *    Licence MOBICOOP described in the file
+ *    LICENSE
+ **************************/
+
+namespace App\Solidary\Service;
+
+use App\Solidary\Entity\SolidaryContact;
+use App\Solidary\Repository\SolidaryAskRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\Security;
+
+class SolidaryContactManager
+{
+    private $entityManager;
+    private $eventDispatcher;
+    private $security;
+    private $solidaryAskRepository;
+
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryAskRepository $solidaryAskRepository)
+    {
+        $this->entityManager = $entityManager;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->security = $security;
+        $this->solidaryAskRepository = $solidaryAskRepository;
+    }
+
+    /**
+     * Handle a SolidaryContact
+     *
+     * @param SolidaryContact $solidaryContact
+     * @return SolidaryContact
+     */
+    public function handleSolidaryContact(SolidaryContact $solidaryContact)
+    {
+        // We check if there is an Ask for the solidarySolution in the SolidaryContact
+        $solidaryAsk = $this->solidaryAskRepository->findBySolidarySolution($solidaryContact->getSolidarySolution());
+        
+        if (empty($solidaryAsk)) {
+            // There is no SolidaryAsk we need to create it before trigger the event
+        }
+        
+        // we trigger the solidaryContact event
+
+        return $solidaryContact;
+    }
+}
