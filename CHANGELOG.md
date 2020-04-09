@@ -1,4 +1,4 @@
-# Release 1.1.0
+# Release 1.2.0
 
 ## API
 
@@ -7,6 +7,8 @@
 * Improvement of Geosearcher : Pelias Autocomplete for localities only, then Pelias Search for full search
 * New territory filters for communities and events
 * Add acces for log in with email or password token
+* Solidary beneficiaries and their solidary files, Structure, Proofs
+* Solidary volunteers to help the beneficiaries
 
 ## CLIENT
 
