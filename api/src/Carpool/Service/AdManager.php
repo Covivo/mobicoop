@@ -140,7 +140,7 @@ class AdManager
 
         // SOLIDARY TEMPORARY FIX
         // if the poster is solidary manager, we assume the Ad is solidary
-        if ($user) {
+        if (isset($user)) {
             if ($this->authManager->isAuthorized('ROLE_SOLIDARY_MANAGER')) {
                 $ad->setSolidary(true);
             }
