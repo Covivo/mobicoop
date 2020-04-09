@@ -261,7 +261,7 @@ class UserManager
         $user->setMusic($this->music);
         $user->setSmoke($this->smoke);
 
-        // Create geotoken        
+        // Create geotoken
         $user->setGeoToken($this->createToken($user));
 
         // Create token to validate inscription
@@ -995,8 +995,6 @@ class UserManager
 
         if ($user->getEmail() == $_ENV['FAKE_FIRST_MAIL']) {
             return $_ENV['FAKE_FIRST_TOKEN'];
-        } else if ($user->getEmail() == $_ENV['FAKE_SECOND_MAIL']) {
-            return $_ENV['FAKE_SECOND_TOKEN'];
         } else {
             return $this->sanitizeString(hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
         }
