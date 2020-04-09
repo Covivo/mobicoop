@@ -93,9 +93,6 @@ const myDataProvider = {
 
           var lid = params.id.search("users") == -1 ? "users/"+params.id : params.id;
 
-
-
-
         return dataProvider.getOne('users',{id:lid} )
             .then(  ({ data } )  =>
                 Promise.all(data.userAuthAssignments.map(element =>
@@ -109,7 +106,6 @@ const myDataProvider = {
                 ).then(
                   // We fill the array rolesTerritory with good format for admin
                   dataThen  =>  {
-
                       data.rolesTerritory = dataThen.reduce( (acc,val) => {
                         var territory =  val.territory == null ? 'null' : val.territory ;
 
@@ -118,23 +114,12 @@ const myDataProvider = {
                           }
                           acc[territory].push(val.authItem);
                           return acc;
-                      
                       }
                         , {}  )
-
                       return {data};
-
                   }
                 )
-              //  return { data : data }
             );
-
-
-
-
-
-
-
         }
     },
     update: (resource, params) => {
@@ -150,12 +135,28 @@ const myDataProvider = {
 
           /* Rewrite roles for fit with api */
           let newRoles = []
-          params.data.fields.forEach(function(v){
-                var territory = v.territory;
-                v.roles.forEach(function(r){
-                  v != null ?  newRoles.push({"authItem": r, "territory": territory}) :   newRoles.push({"authItem": r});
-                });
-          });
+
+          if (  params.data.fields != null ){
+            params.data.fields.forEach(function(v){
+                  var territory = v.territory;
+                  v.roles.forEach(function(r){
+                    v != null ?  newRoles.push({"authItem": r, "territory": territory}) :   newRoles.push({"authItem": r});
+                  });
+            });
+          }else{
+
+            for (const territory in  params.data.rolesTerritory) {
+              console.info(params.data.rolesTerritory[territory])
+              for (const r in  params.data.rolesTerritory[territory]) {
+                const role = params.data.rolesTerritory[territory][r]
+                  territory != null ?  newRoles.push({"authItem": role, "territory": territory}) :   newRoles.push({"authItem": role});
+              }
+          }
+
+        }
+
+
+
           params.data.userAuthAssignments = newRoles
           /* Rewrite roles for fit with api */
 
