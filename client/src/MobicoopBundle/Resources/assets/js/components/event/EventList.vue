@@ -81,7 +81,10 @@
                   <v-col
                     cols="6"
                   >
-                    <a :href="paths.event_create">
+                    <a
+                      v-if="isLogged"
+                      :href="paths.event_create"
+                    >
                       <v-btn
                         type="button"
                         color="secondary"
@@ -165,7 +168,10 @@
                   <v-col
                     cols="6"
                   >
-                    <a :href="paths.event_create">
+                    <a
+                      v-if="isLogged"
+                      :href="paths.event_create"
+                    >
                       <v-btn
                         type="button"
                         color="secondary"
@@ -285,6 +291,10 @@ export default {
     itemsPerPageDefault: {
       type: Number,
       default: 1
+    },
+    isLogged: {
+      type: Boolean,
+      default: false
     }
 
   },
