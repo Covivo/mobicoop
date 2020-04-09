@@ -61,6 +61,7 @@
             :time="result.time"
             :seats="result.seats"
             :price="result.roundedPrice"
+            :solidary-exclusive="result.solidaryExclusive"
           />
 
           <v-divider />

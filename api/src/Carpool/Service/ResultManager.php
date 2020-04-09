@@ -478,6 +478,10 @@ class ResultManager
                 $result->setAskId($matching['request']->getAsks()[0]->getId());
             }
 
+            // solidary : the request can be solidary
+            $result->setSolidary($matching['request']->getProposalRequest()->getCriteria()->isSolidary());
+            $result->setSolidaryExclusive(false);
+
             // communities
             foreach ($matching['request']->getProposalRequest()->getCommunities() as $community) {
                 $communities[$community->getId()] = $community->getName();
@@ -1043,6 +1047,10 @@ class ResultManager
             if (is_null($result->getAskId()) && !empty($matching['offer']->getAsks())) {
                 $result->setAskId($matching['offer']->getAsks()[0]->getId());
             }
+
+            // solidary : the offer can be solidaryExclusive
+            $result->setSolidary(false);
+            $result->setSolidaryExclusive($matching['offer']->getProposalOffer()->getCriteria()->isSolidaryExclusive());
 
             // communities
             foreach ($matching['offer']->getProposalOffer()->getCommunities() as $community) {
