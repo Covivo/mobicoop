@@ -44,23 +44,30 @@
       <v-col
         cols="2"
         class="title text-right"
+        :class="solidaryExclusive ? 'warning--text' : ''"
       >
         {{ price ? price +'€' : '' }}
         <v-tooltip
           slot="append"
           right
-          color="info"
+          :color="solidaryExclusive ? 'warning' : 'info'"
           :max-width="'35%'"
         >
           <template v-slot:activator="{ on }">
             <v-icon
               justify="left"
+              :color="solidaryExclusive ? 'warning' : 'default'"
               v-on="on"
             >
               mdi-help-circle-outline
             </v-icon>
           </template>
-          <span>{{ $t('priceTooltip') }}</span>
+          <span v-if="solidaryExclusive">
+            {{ $t('priceTooltipSolidaryExclusive') }}
+          </span>
+          <span v-else>
+            {{ $t('priceTooltip') }}
+          </span>
         </v-tooltip>
       </v-col>
     </v-row>
@@ -114,7 +121,11 @@ export default {
     seats: {
       type: Number,
       default: null
-    },  
+    },
+    solidaryExclusive: {
+      type: Boolean,
+      default: false
+    }  
   },
   data() {
     return {
