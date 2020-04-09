@@ -91,6 +91,7 @@ const TerritoryInput = props => {
                                 element => element.name === selectedItem,
                             );
                             if (territory) {
+                                territory.link = '/territories/'+territory.id
                                 form.change('territory', null)
                                 form.change('territory.id', territory.id)
                                 props.setTerritory(territory)

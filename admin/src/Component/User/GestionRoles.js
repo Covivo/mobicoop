@@ -13,7 +13,7 @@ import {
 } from 'react-admin';
 import { makeStyles } from '@material-ui/core/styles'
 
-const GestionRoles = () => {
+const GestionRoles = ({record}) => {
 
   const dataProvider = useDataProvider();
   const [roles, setRoles] = useState([]);
@@ -23,12 +23,32 @@ const GestionRoles = () => {
   useEffect (
       () => { const getData = () => dataProvider.getList('permissions/roles', {pagination:{ page: 1 , perPage: 1000 }, sort: { field: 'id', order: 'ASC' }, })
           .then( ({ data }) => {
-            console.info(data)
             setRoles(data)
           });
           getData()
         }, []
   )
+
+  useEffect(() => {
+    if (record.rolesTerritory) {
+      const values = [...fields];
+      console.info(values)
+      const cpt = 0;
+      for (const territory in record.rolesTerritory) {
+          values[cpt]['roles'] = record.rolesTerritory[territory]
+          values[cpt]['territory'] = territory
+
+      }
+            console.info(values)
+        setFields(values);
+    }
+  }, [record]);
+
+
+
+
+
+
   function handleAdd() {
     const values = [...fields];
     values.push({'roles' : [], 'territory' : null});
@@ -46,8 +66,9 @@ const GestionRoles = () => {
 
   const handleAddPair = (indice, nature) => e => {
       const values = [...fields];
+
       if (nature == 'roles')   values[indice]['roles'] = e.target.value;
-      else  values[indice]['territory'] = '/territories/'+e.id;
+      else  values[indice]['territory'] = e.link;
       setFields(values);
       form.change('fields', fields);
   }
@@ -71,8 +92,7 @@ const GestionRoles = () => {
                   { roles.map( d =>  <MenuItem  key={d.id} value={d.id}>{d.name}</MenuItem> ) }
                  </Select>
 
-              <TerritoryInput key={`territory-${i}`}
-                label='ff'  setTerritory={handleAddPair(i, 'territory')}  />
+              <TerritoryInput key={`territory-${i}`} setTerritory={handleAddPair(i, 'territory')}  />
 
               <button type="button" onClick={() => handleRemove(i)}>
                 X

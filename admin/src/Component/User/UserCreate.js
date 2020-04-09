@@ -4,8 +4,6 @@ import GeocompleteInput from "../Utilities/geocomplete";
 import TerritoryInput from "../Utilities/territory";
 import GestionRoles from "./GestionRoles";
 
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
 
 import {
     Create,

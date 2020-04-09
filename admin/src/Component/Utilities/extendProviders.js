@@ -93,29 +93,47 @@ const myDataProvider = {
 
           var lid = params.id.search("users") == -1 ? "users/"+params.id : params.id;
 
-          return dataProvider.getOne('users',{id:lid} )
-            .then( ({ data }) => {
-                data.rolesIds = []
+
+
+
+        return dataProvider.getOne('users',{id:lid} )
+            .then(  ({ data } )  =>
                 Promise.all(data.userAuthAssignments.map(element =>
 
                     dataProvider.getOne('userAuthAssignments',{id: element} )
-                    .then( ( retourAssignement ) => {
-                          data.rolesIds.push(retourAssignement.data.authItem)
-                    })
-                    .catch( error => {
-                        console.log("Erreur lors de la récupération des droits:", error)
-                    })
+                        .then( ({ data }) => data )
+                        .catch( error => {
+                            console.log("Erreur lors de la récupération des droits:", error)
+                        })
+                      )
+                ).then(
+                  // We fill the array rolesTerritory with good format for admin
+                  dataThen  =>  {
 
-                ));
+                      data.rolesTerritory = dataThen.reduce( (acc,val) => {
+                        var territory =  val.territory == null ? 'null' : val.territory ;
 
-                    return { data : data }
+                          if(!acc[territory]){
+                            acc[territory] = [];
+                          }
+                          acc[territory].push(val.authItem);
+                          return acc;
+                      
+                      }
+                        , {}  )
 
-            })
-            .catch( error => {
-                console.log("Erreur lors de la récupération de l'utilisateur :", error)
-            })
+                      return {data};
 
-            return dataProvider.getOne(resource, params);
+                  }
+                )
+              //  return { data : data }
+            );
+
+
+
+
+
+
 
         }
     },
@@ -131,10 +149,12 @@ const myDataProvider = {
           options.headers.set('Authorization', `Bearer ${token}`);
 
           /* Rewrite roles for fit with api */
-          let territories =  params.data.userTerritories;
           let newRoles = []
-          params.data.rolesIds.forEach(function(v){
-              newRoles.push({"authItem": v, "territory": territories})
+          params.data.fields.forEach(function(v){
+                var territory = v.territory;
+                v.roles.forEach(function(r){
+                  v != null ?  newRoles.push({"authItem": r, "territory": territory}) :   newRoles.push({"authItem": r});
+                });
           });
           params.data.userAuthAssignments = newRoles
           /* Rewrite roles for fit with api */
