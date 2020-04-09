@@ -50,77 +50,77 @@ describe('Visitor / home', () => {
 
   });
 
-  it('A user logs in and add a proposal', () => {
-    let email = "first_user_mobicoop@yopmail.com";
-    let password = "Mobicoop54";
+  // it('A user logs in and add a proposal', () => {
+  //   let email = "first_user_mobicoop@yopmail.com";
+  //   let password = "Mobicoop54";
 
-    cy.loginWith(email, password);
-    cy.wait(600);
+  //   cy.loginWith(email, password);
+  //   cy.wait(600);
 
-    // cy.percySnapshot('logged_home');
+  //   // cy.percySnapshot('logged_home');
 
-    cy.addProposal();
+  //   cy.addProposal();
 
-    cy.wait(600);
-  });
+  //   cy.wait(600);
+  // });
 
-  // CREATE AN OTHER USER
-  it('A second  user is created', () => {
-    // In order to have a proposal in database
-    let email = 'second_user_mobicoop@yopmail.com'
-    let password = 'Mobicoop54'
-    let lastname = 'John'
-    let name = 'Smith'
-    let phone = '0611111111'
+  // // CREATE AN OTHER USER
+  // it('A second  user is created', () => {
+  //   // In order to have a proposal in database
+  //   let email = 'second_user_mobicoop@yopmail.com'
+  //   let password = 'Mobicoop54'
+  //   let lastname = 'John'
+  //   let name = 'Smith'
+  //   let phone = '0611111111'
 
-    cy.signUp(email, password, lastname, name, phone);
+  //   cy.signUp(email, password, lastname, name, phone);
 
-    cy.get('#token').click()
-      .type('b0d5528165ec74fb4f9afd7654a6543fe24c57892cd9642cf991bbdf43ef9878');
-    cy.get('#formLoginValidation > .v-btn > .v-btn__content').click();
-    cy.get('.v-alert__content > :nth-child(1)')     
-      .contains('Bravo John !');
+  //   cy.get('#token').click()
+  //     .type('b0d5528165ec74fb4f9afd7654a6543fe24c57892cd9642cf991bbdf43ef9878');
+  //   cy.get('#formLoginValidation > .v-btn > .v-btn__content').click();
+  //   cy.get('.v-alert__content > :nth-child(1)')     
+  //     .contains('Bravo John !');
 
-    cy.wait(3000); // error no redirection to home  });
-  });
+  //   cy.wait(3000); // error no redirection to home  });
+  // });
 
-   it('A user log in, add a proposal and find a result', () => {
-    let email = "second_user_mobicoop@yopmail.com";
-    let password = "Mobicoop54";
-    cy.loginWith(email, password);
-    cy.wait(600);
+  //  it('A user log in, add a proposal and find a result', () => {
+  //   let email = "second_user_mobicoop@yopmail.com";
+  //   let password = "Mobicoop54";
+  //   cy.loginWith(email, password);
+  //   cy.wait(600);
 
-    cy.addProposal();
-    cy.wait(600);
+  //   cy.addProposal();
+  //   cy.wait(600);
 
-    cy.get('.col-6 > .v-btn > .v-btn__content')
-    .click();
-    cy.contains('p','1 annonce en covoiturage trouvée' )
+  //   cy.get('.col-6 > .v-btn > .v-btn__content')
+  //   .click();
+  //   cy.contains('p','1 annonce en covoiturage trouvée' )
 
-    cy.get('.v-btn__content > span').click();
+  //   cy.get('.v-btn__content > span').click();
 
-    cy.contains('.v-dialog > :nth-child(1) > .v-sheet--tile > .v-toolbar__content','Détail du trajet')
-    cy.wait(12000);
+  //   cy.contains('.v-dialog > :nth-child(1) > .v-sheet--tile > .v-toolbar__content','Détail du trajet')
+  //   cy.wait(12000);
 
-    cy.contains('Covoiturer comme passager').click();
-    cy.wait(6000);
+  //   cy.contains('Covoiturer comme passager').click();
+  //   cy.wait(6000);
 
 
-    cy.url().should('include', baseUrl + 'utilisateur/messages');
+  //   cy.url().should('include', baseUrl + 'utilisateur/messages');
 
-  });
+  // });
 
-  it('A user checks his messages', () => {
-    let email = "first_user_mobicoop@yopmail.com";
-    let password = "Mobicoop54";
-    cy.loginWith(email, password);
+  // it('A user checks his messages', () => {
+  //   let email = "first_user_mobicoop@yopmail.com";
+  //   let password = "Mobicoop54";
+  //   cy.loginWith(email, password);
     
-    cy.get('.v-toolbar__items > a.v-btn > .v-btn__content')
-      .click();
+  //   cy.get('.v-toolbar__items > a.v-btn > .v-btn__content')
+  //     .click();
 
-    cy.url().should('include', baseUrl + 'utilisateur/messages');
-    cy.wait(6000);
-  });
+  //   cy.url().should('include', baseUrl + 'utilisateur/messages');
+  //   cy.wait(6000);
+  // });
 
   it('A User goes to his account and deletes it ', () => {
     let email = "first_user_mobicoop@yopmail.com"
@@ -130,14 +130,14 @@ describe('Visitor / home', () => {
     cy.delete();
   });
 
-  it('An User goes to his account and deletes it ', () => {
-    let email = "second_user_mobicoop@yopmail.com"
-    let password = "Mobicoop54"
+  // it('An User goes to his account and deletes it ', () => {
+  //   let email = "second_user_mobicoop@yopmail.com"
+  //   let password = "Mobicoop54"
 
-    cy.loginWith(email, password);
+  //   cy.loginWith(email, password);
 
-    cy.delete();
-  });
+  //   cy.delete();
+  // });
 })
 
 

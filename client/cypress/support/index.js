@@ -15,7 +15,6 @@
 
 // Import commands.js using ES2015 syntax:
 import './user-commands'
-import './proposal-commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
