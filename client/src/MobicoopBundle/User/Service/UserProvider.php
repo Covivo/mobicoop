@@ -62,8 +62,6 @@ class UserProvider implements UserProviderInterface
      */
     public function loadUserByUsername($username)
     {
-        dump($this->request->get('_route'));
-        die();
         if ($this->request->get('_route') == self::USER_LOGIN_ROUTE && $this->request->get('email') && $this->request->get('password')) {
             // we want to login, we set the credentials for the dataProvider
             $this->dataProvider->setUsername($this->request->get('email'));

@@ -11,7 +11,7 @@
             multi-line
             color="info"
             vertical
-            timeout="10000"
+            :timeout="10000"
           >
             <div>
               {{ $t('snackbar') }}

@@ -196,6 +196,7 @@ class UserManager
 
         // dispatch en event
         if (is_null($user->getUserDelegate())) {
+            
             // registration by the user itself
             $event = new UserRegisteredEvent($user);
             $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);

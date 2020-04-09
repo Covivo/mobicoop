@@ -1023,7 +1023,8 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'schedule' => $this->getSchedule(),
                 'paused' => $this->isPaused(),
                 'results' => $this->getResults(),
-                'frequency' => $this->getFrequency()
+                'frequency' => $this->getFrequency(),
+                'potentialCarpoolers' => $this->getPotentialCarpoolers()
             ];
     }
 }
