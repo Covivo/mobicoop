@@ -59,6 +59,6 @@ dotenv_instance = open("../../.env", "a+")
 for key in dictenv_mobicoop:
     if key not in dictenv_instance.keys():
         print ("Key "+key+ " not found, adding it with default value : "+dictenv_mobicoop.get(key))
-        dotenv_instance.write(key+'='+dictenv_mobicoop.get(key)+"\r\n")
+        dotenv_instance.write("\n"+key+'='+dictenv_mobicoop.get(key))
 
 dotenv_instance.close()
