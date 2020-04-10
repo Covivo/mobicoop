@@ -127,7 +127,7 @@ class CommunityController extends AbstractController
                         return new Response();
                     }
                     //If an error occur on upload image, the community is already create, so we delete her
-                    $communityManager->deleteCommunity($community->getId());
+                    // $communityManager->deleteCommunity($community->getId());
                     // return error if image post didnt't work
                     return new Response(json_encode('error.image'));
                 }
