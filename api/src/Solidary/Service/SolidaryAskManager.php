@@ -56,7 +56,7 @@ class SolidaryAskManager
         $solidaryAsk = $this->createAssociatedSolidaryAskHistory($solidaryAsk);
 
         // If it's a Carpool Ask type we need to create the related Ask
-        if (!is_null($solidaryAsk->getSolidarySolution()->getMatching())) {
+        if (!is_null($solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getMatching())) {
             // create the carpool Ask
             $ask = new Ask();
             $ask->setStatus(Ask::STATUS_PENDING_AS_PASSENGER);
@@ -71,7 +71,7 @@ class SolidaryAskManager
             $ask->setUser($user);
 
             // We get the matching to have all criterias
-            $matching = $solidaryAsk->getSolidarySolution()->getMatching();
+            $matching = $solidaryAsk->getSolidarySolution()->getSolidaryMatching->getMatching();
 
             // The User related to the Ask
             $userRelated = $matching->getProposalOffer()->getUser();
@@ -89,6 +89,9 @@ class SolidaryAskManager
                 $ask->addWaypoint($newWaypoint);
             }
 
+            // We set the link between the Ask and the SolidaryAsk
+            $ask->setSolidaryAsk($solidaryAsk);
+
             // We create the associated Ask History
             $askHistory = new AskHistory();
             $askHistory->setStatus($ask->getStatus());
@@ -96,22 +99,22 @@ class SolidaryAskManager
             $ask->addAskHistory($askHistory);
             
             // message
-            if (!is_null($solidaryAsk->getMessage())) {
-                $message = new Message();
-                $message->setUser($user);
-                $message->setText($solidaryAsk->getMessage());
-                $recipient = new Recipient();
-                $recipient->setUser($userRelated);
-                $recipient->setStatus(Recipient::STATUS_PENDING);
-                $message->addRecipient($recipient);
-                $this->entityManager->persist($message);
-                $askHistory->setMessage($message);
-            }
+            // if (!is_null($solidaryAsk->getMessage())) {
+            //     $message = new Message();
+            //     $message->setUser($user);
+            //     $message->setText($solidaryAsk->getMessage());
+            //     $recipient = new Recipient();
+            //     $recipient->setUser($userRelated);
+            //     $recipient->setStatus(Recipient::STATUS_PENDING);
+            //     $message->addRecipient($recipient);
+            //     $this->entityManager->persist($message);
+            //     $askHistory->setMessage($message);
+            // }
             
-            // SMS
-            if (!is_null($solidaryAsk->getSms())) {
-                // To do : Send the SMS
-            }
+            // // SMS
+            // if (!is_null($solidaryAsk->getSms())) {
+            //     // To do : Send the SMS
+            // }
 
             $this->entityManager->persist($ask);
             $this->entityManager->flush();

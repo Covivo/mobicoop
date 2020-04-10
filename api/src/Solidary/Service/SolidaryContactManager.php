@@ -22,6 +22,7 @@
 
 namespace App\Solidary\Service;
 
+use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryContact;
 use App\Solidary\Repository\SolidaryAskRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,13 +35,15 @@ class SolidaryContactManager
     private $eventDispatcher;
     private $security;
     private $solidaryAskRepository;
+    private $solidaryAskManager;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryAskRepository $solidaryAskRepository)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryAskRepository $solidaryAskRepository, SolidaryAskManager $solidaryAskManager)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->security = $security;
         $this->solidaryAskRepository = $solidaryAskRepository;
+        $this->solidaryAskManager = $solidaryAskManager;
     }
 
     /**
@@ -56,6 +59,15 @@ class SolidaryContactManager
         
         if (empty($solidaryAsk)) {
             // There is no SolidaryAsk we need to create it before trigger the event
+            $solidaryAsk = new SolidaryAsk();
+            $solidaryAsk->setStatus(0);
+            $solidaryAsk->setSolidarySolution($solidaryContact->getSolidarySolution());
+            $criteria = clone $solidaryContact->getSolidarySolution()->getSolidaryMatching()->getCriteria();
+            $solidaryAsk->setCriteria($criteria);
+            $solidaryAsk = $this->solidaryAskManager->createSolidaryAsk($solidaryAsk);
+            
+            // We set the solidaryAsk field for the return
+            $solidaryContact->setSolidaryAsk($solidaryAsk);
         }
         
         // we trigger the solidaryContact event
