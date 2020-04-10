@@ -546,6 +546,7 @@
                 </v-row>
 
                 <v-checkbox
+                  v-if="driver"
                   v-model="checkbox"
                   class="check mt-12"
                   color="primary"
