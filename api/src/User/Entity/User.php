@@ -121,6 +121,7 @@ use App\User\Controller\UserCanUseEmail;
  *          "post"={
  *              "method"="POST",
  *              "path"="/users",
+ *              "normalization_context"={"groups"={"readUser"}},
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
