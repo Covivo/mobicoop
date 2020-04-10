@@ -37,7 +37,7 @@ const GestionRoles = ({record}) => {
   const [fields, setFields] = useState([{'roles' : [], 'territory' : null}]);
   const [currentTerritory, setCurrentTerritory] = useState([]);
   const form = useForm();
- const classes = useStyles();
+  const classes = useStyles();
   useEffect (
       () => { const getData = () => dataProvider.getList('permissions/roles', {pagination:{ page: 1 , perPage: 1000 }, sort: { field: 'id', order: 'ASC' }, })
           .then( ({ data }) => {
@@ -51,7 +51,6 @@ const GestionRoles = ({record}) => {
     if (record.rolesTerritory) {
       const values = [...fields];
       let cpt = 0;
-      let territoryList = []
       for (const territory in record.rolesTerritory) {
           values[cpt] = [];
           values[cpt]['roles'] = record.rolesTerritory[territory]
@@ -60,9 +59,7 @@ const GestionRoles = ({record}) => {
 
           dataProvider.getOne('territories',{id: territory} )
               .then( ({ data }) =>  {
-                  territoryList.push(data.name)
-                  setCurrentTerritory(currentTerritory, data.name)
-                  return territoryList
+                  setCurrentTerritory(t => [...t, data.name])
               })
               .catch( error => {
             })
@@ -95,9 +92,11 @@ const GestionRoles = ({record}) => {
       setFields(values);
       form.change('fields', fields);
   }
+
   return (
     <Fragment>
         {fields.map((field, i) => {
+
           return (
 
               <Grid key={`grid-${i}`} container spacing={3}>
@@ -108,7 +107,8 @@ const GestionRoles = ({record}) => {
                        value={field['roles']}
                      >
                   { roles.map( d =>  <MenuItem  key={d.id} value={d.id}>{d.name}</MenuItem> ) }
-                     </Select>
+                </Select>
+                <p>Current territory : {currentTerritory[i]}</p>
                 </Grid>
 
               <Grid item xs={5}>
@@ -120,6 +120,8 @@ const GestionRoles = ({record}) => {
                   Supprimer
                 </Button>
               </Grid>
+
+
 
             </Grid>
 

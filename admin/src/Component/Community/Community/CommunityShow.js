@@ -90,15 +90,8 @@ export const CommunityShow = (props) => {
             </Tab>
             <Tab label={translate('custom.label.community.membersModerator')}>
 
+
                 <ReferenceArrayField source="communityUsers" reference="community_users" addLabel={false}>
-                    <List {...props}
-                          perPage={ 25 }
-                          bulkActionButtons={<UserBulkActionButtons />}
-                          actions={null}
-                          sort={{ field: 'id', order: 'ASC' }}
-                          title=": composition"
-                          filter={{ is_published: true }}
-                    >
                         <Datagrid>
                             <UserReferenceField label={translate('custom.label.community.member')}  source="user" reference="users" />
                             <SelectField source="status" label={translate('custom.label.community.status')}  choices={statusChoices} />
@@ -111,7 +104,6 @@ export const CommunityShow = (props) => {
                             <DeleteButton />
                             */ }
                         </Datagrid>
-                    </List>
                 </ReferenceArrayField>
                 { /*  <AddNewMemberButton /> should be in an Community Edit view */ }
             </Tab>
