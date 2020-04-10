@@ -70,6 +70,11 @@
                     "myproposal":"Votre proposition de trajet"
                 }
             },
+            "driverLicense": {
+                "text":"En publiant mon annonce, je certifie avoir un permis de conduire et une assurance valides et à jour",
+                "link": "(Charte)",
+                "route": "/cgu"
+            },
             "buttons": {
                 "next": "Suivant",
                 "previous": "Précédent",
