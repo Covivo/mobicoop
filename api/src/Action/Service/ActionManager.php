@@ -30,7 +30,9 @@ use App\Action\Service\DiaryManager;
 use App\App\Entity\App;
 use App\Communication\Service\NotificationManager;
 use App\Solidary\Entity\Solidary;
+use App\Solidary\Event\SolidaryContactEmail;
 use App\Solidary\Event\SolidaryContactMessage;
+use App\Solidary\Event\SolidaryContactSms;
 use App\Solidary\Event\SolidaryCreated;
 use App\Solidary\Event\SolidaryUpdated;
 use App\Solidary\Event\SolidaryUserCreated;
@@ -90,7 +92,13 @@ class ActionManager
                 break;
             case SolidaryContactMessage::NAME:$this->onSolidaryContactMessage($action, $object);
                 break;
-            default: $this->treatAction($action, $object);
+            case SolidaryContactSms::NAME:$this->onSolidaryContactSms($action, $object);
+                break;
+            case SolidaryContactEmail::NAME:$this->onSolidaryContactEmail($action, $object);
+                break;
+            default:
+                // For all the manual action with basic behaviour
+                $this->treatAction($action, $object);
                 break;
         }
     }
@@ -165,10 +173,52 @@ class ActionManager
         }
         $admin = $this->security->getUser();
 
-        // Trigger the message
+        // Trigger the message by notifies (need to add lines in table notification)
+        // TO DO
+
+
+        // Store in diary
+        $this->diaryManager->addDiaryEntry($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
+    }
+
+    private function onSolidaryContactSms(Action $action, SolidaryContactMessage $event)
+    {
+        $solidaryContact = $event->getSolidaryContact();
+        $user = $solidaryContact->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
+        
+        
+        if (!is_null($solidaryContact->getSolidarySolution()->getSolidaryMatching()->getMatching())) {
+            $recipient = $solidaryContact->getSolidarySolution()->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser();
+        } else {
+            $recipient = $solidaryContact->getSolidarySolution()->getSolidaryMatching()->getSolidaryUser()->getUser();
+        }
+        $admin = $this->security->getUser();
+
+        // Trigger the sms by notifies (need to add lines in table notification)
+        // TO DO
+
+        // Store in diary
+        $this->diaryManager->addDiaryEntry($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
+    }
+    
+    private function onSolidaryContactEmail(Action $action, SolidaryContactMessage $event)
+    {
+        $solidaryContact = $event->getSolidaryContact();
+        $user = $solidaryContact->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
+        
+        
+        if (!is_null($solidaryContact->getSolidarySolution()->getSolidaryMatching()->getMatching())) {
+            $recipient = $solidaryContact->getSolidarySolution()->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser();
+        } else {
+            $recipient = $solidaryContact->getSolidarySolution()->getSolidaryMatching()->getSolidaryUser()->getUser();
+        }
+        $admin = $this->security->getUser();
+
+        // Trigger the email by notifies (need to add lines in table notification)
+        // TO DO
         
 
         // Store in diary
-        $this->diaryManager->addDiaryEntry($action, $user, $admin, null, $event->getSolidary());
+        $this->diaryManager->addDiaryEntry($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
     }
 }
