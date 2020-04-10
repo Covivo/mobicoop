@@ -5,7 +5,7 @@ const useKibana = () => {
     
     useEffect( () => {
         const token         = localStorage.getItem('token')
-        const instanceName  = process.env.REACT_APP_INSTANCE_NAME
+        const instanceName  = process.env.SCOPE_INSTANCE_NAME
         const kibanaAuthenticationApi = process.env.REACT_APP_KIBANA_URL +'/login/' + instanceName
         console.log("kibanaAuthenticationApi:", kibanaAuthenticationApi)
 
