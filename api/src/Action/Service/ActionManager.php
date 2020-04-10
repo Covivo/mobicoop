@@ -30,6 +30,7 @@ use App\Action\Service\DiaryManager;
 use App\App\Entity\App;
 use App\Communication\Service\NotificationManager;
 use App\Solidary\Entity\Solidary;
+use App\Solidary\Event\SolidaryContactMessage;
 use App\Solidary\Event\SolidaryCreated;
 use App\Solidary\Event\SolidaryUpdated;
 use App\Solidary\Event\SolidaryUserCreated;
@@ -86,6 +87,8 @@ class ActionManager
             case SolidaryCreated::NAME:$this->onSolidaryCreated($action, $object);
                 break;
             case SolidaryUpdated::NAME:$this->onSolidaryUpdated($action, $object);
+                break;
+            case SolidaryContactMessage::NAME:$this->onSolidaryContactMessage($action, $object);
                 break;
             default: $this->treatAction($action, $object);
                 break;
@@ -146,6 +149,26 @@ class ActionManager
     {
         $user = $event->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
         $admin = $this->security->getUser();
+        $this->diaryManager->addDiaryEntry($action, $user, $admin, null, $event->getSolidary());
+    }
+
+    private function onSolidaryContactMessage(Action $action, SolidaryContactMessage $event)
+    {
+        $solidaryContact = $event->getSolidaryContact();
+        $user = $solidaryContact->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
+        
+        
+        if (!is_null($solidaryContact->getSolidarySolution()->getSolidaryMatching()->getMatching())) {
+            $recipient = $solidaryContact->getSolidarySolution()->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser();
+        } else {
+            $recipient = $solidaryContact->getSolidarySolution()->getSolidaryMatching()->getSolidaryUser()->getUser();
+        }
+        $admin = $this->security->getUser();
+
+        // Trigger the message
+        
+
+        // Store in diary
         $this->diaryManager->addDiaryEntry($action, $user, $admin, null, $event->getSolidary());
     }
 }

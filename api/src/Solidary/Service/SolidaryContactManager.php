@@ -22,8 +22,10 @@
 
 namespace App\Solidary\Service;
 
+use App\Communication\Entity\Medium;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryContact;
+use App\Solidary\Event\SolidaryContactMessage;
 use App\Solidary\Repository\SolidaryAskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -54,7 +56,7 @@ class SolidaryContactManager
      */
     public function handleSolidaryContact(SolidaryContact $solidaryContact)
     {
-        // We check if there is an Ask for the solidarySolution in the SolidaryContact
+        // We check if there is already an Ask for the solidarySolution in the SolidaryContact
         $solidaryAsk = $this->solidaryAskRepository->findBySolidarySolution($solidaryContact->getSolidarySolution());
         
         if (empty($solidaryAsk)) {
@@ -70,7 +72,20 @@ class SolidaryContactManager
             $solidaryContact->setSolidaryAsk($solidaryAsk);
         }
         
-        // we trigger the solidaryContact event
+        // we trigger the solidaryContact events
+        $media = $solidaryContact->getMedia();
+        foreach ($media as $medium) {
+            switch ($medium->getId()) {
+                case Medium::MEDIUM_MESSAGE:
+                    $event = new SolidaryContactMessage($solidaryContact);
+                    $this->eventDispatcher->dispatch(SolidaryContactMessage::NAME, $event);
+                    break;
+                case Medium::MEDIUM_SMS:
+                    break;
+                case Medium::MEDIUM_EMAIL:
+                    break;
+            }
+        }
 
         return $solidaryContact;
     }
