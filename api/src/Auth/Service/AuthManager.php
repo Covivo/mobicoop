@@ -95,6 +95,16 @@ class AuthManager
         // we get the requester
         $requester = $this->tokenStorage->getToken()->getUser();
 
+        if (is_string($requester)) {
+            // the requester could contain only the id under certain circumstances (eg. refresh token), we check if the user was set by another way
+            if ($this->user instanceof User) {
+                $requester = $this->user;
+            } else {
+                // we should not authorize
+                return false;
+            }
+        }
+
         // check if the item is authorized for the requester
         return $this->isAssigned($requester, $item, $params);
     }

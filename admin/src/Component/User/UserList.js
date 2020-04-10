@@ -80,6 +80,8 @@ const UserList = (props) => {
           <TextInput source="familyName" label={translate('custom.label.user.familyName')} alwaysOn />
           <TextInput source="email" label={translate('custom.label.user.email')} alwaysOn />
           <BooleanInput source="solidary" label={translate('custom.label.user.solidary')} allowEmpty={false} defaultValue={true} />
+          <BooleanInput source="solidaryCandidate " label={translate('custom.label.user.candidate')} allowEmpty={false} defaultValue={true} />
+          <BooleanInput source="solidaryUser.volunteer " label={translate('custom.label.user.volunteer')} allowEmpty={false} defaultValue={true} />
           <ReferenceInput
               source="homeAddressODTerritory"
               label={translate('custom.label.user.territory')}
