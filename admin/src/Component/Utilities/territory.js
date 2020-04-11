@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
-import { fetchUtils, FormDataConsumer, REDUX_FORM_NAME } from 'react-admin';
+import { fetchUtils, FormDataConsumer, REDUX_FORM_NAME,useTranslate } from 'react-admin';
 import { useForm, useField } from 'react-final-form';
 import useDebounce from './useDebounce';
 import { change } from 'redux-form';
@@ -46,7 +46,10 @@ const fetchSuggestions = input => {
 
 const TerritoryInput = props => {
     const form  = useForm();
+    const translate = useTranslate();
+
     const field = useField('userTerritories');
+    const lelabel = props.initValue != null ? translate('custom.label.territory.changeTerritory') : translate('custom.label.territory.territory')
 
     const [input, setInput] = useState('');
     const [suggestions, setSuggestions] = useState([]);
@@ -107,7 +110,7 @@ const TerritoryInput = props => {
                         }) => (
                             <div >
                                 <TextField
-                                    label={"Territoire"}
+                                    label={lelabel}
                                     variant="filled"
                                     required
                                     error={errorState}

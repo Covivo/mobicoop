@@ -143,7 +143,13 @@ const fr = {
                 visibility : "Visibilité de mon numéro de téléphone",
                 forCarpooler : "Visible seulement après acceptation du covoiturage, uniquement par les participants.",
                 forAll : "Visible dès la publication de l'annonce, par tous les inscrits."
-              }
+              },
+              selectRoles : 'Selectionner un ou plusieurs rôles'
+            },
+            territory : {
+              territory : 'Territoire',
+              changeTerritory :  'Changer de territoire',
+              currentTerritory :  'Territoire actuel',
             }
         }
     }
