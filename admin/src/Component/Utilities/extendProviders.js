@@ -59,7 +59,6 @@ const myDataProvider = {
 
             /* Rewrite roles for fit with api */
             let newRoles = []
-            console.info(params)
             params.data.fields.forEach(function(v){
                   var territory = v.territory;
                   v.roles.forEach(function(r){

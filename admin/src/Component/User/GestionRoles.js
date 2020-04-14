@@ -83,10 +83,8 @@ const GestionRoles = ({record}) => {
   const handleAddPair = (indice, nature) => e => {
       const values = [...fields];
 
-console.info(values)
       if (nature == 'roles')   values[indice]['roles'] = e.target.value;
       else  values[indice]['territory'] = e.link;
-      console.info(values)
       setFields(values);
       form.change('fields', fields);
   }
