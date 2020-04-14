@@ -10,10 +10,10 @@ const KibanaWidget = ({from="now-1y", width="100%", height="1200", url=process.e
     const kibanaStatus = useKibana()
     const [communitiesList, setCommunitiesList] = useState()
 
-    // List of communities the user manage (max 10)
+    // List of communities the user manage (max 2)
     const dataProvider = useDataProvider()
     useEffect( () => {
-        const loadCommunitiesList = () => dataProvider.getList('communities', {pagination:{ page: 1 , perPage: 10 }, sort: { field: 'id', order: 'ASC' }, })
+        const loadCommunitiesList = () => dataProvider.getList('communities', {pagination:{ page: 1 , perPage: 2 }, sort: { field: 'id', order: 'ASC' }, })
                     .then(result  => result && result.data && result.data.length && setCommunitiesList(result.data.map( c => c.name)))
         loadCommunitiesList()
         }
@@ -22,7 +22,7 @@ const KibanaWidget = ({from="now-1y", width="100%", height="1200", url=process.e
     
     // Admin or community ?
     // Full rights granted to   territory_manage
-    // Restricted rights for    community_manage (Automatic filter to my list of communities, hiiden with negative margin)
+    // Restricted rights for    community_manage (Automatic filter to my list of communities, hidden with negative margin)
     const style     = isAuthorized("territory_manage") ? {borderWidth:0} : {marginTop:'-70px', borderWidth:0}
     const filters   = getKibanaFilter({from, communitiesList})
 
