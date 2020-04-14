@@ -24,7 +24,6 @@ avatars: ["/images/avatarsDefault/square_100.svg", "/images/avatarsDefault/squar
 
 const FullNameField = ({ record, size }) => {
     const classes = useStyles();
-    console.info(record)
     return record ? (
         <div className={classes.root}>
             <AvatarField

@@ -148,15 +148,12 @@ const myDataProvider = {
             });
           }else{
             for (const territory in  params.data.rolesTerritory) {
-              console.info(params.data.rolesTerritory[territory])
               for (const r in  params.data.rolesTerritory[territory]) {
                 const role = params.data.rolesTerritory[territory][r]
                   territory != null ?  newRoles.push({"authItem": role, "territory": territory}) :   newRoles.push({"authItem": role});
               }
           }
         }
-
-
 
           params.data.userAuthAssignments = newRoles
           /* Rewrite roles for fit with api */
