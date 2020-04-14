@@ -41,7 +41,7 @@ class CampaignRepository
     private $repository;
 
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -51,5 +51,20 @@ class CampaignRepository
     public function find(int $id): ?Campaign
     {
         return $this->repository->find($id);
+    }
+
+    /**
+     * Get campaigns owned by the user
+     *
+     * @param Int $userId
+     * @return void
+     */
+    public function getOwnedCampaigns(Int $userId)
+    {
+        $query = $this->repository->createQueryBuilder('c')
+        ->where('c.user = :userId')
+        ->setParameter('userId', $userId)
+        ->getQuery()->getResult();
+        return $query;
     }
 }
