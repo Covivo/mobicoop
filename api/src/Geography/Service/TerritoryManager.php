@@ -26,6 +26,7 @@ namespace App\Geography\Service;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
 use App\Geography\Entity\Territory;
+use App\Geography\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use CrEOF\Spatial\PHP\Types\Geometry\MultiPolygon;
 use Psr\Log\LoggerInterface;
@@ -43,6 +44,7 @@ class TerritoryManager
     const BATCH_DIRECTIONS = 100;
 
     private $entityManager;
+    private $territoryRepository;
     private $logger;
    
     /**
@@ -50,17 +52,29 @@ class TerritoryManager
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, TerritoryRepository $territoryRepository, LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
+        $this->territoryRepository = $territoryRepository;
         $this->logger = $logger;
+    }
+
+    /**
+     * Get a territory
+     *
+     * @param integer $id       The id of the territory
+     * @return Territory|null   The territory or null if not found
+     */
+    public function getTerritory(int $id)
+    {
+        return $this->territoryRepository->find($id);
     }
 
     /**
      * Create a new territory.
      *
-     * @param Territory $territory
-     * @return Territory
+     * @param Territory $territory  The territory to create
+     * @return Territory The territory created
      */
     public function createTerritory(Territory $territory)
     {
@@ -72,12 +86,112 @@ class TerritoryManager
         // todo : check if the territory already exists
         // note : we can't use a unique contraint to do so as the field is a blob...
 
-        // TODO : search all addresses and directions that belong to this new territory
-
         $this->entityManager->persist($territory);
         $this->entityManager->flush();
 
+        // search and link all addresses and directions that belong to this new territory
+        $conn = $this->entityManager->getConnection();
+        
+        $this->logger->info("TerritoryManager : treating territory : " . $territory->getId() . " for addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $sql = "INSERT INTO address_territory (address_id,territory_id)
+            SELECT a.id, t.id
+            FROM address a
+            JOIN territory t
+            WHERE ST_INTERSECTS(t.geo_json_detail,a.geo_json)=1
+            AND t.id = " . $territory->getId();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $this->logger->info("TerritoryManager : end treating addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        $this->logger->info("TerritoryManager : treating territory : " . $territory->getId() . " for directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $sql = "INSERT INTO direction_territory (direction_id,territory_id)
+            SELECT d.id, t.id
+            FROM direction d
+            JOIN territory t
+            WHERE ST_INTERSECTS(t.geo_json_detail,d.geo_json_detail)=1
+            AND t.id = " . $territory->getId();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $this->logger->info("TerritoryManager : end treating directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
         return $territory;
+    }
+
+    /**
+     * Update a territory.
+     *
+     * @param integer $id           The id of the territory to update
+     * @param Territory $territory  The territory data used to update the territory
+     * @return Territory The territory updated
+     */
+    public function updateTerritory(int $id, Territory $territoryData)
+    {
+        // territories are special object, they mainly rely on geojson data, so we need to know if the update concerns only the name or even the geo data
+        $geoUpdated = false;
+
+        // we first check if the geoJsonDetail is a string => if so geo data is posted
+        if (is_string($territoryData->getGeoJsonDetail())) {
+            // geo data posted
+            // we first get the original territory
+            $originalTerritory = $this->getTerritory($id);
+            var_dump($originalTerritory->getGeoJsonDetail());
+            exit;
+            //var_dump($territoryData->getGeoJsonDetail());exit;
+
+            $polygon = new MultiPolygon(json_decode($territoryData->getGeoJsonDetail(), true));
+            $territoryData->setGeoJsonDetail($polygon);
+
+
+            // we check if the data is different
+            var_dump($originalTerritory->getGeoJsonDetail()->toArray() != $territoryData->getGeoJsonDetail()->toArray());
+            exit;
+            if ($originalTerritory->getGeoJsonDetail()->toArray() != $territoryData->getGeoJsonDetail()->toArray()) {
+                $geoUpdated = true;
+            }
+        }
+
+        echo $geoUpdated;
+        exit;
+        
+        $this->entityManager->persist($territoryData);
+        $this->entityManager->flush();
+
+        if ($geoUpdated) {
+            $conn = $this->entityManager->getConnection();
+            // delete previously linked addresses and directions
+            $this->logger->info("TerritoryManager : removing address-territory link for territory " . $territoryData->getId() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $sql = "DELETE FROM address_territory WHERE territory_id = " . $territoryData->getId();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $this->logger->info("TerritoryManager : removing direction-territory link for territory " . $territoryData->getId() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $sql = "DELETE FROM direction_territory WHERE territory_id = " . $territoryData->getId();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            
+            $this->logger->info("TerritoryManager : treating territory : " . $territoryData->getId() . " for addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $sql = "INSERT INTO address_territory (address_id,territory_id)
+                SELECT a.id, t.id
+                FROM address a
+                JOIN territory t
+                WHERE ST_INTERSECTS(t.geo_json_detail,a.geo_json)=1
+                AND t.id = " . $territoryData->getId();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $this->logger->info("TerritoryManager : end treating addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+            $this->logger->info("TerritoryManager : treating territory : " . $territoryData->getId() . " for directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $sql = "INSERT INTO direction_territory (direction_id,territory_id)
+                SELECT d.id, t.id
+                FROM direction d
+                JOIN territory t
+                WHERE ST_INTERSECTS(t.geo_json_detail,d.geo_json_detail)=1
+                AND t.id = " . $territoryData->getId();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $this->logger->info("TerritoryManager : end treating directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        }
+        
+        return $territoryData;
     }
 
     /**
@@ -90,10 +204,10 @@ class TerritoryManager
         $conn = $this->entityManager->getConnection();
 
         // remove all addresses territories
-        $this->logger->info("TerritoryManager : removing address-territory link | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        $sql = "DELETE FROM address_territory";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        // $this->logger->info("TerritoryManager : removing address-territory link | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        // $sql = "DELETE FROM address_territory";
+        // $stmt = $conn->prepare($sql);
+        // $stmt->execute();
         // remove all direction territories
         $this->logger->info("TerritoryManager : removing direction-territory link | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $sql = "DELETE FROM direction_territory";
@@ -103,7 +217,52 @@ class TerritoryManager
         // create address territory link
         // long process, we need to cut into batches
         // first we get the territory ids
-        $sql = "SELECT id FROM territory";
+        // $sql = "SELECT id FROM territory";
+        // $stmt = $conn->prepare($sql);
+        // $stmt->execute();
+        // $results = $stmt->fetchAll();
+        // $ids = [];
+        // foreach ($results as $result) {
+        //     $ids[] = $result['id'];
+        // }
+        // $this->logger->info("TerritoryManager : number of territories to treat : " . count($ids) . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        // then we insert addresses for each territory
+        // $this->logger->info("TerritoryManager : start treating addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        // foreach ($ids as $id) {
+        //     $this->logger->info("TerritoryManager : treating territory : $id for addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        //     $sql = "INSERT INTO address_territory (address_id,territory_id)
+        //         SELECT a.id, t.id
+        //         FROM address a
+        //         JOIN territory t
+        //         WHERE ST_INTERSECTS(t.geo_json_detail,a.geo_json)=1
+        //         AND t.id = $id
+        //     ";
+        //     $stmt = $conn->prepare($sql);
+        //     $stmt->execute();
+        // }
+        // $this->logger->info("TerritoryManager : end treating addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        // then we insert directions for each territory
+        // $this->logger->info("TerritoryManager : start treating directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        // foreach ($ids as $id) {
+        //     $this->logger->info("TerritoryManager : treating territory : $id for directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        //     $sql = "INSERT INTO direction_territory (direction_id,territory_id)
+        //         SELECT d.id, t.id
+        //         FROM direction d
+        //         JOIN territory t
+        //         WHERE ST_INTERSECTS(t.geo_json_detail,d.geo_json_detail)=1
+        //         AND t.id = $id
+        //     ";
+        //     $stmt = $conn->prepare($sql);
+        //     $stmt->execute();
+        // }
+        // $this->logger->info("TerritoryManager : end treating directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        // create direction territory link
+        // long process, we need to cut into batches
+        // first we get the direction ids
+        $sql = "SELECT id FROM direction";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $results = $stmt->fetchAll();
@@ -111,34 +270,18 @@ class TerritoryManager
         foreach ($results as $result) {
             $ids[] = $result['id'];
         }
-        $this->logger->info("TerritoryManager : number of territories to treat : " . count($ids) . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
-        // then we insert using batches
-        $this->logger->info("TerritoryManager : start treating addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        foreach ($ids as $id) {
-            $this->logger->info("TerritoryManager : treating territory : $id for addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            $sql = "INSERT INTO address_territory (address_id,territory_id)
-                SELECT a.id, t.id
-                FROM address a
-                JOIN territory t
-                WHERE ST_INTERSECTS(t.geo_json_detail,a.geo_json)=1
-                AND t.id = $id
-            ";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-        }
-        $this->logger->info("TerritoryManager : end treating addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
-        // create direction territory link
+        $this->logger->info("TerritoryManager : number of directions to treat : " . count($ids) . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        
+        // then we insert
         $this->logger->info("TerritoryManager : start treating directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         foreach ($ids as $id) {
-            $this->logger->info("TerritoryManager : treating territory : $id | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->logger->info("TerritoryManager : treating direction : $id | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $sql = "INSERT INTO direction_territory (direction_id,territory_id)
                 SELECT d.id, t.id
                 FROM direction d
                 JOIN territory t
-                WHERE ST_INTERSECTS(t.geo_json_detail,d.geo_json)=1
-                AND t.id = $id
+                WHERE ST_INTERSECTS(t.geo_json_detail,d.geo_json_detail)=1
+                AND d.id = $id
             ";
             $stmt = $conn->prepare($sql);
             $stmt->execute();

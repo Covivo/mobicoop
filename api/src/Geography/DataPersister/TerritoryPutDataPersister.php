@@ -21,39 +21,39 @@
  *    LICENSE
  **************************/
 
-namespace App\Geography\DataProvider;
+ namespace App\Geography\DataPersister;
 
-use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Geography\Entity\Territory;
 use App\Geography\Service\TerritoryManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
-/**
- * Collection data provider for Direction search (route calculation).
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
- */
-final class TerritoryLinkCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class TerritoryPutDataPersister implements ContextAwareDataPersisterInterface
 {
-    protected $request;
+    private $security;
+    private $request;
     private $territoryManager;
     
-    public function __construct(RequestStack $requestStack, TerritoryManager $territoryManager)
+    public function __construct(Security $security, TerritoryManager $territoryManager, RequestStack $requestStack)
     {
+        $this->security = $security;
         $this->request = $requestStack->getCurrentRequest();
         $this->territoryManager = $territoryManager;
     }
-    
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+
+    public function supports($data, array $context = []): bool
     {
-        return Territory::class === $resourceClass && $operationName === "link";
+        return $data instanceof Territory && isset($context['item_operation_name']) && $context['item_operation_name'] == 'put';
     }
-    
-    public function getCollection(string $resourceClass, string $operationName = null): ?array
+
+    public function persist($data, array $context = [])
     {
-        //$this->territoryManager->initAddressesAndDirections();
-        return [];
+        return $this->territoryManager->updateTerritory($this->request->get("id"), $data);
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,40 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace App\Geography\Controller;
+ namespace App\Geography\DataPersister;
 
-use App\Geography\Service\TerritoryManager;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Geography\Entity\Territory;
-use App\TranslatorTrait;
+use App\Geography\Service\TerritoryManager;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
-/**
- * Controller class for territory post.
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
- */
-class TerritoryPost
+final class TerritoryPostDataPersister implements ContextAwareDataPersisterInterface
 {
-    use TranslatorTrait;
     private $territoryManager;
-
+    
     public function __construct(TerritoryManager $territoryManager)
     {
         $this->territoryManager = $territoryManager;
     }
 
-    /**
-     * This method is invoked when a new territory is posted.
-     * It returns the new territory created.
-     *
-     * @param Territory $data
-     * @return Territory
-     */
-    public function __invoke(Territory $data): Territory
+    public function supports($data, array $context = []): bool
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Territory id is provided"));
-        }
-        $data = $this->territoryManager->createTerritory($data);
-        return $data;
+        return $data instanceof Territory && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post';
+    }
+
+    public function persist($data, array $context = [])
+    {
+        return $this->territoryManager->createTerritory($data);
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }
