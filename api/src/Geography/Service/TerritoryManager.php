@@ -28,6 +28,7 @@ use App\Geography\Entity\Direction;
 use App\Geography\Entity\Territory;
 use Doctrine\ORM\EntityManagerInterface;
 use CrEOF\Spatial\PHP\Types\Geometry\MultiPolygon;
+use Psr\Log\LoggerInterface;
 
 /**
  * Territory management service.
@@ -38,16 +39,21 @@ use CrEOF\Spatial\PHP\Types\Geometry\MultiPolygon;
  */
 class TerritoryManager
 {
+    const BATCH_ADDRESSES = 100;
+    const BATCH_DIRECTIONS = 100;
+
     private $entityManager;
+    private $logger;
    
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -84,30 +90,59 @@ class TerritoryManager
         $conn = $this->entityManager->getConnection();
 
         // remove all addresses territories
+        $this->logger->info("TerritoryManager : removing address-territory link | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $sql = "DELETE FROM address_territory";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         // remove all direction territories
+        $this->logger->info("TerritoryManager : removing direction-territory link | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $sql = "DELETE FROM direction_territory";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
 
         // create address territory link
-        $sql = "INSERT INTO address_territory (address_id,territory_id)
-        SELECT a.id, t.id
-        FROM address a
-        JOIN territory t
-        WHERE ST_INTERSECTS(t.geo_json_detail,a.geo_json)=1";
+        // long process, we need to cut into batches
+        // first we get the territory ids
+        $sql = "SELECT id FROM territory";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
+        $results = $stmt->fetchAll();
+        $ids = [];
+        foreach ($results as $result) {
+            $ids[] = $result['id'];
+        }
+        $this->logger->info("TerritoryManager : number of territories to treat : " . count($ids) . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        // then we insert using batches
+        $this->logger->info("TerritoryManager : start treating addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        foreach ($ids as $id) {
+            $this->logger->info("TerritoryManager : treating territory : $id for addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $sql = "INSERT INTO address_territory (address_id,territory_id)
+                SELECT a.id, t.id
+                FROM address a
+                JOIN territory t
+                WHERE ST_INTERSECTS(t.geo_json_detail,a.geo_json)=1
+                AND t.id = $id
+            ";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+        }
+        $this->logger->info("TerritoryManager : end treating addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         // create direction territory link
-        $sql = "INSERT INTO direction_territory (direction_id,territory_id)
-        SELECT d.id, t.id
-        FROM direction d
-        JOIN territory t
-        WHERE ST_INTERSECTS(t.geo_json_detail,d.geo_json)=1";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $this->logger->info("TerritoryManager : start treating directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        foreach ($ids as $id) {
+            $this->logger->info("TerritoryManager : treating territory : $id | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $sql = "INSERT INTO direction_territory (direction_id,territory_id)
+                SELECT d.id, t.id
+                FROM direction d
+                JOIN territory t
+                WHERE ST_INTERSECTS(t.geo_json_detail,d.geo_json)=1
+                AND t.id = $id
+            ";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+        }
+        $this->logger->info("TerritoryManager : end treating directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 }

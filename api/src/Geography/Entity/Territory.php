@@ -41,6 +41,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      },
  *      collectionOperations={
  *          "get",
+ *          "link"={
+ *              "method"="GET",
+ *              "path"="/territories/link"
+ *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/territories",

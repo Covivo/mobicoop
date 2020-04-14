@@ -4,7 +4,7 @@ monolog:
             type:               fingers_crossed
             action_level:       info
             handler:            grouped
-            channels:           ["!carpool", "!communication", "!community", "!geomatcher", "!georouter", "!mass", "!notification"]
+            channels:           ["!carpool", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification"]
         grouped:
             type:               group
             members:            [streamed, swift]
@@ -35,6 +35,11 @@ monolog:
             level: debug
             path: "%kernel.logs_dir%/communtiy.log"
             channels: [community]
+        geography:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/geography.log"
+            channels: [geography]
         geomatcher:
             type: stream
             level: info
