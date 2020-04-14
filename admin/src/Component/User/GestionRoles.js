@@ -35,7 +35,7 @@ const GestionRoles = ({record}) => {
   const translate = useTranslate();
   const dataProvider = useDataProvider();
   const [roles, setRoles] = useState([]);
-  const [fields, setFields] = useState([{'roles' : [''], 'territory' : null}]);
+  const [fields, setFields] = useState([{'roles' : new Array(), 'territory' : null}]);
   const [currentTerritory, setCurrentTerritory] = useState([]);
   const form = useForm();
   const classes = useStyles();
@@ -83,11 +83,14 @@ const GestionRoles = ({record}) => {
   const handleAddPair = (indice, nature) => e => {
       const values = [...fields];
 
+console.info(values)
       if (nature == 'roles')   values[indice]['roles'] = e.target.value;
       else  values[indice]['territory'] = e.link;
+      console.info(values)
       setFields(values);
       form.change('fields', fields);
   }
+
 
   return (
     <Fragment>

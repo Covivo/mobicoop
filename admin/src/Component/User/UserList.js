@@ -104,7 +104,7 @@ const UserList = (props) => {
           exporter={false}
           hasCreate={isAuthorized('user_create')}
     >
-        <MyDatagrid  rowClick="show">
+        <Datagrid  rowClick="show">
             <TextField source="originId" label={translate('custom.label.user.id')} sortBy="id"/>
             <TextField source="givenName" label={translate('custom.label.user.givenName')}  />
             <TextField source="familyName" label={translate('custom.label.user.familyName')} />
@@ -114,7 +114,7 @@ const UserList = (props) => {
             {isAuthorized("user_update") &&
             <EditButton />
             }
-        </MyDatagrid>
+        </Datagrid>
     </List>
   )
 };

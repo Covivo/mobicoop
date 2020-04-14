@@ -107,7 +107,9 @@ const fr = {
               telephone: "Téléphone",
               newsSubscription : "Recevoir les actualités du service  %{instanceName} (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)",
               roles : "Droits d'accès",
-              adresse : "Adresse",
+              adresse : "Commune de résidence",
+              currentAdresse : "Commune de résidence actuel",
+              newsAdresse : "Nouvelle commune de résidence",
               manageRoles : 'Modification des rôles',
               carpoolSetting : {
                 music :"En ce qui concerne la musique en voiture",
@@ -144,7 +146,9 @@ const fr = {
                 forCarpooler : "Visible seulement après acceptation du covoiturage, uniquement par les participants.",
                 forAll : "Visible dès la publication de l'annonce, par tous les inscrits."
               },
-              selectRoles : 'Selectionner un ou plusieurs rôles'
+              selectRoles : 'Selectionner un ou plusieurs rôles',
+              candidate : 'Solidiaire : candidat',
+              volunteer : 'Solidiaire : volontaire'
             },
             territory : {
               territory : 'Territoire',

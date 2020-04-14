@@ -73,7 +73,11 @@ const UserEdit = props => {
 
                 <SelectInput fullWidth source="phoneDisplay" label={translate('custom.label.user.phoneDisplay.visibility')} choices={phoneDisplay}  formClassName={classes.spacedHalfwidth}/>
 
+                  <ReferenceField  source="addresses" label={translate('custom.label.user.currentAdresse')}  reference="addresses" link="" formClassName={classes.fullwidthDense}>
+                      <FunctionField render={addressRenderer} />
+                  </ReferenceField>
 
+                  <GeocompleteInput source="addresses" label={translate('custom.label.user.newsAdresse')}  validate={required()} formClassName={classes.fullwidth}/>
 
                 <BooleanInput initialValue={true} label={translate('custom.label.user.accepteReceiveEmail')} source="newsSubscription" />
 

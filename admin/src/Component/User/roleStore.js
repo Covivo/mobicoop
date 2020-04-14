@@ -29,7 +29,6 @@ function reducer(state, action) {
         case 'add_pair' :
             return [...state, {'roles': new Array(), 'territory' : null}]
         case 'update' :
-
           if (action.nature == 'roles'){
             let retourUpdate = [...state]
             retourUpdate[action.indice]['roles'] =  action.valeur
@@ -39,6 +38,7 @@ function reducer(state, action) {
             retourUpdate[action.indice]['territory'] =  action.valeur.name
             return retourUpdate
           }
+
         case 'resume_edit' :
             if (state[0]['roles'].length == 0 || state[0]['roles'] == 'none') state = [] // Empty array for edit case
             return [...state, {'roles': action.dataFormat.roles, 'territory' : action.dataFormat.territory, 'territoryName' : action.dataFormat.territoryName}]

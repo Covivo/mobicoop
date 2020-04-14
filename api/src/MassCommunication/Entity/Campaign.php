@@ -50,7 +50,8 @@ use App\MassCommunication\Controller\CampaignSendTest;
  *          "owned"={
  *              "method"="GET",
  *              "path"="/campaigns/owned",
- *              "normalization_context"={"groups"={"campaign_read"}},
+ *              "normalization_context"={"groups"={"read_campaign"}},
+ *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },
  *      },
  *      itemOperations={

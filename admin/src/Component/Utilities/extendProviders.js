@@ -59,6 +59,7 @@ const myDataProvider = {
 
             /* Rewrite roles for fit with api */
             let newRoles = []
+            console.info(params)
             params.data.fields.forEach(function(v){
                   var territory = v.territory;
                   v.roles.forEach(function(r){
@@ -135,7 +136,6 @@ const myDataProvider = {
 
           /* Rewrite roles for fit with api */
           let newRoles = []
-
           if (  params.data.fields != null ){
             params.data.fields.forEach(function(v){
                   var territory = v.territory;
@@ -144,7 +144,6 @@ const myDataProvider = {
                   });
             });
           }else{
-
             for (const territory in  params.data.rolesTerritory) {
               console.info(params.data.rolesTerritory[territory])
               for (const r in  params.data.rolesTerritory[territory]) {
@@ -152,7 +151,6 @@ const myDataProvider = {
                   territory != null ?  newRoles.push({"authItem": role, "territory": territory}) :   newRoles.push({"authItem": role});
               }
           }
-
         }
 
 
