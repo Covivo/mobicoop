@@ -68,6 +68,10 @@ const myDataProvider = {
             params.data.userAuthAssignments = newRoles
             /* Rewrite roles for fit with api */
 
+            /* Rewrite adresse for API */
+            params.data.addresses =  new Array();
+            params.data.addresses[0] = params.data.address
+
             /* Add custom fields fo fit with api */
             params.data.passwordSendType = 1
             params.data.language = "fr_FR"

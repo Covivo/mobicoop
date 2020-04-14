@@ -82,7 +82,7 @@ const GeocompleteInput = props => {
                             );
                             if (address) {
                                 form.change('address', null)
-                                form.change('address.streetAddress', address.streetAddress)
+                                form.change('address.streetAddress', address.streetAddress ? address.streetAddress : null)
                                 form.change('address.postalCode', address.postalCode)
                                 form.change('address.addressLocality', address.addressLocality)
                                 form.change('address.addressCountry', address.addressCountry)

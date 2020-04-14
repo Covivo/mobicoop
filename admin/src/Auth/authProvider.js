@@ -49,7 +49,7 @@ export default (type, params) => {
                           headers : options.headers
                       }).then( retour => {
                           if (retour.status = '200') {
-                              localStorage.setItem('permission', retour.body);
+                            return  localStorage.setItem('permission', retour.body);
                           }
                       })
 
