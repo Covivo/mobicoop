@@ -109,22 +109,7 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, 
-    ImageManager $imageManager,
-     LoggerInterface $logger, 
-     EventDispatcherInterface $dispatcher, 
-     AuthItemRepository $authItemRepository, 
-     CommunityRepository $communityRepository, 
-     MessageRepository $messageRepository, 
-     UserPasswordEncoderInterface $encoder, 
-     NotificationRepository $notificationRepository, 
-     UserNotificationRepository $userNotificationRepository, 
-     AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, 
-     UserRepository $userRepository, $chat, $smoke, $music,
-     CommunityUserRepository $communityUserRepository, 
-     TranslatorInterface $translator, Security $security, 
-     SolidaryRepository $solidaryRepository, 
-     StructureRepository $structureRepository, string $fakeFirstMail, string $fakeFirstToken)
+    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, AuthItemRepository $authItemRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator, Security $security, SolidaryRepository $solidaryRepository, StructureRepository $structureRepository, string $fakeFirstMail, string $fakeFirstToken) 
     {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -149,7 +134,6 @@ class UserManager
         $this->smoke = $smoke;
         $this->fakeFirstMail = $fakeFirstMail;
         $this->fakeFirstToken = $fakeFirstToken;
-
     }
 
     /**
@@ -1014,13 +998,11 @@ class UserManager
         $time = $datetime->getTimestamp();
         // note : we replace the '/' by an arbitrary 'a' as the token could be used in a url
 
-        if($user->getEmail() == $this->fakeFirstMail){
+        if ($user->getEmail() == $this->fakeFirstMail) {
             return $this->fakeFirstToken;
         } else {
             return $this->sanitizeString(hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
-
         }
-        
     }
 
     /**
