@@ -332,6 +332,14 @@ class Address implements \JsonSerializable
     private $updatedDate;
 
     /**
+     * @var ArrayCollection|null The territories of this address.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
+     * @Groups({"read","write"})
+     */
+    private $territories;
+
+    /**
      * @var string|null Icon fileName.
      *
      * @Groups({"read"})
@@ -352,6 +360,7 @@ class Address implements \JsonSerializable
             $this->id = $id;
         }
         $this->displayLabel = new ArrayCollection();
+        $this->territories = new ArrayCollection();
     }
 
     public function __clone()
@@ -648,6 +657,59 @@ class Address implements \JsonSerializable
         $this->providedBy = $providedBy;
     }
 
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
+
+        return $this;
+    }
+
+    public function getCommunity(): ?Community
+    {
+        return $this->community;
+    }
+
+    public function setCommunity(?Community $community): self
+    {
+        $this->community = $community;
+
+        return $this;
+    }
+
+    public function getTerritories()
+    {
+        return $this->territories->getValues();
+    }
+
+    public function addTerritory(Territory $territory): self
+    {
+        if (!$this->territories->contains($territory)) {
+            $this->territories[] = $territory;
+        }
+        
+        return $this;
+    }
+    
+    public function removeTerritory(Territory $territory): self
+    {
+        if ($this->territories->contains($territory)) {
+            $this->territories->removeElement($territory);
+        }
+        return $this;
+    }
+
+    public function removeTerritories(): self
+    {
+        $this->territories->clear();
+        return $this;
+    }
+
+
     // DOCTRINE EVENTS
     
     /**
@@ -683,30 +745,7 @@ class Address implements \JsonSerializable
         }
     }
 
-    public function getEvent(): ?Event
-    {
-        return $this->event;
-    }
-
-    public function setEvent(?Event $event): self
-    {
-        $this->event = $event;
-
-        return $this;
-    }
-
-    public function getCommunity(): ?Community
-    {
-        return $this->community;
-    }
-
-    public function setCommunity(?Community $community): self
-    {
-        $this->community = $community;
-
-        return $this;
-    }
-
+    
     public function jsonSerialize()
     {
         return

@@ -88,4 +88,20 @@ class AddressRepository
         return $query->getResult()
         ;
     }
+
+    /**
+     * Find territories for an Address
+     *
+     * @param Address $address  The address
+     * @return Territory[]|null       The territories
+     */
+    public function findAddressTerritories(Address $address)
+    {
+        $query = $this->repository->createQueryBuilder('a')
+            ->join('\App\Geography\Entity\Territory', 'territory')
+            ->where('a.id = :id')
+            ->setParameter('id', $address->getId())
+            ->andWhere('ST_INTERSECTS(territory.geoJsonDetail,a.geoJson)=1');
+        return $query->getQuery()->getResult();
+    }
 }

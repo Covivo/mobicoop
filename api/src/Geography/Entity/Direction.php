@@ -244,6 +244,14 @@ class Direction
     private $updatedDate;
 
     /**
+     * @var ArrayCollection|null The territories of this direction.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
+     * @Groups({"read","write"})
+     */
+    private $territories;
+
+    /**
      * @var boolean Save the geoJson with the direction.
      * Used to avoid slow insert/updates for realtime operations.
      */
@@ -576,6 +584,34 @@ class Direction
     {
         $this->saveGeoJson = $saveGeoJson;
 
+        return $this;
+    }
+
+    public function getTerritories()
+    {
+        return $this->territories->getValues();
+    }
+
+    public function addTerritory(Territory $territory): self
+    {
+        if (!$this->territories->contains($territory)) {
+            $this->territories[] = $territory;
+        }
+        
+        return $this;
+    }
+    
+    public function removeTerritory(Territory $territory): self
+    {
+        if ($this->territories->contains($territory)) {
+            $this->territories->removeElement($territory);
+        }
+        return $this;
+    }
+
+    public function removeTerritories(): self
+    {
+        $this->territories->clear();
         return $this;
     }
 

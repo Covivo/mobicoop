@@ -23,6 +23,8 @@
 
 namespace App\Geography\Service;
 
+use App\Geography\Entity\Address;
+use App\Geography\Entity\Direction;
 use App\Geography\Entity\Territory;
 use Doctrine\ORM\EntityManagerInterface;
 use CrEOF\Spatial\PHP\Types\Geometry\MultiPolygon;
@@ -64,9 +66,48 @@ class TerritoryManager
         // todo : check if the territory already exists
         // note : we can't use a unique contraint to do so as the field is a blob...
 
+        // TODO : search all addresses and directions that belong to this new territory
+
         $this->entityManager->persist($territory);
         $this->entityManager->flush();
 
         return $territory;
+    }
+
+    /**
+     * Reaffect all addresses and directions to their territories
+     *
+     * @return void
+     */
+    public function initAddressesAndDirections()
+    {
+        $conn = $this->entityManager->getConnection();
+
+        // remove all addresses territories
+        $sql = "DELETE FROM address_territory";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        // remove all direction territories
+        $sql = "DELETE FROM direction_territory";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        // create address territory link
+        $sql = "INSERT INTO address_territory (address_id,territory_id)
+        SELECT a.id, t.id
+        FROM address a
+        JOIN territory t
+        WHERE ST_INTERSECTS(t.geo_json_detail,a.geo_json)=1";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        // create direction territory link
+        $sql = "INSERT INTO direction_territory (direction_id,territory_id)
+        SELECT d.id, t.id
+        FROM direction d
+        JOIN territory t
+        WHERE ST_INTERSECTS(t.geo_json_detail,d.geo_json)=1";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
     }
 }

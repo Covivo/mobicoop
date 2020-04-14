@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -24,26 +24,23 @@
 namespace App\Geography\EventListener;
 
 use App\Geography\Entity\Address;
-use App\Geography\Service\GeoTools;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use App\Geography\Service\AddressManager;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 /**
- * Address Load Event listener
+ * Address Write Event listener
  */
-class AddressLoadListener
+class AddressWriteListener
 {
-    private $geoTools;
+    private $addressManager;
 
-    public function __construct(GeoTools $geoTools)
+    public function __construct(AddressManager $addressManager)
     {
-        $this->geoTools = $geoTools;
+        $this->addressManager = $addressManager;
     }
 
-    public function postLoad(LifecycleEventArgs $args)
+    public function setTerritories(Address $address, LifecycleEventArgs $args)
     {
-        $address = $args->getEntity();
-        if ($address instanceof Address) {
-            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
-        }
+        $this->addressManager->createAddressTerritories($address, true);
     }
 }
