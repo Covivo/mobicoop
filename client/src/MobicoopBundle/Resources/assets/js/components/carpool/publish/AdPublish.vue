@@ -545,30 +545,20 @@
                   </v-col>
                 </v-row>
 
-                <v-checkbox
-                  v-if="driver"
-                  v-model="checkbox"
-                  class="check mt-12"
-                  color="primary"
-                  :rules="checkboxRules"
-                  required
-                >
-                  <template
-                    v-slot:label
-                    v-slot:activator="{ on }"
+                <v-row>
+                  <v-col
+                    v-if="driver"
                   >
-                    <div>
-                      {{ $t('stepper.driverLicense.text') }}
-                      <a
-                        class="primary--text"
-                        target="_blank"
-                        :href="$t('stepper.driverLicense.route')"
-                        @click.stop
-                      >{{ $t('stepper.driverLicense.link') }}
-                      </a>
-                    </div>
-                  </template>
-                </v-checkbox>
+                    {{ $t('stepper.driverLicense.text') }}
+                    <a
+                      class="primary--text"
+                      target="_blank"
+                      :href="$t('stepper.driverLicense.route')"
+                      @click.stop
+                    >{{ $t('stepper.driverLicense.link') }}
+                    </a>
+                  </v-col>
+                </v-row>
               </v-container>
             </v-stepper-content>
           </v-stepper-items>
@@ -856,11 +846,7 @@ export default {
       dialog: false,
       oldUpdateObject: null,
       cancellationMessage: "",
-      bodyIsFullyLoaded: false,
-      checkboxRules: [
-        v => !!v || this.$t("ui.pages.signup.chart.errors.required")
-      ],
-      checkbox: false,
+      bodyIsFullyLoaded: false
     }
   },
   computed: {
@@ -917,7 +903,6 @@ export default {
       if (this.isValidUpdate && this.oldUpdateObject == null) return false;
       // update mode and there are no changes
       if (!this.isUpdated ) return false;
-      if(!this.checkbox) return false;
 
       // validation ok
       return true;
