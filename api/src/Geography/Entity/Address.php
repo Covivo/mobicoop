@@ -335,7 +335,6 @@ class Address implements \JsonSerializable
      * @var ArrayCollection|null The territories of this address.
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
-     * @Groups({"read","write"})
      */
     private $territories;
 

@@ -41,6 +41,6 @@ class AddressWriteListener
 
     public function setTerritories(Address $address, LifecycleEventArgs $args)
     {
-        $this->addressManager->createAddressTerritories($address, true);
+        //$this->addressManager->createAddressTerritories($address, true);
     }
 }

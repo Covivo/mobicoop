@@ -247,7 +247,6 @@ class Direction
      * @var ArrayCollection|null The territories of this direction.
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
-     * @Groups({"read","write"})
      */
     private $territories;
 

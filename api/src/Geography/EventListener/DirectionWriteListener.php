@@ -41,6 +41,6 @@ class DirectionWriteListener
 
     public function setTerritories(Direction $direction, LifecycleEventArgs $args)
     {
-        $this->directionManager->createDirectionTerritories($direction, true);
+        //$this->directionManager->createDirectionTerritories($direction, true);
     }
 }
