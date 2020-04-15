@@ -32,7 +32,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Collection data provider for Community search (by name).
+ * Collection data provider for Campaigns search (by usser).
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
