@@ -34,13 +34,10 @@ use Psr\Log\LoggerInterface;
  *
  * This service is used to determine wether particular points is within given territories.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 class TerritoryManager
 {
-    const BATCH_ADDRESSES = 100;
-    const BATCH_DIRECTIONS = 100;
-
     private $entityManager;
     private $territoryRepository;
     private $logger;

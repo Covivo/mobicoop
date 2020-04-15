@@ -33,7 +33,7 @@ monolog:
         community:
             type: stream
             level: debug
-            path: "%kernel.logs_dir%/communtiy.log"
+            path: "%kernel.logs_dir%/community.log"
             channels: [community]
         geography:
             type: stream

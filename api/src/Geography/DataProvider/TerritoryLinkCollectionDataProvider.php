@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -30,9 +30,9 @@ use App\Geography\Service\TerritoryManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Collection data provider for Direction search (route calculation).
+ * Collection data provider for Territory link calculation (addresses and directions link).
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  */
 final class TerritoryLinkCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
@@ -53,7 +53,7 @@ final class TerritoryLinkCollectionDataProvider implements CollectionDataProvide
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        //$this->territoryManager->initAddressesAndDirections();
+        $this->territoryManager->initAddressesAndDirections();
         return [];
     }
 }

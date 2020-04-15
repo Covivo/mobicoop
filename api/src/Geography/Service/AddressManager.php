@@ -50,7 +50,7 @@ class AddressManager
     }
 
     /**
-     * Create or update territories for an Address.
+     * Create territories for an Address.
      *
      * @param Address $address  The address
      * @param boolean $persist  Persit the address immediately
