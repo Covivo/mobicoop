@@ -6,7 +6,7 @@
       <v-col
         cols="8"
         md="12"
-        lg="12"
+        lg="10"
         xl="8"
       >
         <v-tabs
