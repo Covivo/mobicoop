@@ -1,3 +1,10 @@
+# Release 1.3.0
+
+## API
+
+* Direct link between addresses and directions to territories : improve the response speed for territory filters
+
+
 # Release 1.2.0
 
 ## API
