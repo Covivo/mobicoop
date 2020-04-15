@@ -7,6 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import { Button} from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
+import FormControl from '@material-ui/core/FormControl';
 
 import {
     email, regex,useTranslate,
@@ -35,10 +36,21 @@ const GestionRoles = ({record}) => {
   const translate = useTranslate();
   const dataProvider = useDataProvider();
   const [roles, setRoles] = useState([]);
-  const [fields, setFields] = useState([{'roles' : new Array(), 'territory' : null}]);
+  const [fields, setFields] = useState([{'roles' : ['none'], 'territory' : null}]);
   const [currentTerritory, setCurrentTerritory] = useState([]);
   const form = useForm();
   const classes = useStyles();
+
+  const required = (message = translate('custom.alert.fieldMandatory') ) =>
+          value => value ? undefined : message;
+
+const verifRoles = (value ) => {
+
+    console.info(value);
+  return null
+}
+
+
   useEffect (
       () => { const getData = () => dataProvider.getList('permissions/roles', {pagination:{ page: 1 , perPage: 1000 }, sort: { field: 'id', order: 'ASC' }, })
           .then( ({ data }) => {
@@ -67,7 +79,7 @@ const GestionRoles = ({record}) => {
 
   function handleAdd() {
       const values = [...fields];
-      values.push({'roles' : [], 'territory' : null});
+      values.push({'roles' :  ['none'], 'territory' : null});
       setFields(values);
       form.change('fields', fields);
   }
@@ -83,8 +95,13 @@ const GestionRoles = ({record}) => {
   const handleAddPair = (indice, nature) => e => {
       const values = [...fields];
 
-      if (nature == 'roles')   values[indice]['roles'] = e.target.value;
+      if (nature == 'roles')  values[indice]['roles'] = e.target.value;
       else  values[indice]['territory'] = e.link;
+
+      //Dont found better option than this : it alow to remove 'none' from the roles
+      if(values[indice]['roles'][0] == "none" ) {
+        values[indice]['roles'].splice(0,1)
+      }
       setFields(values);
       form.change('fields', fields);
   }
@@ -112,7 +129,7 @@ const GestionRoles = ({record}) => {
                 </Grid>
 
               <Grid item xs={5}>
-                    <TerritoryInput key={`territory-${i}`} setTerritory={handleAddPair(i, 'territory')} initValue={field.territory} />
+                    <TerritoryInput key={`territory-${i}`} setTerritory={handleAddPair(i, 'territory')} validate={required(translate('custom.label.user.territoryMandatory'))} initValue={field.territory} />
               </Grid>
 
               <Grid item xs={2}>

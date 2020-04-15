@@ -148,7 +148,12 @@ const fr = {
               },
               selectRoles : 'Selectionner un ou plusieurs rôles',
               candidate : 'Solidiaire : candidat',
-              volunteer : 'Solidiaire : volontaire'
+              volunteer : 'Solidiaire : volontaire',
+              adresseMandatory : "L'adresse est obligatoire",
+              territoryMandatory : "Sélectionner un ou plusieurs territoires",
+              contact : "Contact",
+               acceptActualite :  'Accepte de recevoir les actualités',
+               declineActualite :  'Refuse de recevoir les actualités',
             },
             territory : {
               territory : 'Territoire',

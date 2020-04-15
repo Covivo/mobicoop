@@ -56,7 +56,7 @@ const TerritoryInput = props => {
     const debouncedInput = useDebounce(input, 500);
 
     const formState   = form.getState()
-    const errorMessage = 'non'
+   const errorMessage = props.validate(input)
     const errorState  = formState.submitFailed && errorMessage
 
 

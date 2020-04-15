@@ -66,7 +66,7 @@ const UserCreate = props => {
     const validateRequired = [required()];
     const paswwordRules = [required(),minPassword(),upperPassword,lowerPassword,numberPassword];
     const emailRules = [required(), email() ];
-    const validateUserCreation = values => values.address ? {} :  ({ address : "L'adresse est obligatoire" })
+    const validateUserCreation = values => values.address ? {} :  ({ address : translate('custom.label.user.adresseMandatory') })
 
     return (
         <Create { ...props } title={translate('custom.label.user.title.create')}>
@@ -86,10 +86,9 @@ const UserCreate = props => {
 
                     <SelectInput fullWidth source="phoneDisplay" label={translate('custom.label.user.phoneDisplay.visibility')} choices={phoneDisplay}  formClassName={classes.spacedHalfwidth}/>
 
-                    <GeocompleteInput fullWidth source="addresses" label={translate('custom.label.user.adresse')} validate={required("L'adresse est obligatoire")}/>
+                    <GeocompleteInput fullWidth source="addresses" label={translate('custom.label.user.adresse')} validate={required(translate('custom.label.user.adresseMandatory'))}/>
 
-                    <BooleanInput initialValue={true} label={translate('custom.label.user.accepteReceiveEmail')} source="newsSubscription" />
-
+                
                 </FormTab>
                 <FormTab label={translate('custom.label.user.preference')}>
                 <SelectInput fullWidth source="music" label={translate('custom.label.user.carpoolSetting.music')} choices={musique} formClassName={classes.spacedHalfwidth}/>
@@ -100,10 +99,7 @@ const UserCreate = props => {
                 </FormTab>
 
                   <FormTab label={translate('custom.label.user.manageRoles')}>
-
                       <GestionRoles />
-
-
                   </FormTab>
 
 
