@@ -356,10 +356,6 @@ class AdManager
                     : Ad::ROLE_DRIVER
                 : Ad::ROLE_PASSENGER);
         }
-        // oneway ?
-//        if (isset($data['oneway'])) {
-//            $ad->setOneWay($data['oneway']);
-//        }
 
         // frequency
         if (isset($data['regular'])) {
@@ -368,14 +364,20 @@ class AdManager
 
         // outward waypoints
         if (isset($data['origin']) && isset($data['waypoints'])) {
-            $outwardsWaypoints[] = $data['origin'];
+            $outwardWaypoints[] = $data['origin'];
+            $returnWaypoints = null;
             foreach ($data['waypoints'] as $waypoint) {
                 if ($waypoint['visible']) {
-                    $outwardsWaypoints[] = $waypoint['address'];
+                    $outwardWaypoints[] = $waypoint['address'];
                 }
             }
-            $outwardsWaypoints[] = $data['destination'];
-            $ad->setOutwardWaypoints($outwardsWaypoints);
+            $outwardWaypoints[] = $data['destination'];
+            
+            if (!$ad->isOneWay()) {
+                $returnWaypoints = array_reverse($outwardWaypoints, false);
+            }
+            $ad->setOutwardWaypoints($outwardWaypoints);
+            $ad->setReturnWaypoints($returnWaypoints);
         }
 
         // date and time
