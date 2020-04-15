@@ -21,6 +21,16 @@ final class Version20200413065039 extends AbstractMigration
         $this->addSql('ALTER TABLE address_territory ADD CONSTRAINT FK_7335052E73F74AD4 FOREIGN KEY (territory_id) REFERENCES territory (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE direction_territory ADD CONSTRAINT FK_8254FD11AF73D997 FOREIGN KEY (direction_id) REFERENCES direction (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE direction_territory ADD CONSTRAINT FK_8254FD1173F74AD4 FOREIGN KEY (territory_id) REFERENCES territory (id) ON DELETE CASCADE');
+
+        // add territory authorization for selected admins
+        $this->addSql('
+        INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES
+        (7, 103),
+        (8, 103),
+        (9, 103),
+        (10, 103),
+        (13, 103)
+        ');
     }
 
     public function down(Schema $schema) : void

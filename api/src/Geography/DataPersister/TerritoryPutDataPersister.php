@@ -49,7 +49,7 @@ final class TerritoryPutDataPersister implements ContextAwareDataPersisterInterf
 
     public function persist($data, array $context = [])
     {
-        return $this->territoryManager->updateTerritory($this->request->get("id"), $data);
+        return $this->territoryManager->updateTerritory($data);
     }
 
     public function remove($data, array $context = [])
