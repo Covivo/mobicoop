@@ -44,12 +44,6 @@ const GestionRoles = ({record}) => {
   const required = (message = translate('custom.alert.fieldMandatory') ) =>
           value => value ? undefined : message;
 
-const verifRoles = (value ) => {
-
-    console.info(value);
-  return null
-}
-
 
   useEffect (
       () => { const getData = () => dataProvider.getList('permissions/roles', {pagination:{ page: 1 , perPage: 1000 }, sort: { field: 'id', order: 'ASC' }, })
