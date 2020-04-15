@@ -121,6 +121,7 @@ use App\User\Controller\UserCanUseEmail;
  *          "post"={
  *              "method"="POST",
  *              "path"="/users",
+ *              "normalization_context"={"groups"={"readUser"}},
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -182,6 +183,7 @@ use App\User\Controller\UserCanUseEmail;
  *          "userRegistration"={
  *              "method"="POST",
  *              "path"="/users/register",
+ *              "normalization_context"={"groups"={"readUser"}},
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
