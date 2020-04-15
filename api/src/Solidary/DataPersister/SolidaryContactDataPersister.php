@@ -3,11 +3,15 @@ namespace App\Solidary\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Solidary\Entity\SolidaryContact;
+use App\Solidary\Service\SolidaryContactManager;
 
 final class SolidaryContactDataPersister implements ContextAwareDataPersisterInterface
 {
-    public function __construct()
+    private $solidaryContactManager;
+
+    public function __construct(SolidaryContactManager $solidaryContactManager)
     {
+        $this->solidaryContactManager = $solidaryContactManager;
     }
 
     public function supports($data, array $context = []): bool
@@ -18,6 +22,7 @@ final class SolidaryContactDataPersister implements ContextAwareDataPersisterInt
     public function persist($data, array $context = [])
     {
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
+            $data = $this->solidaryContactManager->handleSolidaryContact($data);
         }
         return $data;
     }

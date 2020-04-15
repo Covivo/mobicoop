@@ -24,6 +24,9 @@
 namespace App\Action\EventSubscriber;
 
 use App\Action\Service\ActionManager;
+use App\Solidary\Event\SolidaryContactEmail;
+use App\Solidary\Event\SolidaryContactMessage;
+use App\Solidary\Event\SolidaryContactSms;
 use App\Solidary\Event\SolidaryCreated;
 use App\Solidary\Event\SolidaryUpdated;
 use App\Solidary\Event\SolidaryUserCreated;
@@ -50,6 +53,9 @@ class SolidarySubscriber implements EventSubscriberInterface
             SolidaryUserUpdated::NAME => 'onSolidaryUserUpdated',
             SolidaryCreated::NAME => 'onSolidaryCreated',
             SolidaryUpdated::NAME => 'onSolidaryUpdated',
+            SolidaryContactMessage::NAME => 'onSolidaryContactMessage',
+            SolidaryContactEmail::NAME => 'onSolidaryContactEmail',
+            SolidaryContactSms::NAME => 'onSolidaryContactSms'
         ];
     }
 
@@ -81,5 +87,20 @@ class SolidarySubscriber implements EventSubscriberInterface
     public function onSolidaryUpdated(SolidaryUpdated $event)
     {
         $this->actionManager->handleAction(SolidaryUpdated::NAME, $event);
+    }
+
+    public function onSolidaryContactMessage(SolidaryContactMessage $event)
+    {
+        $this->actionManager->handleAction(SolidaryContactMessage::NAME, $event);
+    }
+
+    public function onSolidaryContactEmail(SolidaryContactEmail $event)
+    {
+        $this->actionManager->handleAction(SolidaryContactEmail::NAME, $event);
+    }
+
+    public function onSolidaryContactSms(SolidaryContactSms $event)
+    {
+        $this->actionManager->handleAction(SolidaryContactSms::NAME, $event);
     }
 }

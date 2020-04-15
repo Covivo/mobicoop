@@ -29,6 +29,7 @@ use App\Solidary\Event\SolidaryCreated;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Solidary\Event\SolidaryUpdated;
+use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\SolidaryUserRepository;
 use Symfony\Component\Security\Core\Security;
@@ -41,8 +42,9 @@ class SolidaryManager
     private $solidaryRepository;
     private $solidaryUserRepository;
     private $adManager;
+    private $solidaryMatcher;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository, SolidaryUserRepository $solidaryUserRepository, AdManager $adManager)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository, SolidaryUserRepository $solidaryUserRepository, AdManager $adManager, SolidaryMatcher $solidaryMatcher)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
@@ -50,6 +52,7 @@ class SolidaryManager
         $this->solidaryRepository = $solidaryRepository;
         $this->solidaryUserRepository = $solidaryUserRepository;
         $this->adManager = $adManager;
+        $this->solidaryMatcher = $solidaryMatcher;
     }
 
     public function getSolidary($id): ?Solidary
@@ -105,32 +108,44 @@ class SolidaryManager
     public function getSolidaryCarpoolSearchSearchResults(SolidarySearch $solidarySearch): SolidarySearch
     {
 
-        // Maybe i don't need this. If there is no destination, i just add a destination point = to origin point later
-
-        //$waypoints = $solidarySearch->getSolidary()->getProposal()->getWaypoints();
-        // $withDestination = false;
-        // foreach ($waypoints as $waypoint) {
-        //     if ($waypoint->isDestination()) {
-        //         $withDestination=true;
-        //     }
-        // }
-        
-        // if ($withDestination) {
-        //     // Call the classic matching algo
-        // } else {
-        //     $solidarySearch->setResults($this->solidaryUserRepository->findForASolidaryCarpoolSearchWithoutDestination($solidarySearch));
-        // }
-        
-        // $solidarySearch->setResults($this->solidaryUserRepository->findForASolidaryCarpoolSearch($solidarySearch));
-        
-        // We make an Ad from the proposal linked to the solidary
+        // We make an Ad from the proposal linked to the solidary (if it's on the return, we take the ProposalLinked)
         // I'll have the results directly in the Ad
-        $proposal = $solidarySearch->getSolidary()->getProposal();
+        
+        if ($solidarySearch->getWay()=="outward") {
+            $proposal = $solidarySearch->getSolidary()->getProposal();
+        } else {
+            if (!is_null($solidarySearch->getSolidary()->getProposal()->getProposalLinked())) {
+                $proposal = $solidarySearch->getSolidary()->getProposal()->getProposalLinked();
+            }
+            throw new SolidaryException(SolidaryException::NO_RETURN_PROPOSAL);
+        }
+
+        // If the proposal doesn't have any destination, we duplicate the origin waypoint
+        $waypoints = $proposal->getWaypoints();
+        $withDestination = false;
+        foreach ($waypoints as $waypoint) {
+            if ($waypoint->isDestination()) {
+                $withDestination=true;
+            }
+        }
+        if (!$withDestination) {
+            // We clone the first waypoint and we use it as destination
+            $newDestination = clone $waypoints[0];
+            $newDestination->setDestination(true);
+            $proposal->addWaypoint(clone $newDestination);
+        }
+
         $ad = $this->adManager->makeAd($proposal, $proposal->getUser()->getId());
-        var_dump($ad->getResults());
-        die;
+        // echo count($ad->getResults());die;
+        // We need to build and persist all the new results as SolidaryMatching.
+        $solidaryMatchings = $this->solidaryMatcher->buildSolidaryMatchingsForCarpool($solidarySearch->getSolidary(), $ad->getResults());
 
         // We make Solidary Results out of the Ad's results
+        $results = [];
+        foreach ($solidaryMatchings as $solidaryMatching) {
+            $results[] = $this->solidaryMatcher->buildSolidaryResultCarpool($solidaryMatching);
+        }
+        $solidarySearch->setResults($results);
 
         return $solidarySearch;
     }
