@@ -400,7 +400,7 @@
                         @click.stop
                       >{{ $t('chart.link') }}
                       </a>
-                    </div>:
+                    </div>
                   </template>
                 </v-checkbox>
                 <v-row

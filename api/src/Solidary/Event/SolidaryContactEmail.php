@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,23 +21,29 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Exception;
+namespace App\Solidary\Event;
 
-class SolidaryException extends \LogicException
+use App\App\Entity\App;
+use App\Solidary\Entity\SolidaryContact;
+use Symfony\Contracts\EventDispatcher\Event;
+use App\User\Entity\User;
+
+/**
+ * Event sent when a solidary contact is made using an email
+ */
+class SolidaryContactEmail extends Event
 {
-    const INVALID_DATA_PROVIDED = "Invalid data provided";
-    const NO_ROLE = "This SolidaryUser has no role";
-    const BAD_SOLIDARYUSERSTRUCTURE_STATUS = "Invalid status value for this SolidaryUserStructure";
-    const BAD_SOLIDARY_ACTION = "Unknown action";
-    const UNKNOWN_USER = "Unknown User";
+    public const NAME = 'solidary_contact_email';
 
-    // SolidarySolution
-    const IS_NOT_VOLUNTEER = "The SolidaryUser is not a volunteer";
-    const CANT_HAVE_BOTH = "A SolidarySolution can't have both a Matching and a SolidaryUser";
+    protected $solidaryContact;
 
-    // Solidary matching
-    const INVALID_HOUR_SLOT = "Hour slot invalid";
-    const NO_RETURN_PROPOSAL = "There is no return proposal";
-    const NO_VALID_ADDRESS = "No valid address";
-    const NOT_A_DRIVER = "This User is not a driver";
+    public function __construct(SolidaryContact $solidaryContact)
+    {
+        $this->solidaryContact = $solidaryContact;
+    }
+
+    public function getSolidaryContact()
+    {
+        return $this->solidaryContact;
+    }
 }

@@ -14,3 +14,4 @@
 
 * Automatic territory filtering for communities and events
 * Changes authentification for login, reset token and reset password
+* Adds sentence "driver's license" at the end of ad publish

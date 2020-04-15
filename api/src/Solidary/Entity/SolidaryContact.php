@@ -77,10 +77,16 @@ class SolidaryContact
     private $content;
 
     /**
-    * @var array List of the Medium of this contact
+    * @var Medium[] List of the Medium of this contact
     * @Groups({"readSolidary","writeSolidary"})
     */
     private $media;
+
+    /**
+     * @var SolidaryAsk If this contact is linked to an Ask, we return it after a contact
+     * @Groups({"readSolidary"})
+     */
+    private $solidaryAsk;
 
 
     public function __construct()
@@ -130,26 +136,33 @@ class SolidaryContact
         return $this->media;
     }
 
-    // public function addMedium(Medium $medium): self
-    // {
-    //     if (!$this->media->contains($medium)) {
-    //         $this->media[] = $medium;
-    //     }
-
-    //     return $this;
-    // }
-
-    // public function removeMedium(Medium $medium): self
-    // {
-    //     if ($this->media->contains($medium)) {
-    //         $this->media->removeElement($medium);
-    //     }
-
-    //     return $this;
-    // }
-
-    public function setMedia(array $array)
+    public function addMedium(Medium $medium): self
     {
-        $this->media = $array;
+        if (!$this->media->contains($medium)) {
+            $this->media[] = $medium;
+        }
+
+        return $this;
+    }
+
+    public function removeMedium(Medium $medium): self
+    {
+        if ($this->media->contains($medium)) {
+            $this->media->removeElement($medium);
+        }
+
+        return $this;
+    }
+
+    public function getSolidaryAsk(): ?SolidaryAsk
+    {
+        return $this->solidaryAsk;
+    }
+    
+    public function setSolidaryAsk(SolidaryAsk $solidaryAsk): self
+    {
+        $this->solidaryAsk = $solidaryAsk;
+        
+        return $this;
     }
 }
