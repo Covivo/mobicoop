@@ -96,7 +96,7 @@ class TerritoryVoter extends Voter
                 }
                 return false;
             case self::TERRITORY_LIST:
-                return $this->canListTerritory();
+                return $this->canListTerritories();
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -122,10 +122,8 @@ class TerritoryVoter extends Voter
         return $this->authManager->isAuthorized(self::TERRITORY_DELETE, ['territory' => $territory]);
     }
 
-    private function canListTerritory()
+    private function canListTerritories()
     {
-        // for now everybody can list territories : todo !
-        return true;
-        //return $this->authManager->isAuthorized(self::TERRITORY_LIST);
+        return $this->authManager->isAuthorized(self::TERRITORY_LIST);
     }
 }
