@@ -55,7 +55,7 @@ class ExceptionListener
         // check if the exception is a NotFoundHttpException
         if ($exception instanceof NotFoundHttpException) {
             // route not found, we check if the route is a redirection for a data import
-            $redirect = $this->redirectManager->getRedirect(substr($this->requestStack->getCurrentRequest()->getRequestUri(), 1)); // note : we remove the leading '/' with a substr
+            $redirect = $this->redirectManager->getRedirect($this->requestStack->getCurrentRequest()->getRequestUri());
             if (!is_null($redirect)) {
                 $url = null;
                 // the route is found, we redirect

@@ -42,7 +42,7 @@
             >
               <!-- button if domain validation -->
               <div
-                v-if="domain == false"
+                v-if="domain == false && isSecured == false"
               >
                 <v-tooltip
                   left
@@ -89,7 +89,7 @@
                   {{ $t('leaveCommunity.button') }}
                 </v-btn>
               </div>
-              <!-- button if user ask to join community but is not accepted yet -->
+              <!-- button if user asked to join community but is not accepted yet -->
               <div v-else-if="askToJoin === true">
                 <v-tooltip
                   top
@@ -124,7 +124,7 @@
                   <span>{{ $t('tooltips.validation') }}</span>
                 </v-tooltip>
               </div>
-              <!-- button is user is not a member -->
+              <!-- button if user is not a member -->
               <div
                 v-else
               >
@@ -140,6 +140,7 @@
                       v-on="on"
                     >
                       <v-btn
+                        v-if="isSecured == false"
                         color="secondary"
                         rounded
                         :loading="loading || (checkValidation && isLogged) "
@@ -418,6 +419,7 @@ export default {
       checkValidation: false,
       isLogged: false,
       domain: true,
+      isSecured: this.community.isSecured,
       refreshMemberList: false,
       refreshLastUsers: false,
       params: { 'communityId' : this.community.id },
