@@ -12,20 +12,20 @@
         <h1 
           v-if="!displayTitleCommunity"
         >
-          Les communautés
+          {{ $t("title") }}
         </h1>
       </v-col>
     </v-row>
     <v-card>
       <v-tabs vertical>
         <v-tab>
-          Qu'est-ce qu'une communauté?
+          {{ $t("firstQuestion") }}
         </v-tab>
         <v-tab>
-          Une communauté, pour quoi faire?
+          {{ $t("secondQuestion") }}
         </v-tab>
         <v-tab>
-          Qui peut créer une communauté?
+          {{ $t("thirdQuestion") }}
         </v-tab>
 
         <v-tab-item>
