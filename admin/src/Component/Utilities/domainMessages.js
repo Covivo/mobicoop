@@ -3,6 +3,12 @@ import React from "react";
 
 const fr = {
     custom: {
+        dashboard : {
+            pendingConnectionToKibana: "Connection en cours à l'outil de reporting Scope....",
+            accessDenied : "Vous ne disposez pas des droits d'accès au tableau de bord Kibana.",
+            kibanaAuthenticationApiFetchError : "Erreur de connexion à Scope.",
+            kibanaAuthenticationApiReturnSomethingWrong : "Erreur de connexion à Scope."
+        },
         email: {
             texte: {
                 emailTous: 'Email à tous les filtrés',

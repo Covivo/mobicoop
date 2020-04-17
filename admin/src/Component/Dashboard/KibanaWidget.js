@@ -1,32 +1,42 @@
 import React, {useState, useEffect} from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import { useDataProvider, Title } from 'react-admin';
+import { useDataProvider, Title, useTranslate } from 'react-admin';
 import { useKibana } from './useKibana';
 import isAuthorized from '../../Auth/permissions'
 import getKibanaFilter from './kibanaFilters'
 
 const KibanaWidget = ({from="now-1y", width="100%", height="1200", url=process.env.REACT_APP_KIBANA_URL,dashboard=process.env.REACT_APP_KIBANA_DASHBOARD}) => {
-    const kibanaStatus = useKibana()
+    const translate = useTranslate()
+
+    const [kibanaStatus, kibanaError]  = useKibana()
     const [communitiesList, setCommunitiesList] = useState()
 
-    // List of communities the user manage (max 2)
-    const dataProvider = useDataProvider()
-    useEffect( () => {
-        const loadCommunitiesList = () => dataProvider.getList('communities', {pagination:{ page: 1 , perPage: 2 }, sort: { field: 'id', order: 'ASC' }, })
-                    .then(result  => result && result.data && result.data.length && setCommunitiesList(result.data.map( c => c.name)))
-        loadCommunitiesList()
-        }
-        , []
-    )
-    
     // Admin or community ?
     // Full rights granted to   territory_manage
     // Restricted rights for    community_manage (Automatic filter to my list of communities, hidden with negative margin)
-    const style     = isAuthorized("territory_manage") ? {borderWidth:0} : {marginTop:'-70px', borderWidth:0}
-    const filters   = getKibanaFilter({from, communitiesList})
+    const isCommunityManager= isAuthorized("community_dashboard_self") && !isAuthorized("user_manage")
+    const isAdmin           = isAuthorized("user_manage")   // a "ROLE_ADMIN" auth_item would be more suitable, but not available yet in the results of /permission API
 
-    if (isAuthorized("territory_manage") || (filters && isAuthorized("community_manage"))) {
+    // List of communities the user manage
+    // Need to have a specific Ressource to manage the data of a community owned by the user
+    const dataProvider = useDataProvider()
+    /*
+    useEffect( () => {
+        const loadCommunitiesList = () => dataProvider.getList('<New ressource Name here>', {pagination:{ page: 1 , perPage: 2 }, sort: { field: 'id', order: 'ASC' }, })
+                    .then(result  => result && result.data && result.data.length && setCommunitiesList(result.data.map( c => c.name)))
+        isCommunityManager && loadCommunitiesList()
+        }
+        , []
+    )
+    */
+    
+    const style     = isAdmin ? {borderWidth:0} : {marginTop:'-70px', borderWidth:0}
+    const filters   = isCommunityManager ? getKibanaFilter({from, communitiesList}) : ''
+
+    // Waiting for a new Ressource. Restrict dashboard to Admin
+    // if (isCommunityManager || isAdmin) {
+    if (isAdmin) {
         return (
             <Card>
                 <Title title="Dashboard" />
@@ -36,7 +46,7 @@ const KibanaWidget = ({from="now-1y", width="100%", height="1200", url=process.e
                             height={height} 
                             width={width}>
                         </iframe>
-                        : <p>Pas de connexion à Kibana ..</p>
+                        : <p>{kibanaError ? kibanaError : translate('custom.dashboard.pendingConnectionToKibana')}</p>
                     }
                 </CardContent>
             </Card>
@@ -45,7 +55,7 @@ const KibanaWidget = ({from="now-1y", width="100%", height="1200", url=process.e
         return (
             <Card>
                 <Title title="Dashboard" />
-                <CardContent>Chargement des données...</CardContent>
+                <CardContent>{translate('custom.dashboard.accessDenied')}</CardContent>
             </Card>
         )
     }

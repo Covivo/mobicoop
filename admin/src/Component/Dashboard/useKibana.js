@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react"
+import { useTranslate } from 'react-admin';
 
 const useKibana = () => {
-    const [ status, setStatus] = useState(false)    // Etat de la connexion à Kibana
-    
+    const [ status, setStatus]  = useState(false)    // Etat de la connexion à Kibana
+    const [ error, setError]    = useState('')    // Etat de la connexion à Kibana
+    const translate = useTranslate()
+
     useEffect( () => {
         const token         = localStorage.getItem('token')
-        const instanceName  = process.env.SCOPE_INSTANCE_NAME
+        const instanceName  = process.env.REACT_APP_SCOPE_INSTANCE_NAME
         const kibanaAuthenticationApi = process.env.REACT_APP_KIBANA_URL +'/login/' + instanceName
         console.log("kibanaAuthenticationApi:", kibanaAuthenticationApi)
+        console.log("process.env:", process.env)
 
         const getKibanaCookie = async () => {
              fetch(kibanaAuthenticationApi, {
@@ -18,11 +22,17 @@ const useKibana = () => {
             .then( reponse => {
                 console.log(reponse)
                 // Should check if cookie is there
-                if (reponse.status === 200 ) setStatus(true)
+                if (reponse.status === 200 ) {
+                    setStatus(true)
+                } else {
+                    setStatus(false)
+                    setError(translate('custom.dashboard.kibanaAuthenticationApiReturnSomethingWrong'))
+                }
             })
             .catch( error => {
                 console.log("Ereur lors de la connexion à Kibana :", error)
                 setStatus(false)
+                setError(translate('custom.dashboard.kibanaAuthenticationApiFetchError'))
             })
         }
         if (token && instanceName && kibanaAuthenticationApi) {
@@ -32,7 +42,7 @@ const useKibana = () => {
     },[]
     )
 
-    return status
+    return [status, error]
 }
 
 export { useKibana }
