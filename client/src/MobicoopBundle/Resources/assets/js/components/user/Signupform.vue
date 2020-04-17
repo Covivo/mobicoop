@@ -380,6 +380,48 @@
                   :required="requiredHomeAddress"
                   @address-selected="selectedGeo"
                 />
+
+                <!-- community -->
+
+                <v-row
+                  class="text-justify pb-5"
+                >
+                  <community-help />
+                </v-row>
+
+                <v-autocomplete                  
+                  v-model="selectedCommunity"
+                  :items="communities.communities"
+                  outlined
+                  chips
+                  :label="$t('communities.label')"
+                  item-text="name"
+                  item-value="id"
+                  @change="emitEvent"
+                >
+                  <template v-slot:selection="data">
+                    <v-chip                      
+                      v-bind="data.attrs"
+                      :input-value="data.selected"
+                      close
+                      @click="data.select"
+                      @click:close="toggleSelected"
+                    >
+                      {{ data.item.name }}
+                    </v-chip>
+                  </template>
+                  <template v-slot:item="data">
+                    <template v-if="typeof data.item !== 'object'">
+                      <v-list-item-content v-text="data.item" />
+                    </template>
+                    <template v-else>
+                      <v-list-item-content>
+                        <v-list-item-title v-html="data.item.name" />
+                        <v-list-item-subtitle v-html="data.item.description" />
+                      </v-list-item-content>
+                    </template>
+                  </template>
+                </v-autocomplete>
                 <v-checkbox
                   v-model="form.validation"
                   class="check mt-12"
