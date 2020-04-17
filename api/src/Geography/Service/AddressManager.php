@@ -72,4 +72,49 @@ class AddressManager
         }
         return $address;
     }
+
+    /**
+     * Create or update territories for an Address, only if the address is directly related to 'useful' entities :
+     * - user (home)
+     * - community
+     * - event
+     * - relay point
+     * - proposal waypoint
+     * - todo : add useful entities
+     *
+     * @param Address $address  The address
+     * @param boolean $persist  Persit the address immediately
+     * @return void             The address with its territories
+     */
+    public function createAddressTerritoriesForUsefulEntity(Address $address, bool $persist = false)
+    {
+        $createLink = false;
+        if ($address->isHome()) {
+            // home address
+            $createLink = true;
+        } elseif (!is_null($address->getCommunity())) {
+            // community
+            $createLink = true;
+        } elseif (!is_null($address->getEvent())) {
+            // event
+            $createLink = true;
+        } elseif (!is_null($address->getRelayPoint())) {
+            // relay point
+            $createLink = true;
+        } elseif (!is_null($address->getWaypoint())) {
+            // proposal waypoint
+            if (!is_null($address->getWaypoint()->getProposal())) {
+                $createLink = true;
+            }
+        }
+        // todo : add any needed useful entity link
+        if ($createLink) {
+            return $this->createAddressTerritories($address, $persist);
+        }
+        if ($persist) {
+            $this->entityManager->persist($address);
+            $this->entityManager->flush();
+        }
+        return $address;
+    }
 }

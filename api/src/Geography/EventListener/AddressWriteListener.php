@@ -41,6 +41,7 @@ class AddressWriteListener
 
     public function setTerritories(Address $address, LifecycleEventArgs $args)
     {
-        //$this->addressManager->createAddressTerritories($address, true);
+        // we create the link to territories only for some selected entities
+        $this->addressManager->createAddressTerritoriesForUsefulEntity($address, true);
     }
 }

@@ -33,7 +33,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use App\Carpool\Entity\WayPoint;
+use App\Carpool\Entity\Waypoint;
 use App\User\Entity\User;
 use App\Image\Entity\Icon;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
@@ -295,6 +295,8 @@ class Address implements \JsonSerializable
 
     /**
      * @var RelayPoint|null The relaypoint related to the address.
+     *
+     * @ORM\OneToOne(targetEntity="App\RelayPoint\Entity\RelayPoint", mappedBy="address")
      * @Groups({"read","pt"})
      */
     private $relayPoint;
@@ -314,6 +316,13 @@ class Address implements \JsonSerializable
      * @Groups({"read"})
      */
     private $community;
+
+    /**
+     * @var Community|null The waypoint of the address.
+     *
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Waypoint", mappedBy="address")
+     */
+    private $waypoint;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -676,6 +685,18 @@ class Address implements \JsonSerializable
     public function setCommunity(?Community $community): self
     {
         $this->community = $community;
+
+        return $this;
+    }
+
+    public function getWaypoint(): ?Waypoint
+    {
+        return $this->waypoint;
+    }
+
+    public function setWaypoint(?Waypoint $waypoint): self
+    {
+        $this->waypoint = $waypoint;
 
         return $this;
     }

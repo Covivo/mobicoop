@@ -102,4 +102,30 @@ class DirectionManager
         }
         return $direction;
     }
+
+    /**
+     * Create or update territories for a Direction, only if the direction is directly related to 'useful' entities :
+     * - proposal
+     *
+     * @param Direction $direction    The direction
+     * @param boolean $persist      Persit the address immediately
+     * @return void The direction with its territories
+     */
+    public function createDirectionTerritoriesForUsefulEntity(Direction $direction, bool $persist = false)
+    {
+        $createLink = false;
+        if (!is_null($direction->getCriteriaDriver())) {
+            if (!is_null($direction->getCriteriaDriver()->getProposal())) {
+                $createLink = true;
+            }
+        } elseif (!is_null($direction->getCriteriaPassenger())) {
+            if (!is_null($direction->getCriteriaPassenger()->getProposal())) {
+                $createLink = true;
+            }
+        }
+        if ($createLink) {
+            return $this->createDirectionTerritories($direction, $persist);
+        }
+        return $direction;
+    }
 }

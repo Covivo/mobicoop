@@ -26,6 +26,7 @@ namespace App\Geography\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Carpool\Entity\Criteria;
 use App\Geography\Service\GeoTools;
 use Symfony\Component\Serializer\Annotation\Groups;
 use CrEOF\Spatial\PHP\Types\Geometry\Polygon;
@@ -261,7 +262,19 @@ class Direction
      * Used for dynamic carpool where we can construct a direction from scratch (adding points on the fly).
      */
     private $detailUpdatable;
-    
+
+    /**
+     * @var Criteria The criteria as driver related to the direction.
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", mappedBy="directionDriver")
+     */
+    private $criteriaDriver;
+
+    /**
+     * @var Criteria The criteria as passenger related to the direction.
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", mappedBy="directionPassenger")
+     */
+    private $criteriaPassenger;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -623,6 +636,30 @@ class Direction
     {
         $this->detailUpdatable = $detailUpdatable;
 
+        return $this;
+    }
+
+    public function getCriteriaDriver(): ?Criteria
+    {
+        return $this->criteriaDriver;
+    }
+
+    public function setCriteriaDriver(Criteria $criteriaDriver): self
+    {
+        $this->criteriaDriver = $criteriaDriver;
+        
+        return $this;
+    }
+
+    public function getCriteriaPassenger(): ?Criteria
+    {
+        return $this->criteriaPassenger;
+    }
+
+    public function setCriteriaPassenger(Criteria $criteriaPassenger): self
+    {
+        $this->criteriaPassenger = $criteriaPassenger;
+        
         return $this;
     }
 

@@ -482,6 +482,7 @@ class Community
     public function setAddress(?Address $address): self
     {
         $this->address = $address;
+        $address->setCommunity($this);
 
         return $this;
     }
