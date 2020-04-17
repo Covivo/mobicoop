@@ -732,7 +732,7 @@ class Address implements \JsonSerializable
                 'home'                 => $this->isHome(),
                 'icon'                 => $this->getIcon(),
                 'venue'                => $this->getVenue(),
-                'event'                => $this->getEvent(),
+                'event'                => $this->getEvent()
             ];
     }
 }
