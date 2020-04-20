@@ -3,7 +3,12 @@
     <v-row
       justify="center"
     >
-      <v-col cols="8">
+      <v-col
+        cols="8"
+        md="12"
+        lg="10"
+        xl="8"
+      >
         <v-tabs
           v-model="modelTabs"
           slider-color="primary"

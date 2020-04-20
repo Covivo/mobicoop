@@ -63,6 +63,7 @@
           >
             <template v-slot:activator="{ on }">
               <v-text-field
+                id="outwardTime"
                 v-model="outwardTime"
                 :label="$t('outwardTime.label')"
                 prepend-icon=""
@@ -325,6 +326,10 @@
                       </v-icon>
                     </v-text-field>
                   </template>
+
+
+                 
+                  <!-- 
                   <!-- 
                     we can't use $refs with v-for : https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-Child-Component-Instances-amp-Child-Elements 
                     because $refs are not reactive, we have to use a custom method closeOutwardTime() which will close the menu

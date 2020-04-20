@@ -86,7 +86,7 @@
       >
         <v-btn
           v-if="isPausable && !isArchived && paused"
-          class="success my-1 mr-1"
+          class="success my-1"
           icon
           :loading="loading"
           @click="pauseAd"
@@ -110,7 +110,7 @@
         </v-btn>
         <v-btn
           v-if="!isArchived"
-          class="secondary ma-1"
+          class="secondary my-1"
           icon
           :loading="loading"
           @click="updateAd"
@@ -121,7 +121,7 @@
         </v-btn>
         <v-btn
           v-if="isPausable && !isArchived && !paused"
-          class="secondary my-1 mr-1"
+          class="secondary my-1"
           icon
           :loading="loading"
           @click="pauseAd"

@@ -432,6 +432,8 @@ services:
             $chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
             $music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
             $smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'
+            $fakeFirstMail: '%env(string:FAKE_FIRST_MAIL)%'
+            $fakeFirstToken: '%env(string:FAKE_FIRST_TOKEN)%'
     
     App\ExternalJourney\DataProvider\ExternalJourneyCollectionDataProvider:
         arguments:

@@ -23,7 +23,7 @@
 
     <v-divider class="primary lighten-5" />
       
-    <v-card-actions class="py-0">
+    <v-card-actions>
       <ad-footer
         v-if="!isPaused"
         :id="ad.id"

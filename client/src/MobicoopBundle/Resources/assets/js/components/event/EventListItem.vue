@@ -19,7 +19,12 @@
           max-height="200"
         />
       </v-col>
-      <v-col cols="6">
+      <v-col
+        cols="6"
+        md="4"
+        lg="5"
+        xl="6"
+      >
         <v-card-title>
           <div>
             <h4>
@@ -57,6 +62,7 @@
             color="secondary"
             rounded
             :href="linkToEventShow(item)"
+            width="231px"
           >
             {{ $t('eventDetails') }}
           </v-btn>

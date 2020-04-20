@@ -145,6 +145,7 @@
                 </v-alert>
 
                 <v-text-field
+                  id="telephone"
                   v-model="form.telephone"
                   :label="$t('models.user.phone.placeholder')+` *`"
                   required
@@ -153,6 +154,7 @@
                   @keypress="isNumber(event)"
                 />
                 <v-text-field
+                  id="password"
                   v-model="form.password"
                   :append-icon="form.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   :rules="[form.passWordRules.required,form.passWordRules.min, form.passWordRules.checkUpper,form.passWordRules.checkLower,form.passWordRules.checkNumber]"
@@ -163,6 +165,7 @@
                   @click:append="form.showPassword = !form.showPassword"
                 />
                 <v-btn
+                  id="buttonNext1"
                   ref="button"
                   rounded
                   class="my-13"
@@ -190,6 +193,7 @@
                 @submit.prevent
               >
                 <v-text-field
+                  id="givenName"
                   v-model="form.givenName"
                   :rules="form.givenNameRules"
                   :label="$t('models.user.givenName.placeholder')+` *`"
@@ -197,6 +201,7 @@
                   required
                 />
                 <v-text-field
+                  id="familyName"
                   v-model="form.familyName"
                   :rules="form.familyNameRules"
                   :label="$t('models.user.familyName.placeholder')+` *`"
@@ -223,6 +228,7 @@
                 >
                   <template v-slot:activator="{ on }">
                     <v-text-field
+                      id="birthday"
                       v-model="form.date"
                       :label="$t('models.user.birthYear.placeholder')+` *`"
                       readonly
@@ -255,6 +261,7 @@
                     {{ $t('ui.button.previous') }}
                   </v-btn>
                   <v-btn
+                    id="buttonNext2"
                     ref="button"
                     rounded
                     class="my-13"

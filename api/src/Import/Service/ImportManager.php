@@ -314,9 +314,11 @@ class ImportManager
     public function importUserImage()
     {
         set_time_limit(7200);
-        if ($this->userImportRepository->findBy(array('id' => 1)) == null) {
-            $this->importUserIfNotMigrate();
-        }
+        //if ($this->userImportRepository->findBy(array('id' => 1)) == null) {
+        // For Users we always do this because users are always in UserImport at this stage
+        // See comments in importUserIfNotMigrate() for more infos
+        $this->importUserIfNotMigrate();
+        //}
         $dir = "../public/import/Avatar/";
         $results = array('importer' => 0,'probleme-id-v1' => 0,'probleme-id-v2' => 0);
 
@@ -494,7 +496,7 @@ class ImportManager
         if (($handle = fopen("../public/import/csv/user_id_corresp.csv", "r")) !== false) {
             while (($data = fgetcsv($handle, 1000, ",")) !== false) {
 
-                // Since the import avec avatars is only made after the migration of the accounts
+                // Since the import of avatars is only made after the migration of the accounts
                 // we need to get the actual UserImport created by the migration and link it by externalid
                 
                 $user = $this->userRepository->find($data[0]);
