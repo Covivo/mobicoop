@@ -611,13 +611,17 @@ class DataProvider
         if (is_null($route)) {
             $route = self::pluralize((new \ReflectionClass($subClassName))->getShortName());
         }
-
+        
         try {
             if ($this->format == self::RETURN_JSON) {
                 $headers = $this->getHeaders(['json']);
+                // var_dump($this->resource.'/'.$id.'/'.$route, ['query'=>$params, 'headers' => $headers]);die;
+
                 $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params, 'headers' => $headers]);
             } else {
                 $headers = $this->getHeaders();
+                // var_dump($this->resource.'/'.$id.'/'.$route, ['query'=>$params, 'headers' => $headers]);die;
+
                 $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params, 'headers' => $headers]);
             }
             if ($clientResponse->getStatusCode() == 200) {
@@ -716,6 +720,10 @@ class DataProvider
         if (is_null($groups)) {
             $groups = ['post'];
         }
+
+        // var_dump($this->resource."/".$operation);
+        // var_dump($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]));die;
+        
         try {
             $uri = $this->resource."/".$operation;
             $headers = $this->getHeaders();
