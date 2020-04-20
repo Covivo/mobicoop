@@ -9,19 +9,23 @@
         xl="10"
         align="center"
       >
-        <h1>Les communautés</h1>
+        <h1 
+          v-if="!displayTitleCommunity"
+        >
+          {{ $t("title") }}
+        </h1>
       </v-col>
     </v-row>
     <v-card>
       <v-tabs vertical>
         <v-tab>
-          Qu'est-ce qu'une communauté?
+          {{ $t("firstQuestion") }}
         </v-tab>
         <v-tab>
-          Une communauté, pour quoi faire?
+          {{ $t("secondQuestion") }}
         </v-tab>
         <v-tab>
-          Qui peut créer une communauté?
+          {{ $t("thirdQuestion") }}
         </v-tab>
 
         <v-tab-item>
@@ -44,7 +48,7 @@
                 <li>{{ $t("communityforwhat.list.firstLine") }}</li>
                 <li>{{ $t("communityforwhat.list.secondLine") }}</li>
                 <li>{{ $t("communityforwhat.list.thirdLine") }}</li>
-                <li>{{ $t("communityforwhat.list.fourthLine") }}</li>
+                <li>{{ $t("communityforwhat.list.fourthLine") }}</li>   
               </ul>
             </v-card-text>
           </v-card>
@@ -70,6 +74,12 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged
-  }
+  },
+  props: {
+    displayTitleCommunity: {
+      type: Boolean,
+      default: false
+    }
+  } 
 }
 </script>
