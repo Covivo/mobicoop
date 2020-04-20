@@ -103,7 +103,7 @@ class ArticleController extends AbstractController
      * Display of the history page
      *
      */
-    public function showHistroy(ArticleManager $articleManager)
+    public function showHistory(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::HISTORY));
     }
@@ -231,7 +231,7 @@ class ArticleController extends AbstractController
      * @param ArticleManager $articleManager
      * @return void
      */
-    public function articleGet(Request $request, ArticleManager $articleManager)
+    public function article(Request $request, ArticleManager $articleManager)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
@@ -239,6 +239,21 @@ class ArticleController extends AbstractController
                 $id = $data['articleId'];
             }
             return new JsonResponse($articleManager->getArticle($id));
+        }
+        return new JsonResponse();
+    }
+
+    /**
+     * Simple get article (useful for redirections)
+     *
+     * @param int               $id             The article id
+     * @param ArticleManager    $articleManager The article manager
+     * @return JsonResponse
+     */
+    public function articleGet(int $id, ArticleManager $articleManager)
+    {
+        if ($article = $articleManager->getArticle($id)) {
+            return $this->showArticle($article);
         }
         return new JsonResponse();
     }
