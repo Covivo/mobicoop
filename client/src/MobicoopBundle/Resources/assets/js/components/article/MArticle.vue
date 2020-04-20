@@ -8,7 +8,7 @@
         v-if="article"
         cols="10"
       >
-        <h1 class="display-2 primary--text bold">
+        <h1 class="display-1 primary--text text-center font-weight-bold">
           {{ article.title }}
         </h1>
         <v-row
@@ -16,7 +16,9 @@
           :key="section"
         >
           <v-col>
-            <h2 class="display-1 secondary--text">
+            <h2
+              class="title font-weight-bold"
+            >
               {{ section.title }}
             </h2>
             <h3 class="headline">
@@ -28,7 +30,8 @@
             >
               <v-col>
                 <div
-                  v-html="paragraph.text"
+                  class="ma-n3"
+                  v-html="paragraph.text" 
                 />
               </v-col>
             </v-row>       
@@ -71,3 +74,7 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+
+</style>
