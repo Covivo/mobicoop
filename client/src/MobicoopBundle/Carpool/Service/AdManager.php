@@ -511,11 +511,9 @@ class AdManager
         //Gestion events : If an event is set as destination or arrival, we set the event in proposal
         if ((isset($data['origin']['event']) && $data['origin']['event'] != null) || (isset($data['destination']['event']) && $data['destination']['event'] != null)) {
             $event = $data['origin']['event']  != null ? $data['origin']['event'] : $data['destination']['event'];
-            
-            // this is an HOTFIX ==> TODO fix correctly the issue
-            $ad->setEventId(str_replace("/events/", "", $event));
+            $ad->setEventId($event["id"]);
         }
-
+        
         // filters
         if (isset($data['filters'])) {
             $ad->setFilters($data['filters']);
