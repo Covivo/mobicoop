@@ -1020,7 +1020,7 @@ class User implements UserInterface, EquatableInterface
      */
     private $alreadyRegistered;
     
-      /**
+    /**
      * @var boolean|null true if the registration is from mobile
      *
      * @Groups({"readUser","write"})
