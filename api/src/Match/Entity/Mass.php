@@ -199,8 +199,7 @@ use Doctrine\Common\Collections\Collection;
   *          "migrate"={
  *              "method"="GET",
  *              "path"="/masses/{id}/migrate",
- *              "normalization_context"={"groups"={"massMigrate"}},
- *              "controller"=MassMigrateAction::class
+ *              "normalization_context"={"groups"={"massMigrate"}}
  *          },
  *      }
  * )
