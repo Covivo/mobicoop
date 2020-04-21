@@ -46,7 +46,14 @@ use App\MassCommunication\Controller\CampaignSendTest;
  *          "normalization_context"={"groups"={"read_campaign"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write_campaign"}}
  *      },
- *      collectionOperations={"get","post"},
+ *      collectionOperations={"get","post",
+ *          "owned"={
+ *              "method"="GET",
+ *              "path"="/campaigns/owned",
+ *              "normalization_context"={"groups"={"read_campaign"}},
+ *              "security_post_denormalize"="is_granted('community_list',object)"
+ *          },
+ *      },
  *      itemOperations={
  *          "get",
  *          "put",
@@ -200,7 +207,7 @@ class Campaign
      * @Groups({"read_campaign","write_campaign"})
      */
     private $images;
-    
+
     public function __construct()
     {
         if (is_null($this->status)) {
@@ -214,14 +221,14 @@ class Campaign
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getName(): ?string
     {
         return $this->name;
@@ -310,11 +317,11 @@ class Campaign
     {
         return $this->medium;
     }
-    
+
     public function setMedium(?Medium $medium): self
     {
         $this->medium = $medium;
-        
+
         return $this;
     }
 
@@ -322,11 +329,11 @@ class Campaign
     {
         return $this->user;
     }
-    
+
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -334,11 +341,11 @@ class Campaign
     {
         return $this->campaignTemplate;
     }
-    
+
     public function setCampaignTemplate(?CampaignTemplate $campaignTemplate): self
     {
         $this->campaignTemplate = $campaignTemplate;
-        
+
         return $this;
     }
 
@@ -423,7 +430,7 @@ class Campaign
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

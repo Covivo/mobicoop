@@ -2,7 +2,7 @@ import React from 'react';
 import isAuthorized from '../../Auth/permissions'
 import Paper from '@material-ui/core/Paper'
 
-import { 
+import {
     List,
     Datagrid,
     TextField, DateField, ImageField,
@@ -13,7 +13,7 @@ const EventPanel = ({ id, record, resource }) => (
     <Paper style={{padding:'1rem'}}>
         <div dangerouslySetInnerHTML={{ __html: record.fullDescription }} />
         { record.url && <p><a href={record.url}>{record.url}</a></p>}
-    </Paper> 
+    </Paper>
 
 );
 

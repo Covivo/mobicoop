@@ -2,15 +2,22 @@ import React from 'react';
 import isAuthorized from '../../Auth/permissions'
 //import bcrypt from 'bcryptjs';
 
-import { 
+import {
     Show,
     TabbedShowLayout, Tab,
-    TextField, EmailField, DateField, 
+    TextField, EmailField, DateField,
     FunctionField, Labeled,
     ReferenceArrayField, BooleanField, Datagrid,
-    ReferenceField, ReferenceManyField
+    ReferenceField, ReferenceManyField,useTranslate,SelectField, Aside
 } from 'react-admin';
 
+import { Typography, List as ListMaterial, ListItem, ListItemIcon, ListItemText, Card, CardHeader, Divider} from '@material-ui/core'
+import { UserRenderer, addressRenderer } from '../Utilities/renderers'
+
+import EmailIcon from '@material-ui/icons/Email';
+import PhoneIcon from '@material-ui/icons/Phone';
+import CheckIcon from '@material-ui/icons/Check';
+import ClearIcon from '@material-ui/icons/Clear';
 
 const renderSmoke = (smoke) => {
     let text = "";
@@ -65,15 +72,86 @@ record && record.chatFavorites
     ? <Labeled label="Sujets favoris : "><TextField source="musicFavorites" record={record} {...rest} /></Labeled>
     : null;
 
-export const UserShow = (props) => (
-    <Show { ...props } title="Utilisateurs > afficher">
+const UserShow = props => {
+
+  const translate = useTranslate();
+  const instance = process.env.REACT_APP_INSTANCE_NAME;
+  const required = (message = translate('custom.alert.fieldMandatory')) =>
+      value => value ? undefined : message;
+
+  const genderChoices = [
+      { id: 1, name: translate('custom.label.user.choices.women') },
+      { id: 2, name: translate('custom.label.user.choices.men') },
+      { id: 3, name: translate('custom.label.user.choices.other') },
+  ];
+  const smoke = [
+      {id : 0, name : translate('custom.label.user.choices.didntSmoke')},
+      {id : 1, name : translate('custom.label.user.choices.didntSmokeCar')},
+      {id : 2, name : translate('custom.label.user.choices.smoke')},
+  ];
+  const musique = [
+      {id : false, name :  translate('custom.label.user.choices.withoutMusic')},
+      {id : true, name : translate('custom.label.user.choices.withMusic')},
+  ];
+
+  const bavardage = [
+      {id : false, name : translate('custom.label.user.choices.dontTalk')},
+      {id : true, name : translate('custom.label.user.choices.talk')},
+  ];
+  const phoneDisplay = [
+      {id : 0, name : translate('custom.label.user.phoneDisplay.forAll')},
+      {id : 1, name : translate('custom.label.user.phoneDisplay.forCarpooler')},
+  ];
+
+  const validateRequired = [required()];
+
+  const Aside = ({ record }) => {
+    const translate = useTranslate();
+        return (
+          <Card style={{ width: 300, marginLeft:'1rem' }} >
+              <CardHeader title={<Typography variant="button">{translate('custom.label.user.contact')}</Typography>} />
+              { record &&
+              <ListMaterial>
+                  <ListItem >
+                      <ListItemIcon><EmailIcon /></ListItemIcon>
+                      <ListItemText primary={<Typography variant="body2">{record.email}</Typography>} />
+                  </ListItem>
+                  <ListItem >
+                      <ListItemIcon><PhoneIcon /></ListItemIcon>
+                      <ListItemText primary={<Typography variant="body2">{record.telephone}</Typography>} />
+                  </ListItem>
+                  <ListItem >
+                      <ListItemIcon>{record.newsSubscription ? <CheckIcon />  : <ClearIcon />  }</ListItemIcon>
+                      <ListItemText primary={<Typography variant="body2">{record.newsSubscription ? translate('custom.label.user.acceptActualite')  : translate('custom.label.user.declineActualite')  }</Typography>} />
+                  </ListItem>
+
+
+              </ListMaterial>
+              }
+
+
+          </Card>
+        )
+  };
+
+
+  return (
+    <Show { ...props } title="Utilisateurs > afficher" aside={<Aside />}>
         <TabbedShowLayout>
             <Tab label="Identité">
-                <TextField source="originId" label="ID"/>
-                <TextField source="givenName" label="Prénom"/>
-                <TextField source="familyName" label="Nom"/>
-                <EmailField source="email" label="Email" />
-                <DateField source="createdDate" label="Date de création"/>
+
+              <TextField fullWidth required source="familyName" label={translate('custom.label.user.familyName')}   />
+              <TextField fullWidth required source="givenName" label={translate('custom.label.user.givenName')}  />
+              <SelectField required source="gender" label={translate('custom.label.user.gender')} choices={genderChoices}  />
+              <DateField required source="birthDate" label={translate('custom.label.user.birthDate')}  />
+
+              <SelectField fullWidth source="phoneDisplay" label={translate('custom.label.user.phoneDisplay.visibility')} choices={phoneDisplay}  />
+
+                <ReferenceField  source="addresses" label={translate('custom.label.user.currentAdresse')}  reference="addresses" link="" >
+                    <FunctionField render={addressRenderer} />
+                </ReferenceField>
+
+
             </Tab>
             <Tab label="Préférences">
                 <FunctionField label="En ce qui concerne le tabac en voiture..." render={record=>renderSmoke(record.smoke)}/>
@@ -106,10 +184,12 @@ export const UserShow = (props) => (
                     </Datagrid>
                 </ReferenceManyField>
             </Tab>
-            {isAuthorized("permission_manage") && 
+            {isAuthorized("permission_manage") &&
             <Tab label="Droits">
-                
+
             </Tab>}
         </TabbedShowLayout>
     </Show>
-);
+  );
+};
+export default UserShow

@@ -26,6 +26,9 @@ namespace App\Geography\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Geography\Controller\TerritoryPost;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * A geographical territory, represented by a geojson multipolygon.
@@ -50,7 +53,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "method"="POST",
  *              "path"="/territories",
  *              "security_post_denormalize"="is_granted('territory_create',object)"
- *          }
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -64,10 +67,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          }
  *      }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"name": "partial"})
  */
 class Territory
 {
-    
+
     /**
      * @var int The id of this territory.
      *
@@ -77,7 +81,7 @@ class Territory
      * @Groups("read")
      */
     private $id;
-            
+
     /**
      * @var string The name of the territory.
      *
@@ -114,16 +118,16 @@ class Territory
     {
         return $this->id;
     }
-            
+
     public function getName(): ?string
     {
         return $this->name;
     }
-    
+
     public function setName(?string $name): self
     {
         $this->name = $name;
-        
+
         return $this;
     }
 
@@ -131,11 +135,11 @@ class Territory
     {
         return $this->geoJsonDetail;
     }
-    
+
     public function setGeoJsonDetail($geoJsonDetail): self
     {
         $this->geoJsonDetail = $geoJsonDetail;
-        
+
         return $this;
     }
 
@@ -164,7 +168,7 @@ class Territory
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *
