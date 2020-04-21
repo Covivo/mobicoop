@@ -26,9 +26,15 @@ const UserList = (props) => {
   const translate = useTranslate();
   const [count, setCount] = useState(0);
 
+  const BooleanStatusField = ({ record = {}, source}) => {
+    let theRecord = {...record};
+    theRecord[source + 'Num'] = !!parseInt(record.status == 1 ?  1 : 0);
+    return <BooleanField record={theRecord} source={source + 'Num'} valueLabelTrue="custom.label.user.accountEnabled" valueLabelFalse="custom.label.user.accountDisabled" />
+  }
+
   const checkValue = ({selected,record } ) => {
 
-  //  if (record.newsSubscription === false) setCount( selected == false ? count  + 1 :count - 1);
+    if (record.newsSubscription === false) setCount( selected == false ? count  + 1 :count - 1);
 
   }
 
@@ -79,9 +85,9 @@ const UserList = (props) => {
           <TextInput source="givenName" label={translate('custom.label.user.givenName')} />
           <TextInput source="familyName" label={translate('custom.label.user.familyName')} alwaysOn />
           <TextInput source="email" label={translate('custom.label.user.email')} alwaysOn />
-          <BooleanInput source="solidary" label={translate('custom.label.user.solidary')} allowEmpty={false} defaultValue={true} />
+          {/* <BooleanInput source="solidary" label={translate('custom.label.user.solidary')} allowEmpty={false} defaultValue={true} /> */}
           <BooleanInput source="solidaryCandidate " label={translate('custom.label.user.candidate')} allowEmpty={false} defaultValue={true} />
-          <BooleanInput source="solidaryUser.volunteer " label={translate('custom.label.user.volunteer')} allowEmpty={false} defaultValue={true} />
+          <BooleanInput source="solidaryUser.volunteer" label={translate('custom.label.user.volunteer')} allowEmpty={false} defaultValue={true} />
           <ReferenceInput
               source="homeAddressODTerritory"
               label={translate('custom.label.user.territory')}
@@ -104,17 +110,18 @@ const UserList = (props) => {
           exporter={false}
           hasCreate={isAuthorized('user_create')}
     >
-        <MyDatagrid  rowClick="show">
+        <MyDatagridUser  rowClick="show">
             <TextField source="originId" label={translate('custom.label.user.id')} sortBy="id"/>
             <TextField source="givenName" label={translate('custom.label.user.givenName')}  />
             <TextField source="familyName" label={translate('custom.label.user.familyName')} />
             <EmailField source="email" label={translate('custom.label.user.email')} />
             <BooleanField source="newsSubscription" label={translate('custom.label.user.accepteEmail')}/>
+            <BooleanStatusField source="status" label={translate('custom.label.user.accountStatus')} />
             <DateField source="createdDate" label={translate('custom.label.user.createdDate')}/>
             {isAuthorized("user_update") &&
             <EditButton />
             }
-        </MyDatagrid>
+        </MyDatagridUser>
     </List>
   )
 };

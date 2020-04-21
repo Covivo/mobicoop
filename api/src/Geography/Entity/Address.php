@@ -534,11 +534,11 @@ class Address implements \JsonSerializable
     {
         return $this->geoJson;
     }
-    
+
     public function setGeoJson($geoJson): self
     {
         $this->geoJson = $geoJson;
-        
+
         return $this;
     }
 
@@ -576,11 +576,11 @@ class Address implements \JsonSerializable
     {
         return $this->home;
     }
-    
+
     public function setHome(?bool $isHome): self
     {
         $this->home = $isHome;
-        
+
         return $this;
     }
 
@@ -649,7 +649,7 @@ class Address implements \JsonSerializable
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *
@@ -669,7 +669,7 @@ class Address implements \JsonSerializable
     {
         $this->setUpdatedDate(new \Datetime());
     }
-    
+
     /**
      * GeoJson representation.
      *

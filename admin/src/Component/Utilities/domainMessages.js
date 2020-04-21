@@ -3,6 +3,12 @@ import React from "react";
 
 const fr = {
     custom: {
+        dashboard : {
+            pendingConnectionToKibana: "Connection en cours à l'outil de reporting Scope....",
+            accessDenied : "Vous ne disposez pas des droits d'accès au tableau de bord Kibana.",
+            kibanaAuthenticationApiFetchError : "Erreur de connexion à Scope.",
+            kibanaAuthenticationApiReturnSomethingWrong : "Erreur de connexion à Scope."
+        },
         email: {
             texte: {
                 emailTous: 'Email à tous les filtrés',
@@ -33,13 +39,27 @@ const fr = {
                 site : 'Site internet',
                 adresse : 'Adresse',
                 setTime : "Préciser l'heure",
-                createur : "Créateur",
                 status : "Status",
                 dateTimeStart: "Date et heure de début",
                 dateTimeFin : "Date et heure de fin",
                 dateStart: "Date de début",
                 dateFin: "Date de fin",
-                image : "Image"
+                image : "Image",
+                title : {
+                  edit : "Événement > Editer",
+                  create  : "Événement > Créer"
+                },
+                currentAdresse : "Adresse actuelle",
+                currentImage : "Image actuelle",
+                changeImage : "Changer l'image de l'événement",
+                uploadImage : "Définir l'image",
+                newAdresse : "Nouvelle adresse",
+                creator : "Créateur",
+                statusChoices : {
+                  draft : "Brouillon",
+                  enabled  : "Validé",
+                  disabled  : "Désactivé"
+                },
             },
             community :{
                 community : 'Communauté',
@@ -65,7 +85,14 @@ const fr = {
                 joinAt : 'Rejoint le',
                 acceptedAt : 'Accepté le',
                 refusedAt : 'Refusé le',
-                newStatus : 'Changer le statut'
+                newStatus : 'Changer le statut',
+                memberHidden : 'Membres cachés',
+                memberVisible : 'Membres Visible',
+                announceHidden : 'Annonces cachées',
+                announceVisible : 'Annonces visibles',
+                createdAt : 'Créée le ',
+                updatedAt : 'Mise à jour le ',
+                neverUpdate : 'Jamais mis à jour'
             },
             campaign : {
                 object : 'Sujet',
@@ -82,7 +109,8 @@ const fr = {
                     archive: 'Archivé',
                 },
                 resumeCampaign : 'Reprendre la campagne'
-            },user : {
+            },
+            user : {
               id : 'Id',
               givenName: 'Prénom',
               familyName: 'Nom',
@@ -99,7 +127,10 @@ const fr = {
               telephone: "Téléphone",
               newsSubscription : "Recevoir les actualités du service  %{instanceName} (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)",
               roles : "Droits d'accès",
-              adresse : "Adresse",
+              adresse : "Commune de résidence",
+              currentAdresse : "Commune de résidence actuel",
+              newsAdresse : "Nouvelle commune de résidence",
+              manageRoles : 'Modification des rôles',
               carpoolSetting : {
                 music :"En ce qui concerne la musique en voiture",
                 musicFavorites : "Radio et/musique préférées",
@@ -134,7 +165,23 @@ const fr = {
                 visibility : "Visibilité de mon numéro de téléphone",
                 forCarpooler : "Visible seulement après acceptation du covoiturage, uniquement par les participants.",
                 forAll : "Visible dès la publication de l'annonce, par tous les inscrits."
-              }
+              },
+              selectRoles : 'Selectionner un ou plusieurs rôles',
+              candidate : 'Solidiaire : candidat',
+              volunteer : 'Solidiaire : volontaire',
+              adresseMandatory : "L'adresse est obligatoire",
+              territoryMandatory : "Sélectionner un ou plusieurs territoires",
+              contact : "Contact",
+              acceptActualite :  'Accepte de recevoir les actualités',
+              declineActualite :  'Refuse de recevoir les actualités',
+              accountStatus : 'Status du compte',
+              accountDisabled : 'Compte non actif',
+              accountEnabled : 'Compte actif',
+            },
+            territory : {
+              territory : 'Territoire',
+              changeTerritory :  'Changer de territoire',
+              currentTerritory :  'Territoire actuel',
             }
         }
     }

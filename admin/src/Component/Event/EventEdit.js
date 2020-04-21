@@ -1,11 +1,11 @@
 import React from 'react'
 
-import { 
+import {
     Edit, SimpleForm,
     TextInput,
     BooleanInput, ReferenceInput, SelectInput,
-    FormDataConsumer, 
-    ReferenceField, FunctionField,useTranslate
+    FormDataConsumer,
+    ReferenceField, FunctionField,useTranslate,ImageField
 } from 'react-admin'
 import RichTextInput from 'ra-input-rich-text';
 import { makeStyles } from '@material-ui/core/styles'
@@ -33,34 +33,39 @@ export const EventEdit = (props) => {
 
     const required = (message = 'ra.validation.required') =>
         value => value ? undefined : translate(message);
-    
+
     return (
-        <Edit { ...props } title="Evénement > éditer">
+        <Edit { ...props } title={translate('custom.label.event.title.edit')}>
             <SimpleForm >
-                <TextInput fullWidth source="name" label="" validate={[required()]} formClassName={classes.title} />
-                <EventImageUpload formClassName={classes.fullwidth}/>
-                <TextInput fullWidth source="description" label="Description" validate={required()} formClassName={classes.fullwidth}/>
-                <RichTextInput variant="filled" source="fullDescription" label="Description complète" validate={required()} formClassName={classes.richtext} />
-                <TextInput fullWidth source="url" type="url" label="Site Internet" formClassName={classes.spacedFullwidth}/>
-                <ReferenceField source="address" label="Adresse actuelle" reference="addresses" link="" className={classes.fullwidth}>
+                <TextInput fullWidth source="name" label={translate('custom.label.event.image')} validate={[required()]} formClassName={classes.title} />
+
+                  <ReferenceField reference="images" source="images[0]" label={translate('custom.label.event.currentImage')}>
+                      <ImageField source="versions.square_250"/>
+                  </ReferenceField>
+
+                <EventImageUpload label={translate('custom.label.event.changeImage')} formClassName={classes.fullwidth}/>
+                <TextInput fullWidth source="description" label={translate('custom.label.event.resume')} validate={required()} formClassName={classes.fullwidth}/>
+                <RichTextInput variant="filled" source="fullDescription" label={translate('custom.label.event.resumefull')} validate={required()} formClassName={classes.richtext} />
+                <TextInput fullWidth source="url" type="url" label={translate('custom.label.event.site')} formClassName={classes.spacedFullwidth}/>
+                <ReferenceField source="address" label={translate('custom.label.event.currentAdresse')} reference="addresses" link="" className={classes.fullwidth}>
                     <FunctionField render={addressRenderer} />
                 </ReferenceField>
 
-                <GeocompleteInput source="address" label="Nouvelle adresse" validate={required()} formClassName={classes.spacedFullwidth}/>
+                <GeocompleteInput source="address" label={translate('custom.label.event.newAdresse')} validate={required()} formClassName={classes.spacedFullwidth}/>
 
-                <BooleanInput label="Préciser l'heure" source="useTime" initialValue={false} formClassName={classes.inlineBlock}/>
+                <BooleanInput label={translate('custom.label.event.preciseHour')} source="setTime" initialValue={false} formClassName={classes.inlineBlock}/>
                 <EventDuration formClassName={classes.inlineBlock}/>
 
-                <ReferenceInput source="user" label="Créateur" reference="users" formClassName={classes.footer}>
+                <ReferenceInput source="user" label={translate('custom.label.event.creator')} reference="users" formClassName={classes.footer}>
                     <SelectInput optionText={<UserRenderer />} />
                 </ReferenceInput>
-                
+
                 <SelectInput source="status" choices={[
-                    { id: 0, name: 'Brouillon' },
-                    { id: 1, name: 'Validé' },
-                    { id: 2, name: 'Désactivé' },
+                    { id: 0, name: translate('custom.label.event.statusChoices.draft') },
+                    { id: 1, name: translate('custom.label.event.statusChoices.enabled') },
+                    { id: 2, name: translate('custom.label.event.statusChoices.disabled') },
                 ]} formClassName={classes.inlineBlock}/>
-                
+
             </SimpleForm>
         </Edit>
     )

@@ -111,7 +111,7 @@ class CampaignManager
         }
         return $campaign;
     }
-    
+
     /**
      * Send messages for a campaign by email.
      *
@@ -129,7 +129,7 @@ class CampaignManager
             $this->getFormedEmailBody($campaign->getBody()),
             $this->getRecipientsFromDeliveries($campaign->getDeliveries())
         );
-        
+
         // if the result of the send is returned here
         // foreach ($campaign->getDeliveries() as $delivery) {
         //     $delivery->setStatus(Delivery::STATUS_SENT);
@@ -139,7 +139,7 @@ class CampaignManager
         $campaign->setStatus(Campaign::STATUS_SENT);
         $this->entityManager->persist($campaign);
         $this->entityManager->flush();
-        
+
         return $campaign;
     }
 
@@ -180,7 +180,7 @@ class CampaignManager
     private function sendMassSms(Campaign $campaign)
     {
         // call the service
-        
+
         // if the result of the send is returned here
         // foreach ($campaign->getDeliveries() as $delivery) {
         //     $delivery->setStatus(Delivery::STATUS_SENT);
@@ -189,7 +189,7 @@ class CampaignManager
         // persist the result depending of the status
         $campaign->setStatus(Campaign::STATUS_SENT);
         $this->entityManager->persist($campaign);
-        
+
         return $campaign;
     }
 
@@ -269,5 +269,17 @@ class CampaignManager
             return $campaign->getUser()->getId();
         }
         return new CampaignNotFoundException('Campaign not found');
+    }
+
+    /**
+     * Find Campaign crate by User
+     *
+     * @param Int $userId
+     * @return void
+     */
+    public function getOwnedCampaign(Int $userId)
+    {
+        $ownedCampaigns = $this->campaignRepository->getOwnedCampaigns($userId);
+        return $ownedCampaigns;
     }
 }
