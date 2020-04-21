@@ -152,8 +152,9 @@ class MassMigrateManager
                     $this->entityManager->flush();
 
                     // We create an Ad for this new user (regular, home to work, monday to friday)
-                    $this->createJourneyFromMassPerson($massPerson);
-
+                    // To DO : see the comment above createJourneyFromMassPerson() method
+                    //$this->createJourneyFromMassPerson($massPerson);
+                    
 
                     // To do : Trigger an event to send a email
                 }
@@ -185,6 +186,8 @@ class MassMigrateManager
     }
 
     /**
+     * TO DO : It might not be a good solution to user createAd from AdManager.
+     * We don't want to trigger matching at every Proposal we add.
      * Create the journey (Ad then Proposal) of a MassPerson
      *
      * @param MassPerson $massPerson
@@ -234,8 +237,10 @@ class MassMigrateManager
         foreach ($days as $day) {
             $schedule[0][$day] = true;
         }
-        $schedule[0]['outwardTime'] = $massPerson->getOutwardTime();
-        $schedule[0]['returnTime'] = $massPerson->getReturnTime();
+        $schedule[0]['outwardTime'] = $massPerson->getOutwardTime()->format("H:i");
+        $schedule[0]['returnTime'] = $massPerson->getReturnTime()->format("H:i");
+
+        $ad->setSchedule($schedule);
 
         // The User
         $ad->setUser($massPerson->getUser());
