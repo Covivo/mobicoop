@@ -66,7 +66,8 @@ const CampaignsList = (props) => {
 
     return(
         <Fragment>
-            <List {...props}>
+            <List {...props}
+                title="Utilisateurs > liste">
                 <Datagrid rowClick="edit">
                     <TextField source="subject" label={translate('custom.label.campaign.object')} />
                     <FunctionField label={translate('custom.label.campaign.numberMember')} render={record => `${record.deliveries.length}` } />

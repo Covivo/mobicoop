@@ -49,7 +49,7 @@ export default (type, params) => {
                           headers : options.headers
                       }).then( retour => {
                           if (retour.status = '200') {
-                              localStorage.setItem('permission', retour.body);
+                            return  localStorage.setItem('permission', retour.body);
                           }
                       })
 
@@ -94,7 +94,7 @@ export default (type, params) => {
                         permission = isAuthorized("event_manage");
                         break;
                     case "/campaigns":
-                        permission = isAuthorized("mass_manage");
+                        permission = isAuthorized("campaign_manage");
                         break;
                     case "/roles":
                         permission = isAuthorized("permission_manage");

@@ -62,7 +62,7 @@ const SelectNewStatus = (props) => {
                onChange={(e) => handleChangeButton(e) }
                className={classes.select}
              >
-              { statusChoices.map( d =>  <MenuItem value={d.id}>{d.name}</MenuItem> ) }
+              { statusChoices.map( d =>  <MenuItem key={d.id} value={d.id}>{d.name}</MenuItem> ) }
              </Select>
           { show && <SaveOutlinedIcon onClick={() => handleClickSave() }  className={classes.icon} /> }
 

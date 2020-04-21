@@ -40,7 +40,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
- *      collectionOperations={"post"},
+ *      collectionOperations={"post","get"},
  *      itemOperations={"get"}
  * )
  */
@@ -127,7 +127,7 @@ class SolidarySolution
     public function setSolidary(?Solidary $solidary): self
     {
         $this->solidary = $solidary;
-        
+
         return $this;
     }
 
@@ -139,7 +139,7 @@ class SolidarySolution
     public function setSolidaryMatching(?SolidaryMatching $solidaryMatching): self
     {
         $this->solidaryMatching = $solidaryMatching;
-        
+
         return $this;
     }
 
@@ -151,7 +151,7 @@ class SolidarySolution
     public function setSolidaryAsk(?SolidaryAsk $solidaryAsk): self
     {
         $this->solidaryAsk = $solidaryAsk;
-        
+
         return $this;
     }
 
@@ -159,11 +159,11 @@ class SolidarySolution
     {
         return $this->comment;
     }
-    
+
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-        
+
         return $this;
     }
 

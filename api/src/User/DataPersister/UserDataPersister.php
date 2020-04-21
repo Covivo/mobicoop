@@ -40,7 +40,7 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
         $this->security = $security;
         $this->userManager = $userManager;
     }
-  
+
     public function supports($data, array $context = []): bool
     {
         return $data instanceof User;

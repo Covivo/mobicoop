@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ImageUpload = ({imageId, onChange, referenceField="campaign", referenceId}) => {
+const ImageUpload = ({imageId, onChange, referenceField="campaign", referenceId,label = null}) => {
 
     // Object name is like this : /events/2'
     // Upload API expected this :  eventId:2 eventFile:"image.png"
@@ -93,21 +93,21 @@ const ImageUpload = ({imageId, onChange, referenceField="campaign", referenceId}
             setLoading(false)
         })
     }
-
     return (
         <div className={classes.container} onMouseEnter={()=>setAfficheUpload(true)} onMouseLeave={()=>setAfficheUpload(false)}>
             {image && image.versions && <img className={classes.img} src={image.versions.square_250} alt={image.name} /> }
             {false && <p>Erreur : {error} </p> }
-             
+
             <div className={classes.upload}>
-                <input accept="image/*" className={classes.input} id="icon-button-file" type="file" onChange={ event => chargeImage(event.target.files[0]) } />
+                <input accept="image/*" className={classes.input} id="icon-button-file" type="file"  onChange={ event => chargeImage(event.target.files[0]) } />
                 <label htmlFor="icon-button-file">
                     <IconButton color="primary" aria-label="upload picture" component="span">
                     { loading ?  <CircularProgress /> : <PhotoCamera /> }
                     </IconButton>
+                    {label}
                 </label>
             </div>
-            
+
         </div>
     )
 
