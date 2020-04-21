@@ -414,6 +414,22 @@ class Mass
      */
     private $migratedUsers;
 
+    /**
+     * @var \DateTimeInterface Date of migration's beginning.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mass"})
+     */
+    private $migrationDate;
+
+    /**
+     * @var \DateTimeInterface Date of migration's end.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mass"})
+     */
+    private $migratedDate;
+
     public function __construct($id = null)
     {
         $this->id = $id;
@@ -630,38 +646,6 @@ class Mass
         $this->setFile(null);
     }
 
-    // DOCTRINE EVENTS
-
-    /**
-     * Creation date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoCreatedDate()
-    {
-        $this->setCreatedDate(new \Datetime());
-    }
-
-    /**
-     * Legitimacy checkbox date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoDateCheckLegit()
-    {
-        $this->setDateCheckLegit(new \Datetime());
-    }
-
-    /**
-     * Update date.
-     *
-     * @ORM\PreUpdate
-     */
-    public function setAutoUpdatedDate()
-    {
-        $this->setUpdatedDate(new \Datetime());
-    }
-
     public function getPersonsCoords(): ?array
     {
         return $this->personsCoords;
@@ -762,5 +746,62 @@ class Mass
         $this->migratedUsers = $migratedUsers;
 
         return $this;
+    }
+
+    public function getMigrationDate(): ?\DateTimeInterface
+    {
+        return $this->migrationDate;
+    }
+
+    public function setMigrationDate(?\DateTimeInterface $migrationDate): self
+    {
+        $this->migrationDate = $migrationDate;
+
+        return $this;
+    }
+    
+    public function getMigratedDate(): ?\DateTimeInterface
+    {
+        return $this->migratedDate;
+    }
+
+    public function setMigratedDate(?\DateTimeInterface $migratedDate): self
+    {
+        $this->migratedDate = $migratedDate;
+
+        return $this;
+    }
+    
+    
+    // DOCTRINE EVENTS
+
+    /**
+     * Creation date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreatedDate()
+    {
+        $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Legitimacy checkbox date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoDateCheckLegit()
+    {
+        $this->setDateCheckLegit(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

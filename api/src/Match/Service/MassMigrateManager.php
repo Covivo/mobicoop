@@ -35,6 +35,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Auth\Repository\AuthItemRepository;
+use App\Carpool\Entity\Ad;
 
 /**
  * Mass compute manager.
@@ -73,8 +74,8 @@ class MassMigrateManager
         $migratedUsers = [];
 
         // First, we set the status of the Mass at Migrating
-        // TO DO : Save the migrating date
         $mass->setStatus(Mass::STATUS_MIGRATING);
+        $mass->setMigrationDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
 
@@ -141,15 +142,19 @@ class MassMigrateManager
 
                 $this->entityManager->persist($personalAddress);
 
+
+                // We create an Ad for this new user (regular, home to work, monday to friday)
+                $this->createAdFromMassPerson();
+
+
                 // To do : Trigger an event to send a email
             }
         }
         $this->entityManager->flush();
 
-        // Finally, we set status of the Mass at Migrated
-        // First, we set the status of the Mass at Migrating
-        // TO DO : Save the migrated date
+        // Finally, we set status of the Mass at Migrated and save the migrated date
         $mass->setStatus(Mass::STATUS_MIGRATED);
+        $mass->setMigratedDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
 
@@ -168,5 +173,9 @@ class MassMigrateManager
             $pass[] = $alphabet[$n];
         }
         return implode($pass); //turn the array into a string
+    }
+
+    private function createAdFromMassPerson()
+    {
     }
 }
