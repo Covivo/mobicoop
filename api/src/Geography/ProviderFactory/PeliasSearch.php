@@ -146,6 +146,12 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
                 $venue = $props['name'];
             }
 
+            // we check if there's a distance provided
+            $distance = null;
+            if (isset($props['distance'])) {
+                $distance = $props['distance'];
+            }
+
             $bounds = [
                 'south' => null,
                 'west' => null,
@@ -183,6 +189,7 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
             ]);
             $result->setId($id);
             $result->setVenue($venue);
+            $result->setDistance($distance);
             $results[] = $result;
         }
         return new AddressCollection($results);

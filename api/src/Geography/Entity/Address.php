@@ -355,11 +355,18 @@ class Address implements \JsonSerializable
     private $icon;
 
     /**
-     * @var array|null The provider of the address
+     * @var array|null The provider of the address.
      *
      * @Groups({"read"})
      */
     private $providedBy;
+
+    /**
+     * @var array|null The distance to the focus point if relevant.
+     *
+     * @Groups({"read"})
+     */
+    private $distance;
 
     public function __construct($id = null)
     {
@@ -653,6 +660,8 @@ class Address implements \JsonSerializable
     public function setIcon(?string $icon)
     {
         $this->icon = $icon;
+
+        return $this;
     }
 
     public function getProvidedBy(): ?string
@@ -663,6 +672,20 @@ class Address implements \JsonSerializable
     public function setProvidedBy(?string $providedBy)
     {
         $this->providedBy = $providedBy;
+
+        return $this;
+    }
+
+    public function getDistance(): ?float
+    {
+        return $this->distance;
+    }
+
+    public function setDistance(?float $distance)
+    {
+        $this->distance = $distance;
+
+        return $this;
     }
 
     public function getEvent(): ?Event
