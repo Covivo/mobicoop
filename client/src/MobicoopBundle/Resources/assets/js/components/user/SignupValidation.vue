@@ -142,7 +142,6 @@ export default {
     },
     treatErrorMessage(error) {
 
-      console.info(error)
       if (error === "Bad credentials.") {
         this.errorDisplay = this.$t("errorCredentials");
         this.loading = false;

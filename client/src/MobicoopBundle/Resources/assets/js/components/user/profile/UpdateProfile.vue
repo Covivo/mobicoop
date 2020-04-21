@@ -83,7 +83,7 @@
               <v-file-input
                 v-model="avatar"
                 :rules="avatarRules"
-                accept="image/png, image/jpeg, image/bmp"
+                accept="image/png, image/jpeg, image/jpg, image/bmp"
                 :label="$t('avatar.label')"
                 prepend-icon="mdi-image"
                 :change="previewAvatar()"
