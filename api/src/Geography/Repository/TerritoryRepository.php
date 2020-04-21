@@ -23,6 +23,7 @@
 
 namespace App\Geography\Repository;
 
+use App\Geography\Entity\Address;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use App\Geography\Entity\Territory;
@@ -67,5 +68,37 @@ class TerritoryRepository
      */
     public function findByGeoJson(array $geoJson)
     {
+    }
+
+    /**
+     * Find territories for a direction
+     *
+     * @param Direction $direction  The direction
+     * @return Territory[]|null       The territories
+     */
+    public function findDirectionTerritories(Direction $direction)
+    {
+        $query = $this->repository->createQueryBuilder('t')
+            ->join('\App\Geography\Entity\Direction', 'd')
+            ->where('d.id = :id')
+            ->setParameter('id', $direction->getId())
+            ->andWhere('ST_INTERSECTS(t.geoJsonDetail,d.geoJsonDetail)=1');
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find territories for an Address
+     *
+     * @param Address $address  The address
+     * @return Territory[]|null       The territories
+     */
+    public function findAddressTerritories(Address $address)
+    {
+        $query = $this->repository->createQueryBuilder('t')
+            ->join('\App\Geography\Entity\Address', 'a')
+            ->where('a.id = :id')
+            ->setParameter('id', $address->getId())
+            ->andWhere('ST_INTERSECTS(t.geoJsonDetail,a.geoJson)=1');
+        return $query->getQuery()->getResult();
     }
 }

@@ -39,12 +39,19 @@ final class WaypointTerritoryFilter extends AbstractContextAwareFilter
             $value = substr($value, strrpos($value, '/') + 1);
         }
         
+        // $queryBuilder
+        //     ->leftJoin('u.proposals', 'p')
+        //     ->leftJoin('p.waypoints', 'w')
+        //     ->leftJoin('w.address', 'a')
+        //     ->join('\App\Geography\Entity\Territory', 'waypointTerritory')
+        //     ->andWhere(sprintf('(waypointTerritory.id = %s AND (ST_INTERSECTS(waypointTerritory.geoJsonDetail,a.geoJson)=1))', $value));
+
         $queryBuilder
             ->leftJoin('u.proposals', 'p')
             ->leftJoin('p.waypoints', 'w')
             ->leftJoin('w.address', 'a')
-            ->join('\App\Geography\Entity\Territory', 'waypointTerritory')
-            ->andWhere(sprintf('(waypointTerritory.id = %s AND (ST_INTERSECTS(waypointTerritory.geoJsonDetail,a.geoJson)=1))', $value));
+            ->leftJoin('a.territories', 'ta')
+            ->andWhere(sprintf('(ta.id = %s)', $value));
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)

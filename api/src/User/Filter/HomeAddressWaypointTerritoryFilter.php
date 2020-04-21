@@ -39,13 +39,22 @@ final class HomeAddressWaypointTerritoryFilter extends AbstractContextAwareFilte
             $value = substr($value, strrpos($value, '/') + 1);
         }
         
+        // $queryBuilder
+        //     ->leftJoin('u.addresses', 'homeAddress')
+        //     ->leftJoin('u.proposals', 'p')
+        //     ->leftJoin('p.waypoints', 'w')
+        //     ->leftJoin('w.address', 'a')
+        //     ->join('\App\Geography\Entity\Territory', 'homeAddressWaypointTerritory')
+        //     ->andWhere(sprintf('(homeAddressWaypointTerritory.id = %s AND (ST_INTERSECTS(homeAddressWaypointTerritory.geoJsonDetail,a.geoJson)=1) OR (ST_INTERSECTS(homeAddressWaypointTerritory.geoJsonDetail,homeAddress.geoJson)=1 AND homeAddress.home=1))', $value));
+    
         $queryBuilder
             ->leftJoin('u.addresses', 'homeAddress')
+            ->leftJoin('homeAddress.territories', 't')
             ->leftJoin('u.proposals', 'p')
             ->leftJoin('p.waypoints', 'w')
             ->leftJoin('w.address', 'a')
-            ->join('\App\Geography\Entity\Territory', 'homeAddressWaypointTerritory')
-            ->andWhere(sprintf('(homeAddressWaypointTerritory.id = %s AND (ST_INTERSECTS(homeAddressWaypointTerritory.geoJsonDetail,a.geoJson)=1) OR (ST_INTERSECTS(homeAddressWaypointTerritory.geoJsonDetail,homeAddress.geoJson)=1 AND homeAddress.home=1))', $value));
+            ->leftJoin('a.territories', 'ta')
+            ->andWhere(sprintf('((ta.id = %s) OR (t.id = %s AND homeAddress.home=1))', $value, $value));
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)

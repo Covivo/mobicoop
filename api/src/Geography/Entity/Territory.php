@@ -27,7 +27,6 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Geography\Controller\TerritoryPost;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
@@ -42,14 +41,31 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get",
+ *          "get"={
+ *              "security"="is_granted('territory_list',object)"
+ *          },
+ *          "link"={
+ *              "method"="GET",
+ *              "path"="/territories/link",
+ *              "security"="is_granted('territory_link',object)"
+ *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/territories",
- *              "controller"=TerritoryPost::class,
+ *              "security_post_denormalize"="is_granted('territory_create',object)"
  *          },
  *      },
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('territory_read',object)"
+ *          },
+ *          "put"={
+ *              "security"="is_granted('territory_update',object)"
+ *          },
+ *          "delete"={
+ *              "security"="is_granted('territory_delete',object)"
+ *          }
+ *      }
  * )
  * @ApiFilter(SearchFilter::class, properties={"name": "partial"})
  */

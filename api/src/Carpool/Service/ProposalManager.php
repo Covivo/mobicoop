@@ -677,7 +677,7 @@ class ProposalManager
             // foreach ($criterias as $criteria) {
             if (isset($owner[$criteria->getId()]['driver']) && isset($ownerRoutes[$owner[$criteria->getId()]['driver']])) {
                 $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['driver']][0]);
-                $direction = $this->zoneManager->createZonesForDirection($direction);
+                //$direction = $this->zoneManager->createZonesForDirection($direction);
                 $direction->setSaveGeoJson(true);
                 $criteria->setDirectionDriver($direction);
                 $criteria->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
@@ -685,7 +685,7 @@ class ProposalManager
             }
             if (isset($owner[$criteria->getId()]['passenger']) && isset($ownerRoutes[$owner[$criteria->getId()]['passenger']])) {
                 $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['passenger']][0]);
-                $direction = $this->zoneManager->createZonesForDirection($direction);
+                //$direction = $this->zoneManager->createZonesForDirection($direction);
                 $direction->setSaveGeoJson(true);
                 $criteria->setDirectionPassenger($direction);
             }

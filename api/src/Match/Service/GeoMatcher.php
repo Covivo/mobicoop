@@ -405,7 +405,7 @@ class GeoMatcher
             }
             
             // we add the zones to the direction
-            $direction = $this->zoneManager->createZonesForDirection($direction);
+            //$direction = $this->zoneManager->createZonesForDirection($direction);
             $result = [
                 'route' => is_array($points) ? $this->generateRoute($points, $direction->getDurations()) : null,
                 'originalDistance' => $candidate1->getDirection() ? $candidate1->getDirection()->getDistance() : $candidate1->getDistance(),
@@ -558,7 +558,8 @@ class GeoMatcher
         $result = null;
 
         // we add the zones to the direction
-        $direction = $this->zoneManager->createZonesForDirection($routes[0]);
+        // $direction = $this->zoneManager->createZonesForDirection($routes[0]);
+        $direction = $routes[0];
 
         // /!\ detour can be empty has we "force" the match, all directions may not be computed /!\
         $result = [

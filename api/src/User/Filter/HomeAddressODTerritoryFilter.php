@@ -39,13 +39,22 @@ final class HomeAddressODTerritoryFilter extends AbstractContextAwareFilter
             $value = substr($value, strrpos($value, '/') + 1);
         }
         
+        // $queryBuilder
+        //     ->leftJoin('u.addresses', 'homeAddress')
+        //     ->leftJoin('u.proposals', 'p')
+        //     ->leftJoin('p.waypoints', 'w')
+        //     ->leftJoin('w.address', 'a')
+        //     ->join('\App\Geography\Entity\Territory', 'homeAddressODTerritory')
+        //     ->andWhere(sprintf('(homeAddressODTerritory.id = %s AND ((w.position=0 OR w.destination=true) AND(ST_INTERSECTS(homeAddressODTerritory.geoJsonDetail,a.geoJson)=1)  OR (ST_INTERSECTS(homeAddressODTerritory.geoJsonDetail,homeAddress.geoJson)=1 AND homeAddress.home=1)))', $value));
+
         $queryBuilder
             ->leftJoin('u.addresses', 'homeAddress')
+            ->leftJoin('homeAddress.territories', 't')
             ->leftJoin('u.proposals', 'p')
             ->leftJoin('p.waypoints', 'w')
             ->leftJoin('w.address', 'a')
-            ->join('\App\Geography\Entity\Territory', 'homeAddressODTerritory')
-            ->andWhere(sprintf('(homeAddressODTerritory.id = %s AND ((w.position=0 OR w.destination=true) AND(ST_INTERSECTS(homeAddressODTerritory.geoJsonDetail,a.geoJson)=1)  OR (ST_INTERSECTS(homeAddressODTerritory.geoJsonDetail,homeAddress.geoJson)=1 AND homeAddress.home=1)))', $value));
+            ->leftJoin('a.territories', 'ta')
+            ->andWhere(sprintf('((ta.id = %s AND (w.position=0 OR w.destination=true)) OR (t.id = %s AND homeAddress.home=1))', $value, $value));
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
@@ -63,7 +72,7 @@ final class HomeAddressODTerritoryFilter extends AbstractContextAwareFilter
                 'format' => 'integer',
                 'required' => false,
                 'swagger' => [
-                    'description' => 'Filter on users that have a proposal or homeAddress in the given territory',
+                    'description' => 'Filter on users that have the origin or the destination of one of their Ad, or their home address, in the given territory',
                     'name' => 'territory',
                     'type' => 'integer',
                 ],

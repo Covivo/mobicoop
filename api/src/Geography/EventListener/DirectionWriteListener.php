@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -23,27 +23,25 @@
 
 namespace App\Geography\EventListener;
 
-use App\Geography\Entity\Address;
-use App\Geography\Service\GeoTools;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use App\Geography\Entity\Direction;
+use App\Geography\Service\DirectionManager;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 /**
- * Address Load Event listener
+ * Direction Write Event listener
  */
-class AddressLoadListener
+class DirectionWriteListener
 {
-    private $geoTools;
+    private $directionManager;
 
-    public function __construct(GeoTools $geoTools)
+    public function __construct(DirectionManager $directionManager)
     {
-        $this->geoTools = $geoTools;
+        $this->directionManager = $directionManager;
     }
 
-    public function postLoad(LifecycleEventArgs $args)
+    public function setTerritories(Direction $direction, LifecycleEventArgs $args)
     {
-        $address = $args->getEntity();
-        if ($address instanceof Address) {
-            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
-        }
+        // we create the link to territories only for some selected entities
+        $this->directionManager->createDirectionTerritoriesForUsefulEntity($direction, true);
     }
 }

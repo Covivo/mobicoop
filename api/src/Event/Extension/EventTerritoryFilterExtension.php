@@ -84,8 +84,8 @@ final class EventTerritoryFilterExtension implements QueryCollectionExtensionInt
                     $where .= " OR ";
                 }
                 $territoryFrom = 'territory'.$territory;
-                $queryBuilder->join('App\Geography\Entity\Territory', $territoryFrom);
-                $where .= sprintf("%s.id = %s AND (ST_INTERSECTS(a.geoJson,%s.geoJsonDetail)=1)", $territoryFrom, $territory, $territoryFrom);
+                $queryBuilder->leftJoin('a.territories', $territoryFrom);
+                $where .= sprintf("%s.id = %s", $territoryFrom, $territory);
             }
             $where .= ")";
             $queryBuilder

@@ -33,7 +33,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use App\Carpool\Entity\WayPoint;
+use App\Carpool\Entity\Waypoint;
 use App\User\Entity\User;
 use App\Image\Entity\Icon;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
@@ -295,6 +295,8 @@ class Address implements \JsonSerializable
 
     /**
      * @var RelayPoint|null The relaypoint related to the address.
+     *
+     * @ORM\OneToOne(targetEntity="App\RelayPoint\Entity\RelayPoint", mappedBy="address")
      * @Groups({"read","pt"})
      */
     private $relayPoint;
@@ -316,6 +318,13 @@ class Address implements \JsonSerializable
     private $community;
 
     /**
+     * @var Community|null The waypoint of the address.
+     *
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Waypoint", mappedBy="address")
+     */
+    private $waypoint;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -330,6 +339,13 @@ class Address implements \JsonSerializable
      * @Groups({"read"})
      */
     private $updatedDate;
+
+    /**
+     * @var ArrayCollection|null The territories of this address.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
+     */
+    private $territories;
 
     /**
      * @var string|null Icon fileName.
@@ -359,6 +375,7 @@ class Address implements \JsonSerializable
             $this->id = $id;
         }
         $this->displayLabel = new ArrayCollection();
+        $this->territories = new ArrayCollection();
     }
 
     public function __clone()
@@ -671,6 +688,71 @@ class Address implements \JsonSerializable
         return $this;
     }
 
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
+
+        return $this;
+    }
+
+    public function getCommunity(): ?Community
+    {
+        return $this->community;
+    }
+
+    public function setCommunity(?Community $community): self
+    {
+        $this->community = $community;
+
+        return $this;
+    }
+
+    public function getWaypoint(): ?Waypoint
+    {
+        return $this->waypoint;
+    }
+
+    public function setWaypoint(?Waypoint $waypoint): self
+    {
+        $this->waypoint = $waypoint;
+
+        return $this;
+    }
+
+    public function getTerritories()
+    {
+        return $this->territories->getValues();
+    }
+
+    public function addTerritory(Territory $territory): self
+    {
+        if (!$this->territories->contains($territory)) {
+            $this->territories[] = $territory;
+        }
+        
+        return $this;
+    }
+    
+    public function removeTerritory(Territory $territory): self
+    {
+        if ($this->territories->contains($territory)) {
+            $this->territories->removeElement($territory);
+        }
+        return $this;
+    }
+
+    public function removeTerritories(): self
+    {
+        $this->territories->clear();
+        return $this;
+    }
+
+
     // DOCTRINE EVENTS
 
     /**
@@ -706,30 +788,7 @@ class Address implements \JsonSerializable
         }
     }
 
-    public function getEvent(): ?Event
-    {
-        return $this->event;
-    }
-
-    public function setEvent(?Event $event): self
-    {
-        $this->event = $event;
-
-        return $this;
-    }
-
-    public function getCommunity(): ?Community
-    {
-        return $this->community;
-    }
-
-    public function setCommunity(?Community $community): self
-    {
-        $this->community = $community;
-
-        return $this;
-    }
-
+    
     public function jsonSerialize()
     {
         return

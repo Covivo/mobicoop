@@ -312,7 +312,7 @@ class DynamicManager
         // last point check
         if ($this->params['dynamicEnableMaxSpeed']) {
             // we compute the direction between the 2 last points to get the average speed
-            // => we exclude the point if the speed is too high (can happen with bad GPS coordinates, eg. bad way guessing on motorways)
+            // => we exclude the point if the speed is too high (can happen with bad GPS coordinates, eg. bad lane guessing on motorways)
             $now = new \DateTime('UTC');
             $newAddress = new Address();
             $newAddress->setLongitude($dynamicData->getLongitude());

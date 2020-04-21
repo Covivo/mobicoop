@@ -39,12 +39,19 @@ final class ODTerritoryFilter extends AbstractContextAwareFilter
             $value = substr($value, strrpos($value, '/') + 1);
         }
         
+        // $queryBuilder
+        // ->leftJoin('u.proposals', 'p')
+        // ->leftJoin('p.waypoints', 'w')
+        // ->leftJoin('w.address', 'a')
+        // ->join('\App\Geography\Entity\Territory', 'oDTerritory')
+        // ->andWhere(sprintf('(oDTerritory.id = %s AND (w.position=0 OR w.destination=true) AND (ST_INTERSECTS(oDTerritory.geoJsonDetail,a.geoJson)=1))', $value));
+
         $queryBuilder
-        ->leftJoin('u.proposals', 'p')
-        ->leftJoin('p.waypoints', 'w')
-        ->leftJoin('w.address', 'a')
-        ->join('\App\Geography\Entity\Territory', 'oDTerritory')
-        ->andWhere(sprintf('(oDTerritory.id = %s AND (w.position=0 OR w.destination=true) AND (ST_INTERSECTS(oDTerritory.geoJsonDetail,a.geoJson)=1))', $value));
+            ->leftJoin('u.proposals', 'p')
+            ->leftJoin('p.waypoints', 'w')
+            ->leftJoin('w.address', 'a')
+            ->leftJoin('a.territories', 'ta')
+            ->andWhere(sprintf('(ta.id = %s AND (w.position=0 OR w.destination=true))', $value));
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
