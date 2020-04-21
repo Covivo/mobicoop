@@ -20,6 +20,8 @@ home_logout:
         fr: /utilisateur/compte-supprimer
         en: /user/account-delete
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::indexLogout
+
+
 ###############
 # user routes #
 ###############
@@ -399,6 +401,7 @@ rdex_journey:
         en: /carpool/rdexJourney
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney
 
+
 ####################
 # community routes #
 ####################
@@ -518,16 +521,26 @@ community_user_available:
     requirements:
         userId: '\d+'
 
+
 ##########################
 # editorial pages routes #
 ##########################
 
-#get an article (AJAX)
+# get an article
+article_get:
+    path:
+        fr: /article/{id}
+        en: /article/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::articleGet
+    requirements:
+        id: '\d+'
+
+# get an article (AJAX)
 article:
     path:
         fr: /article
         en: /article
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::articleGet
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::article
 
 # display project page
 project:
@@ -569,7 +582,7 @@ history:
     path:
         fr: /historique
         en: /history
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showHistroy
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showHistory
 
 # display actors page
 actors:
@@ -642,6 +655,7 @@ LastExternalArticles:
         en: /articles/last/extern
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::lastExternalArticles
 
+
 ####################
 # geography routes #
 ####################
@@ -652,6 +666,7 @@ georouter:
         fr: /georoute
         en: /georoute
     controller: Mobicoop\Bundle\MobicoopBundle\Geography\Controller\GeoRouterController::geoRoute
+
 
 ####################
 # contact routes #
@@ -669,6 +684,7 @@ contact_send:
         fr: /contact/send
         en: /contact/send
     controller: Mobicoop\Bundle\MobicoopBundle\Communication\Controller\ContactController:sendContact
+
 
 ####################
 # solidarity routes #
@@ -688,9 +704,9 @@ solidary_ask:
     controller: Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\SolidaryController:solidaryCreate
 
 
-####################
-# community routes #
-####################
+################
+# event routes #
+################
 
 # display events
 event_list:
@@ -699,7 +715,7 @@ event_list:
         en: /events
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventList
 
-# Get the communities (AJAX)
+# Get the events (AJAX)
 event_get_list:
     methods: [POST]
     path:
@@ -714,7 +730,7 @@ event_create:
         en: /event/create
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventCreate
 
-# display one community
+# display one event
 event_show:
     path:
         fr: /evenement/{id}
@@ -723,7 +739,7 @@ event_show:
     requirements:
         id: '\d+'
 
-# display one widget
+# display widget
 event_widget:
     path:
         fr: /evenement-widget/{id}
@@ -732,7 +748,7 @@ event_widget:
     requirements:
         id: '\d+'
 
-# display one widget
+# get widget
 event_get_widget:
     path:
         fr: /evenement-get-widget/{id}
@@ -749,6 +765,11 @@ event_report:
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventReport
     requirements:
         id: '\d+'
+
+
+###############
+# misc routes #
+###############
 
 # round price
 round_price:

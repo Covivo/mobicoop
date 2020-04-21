@@ -23,6 +23,7 @@
 
 namespace App\Import\Service;
 
+use App\Article\Repository\ArticleRepository;
 use App\Community\Repository\CommunityRepository;
 use App\Event\Repository\EventRepository;
 use App\Import\Entity\Redirect;
@@ -39,15 +40,17 @@ class RedirectManager
     private $redirectRepository;
     private $communityRepository;
     private $eventRepository;
+    private $articleRepository;
 
     /**
      * Constructor.
      */
-    public function __construct(RedirectRepository $redirectRepository, CommunityRepository $communityRepository, EventRepository $eventRepository)
+    public function __construct(RedirectRepository $redirectRepository, CommunityRepository $communityRepository, EventRepository $eventRepository, ArticleRepository $articleRepository)
     {
         $this->redirectRepository = $redirectRepository;
         $this->communityRepository = $communityRepository;
         $this->eventRepository = $eventRepository;
+        $this->articleRepository = $articleRepository;
     }
 
     /**
@@ -69,6 +72,11 @@ class RedirectManager
                 case Redirect::TYPE_EVENT:
                     if ($event = $this->eventRepository->find($redirect->getDestinationId())) {
                         $redirect->setDestinationComplement($event->getName());
+                    }
+                    break;
+                case Redirect::TYPE_ARTICLE:
+                    if ($article = $this->articleRepository->find($redirect->getDestinationId())) {
+                        $redirect->setDestinationComplement($article->getTitle());
                     }
                     break;
             }
