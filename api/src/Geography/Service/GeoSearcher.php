@@ -63,11 +63,12 @@ class GeoSearcher
     private $defaultRelayPointResultNumber;
     private $defaultEventResultNumber;
     private $geoDataFixes;
+    private $distanceOrder;
 
     /**
      * Constructor.
      */
-    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, IconRepository $iconRepository, string $iconPath, string $dataPath, string $defaultSigResultNumber, string $defaultNamedResultNumber, string $defaultRelayPointResultNumber, string $defaultEventResultNumber, array $geoDataFixes)
+    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, IconRepository $iconRepository, string $iconPath, string $dataPath, string $defaultSigResultNumber, string $defaultNamedResultNumber, string $defaultRelayPointResultNumber, string $defaultEventResultNumber, array $geoDataFixes, bool $distanceOrder)
     {
         $this->geocoder = $geocoder;
         $this->geoTools = $geoTools;
@@ -83,6 +84,7 @@ class GeoSearcher
         $this->defaultRelayPointResultNumber = $defaultRelayPointResultNumber;
         $this->defaultEventResultNumber = $defaultEventResultNumber;
         $this->geoDataFixes = $geoDataFixes;
+        $this->distanceOrder = $distanceOrder;
     }
 
     /**
@@ -197,6 +199,12 @@ class GeoSearcher
                 $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_VENUE)->getFileName());
             }
 
+            if (method_exists($geoResult, 'getDistance')) {
+                if (!is_null($geoResult->getDistance())) {
+                    $address->setDistance($geoResult->getDistance());
+                }
+            }
+
             // add id and fix result if handled by the provider
             if (method_exists($geoResult, 'getId')) {
                 $address = $this->fixAddress($geoResult->getId(), $address);
@@ -205,6 +213,12 @@ class GeoSearcher
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
 
             $result[] = $address;
+        }
+
+        if ($this->distanceOrder) {
+            usort($result, function ($a, $b) {
+                return $a->getDistance()>$b->getDistance();
+            });
         }
         
         // 2 - named addresses
