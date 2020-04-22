@@ -9,6 +9,9 @@
 * Add acces for log in with email or password token
 * Solidary beneficiaries and their solidary files, Structure, Proofs
 * Solidary volunteers to help the beneficiaries
+* Add function checkUserHaveAuthItem to check if an User have a specified Auth Item
+* Add Role 'ROLE_COMMUNITY_MANAGER' to the creators of the community (client side)
+* Add button for admin access from the detail page of community (for the creator)
 
 ## CLIENT
 

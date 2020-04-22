@@ -78,7 +78,7 @@ export default {
     }
   },
   data () {
-    return { 
+    return {
       lastUsers: this.givenLastUsers ? this.givenLastUsers : null,
       loading: false
     }
@@ -91,7 +91,7 @@ export default {
   methods:{
     getCommunityLastUsers() {
       this.loading = true;
-      axios 
+      axios
         .get('/community-last-users/'+this.community.id, {
           headers:{
             'content-type': 'application/json'
