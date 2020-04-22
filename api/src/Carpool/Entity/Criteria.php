@@ -670,7 +670,7 @@ class Criteria
     /**
      * @var Direction|null The direction used in the journey as a driver.
      *
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="criteriaDriver", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="criteriasDriver", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups({"read","results"})
      */
@@ -679,7 +679,7 @@ class Criteria
     /**
      * @var Direction|null The direction used in the journey as a passenger.
      *
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="criteriaPassenger", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="criteriasPassenger", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups({"read","results","thread"})
      */
@@ -1655,7 +1655,7 @@ class Criteria
     {
         $this->directionDriver = $directionDriver;
         // set the reverse side, useful for direction managing
-        if ($directionDriver->getCriteriaDriver() !== $this) {
+        if ($directionDriver->getCriteriasDriver() !== $this) {
             $directionDriver->setCriteriaDriver($this);
         }
         
