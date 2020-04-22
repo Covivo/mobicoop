@@ -38,6 +38,8 @@ use App\Auth\Repository\AuthItemRepository;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Service\AdManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Match\Event\MassMigrateUserMigratedEvent;
 
 /**
  * Mass compute manager.
@@ -55,8 +57,9 @@ class MassMigrateManager
     private $userRepository;
     private $adManager;
     private $params;
+    private $eventDispatcher;
 
-    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, array $params)
+    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, array $params)
     {
         $this->massPersonRepository = $massPersonRepository;
         $this->entityManager = $entityManager;
@@ -65,6 +68,7 @@ class MassMigrateManager
         $this->userRepository = $userRepository;
         $this->adManager = $adManager;
         $this->params = $params;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -124,6 +128,7 @@ class MassMigrateManager
                     // Set an encrypted password
                     $password = $this->randomPassword();
                     $user->setPassword($this->encoder->encodePassword($user, $password));
+                    $user->setClearPassword($password); // Used to be send by email (not persisted)
 
                     // auto valid the registration
                     $user->setValidatedDate(new \DateTime());
@@ -157,6 +162,8 @@ class MassMigrateManager
                     
 
                     // To do : Trigger an event to send a email
+                    $event = new MassMigrateUserMigratedEvent($user);
+                    $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
                 }
             }
         }
