@@ -59,17 +59,6 @@ use App\Community\Filter\TerritoryFilter;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "swagger_context" = {
- *                  "parameters" = {
- *                      {
- *                          "name" = "userId",
- *                          "in" = "query",
- *                          "type" = "number",
- *                          "format" = "integer",
- *                          "description" = "Check if this userId is already an accepted member"
- *                      }
- *                  }
- *              },
  *              "normalization_context"={"groups"={"communities"}},
  *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },

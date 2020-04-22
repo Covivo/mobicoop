@@ -272,6 +272,10 @@ services:
         tags:
             - { name: monolog.logger, channel: community }
 
+    App\Community\DataProvider\CommunityCollectionDataProvider:
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
     # Event
     App\Event\Controller\:
         resource: '../src/Event/Controller'

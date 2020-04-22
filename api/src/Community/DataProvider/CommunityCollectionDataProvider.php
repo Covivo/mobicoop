@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,43 +21,46 @@
  *    LICENSE
  **************************/
 
-namespace App\User\DataProvider;
+namespace App\Community\DataProvider;
 
-use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\User\Entity\User;
-use Doctrine\Persistence\ManagerRegistry;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
+use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use App\Community\Entity\Community;
+use App\Community\Service\CommunityManager;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * Collection data provider for User search.
+ * Collection data provider for Community entity.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  */
-final class UserSearchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class CommunityCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $collectionExtensions;
     private $managerRegistry;
+    private $communityManager;
     
-    public function __construct(ManagerRegistry $managerRegistry, iterable $collectionExtensions)
+    public function __construct(ManagerRegistry $managerRegistry, iterable $collectionExtensions, CommunityManager $communityManager)
     {
         $this->collectionExtensions = $collectionExtensions;
         $this->managerRegistry = $managerRegistry;
+        $this->communityManager = $communityManager;
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName === "get";
+        return Community::class === $resourceClass && $operationName === "get";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): PaginatorInterface
     {
         $manager = $this->managerRegistry->getManagerForClass($resourceClass);
         $repository = $manager->getRepository($resourceClass);
-        $queryBuilder = $repository->createQueryBuilder('u');
+        $queryBuilder = $repository->createQueryBuilder('c');
         $queryNameGenerator = new QueryNameGenerator();
         
         foreach ($this->collectionExtensions as $extension) {
@@ -67,8 +70,7 @@ final class UserSearchCollectionDataProvider implements CollectionDataProviderIn
                 return $result;
             }
         }
-
-        
+ 
         return $queryBuilder->getQuery()->getResult();
     }
 }
