@@ -31,7 +31,11 @@ use App\Community\Entity\CommunitySecurity;
 use App\Community\Entity\CommunityUser;
 use App\Community\Repository\CommunityRepository;
 use App\User\Entity\User;
+use App\User\Service\UserManager;
 use App\User\Repository\UserRepository;
+use App\Auth\Repository\AuthItemRepository;
+use App\Auth\Entity\AuthItem;
+use App\Auth\Entity\UserAuthAssignment;
 
 /**
  * Community manager.
@@ -50,6 +54,8 @@ class CommunityManager
     private $userRepository;
     private $communityRepository;
     private $proposalRepository;
+    private $authItemRepository;
+    private $userManager;
 
     /**
      * Constructor
@@ -63,7 +69,9 @@ class CommunityManager
         string $securityPath,
         UserRepository $userRepository,
         CommunityRepository $communityRepository,
-        ProposalRepository $proposalRepository
+        ProposalRepository $proposalRepository,
+        AuthItemRepository $authItemRepository,
+        UserManager $userManager
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -71,6 +79,8 @@ class CommunityManager
         $this->userRepository = $userRepository;
         $this->communityRepository = $communityRepository;
         $this->proposalRepository = $proposalRepository;
+        $this->authItemRepository = $authItemRepository;
+        $this->userManager = $userManager;
     }
 
     /**
@@ -218,7 +228,7 @@ class CommunityManager
         return $this->communityRepository->find($communityId);
     }
 
-    
+
     /**
      * Remove the link between the journeys of a user and a community
      */
@@ -247,5 +257,30 @@ class CommunityManager
     {
         $ownedCommunities = $this->communityRepository->getOwnedCommunities($userId);
         return $ownedCommunities;
+    }
+
+    /**
+     * Give the roles : community_manager to the creator of a public community and save the data
+     *
+     * @param Community       $Community           The community created
+     * @return void
+     */
+    public function save(Community $community)
+    {
+        $user = $community->getUser();
+        $authItem = $this->authItemRepository->find(AuthItem::ROLE_COMMUNITY_MANAGER_PUBLIC);
+
+        //Check if the user dont have the ROLE_COMMUNITY_MANAGER right yet
+        if (!$this->userManager->checkUserHaveAuthItem($user, $authItem)) {
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
+
+            $this->entityManager->persist($user);
+        }
+        $this->entityManager->persist($community);
+        $this->entityManager->flush();
+
+        return $community;
     }
 }

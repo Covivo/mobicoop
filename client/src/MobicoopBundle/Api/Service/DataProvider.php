@@ -391,8 +391,6 @@ class DataProvider
                 } catch (ServerException $e) {
                     throw new ApiTokenException("Unable to get an API token.");
                 } catch (ClientException $e) {
-                    dump($e);
-                    die();
                     //Wrong credentials
                     if ($e->getCode() == '401') {
                         return new JsonResponse('bad-credentials-api');

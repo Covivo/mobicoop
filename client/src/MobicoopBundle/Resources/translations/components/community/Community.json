@@ -24,6 +24,9 @@
           "label": "Publier une annonce",
           "route": "covoiturage/recherche/poster"
       },
+      "accessAdmin": {
+          "label": "Administrer ma communauté"
+      },
       "search": {
         "label": "Rechercher",
         "route": ""
@@ -65,7 +68,7 @@
       }
     },
     "urlCommunityUser":"/community-user"
-    
+
   },
   "en": {
     "leaveCommunity": {
