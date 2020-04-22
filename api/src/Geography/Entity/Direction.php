@@ -267,21 +267,21 @@ class Direction
      * @var ArrayCollection The criterias as driver related to the direction.
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Criteria", mappedBy="directionDriver")
      */
-    private $criteriasDriver;
+    private $criteriaDrivers;
 
     /**
      * @var ArrayCollection The criterias as passenger related to the direction.
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Criteria", mappedBy="directionPassenger")
      */
-    private $criteriasPassenger;
+    private $criteriaPassengers;
 
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
         $this->zones = new ArrayCollection();
         $this->territories = new ArrayCollection();
-        $this->criteriasDriver = new ArrayCollection();
-        $this->criteriasPassenger = new ArrayCollection();
+        $this->criteriaDrivers = new ArrayCollection();
+        $this->criteriaPassengers = new ArrayCollection();
         $this->saveGeoJson = true;
     }
 
@@ -641,15 +641,18 @@ class Direction
         return $this;
     }
 
-    public function getCriteriasDriver()
+    public function getCriteriaDrivers(bool $getValues = true)
     {
-        return $this->criteriasDriver->getValues();
+        if ($getValues) {
+            return $this->criteriaDrivers->getValues();
+        }
+        return $this->criteriaDrivers;
     }
 
     public function addCriteriaDriver(Criteria $criteriaDriver): self
     {
-        if (!$this->criteriasDriver->contains($criteriaDriver)) {
-            $this->criteriasDriver[] = $criteriaDriver;
+        if (!$this->criteriaDrivers->contains($criteriaDriver)) {
+            $this->criteriaDrivers[] = $criteriaDriver;
         }
         
         return $this;
@@ -657,21 +660,24 @@ class Direction
     
     public function removeCriteriaDriver(Criteria $criteriaDriver): self
     {
-        if ($this->criteriasDriver->contains($criteriaDriver)) {
-            $this->criteriasDriver->removeElement($criteriaDriver);
+        if ($this->criteriaDrivers->contains($criteriaDriver)) {
+            $this->criteriaDrivers->removeElement($criteriaDriver);
         }
         return $this;
     }
 
-    public function getCriteriasPassenger()
+    public function getCriteriaPassengers(bool $getValues = true)
     {
-        return $this->criteriasPassenger->getValues();
+        if ($getValues) {
+            return $this->criteriaPassengers->getValues();
+        }
+        return $this->criteriaPassengers;
     }
 
     public function addCriteriaPassenger(Criteria $criteriaPassenger): self
     {
-        if (!$this->criteriasPassenger->contains($criteriaPassenger)) {
-            $this->criteriasPassenger[] = $criteriaPassenger;
+        if (!$this->criteriaPassengers->contains($criteriaPassenger)) {
+            $this->criteriaPassengers[] = $criteriaPassenger;
         }
         
         return $this;
@@ -679,8 +685,8 @@ class Direction
     
     public function removeCriteriaPassenger(Criteria $criteriaPassenger): self
     {
-        if ($this->criteriasPassenger->contains($criteriaPassenger)) {
-            $this->criteriasPassenger->removeElement($criteriaPassenger);
+        if ($this->criteriaPassengers->contains($criteriaPassenger)) {
+            $this->criteriaPassengers->removeElement($criteriaPassenger);
         }
         return $this;
     }
