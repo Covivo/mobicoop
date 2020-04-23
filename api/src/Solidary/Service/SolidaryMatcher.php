@@ -279,11 +279,12 @@ class SolidaryMatcher
     {
         // get The hours slot of the structure
         $hoursSlots = [
-            "m" => ["min" => new \DateTime($structure->getMMinRangeTime()->format("H:i:s")),"max" => new \DateTime($structure->getMMaxRangeTime()->format("H:i:s"))],
-            "a" => ["min" => new \DateTime($structure->getAMinRangeTime()->format("H:i:s")),"max" => new \DateTime($structure->getAMaxRangeTime()->format("H:i:s"))],
-            "e" => ["min" => new \DateTime($structure->getEMinRangeTime()->format("H:i:s")),"max" => new \DateTime($structure->getEMaxRangeTime()->format("H:i:s"))]
+            "m" => ["min" => (!is_null($structure->getMMinRangeTime())) ? new \DateTime($structure->getMMinRangeTime()->format("H:i:s")) : Criteria::getHoursSlots()["m"]["min"],"max" => (!is_null($structure->getMMaxRangeTime())) ? new \DateTime($structure->getMMaxRangeTime()->format("H:i:s")) : Criteria::getHoursSlots()["m"]["max"]],
+            "a" => ["min" => (!is_null($structure->getAMinRangeTime())) ? new \DateTime($structure->getAMinRangeTime()->format("H:i:s")) : Criteria::getHoursSlots()["a"]["min"],"max" => (!is_null($structure->getAMaxRangeTime())) ? new \DateTime($structure->getAMaxRangeTime()->format("H:i:s")) : Criteria::getHoursSlots()["a"]["max"]],
+            "e" => ["min" => (!is_null($structure->getEMinRangeTime())) ? new \DateTime($structure->getEMinRangeTime()->format("H:i:s")) : Criteria::getHoursSlots()["e"]["min"],"max" => (!is_null($structure->getEMaxRangeTime())) ? new \DateTime($structure->getEMaxRangeTime()->format("H:i:s")) : Criteria::getHoursSlots()["e"]["max"]]
         ];
-
+        var_dump($hoursSlots);
+        die;
         foreach ($hoursSlots as $slot => $hoursSlot) {
             if ($hoursSlot['min']<=$mintime && $maxtime<=$hoursSlot['max']) {
                 return $slot;
