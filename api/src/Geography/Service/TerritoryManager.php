@@ -38,6 +38,8 @@ use Psr\Log\LoggerInterface;
  */
 class TerritoryManager
 {
+    private const BATCH_ADDRESSES = 100;
+
     private $entityManager;
     private $territoryRepository;
     private $logger;
@@ -249,5 +251,100 @@ class TerritoryManager
             $stmt->execute();
         }
         $this->logger->info("TerritoryManager : end treating directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+    }
+
+    /**
+     * Affect addresses and directions that are not linked yet to their territories
+     *
+     * @return void
+     */
+    public function updateAddressesAndDirections()
+    {
+        $conn = $this->entityManager->getConnection();
+        
+        // find all addresses not linked yet
+        $sql = "SELECT id FROM address a LEFT JOIN address_territory at ON a.id = at.address_id WHERE at.address_id IS NULL";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $results = $stmt->fetchAll();
+        $address_ids = [];
+        foreach ($results as $result) {
+            $address_ids[] = $result['id'];
+        }
+        $this->logger->info("TerritoryManager : updateAddressesAndDirections : number of addresses to treat : " . count($address_ids) . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        // we will need an array of territory ids
+        $ids= [];
+
+        if (count($address_ids)>0) {
+            // create address territory link
+            // long process, we need to cut into batches
+            // we will iterate through territories as addresses are simple geometries, it is faster to use the territories as base for loops
+            $sql = "SELECT id FROM territory";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $results = $stmt->fetchAll();
+            foreach ($results as $result) {
+                $ids[] = $result['id'];
+            }
+            $this->logger->info("TerritoryManager : updateAddressesAndDirections : number of territories to treat : " . count($ids) . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+            // then we insert addresses for each territory
+            $this->logger->info("TerritoryManager : updateAddressesAndDirections : start treating addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            foreach ($ids as $id) {
+                $this->logger->info("TerritoryManager : updateAddressesAndDirections : treating territory : $id for addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                // we use batches of addresses
+                $forBatch = $address_ids;
+                $continue = true;
+                $start = 0;
+                while ($continue) {
+                    $batch = array_slice($forBatch, $start, self::BATCH_ADDRESSES);
+                    if (count($batch)>0) {
+                        $sql = "INSERT INTO address_territory (address_id,territory_id)
+                            SELECT a.id, t.id
+                            FROM address a
+                            JOIN territory t
+                            WHERE ST_INTERSECTS(t.geo_json_detail,a.geo_json)=1
+                            AND t.id = $id AND a.id IN(" . implode(",", $batch) . ")
+                        ";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->execute();
+                        $start += self::BATCH_ADDRESSES;
+                    } else {
+                        $continue = false;
+                    }
+                }
+            }
+        }
+        $this->logger->info("TerritoryManager : updateAddressesAndDirections : end treating addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        // find all directions not linked yet
+        $sql = "SELECT id FROM direction d LEFT JOIN direction_territory dt ON d.id = dt.direction_id WHERE dt.direction_id IS NULL";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $results = $stmt->fetchAll();
+        $direction_ids = [];
+        foreach ($results as $result) {
+            $direction_ids[] = $result['id'];
+        }
+        $this->logger->info("TerritoryManager : updateAddressesAndDirections : number of directions to treat : " . count($direction_ids) . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        if (count($direction_ids)>0) {
+            // then we insert
+            $this->logger->info("TerritoryManager : updateAddressesAndDirections : start treating directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            foreach ($direction_ids as $id) {
+                $this->logger->info("TerritoryManager : updateAddressesAndDirections : treating direction : $id | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                $sql = "INSERT INTO direction_territory (direction_id,territory_id)
+                    SELECT d.id, t.id
+                    FROM direction d
+                    JOIN territory t
+                    WHERE ST_INTERSECTS(t.geo_json_detail,d.geo_json_detail)=1
+                    AND d.id = $id
+                ";
+                $stmt = $conn->prepare($sql);
+                $stmt->execute();
+            }
+            $this->logger->info("TerritoryManager : updateAddressesAndDirections : end treating directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        }
     }
 }

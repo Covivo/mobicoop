@@ -67,8 +67,13 @@ class TerritoryVoter extends Voter
             return false;
         }
         
-        // only vote on Territory objects inside this voter
-        if (!$subject instanceof Territory && !$subject instanceof Paginator) {
+        if (in_array($attribute, [
+            self::TERRITORY_CREATE,
+            self::TERRITORY_READ,
+            self::TERRITORY_UPDATE,
+            self::TERRITORY_DELETE,
+            self::TERRITORY_LIST
+            ]) && !$subject instanceof Territory && !$subject instanceof Paginator) {
             return false;
         }
         return true;
