@@ -42,6 +42,7 @@ class DirectionWriteListener
     public function setTerritories(Direction $direction, LifecycleEventArgs $args)
     {
         // we create the link to territories only for some selected entities
-        $this->directionManager->createDirectionTerritoriesForUsefulEntity($direction, true);
+        // desactivated for now as the calculation can be very long for long distance directions
+        // $this->directionManager->createDirectionTerritoriesForUsefulEntity($direction, true);
     }
 }

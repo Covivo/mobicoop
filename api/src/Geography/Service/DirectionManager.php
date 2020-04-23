@@ -130,8 +130,7 @@ class DirectionManager
             }
         }
         if ($createLink) {
-            // desactivated for now as the calculation can be very long for long distance directions
-            // return $this->createDirectionTerritories($direction, $persist);
+            return $this->createDirectionTerritories($direction, $persist);
         }
         return $direction;
     }
