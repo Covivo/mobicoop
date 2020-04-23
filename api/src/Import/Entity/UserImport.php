@@ -44,23 +44,29 @@ use App\Import\Controller\ImportImageUserController;
  *      },
  *      collectionOperations={
  *          "treat"={
- *              "method"="GET",
+ *              "method"="POST",
  *              "path"="/user_imports/treat",
  *              "normalization_context"={"groups"={"read"}},
+ *              "security"="is_granted('import_create',object)"
  *          },
  *          "match"={
- *              "method"="GET",
+ *              "method"="POST",
  *              "path"="/user_imports/match",
  *              "normalization_context"={"groups"={"read"}},
+ *              "security"="is_granted('import_create',object)"
  *          },
  *          "import-users-from-v1"={
  *              "method"="GET",
  *              "path"="/import/images-from-v1/users",
  *              "controller"=ImportImageUserController::class,
+ *              "read"=false,
+ *              "security"="is_granted('import_create',object)"
  *          },
  *      },
  *      itemOperations={
- *          "get"
+ *          "get"={
+ *              "security"="is_granted('import_create',object)"
+ *          },
  *      }
  * )
  *

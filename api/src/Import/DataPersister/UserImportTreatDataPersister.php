@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,38 +21,48 @@
  *    LICENSE
  **************************/
 
-namespace App\Import\DataProvider;
+namespace App\Import\DataPersister;
 
-use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Import\Entity\UserImport;
-use Symfony\Component\HttpFoundation\RequestStack;
 use App\Import\Service\ImportManager;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
- * Collection data provider for User import treatment.
+ * Collection data persister for User import treatment.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  */
-final class UserImportTreatCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class UserImportTreatDataPersister implements ContextAwareDataPersisterInterface
 {
-    protected $request;
+    private $security;
+    private $request;
     protected $importManager;
     
-    public function __construct(RequestStack $requestStack, ImportManager $importManager)
+    public function __construct(Security $security, ImportManager $importManager, RequestStack $requestStack)
     {
+        $this->security = $security;
         $this->request = $requestStack->getCurrentRequest();
         $this->importManager = $importManager;
     }
-    
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+
+    public function supports($data, array $context = []): bool
     {
-        return UserImport::class === $resourceClass && $operationName === "treat";
+        return $data instanceof UserImport && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'treat';
     }
-    
-    public function getCollection(string $resourceClass, string $operationName = null): ?array
+
+    public function persist($data, array $context = [])
     {
-        return [$this->importManager->treatUserImport($this->request->get("origin"))];
+        /**
+         * @var UserImport $data
+         */
+        return $this->importManager->treatUserImport($this->request->get("origin"));
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }
