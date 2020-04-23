@@ -114,13 +114,19 @@ class DirectionManager
     public function createDirectionTerritoriesForUsefulEntity(Direction $direction, bool $persist = false)
     {
         $createLink = false;
-        if (!is_null($direction->getCriteriaDriver())) {
-            if (!is_null($direction->getCriteriaDriver()->getProposal())) {
-                $createLink = true;
+        if (count($direction->getCriteriaDrivers())>0) {
+            foreach ($direction->getCriteriaDrivers() as $criteriaDriver) {
+                if (!is_null($criteriaDriver->getProposal())) {
+                    $createLink = true;
+                    break;
+                }
             }
-        } elseif (!is_null($direction->getCriteriaPassenger())) {
-            if (!is_null($direction->getCriteriaPassenger()->getProposal())) {
-                $createLink = true;
+        } elseif (count($direction->getCriteriaPassengers())>0) {
+            foreach ($direction->getCriteriaPassengers() as $criteriaPassenger) {
+                if (!is_null($criteriaPassenger->getProposal())) {
+                    $createLink = true;
+                    break;
+                }
             }
         }
         if ($createLink) {

@@ -264,22 +264,24 @@ class Direction
     private $detailUpdatable;
 
     /**
-     * @var Criteria The criteria as driver related to the direction.
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", mappedBy="directionDriver")
+     * @var ArrayCollection The criterias as driver related to the direction.
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Criteria", mappedBy="directionDriver")
      */
-    private $criteriaDriver;
+    private $criteriaDrivers;
 
     /**
-     * @var Criteria The criteria as passenger related to the direction.
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", mappedBy="directionPassenger")
+     * @var ArrayCollection The criterias as passenger related to the direction.
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Criteria", mappedBy="directionPassenger")
      */
-    private $criteriaPassenger;
+    private $criteriaPassengers;
 
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
         $this->zones = new ArrayCollection();
         $this->territories = new ArrayCollection();
+        $this->criteriaDrivers = new ArrayCollection();
+        $this->criteriaPassengers = new ArrayCollection();
         $this->saveGeoJson = true;
     }
 
@@ -639,27 +641,53 @@ class Direction
         return $this;
     }
 
-    public function getCriteriaDriver(): ?Criteria
+    public function getCriteriaDrivers(bool $getValues = true)
     {
-        return $this->criteriaDriver;
+        if ($getValues) {
+            return $this->criteriaDrivers->getValues();
+        }
+        return $this->criteriaDrivers;
     }
 
-    public function setCriteriaDriver(Criteria $criteriaDriver): self
+    public function addCriteriaDriver(Criteria $criteriaDriver): self
     {
-        $this->criteriaDriver = $criteriaDriver;
+        if (!$this->criteriaDrivers->contains($criteriaDriver)) {
+            $this->criteriaDrivers[] = $criteriaDriver;
+        }
         
         return $this;
     }
-
-    public function getCriteriaPassenger(): ?Criteria
+    
+    public function removeCriteriaDriver(Criteria $criteriaDriver): self
     {
-        return $this->criteriaPassenger;
+        if ($this->criteriaDrivers->contains($criteriaDriver)) {
+            $this->criteriaDrivers->removeElement($criteriaDriver);
+        }
+        return $this;
     }
 
-    public function setCriteriaPassenger(Criteria $criteriaPassenger): self
+    public function getCriteriaPassengers(bool $getValues = true)
     {
-        $this->criteriaPassenger = $criteriaPassenger;
+        if ($getValues) {
+            return $this->criteriaPassengers->getValues();
+        }
+        return $this->criteriaPassengers;
+    }
+
+    public function addCriteriaPassenger(Criteria $criteriaPassenger): self
+    {
+        if (!$this->criteriaPassengers->contains($criteriaPassenger)) {
+            $this->criteriaPassengers[] = $criteriaPassenger;
+        }
         
+        return $this;
+    }
+    
+    public function removeCriteriaPassenger(Criteria $criteriaPassenger): self
+    {
+        if ($this->criteriaPassengers->contains($criteriaPassenger)) {
+            $this->criteriaPassengers->removeElement($criteriaPassenger);
+        }
         return $this;
     }
 

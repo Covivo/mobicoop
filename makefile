@@ -117,6 +117,12 @@ db-diff:
 	$(info $(builder)------------------------------------------------------$(reset))
 	@docker-compose -f docker-compose-builder-$(os).yml run --rm db-diff
 
+app-geography-territory-link-batch:
+	$(info $(builder)-----------------------------------------------------------)
+	$(info $(builder)Make ($(os)): Command app:geography:territory-link-batch...)
+	$(info $(builder)-----------------------------------------------------------$(reset))
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm app-geography-territory-link-batch
+
 logs: 
 	$(info $(green)------------------------------------------------------)
 	$(info $(green)Mobicoop Logs)
