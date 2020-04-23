@@ -35,18 +35,21 @@ use App\Solidary\Repository\SolidaryMatchingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Result;
 use App\Carpool\Repository\MatchingRepository;
+use App\Solidary\Entity\Structure;
 
 class SolidaryMatcher
 {
     private $solidaryMatchingRepository;
     private $entityManager;
     private $matchingRepository;
+    private $params;
 
-    public function __construct(SolidaryMatchingRepository $solidaryMatchingRepository, EntityManagerInterface $entityManager, MatchingRepository $matchingRepository)
+    public function __construct(SolidaryMatchingRepository $solidaryMatchingRepository, EntityManagerInterface $entityManager, MatchingRepository $matchingRepository, array $params)
     {
         $this->solidaryMatchingRepository = $solidaryMatchingRepository;
         $this->entityManager = $entityManager;
         $this->matchingRepository = $matchingRepository;
+        $this->params = $params;
     }
 
     /**
@@ -94,7 +97,6 @@ class SolidaryMatcher
             } else {
                 // We check if there already is a SolidaryAsk for this matching
                 $solidaryAsk = $this->solidaryMatchingRepository->findAskOfSolidaryMatching($solidaryMatching);
-
                 // There is no Ask, we can add this solidaryMatching to the return
                 if (is_null($solidaryAsk)) {
                     $solidaryMatchings[] = $solidaryMatching;
@@ -270,12 +272,20 @@ class SolidaryMatcher
      * Get the hour slot of this time
      * m : morning, a : afternoon, e : evening
      *
-     * @param \DateTimeInterface $time
+     * @param \DateTimeInterface $mintime
+     * @param \DateTimeInterface $maxtime
+     * @param Structure $structure
      * @return string
      */
-    public function getHourSlot(\DateTimeInterface $mintime, \DateTimeInterface $maxtime): string
+    public function getHourSlot(\DateTimeInterface $mintime, \DateTimeInterface $maxtime, Structure $structure): string
     {
-        $hoursSlots = Criteria::getHoursSlots();
+        // get The hours slot of the structure
+        $hoursSlots = [
+            "m" => ["min" => (!is_null($structure->getMMinRangeTime())) ? new \DateTime($structure->getMMinRangeTime()->format("H:i:s")) : $this->getDefaultHoursSlotsRanges()["m"]["min"],"max" => (!is_null($structure->getMMaxRangeTime())) ? new \DateTime($structure->getMMaxRangeTime()->format("H:i:s")) : $this->getDefaultHoursSlotsRanges()["m"]["max"]],
+            "a" => ["min" => (!is_null($structure->getAMinRangeTime())) ? new \DateTime($structure->getAMinRangeTime()->format("H:i:s")) : $this->getDefaultHoursSlotsRanges()["a"]["min"],"max" => (!is_null($structure->getAMaxRangeTime())) ? new \DateTime($structure->getAMaxRangeTime()->format("H:i:s")) : $this->getDefaultHoursSlotsRanges()["a"]["max"]],
+            "e" => ["min" => (!is_null($structure->getEMinRangeTime())) ? new \DateTime($structure->getEMinRangeTime()->format("H:i:s")) : $this->getDefaultHoursSlotsRanges()["e"]["min"],"max" => (!is_null($structure->getEMaxRangeTime())) ? new \DateTime($structure->getEMaxRangeTime()->format("H:i:s")) : $this->getDefaultHoursSlotsRanges()["e"]["max"]]
+        ];
+
         foreach ($hoursSlots as $slot => $hoursSlot) {
             if ($hoursSlot['min']<=$mintime && $maxtime<=$hoursSlot['max']) {
                 return $slot;
@@ -359,5 +369,21 @@ class SolidaryMatcher
         }
 
         return $schedule;
+    }
+
+
+    /**
+     * Get the instance default hours slots ranges
+     * (i.e. to determine if a time is in morning, afternoon or evening when no indication is given otherwise)
+     *
+     * @return array
+     */
+    public function getDefaultHoursSlotsRanges(): array
+    {
+        return [
+            "m" => ["min" => new \DateTime($this->params['solidaryMMinRangeTime']),"max" => new \DateTime($this->params['solidaryMMaxRangeTime'])],
+            "a" => ["min" => new \DateTime($this->params['solidaryAMinRangeTime']),"max" => new \DateTime($this->params['solidaryAMaxRangeTime'])],
+            "e" => ["min" => new \DateTime($this->params['solidaryEMinRangeTime']),"max" => new \DateTime($this->params['solidaryEMaxRangeTime'])]
+        ];
     }
 }

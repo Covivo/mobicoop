@@ -61,7 +61,6 @@ class SolidarySolution
     /**
      * @var Solidary The solidary record.
      *
-     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Solidary", inversedBy="solidarySolutions")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"readSolidary","writeSolidary"})

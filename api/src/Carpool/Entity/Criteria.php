@@ -1814,15 +1814,6 @@ class Criteria
         // ($this->createdDate ? $this->createdDate->format('Y-m-d H:i:s') : '') . $delimiter;
     }
 
-    public static function getHoursSlots(): array
-    {
-        return [
-            "m" => ["min" => new \DateTime("06:00:00"),"max" => new \DateTime("12:00:00")],
-            "a" => ["min" => new \DateTime("12:00:01"),"max" => new \DateTime("19:00:00")],
-            "e" => ["min" => new \DateTime("19:00:01"),"max" => new \DateTime("23:00:00")]
-        ];
-    }
-
     // DOCTRINE EVENTS
     
     /**

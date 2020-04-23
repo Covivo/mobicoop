@@ -116,7 +116,7 @@ class SolidaryMatchingRepository
 
         $results = $query->getQuery()->getResult();
         if (count($results)>0) {
-            return $results[0];
+            return $results[0]->getSolidarySolution()->getSolidaryAsk();
         }
         return null;
     }

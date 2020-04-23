@@ -111,13 +111,17 @@ class SolidaryUserRepository
                 ->join('su.address', 'a')
                 ->where('su.volunteer = 1');
 
+        // Get the Structure
+        $structure = $solidaryTransportSearch->getSolidary()->getSolidaryUserStructure()->getStructure();
+
         if ($criteria->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
             // Punctual journey
 
             // Date
 
-            // MinTime and MaxTime
-            $slot = $this->solidaryMatcher->getHourSlot($criteria->getMinTime(), $criteria->getMaxTime());
+            // Get the slot of the MinTime and MaxTime for the current structure
+            $slot = $this->solidaryMatcher->getHourSlot($criteria->getMinTime(), $criteria->getMaxTime(), $structure);
+
             // We need to determine the weekday of the fromDate and take only the volunteer available that day on the slot
             if (self::USE_DAY_RESTRICTION) {
                 $weekDay = $criteria->getFromDate()->format('w');
@@ -142,7 +146,7 @@ class SolidaryUserRepository
             // If the SolidaryUser can drive on the particular days of the critera
             // We look also if the SolidaryUser has set a maching min and max time for the maching hour slot
             if ($criteria->isMonCheck()) {
-                $slot = $this->solidaryMatcher->getHourSlot($criteria->getMonMinTime(), $criteria->getMonMaxTime());
+                $slot = $this->solidaryMatcher->getHourSlot($criteria->getMonMinTime(), $criteria->getMonMaxTime(), $structure);
                 if (self::USE_DAY_RESTRICTION) {
                     $query->andWhere('su.'.$slot.'Mon = 1');
                 }
@@ -152,7 +156,7 @@ class SolidaryUserRepository
                 }
             }
             if ($criteria->isTueCheck()) {
-                $slot = $this->solidaryMatcher->getHourSlot($criteria->getTueMinTime(), $criteria->getTueMaxTime());
+                $slot = $this->solidaryMatcher->getHourSlot($criteria->getTueMinTime(), $criteria->getTueMaxTime(), $structure);
                 if (self::USE_DAY_RESTRICTION) {
                     $query->andWhere('su.'.$slot.'Tue = 1');
                 }
@@ -162,7 +166,7 @@ class SolidaryUserRepository
                 }
             }
             if ($criteria->isWedCheck()) {
-                $slot = $this->solidaryMatcher->getHourSlot($criteria->getWedMinTime(), $criteria->getWedMaxTime());
+                $slot = $this->solidaryMatcher->getHourSlot($criteria->getWedMinTime(), $criteria->getWedMaxTime(), $structure);
                 if (self::USE_DAY_RESTRICTION) {
                     $query->andWhere('su.'.$slot.'Wed = 1');
                 }
@@ -172,7 +176,7 @@ class SolidaryUserRepository
                 }
             }
             if ($criteria->isThuCheck()) {
-                $slot = $this->solidaryMatcher->getHourSlot($criteria->getThuMinTime(), $criteria->getThuMaxTime());
+                $slot = $this->solidaryMatcher->getHourSlot($criteria->getThuMinTime(), $criteria->getThuMaxTime(), $structure);
                 if (self::USE_DAY_RESTRICTION) {
                     $query->andWhere('su.'.$slot.'Thu = 1');
                 }
@@ -182,7 +186,7 @@ class SolidaryUserRepository
                 }
             }
             if ($criteria->isFriCheck()) {
-                $slot = $this->solidaryMatcher->getHourSlot($criteria->getFriMinTime(), $criteria->getFriMinTime());
+                $slot = $this->solidaryMatcher->getHourSlot($criteria->getFriMinTime(), $criteria->getFriMinTime(), $structure);
                 if (self::USE_DAY_RESTRICTION) {
                     $query->andWhere('su.'.$slot.'Fri = 1');
                 }
@@ -192,7 +196,7 @@ class SolidaryUserRepository
                 }
             }
             if ($criteria->isSatCheck()) {
-                $slot = $this->solidaryMatcher->getHourSlot($criteria->getSatMinTime(), $criteria->getSatMaxTime());
+                $slot = $this->solidaryMatcher->getHourSlot($criteria->getSatMinTime(), $criteria->getSatMaxTime(), $structure);
                 if (self::USE_DAY_RESTRICTION) {
                     $query->andWhere('su.'.$slot.'Sat = 1');
                 }
@@ -202,7 +206,7 @@ class SolidaryUserRepository
                 }
             }
             if ($criteria->isSunCheck()) {
-                $slot = $this->solidaryMatcher->getHourSlot($criteria->getSunMinTime(), $criteria->getSunMaxTime());
+                $slot = $this->solidaryMatcher->getHourSlot($criteria->getSunMinTime(), $criteria->getSunMaxTime(), $structure);
                 if (self::USE_DAY_RESTRICTION) {
                     $query->andWhere('su.'.$slot.'Sun = 1');
                 }

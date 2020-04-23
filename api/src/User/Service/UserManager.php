@@ -49,6 +49,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\Community\Entity\Community;
+use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Event\SolidaryCreated;
 use App\Solidary\Event\SolidaryUserCreated;
 use App\Solidary\Event\SolidaryUserUpdated;
@@ -190,6 +191,9 @@ class UserManager
             $userAuthAssignment = new UserAuthAssignment();
             $userAuthAssignment->setAuthItem($authItem);
             $user->addUserAuthAssignment($userAuthAssignment);
+
+            // If there is no availability time information, we get the one from the structure
+            $user->setSolidaryUser($this->setDefaultSolidaryUserAvailabilities($user->getSolidaryUser()));
         }
 
         // persist the user
@@ -235,6 +239,104 @@ class UserManager
 
         // return the user
         return $user;
+    }
+
+
+    /**
+     * Set the default availabilities of a SolidaryUser
+     * If no availabilitie already given, we take the structure default
+     * For the days check, if there is no indication, we consider the user available
+     *
+     * @param SolidaryUser $solidaryUser
+     * @return SolidaryUser
+     */
+    private function setDefaultSolidaryUserAvailabilities(SolidaryUser $solidaryUser): SolidaryUser
+    {
+        // Times
+        if ($solidaryUser->getMMinTime()=="") {
+            $solidaryUser->setMMinTime($solidaryUser->getSolidaryUserStructures()[0]->getStructure()->getMMinTime());
+        }
+        if ($solidaryUser->getMMaxTime()=="") {
+            $solidaryUser->setMMaxTime($solidaryUser->getSolidaryUserStructures()[0]->getStructure()->getMMaxTime());
+        }
+        if ($solidaryUser->getAMinTime()=="") {
+            $solidaryUser->setAMinTime($solidaryUser->getSolidaryUserStructures()[0]->getStructure()->getAMinTime());
+        }
+        if ($solidaryUser->getAMaxTime()=="") {
+            $solidaryUser->setAMaxTime($solidaryUser->getSolidaryUserStructures()[0]->getStructure()->getAMaxTime());
+        }
+        if ($solidaryUser->getEMinTime()=="") {
+            $solidaryUser->setEMinTime($solidaryUser->getSolidaryUserStructures()[0]->getStructure()->getEMinTime());
+        }
+        if ($solidaryUser->getEMaxTime()=="") {
+            $solidaryUser->setEMaxTime($solidaryUser->getSolidaryUserStructures()[0]->getStructure()->getEMaxTime());
+        }
+        
+        // Days
+        if ($solidaryUser->hasMMon()!==false) {
+            $solidaryUser->setMMon(true);
+        }
+        if ($solidaryUser->hasAMon()!==false) {
+            $solidaryUser->setAMon(true);
+        }
+        if ($solidaryUser->hasEMon()!==false) {
+            $solidaryUser->setEMon(true);
+        }
+        if ($solidaryUser->hasMTue()!==false) {
+            $solidaryUser->setMTue(true);
+        }
+        if ($solidaryUser->hasATue()!==false) {
+            $solidaryUser->setATue(true);
+        }
+        if ($solidaryUser->hasETue()!==false) {
+            $solidaryUser->setETue(true);
+        }
+        if ($solidaryUser->hasMWed()!==false) {
+            $solidaryUser->setMWed(true);
+        }
+        if ($solidaryUser->hasAWed()!==false) {
+            $solidaryUser->setAWed(true);
+        }
+        if ($solidaryUser->hasEWed()!==false) {
+            $solidaryUser->setEWed(true);
+        }
+        if ($solidaryUser->hasMThu()!==false) {
+            $solidaryUser->setMThu(true);
+        }
+        if ($solidaryUser->hasAThu()!==false) {
+            $solidaryUser->setAThu(true);
+        }
+        if ($solidaryUser->hasEThu()!==false) {
+            $solidaryUser->setEThu(true);
+        }
+        if ($solidaryUser->hasMFri()!==false) {
+            $solidaryUser->setMFri(true);
+        }
+        if ($solidaryUser->hasAFri()!==false) {
+            $solidaryUser->setAFri(true);
+        }
+        if ($solidaryUser->hasEFri()!==false) {
+            $solidaryUser->setEFri(true);
+        }
+        if ($solidaryUser->hasMSat()!==false) {
+            $solidaryUser->setMSat(true);
+        }
+        if ($solidaryUser->hasASat()!==false) {
+            $solidaryUser->setASat(true);
+        }
+        if ($solidaryUser->hasESat()!==false) {
+            $solidaryUser->setESat(true);
+        }
+        if ($solidaryUser->hasMSun()!==false) {
+            $solidaryUser->setMSun(true);
+        }
+        if ($solidaryUser->hasASun()!==false) {
+            $solidaryUser->setASun(true);
+        }
+        if ($solidaryUser->hasESun()!==false) {
+            $solidaryUser->setESun(true);
+        }
+        return $solidaryUser;
     }
 
     /**
@@ -323,6 +425,9 @@ class UserManager
             $userAuthAssignment = new UserAuthAssignment();
             $userAuthAssignment->setAuthItem($authItem);
             $user->addUserAuthAssignment($userAuthAssignment);
+
+            // If there is no availability time information, we get the one from the structure
+            $user->setSolidaryUser($this->setDefaultSolidaryUserAvailabilities($user->getSolidaryUser()));
         }
 
         // persist the user

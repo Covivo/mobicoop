@@ -441,3 +441,14 @@ services:
             $params:
                 avatarSizes: '%env(string:AVATAR_SIZES)%'
                 avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'
+
+    # Solidary
+    App\Solidary\Service\SolidaryMatcher:
+        arguments:
+            $params:
+                solidaryMMinRangeTime: '%env(string:SOLIDARY_M_MIN_RANGE_TIME)%'
+                solidaryMMaxRangeTime: '%env(string:SOLIDARY_M_MAX_RANGE_TIME)%'
+                solidaryAMinRangeTime: '%env(string:SOLIDARY_A_MIN_RANGE_TIME)%'
+                solidaryAMaxRangeTime: '%env(string:SOLIDARY_A_MAX_RANGE_TIME)%'
+                solidaryEMinRangeTime: '%env(string:SOLIDARY_E_MIN_RANGE_TIME)%'
+                solidaryEMaxRangeTime: '%env(string:SOLIDARY_E_MAX_RANGE_TIME)%'
