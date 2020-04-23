@@ -288,3 +288,9 @@ journeyDetailOrigin: "{journeyOrigin}"
 journeyDetailTo: "à"
 journeyDetailDestination: "{journeyDestination}"
 journeyDetailTime: "prévu le {journeyDate} à {journeyTime}."
+
+# Mobimatch
+massMigrated: "Votre compte de covoiturage"
+temporaryPasswordAttributed: "Un mot de passe temporaire vous a été attribué"
+temporaryPassword: "{password}"
+changePassword: "Nous vous encourageons fortement à le modifier lors de votre prochaine connexion"
