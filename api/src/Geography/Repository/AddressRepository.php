@@ -104,4 +104,32 @@ class AddressRepository
             ->andWhere('ST_INTERSECTS(territory.geoJsonDetail,a.geoJson)=1');
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Find all minimal addresses (only latitude and logitude filled)
+     *
+     * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The addresses found
+     */
+    public function findMinimalAddresses()
+    {
+        $query = $this->repository->createQueryBuilder('a')
+            ->andWhere('houseNumber IS NULL')
+            ->andWhere('street IS NULL')
+            ->andWhere('streetAddress IS NULL')
+            ->andWhere('postalCode IS NULL')
+            ->andWhere('addressLocality IS NULL')
+            ->andWhere('name IS NULL')
+            ->andWhere('addressCountry IS NULL')
+            ->andWhere('countryCode IS NULL')
+            ->andWhere('county IS NULL')
+            ->andWhere('localAdmin IS NULL')
+            ->andWhere('macroCounty IS NULL')
+            ->andWhere('macroRegion IS NULL')
+            ->andWhere('region IS NULL')
+            ->andWhere('subLocality IS NULL')
+            ->andWhere('latitude IS NOT NULL')
+            ->andWhere('longitude IS NOT NULL')
+            ;
+        return $query->getQuery()->getResult();
+    }
 }

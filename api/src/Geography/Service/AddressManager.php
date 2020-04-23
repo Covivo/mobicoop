@@ -37,16 +37,20 @@ class AddressManager
 {
     private $entityManager;
     private $territoryRepository;
+    private $addressRepository;
+    private $geoSearcher;
    
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, TerritoryRepository $territoryRepository)
+    public function __construct(EntityManagerInterface $entityManager, TerritoryRepository $territoryRepository, AddressRepository $addressRepository, GeoSearcher $geoSearcher)
     {
         $this->entityManager = $entityManager;
         $this->territoryRepository = $territoryRepository;
+        $this->addressRepository = $addressRepository;
+        $this->geoSearcher = $geoSearcher;
     }
 
     /**
@@ -116,5 +120,42 @@ class AddressManager
             $this->entityManager->flush();
         }
         return $address;
+    }
+
+    /**
+     * Complete minimal addresses by reverse geocoding.
+     *
+     * @return void
+     */
+    public function completeMinimalAddresses()
+    {
+        // first we search all addresses that have only latitude and longitude filled
+        if ($addresses = $this->addressRepository->findMinimalAddresses()) {
+            foreach ($addresses as $address) {
+                $reversedGeocodeAddress = null;
+                if ($foundAddresses = $this->geoSearcher->reverseGeoCode($address->getLatitude(), $address->getLongitude())) {
+                    $reversedGeocodeAddress = $foundAddresses[0];
+                }
+                if (!is_null($reversedGeocodeAddress)) {
+                    $address->setStreetAddress($reversedGeocodeAddress->getStreetAddress());
+                    $address->setPostalCode($reversedGeocodeAddress->getPostalCode());
+                    $address->setAddressLocality($reversedGeocodeAddress->getAddressLocality());
+                    $address->setAddressCountry($reversedGeocodeAddress->getAddressCountry());
+                    $address->setElevation($reversedGeocodeAddress->getElevation());
+                    $address->setHouseNumber($reversedGeocodeAddress->getHouseNumber());
+                    $address->setStreet($reversedGeocodeAddress->getStreet());
+                    $address->setSubLocality($reversedGeocodeAddress->getSubLocality());
+                    $address->setLocalAdmin($reversedGeocodeAddress->getLocalAdmin());
+                    $address->setCounty($reversedGeocodeAddress->getCounty());
+                    $address->setMacroCounty($reversedGeocodeAddress->getMacroCounty());
+                    $address->setRegion($reversedGeocodeAddress->getRegion());
+                    $address->setMacroRegion($reversedGeocodeAddress->getMacroRegion());
+                    $address->setCountryCode($reversedGeocodeAddress->getCountryCode());
+                    $address->setVenue($reversedGeocodeAddress->getVenue());
+                    $this->entityManager->persist($address);
+                    $this->entityManager->flush();
+                }
+            }
+        }
     }
 }

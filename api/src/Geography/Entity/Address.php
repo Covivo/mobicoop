@@ -94,7 +94,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  *                     }
  *                   }
  *              }
- *          }
+ *          },
+ *          "completion"={
+ *              "method"="GET",
+ *              "path"="/addresses/completion",
+ *              "security"="is_granted('import_create',object)"
+ *          },
  *      },
  *      itemOperations={"get","put"}
  * )
