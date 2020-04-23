@@ -1021,7 +1021,13 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"massMigrate"})
      */
     private $alreadyRegistered;
-
+    
+    /**
+     * @var boolean|null true if the registration is from mobile
+     *
+     * @Groups({"readUser","write"})
+     */
+    private $registerFromMobile;
 
     /**
      * @var \DateTimeInterface Last user activity date
@@ -1081,6 +1087,7 @@ class User implements UserInterface, EquatableInterface
         }
         $this->setStatus($status);
         $this->setAlreadyRegistered(false);
+        $this->setRegisterFromMobile(false);
     }
 
     public function getId(): ?int
@@ -2403,6 +2410,18 @@ class User implements UserInterface, EquatableInterface
     public function setUnsubscribeMessage(?string $unsubscribeMessage): self
     {
         $this->unsubscribeMessage = $unsubscribeMessage;
+
+        return $this;
+    }
+
+    public function isRegisterFromMobile(): ?bool
+    {
+        return $this->registerFromMobile;
+    }
+
+    public function setRegisterFromMobile(?bool $registerFromMobile): self
+    {
+        $this->registerFromMobile = $registerFromMobile;
 
         return $this;
     }

@@ -1,7 +1,8 @@
 {
     "fr":{
         "title":"Connexion",
-        "errorCredentials":"Nom d'utilisateur ou mot de passe incorrect.",
+        "Bad credentials.":"Nom d'utilisateur ou mot de passe incorrect.",
+        "Unable to get an API token.": "Erreur lors de la connexion.",
         "errorCredentialsFacebook":"Erreur dans la connexion via Facebook",
         "userFBNotFound":"Cet utilisateur facebook n'est pas inscrit sur la plateforme",
         "urlRecovery":"/utilisateur/mot-de-passe/recuperation",

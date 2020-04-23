@@ -90,9 +90,9 @@ final class TerritoryTerritoryFilterExtension implements QueryCollectionExtensio
                 }
                 $territoryFrom = 'territory'.$territory;
                 $where .= sprintf("%s.id = %s", $rootAlias, $territory);
-             }
-             $where .= ")";
-             $queryBuilder->andWhere($where);
+            }
+            $where .= ")";
+            $queryBuilder->andWhere($where);
         }
     }
 }

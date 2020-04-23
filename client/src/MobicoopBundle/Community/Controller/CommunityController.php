@@ -60,7 +60,7 @@ class CommunityController extends AbstractController
     {
         $this->createFromFront = $createFromFront;
     }
-    
+
     /**
      * Create a community
      */
@@ -70,13 +70,13 @@ class CommunityController extends AbstractController
         if (!$this->createFromFront) {
             return $this->redirectToRoute('home');
         }
-        
+
         $community = new Community();
         $this->denyAccessUnlessGranted('create', $community);
         $user = $userManager->getLoggedUser();
         $communityUser = new CommunityUser();
         $address = new Address();
-        
+
         if ($request->isMethod('POST')) {
             $data = $request->request;
             // Check if the community name is available (if yes continue)
@@ -84,7 +84,7 @@ class CommunityController extends AbstractController
 
                 // set the user as a user of the community
                 $communityUser->setUser($user);
-                
+
                 // set community address
                 $communityAddress = json_decode($data->get('address'), true);
                 $address->setAddressCountry($communityAddress['addressCountry']);
@@ -206,8 +206,8 @@ class CommunityController extends AbstractController
             return new JsonResponse("bad method");
         }
     }
-    
-    
+
+
     /**
      * Show a community
      */
@@ -298,7 +298,7 @@ class CommunityController extends AbstractController
         $community = $communityManager->getPublicInfos($id);
         // retreive logged user
         $user = $userManager->getLoggedUser();
-        
+
         // This should be removed when denyAccessUnlessGranted is functionnal
         if (is_null($user)) {
             return $this->redirectToRoute('user_login');
@@ -427,10 +427,10 @@ class CommunityController extends AbstractController
             // Maybe to discuss I think that only a user can get access to the community user associate
             $user = $userManager->getUser($data['userId']);
             $this->denyAccessUnlessGranted('update', $user);
-            
+
             return new Response(json_encode($communityManager->getCommunityUser($data['communityId'], $data['userId'], 1)));
         }
-        
+
         return new Response;
     }
 
