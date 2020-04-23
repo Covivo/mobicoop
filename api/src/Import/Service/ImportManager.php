@@ -190,7 +190,7 @@ class ImportManager
 
         //gc_collect_cycles();
 
-        return [];
+        return true;
     }
 
     /**
@@ -213,7 +213,7 @@ class ImportManager
         // treat the return and opposite
         $proposals = $this->proposalManager->createLinkedAndOppositesForProposals($proposalIds);
 
-        return [];
+        return true;
     }
 
 

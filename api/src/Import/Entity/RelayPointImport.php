@@ -25,10 +25,14 @@ use App\Import\Controller\ImportImageRelayController;
  *              "method"="GET",
  *              "path"="/import/images-from-v1/relay",
  *              "controller"=ImportImageRelayController::class,
+ *              "read"=false,
+ *              "security"="is_granted('import_create',object)"
  *          },
  *      },
  *      itemOperations={
- *          "get"
+ *          "get"={
+ *              "security"="is_granted('import_create',object)"
+ *          },
  *      }
  * )
  *

@@ -25,10 +25,14 @@ use App\Import\Controller\ImportImageEventController;
  *              "method"="GET",
  *              "path"="/import/images-from-v1/event",
  *              "controller"=ImportImageEventController::class,
+ *              "read"=false,
+ *              "security"="is_granted('import_create',object)"
  *          },
  *      },
  *      itemOperations={
- *          "get"
+ *          "get"={
+ *              "security"="is_granted('import_create',object)"
+ *          },
  *      }
  * )
  *
