@@ -95,7 +95,6 @@ class SolidaryMatcher
             } else {
                 // We check if there already is a SolidaryAsk for this matching
                 $solidaryAsk = $this->solidaryMatchingRepository->findAskOfSolidaryMatching($solidaryMatching);
-
                 // There is no Ask, we can add this solidaryMatching to the return
                 if (is_null($solidaryAsk)) {
                     $solidaryMatchings[] = $solidaryMatching;
