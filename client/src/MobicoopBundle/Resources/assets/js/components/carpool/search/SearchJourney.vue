@@ -128,6 +128,7 @@
         </v-col>
         <v-col
           cols="1"
+          class="ma-2"
         >
           <v-switch
             v-model="regular"

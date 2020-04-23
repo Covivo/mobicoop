@@ -41,15 +41,18 @@
           <v-card-text>
             <v-form
               ref="form"
+              v-model="valid"
               lazy-validation
             >
               <v-text-field
+                ref="email"
                 v-model="email"
                 :label="$t('popup.form.email.label')"
                 :rules="emailRules"
                 required
               />
               <v-textarea
+                ref="description"
                 v-model="description"
                 :label="$t('popup.form.description.label')"
                 :rules="descriptionRules"
@@ -69,6 +72,7 @@
             <v-btn
               color="error darken-1"
               text
+              :disabled="!valid ||isDisable"
               @click="isDialogOpened=false; report()"
             >
               {{ $t('popup.button.report') }}
@@ -99,6 +103,7 @@ export default {
   },
   data() {
     return {
+      valid: true,
       isLoading: false,
       isDialogOpened: false,
       isSnackbarOpened: false,
@@ -113,6 +118,11 @@ export default {
       descriptionRules: [
         v => !!v || this.$t("popup.form.description.errors.required")
       ]
+    }
+  },
+  computed : {
+    isDisable() {
+      if(!this.email || !this.description) return true;
     }
   },
   methods:{
@@ -136,6 +146,6 @@ export default {
           this.isLoading = false;
         });
     }
-  }
+  },
 }
 </script>

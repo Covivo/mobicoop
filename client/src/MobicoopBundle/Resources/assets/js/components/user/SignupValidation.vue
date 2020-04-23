@@ -119,7 +119,7 @@ export default {
       default: ""
     }
   },
-  data() { 
+  data() {
     return {
       valid:true,
       token:this.urlToken,

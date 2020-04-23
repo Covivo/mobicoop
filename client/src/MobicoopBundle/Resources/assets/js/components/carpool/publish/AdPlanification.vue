@@ -221,10 +221,10 @@
           <p class="error--text">
             {{ $t('errorReturnTime') }}
           </p>
-        </v-col>  
-      </v-row>  
+        </v-col>
+      </v-row>
     </v-form>
-    
+
     <!-- Regular -->
     <v-form v-else>
       <!-- we have a maximum of 7 different schedules, we iterate on them -->
@@ -326,12 +326,8 @@
                       </v-icon>
                     </v-text-field>
                   </template>
-
-
-                 
-                  <!-- 
-                  <!-- 
-                    we can't use $refs with v-for : https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-Child-Component-Instances-amp-Child-Elements 
+                  <!--
+                    we can't use $refs with v-for : https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-Child-Component-Instances-amp-Child-Elements
                     because $refs are not reactive, we have to use a custom method closeOutwardTime() which will close the menu
                     -->
                   <v-time-picker
@@ -395,8 +391,8 @@
                       </v-icon>
                     </v-text-field>
                   </template>
-                  <!-- 
-                    we can't use $refs with v-for : https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-Child-Component-Instances-amp-Child-Elements 
+                  <!--
+                    we can't use $refs with v-for : https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-Child-Component-Instances-amp-Child-Elements
                     because $refs are not reactive, we have to use a custom method close() which will close the menu
                     -->
                   <v-time-picker
@@ -430,7 +426,7 @@
                 </v-tooltip>
               </v-col>
             </v-row>
-            
+
             <!-- Remove schedule -->
             <v-row
               align="center"
@@ -459,7 +455,7 @@
       <!-- Add schedule -->
       <v-row
         v-if="!schedules[6].visible"
-        align="center" 
+        align="center"
         justify="center"
         dense
       >

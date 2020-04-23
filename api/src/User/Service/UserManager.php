@@ -205,7 +205,7 @@ class UserManager
 
         // dispatch en event
         if (is_null($user->getUserDelegate())) {
-            
+
             // registration by the user itself
             $event = new UserRegisteredEvent($user);
             $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
@@ -1113,5 +1113,22 @@ class UserManager
     {
         $seed = str_split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
         return $seed[array_rand($seed)];
+    }
+
+    /**
+     * Check if an user $user have a specific AuthItem $authItem
+     *
+     * @param User $user    The user to check
+     * @param AuthItem $AuthItem    The auth item to check
+     * @return boolean True if user have item
+     */
+    public function checkUserHaveAuthItem(User $user, AuthItem $authItem)
+    {
+        foreach ($user->getUserAuthAssignments() as $oneItem) {
+            if ($oneItem->getAuthItem() == $authItem) {
+                return true;
+            }
+        }
+        return false;
     }
 }
