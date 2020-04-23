@@ -19,6 +19,7 @@
 * Add a login system using tokens (for email and password reset validation)
 * Solidary beneficiaries and their solidary files, Structure, Proofs
 * Solidary volunteers to help the beneficiaries
+* Add Filter extension on User and Territory
 
 ## CLIENT
 
