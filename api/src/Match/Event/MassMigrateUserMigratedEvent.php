@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ use App\User\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a user asks to change its password.
+ * Event sent when a massUser is migrated to a regular User
  */
 class MassMigrateUserMigratedEvent extends Event
 {
