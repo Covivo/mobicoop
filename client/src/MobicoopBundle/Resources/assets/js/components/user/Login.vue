@@ -148,15 +148,9 @@ export default {
       this.treatErrorMessage({'value':data})
     },
     treatErrorMessage(errorMessage) {
-      if (errorMessage.value === "Unable to get an API token.") {
-        this.errorDisplay = this.$t("errorCredentials");
-        this.loading = false;
-      }
-      else{
-        this.errorDisplay = this.$t(errorMessage.value);
-        this.loading = false;
-      }
-    },
+      this.errorDisplay = this.$t(errorMessage.value);
+      this.loading = false;
+    },  
   }
 };
 </script>
