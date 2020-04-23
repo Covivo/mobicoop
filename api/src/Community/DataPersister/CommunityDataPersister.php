@@ -45,9 +45,8 @@ final class CommunityDataPersister implements ContextAwareDataPersisterInterface
     {
         //We post a community, we add the role community_manager to the author
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-              return $data instanceof Community;
+            return $data instanceof Community;
         }
-
     }
 
     public function persist($data, array $context = [])
