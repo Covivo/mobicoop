@@ -71,6 +71,7 @@ const myDataProvider = {
             /* Rewrite adresse for API */
             params.data.addresses =  new Array();
             params.data.addresses[0] = params.data.address
+            params.data.addresses[0].home = true
 
             /* Add custom fields fo fit with api */
             params.data.passwordSendType = 1
