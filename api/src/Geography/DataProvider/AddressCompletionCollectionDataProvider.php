@@ -25,7 +25,7 @@ namespace App\Geography\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Geography\Entity\Territory;
+use App\Geography\Entity\Address;
 use App\Geography\Service\AddressManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -48,7 +48,7 @@ final class AddressCompletionCollectionDataProvider implements CollectionDataPro
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Territory::class === $resourceClass && $operationName === "completion";
+        return Address::class === $resourceClass && $operationName === "completion";
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
