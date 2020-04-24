@@ -1,8 +1,8 @@
 import React from 'react';
-import { 
-    Show, 
-    Tab, TabbedShowLayout, 
-    Link, 
+import {
+    Show,
+    Tab, TabbedShowLayout,
+    Link,
     Datagrid,
     Button, ShowButton, EditButton, DeleteButton,
     TextField, ReferenceArrayField, SelectField
@@ -18,7 +18,7 @@ const AddSectionButton = ({ record }) => (
         component={Link}
         to={{
             pathname: `/sections/create`,
-            search: `?article=${record.id}`
+           state: { record: { article: record.id } },
         }}
         label="Ajouter une section"
     >
