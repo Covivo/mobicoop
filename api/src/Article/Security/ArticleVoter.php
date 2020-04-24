@@ -38,7 +38,7 @@ class ArticleVoter extends Voter
     const ARTICLE_UPDATE = 'article_update';
     const ARTICLE_DELETE = 'article_delete';
     const ARTICLE_LIST = 'article_list';
-    
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -75,15 +75,23 @@ class ArticleVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        if ($subject instanceof Article)
+          $article = $subject;
+        else if ($subject instanceof Section){
+          $article = $subject->getArticle();
+        }
+        else if ($subject instanceof Paragraph){
+          $article = $subject->getSection()->getArticle();
+        }
         switch ($attribute) {
             case self::ARTICLE_CREATE:
                 return $this->canCreateArticle();
             case self::ARTICLE_READ:
-                return $this->canReadArticle($subject);
+                return $this->canReadArticle($article);
             case self::ARTICLE_UPDATE:
-                return $this->canUpdateArticle($subject);
+                return $this->canUpdateArticle($article);
             case self::ARTICLE_DELETE:
-                return $this->canDeleteArticle($subject);
+                return $this->canDeleteArticle($article);
             case self::ARTICLE_LIST:
                 return $this->canListArticle();
             }
