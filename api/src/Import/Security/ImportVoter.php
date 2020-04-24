@@ -27,6 +27,7 @@ use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Event\Service\EventManager;
+use App\Geography\Entity\Address;
 use App\Import\Entity\CommunityImport;
 use App\Import\Entity\EventImport;
 use App\Import\Entity\RelayPointImport;
@@ -64,7 +65,8 @@ class ImportVoter extends Voter
             !($subject instanceof CommunityImport) &&
             !($subject instanceof EventImport) &&
             !($subject instanceof RelayPointImport) &&
-            !($subject instanceof UserImport)
+            !($subject instanceof UserImport) &&
+            !($subject instanceof Address)
             ) {
             return false;
         }
