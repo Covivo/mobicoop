@@ -4,11 +4,13 @@ import GeocompleteInput from "../Utilities/geocomplete";
 import TerritoryInput from "../Utilities/territory";
 import GestionRoles from "./GestionRoles";
 
+import { DateInput} from 'react-admin-date-inputs';
+import frLocale from "date-fns/locale/fr";
 
 import {
     Create,
     TabbedForm, FormTab,
-    TextInput, SelectInput, DateInput,
+    TextInput, SelectInput,
     email, regex, ReferenceArrayInput, SelectArrayInput,BooleanInput,ReferenceInput,useTranslate, Toolbar,  SaveButton,
     useCreate,
     useRedirect,
@@ -78,8 +80,8 @@ const UserCreate = props => {
                     <TextInput fullWidth required source="familyName" label={translate('custom.label.user.familyName')} validate={ validateRequired } formClassName={classes.spacedHalfwidth} />
                     <TextInput fullWidth required source="givenName" label={translate('custom.label.user.givenName')} validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
                     <SelectInput required source="gender" label={translate('custom.label.user.gender')} choices={genderChoices} validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
-                    <DateInput required source="birthDate" label={translate('custom.label.user.birthDate')} validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
 
+                    <DateInput required source="birthDate" label={translate('custom.label.user.birthDate')} validate={[required()]} options={{ format: 'dd/MM/yyyy' }} providerOptions={{  locale: frLocale }} formClassName={classes.spacedHalfwidth}/>
                     <TextInput required source="telephone" label={translate('custom.label.user.telephone')} validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
 
                     <BooleanInput fullWidth label={translate('custom.label.user.newsSubscription',{ instanceName: instance })} source="newsSubscription" formClassName={classes.spacedHalfwidth} />
@@ -88,7 +90,7 @@ const UserCreate = props => {
 
                     <GeocompleteInput fullWidth source="addresses" label={translate('custom.label.user.adresse')} validate={required(translate('custom.label.user.adresseMandatory'))}/>
 
-                
+
                 </FormTab>
                 <FormTab label={translate('custom.label.user.preference')}>
                 <SelectInput fullWidth source="music" label={translate('custom.label.user.carpoolSetting.music')} choices={musique} formClassName={classes.spacedHalfwidth}/>

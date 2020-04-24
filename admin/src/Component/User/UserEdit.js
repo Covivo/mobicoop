@@ -5,10 +5,14 @@ import TerritoryInput from "../Utilities/territory";
 
 import GestionRoles from "./GestionRoles";
 
+
+import { DateInput} from 'react-admin-date-inputs';
+import frLocale from "date-fns/locale/fr";
+
 import {
     Edit,
     TabbedForm, FormTab,
-    TextInput, SelectInput, DateInput,
+    TextInput, SelectInput,
     email, regex, ReferenceArrayInput, SelectArrayInput,BooleanInput,ReferenceInput,ReferenceField, FunctionField,useTranslate,useDataProvider
 } from 'react-admin';
 import { makeStyles } from '@material-ui/core/styles'
@@ -65,8 +69,8 @@ const UserEdit = props => {
                 <TextInput fullWidth required source="familyName" label={translate('custom.label.user.familyName')} validate={ validateRequired } formClassName={classes.spacedHalfwidth} />
                 <TextInput fullWidth required source="givenName" label={translate('custom.label.user.givenName')} validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
                 <SelectInput required source="gender" label={translate('custom.label.user.gender')} choices={genderChoices} validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
-                <DateInput required source="birthDate" label={translate('custom.label.user.birthDate')} validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
 
+                <DateInput required source="birthDate" label={translate('custom.label.user.birthDate')} validate={[required()]} options={{ format: 'dd/MM/yyyy' }} providerOptions={{  locale: frLocale }} formClassName={classes.spacedHalfwidth}/>
                 <TextInput required source="telephone" label={translate('custom.label.user.telephone')} validate={ validateRequired } formClassName={classes.spacedHalfwidth}/>
 
                 <BooleanInput fullWidth label={translate('custom.label.user.newsSubscription',{ instanceName: instance })} source="news_subscription" formClassName={classes.spacedHalfwidth} />
