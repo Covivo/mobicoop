@@ -53,13 +53,10 @@ export const EventEdit = (props) => {
 
                 <GeocompleteInput source="address" label={translate('custom.label.event.newAdresse')} validate={required()} formClassName={classes.spacedFullwidth}/>
 
-                <BooleanInput label={translate('custom.label.event.preciseHour')} source="setTime" initialValue={false} formClassName={classes.inlineBlock}/>
+                <BooleanInput label={translate('custom.label.event.setTime')} source="setTime" formClassName={classes.inlineBlock}/>
                 <EventDuration formClassName={classes.inlineBlock}/>
 
-                <ReferenceInput source="user" label={translate('custom.label.event.creator')} reference="users" formClassName={classes.footer}>
-                    <SelectInput optionText={<UserRenderer />} />
-                </ReferenceInput>
-
+    
                 <SelectInput source="status" choices={[
                     { id: 0, name: translate('custom.label.event.statusChoices.draft') },
                     { id: 1, name: translate('custom.label.event.statusChoices.enabled') },
