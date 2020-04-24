@@ -72,7 +72,7 @@
             <v-btn
               color="error darken-1"
               text
-              :disabled="!valid ||isDisable"
+              :disabled="!valid || isDisable"
               @click="isDialogOpened=false; report()"
             >
               {{ $t('popup.button.report') }}
@@ -121,8 +121,9 @@ export default {
     }
   },
   computed : {
-    isDisable() {
-      if(!this.email || !this.description) return true;
+    isDisable () {
+      if(!this.email || !this.description) return true;
+      return false;
     }
   },
   methods:{
