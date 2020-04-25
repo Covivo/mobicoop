@@ -22,7 +22,7 @@
 * Add Filter extension on User and Territory
 * Add function checkUserHaveAuthItem to check if an User have a specified Auth Item
 * Add Role 'ROLE_COMMUNITY_MANAGER' to the creators of the community (client side)
-* Add button for admin access from the detail page of community (for the creator) + paramaters CAN_ACCESS_ADMIN_FROM_COMMUNITY
+* Add button for admin access from the detail page of community (for the creator) + parameters CAN_ACCESS_ADMIN_FROM_COMMUNITY
 
 ## CLIENT
 
