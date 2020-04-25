@@ -9,6 +9,7 @@
 {% block main %}
 
     <community
+
         :community="{{ community|json_encode }}"
         :geodata="{{ {'geocompleteuri':geoCompleteUri, 'searchroute':searchRoute}|json_encode }}"
         :user="{{ app.user|json_encode }}"
@@ -23,5 +24,6 @@
         :last-users="{{ lastUsers|json_encode }}"
         :user-community-status="{{ communityUserStatus }}"
         :url-admin="{{urlAdmin|json_encode}}"
+        :can-access-admin-from-community="{{canAccessAdminFromCommunity}}"
     ></community>
 {% endblock %}
