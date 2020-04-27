@@ -37,8 +37,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeSolidary"}}
+ *          "normalization_context"={"groups"={"readSolidaryContact"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidaryContact"}}
  *      },
  *      collectionOperations={
  *          "get","post"
@@ -57,13 +57,13 @@ class SolidaryContact
      * @var int The id of this subject.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidaryContact","writeSolidaryContact"})
      */
     private $id;
 
     /**
     * @var SolidarySolution The solidary solution this contact is for
-    * @Groups({"readSolidary","writeSolidary"})
+    * @Groups({"readSolidaryContact","writeSolidaryContact"})
     * @MaxDepth(1)
     */
     private $solidarySolution;
@@ -71,20 +71,20 @@ class SolidaryContact
     /**
     * @var string The content (usually text) message of this contact
     * @Assert\NotBlank
-    * @Groups({"readSolidary","writeSolidary"})
+    * @Groups({"readSolidaryContact","writeSolidaryContact"})
     * @MaxDepth(1)
     */
     private $content;
 
     /**
     * @var Medium[] List of the Medium of this contact
-    * @Groups({"readSolidary","writeSolidary"})
+    * @Groups({"readSolidaryContact","writeSolidaryContact"})
     */
     private $media;
 
     /**
      * @var SolidaryAsk If this contact is linked to an Ask, we return it after a contact
-     * @Groups({"readSolidary"})
+     * @Groups({"readSolidaryContact"})
      */
     private $solidaryAsk;
 
