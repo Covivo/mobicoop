@@ -219,6 +219,7 @@ services:
         arguments:
             $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $emailTitleTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
+            $pushTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_PUSH_PATH)%'
             $smsTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_SMS_PATH)%'
             $enabled: '%env(bool:resolve:NOTIFICATION_ENABLED)%'
         tags:
@@ -235,6 +236,20 @@ services:
         tags:
             - { name: monolog.logger, channel: communication }
 
+    App\Communication\Service\InternalMessageManager:
+        tags:
+            - { name: monolog.logger, channel: communication }
+
+    App\Communication\Service\PushManager:
+        arguments:
+            $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_PUSH_PATH)%'
+            $pushProvider: '%env(resolve:PUSH_PROVIDER)%'
+            $username: '%env(resolve:PUSH_USERNAME)%'
+            $password: '%env(resolve:PUSH_PASSWORD)%'
+            $sender: '%env(resolve:PUSH_SENDER)%'
+        tags:
+            - { name: monolog.logger, channel: communication }
+
     App\Communication\Service\SmsManager:
         arguments:
             $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_SMS_PATH)%'
@@ -242,10 +257,6 @@ services:
             $username: '%env(resolve:SMS_USERNAME)%'
             $password: '%env(resolve:SMS_PASSWORD)%'
             $sender: '%env(resolve:SMS_SENDER)%'
-        tags:
-            - { name: monolog.logger, channel: communication }
-
-    App\Communication\Service\InternalMessageManager:
         tags:
             - { name: monolog.logger, channel: communication }
     

@@ -48,6 +48,7 @@ use App\User\Service\UserManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use App\Carpool\Service\AdManager;
+use App\Communication\Entity\Push;
 
 /**
  * Notification manager
@@ -59,10 +60,12 @@ class NotificationManager
     private $entityManager;
     private $internalMessageManager;
     private $emailManager;
+    private $pushManager;
     private $smsManager;
     private $templating;
     private $emailTemplatePath;
     private $emailTitleTemplatePath;
+    private $pushTemplatePath;
     private $smsTemplatePath;
     private $logger;
     private $notificationRepository;
@@ -74,17 +77,36 @@ class NotificationManager
     const LANG = 'fr_FR';
 
 
-    public function __construct(EntityManagerInterface $entityManager, Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, SmsManager $smsManager, LoggerInterface $logger, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled, TranslatorInterface $translator, UserManager $userManager, AdManager $adManager)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        Environment $templating,
+        InternalMessageManager $internalMessageManager,
+        EmailManager $emailManager,
+        PushManager $pushManager,
+        SmsManager $smsManager,
+        LoggerInterface $logger,
+        NotificationRepository $notificationRepository,
+        UserNotificationRepository $userNotificationRepository,
+        string $emailTemplatePath,
+        string $emailTitleTemplatePath,
+        string $pushTemplatePath,
+        string $smsTemplatePath,
+        bool $enabled,
+        TranslatorInterface $translator,
+        UserManager $userManager,
+        AdManager $adManager
+    ) {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
         $this->emailManager = $emailManager;
+        $this->pushManager = $pushManager;
         $this->smsManager = $smsManager;
         $this->logger = $logger;
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
         $this->emailTemplatePath = $emailTemplatePath;
         $this->emailTitleTemplatePath = $emailTitleTemplatePath;
+        $this->pushTemplatePath = $pushTemplatePath;
         $this->smsTemplatePath = $smsTemplatePath;
         $this->templating = $templating;
         $this->enabled = $enabled;
@@ -149,7 +171,7 @@ class NotificationManager
                         $this->logger->info("Sms notification for  $action / " . $recipient->getEmail());
                         break;
                     case Medium::MEDIUM_PUSH:
-                        // todo : call the dedicated service to send the push with the notification template
+                        $this->notifyByPush($notification, $recipient, $object);
                         $this->createNotified($notification, $recipient, $object);
                         $this->logger->info("Push notification for  $action / " . $recipient->getEmail());
                         break;
@@ -440,6 +462,119 @@ class NotificationManager
 
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->smsManager->send($sms, $notification->getTemplateBody() ? $this->smsTemplatePath . $notification->getTemplateBody() : $this->smsTemplatePath . $notification->getAction()->getName(), $bodyContext);
+    }
+
+    /**
+     * Notify a user by push notification.
+     * Different variables can be passed to the notification body and title depending on the object linked to the notification.
+     *
+     * @param Notification  $notification
+     * @param User          $recipient
+     * @param object|null   $object
+     * @return void
+     */
+    private function notifyByPush(Notification $notification, User $recipient, ?object $object = null)
+    {
+        $push = new Push();
+        $push->setRecipientDeviceId($recipient->getPushDeviceId());
+        $bodyContext = [];
+        if ($object) {
+            switch (get_class($object)) {
+                case Proposal::class:
+                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'object' => $object];
+                    break;
+                case Matching::class:
+                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'matching'=> $object];
+                    break;
+                case AskHistory::class:
+                    $bodyContext = ['user'=>$recipient];
+                    break;
+                case Ask::class:
+                    foreach ($object->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
+                        if ($waypoint->getPosition() == 0) {
+                            $passengerOriginWaypoint = $waypoint;
+                        } elseif ($waypoint->isDestination() == true) {
+                            $passengerDestinationWaypoint = $waypoint;
+                        }
+                    };
+                    $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaypoint, 'destination'=>$passengerDestinationWaypoint];
+                    break;
+                case Ad::class:
+                    $outwardOrigin = null;
+                    $outwardDestination = null;
+                    $returnOrigin = null;
+                    $returnDestination = null;
+                    $sender = $this->userManager->getUser($object->getUserId());
+                    if ($object->getResults()[0]->getResultPassenger() !== null) {
+                        $result = $object->getResults()[0]->getResultPassenger();
+                    } else {
+                        $result = $object->getResults()[0]->getResultDriver();
+                    };
+                    if ($result->getOutward() !== null) {
+                        foreach ($result->getOutward()->getWaypoints() as $waypoint) {
+                            if ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'origin') {
+                                $outwardOrigin = $waypoint;
+                            } elseif ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'destination') {
+                                $outwardDestination = $waypoint;
+                            }
+                        }
+                    }
+                    if ($result->getReturn() !== null) {
+                        foreach ($result->getReturn()->getWaypoints() as $waypoint) {
+                            if ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'origin') {
+                                $returnOrigin = $waypoint;
+                            } elseif ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'destination') {
+                                $returnDestination = $waypoint;
+                            }
+                        }
+                    }
+                    $bodyContext = [
+                        'user'=>$recipient,
+                        'ad'=>$object,
+                        'sender'=>$sender,
+                        'result'=>$result,
+                        'outwardOrigin'=>$outwardOrigin,
+                        'outwardDestination'=>$outwardDestination,
+                        'returnOrigin'=>$returnOrigin,
+                        'returnDestination'=>$returnDestination
+                    ];
+                    break;
+                case Recipient::class:
+                    $bodyContext = [];
+                    break;
+                case User::class:
+                    $bodyContext = ['user'=>$recipient];
+                    break;
+                case Message::class:
+                    $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
+                    break;
+                default:
+                    if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
+                        $outwardOrigin = null;
+                        $outwardDestination = null;
+                        /** @var Waypoint $waypoint */
+                        foreach ($object->ask->getWaypoints() as $waypoint) {
+                            if ($waypoint->getPosition() == 0) {
+                                $outwardOrigin = $waypoint;
+                            } elseif ($waypoint->isDestination()) {
+                                $outwardDestination = $waypoint;
+                            }
+                        }
+                        $bodyContext = [
+                            'user' => $recipient,
+                            'notification' => $notification,
+                            'object' => $object,
+                            'origin' => $outwardOrigin,
+                            'destination' => $outwardDestination
+                        ];
+                    }
+            }
+        } else {
+            $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
+        }
+
+        // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
+        $this->pushManager->send($push, $notification->getTemplateBody() ? $this->pushTemplatePath . $notification->getTemplateBody() : $this->pushTemplatePath . $notification->getAction()->getName(), $bodyContext);
     }
 
 

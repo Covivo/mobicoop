@@ -732,6 +732,14 @@ class User implements UserInterface, EquatableInterface
     private $androidAppId;
 
     /**
+     * @var string|null Push device ID.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser","write"})
+     */
+    private $pushDeviceId;
+
+    /**
      * @var string User language
      * @Groups({"readUser","write"})
      * @ORM\Column(name="language", type="string", length=10, nullable=true)
@@ -1489,6 +1497,17 @@ class User implements UserInterface, EquatableInterface
     public function setAndroidAppId(?string $androidAppId): self
     {
         $this->androidAppId = $androidAppId;
+        return $this;
+    }
+
+    public function getPushDeviceId(): ?string
+    {
+        return $this->pushDeviceId;
+    }
+
+    public function setPushDeviceId(?string $pushDeviceId): self
+    {
+        $this->pushDeviceId = $pushDeviceId;
         return $this;
     }
 
