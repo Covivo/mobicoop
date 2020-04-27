@@ -378,6 +378,20 @@ class UserManager
         // Create token to unscubscribe from the instance news
         $user->setUnsubscribeToken($this->createToken($user));
 
+        // generate android or ios app id if registration via mobile app
+        if (!is_null($user->getMobileRegistration())) {
+            switch ($user->getMobileRegistration()) {
+                case User::MOBILE_APP_IOS:
+                    $user->setIosAppId($this->createToken($user));
+                    break;
+                case User::MOBILE_APP_ANDROID:
+                    $user->setAndroidAppId($this->createToken($user));
+                    break;
+                default:
+                    break;
+            }
+        }
+
         // return the user
         return $user;
     }

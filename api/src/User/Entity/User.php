@@ -398,6 +398,10 @@ class User implements UserInterface, EquatableInterface
     const PWD_SEND_TYPE_SMS = 1;     // password sent by sms if phone present
     const PWD_SEND_TYPE_EMAIL = 2;   // password sent by email
 
+    const MOBILE_APP_WEB = 1;
+    const MOBILE_APP_IOS = 2;
+    const MOBILE_APP_ANDROID = 3;
+
     /**
      * @var int The id of this user.
      *
@@ -1031,11 +1035,11 @@ class User implements UserInterface, EquatableInterface
     private $alreadyRegistered;
     
     /**
-     * @var boolean|null true if the registration is from mobile
+     * @var int|null Registration from mobile (web app:1, iOS:2, Android:3)
      *
      * @Groups({"readUser","write"})
      */
-    private $registerFromMobile;
+    private $mobileRegistration;
 
     /**
      * @var \DateTimeInterface Last user activity date
@@ -1095,7 +1099,7 @@ class User implements UserInterface, EquatableInterface
         }
         $this->setStatus($status);
         $this->setAlreadyRegistered(false);
-        $this->setRegisterFromMobile(false);
+        $this->setMobileRegistration(null);
     }
 
     public function getId(): ?int
@@ -2433,14 +2437,14 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function isRegisterFromMobile(): ?bool
+    public function getMobileRegistration(): ?int
     {
-        return $this->registerFromMobile;
+        return $this->mobileRegistration;
     }
 
-    public function setRegisterFromMobile(?bool $registerFromMobile): self
+    public function setMobileRegistration(?int $mobileRegistration): self
     {
-        $this->registerFromMobile = $registerFromMobile;
+        $this->mobileRegistration = $mobileRegistration;
 
         return $this;
     }
