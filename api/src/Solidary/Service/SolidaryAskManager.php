@@ -91,10 +91,10 @@ class SolidaryAskManager
             $ask->setSolidaryAsk($solidaryAsk);
 
             // We create the associated Ask History
-            // $askHistory = new AskHistory();
-            // $askHistory->setStatus($ask->getStatus());
-            // $askHistory->setType($ask->getType());
-            // $ask->addAskHistory($askHistory);
+            $askHistory = new AskHistory();
+            $askHistory->setStatus($ask->getStatus());
+            $askHistory->setType($ask->getType());
+            $ask->addAskHistory($askHistory);
 
             $this->entityManager->persist($ask);
             $this->entityManager->flush();
@@ -102,7 +102,7 @@ class SolidaryAskManager
             // We link the solidary Ask to this new Ask
             $solidaryAsk->setAsk($ask);
 
-            $this->entityManager->persist($ask);
+            $this->entityManager->persist($solidaryAsk);
             $this->entityManager->flush();
         }
 
