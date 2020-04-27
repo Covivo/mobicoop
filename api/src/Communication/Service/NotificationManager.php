@@ -48,6 +48,7 @@ use App\User\Service\UserManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use App\Carpool\Service\AdManager;
+use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Entity\SolidaryContact;
 
 /**
@@ -136,7 +137,7 @@ class NotificationManager
                             if ($object instanceof  MessagerInterface && !is_null($object->getMessage())) {
                                 $this->internalMessageManager->sendForObject([$recipient], $object);
                             } else {
-                                $this->notifyByInternalMessage($notification, $recipient, $object);
+                                $this->notifyByInternalMessage($recipient, $object);
                             }
                         }
                         $this->createNotified($notification, $recipient, $object);
@@ -165,12 +166,11 @@ class NotificationManager
     /**
      * Notify a user by internal message
      *
-     * @param Notification  $notification
      * @param User          $recipient
      * @param object|null   $object
      * @return void
      */
-    private function notifyByInternalMessage(Notification $notification, User $recipient, ?object $object = null)
+    private function notifyByInternalMessage(User $recipient, ?object $object = null)
     {
         $message = new Message();
         $message->setUser($object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser());
@@ -179,13 +179,42 @@ class NotificationManager
         $messageRecipient->setUser($recipient);
         $message->addRecipient($messageRecipient);
 
+        // We set those variables at null get them in the switch if it's necessary
+        $solidaryAsk = $ask = null;
+        
         if ($object) {
             switch (get_class($object)) {
                 case SolidaryContact::class:
                     $message->setText($object->getContent());
+                    $solidaryAsk = $object->getSolidaryAsk();
+                    $ask = $object->getSolidaryAsk()->getAsk();
                 break;
             }
+            
+            
             $this->entityManager->persist($message);
+            $this->entityManager->flush();
+
+            // if there is a solidaryAsk we persist a new SolidaryAskHistory linked to this message
+            if (!is_null($solidaryAsk)) {
+                $solidaryAskHistory = new SolidaryAskHistory();
+                $solidaryAskHistory->setStatus($solidaryAsk->getStatus());
+                $solidaryAskHistory->setSolidaryAsk($solidaryAsk);
+                $solidaryAskHistory->setMessage($message);
+                $this->entityManager->persist($solidaryAskHistory);
+                $this->entityManager->flush();
+            }
+
+            // if there is an Ask we persist a new SolidaryAskHistory linked to this message
+            if (!is_null($ask)) {
+                $askHistory = new AskHistory();
+                $askHistory->setStatus($ask->getStatus());
+                $askHistory->setType($ask->getType());
+                $askHistory->setAsk($ask);
+                $askHistory->setMessage($message);
+                $this->entityManager->persist($askHistory);
+                $this->entityManager->flush();
+            }
         }
     }
     
