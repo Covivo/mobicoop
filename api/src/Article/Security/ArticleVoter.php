@@ -75,13 +75,12 @@ class ArticleVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        if ($subject instanceof Article)
-          $article = $subject;
-        else if ($subject instanceof Section){
-          $article = $subject->getArticle();
-        }
-        else if ($subject instanceof Paragraph){
-          $article = $subject->getSection()->getArticle();
+        if ($subject instanceof Article) {
+            $article = $subject;
+        } elseif ($subject instanceof Section) {
+            $article = $subject->getArticle();
+        } elseif ($subject instanceof Paragraph) {
+            $article = $subject->getSection()->getArticle();
         }
         switch ($attribute) {
             case self::ARTICLE_CREATE:

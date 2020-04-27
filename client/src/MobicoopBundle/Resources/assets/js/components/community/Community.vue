@@ -175,7 +175,7 @@
           </v-row>
           <!-- button for acces to the admin : only for creator -->
           <div
-            v-if="isCreator"
+            v-if="(isCreator && canAccessAdminFromCommunity !== false)"
           >
             <v-btn
               color="secondary"
@@ -407,6 +407,10 @@ export default {
       type: String,
       default: null
     },
+    canAccessAdminFromCommunity : {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
