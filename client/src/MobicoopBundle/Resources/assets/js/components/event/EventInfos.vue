@@ -34,10 +34,10 @@
         justify="center"
       >
         <v-card-text>
-          <h3 class="headline text-justify font-weight-bold">
+          <h3 class="headline  text-left font-weight-bold">
             {{ event.name }}
           </h3>
-          <p class="headline text-justify subtitle-1">
+          <p class="headline text-left subtitle-1">
             {{ event.address.addressLocality }}
           </p>
           <p
