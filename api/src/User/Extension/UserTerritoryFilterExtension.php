@@ -95,7 +95,6 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
              * @var Territory $territory
              */
             foreach ($territories as $territory) {
-
                 if ($where != '(') {
                     $where .= " OR ";
                 }
@@ -107,9 +106,7 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
                 //Check if the proposal address is in territory
                 $territoryFromOD = 'territoryod'.$territory;
                 $queryBuilder->leftJoin('a2.territories', $territoryFromOD);
-                $where .= sprintf(" OR %s.id = %s",  $territoryFromOD, $territory);
-
-
+                $where .= sprintf(" OR %s.id = %s", $territoryFromOD, $territory);
             }
             $where .= ")";
             $queryBuilder
