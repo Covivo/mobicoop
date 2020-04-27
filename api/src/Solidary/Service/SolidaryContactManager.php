@@ -61,18 +61,18 @@ class SolidaryContactManager
         // We check if there is already an Ask for the solidarySolution in the SolidaryContact
         $solidaryAsk = $this->solidaryAskRepository->findBySolidarySolution($solidaryContact->getSolidarySolution());
         
-        if (empty($solidaryAsk)) {
-            // There is no SolidaryAsk we need to create it before trigger the event
-            $solidaryAsk = new SolidaryAsk();
-            $solidaryAsk->setStatus(0);
-            $solidaryAsk->setSolidarySolution($solidaryContact->getSolidarySolution());
-            $criteria = clone $solidaryContact->getSolidarySolution()->getSolidaryMatching()->getCriteria();
-            $solidaryAsk->setCriteria($criteria);
-            $solidaryAsk = $this->solidaryAskManager->createSolidaryAsk($solidaryAsk);
+        // if (empty($solidaryAsk)) {
+        //     // There is no SolidaryAsk we need to create it before trigger the event
+        //     $solidaryAsk = new SolidaryAsk();
+        //     $solidaryAsk->setStatus(0);
+        //     $solidaryAsk->setSolidarySolution($solidaryContact->getSolidarySolution());
+        //     $criteria = clone $solidaryContact->getSolidarySolution()->getSolidaryMatching()->getCriteria();
+        //     $solidaryAsk->setCriteria($criteria);
+        //     $solidaryAsk = $this->solidaryAskManager->createSolidaryAsk($solidaryAsk);
             
-            // We set the solidaryAsk field for the return
-            $solidaryContact->setSolidaryAsk($solidaryAsk);
-        }
+        //     // We set the solidaryAsk field for the return
+        //     $solidaryContact->setSolidaryAsk($solidaryAsk);
+        // }
         
         // we trigger the solidaryContact events
         $media = $solidaryContact->getMedia();

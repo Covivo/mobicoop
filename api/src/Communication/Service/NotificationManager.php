@@ -48,6 +48,7 @@ use App\User\Service\UserManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use App\Carpool\Service\AdManager;
+use App\Solidary\Entity\SolidaryContact;
 
 /**
  * Notification manager
@@ -287,6 +288,10 @@ class NotificationManager
                         'journeyTime' => $time
                     ];
                 break;
+                case SolidaryContact::class:
+                    $titleContext = ['user'=>$object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser()];
+                    $bodyContext = ['text'=>$object->getContent(), 'recipient'=>$recipient];
+                break;
                 default:
                     if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
                         $outwardOrigin = null;
@@ -412,6 +417,9 @@ class NotificationManager
                     break;
                 case Message::class:
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
+                    break;
+                case SolidaryContact::class:
+                    $bodyContext = ['text'=>$object->getContent(), 'recipient'=>$recipient];
                     break;
                 default:
                     if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {

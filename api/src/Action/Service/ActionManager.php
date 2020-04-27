@@ -181,7 +181,7 @@ class ActionManager
         $this->diaryManager->addDiaryEntry($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
     }
 
-    private function onSolidaryContactSms(Action $action, SolidaryContactMessage $event)
+    private function onSolidaryContactSms(Action $action, SolidaryContactSms $event)
     {
         $solidaryContact = $event->getSolidaryContact();
         $user = $solidaryContact->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
@@ -195,13 +195,13 @@ class ActionManager
         $admin = $this->security->getUser();
 
         // Trigger the sms by notifies (need to add lines in table notification)
-        // TO DO
+        $this->notificationManager->notifies(SolidaryContactSms::NAME, $recipient, $event->getSolidaryContact());
 
         // Store in diary
         $this->diaryManager->addDiaryEntry($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
     }
     
-    private function onSolidaryContactEmail(Action $action, SolidaryContactMessage $event)
+    private function onSolidaryContactEmail(Action $action, SolidaryContactEmail $event)
     {
         $solidaryContact = $event->getSolidaryContact();
         $user = $solidaryContact->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
@@ -214,9 +214,8 @@ class ActionManager
         }
         $admin = $this->security->getUser();
 
-        // Trigger the email by notifies (need to add lines in table notification)
-        // TO DO
-        
+        // Trigger the email by notifies
+        $this->notificationManager->notifies(SolidaryContactEmail::NAME, $recipient, $event->getSolidaryContact());
 
         // Store in diary
         $this->diaryManager->addDiaryEntry($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
