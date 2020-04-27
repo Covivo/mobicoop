@@ -120,6 +120,7 @@
                 :items="eventscoming"
                 :items-per-page.sync="itemsPerPage"
                 :server-items-length="totalItems"
+                :no-data-text="$t('noEvent')"
                 :footer-props="{
                   'items-per-page-options': itemsPerPageOptions,
                   'items-per-page-all-text': $t('all'),
