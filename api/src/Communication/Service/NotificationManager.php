@@ -135,6 +135,8 @@ class NotificationManager
                             $this->logger->info("Internal message notification for $action / " . get_class($object) . " / " . $recipient->getEmail());
                             if ($object instanceof  MessagerInterface && !is_null($object->getMessage())) {
                                 $this->internalMessageManager->sendForObject([$recipient], $object);
+                            } else {
+                                $this->notifyByInternalMessage($notification, $recipient, $object);
                             }
                         }
                         $this->createNotified($notification, $recipient, $object);
@@ -159,6 +161,34 @@ class NotificationManager
         }
     }
 
+    
+    /**
+     * Notify a user by internal message
+     *
+     * @param Notification  $notification
+     * @param User          $recipient
+     * @param object|null   $object
+     * @return void
+     */
+    private function notifyByInternalMessage(Notification $notification, User $recipient, ?object $object = null)
+    {
+        $message = new Message();
+        $message->setUser($object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser());
+        $messageRecipient = new Recipient();
+        $messageRecipient->setStatus(Recipient::STATUS_PENDING);
+        $messageRecipient->setUser($recipient);
+        $message->addRecipient($messageRecipient);
+
+        if ($object) {
+            switch (get_class($object)) {
+                case SolidaryContact::class:
+                    $message->setText($object->getContent());
+                break;
+            }
+            $this->entityManager->persist($message);
+        }
+    }
+    
     /**
      * Notify a user by email.
      * Different variables can be passed to the notification body and title depending on the object linked to the notification.

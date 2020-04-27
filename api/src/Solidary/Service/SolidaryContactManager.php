@@ -61,6 +61,7 @@ class SolidaryContactManager
         // We check if there is already an Ask for the solidarySolution in the SolidaryContact
         $solidaryAsk = $this->solidaryAskRepository->findBySolidarySolution($solidaryContact->getSolidarySolution());
         
+        // UNCOMMENT THIS IF TO CREATE THE SOLIDARY ASK !
         // if (empty($solidaryAsk)) {
         //     // There is no SolidaryAsk we need to create it before trigger the event
         //     $solidaryAsk = new SolidaryAsk();

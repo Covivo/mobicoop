@@ -173,8 +173,8 @@ class ActionManager
         }
         $admin = $this->security->getUser();
 
-        // Trigger the message by notifies (need to add lines in table notification)
-        // TO DO
+        // Trigger the message by notifies
+        $this->notificationManager->notifies(SolidaryContactMessage::NAME, $recipient, $event->getSolidaryContact());
 
 
         // Store in diary
