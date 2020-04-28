@@ -99,22 +99,6 @@ class SolidarySolution
     private $comment;
 
     /**
-     * @var \DateTimeInterface Creation date of the solidary record.
-     *
-     * @ORM\Column(type="datetime")
-     * @Groups("readSolidary")
-     */
-    private $createdDate;
-
-    /**
-     * @var \DateTimeInterface Updated date of the solidary record.
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("readSolidary")
-     */
-    private $updatedDate;
-
-    /**
      * For formal request
      * @var \DateTimeInterface|null The date for the outward if the frequency is punctual, the start date of the outward if the frequency is regular.
      * @Groups({"writeSolidary"})
@@ -144,13 +128,35 @@ class SolidarySolution
 
     /**
      * For formal request
-     * @var array|null The schedule
-     * The schedule contains the outward and return elements.
+     * @var array|null The outward schedule
      *
      * @Groups({"writeSolidary"})
      */
-    private $schedule;
+    private $outwardSchedule;
 
+    /**
+     * For formal request
+     * @var array|null The return schedule
+     *
+     * @Groups({"writeSolidary"})
+     */
+    private $returnSchedule;
+
+    /**
+     * @var \DateTimeInterface Creation date of the solidary record.
+     *
+     * @ORM\Column(type="datetime")
+     * @Groups("readSolidary")
+     */
+    private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date of the solidary record.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("readSolidary")
+     */
+    private $updatedDate;
 
     /** Exemple of formal request data :
      *
@@ -232,30 +238,6 @@ class SolidarySolution
         return $this;
     }
 
-    public function getCreatedDate(): ?\DateTimeInterface
-    {
-        return $this->createdDate;
-    }
-
-    public function setCreatedDate(\DateTimeInterface $createdDate): self
-    {
-        $this->createdDate = $createdDate;
-
-        return $this;
-    }
-
-    public function getUpdatedDate(): ?\DateTimeInterface
-    {
-        return $this->updatedDate;
-    }
-
-    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
-    {
-        $this->updatedDate = $updatedDate;
-
-        return $this;
-    }
-
     public function getOutwardDate(): ?\DateTimeInterface
     {
         return $this->outwardDate;
@@ -304,17 +286,54 @@ class SolidarySolution
         return $this;
     }
 
-    public function getSchedule(): ?array
+    public function getOutwardSchedule(): ?array
     {
-        return $this->schedule;
+        return $this->outwardSchedule;
     }
     
-    public function setSchedule(?array $schedule): self
+    public function setOutwardSchedule(?array $outwardSchedule): self
     {
-        $this->schedule = $schedule;
+        $this->outwardSchedule = $outwardSchedule;
         
         return $this;
     }
+
+    public function getReturnSchedule(): ?array
+    {
+        return $this->returnSchedule;
+    }
+    
+    public function setReturnSchedule(?array $returnSchedule): self
+    {
+        $this->returnSchedule = $returnSchedule;
+        
+        return $this;
+    }
+
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
 
     // DOCTRINE EVENTS
 

@@ -22,6 +22,9 @@
 
 namespace App\Solidary\Service;
 
+use App\Carpool\Entity\Criteria;
+use App\Solidary\Entity\SolidaryAsk;
+use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Entity\SolidarySolution;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryMatchingRepository;
@@ -75,16 +78,94 @@ class SolidarySolutionManager
         /*****  Update the criteria of the SolidaryAsk */
 
         // Get the solidaryAsk
+        
+        // Check if there is a SolidaryAsk
         $solidaryAsk = $solidarySolution->getSolidaryAsk();
         if (is_null($solidaryAsk)) {
             throw new SolidaryException(SolidaryException::NO_SOLIDARY_ASK);
         }
 
+        // Check if the SolidaryAsk has the right status
+        if ($solidaryAsk->getStatus()!==SolidaryAsk::STATUS_ASKED) {
+            throw new SolidaryException(SolidaryException::BAD_SOLIDARY_ASK_STATUS_FOR_FORMAL);
+        }
+
+        // SolidaryAsk Criteria
+        $solidaryAskCriteria = $solidaryAsk->getCriteria();
+
+        $solidaryAskCriteria->setFromDate($solidarySolution->getOutwardDate());
+        // TO DO : RETURN FOR CARPOOL
+
+        // Treat the schedule
+        $outwardSchedule = $solidarySolution->getOutwardSchedule()[0];
+        if (isset($outwardSchedule["mon"]) && $outwardSchedule["mon"]==1) {
+            $solidaryAskCriteria->setMonCheck(true);
+            if ($solidaryAskCriteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $solidaryAskCriteria->setMonTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+            }
+        }
+        if (isset($outwardSchedule["tue"]) && $outwardSchedule["tue"]==1) {
+            $solidaryAskCriteria->setTueCheck(true);
+            if ($solidaryAskCriteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $solidaryAskCriteria->setTueTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+            }
+        }
+        if (isset($outwardSchedule["wed"]) && $outwardSchedule["wed"]==1) {
+            $solidaryAskCriteria->setWedCheck(true);
+            if ($solidaryAskCriteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $solidaryAskCriteria->setWedTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+            }
+        }
+        if (isset($outwardSchedule["thu"]) && $outwardSchedule["thu"]==1) {
+            $solidaryAskCriteria->setThuCheck(true);
+            if ($solidaryAskCriteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $solidaryAskCriteria->setThuTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+            }
+        }
+        if (isset($outwardSchedule["fri"]) && $outwardSchedule["fri"]==1) {
+            $solidaryAskCriteria->setFriCheck(true);
+            if ($solidaryAskCriteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $solidaryAskCriteria->setFriTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+            }
+        }
+        if (isset($outwardSchedule["sat"]) && $outwardSchedule["sat"]==1) {
+            $solidaryAskCriteria->setSatCheck(true);
+            if ($solidaryAskCriteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $solidaryAskCriteria->setSatTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+            }
+        }
+        if (isset($outwardSchedule["sun"]) && $outwardSchedule["sun"]==1) {
+            $solidaryAskCriteria->setSunCheck(true);
+            if ($solidaryAskCriteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $solidaryAskCriteria->setSunTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+            }
+        }
+
+        // The toDate is only for regular
+        if ($solidaryAskCriteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+            $solidaryAskCriteria->setToDate($solidarySolution->getOutwardLimitDate());
+        } else {
+            // Punctual journey we update fromTime
+            $solidaryAskCriteria->setFromTime(new \DateTime($outwardSchedule['outwardTime']));
+        }
+
+        $this->entityManager->persist($solidaryAskCriteria);
+        $this->entityManager->flush();
+
+
+
+        /*****  Update the status of the SolidaryAsk and add a SolidaryAsk history */
+        $solidaryAsk->setStatus(SolidaryAsk::STATUS_PENDING);
+        $this->entityManager->persist($solidaryAsk);
+        $this->entityManager->flush();
+        $solidaryAskHistory = new SolidaryAskHistory();
+        $solidaryAskHistory->setStatus($solidaryAsk->getStatus());
+        $solidaryAskHistory->setSolidaryAsk($solidaryAsk);
+        $this->entityManager->persist($solidaryAskHistory);
+        $this->entityManager->flush();
 
         /*****  If this is a Carpool Solidary Solution, we need to update the carpool Ask and its Criteria */
 
-
-        /*****  Update the status of the SolidaryAsk */
 
         return $solidarySolution;
     }
