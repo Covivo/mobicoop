@@ -736,14 +736,6 @@ class User implements UserInterface, EquatableInterface
     private $androidAppId;
 
     /**
-     * @var string|null Push device ID.
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write"})
-     */
-    private $pushDeviceId;
-
-    /**
      * @var string User language
      * @Groups({"readUser","write"})
      * @ORM\Column(name="language", type="string", length=10, nullable=true)
@@ -767,6 +759,14 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","write"})
      */
     private $cars;
+
+    /**
+     * @var ArrayCollection|null A user may have many push token ids.
+     *
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\PushToken", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readUser","write"})
+     */
+    private $pushTokens;
 
     /**
      * @var ArrayCollection|null The proposals made for this user (in general by the user itself, except when it is a "posting for").
@@ -1042,6 +1042,12 @@ class User implements UserInterface, EquatableInterface
     private $mobileRegistration;
 
     /**
+     * @var string|null The link used to validate the email (useful for mobile apps)
+     * @Groups({"readUser","write"})
+     */
+    private $emailValidationLink;
+
+    /**
      * @var \DateTimeInterface Last user activity date
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -1093,6 +1099,7 @@ class User implements UserInterface, EquatableInterface
         $this->deliveries = new ArrayCollection();
         $this->carpoolProofsAsDriver = new ArrayCollection();
         $this->carpoolProofsAsPassenger = new ArrayCollection();
+        $this->pushTokens = new ArrayCollection();
         $this->roles = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
@@ -1604,6 +1611,34 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($car->getUser() === $this) {
                 $car->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getPushTokens()
+    {
+        return $this->pushTokens->getValues();
+    }
+
+    public function addPushToken(PushToken $pushToken): self
+    {
+        if (!$this->pushTokens->contains($pushToken)) {
+            $this->pushTokens->add($pushToken);
+            $pushToken->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePushToken(PushToken $pushToken): self
+    {
+        if ($this->pushTokens->contains($pushToken)) {
+            $this->pushTokens->removeElement($pushToken);
+            // set the owning side to null (unless already changed)
+            if ($pushToken->getUser() === $this) {
+                $pushToken->setUser(null);
             }
         }
 
@@ -2445,6 +2480,18 @@ class User implements UserInterface, EquatableInterface
     public function setMobileRegistration(?int $mobileRegistration): self
     {
         $this->mobileRegistration = $mobileRegistration;
+
+        return $this;
+    }
+
+    public function getEmailValidationLink(): ?string
+    {
+        return $this->emailValidationLink;
+    }
+
+    public function setEmailValidationLink(?string $emailValidationLink): self
+    {
+        $this->emailValidationLink = $emailValidationLink;
 
         return $this;
     }
