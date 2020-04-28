@@ -49,6 +49,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use App\Carpool\Service\AdManager;
 use App\Communication\Entity\Push;
+use App\User\Entity\PushToken;
 
 /**
  * Notification manager
@@ -66,6 +67,7 @@ class NotificationManager
     private $emailTemplatePath;
     private $emailTitleTemplatePath;
     private $pushTemplatePath;
+    private $pushTitleTemplatePath;
     private $smsTemplatePath;
     private $logger;
     private $notificationRepository;
@@ -90,6 +92,7 @@ class NotificationManager
         string $emailTemplatePath,
         string $emailTitleTemplatePath,
         string $pushTemplatePath,
+        string $pushTitleTemplatePath,
         string $smsTemplatePath,
         bool $enabled,
         TranslatorInterface $translator,
@@ -107,6 +110,7 @@ class NotificationManager
         $this->emailTemplatePath = $emailTemplatePath;
         $this->emailTitleTemplatePath = $emailTitleTemplatePath;
         $this->pushTemplatePath = $pushTemplatePath;
+        $this->pushTitleTemplatePath = $pushTitleTemplatePath;
         $this->smsTemplatePath = $smsTemplatePath;
         $this->templating = $templating;
         $this->enabled = $enabled;
@@ -468,28 +472,39 @@ class NotificationManager
      * Notify a user by push notification.
      * Different variables can be passed to the notification body and title depending on the object linked to the notification.
      *
-     * @param Notification  $notification
-     * @param User          $recipient
-     * @param object|null   $object
+     * @param Notification  $notification   The notification
+     * @param User          $recipient      The recipient user
+     * @param object|null   $object         The object to use
      * @return void
      */
     private function notifyByPush(Notification $notification, User $recipient, ?object $object = null)
     {
         $push = new Push();
-        $push->setRecipientDeviceId($recipient->getPushDeviceId());
+        $recipientDeviceIds=[];
+        foreach ($recipient->getPushTokens() as $pushToken) {
+            /**
+             * @var PushToken $pushToken
+             */
+            $recipientDeviceIds[] = $pushToken->getToken();
+        }
+        $push->setRecipientDeviceIds($recipientDeviceIds);
         $bodyContext = [];
         if ($object) {
             switch (get_class($object)) {
                 case Proposal::class:
+                    $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'object' => $object];
                     break;
                 case Matching::class:
+                    $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'matching'=> $object];
                     break;
                 case AskHistory::class:
+                    $titleContext = [];
                     $bodyContext = ['user'=>$recipient];
                     break;
                 case Ask::class:
+                    $titleContext = [];
                     foreach ($object->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
                         if ($waypoint->getPosition() == 0) {
                             $passengerOriginWaypoint = $waypoint;
@@ -500,6 +515,7 @@ class NotificationManager
                     $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaypoint, 'destination'=>$passengerDestinationWaypoint];
                     break;
                 case Ad::class:
+                    $titleContext = [];
                     $outwardOrigin = null;
                     $outwardDestination = null;
                     $returnOrigin = null;
@@ -540,15 +556,19 @@ class NotificationManager
                     ];
                     break;
                 case Recipient::class:
+                    $titleContext = [];
                     $bodyContext = [];
                     break;
                 case User::class:
+                    $titleContext = [];
                     $bodyContext = ['user'=>$recipient];
                     break;
                 case Message::class:
+                    $titleContext = [];
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
                     break;
                 default:
+                    $titleContext = [];
                     if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
                         $outwardOrigin = null;
                         $outwardDestination = null;
@@ -570,8 +590,22 @@ class NotificationManager
                     }
             }
         } else {
+            $titleContext = [];
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
         }
+
+        $lang = self::LANG;
+        if (!is_null($recipient->getLanguage())) {
+            $lang = $recipient->getLanguage();
+        }
+        
+        $this->translator->setLocale($lang);
+        $push->setTitle($this->templating->render(
+            $notification->getTemplateTitle() ? $this->pushTitleTemplatePath . $notification->getTemplateTitle() : $this->pushTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
+            [
+                'context' => $titleContext
+            ]
+        ));
 
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->pushManager->send($push, $notification->getTemplateBody() ? $this->pushTemplatePath . $notification->getTemplateBody() : $this->pushTemplatePath . $notification->getAction()->getName(), $bodyContext);

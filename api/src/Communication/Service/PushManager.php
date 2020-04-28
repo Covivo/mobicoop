@@ -24,6 +24,7 @@
 namespace App\Communication\Service;
 
 use App\Communication\Entity\Push;
+use App\DataProvider\Entity\FirebaseProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -49,11 +50,10 @@ class PushManager
      * @param TranslatorInterface $translator   The translation system
      * @param string $templatePath              The templates path
      * @param string $pushProvider              The name of the push provider
-     * @param string $username
-     * @param string $password
-     * @param string $sender
+     * @param string $apiToken                  The api token
+     * @param string $senderId                  The sender id
      */
-    public function __construct(Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $templatePath, string $pushProvider, string $username, string $password, string $sender)
+    public function __construct(Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $templatePath, string $pushProvider, string $apiToken, string $senderId)
     {
         $this->templating = $templating;
         $this->templatePath = $templatePath;
@@ -61,8 +61,10 @@ class PushManager
         $this->translator = $translator;
 
         switch ($pushProvider) {
-            case 'Firebase':  $this->pushProvider = "TODO";break;
-            default:  $this->pushProvider = "TODO";break;
+            case 'Firebase':
+            default:
+                $this->pushProvider = new FirebaseProvider($apiToken, $senderId);
+                break;
         }
     }
 
@@ -90,7 +92,7 @@ class PushManager
         $this->translator->setLocale($sessionLocale);
 
         // send the push notification
-        //$this->pushProvider->myMethod($push);
+        $this->pushProvider->postCollection($push);
 
         return;
     }

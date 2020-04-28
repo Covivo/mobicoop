@@ -1511,17 +1511,6 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getPushDeviceId(): ?string
-    {
-        return $this->pushDeviceId;
-    }
-
-    public function setPushDeviceId(?string $pushDeviceId): self
-    {
-        $this->pushDeviceId = $pushDeviceId;
-        return $this;
-    }
-
     public function getLanguage(): ?string
     {
         return $this->language;

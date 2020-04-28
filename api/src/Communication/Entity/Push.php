@@ -31,10 +31,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Push
 {
     /**
-     * @var string Recipient device id
+     * @var array Recipient device ids
      * @Assert\NotBlank
      */
-    private $recipientDeviceId;
+    private $recipientDeviceIds;
+
+    /**
+     * @var string Notification title
+     * @Assert\NotBlank
+     */
+    private $title;
 
     /**
      * @var string Notification message
@@ -42,14 +48,26 @@ class Push
      */
     private $message;
 
-    public function getRecipientDeviceId(): string
+    public function getRecipientDeviceIds(): array
     {
-        return $this->recipientDeviceId;
+        return $this->recipientDeviceIds;
     }
 
-    public function setRecipientDeviceId(string $recipientDeviceId): self
+    public function setRecipientDeviceIds(array $recipientDeviceIds): self
     {
-        $this->recipientDeviceId = $recipientDeviceId;
+        $this->recipientDeviceIds = $recipientDeviceIds;
+
+        return $this;
+    }
+
+    public function getTitle():? string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
 
         return $this;
     }
