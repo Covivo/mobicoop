@@ -114,11 +114,6 @@ class SolidaryAskHistory implements MessagerInterface
      */
     private $message;
 
-    public function __construct()
-    {
-        $this->notifieds = new ArrayCollection();
-    }
-    
     public function getId(): ?int
     {
         return $this->id;
@@ -184,34 +179,6 @@ class SolidaryAskHistory implements MessagerInterface
         return $this;
     }
 
-    public function getNotifieds()
-    {
-        return $this->notifieds->getValues();
-    }
-    
-    public function addNotified(Notified $notified): self
-    {
-        if (!$this->notifieds->contains($notified)) {
-            $this->notifieds[] = $notified;
-            $notified->setAskHistory($this);
-        }
-        
-        return $this;
-    }
-    
-    public function removeNotified(Notified $notified): self
-    {
-        if ($this->notifieds->contains($notified)) {
-            $this->notifieds->removeElement($notified);
-            // set the owning side to null (unless already changed)
-            if ($notified->getAskHistory() === $this) {
-                $notified->setAskHistory(null);
-            }
-        }
-        
-        return $this;
-    }
-    
     // DOCTRINE EVENTS
     
     /**
