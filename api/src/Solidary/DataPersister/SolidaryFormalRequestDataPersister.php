@@ -2,10 +2,10 @@
 namespace App\Solidary\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Solidary\Entity\SolidarySolution;
+use App\Solidary\Entity\SolidaryFormalRequest;
 use App\Solidary\Service\SolidarySolutionManager;
 
-final class SolidarySolutionDataPersister implements ContextAwareDataPersisterInterface
+final class SolidaryFormalRequestDataPersister implements ContextAwareDataPersisterInterface
 {
     private $solidarySolutionManager;
 
@@ -16,14 +16,13 @@ final class SolidarySolutionDataPersister implements ContextAwareDataPersisterIn
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof SolidarySolution;
+        return $data instanceof SolidaryFormalRequest;
     }
 
     public function persist($data, array $context = [])
     {
-        // call your persistence layer to save $data
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-            $data = $this->solidarySolutionManager->createSolidarySolution($data);
+            $data = $this->solidarySolutionManager->makeFormalRequest($data);
         }
         return $data;
     }

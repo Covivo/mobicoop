@@ -25,6 +25,7 @@ namespace App\Solidary\Service;
 use App\Carpool\Entity\Criteria;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAskHistory;
+use App\Solidary\Entity\SolidaryFormalRequest;
 use App\Solidary\Entity\SolidarySolution;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryMatchingRepository;
@@ -70,11 +71,13 @@ class SolidarySolutionManager
     /**
      * Make a formal request for a SolidarySolution
      *
-     * @param SolidarySolution $solidarySolution
-     * @return SolidarySolution|null
+     * @param SolidaryFormalRequest $solidarySolution
+     * @return SolidaryFormalRequest|null
      */
-    public function makeFormalRequest(SolidarySolution $solidarySolution) : ?SolidarySolution
+    public function makeFormalRequest(SolidaryFormalRequest $solidaryFormalRequest) : ?SolidaryFormalRequest
     {
+        $solidarySolution = $solidaryFormalRequest->getSolidarySolution();
+
         /*****  Update the criteria of the SolidaryAsk */
 
         // Get the solidaryAsk
@@ -93,11 +96,11 @@ class SolidarySolutionManager
         // SolidaryAsk Criteria
         $solidaryAskCriteria = $solidaryAsk->getCriteria();
 
-        $solidaryAskCriteria->setFromDate($solidarySolution->getOutwardDate());
+        $solidaryAskCriteria->setFromDate($solidaryFormalRequest->getOutwardDate());
         // TO DO : RETURN FOR CARPOOL
 
         // Treat the schedule
-        $outwardSchedule = $solidarySolution->getOutwardSchedule()[0];
+        $outwardSchedule = $solidaryFormalRequest->getOutwardSchedule()[0];
         if (isset($outwardSchedule["mon"]) && $outwardSchedule["mon"]==1) {
             $solidaryAskCriteria->setMonCheck(true);
             if ($solidaryAskCriteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
@@ -143,7 +146,7 @@ class SolidarySolutionManager
 
         // The toDate is only for regular
         if ($solidaryAskCriteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-            $solidaryAskCriteria->setToDate($solidarySolution->getOutwardLimitDate());
+            $solidaryAskCriteria->setToDate($solidaryFormalRequest->getOutwardLimitDate());
         } else {
             // Punctual journey we update fromTime
             $solidaryAskCriteria->setFromTime(new \DateTime($outwardSchedule['outwardTime']));
@@ -167,6 +170,6 @@ class SolidarySolutionManager
         /*****  If this is a Carpool Solidary Solution, we need to update the carpool Ask and its Criteria */
 
 
-        return $solidarySolution;
+        return $solidaryFormalRequest;
     }
 }

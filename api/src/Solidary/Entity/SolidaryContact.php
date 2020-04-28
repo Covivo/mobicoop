@@ -63,6 +63,7 @@ class SolidaryContact
 
     /**
     * @var SolidarySolution The solidary solution this contact is for
+    * @Assert\NotBlank
     * @Groups({"readSolidaryContact","writeSolidaryContact"})
     * @MaxDepth(1)
     */
