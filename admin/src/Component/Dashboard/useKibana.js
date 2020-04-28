@@ -10,8 +10,7 @@ const useKibana = () => {
         const token         = localStorage.getItem('token')
         const instanceName  = process.env.REACT_APP_SCOPE_INSTANCE_NAME
         const kibanaAuthenticationApi = process.env.REACT_APP_KIBANA_URL +'/login/' + instanceName
-        console.log("kibanaAuthenticationApi:", kibanaAuthenticationApi)
-        console.log("process.env:", process.env)
+        console.log("Scope API:", kibanaAuthenticationApi)
 
         const getKibanaCookie = async () => {
              fetch(kibanaAuthenticationApi, {
