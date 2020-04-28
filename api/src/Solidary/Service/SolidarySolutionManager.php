@@ -143,8 +143,6 @@ class SolidarySolutionManager
     {
         $criteria->setFromDate($solidaryFormalRequest->getOutwardDate());
 
-        // TO DO : RETURN FOR CARPOOL
-
         // Treat the schedule
         $outwardSchedule = $solidaryFormalRequest->getOutwardSchedule()[0];
         if (isset($outwardSchedule["mon"]) && $outwardSchedule["mon"]==1) {
