@@ -24,11 +24,13 @@ namespace App\Solidary\Service;
 
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\AskHistory;
+use App\Carpool\Entity\Matching;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Exception\SolidaryException;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -57,35 +59,14 @@ class SolidaryAskManager
 
         // If it's a Carpool Ask type we need to create the related Ask
         if (!is_null($solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getMatching())) {
-            // create the carpool Ask
-            $ask = new Ask();
-            $ask->setStatus(Ask::STATUS_INITIATED);
-
             // The User who make the Ask
             $user = $solidaryAsk->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
-
-            $ask->setType(1); // One way. Default value.
-            $ask->setUser($user);
 
             // We get the matching to have all criterias
             $matching = $solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getMatching();
 
-            // The User related to the Ask
-            $userRelated = $matching->getProposalOffer()->getUser();
-
-
-            $ask->setMatching($matching);
-            $ask->setUserRelated($userRelated);
-            $ask->setUserDelegate($this->security->getUser()); // The admin or the user that make the Ask for the true User
-            $criteria = clone $matching->getCriteria();
-            $ask->setCriteria($criteria);
-
-            // we use the matching waypoints
-            $waypoints = $matching->getWaypoints();
-            foreach ($waypoints as $waypoint) {
-                $newWaypoint = clone $waypoint;
-                $ask->addWaypoint($newWaypoint);
-            }
+            // create the carpool Ask
+            $ask = $this->createAskFromMatching($matching, $user);
 
             // We set the link between the Ask and the SolidaryAsk
             $ask->setSolidaryAsk($solidaryAsk);
@@ -104,26 +85,25 @@ class SolidaryAskManager
 
             $this->entityManager->persist($solidaryAsk);
             $this->entityManager->flush();
-        }
 
-        return $solidaryAsk;
-    }
+            // If there is a matchinglinked, we need to create an Ask for the return trip
+            if (!is_null($matching->getMatchingLinked())) {
+                $askLinked = $this->createAskFromMatching($matching->getMatchingLinked(), $user);
 
-    /**
-     * Update a solidary Ask
-     *
-     * @param SolidaryAsk $solidaryAsk
-     * @return SolidaryAsk|null
-     */
-    public function updateSolidaryAsk(SolidaryAsk $solidaryAsk): ?SolidaryAsk
-    {
-        
-        // We create the associated SolidaryAskHistory
-        $solidaryAsk = $this->createAssociatedSolidaryAskHistory($solidaryAsk);
+                // We create the associated Ask History
+                $askLinkedHistory = new AskHistory();
+                $askLinkedHistory->setStatus($askLinked->getStatus());
+                $askLinkedHistory->setType($askLinked->getType());
+                $askLinked->addAskHistory($askLinkedHistory);
 
-        // If it's a Carpool Ask type we need to update the related Ask
-        if (!is_null($solidaryAsk->getSolidarySolution()->getMatching())) {
-            // update the carpool Ask
+                $this->entityManager->persist($askLinked);
+                $this->entityManager->flush();
+
+                // We link this "return" Ask to the "outward" Ask
+                $ask->setAskLinked($askLinked);
+                $this->entityManager->persist($ask);
+                $this->entityManager->flush();
+            }
         }
 
         return $solidaryAsk;
@@ -146,5 +126,39 @@ class SolidaryAskManager
         $this->entityManager->flush();
 
         return $solidaryAsk;
+    }
+
+    /**
+     * Create an Ask from a matching informations
+     *
+     * @param Matching  $matching   Matching using as base for the Ask Matching
+     * @param User      $user       The User who make the Ask
+     * @return Ask
+     */
+    private function createAskFromMatching(Matching $matching, User $user): Ask
+    {
+        $ask = new Ask();
+        $ask->setStatus(Ask::STATUS_INITIATED);
+
+        $ask->setType(1); // One way. Default value.
+        $ask->setUser($user);
+
+        // The User related to the Ask
+        $userRelated = $matching->getProposalOffer()->getUser();
+
+        $ask->setMatching($matching);
+        $ask->setUserRelated($userRelated);
+        $ask->setUserDelegate($this->security->getUser()); // The admin or the user that make the Ask for the true User
+        $criteria = clone $matching->getCriteria();
+        $ask->setCriteria($criteria);
+
+        // we use the matching waypoints
+        $waypoints = $matching->getWaypoints();
+        foreach ($waypoints as $waypoint) {
+            $newWaypoint = clone $waypoint;
+            $ask->addWaypoint($newWaypoint);
+        }
+
+        return $ask;
     }
 }
