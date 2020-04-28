@@ -63,4 +63,29 @@ class SolidarySolutionManager
         $this->entityManager->flush();
         return $solidarySolution;
     }
+
+    /**
+     * Make a formal request for a SolidarySolution
+     *
+     * @param SolidarySolution $solidarySolution
+     * @return SolidarySolution|null
+     */
+    public function makeFormalRequest(SolidarySolution $solidarySolution) : ?SolidarySolution
+    {
+        /*****  Update the criteria of the SolidaryAsk */
+
+        // Get the solidaryAsk
+        $solidaryAsk = $solidarySolution->getSolidaryAsk();
+        if (is_null($solidaryAsk)) {
+            throw new SolidaryException(SolidaryException::NO_SOLIDARY_ASK);
+        }
+
+
+        /*****  If this is a Carpool Solidary Solution, we need to update the carpool Ask and its Criteria */
+
+
+        /*****  Update the status of the SolidaryAsk */
+
+        return $solidarySolution;
+    }
 }

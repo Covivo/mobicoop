@@ -41,7 +41,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={"post","get"},
- *      itemOperations={"get"}
+ *      itemOperations={
+ *          "get",
+ *          "formalRequest"={
+ *              "method"="PUT",
+ *              "path"="/solidary_solutions/{id}/formal"
+ *          }
+ *      }
  * )
  */
 class SolidarySolution
@@ -107,6 +113,66 @@ class SolidarySolution
      * @Groups("readSolidary")
      */
     private $updatedDate;
+
+    /**
+     * For formal request
+     * @var \DateTimeInterface|null The date for the outward if the frequency is punctual, the start date of the outward if the frequency is regular.
+     * @Groups({"writeSolidary"})
+     */
+    private $outwardDate;
+
+    /**
+     * For formal request
+     * @var \DateTimeInterface|null The limit date for the outward if the frequency is regular.
+     * @Groups({"writeSolidary"})
+     */
+    private $outwardLimitDate;
+
+    /**
+     * For formal request
+     * @var \DateTimeInterface|null The date for the return if the frequency is punctual, the start date of the return if the frequency is regular.
+     * @Groups({"writeSolidary"})
+     */
+    private $returnDate;
+
+    /**
+     * For formal request
+     * @var \DateTimeInterface|null The limit date for the return if the frequency is regular.
+     * @Groups({"writeSolidary"})
+     */
+    private $returnLimitDate;
+
+    /**
+     * For formal request
+     * @var array|null The schedule
+     * The schedule contains the outward and return elements.
+     *
+     * @Groups({"writeSolidary"})
+     */
+    private $schedule;
+
+
+    /** Exemple of formal request data :
+     *
+     * {
+     *   "outwardDate": "2020-04-28T00:00:00+00:00",
+     *   "outwardLimitDate": "2020-05-05T00:00:00+00:00",
+     *   "schedule": [
+     *    {
+     *      "outwardTime": "08:30",
+     *      "returnTime": "18:00",
+     *      "mon": 1,
+     *      "tue": 1,
+     *      "wed": 0,
+     *      "thu": 0,
+     *      "fri": 0,
+     *      "sat": 0,
+     *      "sun": 0
+     *    }
+     *  ]
+     * }
+     *
+     */
 
     public function __construct()
     {
@@ -187,6 +253,66 @@ class SolidarySolution
     {
         $this->updatedDate = $updatedDate;
 
+        return $this;
+    }
+
+    public function getOutwardDate(): ?\DateTimeInterface
+    {
+        return $this->outwardDate;
+    }
+
+    public function setOutwardDate(?\DateTimeInterface $outwardDate): self
+    {
+        $this->outwardDate = $outwardDate;
+
+        return $this;
+    }
+
+    public function getOutwardLimitDate(): ?\DateTimeInterface
+    {
+        return $this->outwardLimitDate;
+    }
+
+    public function setOutwardLimitDate(?\DateTimeInterface $outwardLimitDate): self
+    {
+        $this->outwardLimitDate = $outwardLimitDate;
+
+        return $this;
+    }
+
+    public function getReturnDate(): ?\DateTimeInterface
+    {
+        return $this->returnDate;
+    }
+
+    public function setReturnDate(?\DateTimeInterface $returnDate): self
+    {
+        $this->returnDate = $returnDate;
+
+        return $this;
+    }
+
+    public function getReturnLimitDate(): ?\DateTimeInterface
+    {
+        return $this->returnLimitDate;
+    }
+
+    public function setReturnLimitDate(?\DateTimeInterface $returnLimitDate): self
+    {
+        $this->returnLimitDate = $returnLimitDate;
+
+        return $this;
+    }
+
+    public function getSchedule(): ?array
+    {
+        return $this->schedule;
+    }
+    
+    public function setSchedule(?array $schedule): self
+    {
+        $this->schedule = $schedule;
+        
         return $this;
     }
 
