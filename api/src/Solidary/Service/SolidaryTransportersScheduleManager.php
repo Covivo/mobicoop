@@ -23,18 +23,33 @@
 namespace App\Solidary\Service;
 
 use App\Solidary\Entity\SolidaryTransportersSchedule\SolidaryTransportersSchedule;
+use App\Solidary\Repository\SolidaryAskRepository;
 
 class SolidaryTransportersScheduleManager
 {
-    public function __construct()
+    private $solidaryAskRepository;
+
+    public function __construct(SolidaryAskRepository $solidaryAskRepository)
     {
+        $this->solidaryAskRepository = $solidaryAskRepository;
     }
 
     public function buildSolidaryTransportersSchedule(SolidaryTransportersSchedule $schedule): SolidaryTransportersSchedule
     {
-        // If no start date, we take today
+        // If no start date, we take today and set enddate to +1 week
+        // If no end date, we take startDate +1 week
+        if (is_null($schedule->getStartDate())) {
+            $schedule->setStartDate(new \DateTime());
+        }
+        if (is_null($schedule->getEndDate())) {
+            $startDate = clone $schedule->getStartDate();
+            $schedule->setEndDate($startDate->modify('+1 week'));
+        }
+
+        $solidaryAsks = $this->solidaryAskRepository->findBetweenTwoDates($schedule->getStartDate(), $schedule->getEndDate());
         
-        
+        $schedule->setSchedule($solidaryAsks);
+
         return $schedule;
     }
 }

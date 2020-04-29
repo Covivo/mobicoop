@@ -79,6 +79,7 @@ class SolidaryTransportersSchedule
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
+        $this->schedule = [];
     }
     
     public function getId(): ?int
