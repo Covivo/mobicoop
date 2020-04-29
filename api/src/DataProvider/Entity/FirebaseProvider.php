@@ -49,11 +49,10 @@ class FirebaseProvider implements ProviderInterface
     public function postCollection(Push $push)
     {
         $notification = new Notification();
-        foreach ($push->getRecipientDeviceIds() as $recipientDeviceId) {
-            $notification->addRecipient($recipientDeviceId);
-        }
-
-        $notification->setTitle($push->getTitle())->setBody($push->getMessage());
+        $notification
+            ->addRecipient($push->getRecipientDeviceIds())
+            ->setTitle($push->getTitle())
+            ->setBody($push->getMessage());
             
         // send the notification
         //$this->client->send($notification);
