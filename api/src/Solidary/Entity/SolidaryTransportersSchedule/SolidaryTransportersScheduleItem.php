@@ -26,7 +26,9 @@ namespace App\Solidary\Entity\SolidaryTransportersSchedule;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A solidary transporter planning item
+ * A solidary transporters planning item
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryTransportersScheduleItem
 {

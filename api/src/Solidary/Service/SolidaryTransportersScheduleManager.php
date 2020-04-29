@@ -28,6 +28,11 @@ use App\Solidary\Entity\SolidaryTransportersSchedule\SolidaryTransportersSchedul
 use App\Solidary\Repository\SolidaryAskRepository;
 use App\Solidary\Entity\SolidaryAsk;
 
+/**
+ * Solidary transporters schedule manager service
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidaryTransportersScheduleManager
 {
     private $solidaryAskRepository;

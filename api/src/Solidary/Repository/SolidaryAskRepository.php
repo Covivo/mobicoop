@@ -28,6 +28,11 @@ use App\Solidary\Entity\SolidarySolution;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * SolidaryAsk Repository
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidaryAskRepository
 {
     /**

@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A solidary transporter planning
+ * A solidary transporters planning
  *
  * @ApiResource(
  *      attributes={
@@ -45,6 +45,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "get"
  *      }
  * )
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryTransportersSchedule
 {
