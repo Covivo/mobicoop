@@ -25,6 +25,8 @@ namespace App\Solidary\Service;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\Communication\Entity\Medium;
+use App\Communication\Entity\Message;
+use App\Communication\Entity\Recipient;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryContact;
 use App\Solidary\Event\SolidaryContactEmail;
@@ -81,6 +83,9 @@ class SolidaryContactManager
         foreach ($media as $medium) {
             switch ($medium->getId()) {
                 case Medium::MEDIUM_MESSAGE:
+
+                    // We create the message
+                    $message = $this->buildInternalMessage($solidaryContact);
                     $event = new SolidaryContactMessage($solidaryContact);
                     $this->eventDispatcher->dispatch(SolidaryContactMessage::NAME, $event);
                     break;
@@ -96,5 +101,17 @@ class SolidaryContactManager
         }
 
         return $solidaryContact;
+    }
+
+    private function buildInternalMessage(SolidaryContact $object): Message
+    {
+        $message = new Message();
+        $message->setUser($object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser());
+        $message->setText($object->getContent());
+        
+        $solidaryAsk = $object->getSolidaryAsk();
+        $ask = $object->getSolidaryAsk()->getAsk();
+
+        return $message;
     }
 }

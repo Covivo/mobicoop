@@ -30,6 +30,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
+use App\Communication\Entity\Message;
+use App\Communication\Interfaces\MessagerInterface;
 
 /**
  * A solidary contact
@@ -49,7 +51,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      }
  * )
  */
-class SolidaryContact
+class SolidaryContact implements MessagerInterface
 {
     const DEFAULT_ID = 999999999999;
     
@@ -89,6 +91,10 @@ class SolidaryContact
      */
     private $solidaryAsk;
 
+    /**
+     * @var Message If this contact uses the internal message medium, $message contains this message
+     */
+    private $message;
 
     public function __construct()
     {
@@ -160,6 +166,18 @@ class SolidaryContact
         return $this->solidaryAsk;
     }
     
+    public function getMessage(): ?Message
+    {
+        return $this->message;
+    }
+    
+    public function setMessage(Message $message): self
+    {
+        $this->message = $message;
+        
+        return $this;
+    }
+
     public function setSolidaryAsk(SolidaryAsk $solidaryAsk): self
     {
         $this->solidaryAsk = $solidaryAsk;

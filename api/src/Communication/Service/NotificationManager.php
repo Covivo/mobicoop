@@ -136,8 +136,6 @@ class NotificationManager
                             $this->logger->info("Internal message notification for $action / " . get_class($object) . " / " . $recipient->getEmail());
                             if ($object instanceof  MessagerInterface && !is_null($object->getMessage())) {
                                 $this->internalMessageManager->sendForObject([$recipient], $object);
-                            } else {
-                                $this->notifyByInternalMessage($recipient, $object);
                             }
                         }
                         $this->createNotified($notification, $recipient, $object);
