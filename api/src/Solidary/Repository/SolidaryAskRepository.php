@@ -95,15 +95,7 @@ class SolidaryAskRepository
         ->join('sa.criteria', 'c')
         ->join('sa.solidarySolution', 'ss')
         ->join('ss.solidaryMatching', 'sm')
-        ->where('(
-                    c.frequency = 1 and (c.fromDate = :startDate or c.fromDate = :endDate)
-                )
-                or
-                (
-                    c.frequency = 2 and (c.fromDate <= :startDate and c.toDate >= :endDate)
-                )
-        ');
-
+        ->where('c.fromDate >= :startDate and (c.toDate <= :endDate or c.toDate is null)');
         if ($onlySolidaryTransport) {
             $query->andWhere('sm.matching is null');
         }

@@ -22,16 +22,21 @@
 
 namespace App\Solidary\Service;
 
+use App\Carpool\Entity\Criteria;
 use App\Solidary\Entity\SolidaryTransportersSchedule\SolidaryTransportersSchedule;
+use App\Solidary\Entity\SolidaryTransportersSchedule\SolidaryTransportersScheduleItem;
 use App\Solidary\Repository\SolidaryAskRepository;
+use App\Solidary\Entity\SolidaryAsk;
 
 class SolidaryTransportersScheduleManager
 {
     private $solidaryAskRepository;
+    private $solidaryMatcher;
 
-    public function __construct(SolidaryAskRepository $solidaryAskRepository)
+    public function __construct(SolidaryAskRepository $solidaryAskRepository, SolidaryMatcher $solidaryMatcher)
     {
         $this->solidaryAskRepository = $solidaryAskRepository;
+        $this->solidaryMatcher = $solidaryMatcher;
     }
 
     public function buildSolidaryTransportersSchedule(SolidaryTransportersSchedule $schedule): SolidaryTransportersSchedule
@@ -48,7 +53,46 @@ class SolidaryTransportersScheduleManager
 
         $solidaryAsks = $this->solidaryAskRepository->findBetweenTwoDates($schedule->getStartDate(), $schedule->getEndDate());
         
-        $schedule->setSchedule($solidaryAsks);
+        $scheduleAsks = [];
+        $currentDate = clone $schedule->getStartDate();
+        // We make the schedule. Day by day.
+        while ($currentDate<=$schedule->getEndDate()) {
+            $item = new SolidaryTransportersScheduleItem();
+            $item->setDate($currentDate);
+            
+            // We check if we found a solidaryAsk for this day
+            foreach ($solidaryAsks as $solidaryAsk) {
+                /**
+                 * @var SolidaryAsk $solidaryAsk
+                 */
+                if (
+                   ($solidaryAsk->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL && $solidaryAsk->getCriteria()->getFromDate()->format("d/m/Y")==$currentDate->format("d/m/Y")) ||
+                   ($solidaryAsk->getCriteria()->getFrequency()==Criteria::FREQUENCY_REGULAR && $solidaryAsk->getCriteria()->getFromDate()->format("d/m/Y")<=$currentDate->format("d/m/Y") && $solidaryAsk->getCriteria()->getToDate()->format("d/m/Y")>=$currentDate->format("d/m/Y"))
+                ) {
+                    $volunteer = $solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getSolidaryUser()->getUser();
+                    $item->setVolunteer($volunteer->getGivenName()." ".$volunteer->getFamilyName());
+
+                    // Determine the hour slot
+                    $structure = $solidaryAsk->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getStructure();
+                    $item->setSlot($this->solidaryMatcher->getHourSlot($solidaryAsk->getCriteria()->getFromTime(), $solidaryAsk->getCriteria()->getFromTime(), $structure));
+
+                    // different usefull ids
+                    $item->setSolidaryId($solidaryAsk->getSolidarySolution()->getSolidary()->getId());
+                    $item->setSolidarySolutionId($solidaryAsk->getSolidarySolution()->getId());
+
+                    // status
+                    $item->setStatus($solidaryAsk->getStatus());
+
+                    break;
+                }
+            }
+
+            $scheduleAsks[] = $item;
+            
+            $currentDate = $currentDate->modify('+1 day');
+        }
+
+        $schedule->setSchedule($scheduleAsks);
 
         return $schedule;
     }

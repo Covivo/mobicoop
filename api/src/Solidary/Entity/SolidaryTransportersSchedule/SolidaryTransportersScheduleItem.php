@@ -23,7 +23,6 @@
 
 namespace App\Solidary\Entity\SolidaryTransportersSchedule;
 
-use App\Solidary\Entity\SolidaryUser;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -32,7 +31,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class SolidaryTransportersScheduleItem
 {
     /**
-     * @var SolidaryUser First name and family name of the volunteer designated by this item
+     * @var string First name and family name of the volunteer designated by this item
      * @Groups({"readSolidaryTransportersSchedule"})
      */
     private $volunteer;
@@ -53,13 +52,13 @@ class SolidaryTransportersScheduleItem
      * @var int Id of the Solidary designated by this item
      * @Groups({"readSolidaryTransportersSchedule"})
      */
-    private $idSolidary;
+    private $solidaryId;
     
     /**
      * @var int Id of the SolidarySolution designated by this item
      * @Groups({"readSolidaryTransportersSchedule"})
      */
-    private $idSolidarySolution;
+    private $solidarySolutionId;
 
     /**
      * @var int Status of this item (status of the SolidaryAsk)
@@ -67,12 +66,12 @@ class SolidaryTransportersScheduleItem
      */
     private $status;
 
-    public function getVolunteer(): ?SolidaryUser
+    public function getVolunteer(): ?string
     {
         return $this->volunteer;
     }
 
-    public function setVolunteer(SolidaryUser $volunteer): self
+    public function setVolunteer(string $volunteer): self
     {
         $this->volunteer = $volunteer;
 
@@ -103,26 +102,26 @@ class SolidaryTransportersScheduleItem
         return $this;
     }
 
-    public function getIdSolidary(): ?int
+    public function getSolidaryId(): ?int
     {
-        return $this->idSolidary;
+        return $this->solidaryId;
     }
 
-    public function setIdSolidary(int $idSolidary): self
+    public function setSolidaryId(int $solidaryId): self
     {
-        $this->idSolidary = $idSolidary;
+        $this->solidaryId = $solidaryId;
         
         return $this;
     }
 
-    public function getIdSolidarySolution(): ?int
+    public function getSolidarySolutionId(): ?int
     {
-        return $this->idSolidarySolution;
+        return $this->solidarySolutionId;
     }
 
-    public function setIdSolidarySolution(int $idSolidarySolution): self
+    public function setSolidarySolutionId(int $solidarySolutionId): self
     {
-        $this->idSolidarySolution = $idSolidarySolution;
+        $this->solidarySolutionId = $solidarySolutionId;
         
         return $this;
     }
