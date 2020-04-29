@@ -10,6 +10,7 @@
     "all":"Tous",
     "startEvent" : "Début",
     "endEvent" : "Fin",
+    "noEvent":"Aucun événement",
     "routes": {
       "event": "/evenement/{id}",
       "getList": "/evenements/getEventList"
@@ -23,6 +24,7 @@
     "all":"All",
     "linePerPage":"Nomber of line per page",
     "seeAds":"See the ads",
+    "noEvent":"No event",
     "routes": {
       "event": "/event/{id}",
       "getList": "/events/getEventList"

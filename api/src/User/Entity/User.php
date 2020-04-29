@@ -945,7 +945,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var UserImport|null The user import data.
      *
-     * @ORM\OneToOne(targetEntity="\App\Import\Entity\UserImport", mappedBy="user")
+     * @ORM\OneToOne(targetEntity="\App\Import\Entity\UserImport", mappedBy="user", cascade={"remove"})
      * @Groups({"readUser"})
      * @MaxDepth(1)
      */

@@ -249,10 +249,11 @@
             </template>
             <v-date-picker
               ref="picker"
-              v-model ="birthDay.date"
+              v-model ="birthDay"
               :max="maxDate()"
               :locale="locale"
               first-day-of-week="1"
+              @change="save"
             />
           </v-menu>
 
@@ -500,7 +501,7 @@ export default {
       telephone: this.user.telephone,
       givenName: this.user.givenName,
       familyName: this.user.familyName,
-      birthDay: this.user.birthDate,
+      birthDay: this.user.birthDate ? this.user.birthDate.date : null,
       homeAddress: this.user.homeAddress ? this.user.homeAddress : null,
       phoneToken: this.user.phoneToken,
       phoneValidatedDate: this.user.phoneValidatedDate,
@@ -563,6 +564,11 @@ export default {
 
     };
   },
+   watch: {
+    menu (val) {
+      val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+    },
+   },
   computed : {
     years () {
       const currentYear = new Date().getFullYear();
@@ -571,8 +577,8 @@ export default {
       return Array.from({length: ageMax - ageMin}, (value, index) => (currentYear - ageMin) - index)
     },
     computedBirthdateFormat () {
-       if (this.birthDay.date) {
-        return moment.utc(this.birthDay.date).format("YYYY-MM-DD");
+       if (this.birthDay) {
+        return moment.utc(this.birthDay).format("YYYY-MM-DD");
       }
       return null;
     }
@@ -587,6 +593,9 @@ export default {
       this.homeAddress = address;
       this.disabledAddress = false;
     },
+    save (date) {
+      this.$refs.menu.save(date)
+    },
     validate () {
       if (this.$refs.form.validate()) {
         this.checkForm();
@@ -600,7 +609,7 @@ export default {
       updateUser.append("gender", this.gender);
       updateUser.append("givenName", this.givenName);
       updateUser.append("telephone", this.telephone);
-      updateUser.append("birthDay", this.birthDay.date);
+      updateUser.append("birthDay", this.birthDay);
       updateUser.append("avatar", this.avatar);
       updateUser.append("newsSubscription", this.newsSubscription);
       updateUser.append("phoneDisplay", this.phoneDisplay.value);
