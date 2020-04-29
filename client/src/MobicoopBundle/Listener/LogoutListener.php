@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Router;
-use Symfony\Component\Security\Core\Authentication\Token\Storage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
 
 class LogoutListener implements LogoutSuccessHandlerInterface
@@ -38,7 +38,7 @@ class LogoutListener implements LogoutSuccessHandlerInterface
     protected $tokenStorage;
     private $session;
 
-    public function __construct(Router $router, Storage\TokenStorage $tokenStorage, SessionInterface $session)
+    public function __construct(Router $router, TokenStorageInterface $tokenStorage, SessionInterface $session)
     {
         $this->router = $router;
         $this->tokenStorage = $tokenStorage;
