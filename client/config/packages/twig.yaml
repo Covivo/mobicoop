@@ -35,3 +35,4 @@ twig:
         matomoSiteId: '%env(resolve:MATOMO_SITE_ID)%'
         urlMobile: '%env(resolve:URL_MOBILE)%'
         urlAdmin: '%env(resolve:URL_ADMIN)%'
+        canAccessAdminFromCommunity: '%env(resolve:CAN_ACCESS_ADMIN_FROM_COMMUNITY)%'

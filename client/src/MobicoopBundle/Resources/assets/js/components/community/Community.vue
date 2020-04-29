@@ -34,7 +34,7 @@
             :url-alt-avatar="urlAltAvatar"
             :avatar-version="avatarVersion"
           />
-          <p>{{ user.isCommunityReferrer }} </p>
+          <p>{{ user && user.isCommunityReferrer }} </p>
           <!-- community buttons and map -->
           <v-row>
             <v-col
@@ -175,7 +175,7 @@
           </v-row>
           <!-- button for acces to the admin : only for creator -->
           <div
-            v-if="isCreator"
+            v-if="(isCreator && canAccessAdminFromCommunity !== false)"
           >
             <v-btn
               color="secondary"
@@ -407,6 +407,10 @@ export default {
       type: String,
       default: null
     },
+    canAccessAdminFromCommunity : {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -451,7 +455,7 @@ export default {
     }
 
     //If the current user = creator : we show the btton for acces to admin
-    if (this.community.user.id == this.user.id) {
+    if (this.user && (this.community.user.id == this.user.id)) {
       this.isCreator = true;
     }
 

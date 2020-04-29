@@ -6,7 +6,7 @@ import { useKibana } from './useKibana';
 import isAuthorized from '../../Auth/permissions'
 import getKibanaFilter from './kibanaFilters'
 
-const KibanaWidget = ({from="now-1y", width="100%", height="1200", url=process.env.REACT_APP_KIBANA_URL,dashboard=process.env.REACT_APP_KIBANA_DASHBOARD}) => {
+const KibanaWidget = ({from="now-1y", width="100%", height="1200", url=process.env.REACT_APP_KIBANA_URL}) => {
     const translate = useTranslate()
 
     const [kibanaStatus, kibanaError]  = useKibana()
@@ -31,6 +31,7 @@ const KibanaWidget = ({from="now-1y", width="100%", height="1200", url=process.e
     )
     */}
 
+    const dashboard = isAdmin ? process.env.REACT_APP_KIBANA_DASHBOARD : process.env.REACT_APP_KIBANA_COMMUNITY_DASHBOARD
     const style     = isAdmin ? {borderWidth:0} : {marginTop:'-70px', borderWidth:0}
     const filters   = isCommunityManager ? getKibanaFilter({from, communitiesList}) : ''
 

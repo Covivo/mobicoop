@@ -18,7 +18,7 @@ const getKibanaFilter = ({from, communitiesList}) => {
    if (communitiesList.lenght > 5) {
        console.error("User manages more than 5 communities. The dashboard may display incomplete data.")
    }
-   const filterPattern = communitiesList.slice(0,5).map( c => `( match_phrase:(community_names.keyword:'${encodeURI(c)}') )` ).join(',') 
+   const filterPattern = communitiesList.slice(0,5).map( c => `( match_phrase:(community_name.keyword:'${encodeURI(c)}') )` ).join(',') 
 
     const filters = 
     `&_g=

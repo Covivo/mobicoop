@@ -20,41 +20,34 @@
  *    LICENSE
  **************************/
 
-namespace App\Community\DataPersister;
+namespace App\Solidary\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Community\Entity\Community;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
-use App\Community\Service\CommunityManager;
+use App\Solidary\Entity\SolidaryTransportersSchedule\SolidaryTransportersSchedule;
+use App\Solidary\Service\SolidaryTransportersScheduleManager;
 
-final class CommunityDataPersister implements ContextAwareDataPersisterInterface
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+final class SolidaryTransportersScheduleDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $request;
-    private $security;
-    private $communityManager;
+    private $solidaryTransportersScheduleManager;
 
-    public function __construct(RequestStack $requestStack, Security $security, CommunityManager $communityManager)
+    public function __construct(SolidaryTransportersScheduleManager $solidaryTransportersScheduleManager)
     {
-        $this->request = $requestStack->getCurrentRequest();
-        $this->security = $security;
-        $this->communityManager = $communityManager;
+        $this->solidaryTransportersScheduleManager = $solidaryTransportersScheduleManager;
     }
 
     public function supports($data, array $context = []): bool
     {
-        // We post a community, we add the role community_manager to the author
-        return $data instanceof Community && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
+        return $data instanceof SolidaryTransportersSchedule;
     }
 
     public function persist($data, array $context = [])
     {
-        // call your persistence layer to save $data
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad community id is provided"));
+        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
+            $data = $this->solidaryTransportersScheduleManager->buildSolidaryTransportersSchedule($data);
         }
-        
-        $data = $this->communityManager->save($data);
         return $data;
     }
 

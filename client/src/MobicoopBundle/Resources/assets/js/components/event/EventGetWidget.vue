@@ -23,6 +23,7 @@
       >
         <v-col
           cols="4"
+          md="5"
           align="center"
           class="justify-center"
         >
@@ -36,6 +37,7 @@
         </v-col>
         <v-col
           cols="8"
+          md="7"
           class="mt-12"
         >
           <v-row class="mt-12">
