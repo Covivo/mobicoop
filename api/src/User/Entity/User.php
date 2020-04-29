@@ -63,7 +63,6 @@ use App\User\Controller\UserUpdatePassword;
 use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserUpdate;
 use App\User\Controller\UserDelete;
-use App\User\Controller\UserCheckSignUpValidationToken;
 use App\User\Controller\UserCheckPhoneToken;
 use App\User\Controller\UserUnsubscribeFromEmail;
 use App\User\Controller\UserMe;
@@ -78,7 +77,7 @@ use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\SolidaryFilter;
 use App\User\Filter\SolidaryCandidateFilter;
-use App\User\Filter\ValidatedDateTokenFilter;
+use App\User\Filter\EmailTokenFilter;
 use App\User\Filter\UnsubscribeTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
@@ -87,6 +86,7 @@ use App\Import\Entity\UserImport;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Entity\Delivery;
 use App\Auth\Entity\UserAuthAssignment;
+use App\Carpool\Entity\CarpoolProof;
 use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
@@ -105,7 +105,7 @@ use App\User\Controller\UserCanUseEmail;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readUser","mass","readSolidary"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readUser","mass","readSolidary","userStructure"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write","writeSolidary"}}
  *      },
  *      collectionOperations={
@@ -227,13 +227,6 @@ use App\User\Controller\UserCanUseEmail;
  *              },
  *              "security_post_denormalize"="is_granted('user_register',object)"
  *          },
- *          "checkSignUpValidationToken"={
- *              "method"="POST",
- *              "denormalization_context"={"groups"={"checkValidationToken"}},
- *              "normalization_context"={"groups"={"readUser"}},
- *              "path"="/users/checkSignUpValidationToken",
- *              "controller"=UserCheckSignUpValidationToken::class
- *          },
  *          "checkPhoneToken"={
  *              "method"="POST",
  *              "denormalization_context"={"groups"={"checkPhoneToken"}},
@@ -336,6 +329,18 @@ use App\User\Controller\UserCanUseEmail;
  *              "method"="PUT",
  *              "path"="/users/{id}/unsubscribe_user",
  *              "controller"=UserUnsubscribeFromEmail::class
+ *          },
+ *          "solidaries"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/solidaries",
+ *              "normalization_context"={"groups"={"readSolidary"}},
+ *              "security"="is_granted('solidary_list',object)"
+ *          },
+ *          "structures"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/structures",
+ *              "normalization_context"={"groups"={"userStructure"}},
+ *              "security"="is_granted('solidary_list',object)"
  *          }
  *      }
  * )
@@ -351,7 +356,7 @@ use App\User\Controller\UserCanUseEmail;
  * @ApiFilter(LoginFilter::class, properties={"login"})
  * @ApiFilter(PwdTokenFilter::class, properties={"pwdToken"})
  * @ApiFilter(UnsubscribeTokenFilter::class, properties={"unsubscribeToken"})
- * @ApiFilter(ValidatedDateTokenFilter::class, properties={"validatedDateToken"})
+ * @ApiFilter(EmailTokenFilter::class, properties={"emailToken"})
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
  * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary"})
  * @ApiFilter(SolidaryCandidateFilter::class, properties={"solidaryCandidate"})
@@ -397,7 +402,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread"})
+     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","userStructure"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -658,7 +663,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","checkValidationToken"})
      */
-    private $validatedDateToken;
+    private $emailToken;
 
     /**
      * @var \DateTimeInterface Updated date of the user.
@@ -974,6 +979,20 @@ class User implements UserInterface, EquatableInterface
     private $userDelegate;
 
     /**
+     * @var ArrayCollection|null The carpool proofs of the user as a driver.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\CarpoolProof", mappedBy="driver")
+     */
+    private $carpoolProofsAsDriver;
+
+    /**
+     * @var ArrayCollection|null The carpool proofs of the user as a driver.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\CarpoolProof", mappedBy="passenger")
+     */
+    private $carpoolProofsAsPassenger;
+
+    /**
      * @var string|null Token for unsubscribee the user from receiving email
      *
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -1000,7 +1019,13 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"massMigrate"})
      */
     private $alreadyRegistered;
-
+    
+    /**
+     * @var boolean|null true if the registration is from mobile
+     *
+     * @Groups({"readUser","write"})
+     */
+    private $registerFromMobile;
 
     /**
      * @var \DateTimeInterface Last user activity date
@@ -1011,11 +1036,23 @@ class User implements UserInterface, EquatableInterface
     private $lastActivityDate;
 
     /**
-     * The SolidaryUser possibly linked to this User
+     * @var SolidaryUser|null The SolidaryUser possibly linked to this User
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user", cascade={"persist","remove"})
      * @Groups({"readUser","write","readSolidary","writeSolidary"})
      */
     private $solidaryUser;
+
+    /**
+     * @var array|null used to get the solidaries of a user
+     * @Groups({"readSolidary"})
+     */
+    private $solidaries;
+
+    /**
+     * @var array|null used to get the structures of a user
+     * @Groups({"userStructure"})
+     */
+    private $structures;
 
     public function __construct($status = null)
     {
@@ -1040,12 +1077,15 @@ class User implements UserInterface, EquatableInterface
         $this->userNotifications = new ArrayCollection();
         $this->campaigns = new ArrayCollection();
         $this->deliveries = new ArrayCollection();
+        $this->carpoolProofsAsDriver = new ArrayCollection();
+        $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->roles = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
         $this->setStatus($status);
         $this->setAlreadyRegistered(false);
+        $this->setRegisterFromMobile(false);
     }
 
     public function getId(): ?int
@@ -1747,7 +1787,7 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->communityId;
     }
-    
+
     public function setCommunityId($communityId)
     {
         $this->communityId = $communityId;
@@ -2090,6 +2130,62 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getCarpoolProofsAsDriver()
+    {
+        return $this->carpoolProofsAsDriver->getValues();
+    }
+
+    public function addCarpoolProofsAsDriver(CarpoolProof $carpoolProofAsDriver): self
+    {
+        if (!$this->carpoolProofsAsDriver->contains($carpoolProofAsDriver)) {
+            $this->carpoolProofsAsDriver->add($carpoolProofAsDriver);
+            $carpoolProofAsDriver->setDriver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCarpoolProofsAsDriver(CarpoolProof $carpoolProofAsDriver): self
+    {
+        if ($this->carpoolProofsAsDriver->contains($carpoolProofAsDriver)) {
+            $this->carpoolProofsAsDriver->removeElement($carpoolProofAsDriver);
+            // set the owning side to null (unless already changed)
+            if ($carpoolProofAsDriver->getDriver() === $this) {
+                $carpoolProofAsDriver->setDriver(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCarpoolProofsAsPassenger()
+    {
+        return $this->carpoolProofsAsPassenger->getValues();
+    }
+
+    public function addCarpoolProofsAsPassenger(CarpoolProof $carpoolProofAsPassenger): self
+    {
+        if (!$this->carpoolProofsAsPassenger->contains($carpoolProofAsPassenger)) {
+            $this->carpoolProofsAsPassenger->add($carpoolProofAsPassenger);
+            $carpoolProofAsPassenger->setPassenger($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCarpoolProofsAsPassenger(CarpoolProof $carpoolProofAsPassenger): self
+    {
+        if ($this->carpoolProofsAsPassenger->contains($carpoolProofAsPassenger)) {
+            $this->carpoolProofsAsPassenger->removeElement($carpoolProofAsPassenger);
+            // set the owning side to null (unless already changed)
+            if ($carpoolProofAsPassenger->getPassenger() === $this) {
+                $carpoolProofAsPassenger->setPassenger(null);
+            }
+        }
+
+        return $this;
+    }
+
     public function getImport(): ?UserImport
     {
         return $this->import;
@@ -2138,14 +2234,14 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getValidatedDateToken(): ?string
+    public function getEmailToken(): ?string
     {
-        return $this->validatedDateToken;
+        return $this->emailToken;
     }
 
-    public function setValidatedDateToken(?string $validatedDateToken): self
+    public function setEmailToken(?string $emailToken): self
     {
-        $this->validatedDateToken = $validatedDateToken;
+        $this->emailToken = $emailToken;
         return $this;
     }
 
@@ -2316,6 +2412,18 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function isRegisterFromMobile(): ?bool
+    {
+        return $this->registerFromMobile;
+    }
+
+    public function setRegisterFromMobile(?bool $registerFromMobile): self
+    {
+        $this->registerFromMobile = $registerFromMobile;
+
+        return $this;
+    }
+
     public function isAlreadyRegistered(): ?bool
     {
         return $this->alreadyRegistered;
@@ -2353,6 +2461,30 @@ class User implements UserInterface, EquatableInterface
     public function setLastActivityDate(?\DateTimeInterface $lastActivityDate): self
     {
         $this->lastActivityDate = $lastActivityDate;
+
+        return $this;
+    }
+
+    public function getSolidaries()
+    {
+        return $this->solidaries;
+    }
+
+    public function setSolidaries(?array $solidaries): self
+    {
+        $this->solidaries = $solidaries;
+
+        return $this;
+    }
+
+    public function getStructures()
+    {
+        return $this->structures;
+    }
+
+    public function setStructures(?array $structures): self
+    {
+        $this->structures = $structures;
 
         return $this;
     }

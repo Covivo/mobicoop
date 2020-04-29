@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 
 use DateTime;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Security\AdVoter;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -190,11 +191,12 @@ class CarpoolController extends AbstractController
 
     /**
      * Delete a carpooling ad.
-     * @param ProposalManager $proposalManager
+     * @param AdManager $adManager
      * @param Request $request
+     * @param UserManager $userManager
      * @return JsonResponse
      */
-    public function carpoolAdDelete(ProposalManager $proposalManager, Request $request, UserManager $userManager)
+    public function carpoolAdDelete(AdManager $adManager, Request $request, UserManager $userManager)
     {
         if ($request->isMethod('DELETE')) {
             $data = json_decode($request->getContent(), true);
@@ -204,27 +206,11 @@ class CarpoolController extends AbstractController
                     'message' => 'error'
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
-            $proposal = $proposalManager->getProposal($data['adId']);
-            $this->denyAccessUnlessGranted('delete_ad', $proposal);
-
             // add the id of the deleter
             $data['deleterId'] = $userManager->getLoggedUser()->getId();
-            if ($response = $proposalManager->deleteProposal($data['adId'], $data)) {
-                return new JsonResponse(
-                    ["message" => "delete.success"],
-                    \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
-                );
-            }
-            return new JsonResponse(
-                ["message" => "delete.error"],
-                \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
-            );
-        }
 
-        return new JsonResponse(
-            ["message" => "delete.error"],
-            \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN
-        );
+            return $this->json($response = $adManager->deleteAd($data['adId'], $data));
+        }
     }
 
     /**

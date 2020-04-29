@@ -507,7 +507,10 @@ class ResultManager
                 }
                 // time
                 // the carpooler is passenger, the proposal owner is driver : we use his time if it's set
-                if ($proposal->getCriteria()->getFromTime()) {
+                // if the proposal is dynamic, we take the updated time of the position linked with the proposal
+                if ($matching['request']->getProposalOffer()->isDynamic()) {
+                    $item->setTime($matching['request']->getProposalOffer()->getPosition()->getUpdatedDate());
+                } elseif ($proposal->getCriteria()->getFromTime()) {
                     $item->setTime($proposal->getCriteria()->getFromTime());
                     $item->setMarginDuration($proposal->getCriteria()->getMarginDuration());
                 } else {
@@ -1081,8 +1084,13 @@ class ResultManager
                 // we have to calculate the starting time using the carpooler time
                 // we init the time to the one of the carpooler
                 if ($matching['offer']->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-                    // the carpooler proposal is punctual, we take the fromTime
-                    $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getFromTime();
+                    // if the proposal is dynamic, we take the updated time of the position linked with the proposal
+                    if ($matching['offer']->getProposalOffer()->isDynamic()) {
+                        $fromTime = $matching['offer']->getProposalOffer()->getPosition()->getUpdatedDate();
+                    } else {
+                        // the carpooler proposal is punctual, we take the fromTime
+                        $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getFromTime();
+                    }
                     $item->setMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getMarginDuration());
                 } else {
                     // the carpooler proposal is regular, we have to take the search/ad day's time
@@ -1779,6 +1787,7 @@ class ResultManager
         }
         
         // we return the result
+        
         $resultRole->setOutward($outward);
         $resultRole->setReturn($return);
         return $resultRole;
@@ -1821,9 +1830,9 @@ class ResultManager
                 ? $matching->getProposalOffer()->getCriteria()->getFromTime()
                 : $matching->getProposalRequest()->getCriteria()->getFromTime();
             if ($role == Ad::ROLE_DRIVER) {
-                $time = $time->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                $time = ($time == null) ? null : $time->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
             } else {
-                $time = $time->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                $time = ($time == null) ? null : $time->add(new \DateInterval('PT' . $pickupDuration . 'S'));
             }
             $item->setDate($date);
             $item->setTime($time);
@@ -2279,7 +2288,7 @@ class ResultManager
         // to check...
         $item->setComputedPrice($ask->getCriteria()->getPassengerComputedPrice());
         $item->setComputedRoundedPrice($ask->getCriteria()->getPassengerComputedRoundedPrice());
-
+                
         return $item;
     }
 

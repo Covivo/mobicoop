@@ -35,7 +35,7 @@ services:
     # Api
     Mobicoop\Bundle\MobicoopBundle\Api\Service\:
         resource: '@MobicoopBundle/Api/Service/*'
-    
+
     Mobicoop\Bundle\MobicoopBundle\Api\Serializer\:
         resource: '@MobicoopBundle/Api/Serializer/*'
 
@@ -84,6 +84,9 @@ services:
         resource: '@MobicoopBundle/Community/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Community\Security\:
         resource: '@MobicoopBundle/Community/Security/*'
+    Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager:
+        arguments:
+            $territoryFilter: '%env(json:COMMUNITY_TERRITORY_FILTER)%'
 
     # DataProvider
     Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider :
@@ -94,6 +97,7 @@ services:
             $authPath: '%env(resolve:API_AUTH_PATH)%'
             $loginPath: '%env(resolve:API_LOGIN_PATH)%'
             $refreshPath: '%env(resolve:API_REFRESH_PATH)%'
+            $loginTokenPath: '%env(resolve:API_LOGIN_TOKEN_PATH)%'
             $tokenId: '%env(resolve:API_TOKEN_ID)%'
         shared: false
 
@@ -104,6 +108,9 @@ services:
         resource: '@MobicoopBundle/Event/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Event\Security\:
         resource: '@MobicoopBundle/Event/Security/*'
+    Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager:
+        arguments:
+            $territoryFilter: '%env(json:EVENT_TERRITORY_FILTER)%'
 
     # Event Listener
     Mobicoop\Bundle\MobicoopBundle\EventListener\ExceptionListener:
@@ -137,7 +144,7 @@ services:
     # Permission
     Mobicoop\Bundle\MobicoopBundle\Permission\Service\:
         resource: '@MobicoopBundle/Permission/Service/*'
-    
+
     # Price
     Mobicoop\Bundle\MobicoopBundle\Price\Controller\:
         resource: '@MobicoopBundle/Price/Controller/*'

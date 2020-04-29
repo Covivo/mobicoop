@@ -42,6 +42,10 @@ doctrine:
                 st_intersects:      CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STIntersects
                 st_buffer:          CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STBuffer
                 point:              CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Point
+                acos:               DoctrineExtensions\Query\Mysql\Acos
+                cos:                DoctrineExtensions\Query\Mysql\Cos
+                radians:            DoctrineExtensions\Query\Mysql\Radians
+                sin:                DoctrineExtensions\Query\Mysql\Sin                
         mappings:
             Action:
                 is_bundle: false

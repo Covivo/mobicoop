@@ -34,6 +34,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
+use App\Carpool\Entity\Criteria;
 use App\Geography\Entity\Address;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -45,6 +46,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readSolidary","readUser"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
@@ -71,6 +73,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class SolidaryUser
 {
+    const DEFAULT_MAX_DISTANCE = 20000; // meters
+
     /**
      * @var int The id of this solidary user.
      *
@@ -101,7 +105,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Morning min time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMinTime;
@@ -109,7 +113,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Morning max time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMaxTime;
@@ -117,7 +121,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Afternoon min time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMinTime;
@@ -125,7 +129,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Afternoon max time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMaxTime;
@@ -133,7 +137,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Evening min time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMinTime;
@@ -141,7 +145,7 @@ class SolidaryUser
     /**
      * @var \DateTimeInterface Evening max time.
      *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMaxTime;
@@ -360,7 +364,7 @@ class SolidaryUser
      * @var ArrayCollection|null The special needs proposed by the solidaryUser.
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readUser","readSolidary","writeSolidary"})
      */
     private $needs;
 
@@ -368,10 +372,19 @@ class SolidaryUser
      * @var ArrayCollection The solidary user structure
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="solidaryUser", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readUser","readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidaryUserStructures;
+
+    /**
+     * @var ArrayCollection|null Solidary matchings.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="solidaryUser", cascade={"remove"}, orphanRemoval=true)
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $solidaryMatchings;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -393,6 +406,13 @@ class SolidaryUser
     {
         $this->needs = new ArrayCollection();
         $this->solidaryUserStructures = new ArrayCollection();
+        $this->setMaxDistance(self::DEFAULT_MAX_DISTANCE);
+        $this->setMMinTime(Criteria::getHoursSlots()['m']['min']);
+        $this->setMMaxTime(Criteria::getHoursSlots()['m']['max']);
+        $this->setAMinTime(Criteria::getHoursSlots()['a']['min']);
+        $this->setAMaxTime(Criteria::getHoursSlots()['a']['max']);
+        $this->setEMinTime(Criteria::getHoursSlots()['e']['min']);
+        $this->setEMaxTime(Criteria::getHoursSlots()['e']['max']);
     }
     
     public function getId(): ?int
@@ -863,6 +883,29 @@ class SolidaryUser
             }
         }
 
+        return $this;
+    }
+
+    public function getSolidaryMatchings()
+    {
+        return $this->solidaryMatchings->getValues();
+    }
+    
+    public function addSolidaryMatching(SolidaryMatching $solidaryMatching): self
+    {
+        if (!$this->solidaryMatchings->contains($solidaryMatching)) {
+            $this->solidaryMatchings[] = $solidaryMatching;
+        }
+        
+        return $this;
+    }
+    
+    public function removeSolidaryMatching(SolidarySolution $solidaryMatching): self
+    {
+        if ($this->solidaryMatchings->contains($solidaryMatching)) {
+            $this->solidaryMatchings->removeElement($solidaryMatching);
+        }
+        
         return $this;
     }
 

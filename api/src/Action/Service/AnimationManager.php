@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,37 +20,25 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Controller;
+namespace App\Action\Service;
 
-use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\Response;
-use App\User\Entity\User;
-use App\User\Service\UserManager;
+use App\Action\Entity\Animation;
+use App\Action\Service\ActionManager;
+use Doctrine\ORM\EntityManagerInterface;
 
-/**
- * Controller class for UserCheckSignUpValidationToken
- *
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- */
-class UserCheckSignUpValidationToken
+class AnimationManager
 {
-    use TranslatorTrait;
+    private $entityManager;
+    private $actionManager;
 
-    private $userManager;
-
-    public function __construct(UserManager $userManager)
+    public function __construct(EntityManagerInterface $entityManager, ActionManager $actionManager)
     {
-        $this->userManager = $userManager;
+        $this->entityManager = $entityManager;
+        $this->actionManager = $actionManager;
     }
 
-    /**
-     * This method is invoked when
-     *
-     * @param $data
-     * @return Response
-     */
-    public function __invoke(User $data)
+    public function treatAnimation(Animation $animation)
     {
-        return $this->userManager->checkValidatedDateToken($data);
+        $this->actionManager->handleAction($animation->getName(), $animation);
     }
 }

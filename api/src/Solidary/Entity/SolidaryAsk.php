@@ -29,6 +29,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\Criteria;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -41,8 +43,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={
  *          "get",
@@ -55,21 +57,22 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class SolidaryAsk
 {
-    const STATUS_INITIATED = 1;
-    const STATUS_PENDING_AS_DRIVER = 2;
-    const STATUS_PENDING_AS_PASSENGER = 3;
-    const STATUS_ACCEPTED_AS_DRIVER = 4;
-    const STATUS_ACCEPTED_AS_PASSENGER = 5;
-    const STATUS_DECLINED_AS_DRIVER = 6;
-    const STATUS_DECLINED_AS_PASSENGER = 7; // asked by remi
+    const STATUS_ASKED = 0;
+    const STATUS_REFUSED = 1;
+    const STATUS_PENDING = 2;
+    const STATUS_LOOKING_FOR_SOLUTION = 3;
+    const STATUS_FOLLOW_UP = 4;
+    const STATUS_CLOSED = 5;
     
+    const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this solidary ask.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read"})
+     * @Groups({"readSolidary"})
      */
     private $id;
 
@@ -78,7 +81,7 @@ class SolidaryAsk
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $status;
 
@@ -86,7 +89,7 @@ class SolidaryAsk
      * @var \DateTimeInterface Creation date of the solidary ask.
      *
      * @ORM\Column(type="datetime")
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $createdDate;
 
@@ -94,16 +97,17 @@ class SolidaryAsk
      * @var \DateTimeInterface Updated date of the solidary ask.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $updatedDate;
 
     /**
      * @var SolidarySolution The solidary solution this Ask is for.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidarySolution")
+     * @Assert\NotBlank
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", inversedBy="solidaryAsk")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $solidarySolution;
 
@@ -112,14 +116,45 @@ class SolidaryAsk
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryAskHistory", mappedBy="solidaryAsk", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"id" = "ASC"})
-     * @Groups({"read","write"})
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      * ApiSubresource(maxDepth=1)
      */
     private $solidaryAskHistories;
 
+    /**
+     * @var string The internal message to sent to the volunteer
+     * @Groups({"writeSolidary"})
+     */
+    private $message;
+
+    /**
+     * @var string The sms to sent to the volunteer
+     * @Groups({"writeSolidary"})
+     */
+    private $sms;
+
+    /**
+     * @var Ask|null The Ask possibly linked to this SolidaryAsk
+     *
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="solidaryAsk", cascade={"persist","remove"})
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $ask;
+
+    /**
+     * @var Criteria|null Criteria of this SolidaryAsk
+     *
+     * @Assert\NotBlank
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="solidaryAsk", cascade={"persist","remove"})
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $criteria;
+
     public function __construct()
     {
+        $this->id = self::DEFAULT_ID;
         $this->solidaryAskHistories = new ArrayCollection();
     }
     
@@ -204,6 +239,54 @@ class SolidaryAsk
         return $this;
     }
 
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    public function setMessage(string $message): self
+    {
+        $this->message = $message;
+
+        return $this;
+    }
+
+    public function getSms(): ?string
+    {
+        return $this->sms;
+    }
+
+    public function setSms(string $sms): self
+    {
+        $this->sms = $sms;
+
+        return $this;
+    }
+
+    public function getAsk(): ?Ask
+    {
+        return $this->ask;
+    }
+
+    public function setAsk(Ask $ask): self
+    {
+        $this->ask = $ask;
+
+        return $this;
+    }
+
+    public function getCriteria(): ?Criteria
+    {
+        return $this->criteria;
+    }
+
+    public function setCriteria(Criteria $criteria): self
+    {
+        $this->criteria = $criteria;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
     
     /**
@@ -224,19 +307,5 @@ class SolidaryAsk
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \Datetime());
-    }
-
-    /**
-     * User related by this Ask
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoUserRelated()
-    {
-        if ($this->getMatching()->getProposalOffer()->getUser()->getId()==$this->getUser()->getId()) {
-            $this->setUserRelated($this->getMatching()->getProposalRequest()->getUser());
-        } else {
-            $this->setUserRelated($this->getMatching()->getProposalOffer()->getUser());
-        }
     }
 }

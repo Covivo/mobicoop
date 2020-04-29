@@ -47,6 +47,7 @@ class AdManager
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
+        $this->dataProvider->setFormat(DataProvider::RETURN_OBJECT);
         $this->security = $security;
     }
 
@@ -288,6 +289,22 @@ class AdManager
     }
 
     /**
+     * Delete an Ad
+     *
+     * @param int $id The id of the ad to delete
+     *
+     * @param array $data
+     * @return boolean The result of the deletion.
+     */
+    public function deleteAd(int $id, ?array $data)
+    {
+        if ($response = $this->dataProvider->delete($id, $data)) {
+            return $response->getValue();
+        }
+        return null;
+    }
+
+    /**
      * Map data json array to and Ad
      *
      * @param array $data
@@ -501,7 +518,7 @@ class AdManager
                 $ad->setEventId(str_replace("/events/", "", $event));
             }
         }
-
+        
         // filters
         if (isset($data['filters'])) {
             $ad->setFilters($data['filters']);
@@ -511,7 +528,13 @@ class AdManager
             $ad->setCancellationMessage($data['cancellationMessage']);
         }
 
-//        dump($ad);die;
+        if (isset($data['deletionMessage'])) {
+            $ad->setDeletionMessage($data['deletionMessage']);
+        }
+
+        if (isset($data['deleterId'])) {
+            $ad->setDeleterId($data['deleterId']);
+        }
 
         return $ad;
     }

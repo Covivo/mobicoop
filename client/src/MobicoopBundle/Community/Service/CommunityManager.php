@@ -35,16 +35,18 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 class CommunityManager
 {
     private $dataProvider;
+    private $territoryFilter;
 
     /**
      * Constructor.
      *
      * @param DataProvider $dataProvider
      */
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(DataProvider $dataProvider, array $territoryFilter)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Community::class);
+        $this->territoryFilter = $territoryFilter;
     }
 
     /**
@@ -88,6 +90,9 @@ class CommunityManager
             foreach ($search as $key => $value) {
                 $params[$key] = $value;
             }
+        }
+        if (count($this->territoryFilter)>0) {
+            $params['territory'] = $this->territoryFilter;
         }
         $response = $this->dataProvider->getCollection($params);
         if ($response->getCode() >=200 && $response->getCode() <= 300) {

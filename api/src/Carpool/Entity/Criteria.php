@@ -31,6 +31,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\User\Entity\Car;
 use App\Geography\Entity\Direction;
 use App\PublicTransport\Entity\PTJourney;
+use App\Solidary\Entity\SolidaryAsk;
+use App\Solidary\Entity\SolidaryMatching;
 
 /**
  * Carpooling : criteria (restriction for an offer / selection for a request).
@@ -53,7 +55,7 @@ class Criteria
     
     const FREQUENCY_PUNCTUAL = 1;
     const FREQUENCY_REGULAR = 2;
-    
+
     /**
      * @var int The id of this criteria.
      *
@@ -623,6 +625,22 @@ class Criteria
      * @Groups({"read","write","thread"})
      */
     private $solidaryExclusive;
+
+    /**
+     * @var SolidaryAsk The SolidaryAsk that uses this criteria.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", mappedBy="criteria")
+     * @Groups({"read","write"})
+     */
+    private $solidaryAsk;
+
+    /**
+     * @var SolidaryMatching The SolidaryMatching that uses this criteria.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="criteria")
+     * @Groups({"read","write"})
+     */
+    private $solidaryMatching;
 
     /**
      * @var boolean Avoid motorway.
@@ -1568,6 +1586,30 @@ class Criteria
         return $this;
     }
 
+    public function getSolidaryAsk(): ?SolidaryAsk
+    {
+        return $this->solidaryAsk;
+    }
+    
+    public function setSolidaryAsk(?SolidaryAsk $solidaryAsk): self
+    {
+        $this->solidaryAsk = $solidaryAsk;
+        
+        return $this;
+    }
+
+    public function getSolidaryMatching(): ?SolidaryMatching
+    {
+        return $this->solidaryMatching;
+    }
+    
+    public function setSolidaryMatching(?SolidaryMatching $solidaryMatching): self
+    {
+        $this->solidaryMatching = $solidaryMatching;
+        
+        return $this;
+    }
+
     public function avoidMotorway(): ?bool
     {
         return $this->avoidMotorway;
@@ -1762,6 +1804,15 @@ class Criteria
         // $directionDriverId . $delimiter .
         // $directionPassengerId . $delimiter .
         // ($this->createdDate ? $this->createdDate->format('Y-m-d H:i:s') : '') . $delimiter;
+    }
+
+    public static function getHoursSlots(): array
+    {
+        return [
+            "m" => ["min" => new \DateTime("06:00:00"),"max" => new \DateTime("12:00:00")],
+            "a" => ["min" => new \DateTime("12:00:01"),"max" => new \DateTime("19:00:00")],
+            "e" => ["min" => new \DateTime("19:00:01"),"max" => new \DateTime("23:00:00")]
+        ];
     }
 
     // DOCTRINE EVENTS

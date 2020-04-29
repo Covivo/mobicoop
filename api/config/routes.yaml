@@ -4,6 +4,9 @@ api_login_check_server:
 # api authentication for users
 api_login_check_user:
     path: /login
+api_login_check_user_token:
+    path: /login-token
+
 # api documentation
 swagger_ui:
     path: /doc

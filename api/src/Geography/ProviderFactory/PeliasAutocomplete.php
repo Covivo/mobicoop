@@ -42,7 +42,12 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
     /**
      * @var string
      */
-    const GEOCODE_ENDPOINT_URL = 'autocomplete?text=%s&size=%d&lang=%s';
+    const GEOCODE_ENDPOINT_URL = 'autocomplete?text=%s&size=%d&lang=%s&layers=locality';
+
+    /**
+     * @var string
+     */
+    const GEOCODE_ENDPOINT_PRIORITIZATION = '&focus.point.lat=%f&focus.point.lon=%f';
 
     /**
      * @var string
@@ -74,6 +79,12 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
     {
         $address = $query->getText();
         $url = sprintf($this->uri.self::GEOCODE_ENDPOINT_URL, urlencode($address), $query->getLimit(), $query->getLocale());
+        if (!is_null($query->getData('userPrioritize'))) {
+            $userPrioritize = $query->getData('userPrioritize');
+            $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $userPrioritize['latitude'], $userPrioritize['longitude']);
+        } elseif (!is_null($query->getData('latitude')) && !is_null($query->getData('longitude'))) {
+            $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $query->getData('latitude'), $query->getData('longitude'));
+        }
         return $this->executeQuery($url);
     }
     /**
@@ -111,7 +122,6 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
             return new AddressCollection([]);
         }
         $results = [];
-        //var_dump($locations);exit;
         foreach ($locations as $location) {
             $props = $location['properties'];
 
@@ -119,6 +129,15 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
             // if ($props['match_type'] == 'fallback' && $props['confidence'] < self::MIN_CONFIDENCE) {
             //     continue;
             // }
+
+            // we check if the search has an id
+            // we search first the locality id, then other ids
+            $id = null;
+            if (isset($props['locality_gid'])) {
+                $id = preg_replace('/[^0-9]/', '', $props['locality_gid']);
+            } elseif (isset($props['id'])) {
+                $id = $props['id'];
+            } // todo : complete with other ids if needed
 
             // we check if the search is a venue
             $venue = null;
@@ -161,6 +180,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
                 'country' => isset($props['country']) ? $props['country'] : null,
                 'countryCode' => isset($props['country_a']) ? strtoupper($props['country_a']) : null
             ]);
+            $result->setId($id);
             $result->setVenue($venue);
             $results[] = $result;
         }

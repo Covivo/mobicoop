@@ -24,6 +24,7 @@
 namespace App\Action\Service;
 
 use App\Action\Entity\Action;
+use App\Action\Entity\Animation;
 use App\Action\Repository\ActionRepository;
 use App\Action\Service\DiaryManager;
 use App\App\Entity\App;
@@ -66,7 +67,7 @@ class ActionManager
      * @param Object $object        Event of the action
      * @return void
      */
-    public function handleEvent(string $actionName, Object $object)
+    public function handleAction(string $actionName, Object $object=null)
     {
         // Get the action
         $action = $this->actionRepository->findOneBy(['name'=>$actionName]);
@@ -86,7 +87,26 @@ class ActionManager
                 break;
             case SolidaryUpdated::NAME:$this->onSolidaryUpdated($action, $object);
                 break;
-            default:
+            default: $this->treatAction($action, $object);
+                break;
+        }
+    }
+
+    private function treatAction(Action $action, Animation $animation)
+    {
+        if ($action->isInLog()) {
+            // To do
+        }
+        if ($action->isInDiary()) {
+            $this->diaryManager->addDiaryEntry(
+                $action,
+                $animation->getUser(),
+                $animation->getAuthor(),
+                $animation->getComment(),
+                $animation->getSolidary(),
+                $animation->getSolidarySolution(),
+                $animation->getProgression()
+            );
         }
     }
 

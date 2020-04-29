@@ -20,6 +20,8 @@ home_logout:
         fr: /utilisateur/compte-supprimer
         en: /user/account-delete
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::indexLogout
+
+
 ###############
 # user routes #
 ###############
@@ -30,6 +32,12 @@ user_login:
         fr: /utilisateur/connexion
         en: /user/login
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
+
+user_login_token:
+    path:
+        fr: /utilisateur/login-token
+        en: /user/login-token
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidationCheck
 
 # logout
 user_logout:
@@ -48,14 +56,14 @@ user_sign_up_validation:
         en: /user/signup/validation/{email}/{token}
     defaults:
         token: ""
-        email: ""
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
+
 
 # user update address
 user_homeAddress_update:
     path:
         fr: /utilisateur/profil/modifier/adresse
-        en: /user/profile/update/address   
+        en: /user/profile/update/address
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::UserAddressUpdate
 
 # profile update
@@ -243,7 +251,7 @@ user_communities_owned:
     path:
         fr: /user/communities/owned
         en: /user/communities/owned
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userOwnedCommunities  
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userOwnedCommunities
 
 # Get events created by a user (POST)
 user_created_events:
@@ -251,16 +259,16 @@ user_created_events:
     path:
         fr: /user/events/created
         en: /user/events/created
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCreatedEvents   
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCreatedEvents
 
 # Get proposals with accepted asks (AJAX)
 user_get_accepted_proposals:
     methods: [GET]
     path:
         fr: /user/proposals/accepted
-        en: /user/proposals/accepted 
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposalsAccepted   
-      
+        en: /user/proposals/accepted
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposalsAccepted
+
 
 ##################
 # carpool routes #
@@ -393,6 +401,7 @@ rdex_journey:
         en: /carpool/rdexJourney
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney
 
+
 ####################
 # community routes #
 ####################
@@ -512,16 +521,26 @@ community_user_available:
     requirements:
         userId: '\d+'
 
+
 ##########################
 # editorial pages routes #
 ##########################
 
-#get an article (AJAX)
+# get an article
+article_get:
+    path:
+        fr: /article/{id}
+        en: /article/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::articleGet
+    requirements:
+        id: '\d+'
+
+# get an article (AJAX)
 article:
     path:
         fr: /article
         en: /article
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::articleGet
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::article
 
 # display project page
 project:
@@ -556,15 +575,15 @@ insurance_policy:
     path:
         fr: /assurance
         en: /insurance
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showInsurancePolicy    
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showInsurancePolicy
 
 # display history page
 history:
     path:
         fr: /historique
         en: /history
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showHistroy    
-    
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showHistory
+
 # display actors page
 actors:
     path:
@@ -577,14 +596,14 @@ solidary_carpool:
     path:
         fr: /covoiturage-solidaire
         en: /solidary-carpool
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showSolidaryCarpool    
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showSolidaryCarpool
 
 # display become a partner page
 become_partner:
     path:
         fr: /devenir-partenaire
         en: /become-partner
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showBecomePartner    
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showBecomePartner
 
 # display FAQ page
 FAQ:
@@ -598,7 +617,7 @@ ToolBox:
     path:
         fr: /boite-a-outils
         en: /toolBox
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showToolbox        
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showToolbox
 
 # display CommunityInfos page
 CommunityInfos:
@@ -634,7 +653,8 @@ LastExternalArticles:
     path:
         fr: /articles/derniers/externes
         en: /articles/last/extern
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::lastExternalArticles 
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::lastExternalArticles
+
 
 ####################
 # geography routes #
@@ -646,6 +666,7 @@ georouter:
         fr: /georoute
         en: /georoute
     controller: Mobicoop\Bundle\MobicoopBundle\Geography\Controller\GeoRouterController::geoRoute
+
 
 ####################
 # contact routes #
@@ -663,6 +684,7 @@ contact_send:
         fr: /contact/send
         en: /contact/send
     controller: Mobicoop\Bundle\MobicoopBundle\Communication\Controller\ContactController:sendContact
+
 
 ####################
 # solidarity routes #
@@ -682,9 +704,9 @@ solidary_ask:
     controller: Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\SolidaryController:solidaryCreate
 
 
-####################
-# community routes #
-####################
+################
+# event routes #
+################
 
 # display events
 event_list:
@@ -693,7 +715,7 @@ event_list:
         en: /events
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventList
 
-# Get the communities (AJAX)
+# Get the events (AJAX)
 event_get_list:
     methods: [POST]
     path:
@@ -708,7 +730,7 @@ event_create:
         en: /event/create
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventCreate
 
-# display one community
+# display one event
 event_show:
     path:
         fr: /evenement/{id}
@@ -717,7 +739,7 @@ event_show:
     requirements:
         id: '\d+'
 
-# display one widget
+# display widget
 event_widget:
     path:
         fr: /evenement-widget/{id}
@@ -726,7 +748,7 @@ event_widget:
     requirements:
         id: '\d+'
 
-# display one widget
+# get widget
 event_get_widget:
     path:
         fr: /evenement-get-widget/{id}
@@ -743,6 +765,11 @@ event_report:
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventReport
     requirements:
         id: '\d+'
+
+
+###############
+# misc routes #
+###############
 
 # round price
 round_price:

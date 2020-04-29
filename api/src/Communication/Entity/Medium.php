@@ -39,8 +39,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"read","readSolidary"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"write","writeSolidary"}}
  *      },
  *      collectionOperations={"get"},
  *      itemOperations={"get"}
@@ -62,7 +62,7 @@ class Medium
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("read")
+     * @Groups({"read","readSolidary","writeSolidary"})
      */
     private $id;
 
@@ -71,7 +71,7 @@ class Medium
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","readSolidary","writeSolidary"})
      */
     private $name;
 

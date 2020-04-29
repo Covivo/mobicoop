@@ -2,6 +2,7 @@
   <v-content>
     <!-- The Ask is just Initiated -->
     <!-- Only the Ask User can make a formal request of carpool -->
+
     <div v-if="status==1 && canUpdateAsk">
       <v-btn
         v-if="driver"
@@ -12,6 +13,7 @@
         rounded
         depressed
         :loading="loading"
+        dense
         @click="updateStatus(2,'driver')"
       >
         {{ $t('button.askCarpoolAsDriver') }}

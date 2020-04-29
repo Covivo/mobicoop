@@ -55,21 +55,4 @@ class ProposalManager
         $response = $this->dataProvider->getItem($id);
         return $response->getValue();
     }
-    
-    /**
-     * Delete a proposal
-     *
-     * @param int $id The id of the proposal to delete
-     *
-     * @param array|null $data
-     * @return boolean The result of the deletion.
-     */
-    public function deleteProposal(int $id, ?array $data)
-    {
-        $response = $this->dataProvider->delete($id, $data);
-        if ($response->getCode() == 204) {
-            return true;
-        }
-        return false;
-    }
 }

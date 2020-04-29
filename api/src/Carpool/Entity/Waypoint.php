@@ -77,6 +77,22 @@ class Waypoint
     private $destination;
 
     /**
+     * @var boolean The waypoint is a floating waypoint (for dynamic carpooling).
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $floating;
+
+    /**
+     * @var boolean The waypoint has been reached during a dynamic carpooling.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $reached;
+
+    /**
      * @var Proposal|null The proposal that created the point.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="waypoints")
@@ -180,6 +196,30 @@ class Waypoint
     public function setDestination(bool $isDestination): self
     {
         $this->destination = $isDestination;
+
+        return $this;
+    }
+
+    public function isFloating(): bool
+    {
+        return $this->floating ? true : false;
+    }
+
+    public function setFloating(?bool $floating): self
+    {
+        $this->floating = $floating;
+
+        return $this;
+    }
+
+    public function isReached(): bool
+    {
+        return $this->reached ? true : false;
+    }
+
+    public function setReached(?bool $reached): self
+    {
+        $this->reached = $reached;
 
         return $this;
     }

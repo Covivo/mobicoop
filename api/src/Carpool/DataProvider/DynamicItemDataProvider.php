@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,43 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Controller;
+namespace App\Carpool\DataProvider;
 
-use App\Carpool\Service\ProposalManager;
-use App\Carpool\Entity\Proposal;
-use App\DataProvider\Entity\Response;
-use App\TranslatorTrait;
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use App\Carpool\Entity\Dynamic;
+use App\Carpool\Service\DynamicManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Controller class for proposal delete.
+ * Item data provider for dynamic ad.
  *
  */
-class ProposalDelete
+final class DynamicItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    use TranslatorTrait;
-    private $proposalManager;
-    private $request;
-
-    public function __construct(ProposalManager $proposalManager, RequestStack $requestStack)
+    protected $request;
+    
+    public function __construct(RequestStack $requestStack, DynamicManager $dynamicManager)
     {
-        $this->proposalManager = $proposalManager;
         $this->request = $requestStack->getCurrentRequest();
+        $this->dynamicManager = $dynamicManager;
     }
-
-    /**
-     * This method is invoked when a proposal is deleted.
-     *
-     * @param Proposal $data
-     * @return Response
-     * @throws \Exception
-     */
-    public function __invoke(Proposal $data)
+    
+    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad proposal id is provided"));
-        }
-        $data = $this->proposalManager->deleteProposal($data, json_decode($this->request->getContent(), true));
-        return $data;
+        return Dynamic::class === $resourceClass;
+    }
+    
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Dynamic
+    {
+        return $this->dynamicManager->getDynamic($id);
     }
 }

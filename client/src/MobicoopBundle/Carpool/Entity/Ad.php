@@ -373,6 +373,20 @@ class Ad implements ResourceInterface, \JsonSerializable
      */
     private $cancellationMessage;
 
+    /**
+     * @var string|null The message if Ad owner is deleting his Ad
+     *
+     * @Groups({"post", "put"})
+     */
+    private $deletionMessage;
+
+    /**
+     * @var int|null The user id of the deleter.
+     *
+     *@Groups({"post","put"})
+     */
+    private $deleterId;
+
     public function __construct($id=null)
     {
         $this->outwardWaypoints = [];
@@ -995,6 +1009,29 @@ class Ad implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getDeleterId(): ?int
+    {
+        return $this->deleterId;
+    }
+
+    public function setDeleterId(?int $deleterId): self
+    {
+        $this->deleterId = $deleterId;
+
+        return $this;
+    }
+
+    public function getDeletionMessage(): ?string
+    {
+        return $this->deletionMessage;
+    }
+
+    public function setDeletionMessage(?string $deletionMessage): Ad
+    {
+        $this->deletionMessage = $deletionMessage;
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -1005,9 +1042,9 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'outwardWaypoints' => $this->getOutwardWaypoints(),
                 'returnWaypoints' => $this->getReturnWaypoints(),
                 'outwardDate' => !is_null($this->getOutwardDate()) ? $this->getOutwardDate()->format('Y-m-d') : null,
-                'outwardLimitDate' => $this->getOutwardLimitDate(),
+                'outwardLimitDate' => !is_null($this->getOutwardLimitDate()) ? $this->getOutwardLimitDate()->format('Y-m-d') : null,
                 'returnDate' => !is_null($this->getReturnDate()) ? $this->getReturnDate()->format('Y-m-d') : null,
-                'returnLimitDate' => $this->getReturnLimitDate(),
+                'returnLimitDate' => !is_null($this->getReturnLimitDate()) ? $this->getReturnLimitDate()->format('Y-m-d') : null,
                 'outwardTime' => $this->getOutwardTime(),
                 'returnTime' => $this->getReturnTime(),
                 'priceKm' => $this->getPriceKm(),
@@ -1021,7 +1058,11 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'origin' => $this->getOrigin(),
                 'destination' => $this->getDestination(),
                 'schedule' => $this->getSchedule(),
-                'paused' => $this->isPaused()
+                'paused' => $this->isPaused(),
+                'results' => $this->getResults(),
+                'frequency' => $this->getFrequency(),
+                'potentialCarpoolers' => $this->getPotentialCarpoolers(),
+                'asks' => $this->getAsks()
             ];
     }
 }

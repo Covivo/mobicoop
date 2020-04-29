@@ -1,7 +1,6 @@
 <?php
-
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,40 +20,9 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Controller;
+namespace App\Action\Exception;
 
-use App\Carpool\Entity\Ad;
-use App\Carpool\Service\AdManager;
-use App\TranslatorTrait;
-
-/**
- * Controller class for ad post.
- *
- * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- */
-class AdPost
+class ActionException extends \LogicException
 {
-    use TranslatorTrait;
-    
-    private $adManager;
-    
-    public function __construct(AdManager $adManager)
-    {
-        $this->adManager = $adManager;
-    }
-
-    /**
-     * This method is invoked when a new ad is posted.
-     *
-     * @param Ad $data
-     * @return Ad
-     */
-    public function __invoke(Ad $data): Ad
-    {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
-        }
-        $data = $this->adManager->createAd($data);
-        return $data;
-    }
+    const INVALID_DATA_PROVIDED = "Invalid data provided";
 }

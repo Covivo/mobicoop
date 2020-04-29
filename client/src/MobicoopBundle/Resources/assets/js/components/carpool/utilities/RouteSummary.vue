@@ -6,7 +6,7 @@
   >
     <v-col
       v-if="time"
-      cols="1"
+      cols="2"
     >
       <span
         class="body-1 font-weight-bold"
@@ -20,7 +20,7 @@
       v-if="!compact"
       cols="5"
       class="text-right"
-      :class="type==1 ? 'text-left' : regular ? 'text-left' : 'text-left  mr-n4'"
+      :class="type==1 ? 'text-left ml-6' : regular ? 'text-left' : 'text-left  mr-n4'"
     >
       <v-list-item
         two-line
@@ -94,7 +94,7 @@
       cols="1"
     >
       <v-icon
-        size="64"
+        size="60"
         :color="iconColor"
       >
         mdi-ray-start-end
@@ -104,7 +104,7 @@
     <!-- Destination -->
     <v-col
       :cols="compact ? null : '5'"
-      :class="type==1 ? 'text-left' : regular ? 'text-left ml-4' : 'text-right  ml-6'"
+      :class="type==1 ? 'text-left ml-3' : regular ? 'text-left ml-4' : 'text-right  ml-6'"
     >
       <v-list-item
         two-line
@@ -124,7 +124,7 @@
           </v-list-item-title>
           <v-list-item-subtitle
             v-if="type==2"
-            :class="(regular && type==2) ? 'subtitle-2 font-weight-bold ml-6' : ((regular) ? 'subtitle-2 font-weight-bold' : 'subtitle-2')"
+            :class="(regular && type==2) ? 'subtitle-2 font-weight-bold' : ((regular) ? 'subtitle-2 font-weight-bold' : 'subtitle-2')"
           >
             <span :class="textColorClass">{{ destinationSecondLine }}</span>
           </v-list-item-subtitle>
@@ -257,7 +257,7 @@ export default {
   },
   methods: {
     formatTime(time) {
-      return moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute"));
+      return moment(time).isValid() ? moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute")) : time;
     }
   }
 };

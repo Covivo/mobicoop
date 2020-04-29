@@ -21,42 +21,32 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Controller;
+namespace App\Carpool\DataProvider;
 
-use App\Carpool\Service\AdManager;
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Carpool\Entity\Ad;
-use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\RequestStack;
+use App\Carpool\Service\AdManager;
 
 /**
- * Controller class for ad put.
- *
+ * Item data provider for put Ad.
  */
-class AdPut
+final class AdPutDataProvider implements RestrictedDataProviderInterface, ItemDataProviderInterface
 {
-    use TranslatorTrait;
-    
-    private $adManager;
-    private $request;
+    protected $adManager;
 
-    public function __construct(AdManager $adManager, RequestStack $requestStack)
+    public function __construct(AdManager $adManager)
     {
         $this->adManager = $adManager;
-        $this->request = $requestStack->getCurrentRequest();
+    }
+    
+    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    {
+        return Ad::class === $resourceClass && $operationName === "put";
     }
 
-    /**
-     * This method is invoked when an Ad is updated.
-     *
-     * @param Ad $data
-     * @return Ad
-     */
-    public function __invoke(Ad $data): Ad
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
-        }
-        $data = $this->adManager->updateAd($data, $this->request->get('mail_search_link'));
-        return $data;
+        return $this->adManager->getFullAd($id);
     }
 }

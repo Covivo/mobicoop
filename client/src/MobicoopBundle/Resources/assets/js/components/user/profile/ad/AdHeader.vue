@@ -86,7 +86,7 @@
       >
         <v-btn
           v-if="isPausable && !isArchived && paused"
-          class="success my-1 mr-1"
+          class="success my-1"
           icon
           :loading="loading"
           @click="pauseAd"
@@ -110,7 +110,7 @@
         </v-btn>
         <v-btn
           v-if="!isArchived"
-          class="secondary ma-1"
+          class="secondary my-1"
           icon
           :loading="loading"
           @click="updateAd"
@@ -121,7 +121,7 @@
         </v-btn>
         <v-btn
           v-if="isPausable && !isArchived && !paused"
-          class="secondary my-1 mr-1"
+          class="secondary my-1"
           icon
           :loading="loading"
           @click="pauseAd"
@@ -254,19 +254,13 @@ export default {
         }
       })
         .then(function (response) {
-          if (response.data && response.data.message) {
-            // self.alert = {
-            //   type: "success",
-            //   message: self.$t(response.data.message)
-            // };
-            self.$emit('ad-deleted', self.isArchived, self.adId, self.$t(response.data.message));
-          }
+          console.log(response);
+          self.$emit('ad-deleted', self.isArchived, self.adId, self.$t("delete.success"));
         })
         .catch(function (error) {
           self.alert = {
             type: "error",
-            message: self.$t(error.response.data && error.response.data.message ?
-              error.response.data.message : error.response.data)
+            message: self.$t("delete.error")
           };
         })
         .finally(function () {

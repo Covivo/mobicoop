@@ -28,25 +28,26 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Carpool\Entity\Matching;
 
 /**
  * Solutions for a Solidary
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * ApiResource(
+ * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={"post"},
+ *      itemOperations={"get"}
  * )
  */
 class SolidarySolution
 {
+    const DEFAULT_ID = 999999999999;
+
     /**
      * @var int $id The id of this solidary matching.
      *
@@ -57,15 +58,6 @@ class SolidarySolution
      */
     private $id;
 
-    /**
-     * @var Matching The matching.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching")
-     * @Groups({"readSolidary","writeSolidary"})
-     * @MaxDepth(1)
-     */
-    private $matching;
-        
     /**
      * @var Solidary The solidary record.
      *
@@ -78,18 +70,25 @@ class SolidarySolution
     private $solidary;
 
     /**
-     * @var SolidaryUser The solidary User if needed.
+     * @var SolidaryMatching|null SolidaryMatching of this SolidarySolution
      *
-     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidaryUser")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", inversedBy="solidarySolution", cascade={"persist","remove"})
      * @Groups({"readSolidary","writeSolidary"})
      */
-    private $solidaryUser;
+    private $solidaryMatching;
+
+    /**
+     * @var SolidaryAsk The solidary Ask for this solidarySolution
+     *
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", mappedBy="solidarySolution")
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $solidaryAsk;
 
     /**
      * @var string A comment about the solidary matching.
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $comment;
@@ -110,23 +109,16 @@ class SolidarySolution
      */
     private $updatedDate;
 
+    public function __construct()
+    {
+        $this->id = self::DEFAULT_ID;
+    }
+
     public function getId(): int
     {
         return $this->id;
     }
 
-    public function getMatching(): ?Matching
-    {
-        return $this->matching;
-    }
-    
-    public function setMatching(?Matching $matching): self
-    {
-        $this->matching = $matching;
-        
-        return $this;
-    }
-    
     public function getSolidary(): ?Solidary
     {
         return $this->solidary;
@@ -139,14 +131,26 @@ class SolidarySolution
         return $this;
     }
 
-    public function getSolidaryUser(): SolidaryUser
+    public function getSolidaryMatching(): ?SolidaryMatching
     {
-        return $this->solidaryUser;
+        return $this->solidaryMatching;
     }
-    
-    public function setSolidaryUser(?SolidaryUser $solidaryUser): self
+
+    public function setSolidaryMatching(?SolidaryMatching $solidaryMatching): self
     {
-        $this->solidaryUser = $solidaryUser;
+        $this->solidaryMatching = $solidaryMatching;
+        
+        return $this;
+    }
+
+    public function getSolidaryAsk(): ?SolidaryAsk
+    {
+        return $this->solidaryAsk;
+    }
+
+    public function setSolidaryAsk(?SolidaryAsk $solidaryAsk): self
+    {
+        $this->solidaryAsk = $solidaryAsk;
         
         return $this;
     }

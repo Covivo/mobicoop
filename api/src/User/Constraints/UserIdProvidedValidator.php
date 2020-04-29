@@ -21,40 +21,30 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Controller;
+ namespace App\User\Constraints;
 
-use App\Carpool\Service\ProposalManager;
-use App\Carpool\Entity\Proposal;
-use App\TranslatorTrait;
+use App\User\Entity\User;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidator;
 
 /**
- * Controller class for proposal post.
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @Annotation
  */
-class ProposalPost
+final class UserIdProvidedValidator extends ConstraintValidator
 {
-    use TranslatorTrait;
-    private $proposalManager;
-
-    public function __construct(ProposalManager $proposalManager)
+    private $security;
+    
+    public function __construct(Security $security)
     {
-        $this->proposalManager = $proposalManager;
+        $this->security = $security;
     }
 
-    /**
-     * This method is invoked when a new proposal is posted.
-     * It returns the new proposal created, with its matchings as subresources.
-     *
-     * @param Proposal $data
-     * @return Proposal
-     */
-    public function __invoke(Proposal $data): Proposal
+    public function validate($value, Constraint $constraint): void
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad proposal id is provided"));
+        // we check if the request is sent by a real user or if a userId has been provided
+        if (!$this->security->getUser() instanceof User && is_null($value)) {
+            $this->context->buildViolation($constraint->message)->addViolation();
         }
-        $data = $this->proposalManager->prepareProposal($data);
-        return $data;
     }
 }

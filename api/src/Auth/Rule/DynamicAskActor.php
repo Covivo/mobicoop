@@ -24,7 +24,7 @@
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
-use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\DynamicAsk;
 
 /**
  *  Check that the requester is an actor of the related dynamic Ask
@@ -36,6 +36,13 @@ class DynamicAskActor implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        return true;
+        if (!isset($params['dynamicAsk'])) {
+            return false;
+        }
+        /**
+         * @var DynamicAsk $dynamicAsk
+         */
+        $dynamicAsk = $params['dynamicAsk'];
+        return ($dynamicAsk->getUser()->getId() == $requester->getId() || $dynamicAsk->getCarpooler()->getId() == $requester->getId());
     }
 }

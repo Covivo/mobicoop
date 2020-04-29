@@ -62,10 +62,13 @@ class ExceptionListener
                 switch ($redirect->getType()) {
                     case Redirect::TYPE_COMMUNITY:
                         $url = $this->router->generate('community_show.' . $redirect->getLanguage(), ['id' => $redirect->getDestinationId()]);
-                    break;
+                        break;
                     case Redirect::TYPE_EVENT:
                         $url = $this->router->generate('event_show.' . $redirect->getLanguage(), ['id' => $redirect->getDestinationId()]);
-                    break;
+                        break;
+                    case Redirect::TYPE_ARTICLE:
+                        $url = $this->router->generate('article_get.' . $redirect->getLanguage(), ['id' => $redirect->getDestinationId()]);
+                        break;
                 }
                 if (!is_null($url)) {
                     $response = new RedirectResponse($url);

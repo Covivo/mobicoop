@@ -52,6 +52,9 @@ use App\Community\Entity\Community;
 use App\Solidary\Event\SolidaryCreated;
 use App\Solidary\Event\SolidaryUserCreated;
 use App\Solidary\Event\SolidaryUserUpdated;
+use App\Solidary\Exception\SolidaryException;
+use App\Solidary\Repository\SolidaryRepository;
+use App\Solidary\Repository\StructureRepository;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Entity\UserNotification;
 use App\User\Event\UserDelegateRegisteredEvent;
@@ -84,6 +87,8 @@ class UserManager
     private $notificationRepository;
     private $userNotificationRepository;
     private $userRepository;
+    private $solidaryRepository;
+    private $structureRepository;
     private $logger;
     private $eventDispatcher;
     private $encoder;
@@ -101,7 +106,7 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, AuthItemRepository $authItemRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator, Security $security)
+    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, AuthItemRepository $authItemRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator, Security $security, SolidaryRepository $solidaryRepository, StructureRepository $structureRepository)
     {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -119,6 +124,8 @@ class UserManager
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
         $this->userRepository = $userRepository;
+        $this->solidaryRepository = $solidaryRepository;
+        $this->structureRepository = $structureRepository;
         $this->chat = $chat;
         $this->music = $music;
         $this->smoke = $smoke;
@@ -189,6 +196,7 @@ class UserManager
 
         // dispatch en event
         if (is_null($user->getUserDelegate())) {
+
             // registration by the user itself
             $event = new UserRegisteredEvent($user);
             $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
@@ -248,25 +256,20 @@ class UserManager
 
         // default phone display : restricted
         $user->setPhoneDisplay(User::PHONE_DISPLAY_RESTRICTED);
-        // creation of the geotoken
-        $datetime = new DateTime();
-        $time = $datetime->getTimestamp();
-        $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
-        $user->setGeoToken($geoToken);
+
         // Default carpool settings
         $user->setChat($this->chat);
         $user->setMusic($this->music);
         $user->setSmoke($this->smoke);
 
-        // Create token to valid inscription
-        $datetime = new DateTime();
-        $time = $datetime->getTimestamp();
-        // For safety, we strip the slashes because this token can be passed in url
-        $validationToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
-        $user->setValidatedDateToken($validationToken);
+        // Create geotoken
+        $user->setGeoToken($this->createToken($user));
 
-        $unsubscribeToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
-        $user->setUnsubscribeToken($unsubscribeToken);
+        // Create token to validate inscription
+        $user->setEmailToken($this->createToken($user));
+
+        // Create token to unscubscribe from the instance news
+        $user->setUnsubscribeToken($this->createToken($user));
 
         // return the user
         return $user;
@@ -294,10 +297,7 @@ class UserManager
         }
 
         // update of the geotoken
-        $datetime = new DateTime();
-        $time = $datetime->getTimestamp();
-        $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
-        $user->setGeoToken($geoToken);
+        $user->setGeoToken($this->createToken($user));
 
 
         // Check if there is a SolidaryUser. If so, we need to check if the right role. If there is not, we add it.
@@ -333,7 +333,7 @@ class UserManager
             $event = new SolidaryCreated($user, $this->security->getUser());
             $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
         }
-        
+
         // return the user
         return $user;
     }
@@ -499,17 +499,15 @@ class UserManager
                 if ($message !== null) {
                     ($message->getMessage()!==null) ? $idMessage = $message->getMessage()->getId() :  $idMessage = $message->getId();
                 } else {
-                    $formerAskHistory = $this->askHistoryRepository->findLastAskHistoryWithMessage($ask);
-                    if (count($formerAskHistory)>0 && $formerAskHistory[0]->getMessage()) {
-                        if ($formerAskHistory[0]->getMessage()->getMessage()) {
-                            $idMessage = $formerAskHistory[0]->getMessage()->getMessage()->getId();
+                    if ($formerAskHistory = $this->askHistoryRepository->findLastAskHistoryWithMessage($ask)) {
+                        if ($formerAskHistory->getMessage()->getMessage()) {
+                            $idMessage = $formerAskHistory->getMessage()->getMessage()->getId();
                         } else {
-                            $idMessage = $formerAskHistory[0]->getMessage()->getId();
+                            $idMessage = $formerAskHistory->getMessage()->getId();
                         }
                     }
                 }
                 $currentThread['idMessage'] = $idMessage;
-
                 $waypoints = $ask->getMatching()->getWaypoints();
                 $criteria = $ask->getCriteria();
                 $currentThread["carpoolInfos"] = [
@@ -561,14 +559,10 @@ class UserManager
         $user = $this->userRepository->findOneBy(["email"=>$data->getEmail()]);
 
         if (!is_null($user)) {
-            $datetime = new DateTime();
-            $time = $datetime->getTimestamp();
-            // encoding of the password
-            $pwdToken = hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt());
-            $user->setPwdToken($pwdToken);
+            // Create a password token
+            $user->setPwdToken($this->createToken($user));
             // update of the geotoken
-            $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
-            $user->setGeoToken($geoToken);
+            $user->setGeoToken($this->createToken($user));
             // persist the user
             $this->entityManager->persist($user);
             $this->entityManager->flush();
@@ -758,8 +752,7 @@ class UserManager
     }
 
     /**
-     * Generate a validation token
-     * (Ajax)
+     * Generate a phone token
      *
      * @param User $user
      * @return void
@@ -877,28 +870,6 @@ class UserManager
         return [];
     }
 
-    public function checkValidatedDateToken($data)
-    {
-        $userFound = $this->userRepository->findOneBy(["validatedDateToken"=>$data->getValidatedDateToken()]);
-
-        if (!is_null($userFound)) {
-            if ($data->getEmail()===$userFound->getEmail()) {
-                // User found by token match with the given email. We update de validated date, persist, then return the user found
-                $userFound->setValidatedDate(new \Datetime());
-                $this->entityManager->persist($userFound);
-                $this->entityManager->flush();
-                return $userFound;
-            } else {
-                // User found by token doesn't match with the given email. We return nothing.
-                return new JsonResponse();
-            }
-        } else {
-            // No user found. We return nothing.
-            return new JsonResponse();
-        }
-        return new JsonResponse();
-    }
-
     public function checkPhoneToken($data)
     {
         $userFound = $this->userRepository->findOneBy(["phoneToken"=>$data->getPhoneToken()]);
@@ -949,5 +920,100 @@ class UserManager
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Get the solidaries of a user
+     *
+     * @param int $userId    The user id we want to get the solidaries
+     * @return User|null
+     */
+    public function getSolidaries(int $userId)
+    {
+        $user = $this->userRepository->find($userId);
+        if (empty($user)) {
+            throw new SolidaryException(SolidaryException::UNKNOWN_USER);
+        }
+
+        $solidaries = $this->solidaryRepository->findByUser($user);
+        if (!empty($solidaries)) {
+            $user->setSolidaries($solidaries);
+        }
+
+        return $user;
+    }
+
+    /**
+     * Get the structures of a user
+     *
+     * @param int $userId    The user id we want to get the structures
+     * @return User|null
+     */
+    public function getStructures(int $userId)
+    {
+        $user = $this->userRepository->find($userId);
+        if (empty($user)) {
+            throw new SolidaryException(SolidaryException::UNKNOWN_USER);
+        }
+
+        $structures = $this->structureRepository->findByUser($user);
+        if (!empty($structures)) {
+            $user->setStructures($structures);
+        }
+
+        return $user;
+    }
+
+    /**
+     * Create a random token for a user.
+     *
+     * @param User $user    The user
+     * @return string   The token generated
+     */
+    private function createToken(User $user)
+    {
+        $datetime = new DateTime();
+        $time = $datetime->getTimestamp();
+        // note : we replace the '/' by an arbitrary 'a' as the token could be used in a url
+        return $this->sanitizeString(hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
+    }
+
+    /**
+     * Sanitize a string by replacing non-letter or digits by letters or digits.
+     *
+     * @param string $string    The string to sanitize
+     * @return string The sanitized string
+     */
+    private function sanitizeString(string $string)
+    {
+        return preg_replace('/[^\w]/', $this->getRandomChar(), $string);
+    }
+
+    /**
+     * Get a random letter or digit
+     *
+     * @return string A letter or digit
+     */
+    private function getRandomChar()
+    {
+        $seed = str_split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
+        return $seed[array_rand($seed)];
+    }
+
+    /**
+     * Check if an user $user have a specific AuthItem $authItem
+     *
+     * @param User $user    The user to check
+     * @param AuthItem $AuthItem    The auth item to check
+     * @return boolean True if user have item
+     */
+    public function checkUserHaveAuthItem(User $user, AuthItem $authItem)
+    {
+        foreach ($user->getUserAuthAssignments() as $oneItem) {
+            if ($oneItem->getAuthItem() == $authItem) {
+                return true;
+            }
+        }
+        return false;
     }
 }

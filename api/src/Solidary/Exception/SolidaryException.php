@@ -28,4 +28,14 @@ class SolidaryException extends \LogicException
     const NO_ROLE = "This SolidaryUser has no role";
     const BAD_SOLIDARYUSERSTRUCTURE_STATUS = "Invalid status value for this SolidaryUserStructure";
     const BAD_SOLIDARY_ACTION = "Unknown action";
+    const UNKNOWN_USER = "Unknown User";
+
+    // SolidarySolution
+    const IS_NOT_VOLUNTEER = "The SolidaryUser is not a volunteer";
+    const CANT_HAVE_BOTH = "A SolidarySolution can't have both a Matching and a SolidaryUser";
+
+    // Solidary matching
+    const INVALID_HOUR_SLOT = "Hour slot invalid";
+    const NO_RETURN_PROPOSAL = "There is no return proposal";
+    const NO_VALID_ADDRESS = "No valid address";
 }

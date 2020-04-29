@@ -127,6 +127,19 @@ services:
         tags:
             - { name: monolog.logger, channel: carpool }
 
+    App\Carpool\Service\DynamicManager:
+        arguments:
+            $params:
+                defaultSeatsDriver: '%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%'
+                defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
+                dynamicProofDistance: '%env(int:DYNAMIC_CARPOOL_PROOF_DISTANCE)%'
+                dynamicReachedDistance: '%env(int:DYNAMIC_CARPOOL_REACHED_DISTANCE)%'
+                dynamicDestinationDistance: '%env(int:DYNAMIC_CARPOOL_DESTINATION_DISTANCE)%'
+                dynamicMaxSpeed: '%env(int:DYNAMIC_CARPOOL_MAX_SPEED)%'
+                dynamicEnableMaxSpeed: '%env(bool:DYNAMIC_CARPOOL_ENABLE_MAX_SPEED)%'
+        tags:
+            - { name: monolog.logger, channel: carpool }
+
     App\Carpool\Service\ProposalManager:
         arguments:
             $params:
@@ -144,6 +157,9 @@ services:
             - { name: monolog.logger, channel: carpool }
     
     App\Carpool\Service\ProposalMatcher:
+        arguments:
+            $params:
+                dynamicMaxPendingTime: '%env(int:DYNAMIC_CARPOOL_MAX_PENDING_TIME)%'
         tags:
             - { name: monolog.logger, channel: carpool }
 
@@ -236,6 +252,11 @@ services:
     # Geocoder; alias to allow this type to be autowired
     Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
 
+    # Georouter, add prioritization
+    Georouter.query_data_plugin:
+        class: Geocoder\Plugin\Plugin\QueryDataPlugin
+        arguments:
+            - '%env(json:SIG_GEOCODER_PRIORITIZE_COORDINATES)%'
     # Geography
     App\Geography\Controller\:
         resource: '../src/Geography/Controller'
@@ -278,6 +299,7 @@ services:
             $defaultNamedResultNumber: '%env(resolve:GEOCOMPLETE_NAMED_DEFAULT_RESULTS)%'
             $defaultRelayPointResultNumber: '%env(resolve:GEOCOMPLETE_RELAY_POINTS_DEFAULT_RESULTS)%'
             $defaultEventResultNumber: '%env(resolve:GEOCOMPLETE_EVENTS_DEFAULT_RESULTS)%'
+            $geoDataFixes: '%env(json:file:resolve:SIG_GEOCODER_FIXER_DATA)%'
 
     # Image
     App\Image\Controller\:
