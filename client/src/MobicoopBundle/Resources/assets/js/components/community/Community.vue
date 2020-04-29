@@ -451,7 +451,7 @@ export default {
     }
 
     //If the current user = creator : we show the btton for acces to admin
-    if (this.user && (this.community.user.id == this.user.id))
+    if (this.user && (this.community.user.id == this.user.id)) {
       this.isCreator = true;
     }
 
