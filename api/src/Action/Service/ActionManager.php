@@ -108,24 +108,6 @@ class ActionManager
         }
     }
 
-    // private function treatAction(Action $action, Animation $animation)
-    // {
-    //     if ($action->isInLog()) {
-    //         // To do
-    //     }
-    //     if ($action->isInDiary()) {
-    //         $this->diaryManager->addDiaryEntry(
-    //             $action,
-    //             $animation->getUser(),
-    //             $animation->getAuthor(),
-    //             $animation->getComment(),
-    //             $animation->getSolidary(),
-    //             $animation->getSolidarySolution(),
-    //             $animation->getProgression()
-    //         );
-    //     }
-    // }
-
     /**
      * Check if a diary registration is required and do it
      *
@@ -138,7 +120,7 @@ class ActionManager
      * @param float $progression
      * @return void
      */
-    public function treatDiary(Action $action, User $user, User $author, ?string $comment, ?Solidary $solidary=null, ?SolidarySolution $solidarySolution=null, ?float $progression=null)
+    public function treatDiary(Action $action, User $user, User $author, ?string $comment=null, ?Solidary $solidary=null, ?SolidarySolution $solidarySolution=null, ?float $progression=null)
     {
         if ($action->isInDiary()) {
             $this->diaryManager->addDiaryEntry(
@@ -154,7 +136,7 @@ class ActionManager
     }
 
     /**
-     * Check if a log registration is required and do it (WIP)
+     * TO DO : Check if a log registration is required and do it
      *
      * @return void
      */
@@ -167,39 +149,39 @@ class ActionManager
     {
         $user = $event->getSolidaryUserStructure()->getSolidaryUser()->getUser();
         $admin = $this->security->getUser();
-        $this->diaryManager->addDiaryEntry($action, $user, $admin);
+        $this->treatDiary($action, $user, $admin);
     }
 
     private function onSolidaryUserStructureRefused(Action $action, SolidaryUserStructureRefused $event)
     {
         $user = $event->getSolidaryUserStructure()->getSolidaryUser()->getUser();
         $admin = $this->security->getUser();
-        $this->diaryManager->addDiaryEntry($action, $user, $admin);
+        $this->treatDiary($action, $user, $admin);
     }
 
     private function onSolidaryUserCreated(Action $action, SolidaryUserCreated $event)
     {
-        $this->diaryManager->addDiaryEntry($action, $event->getUser(), $event->getAuthor());
+        $this->treatDiary($action, $event->getUser(), $event->getAuthor());
     }
 
     private function onSolidaryUserUpdated(Action $action, SolidaryUserUpdated $event)
     {
         $user = $event->getSolidaryUser()->getUser();
         $admin = $this->security->getUser();
-        $this->diaryManager->addDiaryEntry($action, $user, $admin);
+        $this->treatDiary($action, $user, $admin);
     }
 
     private function onSolidaryCreated(Action $action, SolidaryCreated $event)
     {
         // To do : The solidary is not persisted yet so we can't pass it to addDiaryEntrey... But it would be cool :)
-        $this->diaryManager->addDiaryEntry($action, $event->getUser(), $event->getAuthor());
+        $this->treatDiary($action, $event->getUser(), $event->getAuthor());
     }
 
     private function onSolidaryUpdated(Action $action, SolidaryUpdated $event)
     {
         $user = $event->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
         $admin = $this->security->getUser();
-        $this->diaryManager->addDiaryEntry($action, $user, $admin, null, $event->getSolidary());
+        $this->treatDiary($action, $user, $admin, null, $event->getSolidary());
     }
 
     private function onSolidaryContactMessage(Action $action, SolidaryContactMessage $event)
@@ -220,7 +202,7 @@ class ActionManager
 
 
         // Store in diary
-        $this->diaryManager->addDiaryEntry($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
+        $this->treatDiary($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
     }
 
     private function onSolidaryContactSms(Action $action, SolidaryContactSms $event)
@@ -240,7 +222,7 @@ class ActionManager
         $this->notificationManager->notifies(SolidaryContactSms::NAME, $recipient, $event->getSolidaryContact());
 
         // Store in diary
-        $this->diaryManager->addDiaryEntry($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
+        $this->treatDiary($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
     }
     
     private function onSolidaryContactEmail(Action $action, SolidaryContactEmail $event)
@@ -260,7 +242,7 @@ class ActionManager
         $this->notificationManager->notifies(SolidaryContactEmail::NAME, $recipient, $event->getSolidaryContact());
 
         // Store in diary
-        $this->diaryManager->addDiaryEntry($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
+        $this->treatDiary($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
     }
 
     private function onSolidaryAnimationPosted(SolidaryAnimationPosted $event)
