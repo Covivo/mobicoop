@@ -29,6 +29,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Solidary\Entity\Solidary;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidaryVoter extends Voter
 {
     const SOLIDARY_CREATE = 'solidary_create';

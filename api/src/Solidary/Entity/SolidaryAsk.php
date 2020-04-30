@@ -54,6 +54,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "put"
  *      }
  * )
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryAsk
 {

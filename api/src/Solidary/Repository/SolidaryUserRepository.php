@@ -31,9 +31,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method SolidaryUser|null find($id, $lockMode = null, $lockVersion = null)
- * @method SolidaryUser|null findOneBy(array $criteria, array $orderBy = null)
- */
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+*/
 class SolidaryUserRepository
 {
     const USE_DAY_RESTRICTION = true; // Restriction by the time range slot by slot (m,a,e) of a SolidaryVolunteer in matching

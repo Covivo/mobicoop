@@ -34,6 +34,9 @@ use App\Solidary\Repository\SolidaryMatchingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidarySolutionManager
 {
     private $entityManager;

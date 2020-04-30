@@ -32,6 +32,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Solidary\Exception\SolidaryException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidaryUserStructureManager
 {
     private $entityManager;

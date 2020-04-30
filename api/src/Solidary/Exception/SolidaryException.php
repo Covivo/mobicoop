@@ -22,6 +22,9 @@
 
 namespace App\Solidary\Exception;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidaryException extends \LogicException
 {
     const INVALID_DATA_PROVIDED = "Invalid data provided";

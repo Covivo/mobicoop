@@ -50,6 +50,7 @@ use App\Communication\Interfaces\MessagerInterface;
  *          "get"
  *      }
  * )
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryContact implements MessagerInterface
 {

@@ -28,9 +28,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method StructureProof|null find($id, $lockMode = null, $lockVersion = null)
- * @method StructureProof|null findOneBy(array $criteria, array $orderBy = null)
- */
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+*/
 class StructureProofRepository
 {
     /**

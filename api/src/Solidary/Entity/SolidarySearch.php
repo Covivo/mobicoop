@@ -56,6 +56,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "get"
  *      }
  * )
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidarySearch
 {

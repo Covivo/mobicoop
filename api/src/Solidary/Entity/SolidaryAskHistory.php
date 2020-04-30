@@ -51,6 +51,7 @@ use App\Communication\Entity\Notified;
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryAskHistory implements MessagerInterface
 {

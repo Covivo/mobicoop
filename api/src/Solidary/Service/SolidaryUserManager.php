@@ -27,6 +27,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Solidary\Event\SolidaryUserUpdatedEvent;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidaryUserManager
 {
     private $entityManager;

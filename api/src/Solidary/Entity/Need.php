@@ -49,6 +49,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Need
 {

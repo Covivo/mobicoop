@@ -69,6 +69,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * )
  * ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
  * ApiFilter(SearchFilter::class, properties={"name":"partial"})
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Structure
 {
