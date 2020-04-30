@@ -26,7 +26,7 @@
           lg="9"
           md="10"
           xl="6"
-          class="text-center"
+          class="text-justify"
         >
           <!-- event : avatar, title and description -->
           <event-infos
