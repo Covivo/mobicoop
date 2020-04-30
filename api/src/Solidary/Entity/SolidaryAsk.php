@@ -40,18 +40,30 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * ApiResource(
+ * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={
- *          "get",
- *          "post"
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "post"={
+ *             "security_post_denormalize"="is_granted('reject',object)"
+ *          }
  *      },
- *      itemOperations={"get","delete",
- *          "put"
+ *      itemOperations={
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "put"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "delete"={
+ *             "security"="is_granted('reject',object)"
+ *          }
  *      }
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>

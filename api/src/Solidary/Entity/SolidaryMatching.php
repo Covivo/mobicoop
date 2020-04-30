@@ -38,18 +38,30 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * ApiResource(
+ * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={
- *          "get","post"
- *
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "post"={
+ *             "security_post_denormalize"="is_granted('reject',object)"
+ *          }
  *      },
  *      itemOperations={
- *          "get"
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "put"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "delete"={
+ *             "security"="is_granted('reject',object)"
+ *          }
  *      }
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -110,6 +122,7 @@ class SolidaryMatching
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidaryMatching", cascade={"persist","remove"})
      * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $solidarySolution;
 

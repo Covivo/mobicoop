@@ -152,4 +152,15 @@ class SolidaryManager
 
         return $solidarySearch;
     }
+
+    /**
+     * Get the solidary solutions of a solidary
+     *
+     * @param int $solidaryId Id of the Solidary
+     * @return array|null
+     */
+    public function getSolidarySolutions(int $solidaryId): array
+    {
+        return $this->solidaryRepository->findSolidarySolutions($solidaryId);
+    }
 }

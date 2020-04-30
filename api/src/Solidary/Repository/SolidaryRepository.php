@@ -103,4 +103,20 @@ class SolidaryRepository
 
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Find the solidary solutions of a solidary
+     *
+     * @param int $solidaryId Id of the Solidary
+     * @return array|null
+     */
+    public function findSolidarySolutions(int $solidaryId): ?array
+    {
+        $query = $this->repository->createQueryBuilder('s')
+        ->join('s.solidarySolutions', 'ss')
+        ->where('s.id = :solidaryId')
+        ->setParameter('solidaryId', $solidaryId);
+
+        return $query->getQuery()->getResult();
+    }
 }
