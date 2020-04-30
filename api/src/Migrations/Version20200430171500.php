@@ -8,12 +8,19 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Import item migration
  */
-final class Version20200430115000 extends AbstractMigration
+final class Version20200430171500 extends AbstractMigration
 {
     public function up(Schema $schema) : void
     {
-        $this->addSql("INSERT INTO `action` (`id`, `name`, `in_log`, `in_diary`, `progression`, `created_date`, `updated_date`, `position`, `type`)
-        VALUES (69, 'solidary_animation_posted', NULL, NULL, NULL, NULL, NULL, '0', NULL);
+        // add solidary_transporter_schedule item
+        $this->addSql("
+            INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`)
+            VALUES (214, NULL, '1', 'solidary_transporters_schedule', 'Get a solidary transport schedule')
+        ");
+
+        // add solidary_transporter_schedule item child to solidary_manage
+        $this->addSql("
+        INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('133', '214')
         ");
     }
 

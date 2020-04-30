@@ -61,11 +61,23 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "denormalization_context"={"groups"={"writeSolidaryFormalRequest"}}
  *      },
  *      collectionOperations={
- *          "get","post"
- *
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "post"={
+ *             "security_post_denormalize"="is_granted('solidary_contact',object)"
+ *          }
  *      },
  *      itemOperations={
- *          "get"
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "put"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "delete"={
+ *             "security"="is_granted('reject',object)"
+ *          }
  *      }
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>

@@ -43,11 +43,23 @@ use App\Communication\Interfaces\MessagerInterface;
  *          "denormalization_context"={"groups"={"writeSolidaryContact"}}
  *      },
  *      collectionOperations={
- *          "get","post"
- *
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "post"={
+ *             "security_post_denormalize"="is_granted('solidary_contact',object)"
+ *          }
  *      },
  *      itemOperations={
- *          "get"
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "put"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "delete"={
+ *             "security"="is_granted('reject',object)"
+ *          }
  *      }
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -88,7 +100,6 @@ class SolidaryContact implements MessagerInterface
 
     /**
      * @var SolidaryAsk If this contact is linked to an Ask, we return it after a contact
-     * @Groups({"readSolidaryContact"})
      */
     private $solidaryAsk;
 

@@ -40,12 +40,23 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
- *      collectionOperations={"post","get"},
+ *      collectionOperations={
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "post"={
+ *             "security_post_denormalize"="is_granted('solidary_update',object)"
+ *          }
+ *      },
  *      itemOperations={
- *          "get",
- *          "formalRequest"={
- *              "method"="PUT",
- *              "path"="/solidary_solutions/{id}/formal"
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "put"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "delete"={
+ *             "security"="is_granted('reject',object)"
  *          }
  *      }
  * )
@@ -88,6 +99,7 @@ class SolidarySolution
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", mappedBy="solidarySolution")
      * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $solidaryAsk;
 

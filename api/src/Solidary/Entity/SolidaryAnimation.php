@@ -39,7 +39,25 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"readAnimation"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeAnimation"}}
  *      },
- *      collectionOperations={"get","post"},
+ *      collectionOperations={
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "post"={
+ *             "security_post_denormalize"="is_granted('solidary_update',object)"
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "put"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "delete"={
+ *             "security"="is_granted('reject',object)"
+ *          }
+ *      }
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */

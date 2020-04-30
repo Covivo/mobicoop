@@ -108,6 +108,7 @@ class SolidaryAsk
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", inversedBy="solidaryAsk")
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $solidarySolution;
