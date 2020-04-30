@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@
 namespace App\Action\EventSubscriber;
 
 use App\Action\Service\ActionManager;
+use App\Solidary\Event\SolidaryAnimationPosted;
 use App\Solidary\Event\SolidaryContactEmail;
 use App\Solidary\Event\SolidaryContactMessage;
 use App\Solidary\Event\SolidaryContactSms;
@@ -35,6 +36,9 @@ use App\Solidary\Event\SolidaryUserStructureAccepted;
 use App\Solidary\Event\SolidaryUserStructureRefused;
 use App\Solidary\Event\SolidaryUserUpdated;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidarySubscriber implements EventSubscriberInterface
 {
     private $actionManager;
@@ -55,7 +59,8 @@ class SolidarySubscriber implements EventSubscriberInterface
             SolidaryUpdated::NAME => 'onSolidaryUpdated',
             SolidaryContactMessage::NAME => 'onSolidaryContactMessage',
             SolidaryContactEmail::NAME => 'onSolidaryContactEmail',
-            SolidaryContactSms::NAME => 'onSolidaryContactSms'
+            SolidaryContactSms::NAME => 'onSolidaryContactSms',
+            SolidaryAnimationPosted::NAME => 'onSolidaryAnimationPosted'
         ];
     }
 
@@ -102,5 +107,10 @@ class SolidarySubscriber implements EventSubscriberInterface
     public function onSolidaryContactSms(SolidaryContactSms $event)
     {
         $this->actionManager->handleAction(SolidaryContactSms::NAME, $event);
+    }
+
+    public function onSolidaryAnimationPosted(SolidaryAnimationPosted $event)
+    {
+        $this->actionManager->handleAction(SolidaryAnimationPosted::NAME, $event);
     }
 }

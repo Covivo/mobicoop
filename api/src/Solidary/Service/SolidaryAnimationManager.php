@@ -20,25 +20,27 @@
  *    LICENSE
  **************************/
 
-namespace App\Action\Service;
+namespace App\Solidary\Service;
 
-use App\Action\Entity\Animation;
-use App\Action\Service\ActionManager;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Solidary\Entity\SolidaryAnimation;
+use App\Solidary\Event\SolidaryAnimationPosted;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class AnimationManager
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+class SolidaryAnimationManager
 {
-    private $entityManager;
-    private $actionManager;
+    private $dispatcher;
 
-    public function __construct(EntityManagerInterface $entityManager, ActionManager $actionManager)
+    public function __construct(EventDispatcherInterface $dispatcher)
     {
-        $this->entityManager = $entityManager;
-        $this->actionManager = $actionManager;
+        $this->dispatcher = $dispatcher;
     }
 
-    public function treatAnimation(Animation $animation)
+    public function treatSolidaryAnimation(SolidaryAnimation $solidaryAnimation)
     {
-        $this->actionManager->handleAction($animation->getName(), $animation);
+        $event = new SolidaryAnimationPosted($solidaryAnimation);
+        $this->dispatcher->dispatch(SolidaryAnimationPosted::NAME, $event);
     }
 }

@@ -30,6 +30,9 @@ use App\Action\Service\DiaryManager;
 use App\App\Entity\App;
 use App\Communication\Service\NotificationManager;
 use App\Solidary\Entity\Solidary;
+use App\Solidary\Entity\SolidaryAnimation;
+use App\Solidary\Entity\SolidarySolution;
+use App\Solidary\Event\SolidaryAnimationPosted;
 use App\Solidary\Event\SolidaryContactEmail;
 use App\Solidary\Event\SolidaryContactMessage;
 use App\Solidary\Event\SolidaryContactSms;
@@ -96,29 +99,68 @@ class ActionManager
                 break;
             case SolidaryContactEmail::NAME:$this->onSolidaryContactEmail($action, $object);
                 break;
+            case SolidaryAnimationPosted::NAME:$this->onSolidaryAnimationPosted($object);
+                break;
             default:
                 // For all the manual action with basic behaviour
-                $this->treatAction($action, $object);
+                // $this->treatAction($action, $object);
                 break;
         }
     }
 
-    private function treatAction(Action $action, Animation $animation)
+    // private function treatAction(Action $action, Animation $animation)
+    // {
+    //     if ($action->isInLog()) {
+    //         // To do
+    //     }
+    //     if ($action->isInDiary()) {
+    //         $this->diaryManager->addDiaryEntry(
+    //             $action,
+    //             $animation->getUser(),
+    //             $animation->getAuthor(),
+    //             $animation->getComment(),
+    //             $animation->getSolidary(),
+    //             $animation->getSolidarySolution(),
+    //             $animation->getProgression()
+    //         );
+    //     }
+    // }
+
+    /**
+     * Check if a diary registration is required and do it
+     *
+     * @param Action $action
+     * @param User $user
+     * @param User $author
+     * @param string $comment
+     * @param Solidary $solidary
+     * @param SolidarySolution $solidarySolution
+     * @param float $progression
+     * @return void
+     */
+    public function treatDiary(Action $action, User $user, User $author, ?string $comment, ?Solidary $solidary=null, ?SolidarySolution $solidarySolution=null, ?float $progression=null)
     {
-        if ($action->isInLog()) {
-            // To do
-        }
         if ($action->isInDiary()) {
             $this->diaryManager->addDiaryEntry(
                 $action,
-                $animation->getUser(),
-                $animation->getAuthor(),
-                $animation->getComment(),
-                $animation->getSolidary(),
-                $animation->getSolidarySolution(),
-                $animation->getProgression()
+                $user,
+                $author,
+                $comment,
+                $solidary,
+                $solidarySolution,
+                $progression
             );
         }
+    }
+
+    /**
+     * Check if a log registration is required and do it (WIP)
+     *
+     * @return void
+     */
+    public function treatLog()
+    {
+        // To Do
     }
 
     private function onSolidaryUserStructureAccepted(Action $action, SolidaryUserStructureAccepted $event)
@@ -219,5 +261,26 @@ class ActionManager
 
         // Store in diary
         $this->diaryManager->addDiaryEntry($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
+    }
+
+    private function onSolidaryAnimationPosted(SolidaryAnimationPosted $event)
+    {
+        $solidaryAnimation = $event->getSolidaryAnimation();
+
+        // We get the action of this SolidaryAnimation
+        $action = $this->actionRepository->findOneBy(['name'=>$solidaryAnimation->getActionName()]);
+        if (empty($action)) {
+            throw new SolidaryException(SolidaryException::BAD_SOLIDARY_ACTION);
+        }
+
+        $this->treatDiary(
+            $action,
+            $solidaryAnimation->getUser(),
+            $solidaryAnimation->getAuthor(),
+            $solidaryAnimation->getComment(),
+            $solidaryAnimation->getSolidary(),
+            $solidaryAnimation->getSolidarySolution(),
+            $solidaryAnimation->getProgression()
+        );
     }
 }

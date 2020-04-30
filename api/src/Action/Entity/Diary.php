@@ -34,7 +34,7 @@ use App\Solidary\Entity\SolidarySolution;
 use App\User\Entity\User;
 
 /**
- * Animation action diary for a user.
+ * Solidary Animation action diary for a user.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Action\Entity;
+namespace App\Solidary\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -41,58 +41,59 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      collectionOperations={"get","post"},
  * )
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class Animation
+class SolidaryAnimation
 {
     const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this animation action.
+     * @var int The id of this SolidaryAnimation action.
      * @ApiProperty(identifier=true)
      * @Groups("readAnimation")
      */
     private $id;
 
     /**
-     * @var string Name of the animation action.
+     * @var string Name of the action executed by this SolidaryAnimation
      * @Assert\NotBlank
      * @Groups({"readAnimation","writeAnimation"})
      */
-    private $name;
+    private $actionName;
 
     /**
-     * @var string Comment of the animation action
+     * @var string Comment of the SolidaryAnimation action
      * @Groups({"readAnimation","writeAnimation"})
      */
     private $comment;
 
     /**
-     * @var User The user related with the animation action.
+     * @var User The user related with the SolidaryAnimation action.
      * @Assert\NotBlank
      * @Groups({"readAnimation","writeAnimation"})
      */
     private $user;
 
     /**
-     * @var User The author of the animation action.
+     * @var User The author of the SolidaryAnimation action.
      * @Groups({"readAnimation","writeAnimation"})
      */
     private $author;
 
     /**
-     * @var int|null The progression if the action can be related to a process (like for solidary records). It's a numeric value, so it can be a percent, a step...
+     * @var int|null The progression if the SolidaryAnimation can be related to a process (like for solidary records). It's a numeric value, so it can be a percent, a step...
      * @Groups({"readAnimation","writeAnimation"})
      */
     private $progression;
 
     /**
-     * @var Solidary|null The solidary record if the action concerns a solidary record.
+     * @var Solidary|null The solidary record if the SolidaryAnimation concerns a solidary record.
      * @Groups({"readAnimation","writeAnimation"})
      */
     private $solidary;
 
     /**
-     * @var SolidarySolution|null The solidary solution if the action concerns a solidary record solution.
+     * @var SolidarySolution|null The solidary solution if the SolidaryAnimation concerns a solidary record solution.
      * @Groups({"readAnimation","writeAnimation"})
      */
     private $solidarySolution;
@@ -115,14 +116,14 @@ class Animation
         return $this;
     }
 
-    public function getName(): ?string
+    public function getActionName(): ?string
     {
-        return $this->name;
+        return $this->actionName;
     }
 
-    public function setName(string $name): self
+    public function setActionName(string $actionName): self
     {
-        $this->name = $name;
+        $this->actionName = $actionName;
 
         return $this;
     }
