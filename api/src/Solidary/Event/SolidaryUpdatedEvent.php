@@ -23,37 +23,26 @@
 
 namespace App\Solidary\Event;
 
-use App\App\Entity\App;
-use App\User\Entity\User;
+use App\Solidary\Entity\Solidary;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a solidary user structure is accepted
+ * Event sent when a solidary is updated
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryUserCreated extends Event
+class SolidaryUpdatedEvent extends Event
 {
-    public const NAME = 'solidary_user_create';
+    public const NAME = 'solidary_update';
 
-    protected $user;
-    protected $author;
+    protected $solidary;
 
-    public function __construct(User $user, $author)
+    public function __construct(Solidary $solidary)
     {
-        $this->user = $user;
-        $this->author = $author;
-        // If it's an App, it means that this User registered himself from the front
-        if ($author instanceof App) {
-            $this->author = $user;
-        }
+        $this->solidary = $solidary;
     }
 
-    public function getUser()
+    public function getSolidary()
     {
-        return $this->user;
-    }
-
-    public function getAuthor()
-    {
-        return $this->author;
+        return $this->solidary;
     }
 }

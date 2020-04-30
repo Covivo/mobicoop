@@ -24,17 +24,17 @@
 namespace App\Action\EventSubscriber;
 
 use App\Action\Service\ActionManager;
-use App\Solidary\Event\SolidaryAnimationPosted;
-use App\Solidary\Event\SolidaryContactEmail;
-use App\Solidary\Event\SolidaryContactMessage;
-use App\Solidary\Event\SolidaryContactSms;
-use App\Solidary\Event\SolidaryCreated;
-use App\Solidary\Event\SolidaryUpdated;
-use App\Solidary\Event\SolidaryUserCreated;
+use App\Solidary\Event\SolidaryAnimationPostedEvent;
+use App\Solidary\Event\SolidaryContactEmailEvent;
+use App\Solidary\Event\SolidaryContactMessageEvent;
+use App\Solidary\Event\SolidaryContactSmsEvent;
+use App\Solidary\Event\SolidaryCreatedEvent;
+use App\Solidary\Event\SolidaryUpdatedEvent;
+use App\Solidary\Event\SolidaryUserCreatedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use App\Solidary\Event\SolidaryUserStructureAccepted;
-use App\Solidary\Event\SolidaryUserStructureRefused;
-use App\Solidary\Event\SolidaryUserUpdated;
+use App\Solidary\Event\SolidaryUserStructureAcceptedEvent;
+use App\Solidary\Event\SolidaryUserStructureRefusedEvent;
+use App\Solidary\Event\SolidaryUserUpdatedEvent;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -51,66 +51,66 @@ class SolidarySubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            SolidaryUserStructureAccepted::NAME => 'onSolidaryUserStructureAccepted',
-            SolidaryUserStructureRefused::NAME => 'onSolidaryUserStructureRefused',
-            SolidaryUserCreated::NAME => 'onSolidaryUserCreated',
-            SolidaryUserUpdated::NAME => 'onSolidaryUserUpdated',
-            SolidaryCreated::NAME => 'onSolidaryCreated',
-            SolidaryUpdated::NAME => 'onSolidaryUpdated',
-            SolidaryContactMessage::NAME => 'onSolidaryContactMessage',
-            SolidaryContactEmail::NAME => 'onSolidaryContactEmail',
-            SolidaryContactSms::NAME => 'onSolidaryContactSms',
-            SolidaryAnimationPosted::NAME => 'onSolidaryAnimationPosted'
+            SolidaryUserStructureAcceptedEvent::NAME => 'onSolidaryUserStructureAccepted',
+            SolidaryUserStructureRefusedEvent::NAME => 'onSolidaryUserStructureRefused',
+            SolidaryUserCreatedEvent::NAME => 'onSolidaryUserCreated',
+            SolidaryUserUpdatedEvent::NAME => 'onSolidaryUserUpdated',
+            SolidaryCreatedEvent::NAME => 'onSolidaryCreated',
+            SolidaryUpdatedEvent::NAME => 'onSolidaryUpdated',
+            SolidaryContactMessageEvent::NAME => 'onSolidaryContactMessage',
+            SolidaryContactEmailEvent::NAME => 'onSolidaryContactEmail',
+            SolidaryContactSmsEvent::NAME => 'onSolidaryContactSms',
+            SolidaryAnimationPostedEvent::NAME => 'onSolidaryAnimationPosted'
         ];
     }
 
-    public function onSolidaryUserStructureAccepted(SolidaryUserStructureAccepted $event)
+    public function onSolidaryUserStructureAccepted(SolidaryUserStructureAcceptedEvent $event)
     {
-        $this->actionManager->handleAction(SolidaryUserStructureAccepted::NAME, $event);
+        $this->actionManager->handleAction(SolidaryUserStructureAcceptedEvent::NAME, $event);
     }
 
-    public function onSolidaryUserStructureRefused(SolidaryUserStructureRefused $event)
+    public function onSolidaryUserStructureRefused(SolidaryUserStructureRefusedEvent $event)
     {
-        $this->actionManager->handleAction(SolidaryUserStructureRefused::NAME, $event);
+        $this->actionManager->handleAction(SolidaryUserStructureRefusedEvent::NAME, $event);
     }
 
-    public function onSolidaryUserCreated(SolidaryUserCreated $event)
+    public function onSolidaryUserCreated(SolidaryUserCreatedEvent $event)
     {
-        $this->actionManager->handleAction(SolidaryUserCreated::NAME, $event);
+        $this->actionManager->handleAction(SolidaryUserCreatedEvent::NAME, $event);
     }
 
-    public function onSolidaryUserUpdated(SolidaryUserUpdated $event)
+    public function onSolidaryUserUpdated(SolidaryUserUpdatedEvent $event)
     {
-        $this->actionManager->handleAction(SolidaryUserUpdated::NAME, $event);
+        $this->actionManager->handleAction(SolidaryUserUpdatedEvent::NAME, $event);
     }
 
-    public function onSolidaryCreated(SolidaryCreated $event)
+    public function onSolidaryCreated(SolidaryCreatedEvent $event)
     {
-        $this->actionManager->handleAction(SolidaryCreated::NAME, $event);
+        $this->actionManager->handleAction(SolidaryCreatedEvent::NAME, $event);
     }
 
-    public function onSolidaryUpdated(SolidaryUpdated $event)
+    public function onSolidaryUpdated(SolidaryUpdatedEvent $event)
     {
-        $this->actionManager->handleAction(SolidaryUpdated::NAME, $event);
+        $this->actionManager->handleAction(SolidaryUpdatedEvent::NAME, $event);
     }
 
-    public function onSolidaryContactMessage(SolidaryContactMessage $event)
+    public function onSolidaryContactMessage(SolidaryContactMessageEvent $event)
     {
-        $this->actionManager->handleAction(SolidaryContactMessage::NAME, $event);
+        $this->actionManager->handleAction(SolidaryContactMessageEvent::NAME, $event);
     }
 
-    public function onSolidaryContactEmail(SolidaryContactEmail $event)
+    public function onSolidaryContactEmail(SolidaryContactEmailEvent $event)
     {
-        $this->actionManager->handleAction(SolidaryContactEmail::NAME, $event);
+        $this->actionManager->handleAction(SolidaryContactEmailEvent::NAME, $event);
     }
 
-    public function onSolidaryContactSms(SolidaryContactSms $event)
+    public function onSolidaryContactSms(SolidaryContactSmsEvent $event)
     {
-        $this->actionManager->handleAction(SolidaryContactSms::NAME, $event);
+        $this->actionManager->handleAction(SolidaryContactSmsEvent::NAME, $event);
     }
 
-    public function onSolidaryAnimationPosted(SolidaryAnimationPosted $event)
+    public function onSolidaryAnimationPosted(SolidaryAnimationPostedEvent $event)
     {
-        $this->actionManager->handleAction(SolidaryAnimationPosted::NAME, $event);
+        $this->actionManager->handleAction(SolidaryAnimationPostedEvent::NAME, $event);
     }
 }

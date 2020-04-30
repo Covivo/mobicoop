@@ -23,27 +23,26 @@
 
 namespace App\Solidary\Event;
 
-use App\App\Entity\App;
-use App\Solidary\Entity\SolidaryContact;
 use Symfony\Contracts\EventDispatcher\Event;
-use App\User\Entity\User;
+use App\Solidary\Entity\SolidaryAnimation;
 
 /**
- * Event sent when a solidary contact is made using an email
+ * Event sent when a solidary animation is posted
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryContactEmail extends Event
+class SolidaryAnimationPostedEvent extends Event
 {
-    public const NAME = 'solidary_contact_email';
+    public const NAME = 'solidary_animation_posted';
 
-    protected $solidaryContact;
+    private $solidaryAnimation;
 
-    public function __construct(SolidaryContact $solidaryContact)
+    public function __construct(SolidaryAnimation $solidaryAnimation)
     {
-        $this->solidaryContact = $solidaryContact;
+        $this->solidaryAnimation = $solidaryAnimation;
     }
 
-    public function getSolidaryContact()
+    public function getSolidaryAnimation()
     {
-        return $this->solidaryContact;
+        return $this->solidaryAnimation;
     }
 }

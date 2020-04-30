@@ -25,10 +25,10 @@ namespace App\Solidary\Service;
 use App\Carpool\Service\AdManager;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidarySearch;
-use App\Solidary\Event\SolidaryCreated;
+use App\Solidary\Event\SolidaryCreatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use App\Solidary\Event\SolidaryUpdated;
+use App\Solidary\Event\SolidaryUpdatedEvent;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\SolidaryUserRepository;
@@ -69,8 +69,8 @@ class SolidaryManager
     public function createSolidary(Solidary $solidary)
     {
         // We trigger the event
-        $event = new SolidaryCreated($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser());
-        $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
+        $event = new SolidaryCreatedEvent($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser());
+        $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
 
         $this->entityManager->persist($solidary);
         $this->entityManager->flush();
@@ -79,8 +79,8 @@ class SolidaryManager
     public function updateSolidary(Solidary $solidary)
     {
         // We trigger the event
-        $event = new SolidaryUpdated($solidary);
-        $this->eventDispatcher->dispatch(SolidaryUpdated::NAME, $event);
+        $event = new SolidaryUpdatedEvent($solidary);
+        $this->eventDispatcher->dispatch(SolidaryUpdatedEvent::NAME, $event);
 
         $this->entityManager->persist($solidary);
         $this->entityManager->flush();

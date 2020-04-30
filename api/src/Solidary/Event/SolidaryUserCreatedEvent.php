@@ -23,25 +23,38 @@
 
 namespace App\Solidary\Event;
 
-use App\Solidary\Entity\SolidaryUserStructure;
+use App\App\Entity\App;
+use App\User\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a solidary user structure is refused
+ * Event sent when a solidary user structure is created
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryUserStructureRefused extends Event
+class SolidaryUserCreatedEvent extends Event
 {
-    public const NAME = 'solidary_user_refused';
+    public const NAME = 'solidary_user_create';
 
-    protected $solidaryUserStructure;
+    protected $user;
+    protected $author;
 
-    public function __construct(SolidaryUserStructure $solidaryUserStructure)
+    public function __construct(User $user, $author)
     {
-        $this->solidaryUserStructure = $solidaryUserStructure;
+        $this->user = $user;
+        $this->author = $author;
+        // If it's an App, it means that this User registered himself from the front
+        if ($author instanceof App) {
+            $this->author = $user;
+        }
     }
 
-    public function getSolidaryUserStructure()
+    public function getUser()
     {
-        return $this->solidaryUserStructure;
+        return $this->user;
+    }
+
+    public function getAuthor()
+    {
+        return $this->author;
     }
 }

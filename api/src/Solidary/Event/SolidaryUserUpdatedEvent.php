@@ -23,25 +23,26 @@
 
 namespace App\Solidary\Event;
 
+use App\Solidary\Entity\SolidaryUser;
 use Symfony\Contracts\EventDispatcher\Event;
-use App\Solidary\Entity\SolidaryAnimation;
 
 /**
- * Event sent when a solidary user structure is accepted
+ * Event sent when a solidary user is updated
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryAnimationPosted extends Event
+class SolidaryUserUpdatedEvent extends Event
 {
-    public const NAME = 'solidary_animation_posted';
+    public const NAME = 'solidary_user_update';
 
-    private $solidaryAnimation;
+    protected $solidaryUser;
 
-    public function __construct(SolidaryAnimation $solidaryAnimation)
+    public function __construct(SolidaryUser $solidaryUser)
     {
-        $this->solidaryAnimation = $solidaryAnimation;
+        $this->solidaryUser = $solidaryUser;
     }
 
-    public function getSolidaryAnimation()
+    public function getSolidaryUser()
     {
-        return $this->solidaryAnimation;
+        return $this->solidaryUser;
     }
 }

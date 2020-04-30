@@ -50,9 +50,9 @@ use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\Community\Entity\Community;
 use App\Solidary\Entity\SolidaryUser;
-use App\Solidary\Event\SolidaryCreated;
-use App\Solidary\Event\SolidaryUserCreated;
-use App\Solidary\Event\SolidaryUserUpdated;
+use App\Solidary\Event\SolidaryCreatedEvent;
+use App\Solidary\Event\SolidaryUserCreatedEvent;
+use App\Solidary\Event\SolidaryUserUpdatedEvent;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\StructureRepository;
@@ -231,10 +231,10 @@ class UserManager
 
         // dispatch SolidaryUser event
         if (!is_null($user->getSolidaryUser())) {
-            $event = new SolidaryUserCreated($user, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryUserCreated::NAME, $event);
-            $event = new SolidaryCreated($user, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
+            $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryUserCreatedEvent::NAME, $event);
+            $event = new SolidaryCreatedEvent($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
         }
 
         // return the user
@@ -438,10 +438,10 @@ class UserManager
         $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
         // dispatch SolidaryUser event
         if (!is_null($user->getSolidaryUser())) {
-            $event = new SolidaryUserCreated($user, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryUserCreated::NAME, $event);
-            $event = new SolidaryCreated($user, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
+            $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryUserCreatedEvent::NAME, $event);
+            $event = new SolidaryCreatedEvent($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
         }
 
         // return the user

@@ -29,9 +29,9 @@ use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryContact;
-use App\Solidary\Event\SolidaryContactEmail;
-use App\Solidary\Event\SolidaryContactMessage;
-use App\Solidary\Event\SolidaryContactSms;
+use App\Solidary\Event\SolidaryContactEmailEvent;
+use App\Solidary\Event\SolidaryContactMessageEvent;
+use App\Solidary\Event\SolidaryContactSmsEvent;
 use App\Solidary\Repository\SolidaryAskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -86,16 +86,16 @@ class SolidaryContactManager
 
                     // We create the message
                     $message = $this->buildInternalMessage($solidaryContact);
-                    $event = new SolidaryContactMessage($solidaryContact);
-                    $this->eventDispatcher->dispatch(SolidaryContactMessage::NAME, $event);
+                    $event = new SolidaryContactMessageEvent($solidaryContact);
+                    $this->eventDispatcher->dispatch(SolidaryContactMessageEvent::NAME, $event);
                     break;
                 case Medium::MEDIUM_SMS:
-                    $event = new SolidaryContactSms($solidaryContact);
-                    $this->eventDispatcher->dispatch(SolidaryContactSms::NAME, $event);
+                    $event = new SolidaryContactSmsEvent($solidaryContact);
+                    $this->eventDispatcher->dispatch(SolidaryContactSmsEvent::NAME, $event);
                     break;
                 case Medium::MEDIUM_EMAIL:
-                    $event = new SolidaryContactEmail($solidaryContact);
-                    $this->eventDispatcher->dispatch(SolidaryContactEmail::NAME, $event);
+                    $event = new SolidaryContactEmailEvent($solidaryContact);
+                    $this->eventDispatcher->dispatch(SolidaryContactEmailEvent::NAME, $event);
                     break;
             }
         }

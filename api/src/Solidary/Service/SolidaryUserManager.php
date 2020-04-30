@@ -25,7 +25,7 @@ namespace App\Solidary\Service;
 use App\Solidary\Entity\SolidaryUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use App\Solidary\Event\SolidaryUserUpdated;
+use App\Solidary\Event\SolidaryUserUpdatedEvent;
 
 class SolidaryUserManager
 {
@@ -41,7 +41,7 @@ class SolidaryUserManager
     public function updateSolidaryUser(SolidaryUser $solidaryUser)
     {
         // We trigger the event
-        $event = new SolidaryUserUpdated($solidaryUser);
-        $this->eventDispatcher->dispatch(SolidaryUserUpdated::NAME, $event);
+        $event = new SolidaryUserUpdatedEvent($solidaryUser);
+        $this->eventDispatcher->dispatch(SolidaryUserUpdatedEvent::NAME, $event);
     }
 }

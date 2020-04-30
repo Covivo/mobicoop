@@ -32,16 +32,16 @@ use App\Communication\Service\NotificationManager;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryAnimation;
 use App\Solidary\Entity\SolidarySolution;
-use App\Solidary\Event\SolidaryAnimationPosted;
-use App\Solidary\Event\SolidaryContactEmail;
-use App\Solidary\Event\SolidaryContactMessage;
-use App\Solidary\Event\SolidaryContactSms;
-use App\Solidary\Event\SolidaryCreated;
-use App\Solidary\Event\SolidaryUpdated;
-use App\Solidary\Event\SolidaryUserCreated;
-use App\Solidary\Event\SolidaryUserStructureAccepted;
-use App\Solidary\Event\SolidaryUserStructureRefused;
-use App\Solidary\Event\SolidaryUserUpdated;
+use App\Solidary\Event\SolidaryAnimationPostedEvent;
+use App\Solidary\Event\SolidaryContactEmailEvent;
+use App\Solidary\Event\SolidaryContactMessageEvent;
+use App\Solidary\Event\SolidaryContactSmsEvent;
+use App\Solidary\Event\SolidaryCreatedEvent;
+use App\Solidary\Event\SolidaryUpdatedEvent;
+use App\Solidary\Event\SolidaryUserCreatedEvent;
+use App\Solidary\Event\SolidaryUserStructureAcceptedEvent;
+use App\Solidary\Event\SolidaryUserStructureRefusedEvent;
+use App\Solidary\Event\SolidaryUserUpdatedEvent;
 use App\Solidary\Exception\SolidaryException;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Security;
@@ -81,29 +81,25 @@ class ActionManager
             throw new SolidaryException(SolidaryException::BAD_SOLIDARY_ACTION);
         }
         switch ($actionName) {
-            case SolidaryUserStructureAccepted::NAME:$this->onSolidaryUserStructureAccepted($action, $object);
+            case SolidaryUserStructureAcceptedEvent::NAME:$this->onSolidaryUserStructureAccepted($action, $object);
                 break;
-            case SolidaryUserStructureRefused::NAME:$this->onSolidaryUserStructureRefused($action, $object);
+            case SolidaryUserStructureRefusedEvent::NAME:$this->onSolidaryUserStructureRefused($action, $object);
                 break;
-            case SolidaryUserCreated::NAME:$this->onSolidaryUserCreated($action, $object);
+            case SolidaryUserCreatedEvent::NAME:$this->onSolidaryUserCreated($action, $object);
                 break;
-            case SolidaryUserUpdated::NAME:$this->onSolidaryUserUpdated($action, $object);
+            case SolidaryUserUpdatedEvent::NAME:$this->onSolidaryUserUpdated($action, $object);
                 break;
-            case SolidaryCreated::NAME:$this->onSolidaryCreated($action, $object);
+            case SolidaryCreatedEvent::NAME:$this->onSolidaryCreated($action, $object);
                 break;
-            case SolidaryUpdated::NAME:$this->onSolidaryUpdated($action, $object);
+            case SolidaryUpdatedEvent::NAME:$this->onSolidaryUpdated($action, $object);
                 break;
-            case SolidaryContactMessage::NAME:$this->onSolidaryContactMessage($action, $object);
+            case SolidaryContactMessageEvent::NAME:$this->onSolidaryContactMessage($action, $object);
                 break;
-            case SolidaryContactSms::NAME:$this->onSolidaryContactSms($action, $object);
+            case SolidaryContactSmsEvent::NAME:$this->onSolidaryContactSms($action, $object);
                 break;
-            case SolidaryContactEmail::NAME:$this->onSolidaryContactEmail($action, $object);
+            case SolidaryContactEmailEvent::NAME:$this->onSolidaryContactEmail($action, $object);
                 break;
-            case SolidaryAnimationPosted::NAME:$this->onSolidaryAnimationPosted($object);
-                break;
-            default:
-                // For all the manual action with basic behaviour
-                // $this->treatAction($action, $object);
+            case SolidaryAnimationPostedEvent::NAME:$this->onSolidaryAnimationPosted($object);
                 break;
         }
     }
@@ -145,46 +141,46 @@ class ActionManager
         // To Do
     }
 
-    private function onSolidaryUserStructureAccepted(Action $action, SolidaryUserStructureAccepted $event)
+    private function onSolidaryUserStructureAccepted(Action $action, SolidaryUserStructureAcceptedEvent $event)
     {
         $user = $event->getSolidaryUserStructure()->getSolidaryUser()->getUser();
         $admin = $this->security->getUser();
         $this->treatDiary($action, $user, $admin);
     }
 
-    private function onSolidaryUserStructureRefused(Action $action, SolidaryUserStructureRefused $event)
+    private function onSolidaryUserStructureRefused(Action $action, SolidaryUserStructureRefusedEvent $event)
     {
         $user = $event->getSolidaryUserStructure()->getSolidaryUser()->getUser();
         $admin = $this->security->getUser();
         $this->treatDiary($action, $user, $admin);
     }
 
-    private function onSolidaryUserCreated(Action $action, SolidaryUserCreated $event)
+    private function onSolidaryUserCreated(Action $action, SolidaryUserCreatedEvent $event)
     {
         $this->treatDiary($action, $event->getUser(), $event->getAuthor());
     }
 
-    private function onSolidaryUserUpdated(Action $action, SolidaryUserUpdated $event)
+    private function onSolidaryUserUpdated(Action $action, SolidaryUserUpdatedEvent $event)
     {
         $user = $event->getSolidaryUser()->getUser();
         $admin = $this->security->getUser();
         $this->treatDiary($action, $user, $admin);
     }
 
-    private function onSolidaryCreated(Action $action, SolidaryCreated $event)
+    private function onSolidaryCreated(Action $action, SolidaryCreatedEvent $event)
     {
         // To do : The solidary is not persisted yet so we can't pass it to addDiaryEntrey... But it would be cool :)
         $this->treatDiary($action, $event->getUser(), $event->getAuthor());
     }
 
-    private function onSolidaryUpdated(Action $action, SolidaryUpdated $event)
+    private function onSolidaryUpdated(Action $action, SolidaryUpdatedEvent $event)
     {
         $user = $event->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
         $admin = $this->security->getUser();
         $this->treatDiary($action, $user, $admin, null, $event->getSolidary());
     }
 
-    private function onSolidaryContactMessage(Action $action, SolidaryContactMessage $event)
+    private function onSolidaryContactMessage(Action $action, SolidaryContactMessageEvent $event)
     {
         $solidaryContact = $event->getSolidaryContact();
         $user = $solidaryContact->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
@@ -198,14 +194,14 @@ class ActionManager
         $admin = $this->security->getUser();
 
         // Trigger the message by notifies
-        $this->notificationManager->notifies(SolidaryContactMessage::NAME, $recipient, $event->getSolidaryContact());
+        $this->notificationManager->notifies(SolidaryContactMessageEvent::NAME, $recipient, $event->getSolidaryContact());
 
 
         // Store in diary
         $this->treatDiary($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
     }
 
-    private function onSolidaryContactSms(Action $action, SolidaryContactSms $event)
+    private function onSolidaryContactSms(Action $action, SolidaryContactSmsEvent $event)
     {
         $solidaryContact = $event->getSolidaryContact();
         $user = $solidaryContact->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
@@ -219,13 +215,13 @@ class ActionManager
         $admin = $this->security->getUser();
 
         // Trigger the sms by notifies (need to add lines in table notification)
-        $this->notificationManager->notifies(SolidaryContactSms::NAME, $recipient, $event->getSolidaryContact());
+        $this->notificationManager->notifies(SolidaryContactSmsEvent::NAME, $recipient, $event->getSolidaryContact());
 
         // Store in diary
         $this->treatDiary($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
     }
     
-    private function onSolidaryContactEmail(Action $action, SolidaryContactEmail $event)
+    private function onSolidaryContactEmail(Action $action, SolidaryContactEmailEvent $event)
     {
         $solidaryContact = $event->getSolidaryContact();
         $user = $solidaryContact->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
@@ -239,13 +235,13 @@ class ActionManager
         $admin = $this->security->getUser();
 
         // Trigger the email by notifies
-        $this->notificationManager->notifies(SolidaryContactEmail::NAME, $recipient, $event->getSolidaryContact());
+        $this->notificationManager->notifies(SolidaryContactEmailEvent::NAME, $recipient, $event->getSolidaryContact());
 
         // Store in diary
         $this->treatDiary($action, $user, $admin, null, $event->getSolidaryContact()->getSolidarySolution()->getSolidary());
     }
 
-    private function onSolidaryAnimationPosted(SolidaryAnimationPosted $event)
+    private function onSolidaryAnimationPosted(SolidaryAnimationPostedEvent $event)
     {
         $solidaryAnimation = $event->getSolidaryAnimation();
 
