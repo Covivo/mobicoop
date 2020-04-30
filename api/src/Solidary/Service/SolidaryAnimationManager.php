@@ -23,7 +23,7 @@
 namespace App\Solidary\Service;
 
 use App\Solidary\Entity\SolidaryAnimation;
-use App\Solidary\Event\SolidaryAnimationPosted;
+use App\Solidary\Event\SolidaryAnimationPostedEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -40,7 +40,7 @@ class SolidaryAnimationManager
 
     public function treatSolidaryAnimation(SolidaryAnimation $solidaryAnimation)
     {
-        $event = new SolidaryAnimationPosted($solidaryAnimation);
-        $this->dispatcher->dispatch(SolidaryAnimationPosted::NAME, $event);
+        $event = new SolidaryAnimationPostedEvent($solidaryAnimation);
+        $this->dispatcher->dispatch(SolidaryAnimationPostedEvent::NAME, $event);
     }
 }
