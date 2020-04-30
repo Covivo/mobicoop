@@ -3,7 +3,6 @@
     :class="textColor"
     :color="backgroundColor"
     :height="height"
-    :max-width="280"
     :flat="flat"
     :tile="tile"
   >
@@ -38,13 +37,14 @@
           <v-row
             justify="center"
           >
-            <v-col>
+            <v-col 
+              :align="alignButton"
+            >
               <v-btn
                 rounded
-                class="mb-4 body-2"
-                :class="cardTextColorButton+' '+cardColorButton"
+                :class="cardTextColorButton+' '+cardColorButton +' '+classButton"
                 :href="hrefButton"
-                width="90%"
+                :width="sizeButton"
               >
                 {{ cardTextButton }}
               </v-btn>
@@ -54,7 +54,7 @@
                 class="ma-0 body-2"
                 :class="cardTextColorButtonTwo+' '+cardColorButtonTwo"
                 :href="hrefButtonTwo"
-                width="90%"
+                :width="sizeButton"
               >
                 {{ cardTextButtonTwo }}
               </v-btn>
@@ -84,7 +84,19 @@ export default {
     textColor: {
       type: String,
       default: "white--text"
-    },  
+    }, 
+    classButton: {
+      type: String,
+      default:"mb-4 body-2"
+    },
+    sizeButton: {
+      type: String,
+      default: "90%"
+    }, 
+    alignButton: {
+      type: String,
+      default:"center"
+    },
     cardTextButton: {
       type: String,
       default: ""
