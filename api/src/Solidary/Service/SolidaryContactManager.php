@@ -23,11 +23,13 @@
 namespace App\Solidary\Service;
 
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Criteria;
 use App\Communication\Entity\Medium;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
 use App\Solidary\Entity\SolidaryAsk;
+use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Entity\SolidaryContact;
 use App\Solidary\Event\SolidaryContactEmailEvent;
 use App\Solidary\Event\SolidaryContactMessageEvent;
@@ -47,14 +49,16 @@ class SolidaryContactManager
     private $security;
     private $solidaryAskRepository;
     private $solidaryAskManager;
+    private $notificationsEnabled;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryAskRepository $solidaryAskRepository, SolidaryAskManager $solidaryAskManager)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryAskRepository $solidaryAskRepository, SolidaryAskManager $solidaryAskManager, bool $notificationsEnabled)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->security = $security;
         $this->solidaryAskRepository = $solidaryAskRepository;
         $this->solidaryAskManager = $solidaryAskManager;
+        $this->notificationsEnabled = $notificationsEnabled;
     }
 
     /**
@@ -71,50 +75,91 @@ class SolidaryContactManager
         if (empty($solidaryAsk)) {
             // There is no SolidaryAsk we need to create it before trigger the event
             $solidaryAsk = new SolidaryAsk();
-            $solidaryAsk->setStatus(0);
+            $solidaryAsk->setStatus(SolidaryAsk::STATUS_ASKED);
             $solidaryAsk->setSolidarySolution($solidaryContact->getSolidarySolution());
             $criteria = clone $solidaryContact->getSolidarySolution()->getSolidaryMatching()->getCriteria();
             $solidaryAsk->setCriteria($criteria);
             $solidaryAsk = $this->solidaryAskManager->createSolidaryAsk($solidaryAsk);
-            
-            // We set the solidaryAsk field for the return
-            $solidaryContact->setSolidaryAsk($solidaryAsk);
+        } else {
+            // We found the solidaryAsk
+            $solidaryAsk = $solidaryAsk[0];
         }
         
         // we trigger the solidaryContact events
         $media = $solidaryContact->getMedia();
-        foreach ($media as $medium) {
-            switch ($medium->getId()) {
-                case Medium::MEDIUM_MESSAGE:
-
-                    // We create the message
-                    $message = $this->buildInternalMessage($solidaryContact);
-                    $event = new SolidaryContactMessageEvent($solidaryContact);
-                    $this->eventDispatcher->dispatch(SolidaryContactMessageEvent::NAME, $event);
-                    break;
-                case Medium::MEDIUM_SMS:
-                    $event = new SolidaryContactSmsEvent($solidaryContact);
-                    $this->eventDispatcher->dispatch(SolidaryContactSmsEvent::NAME, $event);
-                    break;
-                case Medium::MEDIUM_EMAIL:
-                    $event = new SolidaryContactEmailEvent($solidaryContact);
-                    $this->eventDispatcher->dispatch(SolidaryContactEmailEvent::NAME, $event);
-                    break;
+        if ($this->notificationsEnabled) {
+            foreach ($media as $medium) {
+                switch ($medium->getId()) {
+                    case Medium::MEDIUM_MESSAGE:
+                        // We create the message
+                        $message = $this->buildInternalMessage($solidaryContact);
+                        $solidaryContact->setMessage($message);
+                        $event = new SolidaryContactMessageEvent($solidaryContact);
+                        $this->eventDispatcher->dispatch(SolidaryContactMessageEvent::NAME, $event);
+                        // We create the SolidaryAskHistory and AskHistory if needed
+                        $this->createHistories($solidaryAsk, $solidaryContact->getMessage());
+                        break;
+                    case Medium::MEDIUM_SMS:
+                        $event = new SolidaryContactSmsEvent($solidaryContact);
+                        $this->eventDispatcher->dispatch(SolidaryContactSmsEvent::NAME, $event);
+                        break;
+                    case Medium::MEDIUM_EMAIL:
+                        $event = new SolidaryContactEmailEvent($solidaryContact);
+                        $this->eventDispatcher->dispatch(SolidaryContactEmailEvent::NAME, $event);
+                        break;
+                }
             }
         }
+        // We set the solidaryAsk field for the return
+        $solidaryContact->setSolidaryAsk($solidaryAsk);
 
         return $solidaryContact;
     }
 
+    /**
+     * Build a simple message to send
+     *
+     * @param SolidaryContact $object
+     * @return Message
+     */
     private function buildInternalMessage(SolidaryContact $object): Message
     {
         $message = new Message();
         $message->setUser($object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser());
         $message->setText($object->getContent());
         
-        $solidaryAsk = $object->getSolidaryAsk();
-        $ask = $object->getSolidaryAsk()->getAsk();
-
         return $message;
+    }
+
+    /**
+     * We create the SolidaryAskHistory and AskHistory if needed linked to a Message
+     *
+     * @param SolidaryAsk $solidaryAsk
+     * @param Message $message
+     * @return void
+     */
+    private function createHistories(SolidaryAsk $solidaryAsk, Message $message)
+    {
+        // if there is a solidaryAsk we persist a new SolidaryAskHistory linked to this message
+        if (!is_null($solidaryAsk)) {
+            $solidaryAskHistory = new SolidaryAskHistory();
+            $solidaryAskHistory->setStatus($solidaryAsk->getStatus());
+            $solidaryAskHistory->setSolidaryAsk($solidaryAsk);
+            $solidaryAskHistory->setMessage($message);
+            $this->entityManager->persist($solidaryAskHistory);
+            $this->entityManager->flush();
+        }
+
+        // if there is an Ask we persist a new SolidaryAskHistory linked to this message
+        $ask = $solidaryAsk->getAsk();
+        if (!is_null($ask)) {
+            $askHistory = new AskHistory();
+            $askHistory->setStatus($ask->getStatus());
+            $askHistory->setType($ask->getType());
+            $askHistory->setAsk($ask);
+            $askHistory->setMessage($message);
+            $this->entityManager->persist($askHistory);
+            $this->entityManager->flush();
+        }
     }
 }

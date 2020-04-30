@@ -162,61 +162,6 @@ class NotificationManager
 
     
     /**
-     * Notify a user by internal message
-     *
-     * @param User          $recipient
-     * @param object|null   $object
-     * @return void
-     */
-    private function notifyByInternalMessage(User $recipient, ?object $object = null)
-    {
-        $message = new Message();
-        $message->setUser($object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser());
-        $messageRecipient = new Recipient();
-        $messageRecipient->setStatus(Recipient::STATUS_PENDING);
-        $messageRecipient->setUser($recipient);
-        $message->addRecipient($messageRecipient);
-
-        // We set those variables at null get them in the switch if it's necessary
-        $solidaryAsk = $ask = null;
-        
-        if ($object) {
-            switch (get_class($object)) {
-                case SolidaryContact::class:
-                    $message->setText($object->getContent());
-                    $solidaryAsk = $object->getSolidaryAsk();
-                    $ask = $object->getSolidaryAsk()->getAsk();
-                break;
-            }
-            
-            
-            $this->entityManager->persist($message);
-            $this->entityManager->flush();
-
-            // if there is a solidaryAsk we persist a new SolidaryAskHistory linked to this message
-            if (!is_null($solidaryAsk)) {
-                $solidaryAskHistory = new SolidaryAskHistory();
-                $solidaryAskHistory->setStatus($solidaryAsk->getStatus());
-                $solidaryAskHistory->setSolidaryAsk($solidaryAsk);
-                $solidaryAskHistory->setMessage($message);
-                $this->entityManager->persist($solidaryAskHistory);
-                $this->entityManager->flush();
-            }
-
-            // if there is an Ask we persist a new SolidaryAskHistory linked to this message
-            if (!is_null($ask)) {
-                $askHistory = new AskHistory();
-                $askHistory->setStatus($ask->getStatus());
-                $askHistory->setType($ask->getType());
-                $askHistory->setAsk($ask);
-                $askHistory->setMessage($message);
-                $this->entityManager->persist($askHistory);
-                $this->entityManager->flush();
-            }
-        }
-    }
-    
-    /**
      * Notify a user by email.
      * Different variables can be passed to the notification body and title depending on the object linked to the notification.
      *
