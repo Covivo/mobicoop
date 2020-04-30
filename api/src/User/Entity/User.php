@@ -720,20 +720,12 @@ class User implements UserInterface, EquatableInterface
     private $phoneValidatedDate;
 
     /**
-     * @var string|null iOS app ID.
+     * @var bool|null Mobile user
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readUser","write"})
      */
-    private $iosAppId;
-
-    /**
-     * @var string|null Android app ID.
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write"})
-     */
-    private $androidAppId;
+    private $mobile;
 
     /**
      * @var string User language
@@ -1489,25 +1481,15 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getIosAppId(): ?string
+    public function hasMobile(): ?bool
     {
-        return $this->iosAppId;
+        return $this->mobile ? true : false;
     }
 
-    public function setIosAppId(?string $iosAppId): self
+    public function setMobile(?bool $mobile): self
     {
-        $this->iosAppId = $iosAppId;
-        return $this;
-    }
+        $this->mobile = $mobile;
 
-    public function getAndroidAppId(): ?string
-    {
-        return $this->androidAppId;
-    }
-
-    public function setAndroidAppId(?string $androidAppId): self
-    {
-        $this->androidAppId = $androidAppId;
         return $this;
     }
 
@@ -2469,7 +2451,9 @@ class User implements UserInterface, EquatableInterface
     public function setMobileRegistration(?int $mobileRegistration): self
     {
         $this->mobileRegistration = $mobileRegistration;
-
+        if ($this->mobileRegistration == self::MOBILE_APP_IOS || $this->mobileRegistration == self::MOBILE_APP_ANDROID) {
+            $this->setMobile(true);
+        }
         return $this;
     }
 

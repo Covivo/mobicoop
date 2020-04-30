@@ -378,20 +378,6 @@ class UserManager
         // Create token to unscubscribe from the instance news
         $user->setUnsubscribeToken($this->createToken($user));
 
-        // generate android or ios app id if registration via mobile app
-        if (!is_null($user->getMobileRegistration())) {
-            switch ($user->getMobileRegistration()) {
-                case User::MOBILE_APP_IOS:
-                    $user->setIosAppId($this->createToken($user));
-                    break;
-                case User::MOBILE_APP_ANDROID:
-                    $user->setAndroidAppId($this->createToken($user));
-                    break;
-                default:
-                    break;
-            }
-        }
-
         // return the user
         return $user;
     }
@@ -740,7 +726,7 @@ class UserManager
             if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
                 // check telephone for sms
                 continue;
-            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
+            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && !$user->hasMobile()) {
                 // check apps for push
                 continue;
             }
@@ -759,7 +745,7 @@ class UserManager
             if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
                 // check telephone for sms
                 continue;
-            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
+            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && !$user->hasMobile()) {
                 // check apps for push
                 continue;
             }
@@ -801,7 +787,7 @@ class UserManager
             if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
                 // check telephone for sms
                 $userNotification->setActive(false);
-            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
+            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && !$user->hasMobile()) {
                 // check apps for push
                 $userNotification->setActive(false);
             }
