@@ -29,8 +29,9 @@ use App\User\Entity\User;
 
 /**
  * Event sent when a solidary is created
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryCreated extends Event
+class SolidaryCreatedEvent extends Event
 {
     public const NAME = 'solidary_create';
 

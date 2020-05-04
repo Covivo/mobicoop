@@ -28,8 +28,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event sent when a solidary user structure is refused
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryUserStructureRefused extends Event
+class SolidaryUserStructureRefusedEvent extends Event
 {
     public const NAME = 'solidary_user_refused';
 

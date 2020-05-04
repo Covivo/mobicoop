@@ -23,27 +23,26 @@
 
 namespace App\Solidary\Event;
 
-use App\App\Entity\App;
-use App\Solidary\Entity\SolidaryContact;
+use App\Solidary\Entity\Solidary;
 use Symfony\Contracts\EventDispatcher\Event;
-use App\User\Entity\User;
 
 /**
- * Event sent when a solidary contact is made using a internal Message
+ * Event sent when a solidary is updated
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryContactMessage extends Event
+class SolidaryUpdatedEvent extends Event
 {
-    public const NAME = 'solidary_contact_message';
+    public const NAME = 'solidary_update';
 
-    protected $solidaryContact;
+    protected $solidary;
 
-    public function __construct(SolidaryContact $solidaryContact)
+    public function __construct(Solidary $solidary)
     {
-        $this->solidaryContact = $solidaryContact;
+        $this->solidary = $solidary;
     }
 
-    public function getSolidaryContact()
+    public function getSolidary()
     {
-        return $this->solidaryContact;
+        return $this->solidary;
     }
 }

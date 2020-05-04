@@ -28,9 +28,10 @@ use App\User\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a solidary user structure is accepted
+ * Event sent when a solidary user structure is created
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryUserCreated extends Event
+class SolidaryUserCreatedEvent extends Event
 {
     public const NAME = 'solidary_user_create';
 

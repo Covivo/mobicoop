@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,27 +20,27 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Event;
+namespace App\Solidary\Service;
 
-use App\Solidary\Entity\SolidaryUserStructure;
-use Symfony\Contracts\EventDispatcher\Event;
+use App\Solidary\Entity\SolidaryAnimation;
+use App\Solidary\Event\SolidaryAnimationPostedEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Event sent when a solidary user structure is accepted
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryUserStructureAccepted extends Event
+class SolidaryAnimationManager
 {
-    public const NAME = 'solidary_user_accepted';
+    private $dispatcher;
 
-    protected $solidaryUserStructure;
-
-    public function __construct(SolidaryUserStructure $solidaryUserStructure)
+    public function __construct(EventDispatcherInterface $dispatcher)
     {
-        $this->solidaryUserStructure = $solidaryUserStructure;
+        $this->dispatcher = $dispatcher;
     }
 
-    public function getSolidaryUserStructure()
+    public function treatSolidaryAnimation(SolidaryAnimation $solidaryAnimation)
     {
-        return $this->solidaryUserStructure;
+        $event = new SolidaryAnimationPostedEvent($solidaryAnimation);
+        $this->dispatcher->dispatch(SolidaryAnimationPostedEvent::NAME, $event);
     }
 }

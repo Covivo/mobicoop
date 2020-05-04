@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,25 +21,31 @@
  *    LICENSE
  **************************/
 
-namespace App\Action\Service;
+namespace App\Security;
 
-use App\Action\Entity\Animation;
-use App\Action\Service\ActionManager;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class AnimationManager
+/**
+ * Reject voter => used to deny access to a mandatory route (= a route needed to be set for consistency, but denied for everyone)
+ */
+class RejectVoter extends Voter
 {
-    private $entityManager;
-    private $actionManager;
+    const REJECT = 'reject';
 
-    public function __construct(EntityManagerInterface $entityManager, ActionManager $actionManager)
+    protected function supports($attribute, $subject)
     {
-        $this->entityManager = $entityManager;
-        $this->actionManager = $actionManager;
+        // if the attribute isn't one we support, return false
+        if (!in_array($attribute, [self::REJECT
+            ])) {
+            return false;
+        }
+      
+        return true;
     }
 
-    public function treatAnimation(Animation $animation)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $this->actionManager->handleAction($animation->getName(), $animation);
+        return false;
     }
 }

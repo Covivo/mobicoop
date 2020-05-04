@@ -30,6 +30,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
+use App\Communication\Entity\Message;
+use App\Communication\Interfaces\MessagerInterface;
 
 /**
  * A solidary contact
@@ -37,19 +39,26 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeSolidary"}}
+ *          "normalization_context"={"groups"={"readSolidaryContact"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeSolidaryContact"}}
  *      },
  *      collectionOperations={
- *          "get","post"
- *
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "post"={
+ *             "security_post_denormalize"="is_granted('solidary_contact',object)"
+ *          }
  *      },
  *      itemOperations={
- *          "get"
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          }
  *      }
  * )
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryContact
+class SolidaryContact implements MessagerInterface
 {
     const DEFAULT_ID = 999999999999;
     
@@ -57,13 +66,14 @@ class SolidaryContact
      * @var int The id of this subject.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidaryContact","writeSolidaryContact"})
      */
     private $id;
 
     /**
     * @var SolidarySolution The solidary solution this contact is for
-    * @Groups({"readSolidary","writeSolidary"})
+    * @Assert\NotBlank
+    * @Groups({"readSolidaryContact","writeSolidaryContact"})
     * @MaxDepth(1)
     */
     private $solidarySolution;
@@ -71,23 +81,26 @@ class SolidaryContact
     /**
     * @var string The content (usually text) message of this contact
     * @Assert\NotBlank
-    * @Groups({"readSolidary","writeSolidary"})
+    * @Groups({"readSolidaryContact","writeSolidaryContact"})
     * @MaxDepth(1)
     */
     private $content;
 
     /**
     * @var Medium[] List of the Medium of this contact
-    * @Groups({"readSolidary","writeSolidary"})
+    * @Groups({"readSolidaryContact","writeSolidaryContact"})
     */
     private $media;
 
     /**
      * @var SolidaryAsk If this contact is linked to an Ask, we return it after a contact
-     * @Groups({"readSolidary"})
      */
     private $solidaryAsk;
 
+    /**
+     * @var Message If this contact uses the internal message medium, $message contains this message
+     */
+    private $message;
 
     public function __construct()
     {
@@ -159,6 +172,18 @@ class SolidaryContact
         return $this->solidaryAsk;
     }
     
+    public function getMessage(): ?Message
+    {
+        return $this->message;
+    }
+    
+    public function setMessage(Message $message): self
+    {
+        $this->message = $message;
+        
+        return $this;
+    }
+
     public function setSolidaryAsk(SolidaryAsk $solidaryAsk): self
     {
         $this->solidaryAsk = $solidaryAsk;

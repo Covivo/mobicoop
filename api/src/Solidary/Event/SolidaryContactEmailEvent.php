@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,40 +21,30 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\DataPersister;
+namespace App\Solidary\Event;
 
-use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Solidary\Entity\SolidarySolution;
-use App\Solidary\Service\SolidarySolutionManager;
+use App\App\Entity\App;
+use App\Solidary\Entity\SolidaryContact;
+use Symfony\Contracts\EventDispatcher\Event;
+use App\User\Entity\User;
 
 /**
+ * Event sent when a solidary contact is made using an email
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class SolidarySolutionDataPersister implements ContextAwareDataPersisterInterface
+class SolidaryContactEmailEvent extends Event
 {
-    private $solidarySolutionManager;
+    public const NAME = 'solidary_contact_email';
 
-    public function __construct(SolidarySolutionManager $solidarySolutionManager)
+    protected $solidaryContact;
+
+    public function __construct(SolidaryContact $solidaryContact)
     {
-        $this->solidarySolutionManager = $solidarySolutionManager;
+        $this->solidaryContact = $solidaryContact;
     }
 
-    public function supports($data, array $context = []): bool
+    public function getSolidaryContact()
     {
-        return $data instanceof SolidarySolution;
-    }
-
-    public function persist($data, array $context = [])
-    {
-        // call your persistence layer to save $data
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-            $data = $this->solidarySolutionManager->createSolidarySolution($data);
-        }
-        return $data;
-    }
-
-    public function remove($data, array $context = [])
-    {
-        // call your persistence layer to delete $data
+        return $this->solidaryContact;
     }
 }

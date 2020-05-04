@@ -26,20 +26,15 @@ namespace App\Solidary\Security;
 use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
-use App\Solidary\Entity\Structure;
-use App\Solidary\Entity\StructureProof;
+use App\Solidary\Entity\SolidaryTransportersSchedule\SolidaryTransportersSchedule;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class StructureVoter extends Voter
+class SolidaryTransportersScheduleVoter extends Voter
 {
-    const STRUCTURE_CREATE = 'structure_create';
-    const STRUCTURE_READ = 'structure_read';
-    const STRUCTURE_UPDATE = 'structure_update';
-    const STRUCTURE_DELETE = 'structure_delete';
-    const STRUCTURE_LIST = 'structure_list';
+    const SOLIDARY_TRANSPORTERS_SCHEDULE = 'solidary_transporters_schedule';
     
     private $authManager;
 
@@ -52,23 +47,17 @@ class StructureVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::STRUCTURE_CREATE,
-            self::STRUCTURE_READ,
-            self::STRUCTURE_UPDATE,
-            self::STRUCTURE_DELETE,
-            self::STRUCTURE_LIST,
+            self::SOLIDARY_TRANSPORTERS_SCHEDULE
             ])) {
             return false;
         }
       
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
-            self::STRUCTURE_CREATE,
-            self::STRUCTURE_READ,
-            self::STRUCTURE_UPDATE,
-            self::STRUCTURE_DELETE,
-            self::STRUCTURE_LIST,
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Structure || $subject instanceof StructureProof)) {
+            self::SOLIDARY_TRANSPORTERS_SCHEDULE
+            ]) && !($subject instanceof Paginator) &&
+                !($subject instanceof SolidaryTransportersSchedule)
+            ) {
             return false;
         }
         return true;
@@ -77,43 +66,15 @@ class StructureVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         switch ($attribute) {
-            case self::STRUCTURE_CREATE:
-                return $this->canCreateStructure();
-            case self::STRUCTURE_READ:
-                return $this->canReadStructure();
-            case self::STRUCTURE_UPDATE:
-                return $this->canUpdateStructure();
-            case self::STRUCTURE_DELETE:
-                return $this->canDeleteStructure();
-            case self::STRUCTURE_LIST:
-                return $this->canListStructure();
+            case self::SOLIDARY_TRANSPORTERS_SCHEDULE:
+                return $this->canGetSolidaryTransportersSchedule();
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canCreateStructure()
+    private function canGetSolidaryTransportersSchedule()
     {
-        return $this->authManager->isAuthorized(self::STRUCTURE_CREATE);
-    }
-
-    private function canReadStructure()
-    {
-        return $this->authManager->isAuthorized(self::STRUCTURE_READ);
-    }
-
-    private function canUpdateStructure()
-    {
-        return $this->authManager->isAuthorized(self::STRUCTURE_UPDATE);
-    }
-    
-    private function canDeleteStructure()
-    {
-        return $this->authManager->isAuthorized(self::STRUCTURE_DELETE);
-    }
-    
-    private function canListStructure()
-    {
-        return $this->authManager->isAuthorized(self::STRUCTURE_LIST);
+        return $this->authManager->isAuthorized(self::SOLIDARY_TRANSPORTERS_SCHEDULE);
     }
 }

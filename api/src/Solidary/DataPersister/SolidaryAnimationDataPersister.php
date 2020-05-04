@@ -23,31 +23,50 @@
 namespace App\Solidary\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Solidary\Entity\SolidarySolution;
-use App\Solidary\Service\SolidarySolutionManager;
+use App\Solidary\Entity\SolidaryAnimation;
+use App\Action\Exception\ActionException;
+use App\Solidary\Service\SolidaryAnimationManager;
+use App\App\Entity\App;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class SolidarySolutionDataPersister implements ContextAwareDataPersisterInterface
+final class SolidaryAnimationDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $solidarySolutionManager;
-
-    public function __construct(SolidarySolutionManager $solidarySolutionManager)
+    private $solidaryAnimationManager;
+    private $security;
+    
+    public function __construct(SolidaryAnimationManager $solidaryAnimationManager, Security $security)
     {
-        $this->solidarySolutionManager = $solidarySolutionManager;
+        $this->solidaryAnimationManager = $solidaryAnimationManager;
+        $this->security = $security;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof SolidarySolution;
+        return $data instanceof SolidaryAnimation;
     }
 
     public function persist($data, array $context = [])
     {
-        // call your persistence layer to save $data
+        if (!($data instanceof SolidaryAnimation)) {
+            throw new ActionException(ActionException::INVALID_DATA_PROVIDED);
+        }
+
+        /**
+         * @var SolidaryAnimation $data
+         */
+
+        // We set the correct author
+        if ($this->security->getUser() instanceof App) {
+            $data->setAuthor($data->getUser());
+        } else {
+            $data->setAuthor($this->security->getUser());
+        }
+
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-            $data = $this->solidarySolutionManager->createSolidarySolution($data);
+            $data = $this->solidaryAnimationManager->treatSolidaryAnimation($data);
         }
         return $data;
     }
