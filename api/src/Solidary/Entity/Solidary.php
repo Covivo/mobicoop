@@ -55,6 +55,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "get"={
  *             "security"="is_granted('solidary_read',object)"
  *          },
+ *          "asks"={
+ *              "method"="GET",
+ *              "path"="/solidaries/{id}/asks",
+ *              "normalization_context"={"groups"={"asksList"}},
+ *              "security"="is_granted('solidary_read',object)"
+ *          },
  *          "put"={
  *             "security"="is_granted('solidary_update',object)"
  *          },
@@ -182,6 +188,12 @@ class Solidary
      */
     private $progression;
 
+    /**
+     * @var array List of the Asks of this solidary (special route)
+     * @Groups({"asksList"})
+     */
+    private $asksList;
+    
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -369,6 +381,18 @@ class Solidary
     public function setProgression(?string $progression): self
     {
         $this->progression = $progression;
+
+        return $this;
+    }
+
+    public function getAsksList(): ?array
+    {
+        return $this->asksList;
+    }
+
+    public function setAsksList(?array $asksList): self
+    {
+        $this->asksList = $asksList;
 
         return $this;
     }
