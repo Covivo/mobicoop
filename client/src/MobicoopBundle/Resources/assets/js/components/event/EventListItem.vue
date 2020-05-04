@@ -45,7 +45,7 @@
         <v-divider />
         <v-list dense>
           <v-list-item>
-            <v-list-item-content>
+            <v-list-item-content class="text-justify">
               {{ item.fullDescription }}
             </v-list-item-content>
           </v-list-item>

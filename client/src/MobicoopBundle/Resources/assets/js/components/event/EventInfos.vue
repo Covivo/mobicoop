@@ -38,7 +38,7 @@
           </p>
           <p
             v-if="displayDescription && formatedDescription!==''"
-            class="body-1 "
+            class="body-1"
             md="6"
             v-html="formatedDescription"
           />
