@@ -55,9 +55,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "get"={
  *             "security"="is_granted('solidary_read',object)"
  *          },
- *          "asks"={
+ *          "contactsList"={
  *              "method"="GET",
- *              "path"="/solidaries/{id}/asks",
+ *              "path"="/solidaries/{id}/contactsList",
  *              "normalization_context"={"groups"={"asksList"}},
  *              "security"="is_granted('solidary_read',object)"
  *          },

@@ -47,7 +47,7 @@ final class SolidaryItemDataProvider implements ItemDataProviderInterface, Restr
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Solidary
     {
-        if ($operationName=="asks") {
+        if ($operationName=="contactsList") {
             return $this->solidaryManager->getAsksList($id);
         }
         
