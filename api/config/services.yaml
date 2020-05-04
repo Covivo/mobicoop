@@ -463,3 +463,7 @@ services:
                 solidaryAMaxRangeTime: '%env(string:SOLIDARY_A_MAX_RANGE_TIME)%'
                 solidaryEMinRangeTime: '%env(string:SOLIDARY_E_MIN_RANGE_TIME)%'
                 solidaryEMaxRangeTime: '%env(string:SOLIDARY_E_MAX_RANGE_TIME)%'
+
+    App\Solidary\Service\SolidaryContactManager:
+        arguments:
+            $notificationsEnabled: '%env(bool:resolve:NOTIFICATION_ENABLED)%'

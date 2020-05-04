@@ -23,25 +23,26 @@
 
 namespace App\Solidary\Event;
 
-use App\Solidary\Entity\SolidaryUser;
+use App\Solidary\Entity\Solidary;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a solidary user structure is accepted
+ * Event sent when a solidary is updated
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryUserUpdated extends Event
+class SolidaryUpdatedEvent extends Event
 {
-    public const NAME = 'solidary_user_update';
+    public const NAME = 'solidary_update';
 
-    protected $solidaryUser;
+    protected $solidary;
 
-    public function __construct(SolidaryUser $solidaryUser)
+    public function __construct(Solidary $solidary)
     {
-        $this->solidaryUser = $solidaryUser;
+        $this->solidary = $solidary;
     }
 
-    public function getSolidaryUser()
+    public function getSolidary()
     {
-        return $this->solidaryUser;
+        return $this->solidary;
     }
 }

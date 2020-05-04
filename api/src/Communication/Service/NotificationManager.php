@@ -50,6 +50,8 @@ use Twig\Environment;
 use App\Carpool\Service\AdManager;
 use App\Communication\Entity\Push;
 use App\User\Entity\PushToken;
+use App\Solidary\Entity\SolidaryAskHistory;
+use App\Solidary\Entity\SolidaryContact;
 
 /**
  * Notification manager
@@ -184,6 +186,7 @@ class NotificationManager
         }
     }
 
+    
     /**
      * Notify a user by email.
      * Different variables can be passed to the notification body and title depending on the object linked to the notification.
@@ -313,6 +316,10 @@ class NotificationManager
                         'journeyTime' => $time
                     ];
                 break;
+                case SolidaryContact::class:
+                    $titleContext = ['user'=>$object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser()];
+                    $bodyContext = ['text'=>$object->getContent(), 'recipient'=>$recipient];
+                break;
                 default:
                     if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
                         $outwardOrigin = null;
@@ -438,6 +445,9 @@ class NotificationManager
                     break;
                 case Message::class:
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
+                    break;
+                case SolidaryContact::class:
+                    $bodyContext = ['text'=>$object->getContent(), 'recipient'=>$recipient];
                     break;
                 default:
                     if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {

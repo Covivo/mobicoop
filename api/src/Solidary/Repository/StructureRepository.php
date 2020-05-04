@@ -29,9 +29,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method Structure|null find($id, $lockMode = null, $lockVersion = null)
- * @method Structure|null findOneBy(array $criteria, array $orderBy = null)
- */
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+*/
 class StructureRepository
 {
     /**

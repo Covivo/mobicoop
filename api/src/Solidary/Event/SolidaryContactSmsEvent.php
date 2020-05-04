@@ -23,25 +23,28 @@
 
 namespace App\Solidary\Event;
 
-use App\Solidary\Entity\SolidaryUserStructure;
+use App\App\Entity\App;
+use App\Solidary\Entity\SolidaryContact;
 use Symfony\Contracts\EventDispatcher\Event;
+use App\User\Entity\User;
 
 /**
- * Event sent when a solidary user structure is refused
+ * Event sent when a solidary contact is made using an email
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryUserStructureRefused extends Event
+class SolidaryContactSmsEvent extends Event
 {
-    public const NAME = 'solidary_user_refused';
+    public const NAME = 'solidary_contact_sms';
 
-    protected $solidaryUserStructure;
+    protected $solidaryContact;
 
-    public function __construct(SolidaryUserStructure $solidaryUserStructure)
+    public function __construct(SolidaryContact $solidaryContact)
     {
-        $this->solidaryUserStructure = $solidaryUserStructure;
+        $this->solidaryContact = $solidaryContact;
     }
 
-    public function getSolidaryUserStructure()
+    public function getSolidaryContact()
     {
-        return $this->solidaryUserStructure;
+        return $this->solidaryContact;
     }
 }

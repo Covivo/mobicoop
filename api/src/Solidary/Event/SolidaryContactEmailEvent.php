@@ -29,11 +29,12 @@ use Symfony\Contracts\EventDispatcher\Event;
 use App\User\Entity\User;
 
 /**
- * Event sent when a solidary contact is made using a internal Message
+ * Event sent when a solidary contact is made using an email
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryContactMessage extends Event
+class SolidaryContactEmailEvent extends Event
 {
-    public const NAME = 'solidary_contact_message';
+    public const NAME = 'solidary_contact_email';
 
     protected $solidaryContact;
 

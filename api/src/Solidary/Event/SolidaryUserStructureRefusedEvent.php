@@ -27,11 +27,12 @@ use App\Solidary\Entity\SolidaryUserStructure;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a solidary user structure is accepted
+ * Event sent when a solidary user structure is refused
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryUserStructureAccepted extends Event
+class SolidaryUserStructureRefusedEvent extends Event
 {
-    public const NAME = 'solidary_user_accepted';
+    public const NAME = 'solidary_user_refused';
 
     protected $solidaryUserStructure;
 

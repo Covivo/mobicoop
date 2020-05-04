@@ -9,6 +9,7 @@
 ## API
 
 * Direct link between addresses / directions and territories : improve the response speed for territory filters
+* Solidary Transport and Carpool Management : Manage solidary volunteers and beneficiaries, searching for solidary solutions, managing files and sollicitations.
 
 ## CLIENT
 

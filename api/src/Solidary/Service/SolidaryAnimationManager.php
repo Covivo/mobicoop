@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,29 +20,27 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Event;
+namespace App\Solidary\Service;
 
-use App\App\Entity\App;
-use App\Solidary\Entity\SolidaryContact;
-use Symfony\Contracts\EventDispatcher\Event;
-use App\User\Entity\User;
+use App\Solidary\Entity\SolidaryAnimation;
+use App\Solidary\Event\SolidaryAnimationPostedEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Event sent when a solidary contact is made using an email
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryContactSms extends Event
+class SolidaryAnimationManager
 {
-    public const NAME = 'solidary_contact_sms';
+    private $dispatcher;
 
-    protected $solidaryContact;
-
-    public function __construct(SolidaryContact $solidaryContact)
+    public function __construct(EventDispatcherInterface $dispatcher)
     {
-        $this->solidaryContact = $solidaryContact;
+        $this->dispatcher = $dispatcher;
     }
 
-    public function getSolidaryContact()
+    public function treatSolidaryAnimation(SolidaryAnimation $solidaryAnimation)
     {
-        return $this->solidaryContact;
+        $event = new SolidaryAnimationPostedEvent($solidaryAnimation);
+        $this->dispatcher->dispatch(SolidaryAnimationPostedEvent::NAME, $event);
     }
 }

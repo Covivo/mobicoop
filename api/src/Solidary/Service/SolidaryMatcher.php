@@ -37,6 +37,9 @@ use App\Carpool\Entity\Result;
 use App\Carpool\Repository\MatchingRepository;
 use App\Solidary\Entity\Structure;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidaryMatcher
 {
     private $solidaryMatchingRepository;

@@ -47,13 +47,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={
- *          "get",
- *          "post"
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          }
  *      },
- *      itemOperations={"get","delete",
- *          "put"
+ *      itemOperations={
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          }
  *      }
  * )
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryAsk
 {
@@ -107,6 +111,7 @@ class SolidaryAsk
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", inversedBy="solidaryAsk")
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $solidarySolution;

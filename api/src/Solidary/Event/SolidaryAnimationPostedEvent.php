@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,25 +21,28 @@
  *    LICENSE
  **************************/
 
-namespace App\Action\Service;
+namespace App\Solidary\Event;
 
-use App\Action\Entity\Animation;
-use App\Action\Service\ActionManager;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\EventDispatcher\Event;
+use App\Solidary\Entity\SolidaryAnimation;
 
-class AnimationManager
+/**
+ * Event sent when a solidary animation is posted
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+class SolidaryAnimationPostedEvent extends Event
 {
-    private $entityManager;
-    private $actionManager;
+    public const NAME = 'solidary_animation_posted';
 
-    public function __construct(EntityManagerInterface $entityManager, ActionManager $actionManager)
+    private $solidaryAnimation;
+
+    public function __construct(SolidaryAnimation $solidaryAnimation)
     {
-        $this->entityManager = $entityManager;
-        $this->actionManager = $actionManager;
+        $this->solidaryAnimation = $solidaryAnimation;
     }
 
-    public function treatAnimation(Animation $animation)
+    public function getSolidaryAnimation()
     {
-        $this->actionManager->handleAction($animation->getName(), $animation);
+        return $this->solidaryAnimation;
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -29,6 +28,9 @@ use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Service\SolidaryManager;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 final class SolidaryItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     private $solidaryManager;

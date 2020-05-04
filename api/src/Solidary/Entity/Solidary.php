@@ -63,6 +63,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          }
  *      }
  * )
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Solidary
 {
