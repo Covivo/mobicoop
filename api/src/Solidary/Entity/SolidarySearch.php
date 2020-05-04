@@ -43,9 +43,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "get"={
  *             "security"="is_granted('reject',object)"
  *          },
- *          "post"={
- *             "security_post_denormalize"="is_granted('reject',object)"
- *          },
  *          "transport"={
  *              "method"="POST",
  *              "path"="/solidary_searches/transport",
@@ -61,12 +58,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
- *          },
-  *         "put"={
- *             "security"="is_granted('reject',object)"
- *          },
- *          "delete"={
  *             "security"="is_granted('reject',object)"
  *          }
  *      }

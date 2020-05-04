@@ -61,12 +61,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      itemOperations={
  *          "get"={
  *             "security"="is_granted('user_read',object)"
- *          },
- *          "put"={
- *             "security"="is_granted('user_update',object)"
- *          },
- *          "delete"={
- *             "security"="is_granted('user_delete',object)"
  *          }
  *      }
  * )

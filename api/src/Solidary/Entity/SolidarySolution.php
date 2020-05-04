@@ -51,12 +51,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={
  *          "get"={
  *             "security"="is_granted('reject',object)"
- *          },
- *          "put"={
- *             "security"="is_granted('reject',object)"
- *          },
- *          "delete"={
- *             "security"="is_granted('reject',object)"
  *          }
  *      }
  * )

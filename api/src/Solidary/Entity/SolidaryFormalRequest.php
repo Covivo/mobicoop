@@ -71,12 +71,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      itemOperations={
  *          "get"={
  *             "security"="is_granted('reject',object)"
- *          },
- *          "put"={
- *             "security"="is_granted('reject',object)"
- *          },
- *          "delete"={
- *             "security"="is_granted('reject',object)"
  *          }
  *      }
  * )

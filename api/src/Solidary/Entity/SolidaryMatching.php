@@ -47,19 +47,10 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      collectionOperations={
  *          "get"={
  *             "security"="is_granted('reject',object)"
- *          },
- *          "post"={
- *             "security_post_denormalize"="is_granted('reject',object)"
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
- *          },
- *          "put"={
- *             "security"="is_granted('reject',object)"
- *          },
- *          "delete"={
  *             "security"="is_granted('reject',object)"
  *          }
  *      }

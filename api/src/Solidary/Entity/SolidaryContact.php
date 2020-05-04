@@ -53,12 +53,6 @@ use App\Communication\Interfaces\MessagerInterface;
  *      itemOperations={
  *          "get"={
  *             "security"="is_granted('reject',object)"
- *          },
- *          "put"={
- *             "security"="is_granted('reject',object)"
- *          },
- *          "delete"={
- *             "security"="is_granted('reject',object)"
  *          }
  *      }
  * )
