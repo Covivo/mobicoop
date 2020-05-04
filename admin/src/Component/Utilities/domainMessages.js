@@ -174,7 +174,7 @@ const fr = {
               contact : "Contact",
               acceptActualite :  'Accepte de recevoir les actualités',
               declineActualite :  'Refuse de recevoir les actualités',
-              accountStatus : 'Status du compte',
+              accountStatus : 'Statut du compte',
               accountDisabled : 'Compte non actif',
               accountEnabled : 'Compte actif',
             },
