@@ -10,6 +10,8 @@
         class="text-center pa-lg-10 pa-md-2"
       >
         <MSocialFeedsItem
+          style="overflow:hidden;"
+
           :i-frame-string="sanitizedIFrame(item.iFrame)"
         />
       </v-col>
@@ -49,7 +51,7 @@ export default {
       items:[],
       loading:true,
       width:"100%",
-      height:"600"
+      height:"700"
     }
   },
   mounted(){
