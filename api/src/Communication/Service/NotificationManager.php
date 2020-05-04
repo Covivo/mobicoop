@@ -172,12 +172,12 @@ class NotificationManager
                     case Medium::MEDIUM_SMS:
                         $this->notifyBySMS($notification, $recipient, $object);
                         $this->createNotified($notification, $recipient, $object);
-                        $this->logger->info("Sms notification for  $action / " . $recipient->getEmail());
+                        $this->logger->info("Sms notification for $action / " . $recipient->getEmail());
                         break;
                     case Medium::MEDIUM_PUSH:
                         $this->notifyByPush($notification, $recipient, $object);
                         $this->createNotified($notification, $recipient, $object);
-                        $this->logger->info("Push notification for  $action / " . $recipient->getEmail());
+                        $this->logger->info("Push notification for $action / " . $recipient->getEmail());
                         break;
                 }
             }
@@ -486,6 +486,10 @@ class NotificationManager
              * @var PushToken $pushToken
              */
             $recipientDeviceIds[] = $pushToken->getToken();
+        }
+        // we check if the recipient has at least one push token id
+        if (count($recipientDeviceIds)==0) {
+            return;
         }
         $push->setRecipientDeviceIds($recipientDeviceIds);
         $bodyContext = [];
