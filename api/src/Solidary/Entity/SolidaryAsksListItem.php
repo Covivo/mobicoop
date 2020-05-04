@@ -24,28 +24,9 @@
 namespace App\Solidary\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A solidary asks list item
- *
- * ApiResource(
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"asksList"}, "enable_max_depth"="true"}
- *      },
- *      collectionOperations={
- *          "get"={
- *             "security"="is_granted('reject',object)"
- *          },
- *      },
- *      itemOperations={
- *          "get"={
- *             "security"="is_granted('reject',object)"
- *          }
- *      }
- * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryAsksListItem
