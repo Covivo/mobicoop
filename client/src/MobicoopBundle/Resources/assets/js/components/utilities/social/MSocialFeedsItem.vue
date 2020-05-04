@@ -1,8 +1,14 @@
 <template>
-  <div  
-    @mouseenter="redirected()"
-    v-html="iFrameString"
-  />
+  <div
+    class="embedIframe"
+    style="overflow:scroll; height:700px;width:100%;"
+    @click="openRequestedPopup()"
+  >
+    <div  
+      style="pointer-events:none;"
+      v-html="iFrameString"
+    />
+  </div>
 </template>
 <script>
 export default {
@@ -18,22 +24,19 @@ export default {
     }
   },
   mounted() {
-    // get src in string
     let urlCurrent = JSON.parse(JSON.stringify(this.iFrameString.replace(/"/g,"'")));
     let regex = /<iframe.*?src='(.*?)'/;
     this.source = regex.exec(urlCurrent)[1];
   },
   methods:{
-    redirected(){
-      let source = this.source
-      let monitor = setInterval(function(){
-        let elem = document.activeElement;
-        if(elem && elem.tagName == 'IFRAME'){
-          clearInterval(monitor);
-          // return window.location.href = "src";
-          return window.open(source, "_blank");
-        }
-      }, 100);
+    openRequestedPopup(){
+      let windowObjectReference;
+      let source = this.source;
+      windowObjectReference = window.open(
+        source ,
+        "DescriptiveWindowName",
+        "resizable,scrollbars,status"
+      );
     }
   }
 }
