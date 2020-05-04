@@ -1,8 +1,5 @@
 <template>
-  <v-row
-    align="center"
-    justify="center"
-  >
+  <v-row>
     <v-col
       cols="4"
       md="4"
@@ -30,7 +27,6 @@
     >
       <v-card
         flat
-        max-height="25vh"
         justify="center"
       >
         <v-card-text>
@@ -42,13 +38,13 @@
           </p>
           <p
             v-if="displayDescription && formatedDescription!==''"
-            class="body-1 pa-3"
+            class="body-1"
             md="6"
             v-html="formatedDescription"
           />
           <p
             v-if="displayDescription && formatedFullDescription!==''"
-            class="body-2 pa-3"
+            class="body-2"
             md="6"
             v-html="formatedFullDescription"
           />
