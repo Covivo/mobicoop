@@ -61,9 +61,11 @@ use Doctrine\Common\Collections\Collection;
  *          "post"={
  *              "method"="POST",
  *              "path"="/masses",
+ *              "deserialize"=false,
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=CreateMassImportAction::class,
  *              "defaults"={"_api_receive"=false},
+ *              "security_post_denormalize"="is_granted('mass_create',object)"
  *          }
  *      },
  *      itemOperations={
