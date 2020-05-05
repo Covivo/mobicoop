@@ -43,6 +43,7 @@ use App\Community\Entity\CommunityUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Match\Event\MassMigrateUserMigratedEvent;
 use App\Match\Exception\MassException;
+use App\Community\Service\CommunityManager;
 
 /**
  * Mass compute manager.
@@ -61,8 +62,9 @@ class MassMigrateManager
     private $adManager;
     private $params;
     private $eventDispatcher;
+    private $communityManager;
 
-    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, array $params)
+    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, array $params)
     {
         $this->massPersonRepository = $massPersonRepository;
         $this->entityManager = $entityManager;
@@ -72,6 +74,7 @@ class MassMigrateManager
         $this->adManager = $adManager;
         $this->params = $params;
         $this->eventDispatcher = $eventDispatcher;
+        $this->communityManager = $communityManager;
     }
 
     /**
@@ -93,36 +96,31 @@ class MassMigrateManager
         // If there is a community to create, we create it
         if (!empty($mass->getCommunityName())) {
             $community = new Community();
-
             $community->setName($mass->getCommunityName());
+
+            // Check if the necessary field are filled
+            if (empty($mass->getCommunityDescription())) {
+                throw new MassException(MassException::COMMUNITY_MISSING_DESCRIPTION);
+            }
+            if (empty($mass->getCommunityFullDescription())) {
+                throw new MassException(MassException::COMMUNITY_MISSING_FULL_DESCRIPTION);
+            }
+            if (empty($mass->getCommunityAddress())) {
+                throw new MassException(MassException::COMMUNITY_MISSING_ADDRESS);
+            }
+
             $community->setDescription($mass->getCommunityDescription());
             $community->setFullDescription($mass->getCommunityFullDescription());
 
             // The creator is the creator of the mass
             $community->setUser($mass->getUser());
 
-            $workPlaces = $this->massPersonRepository->findAllDestinationsForMass($mass);
-            if (count($workPlaces)==0) {
-                throw new MassException(MassException::NO_WORK_PLACES);
-            }
-            // we take the first work place as the address of the community
-            if (empty($workPlaces[0]['latitude']) || empty($workPlaces[0]['longitude'])) {
-                throw new MassException(MassException::INVALIDE_COMMUNITY_COORDINATES);
-            }
+            $community->setAddress($mass->getCommunityAddress());
 
-            $communityAddress = new Address();
-            $communityAddress->setHouseNumber($workPlaces[0]['houseNumber']);
-            $communityAddress->setStreet($workPlaces[0]['street']);
-            $communityAddress->setPostalCode($workPlaces[0]['postalCode']);
-            $communityAddress->setAddressLocality($workPlaces[0]['addressLocality']);
-            $communityAddress->setAddressCountry($workPlaces[0]['addressCountry']);
-            $communityAddress->setLatitude($workPlaces[0]['latitude']);
-            $communityAddress->setLongitude($workPlaces[0]['longitude']);
 
-            $community->setAddress($communityAddress);
-
-            $this->entityManager->persist($community);
-            $this->entityManager->flush();
+            // $this->entityManager->persist($community);
+            // $this->entityManager->flush();
+            $community = $this->communityManager->save($community);
         }
 
 
@@ -137,13 +135,13 @@ class MassMigrateManager
         foreach ($massPersons as $massPerson) {
 
             // We check if this user already exists
-            $userFound = $this->userRepository->findOneBy(["email"=>$massPerson->getEmail()]);
+            $user = $this->userRepository->findOneBy(["email"=>$massPerson->getEmail()]);
 
-            if (!is_null($userFound)) {
+            if (!is_null($user)) {
                 // This MassPerson has already an existing account
                 // We're returning the founded User
-                $userFound->setAlreadyRegistered(true);
-                $migratedUsers[] = $userFound;
+                $user->setAlreadyRegistered(true);
+                $migratedUsers[] = $user;
             } else {
 
                 // We don't know this MassPerson. We're creating the User.
@@ -178,18 +176,6 @@ class MassMigrateManager
                     $userAuthAssignment->setAuthItem($authItem);
                     $user->addUserAuthAssignment($userAuthAssignment);
 
-                    // If there is a community we create and persist a CommunityUser with the User.
-                    // else, only the user
-                    if (!empty($mass->getCommunityName())) {
-                        $this->entityManager->persist($user);
-                    } else {
-                        $communityUser = new CommunityUser();
-                        $communityUser->setCommunity($community);
-                        $communityUser->setUser($user);
-                        $this->entityManager->persist($communityUser);
-                        $this->entityManager->flush();
-                    }
-
                     $migratedUsers[] = $user; // For the return
 
                     // We update the MassPerson to link it to the created User
@@ -213,6 +199,15 @@ class MassMigrateManager
                     $event = new MassMigrateUserMigratedEvent($user);
                     $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
                 }
+            }
+
+            // If there is a community we create a CommunityUser with the User.
+            if (!empty($mass->getCommunityName())) {
+                $communityUser = new CommunityUser();
+                $communityUser->setCommunity($community);
+                $communityUser->setUser($user);
+                $this->entityManager->persist($communityUser);
+                $this->entityManager->flush();
             }
         }
         //$this->entityManager->flush();

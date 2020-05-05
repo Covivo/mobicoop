@@ -20,47 +20,45 @@
  *    LICENSE
  **************************/
 
-namespace App\Match\DataProvider;
+namespace App\Match\DataPersister;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Match\Entity\Mass;
-use App\Match\Service\MassMigrateManager;
-use App\Match\Repository\MassRepository;
 use App\Match\Exception\MassException;
+use App\Match\Service\MassMigrateManager;
 
 /**
- * Item data provider for migrating a Mass
+ * Item data persister for migrating a Mass
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  *
  */
-final class MassMigrateItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+final class MassMigrateDataPersister implements ContextAwareDataPersisterInterface
 {
     private $massMigrateManager;
-    private $massRepository;
 
-    public function __construct(MassMigrateManager $massMigrateManager, MassRepository $massRepository)
+    public function __construct(MassMigrateManager $massMigrateManager)
     {
         $this->massMigrateManager = $massMigrateManager;
-        $this->massRepository = $massRepository;
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function supports($data, array $context = []): bool
     {
-        return Mass::class === $resourceClass && $operationName=="migrate";
+        return $data instanceof Mass && isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'migrate';
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Mass
+    public function persist($data, array $context = [])
     {
-        $mass = $this->massRepository->find($id);
-
         // Only qualified Masses can be migrated
-        if ($mass->getMassType()!==1) {
+        if ($data->getMassType()!==1) {
             throw new MassException("bad Mass type");
         }
 
-        return $this->massMigrateManager->migrate($mass);
+        return $this->massMigrateManager->migrate($data);
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }
