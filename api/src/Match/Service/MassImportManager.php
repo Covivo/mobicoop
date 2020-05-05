@@ -139,6 +139,8 @@ class MassImportManager
         // we rename the file
         $mass->setFileName($this->generateFilename($mass));
 
+        $mass->setStatus(Mass::STATUS_INCOMING);
+
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
         

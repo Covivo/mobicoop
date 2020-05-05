@@ -44,6 +44,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Match\Event\MassMigrateUserMigratedEvent;
 use App\Match\Exception\MassException;
 use App\Community\Service\CommunityManager;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Mass compute manager.
@@ -63,8 +64,9 @@ class MassMigrateManager
     private $params;
     private $eventDispatcher;
     private $communityManager;
+    private $security;
 
-    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, array $params)
+    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, array $params)
     {
         $this->massPersonRepository = $massPersonRepository;
         $this->entityManager = $entityManager;
@@ -75,6 +77,7 @@ class MassMigrateManager
         $this->params = $params;
         $this->eventDispatcher = $eventDispatcher;
         $this->communityManager = $communityManager;
+        $this->security = $security;
     }
 
     /**
@@ -113,7 +116,7 @@ class MassMigrateManager
             $community->setFullDescription($mass->getCommunityFullDescription());
 
             // The creator is the creator of the mass
-            $community->setUser($mass->getUser());
+            $community->setUser($this->security->getUser());
 
             $community->setAddress($mass->getCommunityAddress());
 

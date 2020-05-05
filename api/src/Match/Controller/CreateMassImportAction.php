@@ -52,8 +52,14 @@ final class CreateMassImportAction
         }
 
         $mass = new Mass();
-        $mass->setStatus(Mass::STATUS_INCOMING);
         $mass->setFile($uploadedFile);
+
+        $mass->setMassType($request->request->get('massType'));
+
+        if ($request->request->get('checkLegit')==1) {
+            $mass->setDateCheckLegit(new \Datetime());
+        }
+
         $mass->setUser($this->security->getUser());
         
         return $this->massImportManager->createMass($mass);

@@ -872,16 +872,6 @@ class Mass
     }
 
     /**
-     * Legitimacy checkbox date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoDateCheckLegit()
-    {
-        $this->setDateCheckLegit(new \Datetime());
-    }
-
-    /**
      * Update date.
      *
      * @ORM\PreUpdate
