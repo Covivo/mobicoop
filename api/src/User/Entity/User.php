@@ -398,6 +398,10 @@ class User implements UserInterface, EquatableInterface
     const PWD_SEND_TYPE_SMS = 1;     // password sent by sms if phone present
     const PWD_SEND_TYPE_EMAIL = 2;   // password sent by email
 
+    const MOBILE_APP_WEB = 1;
+    const MOBILE_APP_IOS = 2;
+    const MOBILE_APP_ANDROID = 3;
+
     /**
      * @var int The id of this user.
      *
@@ -716,20 +720,12 @@ class User implements UserInterface, EquatableInterface
     private $phoneValidatedDate;
 
     /**
-     * @var string|null iOS app ID.
+     * @var bool|null Mobile user
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readUser","write"})
      */
-    private $iosAppId;
-
-    /**
-     * @var string|null Android app ID.
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write"})
-     */
-    private $androidAppId;
+    private $mobile;
 
     /**
      * @var string User language
@@ -755,6 +751,14 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","write"})
      */
     private $cars;
+
+    /**
+     * @var ArrayCollection|null A user may have many push token ids.
+     *
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\PushToken", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readUser","write"})
+     */
+    private $pushTokens;
 
     /**
      * @var ArrayCollection|null The proposals made for this user (in general by the user itself, except when it is a "posting for").
@@ -1023,11 +1027,17 @@ class User implements UserInterface, EquatableInterface
     private $alreadyRegistered;
     
     /**
-     * @var boolean|null true if the registration is from mobile
+     * @var int|null Registration from mobile (web app:1, iOS:2, Android:3)
      *
      * @Groups({"readUser","write"})
      */
-    private $registerFromMobile;
+    private $mobileRegistration;
+
+    /**
+     * @var string|null The link used to validate the email (useful for mobile apps)
+     * @Groups({"readUser","write"})
+     */
+    private $emailValidationLink;
 
     /**
      * @var \DateTimeInterface Last user activity date
@@ -1081,13 +1091,14 @@ class User implements UserInterface, EquatableInterface
         $this->deliveries = new ArrayCollection();
         $this->carpoolProofsAsDriver = new ArrayCollection();
         $this->carpoolProofsAsPassenger = new ArrayCollection();
+        $this->pushTokens = new ArrayCollection();
         $this->roles = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
         $this->setStatus($status);
         $this->setAlreadyRegistered(false);
-        $this->setRegisterFromMobile(false);
+        $this->setMobileRegistration(null);
     }
 
     public function getId(): ?int
@@ -1470,25 +1481,15 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getIosAppId(): ?string
+    public function hasMobile(): ?bool
     {
-        return $this->iosAppId;
+        return $this->mobile ? true : false;
     }
 
-    public function setIosAppId(?string $iosAppId): self
+    public function setMobile(?bool $mobile): self
     {
-        $this->iosAppId = $iosAppId;
-        return $this;
-    }
+        $this->mobile = $mobile;
 
-    public function getAndroidAppId(): ?string
-    {
-        return $this->androidAppId;
-    }
-
-    public function setAndroidAppId(?string $androidAppId): self
-    {
-        $this->androidAppId = $androidAppId;
         return $this;
     }
 
@@ -1581,6 +1582,34 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($car->getUser() === $this) {
                 $car->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getPushTokens()
+    {
+        return $this->pushTokens->getValues();
+    }
+
+    public function addPushToken(PushToken $pushToken): self
+    {
+        if (!$this->pushTokens->contains($pushToken)) {
+            $this->pushTokens->add($pushToken);
+            $pushToken->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePushToken(PushToken $pushToken): self
+    {
+        if ($this->pushTokens->contains($pushToken)) {
+            $this->pushTokens->removeElement($pushToken);
+            // set the owning side to null (unless already changed)
+            if ($pushToken->getUser() === $this) {
+                $pushToken->setUser(null);
             }
         }
 
@@ -2414,14 +2443,28 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function isRegisterFromMobile(): ?bool
+    public function getMobileRegistration(): ?int
     {
-        return $this->registerFromMobile;
+        return $this->mobileRegistration;
     }
 
-    public function setRegisterFromMobile(?bool $registerFromMobile): self
+    public function setMobileRegistration(?int $mobileRegistration): self
     {
-        $this->registerFromMobile = $registerFromMobile;
+        $this->mobileRegistration = $mobileRegistration;
+        if ($this->mobileRegistration == self::MOBILE_APP_IOS || $this->mobileRegistration == self::MOBILE_APP_ANDROID) {
+            $this->setMobile(true);
+        }
+        return $this;
+    }
+
+    public function getEmailValidationLink(): ?string
+    {
+        return $this->emailValidationLink;
+    }
+
+    public function setEmailValidationLink(?string $emailValidationLink): self
+    {
+        $this->emailValidationLink = $emailValidationLink;
 
         return $this;
     }

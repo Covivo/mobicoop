@@ -21,21 +21,31 @@
  *    LICENSE
  **************************/
 
-namespace App\Auth\Rule;
+namespace App\User\Repository;
 
-use App\Auth\Interfaces\AuthRuleInterface;
-use App\Carpool\Entity\Ask;
+use App\User\Entity\PushToken;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
-/**
- *  Check that the requester is a mobile user
- */
-class MobileUser implements AuthRuleInterface
+class PushTokenRepository
 {
     /**
-     * {@inheritdoc}
+     * @var EntityRepository
      */
-    public function execute($requester, $item, $params)
+    private $repository;
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        return $requester->hasMobile();
+        $this->repository = $entityManager->getRepository(PushToken::class);
+    }
+    
+    public function find(int $id): ?PushToken
+    {
+        return $this->repository->find($id);
+    }
+
+    public function findOneBy(array $criteria): ?PushToken
+    {
+        return $this->repository->findOneBy($criteria);
     }
 }

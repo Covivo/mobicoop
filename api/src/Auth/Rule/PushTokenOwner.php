@@ -24,18 +24,26 @@
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
-use App\Carpool\Entity\Ask;
+use App\User\Entity\PushToken;
 
 /**
- *  Check that the requester is a mobile user
+ *  Check that the requester is the owner of the related Push Token
  */
-class MobileUser implements AuthRuleInterface
+class PushTokenOwner implements AuthRuleInterface
 {
     /**
      * {@inheritdoc}
      */
     public function execute($requester, $item, $params)
     {
-        return $requester->hasMobile();
+        if (!isset($params['pushToken'])) {
+            return false;
+        }
+        
+        /**
+         * @var PushToken $pushToken
+         */
+        $pushToken = $params['pushToken'];
+        return $pushToken->getUser()->getId() == $requester->getId();
     }
 }

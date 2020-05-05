@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -23,71 +23,76 @@
 
 namespace App\Communication\Service;
 
-use App\Communication\Entity\Sms;
-use App\DataProvider\Entity\SmsEnvoiProvider;
+use App\Communication\Entity\Push;
+use App\DataProvider\Entity\FirebaseProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 /**
- * Sms sending service
+ * Push notification sending service
  *
- * @author Remi Wortemann <remi.wortemann@mobicoop.org>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-class SmsManager
+class PushManager
 {
     private $templating;
     private $templatePath;
     private $logger;
-    private $smsProvider;
+    private $pushProvider;
     private $translator;
   
     /**
-     * SmsManager constructor.
+     * PushManager constructor.
      *
-     * @param Environment $templating
-     * @param LoggerInterface $logger
-     * @param SmsProvider $smsProvider
-     * @param string $templatePath
+     * @param Environment $templating           The templating system
+     * @param LoggerInterface $logger           The logger
+     * @param TranslatorInterface $translator   The translation system
+     * @param string $templatePath              The templates path
+     * @param string $pushProvider              The name of the push provider
+     * @param string $apiToken                  The api token
+     * @param string $senderId                  The sender id
      */
-    public function __construct(Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $templatePath, string $smsProvider, string $username, string $password, string $sender)
+    public function __construct(Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $templatePath, string $pushProvider, string $apiToken, string $senderId)
     {
         $this->templating = $templating;
         $this->templatePath = $templatePath;
         $this->logger = $logger;
         $this->translator = $translator;
 
-        switch ($smsProvider) {
-            case 'smsEnvoi':  $this->smsProvider = new SmsEnvoiProvider($username, $password, $sender);break;
-            default:  $this->smsProvider = new SmsEnvoiProvider($username, $password, $sender);break;
+        switch ($pushProvider) {
+            case 'Firebase':
+            default:
+                $this->pushProvider = new FirebaseProvider($apiToken, $senderId);
+                break;
         }
     }
 
     /**
-     * Send a sms
-     * @param Sms $sms the sms to send
-     * @param string $template the sms's template
-     * @param array $context optional array of parameters that can be included in the template
-     * @return string
+     * Send a push notification
+     * @param Push $push        The push notification to send
+     * @param string $template  The push notification template to use
+     * @param array $context    The optional array of parameters that can be included in the template
+     * @return void
      */
-    public function send(Sms $sms, $template, $context=[], $lang="fr_FR")
+    public function send(Push $push, $template, $context=[], $lang="fr_FR")
     {
         $sessionLocale= $this->translator->getLocale();
         $this->translator->setLocale($lang);
-        $sms->setMessage(
+        $push->setMessage(
             $this->templating->render(
                 $this->templatePath.$template.'.html.twig',
                 array(
                     'context' => $context,
-                    'message' => str_replace(array("\r\n", "\r", "\n"), "<br />", $sms->getMessage()),
+                    'message' => str_replace(array("\r\n", "\r", "\n"), "<br />", $push->getMessage()),
                 )
             ),
             'text/html'
         );
         $this->translator->setLocale($sessionLocale);
 
-        // to do send sms via smsEnvoi
-        $this->smsProvider->postCollection($sms);
+        // send the push notification
+        $this->pushProvider->postCollection($push);
 
         return;
     }

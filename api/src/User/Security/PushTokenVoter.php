@@ -21,31 +21,64 @@
  *    LICENSE
  **************************/
 
-namespace App\Security;
+namespace App\User\Security;
 
+use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\User\Entity\PushToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-/**
- * Reject voter => used to deny access to a mandatory route (= a route needed to be set for consistency, but denied for everyone)
- */
-class RejectVoter extends Voter
+class PushTokenVoter extends Voter
 {
-    const REJECT = 'reject';
+    const PUSH_TOKEN_CREATE = 'push_token_create';
+    const PUSH_TOKEN_DELETE = 'push_token_delete';
+    
+    private $authManager;
+
+    public function __construct(AuthManager $authManager)
+    {
+        $this->authManager = $authManager;
+    }
 
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
-        if (!in_array($attribute, [self::REJECT
+        if (!in_array($attribute, [
+            self::PUSH_TOKEN_CREATE,
+            self::PUSH_TOKEN_DELETE
             ])) {
             return false;
         }
       
+        // only vote on User objects inside this voter
+        if (!in_array($attribute, [
+            self::PUSH_TOKEN_CREATE,
+            self::PUSH_TOKEN_DELETE
+            ]) && !($subject instanceof PushToken)) {
+            return false;
+        }
         return true;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        return false;
+        switch ($attribute) {
+            case self::PUSH_TOKEN_CREATE:
+                return $this->canCreatePushToken();
+            case self::PUSH_TOKEN_DELETE:
+                return $this->canDeletePushToken($subject);
+        }
+
+        throw new \LogicException('This code should not be reached!');
+    }
+
+    private function canCreatePushToken()
+    {
+        return $this->authManager->isAuthorized(self::PUSH_TOKEN_CREATE);
+    }
+
+    private function canDeletePushToken(PushToken $pushToken)
+    {
+        return $this->authManager->isAuthorized(self::PUSH_TOKEN_DELETE, ['pushToken'=>$pushToken]);
     }
 }

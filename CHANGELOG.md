@@ -1,3 +1,9 @@
+# Release 1.4.0
+
+## API
+
+* New push notifications system
+
 # Release 1.3.0
 
 ## API
