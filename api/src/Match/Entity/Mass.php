@@ -27,6 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\Community\Entity\Community;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Match\Controller\CreateMassImportAction;
@@ -407,28 +408,12 @@ class Mass
     private $dateCheckLegit;
 
     /**
-     * @var string The name of the new community that will be created if we migrate the users.
-     * All the migrated user will join this new community.
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"mass","massPost", "massMigrate"})
-     */
-    private $communityName;
-
-    /**
-     * @var string The short description of the community.
+     * @var Community The community created after the migration of this mass users
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readCommunity","write","communities"})
+     * @ORM\OneToOne(targetEntity="App\Community\Entity\Community", inversedBy="mass")
+     * @Groups({"mass","massMigrate"})
      */
-    private $communityDescription;
-
-    /**
-     * @var string The full description of the community.
-     *
-     * @ORM\Column(type="text", nullable=true)
-     * @Groups({"readCommunity","write","communities"})
-     */
-    private $communityFullDescription;
+    private $community;
 
     /**
      * @var array|null The migrated users
@@ -451,6 +436,25 @@ class Mass
      * @Groups({"mass"})
      */
     private $migratedDate;
+
+    /**
+     * @var string The name of the new community that will be created if we migrate the users.
+     * All the migrated user will join this new community.
+     * @Groups({"mass","massPost", "massMigrate"})
+     */
+    private $communityName;
+
+    /**
+     * @var string The short description of the community.
+     * @Groups({"readCommunity","write","communities"})
+     */
+    private $communityDescription;
+
+    /**
+     * @var string The full description of the community.
+     * @Groups({"readCommunity","write","communities"})
+     */
+    private $communityFullDescription;
 
     public function __construct($id = null)
     {
@@ -758,34 +762,16 @@ class Mass
         return $this;
     }
 
-    public function getCommunityName(): ?string
+    public function getCommunity(): ?Community
     {
-        return $this->communityName;
+        return $this->community;
     }
 
-    public function setCommunityName(?string $communityName)
+    public function setCommunity(?Community $community): self
     {
-        $this->communityName = $communityName;
-    }
+        $this->community = $community;
 
-    public function getCommunityDescription(): string
-    {
-        return $this->communityDescription;
-    }
-
-    public function setCommunityDescription(string $communityDescription)
-    {
-        $this->communityDescription = $communityDescription;
-    }
-
-    public function getCommunityFullDescription(): string
-    {
-        return $this->communityFullDescription;
-    }
-
-    public function setCommunityFullDescription(string $communityFullDescription)
-    {
-        $this->communityFullDescription = $communityFullDescription;
+        return $this;
     }
 
     public function getMigratedUsers(): ?array
@@ -824,6 +810,35 @@ class Mass
         return $this;
     }
     
+    public function getCommunityName(): ?string
+    {
+        return $this->communityName;
+    }
+
+    public function setCommunityName(?string $communityName)
+    {
+        $this->communityName = $communityName;
+    }
+
+    public function getCommunityDescription(): string
+    {
+        return $this->communityDescription;
+    }
+
+    public function setCommunityDescription(string $communityDescription)
+    {
+        $this->communityDescription = $communityDescription;
+    }
+
+    public function getCommunityFullDescription(): string
+    {
+        return $this->communityFullDescription;
+    }
+
+    public function setCommunityFullDescription(string $communityFullDescription)
+    {
+        $this->communityFullDescription = $communityFullDescription;
+    }
     
     // DOCTRINE EVENTS
 

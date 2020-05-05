@@ -43,6 +43,7 @@ use App\Carpool\Entity\Proposal;
 use App\Community\Controller\JoinAction;
 use App\RelayPoint\Entity\RelayPoint;
 use App\Community\Filter\TerritoryFilter;
+use App\Match\Entity\Mass;
 
 /**
  * A community : a group of users sharing common interests.
@@ -331,6 +332,15 @@ class Community
      * @Groups({"readCommunity","communities"})
      */
     private $member;
+
+    /**
+     * @var Mass|null The relay points related to the community.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Match\Entity\Mass", mappedBy="community")
+     * @Groups({"readCommunity","write"})
+     * @MaxDepth(1)
+     */
+    private $mass;
 
     public function __construct($id=null)
     {
@@ -630,6 +640,18 @@ class Community
     public function setMember(?bool $member): self
     {
         $this->member = $member;
+
+        return $this;
+    }
+
+    public function getMass(): ?Mass
+    {
+        return $this->mass;
+    }
+
+    public function setMass(?Mass $mass): self
+    {
+        $this->mass = $mass;
 
         return $this;
     }
