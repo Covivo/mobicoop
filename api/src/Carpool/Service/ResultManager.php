@@ -471,10 +471,10 @@ class ResultManager
             if (is_null($result->getCarpooler())) {
                 $carpooler=$matching['request']->getProposalRequest()->getUser();
                 $result->setCarpooler($carpooler);
-                if ($matching['request']->getProposalOffer()->getUser() && $carpooler->getPhoneDisplay() == 2 && $carpooler->getPhoneValidatedDate()) {
+                if ($matching['request']->getProposalOffer()->getUser() && $carpooler->getPhoneDisplay() == 2) {
                     $result->getCarpooler()->setPhone($carpooler->getTelephone());
                 }
-                if ($acceptedCarpool && $carpooler->getPhoneValidatedDate()) {
+                if ($acceptedCarpool) {
                     $result->getCarpooler()->setPhone($carpooler->getTelephone());
                 }
             }
@@ -1051,10 +1051,10 @@ class ResultManager
             if (is_null($result->getCarpooler())) {
                 $carpooler=$matching['offer']->getProposalOffer()->getUser();
                 $result->setCarpooler($carpooler);
-                if ($matching['offer']->getProposalRequest()->getUser() && $carpooler->getPhoneDisplay() == 2 && $carpooler->getPhoneValidatedDate()) {
+                if ($matching['offer']->getProposalRequest()->getUser() && $carpooler->getPhoneDisplay() == 2) {
                     $result->getCarpooler()->setPhone($carpooler->getTelephone());
                 }
-                if ($acceptedCarpool && $carpooler->getPhoneValidatedDate()) {
+                if ($acceptedCarpool) {
                     $result->getCarpooler()->setPhone($carpooler->getTelephone());
                 }
             }
