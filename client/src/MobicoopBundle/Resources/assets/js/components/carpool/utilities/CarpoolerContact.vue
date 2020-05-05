@@ -4,7 +4,7 @@
     justify="end"
     class="min-width-no-flex"
   >
-    <div v-if="user && carpooler.phone">
+    <div v-if="user && carpooler.telephone">
       <v-btn
         v-show="!phoneButtonToggled"
         color="secondary"
@@ -28,7 +28,7 @@
         @click="toggleButton"
       >
         <v-icon>mdi-phone</v-icon>
-        {{ carpooler.phone }}
+        {{ carpooler.telephone }}
       </v-btn>
     </div>
     <div v-if="displayMailBox">

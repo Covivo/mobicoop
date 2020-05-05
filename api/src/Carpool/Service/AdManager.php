@@ -715,7 +715,7 @@ class AdManager
      * @param Matching $matching - the corresponding Matching
      * @return Ad
      */
-    public function makeAd($proposal, $userId, $hasAsks = false, ?Ad $askLinked = null, ?Matching $matching = null, bool $acceptedCarpool=false)
+    public function makeAd($proposal, $userId, $hasAsks = false, ?Ad $askLinked = null, ?Matching $matching = null)
     {
         $ad = new Ad();
         $ad->setId($proposal->getId());
@@ -788,7 +788,7 @@ class AdManager
             }
         }
         $ad->setSchedule($schedule);
-        $results = $this->resultManager->createAdResults($proposal, $acceptedCarpool);
+        $results = $this->resultManager->createAdResults($proposal);
         $ad->setPotentialCarpoolers(count($results));
 
         if (!$hasAsks) {
@@ -1503,7 +1503,7 @@ class AdManager
             if (count($askAds) > 0) {
                 // if yes we create an ad with the associated asks
                 // we pass the askLinked (Ad) to fill Ad with data from the ask if not null
-                $ad = $this->makeAd($proposal, $userId, true, $askAdLinked, $matchingLinked, true);
+                $ad = $this->makeAd($proposal, $userId, true, $askAdLinked, $matchingLinked);
                 $ad->setAsks($askAds);
                 // we put the id of the proposals linked in the temporary array
                 $temp[] = $ad->getProposalLinkedId();

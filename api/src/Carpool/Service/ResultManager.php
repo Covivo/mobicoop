@@ -34,6 +34,7 @@ use App\Carpool\Entity\ResultRole;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Service\FormatDataManager;
+use App\User\Entity\User;
 use DateTime;
 
 /**
@@ -78,13 +79,13 @@ class ResultManager
      * @param Proposal $proposal    The proposal with its matchings
      * @return array                The array of results
      */
-    public function createAdResults(Proposal $proposal, bool $acceptedCarpool=false)
+    public function createAdResults(Proposal $proposal)
     {
         // the outward results are the base results
-        $results = $this->createProposalResults($proposal, false, $acceptedCarpool);
+        $results = $this->createProposalResults($proposal, false);
         $returnResults = [];
         if ($proposal->getProposalLinked()) {
-            $returnResults = $this->createProposalResults($proposal->getProposalLinked(), true, $acceptedCarpool);
+            $returnResults = $this->createProposalResults($proposal->getProposalLinked(), true);
         }
 
         // the outward results are the base
@@ -402,7 +403,7 @@ class ResultManager
      * @param boolean $return The result is for the return trip
      * @return array
      */
-    private function createProposalResults(Proposal $proposal, bool $return = false, bool $acceptedCarpool = false)
+    private function createProposalResults(Proposal $proposal, bool $return = false)
     {
         $results = [];
         // we group the matchings by matching proposalId to merge potential driver and/or passenger candidates
@@ -434,7 +435,7 @@ class ResultManager
         }
         // we iterate through the matchings to create the results
         foreach ($matchings as $matchingProposalId => $matching) {
-            $result = $this->createMatchingResult($proposal, $matchingProposalId, $matching, $return, $acceptedCarpool);
+            $result = $this->createMatchingResult($proposal, $matchingProposalId, $matching, $return);
             $results[$matchingProposalId] = $result;
         }
         return $results;
@@ -449,7 +450,7 @@ class ResultManager
      * @param boolean $return               The matching concerns a return (=false if it's the outward)
      * @return Result                       The result object
      */
-    private function createMatchingResult(Proposal $proposal, int $matchingProposalId, array $matching, bool $return, bool $acceptedCarpool = false)
+    private function createMatchingResult(Proposal $proposal, int $matchingProposalId, array $matching, bool $return)
     {
         $result = new Result();
         $result->setId($proposal->getId());
@@ -471,11 +472,17 @@ class ResultManager
             if (is_null($result->getCarpooler())) {
                 $carpooler=$matching['request']->getProposalRequest()->getUser();
                 $result->setCarpooler($carpooler);
-                if ($matching['request']->getProposalOffer()->getUser() && $carpooler->getPhoneDisplay() == 2) {
-                    $result->getCarpooler()->setPhone($carpooler->getTelephone());
+                // We check if we have accepted carpool if yes we display the carpooler phone number
+                $hasAsk = false;
+                $asks = $matching['request']->getAsks();
+                foreach ($asks as $ask) {
+                    if ($ask->getStatus() == (ASK::STATUS_ACCEPTED_AS_DRIVER || ASK::STATUS_ACCEPTED_AS_PASSENGER)) {
+                        $hasAsk=true;
+                    }
                 }
-                if ($acceptedCarpool) {
-                    $result->getCarpooler()->setPhone($carpooler->getTelephone());
+                // if we don't have accepted carpools AND (no user is logged OR the phone display is restricted) we pass the telephone at null
+                if (!$hasAsk && (!$matching['request']->getProposalOffer()->getUser() || $carpooler->getPhoneDisplay() == USER::PHONE_DISPLAY_RESTRICTED)) {
+                    $result->getCarpooler()->setTelephone(null);
                 }
             }
             if (is_null($result->getComment()) && !is_null($matching['request']->getProposalRequest()->getComment())) {
@@ -1051,11 +1058,17 @@ class ResultManager
             if (is_null($result->getCarpooler())) {
                 $carpooler=$matching['offer']->getProposalOffer()->getUser();
                 $result->setCarpooler($carpooler);
-                if ($matching['offer']->getProposalRequest()->getUser() && $carpooler->getPhoneDisplay() == 2) {
-                    $result->getCarpooler()->setPhone($carpooler->getTelephone());
+                // We check if we have accepted carpool
+                $hasAsk = false;
+                $asks = $matching['offer']->getAsks();
+                foreach ($asks as $ask) {
+                    if ($ask->getStatus() == (ASK::STATUS_ACCEPTED_AS_DRIVER || ASK::STATUS_ACCEPTED_AS_PASSENGER)) {
+                        $hasAsk=true;
+                    }
                 }
-                if ($acceptedCarpool) {
-                    $result->getCarpooler()->setPhone($carpooler->getTelephone());
+                // if we don't have accepted carpools AND (no user is logged OR the phone display is restricted) we pass the telephone at null
+                if (!$hasAsk && (!$matching['offer']->getProposalRequest()->getUser() || $carpooler->getPhoneDisplay() == USER::PHONE_DISPLAY_RESTRICTED)) {
+                    $result->getCarpooler()->setTelephone(null);
                 }
             }
             if (is_null($result->getComment()) && !is_null($matching['offer']->getProposalOffer()->getComment())) {
