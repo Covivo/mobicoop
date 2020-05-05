@@ -406,6 +406,13 @@ class Mass
      */
     private $dateCheckLegit;
 
+    /**
+     * @var string The name of the new community that will be created if we migrate the users.
+     * All the migrated user will join this new community.
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"mass","massPost", "massMigrate"})
+     */
+    private $communityName;
 
     /**
      * @var array|null The migrated users
@@ -733,6 +740,16 @@ class Mass
         $this->dateCheckLegit = $dateCheckLegit;
 
         return $this;
+    }
+
+    public function getCommunityName(): ?string
+    {
+        return $this->communityName;
+    }
+
+    public function setCommunityName(?string $communityName)
+    {
+        $this->communityName = $communityName;
     }
 
     public function getMigratedUsers(): ?array
