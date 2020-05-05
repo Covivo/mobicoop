@@ -4,7 +4,7 @@
     justify="end"
     class="min-width-no-flex"
   >
-    <div v-if="user && displayPhone">
+    <div v-if="user && carpooler.phone">
       <v-btn
         v-show="!phoneButtonToggled"
         color="secondary"
@@ -70,10 +70,6 @@ export default {
     askId: {
       type: Number,
       default: -99
-    },
-    displayPhone: {
-      type: Boolean,
-      default: false
     },
     displayMailBox: {
       type: Boolean,

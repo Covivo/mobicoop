@@ -543,7 +543,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var string|null The telephone number of the user (for results).
-     * @Groups({"readUser","results"})
+     * @Groups({"readUser","results","write"})
      */
     private $phone;
 
@@ -552,7 +552,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","write", "results"})
+     * @Groups({"readUser","write"})
      */
     private $phoneDisplay;
 
@@ -1266,7 +1266,14 @@ class User implements UserInterface, EquatableInterface
 
     public function getPhone(): ?string
     {
-        return ($this->phoneValidatedDate ? $this->telephone : null);
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone)
+    {
+        $this->phone = $phone;
+
+        return $this;
     }
 
     public function getPhoneDisplay(): ?int

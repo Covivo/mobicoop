@@ -78,13 +78,13 @@ class ResultManager
      * @param Proposal $proposal    The proposal with its matchings
      * @return array                The array of results
      */
-    public function createAdResults(Proposal $proposal)
+    public function createAdResults(Proposal $proposal, bool $acceptedCarpool=false)
     {
         // the outward results are the base results
-        $results = $this->createProposalResults($proposal, false);
+        $results = $this->createProposalResults($proposal, false, $acceptedCarpool);
         $returnResults = [];
         if ($proposal->getProposalLinked()) {
-            $returnResults = $this->createProposalResults($proposal->getProposalLinked(), true);
+            $returnResults = $this->createProposalResults($proposal->getProposalLinked(), true, $acceptedCarpool);
         }
 
         // the outward results are the base
@@ -402,7 +402,7 @@ class ResultManager
      * @param boolean $return The result is for the return trip
      * @return array
      */
-    private function createProposalResults(Proposal $proposal, bool $return = false)
+    private function createProposalResults(Proposal $proposal, bool $return = false, bool $acceptedCarpool = false)
     {
         $results = [];
         // we group the matchings by matching proposalId to merge potential driver and/or passenger candidates
@@ -434,7 +434,7 @@ class ResultManager
         }
         // we iterate through the matchings to create the results
         foreach ($matchings as $matchingProposalId => $matching) {
-            $result = $this->createMatchingResult($proposal, $matchingProposalId, $matching, $return);
+            $result = $this->createMatchingResult($proposal, $matchingProposalId, $matching, $return, $acceptedCarpool);
             $results[$matchingProposalId] = $result;
         }
         return $results;
@@ -449,7 +449,7 @@ class ResultManager
      * @param boolean $return               The matching concerns a return (=false if it's the outward)
      * @return Result                       The result object
      */
-    private function createMatchingResult(Proposal $proposal, int $matchingProposalId, array $matching, bool $return)
+    private function createMatchingResult(Proposal $proposal, int $matchingProposalId, array $matching, bool $return, bool $acceptedCarpool = false)
     {
         $result = new Result();
         $result->setId($proposal->getId());
@@ -469,7 +469,14 @@ class ResultManager
                 $result->setFrequencyResult($matching['request']->getProposalRequest()->getCriteria()->getFrequency());
             }
             if (is_null($result->getCarpooler())) {
-                $result->setCarpooler($matching['request']->getProposalRequest()->getUser());
+                $carpooler=$matching['request']->getProposalRequest()->getUser();
+                $result->setCarpooler($carpooler);
+                if ($matching['request']->getProposalOffer()->getUser() && $carpooler->getPhoneDisplay() == 2 && $carpooler->getPhoneValidatedDate()) {
+                    $result->getCarpooler()->setPhone($carpooler->getTelephone());
+                }
+                if ($acceptedCarpool && $carpooler->getPhoneValidatedDate()) {
+                    $result->getCarpooler()->setPhone($carpooler->getTelephone());
+                }
             }
             if (is_null($result->getComment()) && !is_null($matching['request']->getProposalRequest()->getComment())) {
                 $result->setComment($matching['request']->getProposalRequest()->getComment());
@@ -1042,7 +1049,14 @@ class ResultManager
                 $result->setFrequencyResult($matching['offer']->getProposalOffer()->getCriteria()->getFrequency());
             }
             if (is_null($result->getCarpooler())) {
-                $result->setCarpooler($matching['offer']->getProposalOffer()->getUser());
+                $carpooler=$matching['offer']->getProposalOffer()->getUser();
+                $result->setCarpooler($carpooler);
+                if ($matching['offer']->getProposalRequest()->getUser() && $carpooler->getPhoneDisplay() == 2 && $carpooler->getPhoneValidatedDate()) {
+                    $result->getCarpooler()->setPhone($carpooler->getTelephone());
+                }
+                if ($acceptedCarpool && $carpooler->getPhoneValidatedDate()) {
+                    $result->getCarpooler()->setPhone($carpooler->getTelephone());
+                }
             }
             if (is_null($result->getComment()) && !is_null($matching['offer']->getProposalOffer()->getComment())) {
                 $result->setComment($matching['offer']->getProposalOffer()->getComment());
