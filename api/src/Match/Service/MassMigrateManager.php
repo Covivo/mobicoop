@@ -38,8 +38,11 @@ use App\Auth\Repository\AuthItemRepository;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Service\AdManager;
+use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Match\Event\MassMigrateUserMigratedEvent;
+use App\Match\Exception\MassException;
 
 /**
  * Mass compute manager.
@@ -81,11 +84,46 @@ class MassMigrateManager
     {
         $migratedUsers = [];
 
-        // First, we set the status of the Mass at Migrating
+        // We set the status of the Mass at Migrating
         $mass->setStatus(Mass::STATUS_MIGRATING);
         $mass->setMigrationDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
+
+        // If there is a community to create, we create it
+        if (!empty($mass->getCommunityName())) {
+            $community = new Community();
+
+            $community->setName($mass->getCommunityName());
+            $community->setDescription($mass->getCommunityDescription());
+            $community->setFullDescription($mass->getCommunityFullDescription());
+
+            // The creator is the creator of the mass
+            $community->setUser($mass->getUser());
+
+            $workPlaces = $this->massPersonRepository->findAllDestinationsForMass($mass);
+            if (count($workPlaces)==0) {
+                throw new MassException(MassException::NO_WORK_PLACES);
+            }
+            // we take the first work place as the address of the community
+            if (empty($workPlaces[0]['latitude']) || empty($workPlaces[0]['longitude'])) {
+                throw new MassException(MassException::INVALIDE_COMMUNITY_COORDINATES);
+            }
+
+            $communityAddress = new Address();
+            $communityAddress->setHouseNumber($workPlaces[0]['houseNumber']);
+            $communityAddress->setStreet($workPlaces[0]['street']);
+            $communityAddress->setPostalCode($workPlaces[0]['postalCode']);
+            $communityAddress->setAddressLocality($workPlaces[0]['addressLocality']);
+            $communityAddress->setAddressCountry($workPlaces[0]['addressCountry']);
+            $communityAddress->setLatitude($workPlaces[0]['latitude']);
+            $communityAddress->setLongitude($workPlaces[0]['longitude']);
+
+            $community->setAddress($communityAddress);
+
+            $this->entityManager->persist($community);
+            $this->entityManager->flush();
+        }
 
 
         // Then we get the Mass persons related the this mass
@@ -139,8 +177,18 @@ class MassMigrateManager
                     $userAuthAssignment = new UserAuthAssignment();
                     $userAuthAssignment->setAuthItem($authItem);
                     $user->addUserAuthAssignment($userAuthAssignment);
-        
-                    $this->entityManager->persist($user);
+
+                    // If there is a community we create and persist a CommunityUser with the User.
+                    // else, only the user
+                    if (!empty($mass->getCommunityName())) {
+                        $this->entityManager->persist($user);
+                    } else {
+                        $communityUser = new CommunityUser();
+                        $communityUser->setCommunity($community);
+                        $communityUser->setUser($user);
+                        $this->entityManager->persist($communityUser);
+                        $this->entityManager->flush();
+                    }
 
                     $migratedUsers[] = $user; // For the return
 
@@ -161,7 +209,7 @@ class MassMigrateManager
                     //$this->createJourneyFromMassPerson($massPerson);
                     
 
-                    // To do : Trigger an event to send a email
+                    // Trigger an event to send a email
                     $event = new MassMigrateUserMigratedEvent($user);
                     $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
                 }

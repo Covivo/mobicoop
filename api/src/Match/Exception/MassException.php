@@ -25,4 +25,6 @@ namespace App\Match\Exception;
 
 class MassException extends \LogicException
 {
+    const NO_WORK_PLACES = "No work places found";
+    const INVALIDE_COMMUNITY_COORDINATES = "Invalides coordinates for this community's address";
 }

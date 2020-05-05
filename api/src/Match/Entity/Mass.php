@@ -415,6 +415,22 @@ class Mass
     private $communityName;
 
     /**
+     * @var string The short description of the community.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readCommunity","write","communities"})
+     */
+    private $communityDescription;
+
+    /**
+     * @var string The full description of the community.
+     *
+     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"readCommunity","write","communities"})
+     */
+    private $communityFullDescription;
+
+    /**
      * @var array|null The migrated users
      * @Groups({"massMigrate"})
      */
@@ -750,6 +766,26 @@ class Mass
     public function setCommunityName(?string $communityName)
     {
         $this->communityName = $communityName;
+    }
+
+    public function getCommunityDescription(): string
+    {
+        return $this->communityDescription;
+    }
+
+    public function setCommunityDescription(string $communityDescription)
+    {
+        $this->communityDescription = $communityDescription;
+    }
+
+    public function getCommunityFullDescription(): string
+    {
+        return $this->communityFullDescription;
+    }
+
+    public function setCommunityFullDescription(string $communityFullDescription)
+    {
+        $this->communityFullDescription = $communityFullDescription;
     }
 
     public function getMigratedUsers(): ?array
