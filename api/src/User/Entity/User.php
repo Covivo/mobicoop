@@ -1266,7 +1266,7 @@ class User implements UserInterface, EquatableInterface
 
     public function getPhone(): ?string
     {
-        return ($this->phoneDisplay == self::PHONE_DISPLAY_ALL ? $this->telephone : null);
+        return ($this->phoneValidatedDate ? $this->telephone : null);
     }
 
     public function getPhoneDisplay(): ?int

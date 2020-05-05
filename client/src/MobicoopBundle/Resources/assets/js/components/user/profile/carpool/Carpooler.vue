@@ -89,7 +89,7 @@
         <carpooler-contact
           :carpooler="result.carpooler"
           :ask-id="ask.askId"
-          :display-phone="true"
+          :display-phone="displayPhone"
           :display-mail-box="true"
           :user="user"
         />
@@ -160,6 +160,7 @@ export default {
   },
   data () {
     return {
+      displayPhone: this.result.carpooler.phone ? true : false,
       carpoolInfos: null,
       outwardTimes:[],
       returnTimes:[],

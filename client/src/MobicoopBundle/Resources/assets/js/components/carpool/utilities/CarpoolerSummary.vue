@@ -57,7 +57,7 @@
         <carpooler-contact
           :carpooler="carpooler"
           :user="user"
-          :display-phone="carpooler.phoneDisplay === 2"
+          :display-phone="carpooler.phoneDisplay === 2 && carpooler.phone"
         />
       </v-col>
 
