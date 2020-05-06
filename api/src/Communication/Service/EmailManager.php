@@ -47,6 +47,7 @@ class EmailManager
     private $logger;
     private $translator;
     private $emailAdditionalHeaders;
+    private $emailSupport;
  
     /**
        * EmailManager constructor.
@@ -60,8 +61,9 @@ class EmailManager
        * @param string $emailReplyToName
        * @param string $templatePath
        * @param string $emailAdditionalHeaders
+       * @param string $emailSupport
        */
-    public function __construct(\Swift_Mailer $mailer, Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailSenderName, string $emailReplyTo, string $emailReplyToName, string $templatePath, string $emailAdditionalHeaders)
+    public function __construct(\Swift_Mailer $mailer, Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailSenderName, string $emailReplyTo, string $emailReplyToName, string $templatePath, string $emailAdditionalHeaders, string $emailSupport)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
@@ -73,6 +75,7 @@ class EmailManager
         $this->logger = $logger;
         $this->translator = $translator;
         $this->emailAdditionalHeaders = $emailAdditionalHeaders;
+        $this->emailSupport = $emailSupport;
     }
 
     /**
@@ -119,8 +122,8 @@ class EmailManager
                 ),
                 'text/html'
             );
-            
-        if ($this->emailAdditionalHeaders) {
+        // we send the email with a specific textheader if the reciepient is the support's email and if specific header is present
+        if ($this->emailAdditionalHeaders && $mail->getRecipientEmail() == $this->emailSupport) {
             $headers = json_decode($this->emailAdditionalHeaders, true);
             foreach ($headers as $key => $value) {
                 if ($this->translator->trans($value) == "senderEmail") {

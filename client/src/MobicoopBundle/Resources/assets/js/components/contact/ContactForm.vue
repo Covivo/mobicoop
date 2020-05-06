@@ -236,6 +236,7 @@ export default {
                 type: "success",
                 message: self.$t(response.data.message)
               };
+              window.location.href="/";
             }
           })
           .catch(function (error) {
