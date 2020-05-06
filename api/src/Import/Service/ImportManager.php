@@ -41,6 +41,7 @@ use App\Import\Repository\RelayPointImportRepository;
 use App\Import\Repository\UserImportRepository;
 use App\RelayPoint\Repository\RelayPointRepository;
 use App\Auth\Repository\RoleRepository;
+use App\Match\Entity\Mass;
 use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -95,18 +96,40 @@ class ImportManager
      * Treat imported users
      *
      * @param string $origin    The origin of the data
-     * @return array    The users imported
+     * @param int $massId       The mass id if the import concerns a mass matching
+     * @return array    An empty array (for consistency, as the method can be called from an API get collection route)
      */
-    public function treatUserImport(string $origin)
+    public function treatUserImport(string $origin, ?int $massId=null)
+    {
+        $this->prepareUserImport($origin, $massId);
+        $this->matchUserImport();
+        return [];
+    }
+
+    /**
+     * Treat imported users
+     *
+     * @param string $origin    The origin of the data
+     * @param int|null $mass    The mass id if the import concerns a mass matching
+     * @return void
+     */
+    private function prepareUserImport(string $origin, ?int $massId=null)
     {
         set_time_limit(7200);
-        //gc_enable();
         
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
 
         // create user_import rows
         $conn = $this->entityManager->getConnection();
-        $sql = "INSERT INTO user_import (user_id,origin,status,created_date,user_external_id) SELECT id, '" . $origin . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',id FROM user";
+        if (!is_null($massId)) {
+            // we select the users that have a related mass_person, and that haven't been imported yet (using the null left join trick)
+            $sql = "
+            INSERT INTO user_import (user_id,origin,status,created_date,user_external_id) 
+            SELECT u.id, '" . $origin . "_" . $massId . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',u.id FROM user u 
+            INNER JOIN mass_person mp ON mp.user_id = u.id LEFT JOIN user_import ui ON ui.user_id = id WHERE ui.user_id is NULL AND mp.mass_id = " . $massId . "  ";
+        } else {
+            $sql = "INSERT INTO user_import (user_id,origin,status,created_date,user_external_id) SELECT id, '" . $origin . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',id FROM user";
+        }
         $stmt = $conn->prepare($sql);
         $stmt->execute();
 
@@ -154,7 +177,7 @@ class ImportManager
 
         // create user_notification rows
         $sql = "INSERT INTO user_notification (notification_id,user_id,active,created_date)
-        SELECT n.id,u.id,IF (u.phone_validated_date IS NULL AND n.medium_id = " . Medium::MEDIUM_SMS . ",0,IF (u.ios_app_id IS NULL AND u.android_app_id IS NULL AND n.medium_id = " . Medium::MEDIUM_PUSH . ",0,n.user_active_default)),'" . (new \DateTime())->format('Y-m-d') . "'
+        SELECT n.id,u.id,IF (u.phone_validated_date IS NULL AND n.medium_id = " . Medium::MEDIUM_SMS . ",0,IF ((u.mobile IS NULL OR u.mobile = 0) AND n.medium_id = " . Medium::MEDIUM_PUSH . ",0,n.user_active_default)),'" . (new \DateTime())->format('Y-m-d') . "'
         FROM user_import i LEFT JOIN user u ON u.id = i.user_id
         JOIN notification n
         WHERE n.user_editable=1";
@@ -187,10 +210,6 @@ class ImportManager
             'oldStatus'=>UserImport::STATUS_USER_TREATED
         ]);
         $q->execute();
-
-        //gc_collect_cycles();
-
-        return true;
     }
 
     /**
@@ -198,7 +217,7 @@ class ImportManager
      *
      * @return array    The users imported
      */
-    public function matchUserImport()
+    private function matchUserImport()
     {
         set_time_limit(50000);
         
@@ -211,9 +230,7 @@ class ImportManager
         $this->proposalManager->createMatchingsForProposals($proposalIds);
 
         // treat the return and opposite
-        $proposals = $this->proposalManager->createLinkedAndOppositesForProposals($proposalIds);
-
-        return true;
+        $this->proposalManager->createLinkedAndOppositesForProposals($proposalIds);
     }
 
 
