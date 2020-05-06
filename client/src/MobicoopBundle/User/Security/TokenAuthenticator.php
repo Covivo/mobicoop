@@ -23,7 +23,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     const USER_LOGIN_ROUTE = "user_login";
     const USER_LOGIN_TOKEN_ROUTE = "user_login_token";
     const USER_SIGN_UP_VALIDATION = "user_sign_up_validation";
-    const USER_UPDATE_PASSWORD_RESET = "user_update_password_reset";
 
     private $dataProvider;
     private $router;
@@ -53,7 +52,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request)
     {
-        return ((in_array($request->get('_route'), [self::USER_LOGIN_ROUTE,self::USER_LOGIN_TOKEN_ROUTE,self::USER_UPDATE_PASSWORD_RESET ]) && $request->isMethod('POST'))
+        return ((in_array($request->get('_route'), [self::USER_LOGIN_ROUTE,self::USER_LOGIN_TOKEN_ROUTE]) && $request->isMethod('POST'))
         || ($request->get('_route') == self::USER_SIGN_UP_VALIDATION  && ($request->attributes->get('email') != '' &&  $request->attributes->get('token') != ''))) ? true : false;
     }
 
@@ -86,13 +85,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
             $this->dataProvider->setPassword(null);
             $this->dataProvider->setUsername($email);
             $this->dataProvider->setEmailToken($emailToken);
-
-        // We want to login with just the reset password token, we set the credentials for the dataProvider
-        } elseif ($request->get('_route') == self::USER_UPDATE_PASSWORD_RESET && $request->attributes->get('token') != '') {
-            $this->dataProvider->setPassword(null);
-            $this->dataProvider->setPasswordToken($request->attributes->get('token'));
         }
-        
         // We set the dataProvider to private => will discard the current JWT token
         $this->dataProvider->setPrivate(true);
 
@@ -127,11 +120,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         $redirectTo = $request->get('_route') == self::USER_LOGIN_ROUTE ? 'home'  : 'carpool_first_ad_post';
-        //If it's a reset password we return the User in json, fit with ajax
-        if ($request->get('_route') == self::USER_UPDATE_PASSWORD_RESET) {
-            return new JsonResponse($token->getUser());
-        }
-
+       
         return new RedirectResponse($this->router->generate($redirectTo));
     }
 
