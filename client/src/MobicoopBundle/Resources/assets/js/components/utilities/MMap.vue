@@ -28,9 +28,13 @@
           <l-tooltip
             v-if="point.title!==''"
           >
-            <p v-html="point.title" />
+            <p
+              class="font-weight-bold"
+              v-html="point.title"
+            />
             <p
               v-if="point.popup"
+              id="description-tooltip"
               v-html="point.popup.description"
             />
           </l-tooltip>
@@ -163,3 +167,11 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+#description-tooltip{
+    width: auto;
+    max-width: 200px;
+    overflow:hidden;
+    text-overflow: ellipsis;
+}
+</style>
