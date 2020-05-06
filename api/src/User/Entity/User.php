@@ -1070,7 +1070,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var MassPerson|null The proposal created after a Mass migration
      *
-     * @ORM\OneToOne(targetEntity="\App\Match\Entity\MassPerson", mappedBy="proposal")
+     * @ORM\OneToOne(targetEntity="\App\Match\Entity\MassPerson", mappedBy="user")
      * @MaxDepth(1)
      * @Groups({"readUser"})
      */
