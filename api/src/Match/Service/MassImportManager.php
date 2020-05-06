@@ -515,7 +515,6 @@ class MassImportManager
             if (is_array($matches) && count($matches)>0) {
                 foreach ($matches as $match) {
                     foreach ($match['matches'] as $matched) {
-                        //var_dump($matched['acceptedDetourDistance']);die;
                         $massMatching = new MassMatching();
                         $massMatching->setMassPerson1($match['driver']->getMassPerson());
                         $massMatching->setMassPerson2($match['passenger']->getMassPerson());

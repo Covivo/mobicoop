@@ -135,11 +135,12 @@ class ProposalManager
      *
      * @param Proposal $proposal
      * @param Boolean $sendEvent
+     * @param Boolean $doMatching
      * @return void
      */
-    public function prepareProposal(Proposal $proposal, bool $sendEvent=true): Proposal
+    public function prepareProposal(Proposal $proposal, bool $sendEvent=true, bool $doMatching=true): Proposal
     {
-        return $this->treatProposal($this->setDefaults($proposal), true, true, $sendEvent);
+        return $this->treatProposal($this->setDefaults($proposal), true, true, $sendEvent, $doMatching);
     }
 
     /**
@@ -211,9 +212,10 @@ class ProposalManager
      * @param boolean   $persist                If we persist the proposal in the database (false for a simple search)
      * @param bool      $excludeProposalUser    Exclude the matching proposals made by the proposal user
      * @param bool      $sendEvent              Send new matching event
+     * @param bool      $doMatching             Do the matchings based on the proposal
      * @return Proposal The treated proposal
      */
-    public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true, bool $sendEvent = true)
+    public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true, bool $sendEvent = true, bool $doMatching = true)
     {
         $this->logger->info("ProposalManager : treatProposal " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -227,7 +229,9 @@ class ProposalManager
         $proposal = $this->setPrices($proposal);
         
         // matching analyze
-        $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
+        if ($doMatching) {
+            $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
+        }
         
         if ($persist) {
             $this->logger->info("ProposalManager : start persist " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));

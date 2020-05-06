@@ -45,6 +45,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Match\Event\MassMigrateUserMigratedEvent;
 use App\Match\Exception\MassException;
 use App\Community\Service\CommunityManager;
+use App\Import\Service\ImportManager;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -67,8 +68,12 @@ class MassMigrateManager
     private $communityManager;
     private $security;
     private $proposalManager;
+    private $importManager;
 
-    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ProposalManager $proposalManager, array $params)
+    const MOBIMATCH_IMPORT_PREFIX = "Mobimatch#";
+    const LAUNCH_IMPORT = false;
+
+    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ProposalManager $proposalManager, ImportManager $importManager, array $params)
     {
         $this->massPersonRepository = $massPersonRepository;
         $this->entityManager = $entityManager;
@@ -81,6 +86,7 @@ class MassMigrateManager
         $this->communityManager = $communityManager;
         $this->security = $security;
         $this->proposalManager = $proposalManager;
+        $this->importManager = $importManager;
     }
 
     /**
@@ -100,6 +106,7 @@ class MassMigrateManager
         $this->entityManager->flush();
 
         // If there is a community to create, we create it
+        $community = null;
         if (!empty($mass->getCommunityName())) {
             $community = new Community();
             $community->setName($mass->getCommunityName());
@@ -192,11 +199,15 @@ class MassMigrateManager
                     $this->entityManager->persist($personalAddress);
                     $this->entityManager->flush();
 
-
                     // Trigger an event to send a email
                     $event = new MassMigrateUserMigratedEvent($user);
                     $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
                 }
+
+                // We set the link between the MassPerson and the User (new or found)
+                $massPerson->setUser($user);
+                $this->entityManager->persist($massPerson);
+                $this->entityManager->flush();
             }
 
             // If there is a community we create a CommunityUser with the User.
@@ -209,12 +220,7 @@ class MassMigrateManager
             }
 
             // We create an Ad for the User (regular, home to work, monday to friday)
-            $ad = $this->createJourneyFromMassPerson($massPerson, $user);
-            
-            // We set the link between the Migrated MassPerson and the Proposal
-            $massPerson->setProposal($this->proposalManager->get($ad->getProposalId()));
-            $this->entityManager->persist($massPerson);
-            $this->entityManager->flush();
+            $this->createJourneyFromMassPerson($massPerson, $user, $community);
         }
         //$this->entityManager->flush();
 
@@ -223,6 +229,11 @@ class MassMigrateManager
         $mass->setMigratedDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
+
+        // Launch import and mass matching
+        if (self::LAUNCH_IMPORT) {
+            $this->importManager->treatUserImport(self::MOBIMATCH_IMPORT_PREFIX+""+$mass->getId(), $mass->getId());
+        }
 
         $mass->setMigratedUsers($migratedUsers);
 
@@ -246,11 +257,12 @@ class MassMigrateManager
      * We don't want to trigger matching at every Proposal we add.
      * Create the journey (Ad then Proposal) of a MassPerson
      *
-     * @param MassPerson $massPerson
-     * @param User $user
+     * @param MassPerson $massPerson            Current MassPerson
+     * @param User $user                        The User created after this MassPerson
+     * @param Community|null $community         The community of this person. Can be null if there is no community created
      * @return Ad
      */
-    private function createJourneyFromMassPerson(MassPerson $massPerson, User $user): Ad
+    private function createJourneyFromMassPerson(MassPerson $massPerson, User $user, ?Community $community): Ad
     {
         $ad = new Ad();
 
@@ -303,6 +315,11 @@ class MassMigrateManager
         $ad->setUser($user);
         $ad->setUserId($user->getId());
 
-        return $this->adManager->createAd($ad);
+        // The community if it exists
+        if (!is_null($community)) {
+            $ad->setCommunities([$community->getId()]);
+        }
+
+        return $this->adManager->createAd($ad, false, false);
     }
 }

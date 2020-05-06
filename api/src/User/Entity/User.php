@@ -91,6 +91,7 @@ use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
+use App\Match\Entity\MassPerson;
 use App\Solidary\Entity\SolidaryUser;
 use App\User\Controller\UserCanUseEmail;
 
@@ -1065,6 +1066,15 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"userStructure"})
      */
     private $structures;
+
+    /**
+     * @var MassPerson|null The proposal created after a Mass migration
+     *
+     * @ORM\OneToOne(targetEntity="\App\Match\Entity\MassPerson", mappedBy="proposal")
+     * @MaxDepth(1)
+     * @Groups({"readUser"})
+     */
+    private $massPerson;
 
     public function __construct($status = null)
     {
@@ -2530,6 +2540,18 @@ class User implements UserInterface, EquatableInterface
     public function setStructures(?array $structures): self
     {
         $this->structures = $structures;
+
+        return $this;
+    }
+
+    public function getMassPerson(): ?MassPerson
+    {
+        return $this->massPerson;
+    }
+
+    public function setMassPerson(?MassPerson $massPerson): self
+    {
+        $this->massPerson = $massPerson;
 
         return $this;
     }

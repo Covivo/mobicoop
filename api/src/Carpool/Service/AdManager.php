@@ -105,10 +105,11 @@ class AdManager
      *
      * @param Ad $ad The ad to create
      * @param bool $fromUpdate - When we create an Ad in update case, waypoints are Object and not Array
+     * @param bool $doMatchings - When we create an Ad, do the matchings based on the proposal
      * @return Ad
      * @throws \Exception
      */
-    public function createAd(Ad $ad, bool $fromUpdate = false)
+    public function createAd(Ad $ad, bool $fromUpdate = false, bool $doMatchings = true)
     {
         $this->logger->info("AdManager : start " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -271,7 +272,7 @@ class AdManager
         }
 
         $outwardProposal->setCriteria($outwardCriteria);
-        $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal);
+        $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal, true, $doMatchings);
 
         $this->logger->info("AdManager : end creating outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -368,7 +369,7 @@ class AdManager
             }
 
             $returnProposal->setCriteria($returnCriteria);
-            $returnProposal = $this->proposalManager->prepareProposal($returnProposal, false);
+            $returnProposal = $this->proposalManager->prepareProposal($returnProposal, false, $doMatchings);
             $this->entityManager->persist($returnProposal);
         }
         // we persist the proposals

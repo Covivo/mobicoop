@@ -25,8 +25,8 @@ namespace App\Match\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Carpool\Entity\Proposal;
 use App\Geography\Entity\Address;
+use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -237,13 +237,13 @@ class MassPerson
     private $updatedDate;
 
     /**
-     * @var Proposal|null The proposal created after a Mass migration
+     * @var User|null The User created base on this MassPerson
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="massPerson")
+     * @ORM\OneToOne(targetEntity="\App\User\Entity\User", inversedBy="massPerson")
      * @MaxDepth(1)
      * @Groups({"read"})
      */
-    private $proposal;
+    private $user;
 
     public function __construct()
     {
@@ -514,14 +514,14 @@ class MassPerson
         return $this;
     }
 
-    public function getProposal(): ?Proposal
+    public function getUser(): ?User
     {
-        return $this->proposal;
+        return $this->user;
     }
     
-    public function setProposal(Proposal $proposal): self
+    public function setUser(User $user): self
     {
-        $this->proposal = $proposal;
+        $this->user = $user;
         
         return $this;
     }

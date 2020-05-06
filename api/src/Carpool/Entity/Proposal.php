@@ -38,7 +38,6 @@ use App\Travel\Entity\TravelMode;
 use App\Community\Entity\Community;
 use App\User\Entity\User;
 use App\Communication\Entity\Notified;
-use App\Match\Entity\MassPerson;
 
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
@@ -318,15 +317,6 @@ class Proposal
      */
     private $external;
 
-    /**
-     * @var MassPerson|null The proposal created after a Mass migration
-     *
-     * @ORM\OneToOne(targetEntity="\App\Match\Entity\MassPerson", mappedBy="proposal")
-     * @MaxDepth(1)
-     * @Groups({"read"})
-     */
-    private $massPerson;
-        
     public function __construct($id=null)
     {
         $this->id = self::DEFAULT_ID;
@@ -777,18 +767,6 @@ class Proposal
     public function setExternal(?string $external): self
     {
         $this->external = $external;
-
-        return $this;
-    }
-
-    public function getMassPerson(): ?MassPerson
-    {
-        return $this->massPerson;
-    }
-
-    public function setMassPerson(?MassPerson $massPerson): self
-    {
-        $this->massPerson = $massPerson;
 
         return $this;
     }
