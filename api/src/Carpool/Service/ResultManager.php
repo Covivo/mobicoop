@@ -478,6 +478,7 @@ class ResultManager
                 foreach ($asks as $ask) {
                     if ($ask->getStatus() == (ASK::STATUS_ACCEPTED_AS_DRIVER || ASK::STATUS_ACCEPTED_AS_PASSENGER)) {
                         $hasAsk=true;
+                        break;
                     }
                 }
                 // if we don't have accepted carpools AND (no user is logged OR the phone display is restricted) we pass the telephone at null
@@ -1064,6 +1065,7 @@ class ResultManager
                 foreach ($asks as $ask) {
                     if ($ask->getStatus() == (ASK::STATUS_ACCEPTED_AS_DRIVER || ASK::STATUS_ACCEPTED_AS_PASSENGER)) {
                         $hasAsk=true;
+                        break;
                     }
                 }
                 // if we don't have accepted carpools AND (no user is logged OR the phone display is restricted) we pass the telephone at null
