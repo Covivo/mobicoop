@@ -95,7 +95,7 @@ services:
             -
                 # these are the basic options that define the entity listener
                 name: 'doctrine.orm.entity_listener'
-                event: 'postPersist'
+                event: 'preFlush'
                 entity: 'App\Geography\Entity\Address'
 
                 # set the 'lazy' option to TRUE to only instantiate listeners when they are used
