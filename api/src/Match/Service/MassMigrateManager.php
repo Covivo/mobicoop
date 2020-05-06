@@ -38,7 +38,6 @@ use App\Auth\Repository\AuthItemRepository;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Service\AdManager;
-use App\Carpool\Service\ProposalManager;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -67,13 +66,12 @@ class MassMigrateManager
     private $eventDispatcher;
     private $communityManager;
     private $security;
-    private $proposalManager;
     private $importManager;
 
     const MOBIMATCH_IMPORT_PREFIX = "Mobimatch#";
-    const LAUNCH_IMPORT = false;
+    const LAUNCH_IMPORT = true;
 
-    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ProposalManager $proposalManager, ImportManager $importManager, array $params)
+    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ImportManager $importManager, array $params)
     {
         $this->massPersonRepository = $massPersonRepository;
         $this->entityManager = $entityManager;
@@ -85,7 +83,6 @@ class MassMigrateManager
         $this->eventDispatcher = $eventDispatcher;
         $this->communityManager = $communityManager;
         $this->security = $security;
-        $this->proposalManager = $proposalManager;
         $this->importManager = $importManager;
     }
 
