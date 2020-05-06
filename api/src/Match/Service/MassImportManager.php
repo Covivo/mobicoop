@@ -520,16 +520,7 @@ class MassImportManager
                         $massMatching->setMassPerson1($match['driver']->getMassPerson());
                         $massMatching->setMassPerson2($match['passenger']->getMassPerson());
                         $massMatching->setDistance($matched['newDistance']);
-                        $massMatching->setOriginalDistance($matched['originalDistance']);
-                        $massMatching->setAcceptedDetourDistance($matched['acceptedDetourDistance']);
-                        $massMatching->setDetourDistance($matched['detourDistance']);
-                        $massMatching->setDetourDistancePercent($matched['detourDistancePercent']);
-                        $massMatching->setOriginalDuration($matched['originalDuration']);
-                        $massMatching->setAcceptedDetourDuration($matched['acceptedDetourDuration']);
                         $massMatching->setDuration($matched['newDuration']);
-                        $massMatching->setDetourDuration($matched['detourDuration']);
-                        $massMatching->setDetourDurationPercent($matched['detourDurationPercent']);
-                        $massMatching->setCommonDistance($matched['commonDistance']);
                         $this->entityManager->persist($massMatching);
                     }
                 }

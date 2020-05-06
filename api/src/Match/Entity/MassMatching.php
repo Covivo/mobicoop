@@ -79,89 +79,12 @@ class MassMatching
     private $distance;
     
     /**
-     * @var int|null The original distance of the driver in metres.
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"mass","massCompute"})
-     */
-    private $originalDistance;
-
-    /**
-     * @var int|null The accepted detour distance of the driver in metres.
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"mass","massCompute"})
-     */
-    private $acceptedDetourDistance;
-
-    /**
-     * @var int|null The detour distance of the driver in metres.
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"mass","massCompute"})
-     */
-    private $detourDistance;
-
-    /**
-     * @var float|null The detour distance of the driver in percentage of the original distance.
-     * @ORM\Column(type="decimal", precision=5, scale=2, nullable=true)
-     * @Groups({"mass","massCompute"})
-     */
-    private $detourDistancePercent;
-
-    /**
-     * @var int|null The original duration of the driver in seconds.
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"mass","massCompute"})
-     */
-    private $originalDuration;
-
-    /**
-     * @var int|null The accepted detour duration of the driver in seconds.
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"mass","massCompute"})
-     */
-    private $acceptedDetourDuration;
-
-    /**
      * @var int The total duration of the direction in milliseconds.
      * corresponding to newDuration in classic carpool matching
      * @ORM\Column(type="integer")
      * @Groups({"mass","massCompute"})
      */
     private $duration;
-
-    /**
-     * @var int|null The detour duration of the driver in seconds.
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"mass","massCompute"})
-     */
-    private $detourDuration;
-
-    /**
-     * @var int|null The detour duration of the driver in percentage of the original duration.
-     * @ORM\Column(type="decimal", precision=5, scale=2, nullable=true)
-     * @Groups({"mass","massCompute"})
-     */
-    private $detourDurationPercent;
-
-    /**
-     * @var int|null The common distance in metres.
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"mass","massCompute"})
-     */
-    private $commonDistance;
-
-    /**
-     * @var int|null The duration till the pick up of the passenger in seconds.
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"mass","massCompute"})
-     */
-    private $pickUpDuration;
-
-    /**
-     * @var int|null The duration till the dropoff of the passenger in seconds.
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"mass","massCompute"})
-     */
-    private $dropOffDuration;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -230,78 +153,6 @@ class MassMatching
         return $this;
     }
 
-    public function getOriginalDistance(): ?int
-    {
-        return $this->originalDistance;
-    }
-
-    public function setOriginalDistance(?int $originalDistance): self
-    {
-        $this->originalDistance = $originalDistance;
-
-        return $this;
-    }
-
-    public function getAcceptedDetourDistance(): ?int
-    {
-        return $this->acceptedDetourDistance;
-    }
-
-    public function setAcceptedDetourDistance(?int $acceptedDetourDistance): self
-    {
-        $this->acceptedDetourDistance = $acceptedDetourDistance;
-
-        return $this;
-    }
-
-    public function getDetourDistance(): ?int
-    {
-        return $this->detourDistance;
-    }
-
-    public function setDetourDistance(?int $detourDistance): self
-    {
-        $this->detourDistance = $detourDistance;
-
-        return $this;
-    }
-
-    public function getDetourDistancePercent(): ?float
-    {
-        return $this->detourDistancePercent;
-    }
-
-    public function setDetourDistancePercent(?float $detourDistancePercent): self
-    {
-        $this->detourDistancePercent = $detourDistancePercent;
-
-        return $this;
-    }
-
-    public function getOriginalDuration(): ?int
-    {
-        return $this->originalDuration;
-    }
-
-    public function setOriginalDuration(?int $originalDuration): self
-    {
-        $this->originalDuration = $originalDuration;
-
-        return $this;
-    }
-
-    public function getAcceptedDetourDuration(): ?int
-    {
-        return $this->acceptedDetourDuration;
-    }
-
-    public function setAcceptedDetourDuration(?int $acceptedDetourDuration): self
-    {
-        $this->acceptedDetourDuration = $acceptedDetourDuration;
-
-        return $this;
-    }
-
     public function getDuration(): ?int
     {
         return $this->duration;
@@ -314,65 +165,6 @@ class MassMatching
         return $this;
     }
 
-    public function getDetourDuration(): ?int
-    {
-        return $this->detourDuration;
-    }
-
-    public function setDetourDuration(?int $detourDuration): self
-    {
-        $this->detourDuration = $detourDuration;
-
-        return $this;
-    }
-
-    public function getDetourDurationPercent(): ?float
-    {
-        return $this->detourDurationPercent;
-    }
-
-    public function setDetourDurationPercent(?float $detourDurationPercent): self
-    {
-        $this->detourDurationPercent = $detourDurationPercent;
-
-        return $this;
-    }
-
-    public function getCommonDistance(): ?int
-    {
-        return $this->commonDistance;
-    }
-
-    public function setCommonDistance(?int $commonDistance): self
-    {
-        $this->commonDistance = $commonDistance;
-
-        return $this;
-    }
-
-    public function getPickUpDuration(): ?int
-    {
-        return $this->pickUpDuration;
-    }
-
-    public function setPickUpDuration(?int $pickUpDuration): self
-    {
-        $this->pickUpDuration = $pickUpDuration;
-
-        return $this;
-    }
-
-    public function getDropOffDuration(): ?int
-    {
-        return $this->dropOffDuration;
-    }
-
-    public function setDropOffDuration(?int $dropOffDuration): self
-    {
-        $this->dropOffDuration = $dropOffDuration;
-
-        return $this;
-    }
 
     public function getCreatedDate(): ?\DateTimeInterface
     {
