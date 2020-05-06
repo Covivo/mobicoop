@@ -38,6 +38,7 @@ use App\Auth\Repository\AuthItemRepository;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Service\AdManager;
+use App\Carpool\Service\ProposalManager;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -65,8 +66,9 @@ class MassMigrateManager
     private $eventDispatcher;
     private $communityManager;
     private $security;
+    private $proposalManager;
 
-    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, array $params)
+    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ProposalManager $proposalManager, array $params)
     {
         $this->massPersonRepository = $massPersonRepository;
         $this->entityManager = $entityManager;
@@ -78,6 +80,7 @@ class MassMigrateManager
         $this->eventDispatcher = $eventDispatcher;
         $this->communityManager = $communityManager;
         $this->security = $security;
+        $this->proposalManager = $proposalManager;
     }
 
     /**
@@ -181,10 +184,6 @@ class MassMigrateManager
 
                     $migratedUsers[] = $user; // For the return
 
-                    // We update the MassPerson to link it to the created User
-                    $massPerson->setUser($user);
-                    $this->entityManager->persist($user);
-
                     // The home address of the user
                     $personalAddress = clone $massPerson->getPersonalAddress();
                     $personalAddress->setUser($user);
@@ -193,10 +192,6 @@ class MassMigrateManager
                     $this->entityManager->persist($personalAddress);
                     $this->entityManager->flush();
 
-                    // We create an Ad for this new user (regular, home to work, monday to friday)
-                    // To DO : see the comment above createJourneyFromMassPerson() method
-                    //$this->createJourneyFromMassPerson($massPerson);
-                    
 
                     // Trigger an event to send a email
                     $event = new MassMigrateUserMigratedEvent($user);
@@ -212,6 +207,14 @@ class MassMigrateManager
                 $this->entityManager->persist($communityUser);
                 $this->entityManager->flush();
             }
+
+            // We create an Ad for the User (regular, home to work, monday to friday)
+            $ad = $this->createJourneyFromMassPerson($massPerson, $user);
+            
+            // We set the link between the Migrated MassPerson and the Proposal
+            $massPerson->setProposal($this->proposalManager->get($ad->getProposalId()));
+            $this->entityManager->persist($massPerson);
+            $this->entityManager->flush();
         }
         //$this->entityManager->flush();
 
@@ -244,9 +247,10 @@ class MassMigrateManager
      * Create the journey (Ad then Proposal) of a MassPerson
      *
      * @param MassPerson $massPerson
+     * @param User $user
      * @return Ad
      */
-    private function createJourneyFromMassPerson(MassPerson $massPerson): Ad
+    private function createJourneyFromMassPerson(MassPerson $massPerson, User $user): Ad
     {
         $ad = new Ad();
 
@@ -296,8 +300,8 @@ class MassMigrateManager
         $ad->setSchedule($schedule);
 
         // The User
-        $ad->setUser($massPerson->getUser());
-        $ad->setUserId($massPerson->getUser()->getId());
+        $ad->setUser($user);
+        $ad->setUserId($user->getId());
 
         return $this->adManager->createAd($ad);
     }
