@@ -94,7 +94,7 @@ class MassMigrateManager
      */
     public function migrate(Mass $mass)
     {
-        set_time_limit(7200);
+        set_time_limit(50000);
 
         $migratedUsers = [];
 
@@ -266,8 +266,8 @@ class MassMigrateManager
      */
     private function createJourneyFromMassPerson(MassPerson $massPerson, User $user, ?Community $community): Ad
     {
-        set_time_limit(7200);
-        
+        set_time_limit(50000);
+
         $ad = new Ad();
 
         // Role
