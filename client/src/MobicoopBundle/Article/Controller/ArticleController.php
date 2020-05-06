@@ -53,6 +53,7 @@ class ArticleController extends AbstractController
     const LOM = 13;
     const GOODPRACTICES = 14;
     const MOREABOUT = 15;
+    const COOKIES = 16;
 
     /**
      * Display of the project page
@@ -142,6 +143,15 @@ class ArticleController extends AbstractController
     public function showFAQ(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::FAQ));
+    }
+
+     /**
+     * Display of the cookie page
+     *
+     */
+    public function showCookie (ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::COOKIES));
     }
 
     /**
