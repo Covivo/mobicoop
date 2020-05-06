@@ -49,12 +49,6 @@ use App\Import\Controller\ImportImageUserController;
  *              "normalization_context"={"groups"={"read"}},
  *              "security"="is_granted('import_create',object)"
  *          },
- *          "match"={
- *              "method"="POST",
- *              "path"="/user_imports/match",
- *              "normalization_context"={"groups"={"read"}},
- *              "security"="is_granted('import_create',object)"
- *          },
  *          "import-users-from-v1"={
  *              "method"="GET",
  *              "path"="/import/images-from-v1/users",
