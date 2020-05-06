@@ -232,7 +232,7 @@ class MassMigrateManager
 
         // Launch import and mass matching
         if (self::LAUNCH_IMPORT) {
-            $this->importManager->treatUserImport(self::MOBIMATCH_IMPORT_PREFIX+""+$mass->getId(), $mass->getId());
+            $this->importManager->treatUserImport(self::MOBIMATCH_IMPORT_PREFIX, $mass->getId());
         }
 
         $mass->setMigratedUsers($migratedUsers);
