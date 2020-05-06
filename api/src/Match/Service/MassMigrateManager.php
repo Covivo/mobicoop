@@ -191,6 +191,9 @@ class MassMigrateManager
 
                     $migratedUsers[] = $user; // For the return
 
+                    $this->entityManager->persist($user);
+                    $this->entityManager->flush();
+
                     // The home address of the user
                     $personalAddress = clone $massPerson->getPersonalAddress();
                     $personalAddress->setUser($user);

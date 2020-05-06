@@ -265,7 +265,7 @@ class AdManager
         // waypoints
         foreach ($ad->getOutwardWaypoints() as $position => $point) {
             $waypoint = new Waypoint();
-            $waypoint->setAddress($this->createAddressFromPoint($point));
+            $waypoint->setAddress(($point instanceof Address) ? $point : $this->createAddressFromPoint($point));
             $waypoint->setPosition($position);
             $waypoint->setDestination($position == count($ad->getOutwardWaypoints())-1);
             $outwardProposal->addWaypoint($waypoint);
@@ -362,7 +362,7 @@ class AdManager
             }
             foreach ($ad->getReturnWaypoints() as $position => $point) {
                 $waypoint = new Waypoint();
-                $waypoint->setAddress($this->createAddressFromPoint($point));
+                $waypoint->setAddress(($point instanceof Address) ? $point : $this->createAddressFromPoint($point));
                 $waypoint->setPosition($position);
                 $waypoint->setDestination($position == count($ad->getReturnWaypoints())-1);
                 $returnProposal->addWaypoint($waypoint);
