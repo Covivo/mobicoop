@@ -313,6 +313,8 @@ use App\User\Controller\UserCanUseEmail;
  *          "put"={
  *              "method"="PUT",
  *              "path"="/users/{id}",
+ *              "normalization_context"={"groups"={"readUser"}},
+ *              "denormalization_context"={"groups"={"write"}},
  *              "security"="is_granted('user_update',object)"
  *          },
  *          "delete_user"={
