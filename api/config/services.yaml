@@ -232,6 +232,7 @@ services:
             $emailReplyToName: '%env(resolve:MAILER_REPLYTO_NAME)%'
             $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%'
             $emailAdditionalHeaders: '%env(resolve:MAILER_ADDITIONAL_HEADERS)%'
+            $emailSupport: '%env(resolve:MAILER_SUPPORT)%'
         tags:
             - { name: monolog.logger, channel: communication }
 
