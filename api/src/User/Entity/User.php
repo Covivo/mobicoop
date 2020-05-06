@@ -313,6 +313,8 @@ use App\User\Controller\UserCanUseEmail;
  *          "put"={
  *              "method"="PUT",
  *              "path"="/users/{id}",
+ *              "normalization_context"={"groups"={"readUser"}},
+ *              "denormalization_context"={"groups"={"write"}},
  *              "security"="is_granted('user_update',object)"
  *          },
  *          "delete_user"={
@@ -535,7 +537,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The telephone number of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","checkPhoneToken"})
+     * @Groups({"readUser","write","checkPhoneToken","results"})
      */
     private $telephone;
 
@@ -546,17 +548,11 @@ class User implements UserInterface, EquatableInterface
     private $oldTelephone;
 
     /**
-     * @var string|null The telephone number of the user (for results).
-     * @Groups({"readUser","results"})
-     */
-    private $phone;
-
-    /**
      * @var int phone display configuration (1 = restricted (default); 2 = all).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","write", "results"})
+     * @Groups({"readUser","write","results"})
      */
     private $phoneDisplay;
 
@@ -1273,11 +1269,6 @@ class User implements UserInterface, EquatableInterface
         $this->telephone = $telephone;
 
         return $this;
-    }
-
-    public function getPhone(): ?string
-    {
-        return ($this->phoneDisplay == self::PHONE_DISPLAY_ALL ? $this->telephone : null);
     }
 
     public function getPhoneDisplay(): ?int

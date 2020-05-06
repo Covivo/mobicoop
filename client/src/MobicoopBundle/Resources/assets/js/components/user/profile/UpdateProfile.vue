@@ -56,6 +56,7 @@
                 <img
                   :src="urlAvatar"
                   alt="avatar"
+                  id="avatar"
                 >
               </v-avatar>
             </v-col>
@@ -631,7 +632,7 @@ export default {
             this.diplayVerification = true;
             this.checkVerifiedPhone();
           }
-          this.urlAvatar = res.data.versions.square_800;
+          //this.urlAvatar = res.data.versions.square_800;
           this.displayFileUpload = false; 
         });
     },
@@ -657,9 +658,9 @@ export default {
         .get(this.$t('avatar.delete.route'))
         .then(res => {
           this.errorUpdate = res.data.state;
-          this.urlAvatar = res.data[res.data.length-1];
           this.displayFileUpload = true;
           this.loadingDelete = false;
+          this.urlAvatar = res.data[res.data.length-1];
         });
     },
     previewAvatar() {
@@ -669,10 +670,10 @@ export default {
           this.urlAvatar = reader.result; // UPDATE PREVIEW
         }.bind(this), false);
         reader.readAsDataURL(this.avatar); // FIRE LOAD EVENT
-
-      } else {
-        this.urlAvatar = this.user.avatars[this.user.avatars.length-1]; // RESET AVATAR
-      }
+      } 
+      // else {
+      //   this.urlAvatar = this.user.avatars[this.user.avatars.length-1]; // RESET AVATAR
+      // }
     },
     checkVerifiedPhone() {
       if (this.telephone !== null) {
@@ -764,3 +765,8 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+  #avatar{
+    width:auto !important;
+  }
+</style>

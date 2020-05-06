@@ -130,7 +130,7 @@ export default {
           .then(response => {
             if(response.data.id !== undefined){
               this.snackbarText = this.$t("snackBar.ok");
-              window.location.href = "/";
+              window.location.href = this.$t("urlLogin");
             }
             else{
               this.snackbarText = this.$t("snackBar.error");
