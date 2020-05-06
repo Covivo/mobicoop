@@ -205,11 +205,6 @@ class MassMigrateManager
                     $event = new MassMigrateUserMigratedEvent($user);
                     $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
                 }
-
-                // We set the link between the MassPerson and the User (new or found)
-                $massPerson->setUser($user);
-                $this->entityManager->persist($massPerson);
-                $this->entityManager->flush();
             }
 
             // If there is a community we create a CommunityUser with the User.
@@ -221,21 +216,26 @@ class MassMigrateManager
                 $this->entityManager->flush();
             }
 
+            // We set the link between the MassPerson and the User (new or found)
+            $massPerson->setUser($user);
+            $this->entityManager->persist($massPerson);
+            $this->entityManager->flush();
+
             // We create an Ad for the User (regular, home to work, monday to friday)
             $this->createJourneyFromMassPerson($massPerson, $user, $community);
         }
         //$this->entityManager->flush();
+
+        // Launch import and mass matching
+        if (self::LAUNCH_IMPORT) {
+            $this->importManager->treatUserImport(self::MOBIMATCH_IMPORT_PREFIX, $mass->getId());
+        }
 
         // Finally, we set status of the Mass at Migrated and save the migrated date
         $mass->setStatus(Mass::STATUS_MIGRATED);
         $mass->setMigratedDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
-
-        // Launch import and mass matching
-        if (self::LAUNCH_IMPORT) {
-            $this->importManager->treatUserImport(self::MOBIMATCH_IMPORT_PREFIX, $mass->getId());
-        }
 
         $mass->setMigratedUsers($migratedUsers);
 
