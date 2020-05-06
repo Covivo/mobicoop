@@ -26,7 +26,6 @@ namespace App\Import\Service;
 use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Service\ProposalManager;
 use App\Communication\Entity\Medium;
-use App\Communication\Repository\NotificationRepository;
 use App\Community\Repository\CommunityRepository;
 use App\Event\Repository\EventRepository;
 use App\Image\Entity\Image;
@@ -40,10 +39,7 @@ use App\Import\Repository\EventImportRepository;
 use App\Import\Repository\RelayPointImportRepository;
 use App\Import\Repository\UserImportRepository;
 use App\RelayPoint\Repository\RelayPointRepository;
-use App\Auth\Repository\RoleRepository;
-use App\Match\Entity\Mass;
 use App\User\Repository\UserRepository;
-use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -57,8 +53,6 @@ class ImportManager
     private $entityManager;
     private $userImportRepository;
     private $proposalManager;
-    private $userManager;
-    private $notificationRepository;
     private $proposalRepository;
     private $imageManager;
     private $eventRepository;
@@ -74,13 +68,11 @@ class ImportManager
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, RelayPointImportRepository $relayPointImportRepository, EventImportRepository $eventImportRepository, CommunityImportRepository $communityImportRepository, ImageManager $imageManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, UserManager $userManager, NotificationRepository $notificationRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository, RelayPointRepository $relayPointRepository)
+    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, RelayPointImportRepository $relayPointImportRepository, EventImportRepository $eventImportRepository, CommunityImportRepository $communityImportRepository, ImageManager $imageManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository, RelayPointRepository $relayPointRepository)
     {
         $this->entityManager = $entityManager;
         $this->userImportRepository = $userImportRepository;
         $this->proposalManager = $proposalManager;
-        $this->userManager = $userManager;
-        $this->notificationRepository = $notificationRepository;
         $this->proposalRepository = $proposalRepository;
         $this->imageManager = $imageManager;
         $this->relayPointRepository = $relayPointRepository;
