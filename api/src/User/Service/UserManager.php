@@ -422,9 +422,11 @@ class UserManager
             if ($user->getSolidaryUser()->isBeneficiary() && !in_array(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE, $authItems)) {
                 $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
             }
-            $userAuthAssignment = new UserAuthAssignment();
-            $userAuthAssignment->setAuthItem($authItem);
-            $user->addUserAuthAssignment($userAuthAssignment);
+            if (!empty($authItem)) {
+                $userAuthAssignment = new UserAuthAssignment();
+                $userAuthAssignment->setAuthItem($authItem);
+                $user->addUserAuthAssignment($userAuthAssignment);
+            }
 
             // If there is no availability time information, we get the one from the structure
             $user->setSolidaryUser($this->setDefaultSolidaryUserAvailabilities($user->getSolidaryUser()));
@@ -695,6 +697,9 @@ class UserManager
         $user = $this->userRepository->findOneBy(["pwdToken"=>$data->getPwdToken()]);
         if (!is_null($user)) {
             $user->setPassword($data->getPassword());
+            // we reset tokens
+            $user->setPwdTokenDate(null);
+            $user->setPwdToken(null);
             // persist the user
             $this->entityManager->persist($user);
             $this->entityManager->flush();

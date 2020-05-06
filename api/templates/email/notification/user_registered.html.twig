@@ -19,9 +19,9 @@
                 <tr>
                     <td style="width:70%">
                         <p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
-                        <p>{{ "yourInscriptionAt" |trans }}  <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" > {{api_env('EMAILS_PLATFORM_NAME')}}</b>  {{ "wellTakenIntoAccount" |trans }}.</p>                        
-                        {% if context.user.mobileRegistration is not null %}
-                            <p>{{ "clickHereToConfirm" |trans}} : <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{ api_env('EMAILS_MOBILE_PLATFORM_URL') }}{{  "urlMobileEmailValidation" |trans }}{{ context.user.email }}?token={{ context.user.emailToken }}" title="">{{ api_env('EMAILS_MOBILE_PLATFORM_URL') }}{{ "urlMobileEmailValidation" |trans }}{{ context.user.email }}?token={{ context.user.emailToken }}</a>.</p>
+                        <p>{{ "yourInscriptionAt" |trans }}  <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" > {{api_env('EMAILS_PLATFORM_NAME')}}</b>  {{ "wellTakenIntoAccount" |trans }}.</p>
+                        {% if context.user.registerFromMobile == true %}
+                            <p>{{ "clickHereToConfirm" |trans}} : <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{ api_env('EMAILS_MOBILE_PLATFORM_URL') }}{{  "urlMobileEmailValidation" |trans }}{{ context.user.email }}?token={{ context.user.emailToken }}" title="">{{ api_env('EMAILS_MOBILE_PLATFORM_URL') }}{{ "urlMobileEmailValidation" |trans }}{{ context.user.email }}?token={{ context.user.emailToken }}</a></p>
                             <p>{{"orUseTheValidationCode" |trans }} : <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" >{{ context.user.emailToken }}</b></p>
                         {% else %}
                             <p>{{ "clickHereToConfirm" |trans}} : <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{ api_env('EMAILS_PLATFORM_URL') }}{{  "urlEmailValidation" |trans }}{{ context.user.email }}/{{ context.user.emailToken }}" title="">{{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlEmailValidation" |trans }}{{ context.user.email }}/{{ context.user.emailToken }}</a>.</p>
