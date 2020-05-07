@@ -27,6 +27,7 @@ use App\Geography\Entity\Address;
 use App\Geography\Repository\AddressRepository;
 use App\Geography\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Address management service.
@@ -39,29 +40,31 @@ class AddressManager
     private $territoryRepository;
     private $addressRepository;
     private $geoSearcher;
+    private $logger;
    
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, TerritoryRepository $territoryRepository, AddressRepository $addressRepository, GeoSearcher $geoSearcher)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, TerritoryRepository $territoryRepository, AddressRepository $addressRepository, GeoSearcher $geoSearcher)
     {
         $this->entityManager = $entityManager;
         $this->territoryRepository = $territoryRepository;
         $this->addressRepository = $addressRepository;
         $this->geoSearcher = $geoSearcher;
+        $this->logger = $logger;
     }
 
     /**
      * Create or update territories for an Address.
      *
      * @param Address $address  The address
-     * @param boolean $persist  Persit the address immediately
-     * @return void             The address with its territories
+     * @return Address          The address with its territories
      */
-    public function createAddressTerritories(Address $address, bool $persist = false)
+    public function createAddressTerritories(Address $address)
     {
+        $this->logger->info('Address Manager | Create address territories for Address #' . $address->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         // first we remove all territories
         $address->removeTerritories();
         // then we search the territories
@@ -70,12 +73,9 @@ class AddressManager
                 $address->addTerritory($territory);
             }
         }
-        if ($persist) {
-            $this->entityManager->persist($address);
-            $this->entityManager->flush();
-        }
         return $address;
     }
+
 
     /**
      * Create or update territories for an Address, only if the address is directly related to 'useful' entities :
@@ -87,10 +87,9 @@ class AddressManager
      * - todo : add useful entities
      *
      * @param Address $address  The address
-     * @param boolean $persist  Persit the address immediately
-     * @return void             The address with its territories
+     * @return Address          The address (with its territories if needed)
      */
-    public function createAddressTerritoriesForUsefulEntity(Address $address, bool $persist = false)
+    public function createAddressTerritoriesForUsefulEntity(Address $address)
     {
         $createLink = false;
         if ($address->isHome()) {
@@ -113,11 +112,7 @@ class AddressManager
         }
         // todo : add any needed useful entity link
         if ($createLink) {
-            return $this->createAddressTerritories($address, $persist);
-        }
-        if ($persist) {
-            $this->entityManager->persist($address);
-            $this->entityManager->flush();
+            return $this->createAddressTerritories($address);
         }
         return $address;
     }

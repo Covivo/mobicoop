@@ -145,11 +145,11 @@ class ArticleController extends AbstractController
         return $this->showArticle($articleManager->getArticle(self::FAQ));
     }
 
-     /**
-     * Display of the cookie page
-     *
-     */
-    public function showCookie (ArticleManager $articleManager)
+    /**
+    * Display of the cookie page
+    *
+    */
+    public function showCookie(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::COOKIES));
     }

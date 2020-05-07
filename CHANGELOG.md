@@ -3,6 +3,7 @@
 ## API
 
 * New push notifications system
+* New migration system for Mobimatch : import Mobimatch persons and their journeys as real users and carpool ads
 
 # Release 1.3.0
 

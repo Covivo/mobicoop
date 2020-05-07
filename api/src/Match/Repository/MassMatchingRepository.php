@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,33 +21,42 @@
  *    LICENSE
  **************************/
 
-namespace App\Geography\EventListener;
+namespace App\Match\Repository;
 
-use App\Geography\Entity\Address;
-use App\Geography\Service\AddressManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\PreFlushEventArgs;
+use Doctrine\ORM\EntityRepository;
+use App\Match\Entity\MassMatching;
 
 /**
- * Address Write Event listener, called on preFlush.
- * @author Sylvain <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@gmail.com>
+ * @method MassMatching|null find($id)
  */
-class AddressWriteListener
+class MassMatchingRepository
 {
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
     private $entityManager;
-    private $addressManager;
 
-    public function __construct(EntityManagerInterface $entityManager, AddressManager $addressManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->addressManager = $addressManager;
+        $this->repository = $entityManager->getRepository(MassMatching::class);
     }
 
-    public function setTerritories(Address $address, PreFlushEventArgs $args)
+    public function find(int $id): ?MassMatching
     {
-        // we create the link to territories only for some selected entities
-        //$address = $this->addressManager->createAddressTerritoriesForUsefulEntity($address);
-        // we persist here, the flush is be made elsewhere
-        //$this->entityManager->persist($address);
+        return $this->repository->find($id);
+    }
+
+    public function deleteMatchingsOfAMass($massId)
+    {
+        $conn = $this->entityManager->getConnection();
+
+        $sql = "DELETE mass_matching FROM `mass_matching` INNER JOIN mass_person on mass_person.id = mass_matching.mass_person1_id WHERE mass_person.mass_id = ".$massId;
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
     }
 }

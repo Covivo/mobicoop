@@ -91,6 +91,7 @@ use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
+use App\Match\Entity\MassPerson;
 use App\Solidary\Entity\SolidaryUser;
 use App\User\Controller\UserCanUseEmail;
 
@@ -1072,6 +1073,15 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUserAdmin" })
      */
     private $adminCommunityUser;
+
+    /**
+     * @var MassPerson|null The Mass person related to the suer if the user is imported from a Mass migration
+     *
+     * @ORM\OneToOne(targetEntity="\App\Match\Entity\MassPerson", mappedBy="user")
+     * @MaxDepth(1)
+     * @Groups({"readUser"})
+     */
+    private $massPerson;
 
     public function __construct($status = null)
     {
@@ -2544,10 +2554,19 @@ class User implements UserInterface, EquatableInterface
     public function setAdminCommunityUser(CommunityUser $adminCommunityUser)
     {
         $this->adminCommunityUser = $adminCommunityUser;
+    }
+
+    public function getMassPerson(): ?MassPerson
+    {
+        return $this->massPerson;
+    }
+
+    public function setMassPerson(?MassPerson $massPerson): self
+    {
+        $this->massPerson = $massPerson;
 
         return $this;
     }
-
 
     // DOCTRINE EVENTS
 
