@@ -45,8 +45,8 @@ class AddressWriteListener
     public function setTerritories(Address $address, PreFlushEventArgs $args)
     {
         // we create the link to territories only for some selected entities
-        $address = $this->addressManager->createAddressTerritoriesForUsefulEntity($address);
+        //$address = $this->addressManager->createAddressTerritoriesForUsefulEntity($address);
         // we persist here, the flush is be made elsewhere
-        $this->entityManager->persist($address);
+        //$this->entityManager->persist($address);
     }
 }

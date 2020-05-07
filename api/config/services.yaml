@@ -313,6 +313,10 @@ services:
         arguments:
             $directory: '%env(resolve:ASYNC_GEO_TEMP)%'
 
+    App\Geography\Service\AddressManager:
+        tags:
+            - { name: monolog.logger, channel: geography }
+
     App\Geography\Service\GeoRouter:
         arguments:
             $uri: '%env(resolve:SIG_GEOROUTER_URI)%'

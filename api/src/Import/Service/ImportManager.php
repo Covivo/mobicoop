@@ -117,7 +117,7 @@ class ImportManager
             // we select the users that have a related mass_person, and that haven't been imported yet (using the null left join trick)
             $sql = "
             INSERT INTO user_import (user_id,origin,status,created_date,user_external_id) 
-            SELECT u.id, '" . $origin . "_" . $massId . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',u.id FROM user u 
+            SELECT u.id, '" . $origin . $massId . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',u.id FROM user u 
             INNER JOIN mass_person mp ON mp.user_id = u.id LEFT JOIN user_import ui ON ui.user_id = u.id WHERE ui.user_id is NULL AND mp.mass_id = " . $massId . "  ";
         } else {
             $sql = "INSERT INTO user_import (user_id,origin,status,created_date,user_external_id) SELECT id, '" . $origin . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',id FROM user";

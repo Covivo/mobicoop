@@ -45,6 +45,7 @@ use App\Match\Event\MassMigrateUserMigratedEvent;
 use App\Match\Exception\MassException;
 use App\Community\Service\CommunityManager;
 use App\Import\Service\ImportManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -67,11 +68,12 @@ class MassMigrateManager
     private $communityManager;
     private $security;
     private $importManager;
+    private $logger;
 
     const MOBIMATCH_IMPORT_PREFIX = "Mobimatch#";
     const LAUNCH_IMPORT = true;
 
-    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ImportManager $importManager, array $params)
+    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ImportManager $importManager, LoggerInterface $logger, array $params)
     {
         $this->massPersonRepository = $massPersonRepository;
         $this->entityManager = $entityManager;
@@ -84,6 +86,7 @@ class MassMigrateManager
         $this->communityManager = $communityManager;
         $this->security = $security;
         $this->importManager = $importManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -99,6 +102,7 @@ class MassMigrateManager
         $migratedUsers = [];
 
         // We set the status of the Mass at Migrating
+        $this->logger->info('Mass Migrate | Set status of Mass #' . $mass->getId() . ' to migrating | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $mass->setStatus(Mass::STATUS_MIGRATING);
         $mass->setMigrationDate(new \Datetime());
         $this->entityManager->persist($mass);
@@ -107,6 +111,7 @@ class MassMigrateManager
         // If there is a community to create, we create it
         $community = null;
         if (!empty($mass->getCommunityName())) {
+            $this->logger->info('Mass Migrate | Create community ' . $mass->getCommunityName() . " | " (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $community = new Community();
             $community->setName($mass->getCommunityName());
 
@@ -129,15 +134,15 @@ class MassMigrateManager
 
             $community->setAddress($mass->getCommunityAddress());
 
-
             // $this->entityManager->persist($community);
             // $this->entityManager->flush();
             $community = $this->communityManager->save($community);
         }
 
-
         // Then we get the Mass persons related the this mass
         $massPersons = $this->massPersonRepository->findAllByMass($mass);
+
+        $this->logger->info('Mass Migrate | Number of Mass persons to migrate : ' . count($massPersons) . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         // Then for each person we're creating a User (with a Role and an Address)
 
@@ -145,6 +150,7 @@ class MassMigrateManager
          * @var MassPerson $massPerson
          */
         foreach ($massPersons as $massPerson) {
+            $this->logger->info('Mass Migrate | Treating Mass person #' . $massPerson->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
             // We check if this user already exists
             $user = $this->userRepository->findOneBy(["email"=>$massPerson->getEmail()]);
@@ -188,18 +194,16 @@ class MassMigrateManager
                     $userAuthAssignment->setAuthItem($authItem);
                     $user->addUserAuthAssignment($userAuthAssignment);
 
-                    $migratedUsers[] = $user; // For the return
-
-                    $this->entityManager->persist($user);
-                    $this->entityManager->flush();
-
                     // The home address of the user
                     $personalAddress = clone $massPerson->getPersonalAddress();
                     $personalAddress->setUser($user);
                     $personalAddress->setHome(true);
 
-                    $this->entityManager->persist($personalAddress);
-                    $this->entityManager->flush();
+                    $user->addAddress($personalAddress);
+
+                    $migratedUsers[] = $user; // For the return
+
+                    $this->entityManager->persist($user);
 
                     // Trigger an event to send a email
                     $event = new MassMigrateUserMigratedEvent($user);
@@ -213,7 +217,6 @@ class MassMigrateManager
                 $communityUser->setCommunity($community);
                 $communityUser->setUser($user);
                 $this->entityManager->persist($communityUser);
-                $this->entityManager->flush();
             }
 
             // We set the link between the MassPerson and the User (new or found)
@@ -222,22 +225,25 @@ class MassMigrateManager
             $this->entityManager->flush();
 
             // We create an Ad for the User (regular, home to work, monday to friday)
+            $this->logger->info('Mass Migrate | createJourneyFromMassPerson #' . $massPerson->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $this->createJourneyFromMassPerson($massPerson, $user, $community);
         }
-        //$this->entityManager->flush();
-
-        // Launch import and mass matching
-        if (self::LAUNCH_IMPORT) {
-            $this->importManager->treatUserImport(self::MOBIMATCH_IMPORT_PREFIX, $mass->getId());
-        }
-
+        
         // Finally, we set status of the Mass at Migrated and save the migrated date
+        // we do it before the import because the import process can break entities relations, and therefor break the flush...
+        $this->logger->info('Mass Migrate | Set status of Mass #' . $mass->getId() . ' to migrated | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $mass->setStatus(Mass::STATUS_MIGRATED);
         $mass->setMigratedDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
 
         $mass->setMigratedUsers($migratedUsers);
+
+        // Launch import and mass matching
+        if (self::LAUNCH_IMPORT) {
+            $this->logger->info('Mass Migrate | Start user import | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->importManager->treatUserImport(self::MOBIMATCH_IMPORT_PREFIX, $mass->getId());
+        }
 
         return $mass;
     }
@@ -324,6 +330,6 @@ class MassMigrateManager
             $ad->setCommunities([$community->getId()]);
         }
 
-        return $this->adManager->createAd($ad, false, false);
+        return $this->adManager->createAd($ad, false);
     }
 }

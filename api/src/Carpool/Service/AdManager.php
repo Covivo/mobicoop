@@ -104,12 +104,11 @@ class AdManager
      * It returns the ad created, with its outward and return results.
      *
      * @param Ad $ad The ad to create
-     * @param bool $fromUpdate - When we create an Ad in update case, waypoints are Object and not Array
      * @param bool $doPrepare - When we prepare the Proposal
      * @return Ad
      * @throws \Exception
      */
-    public function createAd(Ad $ad, bool $fromUpdate = false, bool $doPrepare = true)
+    public function createAd(Ad $ad, bool $doPrepare = true)
     {
         $this->logger->info("AdManager : start " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 

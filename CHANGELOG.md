@@ -3,13 +3,14 @@
 ## API
 
 * New push notifications system
+* New migration system for Mobimatch : import Mobimatch persons and their journeys as real users and carpool ads
 
 # Release 1.3.0
 
 ## API
 
 * Direct link between addresses / directions and territories : improve the response speed for territory filters
-* Solidary Transport and Carpool Management : Manage solidary volunteers and beneficiaries, searching for solidary solutions, managing files and sollicitations.
+* Solidary Transport and Carpool Management : Manage solidary volunteers and beneficiaries, searching for solidary solutions, managing files and sollicitations
 
 ## CLIENT
 
