@@ -603,6 +603,13 @@ FAQ:
         en: /FAQ
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showFAQ
 
+# display cookie page
+cookies:
+    path:
+        fr: /cookies
+        en: /cookies
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCookie    
+
 # display ToolBox page
 ToolBox:
     path:
@@ -699,13 +706,6 @@ solidary_ask:
 # event routes #
 ################
 
-# display events
-event_list:
-    path:
-        fr: /evenements
-        en: /events
-    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventList
-
 # Get the events (AJAX)
 event_get_list:
     methods: [POST]
@@ -713,6 +713,13 @@ event_get_list:
         fr: /evenements/getEventList
         en: /events/getEventList
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::getEventList
+
+# display events
+event_list:
+    path:
+        fr: /evenements/{tabDefault?}
+        en: /events/{tabDefault?}
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventList    
 
 # create event
 event_create:
