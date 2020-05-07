@@ -112,7 +112,6 @@ const TerritoryInput = props => {
                                 <TextField
                                     label={lelabel}
                                     variant="filled"
-                                    required
                                     error={errorState}
                                     helperText={errorState && errorMessage}
                                     InputProps={{
