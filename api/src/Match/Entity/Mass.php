@@ -57,7 +57,9 @@ use Doctrine\Common\Collections\Collection;
  *          "denormalization_context"={"groups"={"write","massPost","massMigrate"}},
  *      },
  *      collectionOperations={
- *          "get",
+ *          "get"={
+ *              "security"="is_granted('mass_list',object)"
+ *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/masses",
@@ -72,31 +74,38 @@ use Doctrine\Common\Collections\Collection;
  *          "get"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"mass"}},
+ *              "security"="is_granted('mass_read',object)"
  *          },
- *          "delete",
+ *          "delete"={
+ *              "security"="is_granted('mass_delete',object)"
+ *          },
  *          "analyze"={
  *              "method"="GET",
  *              "path"="/masses/{id}/analyze",
  *              "normalization_context"={"groups"={"massPost"}},
- *              "controller"=MassAnalyzeAction::class
+ *              "controller"=MassAnalyzeAction::class,
+ *              "security"="is_granted('mass_create',object)"
  *          },
  *          "reanalyze"={
  *              "method"="GET",
  *              "path"="/masses/{id}/reanalyze",
  *              "normalization_context"={"groups"={"massPost"}},
- *              "controller"=MassReAnalyzeAction::class
+ *              "controller"=MassReAnalyzeAction::class,
+ *              "security"="is_granted('mass_create',object)"
  *          },
  *          "compute"={
  *              "method"="GET",
  *              "path"="/masses/{id}/compute",
  *              "normalization_context"={"groups"={"massCompute"}},
- *              "controller"=MassComputeAction::class
+ *              "controller"=MassComputeAction::class,
+ *              "security"="is_granted('mass_create',object)"
  *          },
  *          "match"={
  *              "method"="GET",
  *              "path"="/masses/{id}/match",
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassMatchAction::class,
+ *              "security"="is_granted('mass_create',object)",
  *              "swagger_context"={
  *                  "parameters"={
  *                     {
@@ -148,6 +157,7 @@ use Doctrine\Common\Collections\Collection;
  *              "path"="/masses/{id}/rematch",
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassReMatchAction::class,
+ *              "security"="is_granted('mass_create',object)",
  *              "swagger_context"={
  *                  "parameters"={
  *                     {
@@ -198,11 +208,13 @@ use Doctrine\Common\Collections\Collection;
  *              "method"="GET",
  *              "path"="/masses/{id}/workingplaces",
  *              "normalization_context"={"groups"={"mass","massWorkingPlaces"}},
- *              "controller"=MassWorkingPlacesAction::class
+ *              "controller"=MassWorkingPlacesAction::class,
+ *              "security"="is_granted('mass_read',object)"
  *          },
-  *          "migrate"={
+ *          "migrate"={
  *              "method"="PUT",
  *              "path"="/masses/{id}/migrate",
+ *              "security"="is_granted('mass_create',object)",
  *              "normalization_context"={"groups"={"massMigrate"}}
  *          },
  *      }
