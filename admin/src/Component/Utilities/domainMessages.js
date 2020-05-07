@@ -166,7 +166,7 @@ const fr = {
                 forCarpooler : "Visible seulement après acceptation du covoiturage, uniquement par les participants.",
                 forAll : "Visible dès la publication de l'annonce, par tous les inscrits."
               },
-              selectRoles : 'Selectionner un ou plusieurs rôles',
+              selectRoles : 'Selectionner un rôle',
               candidate : 'Solidiaire : candidat',
               volunteer : 'Solidiaire : volontaire',
               adresseMandatory : "L'adresse est obligatoire",

@@ -109,7 +109,6 @@ const GestionRoles = ({record}) => {
               <Grid key={`grid-${i}`} container spacing={3}>
                 <Grid item xs={5}>
                     <Select
-                       multiple
                        onChange={handleAddPair(i, 'roles')}
                        value={field['roles']}
                      >
