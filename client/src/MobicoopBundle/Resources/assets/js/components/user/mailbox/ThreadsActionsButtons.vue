@@ -3,7 +3,9 @@
     <!-- The Ask is just Initiated -->
     <!-- Only the Ask User can make a formal request of carpool -->
 
-    <div v-if="status==1 && canUpdateAsk">
+    <div
+      v-if="status==1 && canUpdateAsk"
+    >
       <v-btn
         v-if="driver"
         class="mb-2"
@@ -14,19 +16,22 @@
         depressed
         :loading="loading"
         dense
+        style="letter-spacing: -0.15px;white-space: normal;"
         @click="updateStatus(2,'driver')"
       >
         {{ $t('button.askCarpoolAsDriver') }}
       </v-btn> 
-       
+
       <v-btn
         v-if="passenger"
+        class="myButton"
         color="primary"
         large
         dark
         rounded
         depressed
         :loading="loading"
+        style="letter-spacing: -0.15px;white-space: normal;"
         @click="updateStatus(3,'passenger')"
       >
         {{ $t('button.askCarpoolAsPassenger') }}
@@ -154,3 +159,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+div > button > span
+  {
+    flex: 1 1 auto !important;
+  }
+</style>
