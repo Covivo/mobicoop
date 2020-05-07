@@ -218,6 +218,18 @@ class NotificationManager
                                 $outwardDestination = $waypoint;
                             }
                         }
+                        // We check if there is really at least one day checked. Otherwide, we force the $result->outward at null to hide it in the mail
+                        // It's the case when the user who made the ask only checked return days
+                        if (!$result->getOutward()->isMonCheck() &&
+                        !$result->getOutward()->isTueCheck() &&
+                        !$result->getOutward()->isWedCheck() &&
+                        !$result->getOutward()->isThuCheck() &&
+                        !$result->getOutward()->isFriCheck() &&
+                        !$result->getOutward()->isSatCheck() &&
+                        !$result->getOutward()->isSunCheck()
+                        ) {
+                            $result->setOutward(null);
+                        }
                     }
                     if ($result->getReturn() !== null) {
                         foreach ($result->getReturn()->getWaypoints() as $waypoint) {
