@@ -23,96 +23,45 @@
 
 namespace App\Match\Controller;
 
-use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
-use App\TranslatorTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Match\Service\MassImportManager;
 use App\Match\Entity\Mass;
-use App\Match\Form\MassImportForm;
-use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Security\Core\Security;
 
+/**
+ * Mass import controller.
+ * Here we use a controller instead of a DataPersister as we need to handle multipart/form-data.
+ */
 final class CreateMassImportAction
 {
-    use TranslatorTrait;
-    private $validator;
-    private $doctrine;
-    private $factory;
+    private $security;
     private $massImportManager;
-    private $logger;
 
-    public function __construct(RegistryInterface $doctrine, FormFactoryInterface $factory, ValidatorInterface $validator, MassImportManager $massImportManager, LoggerInterface $logger)
+    public function __construct(Security $security, MassImportManager $massImportManager)
     {
-        $this->validator = $validator;
-        $this->doctrine = $doctrine;
-        $this->factory = $factory;
         $this->massImportManager = $massImportManager;
-        $this->logger = $logger;
+        $this->security = $security;
     }
 
     public function __invoke(Request $request): ?Mass
     {
-        if (is_null($request)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad request id is provided"));
+        $uploadedFile = $request->files->get('file');
+        if (!$uploadedFile) {
+            throw new BadRequestHttpException('"file" is required');
         }
-        /** @var Mass $mass */
+
         $mass = new Mass();
-        $mass->setStatus(Mass::STATUS_INCOMING);
+        $mass->setFile($uploadedFile);
 
-        $form = $this->factory->create(MassImportForm::class, $mass);
-        $form->handleRequest($request);
+        $mass->setMassType($request->request->get('massType'));
 
-        $originalName = null;
-
-        // we search the user of the file
-        if ($user = $this->massImportManager->getUser($mass)) {
-            // we associate the user and the mass
-            $user->addMass($mass);
-            // we rename the file
-            $mass->setFileName($this->massImportManager->generateFilename($mass));
-            // we check if an originalName has been sent
-            if ($mass->getOriginalName()) {
-                $originalName = $mass->getOriginalName();
-            }
-        }
-        if ($form->isSubmitted() && $form->isValid()) {
-            // the form is valid and the image has a valid user
-            // we persist the file to fill the fields automatically (size, mimetype...)
-            $em = $this->doctrine->getManager();
-            $em->persist($mass);
-
-            if ($originalName) {
-                $mass->setOriginalName($originalName);
-            }
-
-            // Prevent the serialization of the file property
-            $mass->preventSerialization();
-
-            $em->persist($mass);
-            $em->flush();
-
-            // the file is uploaded, we treat it and return it
-            $mass = $this->massImportManager->treatMass($mass);
-
-            // if we have an error we remove the file
-            if (count($mass->getErrors()) > 0) {
-                $mass->setStatus(Mass::STATUS_INVALID);
-                $originalMass = clone $mass;
-                $em->remove($mass);
-                $em->flush();
-                return $originalMass;
-            }
-
-            $mass->setStatus(Mass::STATUS_VALID);
-            $em->persist($mass);
-            $em->flush();
-
-            return $mass;
+        if ($request->request->get('checkLegit')==1) {
+            $mass->setDateCheckLegit(new \Datetime());
         }
 
-        // This will be handled by API Platform and returns a validation error.
-        throw new ValidationException($this->validator->validate($mass));
+        $mass->setUser($this->security->getUser());
+        
+        return $this->massImportManager->createMass($mass);
     }
 }

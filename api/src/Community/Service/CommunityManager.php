@@ -203,11 +203,13 @@ class CommunityManager
      * @param User|null $user  If a user is provided check and set that if he's in community and/or he's creator
      * @return Community|null
      */
-    public function getCommunity(int $communityId,  $user)
+    public function getCommunity(int $communityId, $user)
     {
         $community = $this->communityRepository->find($communityId);
         $this->getAdsOfCommunity($community);
-        if ($user) $this->checkIfCurrentUserIsMember($community, $user);
+        if ($user) {
+            $this->checkIfCurrentUserIsMember($community, $user);
+        }
         return $community;
     }
 

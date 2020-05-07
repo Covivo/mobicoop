@@ -104,11 +104,11 @@ class AdManager
      * It returns the ad created, with its outward and return results.
      *
      * @param Ad $ad The ad to create
-     * @param bool $fromUpdate - When we create an Ad in update case, waypoints are Object and not Array
+     * @param bool $doPrepare - When we prepare the Proposal
      * @return Ad
      * @throws \Exception
      */
-    public function createAd(Ad $ad, bool $fromUpdate = false)
+    public function createAd(Ad $ad, bool $doPrepare = true)
     {
         $this->logger->info("AdManager : start " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -264,14 +264,16 @@ class AdManager
         // waypoints
         foreach ($ad->getOutwardWaypoints() as $position => $point) {
             $waypoint = new Waypoint();
-            $waypoint->setAddress($this->createAddressFromPoint($point));
+            $waypoint->setAddress(($point instanceof Address) ? $point : $this->createAddressFromPoint($point));
             $waypoint->setPosition($position);
             $waypoint->setDestination($position == count($ad->getOutwardWaypoints())-1);
             $outwardProposal->addWaypoint($waypoint);
         }
 
         $outwardProposal->setCriteria($outwardCriteria);
-        $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal);
+        if ($doPrepare) {
+            $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal, true);
+        }
 
         $this->logger->info("AdManager : end creating outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -361,14 +363,16 @@ class AdManager
             }
             foreach ($ad->getReturnWaypoints() as $position => $point) {
                 $waypoint = new Waypoint();
-                $waypoint->setAddress($this->createAddressFromPoint($point));
+                $waypoint->setAddress(($point instanceof Address) ? $point : $this->createAddressFromPoint($point));
                 $waypoint->setPosition($position);
                 $waypoint->setDestination($position == count($ad->getReturnWaypoints())-1);
                 $returnProposal->addWaypoint($waypoint);
             }
 
             $returnProposal->setCriteria($returnCriteria);
-            $returnProposal = $this->proposalManager->prepareProposal($returnProposal, false);
+            if ($doPrepare) {
+                $returnProposal = $this->proposalManager->prepareProposal($returnProposal, false);
+            }
             $this->entityManager->persist($returnProposal);
         }
         // we persist the proposals

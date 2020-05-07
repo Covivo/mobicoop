@@ -95,19 +95,13 @@ services:
             -
                 # these are the basic options that define the entity listener
                 name: 'doctrine.orm.entity_listener'
-                event: 'postPersist'
+                event: 'preFlush'
                 entity: 'App\Geography\Entity\Address'
 
                 # set the 'lazy' option to TRUE to only instantiate listeners when they are used
                 lazy: true
 
                 # configure a custom method name with the 'method' option
-                method: 'setTerritories'
-            -
-                name: 'doctrine.orm.entity_listener'
-                event: 'postUpdate'
-                entity: 'App\Geography\Entity\Address'
-                lazy: true
                 method: 'setTerritories'
 
     # Community User Load Listener
@@ -319,6 +313,10 @@ services:
     App\Geography\EventSubscriber\CarpoolSubscriber:
         arguments:
             $directory: '%env(resolve:ASYNC_GEO_TEMP)%'
+
+    App\Geography\Service\AddressManager:
+        tags:
+            - { name: monolog.logger, channel: geography }
 
     App\Geography\Service\GeoRouter:
         arguments:
