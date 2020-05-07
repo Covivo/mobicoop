@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -23,36 +23,42 @@
 
 namespace App\Community\DataProvider;
 
-use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Community\Entity\Community;
 use App\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
- * Collection data provider for Community user search.
+ * Item data provider for Community
+ * We use this provider to add on a communtiy the last 3 members, and the add so we can have only 1 request in front
  *
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Julien Deschampt <julien.deschampt@mobicoop.org>
  *
  */
-final class CommunityIsMemberCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class CommunityGetItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
     private $communityManager;
-    
-    public function __construct(RequestStack $requestStack, CommunityManager $communityManager)
+    private $security;
+
+    public function __construct(RequestStack $requestStack, CommunityManager $communityManager, Security $security)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->communityManager = $communityManager;
+
+        $this->security = $security;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Community::class === $resourceClass && $operationName === "isMember";
+        return Community::class === $resourceClass && $operationName === "get";
     }
-    
-    public function getCollection(string $resourceClass, string $operationName = null): ?array
+
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Community
     {
-        return $this->communityManager->getCommunitiesWhereUserIsMember($this->request->get("userId"));
+        $user = $this->security->getUser() ? $this->security->getUser()  : null;
+        return $this->communityManager->getCommunity($id, $user);
     }
 }

@@ -609,7 +609,7 @@ class DataProvider
         if (is_null($route)) {
             $route = self::pluralize((new \ReflectionClass($subClassName))->getShortName());
         }
-        
+
         try {
             if ($this->format == self::RETURN_JSON) {
                 $headers = $this->getHeaders(['json']);
@@ -721,7 +721,7 @@ class DataProvider
 
         // var_dump($this->resource."/".$operation);
         // var_dump($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]));die;
-        
+
         try {
             $uri = $this->resource."/".$operation;
             $headers = $this->getHeaders();

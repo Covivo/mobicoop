@@ -122,12 +122,11 @@ use App\Community\Filter\TerritoryFilter;
  *              "normalization_context"={"groups"={"readCommunity"}},
  *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },
- *          "ads"={
+ *          "accessAdmin"={
+ *              "normalization_context"={"groups"={"readCommunity","readCommunityAdmin"}},
  *              "method"="GET",
- *              "path"="/communities/{id}/ads",
- *              "normalization_context"={"groups"={"readCommunity"}},
- *              "security_post_denormalize"="is_granted('community_ads',object)"
- *          },
+ *              "path"="/communities/accesFromAdminReact",
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
@@ -163,7 +162,7 @@ class Community
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readCommunity","readCommunityUser","results","existsCommunity","communities"})
+     * @Groups({"readCommunity","readCommunityUser","results","existsCommunity","communities","readUserAdmin"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -173,7 +172,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin","readUser"})
      */
     private $name;
 
@@ -181,7 +180,7 @@ class Community
      * @var int Community status.
      *
      * @ORM\Column(type="smallint", nullable=true)
-     * @Groups({"readCommunity","write"})
+     * @Groups({"readCommunity","write","readUserAdmin"})
      */
     private $status;
 
@@ -300,7 +299,7 @@ class Community
      *
      * @ApiProperty(push=true)
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -331,6 +330,12 @@ class Community
      * @Groups({"readCommunity","communities"})
      */
     private $member;
+
+    /**
+     * @var array|null Store the ads of the community
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic"})
+     */
+    private $ads;
 
     public function __construct($id=null)
     {
@@ -630,6 +635,19 @@ class Community
     public function setMember(?bool $member): self
     {
         $this->member = $member;
+
+        return $this;
+    }
+
+    public function getAds()
+    {
+        return $this->ads;
+    }
+
+
+    public function setAds(?array $ads): self
+    {
+        $this->ads = $ads;
 
         return $this;
     }

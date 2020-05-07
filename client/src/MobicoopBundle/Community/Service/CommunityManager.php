@@ -3,6 +3,7 @@
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
+
  ***************************
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU Affero General Public License as
@@ -36,17 +37,19 @@ class CommunityManager
 {
     private $dataProvider;
     private $territoryFilter;
+    private $communityLimitMemberDisplayOnFront;
 
     /**
      * Constructor.
      *
      * @param DataProvider $dataProvider
      */
-    public function __construct(DataProvider $dataProvider, array $territoryFilter)
+    public function __construct(DataProvider $dataProvider, array $territoryFilter, int $communityLimitMemberDisplayOnFront)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Community::class);
         $this->territoryFilter = $territoryFilter;
+        $this->communityLimitMemberDisplayOnFront = $communityLimitMemberDisplayOnFront;
     }
 
     /**
@@ -64,6 +67,43 @@ class CommunityManager
         }
         return null;
     }
+
+    /**
+    * Get all communities for a user if given, and the list of all community
+    * @param User|null $user   The current user or null, if not logged
+    * @param Array $data  Data for the pagination like page,perPage,search
+    * @return Array|null    The communities found or null if not found.
+    *
+    */
+    public function getAllCommunities($user, $data)
+    {
+        $perPage = (isset($data['perPage']) && !is_null($data['perPage'])) ? $data['perPage'] : null;
+        $page = (isset($data['page']) && !is_null($data['page'])) ? $data['page'] : null;
+        $search = (isset($data['search']) && !is_null($data['search'])) ? $data['search'] : [];
+
+        $returnCommunitiesUser = [];
+        if ($user) {
+            // We get all the communities
+            $communities = $this->getCommunities($user->getId(), $perPage, $page, $search);
+            // We get the communities of the user
+            $communitiesUser = $this->getAllCommunityUser($user->getId());
+            if ($communitiesUser != null) {
+                foreach ($communitiesUser as $communityUser) {
+                    $returnCommunitiesUser[] = $communityUser->getCommunity();
+                }
+            }
+        } else {
+            $communities = $this->getCommunities(null, $perPage, $page, $search);
+        }
+
+        $return['communitiesMember'] = $communities->getMember();
+        $return['communitiesView'] = $communities->getView();
+        $return['communitiesTotalItems'] = $communities->getTotalItems();
+
+        $return['communitiesUser'] = $returnCommunitiesUser;
+        return $return;
+    }
+
 
     /**
     * Get all communities
@@ -94,6 +134,7 @@ class CommunityManager
         if (count($this->territoryFilter)>0) {
             $params['territory'] = $this->territoryFilter;
         }
+
         $response = $this->dataProvider->getCollection($params);
         if ($response->getCode() >=200 && $response->getCode() <= 300) {
             return $response->getValue();
@@ -177,25 +218,6 @@ class CommunityManager
     }
 
     /**
-     * Get last accepted community users
-     * @param community.id          $communityId                 Id of the community
-     * @return array|null The events found or null if not found.
-     */
-    public function getLastUsers(int $communityId, int $limit=3, int $status=1)
-    {
-        $this->dataProvider->setClass(CommunityUser::class);
-        $params=[];
-        $params['order[acceptedDate]'] = "desc";
-        $params['status'] = $status;
-        $params['perPage'] = $limit;
-        if ($communityId) {
-            $params['community.id'] = $communityId  ;
-        }
-        $response = $this->dataProvider->getCollection($params);
-        return $response->getValue()->getMember();
-    }
-
-    /**
      * Get the community_user of a user for a community
      * @param int $communityId  Id of the community
      * @param int $userId       Id of the User to test
@@ -219,36 +241,19 @@ class CommunityManager
     }
 
     /**
-     * Get all proposals of a community
-     *
-     * @param integer $id
-     * @return void
-     */
-    public function getAds(int $id)
-    {
-        $this->dataProvider->setClass(Community::class);
-        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
-        $proposals = $this->dataProvider->getSubCollection($id, "ad", "ads");
-        return $proposals->getValue();
-    }
-
-    /**
      * Undocumented function
      *
      * @param string $name
      * @return void
      */
-    public function checkNameAvailability(string $name)
+    public function checkExists(string $name)
     {
         $response = $this->dataProvider->getSpecialCollection('exists', ['name' => $name]);
-        if (count($response->getValue()->getMember()) == 0) {
-            return true;
-        }
-        return false;
+        return $response->getValue();
     }
 
     /**
-     * get  communities owned by the user
+     * get communities owned by the user
      *
      * @param integer $userId
      * @return void
@@ -289,5 +294,89 @@ class CommunityManager
     {
         $response = $this->dataProvider->getSpecialItem($communityId, 'public');
         return $response->getValue();
+    }
+
+    /**
+    * Format the waypoint of ads for a ommunity (used in detail community)
+    *
+    * @param Community $community
+    * @return Array|null Tha waypoints
+    */
+    public function formatWaypointForDetailCommunity(Community $community)
+    {
+        $ways = [];
+        if ($community->getAds() != null) {
+            foreach ($community->getAds() as $ad) {
+                $origin = null;
+                $destination = null;
+                $isRegular = null;
+                $date = null;
+
+                if ($ad["frequency"] === Ad::FREQUENCY_REGULAR) {
+                    $isRegular = true;
+                } else {
+                    $date = new \DateTime($ad["outwardDate"]);
+                    $date = $date->format('Y-m-d');
+                }
+                $currentAd = [
+                    "frequency"=>($ad["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'punctual' : 'regular',
+                    "carpoolerFirstName" => $ad["user"]["givenName"],
+                    "carpoolerLastName" => $ad["user"]["shortFamilyName"],
+                    "waypoints"=>[]
+                ];
+                foreach ($ad["outwardWaypoints"] as $waypoint) {
+                    if ($waypoint['position'] === 0) {
+                        $origin = $waypoint["address"];
+                    } elseif ($waypoint['destination']) {
+                        $destination = $waypoint["address"];
+                    }
+                    $currentAd["waypoints"][] = [
+                        "title"=>$waypoint["address"]["addressLocality"],
+                        "destination"=>$waypoint['destination'],
+                        "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
+                    ];
+                }
+                $searchLinkParams = [
+                    "origin" => json_encode($origin),
+                    "destination" => json_encode($destination),
+                    "regular" => $isRegular,
+                    "date" => $date,
+                    "cid" => $community->getId()
+                ];
+                $currentAd["searchLink"] = $this->generateUrl("carpool_search_result_get", $searchLinkParams, UrlGeneratorInterface::ABSOLUTE_URL);
+                $ways[] = $currentAd;
+            }
+        }
+        return $ways;
+    }
+
+    /**
+     * Get last accepted community users and format them
+     * @param Community  $community
+     * @param int $status Status we want to get, init to 1
+     * @return array|null The last users formated
+     */
+    public function getLastUsers(Community $community, int $status = 1)
+    {
+        //Declare array we need
+        $allmembers = $lastUsersFormated = array();
+        $cpt = 0;
+
+        //We stock the member with array_unshift so we can have the last members in first position
+        foreach ($community->getCommunityUsers() as $member) {
+            array_unshift($allmembers, $member);
+        }
+
+        //While we get result in member OR we get to the limit we want to display (.env -> COMMUNITY_LIMIT_MEMBER_DISPLAY_ON_FRONT )
+        while ($cpt < count($allmembers) && count($lastUsersFormated) < $this->communityLimitMemberDisplayOnFront) {
+            $currentUser = $allmembers[$cpt];
+            if ($currentUser->getStatus() == $status) {
+                $lastUsersFormated[$cpt]["name"]=ucfirst($currentUser->getUser()->getGivenName())." ".$currentUser->getUser()->getShortFamilyName();
+                $lastUsersFormated[$cpt]["acceptedDate"]=$currentUser->getAcceptedDate()->format('d/m/Y');
+            }
+            $cpt ++;
+        }
+
+        return $lastUsersFormated;
     }
 }

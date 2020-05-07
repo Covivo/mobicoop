@@ -98,34 +98,43 @@ const myDataProvider = {
 
           var lid = params.id.search("users") == -1 ? "users/"+params.id : params.id;
 
-        return dataProvider.getOne('users',{id:lid} )
-            .then(  ({ data } )  =>
-                Promise.all(data.userAuthAssignments.map(element =>
+          return dataProvider.getOne('users',{id:lid} )
+              .then(  ({ data } )  =>
+                  Promise.all(data.userAuthAssignments.map(element =>
 
-                    dataProvider.getOne('userAuthAssignments',{id: element} )
-                        .then( ({ data }) => data )
-                        .catch( error => {
-                            console.log("Erreur lors de la récupération des droits:", error)
-                        })
-                      )
-                ).then(
-                  // We fill the array rolesTerritory with good format for admin
-                  dataThen  =>  {
-                      data.rolesTerritory = dataThen.reduce( (acc,val) => {
-                        var territory =  val.territory == null ? 'null' : val.territory ;
+                      dataProvider.getOne('userAuthAssignments',{id: element} )
+                          .then( ({ data }) => data )
+                          .catch( error => {
+                              console.log("Erreur lors de la récupération des droits:", error)
+                          })
+                        )
+                  ).then(
+                    // We fill the array rolesTerritory with good format for admin
+                    dataThen  =>  {
+                        data.rolesTerritory = dataThen.reduce( (acc,val) => {
+                          var territory =  val.territory == null ? 'null' : val.territory ;
 
-                          if(!acc[territory]){
-                            acc[territory] = [];
-                          }
-                          acc[territory].push(val.authItem);
-                          return acc;
-                      }
-                        , {}  )
-                      return {data};
-                  }
-                )
-            );
+                            if(!acc[territory]){
+                              acc[territory] = [];
+                            }
+                            acc[territory].push(val.authItem);
+                            return acc;
+                        }
+                          , {}  )
+                        return {data};
+                    }
+                  )
+              );
+          }
+    },
+    getList : (resource, params) => {
+        if (resource == 'communities') {
+            //Add a the custom filter : Admin, so we can have full control of resultats in API side
+            resource = resource + '/accesFromAdminReact';
+
         }
+        return dataProvider.getList(resource, params);
+
     },
     update: (resource, params) => {
         if (resource !== 'users') {

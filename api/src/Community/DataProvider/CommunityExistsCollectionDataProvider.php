@@ -39,20 +39,23 @@ final class CommunityExistsCollectionDataProvider implements CollectionDataProvi
 {
     protected $request;
     private $communityManager;
-    
+
     public function __construct(RequestStack $requestStack, CommunityManager $communityManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->communityManager = $communityManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Community::class === $resourceClass && $operationName === "exists";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->communityManager->exists($this->request->get("name"));
+        if ($this->communityManager->getCommunityByName($this->request->get('name'))) {
+            throw new \InvalidArgumentException("Community name already used");
+        }
+        return null;
     }
 }
