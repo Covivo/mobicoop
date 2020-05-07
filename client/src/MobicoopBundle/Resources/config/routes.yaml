@@ -455,16 +455,6 @@ community_leave:
     requirements:
         id: '\d+'
 
-# check if a user is an accepted member of a community (AJAX)
-community_user_is_member:
-    methods: [POST]
-    path:
-        fr: /community/isMember
-        en: /community/isMember
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::isMember
-    requirements:
-        id: '\d+'
-
 # get a community user (AJAX)
 community_user:
     methods: [POST]
@@ -475,14 +465,6 @@ community_user:
     requirements:
         id: '\d+'
 
-# get the last community users (AJAX)
-community_last_users:
-    path:
-        fr: /community-last-users/{id}
-        en: /community-last-users/{id}
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityLastUsers
-    requirements:
-        id: '\d+'
 
 # get community members list (AJAX)
 community_member_list:

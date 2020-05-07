@@ -50,7 +50,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={
  *          "get"={
  *             "security"="is_granted('reject',object)"
- *          }
+ *          },
  *      }
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>

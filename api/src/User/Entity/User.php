@@ -241,6 +241,11 @@ use App\User\Controller\UserCanUseEmail;
  *              "method"="GET",
  *              "path"="/users/me",
  *              "read"="false"
+ *          },
+ *          "accessAdmin"={
+ *              "normalization_context"={"groups"={"readUser","readUserAdmin"}},
+ *              "method"="GET",
+ *              "path"="/users/accesFromAdminReact",
  *          }
  *      },
  *      itemOperations={
@@ -428,7 +433,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities"})
      */
     private $givenName;
 
@@ -436,7 +441,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","communities"})
      */
     private $familyName;
 
@@ -1021,7 +1026,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"massMigrate"})
      */
     private $alreadyRegistered;
-    
+
     /**
      * @var int|null Registration from mobile (web app:1, iOS:2, Android:3)
      *
@@ -1061,6 +1066,12 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"userStructure"})
      */
     private $structures;
+
+    /**
+     * @var CommunityUser|null The communityUser link to the user, use in admin for get the record CommunityUser from the User ressource
+     * @Groups({"readUserAdmin" })
+     */
+    private $adminCommunityUser;
 
     public function __construct($status = null)
     {
@@ -2524,6 +2535,19 @@ class User implements UserInterface, EquatableInterface
 
         return $this;
     }
+
+    public function getAdminCommunityUser()
+    {
+        return $this->adminCommunityUser;
+    }
+
+    public function setAdminCommunityUser(CommunityUser $adminCommunityUser)
+    {
+        $this->adminCommunityUser = $adminCommunityUser;
+
+        return $this;
+    }
+
 
     // DOCTRINE EVENTS
 

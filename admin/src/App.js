@@ -115,7 +115,7 @@ export default props => (
     >
       {permissions => {
         return  [
-          isAuthorized("user_read")    ? <Resource name={'users'} {...users} /> : null,
+          isAuthorized("user_manage")     ? <Resource name={'users'} {...users} /> : <Resource name={'users'}  />,
           isAuthorized("community_manage")    ? <Resource name={'communities'} {...communities} /> : null,
           isAuthorized("community_manage")    ? <Resource name={'community_users'} {...community_users} /> : null,
           isAuthorized("campaign_manage")         ? <Resource name={'campaigns/owned'} {...campaigns} /> : null,

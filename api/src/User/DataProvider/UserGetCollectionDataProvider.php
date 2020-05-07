@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,38 +21,42 @@
  *    LICENSE
  **************************/
 
-namespace App\Community\DataProvider;
+namespace App\User\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Carpool\Service\AdManager;
-use App\Community\Entity\Community;
+use App\User\Entity\User;
+use App\User\Service\UserManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
- * Collection data provider for Community search (by name).
+ * Collection data provider for User on GET, use for check if we come from admin ( $this->request->get('accesFromAdminReact') )
+ * Here we want to GET the list of users who are in the communities that belong to the current user
  *
- * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Julien Deschampt <julien.deschampt@mobicoop.org>
  *
  */
-final class CommunityAdsCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class UserGetCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
-    private $adManager;
-    
-    public function __construct(RequestStack $requestStack, AdManager $adManager)
+    private $userManager;
+    private $security;
+
+    public function __construct(RequestStack $requestStack, UserManager $userManager, Security $security)
     {
         $this->request = $requestStack->getCurrentRequest();
-        $this->adManager = $adManager;
+        $this->userManager = $userManager;
+        $this->security = $security;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Community::class === $resourceClass && $operationName === "ads";
+        return User::class === $resourceClass && $operationName === "accessAdmin";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->adManager->getAdsOfCommunity($this->request->get("id"));
+        return $this->userManager->getUsersForAdmin($this->security->getUser());
     }
 }

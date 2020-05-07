@@ -4,11 +4,23 @@ import { ReferenceField } from 'react-admin';
 
 import FullNameField from './FullNameField';
 
-const UserReferenceField = props => (
-    <ReferenceField source="user" reference="users" {...props}>
-        <FullNameField />
-    </ReferenceField>
-);
+const UserReferenceField = props => {
+
+  //We test the roles in localStorage, and we check if user have role admin or super admin
+  //If he dont : he's a community manager, we dont show the detail of user
+  let stateLink= true;
+  if (localStorage && localStorage.roles){
+      const roles = localStorage.roles.split(',');
+          if (!roles.includes('ROLE_SUPER_ADMIN') && !roles.includes('ROLE_ADMIN')){
+              stateLink = false;
+        }
+      }
+    return (
+          <ReferenceField source="user" reference="users" {...props} link={stateLink}>
+            <FullNameField />
+        </ReferenceField>
+      );
+};
 
 UserReferenceField.defaultProps = {
     source: 'user',

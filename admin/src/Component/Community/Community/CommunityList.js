@@ -19,8 +19,6 @@ const CommunityPanel = ({ id, record, resource }) => (
     <div dangerouslySetInnerHTML={{ __html: record.fullDescription }} />
 );
 export const CommunityList = (props) => {
-
-console.info(props)
     const translate = useTranslate();
     return (
       <List {...props} title="Communautés > liste" perPage={ 25 } filters={<CommunityFilter />} sort={{ field: 'originId', order: 'DESC' }}>

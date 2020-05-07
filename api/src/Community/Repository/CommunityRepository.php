@@ -35,12 +35,12 @@ class CommunityRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Community::class);
     }
-    
+
     /**
      * Find community by id.
      *
@@ -53,14 +53,34 @@ class CommunityRepository
     }
 
     /**
+     * Find All communities
+     *
+     * @return Community|null
+     */
+    public function findAll(): ?array
+    {
+        return $this->repository->findAll();
+    }
+    /**
      * Find communities by criteria
      *
      * @param array $criteria
-     * @return void
+     * @return Community|null
      */
     public function findBy(array $criteria)
     {
         return $this->repository->findBy($criteria);
+    }
+
+    /**
+     * Find One community by criteria
+     *
+     * @param array $criteria
+     * @return Community|null
+     */
+    public function findOneBy(array $criteria): ?Community
+    {
+        return $this->repository->findOneBy($criteria);
     }
 
     /**
@@ -158,20 +178,5 @@ class CommunityRepository
             return true;
         }
         return false;
-    }
-
-    /**
-     *Get communities owned by the user
-     *
-     * @param Int $userId
-     * @return void
-     */
-    public function getOwnedCommunities(Int $userId)
-    {
-        $query = $this->repository->createQueryBuilder('c')
-        ->where('c.user = :userId')
-        ->setParameter('userId', $userId)
-        ->getQuery()->getResult();
-        return $query;
     }
 }

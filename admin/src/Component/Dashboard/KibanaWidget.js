@@ -15,29 +15,27 @@ const KibanaWidget = ({from="now-1y", width="100%", height="1200", url=process.e
     // Admin or community ?
     // Full rights granted to   territory_manage
     // Restricted rights for    community_manage (Automatic filter to my list of communities, hidden with negative margin)
+    const roles = localStorage.roles.split(',');
     const isCommunityManager= isAuthorized("community_dashboard_self") && !isAuthorized("user_manage")
-    const isAdmin           = isAuthorized("user_manage")   // a "ROLE_ADMIN" auth_item would be more suitable, but not available yet in the results of /permission API
+    const isAdmin           =  !roles.includes('ROLE_SUPER_ADMIN') && !roles.includes('ROLE_ADMIN') ? false : true   // a "ROLE_ADMIN" auth_item would be more suitable, but not available yet in the results of /permission API
 
     // List of communities the user manage
-    // Need to have a specific Ressource to manage the data of a community owned by the user
     const dataProvider = useDataProvider()
-    {/*
+    {
     useEffect( () => {
-        const loadCommunitiesList = () => dataProvider.getList('<New ressource Name here>', {pagination:{ page: 1 , perPage: 2 }, sort: { field: 'id', order: 'ASC' }, })
+        const loadCommunitiesList = () => dataProvider.getList('communities', {pagination:{ page: 1 , perPage: 2 }, sort: { field: 'id', order: 'ASC' }, })
                     .then(result  => result && result.data && result.data.length && setCommunitiesList(result.data.map( c => c.name)))
         isCommunityManager && loadCommunitiesList()
         }
         , []
     )
-    */}
+    }
 
     const dashboard = isAdmin ? process.env.REACT_APP_KIBANA_DASHBOARD : process.env.REACT_APP_KIBANA_COMMUNITY_DASHBOARD
     const style     = isAdmin ? {borderWidth:0} : {marginTop:'-70px', borderWidth:0}
     const filters   = isCommunityManager ? getKibanaFilter({from, communitiesList}) : ''
 
-    // Waiting for a new Ressource. Restrict dashboard to Admin
-    // if (isCommunityManager || isAdmin) {
-    if (isAdmin) {
+     if (isCommunityManager || isAdmin) {
         return (
             <Card>
                 <Title title="Dashboard" />
