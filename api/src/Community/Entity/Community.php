@@ -334,7 +334,7 @@ class Community
     private $member;
 
     /**
-     * @var Mass|null The relay points related to the community.
+     * @var Mass|null The mass related to the community.
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\Mass", mappedBy="community")
      * @Groups({"readCommunity","write"})

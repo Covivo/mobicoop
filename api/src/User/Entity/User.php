@@ -1068,7 +1068,7 @@ class User implements UserInterface, EquatableInterface
     private $structures;
 
     /**
-     * @var MassPerson|null The proposal created after a Mass migration
+     * @var MassPerson|null The Mass person related to the suer if the user is imported from a Mass migration
      *
      * @ORM\OneToOne(targetEntity="\App\Match\Entity\MassPerson", mappedBy="user")
      * @MaxDepth(1)
