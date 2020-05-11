@@ -28,7 +28,7 @@
           <iframe
             :src="$t('widget.externalRoute', {'id':community.id})"
             width="100%"
-            height="640px"
+            height="840px"
             frameborder="0"
             scrolling="no"
           />

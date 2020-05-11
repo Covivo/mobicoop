@@ -70,7 +70,7 @@
     "urlCommunityUser":"/community-user",
     "widget":{
         "label": "Voir le Widget",
-        "route": "/communaute/widget/get/",
+        "route": "/communaute/widget/get/{id}",
         "externalRoute": "/communaute/widget/{id}"
     }
 
@@ -124,7 +124,7 @@
     "urlCommunityUser":"/community-user",
     "widget":{
         "label": "See Widget",
-        "route": "/community/widget/get/",
+        "route": "/community/widget/get/{id}",
         "externalRoute": "/community/widget/{id}"
     }
   }

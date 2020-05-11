@@ -155,6 +155,15 @@
                   <span>{{ $t('tooltips.connected') }}</span>
                 </v-tooltip>
               </div>
+              <v-btn
+                class="mt-3"
+
+                color="primary"
+                rounded
+                :href="$t('widget.route', {'id':community.id})"
+              >
+                {{ $t('widget.label') }}
+              </v-btn>
             </v-col>
             <!-- map -->
             <v-col
