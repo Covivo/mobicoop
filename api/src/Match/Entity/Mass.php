@@ -818,7 +818,7 @@ class Mass
 
         return $this;
     }
-    
+
     public function getMigratedDate(): ?\DateTimeInterface
     {
         return $this->migratedDate;
@@ -830,7 +830,7 @@ class Mass
 
         return $this;
     }
-    
+
     public function getCommunityName(): ?string
     {
         return $this->communityName;
@@ -860,7 +860,7 @@ class Mass
     {
         $this->communityFullDescription = $communityFullDescription;
     }
-    
+
     public function getCommunityAddress(): ?Address
     {
         return $this->communityAddress;
