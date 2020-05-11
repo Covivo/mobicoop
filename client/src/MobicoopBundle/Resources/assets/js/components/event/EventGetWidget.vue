@@ -28,7 +28,7 @@
           class="justify-center"
         >
           <iframe
-            :src="`/evenement-widget/${event.id}`"
+            :src="$t('buttons.widget.externalRoute', {'id':event.id})"
             width="100%"
             height="640px"
             frameborder="0"
@@ -123,7 +123,7 @@ export default {
       }
     },
     getUrl() {
-      return window.location.protocol +"//"+ window.location.host + "/evenement-widget/" + this.event.id;
+      return window.location.protocol +"//"+ window.location.host + this.$t('buttons.widget.externalRoute', {'id':this.event.id});
     }
   }
 }
