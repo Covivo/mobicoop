@@ -1130,9 +1130,7 @@ class UserManager
     public function checkUserHaveAuthItem(User $user, AuthItem $authItem)
     {
         foreach ($user->getUserAuthAssignments() as $oneItem) {
-            if ($oneItem->getAuthItem() == $authItem) {
-                return true;
-            }
+            if ($oneItem->getAuthItem() == $authItem) return true;
         }
         return false;
     }

@@ -30,6 +30,9 @@ use App\App\Entity\App;
 use App\Community\Entity\Community;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
+use App\User\Service\UserManager;
+use App\Auth\Repository\AuthItemRepository;
+use App\Auth\Entity\AuthItem;
 
 /**
  * Extension for get the owned community for a referent in admin
@@ -42,10 +45,14 @@ use Symfony\Component\Security\Core\Security;
 final class CommunityOwnedForReferentExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     private $security;
+    private  $userManager;
+    private $authItemRepository;
 
-    public function __construct(Security $security)
+    public function __construct(Security $security, UserManager $userManager,AuthItemRepository $authItemRepository)
     {
         $this->security = $security;
+        $this->userManager = $userManager;
+        $this->authItemRepository = $authItemRepository;
     }
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
@@ -60,8 +67,16 @@ final class CommunityOwnedForReferentExtension implements QueryCollectionExtensi
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
     {
-        // concerns only Community resource, and User users (not Apps)
-        if (Community::class !== $resourceClass || (null === $user = $this->security->getUser()) || $this->security->getUser() instanceof App || $this->security->isGranted('ROLE_ADMIN') || $operationName !='accessAdmin') {
+
+        $authItemAdmin = $this->authItemRepository->find(AuthItem::ROLE_ADMIN);
+        $authItemSuperAdmin = $this->authItemRepository->find(AuthItem::ROLE_SUPER_ADMIN);
+        // concerns only Community resource, and User users (not Apps),
+        // check also if we are coming from admin (display all if we are in front, no matter what roles) and if we are not admin
+        if (Community::class !== $resourceClass || (null === $user = $this->security->getUser()) ||
+             $user instanceof App ||
+             $this->userManager->checkUserHaveAuthItem($user,$authItemAdmin) ||
+             $this->userManager->checkUserHaveAuthItem($user,$authItemSuperAdmin) ||
+             $operationName !='accessAdmin') {
             return;
         }
 
