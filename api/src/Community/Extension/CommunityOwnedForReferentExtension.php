@@ -45,10 +45,10 @@ use App\Auth\Entity\AuthItem;
 final class CommunityOwnedForReferentExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     private $security;
-    private  $userManager;
+    private $userManager;
     private $authItemRepository;
 
-    public function __construct(Security $security, UserManager $userManager,AuthItemRepository $authItemRepository)
+    public function __construct(Security $security, UserManager $userManager, AuthItemRepository $authItemRepository)
     {
         $this->security = $security;
         $this->userManager = $userManager;
@@ -67,15 +67,14 @@ final class CommunityOwnedForReferentExtension implements QueryCollectionExtensi
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
     {
-
         $authItemAdmin = $this->authItemRepository->find(AuthItem::ROLE_ADMIN);
         $authItemSuperAdmin = $this->authItemRepository->find(AuthItem::ROLE_SUPER_ADMIN);
         // concerns only Community resource, and User users (not Apps),
         // check also if we are coming from admin (display all if we are in front, no matter what roles) and if we are not admin
         if (Community::class !== $resourceClass || (null === $user = $this->security->getUser()) ||
              $user instanceof App ||
-             $this->userManager->checkUserHaveAuthItem($user,$authItemAdmin) ||
-             $this->userManager->checkUserHaveAuthItem($user,$authItemSuperAdmin) ||
+             $this->userManager->checkUserHaveAuthItem($user, $authItemAdmin) ||
+             $this->userManager->checkUserHaveAuthItem($user, $authItemSuperAdmin) ||
              $operationName !='accessAdmin') {
             return;
         }
