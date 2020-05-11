@@ -95,10 +95,6 @@ export default {
       type: Object,
       default: null
     },
-    users: {
-      type: Array,
-      default: null
-    },
     event:{
       type: Object,
       default: null
@@ -127,7 +123,6 @@ export default {
       loading: false,
       snackbar: false,
       errorUpdate: false,
-      isLogged: false,
       domain: true,
       params: { 'eventId' : this.event.id },
       defaultDestination: this.event.address,
@@ -144,13 +139,6 @@ export default {
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
-  },
-  methods:{
-    checkIfUserLogged() {
-      if (this.user !== null) {
-        this.isLogged = true;
-      }
-    }
   }
 }
 </script>

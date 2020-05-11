@@ -124,7 +124,6 @@ export default {
       loading: false,
       snackbar: false,
       errorUpdate: false,
-      isLogged: false,
       domain: true,
       params: { 'communityId' : this.community.id },
       defaultDestination: this.community.address,
@@ -137,13 +136,6 @@ export default {
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
-  },
-  methods:{
-    checkIfUserLogged() {
-      if (this.user !== null) {
-        this.isLogged = true;
-      }
-    }
   }
 }
 </script>

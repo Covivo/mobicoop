@@ -72,38 +72,10 @@ export default {
     messages: TranslationsMerged,
   },
   props:{
-    user: {
-      type: Object,
-      default: null
-    },
-    geodata: {
-      type: Object,
-      default: null
-    },
-    users: {
-      type: Array,
-      default: null
-    },
     event:{
       type: Object,
       default: null
-    },
-    avatarVersion: {
-      type: String,
-      default: null
-    },
-    urlAltAvatar: {
-      type: String,
-      default: null
-    },
-    regular: {
-      type: Boolean,
-      default: false
-    },
-    punctualDateOptional: {
-      type: Boolean,
-      default: false
-    },
+    }
   },
   data () {
     return {
@@ -111,17 +83,11 @@ export default {
       loading: false,
       snackbar: false,
       errorUpdate: false,
-      isLogged: false,
       params: { 'eventId' : this.event.id },
 
     }
   },
   methods:{
-    checkIfUserLogged() {
-      if (this.user !== null) {
-        this.isLogged = true;
-      }
-    },
     getUrl() {
       return window.location.protocol +"//"+ window.location.host + this.$t('buttons.widget.externalRoute', {'id':this.event.id});
     }
