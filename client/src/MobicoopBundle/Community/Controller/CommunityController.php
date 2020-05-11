@@ -460,12 +460,9 @@ class CommunityController extends AbstractController
         $community = $communityManager->getCommunity($id);
 
         //$this->denyAccessUnlessGranted('show', $community);
-        // retreive logged user
-        $user = $userManager->getLoggedUser();
 
-        return $this->render('@Mobicoop/event/event-widget.html.twig', [
+        return $this->render('@Mobicoop/community/community-widget.html.twig', [
             'community' => $community,
-            'user' => $user,
             'searchRoute' => 'covoiturage/recherche',
             'error' => (isset($error)) ? $error : false,
         ]);
@@ -478,7 +475,7 @@ class CommunityController extends AbstractController
     {
         // retreive event;
         $community = $communityManager->getCommunity($id);
-        dump($community);
+        
         //$this->denyAccessUnlessGranted('show', $community);
         // retreive logged user
         $user = $userManager->getLoggedUser();

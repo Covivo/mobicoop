@@ -70,37 +70,9 @@ export default {
     messages: TranslationsMerged,
   },
   props:{
-    user: {
-      type: Object,
-      default: null
-    },
-    geodata: {
-      type: Object,
-      default: null
-    },
-    users: {
-      type: Array,
-      default: null
-    },
     community:{
       type: Object,
       default: null
-    },
-    avatarVersion: {
-      type: String,
-      default: null
-    },
-    urlAltAvatar: {
-      type: String,
-      default: null
-    },
-    regular: {
-      type: Boolean,
-      default: false
-    },
-    punctualDateOptional: {
-      type: Boolean,
-      default: false
     },
   },
   data () {
@@ -113,11 +85,6 @@ export default {
     }
   },
   methods:{
-    checkIfUserLogged() {
-      if (this.user !== null) {
-        this.isLogged = true;
-      }
-    },
     getUrl() {
       return window.location.protocol +"//"+ window.location.host + this.$t('widget.externalRoute', {'id':this.community.id});
     }

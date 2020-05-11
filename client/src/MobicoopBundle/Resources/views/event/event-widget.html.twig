@@ -1,7 +1,7 @@
 {# @var community \Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community #}
-{% extends '@Mobicoop/event/base.widget.html.twig' %}
+{% extends '@Mobicoop/base.widget.html.twig' %}
 
-{% block title %}Evénement {% endblock %}
+{% block title %}{% trans from 'ui' %}events.widget.title{% endtrans %}{% endblock %}
 {% block main %}
     <event-widget
         :event="{{ event|json_encode }}"

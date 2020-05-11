@@ -20,6 +20,7 @@ import CommunityHelp from "@components/community/CommunityHelp";
 import Community from '@components/community/Community'
 import CommunitySecuredSignIn from '@components/community/CommunitySecuredSignIn'
 import CommunityCreate from "@components/community/CommunityCreate";
+import CommunityWidget from "@components/community/CommunityWidget";
 import CommunityGetWidget from "@components/community/CommunityGetWidget";
 
 // USER
@@ -58,6 +59,7 @@ export default {
   Community,
   CommunitySecuredSignIn,
   CommunityCreate,
+  CommunityWidget,
   CommunityGetWidget,
   Login,
   Messages,
