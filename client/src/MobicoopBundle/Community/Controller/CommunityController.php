@@ -450,4 +450,43 @@ class CommunityController extends AbstractController
 
         return new Response();
     }
+
+    /**
+     * Show a community widget.
+     */
+    public function communityWidget($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
+    {
+        // retreive event;
+        $community = $communityManager->getCommunity($id);
+
+        //$this->denyAccessUnlessGranted('show', $community);
+        // retreive logged user
+        $user = $userManager->getLoggedUser();
+
+        return $this->render('@Mobicoop/event/event-widget.html.twig', [
+            'community' => $community,
+            'user' => $user,
+            'searchRoute' => 'covoiturage/recherche',
+            'error' => (isset($error)) ? $error : false,
+        ]);
+    }
+
+    /**
+     * Show a community widget page to get the widget code.
+     */
+    public function communityGetWidget($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
+    {
+        // retreive event;
+        $community = $communityManager->getCommunity($id);
+        dump($community);
+        //$this->denyAccessUnlessGranted('show', $community);
+        // retreive logged user
+        $user = $userManager->getLoggedUser();
+        return $this->render('@Mobicoop/community/community-get-widget.html.twig', [
+            'community' => $community,
+            'user' => $user,
+            'searchRoute' => 'covoiturage/recherche',
+            'error' => (isset($error)) ? $error : false,
+        ]);
+    }
 }

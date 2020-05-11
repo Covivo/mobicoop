@@ -179,7 +179,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * Show a widget event.
+     * Show a event widget.
      */
     public function eventWidget($id, EventManager $eventManager, UserManager $userManager, Request $request)
     {
@@ -199,7 +199,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * Show a widget event.
+     * Show an event widget page to get the widget.
      */
     public function eventGetWidget($id, EventManager $eventManager, UserManager $userManager, Request $request)
     {

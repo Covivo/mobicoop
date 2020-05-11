@@ -67,7 +67,12 @@
        "label": "Chercher les covoiturages correspondant"
       }
     },
-    "urlCommunityUser":"/community-user"
+    "urlCommunityUser":"/community-user",
+    "widget":{
+        "label": "Voir le Widget",
+        "route": "/communaute/widget/get/",
+        "externalRoute": "/communaute/widget/{id}"
+    }
 
   },
   "en": {
@@ -116,6 +121,11 @@
       "destination":"Destination",
       "regular":"Regular journey"
     },
-    "urlCommunityUser":"/community-user"
+    "urlCommunityUser":"/community-user",
+    "widget":{
+        "label": "See Widget",
+        "route": "/community/widget/get/",
+        "externalRoute": "/community/widget/{id}"
+    }
   }
 }
