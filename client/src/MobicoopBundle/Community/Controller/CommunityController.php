@@ -461,10 +461,13 @@ class CommunityController extends AbstractController
 
         //$this->denyAccessUnlessGranted('show', $community);
 
+        // retreive logged user
+        $user = $userManager->getLoggedUser();
+
         return $this->render('@Mobicoop/community/community-widget.html.twig', [
             'community' => $community,
-            'searchRoute' => 'covoiturage/recherche',
-            'error' => (isset($error)) ? $error : false,
+            'user' => $user,
+            'searchRoute' => 'covoiturage/recherche'
         ]);
     }
 
@@ -477,13 +480,8 @@ class CommunityController extends AbstractController
         $community = $communityManager->getCommunity($id);
         
         //$this->denyAccessUnlessGranted('show', $community);
-        // retreive logged user
-        $user = $userManager->getLoggedUser();
         return $this->render('@Mobicoop/community/community-get-widget.html.twig', [
-            'community' => $community,
-            'user' => $user,
-            'searchRoute' => 'covoiturage/recherche',
-            'error' => (isset($error)) ? $error : false,
+            'community' => $community
         ]);
     }
 }
