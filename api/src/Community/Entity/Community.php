@@ -338,15 +338,6 @@ class Community
      */
     private $ads;
 
-    /**
-     * @var Mass|null The mass related to the community.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Match\Entity\Mass", mappedBy="community")
-     * @Groups({"readCommunity","write"})
-     * @MaxDepth(1)
-     */
-    private $mass;
-
     public function __construct($id=null)
     {
         $this->id = $id;
@@ -657,16 +648,6 @@ class Community
     public function setAds(?array $ads): self
     {
         $this->ads = $ads;
-    }
-
-    public function getMass(): ?Mass
-    {
-        return $this->mass;
-    }
-
-    public function setMass(?Mass $mass): self
-    {
-        $this->mass = $mass;
 
         return $this;
     }
