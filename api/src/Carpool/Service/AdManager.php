@@ -879,7 +879,7 @@ class AdManager
      * @param Proposal $proposal Base Proposal of the Ad
      * @return Ad
      */
-    private function makeAdForCommunityOrEvent(Proposal $proposal)
+    public function makeAdForCommunityOrEvent(Proposal $proposal)
     {
         $ad = new Ad();
         $ad->setId($proposal->getId());
