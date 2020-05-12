@@ -1,0 +1,9 @@
+{% extends '@Mobicoop/base.widget.html.twig' %}
+
+{% block title %}{% trans from 'ui' %}widget.title{% endtrans %}{% endblock %}
+{% block main %}
+    <platform-widget
+        :geodata="{{ {'geocompleteuri':geoCompleteUri, 'searchroute':searchRoute}|json_encode }}"
+        :user="{{ app.user|json_encode }}"
+    ></platform-widget>
+{% endblock %}

@@ -1,6 +1,16 @@
 <template>
   <v-content>
     <v-container>
+      <!-- <v-row
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          align="center"
+        >
+          {{ $t("title") }}
+        </v-col>
+      </v-row> -->
       <v-row
         justify="center"
       >
@@ -8,24 +18,13 @@
           cols="12"
           align="center"
         >
-          <!-- Event : avatar, title and description -->
-          <event-infos
-            :event="event"
-            :url-alt-avatar="urlAltAvatar"
-            :avatar-version="avatarVersion"
-            :display-description="false"
-            :is-widget="true"
-          />
+          <img
+            class="logo"
+            :src="$t('urlLogo')"
+            alt="Mobicoop"
+          >
         </v-col>
       </v-row>
-      <!-- search journey -->
-      <p
-        class="font-weight-bold"
-        align="center"
-      >
-        {{ $t('title.searchCarpool') }}
-      </p>
-      <!-- event buttons and map -->
       <v-row
         align="center"
         justify="center"
@@ -42,7 +41,7 @@
             :default-destination="defaultDestination"
             :hide-publish="true"
             :disable-search="disableSearch"
-            :show-destination="false"
+            :show-destination="true"
             :is-widget="true"
           />
         </v-col>
@@ -53,21 +52,17 @@
 <script>
 
 import axios from "axios";
-import { merge } from "lodash";
-import Translations from "@translations/components/event/Event.json";
-import TranslationsClient from "@clientTranslations/components/event/Event.json";
-import EventInfos from "@components/event/EventInfos";
+import Translations from "@translations/components/utilities/PlatformWidget.json";
 import Search from "@components/carpool/search/Search";
 import moment from "moment";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    EventInfos, Search,
+    Search
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: Translations,
   },
   props:{
     user: {
@@ -76,18 +71,6 @@ export default {
     },
     geodata: {
       type: Object,
-      default: null
-    },
-    event:{
-      type: Object,
-      default: null
-    },
-    avatarVersion: {
-      type: String,
-      default: null
-    },
-    urlAltAvatar: {
-      type: String,
       default: null
     },
     regular: {
@@ -102,17 +85,13 @@ export default {
   data () {
     return {
       locale: this.$i18n.locale,
-      params: { 'eventId' : this.event.id },
-      defaultDestination: this.event.address,
+      params: null,
+      defaultDestination: null,
     }
   },
   computed: {
     disableSearch() {
-      let now = moment();
-      if (now > moment(this.event.toDate.date))
-        return true;
-      else
-        return false;
+      return false;
     }
   },
   created() {

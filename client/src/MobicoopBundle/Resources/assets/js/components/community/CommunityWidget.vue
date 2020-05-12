@@ -8,9 +8,8 @@
           cols="12"
           align="center"
         >
-          <!-- Event : avatar, title and description -->
-          <event-infos
-            :event="event"
+          <community-infos
+            :community="community"
             :url-alt-avatar="urlAltAvatar"
             :avatar-version="avatarVersion"
             :display-description="false"
@@ -42,7 +41,7 @@
             :default-destination="defaultDestination"
             :hide-publish="true"
             :disable-search="disableSearch"
-            :show-destination="false"
+            :show-destination="true"
             :is-widget="true"
           />
         </v-col>
@@ -54,9 +53,9 @@
 
 import axios from "axios";
 import { merge } from "lodash";
-import Translations from "@translations/components/event/Event.json";
-import TranslationsClient from "@clientTranslations/components/event/Event.json";
-import EventInfos from "@components/event/EventInfos";
+import Translations from "@translations/components/community/Community.json";
+import TranslationsClient from "@clientTranslations/components/community/Community.json";
+import CommunityInfos from "@components/community/CommunityInfos";
 import Search from "@components/carpool/search/Search";
 import moment from "moment";
 
@@ -64,7 +63,8 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    EventInfos, Search,
+    CommunityInfos,
+    Search,
   },
   i18n: {
     messages: TranslationsMerged,
@@ -78,7 +78,7 @@ export default {
       type: Object,
       default: null
     },
-    event:{
+    community:{
       type: Object,
       default: null
     },
@@ -102,17 +102,13 @@ export default {
   data () {
     return {
       locale: this.$i18n.locale,
-      params: { 'eventId' : this.event.id },
-      defaultDestination: this.event.address,
+      params: { 'communityId' : this.community.id },
+      defaultDestination: this.community.address,
     }
   },
   computed: {
     disableSearch() {
-      let now = moment();
-      if (now > moment(this.event.toDate.date))
-        return true;
-      else
-        return false;
+      return false;
     }
   },
   created() {

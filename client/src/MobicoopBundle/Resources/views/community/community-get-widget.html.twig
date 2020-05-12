@@ -1,0 +1,9 @@
+{# @var community \Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community #}
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}{% trans from 'ui' %}communities.widget.title{% endtrans %}{% endblock %}
+{% block main %}
+    <community-get-widget
+        :community="{{ community|json_encode }}"
+    ></community-get-widget>
+{% endblock %}

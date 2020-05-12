@@ -179,7 +179,7 @@ class EventController extends AbstractController
     }
 
     /**
-     * Show a widget event.
+     * Show a event widget.
      */
     public function eventWidget($id, EventManager $eventManager, UserManager $userManager, Request $request)
     {
@@ -193,27 +193,20 @@ class EventController extends AbstractController
         return $this->render('@Mobicoop/event/event-widget.html.twig', [
             'event' => $event,
             'user' => $user,
-            'searchRoute' => 'covoiturage/recherche',
-            'error' => (isset($error)) ? $error : false,
+            'searchRoute' => 'covoiturage/recherche'
         ]);
     }
 
     /**
-     * Show a widget event.
+     * Show an event widget page to get the widget.
      */
     public function eventGetWidget($id, EventManager $eventManager, UserManager $userManager, Request $request)
     {
         // retreive event;
         $event = $eventManager->getEvent($id);
         //$this->denyAccessUnlessGranted('show', $community);
-        // retreive logged user
-        $user = $userManager->getLoggedUser();
-
         return $this->render('@Mobicoop/event/event-get-widget.html.twig', [
-            'event' => $event,
-            'user' => $user,
-            'searchRoute' => 'covoiturage/recherche',
-            'error' => (isset($error)) ? $error : false,
+            'event' => $event
         ]);
     }
 

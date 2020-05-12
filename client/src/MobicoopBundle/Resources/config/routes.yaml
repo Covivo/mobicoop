@@ -494,6 +494,23 @@ community_user_available:
     requirements:
         userId: '\d+'
 
+# display widget
+community_widget:
+    path:
+        fr: /communaute/widget/{id}
+        en: /community/widget/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityWidget
+    requirements:
+        id: '\d+'
+
+# get widget
+community_get_widget:
+    path:
+        fr: /communaute/widget/get/{id}
+        en: /community/widget/get/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityGetWidget
+    requirements:
+        id: '\d+'        
 
 ##########################
 # editorial pages routes #
@@ -722,8 +739,8 @@ event_show:
 # display widget
 event_widget:
     path:
-        fr: /evenement-widget/{id}
-        en: /event-widget/{id}
+        fr: /evenement/widget/{id}
+        en: /event/widget/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventWidget
     requirements:
         id: '\d+'
@@ -731,8 +748,8 @@ event_widget:
 # get widget
 event_get_widget:
     path:
-        fr: /evenement-get-widget/{id}
-        en: /event-get-widget/{id}
+        fr: /evenement/widget/get/{id}
+        en: /event/widget/get/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventGetWidget
     requirements:
         id: '\d+'
@@ -757,3 +774,17 @@ round_price:
         fr: /prix/arrondir
         en: /price/round
     controller: Mobicoop\Bundle\MobicoopBundle\Price\Controller\PriceController::roundPrice
+
+# Get the platform widget
+get_platform_widget:
+    path:
+        fr: /widget/get
+        en: /widget/get
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::getPlatformWidget
+
+# The platform widget
+platform_widget:
+    path:
+        fr: /widget
+        en: /widget
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::platformWidget
