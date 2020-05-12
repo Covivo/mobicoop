@@ -64,7 +64,6 @@ const GestionRoles = ({record}) => {
       if (territory != 'null') {
           dataProvider.getOne('territories',{id: territory} )
               .then( ({ data }) =>  {
-                console.info(data)
                   //setCurrentTerritory(t => [...t, data.name])
                         setFields(t => [...t, {'roles' : roles, 'territory' : territory,'territoryName' : data.name} ])
               })
