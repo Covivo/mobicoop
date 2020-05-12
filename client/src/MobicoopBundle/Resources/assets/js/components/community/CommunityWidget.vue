@@ -1,23 +1,6 @@
 <template>
   <v-content>
-    <!--SnackBar-->
-    <v-snackbar
-      v-model="snackbar"
-      :color="(errorUpdate)?'error':'warning'"
-      top
-    >
-      <!--      {{ (errorUpdate)?textSnackError:textSnackOk }}-->
-      <v-btn
-        color="white"
-        text
-        @click="snackbar = false"
-      >
-        <v-icon>mdi-close-circle-outline</v-icon>
-      </v-btn>
-    </v-snackbar>
-
     <v-container>
-      <!-- eventWidget buttons and map -->
       <v-row
         justify="center"
       >
@@ -25,7 +8,6 @@
           cols="12"
           align="center"
         >
-          <!-- Event : avatar, title and description -->
           <community-infos
             :community="community"
             :url-alt-avatar="urlAltAvatar"
@@ -120,11 +102,6 @@ export default {
   data () {
     return {
       locale: this.$i18n.locale,
-      search: '',
-      loading: false,
-      snackbar: false,
-      errorUpdate: false,
-      domain: true,
       params: { 'communityId' : this.community.id },
       defaultDestination: this.community.address,
     }

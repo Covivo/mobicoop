@@ -1,20 +1,5 @@
 <template>
   <v-content>
-    <!--SnackBar-->
-    <v-snackbar
-      v-model="snackbar"
-      :color="(errorUpdate)?'error':'warning'"
-      top
-    >
-      <v-btn
-        color="white"
-        text
-        @click="snackbar = false"
-      >
-        <v-icon>mdi-close-circle-outline</v-icon>
-      </v-btn>
-    </v-snackbar>
-
     <v-container>
       <v-row
         justify="center"
@@ -39,15 +24,13 @@
           class="mt-12"
         >
           <v-row class="mt-12">
-            <h4>Intégrer le widget</h4>
-            <p class="mt-8">
-              Pour intégrer le widget, il faut copier le texte ci-dessous et le coller sur votre site web.<br>
-              Vous pouvez modifier les éléments en gras afin de personnaliser votre widget.
-            </p>
-            <p>
-              &lt;iframe src="{{ getUrl() }}" width="<strong>100%</strong>" height="<strong>440px</strong>" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;
-            </p>
-            <p><strong>Attention</strong> : Certains outils de publication comme Wordpress nécessitent l'ajout de plugins spécifiques pour pouvoir utiliser une iFrame.</p>
+            <h4>{{ $t('widget.textDetails.title') }}</h4>
+            <p
+              class="mt-8"
+              v-html="$t('widget.textDetails.p1')"
+            />
+            <p v-html="$t('widget.textDetails.p2', {'url':getUrl()})" />
+            <p v-html="$t('widget.textDetails.p3')" />
           </v-row>
         </v-col>
       </v-row>
@@ -74,15 +57,6 @@ export default {
       type: Object,
       default: null
     },
-  },
-  data () {
-    return {
-      search: '',
-      loading: false,
-      snackbar: false,
-      errorUpdate: false,
-      isLogged: false
-    }
   },
   methods:{
     getUrl() {

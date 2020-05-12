@@ -85,10 +85,6 @@ export default {
   data () {
     return {
       locale: this.$i18n.locale,
-      search: '',
-      loading: false,
-      errorUpdate: false,
-      domain: true,
       params: null,
       defaultDestination: null,
     }

@@ -1,20 +1,5 @@
 <template>
   <v-content>
-    <!--SnackBar-->
-    <v-snackbar
-      v-model="snackbar"
-      :color="(errorUpdate)?'error':'warning'"
-      top
-    >
-      <v-btn
-        color="white"
-        text
-        @click="snackbar = false"
-      >
-        <v-icon>mdi-close-circle-outline</v-icon>
-      </v-btn>
-    </v-snackbar>
-
     <v-container>
       <v-row
         justify="center"
@@ -69,14 +54,6 @@ export default {
       type: Object,
       default: null
     },
-  },
-  data () {
-    return {
-      search: '',
-      loading: false,
-      snackbar: false,
-      errorUpdate: false
-    }
   },
   methods:{
     getUrl() {
