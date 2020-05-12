@@ -339,6 +339,7 @@ class MassImportManager
         }
         $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_ARRAY);
 
+        $i=1;
         foreach ($routesOwner as $key => $massPerson) {
             if (isset($ownerRoutes[$key])) {
                 $route = $ownerRoutes[$key][0];
@@ -368,6 +369,7 @@ class MassImportManager
                 $analyseErrors[] = 'No route found for <' . $origin . '> => <' . $destination . '>, id #' . $massPerson->getGivenId();
             }
             $this->logger->info('Mass analyze | Direction personal address n°' . $i . ' end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $i++;
         }
 
         $this->logger->info('Mass analyze | Direction personal address end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
