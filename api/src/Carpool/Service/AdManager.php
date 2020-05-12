@@ -33,7 +33,7 @@ use App\Carpool\Entity\Waypoint;
 use App\Carpool\Event\AdMajorUpdatedEvent;
 use App\Carpool\Event\AdMinorUpdatedEvent;
 use App\Community\Exception\CommunityNotFoundException;
-use App\Community\Service\CommunityManager;
+use App\Community\Repository\CommunityRepository;
 use App\Event\Exception\EventNotFoundException;
 use App\Event\Service\EventManager;
 use App\Geography\Entity\Address;
@@ -58,9 +58,7 @@ use App\Auth\Service\AuthManager;
 class AdManager
 {
     private $entityManager;
-    private $proposalManager;
     private $userManager;
-    private $communityManager;
     private $eventManager;
     private $resultManager;
     private $params;
@@ -72,19 +70,17 @@ class AdManager
     private $eventDispatcher;
     private $security;
     private $authManager;
+    private $communityRepository;
 
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager)
+    public function __construct(EntityManagerInterface $entityManager, UserManager $userManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager, CommunityRepository $communityRepository)
     {
         $this->entityManager = $entityManager;
-        $this->proposalManager = $proposalManager;
         $this->userManager = $userManager;
-        $this->communityManager = $communityManager;
         $this->eventManager = $eventManager;
         $this->resultManager = $resultManager;
         $this->logger = $logger;
@@ -96,6 +92,7 @@ class AdManager
         $this->eventDispatcher = $eventDispatcher;
         $this->security = $security;
         $this->authManager = $authManager;
+        $this->communityRepository = $communityRepository;
     }
 
     /**
@@ -178,7 +175,7 @@ class AdManager
         if ($ad->getCommunities()) {
             // todo : check if the user can post/search in each community
             foreach ($ad->getCommunities() as $communityId) {
-                if ($community = $this->communityManager->getCommunity($communityId)) {
+                if ($community = $this->communityRepository->findOneBy( ['id'=>$communityId] ) ) {
                     $outwardProposal->addCommunity($community);
                 } else {
                     throw new CommunityNotFoundException('Community ' . $communityId . ' not found');
@@ -272,7 +269,6 @@ class AdManager
 
         $outwardProposal->setCriteria($outwardCriteria);
         if ($doPrepare) {
-            $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal, true);
         }
 
         $this->logger->info("AdManager : end creating outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -371,7 +367,6 @@ class AdManager
 
             $returnProposal->setCriteria($returnCriteria);
             if ($doPrepare) {
-                $returnProposal = $this->proposalManager->prepareProposal($returnProposal, false);
             }
             $this->entityManager->persist($returnProposal);
         }
@@ -382,18 +377,15 @@ class AdManager
 
         // if the ad is a round trip, we want to link the potential matching results
         if (!$ad->isOneWay()) {
-            $outwardProposal = $this->proposalManager->linkRelatedMatchings($outwardProposal);
             $this->entityManager->persist($outwardProposal);
             $this->entityManager->flush();
         }
         // if the requester can be driver and passenger, we want to link the potential opposite matching results
         if ($ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER) {
             // linking for the outward
-            $outwardProposal = $this->proposalManager->linkOppositeMatchings($outwardProposal);
             $this->entityManager->persist($outwardProposal);
             if (!$ad->isOneWay()) {
                 // linking for the return
-                $returnProposal = $this->proposalManager->linkOppositeMatchings($returnProposal);
                 $this->entityManager->persist($returnProposal);
             }
             $this->entityManager->flush();
@@ -558,7 +550,6 @@ class AdManager
     public function getAd(int $id, ?array $filters = null, ?array $order = null)
     {
         $ad = new Ad();
-        $proposal = $this->proposalManager->get($id);
         if (is_null($proposal)) {
             return null;
         }
@@ -603,7 +594,6 @@ class AdManager
      */
     public function getFullAd(int $id)
     {
-        $proposal = $this->proposalManager->get($id);
         return $this->makeAd($proposal, $proposal->getUser()->getId());
     }
 
@@ -617,17 +607,7 @@ class AdManager
     public function getAdForPermission(int $id)
     {
         $ad = new Ad();
-        if ($proposal = $this->proposalManager->get($id)) {
-            $ad->setId($id);
-            $ad->setFrequency($proposal->getCriteria()->getFrequency());
-            $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
-            $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
-            $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
-            if (!is_null($proposal->getUser())) {
-                $ad->setUserId($proposal->getUser()->getId());
-            }
-            return $ad;
-        }
+
         return null;
     }
 
@@ -667,7 +647,6 @@ class AdManager
     {
         $ads = [];
         $event = $this->eventManager->getEvent($eventId);
-
 
         $refIdProposals = [];
         foreach ($event->getProposals() as $proposal) {
@@ -883,7 +862,7 @@ class AdManager
      * @param Proposal $proposal Base Proposal of the Ad
      * @return Ad
      */
-    private function makeAdForCommunityOrEvent(Proposal $proposal)
+    public function makeAdForCommunityOrEvent(Proposal $proposal)
     {
         $ad = new Ad();
         $ad->setId($proposal->getId());
