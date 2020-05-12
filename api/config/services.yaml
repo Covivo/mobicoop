@@ -62,25 +62,19 @@ services:
             - { name: doctrine.event_listener, event: postLoad }
 
     # Direction Write Listener
-    App\Geography\EventListener\DirectionWriteListener:
-        tags:
-            -
-                # these are the basic options that define the entity listener
-                name: 'doctrine.orm.entity_listener'
-                event: 'postPersist'
-                entity: 'App\Geography\Entity\Direction'
+    # App\Geography\EventListener\DirectionWriteListener:
+    #     tags:
+    #         -
+    #             # these are the basic options that define the entity listener
+    #             name: 'doctrine.orm.entity_listener'
+    #             event: 'preFlush'
+    #             entity: 'App\Geography\Entity\Direction'
 
-                # set the 'lazy' option to TRUE to only instantiate listeners when they are used
-                lazy: true
+    #             # set the 'lazy' option to TRUE to only instantiate listeners when they are used
+    #             lazy: true
 
-                # configure a custom method name with the 'method' option
-                method: 'setTerritories'
-            -
-                name: 'doctrine.orm.entity_listener'
-                event: 'postUpdate'
-                entity: 'App\Geography\Entity\Direction'
-                lazy: true
-                method: 'setTerritories'
+    #             # configure a custom method name with the 'method' option
+    #             method: 'setTerritories'
 
     # Address Load Listener
     mobicoop.address.address_load_listener:

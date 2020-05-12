@@ -239,7 +239,7 @@ class MassPerson
     /**
      * @var User|null The User created base on this MassPerson
      *
-     * @ORM\OneToOne(targetEntity="\App\User\Entity\User", inversedBy="massPerson")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="massPerson")
      * @MaxDepth(1)
      * @Groups({"read"})
      */

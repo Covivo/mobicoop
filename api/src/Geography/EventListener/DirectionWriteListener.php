@@ -25,10 +25,11 @@ namespace App\Geography\EventListener;
 
 use App\Geography\Entity\Direction;
 use App\Geography\Service\DirectionManager;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PreFlushEventArgs;
 
 /**
- * Direction Write Event listener
+ * Direction Write Event listener, called on preFlush.
+ * @author Sylvain <sylvain.briat@mobicoop.org>
  */
 class DirectionWriteListener
 {
@@ -39,7 +40,7 @@ class DirectionWriteListener
         $this->directionManager = $directionManager;
     }
 
-    public function setTerritories(Direction $direction, LifecycleEventArgs $args)
+    public function setTerritories(Direction $direction, PreFlushEventArgs $args)
     {
         // we create the link to territories only for some selected entities
         // desactivated for now as the calculation can be very long for long distance directions

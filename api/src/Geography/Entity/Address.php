@@ -387,6 +387,8 @@ class Address implements \JsonSerializable
     {
         // when we clone an Address we exclude the id
         $this->id = null;
+        $this->setHome(null);
+        $this->territories = new ArrayCollection();
     }
 
     public function getId(): ?int
