@@ -774,3 +774,17 @@ round_price:
         fr: /prix/arrondir
         en: /price/round
     controller: Mobicoop\Bundle\MobicoopBundle\Price\Controller\PriceController::roundPrice
+
+# Get the platform widget
+get_platform_widget:
+    path:
+        fr: /widget/get
+        en: /widget/get
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::getPlatformWidget
+
+# The platform widget
+platform_widget:
+    path:
+        fr: /widget
+        en: /widget
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::platformWidget

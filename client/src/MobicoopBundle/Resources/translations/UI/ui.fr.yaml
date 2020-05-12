@@ -45,3 +45,5 @@ events:
         title: "Créer un événement"
     widget:
         title: "Widget événement"
+widget:
+    title: "Widget"

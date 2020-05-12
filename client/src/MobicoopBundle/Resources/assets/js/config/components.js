@@ -47,6 +47,10 @@ import EventReport from "@components/event/EventReport";
 // ARTICLE
 import MArticle from "@components/article/MArticle";
 
+// PLATFORM WIDGET
+import PlatformWidget from "@components/utilities/platformWidget/PlatformWidget";
+import PlatformGetWidget from "@components/utilities/platformWidget/PlatformGetWidget";
+
 export default {
   MHeader,
   MFooter,
@@ -76,5 +80,7 @@ export default {
   EventWidget,
   EventGetWidget,
   EventReport,
-  MArticle
+  MArticle,
+  PlatformWidget,
+  PlatformGetWidget
 }
