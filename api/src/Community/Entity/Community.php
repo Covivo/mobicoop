@@ -239,7 +239,7 @@ class Community
     * @var \DateTimeInterface Creation date of the community.
     *
     * @ORM\Column(type="datetime")
-    * @Groups({"readCommunity","communities"})
+    * @Groups({"readCommunity"})
     */
     private $createdDate;
 
@@ -300,7 +300,7 @@ class Community
      *
      * @ApiProperty(push=true)
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -482,6 +482,7 @@ class Community
     public function setAddress(?Address $address): self
     {
         $this->address = $address;
+        $address->setCommunity($this);
 
         return $this;
     }

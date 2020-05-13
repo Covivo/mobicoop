@@ -39,13 +39,22 @@ final class DirectionTerritoryFilter extends AbstractContextAwareFilter
             $value = substr($value, strrpos($value, '/') + 1);
         }
         
+        // $queryBuilder
+        //     ->leftJoin('u.proposals', 'p')
+        //     ->leftJoin('p.criteria', 'c')
+        //     ->leftJoin('c.directionDriver', 'dd')
+        //     ->leftJoin('c.directionPassenger', 'dp')
+        //     ->join('\App\Geography\Entity\Territory', 'directionTerritory')
+        //     ->andWhere(sprintf('directionTerritory.id = %s AND (ST_INTERSECTS(directionTerritory.geoJsonDetail,dd.geoJsonDetail)=1 OR ST_INTERSECTS(directionTerritory.geoJsonDetail,dp.geoJsonDetail)=1)', $value));
+
         $queryBuilder
             ->leftJoin('u.proposals', 'p')
             ->leftJoin('p.criteria', 'c')
             ->leftJoin('c.directionDriver', 'dd')
             ->leftJoin('c.directionPassenger', 'dp')
-            ->join('\App\Geography\Entity\Territory', 'directionTerritory')
-            ->andWhere(sprintf('directionTerritory.id = %s AND (ST_INTERSECTS(directionTerritory.geoJsonDetail,dd.geoJsonDetail)=1 OR ST_INTERSECTS(directionTerritory.geoJsonDetail,dp.geoJsonDetail)=1)', $value));
+            ->leftJoin('dd.territories', 'td')
+            ->leftJoin('dp.territories', 'tp')
+            ->andWhere(sprintf('(td.id = %s OR tp.id = %s)', $value, $value));
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
@@ -63,7 +72,7 @@ final class DirectionTerritoryFilter extends AbstractContextAwareFilter
                 'format' => 'integer',
                 'required' => false,
                 'swagger' => [
-                    'description' => 'Filter on users that have a proposal in the given territory',
+                    'description' => 'Filter on users that have a point of one of their Ad in the given territoryy',
                     'name' => 'proposalTerritory',
                     'type' => 'integer',
                 ],

@@ -58,13 +58,20 @@ const myDataProvider = {
             options.headers.set('Authorization', `Bearer ${token}`);
 
             /* Rewrite roles for fit with api */
-            let territories =  params.data.userTerritories;
             let newRoles = []
-            params.data.userAuthAssignments.forEach(function(v){
-                newRoles.push({"authItem": v, "territory": territories})
+            params.data.fields.forEach(function(v){
+                  var territory = v.territory;
+                  v.roles.forEach(function(r){
+                    v != null ?  newRoles.push({"authItem": r, "territory": territory}) :   newRoles.push({"authItem": r});
+                  });
             });
             params.data.userAuthAssignments = newRoles
             /* Rewrite roles for fit with api */
+
+            /* Rewrite adresse for API */
+            params.data.addresses =  new Array();
+            params.data.addresses[0] = params.data.address
+            params.data.addresses[0].home = true
 
             /* Add custom fields fo fit with api */
             params.data.passwordSendType = 1
@@ -91,30 +98,33 @@ const myDataProvider = {
 
           var lid = params.id.search("users") == -1 ? "users/"+params.id : params.id;
 
-          return dataProvider.getOne('users',{id:lid} )
-            .then( ({ data }) => {
-                data.rolesIds = []
+        return dataProvider.getOne('users',{id:lid} )
+            .then(  ({ data } )  =>
                 Promise.all(data.userAuthAssignments.map(element =>
 
                     dataProvider.getOne('userAuthAssignments',{id: element} )
-                    .then( ( retourAssignement ) => {
-                          data.rolesIds.push(retourAssignement.data.authItem)
-                    })
-                    .catch( error => {
-                        console.log("Erreur lors de la récupération des droits:", error)
-                    })
+                        .then( ({ data }) => data )
+                        .catch( error => {
+                            console.log("Erreur lors de la récupération des droits:", error)
+                        })
+                      )
+                ).then(
+                  // We fill the array rolesTerritory with good format for admin
+                  dataThen  =>  {
+                      data.rolesTerritory = dataThen.reduce( (acc,val) => {
+                        var territory =  val.territory == null ? 'null' : val.territory ;
 
-                ));
-
-                    return { data : data }
-
-            })
-            .catch( error => {
-                console.log("Erreur lors de la récupération de l'utilisateur :", error)
-            })
-
-            return dataProvider.getOne(resource, params);
-
+                          if(!acc[territory]){
+                            acc[territory] = [];
+                          }
+                          acc[territory].push(val.authItem);
+                          return acc;
+                      }
+                        , {}  )
+                      return {data};
+                  }
+                )
+            );
         }
     },
     update: (resource, params) => {
@@ -129,11 +139,23 @@ const myDataProvider = {
           options.headers.set('Authorization', `Bearer ${token}`);
 
           /* Rewrite roles for fit with api */
-          let territories =  params.data.userTerritories;
           let newRoles = []
-          params.data.rolesIds.forEach(function(v){
-              newRoles.push({"authItem": v, "territory": territories})
-          });
+          if (  params.data.fields != null ){
+            params.data.fields.forEach(function(v){
+                  var territory = v.territory;
+                  v.roles.forEach(function(r){
+                    v != null ?  newRoles.push({"authItem": r, "territory": territory}) :   newRoles.push({"authItem": r});
+                  });
+            });
+          }else{
+            for (const territory in  params.data.rolesTerritory) {
+              for (const r in  params.data.rolesTerritory[territory]) {
+                const role = params.data.rolesTerritory[territory][r]
+                  territory != null ?  newRoles.push({"authItem": role, "territory": territory}) :   newRoles.push({"authItem": role});
+              }
+          }
+        }
+
           params.data.userAuthAssignments = newRoles
           /* Rewrite roles for fit with api */
 

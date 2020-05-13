@@ -39,14 +39,25 @@ final class HomeAddressDirectionTerritoryFilter extends AbstractContextAwareFilt
             $value = substr($value, strrpos($value, '/') + 1);
         }
         
+        // $queryBuilder
+        //     ->leftJoin('u.addresses', 'homeAddress')
+        //     ->leftJoin('u.proposals', 'p')
+        //     ->leftJoin('p.criteria', 'c')
+        //     ->leftJoin('c.directionDriver', 'dd')
+        //     ->leftJoin('c.directionPassenger', 'dp')
+        //     ->join('\App\Geography\Entity\Territory', 'homeAddressDirectionTerritory')
+        //     ->andWhere(sprintf('(homeAddressDirectionTerritory.id = %s AND (ST_INTERSECTS(homeAddressDirectionTerritory.geoJsonDetail,dd.geoJsonDetail)=1 OR ST_INTERSECTS(homeAddressDirectionTerritory.geoJsonDetail,dp.geoJsonDetail)=1 OR (ST_INTERSECTS(homeAddressDirectionTerritory.geoJsonDetail,homeAddress.geoJson)=1 AND homeAddress.home=1)))', $value));
+
         $queryBuilder
             ->leftJoin('u.addresses', 'homeAddress')
+            ->leftJoin('homeAddress.territories', 't')
             ->leftJoin('u.proposals', 'p')
             ->leftJoin('p.criteria', 'c')
             ->leftJoin('c.directionDriver', 'dd')
             ->leftJoin('c.directionPassenger', 'dp')
-            ->join('\App\Geography\Entity\Territory', 'homeAddressDirectionTerritory')
-            ->andWhere(sprintf('(homeAddressDirectionTerritory.id = %s AND (ST_INTERSECTS(homeAddressDirectionTerritory.geoJsonDetail,dd.geoJsonDetail)=1 OR ST_INTERSECTS(homeAddressDirectionTerritory.geoJsonDetail,dp.geoJsonDetail)=1 OR (ST_INTERSECTS(homeAddressDirectionTerritory.geoJsonDetail,homeAddress.geoJson)=1 AND homeAddress.home=1)))', $value));
+            ->leftJoin('dd.territories', 'td')
+            ->leftJoin('dp.territories', 'tp')
+            ->andWhere(sprintf('((td.id = %s OR tp.id = %s) OR (t.id = %s AND homeAddress.home=1))', $value, $value, $value));
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
@@ -64,7 +75,7 @@ final class HomeAddressDirectionTerritoryFilter extends AbstractContextAwareFilt
                 'format' => 'integer',
                 'required' => false,
                 'swagger' => [
-                    'description' => 'Filter on users that have a proposal or homeAddress in the given territory',
+                    'description' => 'Filter on users that have a point of one of their Ad, or their home address, in the given territory',
                     'name' => 'territory',
                     'type' => 'integer',
                 ],

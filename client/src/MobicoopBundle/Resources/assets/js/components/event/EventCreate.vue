@@ -51,8 +51,6 @@
                 v-model="fullDescription"
                 :rules="fullDescriptionRules"
                 :label="$t('form.fullDescription.label')"
-                rows="5"
-                :maxlength="max"
                 auto-grow
                 clearable
                 outlined

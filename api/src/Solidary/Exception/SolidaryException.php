@@ -38,4 +38,5 @@ class SolidaryException extends \LogicException
     const INVALID_HOUR_SLOT = "Hour slot invalid";
     const NO_RETURN_PROPOSAL = "There is no return proposal";
     const NO_VALID_ADDRESS = "No valid address";
+    const NOT_A_DRIVER = "This User is not a driver";
 }

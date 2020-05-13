@@ -119,7 +119,7 @@ wellTakenIntoAccount: "est bien prise en compte"
 clickHereToConfirm: "Veuillez cliquer sur ce lien pour confirmer votre email"
 orUseTheValidationCode: "Ou utilisez le code de validation directement sur le site"
 urlEmailValidation: "/utilisateur/inscription/validation/"
-urlMobileEmailValidation: "/confirm-registration/"
+urlMobileEmailValidation: "/#/confirm-registration/"
 yourPasswordIs: "Votre mot de passe est"
 yourPasswordHasBeenSendBySms: "Votre mot de passe vous a été envoyé par SMS."
 
@@ -289,3 +289,9 @@ journeyDetailOrigin: "{journeyOrigin}"
 journeyDetailTo: "à"
 journeyDetailDestination: "{journeyDestination}"
 journeyDetailTime: "prévu le {journeyDate} à {journeyTime}."
+
+# Mobimatch
+massMigrated: "Votre compte de covoiturage"
+temporaryPasswordAttributed: "Un mot de passe temporaire vous a été attribué"
+temporaryPassword: "{password}"
+changePassword: "Nous vous encourageons fortement à le modifier lors de votre prochaine connexion"

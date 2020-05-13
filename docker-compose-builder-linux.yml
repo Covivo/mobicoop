@@ -38,6 +38,11 @@ services:
       service: base
     working_dir: /var/www/api
     command: php bin/console doctrine:migrations:migrate -n -v
+  app-geography-territory-link-batch:
+    extends:
+      service: base
+    working_dir: /var/www/api
+    command: php bin/console app:geography:territory-link-batch
 
 networks:
   mobicoop_platform:

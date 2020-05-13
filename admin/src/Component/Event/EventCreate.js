@@ -34,7 +34,7 @@ export const EventCreate = (props) => {
         <Create { ...props } title="Evénement > créer">
             <SimpleForm >
                 <TextInput fullWidth source="name" label={translate('custom.label.event.name')} validate={[required()]} formClassName={classes.title} />
-                <EventImageUpload formClassName={classes.fullwidth}/>
+                <EventImageUpload label={translate('custom.label.event.uploadImage')}  formClassName={classes.fullwidth}/>
                 <TextInput fullWidth source="description" label={translate('custom.label.event.resume')}  validate={required()} formClassName={classes.fullwidth}/>
                 <RichTextInput variant="filled" source="fullDescription" label={translate('custom.label.event.resumefull')}  validate={required()} formClassName={classes.richtext} />
 
@@ -44,12 +44,12 @@ export const EventCreate = (props) => {
                 <BooleanInput label={translate('custom.label.event.setTime')}  source="useTime" initialValue={false} formClassName={classes.inlineBlock}/>
                 <EventDuration formClassName={classes.inlineBlock}/>
                  <SelectInput label={translate('custom.label.event.status')} source="status" defaultValue={1} choices={[
-                    { id: 0, name: 'Brouillon' },
-                    { id: 1, name: 'Validé' },
-                    { id: 2, name: 'Désactivé' },
+                   { id: 0, name: translate('custom.label.event.statusChoices.draft') },
+                   { id: 1, name: translate('custom.label.event.statusChoices.enabled') },
+                   { id: 2, name: translate('custom.label.event.statusChoices.disabled') },
                 ]} formClassName={classes.inlineBlock}/>
 
-                <CurrentUserInput source="user" label={translate('custom.label.event.createur')} />
+                <CurrentUserInput source="user" label={translate('custom.label.event.creator')} />
 
 
 

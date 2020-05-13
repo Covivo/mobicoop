@@ -43,6 +43,7 @@ final class CommunityDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
+        // We post a community, we add the role community_manager to the author
         return $data instanceof Community && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
     }
 

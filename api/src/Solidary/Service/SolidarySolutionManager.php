@@ -24,6 +24,7 @@ namespace App\Solidary\Service;
 
 use App\Solidary\Entity\SolidarySolution;
 use App\Solidary\Exception\SolidaryException;
+use App\Solidary\Repository\SolidaryMatchingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -55,6 +56,9 @@ class SolidarySolutionManager
             throw new SolidaryException(SolidaryException::CANT_HAVE_BOTH);
         }
 
+        // We get the Solidary of this SolidaryMatching and set it for the SolidarySolution ((yeah, it a shortcut for the model)
+        $solidarySolution->setSolidary($solidarySolution->getSolidaryMatching()->getSolidary());
+        
         $this->entityManager->persist($solidarySolution);
         $this->entityManager->flush();
         return $solidarySolution;

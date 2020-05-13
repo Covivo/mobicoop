@@ -1,3 +1,13 @@
+# Release 1.3.0
+
+## API
+
+* Direct link between addresses / directions and territories : improve the response speed for territory filters
+
+## CLIENT
+
+* Add Driver's License acknowledgement
+
 # Release 1.2.0
 
 ## API
@@ -6,9 +16,10 @@
 * JSON file to fix wrong geographic data
 * Improvement of Geosearcher : Pelias Autocomplete for localities only, then Pelias Search for full search
 * New territory filters for communities and events
-* Add acces for log in with email or password token
+* Add a login system using tokens (for email and password reset validation)
 * Solidary beneficiaries and their solidary files, Structure, Proofs
 * Solidary volunteers to help the beneficiaries
+* Add Filter extension on User and Territory
 * Add function checkUserHaveAuthItem to check if an User have a specified Auth Item
 * Add Role 'ROLE_COMMUNITY_MANAGER' to the creators of the community (client side)
 * Add button for admin access from the detail page of community (for the creator)
@@ -16,4 +27,4 @@
 ## CLIENT
 
 * Automatic territory filtering for communities and events
-* Changes authentification for login, reset token and reset password
+* New authentication for login, reset token and reset password

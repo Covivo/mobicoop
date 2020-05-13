@@ -544,6 +544,21 @@
                     />
                   </v-col>
                 </v-row>
+
+                <v-row>
+                  <v-col
+                    v-if="driver"
+                  >
+                    {{ $t('stepper.driverLicense.text') }}
+                    <a
+                      class="primary--text"
+                      target="_blank"
+                      :href="$t('stepper.driverLicense.route')"
+                      @click.stop
+                    >{{ $t('stepper.driverLicense.link') }}
+                    </a>
+                  </v-col>
+                </v-row>
               </v-container>
             </v-stepper-content>
           </v-stepper-items>

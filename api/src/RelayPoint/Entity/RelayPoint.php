@@ -192,7 +192,7 @@ class RelayPoint
      * @var Address The address of the relay point.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="relayPoint", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -395,6 +395,7 @@ class RelayPoint
     public function setAddress(?Address $address): self
     {
         $this->address = $address;
+        $address->setRelayPoint($this);
 
         return $this;
     }

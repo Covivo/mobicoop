@@ -1,6 +1,7 @@
 <template>
   <v-form :ref="name">
     <v-autocomplete
+      id="address"
       v-model="address"
       :loading="isLoading"
       :items="items"
@@ -33,7 +34,7 @@
         </template>
         <template v-else>
           <v-list>
-            <v-list-item>
+            <v-list-item id="content">
               <v-list-item-avatar v-if="displayIcon">
                 <v-avatar size="36">
                   <v-img

@@ -670,8 +670,8 @@ class Criteria
     /**
      * @var Direction|null The direction used in the journey as a driver.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="criteriaDrivers", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups({"read","results"})
      */
     private $directionDriver;
@@ -679,8 +679,8 @@ class Criteria
     /**
      * @var Direction|null The direction used in the journey as a passenger.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="criteriaPassengers", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups({"read","results","thread"})
      */
     private $directionPassenger;
@@ -1654,6 +1654,10 @@ class Criteria
     public function setDirectionDriver(?Direction $directionDriver): self
     {
         $this->directionDriver = $directionDriver;
+        // set the reverse side, useful for direction managing
+        if (!$directionDriver->getCriteriaDrivers(false)->contains($this)) {
+            $directionDriver->addCriteriaDriver($this);
+        }
         
         return $this;
     }
@@ -1666,6 +1670,10 @@ class Criteria
     public function setDirectionPassenger(?Direction $directionPassenger): self
     {
         $this->directionPassenger = $directionPassenger;
+        // set the reverse side, useful for direction managing
+        if (!$directionPassenger->getCriteriaPassengers(false)->contains($this)) {
+            $directionPassenger->addCriteriaPassenger($this);
+        }
         
         return $this;
     }
@@ -1804,15 +1812,6 @@ class Criteria
         // $directionDriverId . $delimiter .
         // $directionPassengerId . $delimiter .
         // ($this->createdDate ? $this->createdDate->format('Y-m-d H:i:s') : '') . $delimiter;
-    }
-
-    public static function getHoursSlots(): array
-    {
-        return [
-            "m" => ["min" => new \DateTime("06:00:00"),"max" => new \DateTime("12:00:00")],
-            "a" => ["min" => new \DateTime("12:00:01"),"max" => new \DateTime("19:00:00")],
-            "e" => ["min" => new \DateTime("19:00:01"),"max" => new \DateTime("23:00:00")]
-        ];
     }
 
     // DOCTRINE EVENTS

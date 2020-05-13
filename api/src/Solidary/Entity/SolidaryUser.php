@@ -406,13 +406,8 @@ class SolidaryUser
     {
         $this->needs = new ArrayCollection();
         $this->solidaryUserStructures = new ArrayCollection();
+        $this->solidaryMatchings = new ArrayCollection();
         $this->setMaxDistance(self::DEFAULT_MAX_DISTANCE);
-        $this->setMMinTime(Criteria::getHoursSlots()['m']['min']);
-        $this->setMMaxTime(Criteria::getHoursSlots()['m']['max']);
-        $this->setAMinTime(Criteria::getHoursSlots()['a']['min']);
-        $this->setAMaxTime(Criteria::getHoursSlots()['a']['max']);
-        $this->setEMinTime(Criteria::getHoursSlots()['e']['min']);
-        $this->setEMaxTime(Criteria::getHoursSlots()['e']['max']);
     }
     
     public function getId(): ?int

@@ -35,6 +35,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Auth\Repository\AuthItemRepository;
+use App\Carpool\Entity\Ad;
+use App\Carpool\Entity\Criteria;
+use App\Carpool\Service\AdManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Match\Event\MassMigrateUserMigratedEvent;
 
 /**
  * Mass compute manager.
@@ -50,16 +55,20 @@ class MassMigrateManager
     private $encoder;
     private $authItemRepository;
     private $userRepository;
+    private $adManager;
     private $params;
+    private $eventDispatcher;
 
-    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, array $params)
+    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, array $params)
     {
         $this->massPersonRepository = $massPersonRepository;
         $this->entityManager = $entityManager;
         $this->encoder = $encoder;
         $this->authItemRepository = $authItemRepository;
         $this->userRepository = $userRepository;
+        $this->adManager = $adManager;
         $this->params = $params;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -73,8 +82,8 @@ class MassMigrateManager
         $migratedUsers = [];
 
         // First, we set the status of the Mass at Migrating
-        // TO DO : Save the migrating date
         $mass->setStatus(Mass::STATUS_MIGRATING);
+        $mass->setMigrationDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
 
@@ -100,56 +109,69 @@ class MassMigrateManager
             } else {
 
                 // We don't know this MassPerson. We're creating the User.
+                if ($massPerson->getEmail()!=="") {
+                    $user = new User();
+                    $user->setGivenName($massPerson->getGivenName());
+                    $user->setFamilyName($massPerson->getFamilyName());
+                    $user->setEmail($massPerson->getEmail());
+                    // To do : Add gender to csv/xml file
+                    $user->setGender(User::GENDER_OTHER);
+                    // To do : Birthdate ?
 
-                $user = new User();
-                $user->setGivenName($massPerson->getGivenName());
-                $user->setFamilyName($massPerson->getFamilyName());
-                $user->setEmail($massPerson->getEmail());
-                // To do : Add gender to csv/xml file
-                $user->setGender(User::GENDER_OTHER);
-                // To do : Birthdate ?
+                    $user->setPhoneDisplay(1);
+                    $user->setSmoke($this->params['smoke']);
+                    $user->setMusic($this->params['music']);
+                    $user->setChat($this->params['chat']);
+                    // To do : Dynamic Language
+                    $user->setLanguage('fr_FR');
 
-                $user->setPhoneDisplay(1);
-                $user->setSmoke($this->params['smoke']);
-                $user->setMusic($this->params['music']);
-                $user->setChat($this->params['chat']);
-                // To do : Dynamic Language
-                $user->setLanguage('fr_FR');
+                    // Set an encrypted password
+                    $password = $this->randomPassword();
+                    $user->setPassword($this->encoder->encodePassword($user, $password));
+                    $user->setClearPassword($password); // Used to be send by email (not persisted)
 
-                // Set an encrypted password
-                $password = $this->randomPassword();
-                $user->setPassword($this->encoder->encodePassword($user, $password));
+                    // auto valid the registration
+                    $user->setValidatedDate(new \DateTime());
 
-                // auto valid the registration
-                $user->setValidatedDate(new \DateTime());
+                    // We give him a fully registrated role
+                    // default role : user registered full
+                    $authItem = $this->authItemRepository->find(AuthItem::ROLE_USER_REGISTERED_FULL);
+                    $userAuthAssignment = new UserAuthAssignment();
+                    $userAuthAssignment->setAuthItem($authItem);
+                    $user->addUserAuthAssignment($userAuthAssignment);
+        
+                    $this->entityManager->persist($user);
 
-                // We give him a fully registrated role
-                // default role : user registered full
-                $authItem = $this->authItemRepository->find(AuthItem::ROLE_USER_REGISTERED_FULL);
-                $userAuthAssignment = new UserAuthAssignment();
-                $userAuthAssignment->setAuthItem($authItem);
-                $user->addUserAuthAssignment($userAuthAssignment);
-    
-                $this->entityManager->persist($user);
+                    $migratedUsers[] = $user; // For the return
 
-                $migratedUsers[] = $user; // For the return
-                
-                // The home address of the user
-                $personalAddress = clone $massPerson->getPersonalAddress();
-                $personalAddress->setUser($user);
-                $personalAddress->setHome(true);
+                    // We update the MassPerson to link it to the created User
+                    $massPerson->setUser($user);
+                    $this->entityManager->persist($user);
 
-                $this->entityManager->persist($personalAddress);
+                    // The home address of the user
+                    $personalAddress = clone $massPerson->getPersonalAddress();
+                    $personalAddress->setUser($user);
+                    $personalAddress->setHome(true);
 
-                // To do : Trigger an event to send a email
+                    $this->entityManager->persist($personalAddress);
+                    $this->entityManager->flush();
+
+                    // We create an Ad for this new user (regular, home to work, monday to friday)
+                    // To DO : see the comment above createJourneyFromMassPerson() method
+                    //$this->createJourneyFromMassPerson($massPerson);
+                    
+
+                    // To do : Trigger an event to send a email
+                    $event = new MassMigrateUserMigratedEvent($user);
+                    $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
+                }
             }
         }
-        $this->entityManager->flush();
+        //$this->entityManager->flush();
 
-        // Finally, we set status of the Mass at Migrated
-        // First, we set the status of the Mass at Migrating
-        // TO DO : Save the migrated date
+        // Finally, we set status of the Mass at Migrated and save the migrated date
         $mass->setStatus(Mass::STATUS_MIGRATED);
+        $mass->setMigratedDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
 
@@ -168,5 +190,69 @@ class MassMigrateManager
             $pass[] = $alphabet[$n];
         }
         return implode($pass); //turn the array into a string
+    }
+
+    /**
+     * TO DO : It might not be a good solution to user createAd from AdManager.
+     * We don't want to trigger matching at every Proposal we add.
+     * Create the journey (Ad then Proposal) of a MassPerson
+     *
+     * @param MassPerson $massPerson
+     * @return Ad
+     */
+    private function createJourneyFromMassPerson(MassPerson $massPerson): Ad
+    {
+        $ad = new Ad();
+
+        // Role
+        if ($massPerson->isDriver() && $massPerson->isPassenger()) {
+            $ad->setRole(Ad::ROLE_DRIVER_OR_PASSENGER);
+        } elseif ($massPerson->isDriver()) {
+            $ad->setRole(Ad::ROLE_DRIVER);
+        } else {
+            $ad->setRole(Ad::ROLE_PASSENGER);
+        }
+
+        // round-trip
+        $ad->setOneWay(false);
+
+        // Regular
+        $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
+
+        // Outward waypoint
+        $outwardWaypoints = [
+            clone $massPerson->getPersonalAddress(),
+            clone $massPerson->getWorkAddress()
+        ];
+
+        $ad->setOutwardWaypoints($outwardWaypoints);
+
+        // return waypoint
+        $returnWaypoints = [
+            clone $massPerson->getWorkAddress(),
+            clone $massPerson->getPersonalAddress()
+        ];
+
+        $ad->setReturnWaypoints($returnWaypoints);
+
+        $ad->setOutwardTime($massPerson->getOutwardTime()->format("H:i"));
+        $ad->setReturnTime($massPerson->getReturnTime()->format("H:i"));
+
+        // Schedule
+        $schedule = [];
+        $days = ['mon','tue','wed','thu','fri'];
+        foreach ($days as $day) {
+            $schedule[0][$day] = true;
+        }
+        $schedule[0]['outwardTime'] = $massPerson->getOutwardTime()->format("H:i");
+        $schedule[0]['returnTime'] = $massPerson->getReturnTime()->format("H:i");
+
+        $ad->setSchedule($schedule);
+
+        // The User
+        $ad->setUser($massPerson->getUser());
+        $ad->setUserId($massPerson->getUser()->getId());
+
+        return $this->adManager->createAd($ad);
     }
 }

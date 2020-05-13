@@ -89,7 +89,6 @@
         <carpooler-contact
           :carpooler="result.carpooler"
           :ask-id="ask.askId"
-          :display-phone="true"
           :display-mail-box="true"
           :user="user"
         />
