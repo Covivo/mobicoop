@@ -42,7 +42,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      collectionOperations={
  *          "get"={
  *             "normalization_context"={"groups"={"readSolidarySearch"}},
- *             "security"="is_granted('solidary_list',object)"
+ *             "security"="is_granted('solidary_update',object)"
  *          }
  *      },
  *      itemOperations={
