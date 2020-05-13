@@ -312,7 +312,7 @@ class CommunityManager
     }
 
     /**
-     * Give the roles : community_manager to the creator of a public community and save the data
+     * Persist and save community User for POST
      *
      * @param CommunityUser       $communityUser           The community user to create
      * @return void

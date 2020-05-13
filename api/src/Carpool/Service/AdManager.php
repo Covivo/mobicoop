@@ -178,7 +178,7 @@ class AdManager
         if ($ad->getCommunities()) {
             // todo : check if the user can post/search in each community
             foreach ($ad->getCommunities() as $communityId) {
-               if ($community = $this->communityRepository->findOneBy( ['id'=>$communityId] ) ) {
+                if ($community = $this->communityRepository->findOneBy(['id'=>$communityId])) {
                     $outwardProposal->addCommunity($community);
                 } else {
                     throw new CommunityNotFoundException('Community ' . $communityId . ' not found');

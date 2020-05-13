@@ -40,7 +40,7 @@ final class CommunityDataPersister implements ContextAwareDataPersisterInterface
     private $request;
     private $communityManager;
 
-    public function __construct(RequestStack $requestStack,CommunityManager $communityManager)
+    public function __construct(RequestStack $requestStack, CommunityManager $communityManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->communityManager = $communityManager;

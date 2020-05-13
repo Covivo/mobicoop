@@ -47,7 +47,7 @@ class CommunityManager
      *
      * @param DataProvider $dataProvider
      */
-    public function __construct(DataProvider $dataProvider, array $territoryFilter, int $communityLimitMemberDisplayOnFront,UrlGeneratorInterface $router)
+    public function __construct(DataProvider $dataProvider, array $territoryFilter, int $communityLimitMemberDisplayOnFront, UrlGeneratorInterface $router)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Community::class);

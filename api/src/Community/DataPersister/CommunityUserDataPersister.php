@@ -40,7 +40,7 @@ final class CommunityUserDataPersister implements ContextAwareDataPersisterInter
     private $request;
     private $communityManager;
 
-    public function __construct(RequestStack $requestStack,CommunityManager $communityManager)
+    public function __construct(RequestStack $requestStack, CommunityManager $communityManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->communityManager = $communityManager;
@@ -48,12 +48,11 @@ final class CommunityUserDataPersister implements ContextAwareDataPersisterInter
 
     public function supports($data, array $context = []): bool
     {
-      // We want to join a community, check if user have the fight before save
-       return $data instanceof CommunityUser
+        // We want to join a community, check if user have the fight before save
+        return $data instanceof CommunityUser
          && isset($context['collection_operation_name'])
          && $context['collection_operation_name'] == 'post'
          && $this->communityManager->canJoin($data);
-
     }
 
     public function persist($data, array $context = [])
