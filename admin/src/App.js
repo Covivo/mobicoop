@@ -19,17 +19,19 @@ import paragraphs from './Component/Article/Paragraph/index';
 import communities from './Component/Community/Community/index';
 import community_users from './Component/Community/CommunityUser/index';
 import relay_points from './Component/RelayPoint/RelayPoint/index';
-import relay_point_types from './Component/RelayPoint/RelayPointType/index';
 import roles from './Component/Right/Role/index';
 import rights from './Component/Right/Right/index';
-import territories from './Component/Territory/index';
 import events from './Component/Event/index';
-import adresses from './Component/Address/index';
 import KibanaWidget from './Component/Dashboard/KibanaWidget'
-import {ResourceGuesser, ListGuesser} from '@api-platform/admin/lib';
-import ProposalList from './Component/Proposals/ProposalList';
+import {ResourceGuesser, } from '@api-platform/admin/lib';
 import myDataProvider from "./Component/Utilities/extendProviders";
 import campaigns from "./Component/Campaigns/index";
+
+import solidaries from './Component/Solidary/Solidary'
+import solidary_users_beneficiary from './Component/Solidary/SolidaryUserBeneficiary'
+import solidary_users_volunteer from './Component/Solidary/SolidaryUserVolunteer'
+import structures from './Component/Solidary/Structure'
+import structure_proofs from './Component/Solidary/StructureProof'
 
 require('dotenv').config();
 
@@ -115,24 +117,35 @@ export default props => (
     >
       {permissions => {
         return  [
-          isAuthorized("user_manage")     ? <Resource name={'users'} {...users} /> : <Resource name={'users'}  />,
+          
+          isAuthorized("user_manage")         ? <Resource name={'users'} {...users} /> : <Resource name={'users'}  />,
           isAuthorized("community_manage")    ? <Resource name={'communities'} {...communities} /> : null,
           isAuthorized("community_manage")    ? <Resource name={'community_users'} {...community_users} /> : null,
-          isAuthorized("campaign_manage")         ? <Resource name={'campaigns/owned'} {...campaigns} /> : null,
-          isAuthorized("event_manage")        ? <ResourceGuesser name={'events'} {...events} /> : null,
+          isAuthorized("campaign_manage")     ? <Resource name={'campaigns/owned'} {...campaigns} /> : null,
+
+          isAuthorized("event_manage")        ? <Resource name={'events'} {...events} /> : null,
+
           isAuthorized("article_manage")      ? <Resource name={'articles'} {...articles} /> : null,
           isAuthorized("article_manage")      ? <Resource name={'sections'} {...sections} /> : null,
           isAuthorized("article_manage")      ? <Resource name={'paragraphs'} {...paragraphs} /> : null,
+
           isAuthorized("relay_point_manage")  ? <Resource name={'relay_points'} {...relay_points} /> : null,
           isAuthorized("relay_point_manage")  ? <Resource name={'relay_point_types'} />  : null,
           isAuthorized("permission_manage")   ? <Resource name={'roles'} {...roles} /> : null,
           isAuthorized("permission_manage")   ? <Resource name={'rights'} {...rights} /> : null,
-          /*  isAuthorized("territory_manage")    ? <Resource name={'territories'} {...territories} /> : null, */
-          /* <Resource name={'proposals'} list={ProposalList} />, Uncomment when proposals will be ready*/
+
+          isAuthorized("solidary_manage")     ? <Resource name="solidary_users" {...solidary_users_beneficiary} /> : null ,
+          isAuthorized("solidary_manage")     ? <Resource name="solidary_users" {...solidary_users_volunteer} /> : null ,
+          isAuthorized("solidary_manage")     ? <Resource name="solidaries" {...solidaries} /> : null ,
+
+          isAuthorized("user_manage")         ? <Resource name="structures" {...structures} /> : null ,
+          isAuthorized("user_manage")         ? <Resource name="structure_proofs" {...structure_proofs} /> : null ,
+
           <Resource name="addresses" />,
           <Resource name="images" />,
           <Resource name="permissions/roles" />,
           <Resource name="territories" />,
+          
          ];
      }
        }
