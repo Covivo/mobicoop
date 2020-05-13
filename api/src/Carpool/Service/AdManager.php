@@ -33,7 +33,7 @@ use App\Carpool\Entity\Waypoint;
 use App\Carpool\Event\AdMajorUpdatedEvent;
 use App\Carpool\Event\AdMinorUpdatedEvent;
 use App\Community\Exception\CommunityNotFoundException;
-use App\Community\Service\CommunityManager;
+use App\Community\Repository\CommunityRepository;
 use App\Event\Exception\EventNotFoundException;
 use App\Event\Service\EventManager;
 use App\Geography\Entity\Address;
@@ -60,7 +60,7 @@ class AdManager
     private $entityManager;
     private $proposalManager;
     private $userManager;
-    private $communityManager;
+    private $communityRepository;
     private $eventManager;
     private $resultManager;
     private $params;
@@ -79,12 +79,12 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityRepository $communityRepository, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
         $this->userManager = $userManager;
-        $this->communityManager = $communityManager;
+        $this->communityRepository = $communityRepository;
         $this->eventManager = $eventManager;
         $this->resultManager = $resultManager;
         $this->logger = $logger;
@@ -178,7 +178,7 @@ class AdManager
         if ($ad->getCommunities()) {
             // todo : check if the user can post/search in each community
             foreach ($ad->getCommunities() as $communityId) {
-                if ($community = $this->communityManager->getCommunity($communityId)) {
+               if ($community = $this->communityRepository->findOneBy( ['id'=>$communityId] ) ) {
                     $outwardProposal->addCommunity($community);
                 } else {
                     throw new CommunityNotFoundException('Community ' . $communityId . ' not found');
@@ -883,7 +883,7 @@ class AdManager
      * @param Proposal $proposal Base Proposal of the Ad
      * @return Ad
      */
-    private function makeAdForCommunityOrEvent(Proposal $proposal)
+    public function makeAdForCommunityOrEvent(Proposal $proposal)
     {
         $ad = new Ad();
         $ad->setId($proposal->getId());

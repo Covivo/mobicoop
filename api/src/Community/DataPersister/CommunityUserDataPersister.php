@@ -23,19 +23,19 @@
 namespace App\Community\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 use App\Community\Service\CommunityManager;
 
 /**
- * Data persister for Community
- * Use for add the role community_manager to the author before save
+ * Data persister for Community User
+ * Use for check if user can join a community before save
  *
  * @author Julien Deschampt <julien.deschampt@mobicoop.org>
  */
 
-final class CommunityDataPersister implements ContextAwareDataPersisterInterface
+final class CommunityUserDataPersister implements ContextAwareDataPersisterInterface
 {
     private $request;
     private $communityManager;
@@ -48,18 +48,21 @@ final class CommunityDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        // We post a community, we add the role community_manager to the author
-        return $data instanceof Community && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
+      // We want to join a community, check if user have the fight before save
+       return $data instanceof CommunityUser
+         && isset($context['collection_operation_name'])
+         && $context['collection_operation_name'] == 'post'
+         && $this->communityManager->canJoin($data);
+
     }
 
     public function persist($data, array $context = [])
     {
         // call your persistence layer to save $data
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad community id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans("bad community user id is provided"));
         }
-
-        $data = $this->communityManager->save($data);
+        $this->communityManager->saveCommunityUser($data);
         return $data;
     }
 
