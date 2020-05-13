@@ -87,6 +87,7 @@ class CommunityManager
         $this->adManager = $adManager;
     }
 
+
     /**
      * Check if a user can join a community
      * To join an opened community, no credentials is needed, the user just need to be registered.
@@ -98,6 +99,7 @@ class CommunityManager
      */
     public function canJoin(CommunityUser $communityUser)
     {
+
         $authorized = true;
         // we check if the community is secured
         $community= $communityUser->getCommunity();
@@ -121,7 +123,10 @@ class CommunityManager
         ($community->getDomain() != (explode("@", $communityUser->getUser()->getEmail()))[1])) {
             $authorized = false;
         }
-        return $authorized;
+        $this->entityManager->persist($communityUser);
+        $this->entityManager->flush();
+
+        return $communityUser;
     }
 
     /**
