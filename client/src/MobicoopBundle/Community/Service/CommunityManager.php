@@ -29,8 +29,6 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Community management service.
@@ -40,19 +38,18 @@ class CommunityManager
     private $dataProvider;
     private $territoryFilter;
     private $communityLimitMemberDisplayOnFront;
-    private $router;
+
     /**
      * Constructor.
      *
      * @param DataProvider $dataProvider
      */
-    public function __construct(DataProvider $dataProvider, array $territoryFilter, int $communityLimitMemberDisplayOnFront,UrlGeneratorInterface $router)
+    public function __construct(DataProvider $dataProvider, array $territoryFilter, int $communityLimitMemberDisplayOnFront)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Community::class);
         $this->territoryFilter = $territoryFilter;
         $this->communityLimitMemberDisplayOnFront = $communityLimitMemberDisplayOnFront;
-        $this->router = $router;
     }
 
     /**
@@ -346,7 +343,7 @@ class CommunityManager
                     "date" => $date,
                     "cid" => $community->getId()
                 ];
-                $currentAd["searchLink"] = $this->router->generate("carpool_search_result_get", $searchLinkParams, UrlGeneratorInterface::ABSOLUTE_URL);
+                $currentAd["searchLink"] = $this->generateUrl("carpool_search_result_get", $searchLinkParams, UrlGeneratorInterface::ABSOLUTE_URL);
                 $ways[] = $currentAd;
             }
         }
