@@ -64,6 +64,13 @@ class CarpoolProof
     private $status;
 
     /**
+     * @var string Register system proof type.
+     *
+     * @ORM\Column(type="string", length=5, nullable=true)
+     */
+    private $type;
+
+    /**
      * @var Ask The ask related to the proof.
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", mappedBy="carpoolProof", cascade={"persist"})
@@ -179,6 +186,26 @@ class CarpoolProof
      */
     private $points;
 
+    /**
+     * @var \DateTimeInterface Driver start date (not persisted).
+     */
+    private $startDriverDate;
+
+    /**
+     * @var \DateTimeInterface Driver end date (not persisted).
+     */
+    private $endDriverDate;
+
+    /**
+     * @var Address Origin of the driver (not persisted).
+     */
+    private $originDriverAddress;
+
+    /**
+     * @var Address Destination of the driver (not persisted).
+     */
+    private $destinationDriverAddress;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -192,6 +219,18 @@ class CarpoolProof
     public function setStatus(int $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }
@@ -387,6 +426,54 @@ class CarpoolProof
     {
         $this->points = $points;
         
+        return $this;
+    }
+
+    public function getStartDriverDate(): ?\DateTimeInterface
+    {
+        return $this->startDriverDate;
+    }
+
+    public function setStartDriverDate(\DateTimeInterface $startDriverDate): self
+    {
+        $this->startDriverDate = $startDriverDate;
+
+        return $this;
+    }
+
+    public function getEndDriverDate(): ?\DateTimeInterface
+    {
+        return $this->endDriverDate;
+    }
+
+    public function setEndDriverDate(\DateTimeInterface $endDriverDate): self
+    {
+        $this->endDriverDate = $endDriverDate;
+
+        return $this;
+    }
+
+    public function getOriginDriverAddress(): ?Address
+    {
+        return $this->originDriverAddress;
+    }
+
+    public function setOriginDriverAddress(?Address $originDriverAddress): self
+    {
+        $this->originDriverAddress = $originDriverAddress;
+
+        return $this;
+    }
+
+    public function getDestinationDriverAddress(): ?Address
+    {
+        return $this->destinationDriverAddress;
+    }
+
+    public function setDestinationDriverAddress(?Address $destinationDriverAddress): self
+    {
+        $this->destinationDriverAddress = $destinationDriverAddress;
+
         return $this;
     }
 

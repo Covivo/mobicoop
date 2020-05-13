@@ -73,6 +73,7 @@ class DynamicManager
     private $askHistoryRepository;
     private $carpoolProofRepository;
     private $internalMessageManager;
+    private $proofType;
 
     /**
      * Constructor.
@@ -95,7 +96,8 @@ class DynamicManager
         AskRepository $askRespository,
         AskHistoryRepository $askHistoryRepository,
         CarpoolProofRepository $carpoolProofRepository,
-        InternalMessageManager $internalMessageManager
+        InternalMessageManager $internalMessageManager,
+        string $proofType
     ) {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -112,6 +114,7 @@ class DynamicManager
         $this->askHistoryRepository = $askHistoryRepository;
         $this->carpoolProofRepository = $carpoolProofRepository;
         $this->internalMessageManager = $internalMessageManager;
+        $this->proofType = $proofType;
     }
 
 
@@ -931,6 +934,7 @@ class DynamicManager
         }
 
         $carpoolProof = new CarpoolProof();
+        $carpoolProof->setType($this->proofType);
         $carpoolProof->setAsk($ask);
         $carpoolProof->setDriver($ask->getUserRelated());
         $carpoolProof->setPassenger($ask->getUser());
