@@ -2,8 +2,8 @@ import React from 'react';
 import {Card, Grid, Avatar, LinearProgress, Button, Chip, Stepper, Step, StepLabel, Divider, List, ListItem, ListItemAvatar, ListItemText, ListItemSecondaryAction} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import RoomIcon from '@material-ui/icons/Room';
-import fakeProposal from './fakeProposal';
-import DropDownButton from '../Utilities/DropDownButton';
+import fakeProposal from './fakeSolidary';
+import DropDownButton from '../../Utilities/DropDownButton';
 
 const useStyles = makeStyles(theme => ({
     main_panel: {
@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const ProposalList = props => {
+const SolidaryView = props => {
     const classes = useStyles();
 
     // For test only. Should be sourced by props
@@ -167,34 +167,5 @@ const ProposalList = props => {
     )
 }
 
-/*
-const ProposalList = props => (
-    <ListGuesser {...props} filter={{ "criteria.solidary": true }}>
-        <FieldGuesser source={"type"} />
-        <FieldGuesser source={"comment"} />
-        <FieldGuesser source={"private"} />
-        <FieldGuesser source={"paused"} />
-        <FieldGuesser source={"createdDate"} />
-        <FieldGuesser source={"updatedDate"} />
-        <FieldGuesser source={"proposalLinked"} />
-        <FieldGuesser source={"user"} />
-        <FieldGuesser source={"userDelegate"} />
-        <FieldGuesser source={"waypoints"} />
-        <FieldGuesser source={"travelModes"} />
-        <FieldGuesser source={"communities"} />
-        <FieldGuesser source={"matchingOffers"} />
-        <FieldGuesser source={"matchingRequests"} />
-        <FieldGuesser source={"criteria"} />
-        <FieldGuesser source={"individualStops"} />
-        <FieldGuesser source={"notifieds"} />
-        <FieldGuesser source={"matchingProposal"} />
-        <FieldGuesser source={"matchingLinked"} />
-        <FieldGuesser source={"askLinked"} />
-        <FieldGuesser source={"formalAsk"} />
-        <FieldGuesser source={"results"} />
-        <FieldGuesser source={"event"} />
-    </ListGuesser>
-);
-*/
 
-export default ProposalList;
+export default SolidaryView;
