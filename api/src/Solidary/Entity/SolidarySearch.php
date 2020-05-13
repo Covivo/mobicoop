@@ -41,19 +41,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      },
  *      collectionOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
- *          },
- *          "transport"={
- *              "method"="POST",
- *              "path"="/solidary_searches/transport",
- *              "security_post_denormalize"="is_granted('solidary_update',object)",
- *              "normalization_context"={"groups"={"readSolidarySearch"}}
- *          },
- *          "carpool"={
- *              "method"="POST",
- *              "path"="/solidary_searches/carpool",
- *              "security_post_denormalize"="is_granted('solidary_update',object)",
- *              "normalization_context"={"groups"={"readSolidarySearch"}}
+ *             "normalization_context"={"groups"={"readSolidarySearch"}},
+ *             "security"="is_granted('solidary_list',object)"
  *          }
  *      },
  *      itemOperations={
