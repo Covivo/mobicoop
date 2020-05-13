@@ -51,10 +51,20 @@ final class SolidarySearchCollectionDataProvider implements CollectionDataProvid
 
     public function getCollection(string $resourceClass, string $operationName = null): ?SolidarySearch
     {
-        // Validation of the params
-        if (empty($this->filters['solidaryId']) || !is_numeric($this->filters['solidaryId'])) {
-            throw new SolidaryException(SolidaryException::SOLIDARY_ID_MISSING_OR_INVALID);
+
+        if (empty($this->filters['solidary'])) {
+            throw new SolidaryException(SolidaryException::SOLIDARY_MISSING);
         }
+
+        $solidaryId = null;
+        if (strrpos($this->filters['solidary'], '/')) {
+            $solidaryId = substr($this->filters['solidary'], strrpos($this->filters['solidary'], '/') + 1);
+        }
+        if(empty($solidaryId) || !is_numeric($solidaryId)){
+            throw new SolidaryException(SolidaryException::SOLIDARY_ID_INVALID);
+        }
+
+
         if (empty($this->filters['type']) || !in_array($this->filters['type'], ["carpool","transport"])) {
             throw new SolidaryException(SolidaryException::TYPE_MISSING_OR_INVALID);
         }
@@ -67,7 +77,7 @@ final class SolidarySearchCollectionDataProvider implements CollectionDataProvid
         $solidarySearch = new SolidarySearch();
         $solidarySearch->setWay($this->filters['way']);
 
-        $solidary = $this->solidaryManager->getSolidary($this->filters['solidaryId']);
+        $solidary = $this->solidaryManager->getSolidary($solidaryId);
         if (empty($solidary)) {
             throw new SolidaryException(SolidaryException::UNKNOWN_SOLIDARY);
         }
