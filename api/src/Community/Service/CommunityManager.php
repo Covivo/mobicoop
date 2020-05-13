@@ -36,7 +36,6 @@ use App\User\Repository\UserRepository;
 use App\Auth\Repository\AuthItemRepository;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
-use App\Carpool\Service\AdManager;
 
 /**
  * Community manager.
@@ -57,7 +56,6 @@ class CommunityManager
     private $proposalRepository;
     private $authItemRepository;
     private $userManager;
-    private $adManager;
 
     /**
      * Constructor
@@ -73,8 +71,7 @@ class CommunityManager
         CommunityRepository $communityRepository,
         ProposalRepository $proposalRepository,
         AuthItemRepository $authItemRepository,
-        UserManager $userManager,
-        AdManager $adManager
+        UserManager $userManager
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -84,9 +81,7 @@ class CommunityManager
         $this->proposalRepository = $proposalRepository;
         $this->authItemRepository = $authItemRepository;
         $this->userManager = $userManager;
-        $this->adManager = $adManager;
     }
-
 
     /**
      * Check if a user can join a community
@@ -99,7 +94,6 @@ class CommunityManager
      */
     public function canJoin(CommunityUser $communityUser)
     {
-
         $authorized = true;
         // we check if the community is secured
         $community= $communityUser->getCommunity();
@@ -123,10 +117,7 @@ class CommunityManager
         ($community->getDomain() != (explode("@", $communityUser->getUser()->getEmail()))[1])) {
             $authorized = false;
         }
-        $this->entityManager->persist($communityUser);
-        $this->entityManager->flush();
-
-        return $communityUser;
+        return $authorized;
     }
 
     /**
@@ -238,7 +229,7 @@ class CommunityManager
                 // we check if the proposal is still valid if yes we retrieve the proposal
                 $LimitDate = $proposal->getCriteria()->getToDate() ? $proposal->getCriteria()->getToDate() : $proposal->getCriteria()->getFromDate();
                 if ($LimitDate >= new \DateTime()) {
-                    $ads[] = $this->adManager->makeAdForCommunityOrEvent($proposal);
+                    $ads[] = $this->makeAdForCommunityOrEvent($proposal);
                     if (!is_null($proposal->getProposalLinked())) {
                         $refIdProposals[$proposal->getId()] = $proposal->getProposalLinked()->getId();
                     }

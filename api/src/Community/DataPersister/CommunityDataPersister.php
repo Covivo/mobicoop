@@ -28,13 +28,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 use App\Community\Service\CommunityManager;
 
-/**
- * Data persister for Community
- * Use for add the role community_manager to the author before save
- *
- * @author Julien Deschampt <julien.deschampt@mobicoop.org>
- */
-
 final class CommunityDataPersister implements ContextAwareDataPersisterInterface
 {
     private $request;
@@ -60,7 +53,7 @@ final class CommunityDataPersister implements ContextAwareDataPersisterInterface
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad community id is provided"));
         }
-
+        
         $data = $this->communityManager->save($data);
         return $data;
     }
