@@ -51,7 +51,6 @@ final class SolidarySearchCollectionDataProvider implements CollectionDataProvid
 
     public function getCollection(string $resourceClass, string $operationName = null): ?SolidarySearch
     {
-
         if (empty($this->filters['solidary'])) {
             throw new SolidaryException(SolidaryException::SOLIDARY_MISSING);
         }
@@ -60,7 +59,7 @@ final class SolidarySearchCollectionDataProvider implements CollectionDataProvid
         if (strrpos($this->filters['solidary'], '/')) {
             $solidaryId = substr($this->filters['solidary'], strrpos($this->filters['solidary'], '/') + 1);
         }
-        if(empty($solidaryId) || !is_numeric($solidaryId)){
+        if (empty($solidaryId) || !is_numeric($solidaryId)) {
             throw new SolidaryException(SolidaryException::SOLIDARY_ID_INVALID);
         }
 
