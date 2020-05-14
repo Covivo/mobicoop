@@ -50,7 +50,7 @@ export const CommunityEdit = (props) => {
     const translate = useTranslate();
     const communityId = props.id;
 
-    const roles = localStorage.roles.split(',');
+    const roles = Array.isArray( localStorage.roles) ?  localStorage.roles.split(',') :  localStorage.roles;
     const [communityManager, setCommunityManager] = useState( !roles.includes('ROLE_SUPER_ADMIN') && !roles.includes('ROLE_ADMIN')  ? true : false );
 
     return (

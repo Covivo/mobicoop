@@ -26,7 +26,7 @@ namespace App\Community\DataProvider;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Community\Entity\Community;
-use App\Community\Service\CommunityManager;
+use App\Community\Repository\CommunityRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -38,12 +38,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class CommunityExistsCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
-    private $communityManager;
+    private $communityRepository;
 
-    public function __construct(RequestStack $requestStack, CommunityManager $communityManager)
+    public function __construct(RequestStack $requestStack, CommunityRepository $communityRepository)
     {
         $this->request = $requestStack->getCurrentRequest();
-        $this->communityManager = $communityManager;
+        $this->communityRepository = $communityRepository;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -53,7 +53,7 @@ final class CommunityExistsCollectionDataProvider implements CollectionDataProvi
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        if ($this->communityManager->getCommunityByName($this->request->get('name'))) {
+        if ($this->communityRepository->findBy(['name'=>$this->request->get('name')])) {
             throw new \InvalidArgumentException("Community name already used");
         }
         return null;
