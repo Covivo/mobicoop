@@ -13,9 +13,8 @@ final class Version20200514112400 extends AbstractMigration
     public function up(Schema $schema) : void
     {
 
-        // Add user_list, user_read items child to community_manager public and private
+        // Add article_list items child to role_user
         $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('5', '51')");
-
     }
 
     public function down(Schema $schema) : void
