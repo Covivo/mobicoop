@@ -51,4 +51,7 @@ class SolidaryException extends \LogicException
     // SolidarySearch
     const SOLIDARY_MISSING = "Solidary is missing";
     const SOLIDARY_ID_INVALID = "Invalid SolidaryId";
+    const WAY_MISSING_OR_INVALID = "Way parameter is missing or invalid (must be outward or return)";
+    const TYPE_MISSING_OR_INVALID = "Type parameter is missing or invalid (must be carpool or transport)";
+    const UNKNOWN_SOLIDARY = "There no Solidary with this id";
 }
