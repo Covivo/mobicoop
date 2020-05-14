@@ -26,6 +26,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use Doctrine\ORM\QueryBuilder;
 use App\Action\Entity\Action;
+use LogicException;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -38,14 +39,17 @@ final class TypeFilter extends AbstractContextAwareFilter
             return;
         }
 
-        echo "ok";
-        die;
+        if (!array_key_exists($value, Action::ACTION_TYPE_FILTER)) {
+            throw new LogicException("Unknown type. Should be in ['".implode("','", array_keys(Action::ACTION_TYPE_FILTER))."']");
+        }
 
         // we will create a new querybuilder for retrieving the solidary users, to avoid modifying the one used for the original query
         $em = $queryBuilder->getEntityManager();
 
+        $alias = $queryBuilder->getRootAliases()[0];
+
         $queryBuilder
-        ->where('type in ('.Action::ACTION_TYPE_FILTER[$value].')');
+        ->where($alias.'.type in ('."'".implode("','", Action::ACTION_TYPE_FILTER[$value])."'".')');
         return;
     }
 
