@@ -60,7 +60,6 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },
  *          "post"={
- *              "controller"=JoinAction::class,
  *              "security_post_denormalize"="is_granted('community_join',object)"
  *          }
  *      },
@@ -99,7 +98,7 @@ class CommunityUser
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="communityUsers")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readCommunityUser","communities","readUserAdmin","readUser"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin"})
      * @MaxDepth(1)
      * @Assert\NotBlank
      */
