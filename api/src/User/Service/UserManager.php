@@ -348,13 +348,13 @@ class UserManager
      */
     public function prepareUser(User $user, bool $encodePassword=false)
     {
-        if (count($user->getUserAuthAssignments()) == 0) {
-            // default role : user registered full
-            $authItem = $this->authItemRepository->find(AuthItem::ROLE_USER_REGISTERED_FULL);
-            $userAuthAssignment = new UserAuthAssignment();
-            $userAuthAssignment->setAuthItem($authItem);
-            $user->addUserAuthAssignment($userAuthAssignment);
-        }
+
+        // We add the default roles we set in User Entity
+        $authItem = $this->authItemRepository->find(User::ROLE_DEFAULT);
+        $userAuthAssignment = new UserAuthAssignment();
+        $userAuthAssignment->setAuthItem($authItem);
+        $user->addUserAuthAssignment($userAuthAssignment);
+
 
         if ($encodePassword) {
             $user->setClearPassword($user->getPassword());

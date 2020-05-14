@@ -4,6 +4,7 @@
 
 * New push notifications system
 * New migration system for Mobimatch : import Mobimatch persons and their journeys as real users and carpool ads
+* Add roles default we set in User entity when Register User (ROLE_USER_REGISTERED_FULL)
 
 # Release 1.3.0
 
