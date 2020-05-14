@@ -1071,7 +1071,7 @@ class Structure
         return $this->users->getValues();
     }
 
-    public function addSolidaryStructure(User $user): self
+    public function addUser(User $user): self
     {
         if (!$this->users->contains($user)) {
             $this->users->add($user);
@@ -1080,7 +1080,7 @@ class Structure
         return $this;
     }
 
-    public function removeSolidaryStructure(User $user): self
+    public function removeUser(User $user): self
     {
         if ($this->users->contains($user)) {
             $this->users->removeElement($user);
