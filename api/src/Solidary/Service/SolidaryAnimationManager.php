@@ -76,6 +76,8 @@ class SolidaryAnimationManager
             $solidaryAnimation->setProgression($diary->getProgression());
             $solidaryAnimation->setSolidary($diary->getSolidary());
             $solidaryAnimation->setSolidarySolution($diary->getSolidarySolution());
+            $solidaryAnimation->setCreatedDate($diary->getCreatedDate());
+            $solidaryAnimation->setUpdatedDate($diary->getUpdatedDate());
             $return[] = $solidaryAnimation;
         }
 

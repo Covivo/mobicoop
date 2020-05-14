@@ -37,6 +37,14 @@ final class Version20200514095100 extends AbstractMigration
             INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`)
             VALUES (220, NULL, '1', 'action_manage', 'Manage the actions')
         ");
+        $this->addSql("
+            INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`)
+            VALUES (221, NULL, '1', 'solidary_animation_create', 'Create a solidaryAnimation')
+        ");
+        $this->addSql("
+            INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`)
+            VALUES (222, NULL, '1', 'solidary_animation_list', 'List the solidaryAnimation of a Solidary')
+        ");
 
         // add solidary_transporter_schedule item child to solidary_manage
         $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('220', '215')");
@@ -45,6 +53,8 @@ final class Version20200514095100 extends AbstractMigration
         $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('220', '218')");
         $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('220', '219')");
         $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('10', '220')");
+        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('133', '221')");
+        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('133', '222')");
     }
 
     public function down(Schema $schema) : void

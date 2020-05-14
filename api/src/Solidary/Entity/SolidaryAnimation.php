@@ -41,9 +41,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      collectionOperations={
  *          "get"={
+ *              "security"="is_granted('solidary_animation_list',object)"
  *          },
  *          "post"={
- *             "security_post_denormalize"="is_granted('solidary_update',object)"
+ *             "security_post_denormalize"="is_granted('solidary_animation_create',object)"
  *          }
  *      },
  *      itemOperations={
@@ -109,6 +110,17 @@ class SolidaryAnimation
      */
     private $solidarySolution;
 
+    /**
+     * @var \DateTimeInterface Creation date of the diary action.
+     * @Groups({"readAnimation"})
+     */
+    private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date of the diary action.
+     * @Groups({"readAnimation"})
+     */
+    private $updatedDate;
 
     public function __construct()
     {
@@ -207,6 +219,30 @@ class SolidaryAnimation
     public function setSolidarySolution(?SolidarySolution $solidarySolution): self
     {
         $this->solidarySolution = $solidarySolution;
+
+        return $this;
+    }
+
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
 
         return $this;
     }
