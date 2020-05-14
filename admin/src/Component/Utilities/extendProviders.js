@@ -61,9 +61,16 @@ const myDataProvider = {
             let newRoles = []
             params.data.fields.forEach(function(v){
                   var territory = v.territory;
-                  v.roles.forEach(function(r){
-                    v != null ?  newRoles.push({"authItem": r, "territory": territory}) :   newRoles.push({"authItem": r});
-                  });
+                  //There is many roles
+                    if (Array.isArray(v.roles) ){
+                      v.roles.forEach(function(r){
+                        v != null ?  newRoles.push({"authItem": r, "territory": territory}) :   newRoles.push({"authItem": r});
+                      });
+                    //There is just 1 roles
+                  }else{
+                    v != null ?  newRoles.push({"authItem": v.roles, "territory": territory}) :   newRoles.push({"authItem": v.roles});
+                  }
+
             });
             params.data.userAuthAssignments = newRoles
             /* Rewrite roles for fit with api */
