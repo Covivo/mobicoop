@@ -77,6 +77,14 @@ class SolidaryManager
 
     public function createSolidary(Solidary $solidary)
     {
+        // to do post and persist proposal
+
+
+        // get solidaryUserStructure from
+        $structureId = $this->security->getUser()->getStructure()[0]->getId();
+        $solidary->setSolidaryUserStructure($this->solidaryUserStructureRepository->getSolidaryUserStructure($structureId, $solidaryUser));
+        
+        
         // We trigger the event
         $event = new SolidaryCreatedEvent($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser());
         $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);

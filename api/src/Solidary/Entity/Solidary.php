@@ -30,6 +30,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Entity\Proposal;
+use App\Geography\Entity\Address;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -193,6 +194,48 @@ class Solidary
      * @Groups({"asksList"})
      */
     private $asksList;
+
+    /**
+     * @var SolidaryUser SolidaryUser associated ti the ask
+     * @Groups ({"writeSolidary"})
+     */
+    private $solidaryUser;
+
+    /**
+     * @var Address Origin address of the solidary
+     * @Groups ({"writeSolidary"})
+     */
+    private $origin;
+
+    /**
+     * @var Address Destination address of the solidary
+     * @Groups ({"writeSolidary"})
+     */
+    private $destination;
+
+    /**
+     * @var \DateTimeInterface outward date and time of the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $outwardDatetime;
+
+    /**
+     * @var \DateTimeInterface outward deadline date and time of the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $outwardDeadlineDatetime;
+
+    /**
+     * @var \DateTimeInterface return date and time of the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $returnDatetime;
+
+    /**
+     * @var \DateTimeInterface return deadline date and time of the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $returnDeadlineDatetime;
     
     public function __construct()
     {
@@ -393,6 +436,90 @@ class Solidary
     public function setAsksList(?array $asksList): self
     {
         $this->asksList = $asksList;
+
+        return $this;
+    }
+
+    public function getSolidaryUser(): SolidaryUser
+    {
+        return $this->solidaryUser;
+    }
+    
+    public function setSolidaryUser(?SolidaryUser $solidaryUser): self
+    {
+        $this->solidaryUser = $solidaryUser;
+        
+        return $this;
+    }
+
+    public function getOrigin(): Address
+    {
+        return $this->origin;
+    }
+    
+    public function setOrigin(?Address $origin): self
+    {
+        $this->origin = $origin;
+        
+        return $this;
+    }
+
+    public function getDestination(): Address
+    {
+        return $this->destination;
+    }
+    
+    public function setDestination(?Address $destination): self
+    {
+        $this->destination = $destination;
+        
+        return $this;
+    }
+
+    public function getOurtwardDatetime(): ?\DateTimeInterface
+    {
+        return $this->ourtwardDatetime;
+    }
+
+    public function setOurtwardDatetime(\DateTimeInterface $ourtwardDatetime): self
+    {
+        $this->ourtwardDatetime = $ourtwardDatetime;
+
+        return $this;
+    }
+
+    public function getOurtwardDeadlineDatetime(): ?\DateTimeInterface
+    {
+        return $this->ourtwardDeadlineDatetime;
+    }
+
+    public function setOurtwardDeadlineDatetime(\DateTimeInterface $ourtwardDeadlineDatetime): self
+    {
+        $this->ourtwardDeadlineDatetime = $ourtwardDeadlineDatetime;
+
+        return $this;
+    }
+
+    public function getReturnDatetime(): ?\DateTimeInterface
+    {
+        return $this->returnDatetime;
+    }
+
+    public function setReturnDatetime(\DateTimeInterface $returnDatetime): self
+    {
+        $this->returnDatetime = $returnDatetime;
+
+        return $this;
+    }
+
+    public function getReturnDeadlineDatetime(): ?\DateTimeInterface
+    {
+        return $this->returnDeadlineDatetime;
+    }
+
+    public function setReturnDeadlineDatetime(\DateTimeInterface $returnDeadlineDatetime): self
+    {
+        $this->returnDeadlineDatetime = $returnDeadlineDatetime;
 
         return $this;
     }
