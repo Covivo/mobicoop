@@ -1136,39 +1136,4 @@ class UserManager
         }
         return false;
     }
-
-
-    /**
-     * Get and return the users for ADMIN ONLY, we can here add, remove and have custom operation for our admin
-     * We want to get the users that belong to the communities of the current user
-     * @param User    $user  The user who want to get the list
-     *
-     * @return User
-     */
-    public function getUsersForAdmin(User $user)
-    {
-        $authItemAdmin = $this->authItemRepository->find(AuthItem::ROLE_ADMIN);
-        $authItemSuperAdmin = $this->authItemRepository->find(AuthItem::ROLE_SUPER_ADMIN);
-
-        //Check if the user have the role admin or super admin, we get him the full list of users, otherwise we get him only the users in his communities
-        if ($this->checkUserHaveAuthItem($user, $authItemAdmin) || $this->checkUserHaveAuthItem($user, $authItemSuperAdmin)) {
-            return $this->userRepository->findAll();
-        } else {
-            //Get the communities that belong to current user
-            $communities = $this->communityRepository->getOwnedCommunities($user->getId());
-            $users = array();
-
-            foreach ($communities as $community) {
-                $usersCommunity = $this->userRepository->getUserBelongToMyCommunity($community);
-                if ($usersCommunity != null) {
-                    foreach ($usersCommunity as $userCommunity) {
-                        $communityUser = $this->communityUserRepository->findBy(['community'=>$community,'user'=>$usersCommunity]);
-                        $userCommunity->setAdminCommunityUser($communityUser[0]);
-                    }
-                    array_push($users, $usersCommunity);
-                }
-            }
-            return $users;
-        }
-    }
 }
