@@ -43,9 +43,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "method"="POST",
  *              "normalization_context"={"groups"={"writeDynamic","results"}},
  *              "security_post_denormalize"="is_granted('dynamic_ad_create',object)"
- *          },"get"
+ *          },
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
  *      },
  *      itemOperations={
+ *          "active"={
+ *              "method"="GET",
+ *              "read"=false,
+ *              "security"="is_granted('dynamic_ad_read',object)"
+ *          },
  *          "get"={
  *              "method"="GET",
  *              "read"=false,

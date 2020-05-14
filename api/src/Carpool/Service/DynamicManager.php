@@ -73,7 +73,6 @@ class DynamicManager
     private $askHistoryRepository;
     private $carpoolProofRepository;
     private $internalMessageManager;
-    private $proofType;
 
     /**
      * Constructor.
@@ -96,8 +95,7 @@ class DynamicManager
         AskRepository $askRespository,
         AskHistoryRepository $askHistoryRepository,
         CarpoolProofRepository $carpoolProofRepository,
-        InternalMessageManager $internalMessageManager,
-        string $proofType
+        InternalMessageManager $internalMessageManager
     ) {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -114,7 +112,6 @@ class DynamicManager
         $this->askHistoryRepository = $askHistoryRepository;
         $this->carpoolProofRepository = $carpoolProofRepository;
         $this->internalMessageManager = $internalMessageManager;
-        $this->proofType = $proofType;
     }
 
 
@@ -485,7 +482,7 @@ class DynamicManager
                     // if the pickup hasn't been made yet, we compute the direction between the driver and the passenger
                     $pickUpDuration = null;
                     $pickUpDistance = null;
-                    if (is_null($ask->getCarpoolProof())) {
+                    if (count($ask->getCarpoolProofs())==0) {
                         $addresses = [];
                         $addresses[] = $matching->getProposalOffer()->getPosition()->getWaypoint()->getAddress();
                         $addresses[] = $matching->getProposalRequest()->getPosition()->getWaypoint()->getAddress();
@@ -496,11 +493,11 @@ class DynamicManager
                     }
                     // check if there's a proof pending
                     $proof = null;
-                    if (!is_null($ask->getCarpoolProof())) {
-                        $proof['id'] = $ask->getCarpoolProof()->getId();
-                        if (is_null($ask->getCarpoolProof()->getPickUpDriverAddress()) && !is_null($ask->getCarpoolProof()->getPickUpPassengerAddress())) {
+                    if (count($ask->getCarpoolProofs())==1) {
+                        $proof['id'] = $ask->getCarpoolProofs()[0]->getId();
+                        if (is_null($ask->getCarpoolProofs()[0]->getPickUpDriverAddress()) && !is_null($ask->getCarpoolProofs()[0]->getPickUpPassengerAddress())) {
                             $proof['needed'] = 'pickUp';
-                        } elseif (is_null($ask->getCarpoolProof()->getDropOffDriverAddress()) && !is_null($ask->getCarpoolProof()->getDropOffPassengerAddress())) {
+                        } elseif (is_null($ask->getCarpoolProofs()[0]->getDropOffDriverAddress()) && !is_null($ask->getCarpoolProofs()[0]->getDropOffPassengerAddress())) {
                             $proof['needed'] = 'dropOff';
                         }
                     }
@@ -545,7 +542,7 @@ class DynamicManager
                     // if the pickup hasn't been made yet, we compute the direction between the driver and the passenger
                     $pickUpDuration = null;
                     $pickUpDistance = null;
-                    if (is_null($ask->getCarpoolProof())) {
+                    if (count($ask->getCarpoolProofs())==0) {
                         $addresses = [];
                         $addresses[] = $matching->getProposalOffer()->getPosition()->getWaypoint()->getAddress();
                         $addresses[] = $matching->getProposalRequest()->getPosition()->getWaypoint()->getAddress();
@@ -556,11 +553,11 @@ class DynamicManager
                     }
                     // check if there's a proof pending
                     $proof = null;
-                    if (!is_null($ask->getCarpoolProof())) {
-                        $proof['id'] = $ask->getCarpoolProof()->getId();
-                        if (!is_null($ask->getCarpoolProof()->getPickUpDriverAddress()) && is_null($ask->getCarpoolProof()->getPickUpPassengerAddress())) {
+                    if (count($ask->getCarpoolProofs())==1) {
+                        $proof['id'] = $ask->getCarpoolProofs()[0]->getId();
+                        if (!is_null($ask->getCarpoolProofs()[0]->getPickUpDriverAddress()) && is_null($ask->getCarpoolProofs()[0]->getPickUpPassengerAddress())) {
                             $proof['needed'] = 'pickUp';
-                        } elseif (!is_null($ask->getCarpoolProof()->getDropOffDriverAddress()) && is_null($ask->getCarpoolProof()->getDropOffPassengerAddress())) {
+                        } elseif (!is_null($ask->getCarpoolProofs()[0]->getDropOffDriverAddress()) && is_null($ask->getCarpoolProofs()[0]->getDropOffPassengerAddress())) {
                             $proof['needed'] = 'dropOff';
                         }
                     }
@@ -927,14 +924,14 @@ class DynamicManager
             throw new DynamicException("Dynamic ask not accepted");
         }
 
-        // check if a proof already exists
-        if (!is_null($ask->getCarpoolProof())) {
+        // check if a proof already exists => the array of carpool proofs for the ask has only one item as it's dynamic => punctual
+        if (count($ask->getCarpoolProofs())==1) {
             // the proof already exists, it's an update
-            return $this->updateDynamicProof($ask->getCarpoolProof()->getId(), $dynamicProof);
+            return $this->updateDynamicProof($ask->getCarpoolProofs()[0]->getId(), $dynamicProof);
         }
 
         $carpoolProof = new CarpoolProof();
-        $carpoolProof->setType($this->proofType);
+        $carpoolProof->setType($this->params['proofType']);
         $carpoolProof->setAsk($ask);
         $carpoolProof->setDriver($ask->getUserRelated());
         $carpoolProof->setPassenger($ask->getUser());
@@ -1023,6 +1020,8 @@ class DynamicManager
                             // drop off driver
                             $carpoolProof->setDropOffDriverDate(new \DateTime('UTC'));
                             $carpoolProof->setDropOffDriverAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProofData->getLatitude(),'longitude'=>$dynamicProofData->getLongitude()]));
+                            // the driver and the passenger have made their certification, the proof is ready to be sent
+                            $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
                         // driver direction will be set when the dynamic ad of the driver will be finished
                         } else {
                             throw new DynamicException("Driver dropoff certification failed : the passenger certified address is too far");
@@ -1062,7 +1061,7 @@ class DynamicManager
                         // the driver has not set its dropoff
                         $carpoolProof->setDropOffPassengerDate(new \DateTime('UTC'));
                         $carpoolProof->setDropOffPassengerAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProofData->getLatitude(),'longitude'=>$dynamicProofData->getLongitude()]));
-                        // set the dynamic ad to finished !
+                        // set the passenger dynamic ad to finished !
                         $carpoolProof->getAsk()->getMatching()->getProposalRequest()->setFinished(true);
                         $this->entityManager->persist($carpoolProof->getAsk()->getMatching()->getProposalRequest());
                     } else {
@@ -1076,8 +1075,10 @@ class DynamicManager
                             // drop off passenger
                             $carpoolProof->setDropOffPassengerDate(new \DateTime('UTC'));
                             $carpoolProof->setDropOffPassengerAddress($this->getAddressByPartialAddressArray(['latitude'=>$dynamicProofData->getLatitude(),'longitude'=>$dynamicProofData->getLongitude()]));
-                            // set the dynamic ad to finished !
+                            // set the passenger dynamic ad to finished !
                             $carpoolProof->getAsk()->getMatching()->getProposalRequest()->setFinished(true);
+                            // the driver and the passenger have made their certification, the proof is ready to be sent
+                            $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
                             $this->entityManager->persist($carpoolProof->getAsk()->getMatching()->getProposalRequest());
                         } else {
                             throw new DynamicException("Passenger dropoff certification failed : the driver certified address is too far");
@@ -1131,9 +1132,9 @@ class DynamicManager
                     /**
                      * @var Ask $ask
                      */
-                    if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER && !is_null($ask->getCarpoolProof()) && !is_null($ask->getCarpoolProof()->getPickUpDriverAddress())) {
+                    if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER && count($ask->getCarpoolProofs()) == 1 && !is_null($ask->getCarpoolProofs()[0]->getPickUpDriverAddress())) {
                         // we update the direction if the driver has made its pickup certification
-                        $this->updateProofDirection($ask->getCarpoolProof(), $dynamic->getLongitude(), $dynamic->getLatitude());
+                        $this->updateProofDirection($ask->getCarpoolProofs()[0], $dynamic->getLongitude(), $dynamic->getLatitude());
                     }
                 }
             }

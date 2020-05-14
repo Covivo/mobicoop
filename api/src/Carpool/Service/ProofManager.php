@@ -23,8 +23,15 @@
 
 namespace App\Carpool\Service;
 
+use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\Criteria;
+use App\Carpool\Entity\Waypoint;
+use App\Carpool\Repository\AskRepository;
+use App\Carpool\Repository\CarpoolProofRepository;
+use App\Carpool\Repository\WaypointRepository;
 use App\DataProvider\Entity\CarpoolProofGouvProvider;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -38,22 +45,41 @@ class ProofManager
     private $entityManager;
     private $logger;
     private $provider;
+    private $carpoolProofRepository;
+    private $askRepository;
+    private $waypointRepository;
+    private $proofType;
     
     /**
      * Constructor.
      *
-     * @param EntityManagerInterface $entityManager
-     * @param ProposalManager $proposalManager
+     * @param EntityManagerInterface $entityManager             The entity manager
+     * @param LoggerInterface $logger                           The logger
+     * @param CarpoolProofRepository $carpoolProofRepository    The carpool proofs repository
+     * @param AskRepository $askRepository                      The ask repository
+     * @param WaypointRepository $waypointRepository            The waypoint repository
+     * @param string $provider                                  The provider for proofs
+     * @param string $uri                                       The uri of the provider
+     * @param string $token                                     The token for the provider
+     * @param string $proofType                                 The proof type for classic ads
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
+        CarpoolProofRepository $carpoolProofRepository,
+        AskRepository $askRepository,
+        WaypointRepository $waypointRepository,
         string $provider,
         string $uri,
-        string $token
+        string $token,
+        string $proofType
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
+        $this->carpoolProofRepository = $carpoolProofRepository;
+        $this->askRepository = $askRepository;
+        $this->waypointRepository = $waypointRepository;
+        $this->proofType = $proofType;
 
         switch ($provider) {
             case 'BetaGouv':
@@ -63,42 +89,76 @@ class ProofManager
         }
     }
 
-
-
-    /************
-     *  COMMON  *
-     ************/
-
     /**
-     * Send the current proofs :
-     * - persisted carpoolProofs with status = 0 (dynamic or punctual)
-     * - unpersisted carpoolProofs (regular)
+     * Send the pending proofs.
      *
+     * @param DateTime|null $fromDate   The start of the period for which we want to send the proofs
+     * @param DateTime|null $toDate     The end of the period  for which we want to send the proofs
      * @return void
      */
-    public function sendProofs()
+    public function sendProofs(?DateTime $fromDate = null, ?DateTime $toDate = null)
     {
-        $proofs = [];
-        // search the dynamic or punctual proofs
-        
-        // search the regular proofs
+        // if no dates are sent, we use the previous day
+        if (is_null($fromDate)) {
+            $fromDate = new DateTime();
+            $fromDate->modify('-1 day');
+            $fromDate->setTime(0, 0);
+        }
+        if (is_null($toDate)) {
+            $toDate = new DateTime();
+            $toDate->modify('-1 day');
+            $toDate->setTime(23, 59, 59, 999);
+        }
 
-        // send the proofs
+        // we get the pending proofs
+        $proofs = $this->getProofs($fromDate, $toDate);
+
+        // send these proofs
         foreach ($proofs as $proof) {
             /**
              * @var CarpoolProof $proof
              */
-            $this->provider->postCollection($proof);
+            if ($this->provider->postCollection($proof)) {
+                $proof->setStatus(CarpoolProof::STATUS_SENT);
+            } else {
+                $proof->setStatus(CarpoolProof::STATUS_ERROR);
+            }
+            $this->entityManager->persist($proof);
         }
+        $this->entityManager->flush();
     }
 
-    /****************
-     *  CLASSIC AD  *
-     ****************/
+    /**
+     * Create and return the pending proofs for the given period.
+     *
+     * @param DateTime $fromDate   The start of the period for which we want to get the proofs
+     * @param DateTime $toDate     The end of the period  for which we want to get the proofs
+     * @return array    The proofs
+     */
+    private function getProofs(DateTime $fromDate, DateTime $toDate)
+    {
+        // first we search the accepted asks for the given period
+        $asks = $this->askRepository->findAcceptedAsksForPeriod($fromDate, $toDate);
 
+        // then we create the corresponding proofs
+        foreach ($asks as $ask) {
+            $carpoolProof = new CarpoolProof();
+            $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
+            $carpoolProof->setType($this->proofType);
+            $carpoolProof->setAsk($ask);
+            $carpoolProof->setDriver($ask->getMatching()->getProposalOffer()->getUser());
+            $carpoolProof->setPassenger($ask->getMatching()->getProposalRequest()->getUser());
+            if ($ask->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                $pickUpWaypoint = $this->waypointRepository->findMinPositionForAskAndRole($ask, Waypoint::ROLE_PASSENGER);
+                $dropOffWaypoint = $this->waypointRepository->findMaxPositionForAskAndRole($ask, Waypoint::ROLE_PASSENGER);
+                
+                $carpoolProof->setPickUpDriverDate($ask->getCriteria()->getFromDate());
+                $carpoolProof->setPickUpPassengerDate($ask->getCriteria()->getFromDate());
+                $carpoolProof->setPickUpPassengerAddress(clone $pickUpWaypoint->getAddress());
+            }
+        }
 
-
-    /****************
-     *  DYNAMIC AD  *
-     ****************/
+        // finally we search all the pending proofs
+        $proofs = $this->carpoolProofRepository->findBy(['status'=>CarpoolProof::STATUS_PENDING]);
+    }
 }

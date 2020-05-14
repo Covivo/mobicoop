@@ -39,9 +39,10 @@ use CrEOF\Spatial\PHP\Types\Geometry\Point;
  */
 class CarpoolProof
 {
-    const STATUS_PENDING = 0;
-    const STATUS_SENT = 1;
-    const STATUS_ERROR = 2;
+    const STATUS_INITIATED = 0;     // not ready to be sent, proof still under construction
+    const STATUS_PENDING = 1;       // ready to be sent
+    const STATUS_SENT = 2;          // sent
+    const STATUS_ERROR = 3;         // error during the sending
 
     const ACTOR_DRIVER = 1;
     const ACTOR_PASSENGER = 2;
@@ -73,7 +74,7 @@ class CarpoolProof
     /**
      * @var Ask The ask related to the proof.
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", mappedBy="carpoolProof", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="carpoolProofs")
      */
     private $ask;
 
@@ -244,7 +245,7 @@ class CarpoolProof
     {
         $this->ask = $ask;
         // set the owning side
-        $ask->setCarpoolProof($this);
+        $ask->addCarpoolProof($this);
 
         return $this;
     }

@@ -50,6 +50,12 @@ class CarpoolProofGouvProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
+    /**
+     * Send a carpool proof
+     *
+     * @param CarpoolProof $carpoolProof    The carpool proof to send
+     * @return bool                         The result of the send
+     */
     public function postCollection(CarpoolProof $carpoolProof)
     {
         // creation of the dataProvider
@@ -107,6 +113,8 @@ class CarpoolProofGouvProvider implements ProviderInterface
 
         // todo : treat the result
         $result = $dataProvider->postCollection($journey, $headers);
+
+        return true;
     }
 
     /**
