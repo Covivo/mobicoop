@@ -34,6 +34,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\RelayPoint\Entity\RelayPoint;
+use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -436,6 +437,14 @@ class Structure
      */
     private $structureProofs;
 
+    /**
+     * @var ArrayCollection|null A Structure can have multiple users that work for it
+     *
+     * @ORM\ManyToMany(targetEntity="\App\User\Entity\User", inversedBy="solidaryStructures")
+     * @MaxDepth(1)
+     */
+    private $users;
+
     public function __construct()
     {
         $this->solidaries = new ArrayCollection();
@@ -444,6 +453,7 @@ class Structure
         $this->subjects = new ArrayCollection();
         $this->needs = new ArrayCollection();
         $this->relayPoints = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -1051,6 +1061,29 @@ class Structure
     {
         if ($this->needs->contains($structureProof)) {
             $this->needs->removeElement($structureProof);
+        }
+
+        return $this;
+    }
+
+    public function getUsers()
+    {
+        return $this->users->getValues();
+    }
+
+    public function addSolidaryStructure(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+        }
+
+        return $this;
+    }
+
+    public function removeSolidaryStructure(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
         }
 
         return $this;

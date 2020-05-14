@@ -93,6 +93,7 @@ use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
 use App\Match\Entity\MassPerson;
 use App\Solidary\Entity\SolidaryUser;
+use App\Solidary\Entity\Structure;
 use App\User\Controller\UserCanUseEmail;
 
 /**
@@ -1083,6 +1084,14 @@ class User implements UserInterface, EquatableInterface
      */
     private $massPerson;
 
+    /**
+     * @var ArrayCollection|null A user may work in multiple solidary Structures.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Structure", mappedBy="users")
+     * @MaxDepth(1)
+     */
+    private $solidaryStructures;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -1109,6 +1118,7 @@ class User implements UserInterface, EquatableInterface
         $this->carpoolProofsAsDriver = new ArrayCollection();
         $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->pushTokens = new ArrayCollection();
+        $this->solidaryStructures = new ArrayCollection();
         $this->roles = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
@@ -2564,6 +2574,29 @@ class User implements UserInterface, EquatableInterface
     public function setMassPerson(?MassPerson $massPerson): self
     {
         $this->massPerson = $massPerson;
+
+        return $this;
+    }
+
+    public function getSolidaryStructures()
+    {
+        return $this->solidaryStructures->getValues();
+    }
+
+    public function addSolidaryStructure(Structure $structure): self
+    {
+        if (!$this->solidaryStructures->contains($structure)) {
+            $this->solidaryStructures->add($structure);
+        }
+
+        return $this;
+    }
+
+    public function removeSolidaryStructure(Structure $structure): self
+    {
+        if ($this->solidaryStructures->contains($structure)) {
+            $this->solidaryStructures->removeElement($structure);
+        }
 
         return $this;
     }
