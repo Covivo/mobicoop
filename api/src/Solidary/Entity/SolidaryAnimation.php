@@ -41,7 +41,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      collectionOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
  *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('solidary_update',object)"
@@ -145,7 +144,7 @@ class SolidaryAnimation
         return $this->comment;
     }
 
-    public function setComment(string $comment): self
+    public function setComment(?string $comment): self
     {
         $this->comment = $comment;
 
