@@ -316,14 +316,12 @@ class CommunityManager
      *
      * @param CommunityUser       $communityUser           The community user to create
      * @return void
-     */ 
+     */
     public function saveCommunityUser(CommunityUser $communityUser)
     {
-      $this->entityManager->persist($communityUser);
-      $this->entityManager->flush();
+        $this->entityManager->persist($communityUser);
+        $this->entityManager->flush();
 
-     return $communityUser;
-
+        return $communityUser;
     }
-
 }
