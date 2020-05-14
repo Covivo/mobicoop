@@ -64,12 +64,13 @@ final class TypeFilter extends AbstractContextAwareFilter
         foreach ($this->properties as $property => $strategy) {
             $description["$property"] = [
                 'property' => $property,
-                'type' => 'boolean',
+                'type' => 'string',
                 'required' => false,
+                'enum' => "{'".implode("','", array_keys(Action::ACTION_TYPE_FILTER))."'}",
                 'swagger' => [
-                    'description' => 'Filter on users that are solidary candidates',
-                    'name' => 'solidaryCandidate',
-                    'type' => 'boolean',
+                    'description' => 'Filter on Action to get only a specific type ['.implode("','", array_keys(Action::ACTION_TYPE_FILTER)).']',
+                    'name' => 'type',
+                    'type' => 'string',
                 ],
             ];
         }
