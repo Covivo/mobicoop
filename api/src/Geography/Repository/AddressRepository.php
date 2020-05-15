@@ -54,6 +54,11 @@ class AddressRepository
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
+    public function find(int $id): ?Address
+    {
+        return $this->repository->find($id);
+    }
+
     /**
      * Return all addresses with the given name for the given user id.
      *

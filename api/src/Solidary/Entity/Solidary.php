@@ -30,7 +30,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Entity\Proposal;
-use App\Geography\Entity\Address;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -71,6 +70,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      }
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class Solidary
 {
@@ -202,13 +202,13 @@ class Solidary
     private $solidaryUser;
 
     /**
-     * @var Address Origin address of the solidary
+     * @var Array Origin address of the solidary
      * @Groups ({"writeSolidary"})
      */
     private $origin;
 
     /**
-     * @var Address Destination address of the solidary
+     * @var Array|null Destination address of the solidary
      * @Groups ({"writeSolidary"})
      */
     private $destination;
@@ -244,6 +244,8 @@ class Solidary
         $this->solidarySolutions = new ArrayCollection();
         $this->solidaryMatchings = new ArrayCollection();
         $this->proofs = new ArrayCollection();
+        $this->origin = [];
+        $this->destination = [];
     }
 
     public function getId(): int
@@ -452,50 +454,50 @@ class Solidary
         return $this;
     }
 
-    public function getOrigin(): Address
+    public function getOrigin(): array
     {
         return $this->origin;
     }
     
-    public function setOrigin(?Address $origin): self
+    public function setOrigin($origin): self
     {
         $this->origin = $origin;
         
         return $this;
     }
 
-    public function getDestination(): Address
+    public function getDestination(): array
     {
         return $this->destination;
     }
     
-    public function setDestination(?Address $destination): self
+    public function setDestination(?array $destination): self
     {
         $this->destination = $destination;
         
         return $this;
     }
 
-    public function getOurtwardDatetime(): ?\DateTimeInterface
+    public function getOutwardDatetime(): ?\DateTimeInterface
     {
-        return $this->ourtwardDatetime;
+        return $this->outwardDatetime;
     }
 
-    public function setOurtwardDatetime(\DateTimeInterface $ourtwardDatetime): self
+    public function setOutwardDatetime(\DateTimeInterface $outwardDatetime): self
     {
-        $this->ourtwardDatetime = $ourtwardDatetime;
+        $this->outwardDatetime = $outwardDatetime;
 
         return $this;
     }
 
-    public function getOurtwardDeadlineDatetime(): ?\DateTimeInterface
+    public function getOutwardDeadlineDatetime(): ?\DateTimeInterface
     {
-        return $this->ourtwardDeadlineDatetime;
+        return $this->outwardDeadlineDatetime;
     }
 
-    public function setOurtwardDeadlineDatetime(\DateTimeInterface $ourtwardDeadlineDatetime): self
+    public function setOutwardDeadlineDatetime(\DateTimeInterface $outwardDeadlineDatetime): self
     {
-        $this->ourtwardDeadlineDatetime = $ourtwardDeadlineDatetime;
+        $this->outwardDeadlineDatetime = $outwardDeadlineDatetime;
 
         return $this;
     }

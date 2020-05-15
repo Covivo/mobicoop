@@ -22,8 +22,12 @@
 
 namespace App\Solidary\Service;
 
+use App\Carpool\Entity\Ad;
 use App\Carpool\Entity\Criteria;
+use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Service\AdManager;
+use App\Geography\Entity\Address;
+use App\Geography\Repository\AddressRepository;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryAsksListItem;
 use App\Solidary\Entity\SolidarySearch;
@@ -37,9 +41,11 @@ use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\SolidaryUserRepository;
 use Symfony\Component\Security\Core\Security;
 use App\Solidary\Entity\SolidaryAsk;
+use App\Solidary\Repository\SolidaryUserStructureRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class SolidaryManager
 {
@@ -51,8 +57,11 @@ class SolidaryManager
     private $solidaryUserRepository;
     private $adManager;
     private $solidaryMatcher;
+    private $addressRepository;
+    private $proposalRepository;
+    private $solidaryUserStructureRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository, SolidaryUserRepository $solidaryUserRepository, AdManager $adManager, SolidaryMatcher $solidaryMatcher, SolidaryAskRepository $solidaryAskRepository)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository, SolidaryUserRepository $solidaryUserRepository, AdManager $adManager, SolidaryMatcher $solidaryMatcher, SolidaryAskRepository $solidaryAskRepository, AddressRepository $addressRepository, ProposalRepository $proposalRepository, SolidaryUserStructureRepository $solidaryUserStructureRepository)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
@@ -62,6 +71,9 @@ class SolidaryManager
         $this->adManager = $adManager;
         $this->solidaryMatcher = $solidaryMatcher;
         $this->solidaryAskRepository = $solidaryAskRepository;
+        $this->addressRepository = $addressRepository;
+        $this->proposalRepository = $proposalRepository;
+        $this->solidaryUserStructureRepository = $solidaryUserStructureRepository;
     }
 
     public function getSolidary($id): ?Solidary
@@ -75,22 +87,44 @@ class SolidaryManager
         return $solidary;
     }
 
+    /**
+     * Create a solidary
+     *
+     * @param Solidary $solidary
+     * @return Solidary
+     */
     public function createSolidary(Solidary $solidary)
     {
-        // to do post and persist proposal
+        // TODO check if the user exist if not create the user
 
+        // TODO if the user exist check if the solidaryUser exist if not create the solidary user
 
-        // get solidaryUserStructure from
-        $structureId = $this->security->getUser()->getStructure()[0]->getId();
-        $solidary->setSolidaryUserStructure($this->solidaryUserStructureRepository->getSolidaryUserStructure($structureId, $solidaryUser));
+        // Create an ad and get associated proposal
+        $ad = $this->createJourneyFromSolidary($solidary);
+        $proposal = $this->proposalRepository->find($ad->getId());
+
+        // we get solidaryUserStructure
+        $solidaryStructureId = $this->security->getUser()->getSolidaryStructures()[0]->getId();
+        $solidaryUserId = $solidary->getSolidaryUser()->getId();
+        $solidaryUserStructure = $this->solidaryUserStructureRepository->findByStructureAndSolidaryUser($solidaryStructureId, $solidaryUserId);
+
+        // we check if we have a deadline if yes we update solidary
+        if ($solidary->getOutwardDeadlineDatetime()) {
+            $solidary->setDeadlineDate($solidary->getOutwardDeadlineDatetime());
+        }
+
+        // we update solidary
+        $solidary->setProposal($proposal);
+        $solidary->setSolidaryUserStructure($solidaryUserStructure[0]);
         
-        
+        $this->entityManager->persist($solidary);
+        $this->entityManager->flush();
+
         // We trigger the event
         $event = new SolidaryCreatedEvent($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser());
         $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
 
-        $this->entityManager->persist($solidary);
-        $this->entityManager->flush();
+        return $solidary;
     }
 
     public function updateSolidary(Solidary $solidary)
@@ -283,5 +317,112 @@ class SolidaryManager
         $solidary->setAsksList($asksList);
 
         return $solidary;
+    }
+
+    /**
+     * We create the ad associated to the solidary
+     *
+     * @param Solidary $solidary
+     * @return Ad
+     */
+    private function createJourneyFromSolidary(Solidary $solidary): Ad
+    {
+        $ad = new Ad;
+
+        // we get and set the origin and destination of the demand
+        $origin = new Address;
+        $destination = null;
+        if (isset($solidary->getOrigin()['iri'])) {
+            $origin = clone $this->addressRepository->find(substr($solidary->getOrigin()['iri'], strrpos($solidary->getOrigin()['iri'], '/') + 1));
+        } else {
+            $origin->setHouseNumber($solidary->getOrigin()['houseNumber']);
+            $origin->setStreet($solidary->getOrigin()['street']);
+            $origin->setStreetAddress($solidary->getOrigin()['streetAddress']);
+            $origin->setPostalCode($solidary->getOrigin()['postalCode']);
+            $origin->setSubLocality($solidary->getOrigin()['subLocality']);
+            $origin->setAddressLocality($solidary->getOrigin()['addressLocality']);
+            $origin->setLocalAdmin($solidary->getOrigin()['localAdmin']);
+            $origin->setCounty($solidary->getOrigin()['county']);
+            $origin->setMacroCounty($solidary->getOrigin()['macroCounty']);
+            $origin->setRegion($solidary->getOrigin()['region']);
+            $origin->setMacroRegion($solidary->getOrigin()['macroRegion']);
+            $origin->setAddressCountry($solidary->getOrigin()['addressCountry']);
+            $origin->setCountryCode($solidary->getOrigin()['countryCode']);
+            $origin->setLatitude($solidary->getOrigin()['latitude']);
+            $origin->setLongitude($solidary->getOrigin()['longitude']);
+        }
+
+        if ($solidary->getDestination() && isset($solidary->getDestination()['iri'])) {
+            $destination = clone $this->addressRepository->find(substr($solidary->getDestination()['iri'], strrpos($solidary->getDestination()['iri'], '/') + 1));
+        } elseif ($solidary->getDestination()) {
+            $destination = new Address();
+            $destination->setHouseNumber($solidary->getDestination()['houseNumber']);
+            $destination->setStreet($solidary->getDestination()['street']);
+            $destination->setStreetAddress($solidary->getDestination()['streetAddress']);
+            $destination->setPostalCode($solidary->getDestination()['postalCode']);
+            $destination->setSubLocality($solidary->getDestination()['subLocality']);
+            $destination->setAddressLocality($solidary->getDestination()['addressLocality']);
+            $destination->setLocalAdmin($solidary->getDestination()['localAdmin']);
+            $destination->setCounty($solidary->getDestination()['county']);
+            $destination->setMacroCounty($solidary->getDestination()['macroCounty']);
+            $destination->setRegion($solidary->getDestination()['region']);
+            $destination->setMacroRegion($solidary->getDestination()['macroRegion']);
+            $destination->setAddressCountry($solidary->getDestination()['addressCountry']);
+            $destination->setCountryCode($solidary->getDestination()['countryCode']);
+            $destination->setLatitude($solidary->getDestination()['latitude']);
+            $destination->setLongitude($solidary->getDestination()['longitude']);
+        }
+        
+        // Role is always passenger since it's a solidary demand
+        $ad->setRole(Ad::ROLE_PASSENGER);
+
+        // round-trip
+        $ad->setOneWay(false);
+
+        // Frequency
+        $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+        // We set the date and time of the demand
+        $ad->setOutwardDate($solidary->getOutwardDatetime());
+        $ad->setReturnDate($solidary->getReturnDatetime());
+        $ad->setOutwardTime($solidary->getOutwardDatetime()->format("H:i"));
+        $ad->setReturnTime($solidary->getReturnDatetime()->format("H:i"));
+        if ($solidary->getOutwardDeadlineDatetime()) {
+            $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
+
+            // we set the schedule and the limit date of the regular demand
+            $ad->setOutwardLimitDate($solidary->getOutwardDeadlineDatetime());
+            $ad->setReturnLimitDate($solidary->getReturnDeadlineDatetime());
+            // Schedule
+            $schedule = [];
+            $days = ['mon','tue','wed','thu','fri'];
+            foreach ($days as $day) {
+                $schedule[0][$day] = true;
+            }
+            $schedule[0]['outwardTime'] = $solidary->getOutwardDatetime()->format("H:i");
+            $schedule[0]['returnTime'] = $solidary->getReturnDatetime()->format("H:i");
+
+            $ad->setSchedule($schedule);
+        }
+
+        // Outward waypoint
+        $outwardWaypoints = [
+            clone $origin,
+            clone $destination
+        ];
+
+        $ad->setOutwardWaypoints($outwardWaypoints);
+
+        // return waypoint
+        $returnWaypoints = [
+            clone $destination,
+            clone $origin
+        ];
+
+        $ad->setReturnWaypoints($returnWaypoints);
+
+        // The User
+        $ad->setUserId($solidary->getSolidaryUser()->getUser()->getId());
+
+        return $this->adManager->createAd($ad, true);
     }
 }
