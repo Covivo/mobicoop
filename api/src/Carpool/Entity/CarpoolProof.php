@@ -217,26 +217,6 @@ class CarpoolProof
      */
     private $points;
 
-    /**
-     * @var \DateTimeInterface Driver start date (not persisted).
-     */
-    private $startDriverDate;
-
-    /**
-     * @var \DateTimeInterface Driver end date (not persisted).
-     */
-    private $endDriverDate;
-
-    /**
-     * @var Address Origin of the driver (not persisted).
-     */
-    private $originDriverAddress;
-
-    /**
-     * @var Address Destination of the driver (not persisted).
-     */
-    private $destinationDriverAddress;
-
     public function getId(): ?int
     {
         return $this->id;
