@@ -20,37 +20,48 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\DataPersister;
+namespace App\Community\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Solidary\Entity\SolidarySearch;
-use App\Solidary\Service\SolidaryManager;
+use App\Community\Entity\CommunityUser;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
+use App\Community\Service\CommunityManager;
 
 /**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * Data persister for Community User
+ * Use for check if user can join a community before save
+ *
+ * @author Julien Deschampt <julien.deschampt@mobicoop.org>
  */
-final class SolidarySearchDataPersister implements ContextAwareDataPersisterInterface
+
+final class CommunityUserDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $solidaryManager;
-    
-    public function __construct(SolidaryManager $solidaryManager)
+    private $request;
+    private $communityManager;
+
+    public function __construct(RequestStack $requestStack, CommunityManager $communityManager)
     {
-        $this->solidaryManager = $solidaryManager;
+        $this->request = $requestStack->getCurrentRequest();
+        $this->communityManager = $communityManager;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof SolidarySearch;
+        // We want to join a community, check if user have the fight before save
+        return $data instanceof CommunityUser
+         && isset($context['collection_operation_name'])
+         && $context['collection_operation_name'] == 'post'
+         && $this->communityManager->canJoin($data);
     }
 
     public function persist($data, array $context = [])
     {
         // call your persistence layer to save $data
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'transport') {
-            $data = $this->solidaryManager->getSolidaryTransportSearchResults($data);
-        } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'carpool') {
-            $data = $this->solidaryManager->getSolidaryCarpoolSearchSearchResults($data);
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad community user id is provided"));
         }
+        $this->communityManager->saveCommunityUser($data);
         return $data;
     }
 

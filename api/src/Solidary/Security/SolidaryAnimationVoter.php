@@ -21,24 +21,21 @@
  *    LICENSE
  **************************/
 
-namespace App\Action\Security;
+namespace App\Solidary\Security;
 
 use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Solidary\Entity\SolidaryAnimation;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\Action\Entity\Action;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class ActionVoter extends Voter
+class SolidaryAnimationVoter extends Voter
 {
-    const ACTION_CREATE = 'action_create';
-    const ACTION_READ = 'action_read';
-    const ACTION_UPDATE = 'action_update';
-    const ACTION_DELETE = 'action_delete';
-    const ACTION_LIST = 'action_list';
+    const SOLIDARY_ANIMATION_CREATE = 'solidary_animation_create';
+    const SOLIDARY_ANIMATION_LIST = 'solidary_animation_list';
     
     private $authManager;
 
@@ -51,70 +48,43 @@ class ActionVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::ACTION_CREATE,
-            self::ACTION_READ,
-            self::ACTION_UPDATE,
-            self::ACTION_DELETE,
-            self::ACTION_LIST
+            self::SOLIDARY_ANIMATION_CREATE,
+            self::SOLIDARY_ANIMATION_LIST,
             ])) {
             return false;
         }
-
-        // only vote on Action objects inside this voter
-        // only for items actions
+      
+        // only vote on User objects inside this voter
         if (!in_array($attribute, [
-            self::ACTION_CREATE,
-            self::ACTION_READ,
-            self::ACTION_UPDATE,
-            self::ACTION_DELETE,
-            self::ACTION_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Action)) {
+            self::SOLIDARY_ANIMATION_CREATE,
+            self::SOLIDARY_ANIMATION_LIST,
+            ]) && !($subject instanceof Paginator) &&
+                !($subject instanceof SolidaryAnimation)
+            ) {
             return false;
         }
-
         return true;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         switch ($attribute) {
-            case self::ACTION_CREATE:
-                return $this->canCreateAction();
-            case self::ACTION_READ:
-                return $this->canReadAction($subject);
-            case self::ACTION_UPDATE:
-                return $this->canUpdateAction($subject);
-            case self::ACTION_DELETE:
-                return $this->canDeleteAction($subject);
-            case self::ACTION_LIST:
-                return $this->canListAction();
+            case self::SOLIDARY_ANIMATION_CREATE:
+                return $this->canCreateSolidaryAnimation();
+            case self::SOLIDARY_ANIMATION_LIST:
+                return $this->canListSolidaryAnimation();
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canCreateAction()
+    private function canCreateSolidaryAnimation()
     {
-        return $this->authManager->isAuthorized(self::ACTION_CREATE);
+        return $this->authManager->isAuthorized(self::SOLIDARY_ANIMATION_CREATE);
     }
 
-    private function canReadAction(Action $action)
+    private function canListSolidaryAnimation()
     {
-        return $this->authManager->isAuthorized(self::ACTION_READ, ['action'=>$action]);
-    }
-
-    private function canUpdateAction(Action $action)
-    {
-        return $this->authManager->isAuthorized(self::ACTION_UPDATE, ['action'=>$action]);
-    }
-    
-    private function canDeleteAction(Action $action)
-    {
-        return $this->authManager->isAuthorized(self::ACTION_DELETE, ['action'=>$action]);
-    }
-    
-    private function canListAction()
-    {
-        return $this->authManager->isAuthorized(self::ACTION_LIST);
+        return $this->authManager->isAuthorized(self::SOLIDARY_ANIMATION_LIST);
     }
 }

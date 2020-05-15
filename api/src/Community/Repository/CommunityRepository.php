@@ -135,6 +135,21 @@ class CommunityRepository
         }
         return $query->getQuery()->getResult();
     }
+    
+    /**
+    *Get communities owned by the user
+    *
+    * @param Int $userId
+    * @return void
+    */
+    public function getOwnedCommunities(Int $userId)
+    {
+        $query = $this->repository->createQueryBuilder('c')
+         ->where('c.user = :userId')
+         ->setParameter('userId', $userId)
+         ->getQuery()->getResult();
+        return $query;
+    }
 
     /**
      * Find if a user is registered in a given community
