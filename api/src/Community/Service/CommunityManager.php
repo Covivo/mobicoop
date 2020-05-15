@@ -288,7 +288,7 @@ class CommunityManager
 
     /**
      * Give the roles : community_manager to the creator of a public community and save the data
-     * Also give the special role tu user : community_restrict for just display communities he created in admin
+     * Also give the special role to user : community_restrict for display only communities he created
      *
      * @param Community       $community           The community created
      * @return void

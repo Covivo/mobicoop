@@ -35,7 +35,7 @@ use App\Auth\Entity\AuthItem;
 
 /**
  * Extension for get the owned community for a referent in admin
- * We use this extension to get only the owned communities for a referent and all for the admin, for those who are community_restrict we get only communities they created
+ * We use this extension to get only the owned communities for those who are community_restrict
  *
  * @author Julien Deschampt <julien.deschampt@mobicoop.org>
  *
