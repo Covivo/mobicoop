@@ -22,6 +22,7 @@
 
 namespace App\Solidary\Service;
 
+use App\Solidary\Entity\Structure;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\NeedRepository;
 use App\Solidary\Repository\StructureProofRepository;
@@ -55,7 +56,13 @@ class StructureManager
         $this->needRepository = $needRepository;
     }
 
-    public function getStructureProofs(int $structureId)
+    /**
+     * Get the StructureProofs of a Structure
+     *
+     * @param integer $structureId
+     * @return array
+     */
+    public function getStructureProofs(int $structureId): ?array
     {
 
         // We get the structure
@@ -65,7 +72,13 @@ class StructureManager
         return $this->structureProofRepository->findStructureProofs($structure);
     }
 
-    public function getStructureSubjects(int $structureId)
+    /**
+     * Get the Subjects of a Structure
+     *
+     * @param integer $structureId
+     * @return array
+     */
+    public function getStructureSubjects(int $structureId): ?array
     {
 
         // We get the structure
@@ -75,7 +88,13 @@ class StructureManager
         return $this->subjectRepository->findStructureSubjects($structure);
     }
 
-    public function getStructureNeeds(int $structureId)
+    /**
+     * Get the needs of a Structure
+     *
+     * @param integer $structureId
+     * @return Structure with an array needs filled
+     */
+    public function getStructureNeeds(int $structureId): ?Structure
     {
         $structure = $this->structureRepository->find($structureId);
 

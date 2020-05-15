@@ -52,13 +52,4 @@ class NeedRepository
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
-
-    public function findStructureNeeds(Structure $structure)
-    {
-        $query = $this->repository->createQueryBuilder('n')
-        ->where('s.structure = :structure')
-        ->join('v.user', 'u')
-        ->setParameter('structure', $structure);
-        return $query->getQuery()->getResult();
-    }
 }
