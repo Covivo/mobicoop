@@ -93,7 +93,6 @@ class AskRepository
      */
     public function findAcceptedAsksForPeriod(DateTime $fromDate, DateTime $toDate)
     {
-
         // we will need the different week number days between fromDate and toDate
         $days = [];
         $curDate = clone $fromDate;
@@ -108,6 +107,34 @@ class AskRepository
                 $curDate->modify('+1 day');
             }
         }
+        // we create the regular where clause
+        $regularWhereArray = [];
+        foreach ($days as $day) {
+            switch ($day) {
+                case 0:
+                    $regularWhereArray[$day] = "(c.sunCheck = 1)";
+                    break;
+                case 1:
+                    $regularWhereArray[$day] = "(c.monCheck = 1)";
+                    break;
+                case 2:
+                    $regularWhereArray[$day] = "(c.tueCheck = 1)";
+                    break;
+                case 3:
+                    $regularWhereArray[$day] = "(c.wedCheck = 1)";
+                    break;
+                case 4:
+                    $regularWhereArray[$day] = "(c.thuCheck = 1)";
+                    break;
+                case 5:
+                    $regularWhereArray[$day] = "(c.friCheck = 1)";
+                    break;
+                case 6:
+                    $regularWhereArray[$day] = "(c.satCheck = 1)";
+                    break;
+            }
+        }
+        $regularWhere = implode(' or ', $regularWhereArray);
         $query = $this->repository->createQueryBuilder('a')
         ->join('a.criteria', 'c')
         ->where('(a.status = :accepted_driver or a.status = :accepted_passenger)')
@@ -118,14 +145,7 @@ class AskRepository
             or 
             (
                 c.frequency = :regular and c.fromDate <= :fromDate and c.toDate >= :toDate and
-                (
-                    (c.monCheck = 1 and 1 IN (:days)) or 
-                    (c.tueCheck = 1 and 2 IN (:days)) or 
-                    (c.wedCheck = 1 and 3 IN (:days)) or 
-                    (c.thuCheck = 1 and 4 IN (:days)) or 
-                    (c.friCheck = 1 and 5 IN (:days)) or 
-                    (c.satCheck = 1 and 6 IN (:days)) or 
-                    (c.sunCheck = 1 and 0 IN (:days))
+                (' . $regularWhere . ')
             )
         )')
         ->setParameter('accepted_driver', Ask::STATUS_ACCEPTED_AS_DRIVER)
@@ -135,7 +155,6 @@ class AskRepository
         ->setParameter('fromDate', $fromDate->format('Y-m-d'))
         ->setParameter('toDate', $toDate->format('Y-m-d'))
         ->setParameter('toDate', $toDate->format('Y-m-d'))
-        ->setParameter('days', implode(',', $days))
         ;
                 
         return $query->getQuery()->getResult();

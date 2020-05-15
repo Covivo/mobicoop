@@ -24,6 +24,7 @@
 namespace App\Carpool\Command;
 
 use App\Carpool\Service\ProofManager;
+use DateTime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -50,9 +51,9 @@ class CarpoolProofBatchCommand extends Command
     protected function configure()
     {
         $this
-        ->setName('app:carpoool:proof-batch')
-        ->addArgument('fromDate', InputArgument::OPTIONAL, 'The start of the period')
-        ->addArgument('toDate', InputArgument::OPTIONAL, 'The end of the period')
+        ->setName('app:carpool:proof-batch')
+        ->addArgument('fromDate', InputArgument::OPTIONAL, 'The start day of the period')
+        ->addArgument('toDate', InputArgument::OPTIONAL, 'The end day of the period (fromDate will be used if only fromDate is given)')
         ->setDescription('Send the carpool proofs for the given period.')
         ->setHelp('Send the carpool proofs to the carpool register; the proofs concerns the given period (default : previous day).')
         ;
@@ -60,6 +61,18 @@ class CarpoolProofBatchCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->proofManager->sendProofs($input->getArgument('fromDate'), $input->getArgument('toDate'));
+        $fromDate = null;
+        $toDate = null;
+        if ($input->getArgument('fromDate')) {
+            $fromDate = DateTime::createFromFormat("Ymd", $input->getArgument('fromDate'));
+            $fromDate->setTime(0, 0);
+            if ($input->getArgument('toDate')) {
+                $toDate = DateTime::createFromFormat("Ymd", $input->getArgument('toDate'));
+            } else {
+                $toDate = clone $fromDate;
+            }
+            $toDate->setTime(23, 59, 59, 999);
+        }
+        $this->proofManager->sendProofs($fromDate, $toDate);
     }
 }

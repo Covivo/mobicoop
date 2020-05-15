@@ -79,6 +79,36 @@ class CarpoolProof
     private $ask;
 
     /**
+     * @var \DateTimeInterface Driver start date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $startDriverDate;
+
+    /**
+     * @var \DateTimeInterface Driver end date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $endDriverDate;
+
+    /**
+     * @var Address Origin of the driver.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     */
+    private $originDriverAddress;
+
+    /**
+     * @var Address Destination of the driver.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     */
+    private $destinationDriverAddress;
+
+    /**
      * @var \DateTimeInterface Passenger pickup certification date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -186,26 +216,6 @@ class CarpoolProof
      * @var array|null The array of points as Address objects. Used to create the geoJsonPoints.
      */
     private $points;
-
-    /**
-     * @var \DateTimeInterface Driver start date (not persisted).
-     */
-    private $startDriverDate;
-
-    /**
-     * @var \DateTimeInterface Driver end date (not persisted).
-     */
-    private $endDriverDate;
-
-    /**
-     * @var Address Origin of the driver (not persisted).
-     */
-    private $originDriverAddress;
-
-    /**
-     * @var Address Destination of the driver (not persisted).
-     */
-    private $destinationDriverAddress;
 
     public function getId(): ?int
     {
