@@ -24,6 +24,7 @@ namespace App\Solidary\Service;
 
 use App\Solidary\Repository\StructureProofRepository;
 use App\Solidary\Repository\StructureRepository;
+use App\Solidary\Repository\SubjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -34,12 +35,14 @@ class StructureManager
     private $entityManager;
     private $structureRepository;
     private $structureProofRepository;
+    private $subjectRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, StructureProofRepository $structureProofRepository, StructureRepository $structureRepository)
+    public function __construct(EntityManagerInterface $entityManager, StructureProofRepository $structureProofRepository, StructureRepository $structureRepository, SubjectRepository $subjectRepository)
     {
         $this->entityManager = $entityManager;
         $this->structureRepository = $structureRepository;
         $this->structureProofRepository = $structureProofRepository;
+        $this->subjectRepository = $subjectRepository;
     }
 
     public function getStructureProofs(int $structureId)
@@ -51,4 +54,14 @@ class StructureManager
         // If there is a structureId, we use it
         return $this->structureProofRepository->findStructureProofs($structure);
     }
+
+    public function getStructureSubjects(int $structureId)
+    {
+
+        // We get the structure
+        $structure = $this->structureRepository->find($structureId);
+
+        // If there is a structureId, we use it
+        return $this->subjectRepository->findStructureSubjects($structure);
+    }    
 }

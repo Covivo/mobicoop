@@ -44,7 +44,9 @@ final class SolidarySearchCollectionDataProvider implements CollectionDataProvid
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        $this->filters = $context['filters'];
+        if(isset($context['filters'])){
+            $this->filters = $context['filters'];
+        }
 
         return SolidarySearch::class === $resourceClass;
     }

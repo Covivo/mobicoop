@@ -51,6 +51,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('subject_create',object)"
+ *          },
+  *          "structure_subjects"={
+ *              "method"="GET",
+ *              "path"="/subjects/structure",
+ *              "normalization_context"={"groups"={"readSubjects"}},
+ *              "security"="is_granted('proof_list',object)"
  *          }
  *      },
  *      itemOperations={
@@ -79,7 +85,7 @@ class Subject
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary","readSubjects"})
      */
     private $id;
 
@@ -88,7 +94,7 @@ class Subject
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary","readSubjects"})
      */
     private $label;
 
@@ -107,7 +113,7 @@ class Subject
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary"})
+     * @Groups({"readSolidary","readSubjects"})
      */
     private $createdDate;
 
@@ -115,7 +121,7 @@ class Subject
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary"})
+     * @Groups({"readSolidary","readSubjects"})
      */
     private $updatedDate;
 
