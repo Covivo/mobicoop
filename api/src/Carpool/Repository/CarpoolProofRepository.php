@@ -23,8 +23,10 @@
 
 namespace App\Carpool\Repository;
 
+use App\Carpool\Entity\Ask;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\CarpoolProof;
+use DateTime;
 
 class CarpoolProofRepository
 {
@@ -43,5 +45,22 @@ class CarpoolProofRepository
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findByAskAndDate(Ask $ask, DateTime $date)
+    {
+        $startDate = clone $date;
+        $startDate->setTime(0, 0);
+        $endDate = clone $date;
+        $endDate->setTime(23, 59, 59, 999);
+
+        $query = $this->repository->createQueryBuilder('cp')
+        ->where('cp.ask = :ask')
+        ->andWhere('cp.pickUpPassengerDate BETWEEN :startDate and :endDate')
+        ->setParameter('ask', $ask)
+        ->setParameter('startDate', $startDate->format('Y-m-d H:i:s'))
+        ->setParameter('endDate', $endDate->format('Y-m-d H:i:s'));
+
+        return $query->getQuery()->getOneOrNullResult();
     }
 }

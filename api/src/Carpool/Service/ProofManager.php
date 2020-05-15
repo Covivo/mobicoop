@@ -143,13 +143,11 @@ class ProofManager
         // then we create the corresponding proofs
         foreach ($asks as $ask) {
             // TODO : search if carpool proofs already exist : could be the case if the driver and passenger used the mobile app
-            $alreadyExist = false;
-            if ($alreadyExist) {
-                // carpool proofs already exist for the given period
-            } else {
-                // no carpool proof for the given period, we create it
-                if ($ask->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-                    // punctual, only one carpool proof
+            if ($ask->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                // punctual, only one carpool proof
+                // we search if a carpool proof already exists for the date
+                if (!$this->carpoolProofRepository->findByAskAndDate($ask, $ask->getCriteria()->getFromDate())) {
+                    // no carpool for this date, we create it
                     $carpoolProof = new CarpoolProof();
                     $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
                     $carpoolProof->setType($this->proofType);
@@ -176,38 +174,40 @@ class ProofManager
                     // we init the end date with the start date
                     $endDate = clone $startDate;
                     // then we add the duration till the destination point
-                    $endDate->modify('+' . $destinationWaypoint->getDuration() + ' second');
+                    $endDate->modify('+' . $destinationWaypoint->getDuration() . ' second');
                     $carpoolProof->setEndDriverDate($endDate);
                     /**
                      * @var Datetime $pickUpDate
                      */
-                    // we init the pickup date to the start date of the driver
+                    // we init the pickup date with the start date of the driver
                     $pickUpDate = clone $ask->getCriteria()->getFromDate();
                     $pickUpDate->setTime($ask->getCriteria()->getFromTime()->format('H'), $ask->getCriteria()->getFromTime()->format('i'));
                     // then we add the duration till the pickup point
-                    $pickUpDate->modify('+' . $pickUpWaypoint->getDuration() + ' second');
+                    $pickUpDate->modify('+' . $pickUpWaypoint->getDuration() . ' second');
                     /**
                      * @var Datetime $dropOffDate
                      */
-                    // we init the dropoff date with the pickup date
-                    $dropOffDate = clone $pickUpDate;
+                    // we init the dropoff date with the start date of the driver
+                    $dropOffDate = clone $startDate;
                     // then we add the duration till the dropoff point
-                    $dropOffDate->modify('+' . $dropOffWaypoint->getDuration() + ' second');
-                    $carpoolProof->setPickUpDriverDate($pickUpDate);
+                    $dropOffDate->modify('+' . $dropOffWaypoint->getDuration() . ' second');
                     $carpoolProof->setPickUpPassengerDate($pickUpDate);
-                    $carpoolProof->setDropOffDriverDate($dropOffDate);
                     $carpoolProof->setDropOffPassengerDate($dropOffDate);
                     $this->entityManager->persist($carpoolProof);
-                } else {
-                    // regular, we need to create a carpool proof for each day between fromDate and toDate
-                    $curDate = clone $fromDate;
-                    $continue = true;
-                    // we get some available information here outside the loop
-                    $originWaypoint = $this->waypointRepository->findMinPositionForAskAndRole($ask, Waypoint::ROLE_DRIVER);
-                    $destinationWaypoint = $this->waypointRepository->findMaxPositionForAskAndRole($ask, Waypoint::ROLE_DRIVER);
-                    $pickUpWaypoint = $this->waypointRepository->findMinPositionForAskAndRole($ask, Waypoint::ROLE_PASSENGER);
-                    $dropOffWaypoint = $this->waypointRepository->findMaxPositionForAskAndRole($ask, Waypoint::ROLE_PASSENGER);
-                    while ($continue) {
+                }
+            } else {
+                // regular, we need to create a carpool proof for each day between fromDate and toDate
+                $curDate = clone $fromDate;
+                $continue = true;
+                // we get some available information here outside the loop
+                $originWaypoint = $this->waypointRepository->findMinPositionForAskAndRole($ask, Waypoint::ROLE_DRIVER);
+                $destinationWaypoint = $this->waypointRepository->findMaxPositionForAskAndRole($ask, Waypoint::ROLE_DRIVER);
+                $pickUpWaypoint = $this->waypointRepository->findMinPositionForAskAndRole($ask, Waypoint::ROLE_PASSENGER);
+                $dropOffWaypoint = $this->waypointRepository->findMaxPositionForAskAndRole($ask, Waypoint::ROLE_PASSENGER);
+                while ($continue) {
+                    // we search if a carpool proof already exists for the date
+                    if (!$this->carpoolProofRepository->findByAskAndDate($ask, $curDate)) {
+                        // no carpool for this date, we create it
                         $carpoolProof = new CarpoolProof();
                         $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
                         $carpoolProof->setType($this->proofType);
@@ -225,7 +225,7 @@ class ProofManager
                         /**
                          * @var Datetime $pickUpDate
                          */
-                        // we init the pickup date to the start date of the driver
+                        // we init the pickup date with the start date of the driver
                         $pickUpDate = clone $curDate;
                         switch ($curDate->format('w')) {
                             // we check for each date of the period if it's a carpoool day
@@ -279,28 +279,26 @@ class ProofManager
                         // we init the end date with the start date
                         $endDate = clone $startDate;
                         // then we add the duration till the destination point
-                        $endDate->modify('+' . $destinationWaypoint->getDuration() + ' second');
+                        $endDate->modify('+' . $destinationWaypoint->getDuration() . ' second');
                         $carpoolProof->setEndDriverDate($endDate);
                         // we add the duration till the pickup point
-                        $pickUpDate->modify('+' . $pickUpWaypoint->getDuration() + ' second');
+                        $pickUpDate->modify('+' . $pickUpWaypoint->getDuration() . ' second');
                         /**
                          * @var Datetime $dropOffDate
                          */
-                        // we init the dropoff date with the pickup date
-                        $dropOffDate = clone $pickUpDate;
+                        // we init the dropoff date with the start date of the driver
+                        $dropOffDate = clone $startDate;
                         // then we add the duration till the dropoff point
-                        $dropOffDate->modify('+' . $dropOffWaypoint->getDuration() + ' second');
-                        $carpoolProof->setPickUpDriverDate($pickUpDate);
+                        $dropOffDate->modify('+' . $dropOffWaypoint->getDuration() . ' second');
                         $carpoolProof->setPickUpPassengerDate($pickUpDate);
-                        $carpoolProof->setDropOffDriverDate($dropOffDate);
                         $carpoolProof->setDropOffPassengerDate($dropOffDate);
                         $this->entityManager->persist($carpoolProof);
+                    }
 
-                        if ($curDate->format('Y-m-d') == $toDate->format('Y-m-d')) {
-                            $continue = false;
-                        } else {
-                            $curDate->modify('+1 day');
-                        }
+                    if ($curDate->format('Y-m-d') == $toDate->format('Y-m-d')) {
+                        $continue = false;
+                    } else {
+                        $curDate->modify('+1 day');
                     }
                 }
             }

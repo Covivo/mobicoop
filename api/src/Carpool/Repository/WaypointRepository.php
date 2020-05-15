@@ -60,13 +60,21 @@ class WaypointRepository
     public function findMinPositionForAskAndRole(Ask $ask, int $role)
     {
         $query = $this->repository->createQueryBuilder('w')
-        ->select('w, MIN(w.position) AS min_position')
+        ->select('MIN(w.position) AS min_position')
         ->where('w.ask = :ask')
         ->andwhere('w.role = :role')
         ->setParameter('ask', $ask)
         ->setParameter('role', $role);
 
-        return $query->getQuery()->getResult();
+        if ($result = $query->getQuery()->getOneOrNullResult()) {
+            return $this->findOneby([
+                'position'=>$result['min_position'],
+                'ask'=>$ask,
+                'role'=>$role
+            ]);
+        }
+
+        return null;
     }
 
     /**
@@ -79,12 +87,20 @@ class WaypointRepository
     public function findMaxPositionForAskAndRole(Ask $ask, int $role)
     {
         $query = $this->repository->createQueryBuilder('w')
-        ->select('w, MAX(w.position) AS max_position')
+        ->select('MAX(w.position) AS max_position')
         ->where('w.ask = :ask')
         ->andwhere('w.role = :role')
         ->setParameter('ask', $ask)
         ->setParameter('role', $role);
 
-        return $query->getQuery()->getResult();
+        if ($result = $query->getQuery()->getOneOrNullResult()) {
+            return $this->findOneby([
+                'position'=>$result['max_position'],
+                'ask'=>$ask,
+                'role'=>$role
+            ]);
+        }
+
+        return null;
     }
 }
