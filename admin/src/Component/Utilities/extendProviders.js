@@ -137,7 +137,7 @@ const myDataProvider = {
     getList : (resource, params) => {
         if (resource == 'communities') {
             //Add a the custom filter : Admin, so we can have full control of resultats in API side
-            resource = resource + '/accesFromAdminReact';
+            resource = resource + '/manage';
 
         }
         return dataProvider.getList(resource, params);

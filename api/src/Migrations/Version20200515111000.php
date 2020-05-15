@@ -17,7 +17,6 @@ final class Version20200515111000 extends AbstractMigration
             INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`)
             VALUES (223, NULL, '1', 'community_restrict', 'Display only communities user created')
         ");
-
     }
 
     public function down(Schema $schema) : void
