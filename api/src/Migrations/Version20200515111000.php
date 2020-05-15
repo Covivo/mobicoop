@@ -15,7 +15,7 @@ final class Version20200515111000 extends AbstractMigration
         // add solidary_transporter_schedule item
         $this->addSql("
             INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`)
-            VALUES (223, NULL, '1', 'community_restrict', 'Display only communities i create')
+            VALUES (223, NULL, '1', 'community_restrict', 'Display only communities user created')
         ");
 
     }

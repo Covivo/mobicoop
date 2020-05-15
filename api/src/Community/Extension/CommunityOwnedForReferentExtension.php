@@ -34,7 +34,6 @@ use App\User\Service\UserManager;
 use App\Auth\Repository\AuthItemRepository;
 use App\Auth\Entity\AuthItem;
 
-
 /**
  * Extension for get the owned community for a referent in admin
  * We use this extension to get only the owned communities for a referent and for the admin (accessAdmin), for those who have ROLE_ADMIN roles we get all
@@ -50,12 +49,11 @@ final class CommunityOwnedForReferentExtension implements QueryCollectionExtensi
     private $authItemRepository;
 
 
-    public function __construct(Security $security,UserManager $userManager, AuthItemRepository $authItemRepository)
+    public function __construct(Security $security, UserManager $userManager, AuthItemRepository $authItemRepository)
     {
         $this->security = $security;
         $this->userManager = $userManager;
         $this->authItemRepository = $authItemRepository;
-
     }
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
