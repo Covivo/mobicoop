@@ -54,6 +54,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('structure_create',object)"
+ *          },
+ *          "structure_needs"={
+ *              "method"="GET",
+ *              "path"="/structures/needs",
+ *              "normalization_context"={"groups"={"readNeeds"}},
+ *              "security"="is_granted('structure_read',object)"
  *          }
  *      },
  *      itemOperations={
@@ -65,6 +71,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *          "delete"={
  *             "security"="is_granted('structure_delete',object)"
+ *          },
+ *          "needs"={
+ *              "method"="GET",
+ *              "path"="/structures/{id}/needs",
+ *              "normalization_context"={"groups"={"readNeeds"}},
+ *              "security"="is_granted('structure_read',object)"
  *          }
  *      }
  * )
@@ -414,7 +426,7 @@ class Structure
      * @var ArrayCollection|null The special needs for this structure.
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary","readNeeds"})
      */
     private $needs;
 
@@ -995,6 +1007,13 @@ class Structure
     public function getNeeds()
     {
         return $this->needs->getValues();
+    }
+
+    public function setNeeds(?ArrayCollection $needs): self
+    {
+        $this->needs = $needs;
+
+        return $this;
     }
 
     public function addNeed(Need $need): self

@@ -24,14 +24,14 @@
 namespace App\Solidary\Repository;
 
 use App\Solidary\Entity\Structure;
-use App\Solidary\Entity\Subject;
+use App\Solidary\Entity\Need;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
 */
-class SubjectRepository
+class NeedRepository
 {
     /**
      * @var EntityRepository
@@ -40,10 +40,10 @@ class SubjectRepository
     
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->repository = $entityManager->getRepository(Subject::class);
+        $this->repository = $entityManager->getRepository(Need::class);
     }
 
-    public function find(int $id): ?Subject
+    public function find(int $id): ?Need
     {
         return $this->repository->find($id);
     }
@@ -53,10 +53,11 @@ class SubjectRepository
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
-    public function findStructureSubjects(Structure $structure)
+    public function findStructureNeeds(Structure $structure)
     {
-        $query = $this->repository->createQueryBuilder('s')
+        $query = $this->repository->createQueryBuilder('n')
         ->where('s.structure = :structure')
+        ->join('v.user', 'u')
         ->setParameter('structure', $structure);
         return $query->getQuery()->getResult();
     }

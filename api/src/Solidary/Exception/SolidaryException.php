@@ -33,6 +33,7 @@ class SolidaryException extends \LogicException
     const BAD_SOLIDARY_ACTION = "Unknown action";
     const UNKNOWN_USER = "Unknown User";
     const NO_STRUCTURE_ID = "No structureId";
+    const NO_STRUCTURE = "No structure found";
 
     // SolidarySolution
     const IS_NOT_VOLUNTEER = "The SolidaryUser is not a volunteer";

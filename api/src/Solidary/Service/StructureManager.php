@@ -22,9 +22,12 @@
 
 namespace App\Solidary\Service;
 
+use App\Solidary\Exception\SolidaryException;
+use App\Solidary\Repository\NeedRepository;
 use App\Solidary\Repository\StructureProofRepository;
 use App\Solidary\Repository\StructureRepository;
 use App\Solidary\Repository\SubjectRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -36,13 +39,20 @@ class StructureManager
     private $structureRepository;
     private $structureProofRepository;
     private $subjectRepository;
+    private $needRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, StructureProofRepository $structureProofRepository, StructureRepository $structureRepository, SubjectRepository $subjectRepository)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        StructureProofRepository $structureProofRepository,
+        StructureRepository $structureRepository,
+        SubjectRepository $subjectRepository,
+        NeedRepository $needRepository
+    ) {
         $this->entityManager = $entityManager;
         $this->structureRepository = $structureRepository;
         $this->structureProofRepository = $structureProofRepository;
         $this->subjectRepository = $subjectRepository;
+        $this->needRepository = $needRepository;
     }
 
     public function getStructureProofs(int $structureId)
@@ -63,5 +73,24 @@ class StructureManager
 
         // If there is a structureId, we use it
         return $this->subjectRepository->findStructureSubjects($structure);
-    }    
+    }
+
+    public function getStructureNeeds(int $structureId)
+    {
+        $structure = $this->structureRepository->find($structureId);
+
+        if (empty($structure)) {
+            throw new SolidaryException(SolidaryException::NO_STRUCTURE);
+        }
+        
+        // To be sure that all returned needs are not about a specific Solidary
+        $needs = $this->needRepository->findBy(['solidary'=>null]);
+        $structure->setNeeds(new ArrayCollection());
+
+        foreach ($needs as $need) {
+            $structure->addNeed($need);
+        }
+
+        return $structure;
+    }
 }
