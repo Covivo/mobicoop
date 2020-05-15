@@ -410,6 +410,8 @@ class User implements UserInterface, EquatableInterface
     const MOBILE_APP_IOS = 2;
     const MOBILE_APP_ANDROID = 3;
 
+    const ROLE_DEFAULT = 3;  // Role we want to add by default when user register, ID is in auth_item (ROLE_USER_REGISTERED_FULL now)
+
     /**
      * @var int The id of this user.
      *
