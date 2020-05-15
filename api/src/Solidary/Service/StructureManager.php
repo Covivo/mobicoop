@@ -20,37 +20,35 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\DataProvider;
+namespace App\Solidary\Service;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use App\Solidary\Entity\Solidary;
-use App\Solidary\Service\SolidaryManager;
+use App\Solidary\Repository\StructureProofRepository;
+use App\Solidary\Repository\StructureRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class SolidaryItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+class StructureManager
 {
-    private $solidaryManager;
+    private $entityManager;
+    private $structureRepository;
+    private $structureProofRepository;
 
-    public function __construct(SolidaryManager $solidaryManager)
+    public function __construct(EntityManagerInterface $entityManager, StructureProofRepository $structureProofRepository, StructureRepository $structureRepository)
     {
-        $this->solidaryManager = $solidaryManager;
+        $this->entityManager = $entityManager;
+        $this->structureRepository = $structureRepository;
+        $this->structureProofRepository = $structureProofRepository;
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function getStructureProofs(int $structureId)
     {
-        return Solidary::class === $resourceClass;
-    }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Solidary
-    {
-        if ($operationName=="contactsList") {
-            return $this->solidaryManager->getAsksList($id);
-        }
-        
-        return $this->solidaryManager->getSolidary($id);
+        // We get the structure
+        $structure = $this->structureRepository->find($structureId);
+
+        // If there is a structureId, we use it
+        return $this->structureProofRepository->findStructureProofs($structure);
     }
 }
