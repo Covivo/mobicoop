@@ -157,11 +157,35 @@ class SolidaryBeneficiary
     private $comment;
 
     /**
+     * @var array The proofs associated to this user
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $proofs;
+    
+    /**
+     * @var bool If the candidate is validated or not
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $validatedCandidate;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $createdDate;
+
+    /**
+     * @var array The diaries associated to this user
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $diaries;
+
+    /**
+     * @var array The solidaries of this user
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $solidaries;
 
     /**
      * @var \DateTimeInterface Updated date.
@@ -173,6 +197,9 @@ class SolidaryBeneficiary
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
+        $this->proofs = [];
+        $this->diaries = [];
+        $this->solidaries = [];
     }
     
     public function getId(): ?int
@@ -271,6 +298,18 @@ class SolidaryBeneficiary
         return $this;
     }
 
+    public function hasNewsSubscription(): ?bool
+    {
+        return $this->newsSubscription;
+    }
+
+    public function setNewsSubscription(?bool $newsSubscription): self
+    {
+        $this->newsSubscription = $newsSubscription;
+
+        return $this;
+    }
+    
     public function getUser(): ?User
     {
         return $this->user;
@@ -304,6 +343,54 @@ class SolidaryBeneficiary
     {
         $this->comment = $comment;
         
+        return $this;
+    }
+
+    public function getProofs(): ?array
+    {
+        return $this->proofs;
+    }
+
+    public function setProofs(?array $proofs): self
+    {
+        $this->proofs = $proofs;
+
+        return $this;
+    }
+
+    public function isValidatedCandidate(): ?bool
+    {
+        return $this->validatedCandidate;
+    }
+
+    public function setValidatedCandidate(?bool $validatedCandidate): self
+    {
+        $this->validatedCandidate = $validatedCandidate;
+
+        return $this;
+    }
+
+    public function getDiaries(): ?array
+    {
+        return $this->diaries;
+    }
+
+    public function setDiaries(?array $diaries): self
+    {
+        $this->diaries = $diaries;
+
+        return $this;
+    }
+
+    public function getSolidaries(): ?array
+    {
+        return $this->solidaries;
+    }
+
+    public function setSolidaries(?array $solidaries): self
+    {
+        $this->solidaries = $solidaries;
+
         return $this;
     }
 
