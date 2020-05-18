@@ -23,33 +23,37 @@
 
 namespace App\Carpool\DataProvider;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Carpool\Entity\Dynamic;
 use App\Carpool\Service\DynamicManager;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
- * Item data provider for dynamic ad.
+ * Collection data provider used to get a current active dynamic ad.
  *
  */
-final class DynamicItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+final class DynamicActiveCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $security;
+    private $dynamicManager;
     
-    public function __construct(RequestStack $requestStack, DynamicManager $dynamicManager)
+    public function __construct(Security $security, DynamicManager $dynamicManager)
     {
-        $this->request = $requestStack->getCurrentRequest();
+        $this->security = $security;
         $this->dynamicManager = $dynamicManager;
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Dynamic::class === $resourceClass && $operationName =="get";
+        return Dynamic::class === $resourceClass && $operationName =="active";
     }
     
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Dynamic
+    public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->dynamicManager->getDynamic($id);
+        if ($last = $this->dynamicManager->getLastDynamicActive($this->security->getUser())) {
+            return [$last];
+        }
+        return [];
     }
 }
