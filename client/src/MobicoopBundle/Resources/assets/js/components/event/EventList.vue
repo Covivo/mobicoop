@@ -324,7 +324,7 @@ export default {
           value: 'id',
         },
         { text: 'Nom', value: 'name' },
-        { text: 'Description', value: 'fulldescription' },
+        { text: 'Description', value: 'description' },
         { text: 'Image', value: 'logos' }
       ],
       loading: false,
