@@ -160,6 +160,13 @@ class SolidaryUserManager
         $solidaryBeneficiary->setCreatedDate($solidaryUser->getCreatedDate());
         $solidaryBeneficiary->setUpdatedDate($solidaryUser->getUpdatedDate());
 
+        // Get the structure of the solidary User
+        $userStructures = [];
+        foreach ($solidaryUser->getSolidaryUserStructures() as $userStructure) {
+            $userStructures[] = $userStructure;
+        }
+        $solidaryBeneficiary->setStructures($userStructures);
+
         // Diary
         $diaries = $this->diaryRepository->findBy(['user'=>$user]);
         $diaryEntries = [];
@@ -179,5 +186,15 @@ class SolidaryUserManager
         $solidaryBeneficiary->setSolidaries($solidaries);
 
         return $solidaryBeneficiary;
+    }
+
+    /**
+     * Get a SolidaryBeneficiary from a User id
+     *
+     * @param int $id User id
+     * @return void
+     */
+    public function getSolidaryVolunteer(int $id)
+    {
     }
 }

@@ -39,7 +39,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readUser","readSolidary","readSolidaryUserStructure"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readUser""readSolidaryUserStructure"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={
@@ -76,8 +76,8 @@ class SolidaryUserStructure
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"readSolidary"})
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary"})
      */
     private $id;
     
@@ -95,7 +95,7 @@ class SolidaryUserStructure
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaryUserStructures", cascade={"persist","remove"})
-     * @Groups({"readUser","readSolidaryUserStructure","writeSolidary"})
+     * @Groups({"readUser","readSolidaryUserStructure"})
      * @MaxDepth(1)
      */
     private $structure;
@@ -104,7 +104,7 @@ class SolidaryUserStructure
      * @var ArrayCollection The ask history items linked with the ask.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="solidaryUserStructure", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readUser","readSolidaryUserStructure","writeSolidary"})
+     * @Groups({"readUser","readSolidaryUserStructure"})
      * @MaxDepth(1)
      */
     private $proofs;
@@ -114,7 +114,6 @@ class SolidaryUserStructure
      * @var ArrayCollection|null The solidary records for this solidary user.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="solidaryUserStructure", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidaries;

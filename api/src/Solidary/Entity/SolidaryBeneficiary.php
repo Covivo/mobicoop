@@ -188,6 +188,12 @@ class SolidaryBeneficiary
     private $solidaries;
 
     /**
+     * @var array The solidary structures of this user
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $structures;
+
+    /**
      * @var \DateTimeInterface Updated date.
      *
      * @Groups({"readSolidary","writeSolidary"})
@@ -390,6 +396,18 @@ class SolidaryBeneficiary
     public function setSolidaries(?array $solidaries): self
     {
         $this->solidaries = $solidaries;
+
+        return $this;
+    }
+
+    public function getStructures(): ?array
+    {
+        return $this->structures;
+    }
+
+    public function setStructures(?array $structures): self
+    {
+        $this->structures = $structures;
 
         return $this;
     }
