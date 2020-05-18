@@ -197,7 +197,7 @@ class SolidaryUserManager
         // Get the structure of the solidary User
         $userStructures = [];
         foreach ($solidaryUser->getSolidaryUserStructures() as $userStructure) {
-            $userStructures[] = $userStructure;
+            $userStructures[] = $userStructure->getStructure();
         }
         $solidaryBeneficiary->setStructures($userStructures);
 
@@ -500,6 +500,25 @@ class SolidaryUserManager
         return $this->getSolidaryBeneficiary($user->getId());
     }
 
+
+    /**
+     * Update a SolidaryBeneficiary
+     *
+     * @param SolidaryBeneficiary $solidaryBeneficiary
+     * @return SolidaryBeneficiary
+     */
+    public function updateSolidaryBeneficiary(SolidaryBeneficiary $solidaryBeneficiary): SolidaryBeneficiary
+    {
+        // To do....
+        
+        return $this->getSolidaryBeneficiary($solidaryBeneficiary->getId());
+    }
+
+    /**
+     * Genereate a random password
+     *
+     * @return String
+     */
     private function randomPassword()
     {
         $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
