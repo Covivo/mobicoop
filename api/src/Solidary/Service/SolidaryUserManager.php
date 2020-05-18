@@ -35,6 +35,7 @@ use Symfony\Component\Security\Core\Security;
 use App\Solidary\Entity\SolidaryUserStructure;
 use App\Action\Repository\DiaryRepository;
 use App\Solidary\Entity\SolidaryDiaryEntry;
+use App\Solidary\Repository\SolidaryRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -48,6 +49,7 @@ class SolidaryUserManager
     private $security;
     private $structureRepository;
     private $diaryRepository;
+    private $solidaryRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -56,7 +58,8 @@ class SolidaryUserManager
         UserRepository $userRepository,
         Security $security,
         StructureRepository $structureRepository,
-        DiaryRepository $diaryRepository
+        DiaryRepository $diaryRepository,
+        SolidaryRepository $solidaryRepository
     ) {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
@@ -65,6 +68,7 @@ class SolidaryUserManager
         $this->security = $security;
         $this->structureRepository = $structureRepository;
         $this->diaryRepository = $diaryRepository;
+        $this->solidaryRepository = $solidaryRepository;
     }
 
     public function updateSolidaryUser(SolidaryUser $solidaryUser)
@@ -170,6 +174,10 @@ class SolidaryUserManager
         }
         $solidaryBeneficiary->setDiaries($diaryEntries);
         
+        // Solidaries
+        $solidaries = $this->solidaryRepository->findByUser($user);
+        $solidaryBeneficiary->setSolidaries($solidaries);
+
         return $solidaryBeneficiary;
     }
 }
