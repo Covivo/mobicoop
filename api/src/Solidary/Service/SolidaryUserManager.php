@@ -35,6 +35,7 @@ use Symfony\Component\Security\Core\Security;
 use App\Solidary\Entity\SolidaryUserStructure;
 use App\Action\Repository\DiaryRepository;
 use App\Solidary\Entity\SolidaryDiaryEntry;
+use App\Solidary\Entity\SolidaryVolunteer;
 use App\Solidary\Repository\SolidaryRepository;
 
 /**
@@ -82,12 +83,10 @@ class SolidaryUserManager
      * Get a SolidaryBeneficiary from a User id
      *
      * @param int $id User id
-     * @return void
+     * @return SolidaryBeneficiary
      */
-    public function getSolidaryBeneficiary(int $id)
+    public function getSolidaryBeneficiary(int $id): SolidaryBeneficiary
     {
-        $solidaryBeneficiary = new SolidaryBeneficiary();
-
         // Get the structure of the Admin
         $structures = $this->structureRepository->findByUser($this->security->getUser());
         $structureAdmin = null;
@@ -110,6 +109,7 @@ class SolidaryUserManager
         }
 
 
+        $solidaryBeneficiary = new SolidaryBeneficiary();
         $solidaryBeneficiary->setId($user->getId());
         $solidaryBeneficiary->setEmail($user->getEmail());
         $solidaryBeneficiary->setGivenName($user->getGivenName());
@@ -189,12 +189,78 @@ class SolidaryUserManager
     }
 
     /**
-     * Get a SolidaryBeneficiary from a User id
+     * Get a SolidaryVolunteer from a User id
      *
      * @param int $id User id
-     * @return void
+     * @return SolidaryVolunteer
      */
-    public function getSolidaryVolunteer(int $id)
+    public function getSolidaryVolunteer(int $id): SolidaryVolunteer
     {
+
+        // Get the structure of the Admin
+        $structures = $this->structureRepository->findByUser($this->security->getUser());
+        $structureAdmin = null;
+        if (!is_null($structures) || count($structures)>0) {
+            $structureAdmin = $structures[0];
+        }
+
+
+        // Get the User
+        $user = $this->userRepository->find($id);
+
+        // Get the SolidaryUser
+        if (is_null($user->getSolidaryUser())) {
+            throw new SolidaryException(SolidaryException::NO_SOLIDARY_USER);
+        }
+        $solidaryUser = $user->getSolidaryUser();
+
+        // We check if the SolidaryUser is a Beneficiary
+        if (!$solidaryUser->isVolunteer()) {
+            throw new SolidaryException(SolidaryException::NO_SOLIDARY_VOLUNTEER);
+        }
+
+        $solidaryVolunteer = new SolidaryVolunteer();
+        $solidaryVolunteer->setUser($user);
+        $solidaryVolunteer->setComment($solidaryUser->getComment());
+
+
+        // We take the first solidaryUser structure.
+        $solidaryUserStructure = $solidaryUser->getSolidaryUserStructures()[0];
+        // If the admin has an identified structure, we take the one that matches on of the SolidaryBeneficiary structure
+        if (!is_null($structureAdmin)) {
+            foreach ($solidaryUser->getSolidaryUserStructures() as $currentSolidaryUserStructure) {
+                if ($currentSolidaryUserStructure->getId() == $structureAdmin->getId()) {
+                    $solidaryUserStructure = $currentSolidaryUserStructure;
+                    break;
+                }
+            }
+        }
+
+        // Is he validated ?
+        $solidaryVolunteer->setValidatedCandidate(false);
+        if (!is_null($solidaryUserStructure->getAcceptedDate())) {
+            $solidaryVolunteer->setValidatedCandidate(true);
+        }
+
+        // Diary
+        $diaries = $this->diaryRepository->findBy(['user'=>$user]);
+        $diaryEntries = [];
+        foreach ($diaries as $diary) {
+            $diaryEntry = new SolidaryDiaryEntry();
+            $diaryEntry->setDiary($diary);
+            $diaryEntry->setAction($diary->getAction()->getName());
+            $diaryEntry->setAuthor($diary->getAuthor());
+            $diaryEntry->setUser($diary->getUser());
+            $diaryEntry->setDate($diary->getCreatedDate());
+            $diaryEntries[] = $diaryEntry;
+        }
+        $solidaryVolunteer->setDiaries($diaryEntries);
+
+        // Solidaries
+        $solidaries = $this->solidaryRepository->findBySolidaryUserMatching($solidaryUser);
+        $solidaryVolunteer->setSolidaries($solidaries);
+
+
+        return $solidaryVolunteer;
     }
 }

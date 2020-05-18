@@ -35,7 +35,7 @@ use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A solidary beneficiary.
+ * A solidary volunteer.
  *
  * @ApiResource(
  *      attributes={
@@ -45,28 +45,28 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      },
  *      collectionOperations={
  *         "get"={
- *             "security"="is_granted('solidary_beneficiary_list',object)"
+ *             "security"="is_granted('solidary_volunteer_list',object)"
  *          },
  *          "post"={
- *             "security_post_denormalize"="is_granted('solidary_beneficiary_create',object)"
+ *             "security_post_denormalize"="is_granted('solidary_volunteer_create',object)"
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('solidary_beneficiary_read',object)"
+ *             "security"="is_granted('solidary_volunteer_read',object)"
  *          },
  *          "put"={
- *             "security"="is_granted('solidary_beneficiary_update',object)"
+ *             "security"="is_granted('solidary_volunteer_update',object)"
  *          },
  *          "delete"={
- *             "security"="is_granted('solidary_beneficiary_delete',object)"
+ *             "security"="is_granted('solidary_volunteer_delete',object)"
  *          }
  *
  *      }
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryBeneficiary
+class SolidaryVolunteer
 {
     const DEFAULT_ID = 999999999999;
 
@@ -83,43 +83,43 @@ class SolidaryBeneficiary
      *
      * @Assert\NotBlank
      * @Assert\Email()
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      */
     private $email;
 
     /**
      * @var string The encoded password of the user.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      */
     private $password;
 
     /**
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      */
     private $gender;
 
     /**
      * @var string|null The telephone number of the user.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      */
     private $telephone;
 
     /**
      * @var string|null The first name of the user.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      */
     private $givenName;
 
     /**
      * @var string|null The family name of the user.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      */
     private $familyName;
 
     /**
      * @var \DateTimeInterface|null The birth date of the user.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      *
      * @ApiProperty(
      *     attributes={
@@ -131,7 +131,7 @@ class SolidaryBeneficiary
 
     /**
      * @var boolean|null The user accepts to receive news about the platform.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      */
     private $newsSubscription;
 
@@ -145,7 +145,7 @@ class SolidaryBeneficiary
 
     /**
      * @var Address The home address of this User
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      */
     private $homeAddress;
 
@@ -156,12 +156,6 @@ class SolidaryBeneficiary
      */
     private $comment;
 
-    /**
-     * @var array The proofs associated to this user
-     * @Groups({"readSolidary","writeSolidary"})
-     */
-    private $proofs;
-    
     /**
      * @var bool If the candidate is validated or not
      * @Groups({"readSolidary","writeSolidary"})
@@ -181,10 +175,10 @@ class SolidaryBeneficiary
     private $solidaries;
 
     /**
-     * @var array The solidary structures of this user
+     * @var array The availabilities of this user
      * @Groups({"readSolidary","writeSolidary"})
      */
-    private $structures;
+    private $availabilities;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -203,9 +197,9 @@ class SolidaryBeneficiary
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
-        $this->proofs = [];
         $this->diaries = [];
         $this->solidaries = [];
+        $this->availabilities = [];
     }
     
     public function getId(): ?int
@@ -352,18 +346,6 @@ class SolidaryBeneficiary
         return $this;
     }
 
-    public function getProofs(): ?array
-    {
-        return $this->proofs;
-    }
-
-    public function setProofs(?array $proofs): self
-    {
-        $this->proofs = $proofs;
-
-        return $this;
-    }
-
     public function isValidatedCandidate(): ?bool
     {
         return $this->validatedCandidate;
@@ -400,14 +382,14 @@ class SolidaryBeneficiary
         return $this;
     }
 
-    public function getStructures(): ?array
+    public function getAvailabilities(): ?array
     {
-        return $this->structures;
+        return $this->availabilities;
     }
 
-    public function setStructures(?array $structures): self
+    public function setAvailabilities(?array $availabilities): self
     {
-        $this->structures = $structures;
+        $this->availabilities = $availabilities;
 
         return $this;
     }
