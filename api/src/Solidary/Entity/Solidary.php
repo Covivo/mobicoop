@@ -76,6 +76,13 @@ class Solidary
 {
     const DEFAULT_ID = 999999999999;
 
+    const GENDER_FEMALE = 1;
+    const GENDER_MALE = 2;
+    const GENDER_OTHER = 3;
+
+    const FREQUENCY_PUNCTUAL = 0;
+    const FREQUENCY_REGULAR = 1;
+
     /**
      * @var int $id The id of this solidary record.
      *
@@ -197,7 +204,7 @@ class Solidary
 
     /**
      * @var SolidaryUser SolidaryUser associated ti the ask
-     * @Groups ({"writeSolidary"})
+     * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $solidaryUser;
 
@@ -236,6 +243,72 @@ class Solidary
      * @Groups ({"writeSolidary"})
      */
     private $returnDeadlineDatetime;
+
+    /**
+     * @var String|null Email of the user who ask for the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $email;
+
+    /**
+     * @var String|null Password of the user who ask for the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $password;
+
+    /**
+     * @var String|null Telephone of the user who ask for the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $telephone;
+
+    /**
+     * @var String|null familyname of the user who ask for the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $familyName;
+
+    /**
+     * @var String|null given name of the user who ask for the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $givenName;
+    
+    /**
+     * @var Int|null Gender of the user who ask for the solidary demand (1=female, 2=male, 3=nc)
+     * @Groups ({"writeSolidary"})
+     */
+    private $gender;
+
+    /**
+     * @var \DateTimeInterface|null Birthdate of the user who ask for the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $birthDate;
+
+    /**
+     * @var Array|null proofs needed for the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $proofs;
+
+    /**
+     * @var String|null structure of the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $structure;
+
+    /**
+     * @var Int frequency of the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $frequency;
+
+    /**
+     * @var Array|null Origin address of the solidary
+     * @Groups ({"writeSolidary"})
+     */
+    private $days;
     
     public function __construct()
     {
@@ -246,6 +319,8 @@ class Solidary
         $this->proofs = new ArrayCollection();
         $this->origin = [];
         $this->destination = [];
+        $this->proof = [];
+        $this->days = [];
     }
 
     public function getId(): int
@@ -442,7 +517,7 @@ class Solidary
         return $this;
     }
 
-    public function getSolidaryUser(): SolidaryUser
+    public function getSolidaryUser(): ?SolidaryUser
     {
         return $this->solidaryUser;
     }
@@ -526,6 +601,140 @@ class Solidary
         return $this;
     }
 
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(?string $telephone): self
+    {
+        $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function getFamilyName(): ?string
+    {
+        return $this->familyName;
+    }
+
+    public function setFamilyName(?string $familyName): self
+    {
+        $this->familyName = $familyName;
+
+        return $this;
+    }
+
+    public function getGivenName(): ?string
+    {
+        return $this->givenName;
+    }
+
+    public function setGivenName(?string $givenName): self
+    {
+        $this->givenName = $givenName;
+
+        return $this;
+    }
+
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    public function setGender($gender): self
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    public function getProofs(): array
+    {
+        return $this->proofs;
+    }
+    
+    public function setProofs(?array $proofs): self
+    {
+        $this->proofs = $proofs;
+        
+        return $this;
+    }
+
+    public function getStructure(): string
+    {
+        return $this->structure;
+    }
+    
+    public function setStructure(?string $structure): self
+    {
+        $this->structure = $structure;
+        
+        return $this;
+    }
+
+    public function getFrequency(): int
+    {
+        return $this->frequency;
+    }
+    
+    public function setFrequency(?bool $frequency): self
+    {
+        $this->frequency = $frequency;
+        
+        return $this;
+    }
+
+    public function getDays(): array
+    {
+        return $this->days;
+    }
+    
+    public function setDays(?array $days): self
+    {
+        $this->days = $days;
+        
+        return $this;
+    }
+
+    
+   
     // DOCTRINE EVENTS
 
     /**

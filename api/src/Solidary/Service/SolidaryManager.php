@@ -28,6 +28,8 @@ use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Service\AdManager;
 use App\Geography\Entity\Address;
 use App\Geography\Repository\AddressRepository;
+use App\Solidary\Entity\Need;
+use App\Solidary\Entity\Proof;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryAsksListItem;
 use App\Solidary\Entity\SolidarySearch;
@@ -41,7 +43,14 @@ use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\SolidaryUserRepository;
 use Symfony\Component\Security\Core\Security;
 use App\Solidary\Entity\SolidaryAsk;
+use App\Solidary\Entity\SolidaryUser;
+use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Repository\SolidaryUserStructureRepository;
+use App\Solidary\Repository\StructureProofRepository;
+use App\Solidary\Repository\StructureRepository;
+use App\User\Entity\User;
+use App\User\Service\UserManager;
+use App\User\Repository\UserRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -60,8 +69,12 @@ class SolidaryManager
     private $addressRepository;
     private $proposalRepository;
     private $solidaryUserStructureRepository;
+    private $userManager;
+    private $userRepository;
+    private $structureProofRepository;
+    private $structureRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository, SolidaryUserRepository $solidaryUserRepository, AdManager $adManager, SolidaryMatcher $solidaryMatcher, SolidaryAskRepository $solidaryAskRepository, AddressRepository $addressRepository, ProposalRepository $proposalRepository, SolidaryUserStructureRepository $solidaryUserStructureRepository)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository, SolidaryUserRepository $solidaryUserRepository, AdManager $adManager, SolidaryMatcher $solidaryMatcher, SolidaryAskRepository $solidaryAskRepository, AddressRepository $addressRepository, ProposalRepository $proposalRepository, SolidaryUserStructureRepository $solidaryUserStructureRepository, UserManager $userManager, UserRepository $userRepository, StructureProofRepository $structureProofRepository, StructureRepository $structureRepository)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
@@ -74,6 +87,10 @@ class SolidaryManager
         $this->addressRepository = $addressRepository;
         $this->proposalRepository = $proposalRepository;
         $this->solidaryUserStructureRepository = $solidaryUserStructureRepository;
+        $this->userManager = $userManager;
+        $this->userRepository = $userRepository;
+        $this->structureProofRepository = $structureProofRepository;
+        $this->structureRepository = $structureRepository;
     }
 
     public function getSolidary($id): ?Solidary
@@ -95,17 +112,19 @@ class SolidaryManager
      */
     public function createSolidary(Solidary $solidary)
     {
-        // TODO check if the user exist if not create the user
-
-        // TODO if the user exist check if the solidaryUser exist if not create the solidary user
-
-        // Create an ad and get associated proposal
-        $ad = $this->createJourneyFromSolidary($solidary);
+        // We create a new user if necessary if it's a demand from the front
+        if ($solidary->getEmail()) {
+            $user = $this->solidaryCreateUser($solidary);
+            $userId = $user->getId();
+        }
+        
+        // Create an ad and get the associated proposal
+        $ad = $this->createJourneyFromSolidary($solidary, $userId);
         $proposal = $this->proposalRepository->find($ad->getId());
 
         // we get solidaryUserStructure
-        $solidaryStructureId = $this->security->getUser()->getSolidaryStructures()[0]->getId();
-        $solidaryUserId = $solidary->getSolidaryUser()->getId();
+        $solidaryStructureId = $solidary->getStructure() ? substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1) : $this->security->getUser()->getSolidaryStructures()[0]->getId();
+        $solidaryUserId = $solidary->getSolidaryUser() ? $solidary->getSolidaryUser()->getId() : $user->getSolidaryUser()->getId();
         $solidaryUserStructure = $this->solidaryUserStructureRepository->findByStructureAndSolidaryUser($solidaryStructureId, $solidaryUserId);
 
         // we check if we have a deadline if yes we update solidary
@@ -116,6 +135,11 @@ class SolidaryManager
         // we update solidary
         $solidary->setProposal($proposal);
         $solidary->setSolidaryUserStructure($solidaryUserStructure[0]);
+
+        // we add the needs to the solidary
+        // foreach ($solidary->getNeeds() as $givenNeed) {
+        //     $solidary->addNeed(clone $givenNeed);
+        // }
         
         $this->entityManager->persist($solidary);
         $this->entityManager->flush();
@@ -212,7 +236,6 @@ class SolidaryManager
         return $this->solidaryRepository->findSolidarySolutions($solidaryId);
     }
 
-    
     /**
      * Get the list of all the Asks (Solidary or not) linked to a Solidary
      *
@@ -325,7 +348,7 @@ class SolidaryManager
      * @param Solidary $solidary
      * @return Ad
      */
-    private function createJourneyFromSolidary(Solidary $solidary): Ad
+    private function createJourneyFromSolidary(Solidary $solidary, int $userId = null): Ad
     {
         $ad = new Ad;
 
@@ -386,7 +409,7 @@ class SolidaryManager
         $ad->setReturnDate($solidary->getReturnDatetime());
         $ad->setOutwardTime($solidary->getOutwardDatetime()->format("H:i"));
         $ad->setReturnTime($solidary->getReturnDatetime()->format("H:i"));
-        if ($solidary->getOutwardDeadlineDatetime()) {
+        if ($solidary->getFrequency(Solidary::FREQUENCY_REGULAR)) {
             $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
 
             // we set the schedule and the limit date of the regular demand
@@ -394,7 +417,7 @@ class SolidaryManager
             $ad->setReturnLimitDate($solidary->getReturnDeadlineDatetime());
             // Schedule
             $schedule = [];
-            $days = ['mon','tue','wed','thu','fri'];
+            $days = $solidary->getDays();
             foreach ($days as $day) {
                 $schedule[0][$day] = true;
             }
@@ -404,6 +427,10 @@ class SolidaryManager
             $ad->setSchedule($schedule);
         }
 
+        // If the destination is not specified we use the origin
+        if ($destination == null) {
+            $destination = $origin;
+        }
         // Outward waypoint
         $outwardWaypoints = [
             clone $origin,
@@ -421,8 +448,96 @@ class SolidaryManager
         $ad->setReturnWaypoints($returnWaypoints);
 
         // The User
-        $ad->setUserId($solidary->getSolidaryUser()->getUser()->getId());
+        $ad->setUserId($userId ? $userId : $solidary->getSolidaryUser()->getUser()->getId());
 
         return $this->adManager->createAd($ad, true);
+    }
+
+    /**
+     * We create the user associate to the solidary demand if the user is not already created
+     * We also create the solidaryUser associated if necessary
+     *
+     * @param Solidary $solidary
+     * @return User
+     */
+    private function solidaryCreateUser(Solidary $solidary): User
+    {
+
+        // We check if the user exist
+        $user = $this->userRepository->findOneBy(['email'=>$solidary->getEmail()]);
+        if ($user == null) {
+            // We create a new user
+            $user = new User();
+            $user->setEmail($solidary->getEmail());
+            $user->setPassword($solidary->getPassword());
+            $user->setGivenName($solidary->getGivenName());
+            $user->setFamilyName($solidary->getFamilyName());
+            $user->setBirthDate($solidary->getBirthDate());
+            $user->setTelephone($solidary->getTelephone());
+            $user->setGender($solidary->getGender());
+            // we add origin address as home address
+            if (isset($solidary->getOrigin()['iri'])) {
+                $homeAddress = clone $this->addressRepository->find(substr($solidary->getOrigin()['iri'], strrpos($solidary->getOrigin()['iri'], '/') + 1));
+            } else {
+                $homeAddress = new Address;
+                $homeAddress->setHouseNumber($solidary->getOrigin()['houseNumber']);
+                $homeAddress->setStreet($solidary->getOrigin()['street']);
+                $homeAddress->setStreetAddress($solidary->getOrigin()['streetAddress']);
+                $homeAddress->setPostalCode($solidary->getOrigin()['postalCode']);
+                $homeAddress->setSubLocality($solidary->getOrigin()['subLocality']);
+                $homeAddress->setAddressLocality($solidary->getOrigin()['addressLocality']);
+                $homeAddress->setLocalAdmin($solidary->getOrigin()['localAdmin']);
+                $homeAddress->setCounty($solidary->getOrigin()['county']);
+                $homeAddress->setMacroCounty($solidary->getOrigin()['macroCounty']);
+                $homeAddress->setRegion($solidary->getOrigin()['region']);
+                $homeAddress->setMacroRegion($solidary->getOrigin()['macroRegion']);
+                $homeAddress->setAddressCountry($solidary->getOrigin()['addressCountry']);
+                $homeAddress->setCountryCode($solidary->getOrigin()['countryCode']);
+                $homeAddress->setLatitude($solidary->getOrigin()['latitude']);
+                $homeAddress->setLongitude($solidary->getOrigin()['longitude']);
+            }
+            $homeAddress->setHome(true);
+            $user->addAddress($homeAddress);
+
+            $user = $this->userManager->registerUser($user);
+        }
+        // We also create the solidaryUser associated to the demand
+        if (is_null($user->getSolidaryUser())) {
+            $solidaryUser = new SolidaryUser();
+            $solidaryUser->setBeneficiary(true);
+            $solidaryUser->setAddress(clone $user->getAddresses()[0]);
+            $user->setSolidaryUser($solidaryUser);
+        } else {
+            $solidaryUser = $user->getSolidaryUser();
+        }
+
+        // We create the solidaryUserStructure associated to the demand
+        $solidaryUserStructure = new SolidaryUserStructure();
+        $structure = $this->structureRepository->find(substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1));
+        $solidaryUserStructure->setStructure($structure);
+        $solidaryUserStructure->setSolidaryUser($solidaryUser);
+
+        // We add the proofs associated to the demand
+        foreach ($solidary->getProofs() as $givenProof) {
+            // We get the structure proof and we create a proof to persist
+            $structureProofId = null;
+            if (strrpos($givenProof['id'], '/')) {
+                $structureProofId = substr($givenProof['id'], strrpos($givenProof['id'], '/') + 1);
+            }
+                
+            $structureProof = $this->structureProofRepository->find($structureProofId);
+            if (!is_null($structureProof) && isset($givenProof['value']) && !is_null($givenProof['value'])) {
+                $proof = new Proof();
+                $proof->setStructureProof($structureProof);
+                $proof->setValue($givenProof['value']);
+                $solidaryUserStructure->addProof($proof);
+            }
+        }
+
+        $solidaryUser->addSolidaryUserStructure($solidaryUserStructure);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        return $user;
     }
 }
