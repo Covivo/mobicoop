@@ -34,9 +34,19 @@ use App\User\Repository\UserRepository;
 use Symfony\Component\Security\Core\Security;
 use App\Solidary\Entity\SolidaryUserStructure;
 use App\Action\Repository\DiaryRepository;
+use App\Auth\Entity\AuthItem;
+use App\Auth\Entity\UserAuthAssignment;
+use App\Auth\Repository\AuthItemRepository;
+use App\Geography\Entity\Address;
+use App\Solidary\Entity\Proof;
 use App\Solidary\Entity\SolidaryDiaryEntry;
 use App\Solidary\Entity\SolidaryVolunteer;
+use App\Solidary\Event\SolidaryCreatedEvent;
+use App\Solidary\Event\SolidaryUserCreatedEvent;
 use App\Solidary\Repository\SolidaryRepository;
+use App\User\Entity\User;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\Solidary\Repository\StructureProofRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -51,6 +61,10 @@ class SolidaryUserManager
     private $structureRepository;
     private $diaryRepository;
     private $solidaryRepository;
+    private $authItemRepository;
+    private $structureProofRepository;
+    private $params;
+    private $encoder;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -60,7 +74,11 @@ class SolidaryUserManager
         Security $security,
         StructureRepository $structureRepository,
         DiaryRepository $diaryRepository,
-        SolidaryRepository $solidaryRepository
+        SolidaryRepository $solidaryRepository,
+        AuthItemRepository $authItemRepository,
+        UserPasswordEncoderInterface $encoder,
+        StructureProofRepository $structureProofRepository,
+        array $params
     ) {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
@@ -70,6 +88,10 @@ class SolidaryUserManager
         $this->structureRepository = $structureRepository;
         $this->diaryRepository = $diaryRepository;
         $this->solidaryRepository = $solidaryRepository;
+        $this->authItemRepository = $authItemRepository;
+        $this->structureProofRepository = $structureProofRepository;
+        $this->params = $params;
+        $this->encoder = $encoder;
     }
 
     public function updateSolidaryUser(SolidaryUser $solidaryUser)
@@ -124,7 +146,19 @@ class SolidaryUserManager
         // Home address
         foreach ($user->getAddresses() as $address) {
             if ($address->isHome()) {
-                $solidaryBeneficiary->setHomeAddress($address);
+                $homeAddress = [];
+                $homeAddress['streetAddress'] = $address->getStreetAddress();
+                $homeAddress['addressLocality'] = $address->getAddressLocality();
+                $homeAddress['localAdmin'] = $address->getLocalAdmin();
+                $homeAddress['county'] = $address->getCounty();
+                $homeAddress['macroCounty'] = $address->getMacroCounty();
+                $homeAddress['region'] = $address->getRegion();
+                $homeAddress['macroRegion'] = $address->getMacroRegion();
+                $homeAddress['addressCountry'] = $address->getAddressCountry();
+                $homeAddress['countryCode'] = $address->getCountryCode();
+                $homeAddress['latitude'] = $address->getLatitude();
+                $homeAddress['longitude'] = $address->getLongitude();
+                $solidaryBeneficiary->setHomeAddress($homeAddress);
             }
         }
 
@@ -332,5 +366,149 @@ class SolidaryUserManager
 
 
         return $volunteers;
+    }
+
+    /**
+     * Create a SolidaryUser and its User if necessary from a SolidaryBeneficiary
+     *
+     * @param SolidaryBeneficiary $solidaryBeneficiary
+     * @return SolidaryBeneficiary|null
+     */
+    public function createSolidaryBeneficiary(SolidaryBeneficiary $solidaryBeneficiary): ?SolidaryBeneficiary
+    {
+
+        // If there is no User, we need to create it first
+        $user = $solidaryBeneficiary->getUser();
+        if (is_null($user)) {
+
+            // We check if there no User with this email
+            if (!is_null($this->userRepository->findOneBy(['email'=>$solidaryBeneficiary->getEmail()]))) {
+                throw new SolidaryException(SolidaryException::ALREADY_USER);
+            }
+
+
+            $user = new User();
+            $user->setEmail($solidaryBeneficiary->getEmail());
+            $user->setGivenName($solidaryBeneficiary->getGivenName());
+            $user->setFamilyName($solidaryBeneficiary->getFamilyName());
+            $user->setNewsSubscription($solidaryBeneficiary->hasNewsSubscription());
+            $user->setTelephone($solidaryBeneficiary->getTelephone());
+            $user->setBirthDate($solidaryBeneficiary->getBirthDate());
+            $user->setGender($solidaryBeneficiary->getGender());
+
+            $user->setPhoneDisplay(1);
+            $user->setSmoke($this->params['smoke']);
+            $user->setMusic($this->params['music']);
+            $user->setChat($this->params['chat']);
+            // To do : Dynamic Language
+            $user->setLanguage('fr_FR');
+
+            // Set an encrypted password
+            $password = $this->randomPassword();
+            $user->setPassword($this->encoder->encodePassword($user, $password));
+            $user->setClearPassword($password); // Used to be send by email (not persisted)
+
+            // auto valid the registration
+            $user->setValidatedDate(new \DateTime());
+
+
+            $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
+        } else {
+            // We check if this User does'nt already have a Solidary User
+            if (!is_null($user->getSolidaryUser())) {
+                throw new SolidaryException(SolidaryException::ALREADY_SOLIDARY_USER);
+            }
+        }
+
+        // We create the SolidaryUser
+        $solidaryUser = new SolidaryUser();
+        $solidaryUser->setBeneficiary(true);
+        $homeAddress = $solidaryBeneficiary->getHomeAddress();
+        $address = new Address();
+        $address->setStreetAddress($homeAddress['streetAddress']);
+        $address->setAddressLocality($homeAddress['addressLocality']);
+        $address->setLocalAdmin($homeAddress['localAdmin']);
+        $address->setCounty($homeAddress['county']);
+        $address->setMacroCounty($homeAddress['macroCounty']);
+        $address->setRegion($homeAddress['region']);
+        $address->setMacroRegion($homeAddress['macroRegion']);
+        $address->setAddressCountry($homeAddress['addressCountry']);
+        $address->setCountryCode($homeAddress['countryCode']);
+        $address->setLatitude($homeAddress['latitude']);
+        $address->setLongitude($homeAddress['longitude']);
+        $address->setName($homeAddress['name']);
+        $address->setHome(true);
+        $address->setUser($user);
+        $solidaryUser->setAddress($address);
+
+        $solidaryUser->setComment($solidaryBeneficiary->getComment());
+        $solidaryUser->setVehicle($solidaryBeneficiary->hasVehicule());
+
+        // We set the link between User and SolidaryUser
+        $user->setSolidaryUser($solidaryUser);
+
+        
+        // If there a Structure given, we use it. Otherwise we use the first admin structure
+        $solidaryBeneficiaryStructure = $solidaryBeneficiary->getStructure();
+        if (is_null($solidaryBeneficiaryStructure)) {
+            // We get the Structure of the Admin to set the SolidaryUserStructure
+            $structures = $this->structureRepository->findByUser($this->security->getUser());
+            $structureAdmin = null;
+            if (!is_null($structures) || count($structures)>0) {
+                $solidaryBeneficiaryStructure = $structures[0];
+            }
+        }
+        $solidaryUserStructure = new SolidaryUserStructure();
+        $solidaryUserStructure->setStructure($solidaryBeneficiaryStructure);
+        $solidaryUserStructure->setSolidaryUser($solidaryUser);
+
+        if ($solidaryBeneficiary->isValidatedCandidate()) {
+            $solidaryUserStructure->setAcceptedDate(new \Datetime());
+        }
+
+        // Proofs
+        foreach ($solidaryBeneficiary->getProofs() as $givenProof) {
+            // We get the structure proof and we create a proof to persist
+            $structureProofId = null;
+            if (strrpos($givenProof['id'], '/')) {
+                $structureProofId = substr($givenProof['id'], strrpos($givenProof['id'], '/') + 1);
+            }
+                
+            $structureProof = $this->structureProofRepository->find($structureProofId);
+            if (!is_null($structureProof) && isset($givenProof['value']) && !is_null($givenProof['value'])) {
+                $proof = new Proof();
+                $proof->setStructureProof($structureProof);
+                $proof->setValue($givenProof['value']);
+                $solidaryUserStructure->addProof($proof);
+            }
+        }
+
+        $solidaryUser->addSolidaryUserStructure($solidaryUserStructure);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        
+        // dispatch SolidaryUser event
+        $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
+        $this->eventDispatcher->dispatch(SolidaryUserCreatedEvent::NAME, $event);
+        $event = new SolidaryCreatedEvent($user, $this->security->getUser());
+        $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
+
+        return $this->getSolidaryBeneficiary($user->getId());
+    }
+
+    private function randomPassword()
+    {
+        $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < 10; $i++) {
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
+        }
+        return implode($pass); //turn the array into a string
     }
 }

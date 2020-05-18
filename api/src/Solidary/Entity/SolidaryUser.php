@@ -794,7 +794,7 @@ class SolidaryUser
         return $this->vehicle;
     }
 
-    public function setVehicle(bool $vehicle): self
+    public function setVehicle(?bool $vehicle): self
     {
         $this->vehicle = $vehicle;
 

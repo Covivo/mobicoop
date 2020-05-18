@@ -138,14 +138,12 @@ class SolidaryVolunteer
 
     /**
      * @var User The user associated with the solidaryUser.
-     *
-     * @Assert\NotBlank
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $user;
 
     /**
-     * @var Address The home address of this User
+     * @var array The home address of this User
      * @Groups({"writeSolidary"})
      */
     private $homeAddress;
@@ -338,6 +336,12 @@ class SolidaryVolunteer
     private $eSun;
 
     /**
+     * @var Structure The solidary structures of this user only in POST context
+     * @Groups({"writeSolidary"})
+     */
+    private $structure;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @Groups({"readSolidary","writeSolidary"})
@@ -478,12 +482,12 @@ class SolidaryVolunteer
         return $this;
     }
 
-    public function getHomeAddress(): ?Address
+    public function getHomeAddress(): ?array
     {
         return $this->homeAddress;
     }
 
-    public function setHomeAddress(?Address $homeAddress): self
+    public function setHomeAddress(?array $homeAddress): self
     {
         $this->homeAddress = $homeAddress;
 
@@ -858,6 +862,18 @@ class SolidaryVolunteer
     public function setESun(?bool $eSun): self
     {
         $this->eSun = $eSun;
+
+        return $this;
+    }
+
+    public function getStructure(): ?Structure
+    {
+        return $this->structure;
+    }
+
+    public function setStructure(?Structure $structure): self
+    {
+        $this->structure = $structure;
 
         return $this;
     }

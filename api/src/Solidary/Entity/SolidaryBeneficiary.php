@@ -138,20 +138,24 @@ class SolidaryBeneficiary
 
     /**
      * @var User The user associated with the solidaryUser.
-     *
-     * @Assert\NotBlank
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $user;
 
     /**
-     * @var Address The home address of this User
+     * @var array The home address of this beneficiary
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $homeAddress;
 
     /**
-     * @var string A comment about the solidaryUser.
+     * @var bool If he has a vehicule
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $vehicule;
+
+    /**
+     * @var string|null A comment about the solidaryUser.
      *
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -183,9 +187,15 @@ class SolidaryBeneficiary
 
     /**
      * @var array The solidary structures of this user
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary"})
      */
     private $structures;
+
+    /**
+     * @var Structure|null The solidary structures of this user only in POST context
+     * @Groups({"writeSolidary"})
+     */
+    private $structure;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -329,14 +339,26 @@ class SolidaryBeneficiary
         return $this;
     }
 
-    public function getHomeAddress(): ?Address
+    public function getHomeAddress(): ?array
     {
         return $this->homeAddress;
     }
 
-    public function setHomeAddress(?Address $homeAddress): self
+    public function setHomeAddress(?array $homeAddress): self
     {
         $this->homeAddress = $homeAddress;
+
+        return $this;
+    }
+
+    public function hasVehicule(): ?bool
+    {
+        return $this->vehicule;
+    }
+
+    public function setVehicule(?bool $vehicule): self
+    {
+        $this->vehicule = $vehicule;
 
         return $this;
     }
@@ -409,6 +431,18 @@ class SolidaryBeneficiary
     public function setStructures(?array $structures): self
     {
         $this->structures = $structures;
+
+        return $this;
+    }
+
+    public function getStructure(): ?Structure
+    {
+        return $this->structure;
+    }
+
+    public function setStructure(?Structure $structure): self
+    {
+        $this->structure = $structure;
 
         return $this;
     }

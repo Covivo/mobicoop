@@ -95,6 +95,7 @@ class Proof
      * @var string The value entered by the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readSolidary"})
      */
     private $value;
 
