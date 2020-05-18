@@ -49,11 +49,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *      },
  *      itemOperations={
- *          "active"={
- *              "method"="GET",
- *              "read"=false,
- *              "security"="is_granted('dynamic_ad_read',object)"
- *          },
  *          "get"={
  *              "method"="GET",
  *              "read"=false,
