@@ -260,6 +260,35 @@ class SolidaryUserManager
         $solidaries = $this->solidaryRepository->findBySolidaryUserMatching($solidaryUser);
         $solidaryVolunteer->setSolidaries($solidaries);
 
+        // Availabilities
+        $solidaryVolunteer->setMMinTime($solidaryUser->getMMinTime());
+        $solidaryVolunteer->setMMaxTime($solidaryUser->getMMaxTime());
+        $solidaryVolunteer->setAMinTime($solidaryUser->getAMinTime());
+        $solidaryVolunteer->setAMaxTime($solidaryUser->getAMaxTime());
+        $solidaryVolunteer->setEMinTime($solidaryUser->getEMinTime());
+        $solidaryVolunteer->setEMaxTime($solidaryUser->getEMaxTime());
+        
+        $solidaryVolunteer->setMMon($solidaryUser->hasMMon());
+        $solidaryVolunteer->setMTue($solidaryUser->hasMTue());
+        $solidaryVolunteer->setMWed($solidaryUser->hasMWed());
+        $solidaryVolunteer->setMThu($solidaryUser->hasMThu());
+        $solidaryVolunteer->setMFri($solidaryUser->hasMFri());
+        $solidaryVolunteer->setMSat($solidaryUser->hasMSat());
+        $solidaryVolunteer->setMSun($solidaryUser->hasMSun());
+        $solidaryVolunteer->setAMon($solidaryUser->hasAMon());
+        $solidaryVolunteer->setATue($solidaryUser->hasATue());
+        $solidaryVolunteer->setAWed($solidaryUser->hasAWed());
+        $solidaryVolunteer->setAThu($solidaryUser->hasAThu());
+        $solidaryVolunteer->setAFri($solidaryUser->hasAFri());
+        $solidaryVolunteer->setASat($solidaryUser->hasASat());
+        $solidaryVolunteer->setASun($solidaryUser->hasASun());
+        $solidaryVolunteer->setEMon($solidaryUser->hasEMon());
+        $solidaryVolunteer->setETue($solidaryUser->hasETue());
+        $solidaryVolunteer->setEWed($solidaryUser->hasEWed());
+        $solidaryVolunteer->setEThu($solidaryUser->hasEThu());
+        $solidaryVolunteer->setEFri($solidaryUser->hasEFri());
+        $solidaryVolunteer->setESat($solidaryUser->hasESat());
+        $solidaryVolunteer->setESun($solidaryUser->hasESun());
 
         return $solidaryVolunteer;
     }

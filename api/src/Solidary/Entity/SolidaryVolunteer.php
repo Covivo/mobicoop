@@ -175,10 +175,166 @@ class SolidaryVolunteer
     private $solidaries;
 
     /**
-     * @var array The availabilities of this user
+     * @var \DateTimeInterface Morning min time.
      * @Groups({"readSolidary","writeSolidary"})
      */
-    private $availabilities;
+    private $mMinTime;
+    
+    /**
+     * @var \DateTimeInterface Morning max time.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $mMaxTime;
+    
+    /**
+     * @var \DateTimeInterface Afternoon min time.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $aMinTime;
+    
+    /**
+     * @var \DateTimeInterface Afternoon max time.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $aMaxTime;
+    
+    /**
+     * @var \DateTimeInterface Evening min time.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $eMinTime;
+    
+    /**
+     * @var \DateTimeInterface Evening max time.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $eMaxTime;
+    
+    /**
+     * @var bool Available on monday morning.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $mMon;
+    
+    /**
+     * @var bool Available on monday afternoon.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $aMon;
+    
+    /**
+     * @var bool Available on monday evening.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $eMon;
+    
+    /**
+     * @var bool Available on tuesday morning.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $mTue;
+    
+    /**
+     * @var bool Available on tuesday afternoon.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $aTue;
+    
+    /**
+     * @var bool Available on tuesday evening.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $eTue;
+    
+    /**
+     * @var bool Available on wednesday morning.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $mWed;
+    
+    /**
+     * @var bool Available on wednesday afternoon.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $aWed;
+    
+    /**
+     * @var bool Available on wednesday evening.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $eWed;
+    
+    /**
+     * @var bool Available on thursday morning.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $mThu;
+    
+    /**
+     * @var bool Available on thursday afternoon.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $aThu;
+    
+    /**
+     * @var bool Available on thursday evening.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $eThu;
+    
+    /**
+     * @var bool Available on friday morning.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $mFri;
+    
+    /**
+     * @var bool Available on friday afternoon.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $aFri;
+    
+    /**
+     * @var bool Available on friday evening.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $eFri;
+    
+    /**
+     * @var bool Available on saturday morning.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $mSat;
+    
+    /**
+     * @var bool Available on saturday afternoon.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $aSat;
+    
+    /**
+     * @var bool Available on saturday evening.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $eSat;
+    
+    /**
+     * @var bool Available on sunday morning.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $mSun;
+    
+    /**
+     * @var bool Available on sunday afternoon.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $aSun;
+    
+    /**
+     * @var bool Available on sunday evening.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $eSun;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -199,7 +355,6 @@ class SolidaryVolunteer
         $this->id = self::DEFAULT_ID;
         $this->diaries = [];
         $this->solidaries = [];
-        $this->availabilities = [];
     }
     
     public function getId(): ?int
@@ -382,14 +537,326 @@ class SolidaryVolunteer
         return $this;
     }
 
-    public function getAvailabilities(): ?array
+    public function getMMinTime(): ?\DateTimeInterface
     {
-        return $this->availabilities;
+        return $this->mMinTime;
     }
 
-    public function setAvailabilities(?array $availabilities): self
+    public function setMMinTime(?\DateTimeInterface $mMinTime): self
     {
-        $this->availabilities = $availabilities;
+        $this->mMinTime = $mMinTime;
+
+        return $this;
+    }
+    
+    public function getMMaxTime(): ?\DateTimeInterface
+    {
+        return $this->mMaxTime;
+    }
+
+    public function setMMaxTime(?\DateTimeInterface $mMaxTime): self
+    {
+        $this->mMaxTime = $mMaxTime;
+
+        return $this;
+    }
+    
+    public function getAMinTime(): ?\DateTimeInterface
+    {
+        return $this->aMinTime;
+    }
+
+    public function setAMinTime(?\DateTimeInterface $aMinTime): self
+    {
+        $this->aMinTime = $aMinTime;
+
+        return $this;
+    }
+    
+    public function getAMaxTime(): ?\DateTimeInterface
+    {
+        return $this->aMaxTime;
+    }
+
+    public function setAMaxTime(?\DateTimeInterface $aMaxTime): self
+    {
+        $this->aMaxTime = $aMaxTime;
+
+        return $this;
+    }
+    
+    public function getEMinTime(): ?\DateTimeInterface
+    {
+        return $this->eMinTime;
+    }
+
+    public function setEMinTime(?\DateTimeInterface $eMinTime): self
+    {
+        $this->eMinTime = $eMinTime;
+
+        return $this;
+    }
+    
+    public function getEMaxTime(): ?\DateTimeInterface
+    {
+        return $this->eMaxTime;
+    }
+
+    public function setEMaxTime(?\DateTimeInterface $eMaxTime): self
+    {
+        $this->eMaxTime = $eMaxTime;
+
+        return $this;
+    }
+    
+    public function hasMMon(): ?bool
+    {
+        return $this->mMon;
+    }
+    
+    public function setMMon(?bool $mMon): self
+    {
+        $this->mMon = $mMon;
+
+        return $this;
+    }
+
+    public function hasAMon(): ?bool
+    {
+        return $this->aMon;
+    }
+
+    public function setAMon(?bool $aMon): self
+    {
+        $this->aMon = $aMon;
+
+        return $this;
+    }
+    
+    public function hasEMon(): ?bool
+    {
+        return $this->eMon;
+    }
+    
+    public function setEMon(?bool $eMon): self
+    {
+        $this->eMon = $eMon;
+
+        return $this;
+    }
+    
+    public function hasMTue(): ?bool
+    {
+        return $this->mTue;
+    }
+    
+    public function setMTue(?bool $mTue): self
+    {
+        $this->mTue = $mTue;
+
+        return $this;
+    }
+    
+    public function hasATue(): ?bool
+    {
+        return $this->aTue;
+    }
+   
+    public function setATue(?bool $aTue): self
+    {
+        $this->aTue = $aTue;
+
+        return $this;
+    }
+    
+    public function hasETue(): ?bool
+    {
+        return $this->eTue;
+    }
+   
+    public function setETue(?bool $eTue): self
+    {
+        $this->eTue = $eTue;
+
+        return $this;
+    }
+    
+    public function hasMWed(): ?bool
+    {
+        return $this->mWed;
+    }
+   
+    public function setMWed(?bool $mWed): self
+    {
+        $this->mWed = $mWed;
+
+        return $this;
+    }
+    
+    public function hasAWed(): ?bool
+    {
+        return $this->aWed;
+    }
+   
+    public function setAWed(?bool $aWed): self
+    {
+        $this->aWed = $aWed;
+
+        return $this;
+    }
+    
+    public function hasEWed(): ?bool
+    {
+        return $this->eWed;
+    }
+   
+    public function setEWed(?bool $eWed): self
+    {
+        $this->eWed = $eWed;
+
+        return $this;
+    }
+    
+    public function hasMThu(): ?bool
+    {
+        return $this->mThu;
+    }
+   
+    public function setMThu(?bool $mThu): self
+    {
+        $this->mThu = $mThu;
+
+        return $this;
+    }
+    
+    public function hasAThu(): ?bool
+    {
+        return $this->aThu;
+    }
+   
+    public function setAThu(?bool $aThu): self
+    {
+        $this->aThu = $aThu;
+
+        return $this;
+    }
+    
+    public function hasEThu(): ?bool
+    {
+        return $this->eThu;
+    }
+   
+    public function setEThu(?bool $eThu): self
+    {
+        $this->eThu = $eThu;
+
+        return $this;
+    }
+    
+    public function hasMFri(): ?bool
+    {
+        return $this->mFri;
+    }
+   
+    public function setMFri(?bool $mFri): self
+    {
+        $this->mFri = $mFri;
+
+        return $this;
+    }
+    
+    public function hasAFri(): ?bool
+    {
+        return $this->aFri;
+    }
+   
+    public function setAFri(?bool $aFri): self
+    {
+        $this->aFri = $aFri;
+
+        return $this;
+    }
+    
+    public function hasEFri(): ?bool
+    {
+        return $this->eFri;
+    }
+   
+    public function setEFri(?bool $eFri): self
+    {
+        $this->eFri = $eFri;
+
+        return $this;
+    }
+    
+    public function hasMSat(): ?bool
+    {
+        return $this->mSat;
+    }
+   
+    public function setMSat(?bool $mSat): self
+    {
+        $this->mSat = $mSat;
+
+        return $this;
+    }
+    
+    public function hasASat(): ?bool
+    {
+        return $this->aSat;
+    }
+   
+    public function setASat(?bool $aSat): self
+    {
+        $this->aSat = $aSat;
+
+        return $this;
+    }
+    
+    public function hasESat(): ?bool
+    {
+        return $this->eSat;
+    }
+   
+    public function setESat(?bool $eSat): self
+    {
+        $this->eSat = $eSat;
+
+        return $this;
+    }
+    
+    public function hasMSun(): ?bool
+    {
+        return $this->mSun;
+    }
+   
+    public function setMSun(?bool $mSun): self
+    {
+        $this->mSun = $mSun;
+
+        return $this;
+    }
+    
+    public function hasASun(): ?bool
+    {
+        return $this->aSun;
+    }
+   
+    public function setASun(?bool $aSun): self
+    {
+        $this->aSun = $aSun;
+
+        return $this;
+    }
+    
+    public function hasESun(): ?bool
+    {
+        return $this->eSun;
+    }
+
+    public function setESun(?bool $eSun): self
+    {
+        $this->eSun = $eSun;
 
         return $this;
     }
