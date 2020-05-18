@@ -90,7 +90,7 @@ class EventManager
 
         // set event infos
         $event->setName($data->get('name'));
-        $event->setDescription($data->get('fullDescription'));
+        $event->setDescription($data->get('description'));
         $event->setFullDescription($data->get('fullDescription'));
         $event->setAddress($address);
         $event->setUrl($data->get('urlEvent'));

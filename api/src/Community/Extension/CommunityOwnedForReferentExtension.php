@@ -30,10 +30,12 @@ use App\App\Entity\App;
 use App\Community\Entity\Community;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
+use App\Auth\Service\AuthManager;
+use App\Auth\Entity\AuthItem;
 
 /**
  * Extension for get the owned community for a referent in admin
- * We use this extension to get only the owned communities for a referent and for the admin (accessAdmin), for those who have ROLE_ADMIN roles we get all
+ * We use this extension to get only the owned communities for those who are community_restrict
  *
  * @author Julien Deschampt <julien.deschampt@mobicoop.org>
  *
@@ -41,11 +43,14 @@ use Symfony\Component\Security\Core\Security;
 
 final class CommunityOwnedForReferentExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
+    private $authManager;
     private $security;
 
-    public function __construct(Security $security)
+
+    public function __construct(Security $security, AuthManager $authManager)
     {
         $this->security = $security;
+        $this->authManager = $authManager;
     }
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
@@ -60,10 +65,13 @@ final class CommunityOwnedForReferentExtension implements QueryCollectionExtensi
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
     {
-        // concerns only Community resource, and User users (not Apps)
-        if (Community::class !== $resourceClass || (null === $user = $this->security->getUser()) || $this->security->getUser() instanceof App || $this->security->isGranted('ROLE_ADMIN') || $operationName !='accessAdmin') {
+        // check if we are coming from admin (display all if we are in front, no matter what roles) and if user is community_restrict
+        if (Community::class !== $resourceClass ||
+             !$this->authManager->isAuthorized('community_restrict') ||
+             $operationName !='manage') {
             return;
         }
+        $user = $this->security->getUser();
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder->andWhere(sprintf('%s.user = :current_user', $rootAlias));
