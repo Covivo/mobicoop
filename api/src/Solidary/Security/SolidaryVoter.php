@@ -27,7 +27,6 @@ use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Solidary\Entity\Solidary;
-use App\Solidary\Entity\SolidaryAnimation;
 use App\Solidary\Entity\SolidaryContact;
 use App\Solidary\Entity\SolidarySearch;
 use App\Solidary\Entity\SolidarySolution;
@@ -75,7 +74,6 @@ class SolidaryVoter extends Voter
             self::SOLIDARY_LIST,
             ]) && !($subject instanceof Paginator) &&
                 !($subject instanceof Solidary) &&
-                !($subject instanceof SolidaryAnimation) &&
                 !($subject instanceof SolidarySolution) &&
                 !($subject instanceof SolidarySearch) &&
                 !($subject instanceof SolidaryContact)

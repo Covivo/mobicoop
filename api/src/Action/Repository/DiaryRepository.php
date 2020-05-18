@@ -20,37 +20,49 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\DataProvider;
+namespace App\Action\Repository;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use App\Solidary\Entity\Solidary;
-use App\Solidary\Service\SolidaryManager;
+use App\Action\Entity\Diary;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class SolidaryItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+class DiaryRepository
 {
-    private $solidaryManager;
-
-    public function __construct(SolidaryManager $solidaryManager)
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
+    
+    private $entityManager;
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->solidaryManager = $solidaryManager;
+        $this->entityManager = $entityManager;
+        $this->repository = $entityManager->getRepository(Diary::class);
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+
+    public function find(int $id): ?Diary
     {
-        return Solidary::class === $resourceClass;
+        return $this->repository->find($id);
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Solidary
+    public function findAll(): ?array
     {
-        if ($operationName=="contactsList") {
-            return $this->solidaryManager->getAsksList($id);
-        }
-        
-        return $this->solidaryManager->getSolidary($id);
+        return $this->repository->findAll();
+    }
+
+
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    {
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findOneBy(array $criteria): ?Diary
+    {
+        return $this->repository->findOneBy($criteria);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,34 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace App\Community\Controller;
+namespace App\Solidary\Repository;
 
-use App\Community\Service\CommunityManager;
-use App\TranslatorTrait;
-use Psr\Log\LoggerInterface;
-use App\Community\Entity\CommunityUser;
-use Symfony\Component\HttpFoundation\Response;
+use App\Solidary\Entity\Structure;
+use App\Solidary\Entity\Need;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
-final class JoinAction
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+*/
+class NeedRepository
 {
-    use TranslatorTrait;
-    private $communityManager;
-    private $logger;
-
-    public function __construct(CommunityManager $communityManager, LoggerInterface $logger)
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->communityManager = $communityManager;
-        $this->logger = $logger;
+        $this->repository = $entityManager->getRepository(Need::class);
     }
 
-    public function __invoke(CommunityUser $data)
+    public function find(int $id): ?Need
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad community  id is provided"));
-        }
-        if ($this->communityManager->canJoin($data)) {
-            return $data;
-        }
-        return new Response('Unauthorized', 403);
+        return $this->repository->find($id);
+    }
+
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    {
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 }

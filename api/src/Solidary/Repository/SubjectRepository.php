@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,37 +21,43 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\DataProvider;
+namespace App\Solidary\Repository;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use App\Solidary\Entity\Solidary;
-use App\Solidary\Service\SolidaryManager;
+use App\Solidary\Entity\Structure;
+use App\Solidary\Entity\Subject;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- */
-final class SolidaryItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+*/
+class SubjectRepository
 {
-    private $solidaryManager;
-
-    public function __construct(SolidaryManager $solidaryManager)
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->solidaryManager = $solidaryManager;
+        $this->repository = $entityManager->getRepository(Subject::class);
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function find(int $id): ?Subject
     {
-        return Solidary::class === $resourceClass;
+        return $this->repository->find($id);
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Solidary
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
-        if ($operationName=="contactsList") {
-            return $this->solidaryManager->getAsksList($id);
-        }
-        
-        return $this->solidaryManager->getSolidary($id);
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findStructureSubjects(Structure $structure)
+    {
+        $query = $this->repository->createQueryBuilder('s')
+        ->where('s.structure = :structure')
+        ->setParameter('structure', $structure);
+        return $query->getQuery()->getResult();
     }
 }
