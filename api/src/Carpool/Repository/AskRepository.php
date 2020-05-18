@@ -154,7 +154,6 @@ class AskRepository
         ->setParameter('regular', Criteria::FREQUENCY_REGULAR)
         ->setParameter('fromDate', $fromDate->format('Y-m-d'))
         ->setParameter('toDate', $toDate->format('Y-m-d'))
-        ->setParameter('toDate', $toDate->format('Y-m-d'))
         ;
                 
         return $query->getQuery()->getResult();

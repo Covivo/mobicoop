@@ -259,7 +259,7 @@ class ProofManager
                                     $pickUpDate->setTime($ask->getCriteria()->getThuTime()->format('H'), $ask->getCriteria()->getThuTime()->format('i'));
                                 }
                                 break;
-                            case 5:     //friday
+                            case 5:     // friday
                                 if ($ask->getCriteria()->isFriCheck()) {
                                     $startDate->setTime($ask->getCriteria()->getFriTime()->format('H'), $ask->getCriteria()->getFriTime()->format('i'));
                                     $pickUpDate->setTime($ask->getCriteria()->getFriTime()->format('H'), $ask->getCriteria()->getFriTime()->format('i'));
