@@ -49,7 +49,9 @@ use App\Carpool\Entity\Result;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\CarpoolProofRepository;
+use App\Carpool\Repository\WaypointRepository;
 use App\Geography\Service\GeoSearcher;
+use DateTime;
 
 /**
  * Dynamic ad manager service.
@@ -72,6 +74,7 @@ class DynamicManager
     private $askRespository;
     private $askHistoryRepository;
     private $carpoolProofRepository;
+    private $waypointRepository;
     private $internalMessageManager;
 
     /**
@@ -95,6 +98,7 @@ class DynamicManager
         AskRepository $askRespository,
         AskHistoryRepository $askHistoryRepository,
         CarpoolProofRepository $carpoolProofRepository,
+        WaypointRepository $waypointRepository,
         InternalMessageManager $internalMessageManager
     ) {
         $this->entityManager = $entityManager;
@@ -111,6 +115,7 @@ class DynamicManager
         $this->askRespository = $askRespository;
         $this->askHistoryRepository = $askHistoryRepository;
         $this->carpoolProofRepository = $carpoolProofRepository;
+        $this->waypointRepository = $waypointRepository;
         $this->internalMessageManager = $internalMessageManager;
     }
 
@@ -933,8 +938,28 @@ class DynamicManager
         $carpoolProof = new CarpoolProof();
         $carpoolProof->setType($this->params['proofType']);
         $carpoolProof->setAsk($ask);
+        // the ask is always made by the passenger, so the driver is always the 'userRelated'
         $carpoolProof->setDriver($ask->getUserRelated());
         $carpoolProof->setPassenger($ask->getUser());
+        $originWaypoint = $this->waypointRepository->findMinPositionForAskAndRole($ask, Waypoint::ROLE_DRIVER);
+        $destinationWaypoint = $this->waypointRepository->findMaxPositionForAskAndRole($ask, Waypoint::ROLE_DRIVER);
+        $carpoolProof->setOriginDriverAddress(clone $originWaypoint->getAddress());
+        $carpoolProof->setDestinationDriverAddress(clone $destinationWaypoint->getAddress());
+        /**
+         * @var DateTime $startDate
+         */
+        $startDate = clone $ask->getCriteria()->getFromDate();
+        $startDate->setTime($ask->getCriteria()->getFromTime()->format('H'), $ask->getCriteria()->getFromTime()->format('i'));
+        $carpoolProof->setStartDriverDate($startDate);
+        /**
+        * @var DateTime $endDate
+        */
+        // we init the end date with the start date
+        $endDate = clone $startDate;
+        // then we add the duration till the destination point
+        $endDate->modify('+' . $destinationWaypoint->getDuration() . ' second');
+        // note : for now, the end date is computed, it's theoratical and not the 'real' end date
+        $carpoolProof->setEndDriverDate($endDate);
 
         // direction
         $direction = new Direction();
