@@ -22,6 +22,9 @@
 
 namespace App\Solidary\Exception;
 
+use App\Solidary\Entity\SolidaryBeneficiary;
+use App\Solidary\Entity\SolidaryVolunteer;
+
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
@@ -34,6 +37,7 @@ class SolidaryException extends \LogicException
     const UNKNOWN_USER = "Unknown User";
     const NO_STRUCTURE_ID = "No structureId";
     const NO_STRUCTURE = "No structure found";
+    const TYPE_SOLIDARY_USER_UNKNOWN = "Unknown solidaryUser type (must be '".SolidaryBeneficiary::TYPE."' or '".SolidaryVolunteer::TYPE."')";
 
     // SolidarySolution
     const IS_NOT_VOLUNTEER = "The SolidaryUser is not a volunteer";

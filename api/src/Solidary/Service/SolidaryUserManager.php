@@ -292,4 +292,24 @@ class SolidaryUserManager
 
         return $solidaryVolunteer;
     }
+
+    /**
+     * Get all the SolidaryBeneficiaries
+     *
+     * @return array
+     */
+    public function getSolidaryBeneficiaries(): array
+    {
+        $beneficiaries = [];
+
+        // First, we get all user with Beneficiary types of SolidaryUser
+        $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryBeneficiary::TYPE);
+        foreach ($users as $user) {
+            // Maybe To do : If it's too slow, we can use the User instead of the Id. But we need to rewrite the ItemDataProvider
+            $beneficiaries[] = $this->getSolidaryBeneficiary($user->getId());
+        }
+
+
+        return $beneficiaries;
+    }
 }

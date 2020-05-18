@@ -69,6 +69,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class SolidaryBeneficiary
 {
     const DEFAULT_ID = 999999999999;
+    const TYPE = "beneficiary";
 
     /**
      * @var int The id of this solidary user.
@@ -417,7 +418,7 @@ class SolidaryBeneficiary
         return $this->createdDate;
     }
 
-    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    public function setCreatedDate(?\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
 
@@ -429,7 +430,7 @@ class SolidaryBeneficiary
         return $this->updatedDate;
     }
 
-    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    public function setUpdatedDate(?\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
 
