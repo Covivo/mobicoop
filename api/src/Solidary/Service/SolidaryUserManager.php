@@ -220,6 +220,7 @@ class SolidaryUserManager
         }
 
         $solidaryVolunteer = new SolidaryVolunteer();
+        $solidaryVolunteer->setId($user->getId());
         $solidaryVolunteer->setUser($user);
         $solidaryVolunteer->setComment($solidaryUser->getComment());
 
@@ -311,5 +312,25 @@ class SolidaryUserManager
 
 
         return $beneficiaries;
+    }
+
+    /**
+     * Get all the SolidaryVolunteers
+     *
+     * @return array
+     */
+    public function getSolidaryVolunteers(): array
+    {
+        $volunteers = [];
+
+        // First, we get all user with Beneficiary types of SolidaryUser
+        $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryVolunteer::TYPE);
+        foreach ($users as $user) {
+            // Maybe To do : If it's too slow, we can use the User instead of the Id. But we need to rewrite the ItemDataProvider
+            $volunteers[] = $this->getSolidaryVolunteer($user->getId());
+        }
+
+
+        return $volunteers;
     }
 }
