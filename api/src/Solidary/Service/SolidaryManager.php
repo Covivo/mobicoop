@@ -113,6 +113,7 @@ class SolidaryManager
     public function createSolidary(Solidary $solidary)
     {
         // We create a new user if necessary if it's a demand from the front
+        $userId = null;
         if ($solidary->getEmail()) {
             $user = $this->solidaryCreateUser($solidary);
             $userId = $user->getId();
@@ -135,8 +136,8 @@ class SolidaryManager
         // we update solidary
         $solidary->setProposal($proposal);
         $solidary->setSolidaryUserStructure($solidaryUserStructure[0]);
-
-        // we add the needs to the solidary
+        
+        // // // we add the needs to the solidary
         // foreach ($solidary->getNeeds() as $givenNeed) {
         //     $solidary->addNeed(clone $givenNeed);
         // }
@@ -400,21 +401,24 @@ class SolidaryManager
         $ad->setRole(Ad::ROLE_PASSENGER);
 
         // round-trip
-        $ad->setOneWay(false);
+        $ad->setOneWay(true);
+        if ($solidary->getReturnDatetime()) {
+            $ad->setOneWay(false);
+        }
 
         // Frequency
         $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
         // We set the date and time of the demand
         $ad->setOutwardDate($solidary->getOutwardDatetime());
-        $ad->setReturnDate($solidary->getReturnDatetime());
+        $ad->setReturnDate($solidary->getReturnDatetime() ? $solidary->getReturnDatetime() : null);
         $ad->setOutwardTime($solidary->getOutwardDatetime()->format("H:i"));
-        $ad->setReturnTime($solidary->getReturnDatetime()->format("H:i"));
-        if ($solidary->getFrequency(Solidary::FREQUENCY_REGULAR)) {
+        $ad->setReturnTime($solidary->getReturnDatetime() ? $solidary->getReturnDatetime()->format("H:i") : null);
+        if ($solidary->getFrequency(criteria::FREQUENCY_REGULAR)) {
             $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
 
             // we set the schedule and the limit date of the regular demand
             $ad->setOutwardLimitDate($solidary->getOutwardDeadlineDatetime());
-            $ad->setReturnLimitDate($solidary->getReturnDeadlineDatetime());
+            $ad->setReturnLimitDate($solidary->getReturnDeadlineDatetime() ? $solidary->getReturnDeadlineDatetime() : null);
             // Schedule
             $schedule = [];
             $days = $solidary->getDays();
@@ -422,7 +426,7 @@ class SolidaryManager
                 $schedule[0][$day] = true;
             }
             $schedule[0]['outwardTime'] = $solidary->getOutwardDatetime()->format("H:i");
-            $schedule[0]['returnTime'] = $solidary->getReturnDatetime()->format("H:i");
+            $schedule[0]['returnTime'] =$solidary->getReturnDatetime() ? $solidary->getReturnDatetime()->format("H:i") : null;
 
             $ad->setSchedule($schedule);
         }
@@ -475,27 +479,25 @@ class SolidaryManager
             $user->setBirthDate($solidary->getBirthDate());
             $user->setTelephone($solidary->getTelephone());
             $user->setGender($solidary->getGender());
-            // we add origin address as home address
-            if (isset($solidary->getOrigin()['iri'])) {
-                $homeAddress = clone $this->addressRepository->find(substr($solidary->getOrigin()['iri'], strrpos($solidary->getOrigin()['iri'], '/') + 1));
-            } else {
-                $homeAddress = new Address;
-                $homeAddress->setHouseNumber($solidary->getOrigin()['houseNumber']);
-                $homeAddress->setStreet($solidary->getOrigin()['street']);
-                $homeAddress->setStreetAddress($solidary->getOrigin()['streetAddress']);
-                $homeAddress->setPostalCode($solidary->getOrigin()['postalCode']);
-                $homeAddress->setSubLocality($solidary->getOrigin()['subLocality']);
-                $homeAddress->setAddressLocality($solidary->getOrigin()['addressLocality']);
-                $homeAddress->setLocalAdmin($solidary->getOrigin()['localAdmin']);
-                $homeAddress->setCounty($solidary->getOrigin()['county']);
-                $homeAddress->setMacroCounty($solidary->getOrigin()['macroCounty']);
-                $homeAddress->setRegion($solidary->getOrigin()['region']);
-                $homeAddress->setMacroRegion($solidary->getOrigin()['macroRegion']);
-                $homeAddress->setAddressCountry($solidary->getOrigin()['addressCountry']);
-                $homeAddress->setCountryCode($solidary->getOrigin()['countryCode']);
-                $homeAddress->setLatitude($solidary->getOrigin()['latitude']);
-                $homeAddress->setLongitude($solidary->getOrigin()['longitude']);
-            }
+            
+            // we add homeAddress to the user
+            $homeAddress = new Address;
+            $homeAddress->setHouseNumber($solidary->getHomeAddress()['houseNumber']);
+            $homeAddress->setStreet($solidary->getHomeAddress()['street']);
+            $homeAddress->setStreetAddress($solidary->getHomeAddress()['streetAddress']);
+            $homeAddress->setPostalCode($solidary->getHomeAddress()['postalCode']);
+            $homeAddress->setSubLocality($solidary->getHomeAddress()['subLocality']);
+            $homeAddress->setAddressLocality($solidary->getHomeAddress()['addressLocality']);
+            $homeAddress->setLocalAdmin($solidary->getHomeAddress()['localAdmin']);
+            $homeAddress->setCounty($solidary->getHomeAddress()['county']);
+            $homeAddress->setMacroCounty($solidary->getHomeAddress()['macroCounty']);
+            $homeAddress->setRegion($solidary->getHomeAddress()['region']);
+            $homeAddress->setMacroRegion($solidary->getHomeAddress()['macroRegion']);
+            $homeAddress->setAddressCountry($solidary->getHomeAddress()['addressCountry']);
+            $homeAddress->setCountryCode($solidary->getHomeAddress()['countryCode']);
+            $homeAddress->setLatitude($solidary->getHomeAddress()['latitude']);
+            $homeAddress->setLongitude($solidary->getHomeAddress()['longitude']);
+            
             $homeAddress->setHome(true);
             $user->addAddress($homeAddress);
 

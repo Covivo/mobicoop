@@ -39,7 +39,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * ApiResource(
+ * @ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
@@ -85,7 +85,7 @@ class Need
     /**
      * @var Solidary Solidary if the need was created for a specific solidary record.
      *
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof")
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Solidary")
      * @Groups({"readUser","readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */

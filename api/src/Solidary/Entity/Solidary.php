@@ -76,13 +76,6 @@ class Solidary
 {
     const DEFAULT_ID = 999999999999;
 
-    const GENDER_FEMALE = 1;
-    const GENDER_MALE = 2;
-    const GENDER_OTHER = 3;
-
-    const FREQUENCY_PUNCTUAL = 0;
-    const FREQUENCY_REGULAR = 1;
-
     /**
      * @var int $id The id of this solidary record.
      *
@@ -166,8 +159,9 @@ class Solidary
     /**
      * @var ArrayCollection|null The special needs for this solidary record.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", cascade={"persist","remove"} )
      * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $needs;
 
@@ -205,13 +199,20 @@ class Solidary
     /**
      * @var SolidaryUser SolidaryUser associated ti the ask
      * @Groups ({"writeSolidary", "readSolidary"})
+     * @MaxDepth(1)
      */
     private $solidaryUser;
 
     /**
-     * @var Array Origin address of the solidary
+     * @var Array|null Address of the user who create the solidary demand
      * @Groups ({"writeSolidary"})
      */
+    private $homeAddress;
+
+    /**
+    * @var Array Origin address of the solidary
+    * @Groups ({"writeSolidary"})
+    */
     private $origin;
 
     /**
@@ -321,6 +322,7 @@ class Solidary
         $this->destination = [];
         $this->proof = [];
         $this->days = [];
+        $this->homeAddress = [];
     }
 
     public function getId(): int
@@ -428,7 +430,7 @@ class Solidary
     {
         return $this->needs->getValues();
     }
-
+ 
     public function addNeed(Need $need): self
     {
         if (!$this->needs->contains($need)) {
@@ -525,6 +527,19 @@ class Solidary
     public function setSolidaryUser(?SolidaryUser $solidaryUser): self
     {
         $this->solidaryUser = $solidaryUser;
+        
+        return $this;
+    }
+
+
+    public function getHomeAddress(): array
+    {
+        return $this->homeAddress;
+    }
+    
+    public function setHomeAddress($homeAddress): self
+    {
+        $this->homeAddress = $homeAddress;
         
         return $this;
     }
@@ -697,7 +712,7 @@ class Solidary
         return $this;
     }
 
-    public function getStructure(): string
+    public function getStructure(): ?string
     {
         return $this->structure;
     }
