@@ -25,47 +25,46 @@ namespace App\Solidary\DataProvider;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use App\Solidary\Entity\SolidaryAnimation;
+use App\Solidary\Entity\Structure;
 use App\Solidary\Exception\SolidaryException;
-use App\Solidary\Service\SolidaryAnimationManager;
-use LogicException;
+use App\Solidary\Service\StructureManager;
+use Symfony\Component\Security\Core\Security;
+use App\User\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class SolidaryAnimationCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class StructureCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    private $solidaryAnimationManager;
-    private $filters;
+    private $security;
+    private $structureManager;
 
-    public function __construct(SolidaryAnimationManager $solidaryAnimationManager)
+    public function __construct(Security $security, StructureManager $structureManager)
     {
-        $this->solidaryAnimationManager = $solidaryAnimationManager;
+        $this->security = $security;
+        $this->structureManager = $structureManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        if (isset($context['filters'])) {
-            $this->filters = $context['filters'];
-        }
-        
-        return SolidaryAnimation::class === $resourceClass && $operationName == "get";
+        return Structure::class === $resourceClass && $operationName = "structure_needs";
     }
 
     public function getCollection(string $resourceClass, string $operationName = null)
     {
-        if (empty($this->filters['solidary'])) {
-            throw new SolidaryException(SolidaryException::SOLIDARY_MISSING);
+        $structureId = null;
+
+        // If the user whose making the request has a structure, we use its id
+        if (!empty($this->security->getUser()->getSolidaryStructures())) {
+            $structureId = $this->security->getUser()->getSolidaryStructures()[0]->getId();
         }
 
-        $solidaryId = null;
-        if (strrpos($this->filters['solidary'], '/')) {
-            $solidaryId = substr($this->filters['solidary'], strrpos($this->filters['solidary'], '/') + 1);
-        }
-        if (empty($solidaryId) || !is_numeric($solidaryId)) {
-            throw new SolidaryException(SolidaryException::SOLIDARY_ID_INVALID);
+        if (is_null($structureId)) {
+            // We found no structureId we can't process this method
+            throw new SolidaryException(SolidaryException::NO_STRUCTURE_ID);
         }
 
-        return $this->solidaryAnimationManager->getSolidaryAnimations($solidaryId);
+        return $this->structureManager->getStructureNeeds($structureId);
     }
 }

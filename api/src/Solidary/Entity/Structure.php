@@ -54,6 +54,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('structure_create',object)"
+ *          },
+ *          "structure_needs"={
+ *              "method"="GET",
+ *              "path"="/structures/needs",
+ *              "normalization_context"={"groups"={"readNeeds"}},
+ *              "security"="is_granted('structure_read',object)"
  *          }
  *      },
  *      itemOperations={
@@ -65,6 +71,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *          "delete"={
  *             "security"="is_granted('structure_delete',object)"
+ *          },
+ *          "needs"={
+ *              "method"="GET",
+ *              "path"="/structures/{id}/needs",
+ *              "normalization_context"={"groups"={"readNeeds"}},
+ *              "security"="is_granted('structure_read',object)"
  *          }
  *      }
  * )
@@ -396,7 +408,6 @@ class Structure
      * @var ArrayCollection|null The solidary user for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidaryUserStructures;
@@ -405,7 +416,6 @@ class Structure
      * @var ArrayCollection|null The subjects for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Subject", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $subjects;
@@ -414,7 +424,6 @@ class Structure
      * @var ArrayCollection|null The special needs for this structure.
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
-     * @Groups({"readSolidary","writeSolidary"})
      */
     private $needs;
 
@@ -422,7 +431,6 @@ class Structure
      * @var ArrayCollection|null The relay points related to the structure.
      *
      * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="structure", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $relayPoints;
@@ -431,7 +439,6 @@ class Structure
      * @var ArrayCollection|null The solidary records for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\StructureProof", mappedBy="structure", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readUser","readSolidary","writeSolidary","userStructure"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -995,6 +1002,13 @@ class Structure
     public function getNeeds()
     {
         return $this->needs->getValues();
+    }
+
+    public function setNeeds(?ArrayCollection $needs): self
+    {
+        $this->needs = $needs;
+
+        return $this;
     }
 
     public function addNeed(Need $need): self

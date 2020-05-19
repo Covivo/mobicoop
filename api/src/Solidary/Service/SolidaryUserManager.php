@@ -22,10 +22,31 @@
 
 namespace App\Solidary\Service;
 
+use App\Solidary\Entity\SolidaryBeneficiary;
 use App\Solidary\Entity\SolidaryUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Solidary\Event\SolidaryUserUpdatedEvent;
+use App\Solidary\Exception\SolidaryException;
+use App\Solidary\Repository\SolidaryUserRepository;
+use App\Solidary\Repository\StructureRepository;
+use App\User\Repository\UserRepository;
+use Symfony\Component\Security\Core\Security;
+use App\Solidary\Entity\SolidaryUserStructure;
+use App\Action\Repository\DiaryRepository;
+use App\Auth\Entity\AuthItem;
+use App\Auth\Entity\UserAuthAssignment;
+use App\Auth\Repository\AuthItemRepository;
+use App\Geography\Entity\Address;
+use App\Solidary\Entity\Proof;
+use App\Solidary\Entity\SolidaryDiaryEntry;
+use App\Solidary\Entity\SolidaryVolunteer;
+use App\Solidary\Event\SolidaryCreatedEvent;
+use App\Solidary\Event\SolidaryUserCreatedEvent;
+use App\Solidary\Repository\SolidaryRepository;
+use App\User\Entity\User;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\Solidary\Repository\StructureProofRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -34,11 +55,43 @@ class SolidaryUserManager
 {
     private $entityManager;
     private $eventDispatcher;
+    private $solidaryUserRepository;
+    private $userRepository;
+    private $security;
+    private $structureRepository;
+    private $diaryRepository;
+    private $solidaryRepository;
+    private $authItemRepository;
+    private $structureProofRepository;
+    private $params;
+    private $encoder;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        EventDispatcherInterface $eventDispatcher,
+        SolidaryUserRepository $solidaryUserRepository,
+        UserRepository $userRepository,
+        Security $security,
+        StructureRepository $structureRepository,
+        DiaryRepository $diaryRepository,
+        SolidaryRepository $solidaryRepository,
+        AuthItemRepository $authItemRepository,
+        UserPasswordEncoderInterface $encoder,
+        StructureProofRepository $structureProofRepository,
+        array $params
+    ) {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->userRepository = $userRepository;
+        $this->solidaryUserRepository = $solidaryUserRepository;
+        $this->security = $security;
+        $this->structureRepository = $structureRepository;
+        $this->diaryRepository = $diaryRepository;
+        $this->solidaryRepository = $solidaryRepository;
+        $this->authItemRepository = $authItemRepository;
+        $this->structureProofRepository = $structureProofRepository;
+        $this->params = $params;
+        $this->encoder = $encoder;
     }
 
     public function updateSolidaryUser(SolidaryUser $solidaryUser)
@@ -46,5 +99,435 @@ class SolidaryUserManager
         // We trigger the event
         $event = new SolidaryUserUpdatedEvent($solidaryUser);
         $this->eventDispatcher->dispatch(SolidaryUserUpdatedEvent::NAME, $event);
+    }
+
+    /**
+     * Get a SolidaryBeneficiary from a User id
+     *
+     * @param int $id User id
+     * @return SolidaryBeneficiary
+     */
+    public function getSolidaryBeneficiary(int $id): SolidaryBeneficiary
+    {
+        // Get the structure of the Admin
+        $structures = $this->structureRepository->findByUser($this->security->getUser());
+        $structureAdmin = null;
+        if (!is_null($structures) || count($structures)>0) {
+            $structureAdmin = $structures[0];
+        }
+
+        // Get the User
+        $user = $this->userRepository->find($id);
+
+        // Get the SolidaryUser
+        if (is_null($user->getSolidaryUser())) {
+            throw new SolidaryException(SolidaryException::NO_SOLIDARY_USER);
+        }
+        $solidaryUser = $user->getSolidaryUser();
+
+        // We check if the SolidaryUser is a Beneficiary
+        if (!$solidaryUser->isBeneficiary()) {
+            throw new SolidaryException(SolidaryException::NO_SOLIDARY_BENEFICIARY);
+        }
+
+
+        $solidaryBeneficiary = new SolidaryBeneficiary();
+        $solidaryBeneficiary->setId($user->getId());
+        $solidaryBeneficiary->setEmail($user->getEmail());
+        $solidaryBeneficiary->setGivenName($user->getGivenName());
+        $solidaryBeneficiary->setFamilyName($user->getFamilyName());
+        $solidaryBeneficiary->setNewsSubscription($user->hasNewsSubscription());
+        $solidaryBeneficiary->setTelephone($user->getTelephone());
+        $solidaryBeneficiary->setBirthDate($user->getBirthDate());
+        $solidaryBeneficiary->setGender($user->getGender());
+        $solidaryBeneficiary->setComment($solidaryUser->getComment());
+        $solidaryBeneficiary->setUser($user);
+
+        // Home address
+        foreach ($user->getAddresses() as $address) {
+            if ($address->isHome()) {
+                $homeAddress = [];
+                $homeAddress['streetAddress'] = $address->getStreetAddress();
+                $homeAddress['addressLocality'] = $address->getAddressLocality();
+                $homeAddress['localAdmin'] = $address->getLocalAdmin();
+                $homeAddress['county'] = $address->getCounty();
+                $homeAddress['macroCounty'] = $address->getMacroCounty();
+                $homeAddress['region'] = $address->getRegion();
+                $homeAddress['macroRegion'] = $address->getMacroRegion();
+                $homeAddress['addressCountry'] = $address->getAddressCountry();
+                $homeAddress['countryCode'] = $address->getCountryCode();
+                $homeAddress['latitude'] = $address->getLatitude();
+                $homeAddress['longitude'] = $address->getLongitude();
+                $solidaryBeneficiary->setHomeAddress($homeAddress);
+            }
+        }
+
+        // Proofs
+        $proofs = [];
+
+        // We take the first solidaryUser structure.
+        $solidaryUserStructure = $solidaryUser->getSolidaryUserStructures()[0];
+        // If the admin has an identified structure, we take the one that matches on of the SolidaryBeneficiary structure
+        if (!is_null($structureAdmin)) {
+            foreach ($solidaryUser->getSolidaryUserStructures() as $currentSolidaryUserStructure) {
+                if ($currentSolidaryUserStructure->getId() == $structureAdmin->getId()) {
+                    $solidaryUserStructure = $currentSolidaryUserStructure;
+                    break;
+                }
+            }
+        }
+
+        /**
+         * @var SolidaryUserStructure $solidaryUserStructure
+         */
+        foreach ($solidaryUserStructure->getProofs() as $proof) {
+            $proofs[] = $proof;
+        }
+        $solidaryBeneficiary->setProofs($proofs);
+
+        // Is he validated ?
+        $solidaryBeneficiary->setValidatedCandidate(false);
+        if (!is_null($solidaryUserStructure->getAcceptedDate())) {
+            $solidaryBeneficiary->setValidatedCandidate(true);
+        }
+
+        $solidaryBeneficiary->setCreatedDate($solidaryUser->getCreatedDate());
+        $solidaryBeneficiary->setUpdatedDate($solidaryUser->getUpdatedDate());
+
+        // Get the structure of the solidary User
+        $userStructures = [];
+        foreach ($solidaryUser->getSolidaryUserStructures() as $userStructure) {
+            $userStructures[] = $userStructure->getStructure();
+        }
+        $solidaryBeneficiary->setStructures($userStructures);
+
+        // Diary
+        $diaries = $this->diaryRepository->findBy(['user'=>$user]);
+        $diaryEntries = [];
+        foreach ($diaries as $diary) {
+            $diaryEntry = new SolidaryDiaryEntry();
+            $diaryEntry->setDiary($diary);
+            $diaryEntry->setAction($diary->getAction()->getName());
+            $diaryEntry->setAuthor($diary->getAuthor());
+            $diaryEntry->setUser($diary->getUser());
+            $diaryEntry->setDate($diary->getCreatedDate());
+            $diaryEntries[] = $diaryEntry;
+        }
+        $solidaryBeneficiary->setDiaries($diaryEntries);
+        
+        // Solidaries
+        $solidaries = $this->solidaryRepository->findByUser($user);
+        $solidaryBeneficiary->setSolidaries($solidaries);
+
+        return $solidaryBeneficiary;
+    }
+
+    /**
+     * Get a SolidaryVolunteer from a User id
+     *
+     * @param int $id User id
+     * @return SolidaryVolunteer
+     */
+    public function getSolidaryVolunteer(int $id): SolidaryVolunteer
+    {
+
+        // Get the structure of the Admin
+        $structures = $this->structureRepository->findByUser($this->security->getUser());
+        $structureAdmin = null;
+        if (!is_null($structures) || count($structures)>0) {
+            $structureAdmin = $structures[0];
+        }
+
+
+        // Get the User
+        $user = $this->userRepository->find($id);
+
+        // Get the SolidaryUser
+        if (is_null($user->getSolidaryUser())) {
+            throw new SolidaryException(SolidaryException::NO_SOLIDARY_USER);
+        }
+        $solidaryUser = $user->getSolidaryUser();
+
+        // We check if the SolidaryUser is a Beneficiary
+        if (!$solidaryUser->isVolunteer()) {
+            throw new SolidaryException(SolidaryException::NO_SOLIDARY_VOLUNTEER);
+        }
+
+        $solidaryVolunteer = new SolidaryVolunteer();
+        $solidaryVolunteer->setId($user->getId());
+        $solidaryVolunteer->setUser($user);
+        $solidaryVolunteer->setComment($solidaryUser->getComment());
+
+
+        // We take the first solidaryUser structure.
+        $solidaryUserStructure = $solidaryUser->getSolidaryUserStructures()[0];
+        // If the admin has an identified structure, we take the one that matches on of the SolidaryBeneficiary structure
+        if (!is_null($structureAdmin)) {
+            foreach ($solidaryUser->getSolidaryUserStructures() as $currentSolidaryUserStructure) {
+                if ($currentSolidaryUserStructure->getId() == $structureAdmin->getId()) {
+                    $solidaryUserStructure = $currentSolidaryUserStructure;
+                    break;
+                }
+            }
+        }
+
+        // Is he validated ?
+        $solidaryVolunteer->setValidatedCandidate(false);
+        if (!is_null($solidaryUserStructure->getAcceptedDate())) {
+            $solidaryVolunteer->setValidatedCandidate(true);
+        }
+
+        // Diary
+        $diaries = $this->diaryRepository->findBy(['user'=>$user]);
+        $diaryEntries = [];
+        foreach ($diaries as $diary) {
+            $diaryEntry = new SolidaryDiaryEntry();
+            $diaryEntry->setDiary($diary);
+            $diaryEntry->setAction($diary->getAction()->getName());
+            $diaryEntry->setAuthor($diary->getAuthor());
+            $diaryEntry->setUser($diary->getUser());
+            $diaryEntry->setDate($diary->getCreatedDate());
+            $diaryEntries[] = $diaryEntry;
+        }
+        $solidaryVolunteer->setDiaries($diaryEntries);
+
+        // Solidaries
+        $solidaries = $this->solidaryRepository->findBySolidaryUserMatching($solidaryUser);
+        $solidaryVolunteer->setSolidaries($solidaries);
+
+        // Availabilities
+        $solidaryVolunteer->setMMinTime($solidaryUser->getMMinTime());
+        $solidaryVolunteer->setMMaxTime($solidaryUser->getMMaxTime());
+        $solidaryVolunteer->setAMinTime($solidaryUser->getAMinTime());
+        $solidaryVolunteer->setAMaxTime($solidaryUser->getAMaxTime());
+        $solidaryVolunteer->setEMinTime($solidaryUser->getEMinTime());
+        $solidaryVolunteer->setEMaxTime($solidaryUser->getEMaxTime());
+        
+        $solidaryVolunteer->setMMon($solidaryUser->hasMMon());
+        $solidaryVolunteer->setMTue($solidaryUser->hasMTue());
+        $solidaryVolunteer->setMWed($solidaryUser->hasMWed());
+        $solidaryVolunteer->setMThu($solidaryUser->hasMThu());
+        $solidaryVolunteer->setMFri($solidaryUser->hasMFri());
+        $solidaryVolunteer->setMSat($solidaryUser->hasMSat());
+        $solidaryVolunteer->setMSun($solidaryUser->hasMSun());
+        $solidaryVolunteer->setAMon($solidaryUser->hasAMon());
+        $solidaryVolunteer->setATue($solidaryUser->hasATue());
+        $solidaryVolunteer->setAWed($solidaryUser->hasAWed());
+        $solidaryVolunteer->setAThu($solidaryUser->hasAThu());
+        $solidaryVolunteer->setAFri($solidaryUser->hasAFri());
+        $solidaryVolunteer->setASat($solidaryUser->hasASat());
+        $solidaryVolunteer->setASun($solidaryUser->hasASun());
+        $solidaryVolunteer->setEMon($solidaryUser->hasEMon());
+        $solidaryVolunteer->setETue($solidaryUser->hasETue());
+        $solidaryVolunteer->setEWed($solidaryUser->hasEWed());
+        $solidaryVolunteer->setEThu($solidaryUser->hasEThu());
+        $solidaryVolunteer->setEFri($solidaryUser->hasEFri());
+        $solidaryVolunteer->setESat($solidaryUser->hasESat());
+        $solidaryVolunteer->setESun($solidaryUser->hasESun());
+
+        return $solidaryVolunteer;
+    }
+
+    /**
+     * Get all the SolidaryBeneficiaries
+     *
+     * @return array
+     */
+    public function getSolidaryBeneficiaries(): array
+    {
+        $beneficiaries = [];
+
+        // First, we get all user with Beneficiary types of SolidaryUser
+        $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryBeneficiary::TYPE);
+        foreach ($users as $user) {
+            // Maybe To do : If it's too slow, we can use the User instead of the Id. But we need to rewrite the ItemDataProvider
+            $beneficiaries[] = $this->getSolidaryBeneficiary($user->getId());
+        }
+
+
+        return $beneficiaries;
+    }
+
+    /**
+     * Get all the SolidaryVolunteers
+     *
+     * @return array
+     */
+    public function getSolidaryVolunteers(): array
+    {
+        $volunteers = [];
+
+        // First, we get all user with Beneficiary types of SolidaryUser
+        $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryVolunteer::TYPE);
+        foreach ($users as $user) {
+            // Maybe To do : If it's too slow, we can use the User instead of the Id. But we need to rewrite the ItemDataProvider
+            $volunteers[] = $this->getSolidaryVolunteer($user->getId());
+        }
+
+
+        return $volunteers;
+    }
+
+    /**
+     * Create a SolidaryUser and its User if necessary from a SolidaryBeneficiary
+     *
+     * @param SolidaryBeneficiary $solidaryBeneficiary
+     * @return SolidaryBeneficiary|null
+     */
+    public function createSolidaryBeneficiary(SolidaryBeneficiary $solidaryBeneficiary): ?SolidaryBeneficiary
+    {
+
+        // If there is no User, we need to create it first
+        $user = $solidaryBeneficiary->getUser();
+        if (is_null($user)) {
+
+            // We check if there no User with this email
+            if (!is_null($this->userRepository->findOneBy(['email'=>$solidaryBeneficiary->getEmail()]))) {
+                throw new SolidaryException(SolidaryException::ALREADY_USER);
+            }
+
+
+            $user = new User();
+            $user->setEmail($solidaryBeneficiary->getEmail());
+            $user->setGivenName($solidaryBeneficiary->getGivenName());
+            $user->setFamilyName($solidaryBeneficiary->getFamilyName());
+            $user->setNewsSubscription($solidaryBeneficiary->hasNewsSubscription());
+            $user->setTelephone($solidaryBeneficiary->getTelephone());
+            $user->setBirthDate($solidaryBeneficiary->getBirthDate());
+            $user->setGender($solidaryBeneficiary->getGender());
+
+            $user->setPhoneDisplay(1);
+            $user->setSmoke($this->params['smoke']);
+            $user->setMusic($this->params['music']);
+            $user->setChat($this->params['chat']);
+            // To do : Dynamic Language
+            $user->setLanguage('fr_FR');
+
+            // Set an encrypted password
+            $password = $this->randomPassword();
+            $user->setPassword($this->encoder->encodePassword($user, $password));
+            $user->setClearPassword($password); // Used to be send by email (not persisted)
+
+            // auto valid the registration
+            $user->setValidatedDate(new \DateTime());
+
+
+            $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
+        } else {
+            // We check if this User does'nt already have a Solidary User
+            if (!is_null($user->getSolidaryUser())) {
+                throw new SolidaryException(SolidaryException::ALREADY_SOLIDARY_USER);
+            }
+        }
+
+        // We create the SolidaryUser
+        $solidaryUser = new SolidaryUser();
+        $solidaryUser->setBeneficiary(true);
+        $homeAddress = $solidaryBeneficiary->getHomeAddress();
+        $address = new Address();
+        $address->setStreetAddress($homeAddress['streetAddress']);
+        $address->setAddressLocality($homeAddress['addressLocality']);
+        $address->setLocalAdmin($homeAddress['localAdmin']);
+        $address->setCounty($homeAddress['county']);
+        $address->setMacroCounty($homeAddress['macroCounty']);
+        $address->setRegion($homeAddress['region']);
+        $address->setMacroRegion($homeAddress['macroRegion']);
+        $address->setAddressCountry($homeAddress['addressCountry']);
+        $address->setCountryCode($homeAddress['countryCode']);
+        $address->setLatitude($homeAddress['latitude']);
+        $address->setLongitude($homeAddress['longitude']);
+        $address->setName($homeAddress['name']);
+        $address->setHome(true);
+        $address->setUser($user);
+        $solidaryUser->setAddress($address);
+
+        $solidaryUser->setComment($solidaryBeneficiary->getComment());
+        $solidaryUser->setVehicle($solidaryBeneficiary->hasVehicule());
+
+        // We set the link between User and SolidaryUser
+        $user->setSolidaryUser($solidaryUser);
+
+        
+        // If there a Structure given, we use it. Otherwise we use the first admin structure
+        $solidaryBeneficiaryStructure = $solidaryBeneficiary->getStructure();
+        if (is_null($solidaryBeneficiaryStructure)) {
+            // We get the Structure of the Admin to set the SolidaryUserStructure
+            $structures = $this->structureRepository->findByUser($this->security->getUser());
+            $structureAdmin = null;
+            if (!is_null($structures) || count($structures)>0) {
+                $solidaryBeneficiaryStructure = $structures[0];
+            }
+        }
+        $solidaryUserStructure = new SolidaryUserStructure();
+        $solidaryUserStructure->setStructure($solidaryBeneficiaryStructure);
+        $solidaryUserStructure->setSolidaryUser($solidaryUser);
+
+        if ($solidaryBeneficiary->isValidatedCandidate()) {
+            $solidaryUserStructure->setAcceptedDate(new \Datetime());
+        }
+
+        // Proofs
+        foreach ($solidaryBeneficiary->getProofs() as $givenProof) {
+            // We get the structure proof and we create a proof to persist
+            $structureProofId = null;
+            if (strrpos($givenProof['id'], '/')) {
+                $structureProofId = substr($givenProof['id'], strrpos($givenProof['id'], '/') + 1);
+            }
+                
+            $structureProof = $this->structureProofRepository->find($structureProofId);
+            if (!is_null($structureProof) && isset($givenProof['value']) && !is_null($givenProof['value'])) {
+                $proof = new Proof();
+                $proof->setStructureProof($structureProof);
+                $proof->setValue($givenProof['value']);
+                $solidaryUserStructure->addProof($proof);
+            }
+        }
+
+        $solidaryUser->addSolidaryUserStructure($solidaryUserStructure);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        
+        // dispatch SolidaryUser event
+        $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
+        $this->eventDispatcher->dispatch(SolidaryUserCreatedEvent::NAME, $event);
+        $event = new SolidaryCreatedEvent($user, $this->security->getUser());
+        $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
+
+        return $this->getSolidaryBeneficiary($user->getId());
+    }
+
+
+    /**
+     * Update a SolidaryBeneficiary
+     *
+     * @param SolidaryBeneficiary $solidaryBeneficiary
+     * @return SolidaryBeneficiary
+     */
+    public function updateSolidaryBeneficiary(SolidaryBeneficiary $solidaryBeneficiary): SolidaryBeneficiary
+    {
+        // To do....
+        
+        return $this->getSolidaryBeneficiary($solidaryBeneficiary->getId());
+    }
+
+    /**
+     * Genereate a random password
+     *
+     * @return String
+     */
+    private function randomPassword()
+    {
+        $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < 10; $i++) {
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
+        }
+        return implode($pass); //turn the array into a string
     }
 }

@@ -25,32 +25,28 @@ namespace App\Solidary\DataProvider;
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use App\Solidary\Entity\Solidary;
-use App\Solidary\Service\SolidaryManager;
+use App\Solidary\Entity\SolidaryVolunteer;
+use App\Solidary\Service\SolidaryUserManager;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class SolidaryItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+final class SolidaryVolunteerItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    private $solidaryManager;
+    private $solidaryUserManager;
 
-    public function __construct(SolidaryManager $solidaryManager)
+    public function __construct(SolidaryUserManager $solidaryUserManager)
     {
-        $this->solidaryManager = $solidaryManager;
+        $this->solidaryUserManager = $solidaryUserManager;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Solidary::class === $resourceClass;
+        return SolidaryVolunteer::class === $resourceClass;
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Solidary
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?SolidaryVolunteer
     {
-        if ($operationName=="contactsList") {
-            return $this->solidaryManager->getAsksList($id);
-        }
-        
-        return $this->solidaryManager->getSolidary($id);
+        return $this->solidaryUserManager->getSolidaryVolunteer($id);
     }
 }

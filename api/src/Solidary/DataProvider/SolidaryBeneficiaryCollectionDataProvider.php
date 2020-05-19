@@ -25,47 +25,28 @@ namespace App\Solidary\DataProvider;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use App\Solidary\Entity\SolidaryAnimation;
-use App\Solidary\Exception\SolidaryException;
-use App\Solidary\Service\SolidaryAnimationManager;
-use LogicException;
+use App\Solidary\Entity\SolidaryBeneficiary;
+use App\Solidary\Service\SolidaryUserManager;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class SolidaryAnimationCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    private $solidaryAnimationManager;
-    private $filters;
+    private $solidaryUserManager;
 
-    public function __construct(SolidaryAnimationManager $solidaryAnimationManager)
+    public function __construct(SolidaryUserManager $solidaryUserManager)
     {
-        $this->solidaryAnimationManager = $solidaryAnimationManager;
+        $this->solidaryUserManager = $solidaryUserManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        if (isset($context['filters'])) {
-            $this->filters = $context['filters'];
-        }
-        
-        return SolidaryAnimation::class === $resourceClass && $operationName == "get";
+        return SolidaryBeneficiary::class === $resourceClass;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null)
     {
-        if (empty($this->filters['solidary'])) {
-            throw new SolidaryException(SolidaryException::SOLIDARY_MISSING);
-        }
-
-        $solidaryId = null;
-        if (strrpos($this->filters['solidary'], '/')) {
-            $solidaryId = substr($this->filters['solidary'], strrpos($this->filters['solidary'], '/') + 1);
-        }
-        if (empty($solidaryId) || !is_numeric($solidaryId)) {
-            throw new SolidaryException(SolidaryException::SOLIDARY_ID_INVALID);
-        }
-
-        return $this->solidaryAnimationManager->getSolidaryAnimations($solidaryId);
+        return $this->solidaryUserManager->getSolidaryBeneficiaries();
     }
 }

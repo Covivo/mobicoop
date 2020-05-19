@@ -123,10 +123,10 @@ use App\Match\Entity\Mass;
  *              "normalization_context"={"groups"={"readCommunity"}},
  *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },
- *          "accessAdmin"={
+ *          "manage"={
  *              "normalization_context"={"groups"={"readCommunity","readCommunityAdmin"}},
  *              "method"="GET",
- *              "path"="/communities/accesFromAdminReact",
+ *              "path"="/communities/manage",
  *          }
  *      },
  *      itemOperations={

@@ -44,7 +44,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readSolidary","readUser"}, "enable_max_depth"="true"},
@@ -796,7 +796,7 @@ class SolidaryUser
         return $this->vehicle;
     }
 
-    public function setVehicle(bool $vehicle): self
+    public function setVehicle(?bool $vehicle): self
     {
         $this->vehicle = $vehicle;
 

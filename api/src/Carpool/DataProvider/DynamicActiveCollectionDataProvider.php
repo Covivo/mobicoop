@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,37 +21,39 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\DataProvider;
+namespace App\Carpool\DataProvider;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use App\Solidary\Entity\Solidary;
-use App\Solidary\Service\SolidaryManager;
+use App\Carpool\Entity\Dynamic;
+use App\Carpool\Service\DynamicManager;
+use Symfony\Component\Security\Core\Security;
 
 /**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * Collection data provider used to get a current active dynamic ad.
+ *
  */
-final class SolidaryItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+final class DynamicActiveCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    private $solidaryManager;
-
-    public function __construct(SolidaryManager $solidaryManager)
+    private $security;
+    private $dynamicManager;
+    
+    public function __construct(Security $security, DynamicManager $dynamicManager)
     {
-        $this->solidaryManager = $solidaryManager;
+        $this->security = $security;
+        $this->dynamicManager = $dynamicManager;
     }
-
+    
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Solidary::class === $resourceClass;
+        return Dynamic::class === $resourceClass && $operationName =="active";
     }
-
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Solidary
+    
+    public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        if ($operationName=="contactsList") {
-            return $this->solidaryManager->getAsksList($id);
+        if ($last = $this->dynamicManager->getLastDynamicActive($this->security->getUser())) {
+            return [$last];
         }
-        
-        return $this->solidaryManager->getSolidary($id);
+        return [];
     }
 }
