@@ -112,6 +112,7 @@ class SolidaryManager
      */
     public function createSolidary(Solidary $solidary)
     {
+        
         // We create a new user if necessary if it's a demand from the front
         $userId = null;
         if ($solidary->getEmail()) {
@@ -136,7 +137,7 @@ class SolidaryManager
         // we update solidary
         $solidary->setProposal($proposal);
         $solidary->setSolidaryUserStructure($solidaryUserStructure[0]);
-        
+
         $this->entityManager->persist($solidary);
         $this->entityManager->flush();
 
@@ -408,7 +409,7 @@ class SolidaryManager
         $ad->setReturnDate($solidary->getReturnDatetime() ? $solidary->getReturnDatetime() : null);
         $ad->setOutwardTime($solidary->getOutwardDatetime()->format("H:i"));
         $ad->setReturnTime($solidary->getReturnDatetime() ? $solidary->getReturnDatetime()->format("H:i") : null);
-        if ($solidary->getFrequency(criteria::FREQUENCY_REGULAR)) {
+        if ($solidary->getFrequency() === criteria::FREQUENCY_REGULAR) {
             $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
 
             // we set the schedule and the limit date of the regular demand
