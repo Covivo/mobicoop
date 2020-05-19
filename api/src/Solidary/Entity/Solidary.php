@@ -210,38 +210,38 @@ class Solidary
     private $homeAddress;
 
     /**
-    * @var Array Origin address of the solidary
-    * @Groups ({"writeSolidary"})
+    * @var Array|null Origin address of the solidary
+     * @Groups ({"writeSolidary", "readSolidary"})
     */
     private $origin;
 
     /**
      * @var Array|null Destination address of the solidary
-     * @Groups ({"writeSolidary"})
+     * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $destination;
 
     /**
      * @var \DateTimeInterface outward date and time of the solidary demand
-     * @Groups ({"writeSolidary"})
+     * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $outwardDatetime;
 
     /**
      * @var \DateTimeInterface outward deadline date and time of the solidary demand
-     * @Groups ({"writeSolidary"})
+     * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $outwardDeadlineDatetime;
 
     /**
      * @var \DateTimeInterface return date and time of the solidary demand
-     * @Groups ({"writeSolidary"})
+     * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $returnDatetime;
 
     /**
      * @var \DateTimeInterface return deadline date and time of the solidary demand
-     * @Groups ({"writeSolidary"})
+     * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $returnDeadlineDatetime;
 
@@ -544,7 +544,7 @@ class Solidary
         return $this;
     }
 
-    public function getOrigin(): array
+    public function getOrigin(): ?array
     {
         return $this->origin;
     }
@@ -556,12 +556,12 @@ class Solidary
         return $this;
     }
 
-    public function getDestination(): array
+    public function getDestination(): ?array
     {
         return $this->destination;
     }
     
-    public function setDestination(?array $destination): self
+    public function setDestination($destination): self
     {
         $this->destination = $destination;
         

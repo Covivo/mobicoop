@@ -96,10 +96,48 @@ class SolidaryManager
     public function getSolidary($id): ?Solidary
     {
         $solidary = $this->solidaryRepository->find($id);
+        $solidary->setOrigin(json_decode(json_encode($solidary->getProposal()->getWaypoints()[0]->getAddress()), true));
+        $solidary->setDestination(json_decode(json_encode($solidary->getProposal()->getWaypoints()[1]->getAddress()), true));
+        $solidary->setSolidaryUser($solidary->getSolidaryUserStructure()->getSolidaryUser());
+        
+        $date = $solidary->getProposal()->getCriteria()->getFromDate()->format("d/m/Y");
+        $time = $solidary->getProposal()->getCriteria()->getMonTime()->format("h:m");
+        
+        $days = ['mon' => false, 'tue' => false,'wed' => false,'thu' => false,'fri' => false, 'sat' => false, 'sun' => false];
+        $criteria = $solidary->getProposal()->getCriteria();
+        if ($solidary->getProposal()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+            if ($criteria->isMonCheck()) {
+                $days['mon'] = true;
+            }
+            if ($criteria->isTueCheck()) {
+                $days['tue'] = true;
+            }
+            if ($criteria->isWedCheck()) {
+                $days['wed'] = true;
+            }
+            if ($criteria->isThuCheck()) {
+                $days['thu'] = true;
+            }
+            if ($criteria->isFriCheck()) {
+                $days['fri'] = true;
+            }
+            if ($criteria->isSatCheck()) {
+                $days['sat'] = true;
+            }
+            if ($criteria->isSunCheck()) {
+                $days['sun'] = true;
+            }
+            $solidary->setDays($days);
+        }
 
+        // $solidary->setOutwardDatetime();
+        // $solidary->setOutwardDeadlineDatetime();
+        // $solidary->setReturnDatetime();
+        // $solidary->setReturnDeadlineDatetime();
+    
         // We find the last entry of diary for this solidary to get the progression
-        $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
-        (count($diariesEntires)>0) ? $solidary->setProgression($diariesEntires[0]->getProgression()) : $solidary->setProgression(0);
+        // $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
+        // (count($diariesEntires)>0) ? $solidary->setProgression($diariesEntires[0]->getProgression()) : $solidary->setProgression(0);
 
         return $solidary;
     }
