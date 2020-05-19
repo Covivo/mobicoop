@@ -125,7 +125,7 @@ class ProofManager
     }
 
     /**
-     * Create a proof for an ask.
+     * Create a realtimeproof for an ask.
      *
      * @param Ask $ask          The ask
      * @param float $longitude  The longitude of the author when the creation is asked
@@ -147,11 +147,56 @@ class ProofManager
         $destinationWaypoint = $this->waypointRepository->findMaxPositionForAskAndRole($ask, Waypoint::ROLE_DRIVER);
         $carpoolProof->setOriginDriverAddress(clone $originWaypoint->getAddress());
         $carpoolProof->setDestinationDriverAddress(clone $destinationWaypoint->getAddress());
-        /**
-         * @var DateTime $startDate
-         */
-        $startDate = clone $ask->getCriteria()->getFromDate();
-        $startDate->setTime($ask->getCriteria()->getFromTime()->format('H'), $ask->getCriteria()->getFromTime()->format('i'));
+        // we have to compute the start date of the driver
+        if ($ask->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+            // for a punctual ad, we use fromDate and fromTime (both are theoretical, they *should* be correct !)
+            /**
+             * @var DateTime $startDate
+             */
+            $startDate = clone $ask->getCriteria()->getFromDate();
+            $startDate->setTime($ask->getCriteria()->getFromTime()->format('H'), $ask->getCriteria()->getFromTime()->format('i'));
+        } else {
+            // for a regular ad, we use the current date and the theoretical time
+            $startDate = new DateTime('UTC');
+            switch ($startDate->format('w')) {
+                // we check for each date of the period if it's a carpoool day
+                case 0:     // sunday
+                    if ($ask->getCriteria()->isSunCheck()) {
+                        $startDate->setTime($ask->getCriteria()->getSunTime()->format('H'), $ask->getCriteria()->getSunTime()->format('i'));
+                    }
+                    break;
+                case 1:     // monday
+                    if ($ask->getCriteria()->isMonCheck()) {
+                        $startDate->setTime($ask->getCriteria()->getMonTime()->format('H'), $ask->getCriteria()->getMonTime()->format('i'));
+                    }
+                    break;
+                case 2:     // tuesday
+                    if ($ask->getCriteria()->isTueCheck()) {
+                        $startDate->setTime($ask->getCriteria()->getTueTime()->format('H'), $ask->getCriteria()->getTueTime()->format('i'));
+                    }
+                    break;
+                case 3:     // wednesday
+                    if ($ask->getCriteria()->isWedCheck()) {
+                        $startDate->setTime($ask->getCriteria()->getWedTime()->format('H'), $ask->getCriteria()->getWedTime()->format('i'));
+                    }
+                    break;
+                case 4:     // thursday
+                    if ($ask->getCriteria()->isThuCheck()) {
+                        $startDate->setTime($ask->getCriteria()->getThuTime()->format('H'), $ask->getCriteria()->getThuTime()->format('i'));
+                    }
+                    break;
+                case 5:     // friday
+                    if ($ask->getCriteria()->isFriCheck()) {
+                        $startDate->setTime($ask->getCriteria()->getFriTime()->format('H'), $ask->getCriteria()->getFriTime()->format('i'));
+                    }
+                    break;
+                case 6:     // saturday
+                    if ($ask->getCriteria()->isSatCheck()) {
+                        $startDate->setTime($ask->getCriteria()->getSatTime()->format('H'), $ask->getCriteria()->getSatTime()->format('i'));
+                    }
+                    break;
+            }
+        }
         $carpoolProof->setStartDriverDate($startDate);
         /**
         * @var DateTime $endDate
@@ -160,7 +205,7 @@ class ProofManager
         $endDate = clone $startDate;
         // then we add the duration till the destination point
         $endDate->modify('+' . $destinationWaypoint->getDuration() . ' second');
-        // note : for now, the end date is computed, it's theoratical and not the 'real' end date
+        // note : for now, the end date is computed, it's theorEtical and not the 'real' end date
         $carpoolProof->setEndDriverDate($endDate);
 
         // direction
@@ -385,6 +430,7 @@ class ProofManager
 
     /**
      * Create and return the pending proofs for the given period.
+     * Used to generate non-realtime proofs.
      *
      * @param DateTime $fromDate   The start of the period for which we want to get the proofs
      * @param DateTime $toDate     The end of the period  for which we want to get the proofs

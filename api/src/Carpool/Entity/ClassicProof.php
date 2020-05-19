@@ -102,7 +102,7 @@ class ClassicProof
      * @Assert\NotBlank(groups={"writeClassicProof"})
      * @Groups("writeClassicProof")
      */
-    private $AskId;
+    private $askId;
 
     public function __construct()
     {

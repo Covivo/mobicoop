@@ -56,7 +56,7 @@ class CarpoolProofRepository
 
         $query = $this->repository->createQueryBuilder('cp')
         ->where('cp.ask = :ask')
-        ->andWhere('cp.pickUpPassengerDate BETWEEN :startDate and :endDate')
+        ->andWhere('(cp.pickUpPassengerDate BETWEEN :startDate and :endDate) or (cp.pickUpDriverDate BETWEEN :startDate and :endDate)')
         ->setParameter('ask', $ask)
         ->setParameter('startDate', $startDate->format('Y-m-d H:i:s'))
         ->setParameter('endDate', $endDate->format('Y-m-d H:i:s'));

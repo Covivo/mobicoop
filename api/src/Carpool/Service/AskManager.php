@@ -79,7 +79,7 @@ class AskManager
      */
     public function getAsk(int $id)
     {
-        return $this->askRespository->find($id);
+        return $this->askRepository->find($id);
     }
     
     /**

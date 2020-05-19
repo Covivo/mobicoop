@@ -497,7 +497,7 @@ class CarpoolProof
      */
     public function setAutoStatus()
     {
-        $this->setStatus(self::STATUS_PENDING);
+        $this->setStatus(self::STATUS_INITIATED);
     }
 
     /**
