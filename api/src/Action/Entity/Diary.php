@@ -56,7 +56,7 @@ class Diary
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","readUser"})
+     * @Groups({"read","readUser","readSolidary"})
      */
     private $id;
 
@@ -65,7 +65,7 @@ class Diary
      *
      * @ORM\ManyToOne(targetEntity="\App\Action\Entity\Action")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write","readUser"})
+     * @Groups({"read","write","readUser","readSolidary"})
      * @MaxDepth(1)
      */
     private $action;

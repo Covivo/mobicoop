@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,6 @@
 
 namespace App\Solidary\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiSubresource;
@@ -31,378 +30,336 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
-use App\Carpool\Entity\Criteria;
 use App\Geography\Entity\Address;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A solidary user.
+ * A solidary volunteer.
  *
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
- * ApiResource(
+ * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readSolidary","readUser"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={
  *         "get"={
- *             "security"="is_granted('user_list',object)"
+ *             "security"="is_granted('solidary_volunteer_list',object)"
  *          },
  *          "post"={
- *             "security_post_denormalize"="is_granted('user_create',object)"
+ *             "security_post_denormalize"="is_granted('solidary_volunteer_create',object)"
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('user_read',object)"
+ *             "security"="is_granted('solidary_volunteer_read',object)"
+ *          },
+ *          "put"={
+ *             "security"="is_granted('solidary_volunteer_update',object)"
+ *          },
+ *          "delete"={
+ *             "security"="is_granted('solidary_volunteer_delete',object)"
  *          }
+ *
  *      }
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryUser
+class SolidaryVolunteer
 {
-    const DEFAULT_MAX_DISTANCE = 20000; // meters
+    const DEFAULT_ID = 999999999999;
+    const TYPE = "volunteer";
 
     /**
      * @var int The id of this solidary user.
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary","readUser"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $id;
 
     /**
-     * @var bool If this solidary user is a beneficiary
+     * @var string The email of the user.
      *
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","readUser"})
+     * @Assert\NotBlank
+     * @Assert\Email()
+     * @Groups({"writeSolidary"})
      */
-    private $beneficiary;
+    private $email;
 
     /**
-     * @var bool If this solidary user is a volunteer
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","readUser"})
+     * @var string The encoded password of the user.
+     * @Groups({"writeSolidary"})
      */
-    private $volunteer;
+    private $password;
+
+    /**
+     * @var int|null The gender of the user (1=female, 2=male, 3=nc)
+     * @Groups({"writeSolidary"})
+     */
+    private $gender;
+
+    /**
+     * @var string|null The telephone number of the user.
+     * @Groups({"writeSolidary"})
+     */
+    private $telephone;
+
+    /**
+     * @var string|null The first name of the user.
+     * @Groups({"writeSolidary"})
+     */
+    private $givenName;
+
+    /**
+     * @var string|null The family name of the user.
+     * @Groups({"writeSolidary"})
+     */
+    private $familyName;
+
+    /**
+     * @var \DateTimeInterface|null The birth date of the user.
+     * @Groups({"writeSolidary"})
+     *
+     * @ApiProperty(
+     *     attributes={
+     *         "swagger_context"={"type"="string", "format"="date"}
+     *     }
+     * )
+     */
+    private $birthDate;
+
+    /**
+     * @var boolean|null The user accepts to receive news about the platform.
+     * @Groups({"writeSolidary"})
+     */
+    private $newsSubscription;
+
+    /**
+     * @var User The user associated with the solidaryUser.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $user;
+
+    /**
+     * @var array The home address of this User
+     * @Groups({"writeSolidary"})
+     */
+    private $homeAddress;
+
+    /**
+     * @var string A comment about the solidaryUser.
+     *
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $comment;
+
+    /**
+     * @var bool If the candidate is validated or not
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $validatedCandidate;
+
+    /**
+     * @var array The diaries associated to this user
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $diaries;
+
+    /**
+     * @var array The solidaries of this user
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $solidaries;
 
     /**
      * @var \DateTimeInterface Morning min time.
-     *
-     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMinTime;
     
     /**
      * @var \DateTimeInterface Morning max time.
-     *
-     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMaxTime;
     
     /**
      * @var \DateTimeInterface Afternoon min time.
-     *
-     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMinTime;
     
     /**
      * @var \DateTimeInterface Afternoon max time.
-     *
-     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMaxTime;
     
     /**
      * @var \DateTimeInterface Evening min time.
-     *
-     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMinTime;
     
     /**
      * @var \DateTimeInterface Evening max time.
-     *
-     * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMaxTime;
     
     /**
      * @var bool Available on monday morning.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMon;
     
     /**
      * @var bool Available on monday afternoon.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMon;
     
     /**
      * @var bool Available on monday evening.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMon;
     
     /**
      * @var bool Available on tuesday morning.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mTue;
     
     /**
      * @var bool Available on tuesday afternoon.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aTue;
     
     /**
      * @var bool Available on tuesday evening.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eTue;
     
     /**
      * @var bool Available on wednesday morning.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mWed;
     
     /**
      * @var bool Available on wednesday afternoon.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aWed;
     
     /**
      * @var bool Available on wednesday evening.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eWed;
     
     /**
      * @var bool Available on thursday morning.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mThu;
     
     /**
      * @var bool Available on thursday afternoon.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aThu;
     
     /**
      * @var bool Available on thursday evening.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eThu;
     
     /**
      * @var bool Available on friday morning.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mFri;
     
     /**
      * @var bool Available on friday afternoon.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aFri;
     
     /**
      * @var bool Available on friday evening.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eFri;
     
     /**
      * @var bool Available on saturday morning.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mSat;
     
     /**
      * @var bool Available on saturday afternoon.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aSat;
     
     /**
      * @var bool Available on saturday evening.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eSat;
     
     /**
      * @var bool Available on sunday morning.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mSun;
     
     /**
      * @var bool Available on sunday afternoon.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aSun;
     
     /**
      * @var bool Available on sunday evening.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eSun;
 
     /**
-     * @var Address The center address of the accepted perimeter.
-     *
-     * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @var Structure The solidary structures of this user only in POST context
+     * @Groups({"writeSolidary"})
      */
-    private $address;
-
-    /**
-     * @var int|null The maximum distance in metres allowed from the center address.
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
-     */
-    private $maxDistance;
-
-    /**
-     * @var bool The solidaryUser has a vehicle.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
-     */
-    private $vehicle;
-
-    /**
-     * @var User The user associated with the solidaryUser.
-     *
-     * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist","remove"}, orphanRemoval=true, mappedBy="solidaryUser")
-     * @Groups({"readSolidary","writeSolidary"})
-     */
-    private $user;
-
-    /**
-     * @var string A comment about the solidaryUser.
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
-     */
-    private $comment;
-
-    /**
-     * @var ArrayCollection|null The special needs proposed by the solidaryUser.
-     *
-     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
-     * @Groups({"readUser","readSolidary","writeSolidary"})
-     */
-    private $needs;
-
-    /**
-     * @var ArrayCollection The solidary user structure
-     *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="solidaryUser", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readUser","readSolidary","writeSolidary"})
-     * @MaxDepth(1)
-     */
-    private $solidaryUserStructures;
-
-    /**
-     * @var ArrayCollection|null Solidary matchings.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="solidaryUser", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
-     * @MaxDepth(1)
-     */
-    private $solidaryMatchings;
+    private $structure;
 
     /**
      * @var \DateTimeInterface Creation date.
      *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $createdDate;
 
     /**
      * @var \DateTimeInterface Updated date.
      *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $updatedDate;
 
     public function __construct()
     {
-        $this->needs = new ArrayCollection();
-        $this->solidaryUserStructures = new ArrayCollection();
-        $this->solidaryMatchings = new ArrayCollection();
-        $this->setMaxDistance(self::DEFAULT_MAX_DISTANCE);
+        $this->id = self::DEFAULT_ID;
+        $this->diaries = [];
+        $this->solidaries = [];
     }
     
     public function getId(): ?int
@@ -417,390 +374,102 @@ class SolidaryUser
         return $this;
     }
 
-    public function isBeneficiary(): ?bool
+    public function getEmail(): string
     {
-        return $this->beneficiary;
+        return $this->email;
     }
 
-    public function setBeneficiary(bool $beneficiary): self
+    public function setEmail(string $email): self
     {
-        $this->beneficiary = $beneficiary;
+        $this->email = $email;
 
         return $this;
     }
 
-    public function isVolunteer(): ?bool
+    public function getPassword(): ?string
     {
-        return $this->volunteer;
+        return $this->password;
     }
 
-    public function setVolunteer(bool $volunteer): self
+    public function setPassword(?string $password): self
     {
-        $this->volunteer = $volunteer;
+        $this->password = $password;
 
         return $this;
     }
 
-    public function getMMinTime(): ?\DateTimeInterface
+    public function getGender()
     {
-        return $this->mMinTime;
+        return $this->gender;
     }
 
-    public function setMMinTime(\DateTimeInterface $mMinTime): self
+    public function setGender($gender): self
     {
-        $this->mMinTime = $mMinTime;
-
-        return $this;
-    }
-    
-    public function getMMaxTime(): ?\DateTimeInterface
-    {
-        return $this->mMaxTime;
-    }
-
-    public function setMMaxTime(\DateTimeInterface $mMaxTime): self
-    {
-        $this->mMaxTime = $mMaxTime;
-
-        return $this;
-    }
-    
-    public function getAMinTime(): ?\DateTimeInterface
-    {
-        return $this->aMinTime;
-    }
-
-    public function setAMinTime(\DateTimeInterface $aMinTime): self
-    {
-        $this->aMinTime = $aMinTime;
-
-        return $this;
-    }
-    
-    public function getAMaxTime(): ?\DateTimeInterface
-    {
-        return $this->aMaxTime;
-    }
-
-    public function setAMaxTime(\DateTimeInterface $aMaxTime): self
-    {
-        $this->aMaxTime = $aMaxTime;
-
-        return $this;
-    }
-    
-    public function getEMinTime(): ?\DateTimeInterface
-    {
-        return $this->eMinTime;
-    }
-
-    public function setEMinTime(\DateTimeInterface $eMinTime): self
-    {
-        $this->eMinTime = $eMinTime;
-
-        return $this;
-    }
-    
-    public function getEMaxTime(): ?\DateTimeInterface
-    {
-        return $this->eMaxTime;
-    }
-
-    public function setEMaxTime(\DateTimeInterface $eMaxTime): self
-    {
-        $this->eMaxTime = $eMaxTime;
-
-        return $this;
-    }
-    
-    public function hasMMon(): ?bool
-    {
-        return $this->mMon;
-    }
-    
-    public function setMMon(bool $mMon): self
-    {
-        $this->mMon = $mMon;
+        $this->gender = $gender;
 
         return $this;
     }
 
-    public function hasAMon(): ?bool
+    public function getTelephone(): ?string
     {
-        return $this->aMon;
+        return $this->telephone;
     }
 
-    public function setAMon(bool $aMon): self
+    public function setTelephone(?string $telephone): self
     {
-        $this->aMon = $aMon;
+        $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function getGivenName(): ?string
+    {
+        return $this->givenName;
+    }
+
+    public function setGivenName(?string $givenName): self
+    {
+        $this->givenName = $givenName;
+
+        return $this;
+    }
+
+    public function getFamilyName(): ?string
+    {
+        return $this->familyName;
+    }
+
+    public function setFamilyName(?string $familyName): self
+    {
+        $this->familyName = $familyName;
+
+        return $this;
+    }
+
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    public function hasNewsSubscription(): ?bool
+    {
+        return $this->newsSubscription;
+    }
+
+    public function setNewsSubscription(?bool $newsSubscription): self
+    {
+        $this->newsSubscription = $newsSubscription;
 
         return $this;
     }
     
-    public function hasEMon(): ?bool
-    {
-        return $this->eMon;
-    }
-    
-    public function setEMon(bool $eMon): self
-    {
-        $this->eMon = $eMon;
-
-        return $this;
-    }
-    
-    public function hasMTue(): ?bool
-    {
-        return $this->mTue;
-    }
-    
-    public function setMTue(bool $mTue): self
-    {
-        $this->mTue = $mTue;
-
-        return $this;
-    }
-    
-    public function hasATue(): ?bool
-    {
-        return $this->aTue;
-    }
-   
-    public function setATue(bool $aTue): self
-    {
-        $this->aTue = $aTue;
-
-        return $this;
-    }
-    
-    public function hasETue(): ?bool
-    {
-        return $this->eTue;
-    }
-   
-    public function setETue(bool $eTue): self
-    {
-        $this->eTue = $eTue;
-
-        return $this;
-    }
-    
-    public function hasMWed(): ?bool
-    {
-        return $this->mWed;
-    }
-   
-    public function setMWed(bool $mWed): self
-    {
-        $this->mWed = $mWed;
-
-        return $this;
-    }
-    
-    public function hasAWed(): ?bool
-    {
-        return $this->aWed;
-    }
-   
-    public function setAWed(bool $aWed): self
-    {
-        $this->aWed = $aWed;
-
-        return $this;
-    }
-    
-    public function hasEWed(): ?bool
-    {
-        return $this->eWed;
-    }
-   
-    public function setEWed(bool $eWed): self
-    {
-        $this->eWed = $eWed;
-
-        return $this;
-    }
-    
-    public function hasMThu(): ?bool
-    {
-        return $this->mThu;
-    }
-   
-    public function setMThu(bool $mThu): self
-    {
-        $this->mThu = $mThu;
-
-        return $this;
-    }
-    
-    public function hasAThu(): ?bool
-    {
-        return $this->aThu;
-    }
-   
-    public function setAThu(bool $aThu): self
-    {
-        $this->aThu = $aThu;
-
-        return $this;
-    }
-    
-    public function hasEThu(): ?bool
-    {
-        return $this->eThu;
-    }
-   
-    public function setEThu(bool $eThu): self
-    {
-        $this->eThu = $eThu;
-
-        return $this;
-    }
-    
-    public function hasMFri(): ?bool
-    {
-        return $this->mFri;
-    }
-   
-    public function setMFri(bool $mFri): self
-    {
-        $this->mFri = $mFri;
-
-        return $this;
-    }
-    
-    public function hasAFri(): ?bool
-    {
-        return $this->aFri;
-    }
-   
-    public function setAFri(bool $aFri): self
-    {
-        $this->aFri = $aFri;
-
-        return $this;
-    }
-    
-    public function hasEFri(): ?bool
-    {
-        return $this->eFri;
-    }
-   
-    public function setEFri(bool $eFri): self
-    {
-        $this->eFri = $eFri;
-
-        return $this;
-    }
-    
-    public function hasMSat(): ?bool
-    {
-        return $this->mSat;
-    }
-   
-    public function setMSat(bool $mSat): self
-    {
-        $this->mSat = $mSat;
-
-        return $this;
-    }
-    
-    public function hasASat(): ?bool
-    {
-        return $this->aSat;
-    }
-   
-    public function setASat(bool $aSat): self
-    {
-        $this->aSat = $aSat;
-
-        return $this;
-    }
-    
-    public function hasESat(): ?bool
-    {
-        return $this->eSat;
-    }
-   
-    public function setESat(bool $eSat): self
-    {
-        $this->eSat = $eSat;
-
-        return $this;
-    }
-    
-    public function hasMSun(): ?bool
-    {
-        return $this->mSun;
-    }
-   
-    public function setMSun(bool $mSun): self
-    {
-        $this->mSun = $mSun;
-
-        return $this;
-    }
-    
-    public function hasASun(): ?bool
-    {
-        return $this->aSun;
-    }
-   
-    public function setASun(bool $aSun): self
-    {
-        $this->aSun = $aSun;
-
-        return $this;
-    }
-    
-    public function hasESun(): ?bool
-    {
-        return $this->eSun;
-    }
-
-    public function setESun(bool $eSun): self
-    {
-        $this->eSun = $eSun;
-
-        return $this;
-    }
-
-    public function getAddress(): ?Address
-    {
-        return $this->address;
-    }
-
-    public function setAddress(?Address $address): self
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
-    public function getMaxDistance(): ?int
-    {
-        return $this->maxDistance;
-    }
-
-    public function setMaxDistance(int $maxDistance): self
-    {
-        $this->maxDistance = $maxDistance;
-
-        return $this;
-    }
-
-    public function hasVehicle(): ?bool
-    {
-        return $this->vehicle;
-    }
-
-    public function setVehicle(?bool $vehicle): self
-    {
-        $this->vehicle = $vehicle;
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -809,6 +478,18 @@ class SolidaryUser
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getHomeAddress(): ?array
+    {
+        return $this->homeAddress;
+    }
+
+    public function setHomeAddress(?array $homeAddress): self
+    {
+        $this->homeAddress = $homeAddress;
 
         return $this;
     }
@@ -825,77 +506,375 @@ class SolidaryUser
         return $this;
     }
 
-    public function getNeeds()
+    public function isValidatedCandidate(): ?bool
     {
-        return $this->needs->getValues();
+        return $this->validatedCandidate;
     }
 
-    public function addNeed(Need $need): self
+    public function setValidatedCandidate(?bool $validatedCandidate): self
     {
-        if (!$this->needs->contains($need)) {
-            $this->needs->add($need);
-        }
+        $this->validatedCandidate = $validatedCandidate;
 
         return $this;
     }
 
-    public function removeNeed(Need $need): self
+    public function getDiaries(): ?array
     {
-        if ($this->needs->contains($need)) {
-            $this->needs->removeElement($need);
-        }
+        return $this->diaries;
+    }
+
+    public function setDiaries(?array $diaries): self
+    {
+        $this->diaries = $diaries;
 
         return $this;
     }
 
-    public function getSolidaryUserStructures()
+    public function getSolidaries(): ?array
     {
-        return $this->solidaryUserStructures->getValues();
+        return $this->solidaries;
     }
 
-    public function addSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure): self
+    public function setSolidaries(?array $solidaries): self
     {
-        if (!$this->solidaryUserStructures->contains($solidaryUserStructure)) {
-            $this->solidaryUserStructures->add($solidaryUserStructure);
-            $solidaryUserStructure->setSolidaryUser($this);
-        }
+        $this->solidaries = $solidaries;
 
         return $this;
     }
 
-    public function removeSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure): self
+    public function getMMinTime(): ?\DateTimeInterface
     {
-        if ($this->solidaryUserStructures->contains($solidaryUserStructure)) {
-            $this->solidaryUserStructures->removeElement($solidaryUserStructure);
-            // set the owning side to null (unless already changed)
-            if ($solidaryUserStructure->getSolidaryUser() === $this) {
-                $solidaryUserStructure->setSolidaryUser(null);
-            }
-        }
-
-        return $this;
+        return $this->mMinTime;
     }
 
-    public function getSolidaryMatchings()
+    public function setMMinTime(?\DateTimeInterface $mMinTime): self
     {
-        return $this->solidaryMatchings->getValues();
-    }
-    
-    public function addSolidaryMatching(SolidaryMatching $solidaryMatching): self
-    {
-        if (!$this->solidaryMatchings->contains($solidaryMatching)) {
-            $this->solidaryMatchings[] = $solidaryMatching;
-        }
-        
+        $this->mMinTime = $mMinTime;
+
         return $this;
     }
     
-    public function removeSolidaryMatching(SolidarySolution $solidaryMatching): self
+    public function getMMaxTime(): ?\DateTimeInterface
     {
-        if ($this->solidaryMatchings->contains($solidaryMatching)) {
-            $this->solidaryMatchings->removeElement($solidaryMatching);
-        }
-        
+        return $this->mMaxTime;
+    }
+
+    public function setMMaxTime(?\DateTimeInterface $mMaxTime): self
+    {
+        $this->mMaxTime = $mMaxTime;
+
+        return $this;
+    }
+    
+    public function getAMinTime(): ?\DateTimeInterface
+    {
+        return $this->aMinTime;
+    }
+
+    public function setAMinTime(?\DateTimeInterface $aMinTime): self
+    {
+        $this->aMinTime = $aMinTime;
+
+        return $this;
+    }
+    
+    public function getAMaxTime(): ?\DateTimeInterface
+    {
+        return $this->aMaxTime;
+    }
+
+    public function setAMaxTime(?\DateTimeInterface $aMaxTime): self
+    {
+        $this->aMaxTime = $aMaxTime;
+
+        return $this;
+    }
+    
+    public function getEMinTime(): ?\DateTimeInterface
+    {
+        return $this->eMinTime;
+    }
+
+    public function setEMinTime(?\DateTimeInterface $eMinTime): self
+    {
+        $this->eMinTime = $eMinTime;
+
+        return $this;
+    }
+    
+    public function getEMaxTime(): ?\DateTimeInterface
+    {
+        return $this->eMaxTime;
+    }
+
+    public function setEMaxTime(?\DateTimeInterface $eMaxTime): self
+    {
+        $this->eMaxTime = $eMaxTime;
+
+        return $this;
+    }
+    
+    public function hasMMon(): ?bool
+    {
+        return $this->mMon;
+    }
+    
+    public function setMMon(?bool $mMon): self
+    {
+        $this->mMon = $mMon;
+
+        return $this;
+    }
+
+    public function hasAMon(): ?bool
+    {
+        return $this->aMon;
+    }
+
+    public function setAMon(?bool $aMon): self
+    {
+        $this->aMon = $aMon;
+
+        return $this;
+    }
+    
+    public function hasEMon(): ?bool
+    {
+        return $this->eMon;
+    }
+    
+    public function setEMon(?bool $eMon): self
+    {
+        $this->eMon = $eMon;
+
+        return $this;
+    }
+    
+    public function hasMTue(): ?bool
+    {
+        return $this->mTue;
+    }
+    
+    public function setMTue(?bool $mTue): self
+    {
+        $this->mTue = $mTue;
+
+        return $this;
+    }
+    
+    public function hasATue(): ?bool
+    {
+        return $this->aTue;
+    }
+   
+    public function setATue(?bool $aTue): self
+    {
+        $this->aTue = $aTue;
+
+        return $this;
+    }
+    
+    public function hasETue(): ?bool
+    {
+        return $this->eTue;
+    }
+   
+    public function setETue(?bool $eTue): self
+    {
+        $this->eTue = $eTue;
+
+        return $this;
+    }
+    
+    public function hasMWed(): ?bool
+    {
+        return $this->mWed;
+    }
+   
+    public function setMWed(?bool $mWed): self
+    {
+        $this->mWed = $mWed;
+
+        return $this;
+    }
+    
+    public function hasAWed(): ?bool
+    {
+        return $this->aWed;
+    }
+   
+    public function setAWed(?bool $aWed): self
+    {
+        $this->aWed = $aWed;
+
+        return $this;
+    }
+    
+    public function hasEWed(): ?bool
+    {
+        return $this->eWed;
+    }
+   
+    public function setEWed(?bool $eWed): self
+    {
+        $this->eWed = $eWed;
+
+        return $this;
+    }
+    
+    public function hasMThu(): ?bool
+    {
+        return $this->mThu;
+    }
+   
+    public function setMThu(?bool $mThu): self
+    {
+        $this->mThu = $mThu;
+
+        return $this;
+    }
+    
+    public function hasAThu(): ?bool
+    {
+        return $this->aThu;
+    }
+   
+    public function setAThu(?bool $aThu): self
+    {
+        $this->aThu = $aThu;
+
+        return $this;
+    }
+    
+    public function hasEThu(): ?bool
+    {
+        return $this->eThu;
+    }
+   
+    public function setEThu(?bool $eThu): self
+    {
+        $this->eThu = $eThu;
+
+        return $this;
+    }
+    
+    public function hasMFri(): ?bool
+    {
+        return $this->mFri;
+    }
+   
+    public function setMFri(?bool $mFri): self
+    {
+        $this->mFri = $mFri;
+
+        return $this;
+    }
+    
+    public function hasAFri(): ?bool
+    {
+        return $this->aFri;
+    }
+   
+    public function setAFri(?bool $aFri): self
+    {
+        $this->aFri = $aFri;
+
+        return $this;
+    }
+    
+    public function hasEFri(): ?bool
+    {
+        return $this->eFri;
+    }
+   
+    public function setEFri(?bool $eFri): self
+    {
+        $this->eFri = $eFri;
+
+        return $this;
+    }
+    
+    public function hasMSat(): ?bool
+    {
+        return $this->mSat;
+    }
+   
+    public function setMSat(?bool $mSat): self
+    {
+        $this->mSat = $mSat;
+
+        return $this;
+    }
+    
+    public function hasASat(): ?bool
+    {
+        return $this->aSat;
+    }
+   
+    public function setASat(?bool $aSat): self
+    {
+        $this->aSat = $aSat;
+
+        return $this;
+    }
+    
+    public function hasESat(): ?bool
+    {
+        return $this->eSat;
+    }
+   
+    public function setESat(?bool $eSat): self
+    {
+        $this->eSat = $eSat;
+
+        return $this;
+    }
+    
+    public function hasMSun(): ?bool
+    {
+        return $this->mSun;
+    }
+   
+    public function setMSun(?bool $mSun): self
+    {
+        $this->mSun = $mSun;
+
+        return $this;
+    }
+    
+    public function hasASun(): ?bool
+    {
+        return $this->aSun;
+    }
+   
+    public function setASun(?bool $aSun): self
+    {
+        $this->aSun = $aSun;
+
+        return $this;
+    }
+    
+    public function hasESun(): ?bool
+    {
+        return $this->eSun;
+    }
+
+    public function setESun(?bool $eSun): self
+    {
+        $this->eSun = $eSun;
+
+        return $this;
+    }
+
+    public function getStructure(): ?Structure
+    {
+        return $this->structure;
+    }
+
+    public function setStructure(?Structure $structure): self
+    {
+        $this->structure = $structure;
+
         return $this;
     }
 
@@ -904,7 +883,7 @@ class SolidaryUser
         return $this->createdDate;
     }
 
-    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    public function setCreatedDate(?\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
 
@@ -916,32 +895,10 @@ class SolidaryUser
         return $this->updatedDate;
     }
 
-    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    public function setUpdatedDate(?\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
 
         return $this;
-    }
-
-    // DOCTRINE EVENTS
-    
-    /**
-     * Creation date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoCreatedDate()
-    {
-        $this->setCreatedDate(new \Datetime());
-    }
-
-    /**
-     * Update date.
-     *
-     * @ORM\PreUpdate
-     */
-    public function setAutoUpdatedDate()
-    {
-        $this->setUpdatedDate(new \Datetime());
     }
 }

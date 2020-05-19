@@ -26,6 +26,9 @@ namespace App\User\Repository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Community\Entity\Community;
+use App\Solidary\Entity\SolidaryBeneficiary;
+use App\Solidary\Entity\SolidaryVolunteer;
+use App\Solidary\Exception\SolidaryException;
 use Doctrine\ORM\EntityRepository;
 
 class UserRepository
@@ -74,5 +77,27 @@ class UserRepository
           ->setParameter('community', $community)
           ->getQuery()
           ->getResult();
+    }
+
+    /**
+     * Get Users with a specific type of SolidaryUser
+     *
+     * @param string $type
+     * @return array|null
+     */
+    public function findUsersBySolidaryUserType(string $type=null): ?array
+    {
+        $query = $this->repository->createQueryBuilder('u')
+        ->join('u.solidaryUser', 'su');
+
+        if ($type==SolidaryBeneficiary::TYPE) {
+            $query->where('su.beneficiary = true');
+        } elseif ($type==SolidaryVolunteer::TYPE) {
+            $query->where('su.volunteer = true');
+        } else {
+            throw new SolidaryException(SolidaryException::TYPE_SOLIDARY_USER_UNKNOWN);
+        }
+
+        return $query->getQuery()->getResult();
     }
 }

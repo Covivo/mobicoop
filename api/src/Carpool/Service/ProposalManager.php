@@ -127,6 +127,20 @@ class ProposalManager
     }
 
     /**
+     * Get the last active dynamic ad for a user.
+     *
+     * @param User $user        The user
+     * @return Proposal|null    The proposal found or null if not found
+     */
+    public function getLastDynamicActive(User $user)
+    {
+        if ($lastActiveProposal = $this->proposalRepository->findBy(['user'=>$user,'dynamic'=>true,'active'=>true], ['createdDate'=>'DESC'], 1)) {
+            return $lastActiveProposal[0];
+        }
+        return null;
+    }
+
+    /**
      * Prepare a proposal for persist.
      * Used when posting a proposal to populate default values like proposal validity.
      *

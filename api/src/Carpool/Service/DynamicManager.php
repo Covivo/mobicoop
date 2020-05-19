@@ -52,6 +52,7 @@ use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Repository\WaypointRepository;
 use App\Geography\Service\GeoSearcher;
 use DateTime;
+use App\User\Entity\User;
 
 /**
  * Dynamic ad manager service.
@@ -625,6 +626,25 @@ class DynamicManager
                     return $result;
                 }
             }
+        }
+        return null;
+    }
+
+    /**
+     * Get the last active dynamic ad.
+     *
+     * @param User $user    The user for whiwh we want the ad
+     * @return Dynamic|null The dynamic ad found or null if not found.
+     */
+    public function getLastDynamicActive(User $user)
+    {
+        if ($proposal = $this->proposalManager->getLastDynamicActive($user)) {
+            $dynamic = new Dynamic();
+            $dynamic->setProposal($proposal);
+            $dynamic->setUser($proposal->getUser());
+            $dynamic->setRole($proposal->getCriteria()->isDriver() ? Dynamic::ROLE_DRIVER : Dynamic::ROLE_PASSENGER);
+            $dynamic->setId($proposal->getId());
+            return $dynamic;
         }
         return null;
     }

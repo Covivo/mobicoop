@@ -341,12 +341,6 @@ use App\User\Controller\UserCanUseEmail;
  *              "path"="/users/{id}/unsubscribe_user",
  *              "controller"=UserUnsubscribeFromEmail::class
  *          },
- *          "solidaries"={
- *              "method"="GET",
- *              "path"="/users/{id}/solidaries",
- *              "normalization_context"={"groups"={"readSolidary"}},
- *              "security"="is_granted('solidary_list',object)"
- *          },
  *          "structures"={
  *              "method"="GET",
  *              "path"="/users/{id}/structures",
@@ -410,6 +404,8 @@ class User implements UserInterface, EquatableInterface
     const MOBILE_APP_WEB = 1;
     const MOBILE_APP_IOS = 2;
     const MOBILE_APP_ANDROID = 3;
+
+    const ROLE_DEFAULT = 3;  // Role we want to add by default when user register, ID is in auth_item (ROLE_USER_REGISTERED_FULL now)
 
     /**
      * @var int The id of this user.
@@ -1053,15 +1049,10 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var SolidaryUser|null The SolidaryUser possibly linked to this User
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user", cascade={"persist","remove"})
-     * @Groups({"readUser","write","readSolidary","writeSolidary"})
+     * @Groups({"readUser","write","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $solidaryUser;
-
-    /**
-     * @var array|null used to get the solidaries of a user
-     * @Groups({"readSolidary"})
-     */
-    private $solidaries;
 
     /**
      * @var array|null used to get the structures of a user
@@ -2528,18 +2519,6 @@ class User implements UserInterface, EquatableInterface
     public function setLastActivityDate(?\DateTimeInterface $lastActivityDate): self
     {
         $this->lastActivityDate = $lastActivityDate;
-
-        return $this;
-    }
-
-    public function getSolidaries()
-    {
-        return $this->solidaries;
-    }
-
-    public function setSolidaries(?array $solidaries): self
-    {
-        $this->solidaries = $solidaries;
 
         return $this;
     }

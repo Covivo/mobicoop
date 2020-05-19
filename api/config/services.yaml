@@ -470,3 +470,10 @@ services:
     App\Solidary\Service\SolidaryContactManager:
         arguments:
             $notificationsEnabled: '%env(bool:resolve:NOTIFICATION_ENABLED)%'
+
+    App\Solidary\Service\SolidaryUserManager:
+        arguments:
+            $params:
+                chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
+                music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
+                smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'            

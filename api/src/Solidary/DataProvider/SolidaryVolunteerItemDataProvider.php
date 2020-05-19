@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,35 +20,33 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\DataProvider;
+namespace App\Solidary\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Carpool\Entity\Dynamic;
-use App\Carpool\Service\DynamicManager;
-use Symfony\Component\HttpFoundation\RequestStack;
+use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use App\Solidary\Entity\SolidaryVolunteer;
+use App\Solidary\Service\SolidaryUserManager;
 
 /**
- * Item data provider for dynamic ad.
- *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class DynamicItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+final class SolidaryVolunteerItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
-    
-    public function __construct(RequestStack $requestStack, DynamicManager $dynamicManager)
+    private $solidaryUserManager;
+
+    public function __construct(SolidaryUserManager $solidaryUserManager)
     {
-        $this->request = $requestStack->getCurrentRequest();
-        $this->dynamicManager = $dynamicManager;
+        $this->solidaryUserManager = $solidaryUserManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Dynamic::class === $resourceClass && $operationName =="get";
+        return SolidaryVolunteer::class === $resourceClass;
     }
-    
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Dynamic
+
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?SolidaryVolunteer
     {
-        return $this->dynamicManager->getDynamic($id);
+        return $this->solidaryUserManager->getSolidaryVolunteer($id);
     }
 }

@@ -408,7 +408,6 @@ class Structure
      * @var ArrayCollection|null The solidary user for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidaryUserStructures;
@@ -417,7 +416,6 @@ class Structure
      * @var ArrayCollection|null The subjects for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Subject", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $subjects;
@@ -426,7 +424,6 @@ class Structure
      * @var ArrayCollection|null The special needs for this structure.
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
-     * @Groups({"readSolidary","writeSolidary","readNeeds"})
      */
     private $needs;
 
@@ -434,7 +431,6 @@ class Structure
      * @var ArrayCollection|null The relay points related to the structure.
      *
      * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="structure", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $relayPoints;
@@ -443,7 +439,6 @@ class Structure
      * @var ArrayCollection|null The solidary records for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\StructureProof", mappedBy="structure", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readUser","readSolidary","writeSolidary","userStructure"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */

@@ -1,8 +1,5 @@
 <template>
-  <v-row
-    align="center"
-    justify="center"
-  >
+  <v-row>
     <v-col
       cols="4"
       md="4"
@@ -32,7 +29,6 @@
     >
       <v-card
         flat
-        height="25vh"
         justify="center"
       >
         <v-card-text>
