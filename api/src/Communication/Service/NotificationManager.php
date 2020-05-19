@@ -52,6 +52,8 @@ use App\Communication\Entity\Push;
 use App\User\Entity\PushToken;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Entity\SolidaryContact;
+use App\Community\Entity\Community;
+
 
 /**
  * Notification manager
@@ -292,6 +294,10 @@ class NotificationManager
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'event' => $object];
                     break;
+                case Community::class:
+                    $titleContext = [];
+                    $bodyContext = ['user'=>$recipient, 'community' => $object];
+                    break;    
                 case Message::class:
                     $titleContext = ['user'=>$object->getUser()];
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];

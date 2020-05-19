@@ -277,3 +277,8 @@ changePassword: "Nous vous encourageons fortement à le modifier lors de votre p
 
 # Solidary
 solidaryContact : "Un administrateur solidaire vous contacte"
+
+# COMMUNITY_NEW_MEMBERSHIP_REQUEST
+hello: "Bonjour,"
+youReceivedExternalContact: "s'est inscrit dans la  ."
+seeYouIn: "Rendez-vous dans le module d'administration pour valider son adhésion : "
