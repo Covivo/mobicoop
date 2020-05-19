@@ -84,7 +84,7 @@ class SolidaryVolunteer
      *
      * @Assert\NotBlank
      * @Assert\Email()
-     * @Groups({"writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $email;
 
@@ -96,31 +96,31 @@ class SolidaryVolunteer
 
     /**
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
-     * @Groups({"writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $gender;
 
     /**
      * @var string|null The telephone number of the user.
-     * @Groups({"writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $telephone;
 
     /**
      * @var string|null The first name of the user.
-     * @Groups({"writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $givenName;
 
     /**
      * @var string|null The family name of the user.
-     * @Groups({"writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $familyName;
 
     /**
      * @var \DateTimeInterface|null The birth date of the user.
-     * @Groups({"writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      *
      * @ApiProperty(
      *     attributes={
@@ -132,7 +132,7 @@ class SolidaryVolunteer
 
     /**
      * @var boolean|null The user accepts to receive news about the platform.
-     * @Groups({"writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $newsSubscription;
 
@@ -144,7 +144,7 @@ class SolidaryVolunteer
 
     /**
      * @var array The home address of this User
-     * @Groups({"writeSolidary"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $homeAddress;
 
@@ -374,7 +374,7 @@ class SolidaryVolunteer
         return $this;
     }
 
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }

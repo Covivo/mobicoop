@@ -101,6 +101,7 @@ class SolidaryUserManager
         $this->userManager = $userManager;
     }
 
+    // Probably obsolete... to do check !
     public function updateSolidaryUser(SolidaryUser $solidaryUser)
     {
         // We trigger the event
@@ -123,14 +124,14 @@ class SolidaryUserManager
             $structureAdmin = $structures[0];
         }
 
-        // Get the User
-        $user = $this->userRepository->find($id);
+        // Get the Solidary User
+        $solidaryUser = $this->solidaryUserRepository->find($id);
+        $user = $solidaryUser->getUser();
 
         // Get the SolidaryUser
         if (is_null($user->getSolidaryUser())) {
             throw new SolidaryException(SolidaryException::NO_SOLIDARY_USER);
         }
-        $solidaryUser = $user->getSolidaryUser();
 
         // We check if the SolidaryUser is a Beneficiary
         if (!$solidaryUser->isBeneficiary()) {
@@ -139,7 +140,7 @@ class SolidaryUserManager
 
 
         $solidaryBeneficiary = new SolidaryBeneficiary();
-        $solidaryBeneficiary->setId($user->getId());
+        $solidaryBeneficiary->setId($solidaryUser->getId());
         $solidaryBeneficiary->setEmail($user->getEmail());
         $solidaryBeneficiary->setGivenName($user->getGivenName());
         $solidaryBeneficiary->setFamilyName($user->getFamilyName());
@@ -239,7 +240,6 @@ class SolidaryUserManager
      */
     public function getSolidaryVolunteer(int $id): SolidaryVolunteer
     {
-
         // Get the structure of the Admin
         $structures = $this->structureRepository->findByUser($this->security->getUser());
         $structureAdmin = null;
@@ -247,15 +247,14 @@ class SolidaryUserManager
             $structureAdmin = $structures[0];
         }
 
-
-        // Get the User
-        $user = $this->userRepository->find($id);
+        // Get the Solidary User
+        $solidaryUser = $this->solidaryUserRepository->find($id);
+        $user = $solidaryUser->getUser();
 
         // Get the SolidaryUser
         if (is_null($user->getSolidaryUser())) {
             throw new SolidaryException(SolidaryException::NO_SOLIDARY_USER);
         }
-        $solidaryUser = $user->getSolidaryUser();
 
         // We check if the SolidaryUser is a Beneficiary
         if (!$solidaryUser->isVolunteer()) {
@@ -263,8 +262,15 @@ class SolidaryUserManager
         }
 
         $solidaryVolunteer = new SolidaryVolunteer();
-        $solidaryVolunteer->setId($user->getId());
+        $solidaryVolunteer->setId($solidaryUser->getId());
         $solidaryVolunteer->setUser($user);
+        $solidaryVolunteer->setEmail($user->getEmail());
+        $solidaryVolunteer->setGivenName($user->getGivenName());
+        $solidaryVolunteer->setFamilyName($user->getFamilyName());
+        $solidaryVolunteer->setNewsSubscription($user->hasNewsSubscription());
+        $solidaryVolunteer->setTelephone($user->getTelephone());
+        $solidaryVolunteer->setBirthDate($user->getBirthDate());
+        $solidaryVolunteer->setGender($user->getGender());
         $solidaryVolunteer->setComment($solidaryUser->getComment());
 
 
@@ -354,7 +360,7 @@ class SolidaryUserManager
         $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryBeneficiary::TYPE);
         foreach ($users as $user) {
             // Maybe To do : If it's too slow, we can use the User instead of the Id. But we need to rewrite the ItemDataProvider
-            $beneficiaries[] = $this->getSolidaryBeneficiary($user->getId());
+            $beneficiaries[] = $this->getSolidaryBeneficiary($user->getSolidaryUser()->getId());
         }
 
 
@@ -374,7 +380,7 @@ class SolidaryUserManager
         $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryVolunteer::TYPE);
         foreach ($users as $user) {
             // Maybe To do : If it's too slow, we can use the User instead of the Id. But we need to rewrite the ItemDataProvider
-            $volunteers[] = $this->getSolidaryVolunteer($user->getId());
+            $volunteers[] = $this->getSolidaryVolunteer($user->getSolidaryUser()->getId());
         }
 
 
@@ -529,14 +535,15 @@ class SolidaryUserManager
      */
     public function updateSolidaryBeneficiary(SolidaryBeneficiary $solidaryBeneficiary): SolidaryBeneficiary
     {
-        // We get the User
-        $user = $this->userRepository->find($solidaryBeneficiary->getId());
+        // We get the SolidaryUser and the User
+        $solidaryUser = $this->solidaryUserRepository->find($solidaryBeneficiary->getId());
+        $user = $solidaryUser->getUser();
 
         if (is_null($user)) {
             throw new SolidaryException(SolidaryException::UNKNOWN_USER);
         }
 
-        $solidaryUser = $user->getSolidaryUser();
+        
 
         // Accepted/Refused
         if (is_null($solidaryBeneficiary->isValidatedCandidate())) {
@@ -557,13 +564,13 @@ class SolidaryUserManager
 
 
 
-        return $this->getSolidaryBeneficiary($solidaryBeneficiary->getId());
+        return $this->getSolidaryBeneficiary($solidaryUser->getId());
     }
 
     /**
      * Create a SolidaryUser and its User if necessary from a SolidaryVolunteer
      *
-     * @param SolidaryVolunteer $solidaryBeneficiary
+     * @param SolidaryVolunteer $solidaryVolunteer
      * @return SolidaryVolunteer|null
      */
     public function createSolidaryVolunteer(SolidaryVolunteer $solidaryVolunteer): ?SolidaryVolunteer
@@ -767,6 +774,125 @@ class SolidaryUserManager
         return $this->getSolidaryVolunteer($user->getId());
     }
 
+    /**
+     * Update a SolidaryVolunteer
+     * For now, only accept/refuse and update the availabilities. Other fields are ignored.
+     *
+     * @param SolidaryVolunteer $solidaryVolunteer
+     * @return SolidaryVolunteer
+     */
+    public function updateSolidaryVolunteer(SolidaryVolunteer $solidaryVolunteer): SolidaryVolunteer
+    {
+        
+        // We get the SolidaryUser and the User
+        $solidaryUser = $this->solidaryUserRepository->find($solidaryVolunteer->getId());
+        $user = $solidaryUser->getUser();
+
+        if (is_null($user)) {
+            throw new SolidaryException(SolidaryException::UNKNOWN_USER);
+        }
+
+        $solidaryUser = $user->getSolidaryUser();
+
+        // Accepted/Refused
+        if (is_null($solidaryVolunteer->isValidatedCandidate())) {
+            // Don't do anything, it's not an acceptation or refulsal action
+        } elseif (!$solidaryVolunteer->isValidatedCandidate()) {
+            // We change the status of the SolidaryUserStructure
+            $this->acceptOrRefuseCandidate($solidaryUser, false, true, $solidaryVolunteer->getStructure());
+        } elseif ($solidaryVolunteer->isValidatedCandidate()) {
+            // We change the status of the SolidaryUserStructure
+            $this->acceptOrRefuseCandidate($solidaryUser, true, false, $solidaryVolunteer->getStructure());
+        }
+        
+        if (!is_null($solidaryVolunteer->getMMinTime())) {
+            $solidaryUser->setMMinTime($solidaryVolunteer->getMMinTime());
+        }
+        if (!is_null($solidaryVolunteer->getMMaxTime())) {
+            $solidaryUser->setMMaxTime($solidaryVolunteer->getMMaxTime());
+        }
+        if (!is_null($solidaryVolunteer->getAMinTime())) {
+            $solidaryUser->setAMinTime($solidaryVolunteer->getAMinTime());
+        }
+        if (!is_null($solidaryVolunteer->getAMaxTime())) {
+            $solidaryUser->setAMaxTime($solidaryVolunteer->getAMaxTime());
+        }
+        if (!is_null($solidaryVolunteer->getEMinTime())) {
+            $solidaryUser->setEMinTime($solidaryVolunteer->getEMinTime());
+        }
+        if (!is_null($solidaryVolunteer->getEMaxTime())) {
+            $solidaryUser->setEMaxTime($solidaryVolunteer->getEMaxTime());
+        }
+        
+        if (!is_null($solidaryVolunteer->hasMMon())) {
+            $solidaryUser->setMMon($solidaryVolunteer->hasMMon());
+        }
+        if (!is_null($solidaryVolunteer->hasMTue())) {
+            $solidaryUser->setMTue($solidaryVolunteer->hasMTue());
+        }
+        if (!is_null($solidaryVolunteer->hasMWed())) {
+            $solidaryUser->setMWed($solidaryVolunteer->hasMWed());
+        }
+        if (!is_null($solidaryVolunteer->hasMThu())) {
+            $solidaryUser->setMThu($solidaryVolunteer->hasMThu());
+        }
+        if (!is_null($solidaryVolunteer->hasMFri())) {
+            $solidaryUser->setMFri($solidaryVolunteer->hasMFri());
+        }
+        if (!is_null($solidaryVolunteer->hasMSat())) {
+            $solidaryUser->setMSat($solidaryVolunteer->hasMSat());
+        }
+        if (!is_null($solidaryVolunteer->hasMSun())) {
+            $solidaryUser->setMSun($solidaryVolunteer->hasMSun());
+        }
+        if (!is_null($solidaryVolunteer->hasAMon())) {
+            $solidaryUser->setAMon($solidaryVolunteer->hasAMon());
+        }
+        if (!is_null($solidaryVolunteer->hasATue())) {
+            $solidaryUser->setATue($solidaryVolunteer->hasATue());
+        }
+        if (!is_null($solidaryVolunteer->hasAWed())) {
+            $solidaryUser->setAWed($solidaryVolunteer->hasAWed());
+        }
+        if (!is_null($solidaryVolunteer->hasAThu())) {
+            $solidaryUser->setAThu($solidaryVolunteer->hasAThu());
+        }
+        if (!is_null($solidaryVolunteer->hasAFri())) {
+            $solidaryUser->setAFri($solidaryVolunteer->hasAFri());
+        }
+        if (!is_null($solidaryVolunteer->hasASat())) {
+            $solidaryUser->setASat($solidaryVolunteer->hasASat());
+        }
+        if (!is_null($solidaryVolunteer->hasASun())) {
+            $solidaryUser->setASun($solidaryVolunteer->hasASun());
+        }
+        if (!is_null($solidaryVolunteer->hasEMon())) {
+            $solidaryUser->setEMon($solidaryVolunteer->hasEMon());
+        }
+        if (!is_null($solidaryVolunteer->hasETue())) {
+            $solidaryUser->setETue($solidaryVolunteer->hasETue());
+        }
+        if (!is_null($solidaryVolunteer->hasEWed())) {
+            $solidaryUser->setEWed($solidaryVolunteer->hasEWed());
+        }
+        if (!is_null($solidaryVolunteer->hasEThu())) {
+            $solidaryUser->setEThu($solidaryVolunteer->hasEThu());
+        }
+        if (!is_null($solidaryVolunteer->hasEFri())) {
+            $solidaryUser->setEFri($solidaryVolunteer->hasEFri());
+        }
+        if (!is_null($solidaryVolunteer->hasESat())) {
+            $solidaryUser->setESat($solidaryVolunteer->hasESat());
+        }
+        if (!is_null($solidaryVolunteer->hasESun())) {
+            $solidaryUser->setESun($solidaryVolunteer->hasESun());
+        }
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $this->getSolidaryVolunteer($solidaryUser->getId());
+    }
 
     /**
      * Accept or refuse a SolidaryUser for a Structure (given or the admin's)
