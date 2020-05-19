@@ -22,6 +22,9 @@
 
 namespace App\Solidary\Exception;
 
+use App\Solidary\Entity\SolidaryBeneficiary;
+use App\Solidary\Entity\SolidaryVolunteer;
+
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
@@ -34,6 +37,9 @@ class SolidaryException extends \LogicException
     const UNKNOWN_USER = "Unknown User";
     const NO_STRUCTURE_ID = "No structureId";
     const NO_STRUCTURE = "No structure found";
+    const TYPE_SOLIDARY_USER_UNKNOWN = "Unknown solidaryUser type (must be '".SolidaryBeneficiary::TYPE."' or '".SolidaryVolunteer::TYPE."')";
+    const ALREADY_USER = "Already a User with this email";
+    const ALREADY_SOLIDARY_USER = "Already a SolidaryUser";
 
     // SolidarySolution
     const IS_NOT_VOLUNTEER = "The SolidaryUser is not a volunteer";
@@ -56,4 +62,9 @@ class SolidaryException extends \LogicException
     const WAY_MISSING_OR_INVALID = "Way parameter is missing or invalid (must be outward or return)";
     const TYPE_MISSING_OR_INVALID = "Type parameter is missing or invalid (must be carpool or transport)";
     const UNKNOWN_SOLIDARY = "There no Solidary with this id";
+
+    // SolidaryUser
+    const NO_SOLIDARY_USER = "This User is not a Solidary User";
+    const NO_SOLIDARY_BENEFICIARY = "This Solidary User is not a beneficiary";
+    const NO_SOLIDARY_VOLUNTEER = "This Solidary User is not a volunteer";
 }
