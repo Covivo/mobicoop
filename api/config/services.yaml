@@ -154,6 +154,8 @@ services:
                 defaultMarginTime: '%env(int:CARPOOL_MARGIN_TIME)%'
                 defaultSeatsDriver: '%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%'
                 defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
+                carpoolProofDistance: '%env(int:CARPOOL_PROOF_DISTANCE)%'
+                proofType: '%env(string:CARPOOL_PROOF_DYNAMIC_TYPE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
 
