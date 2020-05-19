@@ -28,7 +28,6 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use App\Geography\Entity\Address;
 use App\User\Entity\User;
@@ -82,8 +81,6 @@ class SolidaryVolunteer
     /**
      * @var string The email of the user.
      *
-     * @Assert\NotBlank
-     * @Assert\Email()
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $email;

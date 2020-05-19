@@ -112,7 +112,7 @@ class SolidaryUserManager
     /**
      * Get a SolidaryBeneficiary from a User id
      *
-     * @param int $id User id
+     * @param int $id SolidaryUser id
      * @return SolidaryBeneficiary
      */
     public function getSolidaryBeneficiary(int $id): SolidaryBeneficiary
@@ -127,6 +127,11 @@ class SolidaryUserManager
         // Get the Solidary User
         $solidaryUser = $this->solidaryUserRepository->find($id);
         $user = $solidaryUser->getUser();
+
+        // If user is null, we try to get the user via the repository. It appends after a post of SolidaryBeneficiary during the return. Why ? I don't know, feel free to check ;)
+        if (is_null($user)) {
+            $user = $this->userRepository->findOneBy(["solidaryUser"=>$solidaryUser]);
+        }
 
         // Get the SolidaryUser
         if (is_null($user->getSolidaryUser())) {
@@ -235,7 +240,7 @@ class SolidaryUserManager
     /**
      * Get a SolidaryVolunteer from a User id
      *
-     * @param int $id User id
+     * @param int $id SolidaryVolunteer id
      * @return SolidaryVolunteer
      */
     public function getSolidaryVolunteer(int $id): SolidaryVolunteer
@@ -250,6 +255,11 @@ class SolidaryUserManager
         // Get the Solidary User
         $solidaryUser = $this->solidaryUserRepository->find($id);
         $user = $solidaryUser->getUser();
+
+        // If user is null, we try to get the user via the repository. It appends after a post of SolidaryBeneficiary during the return. Why ? I don't know, feel free to check ;)
+        if (is_null($user)) {
+            $user = $this->userRepository->findOneBy(["solidaryUser"=>$solidaryUser]);
+        }
 
         // Get the SolidaryUser
         if (is_null($user->getSolidaryUser())) {
@@ -521,7 +531,7 @@ class SolidaryUserManager
         $event = new SolidaryCreatedEvent($user, $this->security->getUser());
         $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
 
-        return $this->getSolidaryBeneficiary($user->getId());
+        return $this->getSolidaryBeneficiary($user->getSolidaryUser()->getId());
     }
 
 
@@ -769,7 +779,7 @@ class SolidaryUserManager
         $event = new SolidaryCreatedEvent($user, $this->security->getUser());
         $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
         
-        return $this->getSolidaryVolunteer($user->getId());
+        return $this->getSolidaryVolunteer($user->getSolidaryUser()->getId());
     }
 
     /**
