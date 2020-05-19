@@ -535,6 +535,9 @@ class SolidaryUserManager
             $this->acceptOrRefuseCandidate($solidaryUser, true, false, $solidaryBeneficiary->getStructure());
         }
         
+        // Proofs
+        $this->addProofToSolidaryUser($solidaryUser, $solidaryBeneficiary->getProofs());
+
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
@@ -561,7 +564,6 @@ class SolidaryUserManager
         if (is_null($structure)) {
             // We get the Structure of the Admin to set the SolidaryUserStructure
             $structures = $this->structureRepository->findByUser($this->security->getUser());
-            $structureAdmin = null;
             if (!is_null($structures) || count($structures)>0) {
                 $structure = $structures[0];
             }
@@ -576,15 +578,15 @@ class SolidaryUserManager
             }
         }
 
-        // We check if this candidate has already been accepted or refused
-        if (!is_null($solidaryUserStructureToUpdate->getAcceptedDate())) {
-            throw new SolidaryException(SolidaryException::ALREADY_ACCEPTED);
-        }
-        if (!is_null($solidaryUserStructureToUpdate->getRefusedDate())) {
-            throw new SolidaryException(SolidaryException::ALREADY_REFUSED);
-        }
 
-        if ($acceptCandidate) {
+        if ($acceptCandidate && $solidaryUserStructureToUpdate->getAcceptedDate()=="" && $solidaryUserStructureToUpdate->getRefusedDate()=="") {
+
+            // We check if this candidate has already been accepted or refused
+            if (!is_null($solidaryUserStructureToUpdate->getAcceptedDate())) {
+                throw new SolidaryException(SolidaryException::ALREADY_ACCEPTED);
+            }
+
+
             $solidaryUserStructureToUpdate->setAcceptedDate(new \DateTime());
             
             // We add the role to the user
@@ -603,7 +605,11 @@ class SolidaryUserManager
             // We dispatch the event
             $event = new SolidaryUserStructureAcceptedEvent($solidaryUserStructureToUpdate, $this->security->getUser());
             $this->eventDispatcher->dispatch(SolidaryUserStructureAcceptedEvent::NAME, $event);
-        } elseif ($refuseCandidate) {
+        } elseif ($refuseCandidate && $solidaryUserStructureToUpdate->getAcceptedDate()=="" && $solidaryUserStructureToUpdate->getRefusedDate()=="") {
+            if (!is_null($solidaryUserStructureToUpdate->getRefusedDate())) {
+                throw new SolidaryException(SolidaryException::ALREADY_REFUSED);
+            }
+    
             $solidaryUserStructureToUpdate->setRefusedDate(new \DateTime());
 
             // We dispatch the event
@@ -612,7 +618,67 @@ class SolidaryUserManager
         }
     }
     
-    
+    /**
+     * Add Proofs to an existing SolidaryUserStructure of a SolidaryUser (for a given Structure or not)
+     *
+     * @param SolidaryUser $solidaryUser    The SolidaryUser
+     * @param array $proofs                 The proofs to add
+     * @param Structure $structure          The Structure  (if there is no structure we use the admin one)
+     * @return void
+     */
+    public function addProofToSolidaryUser(SolidaryUser $solidaryUser, array $proofs, Structure $structure=null)
+    {
+        $solidaryUserStructures = $solidaryUser->getSolidaryUserStructures();
+
+        // If there a Structure given, we use it. Otherwise we use the first admin structure
+        if (is_null($structure)) {
+            // We get the Structure of the Admin to set the SolidaryUserStructure
+            $structures = $this->structureRepository->findByUser($this->security->getUser());
+            if (!is_null($structures) || count($structures)>0) {
+                $structure = $structures[0];
+            }
+        }
+        
+        // We search the right solidaryUserStructure to update
+        $solidaryUserStructureToUpdate = null;
+        foreach ($solidaryUserStructures as $solidaryUserStructure) {
+            if ($solidaryUserStructure->getStructure()->getId() == $structure->getId()) {
+                $solidaryUserStructureToUpdate = $solidaryUserStructure;
+                break;
+            }
+        }
+
+        // We get the existing proofs of this SolidaryUserStructure to check if we don't try add an already existing proof
+        $existingProofs = $solidaryUserStructureToUpdate->getProofs();
+
+        // We add the new proofs to the SolidaryUserStructure
+        foreach ($proofs as $givenProof) {
+            // We get the structure proof and we create a proof to persist
+            $structureProofId = null;
+            if (strrpos($givenProof['id'], '/')) {
+                $structureProofId = substr($givenProof['id'], strrpos($givenProof['id'], '/') + 1);
+            }
+                
+            $structureProof = $this->structureProofRepository->find($structureProofId);
+
+            // We check if there is already a similar proof
+            $alreadyExistingProof = false;
+            foreach ($existingProofs as $existingProof) {
+                if ($existingProof->getStructureProof()->getId() == $structureProofId) {
+                    $alreadyExistingProof = true;
+                }
+            }
+
+            if (!$alreadyExistingProof && !is_null($structureProof) && isset($givenProof['value']) && !is_null($givenProof['value'])) {
+                $proof = new Proof();
+                $proof->setStructureProof($structureProof);
+                $proof->setValue($givenProof['value']);
+                $solidaryUserStructureToUpdate->addProof($proof);
+            }
+        }
+    }
+
+
     /**
      * Genereate a random password
      *
