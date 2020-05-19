@@ -137,11 +137,6 @@ class SolidaryManager
         $solidary->setProposal($proposal);
         $solidary->setSolidaryUserStructure($solidaryUserStructure[0]);
         
-        // // // we add the needs to the solidary
-        // foreach ($solidary->getNeeds() as $givenNeed) {
-        //     $solidary->addNeed(clone $givenNeed);
-        // }
-        
         $this->entityManager->persist($solidary);
         $this->entityManager->flush();
 
@@ -422,8 +417,8 @@ class SolidaryManager
             // Schedule
             $schedule = [];
             $days = $solidary->getDays();
-            foreach ($days as $day) {
-                $schedule[0][$day] = true;
+            foreach ($days as $day => $value) {
+                $schedule[0][$day] = $value;
             }
             $schedule[0]['outwardTime'] = $solidary->getOutwardDatetime()->format("H:i");
             $schedule[0]['returnTime'] =$solidary->getReturnDatetime() ? $solidary->getReturnDatetime()->format("H:i") : null;

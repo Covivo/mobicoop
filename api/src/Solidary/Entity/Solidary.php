@@ -159,7 +159,7 @@ class Solidary
     /**
      * @var ArrayCollection|null The special needs for this solidary record.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", cascade={"persist","remove"} )
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", cascade={"persist","remove"})
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */

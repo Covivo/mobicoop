@@ -71,6 +71,7 @@ class Need
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
      * @Groups({"readUser","readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $label;
 
@@ -79,6 +80,7 @@ class Need
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readUser","readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $private;
 
