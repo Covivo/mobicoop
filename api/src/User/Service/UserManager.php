@@ -254,27 +254,25 @@ class UserManager
      */
     public function setDefaultSolidaryUserAvailabilities(SolidaryUser $solidaryUser, Structure $structure=null): SolidaryUser
     {
-        
         $solidaryUserstructure = null;
-        if(!is_null($structure)){
+        if (!is_null($structure)) {
             // A structure is given. We're looking for the solidaryUserStructure between this structure and the SolidaryUser
             $solidaryUserstructures = $solidaryUser->getSolidaryUserStructures();
-            foreach($solidaryUserstructures as $currentSolidaryUserstructure){
-                if($currentSolidaryUserstructure->getStructure()->getId() == $structure->getId()){
+            foreach ($solidaryUserstructures as $currentSolidaryUserstructure) {
+                if ($currentSolidaryUserstructure->getStructure()->getId() == $structure->getId()) {
                     $solidaryUserstructure = $currentSolidaryUserstructure;
                     break;
                 }
             }
-        }
-        else{
+        } else {
             // No structure given. We take the admin's one
             $structures = $this->structureRepository->findByUser($this->security->getUser());
             if (!is_null($structures) || count($structures)>0) {
                 $solidaryUserstructure = $structures[0];
-            }            
+            }
         }
 
-        if(is_null($solidaryUserstructure)){
+        if (is_null($solidaryUserstructure)) {
             throw new SolidaryException(SolidaryException::NO_STRUCTURE);
         }
 

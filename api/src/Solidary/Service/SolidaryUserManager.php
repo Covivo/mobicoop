@@ -669,34 +669,88 @@ class SolidaryUserManager
 
         // Availabilities : First we set those given, next we fill the blanks with the structure default
         
-        if(!is_null($solidaryVolunteer->getMMinTime())) $solidaryUser->setMMinTime($solidaryVolunteer->getMMinTime());
-        if(!is_null($solidaryVolunteer->getMMaxTime())) $solidaryUser->setMMaxTime($solidaryVolunteer->getMMaxTime());
-        if(!is_null($solidaryVolunteer->getAMinTime())) $solidaryUser->setAMinTime($solidaryVolunteer->getAMinTime());
-        if(!is_null($solidaryVolunteer->getAMaxTime())) $solidaryUser->setAMaxTime($solidaryVolunteer->getAMaxTime());
-        if(!is_null($solidaryVolunteer->getEMinTime())) $solidaryUser->setEMinTime($solidaryVolunteer->getEMinTime());
-        if(!is_null($solidaryVolunteer->getEMaxTime())) $solidaryUser->setEMaxTime($solidaryVolunteer->getEMaxTime());
+        if (!is_null($solidaryVolunteer->getMMinTime())) {
+            $solidaryUser->setMMinTime($solidaryVolunteer->getMMinTime());
+        }
+        if (!is_null($solidaryVolunteer->getMMaxTime())) {
+            $solidaryUser->setMMaxTime($solidaryVolunteer->getMMaxTime());
+        }
+        if (!is_null($solidaryVolunteer->getAMinTime())) {
+            $solidaryUser->setAMinTime($solidaryVolunteer->getAMinTime());
+        }
+        if (!is_null($solidaryVolunteer->getAMaxTime())) {
+            $solidaryUser->setAMaxTime($solidaryVolunteer->getAMaxTime());
+        }
+        if (!is_null($solidaryVolunteer->getEMinTime())) {
+            $solidaryUser->setEMinTime($solidaryVolunteer->getEMinTime());
+        }
+        if (!is_null($solidaryVolunteer->getEMaxTime())) {
+            $solidaryUser->setEMaxTime($solidaryVolunteer->getEMaxTime());
+        }
         
-        if(!is_null($solidaryVolunteer->hasMMon())) $solidaryUser->setMMon($solidaryVolunteer->hasMMon());
-        if(!is_null($solidaryVolunteer->hasMTue())) $solidaryUser->setMTue($solidaryVolunteer->hasMTue());
-        if(!is_null($solidaryVolunteer->hasMWed())) $solidaryUser->setMWed($solidaryVolunteer->hasMWed());
-        if(!is_null($solidaryVolunteer->hasMThu())) $solidaryUser->setMThu($solidaryVolunteer->hasMThu());
-        if(!is_null($solidaryVolunteer->hasMFri())) $solidaryUser->setMFri($solidaryVolunteer->hasMFri());
-        if(!is_null($solidaryVolunteer->hasMSat())) $solidaryUser->setMSat($solidaryVolunteer->hasMSat());
-        if(!is_null($solidaryVolunteer->hasMSun())) $solidaryUser->setMSun($solidaryVolunteer->hasMSun());
-        if(!is_null($solidaryVolunteer->hasAMon())) $solidaryUser->setAMon($solidaryVolunteer->hasAMon());
-        if(!is_null($solidaryVolunteer->hasATue())) $solidaryUser->setATue($solidaryVolunteer->hasATue());
-        if(!is_null($solidaryVolunteer->hasAWed())) $solidaryUser->setAWed($solidaryVolunteer->hasAWed());
-        if(!is_null($solidaryVolunteer->hasAThu())) $solidaryUser->setAThu($solidaryVolunteer->hasAThu());
-        if(!is_null($solidaryVolunteer->hasAFri())) $solidaryUser->setAFri($solidaryVolunteer->hasAFri());
-        if(!is_null($solidaryVolunteer->hasASat())) $solidaryUser->setASat($solidaryVolunteer->hasASat());
-        if(!is_null($solidaryVolunteer->hasASun())) $solidaryUser->setASun($solidaryVolunteer->hasASun());
-        if(!is_null($solidaryVolunteer->hasEMon())) $solidaryUser->setEMon($solidaryVolunteer->hasEMon());
-        if(!is_null($solidaryVolunteer->hasETue())) $solidaryUser->setETue($solidaryVolunteer->hasETue());
-        if(!is_null($solidaryVolunteer->hasEWed())) $solidaryUser->setEWed($solidaryVolunteer->hasEWed());
-        if(!is_null($solidaryVolunteer->hasEThu())) $solidaryUser->setEThu($solidaryVolunteer->hasEThu());
-        if(!is_null($solidaryVolunteer->hasEFri())) $solidaryUser->setEFri($solidaryVolunteer->hasEFri());
-        if(!is_null($solidaryVolunteer->hasESat())) $solidaryUser->setESat($solidaryVolunteer->hasESat());
-        if(!is_null($solidaryVolunteer->hasESun())) $solidaryUser->setESun($solidaryVolunteer->hasESun());        
+        if (!is_null($solidaryVolunteer->hasMMon())) {
+            $solidaryUser->setMMon($solidaryVolunteer->hasMMon());
+        }
+        if (!is_null($solidaryVolunteer->hasMTue())) {
+            $solidaryUser->setMTue($solidaryVolunteer->hasMTue());
+        }
+        if (!is_null($solidaryVolunteer->hasMWed())) {
+            $solidaryUser->setMWed($solidaryVolunteer->hasMWed());
+        }
+        if (!is_null($solidaryVolunteer->hasMThu())) {
+            $solidaryUser->setMThu($solidaryVolunteer->hasMThu());
+        }
+        if (!is_null($solidaryVolunteer->hasMFri())) {
+            $solidaryUser->setMFri($solidaryVolunteer->hasMFri());
+        }
+        if (!is_null($solidaryVolunteer->hasMSat())) {
+            $solidaryUser->setMSat($solidaryVolunteer->hasMSat());
+        }
+        if (!is_null($solidaryVolunteer->hasMSun())) {
+            $solidaryUser->setMSun($solidaryVolunteer->hasMSun());
+        }
+        if (!is_null($solidaryVolunteer->hasAMon())) {
+            $solidaryUser->setAMon($solidaryVolunteer->hasAMon());
+        }
+        if (!is_null($solidaryVolunteer->hasATue())) {
+            $solidaryUser->setATue($solidaryVolunteer->hasATue());
+        }
+        if (!is_null($solidaryVolunteer->hasAWed())) {
+            $solidaryUser->setAWed($solidaryVolunteer->hasAWed());
+        }
+        if (!is_null($solidaryVolunteer->hasAThu())) {
+            $solidaryUser->setAThu($solidaryVolunteer->hasAThu());
+        }
+        if (!is_null($solidaryVolunteer->hasAFri())) {
+            $solidaryUser->setAFri($solidaryVolunteer->hasAFri());
+        }
+        if (!is_null($solidaryVolunteer->hasASat())) {
+            $solidaryUser->setASat($solidaryVolunteer->hasASat());
+        }
+        if (!is_null($solidaryVolunteer->hasASun())) {
+            $solidaryUser->setASun($solidaryVolunteer->hasASun());
+        }
+        if (!is_null($solidaryVolunteer->hasEMon())) {
+            $solidaryUser->setEMon($solidaryVolunteer->hasEMon());
+        }
+        if (!is_null($solidaryVolunteer->hasETue())) {
+            $solidaryUser->setETue($solidaryVolunteer->hasETue());
+        }
+        if (!is_null($solidaryVolunteer->hasEWed())) {
+            $solidaryUser->setEWed($solidaryVolunteer->hasEWed());
+        }
+        if (!is_null($solidaryVolunteer->hasEThu())) {
+            $solidaryUser->setEThu($solidaryVolunteer->hasEThu());
+        }
+        if (!is_null($solidaryVolunteer->hasEFri())) {
+            $solidaryUser->setEFri($solidaryVolunteer->hasEFri());
+        }
+        if (!is_null($solidaryVolunteer->hasESat())) {
+            $solidaryUser->setESat($solidaryVolunteer->hasESat());
+        }
+        if (!is_null($solidaryVolunteer->hasESun())) {
+            $solidaryUser->setESun($solidaryVolunteer->hasESun());
+        }
 
         // Default values
         $this->userManager->setDefaultSolidaryUserAvailabilities($solidaryUser, $solidaryVolunteerStructure);
