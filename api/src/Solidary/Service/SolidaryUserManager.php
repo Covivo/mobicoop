@@ -41,8 +41,11 @@ use App\Geography\Entity\Address;
 use App\Solidary\Entity\Proof;
 use App\Solidary\Entity\SolidaryDiaryEntry;
 use App\Solidary\Entity\SolidaryVolunteer;
+use App\Solidary\Entity\Structure;
 use App\Solidary\Event\SolidaryCreatedEvent;
 use App\Solidary\Event\SolidaryUserCreatedEvent;
+use App\Solidary\Event\SolidaryUserStructureAcceptedEvent;
+use App\Solidary\Event\SolidaryUserStructureRefusedEvent;
 use App\Solidary\Repository\SolidaryRepository;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -186,8 +189,10 @@ class SolidaryUserManager
         $solidaryBeneficiary->setProofs($proofs);
 
         // Is he validated ?
-        $solidaryBeneficiary->setValidatedCandidate(false);
-        if (!is_null($solidaryUserStructure->getAcceptedDate())) {
+        $solidaryBeneficiary->setValidatedCandidate(null);
+        if (!is_null($solidaryUserStructure->getRefusedDate())) {
+            $solidaryBeneficiary->setValidatedCandidate(false);
+        } elseif (!is_null($solidaryUserStructure->getAcceptedDate())) {
             $solidaryBeneficiary->setValidatedCandidate(true);
         }
 
@@ -503,17 +508,111 @@ class SolidaryUserManager
 
     /**
      * Update a SolidaryBeneficiary
+     * For now, only accept/refuse and add a proof. Other fields are ignored.
      *
      * @param SolidaryBeneficiary $solidaryBeneficiary
      * @return SolidaryBeneficiary
      */
     public function updateSolidaryBeneficiary(SolidaryBeneficiary $solidaryBeneficiary): SolidaryBeneficiary
     {
-        // To do....
+        // We get the User
+        $user = $this->userRepository->find($solidaryBeneficiary->getId());
+
+        if (is_null($user)) {
+            throw new SolidaryException(SolidaryException::UNKNOWN_USER);
+        }
+
+        $solidaryUser = $user->getSolidaryUser();
+
+        // Accepted/Refused
+        if (is_null($solidaryBeneficiary->isValidatedCandidate())) {
+            // Don't do anything, it's not an acceptation or refulsal action
+        } elseif (!$solidaryBeneficiary->isValidatedCandidate()) {
+            // We change the status of the SolidaryUserStructure
+            $this->acceptOrRefuseCandidate($solidaryUser, false, true, $solidaryBeneficiary->getStructure());
+        } elseif ($solidaryBeneficiary->isValidatedCandidate()) {
+            // We change the status of the SolidaryUserStructure
+            $this->acceptOrRefuseCandidate($solidaryUser, true, false, $solidaryBeneficiary->getStructure());
+        }
         
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+
+
         return $this->getSolidaryBeneficiary($solidaryBeneficiary->getId());
     }
 
+    /**
+     * Accept or refuse a SolidaryUser for a Structure (given or the admin's)
+     *
+     * @param SolidaryUser $solidaryUser   The SolidaryUser
+     * @param boolean $acceptCandidate     Accept this SolidaryUser for a Structure to be determined
+     * @param boolean $refuseCandidate     Refuse this SolidaryUser for a Structure to be determined
+     * @param Structure $structure         The structure (if there is no structure we use the admin one)
+     * @return void
+     */
+    public function acceptOrRefuseCandidate(SolidaryUser $solidaryUser, bool $acceptCandidate = false, bool $refuseCandidate = false, Structure $structure = null)
+    {
+        // Handle the status of the candidate
+        $solidaryUserStructures = $solidaryUser->getSolidaryUserStructures();
+
+        // If there a Structure given, we use it. Otherwise we use the first admin structure
+        if (is_null($structure)) {
+            // We get the Structure of the Admin to set the SolidaryUserStructure
+            $structures = $this->structureRepository->findByUser($this->security->getUser());
+            $structureAdmin = null;
+            if (!is_null($structures) || count($structures)>0) {
+                $structure = $structures[0];
+            }
+        }
+        
+        // We search the right solidaryUserStructure to update
+        $solidaryUserStructureToUpdate = null;
+        foreach ($solidaryUserStructures as $solidaryUserStructure) {
+            if ($solidaryUserStructure->getStructure()->getId() == $structure->getId()) {
+                $solidaryUserStructureToUpdate = $solidaryUserStructure;
+                break;
+            }
+        }
+
+        // We check if this candidate has already been accepted or refused
+        if (!is_null($solidaryUserStructureToUpdate->getAcceptedDate())) {
+            throw new SolidaryException(SolidaryException::ALREADY_ACCEPTED);
+        }
+        if (!is_null($solidaryUserStructureToUpdate->getRefusedDate())) {
+            throw new SolidaryException(SolidaryException::ALREADY_REFUSED);
+        }
+
+        if ($acceptCandidate) {
+            $solidaryUserStructureToUpdate->setAcceptedDate(new \DateTime());
+            
+            // We add the role to the user
+            if ($solidaryUser->isVolunteer()) {
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER);
+            } elseif ($solidaryUser->isBeneficiary()) {
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY);
+            } else {
+                throw new SolidaryException(SolidaryException::NO_ROLE);
+            }
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user = $solidaryUser->getUser();
+            $user->addUserAuthAssignment($userAuthAssignment);
+
+            // We dispatch the event
+            $event = new SolidaryUserStructureAcceptedEvent($solidaryUserStructureToUpdate, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryUserStructureAcceptedEvent::NAME, $event);
+        } elseif ($refuseCandidate) {
+            $solidaryUserStructureToUpdate->setRefusedDate(new \DateTime());
+
+            // We dispatch the event
+            $event = new SolidaryUserStructureRefusedEvent($solidaryUserStructureToUpdate, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryUserStructureRefusedEvent::NAME, $event);
+        }
+    }
+    
+    
     /**
      * Genereate a random password
      *

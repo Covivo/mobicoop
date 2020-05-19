@@ -168,7 +168,7 @@ class SolidaryBeneficiary
     private $proofs;
     
     /**
-     * @var bool If the candidate is validated or not
+     * @var bool|null If the candidate is validated or not
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $validatedCandidate;
