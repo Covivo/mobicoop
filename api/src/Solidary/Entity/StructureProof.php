@@ -168,6 +168,14 @@ class StructureProof
     private $file;
 
     /**
+     * @var bool Is the proof mandatory ?
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"readUser","readSolidary","writeSolidary","userStructure","readStructureProofs"})
+     */
+    private $mandatory;
+
+    /**
      * @var Structure Structure of the proof.
      *
      * @Assert\NotBlank
@@ -332,6 +340,18 @@ class StructureProof
     public function setFile(?bool $isFile): self
     {
         $this->file = $isFile;
+        
+        return $this;
+    }
+
+    public function isMandatory(): ?bool
+    {
+        return $this->mandatory;
+    }
+    
+    public function setMandatory(?bool $mandatory): self
+    {
+        $this->mandatory = $mandatory;
         
         return $this;
     }
