@@ -50,6 +50,7 @@ use App\Solidary\Repository\SolidaryRepository;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Solidary\Repository\StructureProofRepository;
+use App\User\Service\UserManager;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -68,6 +69,7 @@ class SolidaryUserManager
     private $structureProofRepository;
     private $params;
     private $encoder;
+    private $userManager;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -81,6 +83,7 @@ class SolidaryUserManager
         AuthItemRepository $authItemRepository,
         UserPasswordEncoderInterface $encoder,
         StructureProofRepository $structureProofRepository,
+        UserManager $userManager,
         array $params
     ) {
         $this->entityManager = $entityManager;
@@ -95,6 +98,7 @@ class SolidaryUserManager
         $this->structureProofRepository = $structureProofRepository;
         $this->params = $params;
         $this->encoder = $encoder;
+        $this->userManager = $userManager;
     }
 
     public function updateSolidaryUser(SolidaryUser $solidaryUser)
@@ -330,6 +334,10 @@ class SolidaryUserManager
         $solidaryVolunteer->setESat($solidaryUser->hasESat());
         $solidaryVolunteer->setESun($solidaryUser->hasESun());
 
+        // Dates
+        $solidaryVolunteer->setCreatedDate($solidaryUser->getCreatedDate());
+        $solidaryVolunteer->setUpdatedDate($solidaryUser->getUpdatedDate());
+
         return $solidaryVolunteer;
     }
 
@@ -471,7 +479,13 @@ class SolidaryUserManager
         $solidaryUserStructure->setSolidaryUser($solidaryUser);
 
         if ($solidaryBeneficiary->isValidatedCandidate()) {
+            // Already accepted. We set the date a give the appropriate role to the user
             $solidaryUserStructure->setAcceptedDate(new \Datetime());
+            // We add the role to the user
+            $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY);
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
         }
 
         // Proofs
@@ -545,6 +559,160 @@ class SolidaryUserManager
 
         return $this->getSolidaryBeneficiary($solidaryBeneficiary->getId());
     }
+
+    /**
+     * Create a SolidaryUser and its User if necessary from a SolidaryVolunteer
+     *
+     * @param SolidaryVolunteer $solidaryBeneficiary
+     * @return SolidaryVolunteer|null
+     */
+    public function createSolidaryVolunteer(SolidaryVolunteer $solidaryVolunteer): ?SolidaryVolunteer
+    {
+        // If there is no User, we need to create it first
+        $user = $solidaryVolunteer->getUser();
+        if (is_null($user)) {
+
+            // We check if there no User with this email
+            if (!is_null($this->userRepository->findOneBy(['email'=>$solidaryVolunteer->getEmail()]))) {
+                throw new SolidaryException(SolidaryException::ALREADY_USER);
+            }
+
+
+            $user = new User();
+            $user->setEmail($solidaryVolunteer->getEmail());
+            $user->setGivenName($solidaryVolunteer->getGivenName());
+            $user->setFamilyName($solidaryVolunteer->getFamilyName());
+            $user->setNewsSubscription($solidaryVolunteer->hasNewsSubscription());
+            $user->setTelephone($solidaryVolunteer->getTelephone());
+            $user->setBirthDate($solidaryVolunteer->getBirthDate());
+            $user->setGender($solidaryVolunteer->getGender());
+
+            $user->setPhoneDisplay(1);
+            $user->setSmoke($this->params['smoke']);
+            $user->setMusic($this->params['music']);
+            $user->setChat($this->params['chat']);
+            // To do : Dynamic Language
+            $user->setLanguage('fr_FR');
+
+            // Set an encrypted password
+            $password = $this->randomPassword();
+            $user->setPassword($this->encoder->encodePassword($user, $password));
+            $user->setClearPassword($password); // Used to be send by email (not persisted)
+
+            // auto valid the registration
+            $user->setValidatedDate(new \DateTime());
+
+
+            $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
+        } else {
+            // We check if this User does'nt already have a Solidary User
+            if (!is_null($user->getSolidaryUser())) {
+                throw new SolidaryException(SolidaryException::ALREADY_SOLIDARY_USER);
+            }
+        }
+
+        // We create the SolidaryUser
+        $solidaryUser = new SolidaryUser();
+        $solidaryUser->setVolunteer(true);
+        $homeAddress = $solidaryVolunteer->getHomeAddress();
+        $address = new Address();
+        $address->setStreetAddress($homeAddress['streetAddress']);
+        $address->setAddressLocality($homeAddress['addressLocality']);
+        $address->setLocalAdmin($homeAddress['localAdmin']);
+        $address->setCounty($homeAddress['county']);
+        $address->setMacroCounty($homeAddress['macroCounty']);
+        $address->setRegion($homeAddress['region']);
+        $address->setMacroRegion($homeAddress['macroRegion']);
+        $address->setAddressCountry($homeAddress['addressCountry']);
+        $address->setCountryCode($homeAddress['countryCode']);
+        $address->setLatitude($homeAddress['latitude']);
+        $address->setLongitude($homeAddress['longitude']);
+        $address->setName($homeAddress['name']);
+        $address->setHome(true);
+        $address->setUser($user);
+        $solidaryUser->setAddress($address);
+
+        $solidaryUser->setComment($solidaryVolunteer->getComment());
+
+        // We set the link between User and SolidaryUser
+        $user->setSolidaryUser($solidaryUser);
+
+        
+        // If there a Structure given, we use it. Otherwise we use the first admin structure
+        $solidaryVolunteerStructure = $solidaryVolunteer->getStructure();
+        if (is_null($solidaryVolunteerStructure)) {
+            // We get the Structure of the Admin to set the SolidaryUserStructure
+            $structures = $this->structureRepository->findByUser($this->security->getUser());
+            $structureAdmin = null;
+            if (!is_null($structures) || count($structures)>0) {
+                $solidaryVolunteerStructure = $structures[0];
+            }
+        }
+        $solidaryUserStructure = new SolidaryUserStructure();
+        $solidaryUserStructure->setStructure($solidaryVolunteerStructure);
+        $solidaryUserStructure->setSolidaryUser($solidaryUser);
+
+        if ($solidaryVolunteer->isValidatedCandidate()) {
+            // Already accepted. We set the date a give the appropriate role to the user
+            $solidaryUserStructure->setAcceptedDate(new \Datetime());
+            // We add the role to the user
+            $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER);
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
+        }
+
+        $solidaryUser->addSolidaryUserStructure($solidaryUserStructure);
+
+        // Availabilities : First we set those given, next we fill the blanks with the structure default
+        
+        if(!is_null($solidaryVolunteer->getMMinTime())) $solidaryUser->setMMinTime($solidaryVolunteer->getMMinTime());
+        if(!is_null($solidaryVolunteer->getMMaxTime())) $solidaryUser->setMMaxTime($solidaryVolunteer->getMMaxTime());
+        if(!is_null($solidaryVolunteer->getAMinTime())) $solidaryUser->setAMinTime($solidaryVolunteer->getAMinTime());
+        if(!is_null($solidaryVolunteer->getAMaxTime())) $solidaryUser->setAMaxTime($solidaryVolunteer->getAMaxTime());
+        if(!is_null($solidaryVolunteer->getEMinTime())) $solidaryUser->setEMinTime($solidaryVolunteer->getEMinTime());
+        if(!is_null($solidaryVolunteer->getEMaxTime())) $solidaryUser->setEMaxTime($solidaryVolunteer->getEMaxTime());
+        
+        if(!is_null($solidaryVolunteer->hasMMon())) $solidaryUser->setMMon($solidaryVolunteer->hasMMon());
+        if(!is_null($solidaryVolunteer->hasMTue())) $solidaryUser->setMTue($solidaryVolunteer->hasMTue());
+        if(!is_null($solidaryVolunteer->hasMWed())) $solidaryUser->setMWed($solidaryVolunteer->hasMWed());
+        if(!is_null($solidaryVolunteer->hasMThu())) $solidaryUser->setMThu($solidaryVolunteer->hasMThu());
+        if(!is_null($solidaryVolunteer->hasMFri())) $solidaryUser->setMFri($solidaryVolunteer->hasMFri());
+        if(!is_null($solidaryVolunteer->hasMSat())) $solidaryUser->setMSat($solidaryVolunteer->hasMSat());
+        if(!is_null($solidaryVolunteer->hasMSun())) $solidaryUser->setMSun($solidaryVolunteer->hasMSun());
+        if(!is_null($solidaryVolunteer->hasAMon())) $solidaryUser->setAMon($solidaryVolunteer->hasAMon());
+        if(!is_null($solidaryVolunteer->hasATue())) $solidaryUser->setATue($solidaryVolunteer->hasATue());
+        if(!is_null($solidaryVolunteer->hasAWed())) $solidaryUser->setAWed($solidaryVolunteer->hasAWed());
+        if(!is_null($solidaryVolunteer->hasAThu())) $solidaryUser->setAThu($solidaryVolunteer->hasAThu());
+        if(!is_null($solidaryVolunteer->hasAFri())) $solidaryUser->setAFri($solidaryVolunteer->hasAFri());
+        if(!is_null($solidaryVolunteer->hasASat())) $solidaryUser->setASat($solidaryVolunteer->hasASat());
+        if(!is_null($solidaryVolunteer->hasASun())) $solidaryUser->setASun($solidaryVolunteer->hasASun());
+        if(!is_null($solidaryVolunteer->hasEMon())) $solidaryUser->setEMon($solidaryVolunteer->hasEMon());
+        if(!is_null($solidaryVolunteer->hasETue())) $solidaryUser->setETue($solidaryVolunteer->hasETue());
+        if(!is_null($solidaryVolunteer->hasEWed())) $solidaryUser->setEWed($solidaryVolunteer->hasEWed());
+        if(!is_null($solidaryVolunteer->hasEThu())) $solidaryUser->setEThu($solidaryVolunteer->hasEThu());
+        if(!is_null($solidaryVolunteer->hasEFri())) $solidaryUser->setEFri($solidaryVolunteer->hasEFri());
+        if(!is_null($solidaryVolunteer->hasESat())) $solidaryUser->setESat($solidaryVolunteer->hasESat());
+        if(!is_null($solidaryVolunteer->hasESun())) $solidaryUser->setESun($solidaryVolunteer->hasESun());        
+
+        // Default values
+        $this->userManager->setDefaultSolidaryUserAvailabilities($solidaryUser, $solidaryVolunteerStructure);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        
+        // // dispatch SolidaryUser event
+        $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
+        $this->eventDispatcher->dispatch(SolidaryUserCreatedEvent::NAME, $event);
+        $event = new SolidaryCreatedEvent($user, $this->security->getUser());
+        $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
+        
+        return $this->getSolidaryVolunteer($user->getId());
+    }
+
 
     /**
      * Accept or refuse a SolidaryUser for a Structure (given or the admin's)
@@ -661,19 +829,26 @@ class SolidaryUserManager
                 
             $structureProof = $this->structureProofRepository->find($structureProofId);
 
-            // We check if there is already a similar proof
-            $alreadyExistingProof = false;
-            foreach ($existingProofs as $existingProof) {
-                if ($existingProof->getStructureProof()->getId() == $structureProofId) {
-                    $alreadyExistingProof = true;
-                }
-            }
+            if (!is_null($structureProof) && isset($givenProof['value']) && !is_null($givenProof['value'])) {
 
-            if (!$alreadyExistingProof && !is_null($structureProof) && isset($givenProof['value']) && !is_null($givenProof['value'])) {
-                $proof = new Proof();
-                $proof->setStructureProof($structureProof);
-                $proof->setValue($givenProof['value']);
-                $solidaryUserStructureToUpdate->addProof($proof);
+                // We check if there is already a similar proof
+                $alreadyExistingProof = null;
+                foreach ($existingProofs as $existingProof) {
+                    if ($existingProof->getStructureProof()->getId() == $structureProofId) {
+                        $alreadyExistingProof = $existingProof;
+                    }
+                }
+
+                // New Proof, we create it
+                if (is_null($alreadyExistingProof)) {
+                    $proof = new Proof();
+                    $proof->setStructureProof($structureProof);
+                    $proof->setValue($givenProof['value']);
+                    $solidaryUserStructureToUpdate->addProof($proof);
+                } else {
+                    // Existing proof, we update the value
+                    $existingProof->setValue($givenProof['value']);
+                }
             }
         }
     }

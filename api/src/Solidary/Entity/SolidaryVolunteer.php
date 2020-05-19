@@ -149,7 +149,7 @@ class SolidaryVolunteer
     private $homeAddress;
 
     /**
-     * @var string A comment about the solidaryUser.
+     * @var string|null A comment about the solidaryUser.
      *
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -174,163 +174,163 @@ class SolidaryVolunteer
     private $solidaries;
 
     /**
-     * @var \DateTimeInterface Morning min time.
+     * @var \DateTimeInterface|null Morning min time.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMinTime;
     
     /**
-     * @var \DateTimeInterface Morning max time.
+     * @var \DateTimeInterface|null Morning max time.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMaxTime;
     
     /**
-     * @var \DateTimeInterface Afternoon min time.
+     * @var \DateTimeInterface|null Afternoon min time.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMinTime;
     
     /**
-     * @var \DateTimeInterface Afternoon max time.
+     * @var \DateTimeInterface|null Afternoon max time.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMaxTime;
     
     /**
-     * @var \DateTimeInterface Evening min time.
+     * @var \DateTimeInterface|null Evening min time.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMinTime;
     
     /**
-     * @var \DateTimeInterface Evening max time.
+     * @var \DateTimeInterface|null Evening max time.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMaxTime;
     
     /**
-     * @var bool Available on monday morning.
+     * @var bool|null Available on monday morning.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMon;
     
     /**
-     * @var bool Available on monday afternoon.
+     * @var bool|null Available on monday afternoon.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMon;
     
     /**
-     * @var bool Available on monday evening.
+     * @var bool|null Available on monday evening.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMon;
     
     /**
-     * @var bool Available on tuesday morning.
+     * @var bool|null Available on tuesday morning.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mTue;
     
     /**
-     * @var bool Available on tuesday afternoon.
+     * @var bool|null Available on tuesday afternoon.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aTue;
     
     /**
-     * @var bool Available on tuesday evening.
+     * @var bool|null Available on tuesday evening.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eTue;
     
     /**
-     * @var bool Available on wednesday morning.
+     * @var bool|null Available on wednesday morning.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mWed;
     
     /**
-     * @var bool Available on wednesday afternoon.
+     * @var bool|null Available on wednesday afternoon.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aWed;
     
     /**
-     * @var bool Available on wednesday evening.
+     * @var bool|null Available on wednesday evening.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eWed;
     
     /**
-     * @var bool Available on thursday morning.
+     * @var bool|null Available on thursday morning.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mThu;
     
     /**
-     * @var bool Available on thursday afternoon.
+     * @var bool|null Available on thursday afternoon.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aThu;
     
     /**
-     * @var bool Available on thursday evening.
+     * @var bool|null Available on thursday evening.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eThu;
     
     /**
-     * @var bool Available on friday morning.
+     * @var bool|null Available on friday morning.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mFri;
     
     /**
-     * @var bool Available on friday afternoon.
+     * @var bool|null Available on friday afternoon.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aFri;
     
     /**
-     * @var bool Available on friday evening.
+     * @var bool|null Available on friday evening.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eFri;
     
     /**
-     * @var bool Available on saturday morning.
+     * @var bool|null Available on saturday morning.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mSat;
     
     /**
-     * @var bool Available on saturday afternoon.
+     * @var bool|null Available on saturday afternoon.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aSat;
     
     /**
-     * @var bool Available on saturday evening.
+     * @var bool|null Available on saturday evening.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eSat;
     
     /**
-     * @var bool Available on sunday morning.
+     * @var bool|null Available on sunday morning.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mSun;
     
     /**
-     * @var bool Available on sunday afternoon.
+     * @var bool|null Available on sunday afternoon.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aSun;
     
     /**
-     * @var bool Available on sunday evening.
+     * @var bool|null Available on sunday evening.
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eSun;

@@ -50,6 +50,7 @@ use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\Community\Entity\Community;
 use App\Solidary\Entity\SolidaryUser;
+use App\Solidary\Entity\Structure;
 use App\Solidary\Event\SolidaryCreatedEvent;
 use App\Solidary\Event\SolidaryUserCreatedEvent;
 use App\Solidary\Event\SolidaryUserUpdatedEvent;
@@ -247,29 +248,54 @@ class UserManager
      * If no availabilitie already given, we take the structure default
      * For the days check, if there is no indication, we consider the user available
      *
-     * @param SolidaryUser $solidaryUser
+     * @param SolidaryUser $solidaryUser    The SolidaryUser
+     * @param Structure $structure          The Structure (if there is no Structure, we take the admin's one)
      * @return SolidaryUser
      */
-    private function setDefaultSolidaryUserAvailabilities(SolidaryUser $solidaryUser): SolidaryUser
+    public function setDefaultSolidaryUserAvailabilities(SolidaryUser $solidaryUser, Structure $structure=null): SolidaryUser
     {
+        
+        $solidaryUserstructure = null;
+        if(!is_null($structure)){
+            // A structure is given. We're looking for the solidaryUserStructure between this structure and the SolidaryUser
+            $solidaryUserstructures = $solidaryUser->getSolidaryUserStructures();
+            foreach($solidaryUserstructures as $currentSolidaryUserstructure){
+                if($currentSolidaryUserstructure->getStructure()->getId() == $structure->getId()){
+                    $solidaryUserstructure = $currentSolidaryUserstructure;
+                    break;
+                }
+            }
+        }
+        else{
+            // No structure given. We take the admin's one
+            $structures = $this->structureRepository->findByUser($this->security->getUser());
+            if (!is_null($structures) || count($structures)>0) {
+                $solidaryUserstructure = $structures[0];
+            }            
+        }
+
+        if(is_null($solidaryUserstructure)){
+            throw new SolidaryException(SolidaryException::NO_STRUCTURE);
+        }
+
         // Times
         if ($solidaryUser->getMMinTime()=="") {
-            $solidaryUser->setMMinTime($solidaryUser->getSolidaryUserStructures()[0]->getStructure()->getMMinTime());
+            $solidaryUser->setMMinTime($solidaryUserstructure->getStructure()->getMMinTime());
         }
         if ($solidaryUser->getMMaxTime()=="") {
-            $solidaryUser->setMMaxTime($solidaryUser->getSolidaryUserStructures()[0]->getStructure()->getMMaxTime());
+            $solidaryUser->setMMaxTime($solidaryUserstructure->getStructure()->getMMaxTime());
         }
         if ($solidaryUser->getAMinTime()=="") {
-            $solidaryUser->setAMinTime($solidaryUser->getSolidaryUserStructures()[0]->getStructure()->getAMinTime());
+            $solidaryUser->setAMinTime($solidaryUserstructure->getStructure()->getAMinTime());
         }
         if ($solidaryUser->getAMaxTime()=="") {
-            $solidaryUser->setAMaxTime($solidaryUser->getSolidaryUserStructures()[0]->getStructure()->getAMaxTime());
+            $solidaryUser->setAMaxTime($solidaryUserstructure->getStructure()->getAMaxTime());
         }
         if ($solidaryUser->getEMinTime()=="") {
-            $solidaryUser->setEMinTime($solidaryUser->getSolidaryUserStructures()[0]->getStructure()->getEMinTime());
+            $solidaryUser->setEMinTime($solidaryUserstructure->getStructure()->getEMinTime());
         }
         if ($solidaryUser->getEMaxTime()=="") {
-            $solidaryUser->setEMaxTime($solidaryUser->getSolidaryUserStructures()[0]->getStructure()->getEMaxTime());
+            $solidaryUser->setEMaxTime($solidaryUserstructure->getStructure()->getEMaxTime());
         }
 
         // Days
