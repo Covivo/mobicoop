@@ -661,19 +661,26 @@ class SolidaryUserManager
                 
             $structureProof = $this->structureProofRepository->find($structureProofId);
 
-            // We check if there is already a similar proof
-            $alreadyExistingProof = false;
-            foreach ($existingProofs as $existingProof) {
-                if ($existingProof->getStructureProof()->getId() == $structureProofId) {
-                    $alreadyExistingProof = true;
-                }
-            }
+            if (!is_null($structureProof) && isset($givenProof['value']) && !is_null($givenProof['value'])) {
 
-            if (!$alreadyExistingProof && !is_null($structureProof) && isset($givenProof['value']) && !is_null($givenProof['value'])) {
-                $proof = new Proof();
-                $proof->setStructureProof($structureProof);
-                $proof->setValue($givenProof['value']);
-                $solidaryUserStructureToUpdate->addProof($proof);
+                // We check if there is already a similar proof
+                $alreadyExistingProof = null;
+                foreach ($existingProofs as $existingProof) {
+                    if ($existingProof->getStructureProof()->getId() == $structureProofId) {
+                        $alreadyExistingProof = $existingProof;
+                    }
+                }
+
+                // New Proof, we create it
+                if (is_null($alreadyExistingProof)) {
+                    $proof = new Proof();
+                    $proof->setStructureProof($structureProof);
+                    $proof->setValue($givenProof['value']);
+                    $solidaryUserStructureToUpdate->addProof($proof);
+                } else {
+                    // Existing proof, we update the value
+                    $existingProof->setValue($givenProof['value']);
+                }
             }
         }
     }
