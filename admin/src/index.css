@@ -4,16 +4,13 @@ body {
   font-family: sans-serif;
 }
 
-header svg{
-    display: none;
-}
-#logoBo{
-    height: 50px;
+header svg {
+  display: none;
 }
 
 .MuiTable-root tr:nth-child(even) {
-  background-color: #f2f2f2!important;
+  background-color: #f2f2f2 !important;
 }
 .MuiTableRow-root.MuiTableRow-hover:hover {
-    background-color: rgba(0, 0, 0, 0.07)!important;
+  background-color: rgba(0, 0, 0, 0.07) !important;
 }
