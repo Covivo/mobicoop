@@ -429,18 +429,17 @@ class SolidaryUserManager
 
             // auto valid the registration
             $user->setValidatedDate(new \DateTime());
-
-
-            $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
-            $userAuthAssignment = new UserAuthAssignment();
-            $userAuthAssignment->setAuthItem($authItem);
-            $user->addUserAuthAssignment($userAuthAssignment);
         } else {
             // We check if this User does'nt already have a Solidary User
             if (!is_null($user->getSolidaryUser())) {
                 throw new SolidaryException(SolidaryException::ALREADY_SOLIDARY_USER);
             }
         }
+        
+        $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
+        $userAuthAssignment = new UserAuthAssignment();
+        $userAuthAssignment->setAuthItem($authItem);
+        $user->addUserAuthAssignment($userAuthAssignment);
 
         // We create the SolidaryUser
         $solidaryUser = new SolidaryUser();
@@ -608,18 +607,17 @@ class SolidaryUserManager
 
             // auto valid the registration
             $user->setValidatedDate(new \DateTime());
-
-
-            $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
-            $userAuthAssignment = new UserAuthAssignment();
-            $userAuthAssignment->setAuthItem($authItem);
-            $user->addUserAuthAssignment($userAuthAssignment);
         } else {
             // We check if this User does'nt already have a Solidary User
             if (!is_null($user->getSolidaryUser())) {
                 throw new SolidaryException(SolidaryException::ALREADY_SOLIDARY_USER);
             }
         }
+
+        $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
+        $userAuthAssignment = new UserAuthAssignment();
+        $userAuthAssignment->setAuthItem($authItem);
+        $user->addUserAuthAssignment($userAuthAssignment);
 
         // We create the SolidaryUser
         $solidaryUser = new SolidaryUser();
