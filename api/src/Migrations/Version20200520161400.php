@@ -8,7 +8,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20200519161400 extends AbstractMigration
+final class Version20200520161400 extends AbstractMigration
 {
     public function up(Schema $schema) : void
     {
@@ -25,7 +25,3 @@ final class Version20200519161400 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
     }
 }
-
-
-
-
