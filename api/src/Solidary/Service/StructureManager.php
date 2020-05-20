@@ -112,4 +112,16 @@ class StructureManager
 
         return $structure;
     }
+
+    /**
+     * Get the list of a Structure near a lat/lon location
+     *
+     * @param float $lat    Latitude
+     * @param float $lon    Longitude
+     * @return array|null   Array of Structures
+     */
+    public function getGeolocalisedStructures(float $lat, float $lon): ?array
+    {
+        return $this->structureRepository->findAll();
+    }
 }
