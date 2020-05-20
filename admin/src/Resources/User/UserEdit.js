@@ -77,7 +77,6 @@ const UserEdit = (props) => {
             label={translate('custom.label.user.email')}
             validate={emailRules}
           />
-
           <TextInput
             fullWidth
             required

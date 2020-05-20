@@ -6,7 +6,6 @@ const CurrentUserInput = (props) => {
   const {
     input: { name, onChange },
     meta: { touched, error },
-    isRequired,
   } = useInput(props);
 
   const notify = useNotify();
@@ -15,10 +14,11 @@ const CurrentUserInput = (props) => {
 
   useEffect(() => {
     global.localStorage.getItem('id');
-    return dataProvider
+
+    dataProvider
       .getOne('users', { id: global.localStorage.getItem('id') })
       .then(({ data }) => {
-        setCurrentUserName(data.givenName + ' ' + data.familyName);
+        setCurrentUserName(`${data.givenName} ${data.familyName}`);
         onChange(data.id);
       })
       .catch(() => {

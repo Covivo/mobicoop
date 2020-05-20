@@ -16,6 +16,7 @@
     "ra-language-french": "3.5.2",
     "ra-language-english": "3.5.2",
     "ra-i18n-polyglot": "3.5.2",
+    "prop-types": "15.7.2",
     "react": "^16.12.0",
     "react-admin": "3.5.2",
     "react-admin-date-inputs": "WiXSL/react-admin-date-inputs#mui-pickers-v3",
@@ -29,7 +30,10 @@
     "eslint-config-airbnb": "^18.1.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.3",
-    "prettier": "^2.0.5"
+    "eslint-config-react-app": "5.2.1",
+    "prettier": "^2.0.5",
+    "@testing-library/react": "10.0.4",
+    "@testing-library/jest-dom": "5.8.0"
   },
   "peerDependencies": {
     "@material-ui/core": "^4.3.3",

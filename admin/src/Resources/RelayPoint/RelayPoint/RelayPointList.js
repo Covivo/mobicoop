@@ -27,7 +27,8 @@ const RelayPointFilter = (props) => (
     <SelectInput source="status" label="Status" choices={statusChoices} />
   </Filter>
 );
-const RelayPointPanel = ({ id, record, resource }) => (
+const RelayPointPanel = ({ record }) => (
+  // eslint-disable-next-line react/no-danger
   <div dangerouslySetInnerHTML={{ __html: record.fullDescription }} />
 );
 export const RelayPointList = (props) => (

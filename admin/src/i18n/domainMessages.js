@@ -1,5 +1,32 @@
 const fr = {
+  resources: {
+    solidary_volunteers: {
+      fields: {
+        givenName: 'Prénom',
+        familyName: 'Nom',
+        homeAddress: 'Domicile',
+        validatedCandidate: 'Rôles',
+        Mon: 'Lun',
+        Tue: 'Mar',
+        Wed: 'Mer',
+        Thu: 'Jeu',
+        Fri: 'Ven',
+        Sat: 'Sam',
+        Sun: 'Dim',
+      },
+    },
+  },
   custom: {
+    solidary_volunteers: {
+      edit: {
+        availability: 'Disponibilité',
+        planning: 'Planning',
+        submission: 'Candidature',
+      },
+      filters: {
+        validatedCandidate: 'Candidature acceptée',
+      },
+    },
     dashboard: {
       pendingConnectionToKibana: "Connection en cours à l'outil de reporting Scope....",
       accessDenied: "Vous ne disposez pas des droits d'accès au tableau de bord Kibana.",

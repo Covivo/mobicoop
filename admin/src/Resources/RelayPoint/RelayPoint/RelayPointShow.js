@@ -17,7 +17,6 @@ import {
 } from 'react-admin';
 
 import { addressRenderer } from '../../../utils/renderers';
-import UserReferenceField from '../../../Resources/User/UserReferenceField';
 
 const statusChoices = [
   { id: 0, name: 'En attente' },
