@@ -21,7 +21,7 @@
       "community": "/communaute/{id}",
       "communitySecuredRegister": "/communaute/{id}/securisee/inscription"
     },
-    "communityDetails":"Voir communauté",
+    "communityDetails":"Voir la communauté",
     "join":"Rejoindre la communauté",
     "protected": "Cette communauté n'est visible que par ses membres"
   },
