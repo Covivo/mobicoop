@@ -87,6 +87,17 @@ class SolidaryAsksListItem
      * @Groups({"asksList"})
      */
     private $solidarySolutionId;
+
+    /**
+     * @var array Messages of the Solidary Solution for this Ask item (usefull for a SolidaryContact)
+     * @Groups({"asksList"})
+     */
+    private $messages;
+
+    public function __construct()
+    {
+        $this->messages = [];
+    }
     
     
     public function getFrequency(): ?int
@@ -193,6 +204,18 @@ class SolidaryAsksListItem
     public function setSolidarySolutionId(int $solidarySolutionId): self
     {
         $this->solidarySolutionId = $solidarySolutionId;
+        
+        return $this;
+    }
+
+    public function getMessages(): ?array
+    {
+        return $this->messages;
+    }
+    
+    public function setMessages(?array $messages): self
+    {
+        $this->messages = $messages;
         
         return $this;
     }

@@ -339,7 +339,7 @@ class ProposalRepository
             }
             
             // bearing => we exclude the proposals if their direction is outside the authorize range (opposite bearing +/- BEARING_RANGE degrees)
-            if (self::USE_BEARING && $proposal->getCriteria()->getDirectionPassenger()->getBearing() != 0) {
+            if (self::USE_BEARING && $proposal->getCriteria()->getDirectionPassenger()->getDistance() > 0) {
                 if ($zoneDriverWhere != "") {
                     $zoneDriverWhere .= " and ";
                 }
@@ -362,61 +362,31 @@ class ProposalRepository
                 if ($zoneDriverWhere != "") {
                     $zoneDriverWhere .= " and ";
                 }
-                // In some Solidary cases origin and destination are the same so we use the lat and long of the origin to create the bbox
-                if ($proposal->getCriteria()->getDirectionPassenger()->getDistance() == 0) {
-                    $lon = $proposal->getWaypoints()[0]->getAddress()->getLongitude();
-                    $lat = $proposal->getWaypoints()[0]->getAddress()->getLatitude();
-                    $dist = 1000;
-                    $zoneDriverWhere .= '(ST_INTERSECTS(dd.geoJsonBbox,ST_GeomFromText(\'' .
-                    $this->getGeoPolygon(
-                        $this->geoTools->moveGeoLon(
-                            $lon,
-                            $lat,
-                            -($dist)
-                        ),
-                        $this->geoTools->moveGeoLat(
-                            $lon,
-                            $lat,
-                            -($dist)
-                        ),
-                        $this->geoTools->moveGeoLon(
-                            $lon,
-                            $lat,
-                            $dist
-                        ),
-                        $this->geoTools->moveGeoLat(
-                            $lon,
-                            $lat,
-                            $dist
-                        )
-                    ) . '\'))=1)';
-                } else {
-                    $zoneDriverWhere .= '(ST_INTERSECTS(dd.geoJsonBbox,ST_GeomFromText(\'' .
-                    $this->getGeoPolygon(
-                        $this->geoTools->moveGeoLon(
-                            $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLon(),
-                            $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLat(),
-                            -($this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance()))
-                        ),
-                        $this->geoTools->moveGeoLat(
-                            $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLat(),
-                            -($this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance()))
-                        ),
-                        $this->geoTools->moveGeoLon(
-                            $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLon(),
-                            $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLat(),
-                            $this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance())
-                        ),
-                        $this->geoTools->moveGeoLat(
-                            $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLat(),
-                            $this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance())
-                        )
-                    ) . '\'))=1)';
-                }
+                $zoneDriverWhere .= '(ST_INTERSECTS(dd.geoJsonBbox,ST_GeomFromText(\'' .
+                $this->getGeoPolygon(
+                    $this->geoTools->moveGeoLon(
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLon(),
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLat(),
+                        -($this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance()))
+                    ),
+                    $this->geoTools->moveGeoLat(
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLat(),
+                        -($this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance()))
+                    ),
+                    $this->geoTools->moveGeoLon(
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLon(),
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLat(),
+                        $this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance())
+                    ),
+                    $this->geoTools->moveGeoLat(
+                        $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLat(),
+                        $this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance())
+                    )
+                ) . '\'))=1)';
             }
 
             // passenger proportion
-            if (self::USE_PASSENGER_PROPORTION) {
+            if (self::USE_PASSENGER_PROPORTION && $proposal->getCriteria()->getDirectionPassenger()->getDistance() > 0) {
                 if ($zoneDriverWhere != "") {
                     $zoneDriverWhere .= " and ";
                 }

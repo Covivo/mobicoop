@@ -22,16 +22,17 @@
 
 namespace App\Solidary\DataProvider;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Service\SolidaryManager;
 
 /**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-final class SolidaryItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+final class SolidaryCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $solidaryManager;
 
@@ -45,11 +46,19 @@ final class SolidaryItemDataProvider implements ItemDataProviderInterface, Restr
         return Solidary::class === $resourceClass;
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Solidary
+    public function getCollection(string $resourceClass, string $operationName = null)
     {
-        if ($operationName=="contactsList") {
-            return $this->solidaryManager->getAsksList($id);
+        $structureId = null;
+        // If the user whose making the request has a structure, we use its id
+        if (!empty($this->security->getUser()->getSolidaryStructures())) {
+            $structureId = $this->security->getUser()->getSolidaryStructures()[0]->getId();
         }
-        return $this->solidaryManager->getSolidary($id);
+
+        if (is_null($structureId)) {
+            // We found no structureId we can't process this method
+            throw new SolidaryException(SolidaryException::NO_STRUCTURE_ID);
+        }
+
+        return $this->solidaryManager->getSolidaries($structureId);
     }
 }

@@ -51,6 +51,7 @@ use App\Solidary\Repository\StructureRepository;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 use App\User\Repository\UserRepository;
+use DateTime;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -96,13 +97,98 @@ class SolidaryManager
     public function getSolidary($id): ?Solidary
     {
         $solidary = $this->solidaryRepository->find($id);
+
+        // we get the origin and destination associated to the demand
         $solidary->setOrigin(json_decode(json_encode($solidary->getProposal()->getWaypoints()[0]->getAddress()), true));
         $solidary->setDestination(json_decode(json_encode($solidary->getProposal()->getWaypoints()[1]->getAddress()), true));
+        
+        // we get the solidaryuser associated to the demand
         $solidary->setSolidaryUser($solidary->getSolidaryUserStructure()->getSolidaryUser());
         
-        $date = $solidary->getProposal()->getCriteria()->getFromDate()->format("d/m/Y");
-        $time = $solidary->getProposal()->getCriteria()->getMonTime()->format("h:m");
+        // we get the date and time associated to the demand
+        $outwardDatetime = $solidary->getProposal()->getCriteria()->getFromDate();
+        $outwardDealineDatetime = null;
+        $returnDatetime = null;
+        $returnDealineDatetime = null;
+        $outwardHours = null;
+        $outwardMinutes = null;
+        // we set time if it's a regular proposal
+        if ($solidary->getProposal()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+            if ($solidary->getProposal()->getCriteria()->isMonCheck()) {
+                $outwardHours = $solidary->getProposal()->getCriteria()->getMonTime()->format('h');
+                $outwardMinutes = $solidary->getProposal()->getCriteria()->getMonTime()->format('i');
+            } elseif ($solidary->getProposal()->getCriteria()->isTueCheck()) {
+                $outwardHours = $solidary->getProposal()->getCriteria()->getTueTime()->format('h');
+                $outwardMinutes = $solidary->getProposal()->getCriteria()->getTueTime()->format('i');
+            } elseif ($solidary->getProposal()->getCriteria()->isWedCheck()) {
+                $outwardHours = $solidary->getProposal()->getCriteria()->getWedTime()->format('h');
+                $outwardMinutes = $solidary->getProposal()->getCriteria()->getWedTime()->format('i');
+            } elseif ($solidary->getProposal()->getCriteria()->isThuCheck()) {
+                $outwardHours = $solidary->getProposal()->getCriteria()->getThuTime()->format('h');
+                $outwardMinutes = $solidary->getProposal()->getCriteria()->getThuTime()->format('i');
+            } elseif ($solidary->getProposal()->getCriteria()->isFriCheck()) {
+                $outwardHours = $solidary->getProposal()->getCriteria()->getFriTime()->format('h');
+                $outwardMinutes = $solidary->getProposal()->getCriteria()->getFriTime()->format('i');
+            } elseif ($solidary->getProposal()->getCriteria()->isSatCheck()) {
+                $outwardHours = $solidary->getProposal()->getCriteria()->getSatTime()->format('h');
+                $outwardMinutes = $solidary->getProposal()->getCriteria()->getSatTime()->format('i');
+            } elseif ($solidary->getProposal()->getCriteria()->isSunCheck()) {
+                $outwardHours = $solidary->getProposal()->getCriteria()->getSunTime()->format('h');
+                $outwardMinutes = $solidary->getProposal()->getCriteria()->getSunTime()->format('i');
+            }
+            // we set the limit date and time of the regular
+            $outwardDealineDatetime = $solidary->getProposal()->getCriteria()->getToDate();
+            date_time_set($outwardDealineDatetime, $outwardHours, $outwardMinutes);
+            $solidary->setOutwardDeadlineDatetime($outwardDealineDatetime);
+        } else {
+            $outwardHours = $solidary->getProposal()->getCriteria()->getFromTime()->format('h');
+            $outwardMinutes = $solidary->getProposal()->getCriteria()->getFromTime()->format('i');
+        }
         
+        date_time_set($outwardDatetime, $outwardHours, $outwardMinutes);
+        $solidary->setOutwardDatetime($outwardDatetime);
+
+        // we do the same if we have a return
+        if ($solidary->getProposal()->getProposalLinked() !== null) {
+            $returnDatetime = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromDate();
+            $returnHours = null;
+            $returnMinutes = null;
+            if ($solidary->getProposal()->getProposalLinked()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                if ($solidary->getProposal()->getProposalLinked()->getCriteria()->isMonCheck()) {
+                    $returnHours = $solidary->getProposal()->getProposalLinked()->getCriteria()->getMonTime()->format('h');
+                    $returnMinutes = $solidary->getProposal()->getProposalLinked()->getCriteria()->getMonTime()->format('i');
+                } elseif ($solidary->getProposal()->getProposalLinked()->getCriteria()->isTueCheck()) {
+                    $returnHours = $solidary->getProposal()->getProposalLinked()->getCriteria()->getTueTime()->format('h');
+                    $returnMinutes = $solidary->getProposal()->getProposalLinked()->getCriteria()->getTueTime()->format('i');
+                } elseif ($solidary->getProposal()->getProposalLinked()->getCriteria()->isWedCheck()) {
+                    $returnHours = $solidary->getProposal()->getProposalLinked()->getCriteria()->getWedTime()->format('h');
+                    $returnMinutes = $solidary->getProposal()->getProposalLinked()->getCriteria()->getWedTime()->format('i');
+                } elseif ($solidary->getProposal()->getProposalLinked()->getCriteria()->isThuCheck()) {
+                    $returnHours = $solidary->getProposal()->getProposalLinked()->getCriteria()->getThuTime()->format('h');
+                    $returnMinutes = $solidary->getProposal()->getProposalLinked()->getCriteria()->getThuTime()->format('i');
+                } elseif ($solidary->getProposal()->getProposalLinked()->getCriteria()->isFriCheck()) {
+                    $returnHours = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFriTime()->format('h');
+                    $returnMinutes = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFriTime()->format('i');
+                } elseif ($solidary->getProposal()->getProposalLinked()->getCriteria()->isSatCheck()) {
+                    $returnHours = $solidary->getProposal()->getProposalLinked()->getCriteria()->getSatTime()->format('h');
+                    $returnMinutes = $solidary->getProposal()->getProposalLinked()->getCriteria()->getSatTime()->format('i');
+                } elseif ($solidary->getProposal()->getProposalLinked()->getCriteria()->isSunCheck()) {
+                    $returnHours = $solidary->getProposal()->getProposalLinked()->getCriteria()->getSunTime()->format('h');
+                    $returnMinutes = $solidary->getProposal()->getProposalLinked()->getCriteria()->getSunTime()->format('i');
+                }
+                // we set the limit date and time of the regular
+                $returnDealineDatetime = $solidary->getProposal()->getProposalLinked()->getCriteria()->getToDate();
+                date_time_set($returnDealineDatetime, $returnHours, $returnMinutes);
+                // we get the return deadline date and time
+                $solidary->setReturnDeadlineDatetime($returnDealineDatetime);
+            } else {
+                $returnHours = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromTime()->format('h');
+                $returnMinutes = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromTime()->format('i');
+            }
+            date_time_set($returnDatetime, $returnHours, $returnMinutes);
+            // we get the return date and time
+            $solidary->setReturnDatetime($returnDatetime);
+        }
         $days = ['mon' => false, 'tue' => false,'wed' => false,'thu' => false,'fri' => false, 'sat' => false, 'sun' => false];
         $criteria = $solidary->getProposal()->getCriteria();
         if ($solidary->getProposal()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
@@ -130,17 +216,35 @@ class SolidaryManager
             $solidary->setDays($days);
         }
 
-        // $solidary->setOutwardDatetime();
-        // $solidary->setOutwardDeadlineDatetime();
-        // $solidary->setReturnDatetime();
-        // $solidary->setReturnDeadlineDatetime();
-    
+        // $solidary->setSolutions();
+        $solidary->setAsksList($this->solidaryManager->getAsksList($solidary->getId()));
+
         // We find the last entry of diary for this solidary to get the progression
         // $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
         // (count($diariesEntires)>0) ? $solidary->setProgression($diariesEntires[0]->getProgression()) : $solidary->setProgression(0);
 
         return $solidary;
     }
+
+    public function getSolidaries(): ?array
+    {
+        // $solidaryUserStrutures = $structure->getSolidaryUserStructure();
+        // $solidaryUsers = []
+        // foreach ($solidaryUserStructures as $solidaryUserStructure) {
+        //     $solidaryUsers[] = $solidaryUserStructures->getSolidaryUser;
+        // }
+        // $solidaries = [];
+        // foreach ($solidaryUsers as $solidaryUser) {
+        //     $solidaries[] = $solidaryUser->getSolidary();
+        // }
+        
+        // {
+        //     $solidaries[] = $this->getSolidary();
+        // }
+
+        // return $solidaries;
+    }
+
 
     /**
      * Create a solidary
@@ -309,7 +413,13 @@ class SolidaryManager
                 $solidaryAsksItem->setDriverType(SolidaryAsksListItem::DRIVER_TYPE_VOLUNTEER);
             }
 
-
+            // Messages
+            $messages = [];
+            foreach ($solidaryAsk->getSolidaryAskHistories() as $solidaryAskHistory) {
+                $messages[$solidaryAskHistory->getMessage()->getContent()] = $solidaryAskHistory->getMessage()->getDate();
+            }
+            var_dump($messages);
+            die;
             // Frequency
             $solidaryAsksItem->setFrequency($askCriteria->getFrequency());
             
