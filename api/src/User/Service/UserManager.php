@@ -42,6 +42,7 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Auth\Repository\AuthItemRepository;
+use App\Carpool\Service\ProofManager;
 use App\Community\Repository\CommunityRepository;
 use App\Community\Entity\CommunityUser;
 use App\User\Event\UserRegisteredEvent;
@@ -89,6 +90,7 @@ class UserManager
     private $notificationRepository;
     private $userNotificationRepository;
     private $userRepository;
+    private $proofManager;
     private $solidaryRepository;
     private $structureRepository;
     private $logger;
@@ -111,8 +113,32 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, AuthItemRepository $authItemRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator, Security $security, SolidaryRepository $solidaryRepository, StructureRepository $structureRepository, string $fakeFirstMail, string $fakeFirstToken)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ImageManager $imageManager,
+        LoggerInterface $logger,
+        EventDispatcherInterface $dispatcher,
+        AuthItemRepository $authItemRepository,
+        CommunityRepository $communityRepository,
+        MessageRepository $messageRepository,
+        UserPasswordEncoderInterface $encoder,
+        NotificationRepository $notificationRepository,
+        UserNotificationRepository $userNotificationRepository,
+        AskHistoryRepository $askHistoryRepository,
+        AskRepository $askRepository,
+        UserRepository $userRepository,
+        ProofManager $proofManager,
+        $chat,
+        $smoke,
+        $music,
+        CommunityUserRepository $communityUserRepository,
+        TranslatorInterface $translator,
+        Security $security,
+        SolidaryRepository $solidaryRepository,
+        StructureRepository $structureRepository,
+        string $fakeFirstMail,
+        string $fakeFirstToken
+    ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
         $this->logger = $logger;
@@ -129,6 +155,7 @@ class UserManager
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
         $this->userRepository = $userRepository;
+        $this->proofManager = $proofManager;
         $this->solidaryRepository = $solidaryRepository;
         $this->structureRepository = $structureRepository;
         $this->chat = $chat;
@@ -946,6 +973,8 @@ class UserManager
                     if (get_class($ask) !== Ask::class) {
                         continue;
                     }
+                    // we need keep the proofs on the carpooler side
+                    $this->proofManager->removeProofs($ask, $user);
                     $event = new UserDeleteAccountWasDriverEvent($ask, $user->getId());
                     $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
                 }
@@ -956,6 +985,8 @@ class UserManager
                     if (get_class($ask) !== Ask::class) {
                         continue;
                     }
+                    // we need keep the proofs on the carpooler side
+                    $this->proofManager->removeProofs($ask, $user);
                     $event = new UserDeleteAccountWasPassengerEvent($ask, $user->getId());
                     $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
                 }

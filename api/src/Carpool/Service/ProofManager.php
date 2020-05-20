@@ -390,6 +390,43 @@ class ProofManager
     }
 
     /**
+     * Remove proofs of a user for a given ask.
+     * Used to anonymize proofs when a user deletes its account.
+     *
+     * @param Ask $ask      The ask
+     * @param User $user    The user to delete
+     * @return void
+     */
+    public function removeProofs(Ask $ask, User $user)
+    {
+        if ($ask->getMatching()->getProposalRequest()->getUser()->getId() == $user->getId()) {
+            // the user is the driver
+            foreach ($ask->getCarpoolProofs() as $carpoolProof) {
+                /**
+                 * @var CarpoolProof $carpoolProof
+                 */
+                $carpoolProof->setDriver(null);
+                $carpoolProof->setOriginDriverAddress(null);
+                $carpoolProof->setDestinationDriverAddress(null);
+                $this->entityManager->persist($carpoolProof);
+            }
+        } else {
+            foreach ($ask->getCarpoolProofs() as $carpoolProof) {
+                /**
+                 * @var CarpoolProof $carpoolProof
+                 */
+                $carpoolProof->setPassenger(null);
+                $carpoolProof->setPickUpPassengerAddress(null);
+                $carpoolProof->setPickUpDriverAddress(null);
+                $carpoolProof->setDropOffPassengerAddress(null);
+                $carpoolProof->setDropOffDriverAddress(null);
+                $this->entityManager->persist($carpoolProof);
+            }
+        }
+        // the flush should be made elsewhere...
+    }
+
+    /**
      * Send the pending proofs.
      *
      * @param DateTime|null $fromDate   The start of the period for which we want to send the proofs
