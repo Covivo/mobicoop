@@ -53,6 +53,7 @@ class ArticleController extends AbstractController
     const LOM = 13;
     const GOODPRACTICES = 14;
     const MOREABOUT = 15;
+    const COVID19 = 17;
 
     /**
      * Display of the project page
@@ -187,6 +188,16 @@ class ArticleController extends AbstractController
     public function showMoreAbout(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::MOREABOUT));
+    }
+
+
+    /**
+    * Display of the COVID-19 page
+    *
+    */
+    public function showCovid19(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::COVID19));
     }
 
     /**
