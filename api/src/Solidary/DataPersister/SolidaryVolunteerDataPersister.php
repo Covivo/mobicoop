@@ -20,39 +20,44 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\DataProvider;
+namespace App\Solidary\DataPersister;
 
-use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use App\Solidary\Entity\SolidaryBeneficiary;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\Solidary\Entity\SolidaryVolunteer;
 use App\Solidary\Service\SolidaryUserManager;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class SolidaryVolunteerDataPersister implements ContextAwareDataPersisterInterface
 {
     private $solidaryUserManager;
-    private $context;
-
+    
     public function __construct(SolidaryUserManager $solidaryUserManager)
     {
         $this->solidaryUserManager = $solidaryUserManager;
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function supports($data, array $context = []): bool
     {
-        $this->context = $context;
-        return SolidaryBeneficiary::class === $resourceClass;
+        return $data instanceof SolidaryVolunteer;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function persist($data, array $context = [])
     {
-        $filters = null;
-        if (isset($this->context['filters'])) {
-            $filters = $this->context['filters'];
+        // call your persistence layer to save $data
+        if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
+            // only for validation or update availabilities
+            $data = $this->solidaryUserManager->updateSolidaryVolunteer($data);
+        } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
+            // create
+            $data = $this->solidaryUserManager->createSolidaryVolunteer($data);
         }
-        return $this->solidaryUserManager->getSolidaryBeneficiaries($filters);
+        return $data;
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }
