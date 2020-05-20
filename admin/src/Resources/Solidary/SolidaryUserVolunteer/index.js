@@ -1,13 +1,13 @@
 import SolidaryUserVolunteerIcon from '@material-ui/icons/ContactPhone';
 
-import ListGuesser from '@api-platform/admin/lib/ListGuesser';
-import ShowGuesser from '@api-platform/admin/lib/ShowGuesser';
+import { SolidaryUserVolunteerList } from './SolidaryUserVolunteerList';
+import { SolidaryUserVolunteerEdit } from './SolidaryUserVolunteerEdit';
 
 export default {
   options: {
-    label: 'Bénévoles',
+    label: 'Transporteurs Bénévoles',
   },
-  list: ListGuesser,
-  show: ShowGuesser,
+  list: SolidaryUserVolunteerList,
+  edit: SolidaryUserVolunteerEdit,
   icon: SolidaryUserVolunteerIcon,
 };

@@ -106,10 +106,14 @@ export default () => (
           <Resource name="solidary_volunteers" {...SolidaryUsersVolunteerResource} />
         ),
         isAuthorized('solidary_manage') && <Resource name="solidaries" {...SolidaryResource} />,
-        isAuthorized('user_manage') && <Resource name="structures" {...StructureResource} />,
+        // API Fail during "/structures" GET
+        // @TODO: Fix API and remove the comment bellow
+        // isAuthorized('user_manage') && <Resource name="structures" {...StructureResource} />,
         isAuthorized('user_manage') && (
           <Resource name="structure_proofs" {...StructureProofResource} />
         ),
+        // These resources were commented on during my refacto, why ?
+        // @TODO: Talk between us about that
         // <Resource name="addresses" {...AddressResource} />,
         // <Resource name="images" />,
         // <Resource name="permissions/roles" />,

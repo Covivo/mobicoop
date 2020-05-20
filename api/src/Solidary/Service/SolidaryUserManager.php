@@ -665,7 +665,9 @@ class SolidaryUserManager
         $solidaryVolunteerStructure = $solidaryVolunteer->getStructure();
         if (is_null($solidaryVolunteerStructure)) {
             // We get the Structure of the Admin to set the SolidaryUserStructure
-            $structures = $this->security->getUser()->getSolidaryStructures();
+            $structures = $this->structureRepository->findByUser($this->security->getUser());
+           
+            $structureAdmin = null;
             if (!is_null($structures) || count($structures)>0) {
                 $solidaryVolunteerStructure = $structures[0];
             }
