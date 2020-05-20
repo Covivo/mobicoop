@@ -24,43 +24,43 @@
  namespace App\Carpool\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Carpool\Entity\DynamicProof;
-use App\Carpool\Exception\DynamicException;
-use App\Carpool\Service\DynamicManager;
+use App\Carpool\Entity\ClassicProof;
+use App\Carpool\Exception\AdException;
+use App\Carpool\Service\AdManager;
 use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
-final class DynamicProofPutDataPersister implements ContextAwareDataPersisterInterface
+final class CarpoolProofPutDataPersister implements ContextAwareDataPersisterInterface
 {
     private $security;
     private $request;
-    private $dynamicManager;
+    private $adManager;
     
-    public function __construct(Security $security, DynamicManager $dynamicManager, RequestStack $requestStack)
+    public function __construct(Security $security, AdManager $adManager, RequestStack $requestStack)
     {
         $this->security = $security;
         $this->request = $requestStack->getCurrentRequest();
-        $this->dynamicManager = $dynamicManager;
+        $this->adManager = $adManager;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof DynamicProof && isset($context['item_operation_name']) && $context['item_operation_name'] == 'put';
+        return $data instanceof ClassicProof && isset($context['item_operation_name']) && $context['item_operation_name'] == 'put';
     }
 
     public function persist($data, array $context = [])
     {
         /**
-         * @var DynamicProof $data
+         * @var ClassicProof $data
          */
         // we check if the request is sent by a real user
         if ($this->security->getUser() instanceof User) {
             $data->setUser($this->security->getUser());
         } else {
-            throw new DynamicException("Operation not permitted");
+            throw new AdException("Operation not permitted");
         }
-        return $this->dynamicManager->updateDynamicProof($this->request->get("id"), $data);
+        return $this->adManager->updateCarpoolProof($this->request->get("id"), $data);
     }
 
     public function remove($data, array $context = [])

@@ -48,6 +48,9 @@ class Waypoint
 {
     const DEFAULT_ID = 999999999999;
 
+    const ROLE_DRIVER = 1;
+    const ROLE_PASSENGER = 2;
+
     /**
      * @var int The id of this point.
      *
