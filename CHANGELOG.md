@@ -6,6 +6,8 @@
     * Automatic creation of carpool proof for planified carpools
     * Realtime creation of carpool proofs for planified and dynamic carpools using mobile app
     * Link with proof registry via cron job
+* New entities for SolidaryUser : SolidaryBeneficiary and SolidaryVolunteer.
+* Several utility routes.
 
 # Release 1.4.0
 
