@@ -35,36 +35,36 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class StructureCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class StructureGeolocationCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    private $security;
     private $structureManager;
+    private $context;
 
-    public function __construct(Security $security, StructureManager $structureManager)
+    public function __construct(StructureManager $structureManager)
     {
-        $this->security = $security;
         $this->structureManager = $structureManager;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Structure::class === $resourceClass && $operationName = "structure_needs";
+        $this->context = $context;
+        return Structure::class === $resourceClass && $operationName = "structure_geolocation";
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        $structureId = null;
-
-        // If the user whose making the request has a structure, we use its id
-        if (!empty($this->security->getUser()->getSolidaryStructures())) {
-            $structureId = $this->security->getUser()->getSolidaryStructures()[0]->getId();
+        if (!isset($this->context['filters'])) {
+            throw new SolidaryException(SolidaryException::INVALID_DATA_PROVIDED);
         }
 
-        if (is_null($structureId)) {
-            // We found no structureId we can't process this method
-            throw new SolidaryException(SolidaryException::NO_STRUCTURE_ID);
+        if (!isset($this->context['filters']['lat'])) {
+            throw new SolidaryException(SolidaryException::MISSING_LATITUDE);
         }
 
-        return $this->structureManager->getStructureNeeds($structureId);
+        if (!isset($this->context['filters']['lon'])) {
+            throw new SolidaryException(SolidaryException::MISSING_LONGITUDE);
+        }
+
+        return $this->structureManager->getGeolocalisedStructures($this->context['filters']['lat'], $this->context['filters']['lon']);
     }
 }

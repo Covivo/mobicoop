@@ -74,4 +74,9 @@ class StructureRepository
 
         return $query->getQuery()->getResult();
     }
+
+    public function findAll(): ?array
+    {
+        return $this->repository->findAll();
+    }
 }

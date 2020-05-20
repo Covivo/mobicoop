@@ -55,10 +55,10 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "post"={
  *             "security_post_denormalize"="is_granted('structure_create',object)"
  *          },
- *          "structure_needs"={
+ *          "structure_geolocation"={
  *              "method"="GET",
- *              "path"="/structures/needs",
- *              "normalization_context"={"groups"={"readNeeds"}},
+ *              "path"="/structures/geolocation",
+ *              "normalization_context"={"groups"={"readSolidary"}},
  *              "security"="is_granted('structure_read',object)"
  *          }
  *      },
@@ -71,12 +71,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *          "delete"={
  *             "security"="is_granted('structure_delete',object)"
- *          },
- *          "needs"={
- *              "method"="GET",
- *              "path"="/structures/{id}/needs",
- *              "normalization_context"={"groups"={"readNeeds"}},
- *              "security"="is_granted('structure_read',object)"
  *          }
  *      }
  * )
@@ -424,6 +418,7 @@ class Structure
      * @var ArrayCollection|null The special needs for this structure.
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
+     * @Groups({"readSolidary"})
      */
     private $needs;
 
