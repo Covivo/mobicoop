@@ -100,10 +100,10 @@ export default () => (
         isAuthorized('permission_manage') && <Resource name="roles" {...RoleResource} />,
         isAuthorized('permission_manage') && <Resource name="rights" {...RightResource} />,
         isAuthorized('solidary_manage') && (
-          <Resource name="solidary_users" {...SolidaryUsersBeneficiaryResource} />
+          <Resource name="solidary_beneficiaries" {...SolidaryUsersBeneficiaryResource} />
         ),
         isAuthorized('solidary_manage') && (
-          <Resource name="solidary_users" {...SolidaryUsersVolunteerResource} />
+          <Resource name="solidary_volunteers" {...SolidaryUsersVolunteerResource} />
         ),
         isAuthorized('solidary_manage') && <Resource name="solidaries" {...SolidaryResource} />,
         isAuthorized('user_manage') && <Resource name="structures" {...StructureResource} />,
