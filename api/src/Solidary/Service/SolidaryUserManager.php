@@ -670,8 +670,7 @@ class SolidaryUserManager
                 $solidaryVolunteerStructure = $structures[0];
             }
         }
-        var_dump($solidaryVolunteerStructure->getId());
-        die;
+        
         $solidaryUserStructure = new SolidaryUserStructure();
         $solidaryUserStructure->setStructure($solidaryVolunteerStructure);
         $solidaryUserStructure->setSolidaryUser($solidaryUser);
