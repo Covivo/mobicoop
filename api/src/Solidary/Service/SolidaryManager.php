@@ -234,9 +234,8 @@ class SolidaryManager
      */
     public function getMySolidaries(User $user)
     {
-        $solidaries = [];
         $fullSolidaries = [];
-        $solidaries[] = $user->getSolidaryUser()->getSolidaryUserStructures()[0]->getSolidaries();
+        $solidaries = $user->getSolidaryUser()->getSolidaryUserStructures()[0]->getSolidaries();
         
         foreach ($solidaries as $solidary) {
             $fullSolidaries[] = $this->getSolidary($solidary->getId());
@@ -253,10 +252,10 @@ class SolidaryManager
      */
     public function getSolidaries(Structure $structure)
     {
-        $solidaries = [];
+        $solidaries = null;
         $solidaryUserStructures = $structure->getSolidaryUserStructures();
         foreach ($solidaryUserStructures as $solidaryUserStructure) {
-            $solidaries[] = $solidaryUserStructure->getSolidaries();
+            $solidaries = $solidaryUserStructure->getSolidaries();
         }
 
         $fullSolidaries = [];
@@ -608,9 +607,6 @@ class SolidaryManager
 
         $ad->setReturnWaypoints($returnWaypoints);
         
-        // The solidary status
-        $ad->setSolidaryExclusive(true);
-
         // The User
         $ad->setUserId($userId ? $userId : $solidary->getSolidaryUser()->getUser()->getId());
 

@@ -28,6 +28,7 @@ use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Service\SolidaryManager;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
@@ -35,10 +36,12 @@ use App\Solidary\Service\SolidaryManager;
 final class SolidaryCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $solidaryManager;
+    private $security;
 
-    public function __construct(SolidaryManager $solidaryManager)
+    public function __construct(SolidaryManager $solidaryManager, Security $security)
     {
         $this->solidaryManager = $solidaryManager;
+        $this->security = $security;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -48,20 +51,10 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
 
     public function getCollection(string $resourceClass, string $operationName = null)
     {
-        $structureId = null;
-        // If the user whose making the request has a structure, we use its id
-        if (!empty($this->security->getUser()->getSolidaryStructures())) {
-            $structureId = $this->security->getUser()->getSolidaryStructures()[0]->getId();
-        }
- 
-        if (is_null($structureId)) {
-            // We found no structureId we can't process this method
-            throw new SolidaryException(SolidaryException::NO_STRUCTURE_ID);
-        }
         if ($operationName=="getMySolidaries") {
             return $this->solidaryManager->getMySolidaries($this->security->getUser());
         }
-       
-        return $this->solidaryManager->getSolidaries($$this->security->getUser()->getSolidaryStructures()[0]->getStructure());
+
+        return $this->solidaryManager->getSolidaries($this->security->getUser()->getSolidaryStructures()[0]);
     }
 }

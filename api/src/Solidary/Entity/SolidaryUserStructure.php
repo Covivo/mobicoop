@@ -36,7 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * ApiResource(
+ * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readUser""readSolidaryUserStructure"}, "enable_max_depth"="true"},
@@ -95,7 +95,7 @@ class SolidaryUserStructure
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaryUserStructures", cascade={"persist","remove"})
-     * @Groups({"readUser","readSolidaryUserStructure"})
+     * @Groups({"readUser","readSolidaryUserStructure", "readSolidary"})
      * @MaxDepth(1)
      */
     private $structure;
