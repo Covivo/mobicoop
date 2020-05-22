@@ -83,7 +83,7 @@ class UserRepository
     /**
      * Get Users with a specific type of SolidaryUser
      *
-     * @param string $type
+     * @param string $type Type of SolidaryUser (Beneficiary or Volunteer)
      * @return array|null
      */
     public function findUsersBySolidaryUserType(string $type=null): ?array

@@ -227,12 +227,11 @@ class Ask
     private $askHistories;
 
     /**
-     * @var CarpoolProof|null The proof related to the ask.
+     * @var ArrayCollection The proofs related to the ask.
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\CarpoolProof", inversedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\CarpoolProof", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
      */
-    private $carpoolProof;
+    private $carpoolProofs;
 
     /**
      * @var Matching|null Related matching for a round trip (return or outward journey).
@@ -266,6 +265,7 @@ class Ask
     {
         $this->waypoints = new ArrayCollection();
         $this->askHistories = new ArrayCollection();
+        $this->carpoolProofs = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -491,17 +491,34 @@ class Ask
         return $this;
     }
 
-    public function getCarpoolProof(): ?CarpoolProof
+    public function getCarpoolProofs()
     {
-        return $this->carpoolProof;
+        return $this->carpoolProofs->getValues();
     }
-
-    public function setCarpoolProof(?CarpoolProof $carpoolProof): self
+    
+    public function addCarpoolProof(CarpoolProof $carpoolProof): self
     {
-        $this->carpoolProof = $carpoolProof;
-
+        if (!$this->carpoolProofs->contains($carpoolProof)) {
+            $this->carpoolProofs[] = $carpoolProof;
+            $carpoolProof->setAsk($this);
+        }
+        
         return $this;
     }
+    
+    public function removeCarpoolProof(CarpoolProof $carpoolProof): self
+    {
+        if ($this->carpoolProofs->contains($carpoolProof)) {
+            $this->carpoolProofs->removeElement($carpoolProof);
+            // set the owning side to null (unless already changed)
+            if ($carpoolProof->getAsk() === $this) {
+                $carpoolProof->setAsk(null);
+            }
+        }
+        
+        return $this;
+    }
+
     public function getMatchingRelated(): ?Matching
     {
         return $this->matchingRelated;

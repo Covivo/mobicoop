@@ -67,4 +67,10 @@ class SolidaryException extends \LogicException
     const NO_SOLIDARY_USER = "This User is not a Solidary User";
     const NO_SOLIDARY_BENEFICIARY = "This Solidary User is not a beneficiary";
     const NO_SOLIDARY_VOLUNTEER = "This Solidary User is not a volunteer";
+    const ALREADY_ACCEPTED = "This SolidaryUser has already be accepted for the current structure";
+    const ALREADY_REFUSED = "This SolidaryUser has already be refused for the current structure";
+
+    // Structure Geolocation
+    const MISSING_LATITUDE = "Latitude missing";
+    const MISSING_LONGITUDE = "Longitude missing";
 }

@@ -1,7 +1,7 @@
 {
   "fr": {
     "priceTooltip": "Tarif indicatif",
-    "detailTitle": "Détail du trajet",
+    "detailTitle": "Détails du covoiturage",
     "places": "{seats} place | {seats} places",
     "carpool": "Covoiturer",
     "carpoolAsDriver": "Covoiturer comme conducteur",

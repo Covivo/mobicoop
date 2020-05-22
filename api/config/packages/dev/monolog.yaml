@@ -5,6 +5,16 @@ monolog:
             level: debug
             path: "%kernel.logs_dir%/carpool.log"
             channels: [carpool]
+        carpool_dynamic:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/carpool_dynamic.log"
+            channels: [carpool_dynamic]
+        carpool_proof:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/carpool_proof.log"
+            channels: [carpool_proof]
         communication:
             type: stream
             level: debug
@@ -44,7 +54,7 @@ monolog:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: ["!event", "!carpool", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification"]
+            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification"]
    
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration
@@ -57,4 +67,4 @@ monolog:
         console:
             type: console
             process_psr_3_messages: false
-            channels: ["!event", "!doctrine", "!console", "!carpool", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification"]
+            channels: ["!event", "!doctrine", "!console", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification"]

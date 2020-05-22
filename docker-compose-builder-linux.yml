@@ -43,6 +43,11 @@ services:
       service: base
     working_dir: /var/www/api
     command: php bin/console app:geography:territory-link-batch
+  app-carpool-proof-batch:
+    extends:
+      service: base
+    working_dir: /var/www/api
+    command: php bin/console app:carpool:proof-batch
 
 networks:
   mobicoop_platform:

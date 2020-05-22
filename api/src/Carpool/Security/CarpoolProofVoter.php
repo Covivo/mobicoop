@@ -26,7 +26,7 @@ namespace App\Carpool\Security;
 use App\Auth\Service\AuthManager;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
-use App\Carpool\Entity\DynamicProof;
+use App\Carpool\Entity\ClassicProof;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\CarpoolProofRepository;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -34,11 +34,11 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
-class DynamicProofVoter extends Voter
+class CarpoolProofVoter extends Voter
 {
-    const DYNAMIC_PROOF_CREATE = 'dynamic_proof_create';
-    const DYNAMIC_PROOF_READ = 'dynamic_proof_read';
-    const DYNAMIC_PROOF_UPDATE = 'dynamic_proof_update';
+    const CARPOOL_PROOF_CREATE = 'carpool_proof_create';
+    const CARPOOL_PROOF_READ = 'carpool_proof_read';
+    const CARPOOL_PROOF_UPDATE = 'carpool_proof_update';
     
     private $security;
     private $request;
@@ -59,36 +59,36 @@ class DynamicProofVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::DYNAMIC_PROOF_CREATE,
-            self::DYNAMIC_PROOF_READ,
-            self::DYNAMIC_PROOF_UPDATE
+            self::CARPOOL_PROOF_CREATE,
+            self::CARPOOL_PROOF_READ,
+            self::CARPOOL_PROOF_UPDATE
             ])) {
             return false;
         }
 
-        // Dynamic Proof is a 'virtual' resource, we can't check its class
+        // Classic Proof is a 'virtual' resource, we can't check its class
         return true;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         switch ($attribute) {
-            case self::DYNAMIC_PROOF_CREATE:
+            case self::CARPOOL_PROOF_CREATE:
                 /**
-                 * @var DynamicProof $subject
+                 * @var ClassicProof $subject
                  */
-                if ($ask = $this->askRepository->find($subject->getDynamicAskId())) {
-                    return $this->canCreateDynamicProof($ask);
+                if ($ask = $this->askRepository->find($subject->getAskId())) {
+                    return $this->canCreateClassicProof($ask);
                 }
                 return false;
-            case self::DYNAMIC_PROOF_READ:
+            case self::CARPOOL_PROOF_READ:
                 if ($carpoolProof = $this->carpoolProofRepository->find($this->request->get('id'))) {
-                    return $this->canReadDynamicProof($carpoolProof);
+                    return $this->canReadClassicProof($carpoolProof);
                 }
                 return false;
-            case self::DYNAMIC_PROOF_UPDATE:
+            case self::CARPOOL_PROOF_UPDATE:
                 if ($carpoolProof = $this->carpoolProofRepository->find($this->request->get('id'))) {
-                    return $this->canUpdateDynamicProof($carpoolProof);
+                    return $this->canUpdateClassicProof($carpoolProof);
                 }
                 return false;
         }
@@ -96,18 +96,18 @@ class DynamicProofVoter extends Voter
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canCreateDynamicProof(Ask $ask)
+    private function canCreateClassicProof(Ask $ask)
     {
-        return $this->authManager->isAuthorized(self::DYNAMIC_PROOF_CREATE, ['ask' => $ask]);
+        return $this->authManager->isAuthorized(self::CARPOOL_PROOF_CREATE, ['ask' => $ask]);
     }
 
-    private function canReadDynamicProof(CarpoolProof $carpoolProof)
+    private function canReadClassicProof(CarpoolProof $carpoolProof)
     {
-        return $this->authManager->isAuthorized(self::DYNAMIC_PROOF_READ, ['ask' => $carpoolProof->getAsk()]);
+        return $this->authManager->isAuthorized(self::CARPOOL_PROOF_READ, ['ask' => $carpoolProof->getAsk()]);
     }
 
-    private function canUpdateDynamicProof(CarpoolProof $carpoolProof)
+    private function canUpdateClassicProof(CarpoolProof $carpoolProof)
     {
-        return $this->authManager->isAuthorized(self::DYNAMIC_PROOF_UPDATE, ['ask' => $carpoolProof->getAsk()]);
+        return $this->authManager->isAuthorized(self::CARPOOL_PROOF_UPDATE, ['ask' => $carpoolProof->getAsk()]);
     }
 }
