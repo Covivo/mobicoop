@@ -1,6 +1,18 @@
 import React, { useState } from 'react';
 
 import {
+  FormWithRedirect,
+  DateTimeInput,
+  SelectArrayInput,
+  TextInput,
+  SaveButton,
+  CheckboxGroupInput,
+  BooleanInput,
+  ReferenceInput,
+  AutocompleteInput,
+  useGetList,
+} from 'react-admin';
+import {
   LinearProgress,
   Box,
   Toolbar,
@@ -13,37 +25,14 @@ import {
   StepLabel,
   Button,
 } from '@material-ui/core';
-
 import { makeStyles } from '@material-ui/core/styles';
-
-import {
-  FormWithRedirect,
-  DateTimeInput,
-  SelectArrayInput,
-  TextInput,
-  SaveButton,
-  CheckboxGroupInput,
-  BooleanInput,
-  ReferenceInput,
-  AutocompleteInput,
-  useGetList,
-} from 'react-admin';
-
 import SolidaryUserBeneficiaryCreateFields from '../SolidaryUserBeneficiary/SolidaryUserBeneficiaryCreateFields';
 import GeocompleteInput from '../../../components/geolocation/geocomplete';
 import DateTimeSelector from './DateTimeSelector';
 import SolidaryQuestion from './SolidaryQuestion';
-
-const ProofField = ({ proof, ...rest }) => {
-  if (proof.checkbox) {
-    return <BooleanInput label={proof.label} source={proof.id} {...rest} />;
-  }
-  if (proof.input) {
-    return <TextInput label={proof.label} source={proof.id} {...rest} />;
-  }
-
-  return null;
-};
+import SolidaryNeeds from './SolidaryNeeds';
+import SolidaryProofField from './SolidaryProofField';
+import SolidaryPunctualAsk from './SolidaryPunctualAsk';
 
 const useStyles = makeStyles({
   layout: {
@@ -65,7 +54,7 @@ const SolidaryCreate = (props) => {
   console.log('Proof:', proofs);
 
   const [hasDestinationAddress, setHasDestinationAddress] = useState(1);
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(4);
 
   const fromDateTimeChoices = [
     { id: 0, label: 'A une date fixe', offsetHour: 0, offsetDays: 0 },
@@ -134,7 +123,7 @@ const SolidaryCreate = (props) => {
               >
                 <SolidaryQuestion question="Le demandeur est-il éligible ?">
                   {proofs && proofs.length && loaded ? (
-                    proofs.map((p) => <ProofField key={p.id} proof={p} />)
+                    proofs.map((p) => <SolidaryProofField key={p.id} proof={p} />)
                   ) : (
                     <LinearProgress />
                   )}
@@ -146,7 +135,10 @@ const SolidaryCreate = (props) => {
                 flexDirection="column"
                 flexGrow={1}
               >
-                <SolidaryUserBeneficiaryCreateFields />
+                <SolidaryUserBeneficiaryCreateFields
+                  form={formProps.form}
+                  user={formProps.form.getState().values.user_id}
+                />
               </Box>
               <Box display={activeStep === 3 ? 'flex' : 'none'} p="1rem" flexDirection="column">
                 <SolidaryQuestion question="Que voulez-vous faire ?">
@@ -183,6 +175,7 @@ const SolidaryCreate = (props) => {
                       label="Adresse d'arrivée"
                       validate={(a) => console.log(a)}
                     />
+                    }
                   </Box>
                 </SolidaryQuestion>
 
@@ -194,39 +187,26 @@ const SolidaryCreate = (props) => {
                     validate={(value) => (value ? undefined : 'Elle est obligatoire')}
                   />
                 </SolidaryQuestion>
+
+                <SolidaryQuestion question="D'ou devez-vous partir ?">
+                  <BooleanInput fullWidth source="frequency" label="Trajet Ponctuel" />
+                </SolidaryQuestion>
               </Box>
               <Box display={activeStep === 4 ? 'flex' : 'none'} p="1rem" flexDirection="column">
-                <SolidaryQuestion question="Quand souhaitez-vous partir ?">
-                  <DateTimeSelector
-                    form={formProps.form}
-                    fieldnameStart="fromStartDatetime"
-                    fieldnameEnd="fromEndDatetime"
-                    choices={fromDateTimeChoices}
-                    initialChoice={0}
-                  />
-                </SolidaryQuestion>
+                <SolidaryPunctualAsk form={formProps.form} />
+                {/*
+                                <SolidaryQuestion question="Quand souhaitez-vous partir ?">
+                                    <DateTimeSelector form={formProps.form} fieldnameStart="fromStartDatetime" fieldnameEnd="fromEndDatetime" choices={fromDateTimeChoices} initialChoice={0} />
+                                </SolidaryQuestion>
 
-                <SolidaryQuestion question="Quand souhaitez-vous revenir ?">
-                  <DateTimeSelector
-                    form={formProps.form}
-                    fieldnameStart="toStartDatetime"
-                    fieldnameEnd="toEndDatetime"
-                    choices={toDateTimeChoices}
-                    initialChoice={0}
-                  />
-                </SolidaryQuestion>
-
-                <SolidaryQuestion question="Autres informations">
-                  <CheckboxGroupInput
-                    source="needs"
-                    choices={[
-                      { id: 1, name: "J'ai besoin d'être accompagné jusqu'à ma porte" },
-                      { id: 2, name: "J'invite à prendre un café" },
-                      { id: 3, name: "J'ai besoin qu'on monte mes courses" },
-                    ]}
-                  />
-                  <TextInput fullWidth source="additional_needs" label="Autres précisions" />
-                </SolidaryQuestion>
+                                <SolidaryQuestion question="Quand souhaitez-vous revenir ?">
+                                    <DateTimeSelector form={formProps.form} fieldnameStart="toStartDatetime" fieldnameEnd="toEndDatetime" choices={toDateTimeChoices} initialChoice={0} />
+                                </SolidaryQuestion>
+                                
+                                <SolidaryQuestion question="Autres informations">
+                                    <SolidaryNeeds />
+                                </SolidaryQuestion>
+                                */}
               </Box>
 
               <Toolbar>
