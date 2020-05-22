@@ -75,7 +75,7 @@ export const CommunityEdit = (props) => {
                     <DateInput disabled source="createdDate" label={translate('custom.label.community.createdDate')} formClassName={classes.inlineBlock}/>
                     <DateInput disabled source="updatedDate" label={translate('custom.label.community.updateDate')} formClassName={classes.inlineBlock}/>
                     <TextInput disabled source="status" label={translate('custom.label.community.status')} formClassName={classes.inlineBlock}/>
-                    <ReferenceInput disabled source="user" label={translate('custom.label.community.createdBy')} reference="users" formClassName={classes.inlineBlock}>
+                    <ReferenceInput source="user" label={translate('custom.label.community.createdBy')} reference="users" formClassName={classes.inlineBlock}>
                         <SelectInput optionText={<UserRenderer />} />
                     </ReferenceInput>
                 </FormTab>
