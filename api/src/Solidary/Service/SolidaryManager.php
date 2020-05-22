@@ -45,6 +45,7 @@ use Symfony\Component\Security\Core\Security;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\SolidaryUserStructure;
+use App\Solidary\Entity\Structure;
 use App\Solidary\Repository\SolidaryUserStructureRepository;
 use App\Solidary\Repository\StructureProofRepository;
 use App\Solidary\Repository\StructureRepository;
@@ -216,8 +217,7 @@ class SolidaryManager
             $solidary->setDays($days);
         }
 
-        // $solidary->setSolutions();
-        $solidary->setAsksList($this->solidaryManager->getAsksList($solidary->getId()));
+        $solidary->setAsksList($this->getAsksList($solidary->getId()));
 
         // We find the last entry of diary for this solidary to get the progression
         // $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
@@ -226,25 +226,46 @@ class SolidaryManager
         return $solidary;
     }
 
-    public function getSolidaries(): ?array
+    /**
+     * Get solidaries of a user
+     *
+     * @param User $user
+     * @return void
+     */
+    public function getMySolidaries(User $user)
     {
-        // $solidaryUserStrutures = $structure->getSolidaryUserStructure();
-        // $solidaryUsers = []
-        // foreach ($solidaryUserStructures as $solidaryUserStructure) {
-        //     $solidaryUsers[] = $solidaryUserStructures->getSolidaryUser;
-        // }
-        // $solidaries = [];
-        // foreach ($solidaryUsers as $solidaryUser) {
-        //     $solidaries[] = $solidaryUser->getSolidary();
-        // }
+        $solidaries = [];
+        $fullSolidaries = [];
+        $solidaries[] = $user->getSolidaryUser()->getSolidaryUserStructures()[0]->getSolidaries();
         
-        // {
-        //     $solidaries[] = $this->getSolidary();
-        // }
+        foreach ($solidaries as $solidary) {
+            $fullSolidaries[] = $this->getSolidary($solidary->getId());
+        }
 
-        // return $solidaries;
+        return $fullSolidaries;
     }
 
+    /**
+     * Get solidaries of a structure
+     *
+     * @param Structure $structure
+     * @return void
+     */
+    public function getSolidaries(Structure $structure)
+    {
+        $solidaries = [];
+        $solidaryUserStructures = $structure->getSolidaryUserStructures();
+        foreach ($solidaryUserStructures as $solidaryUserStructure) {
+            $solidaries[] = $solidaryUserStructure->getSolidaries();
+        }
+
+        $fullSolidaries = [];
+        foreach ($solidaries as $solidary) {
+            $fullSolidaries[] = $this->getSolidary($solidary->getId());
+        }
+
+        return $fullSolidaries;
+    }
 
     /**
      * Create a solidary
@@ -381,7 +402,7 @@ class SolidaryManager
      * @param integer $solidaryId
      * @return Solidary
      */
-    public function getAsksList(int $solidaryId): Solidary
+    public function getAsksList(int $solidaryId): array
     {
         $asksList = [];
 
@@ -481,10 +502,7 @@ class SolidaryManager
             $asksList[] = $solidaryAsksItem;
         }
 
-        $solidary = $this->getSolidary($solidaryId);
-        $solidary->setAsksList($asksList);
-
-        return $solidary;
+        return $asksList;
     }
 
     /**
@@ -500,29 +518,24 @@ class SolidaryManager
         // we get and set the origin and destination of the demand
         $origin = new Address;
         $destination = null;
-        if (isset($solidary->getOrigin()['iri'])) {
-            $origin = clone $this->addressRepository->find(substr($solidary->getOrigin()['iri'], strrpos($solidary->getOrigin()['iri'], '/') + 1));
-        } else {
-            $origin->setHouseNumber($solidary->getOrigin()['houseNumber']);
-            $origin->setStreet($solidary->getOrigin()['street']);
-            $origin->setStreetAddress($solidary->getOrigin()['streetAddress']);
-            $origin->setPostalCode($solidary->getOrigin()['postalCode']);
-            $origin->setSubLocality($solidary->getOrigin()['subLocality']);
-            $origin->setAddressLocality($solidary->getOrigin()['addressLocality']);
-            $origin->setLocalAdmin($solidary->getOrigin()['localAdmin']);
-            $origin->setCounty($solidary->getOrigin()['county']);
-            $origin->setMacroCounty($solidary->getOrigin()['macroCounty']);
-            $origin->setRegion($solidary->getOrigin()['region']);
-            $origin->setMacroRegion($solidary->getOrigin()['macroRegion']);
-            $origin->setAddressCountry($solidary->getOrigin()['addressCountry']);
-            $origin->setCountryCode($solidary->getOrigin()['countryCode']);
-            $origin->setLatitude($solidary->getOrigin()['latitude']);
-            $origin->setLongitude($solidary->getOrigin()['longitude']);
-        }
-
-        if ($solidary->getDestination() && isset($solidary->getDestination()['iri'])) {
-            $destination = clone $this->addressRepository->find(substr($solidary->getDestination()['iri'], strrpos($solidary->getDestination()['iri'], '/') + 1));
-        } elseif ($solidary->getDestination()) {
+        
+        $origin->setHouseNumber($solidary->getOrigin()['houseNumber']);
+        $origin->setStreet($solidary->getOrigin()['street']);
+        $origin->setStreetAddress($solidary->getOrigin()['streetAddress']);
+        $origin->setPostalCode($solidary->getOrigin()['postalCode']);
+        $origin->setSubLocality($solidary->getOrigin()['subLocality']);
+        $origin->setAddressLocality($solidary->getOrigin()['addressLocality']);
+        $origin->setLocalAdmin($solidary->getOrigin()['localAdmin']);
+        $origin->setCounty($solidary->getOrigin()['county']);
+        $origin->setMacroCounty($solidary->getOrigin()['macroCounty']);
+        $origin->setRegion($solidary->getOrigin()['region']);
+        $origin->setMacroRegion($solidary->getOrigin()['macroRegion']);
+        $origin->setAddressCountry($solidary->getOrigin()['addressCountry']);
+        $origin->setCountryCode($solidary->getOrigin()['countryCode']);
+        $origin->setLatitude($solidary->getOrigin()['latitude']);
+        $origin->setLongitude($solidary->getOrigin()['longitude']);
+        
+        if ($solidary->getDestination()) {
             $destination = new Address();
             $destination->setHouseNumber($solidary->getDestination()['houseNumber']);
             $destination->setStreet($solidary->getDestination()['street']);
@@ -594,6 +607,9 @@ class SolidaryManager
         ];
 
         $ad->setReturnWaypoints($returnWaypoints);
+        
+        // The solidary status
+        $ad->setSolidaryExclusive(true);
 
         // The User
         $ad->setUserId($userId ? $userId : $solidary->getSolidaryUser()->getUser()->getId());

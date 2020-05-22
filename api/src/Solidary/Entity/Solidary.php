@@ -47,6 +47,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "get"={
  *             "security"="is_granted('solidary_list',object)"
  *          },
+ *          "getMySolidaries"={
+ *              "method"="GET",
+ *              "path"="/solidaries/myRequests",
+ *              "normalization_context"={"groups"={"readSolidary"}},
+ *              "security"="is_granted('solidary_list',object)"
+ *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('solidary_create',object)"
  *          }
@@ -192,7 +198,7 @@ class Solidary
 
     /**
      * @var array List of the Asks of this solidary (special route)
-     * @Groups({"asksList"})
+     * @Groups({"asksList","writeSolidary", "readSolidary"})
      */
     private $asksList;
 
