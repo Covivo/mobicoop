@@ -1,18 +1,62 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DateInput } from 'react-admin-date-inputs';
 import frLocale from 'date-fns/locale/fr';
-import { TextInput, SelectInput, email, regex, BooleanInput, useTranslate } from 'react-admin';
+import {
+  TextInput,
+  SelectInput,
+  email,
+  regex,
+  BooleanInput,
+  useTranslate,
+  useDataProvider,
+  useNotify,
+} from 'react-admin';
+
 import { makeStyles } from '@material-ui/core/styles';
-import { Box } from '@material-ui/core';
+import { Box, CircularProgress, Backdrop } from '@material-ui/core';
 
 const useStyles = makeStyles({
   spacedHalfwidth: { maxWidth: '400px', marginBottom: '0.5rem' },
+  loadingHeader: {
+    display: 'flex',
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    maxWidth: '400px',
+    marginBottom: '0.5rem',
+  },
 });
 
 const SolidaryUserBeneficiaryCreateFields = (props) => {
   const classes = useStyles();
   const translate = useTranslate();
   const instance = process.env.REACT_APP_INSTANCE_NAME;
+  const [loading, setLoading] = useState(false);
+  // Pre-fill user data
+  const dataProvider = useDataProvider();
+  const notify = useNotify();
+  useEffect(() => {
+    if (props.user) {
+      setLoading(true);
+      dataProvider
+        .getOne('users', { id: props.user })
+        .then((result) => {
+          console.log('Results : ', result.data);
+          if (result.data.email) {
+            props.form.change('email', result.data.email);
+            props.form.change('familyName', result.data.familyName);
+            props.form.change('givenName', result.data.givenName);
+            props.form.change('gender', result.data.gender);
+            props.form.change('birthDate', result.data.birthDate);
+            props.form.change('telephone', result.data.telephone);
+            props.form.change('newsSubscription', result.data.newsSubscription);
+          }
+        })
+        .catch((error) => notify(error.message, 'warning'))
+        .finally(() => setLoading(false));
+    }
+  }, [props.user]);
 
   const required = (message = translate('custom.alert.fieldMandatory')) => (value) =>
     value ? undefined : message;
@@ -45,6 +89,13 @@ const SolidaryUserBeneficiaryCreateFields = (props) => {
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" width="100%">
+      {loading && (
+        <Box className={classes.loadingHeader}>
+          <CircularProgress />
+          <p>Recherche de l'utilisateur...</p>
+        </Box>
+      )}
+
       <TextInput
         fullWidth
         required
