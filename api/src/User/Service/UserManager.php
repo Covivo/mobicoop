@@ -961,6 +961,9 @@ class UserManager
                 $this->deleteCommunityUsers($user);
             }
         }
+        // check if the user have pending proofs, and remove the links
+        $this->proofManager->removeProofs($user);
+                    
         // We check if the user have ads.
         // If he have ads we check if a carpool is initiated if yes we send an email to the carpooler
         foreach ($user->getProposals() as $proposal) {
@@ -973,8 +976,6 @@ class UserManager
                     if (get_class($ask) !== Ask::class) {
                         continue;
                     }
-                    // we need keep the proofs on the carpooler side
-                    $this->proofManager->removeProofs($ask, $user);
                     $event = new UserDeleteAccountWasDriverEvent($ask, $user->getId());
                     $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
                 }
@@ -985,8 +986,6 @@ class UserManager
                     if (get_class($ask) !== Ask::class) {
                         continue;
                     }
-                    // we need keep the proofs on the carpooler side
-                    $this->proofManager->removeProofs($ask, $user);
                     $event = new UserDeleteAccountWasPassengerEvent($ask, $user->getId());
                     $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
                 }

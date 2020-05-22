@@ -101,6 +101,14 @@ class ProofManager
         }
     }
 
+
+
+
+    /********************
+     * PROOF MANAGEMENT *
+     ********************/
+
+
     /**
      * Get a carpool proof by its id.
      *
@@ -390,41 +398,88 @@ class ProofManager
     }
 
     /**
-     * Remove proofs of a user for a given ask.
+     * Remove proofs of a user.
      * Used to anonymize proofs when a user deletes its account.
      *
-     * @param Ask $ask      The ask
      * @param User $user    The user to delete
      * @return void
      */
-    public function removeProofs(Ask $ask, User $user)
+    public function removeProofs(User $user)
     {
-        if ($ask->getMatching()->getProposalRequest()->getUser()->getId() == $user->getId()) {
-            // the user is the driver
-            foreach ($ask->getCarpoolProofs() as $carpoolProof) {
-                /**
-                 * @var CarpoolProof $carpoolProof
-                 */
-                $carpoolProof->setDriver(null);
-                $carpoolProof->setOriginDriverAddress(null);
-                $carpoolProof->setDestinationDriverAddress(null);
-                $this->entityManager->persist($carpoolProof);
-            }
-        } else {
-            foreach ($ask->getCarpoolProofs() as $carpoolProof) {
-                /**
-                 * @var CarpoolProof $carpoolProof
-                 */
-                $carpoolProof->setPassenger(null);
-                $carpoolProof->setPickUpPassengerAddress(null);
-                $carpoolProof->setPickUpDriverAddress(null);
-                $carpoolProof->setDropOffPassengerAddress(null);
-                $carpoolProof->setDropOffDriverAddress(null);
-                $this->entityManager->persist($carpoolProof);
+        // we start by searching in the asks, if the user is the first to remove its account
+        $asks = $this->askRepository->findAskByUser($user);
+        foreach ($asks as $ask) {
+            if ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $user->getId()) {
+                // the user is the driver
+                foreach ($ask->getCarpoolProofs() as $carpoolProof) {
+                    /**
+                     * @var CarpoolProof $carpoolProof
+                     */
+                    $carpoolProof->setDriver(null);
+                    $ask->removeCarpoolProof($carpoolProof);
+                    // if the poof is pending, we set it to canceled
+                    if ($carpoolProof->getStatus() == CarpoolProof::STATUS_PENDING) {
+                        $carpoolProof->setStatus(CarpoolProof::STATUS_CANCELED);
+                    }
+                    // uncomment the following to anonymize driver addresses used in the proof
+                    // $carpoolProof->setOriginDriverAddress(null);
+                    // $carpoolProof->setDestinationDriverAddress(null);
+                    $this->entityManager->persist($carpoolProof);
+                }
+            } else {
+                foreach ($ask->getCarpoolProofs() as $carpoolProof) {
+                    /**
+                     * @var CarpoolProof $carpoolProof
+                     */
+                    $carpoolProof->setPassenger(null);
+                    $ask->removeCarpoolProof($carpoolProof);
+                    // if the poof is pending, we set it to canceled
+                    if ($carpoolProof->getStatus() == CarpoolProof::STATUS_PENDING) {
+                        $carpoolProof->setStatus(CarpoolProof::STATUS_CANCELED);
+                    }
+                    // uncomment the following to anonymize passenger addresses used in the proof
+                    // $carpoolProof->setPickUpPassengerAddress(null);
+                    // $carpoolProof->setPickUpDriverAddress(null);
+                    // $carpoolProof->setDropOffPassengerAddress(null);
+                    // $carpoolProof->setDropOffDriverAddress(null);
+                    $this->entityManager->persist($carpoolProof);
+                }
             }
         }
+
+        // then we search in the proofs, as another user may have removed its account, the proofs may still exist
+        $carpoolProofs = $this->carpoolProofRepository->findRemainingByUser($user);
+        foreach ($carpoolProofs as $carpoolProof) {
+            /**
+             * @var CarpoolProof $carpoolProof
+             */
+            if (!is_null($carpoolProof->getDriver())) {
+                $carpoolProof->setDriver(null);
+            // uncomment the following to anonymize driver addresses used in the proof
+                // $carpoolProof->setOriginDriverAddress(null);
+                // $carpoolProof->setDestinationDriverAddress(null);
+            } elseif (!is_null($carpoolProof->getPassenger())) {
+                $carpoolProof->setPassenger(null);
+                // uncomment the following to anonymize passenger addresses used in the proof
+                // $carpoolProof->setPickUpPassengerAddress(null);
+                // $carpoolProof->setPickUpDriverAddress(null);
+                // $carpoolProof->setDropOffPassengerAddress(null);
+                // $carpoolProof->setDropOffDriverAddress(null);
+            }
+            $this->entityManager->persist($carpoolProof);
+        }
+        
         // the flush should be made elsewhere...
+        // $this->entityManager->flush();
     }
+
+
+
+
+    /*****************************
+     * PROOF REGISTER MANAGEMENT *
+     *****************************/
+
 
     /**
      * Send the pending proofs.

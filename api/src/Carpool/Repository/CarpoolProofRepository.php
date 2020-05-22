@@ -26,6 +26,7 @@ namespace App\Carpool\Repository;
 use App\Carpool\Entity\Ask;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\CarpoolProof;
+use App\User\Entity\User;
 use DateTime;
 
 class CarpoolProofRepository
@@ -47,6 +48,13 @@ class CarpoolProofRepository
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
+    /**
+     * Find a proof by ask and date
+     *
+     * @param Ask $ask          The ask
+     * @param DateTime $date    The date
+     * @return CarpoolProof|null    The carpool proof found or null if not found
+     */
     public function findByAskAndDate(Ask $ask, DateTime $date)
     {
         $startDate = clone $date;
@@ -62,5 +70,21 @@ class CarpoolProofRepository
         ->setParameter('endDate', $endDate->format('Y-m-d H:i:s'));
 
         return $query->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * Find the remaining proofs for a user (driver or passenger) : used to find proofs related to a deleted ask
+     *
+     * @param User $user    The user
+     * @return CarpoolProof[]|null    The carpool proofs found or null if not found
+     */
+    public function findRemainingByUser(User $user)
+    {
+        $query = $this->repository->createQueryBuilder('cp')
+        ->where('cp.ask is null')
+        ->andWhere('(cp.driver = :user or cp.passenger = :user)')
+        ->setParameter('user', $user);
+
+        return $query->getQuery()->getResult();
     }
 }

@@ -79,7 +79,8 @@ class AskHistoryRepository
         ->join('ah.message', 'm')
         ->where('a = :ask')
         ->setParameter('ask', $ask)
-        ->orderBy('ah.createdDate', 'DESC');
+        ->orderBy('ah.createdDate', 'DESC')
+        ->setMaxResults(1);
         
         return $query->getQuery()->getOneOrNullResult();
     }
