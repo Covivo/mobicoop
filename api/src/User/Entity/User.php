@@ -93,6 +93,7 @@ use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
 use App\Match\Entity\MassPerson;
 use App\Solidary\Entity\SolidaryUser;
+use App\Solidary\Entity\Structure;
 use App\User\Controller\UserCanUseEmail;
 
 /**
@@ -340,12 +341,6 @@ use App\User\Controller\UserCanUseEmail;
  *              "path"="/users/{id}/unsubscribe_user",
  *              "controller"=UserUnsubscribeFromEmail::class
  *          },
- *          "solidaries"={
- *              "method"="GET",
- *              "path"="/users/{id}/solidaries",
- *              "normalization_context"={"groups"={"readSolidary"}},
- *              "security"="is_granted('solidary_list',object)"
- *          },
  *          "structures"={
  *              "method"="GET",
  *              "path"="/users/{id}/structures",
@@ -409,6 +404,8 @@ class User implements UserInterface, EquatableInterface
     const MOBILE_APP_WEB = 1;
     const MOBILE_APP_IOS = 2;
     const MOBILE_APP_ANDROID = 3;
+
+    const ROLE_DEFAULT = 3;  // Role we want to add by default when user register, ID is in auth_item (ROLE_USER_REGISTERED_FULL now)
 
     /**
      * @var int The id of this user.
@@ -1052,15 +1049,10 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var SolidaryUser|null The SolidaryUser possibly linked to this User
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user", cascade={"persist","remove"})
-     * @Groups({"readUser","write","readSolidary","writeSolidary"})
+     * @Groups({"readUser","write","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $solidaryUser;
-
-    /**
-     * @var array|null used to get the solidaries of a user
-     * @Groups({"readSolidary"})
-     */
-    private $solidaries;
 
     /**
      * @var array|null used to get the structures of a user
@@ -1082,6 +1074,14 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser"})
      */
     private $massPerson;
+
+    /**
+     * @var ArrayCollection|null A user may work in multiple solidary Structures.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Structure", mappedBy="users")
+     * @MaxDepth(1)
+     */
+    private $solidaryStructures;
 
     public function __construct($status = null)
     {
@@ -1109,6 +1109,7 @@ class User implements UserInterface, EquatableInterface
         $this->carpoolProofsAsDriver = new ArrayCollection();
         $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->pushTokens = new ArrayCollection();
+        $this->solidaryStructures = new ArrayCollection();
         $this->roles = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
@@ -2522,18 +2523,6 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getSolidaries()
-    {
-        return $this->solidaries;
-    }
-
-    public function setSolidaries(?array $solidaries): self
-    {
-        $this->solidaries = $solidaries;
-
-        return $this;
-    }
-
     public function getStructures()
     {
         return $this->structures;
@@ -2564,6 +2553,29 @@ class User implements UserInterface, EquatableInterface
     public function setMassPerson(?MassPerson $massPerson): self
     {
         $this->massPerson = $massPerson;
+
+        return $this;
+    }
+
+    public function getSolidaryStructures()
+    {
+        return $this->solidaryStructures->getValues();
+    }
+
+    public function addSolidaryStructure(Structure $structure): self
+    {
+        if (!$this->solidaryStructures->contains($structure)) {
+            $this->solidaryStructures->add($structure);
+        }
+
+        return $this;
+    }
+
+    public function removeSolidaryStructure(Structure $structure): self
+    {
+        if ($this->solidaryStructures->contains($structure)) {
+            $this->solidaryStructures->removeElement($structure);
+        }
 
         return $this;
     }

@@ -67,6 +67,7 @@
           <v-btn
             color="secondary"
             rounded
+            class="mt-5"
             :width="250"
             :href="linkToCommunityShow(item)"
           >

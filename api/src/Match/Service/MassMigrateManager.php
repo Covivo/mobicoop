@@ -157,7 +157,7 @@ class MassMigrateManager
 
             if (!is_null($user)) {
                 // This MassPerson has already an existing account
-                // We're returning the founded User
+                // We're returning the found User
                 $user->setAlreadyRegistered(true);
                 $migratedUsers[] = $user;
             } else {

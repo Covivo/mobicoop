@@ -44,12 +44,18 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readUser","readSolidary"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeSolidary"}}
+ *          "normalization_context"={"groups"={"readProof"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeProof"}}
  *      },
  *      collectionOperations={
  *          "get"={
  *             "security"="is_granted('proof_list',object)"
+ *          },
+ *          "structure_proofs"={
+ *              "method"="GET",
+ *              "path"="/proofs/structure",
+ *              "normalization_context"={"groups"={"readStructureProofs"}},
+ *              "security"="is_granted('proof_list',object)"
  *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('proof_create',object)"
@@ -82,7 +88,6 @@ class Proof
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"readUser","readSolidary","writeSolidary"})
      */
     private $id;
 
@@ -90,7 +95,7 @@ class Proof
      * @var string The value entered by the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readSolidary","writeSolidary"})
+     * @Groups({"readSolidary"})
      */
     private $value;
 
@@ -100,7 +105,6 @@ class Proof
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof", inversedBy="proofs")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $structureProof;
@@ -109,7 +113,6 @@ class Proof
      * @var string The final file name of the proof.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readSolidary","writeSolidary"})
      */
     private $fileName;
     
@@ -117,7 +120,6 @@ class Proof
      * @var string The original file name of the proof.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readSolidary","writeSolidary"})
      */
     private $originalName;
 
@@ -125,7 +127,6 @@ class Proof
      * @var int The size in bytes of the file.
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"readUser","readSolidary","writeSolidary"})
      */
     private $size;
     
@@ -133,7 +134,6 @@ class Proof
      * @var string The mime type of the file.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readSolidary","writeSolidary"})
      */
     private $mimeType;
 
@@ -149,7 +149,6 @@ class Proof
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="proofs", cascade={"persist","remove"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidaryUserStructure;
@@ -158,7 +157,6 @@ class Proof
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
      */
     private $createdDate;
 
@@ -166,7 +164,6 @@ class Proof
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
      */
     private $updatedDate;
     

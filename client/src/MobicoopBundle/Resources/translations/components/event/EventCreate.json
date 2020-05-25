@@ -12,6 +12,10 @@
         "label": "Nom de l'événement*",
         "required": "Le nom de l'événement est requis"
       },
+      "description": {
+        "label": "Description courte de l'événement*",
+        "required": "La courte description de l'événement est requise"
+      },
       "fullDescription": {
         "label": "Description détaillée de l'événement*",
         "required": "La description détaillée de l'événement est requise"

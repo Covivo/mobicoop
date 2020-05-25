@@ -41,7 +41,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\HasLifecycleCallbacks
  * ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readSolidary","readNeeds"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={"get","post"},
@@ -61,7 +61,7 @@ class Need
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"readUser","readSolidary"})
+     * @Groups({"readUser","readSolidary","readNeeds"})
      */
     private $id;
 
@@ -70,7 +70,7 @@ class Need
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readUser","readSolidary","writeSolidary"})
+     * @Groups({"readUser","readSolidary","writeSolidary","readNeeds"})
      */
     private $label;
 
@@ -78,14 +78,14 @@ class Need
      * @var bool The need is not publicly available.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readUser","readSolidary","writeSolidary"})
+     * @Groups({"readUser","readSolidary","writeSolidary","readNeeds"})
      */
     private $private;
 
     /**
      * @var Solidary Solidary if the need was created for a specific solidary record.
      *
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof")
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Solidary")
      * @Groups({"readUser","readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
@@ -95,6 +95,7 @@ class Need
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readNeeds"})
      */
     private $createdDate;
 
@@ -102,6 +103,7 @@ class Need
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readNeeds"})
      */
     private $updatedDate;
     

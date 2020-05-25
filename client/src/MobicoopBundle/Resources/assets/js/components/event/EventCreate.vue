@@ -47,6 +47,15 @@
           </v-row>
           <v-row justify="center">
             <v-col cols="6">
+              <v-text-field
+                v-model="description"
+                :rules="descriptionRules"
+                :label="$t('form.description.label')"
+              />
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="6">
               <v-textarea
                 v-model="fullDescription"
                 :rules="fullDescriptionRules"
@@ -355,7 +364,6 @@ export default {
   },
   data () {
     return {
-      max: 255,
       startDate: null,
       endDate : null,
       startTime: null,
@@ -373,6 +381,10 @@ export default {
       name: null,
       nameRules: [
         v => !!v || this.$t("form.name.required"),
+      ],
+      description: null,
+      descriptionRules: [
+        v => !!v || this.$t("form.description.required"),
       ],
       fullDescription: null,
       fullDescriptionRules: [
@@ -420,10 +432,11 @@ export default {
     createEvent() {
       this.dialog = false;
       this.loading = true;
-      if (this.name  && this.fullDescription && this.avatar && this.eventAddress && this.startDate && this.endDate) {
+      if (this.name  && this.description && this.fullDescription && this.avatar && this.eventAddress && this.startDate && this.endDate) {
         let newEvent = new FormData();
         newEvent.append("name", this.name);
         newEvent.append("fullDescription", this.fullDescription);
+        newEvent.append("description", this.description);
         newEvent.append("avatar", this.avatar);
         newEvent.append("address", JSON.stringify(this.eventAddress));
         newEvent.append("startDate", this.startDate);

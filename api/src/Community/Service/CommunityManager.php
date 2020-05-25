@@ -36,6 +36,7 @@ use App\User\Repository\UserRepository;
 use App\Auth\Repository\AuthItemRepository;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
+use App\Carpool\Service\AdManager;
 
 /**
  * Community manager.
@@ -56,6 +57,7 @@ class CommunityManager
     private $proposalRepository;
     private $authItemRepository;
     private $userManager;
+    private $adManager;
 
     /**
      * Constructor
@@ -71,7 +73,8 @@ class CommunityManager
         CommunityRepository $communityRepository,
         ProposalRepository $proposalRepository,
         AuthItemRepository $authItemRepository,
-        UserManager $userManager
+        UserManager $userManager,
+        AdManager $adManager
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -81,6 +84,7 @@ class CommunityManager
         $this->proposalRepository = $proposalRepository;
         $this->authItemRepository = $authItemRepository;
         $this->userManager = $userManager;
+        $this->adManager = $adManager;
     }
 
     /**
@@ -229,7 +233,7 @@ class CommunityManager
                 // we check if the proposal is still valid if yes we retrieve the proposal
                 $LimitDate = $proposal->getCriteria()->getToDate() ? $proposal->getCriteria()->getToDate() : $proposal->getCriteria()->getFromDate();
                 if ($LimitDate >= new \DateTime()) {
-                    $ads[] = $this->makeAdForCommunityOrEvent($proposal);
+                    $ads[] = $this->adManager->makeAdForCommunityOrEvent($proposal);
                     if (!is_null($proposal->getProposalLinked())) {
                         $refIdProposals[$proposal->getId()] = $proposal->getProposalLinked()->getId();
                     }
@@ -284,6 +288,7 @@ class CommunityManager
 
     /**
      * Give the roles : community_manager to the creator of a public community and save the data
+     * Also give the special role to user : community_restrict for display only communities he created
      *
      * @param Community       $community           The community created
      * @return void
@@ -291,7 +296,9 @@ class CommunityManager
     public function save(Community $community)
     {
         $user = $community->getUser();
+
         $authItem = $this->authItemRepository->find(AuthItem::ROLE_COMMUNITY_MANAGER_PUBLIC);
+        $authItemRestrict = $this->authItemRepository->findByName('community_restrict');
 
         //Check if the user dont have the ROLE_COMMUNITY_MANAGER right yet
         if (!$this->userManager->checkUserHaveAuthItem($user, $authItem)) {
@@ -299,11 +306,29 @@ class CommunityManager
             $userAuthAssignment->setAuthItem($authItem);
             $user->addUserAuthAssignment($userAuthAssignment);
 
+            $userAuthAssignmentRestrist = new UserAuthAssignment();
+            $userAuthAssignmentRestrist->setAuthItem($authItemRestrict);
+            $user->addUserAuthAssignment($userAuthAssignmentRestrist);
+
             $this->entityManager->persist($user);
         }
         $this->entityManager->persist($community);
         $this->entityManager->flush();
 
         return $community;
+    }
+
+    /**
+     * Persist and save community User for POST
+     *
+     * @param CommunityUser       $communityUser           The community user to create
+     * @return void
+     */
+    public function saveCommunityUser(CommunityUser $communityUser)
+    {
+        $this->entityManager->persist($communityUser);
+        $this->entityManager->flush();
+
+        return $communityUser;
     }
 }

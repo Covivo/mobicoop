@@ -45,7 +45,7 @@ final class DynamicItemDataProvider implements ItemDataProviderInterface, Restri
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Dynamic::class === $resourceClass;
+        return Dynamic::class === $resourceClass && $operationName =="get";
     }
     
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Dynamic
