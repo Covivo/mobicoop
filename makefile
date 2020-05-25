@@ -140,3 +140,6 @@ go-platform:
 
 go-db:
 	@docker exec -it mobicoop_db bash
+
+connect:
+	@docker exec -it mobicoop_platform /bin/bash

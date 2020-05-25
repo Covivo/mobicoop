@@ -7,9 +7,9 @@ import {
   Filter,
   TextField,
   EditButton,
-  BooleanInput,
   ReferenceInput,
   SelectInput,
+  NullableBooleanInput,
 } from 'react-admin';
 
 import { DayField } from './Fields/DayField';
@@ -19,13 +19,21 @@ import { RoleField } from './Fields/RoleField';
 const SolidaryUserVolunteerFilter = (props) => (
   <Filter {...props}>
     <TextInput source="givenName" alwaysOn />
-    <ReferenceInput alwaysOn label="Post" source="solidary" reference="solidaries">
-      <SelectInput optionText="title" />
-    </ReferenceInput>
-    <BooleanInput
-      label="custom.solidary_volunteers.filters.validatedCandidate"
-      source="validatedCandidate"
+    <TextInput source="familyName" alwaysOn />
+    <ReferenceInput
       alwaysOn
+      label="custom.solidary_volunteers.input.solidary"
+      source="solidary"
+      reference="solidaries"
+    >
+      <SelectInput optionText="id" />
+    </ReferenceInput>
+    <NullableBooleanInput
+      alwaysOn
+      displayNull
+      label="custom.solidary_volunteers.input.validatedCandidate"
+      source="validatedCandidate"
+      choices={[{ id: false, name: 'Candidats' }]}
     />
   </Filter>
 );

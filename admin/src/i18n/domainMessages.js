@@ -1,4 +1,5 @@
 const fr = {
+  ra: { boolean: { null: 'Tous' } },
   resources: {
     solidary_volunteers: {
       fields: {
@@ -22,9 +23,16 @@ const fr = {
         availability: 'Disponibilité',
         planning: 'Planning',
         submission: 'Candidature',
+        morning: 'Matin',
+        afternoon: 'Après-midi',
+        evening: 'Soirée',
       },
-      filters: {
+      input: {
         validatedCandidate: 'Candidature acceptée',
+        rejectedCandidate: 'Candidature refusée',
+        acceptCandidate: 'Accepter candidature',
+        rejectCandidate: 'Rejeter candidature',
+        solidary: 'Demande solidaire',
       },
     },
     dashboard: {
@@ -214,6 +222,7 @@ const fr = {
 };
 
 const en = {
+  ra: { boolean: { null: 'All' } },
   custom: {},
 };
 

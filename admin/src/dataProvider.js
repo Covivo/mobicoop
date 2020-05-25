@@ -4,6 +4,7 @@ import { fetchHydra as baseFetchHydra } from '@api-platform/admin';
 import baseDataProvider from '@api-platform/admin/lib/hydra/dataProvider';
 import { Redirect } from 'react-router-dom';
 import { fetchUtils } from 'react-admin';
+import { dataProviderAdapter } from './dataProviderAdapter';
 
 const entrypoint = process.env.REACT_APP_API;
 const token = global.localStorage.getItem('token');
@@ -14,6 +15,7 @@ const currentUser = global.localStorage.getItem('id');
 const fetchHeaders = () => {
   return { Authorization: `Bearer ${global.localStorage.getItem('token')}` };
 };
+
 const fetchHydra = (url, options = {}) =>
   baseFetchHydra(url, {
     ...options,
@@ -32,7 +34,7 @@ const apiDocumentationParser = (entrypoint) =>
               {
                 props: {
                   path: '/',
-                  render: () => <Redirect to={`/login`} />,
+                  render: () => <Redirect to="/login" />,
                 },
               },
             ],
@@ -46,7 +48,7 @@ const apiDocumentationParser = (entrypoint) =>
 
 const dataProvider = baseDataProvider(entrypoint, fetchHydra, apiDocumentationParser);
 
-export default {
+export default dataProviderAdapter({
   ...dataProvider,
   create: (resource, params) => {
     if (resource !== 'users') {
@@ -61,119 +63,119 @@ export default {
 
     /* Rewrite roles for fit with api */
     let newRoles = [];
-    params.data.fields.forEach(function (v) {
+    const newParams = { ...params };
+
+    newParams.data.fields.forEach(function (v) {
       var territory = v.territory;
       v.roles.forEach(function (r) {
-        v != null
-          ? newRoles.push({ authItem: r, territory: territory })
-          : newRoles.push({ authItem: r });
+        v != null ? newRoles.push({ authItem: r, territory }) : newRoles.push({ authItem: r });
       });
     });
-    params.data.userAuthAssignments = newRoles;
+
+    newParams.data.userAuthAssignments = newRoles;
     /* Rewrite roles for fit with api */
 
     /* Rewrite adresse for API */
-    params.data.addresses = [];
-    params.data.addresses[0] = params.data.address;
-    params.data.addresses[0].home = true;
+    newParams.data.addresses = [];
+    newParams.data.addresses[0] = newParams.data.address;
+    newParams.data.addresses[0].home = true;
 
     /* Add custom fields fo fit with api */
-    params.data.passwordSendType = 1;
-    params.data.language = 'fr_FR';
-    params.data.userDelegate = '/users/' + currentUser;
+    newParams.data.passwordSendType = 1;
+    newParams.data.language = 'fr_FR';
+    newParams.data.userDelegate = `/users/${currentUser}`;
     /* Add custom fields fo fit with api */
 
     return httpClient(`${apiUrlCreateUSer}`, {
       method: 'POST',
-      body: JSON.stringify(params.data),
+      body: JSON.stringify(newParams.data),
       headers: options.headers,
     }).then(({ json }) => ({
-      data: { ...params.data, id: json.id },
+      data: { ...newParams.data, id: json.id },
     }));
   },
   getOne: (resource, params) => {
     if (resource !== 'users') {
       // fallback to the default implementation
       return dataProvider.getOne(resource, params);
-    } else {
-      var lid = params.id.search('users') === -1 ? 'users/' + params.id : params.id;
-
-      return dataProvider.getOne('users', { id: lid }).then(({ data }) =>
-        Promise.all(
-          data.userAuthAssignments.map((element) =>
-            dataProvider
-              .getOne('userAuthAssignments', { id: element })
-              .then(({ data }) => data)
-              .catch((error) => {
-                console.log('Erreur lors de la récupération des droits:', error);
-              })
-          )
-        ).then(
-          // We fill the array rolesTerritory with good format for admin
-          (dataThen) => {
-            data.rolesTerritory = dataThen.reduce((acc, val) => {
-              var territory = val.territory == null ? 'null' : val.territory;
-
-              if (!acc[territory]) {
-                acc[territory] = [];
-              }
-              acc[territory].push(val.authItem);
-              return acc;
-            }, {});
-            return { data };
-          }
-        )
-      );
     }
+
+    var lid = params.id.search('users') === -1 ? 'users/' + params.id : params.id;
+
+    return dataProvider.getOne('users', { id: lid }).then(({ data }) =>
+      Promise.all(
+        data.userAuthAssignments.map((element) =>
+          dataProvider
+            .getOne('userAuthAssignments', { id: element })
+            .then(({ data }) => data)
+            .catch((error) => {
+              console.log('Erreur lors de la récupération des droits:', error);
+            })
+        )
+      ).then(
+        // We fill the array rolesTerritory with good format for admin
+        (dataThen) => {
+          data.rolesTerritory = dataThen.reduce((acc, val) => {
+            var territory = val.territory == null ? 'null' : val.territory;
+
+            if (!acc[territory]) {
+              acc[territory] = [];
+            }
+            acc[territory].push(val.authItem);
+            return acc;
+          }, {});
+          return { data };
+        }
+      )
+    );
   },
   getList: (resource, params) => {
-    if (resource == 'communities') {
-      //Add a the custom filter : Admin, so we can have full control of resultats in API side
-      resource = resource + '/accesFromAdminReact';
+    if (resource === 'communities') {
+      // Add a the custom filter : Admin, so we can have full control of resultats in API side
+      return dataProvider.getList(`${resource}/accesFromAdminReact`, params);
     }
+
     return dataProvider.getList(resource, params);
   },
   update: (resource, params) => {
-    if (resource !== 'users') {
-      // fallback to the default implementation
-      return dataProvider.update(resource, params);
-    } else {
-      const options = {};
-      if (!options.headers) {
-        options.headers = new global.Headers({ Accept: 'application/json' });
-      }
-      options.headers.set('Authorization', `Bearer ${token}`);
+    const newParams = { ...params };
 
-      /* Rewrite roles for fit with api */
-      let newRoles = [];
-      if (params.data.fields != null) {
-        params.data.fields.forEach(function (v) {
-          var territory = v.territory;
-          v.roles.forEach(function (r) {
-            v != null
-              ? newRoles.push({ authItem: r, territory: territory })
-              : newRoles.push({ authItem: r });
-          });
+    if (resource !== 'users') {
+      return dataProvider.update(resource, newParams);
+    }
+
+    const options = {};
+    options.headers = new global.Headers({ Accept: 'application/json' });
+    options.headers.set('Authorization', `Bearer ${token}`);
+
+    /* Rewrite roles for fit with api */
+    const newRoles = [];
+    if (newParams.data.fields != null) {
+      newParams.data.fields.forEach(function (v) {
+        var territory = v.territory;
+        v.roles.forEach(function (r) {
+          v != null
+            ? newRoles.push({ authItem: r, territory: territory })
+            : newRoles.push({ authItem: r });
         });
-      } else {
-        for (const territory in params.data.rolesTerritory) {
-          for (const r in params.data.rolesTerritory[territory]) {
-            const role = params.data.rolesTerritory[territory][r];
-            territory != null
-              ? newRoles.push({ authItem: role, territory: territory })
-              : newRoles.push({ authItem: role });
-          }
+      });
+    } else {
+      for (const territory in newParams.data.rolesTerritory) {
+        for (const r in newParams.data.rolesTerritory[territory]) {
+          const role = newParams.data.rolesTerritory[territory][r];
+          territory != null
+            ? newRoles.push({ authItem: role, territory: territory })
+            : newRoles.push({ authItem: role });
         }
       }
-
-      params.data.userAuthAssignments = newRoles;
-      /* Rewrite roles for fit with api */
-
-      return dataProvider.update('users', {
-        id: params.id,
-        data: params.data,
-        previousData: params.data.previousData,
-      });
     }
+
+    newParams.data.userAuthAssignments = newRoles;
+    /* Rewrite roles for fit with api */
+    return dataProvider.update('users', {
+      id: newParams.data.originId,
+      data: newParams.data,
+      previousData: newParams.data.previousData,
+    });
   },
-};
+});
