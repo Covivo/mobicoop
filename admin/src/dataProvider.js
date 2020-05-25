@@ -117,11 +117,9 @@ export default {
           // We fill the array rolesTerritory with good format for admin
           (dataThen) => {
             data.rolesTerritory = dataThen.reduce((acc, val) => {
-              var territory = val.territory == null ? 'null' : val.territory;
-              if (!acc[territory]) {
-                acc[territory] = [];
-              }
-              acc[territory].push(val.authItem);
+    
+              acc[val.authItem] = val.territory != null ? val.territory : null ;
+            
               return acc;
             }, {});
             return { data };
@@ -153,12 +151,17 @@ export default {
       if (params.data.fields != null) {
         params.data.fields.forEach(function (v) {
           var territory = v.territory;
-          v.roles.forEach(function (r) {
-            v != null
-              ? newRoles.push({ authItem: r, territory: territory })
-              : newRoles.push({ authItem: r });
-          });
+            //There is many roles
+            if (Array.isArray(v.roles) ){
+              v.roles.forEach(function(r){
+                v != null ?  newRoles.push({"authItem": r, "territory": territory}) :   newRoles.push({"authItem": r});
+              });
+            //There is just 1 roles
+            }else{
+              v != null ?  newRoles.push({"authItem": v.roles, "territory": territory}) :   newRoles.push({"authItem": v.roles});
+            }
         });
+        
       } else {
         for (const territory in params.data.rolesTerritory) {
           for (const r in params.data.rolesTerritory[territory]) {

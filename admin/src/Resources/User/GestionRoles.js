@@ -53,12 +53,13 @@ const GestionRoles = ({ record }) => {
   }, []);
 
   useEffect(() => {
+
     console.info(record.rolesTerritory)
     if (record.rolesTerritory) {
       // We clear fields in case of an Edit
       setFields([]);
-      for (const [territory, roles] of Object.entries(record.rolesTerritory)) {
-        if (territory != 'null') {
+      for (const [roles, territory] of Object.entries(record.rolesTerritory)) {
+        if (territory != null) {
           dataProvider
           .getOne('territories', { id: territory })
           .then(({ data }) => {
