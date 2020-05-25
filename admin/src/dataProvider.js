@@ -61,13 +61,18 @@ export default {
 
     /* Rewrite roles for fit with api */
     let newRoles = [];
-    params.data.fields.forEach(function (v) {
-      var territory = v.territory;
-      v.roles.forEach(function (r) {
-        v != null
-          ? newRoles.push({ authItem: r, territory: territory })
-          : newRoles.push({ authItem: r });
-      });
+    params.data.fields.forEach(function(v){
+        var territory = v.territory;
+        //There is many roles
+          if (Array.isArray(v.roles) ){
+            v.roles.forEach(function(r){
+              v != null ?  newRoles.push({"authItem": r, "territory": territory}) :   newRoles.push({"authItem": r});
+            });
+          //There is just 1 roles
+        }else{
+          v != null ?  newRoles.push({"authItem": v.roles, "territory": territory}) :   newRoles.push({"authItem": v.roles});
+        }
+
     });
     params.data.userAuthAssignments = newRoles;
     /* Rewrite roles for fit with api */
@@ -129,7 +134,7 @@ export default {
   getList: (resource, params) => {
     if (resource == 'communities') {
       //Add a the custom filter : Admin, so we can have full control of resultats in API side
-      resource = resource + '/accesFromAdminReact';
+      resource = resource + '/manage';
     }
     return dataProvider.getList(resource, params);
   },
