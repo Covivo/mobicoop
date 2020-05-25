@@ -118,7 +118,7 @@ class SolidaryUserManager
     public function getSolidaryBeneficiary(int $id): SolidaryBeneficiary
     {
         // Get the structure of the Admin
-        $structures = $this->structureRepository->findByUser($this->security->getUser());
+        $structures = $this->security->getUser()->getSolidaryStructures();
         $structureAdmin = null;
         if (!is_null($structures) || count($structures)>0) {
             $structureAdmin = $structures[0];
@@ -246,7 +246,7 @@ class SolidaryUserManager
     public function getSolidaryVolunteer(int $id): SolidaryVolunteer
     {
         // Get the structure of the Admin
-        $structures = $this->structureRepository->findByUser($this->security->getUser());
+        $structures = $this->security->getUser()->getSolidaryStructures();
         $structureAdmin = null;
         if (!is_null($structures) || count($structures)>0) {
             $structureAdmin = $structures[0];
@@ -488,7 +488,7 @@ class SolidaryUserManager
         $solidaryBeneficiaryStructure = $solidaryBeneficiary->getStructure();
         if (is_null($solidaryBeneficiaryStructure)) {
             // We get the Structure of the Admin to set the SolidaryUserStructure
-            $structures = $this->structureRepository->findByUser($this->security->getUser());
+            $structures = $this->security->getUser()->getSolidaryStructures();
             $structureAdmin = null;
             if (!is_null($structures) || count($structures)>0) {
                 $solidaryBeneficiaryStructure = $structures[0];
@@ -665,13 +665,12 @@ class SolidaryUserManager
         $solidaryVolunteerStructure = $solidaryVolunteer->getStructure();
         if (is_null($solidaryVolunteerStructure)) {
             // We get the Structure of the Admin to set the SolidaryUserStructure
-            $structures = $this->structureRepository->findByUser($this->security->getUser());
-           
-            $structureAdmin = null;
+            $structures = $this->security->getUser()->getSolidaryStructures();
             if (!is_null($structures) || count($structures)>0) {
                 $solidaryVolunteerStructure = $structures[0];
             }
         }
+        
         $solidaryUserStructure = new SolidaryUserStructure();
         $solidaryUserStructure->setStructure($solidaryVolunteerStructure);
         $solidaryUserStructure->setSolidaryUser($solidaryUser);
@@ -925,7 +924,7 @@ class SolidaryUserManager
         // If there a Structure given, we use it. Otherwise we use the first admin structure
         if (is_null($structure)) {
             // We get the Structure of the Admin to set the SolidaryUserStructure
-            $structures = $this->structureRepository->findByUser($this->security->getUser());
+            $structures = $this->security->getUser()->getSolidaryStructures();
             if (!is_null($structures) || count($structures)>0) {
                 $structure = $structures[0];
             }
@@ -995,7 +994,7 @@ class SolidaryUserManager
         // If there a Structure given, we use it. Otherwise we use the first admin structure
         if (is_null($structure)) {
             // We get the Structure of the Admin to set the SolidaryUserStructure
-            $structures = $this->structureRepository->findByUser($this->security->getUser());
+            $structures = $this->security->getUser()->getSolidaryStructures();
             if (!is_null($structures) || count($structures)>0) {
                 $structure = $structures[0];
             }

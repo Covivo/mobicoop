@@ -58,7 +58,7 @@ export default {
       label: "Enregistrer",
       route: "/utilisateur/preferences-covoiturage/modifier"
     },
-    success: "Préférences de co-voiturage mises à jour avec succès !",
+    success: "Préférences de covoiturage mises à jour avec succès !",
     error:  "Une erreur est survenue."
   }
 }

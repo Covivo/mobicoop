@@ -70,6 +70,17 @@ class AskManager
         $this->resultManager = $resultManager;
         $this->logger = $logger;
     }
+
+    /**
+     * Get an ask by its id
+     *
+     * @param integer $id   The id of the ask to find
+     * @return Ask          The ask found or null if not found
+     */
+    public function getAsk(int $id)
+    {
+        return $this->askRepository->find($id);
+    }
     
     /**
      * Create an ask.
@@ -118,56 +129,6 @@ class AskManager
         $this->entityManager->persist($askHistory);
 
         return $askHistory;
-    }
-
-    /**
-     * Create an ask from already matched Proposal
-     *
-     * @param Proposal $proposal The new Proposal
-     * @param Matching $matching between those two proposals
-     * @param bool $formal Create a formal ask
-     * @param Ask $askOpposite Opposite ask if relevant
-     */
-    public function createAskFromMatchedProposal(Proposal $proposal, Matching $matching, bool $formal=false, ?Ask $askOpposite = null)
-    {
-        $ask = new Ask();
-        if ($formal) {
-            // if it's a formal ask, the status is pending
-            $ask->setStatus(Ask::STATUS_PENDING);
-        } else {
-            // if it's not a formal ask, the status is initiated
-            $ask->setStatus(Ask::STATUS_INITIATED);
-        }
-        $ask->setType($proposal->getType());
-        $ask->setUser($proposal->getUser());
-        $ask->setMatching($matching);
-
-        // we use the matching criteria
-        $criteria = clone $matching->getCriteria();
-        $ask->setCriteria($criteria);
-        
-        // we use the matching waypoints
-        $waypoints = $matching->getWaypoints();
-        foreach ($waypoints as $waypoint) {
-            $ask->addWaypoint($waypoint);
-        }
-
-        if ($proposal->getAskLinked()) {
-            // there's already an ask linked to the proposal, it's the return trip
-            $ask->setAskLinked($proposal->getAskLinked());
-        } else {
-            // Ask History
-            $askHistory = new AskHistory();
-            $askHistory->setStatus($ask->getStatus());
-            $askHistory->setType($ask->getType());
-            $ask->addAskHistory($askHistory);
-        }
-
-        if ($askOpposite) {
-            $ask->setAskOpposite($askOpposite);
-        }
-        
-        return $this->createAsk($ask);
     }
 
     /**

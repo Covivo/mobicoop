@@ -15,7 +15,8 @@ final class Version20190709090039 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('SET FOREIGN_KEY_CHECKS=0;');
+        $this->addSql('ALTER TABLE notified DROP FOREIGN KEY FK_D23269D4B93F8B63');
+        $this->addSql('DROP INDEX IDX_D23269D4B93F8B63 ON notified');
         $this->addSql('ALTER TABLE notified CHANGE ask_id ask_history_id INT DEFAULT NULL');
         $this->addSql('SET FOREIGN_KEY_CHECKS=1;');
         $this->addSql('ALTER TABLE notified ADD CONSTRAINT FK_D23269D4885E0A12 FOREIGN KEY (ask_history_id) REFERENCES ask_history (id)');

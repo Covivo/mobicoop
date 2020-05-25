@@ -16,7 +16,7 @@
             "tokenError": "Erreur le code n'a pas été envoyé"
         },
         "avatar": {
-            "label": "Avatar",
+            "label": "Photo",
             "size": "Vous avez dépassé la taille maximale de l'avatar",
             "delete": {
                 "route": "/utilisateur/profil/avatar/supprimer",
@@ -29,7 +29,7 @@
         },
         "news": {
             "label": "Actualités du service {platform}  (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)",
-            "tooltip": "Les actualités du service sont des emails répondant uniquement à la finalité de vous maintenir informé des évolutions du service et favoriser votre pratique du covoiturage, comme des mises à jour de la plateforme ou des emails provenant du référent d'une communauté à laquelle vous appartenez. Aucune sollicitation commerciale n'est réalisée via ces emails.",
+            "tooltip": "Les actualités du service sont des emails répondant uniquement à la finalité de vous maintenir informé des évolutions du service et favoriser votre pratique du covoiturage. Comme des mises à jour de la plateforme ou des emails provenant du référent d'une communauté à laquelle vous appartenez. Ces informations peuvent concerner des mises à jour de la plateforme. Aucune sollicitation commerciale n'est réalisée via ces emails.",
             "confirmation": {
                 "title": "Confirmation de désinscription",
                 "content": "Attention, en vous désinscrivant de ces actualités de service, vous ne recevrez plus aucune information sur tous les sujets suivants :<br><ul><li>nouvelles fonctionnalités et nouveaux services de la plate-forme</li><li>actualités covoiturage de votre territoire</li><li>actualités de vos communautés</li><li>accompagnement personnalisé</li></ul><br>Êtes-vous sûr de vouloir vous désinscrire ?"
