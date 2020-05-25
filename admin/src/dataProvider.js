@@ -118,7 +118,6 @@ export default {
           (dataThen) => {
             data.rolesTerritory = dataThen.reduce((acc, val) => {
               var territory = val.territory == null ? 'null' : val.territory;
-
               if (!acc[territory]) {
                 acc[territory] = [];
               }
