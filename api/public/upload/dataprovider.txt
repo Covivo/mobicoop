@@ -1,0 +1,538 @@
+v2/journeysArray
+(
+    [base_uri] => GuzzleHttp\Psr7\Uri Object
+        (
+            [scheme:GuzzleHttp\Psr7\Uri:private] => https
+            [userInfo:GuzzleHttp\Psr7\Uri:private] => 
+            [host:GuzzleHttp\Psr7\Uri:private] => api-staging.covoiturage.beta.gouv.fr
+            [port:GuzzleHttp\Psr7\Uri:private] => 
+            [path:GuzzleHttp\Psr7\Uri:private] => 
+            [query:GuzzleHttp\Psr7\Uri:private] => 
+            [fragment:GuzzleHttp\Psr7\Uri:private] => 
+        )
+
+    [handler] => GuzzleHttp\HandlerStack Object
+        (
+            [handler:GuzzleHttp\HandlerStack:private] => Closure Object
+                (
+                    [static] => Array
+                        (
+                            [default] => Closure Object
+                                (
+                                    [static] => Array
+                                        (
+                                            [default] => GuzzleHttp\Handler\CurlMultiHandler Object
+                                                (
+                                                    [factory:GuzzleHttp\Handler\CurlMultiHandler:private] => GuzzleHttp\Handler\CurlFactory Object
+                                                        (
+                                                            [handles:GuzzleHttp\Handler\CurlFactory:private] => Array
+                                                                (
+                                                                )
+
+                                                            [maxHandles:GuzzleHttp\Handler\CurlFactory:private] => 50
+                                                        )
+
+                                                    [selectTimeout:GuzzleHttp\Handler\CurlMultiHandler:private] => 1
+                                                    [active:GuzzleHttp\Handler\CurlMultiHandler:private] => 
+                                                    [handles:GuzzleHttp\Handler\CurlMultiHandler:private] => Array
+                                                        (
+                                                        )
+
+                                                    [delays:GuzzleHttp\Handler\CurlMultiHandler:private] => Array
+                                                        (
+                                                        )
+
+                                                    [options:GuzzleHttp\Handler\CurlMultiHandler:private] => Array
+                                                        (
+                                                        )
+
+                                                )
+
+                                            [sync] => GuzzleHttp\Handler\CurlHandler Object
+                                                (
+                                                    [factory:GuzzleHttp\Handler\CurlHandler:private] => GuzzleHttp\Handler\CurlFactory Object
+                                                        (
+                                                            [handles:GuzzleHttp\Handler\CurlFactory:private] => Array
+                                                                (
+                                                                )
+
+                                                            [maxHandles:GuzzleHttp\Handler\CurlFactory:private] => 3
+                                                        )
+
+                                                )
+
+                                        )
+
+                                    [parameter] => Array
+                                        (
+                                            [$request] => <required>
+                                            [$options] => <required>
+                                        )
+
+                                )
+
+                            [streaming] => GuzzleHttp\Handler\StreamHandler Object
+                                (
+                                    [lastHeaders:GuzzleHttp\Handler\StreamHandler:private] => Array
+                                        (
+                                        )
+
+                                )
+
+                        )
+
+                    [parameter] => Array
+                        (
+                            [$request] => <required>
+                            [$options] => <required>
+                        )
+
+                )
+
+            [stack:GuzzleHttp\HandlerStack:private] => Array
+                (
+                    [0] => Array
+                        (
+                            [0] => Closure Object
+                                (
+                                    [parameter] => Array
+                                        (
+                                            [$handler] => <required>
+                                        )
+
+                                )
+
+                            [1] => http_errors
+                        )
+
+                    [1] => Array
+                        (
+                            [0] => Closure Object
+                                (
+                                    [parameter] => Array
+                                        (
+                                            [$handler] => <required>
+                                        )
+
+                                )
+
+                            [1] => allow_redirects
+                        )
+
+                    [2] => Array
+                        (
+                            [0] => Closure Object
+                                (
+                                    [parameter] => Array
+                                        (
+                                            [$handler] => <required>
+                                        )
+
+                                )
+
+                            [1] => cookies
+                        )
+
+                    [3] => Array
+                        (
+                            [0] => Closure Object
+                                (
+                                    [parameter] => Array
+                                        (
+                                            [$handler] => <required>
+                                        )
+
+                                )
+
+                            [1] => prepare_body
+                        )
+
+                )
+
+            [cached:GuzzleHttp\HandlerStack:private] => 
+        )
+
+    [allow_redirects] => Array
+        (
+            [max] => 5
+            [protocols] => Array
+                (
+                    [0] => http
+                    [1] => https
+                )
+
+            [strict] => 
+            [referer] => 
+            [track_redirects] => 
+        )
+
+    [http_errors] => 1
+    [decode_content] => 1
+    [verify] => 1
+    [cookies] => 
+    [idn_conversion] => 1
+    [headers] => Array
+        (
+            [User-Agent] => GuzzleHttp/6.5.1 curl/7.58.0 PHP/7.2.19-1+ubuntu18.04.1+deb.sury.org+1
+        )
+
+)
+{"headers":{"Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZTJiNTNkNzlhY2QyMDA0MTJhNzhlYiIsImFwcCI6IjVjZTUzY2QxNjVmY2YzMDA0MWQwNjIwMSIsImlhdCI6MTU1ODUyNzE4NX0.GcJcYDiBKph4e7-tjmCTMV4QOtKQFEpykA41t6yz7fo","Content-Type":"application\/json"},"json":{"journey_id":"4","operator_class":"A","passenger":{"identity":{"email":"jean@free.fr","phone":"0611784512"},"start":{"datetime":"2020-05-21T18:02:39Z","lon":6.170518,"lat":49.114581},"end":{"datetime":"2020-05-21T18:43:53Z","lon":6.176937,"lat":48.661642},"seats":1,"contribution":400,"incentives":[]},"driver":{"identity":{"email":"sylvain.briat@free.fr","phone":"0611781225"},"start":{"datetime":"2020-05-21T18:00:00Z","lon":6.17963,"lat":49.115164},"end":{"datetime":"2020-05-21T18:50:26Z","lon":6.178289,"lat":48.690303},"revenue":400,"incentives":[]}}}v2/journeysArray
+(
+    [base_uri] => GuzzleHttp\Psr7\Uri Object
+        (
+            [scheme:GuzzleHttp\Psr7\Uri:private] => https
+            [userInfo:GuzzleHttp\Psr7\Uri:private] => 
+            [host:GuzzleHttp\Psr7\Uri:private] => api-staging.covoiturage.beta.gouv.fr
+            [port:GuzzleHttp\Psr7\Uri:private] => 
+            [path:GuzzleHttp\Psr7\Uri:private] => 
+            [query:GuzzleHttp\Psr7\Uri:private] => 
+            [fragment:GuzzleHttp\Psr7\Uri:private] => 
+        )
+
+    [handler] => GuzzleHttp\HandlerStack Object
+        (
+            [handler:GuzzleHttp\HandlerStack:private] => Closure Object
+                (
+                    [static] => Array
+                        (
+                            [default] => Closure Object
+                                (
+                                    [static] => Array
+                                        (
+                                            [default] => GuzzleHttp\Handler\CurlMultiHandler Object
+                                                (
+                                                    [factory:GuzzleHttp\Handler\CurlMultiHandler:private] => GuzzleHttp\Handler\CurlFactory Object
+                                                        (
+                                                            [handles:GuzzleHttp\Handler\CurlFactory:private] => Array
+                                                                (
+                                                                )
+
+                                                            [maxHandles:GuzzleHttp\Handler\CurlFactory:private] => 50
+                                                        )
+
+                                                    [selectTimeout:GuzzleHttp\Handler\CurlMultiHandler:private] => 1
+                                                    [active:GuzzleHttp\Handler\CurlMultiHandler:private] => 
+                                                    [handles:GuzzleHttp\Handler\CurlMultiHandler:private] => Array
+                                                        (
+                                                        )
+
+                                                    [delays:GuzzleHttp\Handler\CurlMultiHandler:private] => Array
+                                                        (
+                                                        )
+
+                                                    [options:GuzzleHttp\Handler\CurlMultiHandler:private] => Array
+                                                        (
+                                                        )
+
+                                                )
+
+                                            [sync] => GuzzleHttp\Handler\CurlHandler Object
+                                                (
+                                                    [factory:GuzzleHttp\Handler\CurlHandler:private] => GuzzleHttp\Handler\CurlFactory Object
+                                                        (
+                                                            [handles:GuzzleHttp\Handler\CurlFactory:private] => Array
+                                                                (
+                                                                )
+
+                                                            [maxHandles:GuzzleHttp\Handler\CurlFactory:private] => 3
+                                                        )
+
+                                                )
+
+                                        )
+
+                                    [parameter] => Array
+                                        (
+                                            [$request] => <required>
+                                            [$options] => <required>
+                                        )
+
+                                )
+
+                            [streaming] => GuzzleHttp\Handler\StreamHandler Object
+                                (
+                                    [lastHeaders:GuzzleHttp\Handler\StreamHandler:private] => Array
+                                        (
+                                        )
+
+                                )
+
+                        )
+
+                    [parameter] => Array
+                        (
+                            [$request] => <required>
+                            [$options] => <required>
+                        )
+
+                )
+
+            [stack:GuzzleHttp\HandlerStack:private] => Array
+                (
+                    [0] => Array
+                        (
+                            [0] => Closure Object
+                                (
+                                    [parameter] => Array
+                                        (
+                                            [$handler] => <required>
+                                        )
+
+                                )
+
+                            [1] => http_errors
+                        )
+
+                    [1] => Array
+                        (
+                            [0] => Closure Object
+                                (
+                                    [parameter] => Array
+                                        (
+                                            [$handler] => <required>
+                                        )
+
+                                )
+
+                            [1] => allow_redirects
+                        )
+
+                    [2] => Array
+                        (
+                            [0] => Closure Object
+                                (
+                                    [parameter] => Array
+                                        (
+                                            [$handler] => <required>
+                                        )
+
+                                )
+
+                            [1] => cookies
+                        )
+
+                    [3] => Array
+                        (
+                            [0] => Closure Object
+                                (
+                                    [parameter] => Array
+                                        (
+                                            [$handler] => <required>
+                                        )
+
+                                )
+
+                            [1] => prepare_body
+                        )
+
+                )
+
+            [cached:GuzzleHttp\HandlerStack:private] => 
+        )
+
+    [allow_redirects] => Array
+        (
+            [max] => 5
+            [protocols] => Array
+                (
+                    [0] => http
+                    [1] => https
+                )
+
+            [strict] => 
+            [referer] => 
+            [track_redirects] => 
+        )
+
+    [http_errors] => 1
+    [decode_content] => 1
+    [verify] => 1
+    [cookies] => 
+    [idn_conversion] => 1
+    [headers] => Array
+        (
+            [User-Agent] => GuzzleHttp/6.5.1 curl/7.58.0 PHP/7.2.19-1+ubuntu18.04.1+deb.sury.org+1
+        )
+
+)
+{"headers":{"Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZTJiNTNkNzlhY2QyMDA0MTJhNzhlYiIsImFwcCI6IjVjZTUzY2QxNjVmY2YzMDA0MWQwNjIwMSIsImlhdCI6MTU1ODUyNzE4NX0.GcJcYDiBKph4e7-tjmCTMV4QOtKQFEpykA41t6yz7fo","Content-Type":"application\/json"},"json":{"journey_id":"5","operator_class":"A","passenger":{"identity":{"email":"jean@free.fr","phone":"0611784512"},"start":{"datetime":"2020-05-20T07:07:15Z","lon":6.176937,"lat":48.661642},"end":{"datetime":"2020-05-20T07:49:37Z","lon":6.170518,"lat":49.114581},"seats":1,"contribution":400,"incentives":[]},"driver":{"identity":{"email":"sylvain.briat@free.fr","phone":"0611781225"},"start":{"datetime":"2020-05-20T07:00:00Z","lon":6.178289,"lat":48.690303},"end":{"datetime":"2020-05-20T07:52:11Z","lon":6.17963,"lat":49.115164},"revenue":400,"incentives":[]}}}v2/journeysArray
+(
+    [base_uri] => GuzzleHttp\Psr7\Uri Object
+        (
+            [scheme:GuzzleHttp\Psr7\Uri:private] => https
+            [userInfo:GuzzleHttp\Psr7\Uri:private] => 
+            [host:GuzzleHttp\Psr7\Uri:private] => api-staging.covoiturage.beta.gouv.fr
+            [port:GuzzleHttp\Psr7\Uri:private] => 
+            [path:GuzzleHttp\Psr7\Uri:private] => 
+            [query:GuzzleHttp\Psr7\Uri:private] => 
+            [fragment:GuzzleHttp\Psr7\Uri:private] => 
+        )
+
+    [handler] => GuzzleHttp\HandlerStack Object
+        (
+            [handler:GuzzleHttp\HandlerStack:private] => Closure Object
+                (
+                    [static] => Array
+                        (
+                            [default] => Closure Object
+                                (
+                                    [static] => Array
+                                        (
+                                            [default] => GuzzleHttp\Handler\CurlMultiHandler Object
+                                                (
+                                                    [factory:GuzzleHttp\Handler\CurlMultiHandler:private] => GuzzleHttp\Handler\CurlFactory Object
+                                                        (
+                                                            [handles:GuzzleHttp\Handler\CurlFactory:private] => Array
+                                                                (
+                                                                )
+
+                                                            [maxHandles:GuzzleHttp\Handler\CurlFactory:private] => 50
+                                                        )
+
+                                                    [selectTimeout:GuzzleHttp\Handler\CurlMultiHandler:private] => 1
+                                                    [active:GuzzleHttp\Handler\CurlMultiHandler:private] => 
+                                                    [handles:GuzzleHttp\Handler\CurlMultiHandler:private] => Array
+                                                        (
+                                                        )
+
+                                                    [delays:GuzzleHttp\Handler\CurlMultiHandler:private] => Array
+                                                        (
+                                                        )
+
+                                                    [options:GuzzleHttp\Handler\CurlMultiHandler:private] => Array
+                                                        (
+                                                        )
+
+                                                )
+
+                                            [sync] => GuzzleHttp\Handler\CurlHandler Object
+                                                (
+                                                    [factory:GuzzleHttp\Handler\CurlHandler:private] => GuzzleHttp\Handler\CurlFactory Object
+                                                        (
+                                                            [handles:GuzzleHttp\Handler\CurlFactory:private] => Array
+                                                                (
+                                                                )
+
+                                                            [maxHandles:GuzzleHttp\Handler\CurlFactory:private] => 3
+                                                        )
+
+                                                )
+
+                                        )
+
+                                    [parameter] => Array
+                                        (
+                                            [$request] => <required>
+                                            [$options] => <required>
+                                        )
+
+                                )
+
+                            [streaming] => GuzzleHttp\Handler\StreamHandler Object
+                                (
+                                    [lastHeaders:GuzzleHttp\Handler\StreamHandler:private] => Array
+                                        (
+                                        )
+
+                                )
+
+                        )
+
+                    [parameter] => Array
+                        (
+                            [$request] => <required>
+                            [$options] => <required>
+                        )
+
+                )
+
+            [stack:GuzzleHttp\HandlerStack:private] => Array
+                (
+                    [0] => Array
+                        (
+                            [0] => Closure Object
+                                (
+                                    [parameter] => Array
+                                        (
+                                            [$handler] => <required>
+                                        )
+
+                                )
+
+                            [1] => http_errors
+                        )
+
+                    [1] => Array
+                        (
+                            [0] => Closure Object
+                                (
+                                    [parameter] => Array
+                                        (
+                                            [$handler] => <required>
+                                        )
+
+                                )
+
+                            [1] => allow_redirects
+                        )
+
+                    [2] => Array
+                        (
+                            [0] => Closure Object
+                                (
+                                    [parameter] => Array
+                                        (
+                                            [$handler] => <required>
+                                        )
+
+                                )
+
+                            [1] => cookies
+                        )
+
+                    [3] => Array
+                        (
+                            [0] => Closure Object
+                                (
+                                    [parameter] => Array
+                                        (
+                                            [$handler] => <required>
+                                        )
+
+                                )
+
+                            [1] => prepare_body
+                        )
+
+                )
+
+            [cached:GuzzleHttp\HandlerStack:private] => 
+        )
+
+    [allow_redirects] => Array
+        (
+            [max] => 5
+            [protocols] => Array
+                (
+                    [0] => http
+                    [1] => https
+                )
+
+            [strict] => 
+            [referer] => 
+            [track_redirects] => 
+        )
+
+    [http_errors] => 1
+    [decode_content] => 1
+    [verify] => 1
+    [cookies] => 
+    [idn_conversion] => 1
+    [headers] => Array
+        (
+            [User-Agent] => GuzzleHttp/6.5.1 curl/7.58.0 PHP/7.2.19-1+ubuntu18.04.1+deb.sury.org+1
+        )
+
+)
+{"headers":{"Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjZTJiNTNkNzlhY2QyMDA0MTJhNzhlYiIsImFwcCI6IjVjZTUzY2QxNjVmY2YzMDA0MWQwNjIwMSIsImlhdCI6MTU1ODUyNzE4NX0.GcJcYDiBKph4e7-tjmCTMV4QOtKQFEpykA41t6yz7fo","Content-Type":"application\/json"},"json":{"journey_id":"6","operator_class":"A","passenger":{"identity":{"email":"jean@free.fr","phone":"0611784512"},"start":{"datetime":"2020-05-20T18:02:39Z","lon":6.170518,"lat":49.114581},"end":{"datetime":"2020-05-20T18:43:53Z","lon":6.176937,"lat":48.661642},"seats":1,"contribution":400,"incentives":[]},"driver":{"identity":{"email":"sylvain.briat@free.fr","phone":"0611781225"},"start":{"datetime":"2020-05-20T18:00:00Z","lon":6.17963,"lat":49.115164},"end":{"datetime":"2020-05-20T18:50:26Z","lon":6.178289,"lat":48.690303},"revenue":400,"incentives":[]}}}

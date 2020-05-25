@@ -284,6 +284,11 @@ services:
         tags:
             - { name: monolog.logger, channel: community }
 
+    # Data provider
+    App\DataProvider\Service\DataProvider:
+        tags:
+            - { name: monolog.logger, channel: data_provider }
+
     # Event
     App\Event\Controller\:
         resource: '../src/Event/Controller'

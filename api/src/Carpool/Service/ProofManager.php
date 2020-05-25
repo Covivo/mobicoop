@@ -510,7 +510,9 @@ class ProofManager
             /**
              * @var CarpoolProof $proof
              */
-            if ($this->provider->postCollection($proof)) {
+            $result = $this->provider->postCollection($proof);
+            $this->logger->info("Result of the send for proof #" . $proof->getId() . " : code " . $result->getCode() . " | value : ".$result->getValue());
+            if ($result->getCode() == 200) {
                 $proof->setStatus(CarpoolProof::STATUS_SENT);
             } else {
                 $proof->setStatus(CarpoolProof::STATUS_ERROR);
