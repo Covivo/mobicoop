@@ -81,7 +81,7 @@ export default () => (
       [
         <Resource name="users" {...(isAuthorized('user_manage') ? UserResource : {})} />,
         isAuthorized('community_manage') && <Resource name="communities" {...CommunityResource} />,
-        isAuthorized('community_manage') && (
+        isAuthorized('user_manage') && (
           <Resource name="community_users" {...CommunityUserResource} />
         ),
         isAuthorized('campaign_manage') && (
@@ -116,7 +116,6 @@ export default () => (
         // @TODO: Talk between us about that
         // <Resource name="addresses" {...AddressResource} />,
         // <Resource name="images" />,
-         <Resource name="permissions/roles" />,
         // <Resource name="territories" {...TerritoryResource} />,
       ].filter((x) => x)
     }
