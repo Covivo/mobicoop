@@ -1,17 +1,22 @@
 import React from 'react';
-import { Edit, TabbedForm, FormTab, TextInput, required } from 'react-admin';
+import { Edit, TabbedForm, FormTab } from 'react-admin';
+
+import { AvailabilityGridInput } from './Input/AvailabilityGridInput';
+import { ValidateCandidateInput } from './Input/ValidateCandidateInput';
+import { UserInformationField } from './Fields/UserInformationField';
 
 export const SolidaryUserVolunteerEdit = (props) => (
   <Edit {...props} title="Transporteurs Bénévoles > ajouter">
     <TabbedForm>
       <FormTab label="custom.solidary_volunteers.edit.availability">
-        <TextInput source="givenName" validate={required()} />
+        <UserInformationField />
+        <AvailabilityGridInput />
       </FormTab>
       <FormTab label="custom.solidary_volunteers.edit.planning">
         {/* @TODO: FILL THIS FORM PART */}
       </FormTab>
       <FormTab label="custom.solidary_volunteers.edit.submission">
-        {/* @TODO: FILL THIS FORM PART */}
+        <ValidateCandidateInput source="validatedCandidate" />
       </FormTab>
     </TabbedForm>
   </Edit>
