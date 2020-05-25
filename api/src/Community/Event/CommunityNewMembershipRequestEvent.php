@@ -24,6 +24,7 @@
 namespace App\Community\Event;
 
 use App\Community\Entity\Community;
+use App\User\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
 
@@ -36,14 +37,24 @@ class CommunityNewMembershipRequestEvent extends Event
     public const NAME = 'community_new_membership_request';
 
     private $community;
+    private $user;
 
-    public function __construct(Community $community)
+
+
+    public function __construct(Community $community, ?User $user)
     {
         $this->community = $community;
+        $this->user = $user;
     }
 
     public function getCommunity()
     {
         return $this->community;
     }
+
+        public function getUser()
+    {
+        return $this->user;
+    }
 }
+

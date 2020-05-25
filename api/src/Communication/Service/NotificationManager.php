@@ -133,6 +133,8 @@ class NotificationManager
      */
     public function notifies(string $action, User $recipient, ?object $object = null)
     {
+        // $this->logger->info($recipient->getId());
+
         if (!$this->enabled) {
             return;
         }
@@ -663,6 +665,9 @@ class NotificationManager
             switch (get_class($object)) {
                 case Proposal::class:
                     $notified->setProposal($object);
+                    break;
+                case Community::class:
+                    $notified->setCommunity($object);
                     break;
                 case Matching::class:
                     $notified->setMatching($object);

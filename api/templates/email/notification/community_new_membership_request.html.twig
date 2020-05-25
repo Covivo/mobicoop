@@ -7,8 +7,8 @@
                 <tr>
                     <td style="width:70%">
                         {<p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}</b></p>
-                        <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b> {{ "youReceivedExternalContact"|trans }} {{community.name}}</p>
-                        <p> {{ seeYouIn | trans }} </p>
+                        <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b> {{ "newMembershipSubscriber"|trans }} {{community.name}}</p>
+                        <p> {{ seeYouInAdmin | trans }} </p>
                    </td>
                 </tr>
             </table>

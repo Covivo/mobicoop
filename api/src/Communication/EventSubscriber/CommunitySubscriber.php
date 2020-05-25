@@ -24,38 +24,46 @@ namespace App\Communication\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
-use App\Community\Service\CommunityManager;
 use App\Community\Event\CommunityNewMembershipRequestEvent;
-use App\Community\Entity\Community;
-
 
 
 class CommunitySubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
 
-    public function __construct(NotificationManager $notificationManager, CommunityManager $communityManager)
+
+    public function __construct(NotificationManager $notificationManager)
     {
         $this->notificationManager = $notificationManager;
-        $this->communityManager = $communityManager;
     }
 
     public static function getSubscribedEvents()
     {
         return [
-            CommunityNewMembershipRequestEvent::NAME => 'onCommunityNewMembershipRequest',
+            CommunityNewMembershipRequestEvent::NAME => 'onCommunityNewMembershipRequest'
         ];
     }
+
+
     /**
-     * Executed when an user is joined a community with manual validation
+     * Executed when an user joined a community
      *
      * @param CommunityNewMembershipRequestEvent $event
      * @return void
      */
     public function onCommunityNewMembershipRequest(CommunityNewMembershipRequestEvent $event)
     {
-        if ($event->$this->getCommunity()->getValidationType() == Community::MANUAL_VALIDATION ) {
-        $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME,$event->getCommunity()->getUser() ,$event->getCommunity());
-        }
+        // the recipient is the creator of community
+        $communityRecipient = ($event->getCommunity()->getUser()); // ici je récupère l'user_id = 7 de la communauté TEST MAIL MOBICOOP qui est test.mail.mobicoop@yopmail.com
+        // we must notify the creator of the community
+        // if ($event->$this->getCommunity()->getValidationType() == Community::MANUAL_VALIDATION ) {
+        $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME, $communityRecipient, $event->getCommunity());
+        // }
     }
 }
+
+
+
+
+
+

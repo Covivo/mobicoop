@@ -279,6 +279,7 @@ changePassword: "Nous vous encourageons fortement à le modifier lors de votre p
 solidaryContact : "Un administrateur solidaire vous contacte"
 
 # COMMUNITY_NEW_MEMBERSHIP_REQUEST
-hello: "Bonjour,"
-youReceivedExternalContact: "s'est inscrit dans la  ."
-seeYouIn: "Rendez-vous dans le module d'administration pour valider son adhésion : "
+newMembershipSubscriber: "s'est inscrit dans la  ."
+seeYouInAdmin: "Rendez-vous dans le module d'administration pour valider son adhésion : "
+communityNewMembershipRequest: "NOUVEAU - Un nouvel utilisateur veut rejoindre votre communauté"
+
