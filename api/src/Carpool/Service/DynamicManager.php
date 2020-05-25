@@ -627,14 +627,14 @@ class DynamicManager
     }
 
     /**
-     * Get the last active dynamic ad.
+     * Get the last unfinished dynamic ad.
      *
-     * @param User $user    The user for whiwh we want the ad
+     * @param User $user    The user for which we want the ad
      * @return Dynamic|null The dynamic ad found or null if not found.
      */
-    public function getLastDynamicActive(User $user)
+    public function getLastDynamicUnfinished(User $user)
     {
-        if ($proposal = $this->proposalManager->getLastDynamicActive($user)) {
+        if ($proposal = $this->proposalManager->getLastDynamicUnfinished($user)) {
             $dynamic = new Dynamic();
             $dynamic->setProposal($proposal);
             $dynamic->setUser($proposal->getUser());

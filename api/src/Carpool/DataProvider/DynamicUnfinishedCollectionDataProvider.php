@@ -30,10 +30,10 @@ use App\Carpool\Service\DynamicManager;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Collection data provider used to get a current active dynamic ad.
+ * Collection data provider used to get a current unfinished dynamic ad.
  *
  */
-final class DynamicActiveCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class DynamicUnfinishedCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $security;
     private $dynamicManager;
@@ -46,12 +46,12 @@ final class DynamicActiveCollectionDataProvider implements CollectionDataProvide
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Dynamic::class === $resourceClass && $operationName =="active";
+        return Dynamic::class === $resourceClass && ($operationName =="active" || $operationName =="unfinished");
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        if ($last = $this->dynamicManager->getLastDynamicActive($this->security->getUser())) {
+        if ($last = $this->dynamicManager->getLastDynamicUnfinished($this->security->getUser())) {
             return [$last];
         }
         return [];
