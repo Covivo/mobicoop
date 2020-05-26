@@ -27,6 +27,7 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Solidary\Entity\SolidaryFormalRequest;
 use App\Solidary\Exception\SolidaryException;
+use App\Solidary\Service\SolidarySolutionManager;
 use Symfony\Component\Security\Core\Security;
 use App\User\Entity\User;
 
@@ -37,10 +38,12 @@ final class SolidaryFormalRequestCollectionDataProvider implements CollectionDat
 {
     private $filters;
     private $security;
+    private $solidarySolutionManager;
 
-    public function __construct(Security $security)
+    public function __construct(Security $security, SolidarySolutionManager $solidarySolutionManager)
     {
         $this->security = $security;
+        $this->solidarySolutionManager = $solidarySolutionManager;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -54,6 +57,18 @@ final class SolidaryFormalRequestCollectionDataProvider implements CollectionDat
 
     public function getCollection(string $resourceClass, string $operationName = null)
     {
-        return "ok";
+        if (empty($this->filters['solidary_solutions'])) {
+            throw new SolidaryException(SolidaryException::SOLIDARY_SOLUTION_MISSING);
+        }
+
+        $solidarySolutionId = null;
+        if (strrpos($this->filters['solidary_solutions'], '/')) {
+            $solidarySolutionId = substr($this->filters['solidary_solutions'], strrpos($this->filters['solidary_solutions'], '/') + 1);
+        }
+        if (empty($solidarySolutionId) || !is_numeric($solidarySolutionId)) {
+            throw new SolidaryException(SolidaryException::SOLIDARY_SOLUTION_ID_INVALID);
+        }
+
+        return $this->solidarySolutionManager->getSolidaryFormalRequest($solidarySolutionId);
     }
 }

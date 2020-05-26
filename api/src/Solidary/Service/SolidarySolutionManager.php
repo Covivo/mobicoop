@@ -31,6 +31,7 @@ use App\Solidary\Entity\SolidaryFormalRequest;
 use App\Solidary\Entity\SolidarySolution;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryMatchingRepository;
+use App\Solidary\Repository\SolidarySolutionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -41,11 +42,13 @@ class SolidarySolutionManager
 {
     private $entityManager;
     private $security;
+    private $solidarySolutionRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, Security $security)
+    public function __construct(EntityManagerInterface $entityManager, Security $security, SolidarySolutionRepository $solidarySolutionRepository)
     {
         $this->entityManager = $entityManager;
         $this->security = $security;
+        $this->solidarySolutionRepository = $solidarySolutionRepository;
     }
 
     /**
@@ -134,6 +137,25 @@ class SolidarySolutionManager
         return $solidaryFormalRequest;
     }
 
+    /**
+     * Get a SolidaryFormalRequest
+     *
+     * @param integer $solidarySolutionId The SolidarySolutionId the SolidaryFormalRequest is based on
+     * @return SolidaryFormalRequest
+     */
+    public function getSolidaryFormalRequest(int $solidarySolutionId): SolidaryFormalRequest
+    {
+        $solidarySolution = $this->solidarySolutionRepository->find($solidarySolutionId);
+
+        if (is_null($solidarySolution)) {
+            throw new SolidaryException(SolidaryException::NO_SOLIDARY_SOLUTION);
+        }
+
+        $solidaryFormalRequest = new SolidaryFormalRequest();
+        $solidaryFormalRequest->setSolidarySolution($solidarySolution);
+
+        return $solidaryFormalRequest;
+    }
 
     /**
      * Update a Criteria based on the SolidaryFormalRequest data

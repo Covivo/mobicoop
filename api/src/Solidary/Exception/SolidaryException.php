@@ -55,6 +55,8 @@ class SolidaryException extends \LogicException
     const NO_SOLIDARY_SOLUTION = "No solidarySolution found for this formal request";
     const NO_SOLIDARY_ASK = "No SolidaryAsk for this SolidarySolution";
     const BAD_SOLIDARY_ASK_STATUS_FOR_FORMAL = "The status of the SolidaryAsk doesn't allow a formal request";
+    const SOLIDARY_SOLUTION_MISSING = "SolidarySolution is missing";
+    const SOLIDARY_SOLUTION_ID_INVALID = "Invalid SolidarySolutionId";
 
     // SolidarySearch
     const SOLIDARY_MISSING = "Solidary is missing";
