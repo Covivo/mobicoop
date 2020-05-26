@@ -39,6 +39,9 @@ class CarpoolProofGouvProvider implements ProviderInterface
     const RESSOURCE_POST = "v2/journeys";
     const ISO6801 = 'Y-m-d\TH:i:s\Z';
 
+    // temporary : proof type fixed to 'A', need to be removed when C types will be implemented
+    const PROOF_TYPE = 'A';
+
     private $uri;
     private $token;
 
@@ -73,7 +76,9 @@ class CarpoolProofGouvProvider implements ProviderInterface
         // todo : add the required items depending on the class
         $journey = [
             "journey_id" => (string)$carpoolProof->getId(),
-            "operator_class" => $carpoolProof->getType(),
+            // TODO : implement other types, for now we use the A type
+            // "operator_class" => $carpoolProof->getType(),
+            "operator_class" => self::PROOF_TYPE,
             "passenger" => [
                 "identity" => [
                     "email" => $carpoolProof->getPassenger()->getEmail(),
@@ -113,10 +118,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
             ]
         ];
 
-        // todo : treat the result
-        $result = $dataProvider->postCollection($journey, $headers);
-
-        return $result;
+        return $dataProvider->postCollection($journey, $headers);
     }
 
     /**
