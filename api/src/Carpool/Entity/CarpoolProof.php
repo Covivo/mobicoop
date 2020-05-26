@@ -43,6 +43,7 @@ class CarpoolProof
     const STATUS_PENDING = 1;       // ready to be sent
     const STATUS_SENT = 2;          // sent
     const STATUS_ERROR = 3;         // error during the sending
+    const STATUS_CANCELED = 4;      // cancellation before sending
 
     const ACTOR_DRIVER = 1;
     const ACTOR_PASSENGER = 2;
@@ -254,9 +255,11 @@ class CarpoolProof
     public function setAsk(?Ask $ask): self
     {
         $this->ask = $ask;
-        // set the owning side
-        $ask->addCarpoolProof($this);
-
+        if (!is_null($ask)) {
+            // set the owning side
+            $ask->addCarpoolProof($this);
+        }
+        
         return $this;
     }
 
@@ -497,7 +500,9 @@ class CarpoolProof
      */
     public function setAutoStatus()
     {
-        $this->setStatus(self::STATUS_INITIATED);
+        if (is_null($this->getStatus())) {
+            $this->setStatus(self::STATUS_INITIATED);
+        }
     }
 
     /**

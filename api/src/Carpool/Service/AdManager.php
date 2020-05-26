@@ -1524,7 +1524,7 @@ class AdManager
         }
 
         // check that the ask is accepted
-        if (!($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
+        if (!($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
             throw new AdException("Ask not accepted");
         }
 
