@@ -1470,7 +1470,7 @@ class ProposalMatcher
             $destinationMatching->removeWaypoint($waypoint);
         }
         foreach ($sourceMatching->getWaypoints() as $waypoint) {
-            $destinationMatching->addWaypoint(clone $waypoint);
+            $destinationMatching->addWaypoint($waypoint);
         }
 
         $this->entityManager->persist($destinationMatching);
