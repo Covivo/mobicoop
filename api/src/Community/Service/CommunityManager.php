@@ -344,14 +344,6 @@ class CommunityManager
 
             // We use event to send notifications if community has a status pending
             if($communityUser->getStatus( )== CommunityUser::STATUS_PENDING){
-
-                $this->logger->info($communityUser->getId());
-                $this->logger->info($community->getName());
-                $this->logger->info($author->getFamilyName());
-                $this->logger->info($author->getGivenName());
-                $this->logger->info($user->getFamilyName());
-                $this->logger->info($user->getGivenName());
-
                 $event = new CommunityNewMembershipRequestEvent($community, $user,$author);
                 $this->eventDispatcher->dispatch(CommunityNewMembershipRequestEvent::NAME, $event);
             }   
