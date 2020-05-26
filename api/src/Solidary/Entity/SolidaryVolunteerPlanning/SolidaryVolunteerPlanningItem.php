@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Entity\SolidaryTransportersSchedule;
+namespace App\Solidary\Entity\SolidaryVolunteerPlanning;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -30,76 +30,40 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SolidaryTransportersScheduleItem
+class SolidaryVolunteerPlanningItem
 {
     /**
-     * @var string First name and family name of the volunteer designated by this item
-     * @Groups({"readSolidaryTransportersSchedule"})
+     * @var string First name and family name of the beneficiary designated by this item
+     * @Groups({"readSolidaryVolunteerPlanning"})
      */
-    private $volunteer;
-
-    /**
-     * @var \DateTimeInterface Date of this item
-     * @Groups({"readSolidaryTransportersSchedule","writeSolidaryTransportersSchedule"})
-     */
-    private $date;
-
-    /**
-     * @var string Hour slot of this item (m : morning, a : afternoon, e : evening)
-     * @Groups({"readSolidaryTransportersSchedule","writeSolidaryTransportersSchedule"})
-     */
-    private $slot;
+    private $beneficiary;
 
     /**
      * @var int Id of the Solidary designated by this item
-     * @Groups({"readSolidaryTransportersSchedule"})
+     * @Groups({"readSolidaryVolunteerPlanning"})
      */
     private $solidaryId;
     
     /**
      * @var int Id of the SolidarySolution designated by this item
-     * @Groups({"readSolidaryTransportersSchedule"})
+     * @Groups({"readSolidaryVolunteerPlanning"})
      */
     private $solidarySolutionId;
 
     /**
      * @var int Status of this item (status of the SolidaryAsk)
-     * @Groups({"readSolidaryTransportersSchedule"})
+     * @Groups({"readSolidaryVolunteerPlanning"})
      */
     private $status;
 
-    public function getVolunteer(): ?string
+    public function getBeneficiary(): ?string
     {
-        return $this->volunteer;
+        return $this->beneficiary;
     }
 
-    public function setVolunteer(string $volunteer): self
+    public function setBeneficiary(string $beneficiary): self
     {
-        $this->volunteer = $volunteer;
-
-        return $this;
-    }
-
-    public function getDate(): ?\DateTimeInterface
-    {
-        return $this->date;
-    }
-
-    public function setDate(\DateTimeInterface $date): self
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-    
-    public function getSlot(): ?string
-    {
-        return $this->slot;
-    }
-
-    public function setSlot(string $slot): self
-    {
-        $this->slot = $slot;
+        $this->beneficiary = $beneficiary;
 
         return $this;
     }
