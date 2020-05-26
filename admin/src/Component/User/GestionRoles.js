@@ -41,14 +41,37 @@ const GestionRoles = ({record}) => {
   const form = useForm();
   const classes = useStyles();
 
+  const userRoles = 
+    {
+    1 : { id : "/auth_items/1", name: translate('custom.label.user.roles.super_admin') } ,
+    2 : { id : "/auth_items/2", name: translate('custom.label.user.roles.admin') },
+    3 : { id : "/auth_items/3", name: translate('custom.label.user.roles.user_full') },
+    4 : { id : "/auth_items/4",  name: translate('custom.label.user.roles.user_min') },
+    5 : { id : "/auth_items/5",  name: translate('custom.label.user.roles.user')},
+    6 : { id : "/auth_items/6", name: translate('custom.label.user.roles.mass_match') },
+    7 : { id : "/auth_items/7",  name: translate('custom.label.user.roles.community_manage') },
+    8 : { id : "/auth_items/8", name: translate('custom.label.user.roles.community_manage_public') },
+    9 : { id : "/auth_items/9",  name: translate('custom.label.user.roles.community_manage_private') },
+    10 : { id : "/auth_items/10", name: translate('custom.label.user.roles.solidary_manager') },
+    11 : { id : "/auth_items/11", name: translate('custom.label.user.roles.solidary_volunteer') },
+    12 : { id : "/auth_items/12",  name: translate('custom.label.user.roles.solidary_beneficiary') },
+    13 : { id : "/auth_items/13",  name: translate('custom.label.user.roles.communication_manager') },
+    171 : { id : "/auth_items/171",  name: translate('custom.label.user.roles.solidary_candidate_volunteer') },
+    172 : { id : "/auth_items/172", name: translate('custom.label.user.roles.solidary_candidate_beneficiary') },
+    }
+;
+
   const required = (message = translate('custom.alert.fieldMandatory') ) =>
           value => value ? undefined : message;
 
 
   useEffect (
-      () => { const getData = () => dataProvider.getList('permissions/roles', {pagination:{ page: 1 , perPage: 1000 }, sort: { field: 'id', order: 'ASC' }, })
+      () => { const getData = () => dataProvider.getList('permissions/roles-granted-for-creation', {pagination:{ page: 1 , perPage: 1000 }, sort: { field: 'id', order: 'ASC' }, })
           .then( ({ data }) => {
-            setRoles(data)
+            const rolesGranted = data.map(obj => { 
+             if (userRoles[obj] ) return userRoles[obj];
+            });
+            setRoles(rolesGranted)
           });
           getData()
         }, []
@@ -58,21 +81,20 @@ const GestionRoles = ({record}) => {
     if (record.rolesTerritory) {
       // We clear fields in case of an Edit
       setFields([])
-      for (const [territory, roles] of Object.entries(record.rolesTerritory)) {
-
-        if (territory != 'null') {
-          dataProvider.getOne('territories',{id: territory} )
+      record.rolesTerritory.forEach(element => {
+        if (element.territory != null) {
+          dataProvider.getOne('territories',{id: element.territory} )
               .then( ({ data }) =>  {
-                      setFields(t => [...t, {'roles' : roles, 'territory' : territory,'territoryName' : data.name} ])
+                      setFields(t => [...t, {'roles' : element.authItem, 'territory' : element.territory,'territoryName' : data.name} ])
               })
               .catch( error => {
             })
           }else{
-            setFields(t => [...t, {'roles' : roles} ])
+            setFields(t => [...t, {'roles' : element.authItem} ])
           }
-      }
+      });
     }
-  }, [record]);
+  }, [record.rolesTerritory]);
 
 
   function handleAdd() {
@@ -103,8 +125,6 @@ const GestionRoles = ({record}) => {
       setFields(values);
       form.change('fields', fields);
   }
-
-
   return (
     <Fragment>
         {fields.map((field, i) => {
@@ -117,7 +137,7 @@ const GestionRoles = ({record}) => {
                        value={field['roles']}
                      >
                       <MenuItem value='none' disabled>{translate('custom.label.user.selectRoles')}</MenuItem>
-                  { roles.map( d =>  <MenuItem  key={d.id} value={d.id}>{d.name}</MenuItem> ) }
+                  { roles.map( d =>  <MenuItem key={d.id} value={d.id}>{d.name}</MenuItem> ) }
                 </Select>
 
                 {field.territoryName &&

@@ -17,6 +17,10 @@
 * New migration system for Mobimatch : import Mobimatch persons and their journeys as real users and carpool ads
 * Add roles default we set in User entity when Register User (ROLE_USER_REGISTERED_FULL)
 * Create new auth item 'community_restrict' for display only communities user created
+* Add route for get granted roles an user can create
+
+## ADMIN
+* Change the way we prefill roles in user edition, and now can only set one role per territory
 
 # Release 1.3.0
 

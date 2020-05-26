@@ -177,6 +177,23 @@ const fr = {
               accountStatus : 'Statut du compte',
               accountDisabled : 'Compte non actif',
               accountEnabled : 'Compte actif',
+              roles : {
+                super_admin : 'Super administrateur',
+                admin : 'Administrateur',
+                user_full : 'Utilisateur avec inscription complète',
+                user_min : 'Utilisateur avec inscription minime',
+                user : 'Utilisateur',
+                mass_match : 'Utilisateur mobimatch',
+                community_manage : 'Référent de communauté',
+                community_manage_public : 'Référent de communauté public',
+                community_manage_private : 'Référent de communauté privée',
+                solidary_manager : 'Opérateur solidaire',
+                solidary_volunteer : 'Bénévole solidaire',
+                solidary_beneficiary : 'Demandeur solidaire',
+                communication_manager : 'Chargé de communication',
+                solidary_candidate_volunteer : 'Candidat bénévole',
+                solidary_candidate_beneficiary : 'Candidat demandeur'
+              }
             },
             territory : {
               territory : 'Territoire',
