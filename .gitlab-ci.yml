@@ -48,7 +48,7 @@ branch_features:   # name of the job
 
   script:
     - npm test
-    - npm test --prefix=admin
+    # - npm test --prefix=admin
 
   only:
     - pushes # job executed only on test
