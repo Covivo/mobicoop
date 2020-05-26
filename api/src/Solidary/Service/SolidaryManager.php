@@ -37,6 +37,8 @@ use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\SolidaryUserRepository;
 use Symfony\Component\Security\Core\Security;
 use App\Solidary\Entity\SolidaryAsk;
+use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanning;
+use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanningItem;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -275,5 +277,68 @@ class SolidaryManager
         $solidary->setAsksList($asksList);
 
         return $solidary;
+    }
+
+    public function buildSolidaryVolunteerPlanning(\DateTimeInterface $startDate, \DateTimeInterface  $endDate, int $solidaryVolunteerId): array
+    {
+        // We get the Volunteer and we check if it's really a volunteer
+        $solidaryVolunteer = $this->solidaryUserRepository->find($solidaryVolunteerId);
+        
+        if (!$solidaryVolunteer->isVolunteer()) {
+            throw new SolidaryException(SolidaryException::NO_SOLIDARY_VOLUNTEER);
+        }
+        
+        $solidaryAsks = $this->solidaryAskRepository->findBetweenTwoDates($startDate, $endDate, $solidaryVolunteer);
+
+        $fullPlanning = [];
+        $currentDate = $startDate;
+        // We make the schedule. Day by day.
+        while ($currentDate<=$endDate) {
+            $solidaryVolunteerPlanning = new SolidaryVolunteerPlanning();
+            $solidaryVolunteerPlanning->setDate($currentDate);
+            
+            // We check if we found a solidaryAsk for this day
+            foreach ($solidaryAsks as $solidaryAsk) {
+                /**
+                 * @var SolidaryAsk $solidaryAsk
+                 */
+                if (
+                   ($solidaryAsk->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL && $solidaryAsk->getCriteria()->getFromDate()->format("d/m/Y")==$currentDate->format("d/m/Y")) ||
+                   ($solidaryAsk->getCriteria()->getFrequency()==Criteria::FREQUENCY_REGULAR && $solidaryAsk->getCriteria()->getFromDate()->format("d/m/Y")<=$currentDate->format("d/m/Y") && $solidaryAsk->getCriteria()->getToDate()->format("d/m/Y")>=$currentDate->format("d/m/Y"))
+                ) {
+
+                    // Determine the hour slot
+                    $structure = $solidaryAsk->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getStructure();
+                    $slot = $this->solidaryMatcher->getHourSlot($solidaryAsk->getCriteria()->getFromTime(), $solidaryAsk->getCriteria()->getFromTime(), $structure);
+
+                    $solidaryVolunteerPlanningItem = new SolidaryVolunteerPlanningItem();
+
+                    // The beneficiary
+                    $beneficiary = $solidaryAsk->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
+                    $solidaryVolunteerPlanningItem->setBeneficiary($beneficiary->getGivenName()." ".$beneficiary->getFamilyName());
+
+
+                    // different usefull ids
+                    $solidaryVolunteerPlanningItem->setSolidaryId($solidaryAsk->getSolidarySolution()->getSolidary()->getId());
+                    $solidaryVolunteerPlanningItem->setSolidarySolutionId($solidaryAsk->getSolidarySolution()->getId());
+
+                    // status
+                    $solidaryVolunteerPlanningItem->setStatus($solidaryAsk->getStatus());
+
+                    switch ($slot) {
+                        case 'm': $solidaryVolunteerPlanning->setMorningSlot($solidaryVolunteerPlanningItem);break;
+                        case 'a': $solidaryVolunteerPlanning->setAfternoonSlot($solidaryVolunteerPlanningItem);break;
+                        case 'e': $solidaryVolunteerPlanning->setEveningSlot($solidaryVolunteerPlanningItem);break;
+                    }
+                }
+            }
+
+            $fullPlanning[] = $solidaryVolunteerPlanning;
+            
+            $currentDate = clone $currentDate;
+            $currentDate->modify('+1 day');
+        }
+
+        return $fullPlanning;
     }
 }

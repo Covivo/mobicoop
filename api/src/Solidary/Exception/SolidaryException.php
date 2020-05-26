@@ -73,4 +73,8 @@ class SolidaryException extends \LogicException
     // Structure Geolocation
     const MISSING_LATITUDE = "Latitude missing";
     const MISSING_LONGITUDE = "Longitude missing";
+
+    // SolidaryVolunteerPlanning
+    const NO_SOLIDARY_VOLUNTEER_ID = "No SolidaryVolunteerId found";
+    const SOLIDARY_VOLUNTEER_ID_INVALID = "Invalid SolidaryVolunteerId";
 }
