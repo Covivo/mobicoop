@@ -6,8 +6,8 @@
             <table style="width:100%;">
                 <tr>
                     <td style="width:70%">
-                        {<p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}}</b></p>
-                        <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.sender.user.id|capitalize}} </b> {{ "newMembershipSubscriber"|trans }} {{context.community.name}}</p>
+                        <p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}}</b></p>
+                        <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.senderGivenName|capitalize}}  {{context.senderShortFamilyName|capitalize}} </b> {{ "newMembershipSubscriber"|trans }} {{context.community.name}}</p>
                         <p> {{ "seeYouInAdmin" | trans }} <a href="{{ api_env('URL_ADMIN') }}">{{"clickHere" |trans }}</a> </p>
                    </td>
                 </tr>

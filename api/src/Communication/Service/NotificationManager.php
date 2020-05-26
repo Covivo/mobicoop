@@ -54,7 +54,6 @@ use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Entity\SolidaryContact;
 use App\Community\Entity\Community;
 
-
 /**
  * Notification manager
  *
@@ -101,8 +100,8 @@ class NotificationManager
         bool $enabled,
         TranslatorInterface $translator,
         UserManager $userManager,
-        AdManager $adManager   
-        ) {
+        AdManager $adManager
+    ) {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
         $this->emailManager = $emailManager;
@@ -294,20 +293,25 @@ class NotificationManager
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'event' => $object];
                     break;
-                case Community::class: 
+                case Community::class:
                     $sender = null;
-                    foreach ($object->getCommunityUsers() as $communityUser) {
-                        if ($communityUser->getCommunity()->getId() === $object->getId()) {
-                            $sender = $communityUser;
+                    if (count($object->getCommunityUsers()) > 0) {
+                        foreach ($object->getCommunityUsers() as $communityUser) {
+                            if ($communityUser->getCommunity()->getId() === $object->getId()) {
+                                $senderGivenName = $communityUser->getUser()->getGivenName();
+                                $senderShortFamilyName = $communityUser->getUser()->getshortFamilyName();
+                            }
                         }
                     }
                     $titleContext = [];
                     $bodyContext = [
                         'recipient'=>$recipient,
                         'community' => $object,
-                        'sender'=>$sender,
+                        'senderGivenName'=>$senderGivenName,
+                        'senderShortFamilyName'=> $senderShortFamilyName
                     ];
-                    break;    
+                    break;
+                    
                 case Message::class:
                     $titleContext = [];
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
