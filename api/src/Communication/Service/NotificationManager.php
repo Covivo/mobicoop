@@ -297,12 +297,8 @@ class NotificationManager
                 case Community::class: 
                     $sender = null;
                     foreach ($object->getCommunityUsers() as $communityUser) {
-                        if ($communityUser->getUser()->getId() == $recipient->getId()) {
+                        if ($communityUser->getCommunity()->getId() === $object->getId()) {
                             $sender = $communityUser;
-                            $this->logger->info('sender'.$sender->getId());
-                            $this->logger->info('recipient'.$recipient->getId());
-                            $this->logger->info('communityUser'.$communityUser->getUser()->getId());
-                        break;
                         }
                     }
                     $titleContext = [];
