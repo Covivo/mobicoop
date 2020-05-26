@@ -240,6 +240,9 @@ class SolidaryManager
     public function getMySolidaries(User $user)
     {
         $fullSolidaries = [];
+        if (is_null($user->getSolidaryUser())) {
+            throw new SolidaryException(SolidaryException:: NO_SOLIDARY_USER);
+        }
         $solidaries = $user->getSolidaryUser()->getSolidaryUserStructures()[0]->getSolidaries();
         
         foreach ($solidaries as $solidary) {
@@ -441,10 +444,11 @@ class SolidaryManager
             // Messages
             $messages = [];
             foreach ($solidaryAsk->getSolidaryAskHistories() as $solidaryAskHistory) {
-                $messages[$solidaryAskHistory->getMessage()->getContent()] = $solidaryAskHistory->getMessage()->getDate();
+                if ($solidaryAskHistory->getMessage() !== null) {
+                    $messages[$solidaryAskHistory->getMessage()->getText()] = $solidaryAskHistory->getMessage()->getCreatedDate();
+                }
             }
-            var_dump($messages);
-            die;
+            $solidaryAsksItem->setMessages($messages);
             // Frequency
             $solidaryAsksItem->setFrequency($askCriteria->getFrequency());
             

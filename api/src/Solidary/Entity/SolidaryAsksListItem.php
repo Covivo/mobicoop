@@ -36,61 +36,61 @@ class SolidaryAsksListItem
 
     /**
      * @var int The frequency (1 = punctual; 2 = regular).
-     * @Groups({"asksList"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $frequency;
 
     /**
      * @var int Ask status
-     * @Groups({"asksList"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $status;
 
     /**
     * @var \DateTimeInterface The start date for regular, the date for punctual
-     * @Groups({"asksList"})
+     * @Groups({"readSolidary","writeSolidary"})
     */
     private $fromDate;
 
     /**
     * @var \DateTimeInterface The end date for regular, null for punctual
-     * @Groups({"asksList"})
+     * @Groups({"readSolidary","writeSolidary"})
     */
     private $toDate;
 
     /**
      * @var array array of schedules to display
-     * @Groups({"asksList"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $schedule;
     
     /**
     * @var string The firstname + familyname of the volunteer/carpooler driver
-    * @Groups({"asksList"})
+    * @Groups({"readSolidary","writeSolidary"})
     */
     private $driver;
 
     /**
      * @var string Phone number of the driver
-     * @Groups({"asksList"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $telephone;
 
     /**
      * @var int Driver's Type (0 : Volunteer, 1 : Carpooler)
-     * @Groups({"asksList"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $driverType;
 
     /**
      * @var int Id of the Solidary Solution for this Ask item (usefull for a SolidaryContact)
-     * @Groups({"asksList"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $solidarySolutionId;
 
     /**
      * @var array Messages of the Solidary Solution for this Ask item (usefull for a SolidaryContact)
-     * @Groups({"asksList"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $messages;
 

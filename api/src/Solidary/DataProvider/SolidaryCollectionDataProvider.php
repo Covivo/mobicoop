@@ -54,7 +54,9 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
         if ($operationName=="getMySolidaries") {
             return $this->solidaryManager->getMySolidaries($this->security->getUser());
         }
-
+        if (empty($this->security->getUser()->getSolidaryStructures())) {
+            throw new SolidaryException(SolidaryException:: NO_STRUCTURE);
+        }
         return $this->solidaryManager->getSolidaries($this->security->getUser()->getSolidaryStructures()[0]);
     }
 }
