@@ -22,6 +22,9 @@
 
 namespace App\Solidary\Service;
 
+use App\Auth\Entity\AuthItem;
+use App\Auth\Entity\UserAuthAssignment;
+use App\Auth\Repository\AuthItemRepository;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Repository\ProposalRepository;
@@ -75,8 +78,9 @@ class SolidaryManager
     private $userRepository;
     private $structureProofRepository;
     private $structureRepository;
+    private $authItemRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository, SolidaryUserRepository $solidaryUserRepository, AdManager $adManager, SolidaryMatcher $solidaryMatcher, SolidaryAskRepository $solidaryAskRepository, AddressRepository $addressRepository, ProposalRepository $proposalRepository, SolidaryUserStructureRepository $solidaryUserStructureRepository, UserManager $userManager, UserRepository $userRepository, StructureProofRepository $structureProofRepository, StructureRepository $structureRepository)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository, SolidaryUserRepository $solidaryUserRepository, AdManager $adManager, SolidaryMatcher $solidaryMatcher, SolidaryAskRepository $solidaryAskRepository, AddressRepository $addressRepository, ProposalRepository $proposalRepository, SolidaryUserStructureRepository $solidaryUserStructureRepository, UserManager $userManager, UserRepository $userRepository, StructureProofRepository $structureProofRepository, StructureRepository $structureRepository, AuthItemRepository $authItemRepository)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
@@ -93,6 +97,7 @@ class SolidaryManager
         $this->userRepository = $userRepository;
         $this->structureProofRepository = $structureProofRepository;
         $this->structureRepository = $structureRepository;
+        $this->authItemRepository = $authItemRepository;
     }
 
     public function getSolidary($id): ?Solidary
@@ -513,7 +518,6 @@ class SolidaryManager
     private function createJourneyFromSolidary(Solidary $solidary, int $userId = null): Ad
     {
         $ad = new Ad;
-
         // we get and set the origin and destination of the demand
         $origin = new Address;
         $destination = null;
@@ -635,6 +639,7 @@ class SolidaryManager
             $user->setBirthDate($solidary->getBirthDate());
             $user->setTelephone($solidary->getTelephone());
             $user->setGender($solidary->getGender());
+            $user->setNewsSubscription(true);
             
             // we add homeAddress to the user
             $homeAddress = new Address;
@@ -665,6 +670,11 @@ class SolidaryManager
             $solidaryUser->setBeneficiary(true);
             $solidaryUser->setAddress(clone $user->getAddresses()[0]);
             $user->setSolidaryUser($solidaryUser);
+            // we add the userAuthItemAssignment associated
+            $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
         } else {
             $solidaryUser = $user->getSolidaryUser();
         }
@@ -691,11 +701,11 @@ class SolidaryManager
                 $solidaryUserStructure->addProof($proof);
             }
         }
-
         $solidaryUser->addSolidaryUserStructure($solidaryUserStructure);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+
         return $user;
     }
 }

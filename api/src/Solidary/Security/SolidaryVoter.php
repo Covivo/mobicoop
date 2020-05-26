@@ -42,6 +42,7 @@ class SolidaryVoter extends Voter
     const SOLIDARY_UPDATE = 'solidary_update';
     const SOLIDARY_DELETE = 'solidary_delete';
     const SOLIDARY_LIST = 'solidary_list';
+    const SOLIDARY_LIST_SELF = 'solidary_list_self';
     const SOLIDARY_CONTACT = 'solidary_contact';
     
     private $authManager;
@@ -60,6 +61,7 @@ class SolidaryVoter extends Voter
             self::SOLIDARY_UPDATE,
             self::SOLIDARY_DELETE,
             self::SOLIDARY_LIST,
+            self::SOLIDARY_LIST_SELF,
             self::SOLIDARY_CONTACT
             ])) {
             return false;
@@ -72,6 +74,7 @@ class SolidaryVoter extends Voter
             self::SOLIDARY_UPDATE,
             self::SOLIDARY_DELETE,
             self::SOLIDARY_LIST,
+            self::SOLIDARY_LIST_SELF,
             ]) && !($subject instanceof Paginator) &&
                 !($subject instanceof Solidary) &&
                 !($subject instanceof SolidarySolution) &&
@@ -97,6 +100,8 @@ class SolidaryVoter extends Voter
                 return $this->canDeleteSolidary($subject);
             case self::SOLIDARY_LIST:
                 return $this->canListSolidary();
+            case self::SOLIDARY_LIST_SELF:
+                return $this->canListSolidarySelf();
             case self::SOLIDARY_CONTACT:
                 return $this->canUpdateSolidary($subject->getSolidarySolution()->getSolidary());
         }
@@ -127,5 +132,10 @@ class SolidaryVoter extends Voter
     private function canListSolidary()
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_LIST);
+    }
+
+    private function canListSolidarySelf()
+    {
+        return $this->authManager->isAuthorized(self::SOLIDARY_LIST_SELF);
     }
 }

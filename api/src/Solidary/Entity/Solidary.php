@@ -49,9 +49,10 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *          "getMySolidaries"={
  *              "method"="GET",
- *              "path"="/solidaries/myRequests",
+ *              "path"="/solidaries/mySolidaries",
  *              "normalization_context"={"groups"={"readSolidary"}},
- *              "security"="is_granted('solidary_list',object)"
+ *              "security"="is_granted('solidary_list_self',object)"
+ *
  *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('solidary_create',object)"
