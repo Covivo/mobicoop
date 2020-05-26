@@ -25,6 +25,7 @@ namespace App\Solidary\Repository;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryMatching;
 use App\Solidary\Entity\SolidarySolution;
+use App\Solidary\Entity\SolidaryUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -94,19 +95,29 @@ class SolidaryAskRepository
      * @param bool $onlySolidaryTransport   True if we search only for Solidary transport
      * @return array
      */
-    public function findBetweenTwoDates(\DateTimeInterface $startDate, \DateTimeInterface $endDate, $onlySolidaryTransport = true)
+    public function findBetweenTwoDates(\DateTimeInterface $startDate, \DateTimeInterface $endDate, SolidaryUser $solidaryVolunteer = null, $onlySolidaryTransport = true)
     {
         $query = $this->repository->createQueryBuilder('sa')
         ->join('sa.criteria', 'c')
         ->join('sa.solidarySolution', 'ss')
         ->join('ss.solidaryMatching', 'sm')
         ->where('c.fromDate >= :startDate and (c.toDate <= :endDate or c.toDate is null)');
+        
+        if (!is_null($solidaryVolunteer)) {
+            $query->andWhere('sm.solidaryUser = :solidaryVolunteer');
+        }
+        
         if ($onlySolidaryTransport) {
             $query->andWhere('sm.matching is null');
         }
         
         $query->setParameter('startDate', $startDate->format("Y-m-d"))
         ->setParameter('endDate', $endDate->format("Y-m-d"));
+
+        if (!is_null($solidaryVolunteer)) {
+            $query->setParameter('solidaryVolunteer', $solidaryVolunteer);
+        }
+
 
         return $query->getQuery()->getResult();
     }
