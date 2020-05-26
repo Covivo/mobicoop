@@ -23,10 +23,9 @@
 
 namespace App\Community\Event;
 
-use App\Community\Entity\Community;
-use App\User\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
-
+use App\User\Entity\User;
+use App\Community\Entity\Community;
 
 /**
  * Event sent when a user wants to join a community with a manual validation
@@ -36,15 +35,13 @@ class CommunityNewMembershipRequestEvent extends Event
 {
     public const NAME = 'community_new_membership_request';
 
-    private $community;
-    private $user;
+    protected $community;
 
-
-
-    public function __construct(Community $community, ?User $user)
+    public function __construct(Community $community, User $user, $author)
     {
         $this->community = $community;
-        $this->user = $user;
+        $this->author = $user;
+ 
     }
 
     public function getCommunity()
@@ -52,9 +49,10 @@ class CommunityNewMembershipRequestEvent extends Event
         return $this->community;
     }
 
-        public function getUser()
+    public function getAuthor()
     {
-        return $this->user;
+        return $this->author;
     }
+
 }
 

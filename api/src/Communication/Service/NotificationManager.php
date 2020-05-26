@@ -101,8 +101,8 @@ class NotificationManager
         bool $enabled,
         TranslatorInterface $translator,
         UserManager $userManager,
-        AdManager $adManager
-    ) {
+        AdManager $adManager   
+        ) {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
         $this->emailManager = $emailManager;
@@ -133,8 +133,6 @@ class NotificationManager
      */
     public function notifies(string $action, User $recipient, ?object $object = null)
     {
-        // $this->logger->info($recipient->getId());
-
         if (!$this->enabled) {
             return;
         }
@@ -296,12 +294,26 @@ class NotificationManager
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'event' => $object];
                     break;
-                case Community::class:
+                case Community::class: 
+                    $sender = null;
+                    foreach ($object->getCommunityUsers() as $communityUser) {
+                        if ($communityUser->getUser()->getId() == $recipient->getId()) {
+                            $sender = $communityUser;
+                            $this->logger->info('sender'.$sender->getId());
+                            $this->logger->info('recipient'.$recipient->getId());
+                            $this->logger->info('communityUser'.$communityUser->getUser()->getId());
+                        break;
+                        }
+                    }
                     $titleContext = [];
-                    $bodyContext = ['user'=>$recipient, 'community' => $object];
+                    $bodyContext = [
+                        'recipient'=>$recipient,
+                        'community' => $object,
+                        'sender'=>$sender,
+                    ];
                     break;    
                 case Message::class:
-                    $titleContext = ['user'=>$object->getUser()];
+                    $titleContext = [];
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
                 break;
                 case RdexConnection::class:

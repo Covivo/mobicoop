@@ -6,9 +6,9 @@
             <table style="width:100%;">
                 <tr>
                     <td style="width:70%">
-                        {<p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}</b></p>
-                        <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b> {{ "newMembershipSubscriber"|trans }} {{community.name}}</p>
-                        <p> {{ seeYouInAdmin | trans }} </p>
+                        {<p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}}</b></p>
+                        <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.sender.user|capitalize}} </b> {{ "newMembershipSubscriber"|trans }} {{context.community.name}}</p>
+                        <p> {{ "seeYouInAdmin" | trans }} </p>
                    </td>
                 </tr>
             </table>

@@ -334,27 +334,28 @@ class CommunityManager
      */
     public function saveCommunityUser(CommunityUser $communityUser)
     {
-
-
-        
             $this->entityManager->persist($communityUser);
             $this->entityManager->flush();
 
-            $user = $communityUser->getUser(); // je récupère l'utilisateur qui veut rejoindre la communauté ici l'id 1 
-            $community = $communityUser->getCommunity(); // je récupère la communauté que veut rejoindre l'utilisateur ici l'id 7
+            $community = $communityUser->getCommunity();
+            $user = $community->getUser();
+            $author = $communityUser->getUser();
+
 
             // We use event to send notifications if community has a status pending
             if($communityUser->getStatus( )== CommunityUser::STATUS_PENDING){
-                $this->logger->info('**************'.$communityUser->getId().'**************');
-                $this->logger->info('**************'.$community->getName().'**************');
-                $this->logger->info('**************'.$user->getFamilyName().'**************');
-                $this->logger->info('**************'.$user->getGivenName().'**************');
 
+                $this->logger->info($communityUser->getId());
+                $this->logger->info($community->getName());
+                $this->logger->info($author->getFamilyName());
+                $this->logger->info($author->getGivenName());
+                $this->logger->info($user->getFamilyName());
+                $this->logger->info($user->getGivenName());
 
-
-                $event = new CommunityNewMembershipRequestEvent($community, $user);
+                $event = new CommunityNewMembershipRequestEvent($community, $user,$author);
                 $this->eventDispatcher->dispatch(CommunityNewMembershipRequestEvent::NAME, $event);
-            }         
+            }   
+                  
         return $communityUser;
     }
 }

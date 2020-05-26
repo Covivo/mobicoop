@@ -54,11 +54,10 @@ class CommunitySubscriber implements EventSubscriberInterface
     public function onCommunityNewMembershipRequest(CommunityNewMembershipRequestEvent $event)
     {
         // the recipient is the creator of community
-        $communityRecipient = ($event->getCommunity()->getUser()); // ici je récupère l'user_id = 7 de la communauté TEST MAIL MOBICOOP qui est test.mail.mobicoop@yopmail.com
+        $communityRecipient = ($event->getCommunity()->getUser());
+
         // we must notify the creator of the community
-        // if ($event->$this->getCommunity()->getValidationType() == Community::MANUAL_VALIDATION ) {
-        $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME, $communityRecipient, $event->getCommunity());
-        // }
+        $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME, $communityRecipient, $event->getCommunity(), $event->getAuthor());
     }
 }
 
