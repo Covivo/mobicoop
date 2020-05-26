@@ -479,3 +479,9 @@ services:
                 chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
                 music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
                 smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'            
+
+    # Utility
+    App\Utility\Service\VersionManager:
+        arguments:
+            $repositoryFile: '%env(string:MOBILE_JSON_REPOSITORY)%'
+            $appId: '%env(string:MOBILE_APP_ID)%'
