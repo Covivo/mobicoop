@@ -313,7 +313,7 @@ class NotificationManager
                     break;
                     
                 case Message::class:
-                    $titleContext = [];
+                    $titleContext = ['user'=>$object->getUser()];
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
                 break;
                 case RdexConnection::class:
