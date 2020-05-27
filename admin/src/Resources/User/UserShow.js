@@ -9,7 +9,6 @@ import {
   TabbedShowLayout,
   Tab,
   TextField,
-  EmailField,
   DateField,
   FunctionField,
   Labeled,
@@ -20,7 +19,6 @@ import {
   ReferenceManyField,
   useTranslate,
   SelectField,
-  Aside,
 } from 'react-admin';
 
 import {
@@ -31,10 +29,9 @@ import {
   ListItemText,
   Card,
   CardHeader,
-  Divider,
 } from '@material-ui/core';
 
-import { UserRenderer, addressRenderer } from '../../utils/renderers';
+import { addressRenderer } from '../../utils/renderers';
 import isAuthorized from '../../auth/permissions';
 
 const renderSmoke = (smoke) => {
@@ -122,7 +119,6 @@ const ConditionalChatFavoritesField = ({ record, ...rest }) =>
 
 const UserShow = (props) => {
   const translate = useTranslate();
-  const instance = process.env.REACT_APP_INSTANCE_NAME;
   const required = (message = translate('custom.alert.fieldMandatory')) => (value) =>
     value ? undefined : message;
 

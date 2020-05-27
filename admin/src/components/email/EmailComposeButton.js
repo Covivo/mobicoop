@@ -11,7 +11,7 @@ const EmailComposeButton = ({ selectedIds, resource, basePath, filterValues}) =>
     const [openRgpd, setOpenRgpd] = useState(false);    // State of the RGPD modal
     const [rgpdAgree, setRgpdAgree] = useState(false);    // State of the RGPD modal
     const shouldFetch = !!Object.keys(filterValues).length;
-    const [mutate, { data, error, loading, loaded }] = useMutation();
+    const [mutate, { data, loaded }] = useMutation();
     const dataProvider  = useDataProvider();
     const [sender, setSender] = useState([]);
     const [campagneInit, setCampagneInit] = useState([]);
