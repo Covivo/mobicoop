@@ -175,10 +175,17 @@ class SolidarySolutionManager
         $solidaryFormalRequest->setOutwardLimitDate($criteria->getFromDate());
         if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
             $solidaryFormalRequest->setOutwardLimitDate($criteria->getToDate());
-        }
 
-        // Days
-        $solidaryFormalRequest->setOutwardSchedule($this->buildScheduleFromCriteria($criteria, "outward"));
+            // Days
+            $solidaryFormalRequest->setOutwardSchedule($this->buildScheduleFromCriteria($criteria, "outward"));
+        } else {
+            // For a punctual, we generate only with one day
+            $outwardSchedule[] = [
+                "outwardTime" => $criteria->getFromTime()->format("H:i"),
+                lcfirst($criteria->getFromDate()->format("D"))=>1
+            ];
+            $solidaryFormalRequest->setOutwardSchedule($outwardSchedule);
+        }
         
         // Return dates and schedule ? Only carpool
         if (!is_null($criteriaReturn)) {
@@ -187,10 +194,17 @@ class SolidarySolutionManager
             $solidaryFormalRequest->setReturnLimitDate($criteriaReturn->getFromDate());
             if ($criteriaReturn->getFrequency()==Criteria::FREQUENCY_REGULAR) {
                 $solidaryFormalRequest->setReturnLimitDate($criteriaReturn->getToDate());
-            }
 
-            // Days
-            $solidaryFormalRequest->setReturnSchedule($this->buildScheduleFromCriteria($criteriaReturn, "return"));
+                // Days
+                $solidaryFormalRequest->setReturnSchedule($this->buildScheduleFromCriteria($criteriaReturn, "return"));
+            } else {
+                // For a punctual, we generate only with one day
+                $returnSchedule[] = [
+                    "returnTime" => $criteriaReturn->getFromTime()->format("H:i"),
+                    lcfirst($criteriaReturn->getFromDate()->format("D"))=>1
+                ];
+                $solidaryFormalRequest->setReturnSchedule($returnSchedule);
+            }
         }
 
         return $solidaryFormalRequest;
@@ -200,44 +214,44 @@ class SolidarySolutionManager
     {
         $schedule = [];
         if ($criteria->isMonCheck() && !is_null($criteria->getMonTime())) {
-            $schedule = $this->buildDaySchedule($schedule, "mon", $criteria->getMonTime(), $way);
+            $schedule = $this->buildDaySchedule($schedule, "mon", $criteria->getMonTime()->format("H:i"), $way);
         }
         if ($criteria->isTueCheck() && !is_null($criteria->getTueTime())) {
-            $schedule = $this->buildDaySchedule($schedule, "tue", $criteria->getTueTime(), $way);
+            $schedule = $this->buildDaySchedule($schedule, "tue", $criteria->getTueTime()->format("H:i"), $way);
         }
         if ($criteria->isWedCheck() && !is_null($criteria->getWedTime())) {
-            $schedule = $this->buildDaySchedule($schedule, "wed", $criteria->getWedTime(), $way);
+            $schedule = $this->buildDaySchedule($schedule, "wed", $criteria->getWedTime()->format("H:i"), $way);
         }
         if ($criteria->isThuCheck() && !is_null($criteria->getThuTime())) {
-            $schedule = $this->buildDaySchedule($schedule, "thu", $criteria->getThuTime(), $way);
+            $schedule = $this->buildDaySchedule($schedule, "thu", $criteria->getThuTime()->format("H:i"), $way);
         }
         if ($criteria->isFriCheck() && !is_null($criteria->getFriTime())) {
-            $schedule = $this->buildDaySchedule($schedule, "fri", $criteria->getFriTime(), $way);
+            $schedule = $this->buildDaySchedule($schedule, "fri", $criteria->getFriTime()->format("H:i"), $way);
         }
         if ($criteria->isSatCheck() && !is_null($criteria->getSatTime())) {
-            $schedule = $this->buildDaySchedule($schedule, "sat", $criteria->getSatTime(), $way);
+            $schedule = $this->buildDaySchedule($schedule, "sat", $criteria->getSatTime()->format("H:i"), $way);
         }
         if ($criteria->isSunCheck() && !is_null($criteria->getSunTime())) {
-            $schedule = $this->buildDaySchedule($schedule, "sun", $criteria->getSunTime(), $way);
+            $schedule = $this->buildDaySchedule($schedule, "sun", $criteria->getSunTime()->format("H:i"), $way);
         }
         return $schedule;
     }
 
     private function buildDaySchedule($schedule, $day, $time, $way)
     {
-        $templateSchedule = ["mon"=>false,"tue"=>false,"wed"=>false,"thu"=>false,"fri"=>false,"sat"=>false,"sun"=>false];
+        //$templateSchedule = ["mon"=>false,"tue"=>false,"wed"=>false,"thu"=>false,"fri"=>false,"sat"=>false,"sun"=>false];
         $found = false;
         foreach ($schedule as $key => $currentSchedule) {
             if ($currentSchedule[$way.'Time']==$time) {
-                $schedule[$key][$day] = true;
+                $schedule[$key][$day] = 1;
                 $found = true;
                 break;
             }
         }
         if (!$found) {
-            $newSchedule = $templateSchedule;
+            $newSchedule = [];
             $newSchedule[$way.'Time'] = $time;
-            $newSchedule[$day] = true;
+            $newSchedule[$day] = 1;
             $schedule[] = $newSchedule;
         }
 
