@@ -43,6 +43,7 @@ const KibanaWidget = ({
               setCommunitiesList(result.data.map((c) => c.name))
           );
       isCommunityManager && loadCommunitiesList();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
   }
 
@@ -64,7 +65,8 @@ const KibanaWidget = ({
               src={`${url}/app/kibana#/dashboard/${dashboard}?embed=true${filters}`}
               height={height}
               width={width}
-            ></iframe>
+              title="Kibana iframe"
+            />
           ) : (
             <p>
               {kibanaError ? kibanaError : translate('custom.dashboard.pendingConnectionToKibana')}
@@ -73,14 +75,13 @@ const KibanaWidget = ({
         </CardContent>
       </Card>
     );
-  } else {
-    return (
-      <Card>
-        <Title title="Dashboard" />
-        <CardContent>{translate('custom.dashboard.accessDenied')}</CardContent>
-      </Card>
-    );
   }
+  return (
+    <Card>
+      <Title title="Dashboard" />
+      <CardContent>{translate('custom.dashboard.accessDenied')}</CardContent>
+    </Card>
+  );
 };
 
 export default KibanaWidget;
