@@ -1,5 +1,5 @@
 import React, { useState, useReducer, useEffect } from 'react';
-import { useDataProvider, fetchUtils, fetchStart, fetchEnd, useUnselectAll } from 'react-admin';
+import { useDataProvider, fetchUtils, useUnselectAll } from 'react-admin';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import CloseIcon from '@material-ui/icons/Close';
@@ -12,7 +12,6 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import CreateCampaignButton from './CreateCampaignButton';
 import SenderSelector from './SenderSelector';
 import { reducer, initialState } from './emailStore';
-import { stringify } from 'query-string';
 
 const useStyles = makeStyles((theme) => ({
   main_container: {
@@ -89,8 +88,6 @@ const MailComposer = ({
   const dataProvider = useDataProvider();
   const apiUrlTest = process.env.REACT_APP_API + process.env.REACT_APP_CAMPAIGN_SEND_TEST;
   const apiUrlReel = process.env.REACT_APP_API + process.env.REACT_APP_CAMPAIGN_SEND;
-  const dispatchTest = useDispatch();
-  const [loadingTest, setLoadingTest] = useState(false);
   const token = localStorage.getItem('token');
   const unselectAll = useUnselectAll();
   const [removeUnsuscribe, setRemoveUnsuscribe] = useState(0);

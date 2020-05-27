@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { DateTimeInput } from 'react-admin';
 import { FormControlLabel, RadioGroup, Radio, Box, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -38,10 +37,6 @@ const DateTimeSelector = ({
   const currentFromDateTime = () =>
     form && fieldnameStart && form.getState().values[fieldnameStart]
       ? new Date(form.getState().values[fieldnameStart])
-      : today;
-  const currentToDateTime = () =>
-    form && fieldnameStart && form.getState().values[fieldnameEnd]
-      ? new Date(form.getState().values[fieldnameEnd])
       : today;
 
   const setOffset = (hours, days, fromHour) => {
