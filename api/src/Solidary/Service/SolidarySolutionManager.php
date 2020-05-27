@@ -154,6 +154,45 @@ class SolidarySolutionManager
         $solidaryFormalRequest = new SolidaryFormalRequest();
         $solidaryFormalRequest->setSolidarySolution($solidarySolution);
 
+        // We get the good criteria. If there is a solidaryAsk, we take it, if not, we take the Proposal Criteria
+        $criteria = $criteriaReturn = null;
+        if (!is_null($solidarySolution->getSolidaryAsk())) {
+            $criteria = $solidarySolution->getSolidaryAsk()->getCriteria();
+            // Return ? Only carpool
+            if (!is_null($solidarySolution->getSolidaryAsk()->getAsk()) && !is_null($solidarySolution->getSolidaryAsk()->getAsk()->getAskLinked())) {
+                $criteriaReturn = $solidarySolution->getSolidaryAsk()->getAsk()->getAskLinked()->getCriteria();
+            }
+        } else {
+            $criteria = $solidarySolution->getSolidary()->getProposal()->getCriteria();
+            if (!is_null($solidarySolution->getSolidary()->getProposal()->getProposalLinked())) {
+                $criteriaReturn = $solidarySolution->getSolidary()->getProposal()->getProposalLinked()->getCriteria();
+            }
+        }
+
+        // Dates
+        $solidaryFormalRequest->setOutwardDate($criteria->getFromDate());
+        
+        $solidaryFormalRequest->setOutwardLimitDate($criteria->getFromDate());
+        if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+            $solidaryFormalRequest->setOutwardLimitDate($criteria->getToDate());
+        }
+        // Return Dates? Only carpool.
+        if (!is_null($criteriaReturn)) {
+            $solidaryFormalRequest->setReturnDate($criteriaReturn->getFromDate());
+            $solidaryFormalRequest->setReturnLimitDate($criteriaReturn->getFromDate());
+            if ($criteriaReturn->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $solidaryFormalRequest->setReturnLimitDate($criteriaReturn->getToDate());
+            }
+        }
+
+        
+        
+        // Days
+        
+
+
+
+
         return $solidaryFormalRequest;
     }
 
