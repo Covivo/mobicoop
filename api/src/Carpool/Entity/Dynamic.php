@@ -49,6 +49,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "path"="/dynamics/active",
  *              "security"="is_granted('dynamic_ad_create',object)"
  *          },
+ *          "unfinished"={
+ *              "method"="GET",
+ *              "path"="/dynamics/unfinished",
+ *              "security"="is_granted('dynamic_ad_create',object)"
+ *          },
  *          "get"={
  *             "security"="is_granted('reject',object)"
  *          },

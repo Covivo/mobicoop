@@ -323,7 +323,7 @@ class Address implements \JsonSerializable
     private $community;
 
     /**
-     * @var Community|null The waypoint of the address.
+     * @var Waypoint|null The waypoint of the address.
      *
      * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Waypoint", mappedBy="address")
      */

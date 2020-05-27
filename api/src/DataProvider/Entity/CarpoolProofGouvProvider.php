@@ -37,6 +37,10 @@ use DateTime;
 class CarpoolProofGouvProvider implements ProviderInterface
 {
     const RESSOURCE_POST = "v2/journeys";
+    const ISO6801 = 'Y-m-d\TH:i:s\Z';
+
+    // temporary : proof type fixed to 'A', need to be removed when C types will be implemented
+    const PROOF_TYPE = 'A';
 
     private $uri;
     private $token;
@@ -68,24 +72,27 @@ class CarpoolProofGouvProvider implements ProviderInterface
         ];
         
         // creation of the journey
+        // note : the casts are mandatory as the register checks for types
         // todo : add the required items depending on the class
         $journey = [
-            "journey_id" => $carpoolProof->getId(),
-            "operator_class" => $carpoolProof->getType(),
+            "journey_id" => (string)$carpoolProof->getId(),
+            // TODO : implement other types, for now we use the A type
+            // "operator_class" => $carpoolProof->getType(),
+            "operator_class" => self::PROOF_TYPE,
             "passenger" => [
                 "identity" => [
                     "email" => $carpoolProof->getPassenger()->getEmail(),
                     "phone" => $carpoolProof->getPassenger()->getTelephone()
                 ],
                 "start" => [
-                    "datetime" => $carpoolProof->getPickUpPassengerDate()->format(DateTime::ISO8601),
-                    "lon" => $carpoolProof->getPickUpPassengerAddress()->getLongitude(),
-                    "lat" => $carpoolProof->getPickUpPassengerAddress()->getLatitude()
+                    "datetime" => $carpoolProof->getPickUpPassengerDate()->format(self::ISO6801),
+                    "lon" => (float)$carpoolProof->getPickUpPassengerAddress()->getLongitude(),
+                    "lat" => (float)$carpoolProof->getPickUpPassengerAddress()->getLatitude()
                 ],
                 "end" => [
-                    "datetime" => $carpoolProof->getDropOffPassengerDate()->format(DateTime::ISO8601),
-                    "lon" => $carpoolProof->getDropOffPassengerAddress()->getLongitude(),
-                    "lat" => $carpoolProof->getDropOffPassengerAddress()->getLatitude()
+                    "datetime" => $carpoolProof->getDropOffPassengerDate()->format(self::ISO6801),
+                    "lon" => (float)$carpoolProof->getDropOffPassengerAddress()->getLongitude(),
+                    "lat" => (float)$carpoolProof->getDropOffPassengerAddress()->getLatitude()
                 ],
                 "seats" => $carpoolProof->getAsk()->getCriteria()->getSeatsPassenger(),
                 "contribution" => $carpoolProof->getAsk()->getCriteria()->getPassengerComputedRoundedPrice()*100,
@@ -97,24 +104,21 @@ class CarpoolProofGouvProvider implements ProviderInterface
                     "phone" => $carpoolProof->getDriver()->getTelephone()
                 ],
                 "start" => [
-                    "datetime" => $carpoolProof->getStartDriverDate()->format(DateTime::ISO8601),
-                    "lon" => $carpoolProof->getOriginDriverAddress()->getLongitude(),
-                    "lat" => $carpoolProof->getOriginDriverAddress()->getLatitude()
+                    "datetime" => $carpoolProof->getStartDriverDate()->format(self::ISO6801),
+                    "lon" => (float)$carpoolProof->getOriginDriverAddress()->getLongitude(),
+                    "lat" => (float)$carpoolProof->getOriginDriverAddress()->getLatitude()
                 ],
                 "end" => [
-                    "datetime" => $carpoolProof->getEndDriverDate()->format(DateTime::ISO8601),
-                    "lon" => $carpoolProof->getDestinationDriverAddress()->getLongitude(),
-                    "lat" => $carpoolProof->getDestinationDriverAddress()->getLatitude()
+                    "datetime" => $carpoolProof->getEndDriverDate()->format(self::ISO6801),
+                    "lon" => (float)$carpoolProof->getDestinationDriverAddress()->getLongitude(),
+                    "lat" => (float)$carpoolProof->getDestinationDriverAddress()->getLatitude()
                 ],
                 "revenue" => $carpoolProof->getAsk()->getCriteria()->getPassengerComputedRoundedPrice()*100,
                 "incentives" => []
             ]
         ];
 
-        // todo : treat the result
-        $result = $dataProvider->postCollection($journey, $headers);
-
-        return true;
+        return $dataProvider->postCollection($journey, $headers);
     }
 
     /**

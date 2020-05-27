@@ -127,15 +127,15 @@ class ProposalManager
     }
 
     /**
-     * Get the last active dynamic ad for a user.
+     * Get the last unfinished dynamic ad for a user.
      *
      * @param User $user        The user
      * @return Proposal|null    The proposal found or null if not found
      */
-    public function getLastDynamicActive(User $user)
+    public function getLastDynamicUnfinished(User $user)
     {
-        if ($lastActiveProposal = $this->proposalRepository->findBy(['user'=>$user,'dynamic'=>true,'active'=>true], ['createdDate'=>'DESC'], 1)) {
-            return $lastActiveProposal[0];
+        if ($lastUnfinishedProposal = $this->proposalRepository->findBy(['user'=>$user,'dynamic'=>true,'finished'=>false], ['createdDate'=>'DESC'], 1)) {
+            return $lastUnfinishedProposal[0];
         }
         return null;
     }

@@ -54,7 +54,7 @@ class AuthItemRepository
      * Find Auth Item by its id
      *
      * @param integer $id
-     * @return User|null
+     * @return AuthItem|null
      */
     public function find(int $id): ?AuthItem
     {
@@ -70,6 +70,34 @@ class AuthItemRepository
     public function findByName(string $name): ?AuthItem
     {
         return $this->repository->findOneBy(['name'=>$name]);
+    }
+
+    /**
+     * Find Auth Item by criteria
+     *
+     * @param Array $criteria
+     * @return AuthItem
+     */
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    {
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    /**
+     * Find Auth Item by Many Id (use in Auth manager for find many roles)
+     *
+     * @param Array $ids Array of ids roles
+     * @return AuthItem
+     */
+    public function findByIds(array $ids): ?array
+    {
+        $query = $this->repository->createQueryBuilder('a')
+            ->where("a.id IN (:arrayIds)")
+            ->setParameter('arrayIds', $ids)
+            ->orderBy('a.id', 'ASC')
+            ->getQuery();
+            
+        return $query->getresult();
     }
 
     public function findAll(): ?array
