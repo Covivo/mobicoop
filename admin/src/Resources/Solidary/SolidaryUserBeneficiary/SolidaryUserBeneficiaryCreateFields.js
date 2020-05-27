@@ -13,7 +13,7 @@ import {
 } from 'react-admin';
 
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, CircularProgress, Backdrop } from '@material-ui/core';
+import { Box, CircularProgress } from '@material-ui/core';
 
 const useStyles = makeStyles({
   spacedHalfwidth: { maxWidth: '400px', marginBottom: '0.5rem' },

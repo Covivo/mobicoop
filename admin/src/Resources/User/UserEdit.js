@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { DateInput } from 'react-admin-date-inputs';
 import frLocale from 'date-fns/locale/fr';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,15 +11,13 @@ import {
   SelectInput,
   email,
   BooleanInput,
-  ReferenceInput,
   ReferenceField,
   FunctionField,
   useTranslate,
-  useDataProvider,
 } from 'react-admin';
 
 import GeocompleteInput from '../../components/geolocation/geocomplete';
-import { UserRenderer, addressRenderer } from '../../utils/renderers';
+import { addressRenderer } from '../../utils/renderers';
 import GestionRoles from './GestionRoles';
 
 const useStyles = makeStyles({
