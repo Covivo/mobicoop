@@ -279,6 +279,7 @@ const SolidaryView = (props) => {
             />
           </ListItem>
           <ListItem>
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a href="#">Voir toutes les actions</a>
           </ListItem>
         </List>
