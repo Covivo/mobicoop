@@ -41,8 +41,7 @@
       "geoToken": "string",
       "phoneToken": "string",
       "phoneValidatedDate": "2020-01-16T15:16:56.382Z",
-      "iosAppId": "string",
-      "androidAppId": "string",
+      "mobile": false,
       "language": "string",
       "addresses": [
         {
@@ -4615,8 +4614,7 @@
       "geoToken": "string",
       "phoneToken": "string",
       "phoneValidatedDate": "2020-01-16T15:16:56.386Z",
-      "iosAppId": "string",
-      "androidAppId": "string",
+      "mobile": false,
       "language": "string",
       "addresses": [
         {

@@ -72,6 +72,7 @@ class MassMatching
 
     /**
      * @var int The total distance of the direction in meter.
+     * corresponding to newDistance in classic carpool matching
      * @ORM\Column(type="integer")
      * @Groups({"mass","massCompute"})
      */
@@ -79,6 +80,7 @@ class MassMatching
     
     /**
      * @var int The total duration of the direction in milliseconds.
+     * corresponding to newDuration in classic carpool matching
      * @ORM\Column(type="integer")
      * @Groups({"mass","massCompute"})
      */
@@ -139,29 +141,30 @@ class MassMatching
         return $this->massPerson2->getId();
     }
 
-    public function getDistance(): int
+    public function getDistance(): ?int
     {
         return $this->distance;
     }
     
-    public function setDistance(int $distance): self
+    public function setDistance(?int $distance): self
     {
         $this->distance = $distance;
         
         return $this;
     }
 
-    public function getDuration(): int
+    public function getDuration(): ?int
     {
         return $this->duration;
     }
     
-    public function setDuration(int $duration): self
+    public function setDuration(?int $duration): self
     {
         $this->duration = $duration;
         
         return $this;
     }
+
 
     public function getCreatedDate(): ?\DateTimeInterface
     {

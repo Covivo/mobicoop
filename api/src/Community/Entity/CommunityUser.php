@@ -60,7 +60,6 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },
  *          "post"={
- *              "controller"=JoinAction::class,
  *              "security_post_denormalize"="is_granted('community_join',object)"
  *          }
  *      },
@@ -89,7 +88,7 @@ class CommunityUser
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readCommunity","readCommunityUser"})
+     * @Groups({"readCommunity","readCommunityUser","readUserAdmin","readUser"})
      */
     private $id;
 
@@ -99,7 +98,7 @@ class CommunityUser
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="communityUsers")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readCommunityUser","write"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin"})
      * @MaxDepth(1)
      * @Assert\NotBlank
      */
@@ -111,7 +110,7 @@ class CommunityUser
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readCommunity","readCommunityUser","write"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin"})
      * @MaxDepth(1)
      * @Assert\NotBlank
      */
@@ -121,7 +120,7 @@ class CommunityUser
      * @var int The status of the event (active/inactive).
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"readCommunity","readCommunityUser","write"})
+     * @Groups({"readCommunity","readCommunityUser","write","readUserAdmin"})
      */
     private $status;
 
@@ -153,7 +152,7 @@ class CommunityUser
     * @var \DateTimeInterface Accepted date.
     *
     * @ORM\Column(type="datetime", nullable=true)
-    * @Groups({"readCommunityUser","write"})
+    * @Groups({"readCommunity","readCommunityUser","write"})
     */
     private $acceptedDate;
 

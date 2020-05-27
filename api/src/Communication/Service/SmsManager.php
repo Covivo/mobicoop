@@ -30,7 +30,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 /**
- * Sms sending service via SmsEnvoi
+ * Sms sending service
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */

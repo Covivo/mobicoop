@@ -25,10 +25,14 @@ use App\Import\Controller\ImportImageCommunityController;
  *              "method"="GET",
  *              "path"="/import/images-from-v1/community",
  *              "controller"=ImportImageCommunityController::class,
+ *              "read"=false,
+ *              "security"="is_granted('import_create',object)"
  *          },
  *      },
  *      itemOperations={
- *          "get"
+ *          "get"={
+ *              "security"="is_granted('import_create',object)"
+ *          },
  *      }
  * )
  *

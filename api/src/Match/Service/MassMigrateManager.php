@@ -38,8 +38,15 @@ use App\Auth\Repository\AuthItemRepository;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Service\AdManager;
+use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Match\Event\MassMigrateUserMigratedEvent;
+use App\Match\Exception\MassException;
+use App\Community\Service\CommunityManager;
+use App\Import\Service\ImportManager;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Mass compute manager.
@@ -58,8 +65,15 @@ class MassMigrateManager
     private $adManager;
     private $params;
     private $eventDispatcher;
+    private $communityManager;
+    private $security;
+    private $importManager;
+    private $logger;
 
-    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, array $params)
+    const MOBIMATCH_IMPORT_PREFIX = "Mobimatch#";
+    const LAUNCH_IMPORT = true;
+
+    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ImportManager $importManager, LoggerInterface $logger, array $params)
     {
         $this->massPersonRepository = $massPersonRepository;
         $this->entityManager = $entityManager;
@@ -69,6 +83,10 @@ class MassMigrateManager
         $this->adManager = $adManager;
         $this->params = $params;
         $this->eventDispatcher = $eventDispatcher;
+        $this->communityManager = $communityManager;
+        $this->security = $security;
+        $this->importManager = $importManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -79,17 +97,52 @@ class MassMigrateManager
      */
     public function migrate(Mass $mass)
     {
+        set_time_limit(50000);
+
         $migratedUsers = [];
 
-        // First, we set the status of the Mass at Migrating
+        // We set the status of the Mass at Migrating
+        $this->logger->info('Mass Migrate | Set status of Mass #' . $mass->getId() . ' to migrating | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $mass->setStatus(Mass::STATUS_MIGRATING);
         $mass->setMigrationDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
 
+        // If there is a community to create, we create it
+        $community = null;
+        if (!empty($mass->getCommunityName())) {
+            $this->logger->info('Mass Migrate | Create community ' . $mass->getCommunityName() . " | " (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $community = new Community();
+            $community->setName($mass->getCommunityName());
+
+            // Check if the necessary field are filled
+            if (empty($mass->getCommunityDescription())) {
+                throw new MassException(MassException::COMMUNITY_MISSING_DESCRIPTION);
+            }
+            if (empty($mass->getCommunityFullDescription())) {
+                throw new MassException(MassException::COMMUNITY_MISSING_FULL_DESCRIPTION);
+            }
+            if (empty($mass->getCommunityAddress())) {
+                throw new MassException(MassException::COMMUNITY_MISSING_ADDRESS);
+            }
+
+            $community->setDescription($mass->getCommunityDescription());
+            $community->setFullDescription($mass->getCommunityFullDescription());
+
+            // The creator is the creator of the mass
+            $community->setUser($this->security->getUser());
+
+            $community->setAddress($mass->getCommunityAddress());
+
+            // $this->entityManager->persist($community);
+            // $this->entityManager->flush();
+            $community = $this->communityManager->save($community);
+        }
 
         // Then we get the Mass persons related the this mass
         $massPersons = $this->massPersonRepository->findAllByMass($mass);
+
+        $this->logger->info('Mass Migrate | Number of Mass persons to migrate : ' . count($massPersons) . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         // Then for each person we're creating a User (with a Role and an Address)
 
@@ -97,15 +150,16 @@ class MassMigrateManager
          * @var MassPerson $massPerson
          */
         foreach ($massPersons as $massPerson) {
+            $this->logger->info('Mass Migrate | Treating Mass person #' . $massPerson->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
             // We check if this user already exists
-            $userFound = $this->userRepository->findOneBy(["email"=>$massPerson->getEmail()]);
+            $user = $this->userRepository->findOneBy(["email"=>$massPerson->getEmail()]);
 
-            if (!is_null($userFound)) {
+            if (!is_null($user)) {
                 // This MassPerson has already an existing account
                 // We're returning the founded User
-                $userFound->setAlreadyRegistered(true);
-                $migratedUsers[] = $userFound;
+                $user->setAlreadyRegistered(true);
+                $migratedUsers[] = $user;
             } else {
 
                 // We don't know this MassPerson. We're creating the User.
@@ -139,43 +193,57 @@ class MassMigrateManager
                     $userAuthAssignment = new UserAuthAssignment();
                     $userAuthAssignment->setAuthItem($authItem);
                     $user->addUserAuthAssignment($userAuthAssignment);
-        
-                    $this->entityManager->persist($user);
-
-                    $migratedUsers[] = $user; // For the return
-
-                    // We update the MassPerson to link it to the created User
-                    $massPerson->setUser($user);
-                    $this->entityManager->persist($user);
 
                     // The home address of the user
                     $personalAddress = clone $massPerson->getPersonalAddress();
                     $personalAddress->setUser($user);
                     $personalAddress->setHome(true);
 
-                    $this->entityManager->persist($personalAddress);
-                    $this->entityManager->flush();
+                    $user->addAddress($personalAddress);
 
-                    // We create an Ad for this new user (regular, home to work, monday to friday)
-                    // To DO : see the comment above createJourneyFromMassPerson() method
-                    //$this->createJourneyFromMassPerson($massPerson);
-                    
+                    $migratedUsers[] = $user; // For the return
 
-                    // To do : Trigger an event to send a email
+                    $this->entityManager->persist($user);
+
+                    // Trigger an event to send a email
                     $event = new MassMigrateUserMigratedEvent($user);
                     $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
                 }
             }
-        }
-        //$this->entityManager->flush();
 
+            // If there is a community we create a CommunityUser with the User.
+            if (!empty($mass->getCommunityName())) {
+                $communityUser = new CommunityUser();
+                $communityUser->setCommunity($community);
+                $communityUser->setUser($user);
+                $this->entityManager->persist($communityUser);
+            }
+
+            // We set the link between the MassPerson and the User (new or found)
+            $massPerson->setUser($user);
+            $this->entityManager->persist($massPerson);
+            $this->entityManager->flush();
+
+            // We create an Ad for the User (regular, home to work, monday to friday)
+            $this->logger->info('Mass Migrate | createJourneyFromMassPerson #' . $massPerson->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->createJourneyFromMassPerson($massPerson, $user, $community);
+        }
+        
         // Finally, we set status of the Mass at Migrated and save the migrated date
+        // we do it before the import because the import process can break entities relations, and therefor break the flush...
+        $this->logger->info('Mass Migrate | Set status of Mass #' . $mass->getId() . ' to migrated | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $mass->setStatus(Mass::STATUS_MIGRATED);
         $mass->setMigratedDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
 
         $mass->setMigratedUsers($migratedUsers);
+
+        // Launch import and mass matching
+        if (self::LAUNCH_IMPORT) {
+            $this->logger->info('Mass Migrate | Start user import | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->importManager->treatUserImport(self::MOBIMATCH_IMPORT_PREFIX, $mass->getId());
+        }
 
         return $mass;
     }
@@ -197,11 +265,15 @@ class MassMigrateManager
      * We don't want to trigger matching at every Proposal we add.
      * Create the journey (Ad then Proposal) of a MassPerson
      *
-     * @param MassPerson $massPerson
+     * @param MassPerson $massPerson            Current MassPerson
+     * @param User $user                        The User created after this MassPerson
+     * @param Community|null $community         The community of this person. Can be null if there is no community created
      * @return Ad
      */
-    private function createJourneyFromMassPerson(MassPerson $massPerson): Ad
+    private function createJourneyFromMassPerson(MassPerson $massPerson, User $user, ?Community $community): Ad
     {
+        set_time_limit(50000);
+
         $ad = new Ad();
 
         // Role
@@ -250,9 +322,14 @@ class MassMigrateManager
         $ad->setSchedule($schedule);
 
         // The User
-        $ad->setUser($massPerson->getUser());
-        $ad->setUserId($massPerson->getUser()->getId());
+        $ad->setUser($user);
+        $ad->setUserId($user->getId());
 
-        return $this->adManager->createAd($ad);
+        // The community if it exists
+        if (!is_null($community)) {
+            $ad->setCommunities([$community->getId()]);
+        }
+
+        return $this->adManager->createAd($ad, false);
     }
 }

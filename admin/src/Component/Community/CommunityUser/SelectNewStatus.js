@@ -35,12 +35,12 @@ const SelectNewStatus = (props) => {
   const [newStatut, setNewStatus] = useState(props.record.status);
   const dataProvider = useDataProvider();
   const translate = useTranslate();
-  const classes = useStyles()
-
+  const classes = useStyles();
   const handleChangeButton = (e) => {
     setNewStatus(e.target.value)
     setShow(true);
   }
+
 
   const handleClickSave = () => {
     setShow(false);
@@ -76,7 +76,7 @@ const SelectNewStatus = (props) => {
             message={translate('custom.alert.valueSaved')}
             autoHideDuration={2000}
             action={
-              <React.Fragment>
+              <div>
                 <IconButton
                   aria-label="close"
                   color="inherit"
@@ -84,7 +84,7 @@ const SelectNewStatus = (props) => {
                 >
                   <CloseIcon />
                 </IconButton>
-              </React.Fragment>
+              </div>
             }
           />
       </Fragment>

@@ -65,7 +65,7 @@ class CommunityVoter extends Voter
             return false;
         }
 
-        // only vote on User objects inside this voter
+        // only vote on Community objects inside this voter
         if (!in_array($attribute, [
             self::COMMUNITY_CREATE,
             self::COMMUNITY_READ,

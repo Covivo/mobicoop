@@ -98,6 +98,9 @@
     "doctrine/reflection": {
         "version": "v1.0.0"
     },
+    "edwinhoksberg/php-fcm": {
+        "version": "1.0.0"
+    },
     "egulias/email-validator": {
         "version": "2.1.8"
     },

@@ -22,29 +22,37 @@
 
 namespace App\Solidary\Service;
 
+use App\Carpool\Entity\Criteria;
 use App\Carpool\Service\AdManager;
 use App\Solidary\Entity\Solidary;
+use App\Solidary\Entity\SolidaryAsksListItem;
 use App\Solidary\Entity\SolidarySearch;
-use App\Solidary\Event\SolidaryCreated;
+use App\Solidary\Event\SolidaryCreatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use App\Solidary\Event\SolidaryUpdated;
+use App\Solidary\Event\SolidaryUpdatedEvent;
 use App\Solidary\Exception\SolidaryException;
+use App\Solidary\Repository\SolidaryAskRepository;
 use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\SolidaryUserRepository;
 use Symfony\Component\Security\Core\Security;
+use App\Solidary\Entity\SolidaryAsk;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidaryManager
 {
     private $entityManager;
     private $eventDispatcher;
     private $security;
     private $solidaryRepository;
+    private $solidaryAskRepository;
     private $solidaryUserRepository;
     private $adManager;
     private $solidaryMatcher;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository, SolidaryUserRepository $solidaryUserRepository, AdManager $adManager, SolidaryMatcher $solidaryMatcher)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository, SolidaryUserRepository $solidaryUserRepository, AdManager $adManager, SolidaryMatcher $solidaryMatcher, SolidaryAskRepository $solidaryAskRepository)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
@@ -53,6 +61,7 @@ class SolidaryManager
         $this->solidaryUserRepository = $solidaryUserRepository;
         $this->adManager = $adManager;
         $this->solidaryMatcher = $solidaryMatcher;
+        $this->solidaryAskRepository = $solidaryAskRepository;
     }
 
     public function getSolidary($id): ?Solidary
@@ -69,8 +78,8 @@ class SolidaryManager
     public function createSolidary(Solidary $solidary)
     {
         // We trigger the event
-        $event = new SolidaryCreated($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser());
-        $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
+        $event = new SolidaryCreatedEvent($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser());
+        $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
 
         $this->entityManager->persist($solidary);
         $this->entityManager->flush();
@@ -79,8 +88,8 @@ class SolidaryManager
     public function updateSolidary(Solidary $solidary)
     {
         // We trigger the event
-        $event = new SolidaryUpdated($solidary);
-        $this->eventDispatcher->dispatch(SolidaryUpdated::NAME, $event);
+        $event = new SolidaryUpdatedEvent($solidary);
+        $this->eventDispatcher->dispatch(SolidaryUpdatedEvent::NAME, $event);
 
         $this->entityManager->persist($solidary);
         $this->entityManager->flush();
@@ -148,5 +157,123 @@ class SolidaryManager
         $solidarySearch->setResults($results);
 
         return $solidarySearch;
+    }
+
+    /**
+     * Get the solidary solutions of a solidary
+     *
+     * @param int $solidaryId Id of the Solidary
+     * @return array|null
+     */
+    public function getSolidarySolutions(int $solidaryId): array
+    {
+        return $this->solidaryRepository->findSolidarySolutions($solidaryId);
+    }
+
+    
+    /**
+     * Get the list of all the Asks (Solidary or not) linked to a Solidary
+     *
+     * @param integer $solidaryId
+     * @return Solidary
+     */
+    public function getAsksList(int $solidaryId): Solidary
+    {
+        $asksList = [];
+
+        $solidaryAsks = $this->solidaryAskRepository->findSolidaryAsks($solidaryId);
+
+        foreach ($solidaryAsks as $solidaryAsk) {
+
+            /**
+             * @var SolidaryAsk $solidaryAsk
+             */
+
+            $solidaryAsksItem = new SolidaryAsksListItem();
+
+            $askCriteria = $askCriteriaReturn = null;
+            if (!is_null($solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getMatching())) {
+                // Carpool
+                $user = $solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser();
+                $askCriteria = $solidaryAsk->getCriteria();
+                if (!is_null($solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getMatching()->getMatchingLinked())) {
+                    $askCriteriaReturn = $solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getMatching()->getMatchingLinked()->getCriteria();
+                }
+
+                $solidaryAsksItem->setDriverType(SolidaryAsksListItem::DRIVER_TYPE_CARPOOLER);
+            } else {
+                // Solidary Transport
+                $user = $solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getSolidaryUser()->getUser();
+                $askCriteria = $solidaryAsk->getCriteria();
+
+                $solidaryAsksItem->setDriverType(SolidaryAsksListItem::DRIVER_TYPE_VOLUNTEER);
+            }
+
+
+            // Frequency
+            $solidaryAsksItem->setFrequency($askCriteria->getFrequency());
+            
+            // Status
+            $solidaryAsksItem->setStatus($solidaryAsk->getStatus());
+
+            // FromDate, to date
+            $solidaryAsksItem->setFromDate($askCriteria->getFromDate());
+            $days = ["mon","tue","wed","thu","fri","sat","sun"];
+
+            $schedule = [];
+            if ($askCriteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                // Regular journey
+                $solidaryAsksItem->setToDate($askCriteria->getToDate());
+                
+                $schedule = $this->adManager->getScheduleFromCriteria($askCriteria, $askCriteriaReturn);
+            } else {
+                // Punctual journey
+                $schedule[0]['outwardTime'] = $askCriteria->getFromTime()->format("H:i");
+                if (!is_null($askCriteriaReturn)) {
+                    $schedule[0]['returnTime'] = $askCriteriaReturn->getFromTime()->format("H:i");
+                }
+                // init days
+                foreach ($days as $day) {
+                    $schedule[0][$day] = false;
+                }
+                if ($askCriteria->isMonCheck()) {
+                    $schedule[0]["mon"]=true;
+                }
+                if ($askCriteria->isTueCheck()) {
+                    $schedule[0]["tue"]=true;
+                }
+                if ($askCriteria->isWedCheck()) {
+                    $schedule[0]["wed"]=true;
+                }
+                if ($askCriteria->isThuCheck()) {
+                    $schedule[0]["thu"]=true;
+                }
+                if ($askCriteria->isFriCheck()) {
+                    $schedule[0]["fri"]=true;
+                }
+                if ($askCriteria->isSatCheck()) {
+                    $schedule[0]["sat"]=true;
+                }
+                if ($askCriteria->isSunCheck()) {
+                    $schedule[0]["sun"]=true;
+                }
+            }
+
+            $solidaryAsksItem->setSchedule($schedule);
+
+            // The driver
+            $solidaryAsksItem->setDriver($user->getGivenName()." ".$user->getFamilyName());
+            $solidaryAsksItem->setTelephone($user->getTelephone());
+
+            // SolidarySolutionId (usefull for a SolidaryContact)
+            $solidaryAsksItem->setSolidarySolutionId($solidaryAsk->getSolidarySolution()->getId());
+
+            $asksList[] = $solidaryAsksItem;
+        }
+
+        $solidary = $this->getSolidary($solidaryId);
+        $solidary->setAsksList($asksList);
+
+        return $solidary;
     }
 }

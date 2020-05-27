@@ -54,7 +54,7 @@ interface ProviderInterface
     /**
      * Deserializes the data returned by the provider.
      *
-     * @param string $class     The name of the class to desereialize.
+     * @param string $class     The name of the class to deserialize.
      * @param array $data       The data to deserialize.
      */
     public function deserialize(string $class, array $data);

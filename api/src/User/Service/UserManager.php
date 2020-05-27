@@ -50,9 +50,9 @@ use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\Community\Entity\Community;
 use App\Solidary\Entity\SolidaryUser;
-use App\Solidary\Event\SolidaryCreated;
-use App\Solidary\Event\SolidaryUserCreated;
-use App\Solidary\Event\SolidaryUserUpdated;
+use App\Solidary\Event\SolidaryCreatedEvent;
+use App\Solidary\Event\SolidaryUserCreatedEvent;
+use App\Solidary\Event\SolidaryUserUpdatedEvent;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\StructureRepository;
@@ -231,10 +231,10 @@ class UserManager
 
         // dispatch SolidaryUser event
         if (!is_null($user->getSolidaryUser())) {
-            $event = new SolidaryUserCreated($user, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryUserCreated::NAME, $event);
-            $event = new SolidaryCreated($user, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
+            $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryUserCreatedEvent::NAME, $event);
+            $event = new SolidaryCreatedEvent($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
         }
 
         // return the user
@@ -271,7 +271,7 @@ class UserManager
         if ($solidaryUser->getEMaxTime()=="") {
             $solidaryUser->setEMaxTime($solidaryUser->getSolidaryUserStructures()[0]->getStructure()->getEMaxTime());
         }
-        
+
         // Days
         if ($solidaryUser->hasMMon()!==false) {
             $solidaryUser->setMMon(true);
@@ -348,13 +348,13 @@ class UserManager
      */
     public function prepareUser(User $user, bool $encodePassword=false)
     {
-        if (count($user->getUserAuthAssignments()) == 0) {
-            // default role : user registered full
-            $authItem = $this->authItemRepository->find(AuthItem::ROLE_USER_REGISTERED_FULL);
-            $userAuthAssignment = new UserAuthAssignment();
-            $userAuthAssignment->setAuthItem($authItem);
-            $user->addUserAuthAssignment($userAuthAssignment);
-        }
+
+        // We add the default roles we set in User Entity
+        $authItem = $this->authItemRepository->find(User::ROLE_DEFAULT);
+        $userAuthAssignment = new UserAuthAssignment();
+        $userAuthAssignment->setAuthItem($authItem);
+        $user->addUserAuthAssignment($userAuthAssignment);
+
 
         if ($encodePassword) {
             $user->setClearPassword($user->getPassword());
@@ -440,10 +440,10 @@ class UserManager
         $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
         // dispatch SolidaryUser event
         if (!is_null($user->getSolidaryUser())) {
-            $event = new SolidaryUserCreated($user, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryUserCreated::NAME, $event);
-            $event = new SolidaryCreated($user, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
+            $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryUserCreatedEvent::NAME, $event);
+            $event = new SolidaryCreatedEvent($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
         }
 
         // return the user
@@ -731,7 +731,7 @@ class UserManager
             if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
                 // check telephone for sms
                 continue;
-            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
+            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && !$user->hasMobile()) {
                 // check apps for push
                 continue;
             }
@@ -750,7 +750,7 @@ class UserManager
             if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
                 // check telephone for sms
                 continue;
-            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
+            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && !$user->hasMobile()) {
                 // check apps for push
                 continue;
             }
@@ -792,7 +792,7 @@ class UserManager
             if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
                 // check telephone for sms
                 $userNotification->setActive(false);
-            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
+            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && !$user->hasMobile()) {
                 // check apps for push
                 $userNotification->setActive(false);
             }

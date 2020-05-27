@@ -28,6 +28,9 @@ use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidaryRepository
 {
     /**
@@ -97,6 +100,22 @@ class SolidaryRepository
         ->join('su.user', 'u')
         ->where('u.id = :user')
         ->setParameter('user', $user->getId());
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find the solidary solutions of a solidary
+     *
+     * @param int $solidaryId Id of the Solidary
+     * @return array|null
+     */
+    public function findSolidarySolutions(int $solidaryId): ?array
+    {
+        $query = $this->repository->createQueryBuilder('s')
+        ->join('s.solidarySolutions', 'ss')
+        ->where('s.id = :solidaryId')
+        ->setParameter('solidaryId', $solidaryId);
 
         return $query->getQuery()->getResult();
     }

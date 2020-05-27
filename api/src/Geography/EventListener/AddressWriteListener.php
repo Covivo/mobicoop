@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -25,23 +24,29 @@ namespace App\Geography\EventListener;
 
 use App\Geography\Entity\Address;
 use App\Geography\Service\AddressManager;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\PreFlushEventArgs;
 
 /**
- * Address Write Event listener
+ * Address Write Event listener, called on preFlush.
+ * @author Sylvain <sylvain.briat@mobicoop.org>
  */
 class AddressWriteListener
 {
+    private $entityManager;
     private $addressManager;
 
-    public function __construct(AddressManager $addressManager)
+    public function __construct(EntityManagerInterface $entityManager, AddressManager $addressManager)
     {
+        $this->entityManager = $entityManager;
         $this->addressManager = $addressManager;
     }
 
-    public function setTerritories(Address $address, LifecycleEventArgs $args)
+    public function setTerritories(Address $address, PreFlushEventArgs $args)
     {
         // we create the link to territories only for some selected entities
-        $this->addressManager->createAddressTerritoriesForUsefulEntity($address, true);
+        //$address = $this->addressManager->createAddressTerritoriesForUsefulEntity($address);
+        // we persist here, the flush is be made elsewhere
+        //$this->entityManager->persist($address);
     }
 }

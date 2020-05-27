@@ -45,6 +45,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "get"
  *      }
  * )
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 
 class SolidaryResultTransport

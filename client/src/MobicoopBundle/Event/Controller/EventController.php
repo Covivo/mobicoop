@@ -51,10 +51,15 @@ class EventController extends AbstractController
     /**
      * Events list controller.
      */
-    public function eventList()
+    public function eventList($tabDefault)
     {
+        $tab = 'tab-current';
+        if ($tabDefault == 'evenements-passes') {
+            $tab = 'tab-passed';
+        }
         return $this->render('@Mobicoop/event/events.html.twig', [
-            'defaultItemsPerPage' => self::DEFAULT_NB_EVENTS_PER_PAGE
+            'defaultItemsPerPage' => self::DEFAULT_NB_EVENTS_PER_PAGE,
+            'tabDefault' => $tab
         ]);
     }
 

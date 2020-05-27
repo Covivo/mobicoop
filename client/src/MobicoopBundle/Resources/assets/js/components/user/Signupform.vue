@@ -276,7 +276,6 @@
                   name="homeAddress"
                   :label="$t('models.user.homeTown.placeholder')"
                   :url="geoSearchUrl"
-                  :hint="requiredHomeAddress ? $t('models.user.homeTown.required.hint') : $t('models.user.homeTown.hint')"
                   persistent-hint
                   :required="requiredHomeAddress"
                   @address-selected="selectedGeo"

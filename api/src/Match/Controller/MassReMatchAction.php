@@ -25,6 +25,7 @@ namespace App\Match\Controller;
 
 use App\Match\Service\MassImportManager;
 use App\Match\Entity\Mass;
+use App\Match\Repository\MassMatchingRepository;
 use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -33,11 +34,13 @@ final class MassReMatchAction
     use TranslatorTrait;
     private $massImportManager;
     private $request;
+    private $massMatchingRepository;
 
-    public function __construct(RequestStack $requestStack, MassImportManager $massImportManager)
+    public function __construct(RequestStack $requestStack, MassImportManager $massImportManager, MassMatchingRepository $massMatchingRepository)
     {
         $this->massImportManager = $massImportManager;
         $this->request = $requestStack->getCurrentRequest();
+        $this->massMatchingRepository = $massMatchingRepository;
     }
 
     public function __invoke(Mass $data): Mass
@@ -56,6 +59,8 @@ final class MassReMatchAction
             // Rollback the Mass status to only valid
             $this->massImportManager->updateStatusMass($data, Mass::STATUS_ANALYZED);
 
+            // delete the previous matchings
+            $this->massMatchingRepository->deleteMatchingsOfAMass($data->getId());
 
             $maxDetourDurationPercent = 40;
             $maxDetourDistancePercent = 40;

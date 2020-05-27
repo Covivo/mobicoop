@@ -20,6 +20,7 @@
         style="margin-bottom: 0px!important; padding-bottom: 0px!important;"
       >
         <v-tabs
+          v-model="modelTabs"
           background-color="primary"
           class="elevation-2"
           dark
@@ -37,7 +38,9 @@
           </v-tab>
 
           <!-- Events available -->
+
           <v-tab-item
+
             :value="'tab-current'"
           >
             <v-card class="pa-6">
@@ -296,6 +299,10 @@ export default {
     isLogged: {
       type: Boolean,
       default: false
+    },
+    tabDefault: {
+      type: String,
+      default: ""
     }
 
   },
@@ -317,7 +324,7 @@ export default {
           value: 'id',
         },
         { text: 'Nom', value: 'name' },
-        { text: 'Description', value: 'fulldescription' },
+        { text: 'Description', value: 'description' },
         { text: 'Image', value: 'logos' }
       ],
       loading: false,
@@ -329,6 +336,8 @@ export default {
       pointsComing:[],
       totalItems:0,
       totalItemsPassed:0,
+      modelTabs:(this.tabDefault !== "") ? this.tabDefault : "tab-current"
+
     }
   },
   watch:{
@@ -338,6 +347,7 @@ export default {
   },
   mounted() {
     //this.createMapComing();
+    this.getEventPassed();
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
@@ -435,6 +445,7 @@ export default {
           if(response.data.eventPassed){
             this.eventspassed = response.data.eventPassed;
             this.totalItemsPassed = response.data.totalItems;
+
           }
           this.loading = false;
         })

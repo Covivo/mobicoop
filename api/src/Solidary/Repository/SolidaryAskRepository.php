@@ -28,6 +28,11 @@ use App\Solidary\Entity\SolidarySolution;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * SolidaryAsk Repository
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidaryAskRepository
 {
     /**
@@ -77,6 +82,48 @@ class SolidaryAskRepository
         ->join('sa.solidarySolution', 'ss')
         ->where('sa.solidarySolution = :solidarySolution')
         ->setParameter('solidarySolution', $solidarySolution);
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find the SolidaryAsk between two dates
+     *
+     * @param \DateTimeInterface $startDate Search startDate
+     * @param \DateTimeInterface $endDate   Search endDate
+     * @param bool $onlySolidaryTransport   True if we search only for Solidary transport
+     * @return array
+     */
+    public function findBetweenTwoDates(\DateTimeInterface $startDate, \DateTimeInterface $endDate, $onlySolidaryTransport = true)
+    {
+        $query = $this->repository->createQueryBuilder('sa')
+        ->join('sa.criteria', 'c')
+        ->join('sa.solidarySolution', 'ss')
+        ->join('ss.solidaryMatching', 'sm')
+        ->where('c.fromDate >= :startDate and (c.toDate <= :endDate or c.toDate is null)');
+        if ($onlySolidaryTransport) {
+            $query->andWhere('sm.matching is null');
+        }
+        
+        $query->setParameter('startDate', $startDate->format("Y-m-d"))
+        ->setParameter('endDate', $endDate->format("Y-m-d"));
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find the solidaryAsks of a solidary
+     *
+     * @param int $solidaryId Id of the Solidary
+     * @return array|null
+     */
+    public function findSolidaryAsks(int $solidaryId): ?array
+    {
+        $query = $this->repository->createQueryBuilder('sa')
+        ->join('sa.solidarySolution', 'ss')
+        ->join('ss.solidary', 's')
+        ->where('s.id = :solidaryId')
+        ->setParameter('solidaryId', $solidaryId);
 
         return $query->getQuery()->getResult();
     }
