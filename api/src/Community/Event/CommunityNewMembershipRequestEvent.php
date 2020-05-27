@@ -46,6 +46,5 @@ class CommunityNewMembershipRequestEvent extends Event
     {
         return $this->community;
     }
-
 }
 
