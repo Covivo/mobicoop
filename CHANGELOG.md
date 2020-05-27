@@ -1,3 +1,9 @@
+# Release 1.6.0
+
+## API
+
+* New related mobile app versioning system
+
 # Release 1.5.0
 
 ## API
