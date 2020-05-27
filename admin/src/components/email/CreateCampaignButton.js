@@ -9,7 +9,7 @@ const CreateCampaignButton = ({
   campagne,
   oldCampaign = null,
 }) => {
-  const [createCampaign, { data, error, loading, loaded }] = useMutation();
+  const [createCampaign, { data, loading, loaded }] = useMutation();
   const createCampaignAction = () => {
     createCampaign({
       type: oldCampaign ? 'update' : 'create',
