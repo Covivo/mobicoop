@@ -45,7 +45,8 @@ class VersionManager
     public function getVersions()
     {
         $versions = json_decode(file_get_contents($this->repositoryFile), true);
-        if (array_key_exists($this->appId, $versions)) {
+
+        if (is_array($versions) && array_key_exists($this->appId, $versions)) {
             return $versions[$this->appId];
         }
         return [];

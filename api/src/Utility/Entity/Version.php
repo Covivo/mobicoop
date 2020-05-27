@@ -36,7 +36,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "normalization_context"={"groups"={"readVersion"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={
- *          "get"
+ *          "get"={
+ *              "security"="is_granted('app_versioning_read',object)"
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
