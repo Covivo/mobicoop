@@ -22,7 +22,7 @@ import StructureProofResource from './Resources/Solidary/StructureProof';
 import SolidaryResource from './Resources/Solidary/Solidary';
 import SolidaryUsersBeneficiaryResource from './Resources/Solidary/SolidaryUserBeneficiary';
 import SolidaryUsersVolunteerResource from './Resources/Solidary/SolidaryUserVolunteer';
-import StructureResource from './Resources/Solidary/Structure';
+//import StructureResource from './Resources/Solidary/Structure';
 import ArticleResource from './Resources/Article/Article';
 import EventResource from './Resources/Event';
 import SectionResource from './Resources/Article/Section';

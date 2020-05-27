@@ -1,5 +1,5 @@
 import React from 'react'
-import { CheckboxGroupInput, useGetList,} from 'react-admin'
+import { CheckboxGroupInput} from 'react-admin'
 import {LinearProgress, } from '@material-ui/core'
 
 const SolidaryNeeds = () => {
