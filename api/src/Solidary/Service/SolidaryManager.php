@@ -715,6 +715,14 @@ class SolidaryManager
         return $user;
     }
 
+    /**
+     * Build a volunteer's planning between two dates.
+     *
+     * @param \DateTimeInterface $startDate
+     * @param \DateTimeInterface $endDate
+     * @param integer $solidaryVolunteerId
+     * @return array
+     */
     public function buildSolidaryVolunteerPlanning(\DateTimeInterface $startDate, \DateTimeInterface  $endDate, int $solidaryVolunteerId): array
     {
         // We get the Volunteer and we check if it's really a volunteer

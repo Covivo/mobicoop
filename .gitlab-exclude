@@ -83,5 +83,6 @@
 /client/var/log/
 /client/public/google*.html
 /client/public/robots.txt
+/client/public/mobile_app_repository.json
 /admin/.env
 /admin/public/robots.txt
