@@ -70,6 +70,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
  * @Vich\Uploadable
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Proof
 {

@@ -21,6 +21,7 @@ import EmailComposeButton from '../Email/EmailComposeButton';
 import ResetButton from '../Utilities/ResetButton';
 import MyDatagrid from '../Utilities/MyDatagrid';
 
+
 const UserList = (props) => {
 
   const translate = useTranslate();
@@ -37,12 +38,9 @@ const UserList = (props) => {
     if (record.newsSubscription === false) setCount( selected == false ? count  + 1 :count - 1);
 
   }
-
   const MyDatagridRow = ({ record, resource, id, onToggleItem, children, selected, basePath }) => {
 
     if (selected && record.newsSubscription === false) setCount(1)
-
-
     return (
         <TableRow key={id} hover={true}>
             {/* first column: selection checkbox */}
@@ -64,7 +62,7 @@ const UserList = (props) => {
             ))}
         </TableRow>
       )
-    }
+  }
   const MyDatagridBody = props => <DatagridBody {...props} row={<MyDatagridRow />} />;
   const MyDatagridUser = props => <Datagrid {...props} body={<MyDatagridBody />} />;
 
@@ -99,31 +97,32 @@ const UserList = (props) => {
       </Filter>
   );
 
-  return (
-    <List {...props}
-          title="Utilisateurs > liste"
-          perPage={ 10 }
-          filters={<UserFilter />}
-          sort={{ field: 'id', order: 'ASC' }}
-          bulkActionButtons={<UserBulkActionButtons />}
-          //exporter={isAuthorized("right_user_assign") ? defaultExporter : false}
-          exporter={false}
-          hasCreate={isAuthorized('user_create')}
-    >
-        <MyDatagridUser  rowClick="show">
-            <TextField source="originId" label={translate('custom.label.user.id')} sortBy="id"/>
-            <TextField source="givenName" label={translate('custom.label.user.givenName')}  />
-            <TextField source="familyName" label={translate('custom.label.user.familyName')} />
-            <EmailField source="email" label={translate('custom.label.user.email')} />
-            <BooleanField source="newsSubscription" label={translate('custom.label.user.accepteEmail')}/>
-            <BooleanStatusField source="status" label={translate('custom.label.user.accountStatus')} />
-            <DateField source="createdDate" label={translate('custom.label.user.createdDate')}/>
-            {isAuthorized("user_update") &&
-            <EditButton />
-            }
-        </MyDatagridUser>
-    </List>
-  )
+      return (
+        <List {...props}
+              title="Utilisateurs > liste"
+              perPage={ 10 }
+              filters={<UserFilter />}
+              sort={{ field: 'id', order: 'ASC' }}
+              bulkActionButtons={<UserBulkActionButtons />}
+              //exporter={isAuthorized("right_user_assign") ? defaultExporter : false}
+              exporter={false}
+              hasCreate={isAuthorized('user_create')}
+        >
+            <MyDatagridUser  rowClick="show">
+                <TextField source="originId" label={translate('custom.label.user.id')} sortBy="id"/>
+                <TextField source="givenName" label={translate('custom.label.user.givenName')}  />
+                <TextField source="familyName" label={translate('custom.label.user.familyName')} />
+                <EmailField source="email" label={translate('custom.label.user.email')} />
+                <BooleanField source="newsSubscription" label={translate('custom.label.user.accepteEmail')}/>
+                <BooleanStatusField source="status" label={translate('custom.label.user.accountStatus')} />
+                <DateField source="createdDate" label={translate('custom.label.user.createdDate')}/>
+                {isAuthorized("user_update") &&
+                <EditButton />
+                }
+            </MyDatagridUser>
+        </List>
+      )
+
 };
 
 export default UserList;

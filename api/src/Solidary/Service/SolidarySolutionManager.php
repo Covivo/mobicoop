@@ -22,12 +22,21 @@
 
 namespace App\Solidary\Service;
 
+use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\AskHistory;
+use App\Carpool\Entity\Criteria;
+use App\Solidary\Entity\SolidaryAsk;
+use App\Solidary\Entity\SolidaryAskHistory;
+use App\Solidary\Entity\SolidaryFormalRequest;
 use App\Solidary\Entity\SolidarySolution;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryMatchingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidarySolutionManager
 {
     private $entityManager;
@@ -62,5 +71,134 @@ class SolidarySolutionManager
         $this->entityManager->persist($solidarySolution);
         $this->entityManager->flush();
         return $solidarySolution;
+    }
+
+    /**
+     * Make a formal request for a SolidarySolution
+     *
+     * @param SolidaryFormalRequest $solidarySolution
+     * @return SolidaryFormalRequest|null
+     */
+    public function makeFormalRequest(SolidaryFormalRequest $solidaryFormalRequest) : ?SolidaryFormalRequest
+    {
+        $solidarySolution = $solidaryFormalRequest->getSolidarySolution();
+
+        // Get the solidaryAsk
+        // Check if there is a SolidaryAsk
+        $solidaryAsk = $solidarySolution->getSolidaryAsk();
+        if (is_null($solidaryAsk)) {
+            throw new SolidaryException(SolidaryException::NO_SOLIDARY_ASK);
+        }
+
+        // Check if the SolidaryAsk has the right status
+        if ($solidaryAsk->getStatus()!==SolidaryAsk::STATUS_ASKED) {
+            throw new SolidaryException(SolidaryException::BAD_SOLIDARY_ASK_STATUS_FOR_FORMAL);
+        }
+
+        // Update the SolidaryAsk Criteria
+        $solidaryAskCriteria = $this->updateCriteriaFromFormalRequest($solidaryFormalRequest, $solidaryAsk->getCriteria());
+        $this->entityManager->persist($solidaryAskCriteria);
+        $this->entityManager->flush();
+
+        //  Update the status of the SolidaryAsk and add a SolidaryAskHistory
+        $solidaryAsk->setStatus(SolidaryAsk::STATUS_PENDING);
+        $this->entityManager->persist($solidaryAsk);
+        $this->entityManager->flush();
+        $solidaryAskHistory = new SolidaryAskHistory();
+        $solidaryAskHistory->setStatus($solidaryAsk->getStatus());
+        $solidaryAskHistory->setSolidaryAsk($solidaryAsk);
+        $this->entityManager->persist($solidaryAskHistory);
+        $this->entityManager->flush();
+
+        // If it's a Carpool Ask, we need to treat also the real Ask
+        // Ask Criteria if it exists
+        if (!is_null($solidaryAsk->getAsk())) {
+            // Update the Criteria
+            $askCriteria = $this->updateCriteriaFromFormalRequest($solidaryFormalRequest, $solidaryAsk->getAsk()->getCriteria());
+            $this->entityManager->persist($askCriteria);
+            $this->entityManager->flush();
+
+            //  Update the status of the Ask and add a AskHistory
+            $ask = $solidaryAsk->getAsk();
+            $ask->setStatus(Ask::STATUS_PENDING_AS_PASSENGER);
+            $this->entityManager->persist($ask);
+            $this->entityManager->flush();
+            $askHistory = new AskHistory();
+            $askHistory->setStatus($ask->getStatus());
+            $askHistory->setType($ask->getType());
+            $askHistory->setAsk($ask);
+            $this->entityManager->persist($askHistory);
+            $this->entityManager->flush();
+        }
+
+        return $solidaryFormalRequest;
+    }
+
+
+    /**
+     * Update a Criteria based on the SolidaryFormalRequest data
+     *
+     * @param SolidaryFormalRequest $solidaryFormalRequest
+     * @param Criteria $criteria
+     * @return Criteria
+     */
+    private function updateCriteriaFromFormalRequest(SolidaryFormalRequest $solidaryFormalRequest, Criteria $criteria): Criteria
+    {
+        $criteria->setFromDate($solidaryFormalRequest->getOutwardDate());
+
+        // Treat the schedule
+        $outwardSchedule = $solidaryFormalRequest->getOutwardSchedule()[0];
+        if (isset($outwardSchedule["mon"]) && $outwardSchedule["mon"]==1) {
+            $criteria->setMonCheck(true);
+            if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $criteria->setMonTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+            }
+        }
+        if (isset($outwardSchedule["tue"]) && $outwardSchedule["tue"]==1) {
+            $criteria->setTueCheck(true);
+            if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $criteria->setTueTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+            }
+        }
+        if (isset($outwardSchedule["wed"]) && $outwardSchedule["wed"]==1) {
+            $criteria->setWedCheck(true);
+            if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $criteria->setWedTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+            }
+        }
+        if (isset($outwardSchedule["thu"]) && $outwardSchedule["thu"]==1) {
+            $criteria->setThuCheck(true);
+            if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $criteria->setThuTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+            }
+        }
+        if (isset($outwardSchedule["fri"]) && $outwardSchedule["fri"]==1) {
+            $criteria->setFriCheck(true);
+            if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $criteria->setFriTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+            }
+        }
+        if (isset($outwardSchedule["sat"]) && $outwardSchedule["sat"]==1) {
+            $criteria->setSatCheck(true);
+            if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $criteria->setSatTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+            }
+        }
+        if (isset($outwardSchedule["sun"]) && $outwardSchedule["sun"]==1) {
+            $criteria->setSunCheck(true);
+            if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $criteria->setSunTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+            }
+        }
+
+        // The toDate is only for regular
+        if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+            $criteria->setToDate($solidaryFormalRequest->getOutwardLimitDate());
+        } else {
+            // Punctual journey we update fromTime
+            $criteria->setFromTime(new \DateTime($outwardSchedule['outwardTime']));
+        }
+
+        return $criteria;
     }
 }

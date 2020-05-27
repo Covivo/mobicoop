@@ -1,8 +1,8 @@
 import React from 'react';
-import { 
-    Show, 
+import {
+    Show,
     ReferenceField, TextField, SelectField, Link,
-    Tab, TabbedShowLayout, 
+    Tab, TabbedShowLayout,
     Datagrid,
     Button, EditButton, DeleteButton,
     ReferenceArrayField
@@ -19,7 +19,7 @@ const AddParagraphButton = ({ record }) => (
         component={Link}
         to={{
             pathname: `/paragraphs/create`,
-            search: `?section=${record.id}`
+            state: { record: { section: record.id } },
         }}
         label="Ajouter un paragraphe"
     >

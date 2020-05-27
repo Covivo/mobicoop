@@ -36,6 +36,7 @@ use App\User\Repository\UserRepository;
 use App\Auth\Repository\AuthItemRepository;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
+use App\Carpool\Service\AdManager;
 
 /**
  * Community manager.
@@ -56,6 +57,7 @@ class CommunityManager
     private $proposalRepository;
     private $authItemRepository;
     private $userManager;
+    private $adManager;
 
     /**
      * Constructor
@@ -71,7 +73,8 @@ class CommunityManager
         CommunityRepository $communityRepository,
         ProposalRepository $proposalRepository,
         AuthItemRepository $authItemRepository,
-        UserManager $userManager
+        UserManager $userManager,
+        AdManager $adManager
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -81,6 +84,7 @@ class CommunityManager
         $this->proposalRepository = $proposalRepository;
         $this->authItemRepository = $authItemRepository;
         $this->userManager = $userManager;
+        $this->adManager = $adManager;
     }
 
     /**
@@ -118,27 +122,6 @@ class CommunityManager
             $authorized = false;
         }
         return $authorized;
-    }
-
-    /**
-     * Check if a user can join a community
-     * To join an opened community, no credentials is needed, the user just need to be registered.
-     * To join a closed community, a user needs to give credentials, we will call them login and password
-     * even if they represent other kind of information (id, date of birth...).
-     *
-     * @param CommunityUser $communityUser
-     * @return bool
-     */
-    public function registerUserInCommunity(Community $community, User $user)
-    {
-        if (!$this->communityRepository->isRegistered($community, $user)) {
-            $communityUser = new CommunityUser();
-            $communityUser->setUser($user);
-            $communityUser->setCommunity($community);
-            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
-            $this->entityManager->persist($communityUser);
-            $this->entityManager->flush();
-        }
     }
 
     /**
@@ -221,11 +204,55 @@ class CommunityManager
      * Get a community by its id
      *
      * @param integer $communityId
+     * @param User|null $user  If a user is provided check and set that if he's in community and/or he's creator
      * @return Community|null
      */
-    public function getCommunity(int $communityId)
+    public function getCommunity(int $communityId, User $user=null)
     {
-        return $this->communityRepository->find($communityId);
+        $community = $this->communityRepository->find($communityId);
+        $this->getAdsOfCommunity($community);
+        if ($user) {
+            $this->checkIfCurrentUserIsMember($community, $user);
+        }
+        return $community;
+    }
+
+    /**
+     * Set the ads of a community
+     *
+     * @param Community Community
+     * @return Community
+     */
+    private function getAdsOfCommunity(Community $community)
+    {
+        $ads = [];
+
+        $refIdProposals = [];
+        foreach ($community->getProposals() as $proposal) {
+            if (!in_array($proposal->getId(), $refIdProposals) && !$proposal->isPrivate()) {
+                // we check if the proposal is still valid if yes we retrieve the proposal
+                $LimitDate = $proposal->getCriteria()->getToDate() ? $proposal->getCriteria()->getToDate() : $proposal->getCriteria()->getFromDate();
+                if ($LimitDate >= new \DateTime()) {
+                    $ads[] = $this->adManager->makeAdForCommunityOrEvent($proposal);
+                    if (!is_null($proposal->getProposalLinked())) {
+                        $refIdProposals[$proposal->getId()] = $proposal->getProposalLinked()->getId();
+                    }
+                }
+            }
+        }
+        $community->setAds($ads);
+    }
+
+    /**
+     *
+     *
+     * @param Community $community
+     * @param User $user  If a user is provided check and set that if he's in community
+     * @return bool
+     */
+    private function checkIfCurrentUserIsMember(Community $community, User $user)
+    {
+        $community->setMember($this->communityRepository->isRegistered($community, $user));
     }
 
 
@@ -261,14 +288,17 @@ class CommunityManager
 
     /**
      * Give the roles : community_manager to the creator of a public community and save the data
+     * Also give the special role to user : community_restrict for display only communities he created
      *
-     * @param Community       $Community           The community created
+     * @param Community       $community           The community created
      * @return void
      */
     public function save(Community $community)
     {
         $user = $community->getUser();
+
         $authItem = $this->authItemRepository->find(AuthItem::ROLE_COMMUNITY_MANAGER_PUBLIC);
+        $authItemRestrict = $this->authItemRepository->findByName('community_restrict');
 
         //Check if the user dont have the ROLE_COMMUNITY_MANAGER right yet
         if (!$this->userManager->checkUserHaveAuthItem($user, $authItem)) {
@@ -276,11 +306,29 @@ class CommunityManager
             $userAuthAssignment->setAuthItem($authItem);
             $user->addUserAuthAssignment($userAuthAssignment);
 
+            $userAuthAssignmentRestrist = new UserAuthAssignment();
+            $userAuthAssignmentRestrist->setAuthItem($authItemRestrict);
+            $user->addUserAuthAssignment($userAuthAssignmentRestrist);
+
             $this->entityManager->persist($user);
         }
         $this->entityManager->persist($community);
         $this->entityManager->flush();
 
         return $community;
+    }
+
+    /**
+     * Persist and save community User for POST
+     *
+     * @param CommunityUser       $communityUser           The community user to create
+     * @return void
+     */
+    public function saveCommunityUser(CommunityUser $communityUser)
+    {
+        $this->entityManager->persist($communityUser);
+        $this->entityManager->flush();
+
+        return $communityUser;
     }
 }

@@ -39,7 +39,6 @@ use App\Carpool\Repository\CriteriaRepository;
 use App\Carpool\Repository\ProposalRepository;
 use App\Communication\Entity\Message;
 use App\Communication\Service\InternalMessageManager;
-use App\Community\Service\CommunityManager;
 use App\DataProvider\Entity\Response;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Zone;
@@ -78,7 +77,6 @@ class ProposalManager
     private $userRepository;
     private $logger;
     private $eventDispatcher;
-    private $communityManager;
     private $askManager;
     private $resultManager;
     private $formatDataManager;
@@ -96,7 +94,7 @@ class ProposalManager
      * @param GeoRouter $geoRouter
      * @param ZoneManager $zoneManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, CommunityManager $communityManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher, AskManager $askManager, ResultManager $resultManager, FormatDataManager $formatDataManager, InternalMessageManager $internalMessageManager, CriteriaRepository $criteriaRepository, array $params)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher, AskManager $askManager, ResultManager $resultManager, FormatDataManager $formatDataManager, InternalMessageManager $internalMessageManager, CriteriaRepository $criteriaRepository, array $params)
     {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -108,7 +106,6 @@ class ProposalManager
         $this->logger = $logger;
         $this->userRepository = $userRepository;
         $this->eventDispatcher = $dispatcher;
-        $this->communityManager = $communityManager;
         $this->askManager = $askManager;
         $this->resultManager = $resultManager;
         $this->resultManager->setParams($params);
@@ -127,6 +124,20 @@ class ProposalManager
     public function get(int $id)
     {
         return $this->proposalRepository->find($id);
+    }
+
+    /**
+     * Get the last active dynamic ad for a user.
+     *
+     * @param User $user        The user
+     * @return Proposal|null    The proposal found or null if not found
+     */
+    public function getLastDynamicActive(User $user)
+    {
+        if ($lastActiveProposal = $this->proposalRepository->findBy(['user'=>$user,'dynamic'=>true,'active'=>true], ['createdDate'=>'DESC'], 1)) {
+            return $lastActiveProposal[0];
+        }
+        return null;
     }
 
     /**
@@ -219,16 +230,16 @@ class ProposalManager
 
         // set min and max times
         $proposal = $this->setMinMax($proposal);
-        
+
         // set the directions
         $proposal = $this->setDirections($proposal);
 
         // we have the directions, we can compute the lacking prices
         $proposal = $this->setPrices($proposal);
-        
+
         // matching analyze
         $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
-        
+
         if ($persist) {
             $this->logger->info("ProposalManager : start persist " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             // TODO : here we should remove the previously matched proposal if they already exist
@@ -236,8 +247,8 @@ class ProposalManager
             $this->entityManager->flush();
             $this->logger->info("ProposalManager : end persist " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
-        
-        
+
+
         if (!$proposal->isPrivate() || !$proposal->isPaused()) {
             // TODO : see which events send !!!
             $matchingOffers = [];
@@ -493,12 +504,12 @@ class ProposalManager
     {
         // set the directions
         $proposal = $this->updateDirection($proposal, $address);
-        
+
         // matching analyze, but exclude the inactive proposals : can happen after an ask from a passenger to a driver
         if ($proposal->isActive()) {
             $proposal = $this->proposalMatcher->updateMatchingsForProposal($proposal);
         }
-                
+
         return $proposal;
     }
 
@@ -571,7 +582,7 @@ class ProposalManager
         return $proposal;
     }
 
-    
+
 
 
 
@@ -592,7 +603,7 @@ class ProposalManager
         $this->logger->info('setDirectionsForProposals | Start creating arrays for calculation at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         $criteriasFound = $this->criteriaRepository->findByUserImportStatus(UserImport::STATUS_USER_TREATED);
-        
+
         $addressesForRoutes = [];
         $owner = [];
         $ids = [];
@@ -660,7 +671,7 @@ class ProposalManager
             $ids[] = $criteria['cid'];
         }
         $this->logger->info('setDirectionsForProposals | End iterate at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        
+
         $this->logger->info('setDirectionsForProposals | Start get routes status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_RAW);
         $this->logger->info('setDirectionsForProposals | End get routes status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -689,7 +700,7 @@ class ProposalManager
                 $direction->setSaveGeoJson(true);
                 $criteria->setDirectionPassenger($direction);
             }
-                
+
             if (is_null($criteria->getAnyRouteAsPassenger())) {
                 $criteria->setAnyRouteAsPassenger($this->params['defaultAnyRouteAsPassenger']);
             }
@@ -789,7 +800,7 @@ class ProposalManager
                     $criteria->setPassengerComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$criteria->getPassengerComputedPrice(), $criteria->getFrequency()));
                 }
             }
-                
+
             // batch
             $pool++;
             if ($pool>=$batch) {
@@ -800,7 +811,7 @@ class ProposalManager
                 $pool = 0;
             }
         }
-        
+
         $this->logger->info('Stop treat rows ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         // final flush for pending persists
         if ($pool>0) {
@@ -811,19 +822,19 @@ class ProposalManager
             gc_collect_cycles();
             $this->logger->info('End flush clear ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
-        
+
         $this->logger->info('End update status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
 
-    
+
     // public function setDirectionsAndDefaultsForImport(int $batch)
     // {
     //     gc_enable();
     //     $this->logger->info('setDirectionsForProposals | Start creating arrays for calculation at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
     //     $criterias = $this->criteriaRepository->findByUserImportStatus(UserImport::STATUS_USER_TREATED);
-        
+
     //     $addressesForRoutes = [];
     //     $owner = [];
     //     $ids = [];
@@ -855,11 +866,11 @@ class ProposalManager
     //         $ids[] = $criteria->getId();
     //     }
     //     $this->logger->info('setDirectionsForProposals | End iterate at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        
+
     //     $this->logger->info('setDirectionsForProposals | Start get routes status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     //     $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_RAW);
     //     $this->logger->info('setDirectionsForProposals | End get routes status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        
+
     //     $directions = [];
     //     $directionString = "";
     //     $directionStrings = [];
@@ -983,7 +994,7 @@ class ProposalManager
     //     ;";
 
     //     $update_criteria_sqls = [];
- 
+
     //     $this->logger->info('Start treat rows ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     //     $id=0; // set here the first direction id
     //     $i=0;
@@ -1030,7 +1041,7 @@ class ProposalManager
     //         } else {
     //             $update_criteria_sql .= "null,";
     //         }
-                
+
     //         if (is_null($criteria->getAnyRouteAsPassenger())) {
     //             $update_criteria_sql .= ($this->params['defaultAnyRouteAsPassenger'] ? '1' : '0') . ",";
     //         } else {
@@ -1244,7 +1255,7 @@ class ProposalManager
     //     }
     //     unlink($filenameDirections);
     //     $this->logger->info('End Direction ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-       
+
     //     foreach ($update_criteria_sqls as $update) {
     //         $stmt = $conn->prepare($update);
     //         $stmt->execute();
@@ -1285,7 +1296,7 @@ class ProposalManager
         $this->logger->info('Start creating candidates | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $this->proposalMatcher->findPotentialMatchingsForProposals($proposalIds);
         $this->logger->info('End creating candidates | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        
+
         return $proposalIds;
     }
 
@@ -1430,7 +1441,7 @@ class ProposalManager
         if (count($asks) > 0) {
             /** @var Ask $ask */
             foreach ($asks as $ask) {
-                
+
                 // todo : find why class of $ask can be a proxy of Ask class
                 if (get_class($ask) !== Ask::class) {
                     continue;
@@ -1499,7 +1510,7 @@ class ProposalManager
 
         return new Response(204, "Deleted with success");
     }
-    
+
     // returns the min and max time from a time and a margin
     private static function getMinMaxTime($time, $margin)
     {

@@ -30,6 +30,9 @@ use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\StructureProof;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class StructureVoter extends Voter
 {
     const STRUCTURE_CREATE = 'structure_create';

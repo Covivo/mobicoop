@@ -40,9 +40,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Geography\Service\GeoSearcher;
 use App\Geography\Service\GeoRouter;
-use App\Geography\Service\ZoneManager;
 use App\Geography\Service\GeoTools;
 use App\Match\Entity\MassMatching;
+use App\Match\Exception\OwnerNotFoundException;
+use App\Match\Repository\MassRepository;
 
 /**
  * Mass import manager.
@@ -61,7 +62,7 @@ class MassImportManager
     const MIMETYPE_JSON = 'application/json';
 
     private $entityManager;
-    private $userRepository;
+    private $massRepository;
     private $massPersonRepository;
     private $fileManager;
     private $logger;
@@ -71,7 +72,6 @@ class MassImportManager
     private $geoSearcher;
     private $geoRouter;
     private $geoMatcher;
-    private $zoneManager;
     private $emailManager;
     private $emailTemplatePath;
 
@@ -87,7 +87,7 @@ class MassImportManager
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        UserRepository $userRepository,
+        MassRepository $massRepository,
         MassPersonRepository $massPersonRepository,
         FileManager $fileManager,
         LoggerInterface $logger,
@@ -96,13 +96,12 @@ class MassImportManager
         GeoSearcher $geoSearcher,
         GeoRouter $geoRouter,
         GeoMatcher $geoMatcher,
-        ZoneManager $zoneManager,
         EmailManager $emailManager,
         array $params,
         string $emailTemplatePath
     ) {
         $this->entityManager = $entityManager;
-        $this->userRepository = $userRepository;
+        $this->massRepository = $massRepository;
         $this->massPersonRepository = $massPersonRepository;
         $this->fileManager = $fileManager;
         $this->logger = $logger;
@@ -112,31 +111,65 @@ class MassImportManager
         $this->geoSearcher = $geoSearcher;
         $this->geoRouter = $geoRouter;
         $this->geoMatcher = $geoMatcher;
-        $this->zoneManager = $zoneManager;
         $this->emailManager = $emailManager;
         $this->emailTemplatePath = $emailTemplatePath;
     }
 
     /**
-     * Get the user of the file.
-     * @param Mass $mass
-     * @throws OwnerNotFoundException
-     * @return object
+     * Get a mass by its id.
+     *
+     * @param integer $id   the id of the mass
+     * @return Mass|null    The mass found or null if not found
      */
-    public function getUser(Mass $mass)
+    public function getMass(int $id)
     {
-        if (!is_null($mass->getUserId())) {
-            return $this->userRepository->find($mass->getUserId());
+        return $this->massRepository->find($id);
+    }
+
+    /**
+     * Create a mass.
+     *
+     * @param Mass $mass    The mass to create
+     * @return Mass         The mass created
+     */
+    public function createMass(Mass $mass)
+    {
+        // we associate the user and the mass
+        $mass->getUser()->addMass($mass);
+        // we rename the file
+        $mass->setFileName($this->generateFilename($mass));
+
+        $mass->setStatus(Mass::STATUS_INCOMING);
+
+        $this->entityManager->persist($mass);
+        $this->entityManager->flush();
+        
+        // the file is uploaded, we treat it and return it
+        $mass = $this->treatMass($mass);
+
+        // if we have an error we remove the file
+        if (count($mass->getErrors()) > 0) {
+            $mass->setStatus(Mass::STATUS_INVALID);
+            $originalMass = clone $mass;
+            $this->entityManager->remove($mass);
+            $this->entityManager->flush();
+            return $originalMass;
         }
-        throw new OwnerNotFoundException('The owner of this file cannot be found');
+
+        $mass->setStatus(Mass::STATUS_VALID);
+        $this->entityManager->persist($mass);
+        $this->entityManager->flush();
+
+        return $mass;
     }
 
     /**
      * Generates a filename and removes the extension.
-     * @param Mass $mass
-     * @return string
+     *
+     * @param Mass $mass    The mass for whiwh we want a filename
+     * @return string       The filename
      */
-    public function generateFilename(Mass $mass)
+    private function generateFilename(Mass $mass)
     {
         $date = new \Datetime();
         if ($mass->getOriginalName()) {
@@ -148,9 +181,10 @@ class MassImportManager
     /**
      * Treat a mass file.
      *
-     * @param Mass $mass The mass to treat
+     * @param Mass $mass    The mass to treat
+     * @return Mass         The mass treated
      */
-    public function treatMass(Mass $mass)
+    private function treatMass(Mass $mass)
     {
         $this->logger->info('Mass match | Treating import file ' . $mass->getFileName() . ' start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -171,7 +205,6 @@ class MassImportManager
         return $mass;
     }
 
-
     /**
      * Analyze mass file data.
      *
@@ -185,7 +218,6 @@ class MassImportManager
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
     }
-
 
     /**
      * Analyze mass file data.

@@ -316,7 +316,7 @@ class Proposal
      * @Groups({"read","write"})
      */
     private $external;
-        
+
     public function __construct($id=null)
     {
         $this->id = self::DEFAULT_ID;

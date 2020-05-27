@@ -322,6 +322,7 @@ class Event implements ResourceInterface, \JsonSerializable
                 'name'              => $this->getName(),
                 'status'            => $this->getStatus(),
                 'fullDescription'   => $this->getFullDescription(),
+                'description'       => $this->getDescription(),
                 'fromDate'          => $this->getFromDate(),
                 'toDate'            => $this->getToDate(),
                 'useTime'           => $this->getUseTime(),

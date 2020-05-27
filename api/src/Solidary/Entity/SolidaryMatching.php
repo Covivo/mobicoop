@@ -45,13 +45,17 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={
- *          "get","post"
- *
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          }
  *      },
  *      itemOperations={
- *          "get"
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          }
  *      }
  * )
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryMatching
 {
@@ -109,6 +113,7 @@ class SolidaryMatching
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidaryMatching", cascade={"persist","remove"})
      * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $solidarySolution;
 

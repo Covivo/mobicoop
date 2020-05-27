@@ -1,8 +1,19 @@
+# Release 1.4.0
+
+## API
+
+* New push notifications system
+* New migration system for Mobimatch : import Mobimatch persons and their journeys as real users and carpool ads
+* Add roles default we set in User entity when Register User (ROLE_USER_REGISTERED_FULL)
+* Create new auth item 'community_restrict' for display only communities user created
+
 # Release 1.3.0
 
 ## API
 
 * Direct link between addresses / directions and territories : improve the response speed for territory filters
+* Solidary Transport and Carpool Management : Manage solidary volunteers and beneficiaries, searching for solidary solutions, managing files and sollicitations.
+* Clean community API
 
 ## CLIENT
 
@@ -22,7 +33,7 @@
 * Add Filter extension on User and Territory
 * Add function checkUserHaveAuthItem to check if an User have a specified Auth Item
 * Add Role 'ROLE_COMMUNITY_MANAGER' to the creators of the community (client side)
-* Add button for admin access from the detail page of community (for the creator)
+* Add button for admin access from the detail page of community (for the creator) + parameters CAN_ACCESS_ADMIN_FROM_COMMUNITY
 
 ## CLIENT
 

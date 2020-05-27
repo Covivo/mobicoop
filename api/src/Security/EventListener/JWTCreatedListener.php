@@ -29,6 +29,7 @@ use App\Auth\Service\AuthManager;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 use Symfony\Component\Security\Core\Security;
 use App\User\Service\UserManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Json Web Token Event listener
@@ -39,9 +40,11 @@ class JWTCreatedListener
     private $authManager;
     private $security;
     private $userManager;
+    private $request;
 
-    public function __construct(AuthManager $authManager, Security $security, userManager $userManager)
+    public function __construct(RequestStack $requestStack, AuthManager $authManager, Security $security, userManager $userManager)
     {
+        $this->request = $requestStack->getCurrentRequest();
         $this->authManager = $authManager;
         $this->security = $security;
         $this->userManager = $userManager;
@@ -67,6 +70,11 @@ class JWTCreatedListener
                 $this->authManager->setUser($user);
             }
             $payload['admin'] = $this->authManager->isAuthorized('access_admin');
+            // TODO : when log system is on, send here an event for "logged user", and treat the mobile in this event
+            // for now we set the mobile here
+            if ($this->request->get("mobile")) {
+                $user->setMobile(true);
+            }
             $this->userManager->updateActivity($user);
         }
         $event->setData($payload);

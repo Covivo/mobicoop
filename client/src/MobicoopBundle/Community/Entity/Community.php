@@ -176,6 +176,11 @@ class Community implements ResourceInterface, \JsonSerializable
      */
     private $member;
 
+    /**
+     * @var array|null Store the ads of the community
+     */
+    private $ads;
+
     public function __construct($id=null)
     {
         if ($id) {
@@ -462,6 +467,18 @@ class Community implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getAds()
+    {
+        return $this->ads;
+    }
+
+    public function setAds(?array $ads): self
+    {
+        $this->ads = $ads;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -480,6 +497,7 @@ class Community implements ResourceInterface, \JsonSerializable
             'validationType'    => $this->getValidationType(),
             'domain'            => $this->getDomain(),
             'isMember'          => $this->isMember(),
+          'ads'                 => $this->getAds(),
         ];
     }
 }

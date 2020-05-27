@@ -1,0 +1,5 @@
+{% extends '/email/notification/base.html.twig' %}
+{% block body %}
+    <p>{{ "solidaryContact"|trans }}.</p>
+    <p>{{ context.text }}</p>
+{% endblock %}

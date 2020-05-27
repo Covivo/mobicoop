@@ -22,6 +22,9 @@
 
 namespace App\Solidary\Exception;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidaryException extends \LogicException
 {
     const INVALID_DATA_PROVIDED = "Invalid data provided";
@@ -39,4 +42,9 @@ class SolidaryException extends \LogicException
     const NO_RETURN_PROPOSAL = "There is no return proposal";
     const NO_VALID_ADDRESS = "No valid address";
     const NOT_A_DRIVER = "This User is not a driver";
+
+    // Solidary Formal Request
+    const NO_SOLIDARY_SOLUTION = "No solidarySolution found for this formal request";
+    const NO_SOLIDARY_ASK = "No SolidaryAsk for this SolidarySolution";
+    const BAD_SOLIDARY_ASK_STATUS_FOR_FORMAL = "The status of the SolidaryAsk doesn't allow a formal request";
 }

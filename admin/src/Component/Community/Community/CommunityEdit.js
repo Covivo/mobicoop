@@ -1,4 +1,4 @@
-import React from 'react';
+import React , {useState} from 'react';
 import {
     Edit,
     TabbedForm, FormTab, required,
@@ -48,7 +48,11 @@ export const CommunityEdit = (props) => {
     const classes = useStyles()
     const redirect = useRedirect()
     const translate = useTranslate();
-    const communityId = props.id
+    const communityId = props.id;
+
+    const roles = Array.isArray( localStorage.roles) ?  localStorage.roles.split(',') :  localStorage.roles;
+    const [communityManager, setCommunityManager] = useState( !roles.includes('ROLE_SUPER_ADMIN') && !roles.includes('ROLE_ADMIN')  ? true : false );
+
     return (
         <Edit {...props } title="Communautés > éditer">
             <TabbedForm >
@@ -76,7 +80,10 @@ export const CommunityEdit = (props) => {
                     </ReferenceInput>
                 </FormTab>
                 <FormTab label={translate('custom.label.community.members')}>
+
+                  { !communityManager &&
                     <AddNewMemberButton />
+                    }
                     <ReferenceArrayField fullWidth source="communityUsers" reference="community_users" label="Tags">
                           <Datagrid>
                               <UserReferenceField label={translate('custom.label.community.member')} source="user" sortBy="user.givenName" reference="users" />
