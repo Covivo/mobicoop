@@ -31,6 +31,7 @@ use App\Solidary\Entity\SolidaryFormalRequest;
 use App\Solidary\Entity\SolidarySolution;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryMatchingRepository;
+use App\Solidary\Repository\SolidarySolutionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -41,11 +42,13 @@ class SolidarySolutionManager
 {
     private $entityManager;
     private $security;
+    private $solidarySolutionRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, Security $security)
+    public function __construct(EntityManagerInterface $entityManager, Security $security, SolidarySolutionRepository $solidarySolutionRepository)
     {
         $this->entityManager = $entityManager;
         $this->security = $security;
+        $this->solidarySolutionRepository = $solidarySolutionRepository;
     }
 
     /**
@@ -134,6 +137,126 @@ class SolidarySolutionManager
         return $solidaryFormalRequest;
     }
 
+    /**
+     * Get a SolidaryFormalRequest
+     *
+     * @param integer $solidarySolutionId The SolidarySolutionId the SolidaryFormalRequest is based on
+     * @return SolidaryFormalRequest
+     */
+    public function getSolidaryFormalRequest(int $solidarySolutionId): SolidaryFormalRequest
+    {
+        $solidarySolution = $this->solidarySolutionRepository->find($solidarySolutionId);
+
+        if (is_null($solidarySolution)) {
+            throw new SolidaryException(SolidaryException::NO_SOLIDARY_SOLUTION);
+        }
+
+        $solidaryFormalRequest = new SolidaryFormalRequest();
+        $solidaryFormalRequest->setSolidarySolution($solidarySolution);
+
+        // We get the good criteria. If there is a solidaryAsk, we take it, if not, we take the Proposal Criteria
+        $criteria = $criteriaReturn = null;
+        if (!is_null($solidarySolution->getSolidaryAsk())) {
+            $criteria = $solidarySolution->getSolidaryAsk()->getCriteria();
+            // Return ? Only carpool
+            if (!is_null($solidarySolution->getSolidaryAsk()->getAsk()) && !is_null($solidarySolution->getSolidaryAsk()->getAsk()->getAskLinked())) {
+                $criteriaReturn = $solidarySolution->getSolidaryAsk()->getAsk()->getAskLinked()->getCriteria();
+            }
+        } else {
+            $criteria = $solidarySolution->getSolidary()->getProposal()->getCriteria();
+            if (!is_null($solidarySolution->getSolidary()->getProposal()->getProposalLinked())) {
+                $criteriaReturn = $solidarySolution->getSolidary()->getProposal()->getProposalLinked()->getCriteria();
+            }
+        }
+
+        // Dates
+        $solidaryFormalRequest->setOutwardDate($criteria->getFromDate());
+        
+        $solidaryFormalRequest->setOutwardLimitDate($criteria->getFromDate());
+        if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+            $solidaryFormalRequest->setOutwardLimitDate($criteria->getToDate());
+
+            // Days
+            $solidaryFormalRequest->setOutwardSchedule($this->buildScheduleFromCriteria($criteria, "outward"));
+        } else {
+            // For a punctual, we generate only with one day
+            $outwardSchedule[] = [
+                "outwardTime" => $criteria->getFromTime()->format("H:i"),
+                lcfirst($criteria->getFromDate()->format("D"))=>1
+            ];
+            $solidaryFormalRequest->setOutwardSchedule($outwardSchedule);
+        }
+        
+        // Return dates and schedule ? Only carpool
+        if (!is_null($criteriaReturn)) {
+            // Dates
+            $solidaryFormalRequest->setReturnDate($criteriaReturn->getFromDate());
+            $solidaryFormalRequest->setReturnLimitDate($criteriaReturn->getFromDate());
+            if ($criteriaReturn->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                $solidaryFormalRequest->setReturnLimitDate($criteriaReturn->getToDate());
+
+                // Days
+                $solidaryFormalRequest->setReturnSchedule($this->buildScheduleFromCriteria($criteriaReturn, "return"));
+            } else {
+                // For a punctual, we generate only with one day
+                $returnSchedule[] = [
+                    "returnTime" => $criteriaReturn->getFromTime()->format("H:i"),
+                    lcfirst($criteriaReturn->getFromDate()->format("D"))=>1
+                ];
+                $solidaryFormalRequest->setReturnSchedule($returnSchedule);
+            }
+        }
+
+        return $solidaryFormalRequest;
+    }
+
+    private function buildScheduleFromCriteria($criteria, $way)
+    {
+        $schedule = [];
+        if ($criteria->isMonCheck() && !is_null($criteria->getMonTime())) {
+            $schedule = $this->buildDaySchedule($schedule, "mon", $criteria->getMonTime()->format("H:i"), $way);
+        }
+        if ($criteria->isTueCheck() && !is_null($criteria->getTueTime())) {
+            $schedule = $this->buildDaySchedule($schedule, "tue", $criteria->getTueTime()->format("H:i"), $way);
+        }
+        if ($criteria->isWedCheck() && !is_null($criteria->getWedTime())) {
+            $schedule = $this->buildDaySchedule($schedule, "wed", $criteria->getWedTime()->format("H:i"), $way);
+        }
+        if ($criteria->isThuCheck() && !is_null($criteria->getThuTime())) {
+            $schedule = $this->buildDaySchedule($schedule, "thu", $criteria->getThuTime()->format("H:i"), $way);
+        }
+        if ($criteria->isFriCheck() && !is_null($criteria->getFriTime())) {
+            $schedule = $this->buildDaySchedule($schedule, "fri", $criteria->getFriTime()->format("H:i"), $way);
+        }
+        if ($criteria->isSatCheck() && !is_null($criteria->getSatTime())) {
+            $schedule = $this->buildDaySchedule($schedule, "sat", $criteria->getSatTime()->format("H:i"), $way);
+        }
+        if ($criteria->isSunCheck() && !is_null($criteria->getSunTime())) {
+            $schedule = $this->buildDaySchedule($schedule, "sun", $criteria->getSunTime()->format("H:i"), $way);
+        }
+        return $schedule;
+    }
+
+    private function buildDaySchedule($schedule, $day, $time, $way)
+    {
+        //$templateSchedule = ["mon"=>false,"tue"=>false,"wed"=>false,"thu"=>false,"fri"=>false,"sat"=>false,"sun"=>false];
+        $found = false;
+        foreach ($schedule as $key => $currentSchedule) {
+            if ($currentSchedule[$way.'Time']==$time) {
+                $schedule[$key][$day] = 1;
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            $newSchedule = [];
+            $newSchedule[$way.'Time'] = $time;
+            $newSchedule[$day] = 1;
+            $schedule[] = $newSchedule;
+        }
+
+        return $schedule;
+    }
 
     /**
      * Update a Criteria based on the SolidaryFormalRequest data

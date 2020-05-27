@@ -62,7 +62,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      },
  *      collectionOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('solidary_contact',object)"
  *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('solidary_contact',object)"
