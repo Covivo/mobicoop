@@ -1,22 +1,18 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 
 import {
   List,
   Datagrid,
   DateField,
   TextField,
-  FieldGuesser,
   useTranslate,
   FunctionField,
   SelectField,
-  Button,
   useDataProvider,
-  useMutation,
   EditButton,
 } from 'react-admin';
 
 import UserReferenceField from '../User/UserReferenceField';
-import EmailComposeButton from '../../components/email/EmailComposeButton';
 import MailComposer from '../../components/email/MailComposer';
 
 const CampaignsList = (props) => {
@@ -31,13 +27,11 @@ const CampaignsList = (props) => {
       .getOne('campaigns', { id: lid })
       .then(({ data }) => {
         setCampaign(data);
-        let users = [];
         Promise.all(
           data.deliveries.map((element) =>
             dataProvider
               .getOne('deliveries', { id: element })
               .then(({ data }) => data)
-              //  users.push(data.user)
               .catch((error) => {
                 console.log("Erreur lors de la campagne d'emailing:", error);
               })
@@ -54,7 +48,7 @@ const CampaignsList = (props) => {
 
   const ButtonCampaign = (props) => {
     //We dont show button if campaign is already send
-    if (props.record.status != 3 && props.record.deliveries.length > 0) {
+    if (props.record.status !== 3 && props.record.deliveries.length > 0) {
       return (
         <EditButton
           basePath={'/campaigns/get-on-campaign'}

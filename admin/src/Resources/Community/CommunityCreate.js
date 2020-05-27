@@ -16,9 +16,7 @@ import {
 
 import GeocompleteInput from '../../components/geolocation/geocomplete';
 import { UserRenderer } from '../../utils/renderers';
-import { validationChoices, statusChoices } from './communityChoices';
-
-const userId = `/users/${localStorage.getItem('id')}`;
+import { validationChoices } from './communityChoices';
 
 const useStyles = makeStyles({
   hiddenField: { display: 'none' },
