@@ -176,24 +176,72 @@ class SolidarySolutionManager
         if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
             $solidaryFormalRequest->setOutwardLimitDate($criteria->getToDate());
         }
-        // Return Dates? Only carpool.
+
+        // Days
+        $solidaryFormalRequest->setOutwardSchedule($this->buildScheduleFromCriteria($criteria, "outward"));
+        
+        // Return dates and schedule ? Only carpool
         if (!is_null($criteriaReturn)) {
+            // Dates
             $solidaryFormalRequest->setReturnDate($criteriaReturn->getFromDate());
             $solidaryFormalRequest->setReturnLimitDate($criteriaReturn->getFromDate());
             if ($criteriaReturn->getFrequency()==Criteria::FREQUENCY_REGULAR) {
                 $solidaryFormalRequest->setReturnLimitDate($criteriaReturn->getToDate());
             }
+
+            // Days
+            $solidaryFormalRequest->setReturnSchedule($this->buildScheduleFromCriteria($criteriaReturn, "return"));
         }
 
-        
-        
-        // Days
-        
-
-
-
-
         return $solidaryFormalRequest;
+    }
+
+    private function buildScheduleFromCriteria($criteria, $way)
+    {
+        $schedule = [];
+        if ($criteria->isMonCheck() && !is_null($criteria->getMonTime())) {
+            $schedule = $this->buildDaySchedule($schedule, "mon", $criteria->getMonTime(), $way);
+        }
+        if ($criteria->isTueCheck() && !is_null($criteria->getTueTime())) {
+            $schedule = $this->buildDaySchedule($schedule, "tue", $criteria->getTueTime(), $way);
+        }
+        if ($criteria->isWedCheck() && !is_null($criteria->getWedTime())) {
+            $schedule = $this->buildDaySchedule($schedule, "wed", $criteria->getWedTime(), $way);
+        }
+        if ($criteria->isThuCheck() && !is_null($criteria->getThuTime())) {
+            $schedule = $this->buildDaySchedule($schedule, "thu", $criteria->getThuTime(), $way);
+        }
+        if ($criteria->isFriCheck() && !is_null($criteria->getFriTime())) {
+            $schedule = $this->buildDaySchedule($schedule, "fri", $criteria->getFriTime(), $way);
+        }
+        if ($criteria->isSatCheck() && !is_null($criteria->getSatTime())) {
+            $schedule = $this->buildDaySchedule($schedule, "sat", $criteria->getSatTime(), $way);
+        }
+        if ($criteria->isSunCheck() && !is_null($criteria->getSunTime())) {
+            $schedule = $this->buildDaySchedule($schedule, "sun", $criteria->getSunTime(), $way);
+        }
+        return $schedule;
+    }
+
+    private function buildDaySchedule($schedule, $day, $time, $way)
+    {
+        $templateSchedule = ["mon"=>false,"tue"=>false,"wed"=>false,"thu"=>false,"fri"=>false,"sat"=>false,"sun"=>false];
+        $found = false;
+        foreach ($schedule as $key => $currentSchedule) {
+            if ($currentSchedule[$way.'Time']==$time) {
+                $schedule[$key][$day] = true;
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            $newSchedule = $templateSchedule;
+            $newSchedule[$way.'Time'] = $time;
+            $newSchedule[$day] = true;
+            $schedule[] = $newSchedule;
+        }
+
+        return $schedule;
     }
 
     /**
