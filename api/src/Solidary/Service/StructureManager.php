@@ -89,27 +89,14 @@ class StructureManager
     }
 
     /**
-     * Get the needs of a Structure
+     * Get the list of a Structure near a lat/lon location
      *
-     * @param integer $structureId
-     * @return Structure with an array needs filled
+     * @param float $lat    Latitude
+     * @param float $lon    Longitude
+     * @return array|null   Array of Structures
      */
-    public function getStructureNeeds(int $structureId): ?Structure
+    public function getGeolocalisedStructures(float $lat, float $lon): ?array
     {
-        $structure = $this->structureRepository->find($structureId);
-
-        if (empty($structure)) {
-            throw new SolidaryException(SolidaryException::NO_STRUCTURE);
-        }
-        
-        // To be sure that all returned needs are not about a specific Solidary
-        $needs = $this->needRepository->findBy(['solidary'=>null]);
-        $structure->setNeeds(new ArrayCollection());
-
-        foreach ($needs as $need) {
-            $structure->addNeed($need);
-        }
-
-        return $structure;
+        return $this->structureRepository->findAll();
     }
 }

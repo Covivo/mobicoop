@@ -28,6 +28,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryContact;
+use App\Solidary\Entity\SolidaryFormalRequest;
 use App\Solidary\Entity\SolidarySearch;
 use App\Solidary\Entity\SolidarySolution;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -72,11 +73,13 @@ class SolidaryVoter extends Voter
             self::SOLIDARY_UPDATE,
             self::SOLIDARY_DELETE,
             self::SOLIDARY_LIST,
+            self::SOLIDARY_CONTACT
             ]) && !($subject instanceof Paginator) &&
                 !($subject instanceof Solidary) &&
                 !($subject instanceof SolidarySolution) &&
                 !($subject instanceof SolidarySearch) &&
-                !($subject instanceof SolidaryContact)
+                !($subject instanceof SolidaryContact) &&
+                !($subject instanceof SolidaryFormalRequest)
             ) {
             return false;
         }

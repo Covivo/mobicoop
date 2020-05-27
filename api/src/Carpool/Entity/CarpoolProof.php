@@ -39,9 +39,11 @@ use CrEOF\Spatial\PHP\Types\Geometry\Point;
  */
 class CarpoolProof
 {
-    const STATUS_PENDING = 0;
-    const STATUS_SENT = 1;
-    const STATUS_ERROR = 2;
+    const STATUS_INITIATED = 0;     // not ready to be sent, proof still under construction
+    const STATUS_PENDING = 1;       // ready to be sent
+    const STATUS_SENT = 2;          // sent
+    const STATUS_ERROR = 3;         // error during the sending
+    const STATUS_CANCELED = 4;      // cancellation before sending
 
     const ACTOR_DRIVER = 1;
     const ACTOR_PASSENGER = 2;
@@ -64,11 +66,48 @@ class CarpoolProof
     private $status;
 
     /**
+     * @var string Register system proof type.
+     *
+     * @ORM\Column(type="string", length=5, nullable=true)
+     */
+    private $type;
+
+    /**
      * @var Ask The ask related to the proof.
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", mappedBy="carpoolProof", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="carpoolProofs")
      */
     private $ask;
+
+    /**
+     * @var \DateTimeInterface Driver start date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $startDriverDate;
+
+    /**
+     * @var \DateTimeInterface Driver end date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $endDriverDate;
+
+    /**
+     * @var Address Origin of the driver.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     */
+    private $originDriverAddress;
+
+    /**
+     * @var Address Destination of the driver.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     */
+    private $destinationDriverAddress;
 
     /**
      * @var \DateTimeInterface Passenger pickup certification date.
@@ -196,6 +235,18 @@ class CarpoolProof
         return $this;
     }
 
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
     public function getAsk(): ?Ask
     {
         return $this->ask;
@@ -204,9 +255,11 @@ class CarpoolProof
     public function setAsk(?Ask $ask): self
     {
         $this->ask = $ask;
-        // set the owning side
-        $ask->setCarpoolProof($this);
-
+        if (!is_null($ask)) {
+            // set the owning side
+            $ask->addCarpoolProof($this);
+        }
+        
         return $this;
     }
 
@@ -390,6 +443,54 @@ class CarpoolProof
         return $this;
     }
 
+    public function getStartDriverDate(): ?\DateTimeInterface
+    {
+        return $this->startDriverDate;
+    }
+
+    public function setStartDriverDate(\DateTimeInterface $startDriverDate): self
+    {
+        $this->startDriverDate = $startDriverDate;
+
+        return $this;
+    }
+
+    public function getEndDriverDate(): ?\DateTimeInterface
+    {
+        return $this->endDriverDate;
+    }
+
+    public function setEndDriverDate(\DateTimeInterface $endDriverDate): self
+    {
+        $this->endDriverDate = $endDriverDate;
+
+        return $this;
+    }
+
+    public function getOriginDriverAddress(): ?Address
+    {
+        return $this->originDriverAddress;
+    }
+
+    public function setOriginDriverAddress(?Address $originDriverAddress): self
+    {
+        $this->originDriverAddress = $originDriverAddress;
+
+        return $this;
+    }
+
+    public function getDestinationDriverAddress(): ?Address
+    {
+        return $this->destinationDriverAddress;
+    }
+
+    public function setDestinationDriverAddress(?Address $destinationDriverAddress): self
+    {
+        $this->destinationDriverAddress = $destinationDriverAddress;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
     
     /**
@@ -399,7 +500,9 @@ class CarpoolProof
      */
     public function setAutoStatus()
     {
-        $this->setStatus(self::STATUS_PENDING);
+        if (is_null($this->getStatus())) {
+            $this->setStatus(self::STATUS_INITIATED);
+        }
     }
 
     /**

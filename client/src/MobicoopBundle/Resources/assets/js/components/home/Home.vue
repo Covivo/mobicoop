@@ -102,6 +102,12 @@
         >
           <h1>{{ $t('title') }}</h1>
           <h3 v-html="$t('subtitle')" />
+          <a
+            :href="$t('urlArticle')"
+            :alt="$t('altUrlArticle')"
+            style="text-decoration:none;"
+            color="secondary"
+          ><h3>{{ $t("clickHere") }}</h3></a>
         </v-col>
       </v-row>
       <search

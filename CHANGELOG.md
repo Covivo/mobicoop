@@ -1,3 +1,20 @@
+# Release 1.6.0
+
+## API
+
+* New related mobile app versioning system
+
+# Release 1.5.0
+
+## API
+
+* New carpool proof system :
+    * Automatic creation of carpool proof for planified carpools
+    * Realtime creation of carpool proofs for planified and dynamic carpools using mobile app
+    * Link with proof registry via cron job
+* New entities for SolidaryUser : SolidaryBeneficiary and SolidaryVolunteer.
+* Several utility routes.
+
 # Release 1.4.0
 
 ## API
@@ -6,6 +23,10 @@
 * New migration system for Mobimatch : import Mobimatch persons and their journeys as real users and carpool ads
 * Add roles default we set in User entity when Register User (ROLE_USER_REGISTERED_FULL)
 * Create new auth item 'community_restrict' for display only communities user created
+* Add route for get granted roles an user can create
+
+## ADMIN
+* Change the way we prefill roles in user edition, and now can only set one role per territory
 
 # Release 1.3.0
 

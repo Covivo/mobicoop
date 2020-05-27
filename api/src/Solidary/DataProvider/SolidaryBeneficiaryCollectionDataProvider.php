@@ -34,6 +34,7 @@ use App\Solidary\Service\SolidaryUserManager;
 final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $solidaryUserManager;
+    private $context;
 
     public function __construct(SolidaryUserManager $solidaryUserManager)
     {
@@ -42,11 +43,16 @@ final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataP
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
+        $this->context = $context;
         return SolidaryBeneficiary::class === $resourceClass;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null)
     {
-        return $this->solidaryUserManager->getSolidaryBeneficiaries();
+        $filters = null;
+        if (isset($this->context['filters'])) {
+            $filters = $this->context['filters'];
+        }
+        return $this->solidaryUserManager->getSolidaryBeneficiaries($filters);
     }
 }

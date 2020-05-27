@@ -55,6 +55,8 @@ class SolidaryException extends \LogicException
     const NO_SOLIDARY_SOLUTION = "No solidarySolution found for this formal request";
     const NO_SOLIDARY_ASK = "No SolidaryAsk for this SolidarySolution";
     const BAD_SOLIDARY_ASK_STATUS_FOR_FORMAL = "The status of the SolidaryAsk doesn't allow a formal request";
+    const SOLIDARY_SOLUTION_MISSING = "SolidarySolution is missing";
+    const SOLIDARY_SOLUTION_ID_INVALID = "Invalid SolidarySolutionId";
 
     // SolidarySearch
     const SOLIDARY_MISSING = "Solidary is missing";
@@ -67,4 +69,14 @@ class SolidaryException extends \LogicException
     const NO_SOLIDARY_USER = "This User is not a Solidary User";
     const NO_SOLIDARY_BENEFICIARY = "This Solidary User is not a beneficiary";
     const NO_SOLIDARY_VOLUNTEER = "This Solidary User is not a volunteer";
+    const ALREADY_ACCEPTED = "This SolidaryUser has already be accepted for the current structure";
+    const ALREADY_REFUSED = "This SolidaryUser has already be refused for the current structure";
+
+    // Structure Geolocation
+    const MISSING_LATITUDE = "Latitude missing";
+    const MISSING_LONGITUDE = "Longitude missing";
+
+    // SolidaryVolunteerPlanning
+    const NO_SOLIDARY_VOLUNTEER_ID = "No SolidaryVolunteerId found";
+    const SOLIDARY_VOLUNTEER_ID_INVALID = "Invalid SolidaryVolunteerId";
 }

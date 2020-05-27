@@ -123,6 +123,12 @@ app-geography-territory-link-batch:
 	$(info $(builder)-----------------------------------------------------------$(reset))
 	@docker-compose -f docker-compose-builder-$(os).yml run --rm app-geography-territory-link-batch
 
+app-carpool-proof-batch:
+	$(info $(builder)------------------------------------------------)
+	$(info $(builder)Make ($(os)): Command app:carpool:proof-batch...)
+	$(info $(builder)------------------------------------------------$(reset))
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm app-carpool-proof-batch 
+
 logs: 
 	$(info $(green)------------------------------------------------------)
 	$(info $(green)Mobicoop Logs)
@@ -140,3 +146,6 @@ go-platform:
 
 go-db:
 	@docker exec -it mobicoop_db bash
+
+connect:
+	@docker exec -it mobicoop_platform /bin/bash

@@ -54,7 +54,7 @@ class Redirect
 {
     const TYPE_COMMUNITY = 0;
     const TYPE_EVENT = 1;
-    const TYPE_ARTICLE = 1;
+    const TYPE_ARTICLE = 2;
 
     /**
      * @var int The id of this redirection.

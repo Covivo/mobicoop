@@ -29,7 +29,6 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\DynamicProof;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\CarpoolProofRepository;
-use App\Carpool\Service\DynamicManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
