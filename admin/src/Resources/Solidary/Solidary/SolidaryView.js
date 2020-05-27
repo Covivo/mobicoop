@@ -228,7 +228,7 @@ const SolidaryView = (props) => {
         <List>
           <ListItem>
             <ListItemAvatar>
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"></Avatar>
+              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
             </ListItemAvatar>
             <ListItemText primary="Umberto Picaldi" secondary="+33 12346536543" />
             <ListItemSecondaryAction>
@@ -241,7 +241,7 @@ const SolidaryView = (props) => {
           </ListItem>
           <ListItem>
             <ListItemAvatar>
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"></Avatar>
+              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
             </ListItemAvatar>
             <ListItemText primary="Marcel Proust" secondary="+33 12346536543" />
             <ListItemSecondaryAction>
@@ -270,7 +270,7 @@ const SolidaryView = (props) => {
         <List>
           <ListItem>
             <ListItemAvatar>
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"></Avatar>
+              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
             </ListItemAvatar>
             <ListItemText primary="Solenne Ayzel" secondary="20/02/2020 14:35" />
             <ListItemText
