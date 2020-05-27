@@ -24,7 +24,6 @@
 namespace App\Community\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
-use App\User\Entity\User;
 use App\Community\Entity\Community;
 
 /**
@@ -37,21 +36,15 @@ class CommunityNewMembershipRequestEvent extends Event
 
     protected $community;
 
-    public function __construct(Community $community, User $user, $author)
+    public function __construct(Community $community)
     {
         $this->community = $community;
-        $this->author = $user;
  
     }
 
     public function getCommunity()
     {
         return $this->community;
-    }
-
-    public function getAuthor()
-    {
-        return $this->author;
     }
 
 }
