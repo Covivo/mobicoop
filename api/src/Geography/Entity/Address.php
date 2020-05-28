@@ -49,7 +49,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read","pt","mass","search"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","pt","mass","search","readRelayPoint"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
