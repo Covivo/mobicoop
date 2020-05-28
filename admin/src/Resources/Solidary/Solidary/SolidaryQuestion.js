@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Box } from '@material-ui/core';
+import {  Box } from '@material-ui/core';
 
 const SolidaryQuestion = ({ question, children }) => (
   <Box display="flex" flexDirection="column" mb="2rem" p={2} boxShadow={1}>

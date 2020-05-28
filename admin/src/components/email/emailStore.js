@@ -31,7 +31,7 @@ function reducer(state, action) {
         }
         options.headers.set('Authorization', `Bearer ${token}`);
 
-        var lid = state[action.indice].image.id;
+        const lid = state[action.indice].image.id;
         httpClient(`${apiUrlUploadImage}/` + lid, {
           method: 'DELETE',
           headers: options.headers,
@@ -44,8 +44,8 @@ function reducer(state, action) {
     case 'add_text':
       return [...state, { texte: '<p>Nouveau texte</p>' }];
     case 'resume_campaign':
-      var valeur = Object.values(action.obj)[0];
-      var nature = Object.keys(action.obj)[0];
+      const valeur = Object.values(action.obj)[0];
+      const nature = Object.keys(action.obj)[0];
       switch (nature) {
         case 'titre':
           return [...state, { titre: valeur }];
@@ -53,6 +53,8 @@ function reducer(state, action) {
           return [...state, { texte: valeur }];
         case 'image':
           return [...state, { image: valeur }];
+        default:
+          return [...state];
       }
 
     case 'add_image':

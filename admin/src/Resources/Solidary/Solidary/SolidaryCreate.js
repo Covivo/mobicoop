@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 
 import {
   FormWithRedirect,
-  DateTimeInput,
-  SelectArrayInput,
   TextInput,
   SaveButton,
   CheckboxGroupInput,
@@ -28,9 +26,9 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import SolidaryUserBeneficiaryCreateFields from '../SolidaryUserBeneficiary/SolidaryUserBeneficiaryCreateFields';
 import GeocompleteInput from '../../../components/geolocation/geocomplete';
-import DateTimeSelector from './DateTimeSelector';
+//import DateTimeSelector from './DateTimeSelector';
 import SolidaryQuestion from './SolidaryQuestion';
-import SolidaryNeeds from './SolidaryNeeds';
+//import SolidaryNeeds from './SolidaryNeeds';
 import SolidaryProofField from './SolidaryProofField';
 import SolidaryPunctualAsk from './SolidaryPunctualAsk';
 
@@ -45,7 +43,7 @@ const useStyles = makeStyles({
 
 const SolidaryCreate = (props) => {
   const classes = useStyles();
-  const { data, error, loading, loaded } = useGetList(
+  const { data, loaded } = useGetList(
     'structure_proofs',
     { page: 1, perPage: 10 },
     { field: 'id', order: 'ASC' }
@@ -56,7 +54,7 @@ const SolidaryCreate = (props) => {
   const [hasDestinationAddress, setHasDestinationAddress] = useState(1);
   const [activeStep, setActiveStep] = useState(4);
 
-  const fromDateTimeChoices = [
+  /* const fromDateTimeChoices = [
     { id: 0, label: 'A une date fixe', offsetHour: 0, offsetDays: 0 },
     { id: 1, label: 'Dans la semaine', offsetHour: 0, offsetDays: 7 },
     { id: 2, label: 'Dans la quinzaine', offsetHour: 0, offsetDays: 14 },
@@ -68,7 +66,7 @@ const SolidaryCreate = (props) => {
     { id: 1, label: 'Une heure plus tard', offsetHour: 1, offsetDays: 0 },
     { id: 2, label: 'Deux heures plus tard', offsetHour: 2, offsetDays: 14 },
     { id: 3, label: 'Trois heures plus tard', offsetHour: 3, offsetDays: 30 },
-  ];
+  ]; */
 
   const save = (handleSubmitWithRedirect) => (values) => console.log('Saving :', values);
 

@@ -12,7 +12,6 @@ import {
 } from 'react-admin';
 
 import { statusChoices } from '../Community/communityChoices';
-import FullNameField from '../User/FullNameField';
 
 const useStyles = makeStyles({
   halfwidth: { width: '50%', marginBottom: '1rem' },

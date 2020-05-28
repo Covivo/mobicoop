@@ -24,7 +24,7 @@ const CurrentUserInput = (props) => {
       .catch(() => {
         notify("Erreur lors de la recherche de l'utilisateur courant", 'warning');
       });
-  }, []);
+  });
 
   return (
     <TextField

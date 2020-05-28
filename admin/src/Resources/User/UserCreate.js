@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import GeocompleteInput from '../../components/geolocation/geocomplete';
 import GestionRoles from './GestionRoles';
 
@@ -13,17 +13,8 @@ import {
   SelectInput,
   email,
   regex,
-  ReferenceArrayInput,
-  SelectArrayInput,
   BooleanInput,
-  ReferenceInput,
   useTranslate,
-  Toolbar,
-  SaveButton,
-  useCreate,
-  useRedirect,
-  useNotify,
-  useDataProvider,
 } from 'react-admin';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -41,8 +32,6 @@ const UserCreate = (props) => {
   const classes = useStyles();
   const translate = useTranslate();
   const instance = process.env.REACT_APP_INSTANCE_NAME;
-
-  const [territory, setTerritory] = useState();
 
   const required = (message = translate('custom.alert.fieldMandatory')) => (value) =>
     value ? undefined : message;

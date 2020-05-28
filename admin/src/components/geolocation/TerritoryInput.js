@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import Downshift from 'downshift';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
-import { fetchUtils, FormDataConsumer, REDUX_FORM_NAME, useTranslate } from 'react-admin';
-import { useForm, useField } from 'react-final-form';
+import { fetchUtils, FormDataConsumer, useTranslate } from 'react-admin';
+import { useForm } from 'react-final-form';
 import useDebounce from '../../utils/useDebounce';
-import { change } from 'redux-form';
 
 const token = localStorage.getItem('token');
 const httpClient = fetchUtils.fetchJson;

@@ -5,8 +5,6 @@ import {
   Show,
   SimpleShowLayout,
   Labeled,
-  TabbedShowLayout,
-  Tab,
   RichTextField,
   TextField,
   ReferenceField,

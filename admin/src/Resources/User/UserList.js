@@ -1,5 +1,4 @@
-import React, { Fragment, useState } from 'react';
-import { Button, useTranslate } from 'react-admin';
+import React, { useState } from 'react';
 import BlockIcon from '@material-ui/icons/Block';
 import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
@@ -17,6 +16,8 @@ import {
   BooleanField,
   DatagridBody,
   Filter,
+  Button,
+  useTranslate,
 } from 'react-admin';
 
 import EmailComposeButton from '../../components/email/EmailComposeButton';
@@ -28,8 +29,8 @@ const UserList = (props) => {
   const [count, setCount] = useState(0);
 
   const BooleanStatusField = ({ record = {}, source }) => {
-    let theRecord = { ...record };
-    theRecord[source + 'Num'] = !!parseInt(record.status == 1 ? 1 : 0);
+    const theRecord = { ...record };
+    theRecord[source + 'Num'] = !!parseInt(record.status === 1 ? 1 : 0);
     return (
       <BooleanField
         record={theRecord}
@@ -41,7 +42,7 @@ const UserList = (props) => {
   };
 
   const checkValue = ({ selected, record }) => {
-    if (record.newsSubscription === false) setCount(selected == false ? count + 1 : count - 1);
+    if (record.newsSubscription === false) setCount(selected === false ? count + 1 : count - 1);
   };
   const MyDatagridRow = ({ record, resource, id, onToggleItem, children, selected, basePath }) => {
     if (selected && record.newsSubscription === false) setCount(1);
@@ -75,8 +76,8 @@ const UserList = (props) => {
 
   const UserBulkActionButtons = (props) => {
     return (
-      <Fragment>
-        {isAuthorized('mass_create') && count == 0 ? (
+      <>
+        {isAuthorized('mass_create') && count === 0 ? (
           <EmailComposeButton label="Email" {...props} />
         ) : (
           <Button
@@ -87,7 +88,7 @@ const UserList = (props) => {
         <ResetButton label="Reset email" {...props} />
         {/* default bulk delete action */}
         {/* <BulkDeleteButton {...props} /> */}
-      </Fragment>
+      </>
     );
   };
   const UserFilter = (props) => (

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { DateTimeInput } from 'react-admin';
 import { FormControlLabel, RadioGroup, Radio, Box, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -39,10 +38,6 @@ const DateTimeSelector = ({
     form && fieldnameStart && form.getState().values[fieldnameStart]
       ? new Date(form.getState().values[fieldnameStart])
       : today;
-  const currentToDateTime = () =>
-    form && fieldnameStart && form.getState().values[fieldnameEnd]
-      ? new Date(form.getState().values[fieldnameEnd])
-      : today;
 
   const setOffset = (hours, days, fromHour) => {
     // offset calculation of endDate, according to an offset applied to startDate
@@ -76,8 +71,8 @@ const DateTimeSelector = ({
   };
 
   const updatePartialDateTime = (value, updateStart = true, updateEnd = true) => {
+    let valueDate = value;
     console.log('Updated value :', value);
-    var valueDate = value;
     if (typeof value === 'string') {
       if (/\d{2}:\d{2}/.test(value)) {
         valueDate = new Date(
@@ -123,6 +118,8 @@ const DateTimeSelector = ({
         updateStart && form && fieldnameStart && form.change(fieldnameStart, alreadySetDate);
         updateEnd && form && fieldnameStart && form.change(fieldnameEnd, alreadySetDate);
         break;
+      default:
+        console.log('default log');
     }
   };
 
