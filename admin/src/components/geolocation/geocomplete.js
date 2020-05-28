@@ -5,8 +5,8 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
-import { fetchUtils, FormDataConsumer, REDUX_FORM_NAME } from 'react-admin';
-import { useForm, useField } from 'react-final-form';
+import { fetchUtils, FormDataConsumer } from 'react-admin';
+import { useForm } from 'react-final-form';
 import useDebounce from '../../utils/useDebounce';
 
 const queryString = require('query-string');
@@ -34,7 +34,6 @@ const GeocompleteInput = (props) => {
   const { classes } = props;
 
   const form = useForm();
-  const field = useField('address');
 
   const [input, setInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);

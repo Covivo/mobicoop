@@ -71,8 +71,8 @@ const DateTimeSelector = ({
   };
 
   const updatePartialDateTime = (value, updateStart = true, updateEnd = true) => {
+    let valueDate = value;
     console.log('Updated value :', value);
-    var valueDate = value;
     if (typeof value === 'string') {
       if (/\d{2}:\d{2}/.test(value)) {
         valueDate = new Date(
@@ -118,6 +118,8 @@ const DateTimeSelector = ({
         updateStart && form && fieldnameStart && form.change(fieldnameStart, alreadySetDate);
         updateEnd && form && fieldnameStart && form.change(fieldnameEnd, alreadySetDate);
         break;
+      default:
+        console.log('default log');
     }
   };
 
