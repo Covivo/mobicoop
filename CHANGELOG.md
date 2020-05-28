@@ -8,6 +8,7 @@
     * Link with proof registry via cron job
 * New entities for SolidaryUser : SolidaryBeneficiary and SolidaryVolunteer.
 * Several utility routes.
+* RDEX : Fix bad handling days and times when there is no outward array given
 
 # Release 1.4.0
 
