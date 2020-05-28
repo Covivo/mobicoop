@@ -55,7 +55,6 @@ export default dataProviderAdapter({
       // fallback to the default implementation
       return dataProvider.create(resource, params);
     }
-
     const options = {
       headers: new global.Headers({ Accept: 'application/json' }),
     };
@@ -63,6 +62,7 @@ export default dataProviderAdapter({
     options.headers.set('Authorization', `Bearer ${token}`);
 
     const newParams = { ...params };
+    console.info(newParams)
 
     /* Rewrite roles for fit with api */
     const newRoles = [];
@@ -123,15 +123,10 @@ export default dataProviderAdapter({
         )
       ).then(
         // We fill the array rolesTerritory with good format for admin
-        (dataThen) => {
-          data.rolesTerritory = dataThen.reduce((acc, val) => {
-            acc[val.authItem] = val.territory != null ? val.territory : null;
-
-            return acc;
-          }, {});
-          return { data };
-        }
-      )
+        dataThen  =>  {
+          data.rolesTerritory = dataThen
+          return {data};
+      }  )
     );
   },
   getList: (resource, params) => {
@@ -143,12 +138,10 @@ export default dataProviderAdapter({
   },
   update: (resource, params) => {
     const newParams = { ...params };
-
     if (resource !== 'users') {
       // fallback to the default implementation
       return dataProvider.update(resource, newParams);
     }
-
     const options = {};
     options.headers = new global.Headers({ Accept: 'application/json' });
     options.headers.set('Authorization', `Bearer ${token}`);
@@ -171,21 +164,23 @@ export default dataProviderAdapter({
         }
       });
     } else {
-      for (const territory in newParams.data.rolesTerritory) {
-        for (const r in newParams.data.rolesTerritory[territory]) {
-          const role = newParams.data.rolesTerritory[territory][r];
-          territory != null
-            ? newRoles.push({ authItem: role, territory })
-            : newRoles.push({ authItem: role });
-        }
-      }
-    }
 
+      const arrayRolesTerritories = newParams.data.rolesTerritory;
+
+      arrayRolesTerritories.forEach( (element) => {
+          const territory = element.territory;
+          const authItem = element.authItem;
+          territory != null
+          ? newRoles.push({ authItem: authItem, territory })
+          : newRoles.push({ authItem: authItem });
+      });
+   
+    }
     /* Rewrite roles for fit with api */
     newParams.data.userAuthAssignments = newRoles;
 
     return dataProvider.update('users', {
-      id: newParams.data.originId,
+      id: newParams.id,
       data: newParams.data,
       previousData: newParams.data.previousData,
     });
