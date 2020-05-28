@@ -50,6 +50,7 @@ use Symfony\Component\Security\Core\Security;
 use App\Auth\Service\AuthManager;
 use App\Carpool\Entity\ClassicProof;
 use App\Carpool\Exception\ProofException;
+use App\Solidary\Repository\SubjectRepository;
 use DateTime;
 
 /**
@@ -76,6 +77,7 @@ class AdManager
     private $security;
     private $authManager;
     private $proofManager;
+    private $subjectRepository;
 
     /**
      * Constructor.
@@ -83,7 +85,7 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityRepository $communityRepository, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager, ProofManager $proofManager)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityRepository $communityRepository, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager, ProofManager $proofManager, SubjectRepository $subjectRepository)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -101,6 +103,7 @@ class AdManager
         $this->security = $security;
         $this->authManager = $authManager;
         $this->proofManager = $proofManager;
+        $this->subjectRepository = $subjectRepository;
     }
 
     /**
@@ -197,6 +200,15 @@ class AdManager
                 $outwardProposal->setEvent($event);
             } else {
                 throw new EventNotFoundException('Event ' . $ad->getEventId() . ' not found');
+            }
+        }
+
+        // subject
+        if ($ad->getSubjectId()) {
+            if ($subject = $this->subjectRepository->find($ad->getSubjectId())) {
+                $outwardProposal->setSubject($subject);
+            } else {
+                throw new EventNotFoundException('Subject ' . $ad->getSubjectId() . ' not found');
             }
         }
 
