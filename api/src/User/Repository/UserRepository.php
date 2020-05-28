@@ -60,7 +60,8 @@ class UserRepository
 
     public function findOneBy(array $criteria): ?User
     {
-        return $this->repository->findOneBy($criteria);
+        $user = $this->repository->findOneBy($criteria);
+        return $user;
     }
 
     /**

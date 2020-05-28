@@ -381,6 +381,12 @@ class ProposalManager
                     $direction = $routes[0];
                 }
             }
+            if (is_null($direction->getBboxMinLon()) && is_null($direction->getBboxMinLat()) && is_null($direction->getBboxMaxLon()) && is_null($direction->getBboxMaxLat())) {
+                $direction->setBboxMaxLat($addresses[0]->getLatitude());
+                $direction->setBboxMaxLon($addresses[0]->getLongitude());
+                $direction->setBboxMinLat($addresses[0]->getLatitude());
+                $direction->setBboxMinLon($addresses[0]->getLongitude());
+            }
             if ($routes) {
                 // creation of the crossed zones
                 //$direction = $this->zoneManager->createZonesForDirection($direction);

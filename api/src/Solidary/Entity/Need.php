@@ -39,8 +39,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * ApiResource(
+ * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readSolidary","readNeeds"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
@@ -70,6 +71,7 @@ class Need
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
+     * @MaxDepth(1)
      * @Groups({"readUser","readSolidary","writeSolidary","readNeeds"})
      */
     private $label;
@@ -78,6 +80,7 @@ class Need
      * @var bool The need is not publicly available.
      *
      * @ORM\Column(type="boolean", nullable=true)
+     * @MaxDepth(1)
      * @Groups({"readUser","readSolidary","writeSolidary","readNeeds"})
      */
     private $private;

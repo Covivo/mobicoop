@@ -1055,8 +1055,16 @@ class User implements UserInterface, EquatableInterface
     private $solidaryUser;
 
     /**
+     * @var array|null used to get the solidaries of a user
+     * @Groups({"readSolidary"})
+     * @MaxDepth(1)
+     */
+    private $solidaries;
+
+    /**
      * @var array|null used to get the structures of a user
      * @Groups({"userStructure"})
+     * @MaxDepth(1)
      */
     private $structures;
 

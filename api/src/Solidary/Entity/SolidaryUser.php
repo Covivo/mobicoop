@@ -44,7 +44,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * ApiResource(
+ * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readSolidary","readUser"}, "enable_max_depth"="true"},
@@ -344,6 +344,7 @@ class SolidaryUser
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist","remove"}, orphanRemoval=true, mappedBy="solidaryUser")
      * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $user;
 
@@ -360,6 +361,7 @@ class SolidaryUser
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
      * @Groups({"readUser","readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $needs;
 

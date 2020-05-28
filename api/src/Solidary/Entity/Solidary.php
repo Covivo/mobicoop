@@ -47,6 +47,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "get"={
  *             "security"="is_granted('solidary_list',object)"
  *          },
+ *          "getMySolidaries"={
+ *              "method"="GET",
+ *              "path"="/solidaries/mySolidaries",
+ *              "normalization_context"={"groups"={"readSolidary"}},
+ *              "security"="is_granted('solidary_list_self',object)"
+ *
+ *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('solidary_create',object)"
  *          }
@@ -70,6 +77,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      }
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class Solidary
 {
@@ -158,8 +166,9 @@ class Solidary
     /**
      * @var ArrayCollection|null The special needs for this solidary record.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", cascade={"persist","remove"})
      * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $needs;
 
@@ -190,9 +199,124 @@ class Solidary
 
     /**
      * @var array List of the Asks of this solidary (special route)
-     * @Groups({"asksList"})
+     * @Groups({"asksList","writeSolidary", "readSolidary"})
      */
     private $asksList;
+
+    /**
+     * @var SolidaryUser SolidaryUser associated ti the ask
+     * @Groups ({"writeSolidary", "readSolidary"})
+     * @MaxDepth(1)
+     */
+    private $solidaryUser;
+
+    /**
+     * @var Array|null Address of the user who create the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $homeAddress;
+
+    /**
+    * @var Array|null Origin address of the solidary
+     * @Groups ({"writeSolidary", "readSolidary"})
+    */
+    private $origin;
+
+    /**
+     * @var Array|null Destination address of the solidary
+     * @Groups ({"writeSolidary", "readSolidary"})
+     */
+    private $destination;
+
+    /**
+     * @var \DateTimeInterface outward date and time of the solidary demand
+     * @Groups ({"writeSolidary", "readSolidary"})
+     */
+    private $outwardDatetime;
+
+    /**
+     * @var \DateTimeInterface outward deadline date and time of the solidary demand
+     * @Groups ({"writeSolidary", "readSolidary"})
+     */
+    private $outwardDeadlineDatetime;
+
+    /**
+     * @var \DateTimeInterface return date and time of the solidary demand
+     * @Groups ({"writeSolidary", "readSolidary"})
+     */
+    private $returnDatetime;
+
+    /**
+     * @var \DateTimeInterface return deadline date and time of the solidary demand
+     * @Groups ({"writeSolidary", "readSolidary"})
+     */
+    private $returnDeadlineDatetime;
+
+    /**
+     * @var String|null Email of the user who ask for the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $email;
+
+    /**
+     * @var String|null Password of the user who ask for the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $password;
+
+    /**
+     * @var String|null Telephone of the user who ask for the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $telephone;
+
+    /**
+     * @var String|null familyname of the user who ask for the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $familyName;
+
+    /**
+     * @var String|null given name of the user who ask for the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $givenName;
+    
+    /**
+     * @var Int|null Gender of the user who ask for the solidary demand (1=female, 2=male, 3=nc)
+     * @Groups ({"writeSolidary"})
+     */
+    private $gender;
+
+    /**
+     * @var \DateTimeInterface|null Birthdate of the user who ask for the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $birthDate;
+
+    /**
+     * @var Array|null proofs needed for the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $proofs;
+
+    /**
+     * @var String|null structure of the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $structure;
+
+    /**
+     * @var Int frequency of the solidary demand
+     * @Groups ({"writeSolidary"})
+     */
+    private $frequency;
+
+    /**
+     * @var Array|null Origin address of the solidary
+     * @Groups ({"writeSolidary"})
+     */
+    private $days;
     
     public function __construct()
     {
@@ -201,6 +325,11 @@ class Solidary
         $this->solidarySolutions = new ArrayCollection();
         $this->solidaryMatchings = new ArrayCollection();
         $this->proofs = new ArrayCollection();
+        $this->origin = [];
+        $this->destination = [];
+        $this->proof = [];
+        $this->days = [];
+        $this->homeAddress = [];
     }
 
     public function getId(): int
@@ -308,7 +437,7 @@ class Solidary
     {
         return $this->needs->getValues();
     }
-
+ 
     public function addNeed(Need $need): self
     {
         if (!$this->needs->contains($need)) {
@@ -397,6 +526,237 @@ class Solidary
         return $this;
     }
 
+    public function getSolidaryUser(): ?SolidaryUser
+    {
+        return $this->solidaryUser;
+    }
+    
+    public function setSolidaryUser(?SolidaryUser $solidaryUser): self
+    {
+        $this->solidaryUser = $solidaryUser;
+        
+        return $this;
+    }
+
+
+    public function getHomeAddress(): array
+    {
+        return $this->homeAddress;
+    }
+    
+    public function setHomeAddress($homeAddress): self
+    {
+        $this->homeAddress = $homeAddress;
+        
+        return $this;
+    }
+
+    public function getOrigin(): ?array
+    {
+        return $this->origin;
+    }
+    
+    public function setOrigin($origin): self
+    {
+        $this->origin = $origin;
+        
+        return $this;
+    }
+
+    public function getDestination(): ?array
+    {
+        return $this->destination;
+    }
+    
+    public function setDestination($destination): self
+    {
+        $this->destination = $destination;
+        
+        return $this;
+    }
+
+    public function getOutwardDatetime(): ?\DateTimeInterface
+    {
+        return $this->outwardDatetime;
+    }
+
+    public function setOutwardDatetime(\DateTimeInterface $outwardDatetime): self
+    {
+        $this->outwardDatetime = $outwardDatetime;
+
+        return $this;
+    }
+
+    public function getOutwardDeadlineDatetime(): ?\DateTimeInterface
+    {
+        return $this->outwardDeadlineDatetime;
+    }
+
+    public function setOutwardDeadlineDatetime(\DateTimeInterface $outwardDeadlineDatetime): self
+    {
+        $this->outwardDeadlineDatetime = $outwardDeadlineDatetime;
+
+        return $this;
+    }
+
+    public function getReturnDatetime(): ?\DateTimeInterface
+    {
+        return $this->returnDatetime;
+    }
+
+    public function setReturnDatetime(\DateTimeInterface $returnDatetime): self
+    {
+        $this->returnDatetime = $returnDatetime;
+
+        return $this;
+    }
+
+    public function getReturnDeadlineDatetime(): ?\DateTimeInterface
+    {
+        return $this->returnDeadlineDatetime;
+    }
+
+    public function setReturnDeadlineDatetime(\DateTimeInterface $returnDeadlineDatetime): self
+    {
+        $this->returnDeadlineDatetime = $returnDeadlineDatetime;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(?string $telephone): self
+    {
+        $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function getFamilyName(): ?string
+    {
+        return $this->familyName;
+    }
+
+    public function setFamilyName(?string $familyName): self
+    {
+        $this->familyName = $familyName;
+
+        return $this;
+    }
+
+    public function getGivenName(): ?string
+    {
+        return $this->givenName;
+    }
+
+    public function setGivenName(?string $givenName): self
+    {
+        $this->givenName = $givenName;
+
+        return $this;
+    }
+
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    public function setGender($gender): self
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    public function getProofs(): array
+    {
+        return $this->proofs;
+    }
+    
+    public function setProofs(?array $proofs): self
+    {
+        $this->proofs = $proofs;
+        
+        return $this;
+    }
+
+    public function getStructure(): ?string
+    {
+        return $this->structure;
+    }
+    
+    public function setStructure(?string $structure): self
+    {
+        $this->structure = $structure;
+        
+        return $this;
+    }
+
+    public function getFrequency(): int
+    {
+        return $this->frequency;
+    }
+    
+    public function setFrequency(?bool $frequency): self
+    {
+        $this->frequency = $frequency;
+        
+        return $this;
+    }
+
+    public function getDays(): array
+    {
+        return $this->days;
+    }
+    
+    public function setDays(?array $days): self
+    {
+        $this->days = $days;
+        
+        return $this;
+    }
+
+    
+   
     // DOCTRINE EVENTS
 
     /**

@@ -22,22 +22,26 @@
 
 namespace App\Solidary\DataProvider;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Service\SolidaryManager;
+use Symfony\Component\Security\Core\Security;
 
 /**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-final class SolidaryItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+final class SolidaryCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $solidaryManager;
+    private $security;
 
-    public function __construct(SolidaryManager $solidaryManager)
+    public function __construct(SolidaryManager $solidaryManager, Security $security)
     {
         $this->solidaryManager = $solidaryManager;
+        $this->security = $security;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -45,11 +49,14 @@ final class SolidaryItemDataProvider implements ItemDataProviderInterface, Restr
         return Solidary::class === $resourceClass;
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Solidary
+    public function getCollection(string $resourceClass, string $operationName = null)
     {
-        if ($operationName=="contactsList") {
-            return $this->solidaryManager->getAsksList($id);
+        if ($operationName=="getMySolidaries") {
+            return $this->solidaryManager->getMySolidaries($this->security->getUser());
         }
-        return $this->solidaryManager->getSolidary($id);
+        if (empty($this->security->getUser()->getSolidaryStructures())) {
+            throw new SolidaryException(SolidaryException::NO_STRUCTURE);
+        }
+        return $this->solidaryManager->getSolidaries($this->security->getUser()->getSolidaryStructures()[0]);
     }
 }
