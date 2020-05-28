@@ -299,7 +299,7 @@ class NotificationManager
                         foreach ($object->getCommunityUsers() as $communityUser) {
                             if ($communityUser->getCommunity()->getId() === $object->getId()) {
                                 $senderGivenName = $communityUser->getUser()->getGivenName();
-                                $senderShortFamilyName = $communityUser->getUser()->getshortFamilyName();
+                                $senderShortFamilyName = $communityUser->getUser()->getShortFamilyName();
                             }
                         }
                     }
