@@ -352,7 +352,6 @@ class AuthManager
         foreach ($rolesUser as $role) {
             $rolesGranted = $this->checkRolesGrantedForRole($role, $rolesGranted);
         }
-    
         return $rolesGranted;
     }
 
@@ -366,7 +365,6 @@ class AuthManager
      */
     private function checkRolesGrantedForRole(array $authItem, array $rolesGranted)
     {
-
         //Array where we associate the granted roles for the roles who can cretae user
         $rolesGrantedForCreation =  [
             AuthItem::ROLE_SUPER_ADMIN => [
