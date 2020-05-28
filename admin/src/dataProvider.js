@@ -16,7 +16,7 @@ const fetchHeaders = () => {
   return { Authorization: `Bearer ${global.localStorage.getItem('token')}` };
 };
 
-const fetchHydra = (url, options = {}) =>
+export const fetchHydra = (url, options = {}) =>
   baseFetchHydra(url, {
     ...options,
     headers: new global.Headers(fetchHeaders()),
@@ -62,7 +62,7 @@ export default dataProviderAdapter({
     options.headers.set('Authorization', `Bearer ${token}`);
 
     const newParams = { ...params };
-    console.info(newParams)
+    console.info(newParams);
 
     /* Rewrite roles for fit with api */
     const newRoles = [];
@@ -123,10 +123,11 @@ export default dataProviderAdapter({
         )
       ).then(
         // We fill the array rolesTerritory with good format for admin
-        dataThen  =>  {
-          data.rolesTerritory = dataThen
-          return {data};
-      }  )
+        (dataThen) => {
+          data.rolesTerritory = dataThen;
+          return { data };
+        }
+      )
     );
   },
   getList: (resource, params) => {
@@ -164,17 +165,15 @@ export default dataProviderAdapter({
         }
       });
     } else {
-
       const arrayRolesTerritories = newParams.data.rolesTerritory;
 
-      arrayRolesTerritories.forEach( (element) => {
-          const territory = element.territory;
-          const authItem = element.authItem;
-          territory != null
+      arrayRolesTerritories.forEach((element) => {
+        const territory = element.territory;
+        const authItem = element.authItem;
+        territory != null
           ? newRoles.push({ authItem: authItem, territory })
           : newRoles.push({ authItem: authItem });
       });
-   
     }
     /* Rewrite roles for fit with api */
     newParams.data.userAuthAssignments = newRoles;

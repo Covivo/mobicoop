@@ -47,19 +47,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const DayChip = ({ condition, label }) =>
+  condition ? <Chip label={label} color="primary" /> : <Chip label={label} />;
+
+const SMS_CONTACT_OPTION = 'SMS';
+const EMAIL_CONTACT_OPTION = 'Email';
+const PHONE_CONTACT_OPTION = 'Téléphone';
+
+const contactOptions = [SMS_CONTACT_OPTION, EMAIL_CONTACT_OPTION, PHONE_CONTACT_OPTION];
+
 const SolidaryView = (props) => {
   const classes = useStyles();
 
   // For test only. Should be sourced by props
   const record = fakeProposal;
-  console.log(record);
 
   const { monCheck, tueCheck, wedCheck, thuCheck, friCheck, satCheck, sunCheck } = record.criteria;
   const { createdDate, updatedDate, id } = record;
   const { givenName, familyName, phone, avatars } = record.user;
 
-  const DayChip = ({ condition, label }) =>
-    condition ? <Chip label={label} color="primary" /> : <Chip label={label} />;
+  const handleContactChoice = (choice) => {
+    console.log(`@TODO: handling ${choice}`);
+  };
 
   return (
     <Card className={classes.main_panel}>
@@ -71,9 +80,7 @@ const SolidaryView = (props) => {
                 <Avatar alt="Remy Sharp" src={avatars.length && avatars[0]} />
               </Grid>
               <Grid item>
-                <h2>
-                  {givenName} {familyName}
-                </h2>
+                <h2>{`${givenName} ${familyName}`}</h2>
               </Grid>
               <Grid item>
                 <small>{phone}</small>
@@ -81,7 +88,8 @@ const SolidaryView = (props) => {
               <Grid item>
                 <DropDownButton
                   label="Contacter demandeur"
-                  options={['SMS', 'Email', 'Téléphone']}
+                  options={contactOptions}
+                  onSelect={handleContactChoice}
                 />
               </Grid>
             </Grid>
@@ -235,7 +243,8 @@ const SolidaryView = (props) => {
               <DropDownButton
                 size="small"
                 label="Contacter conducteur"
-                options={['SMS', 'Email', 'Téléphone']}
+                options={contactOptions}
+                onSelect={handleContactChoice}
               />
             </ListItemSecondaryAction>
           </ListItem>
@@ -248,7 +257,8 @@ const SolidaryView = (props) => {
               <DropDownButton
                 size="small"
                 label="Contacter conducteur"
-                options={['SMS', 'Email', 'Téléphone']}
+                options={contactOptions}
+                onSelect={handleContactChoice}
               />
             </ListItemSecondaryAction>
           </ListItem>
