@@ -29,6 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
+use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPoint;
 
 /**
  * A postal address.
@@ -447,12 +448,12 @@ class Address implements ResourceInterface, \JsonSerializable
         $this->displayLabel = $displayLabel;
     }
 
-    public function getRelayPoint(): ?array
+    public function getRelayPoint(): ?RelayPoint
     {
         return $this->relayPoint;
     }
 
-    public function setRelayPoint(?array $relayPoint)
+    public function setRelayPoint(?RelayPoint $relayPoint)
     {
         $this->relayPoint = $relayPoint;
     }
@@ -505,7 +506,8 @@ class Address implements ResourceInterface, \JsonSerializable
              'home'                 => $this->isHome(),
              'icon'                 => $this->getIcon(),
              'venue'                => $this->getVenue(),
-             'event'                => $this->getEvent()
+             'event'                => $this->getEvent(),
+             'relayPoint'           => $this->getRelayPoint()
          ];
     }
 }

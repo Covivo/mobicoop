@@ -497,7 +497,7 @@ class Community implements ResourceInterface, \JsonSerializable
             'validationType'    => $this->getValidationType(),
             'domain'            => $this->getDomain(),
             'isMember'          => $this->isMember(),
-          'ads'                 => $this->getAds(),
+            'ads'               => $this->getAds(),
         ];
     }
 }

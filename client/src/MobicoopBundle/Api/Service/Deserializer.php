@@ -69,6 +69,8 @@ use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Mobicoop\Bundle\MobicoopBundle\Price\Entity\Price;
+use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPoint;
+use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointType;
 
 /**
  * Custom deserializer service.
@@ -94,82 +96,85 @@ class Deserializer
     {
         switch ($class) {
             case User::class:
-                return self::deserializeUser($data);
+                return $this->deserializeUser($data);
                 break;
             case Address::class:
-                return self::deserializeAddress($data);
+                return $this->deserializeAddress($data);
                 break;
             case Event::class:
-                return self::deserializeEvent($data);
+                return $this->deserializeEvent($data);
                 break;
             case Image::class:
-                return self::deserializeImage($data);
+                return $this->deserializeImage($data);
                 break;
             case Ad::class:
-                return self::deserializeAd($data);
+                return $this->deserializeAd($data);
                 break;
             case Proposal::class:
-                return self::deserializeProposal($data);
+                return $this->deserializeProposal($data);
                 break;
             case PTJourney::class:
-                return self::deserializePTJourney($data);
+                return $this->deserializePTJourney($data);
                 break;
             case PTTripPoint::class:
-                return self::deserializePTTripPoint($data);
+                return $this->deserializePTTripPoint($data);
                 break;
             case PTLineStop::class:
-                return self::deserializePTLineStop($data);
+                return $this->deserializePTLineStop($data);
                 break;
             case ExternalJourneyProvider::class:
-                return self::deserializeExternalJourneyProvider($data);
+                return $this->deserializeExternalJourneyProvider($data);
                 break;
             case ExternalJourney::class:
                 return $data;
                 break;
             case Mass::class:
-                return self::deserializeMass($data);
+                return $this->deserializeMass($data);
                 break;
             case MassPerson::class:
-                return self::deserializeMassPerson($data);
+                return $this->deserializeMassPerson($data);
                 break;
             case MassMatching::class:
-                return self::deserializeMassMatching($data);
+                return $this->deserializeMassMatching($data);
                 break;
             case Community::class:
-                return self::deserializeCommunity($data);
+                return $this->deserializeCommunity($data);
                 break;
             case CommunityUser::class:
-                return self::deserializeCommunityUser($data);
+                return $this->deserializeCommunityUser($data);
                 break;
             case Article::class:
-                return self::deserializeArticle($data);
+                return $this->deserializeArticle($data);
                 break;
             case Permission::class:
-                return self::deserializePermission($data);
+                return $this->deserializePermission($data);
                 break;
             case Message::class:
-                return self::deserializeMessage($data);
+                return $this->deserializeMessage($data);
                 break;
             case Recipient::class:
-                return self::deserializeRecipient($data);
+                return $this->deserializeRecipient($data);
                 break;
             case Direction::class:
-                return self::deserializeDirection($data);
+                return $this->deserializeDirection($data);
                 break;
             case Contact::class:
-                return self::deserializeContact($data);
+                return $this->deserializeContact($data);
                 break;
             case Subject::class:
-                return self::deserializeSubject($data);
+                return $this->deserializeSubject($data);
                 break;
             case Structure::class:
-                return self::deserializeStructure($data);
+                return $this->deserializeStructure($data);
                 break;
             case Price::class:
-                return self::deserializePrice($data);
+                return $this->deserializePrice($data);
                 break;
             case Redirect::class:
-                return self::deserializeRedirect($data);
+                return $this->deserializeRedirect($data);
+                break;
+            case RelayPoint::class:
+                return $this->deserializeRelayPoint($data) ;
                 break;
             default:
                 break;
@@ -180,23 +185,23 @@ class Deserializer
     private function deserializeUser(array $data): ?User
     {
         $user = new User();
-        $user = self::autoSet($user, $data);
+        $user = $this->autoSet($user, $data);
         if (isset($data["@id"])) {
             $user->setIri($data["@id"]);
         }
         if (isset($data["addresses"])) {
             foreach ($data["addresses"] as $address) {
-                $user->addAddress(self::deserializeAddress($address));
+                $user->addAddress($this->deserializeAddress($address));
             }
         }
         if (isset($data["masses"])) {
             foreach ($data["masses"] as $mass) {
-                $user->addMass(self::deserializeMass($mass));
+                $user->addMass($this->deserializeMass($mass));
             }
         }
         if (isset($data["images"])) {
             foreach ($data["images"] as $image) {
-                $user->addImage(self::deserializeImage($image));
+                $user->addImage($this->deserializeImage($image));
             }
         }
         return $user;
@@ -205,7 +210,7 @@ class Deserializer
     private function deserializeAddress(array $data): ?Address
     {
         $address = new Address();
-        $address = self::autoSet($address, $data);
+        $address = $this->autoSet($address, $data);
         if (isset($data["@id"])) {
             $address->setIri($data["@id"]);
         }
@@ -215,16 +220,16 @@ class Deserializer
     private function deserializeEvent(array $data): ?Event
     {
         $event = new Event();
-        $event = self::autoSet($event, $data);
+        $event = $this->autoSet($event, $data);
         if (isset($data["@id"])) {
             $event->setIri($data["@id"]);
         }
         if (isset($data["address"])) {
-            $event->setAddress(self::deserializeAddress($data['address']));
+            $event->setAddress($this->deserializeAddress($data['address']));
         }
         if (isset($data["images"])) {
             foreach ($data["images"] as $image) {
-                $event->addImage(self::deserializeImage($image));
+                $event->addImage($this->deserializeImage($image));
             }
         }
         return $event;
@@ -233,7 +238,7 @@ class Deserializer
     private function deserializeImage(array $data): ?Image
     {
         $image = new Image();
-        $image = self::autoSet($image, $data);
+        $image = $this->autoSet($image, $data);
         if (isset($data["@id"])) {
             $image->setIri($data["@id"]);
         }
@@ -243,27 +248,27 @@ class Deserializer
     private function deserializeAd(array $data): ?Ad
     {
         $ad = new Ad();
-        $ad = self::autoSet($ad, $data);
+        $ad = $this->autoSet($ad, $data);
         return $ad;
     }
 
     private function deserializeProposal(array $data): ?Proposal
     {
         $proposal = new Proposal();
-        $proposal = self::autoSet($proposal, $data);
+        $proposal = $this->autoSet($proposal, $data);
         if (isset($data["@id"])) {
             $proposal->setIri($data["@id"]);
         }
         if (isset($data["user"])) {
-            $proposal->setUser(self::deserializeUser($data['user']));
+            $proposal->setUser($this->deserializeUser($data['user']));
         }
         if (isset($data["travelModes"])) {
             foreach ($data["travelModes"] as $travelMode) {
-                $proposal->addTravelMode(self::deserializeTravelMode($travelMode));
+                $proposal->addTravelMode($this->deserializeTravelMode($travelMode));
             }
         }
         if (isset($data["proposalLinked"]) && is_array($data["proposalLinked"])) {
-            $proposal->setProposalLinked(self::deserializeProposal($data['proposalLinked']));
+            $proposal->setProposalLinked($this->deserializeProposal($data['proposalLinked']));
         }
         return $proposal;
     }
@@ -271,7 +276,7 @@ class Deserializer
     private function deserializeTravelMode(array $data): ?TravelMode
     {
         $travelMode = new TravelMode();
-        $travelMode = self::autoSet($travelMode, $data);
+        $travelMode = $this->autoSet($travelMode, $data);
         if (isset($data["@id"])) {
             $travelMode->setIri($data["@id"]);
         }
@@ -281,14 +286,14 @@ class Deserializer
     private function deserializeDirection(array $data): ?Direction
     {
         $direction = new Direction();
-        $direction = self::autoSet($direction, $data);
+        $direction = $this->autoSet($direction, $data);
         if (isset($data["@id"])) {
             $direction->setIri($data["@id"]);
         }
         if (isset($data["points"])) {
             $points = [];
             foreach ($data["points"] as $address) {
-                $points[] = self::deserializeAddress($address);
+                $points[] = $this->deserializeAddress($address);
             }
             $direction->setPoints($points);
         }
@@ -301,18 +306,18 @@ class Deserializer
     private function deserializePTJourney(array $data): ?PTJourney
     {
         $PTJourney = new PTJourney();
-        $PTJourney = self::autoSet($PTJourney, $data);
+        $PTJourney = $this->autoSet($PTJourney, $data);
         if (isset($data["ptdeparture"])) {
-            $PTJourney->setPTDeparture(self::deserializePTDeparture($data["ptdeparture"]));
+            $PTJourney->setPTDeparture($this->deserializePTDeparture($data["ptdeparture"]));
         }
         if (isset($data["ptarrival"])) {
-            $PTJourney->setPTArrival(self::deserializePTArrival($data["ptarrival"]));
+            $PTJourney->setPTArrival($this->deserializePTArrival($data["ptarrival"]));
         }
         if (isset($data["ptlegs"])) {
             $nblegs = 0;
             foreach ($data["ptlegs"] as $ptleg) {
                 $nblegs++;
-                $PTJourney->addPTLeg(self::deserializePTLeg($ptleg, $nblegs));
+                $PTJourney->addPTLeg($this->deserializePTLeg($ptleg, $nblegs));
             }
         }
         return $PTJourney;
@@ -321,9 +326,9 @@ class Deserializer
     private function deserializePTTripPoint(array $data): ?PTTripPoint
     {
         $PTTripPoint = new PTTripPoint();
-        $PTTripPoint = self::autoSet($PTTripPoint, $data);
+        $PTTripPoint = $this->autoSet($PTTripPoint, $data);
         if (isset($data["locality"])) {
-            $PTTripPoint->setLocality(self::deserializeLocality($data["locality"]));
+            $PTTripPoint->setLocality($this->deserializeLocality($data["locality"]));
         }
         return $PTTripPoint;
     }
@@ -331,19 +336,19 @@ class Deserializer
     private function deserializeLocality(array $data): ?PTLocality
     {
         $PTLocality = new PTLocality();
-        $PTLocality = self::autoSet($PTLocality, $data);
+        $PTLocality = $this->autoSet($PTLocality, $data);
         return $PTLocality;
     }
 
     private function deserializePTLineStop(array $data): ?PTLineStop
     {
         $PTLineStop = new PTLineStop(1);
-        $PTLineStop = self::autoSet($PTLineStop, $data);
+        $PTLineStop = $this->autoSet($PTLineStop, $data);
         if (isset($data["line"])) {
-            $PTLineStop->setLine(self::deserializePTLine($data["line"]));
+            $PTLineStop->setLine($this->deserializePTLine($data["line"]));
         }
         if (isset($data["stop"])) {
-            $PTLineStop->setStop(self::deserializePTStop($data["stop"]));
+            $PTLineStop->setStop($this->deserializePTStop($data["stop"]));
         }
         return $PTLineStop;
     }
@@ -351,9 +356,9 @@ class Deserializer
     private function deserializePTDeparture(array $data): ?PTDeparture
     {
         $PTDeparture = new PTDeparture();
-        $PTDeparture = self::autoSet($PTDeparture, $data);
+        $PTDeparture = $this->autoSet($PTDeparture, $data);
         if (isset($data["address"])) {
-            $PTDeparture->setAddress(self::deserializeAddress($data["address"]));
+            $PTDeparture->setAddress($this->deserializeAddress($data["address"]));
         }
         return $PTDeparture;
     }
@@ -361,9 +366,9 @@ class Deserializer
     private function deserializePTArrival(array $data): ?PTArrival
     {
         $PTArrival = new PTArrival();
-        $PTArrival = self::autoSet($PTArrival, $data);
+        $PTArrival = $this->autoSet($PTArrival, $data);
         if (isset($data["address"])) {
-            $PTArrival->setAddress(self::deserializeAddress($data["address"]));
+            $PTArrival->setAddress($this->deserializeAddress($data["address"]));
         }
         return $PTArrival;
     }
@@ -371,24 +376,24 @@ class Deserializer
     private function deserializePTLeg(array $data, int $id): ?PTLeg
     {
         $PTLeg = new PTLeg($id);
-        $PTLeg = self::autoSet($PTLeg, $data);
+        $PTLeg = $this->autoSet($PTLeg, $data);
         if (isset($data["ptdeparture"])) {
-            $PTLeg->setPTDeparture(self::deserializePTDeparture($data["ptdeparture"]));
+            $PTLeg->setPTDeparture($this->deserializePTDeparture($data["ptdeparture"]));
         }
         if (isset($data["ptarrival"])) {
-            $PTLeg->setPTArrival(self::deserializePTArrival($data["ptarrival"]));
+            $PTLeg->setPTArrival($this->deserializePTArrival($data["ptarrival"]));
         }
         if (isset($data["travelMode"])) {
-            $PTLeg->setTravelMode(self::deserializeTravelMode($data["travelMode"]));
+            $PTLeg->setTravelMode($this->deserializeTravelMode($data["travelMode"]));
         }
         if (isset($data["ptline"])) {
-            $PTLeg->setPTLine(self::deserializePTLine($data["ptline"]));
+            $PTLeg->setPTLine($this->deserializePTLine($data["ptline"]));
         }
         if (isset($data["ptsteps"])) {
             $nbsteps = 0;
             foreach ($data["ptsteps"] as $ptstep) {
                 $nbsteps++;
-                $PTLeg->addPTStep(self::deserializePTStep($ptstep, $nbsteps));
+                $PTLeg->addPTStep($this->deserializePTStep($ptstep, $nbsteps));
             }
         }
         return $PTLeg;
@@ -397,9 +402,9 @@ class Deserializer
     private function deserializePTLine(array $data): ?PTLine
     {
         $PTLine = new PTLine();
-        $PTLine = self::autoSet($PTLine, $data);
+        $PTLine = $this->autoSet($PTLine, $data);
         if (isset($data["ptcompany"])) {
-            $PTLine->setPTCompany(self::deserializePTCompany($data["ptcompany"]));
+            $PTLine->setPTCompany($this->deserializePTCompany($data["ptcompany"]));
         }
         return $PTLine;
     }
@@ -407,9 +412,9 @@ class Deserializer
     private function deserializePTStop(array $data): ?PTStop
     {
         $PTStop = new PTStop(1);
-        $PTStop = self::autoSet($PTStop, $data);
+        $PTStop = $this->autoSet($PTStop, $data);
         if (isset($data["accessibilityStatus"])) {
-            $PTStop->setAccessibilityStatus(self::deserializePTAccessibilityStatus($data["accessibilityStatus"]));
+            $PTStop->setAccessibilityStatus($this->deserializePTAccessibilityStatus($data["accessibilityStatus"]));
         }
         return $PTStop;
     }
@@ -417,26 +422,26 @@ class Deserializer
     private function deserializePTAccessibilityStatus(array $data): ?PTAccessibilityStatus
     {
         $PTAccessibilityStatus = new PTAccessibilityStatus(1);
-        $PTAccessibilityStatus = self::autoSet($PTAccessibilityStatus, $data);
+        $PTAccessibilityStatus = $this->autoSet($PTAccessibilityStatus, $data);
         return $PTAccessibilityStatus;
     }
 
     private function deserializePTCompany(array $data): ?PTCompany
     {
         $PTCompany = new PTCompany();
-        $PTCompany = self::autoSet($PTCompany, $data);
+        $PTCompany = $this->autoSet($PTCompany, $data);
         return $PTCompany;
     }
 
     private function deserializePTStep(array $data, int $id): ?PTStep
     {
         $PTStep = new PTStep($id);
-        $PTStep = self::autoSet($PTStep, $data);
+        $PTStep = $this->autoSet($PTStep, $data);
         if (isset($data["ptdeparture"])) {
-            $PTStep->setPTDeparture(self::deserializePTDeparture($data["ptdeparture"]));
+            $PTStep->setPTDeparture($this->deserializePTDeparture($data["ptdeparture"]));
         }
         if (isset($data["ptarrival"])) {
-            $PTStep->setPTArrival(self::deserializePTArrival($data["ptarrival"]));
+            $PTStep->setPTArrival($this->deserializePTArrival($data["ptarrival"]));
         }
         return $PTStep;
     }
@@ -444,17 +449,17 @@ class Deserializer
     private function deserializeMass(array $data): ?Mass
     {
         $mass = new Mass();
-        $mass = self::autoSet($mass, $data);
+        $mass = $this->autoSet($mass, $data);
         if (isset($data["@id"])) {
             $mass->setIri($data["@id"]);
         }
         if (isset($data["persons"])) {
             foreach ($data["persons"] as $person) {
-                $mass->addPerson(self::deserializeMassPerson($person));
+                $mass->addPerson($this->deserializeMassPerson($person));
             }
         }
         if (isset($data["massMatrix"])) {
-            $mass->setMassMatrix(self::deserializeMassMatrix($data["massMatrix"]));
+            $mass->setMassMatrix($this->deserializeMassMatrix($data["massMatrix"]));
         }
         return $mass;
     }
@@ -462,18 +467,18 @@ class Deserializer
     private function deserializeMassMatrix(array $data): ?MassMatrix
     {
         $massMatrix = new MassMatrix();
-        $massMatrix = self::autoSet($massMatrix, $data);
+        $massMatrix = $this->autoSet($massMatrix, $data);
         if (isset($data["@id"])) {
             $massMatrix->setIri($data["@id"]);
         }
         if (isset($data["originalsJourneys"])) {
             foreach ($data["originalsJourneys"] as $massJourney) {
-                $massMatrix->addOriginalsJourneys(self::deserializeMassJourney($massJourney));
+                $massMatrix->addOriginalsJourneys($this->deserializeMassJourney($massJourney));
             }
         }
         if (isset($data["carpools"])) {
             foreach ($data["carpools"] as $carpool) {
-                $massMatrix->addCarpools(self::deserializeMassCarpool($carpool));
+                $massMatrix->addCarpools($this->deserializeMassCarpool($carpool));
             }
         }
         return $massMatrix;
@@ -482,7 +487,7 @@ class Deserializer
     private function deserializeMassJourney(array $data): ?MassJourney
     {
         $originalJourney = new MassJourney();
-        $originalJourney = self::autoSet($originalJourney, $data);
+        $originalJourney = $this->autoSet($originalJourney, $data);
         if (isset($data["@id"])) {
             $originalJourney->setIri($data["@id"]);
         }
@@ -492,7 +497,7 @@ class Deserializer
     private function deserializeMassCarpool(array $data): ?MassCarpool
     {
         $massCarpool = new MassCarpool();
-        $massCarpool = self::autoSet($massCarpool, $data);
+        $massCarpool = $this->autoSet($massCarpool, $data);
         if (isset($data["@id"])) {
             $massCarpool->setIri($data["@id"]);
         }
@@ -501,27 +506,27 @@ class Deserializer
     private function deserializeMassPerson(array $data): ?MassPerson
     {
         $massPerson = new MassPerson();
-        $massPerson = self::autoSet($massPerson, $data);
+        $massPerson = $this->autoSet($massPerson, $data);
         if (isset($data["@id"])) {
             $massPerson->setIri($data["@id"]);
         }
         if (isset($data["personalAddress"])) {
-            $massPerson->setPersonalAddress(self::deserializeAddress($data["personalAddress"]));
+            $massPerson->setPersonalAddress($this->deserializeAddress($data["personalAddress"]));
         }
         if (isset($data["workAddress"])) {
-            $massPerson->setWorkAddress(self::deserializeAddress($data["workAddress"]));
+            $massPerson->setWorkAddress($this->deserializeAddress($data["workAddress"]));
         }
         if (isset($data["direction"])) {
-            $massPerson->setDirection(self::deserializeDirection($data["direction"]));
+            $massPerson->setDirection($this->deserializeDirection($data["direction"]));
         }
         if (isset($data["matchingsAsDriver"])) {
             foreach ($data["matchingsAsDriver"] as $matchingsAsDriver) {
-                $massPerson->addMatchingsAsDriver(self::deserializeMassMatching($matchingsAsDriver));
+                $massPerson->addMatchingsAsDriver($this->deserializeMassMatching($matchingsAsDriver));
             }
         }
         if (isset($data["matchingsAsPassenger"])) {
             foreach ($data["matchingsAsPassenger"] as $matchingsAsPassenger) {
-                $massPerson->addMatchingsAsPassenger(self::deserializeMassMatching($matchingsAsPassenger));
+                $massPerson->addMatchingsAsPassenger($this->deserializeMassMatching($matchingsAsPassenger));
             }
         }
         return $massPerson;
@@ -530,7 +535,7 @@ class Deserializer
     private function deserializeMassMatching(array $data): ?MassMatching
     {
         $massMatching = new MassMatching();
-        $massMatching = self::autoSet($massMatching, $data);
+        $massMatching = $this->autoSet($massMatching, $data);
         if (isset($data["@id"])) {
             $massMatching->setIri($data["@id"]);
         }
@@ -540,25 +545,25 @@ class Deserializer
     private function deserializeExternalJourneyProvider(array $data): ?ExternalJourneyProvider
     {
         $provider = new ExternalJourneyProvider();
-        $provider = self::autoSet($provider, $data);
+        $provider = $this->autoSet($provider, $data);
         return $provider;
     }
 
     private function deserializeCommunityUser(array $data): ?CommunityUser
     {
         $communityUser = new communityUser();
-        $communityUser = self::autoSet($communityUser, $data);
+        $communityUser = $this->autoSet($communityUser, $data);
         if (isset($data["@id"])) {
             $communityUser->setIri($data["@id"]);
         }
         if (isset($data["community"]) && is_array($data["community"])) {
-            $communityUser->setCommunity(self::deserializeCommunity($data["community"]));
+            $communityUser->setCommunity($this->deserializeCommunity($data["community"]));
         }
         if (isset($data["user"])) {
-            $communityUser->setUser(self::deserializeUser($data["user"]));
+            $communityUser->setUser($this->deserializeUser($data["user"]));
         }
         if (isset($data["admin"])) {
-            $communityUser->setAdmin(self::deserializeUser($data["admin"]));
+            $communityUser->setAdmin($this->deserializeUser($data["admin"]));
         }
         return $communityUser;
     }
@@ -566,30 +571,30 @@ class Deserializer
     private function deserializeCommunity(array $data): ?Community
     {
         $community = new Community();
-        $community = self::autoSet($community, $data);
+        $community = $this->autoSet($community, $data);
         if (isset($data["@id"])) {
             $community->setIri($data["@id"]);
         }
         if (isset($data["user"])) {
-            $community->setUser(self::deserializeUser($data["user"]));
+            $community->setUser($this->deserializeUser($data["user"]));
         }
         if (isset($data["address"])) {
-            $community->setAddress(self::deserializeAddress($data['address']));
+            $community->setAddress($this->deserializeAddress($data['address']));
         }
         if (isset($data["images"])) {
             foreach ($data["images"] as $image) {
-                $community->addImage(self::deserializeImage($image));
+                $community->addImage($this->deserializeImage($image));
             }
         }
         if (isset($data["proposals"])) {
             foreach ($data["proposals"] as $proposal) {
-                $community->addProposal(self::deserializeProposal($proposal));
+                $community->addProposal($this->deserializeProposal($proposal));
             }
         }
         if (isset($data["communityUsers"]) && is_array($data["communityUsers"])) {
             foreach ($data["communityUsers"] as $communityUser) {
                 if (!is_null($communityUser) && is_array($communityUser)) {
-                    $community->addCommunityUser(self::deserializeCommunityUser($communityUser));
+                    $community->addCommunityUser($this->deserializeCommunityUser($communityUser));
                 }
             }
         }
@@ -602,13 +607,13 @@ class Deserializer
     private function deserializeArticle(array $data): ?Article
     {
         $article = new Article();
-        $article = self::autoSet($article, $data);
+        $article = $this->autoSet($article, $data);
         if (isset($data["@id"])) {
             $article->setIri($data["@id"]);
         }
         if (isset($data["sections"])) {
             foreach ($data["sections"] as $section) {
-                $article->addSection(self::deserializeSection($section));
+                $article->addSection($this->deserializeSection($section));
             }
         }
         return $article;
@@ -617,13 +622,13 @@ class Deserializer
     private function deserializeSection(array $data): ?Section
     {
         $section = new Section();
-        $section = self::autoSet($section, $data);
+        $section = $this->autoSet($section, $data);
         if (isset($data["@id"])) {
             $section->setIri($data["@id"]);
         }
         if (isset($data["paragraphs"])) {
             foreach ($data["paragraphs"] as $paragraph) {
-                $section->addParagraph(self::deserializeParagraph($paragraph));
+                $section->addParagraph($this->deserializeParagraph($paragraph));
             }
         }
         return $section;
@@ -632,7 +637,7 @@ class Deserializer
     private function deserializeParagraph(array $data): ?Paragraph
     {
         $paragraph = new Paragraph();
-        $paragraph = self::autoSet($paragraph, $data);
+        $paragraph = $this->autoSet($paragraph, $data);
         if (isset($data["@id"])) {
             $paragraph->setIri($data["@id"]);
         }
@@ -642,7 +647,7 @@ class Deserializer
     private function deserializePermission(array $data): ?Permission
     {
         $permission = new Permission();
-        $permission = self::autoSet($permission, $data);
+        $permission = $this->autoSet($permission, $data);
         if (isset($data["@id"])) {
             $permission->setIri($data["@id"]);
         }
@@ -652,20 +657,20 @@ class Deserializer
     private function deserializeMessage(array $data): ?Message
     {
         $message = new Message();
-        $message = self::autoSet($message, $data);
+        $message = $this->autoSet($message, $data);
         if (isset($data["@id"])) {
             $message->setIri($data["@id"]);
         }
         if (isset($data["user"])) {
-            $message->setUser(self::deserializeUser($data["user"]));
+            $message->setUser($this->deserializeUser($data["user"]));
         }
         if (isset($data["recipients"])) {
             foreach ($data["recipients"] as $recipient) {
-                $message->addRecipient(self::deserializeRecipient($recipient));
+                $message->addRecipient($this->deserializeRecipient($recipient));
             }
         }
         if (isset($data["message"]) && is_array($data["message"])) {
-            $message->setMessage(self::deserializeMessage($data["message"]));
+            $message->setMessage($this->deserializeMessage($data["message"]));
         }
 
         return $message;
@@ -674,15 +679,15 @@ class Deserializer
     private function deserializeRecipient(array $data): ?Recipient
     {
         $recipient = new Recipient();
-        $recipient = self::autoSet($recipient, $data);
+        $recipient = $this->autoSet($recipient, $data);
         if (isset($data["@id"])) {
             $recipient->setIri($data["@id"]);
         }
         if (isset($data["user"])) {
-            $recipient->setUser(self::deserializeUser($data["user"]));
+            $recipient->setUser($this->deserializeUser($data["user"]));
         }
         if (isset($data["message"]) && is_array($data["message"])) {
-            $recipient->setMessage(self::deserializeMessage($data["message"]));
+            $recipient->setMessage($this->deserializeMessage($data["message"]));
         }
         return $recipient;
     }
@@ -690,7 +695,7 @@ class Deserializer
     private function deserializeContact(array $data) : ?Contact
     {
         $contact = new Contact();
-        $contact = self::autoSet($contact, $data);
+        $contact = $this->autoSet($contact, $data);
 
         return $contact;
     }
@@ -698,7 +703,7 @@ class Deserializer
     private function deserializeSubject(array $data) : ?Subject
     {
         $contact = new Subject();
-        $contact = self::autoSet($contact, $data);
+        $contact = $this->autoSet($contact, $data);
 
         return $contact;
     }
@@ -706,7 +711,7 @@ class Deserializer
     private function deserializeStructure(array $data) : ?Structure
     {
         $contact = new Structure();
-        $contact = self::autoSet($contact, $data);
+        $contact = $this->autoSet($contact, $data);
 
         return $contact;
     }
@@ -714,7 +719,7 @@ class Deserializer
     private function deserializePrice(array $data) : ?Price
     {
         $price = new Price();
-        $price = self::autoSet($price, $data);
+        $price = $this->autoSet($price, $data);
 
         return $price;
     }
@@ -722,9 +727,53 @@ class Deserializer
     private function deserializeRedirect(array $data) : ?Redirect
     {
         $redirect = new Redirect();
-        $redirect = self::autoSet($redirect, $data);
+        $redirect = $this->autoSet($redirect, $data);
 
         return $redirect;
+    }
+
+    private function deserializeRelayPoint(array $data): ?RelayPoint
+    {
+        $relayPoint = new RelayPoint();
+        $relayPoint = $this->autoSet($relayPoint, $data);
+        if (isset($data["@id"])) {
+            $relayPoint->setIri($data["@id"]);
+        }
+        if (isset($data["user"])) {
+            $relayPoint->setUser($this->deserializeUser($data["user"]));
+        }
+        if (isset($data["address"])) {
+            $relayPoint->setAddress($this->deserializeAddress($data['address']));
+        }
+        if (isset($data["images"])) {
+            foreach ($data["images"] as $image) {
+                $relayPoint->addImage($this->deserializeImage($image));
+            }
+        }
+        if (isset($data["community"])) {
+            $relayPoint->setCommunity($this->deserializeCommunity($data["community"]));
+        }
+        if (isset($data["structure"])) {
+            $relayPoint->setStructure($this->deserializeStructure($data["structure"]));
+        }
+        if (isset($data["relayPointTypes"])) {
+            foreach ($data["relayPointTypes"] as $relayPointType) {
+                $relayPoint->addRelayPointType($this->deserializeRelayPointType($relayPointType));
+            }
+        }
+        return $relayPoint;
+    }
+
+    private function deserializeRelayPointType(array $data) : ?RelayPointType
+    {
+        $relayPointType = new RelayPointType();
+        $relayPointType = $this->autoSet($relayPointType, $data);
+        if (isset($data["images"])) {
+            foreach ($data["images"] as $image) {
+                $relayPointType->addImage($this->deserializeImage($image));
+            }
+        }
+        return $relayPointType;
     }
 
     private function autoSet($object, $data)
