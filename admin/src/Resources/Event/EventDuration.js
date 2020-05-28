@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormDataConsumer, required, useTranslate } from 'react-admin';
 
-import { DateInput, TimeInput, DateTimeInput } from 'react-admin-date-inputs';
+import { DateInput, DateTimeInput } from 'react-admin-date-inputs';
 import frLocale from 'date-fns/locale/fr';
 
 const EventDuration = (props) => {

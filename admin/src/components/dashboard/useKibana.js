@@ -9,7 +9,7 @@ const useKibana = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const instanceName = process.env.REACT_APP_SCOPE_INSTANCE_NAME;
-    const kibanaAuthenticationApi = process.env.REACT_APP_KIBANA_URL + '/login/' + instanceName;
+    const kibanaAuthenticationApi = `${process.env.REACT_APP_KIBANA_URL}/login/${instanceName}`;
     console.log('Scope API:', kibanaAuthenticationApi);
 
     const getKibanaCookie = async () => {
@@ -37,6 +37,7 @@ const useKibana = () => {
     if (token && instanceName && kibanaAuthenticationApi) {
       getKibanaCookie();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return [status, error];

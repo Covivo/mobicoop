@@ -42,6 +42,7 @@ const ImageUpload = ({
   const [image, setImage] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  // eslint-disable-next-line no-unused-vars
   const [afficheUpload, setAfficheUpload] = useState(false);
   const [deleteImage] = useMutation({
     type: 'delete',
@@ -66,6 +67,7 @@ const ImageUpload = ({
           setLoading(false);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageId]);
 
   // Upload image service

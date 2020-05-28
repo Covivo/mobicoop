@@ -4,7 +4,6 @@ import DriveEtaIcon from '@material-ui/icons/DriveEta';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import TodayIcon from '@material-ui/icons/Today';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
-import { makeStyles } from '@material-ui/core/styles';
 
 import {
   Show,
@@ -18,7 +17,6 @@ import {
   ReferenceArrayField,
   ReferenceField,
   FunctionField,
-  BulkDeleteButton,
   useTranslate,
 } from 'react-admin';
 
@@ -32,23 +30,9 @@ import {
   CardHeader,
 } from '@material-ui/core';
 
-import EmailComposeButton from '../../components/email/EmailComposeButton';
 import UserReferenceField from '../User/UserReferenceField';
 import { addressRenderer } from '../../utils/renderers';
 import { validationChoices, statusChoices } from './communityChoices';
-import isAuthorized from '../../auth/permissions';
-
-const useStyles = makeStyles({
-  actionButton: { marginTop: '1rem', marginBottom: '1rem' },
-});
-
-const UserBulkActionButtons = (props) => (
-  <>
-    {isAuthorized('mass_create') && <EmailComposeButton label="Email" {...props} />}
-    {/* default bulk delete action */}
-    <BulkDeleteButton {...props} />
-  </>
-);
 
 const Aside = ({ record }) => {
   const translate = useTranslate();

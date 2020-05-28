@@ -3,12 +3,11 @@ import { useDataProvider, fetchUtils, useUnselectAll } from 'react-admin';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import CloseIcon from '@material-ui/icons/Close';
-import { useDispatch } from 'react-redux';
 import { Modal, Grid, Button, TextField, Paper, CircularProgress, Fab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import DeleteIcon from '@material-ui/icons/Delete';
 import RichTextInput from './RichTextInput';
 import ImageUpload from './ImageUpload';
-import DeleteIcon from '@material-ui/icons/Delete';
 import CreateCampaignButton from './CreateCampaignButton';
 import SenderSelector from './SenderSelector';
 import { reducer, initialState } from './emailStore';
@@ -100,6 +99,7 @@ const MailComposer = ({
 
   // Sélection des destinataires à partir d'un filtre éventuel
   useEffect(() => {
+    const goodArray = [];
     if (shouldFetch) {
       setLoading(true);
       dataProvider
@@ -109,10 +109,8 @@ const MailComposer = ({
           sort: { field: 'id', order: 'ASC' },
         })
         .then(({ data }) => {
-          console.info(data);
-          var goodArray = [];
           data.map((d) => {
-            if (d.newsSubscription != false) {
+            if (d.newsSubscription !== false) {
               goodArray.push(d);
             } else {
               setRemoveUnsuscribe(removeUnsuscribe + 1);
@@ -126,6 +124,7 @@ const MailComposer = ({
           setLoading(false);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldFetch, filterValues, resource]);
 
   useEffect(() => {
@@ -144,6 +143,7 @@ const MailComposer = ({
             } `
           );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ids, loading]);
 
   useEffect(() => {
@@ -158,6 +158,7 @@ const MailComposer = ({
       });
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   // Callback suite à la création / mise à jour d'une campagne
@@ -192,11 +193,9 @@ const MailComposer = ({
     }
     options.headers.set('Authorization', `Bearer ${token}`);
 
-    let response = fetchUtils
-      .fetchJson(`${apiUrlTest}/${campagne.originId}`, options)
-      .then(({ json }) => ({
-        data: json,
-      }));
+    fetchUtils.fetchJson(`${apiUrlTest}/${campagne.originId}`, options).then(({ json }) => ({
+      data: json,
+    }));
     setCompteRendu('Le mail de test a été envoyé à ' + expediteur.replyTo);
     setEtat(etats.MAIL_TEST_ENVOYE);
     setLoading(false);
@@ -211,11 +210,10 @@ const MailComposer = ({
     }
     options.headers.set('Authorization', `Bearer ${token}`);
 
-    let response = fetchUtils
-      .fetchJson(`${apiUrlReel}/${campagne.originId}`, options)
-      .then(({ json }) => ({
-        data: json,
-      }));
+    fetchUtils.fetchJson(`${apiUrlReel}/${campagne.originId}`, options).then(({ json }) => ({
+      data: json,
+    }));
+
     setCompteRendu('Le mail a été envoyé aux ' + (ids.length || 0) + ' destinataires.');
     setEtat(etats.MAIL_MASSE_ENVOYE);
     setLoading(false);

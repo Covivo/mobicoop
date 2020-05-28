@@ -56,6 +56,7 @@ const SolidaryUserBeneficiaryCreateFields = (props) => {
         .catch((error) => notify(error.message, 'warning'))
         .finally(() => setLoading(false));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.user]);
 
   const required = (message = translate('custom.alert.fieldMandatory')) => (value) =>
