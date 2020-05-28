@@ -109,6 +109,7 @@ const MailComposer = ({
           sort: { field: 'id', order: 'ASC' },
         })
         .then(({ data }) => {
+          // eslint-disable-next-line array-callback-return
           data.map((d) => {
             if (d.newsSubscription !== false) {
               goodArray.push(d);
@@ -153,6 +154,7 @@ const MailComposer = ({
       setIds(selectedIds);
       setObjetMail(campagneReprise.subject);
       const obj = JSON.parse(campagneReprise.body);
+      // eslint-disable-next-line array-callback-return
       obj.map((obj) => {
         dispatchAndReset({ type: 'resume_campaign', obj });
       });

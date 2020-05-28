@@ -1,21 +1,10 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslate, useDataProvider } from 'react-admin';
 import { useForm } from 'react-final-form';
-import { Select, MenuItem, Button, makeStyles, Grid } from '@material-ui/core';
+import { Select, MenuItem, Button, Grid } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 import TerritoryInput from '../../components/geolocation/TerritoryInput';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
-}));
 
 const GestionRoles = ({ record }) => {
   const translate = useTranslate();
@@ -105,11 +94,11 @@ const GestionRoles = ({ record }) => {
   const handleAddPair = (indice, nature) => (e) => {
     const values = [...fields];
 
-    if (nature == 'roles') values[indice]['roles'] = e.target.value;
+    if (nature === 'roles') values[indice]['roles'] = e.target.value;
     else values[indice]['territory'] = e.link;
 
     //Dont found better option than this : it alow to remove 'none' from the roles
-    if (values[indice]['roles'][0] == 'none') {
+    if (values[indice]['roles'][0] === 'none') {
       values[indice]['roles'].splice(0, 1);
     }
     setFields(values);

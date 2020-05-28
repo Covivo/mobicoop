@@ -54,9 +54,7 @@ const SolidaryCreate = (props) => {
   const [hasDestinationAddress, setHasDestinationAddress] = useState(1);
   const [activeStep, setActiveStep] = useState(4);
 
-  {
-    /*
-    const fromDateTimeChoices = [
+  /* const fromDateTimeChoices = [
     { id: 0, label: 'A une date fixe', offsetHour: 0, offsetDays: 0 },
     { id: 1, label: 'Dans la semaine', offsetHour: 0, offsetDays: 7 },
     { id: 2, label: 'Dans la quinzaine', offsetHour: 0, offsetDays: 14 },
@@ -68,9 +66,7 @@ const SolidaryCreate = (props) => {
     { id: 1, label: 'Une heure plus tard', offsetHour: 1, offsetDays: 0 },
     { id: 2, label: 'Deux heures plus tard', offsetHour: 2, offsetDays: 14 },
     { id: 3, label: 'Trois heures plus tard', offsetHour: 3, offsetDays: 30 },
-  ];
-*/
-  }
+  ]; */
 
   const save = (handleSubmitWithRedirect) => (values) => console.log('Saving :', values);
 

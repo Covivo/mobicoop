@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import React from 'react';
 import {
   Dialog,
@@ -40,13 +39,7 @@ const RgpdConsent = ({ isOpen, onClose, iAgree }) => {
         <Button onClick={handleClose} color="primary">
           {translate('custom.rgpd.modal.buttonDisagree')}
         </Button>
-        <Button
-          onClick={handleIagree}
-          color="primary"
-          autoFocus
-          variant="contained"
-          color="primary"
-        >
+        <Button onClick={handleIagree} color="primary" autoFocus variant="contained">
           {translate('custom.rgpd.modal.buttonAgree')}
         </Button>
       </DialogActions>

@@ -27,6 +27,7 @@ const KibanaWidget = ({
 
   // List of communities the user manage
   const dataProvider = useDataProvider();
+  // eslint-disable-next-line no-lone-blocks
   {
     useEffect(() => {
       const loadCommunitiesList = () =>
