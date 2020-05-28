@@ -22,7 +22,11 @@ import StructureProofResource from './Resources/Solidary/StructureProof';
 import SolidaryResource from './Resources/Solidary/Solidary';
 import SolidaryUsersBeneficiaryResource from './Resources/Solidary/SolidaryUserBeneficiary';
 import SolidaryUsersVolunteerResource from './Resources/Solidary/SolidaryUserVolunteer';
+<<<<<<< HEAD
 // import StructureResource from './Resources/Solidary/Structure';
+=======
+//import StructureResource from './Resources/Solidary/Structure';
+>>>>>>> 3e1bc9e16d8a6923a87f7fb4ccea5a53f7e07800
 import ArticleResource from './Resources/Article/Article';
 import EventResource from './Resources/Event';
 import SectionResource from './Resources/Article/Section';

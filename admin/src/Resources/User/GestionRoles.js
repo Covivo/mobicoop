@@ -14,26 +14,47 @@ const GestionRoles = ({ record }) => {
   const form = useForm();
 
   const userRoles = {
-    1: { id: '/auth_items/1', name: translate('custom.label.user.roles.super_admin') },
-    2: { id: '/auth_items/2', name: translate('custom.label.user.roles.admin') },
-    3: { id: '/auth_items/3', name: translate('custom.label.user.roles.user_full') },
-    4: { id: '/auth_items/4', name: translate('custom.label.user.roles.user_min') },
-    5: { id: '/auth_items/5', name: translate('custom.label.user.roles.user') },
-    6: { id: '/auth_items/6', name: translate('custom.label.user.roles.mass_match') },
-    7: { id: '/auth_items/7', name: translate('custom.label.user.roles.community_manage') },
-    8: { id: '/auth_items/8', name: translate('custom.label.user.roles.community_manage_public') },
-    9: { id: '/auth_items/9', name: translate('custom.label.user.roles.community_manage_private') },
-    10: { id: '/auth_items/10', name: translate('custom.label.user.roles.solidary_manager') },
-    11: { id: '/auth_items/11', name: translate('custom.label.user.roles.solidary_volunteer') },
-    12: { id: '/auth_items/12', name: translate('custom.label.user.roles.solidary_beneficiary') },
-    13: { id: '/auth_items/13', name: translate('custom.label.user.roles.communication_manager') },
+    1: { id: '/auth_items/1', name: translate('custom.label.user.rolesForCreation.super_admin') },
+    2: { id: '/auth_items/2', name: translate('custom.label.user.rolesForCreation.admin') },
+    3: { id: '/auth_items/3', name: translate('custom.label.user.rolesForCreation.user_full') },
+    4: { id: '/auth_items/4', name: translate('custom.label.user.rolesForCreation.user_min') },
+    5: { id: '/auth_items/5', name: translate('custom.label.user.rolesForCreation.user') },
+    6: { id: '/auth_items/6', name: translate('custom.label.user.rolesForCreation.mass_match') },
+    7: {
+      id: '/auth_items/7',
+      name: translate('custom.label.user.rolesForCreation.community_manage'),
+    },
+    8: {
+      id: '/auth_items/8',
+      name: translate('custom.label.user.rolesForCreation.community_manage_public'),
+    },
+    9: {
+      id: '/auth_items/9',
+      name: translate('custom.label.user.rolesForCreation.community_manage_private'),
+    },
+    10: {
+      id: '/auth_items/10',
+      name: translate('custom.label.user.rolesForCreation.solidary_manager'),
+    },
+    11: {
+      id: '/auth_items/11',
+      name: translate('custom.label.user.rolesForCreation.solidary_volunteer'),
+    },
+    12: {
+      id: '/auth_items/12',
+      name: translate('custom.label.user.rolesForCreation.solidary_beneficiary'),
+    },
+    13: {
+      id: '/auth_items/13',
+      name: translate('custom.label.user.rolesForCreation.communication_manager'),
+    },
     171: {
       id: '/auth_items/171',
-      name: translate('custom.label.user.roles.solidary_candidate_volunteer'),
+      name: translate('custom.label.user.rolesForCreation.solidary_candidate_volunteer'),
     },
     172: {
       id: '/auth_items/172',
-      name: translate('custom.label.user.roles.solidary_candidate_beneficiary'),
+      name: translate('custom.label.user.rolesForCreation.solidary_candidate_beneficiary'),
     },
   };
   const required = (message = translate('custom.alert.fieldMandatory')) => (value) =>
@@ -47,12 +68,14 @@ const GestionRoles = ({ record }) => {
           sort: { field: 'id', order: 'ASC' },
         })
         .then(({ data }) => {
+          // eslint-disable-next-line array-callback-return
           const rolesGranted = data.map((obj) => {
             if (userRoles[obj]) return userRoles[obj];
           });
           setRoles(rolesGranted);
         });
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -75,6 +98,7 @@ const GestionRoles = ({ record }) => {
         }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [record.rolesTerritory]);
 
   function handleAdd() {
