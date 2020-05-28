@@ -32,6 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Carpool\Entity\Proposal;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -133,9 +134,18 @@ class Subject
      */
     private $solidaries;
 
+    /**
+     * @var ArrayCollection|null The Proposals linked to this subject
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="subject")
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $proposals;
+
     public function __construct()
     {
         $this->solidaries = new ArrayCollection();
+        $this->proposals = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -220,6 +230,34 @@ class Subject
             // set the owning side to null (unless already changed)
             if ($solidary->getSubject() === $this) {
                 $solidary->setSubject(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getProposals()
+    {
+        return $this->proposals->getValues();
+    }
+
+    public function addProposals(Proposal $proposal): self
+    {
+        if (!$this->proposals->contains($proposal)) {
+            $this->proposals->add($proposal);
+            $proposal->setSubject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProposals(Proposal $proposal): self
+    {
+        if ($this->proposals->contains($proposal)) {
+            $this->proposals->removeElement($proposal);
+            // set the owning side to null (unless already changed)
+            if ($proposal->getSubject() === $this) {
+                $proposal->setSubject(null);
             }
         }
 
