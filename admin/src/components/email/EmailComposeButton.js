@@ -16,6 +16,7 @@ const EmailComposeButton = ({ selectedIds, resource, basePath, filterValues }) =
   const translate = useTranslate();
 
   useEffect(() => {
+    let mounted = true;
     localStorage.getItem('id') &&
       dataProvider
         .getOne('users', { id: localStorage.getItem('id') })
@@ -25,12 +26,14 @@ const EmailComposeButton = ({ selectedIds, resource, basePath, filterValues }) =
             fromName: data.givenName + ' ' + data.familyName,
             id: data.id,
           };
-          setSender([senderConnecte]);
+          if (mounted) {
+            setSender([senderConnecte]);
+          }
         })
         .catch((error) => {
           console.log("Erreur lors de la recherche de l'utilisateur courant :", error);
         });
-    return;
+    return () => (mounted = false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const campaignCreateParameters = sender[0]
