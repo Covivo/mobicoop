@@ -59,7 +59,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "method"="GET",
  *              "path"="/structures/geolocation",
  *              "normalization_context"={"groups"={"readSolidary"}},
- *              "security"="is_granted('structure_read',object)"
+ *              "security"="is_granted('structure_list',object)"
  *          }
  *      },
  *      itemOperations={
