@@ -47,6 +47,12 @@ const pickManagedSolidaryVolunteerData = (params) => ({
     'eFri',
     'eSat',
     'eSun',
+    'mMinTime',
+    'mMaxTime',
+    'aMinTime',
+    'aMaxTime',
+    'eMinTime',
+    'eMaxTime',
   ]),
 });
 

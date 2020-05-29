@@ -108,7 +108,7 @@ export default () => (
         isAuthorized('solidary_manage') && <Resource name="solidaries" {...SolidaryResource} />,
         // API Fail during "/structures" GET
         // @TODO: Fix API and remove the comment bellow
-        //isAuthorized('user_manage') && <Resource name="structures" {...StructureResource} />,
+        // isAuthorized('user_manage') && <Resource name="structures" {...StructureResource} />,
         isAuthorized('user_manage') && (
           <Resource name="structure_proofs" {...StructureProofResource} />
         ),

@@ -12,12 +12,12 @@ import {
   MenuList,
 } from '@material-ui/core';
 
-const DropDownButton = ({ label, options, setSelected, size = 'medium', variant = 'text' }) => {
+const DropDownButton = ({ label, options, onSelect, size = 'medium', variant = 'text' }) => {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
 
   const handleMenuItemClick = (event, index) => {
-    setSelected(index);
+    onSelect(options[index], index);
     setOpen(false);
   };
 

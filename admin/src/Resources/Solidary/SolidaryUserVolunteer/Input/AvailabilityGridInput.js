@@ -1,5 +1,7 @@
 import React from 'react';
-import { BooleanInput, useTranslate } from 'react-admin';
+import { BooleanInput, useTranslate, FormDataConsumer } from 'react-admin';
+import PropTypes from 'prop-types';
+import EditIcon from '@material-ui/icons/Edit';
 
 import {
   Table,
@@ -8,9 +10,11 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   makeStyles,
 } from '@material-ui/core';
+
+import { resolveVoluntaryAvailabilityHourRanges } from '../utils/resolveVoluntaryAvailabilityHourRanges';
+import { AvailabilityRangeDialogButton } from './AvailabilityRangeDialogButton';
 
 const createAvailabilityRow = (day) => ({
   day,
@@ -33,7 +37,7 @@ const buildVoluntaryAvailabilityRows = () => {
 
 const useStyles = makeStyles({
   table: {
-    maxWidth: 550,
+    maxWidth: 800,
     '& .MuiFormHelperText-root': {
       display: 'none!important',
     },
@@ -43,30 +47,41 @@ const useStyles = makeStyles({
   },
 });
 
-export const AvailabilityGridInput = () => {
+export const AvailabilityGridInput = (props) => {
   const translate = useTranslate();
   const rows = buildVoluntaryAvailabilityRows();
   const classes = useStyles();
 
   return (
-    <TableContainer className={classes.table} component={Paper}>
+    <TableContainer className={classes.table}>
       <Table aria-label="simple table">
         <TableHead>
-          <TableRow>
-            <TableCell align="center">&nbsp;</TableCell>
-            <TableCell align="center">
-              {translate(`custom.solidary_volunteers.edit.morning`)}
-              {` (6h-14h)`}
-            </TableCell>
-            <TableCell align="center">
-              {translate(`custom.solidary_volunteers.edit.afternoon`)}
-              {` (12h-19h)`}
-            </TableCell>
-            <TableCell align="center">
-              {translate(`custom.solidary_volunteers.edit.evening`)}
-              {` (17h-23h)`}
-            </TableCell>
-          </TableRow>
+          <FormDataConsumer>
+            {({ formData }) => {
+              const hourRanges = resolveVoluntaryAvailabilityHourRanges(formData);
+
+              return (
+                <TableRow>
+                  <TableCell align="center">&nbsp;</TableCell>
+                  <TableCell align="center">
+                    {translate(`custom.solidary_volunteers.edit.morning`)}
+                    {` (${hourRanges.morning || `6h-14h`})`}
+                    <AvailabilityRangeDialogButton label={<EditIcon />} source="m" {...props} />
+                  </TableCell>
+                  <TableCell align="center">
+                    {translate(`custom.solidary_volunteers.edit.afternoon`)}
+                    {` (${hourRanges.afternoon || `12h-19h`})`}
+                    <AvailabilityRangeDialogButton label={<EditIcon />} source="a" {...props} />
+                  </TableCell>
+                  <TableCell align="center">
+                    {translate(`custom.solidary_volunteers.edit.evening`)}
+                    {` (${hourRanges.evening || `17h-23h`})`}
+                    <AvailabilityRangeDialogButton label={<EditIcon />} source="e" {...props} />
+                  </TableCell>
+                </TableRow>
+              );
+            }}
+          </FormDataConsumer>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
@@ -89,4 +104,8 @@ export const AvailabilityGridInput = () => {
       </Table>
     </TableContainer>
   );
+};
+
+AvailabilityGridInput.propTypes = {
+  record: PropTypes.object.isRequired,
 };
