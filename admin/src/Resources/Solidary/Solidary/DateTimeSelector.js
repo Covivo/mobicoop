@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { FormControlLabel, RadioGroup, Radio, Box, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { useField } from 'react-final-form';
 
 const useStyles = makeStyles({
   invisible: { display: 'none' },
@@ -10,9 +12,9 @@ const useStyles = makeStyles({
 /*
 
 choices = [
-    { id:0, label="A une date fixe",  offsetHour=0, offsetDays=7, fromHour=0}
-    { id:1, label="Dans la semaine", offsetHour=0, offsetDays=7},
-    { id:2, label="Dans le mois", offsetHour=0, offsetDays=14}
+    { id:0, label="A une date fixe",  offsetHour:0, offsetDays:7, fromHour:0}
+    { id:1, label="Dans la semaine", offsetHour:0, offsetDays:7},
+    { id:2, label="Dans le mois", offsetHour:0, offsetDays:14}
 ]
 
 type : DateTimeSelector.time, DateTimeSelector.date, DateTimeSelector.datetime
@@ -21,105 +23,121 @@ I missed Typescript
 */
 
 const DateTimeSelector = ({
-  form,
   fieldnameStart,
   fieldnameEnd,
   choices,
   initialChoice,
   type = 'date',
   initialStart,
+  initialEnd,
 }) => {
   const classes = useStyles();
   const [choice, setChoice] = useState(choices[initialChoice]);
 
+  const {
+    input: { value: valueStart, onChange: onChangeStart },
+  } = useField(fieldnameStart);
+  const {
+    input: { value: valueEnd, onChange: onChangeEnd },
+  } = useField(fieldnameEnd);
+  const {
+    input: { onChange: onChangeMargin },
+  } = useField('margin');
+  /*
+  console.log(fieldnameStart, valueStart);
+  console.log(fieldnameEnd, valueEnd);
+  console.log('initialStart', initialStart);
+  console.log('initialEnd', initialEnd);
+*/
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const currentFromDateTime = () =>
-    form && fieldnameStart && form.getState().values[fieldnameStart]
-      ? new Date(form.getState().values[fieldnameStart])
-      : today;
 
-  const setOffset = (hours, days, fromHour) => {
-    // offset calculation of endDate, according to an offset applied to startDate
-    var OffsetDate = new Date(today);
+  const updateEndDateByOffset = (originDate, hours, days) => {
+    // offset calculation of endDate, according to an offset applied to originDate
+    console.log('updateEndDateByOffset:', originDate, hours, days);
+    const OffsetDate = new Date(originDate);
     OffsetDate.setDate(OffsetDate.getDate() + days || 0);
-    OffsetDate.setHours(OffsetDate.getHours() + (hours || 0) + (fromHour || 0));
+    OffsetDate.setHours(OffsetDate.getHours() + (hours || 0));
     updatePartialDateTime(OffsetDate, false, true);
+  };
 
-    var startDate = new Date(today);
-    startDate.setHours(startDate.getHours() + (fromHour || 0));
+  const updateStartDateByOffset = (originDate, hours) => {
+    // offset calculation of start date, according to an hourly offset fromHour applied to originDate
+    const startDate = new Date(originDate);
+    startDate.setHours(startDate.getHours() + (hours || 0));
     updatePartialDateTime(startDate, true, false);
   };
 
   const handleChange = (value) => {
+    // Set datetime fields according to option value
     const newChoice = choices[value];
-    console.log('handleChange :', choices[value]);
     if (newChoice.id > 0) {
       // relative date
-      setOffset(newChoice.offsetHour, newChoice.offsetDays, newChoice.fromHour);
-    } else {
-      if (newChoice.id === 0) {
-        // From date = To date
-        form && fieldnameEnd && form.change(fieldnameEnd, null);
-      } else {
-        // No date
-        form && fieldnameStart && form.change(fieldnameStart, null);
-        form && fieldnameEnd && form.change(fieldnameEnd, null);
-      }
+      updateEndDateByOffset(initialEnd || today, newChoice.offsetHour, newChoice.offsetDays);
+      updateStartDateByOffset(initialStart || today, newChoice.offsetHour);
+      newChoice.margin && onChangeMargin(newChoice.margin);
+    } else if (newChoice.id === 0 && type !== 'time') {
+      // Clear toDate
+      onChangeEnd(null);
     }
     setChoice(newChoice);
   };
 
-  const updatePartialDateTime = (value, updateStart = true, updateEnd = true) => {
-    let valueDate = value;
-    console.log('Updated value :', value);
-    if (typeof value === 'string') {
-      if (/\d{2}:\d{2}/.test(value)) {
-        valueDate = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate(),
-          parseInt(value.slice(0, 2)),
-          parseInt(value.slice(3, 5))
-        );
-      } else {
-        valueDate = new Date(value);
+  const buildDateObject = (source, initialDate = null) => {
+    // Build a new Date object.
+    // source can be :
+    // - a Date object
+    // - a string that can be regularly parsed by new Date(). Ex : "2020-06-03"
+    // - a time string, like : 15:03
+    if (typeof source === 'string' && /^\d{2}:\d{2}$/.test(source)) {
+      // time only : use initialDate if any
+      if (initialDate) {
+        const formatedDateTime = `${initialDate.getFullYear()}-${initialDate.getMonth()}-${initialDate.getDate()} ${source}`;
+        return new Date(formatedDateTime);
       }
+      return new Date(`2020-01-02 ${source}`);
     }
 
+    return new Date(source);
+  };
+
+  const updateDateOnly = (originTime, destinationDate) => {
+    // Return a new date, which is destinationDate's year/month/day AND originDate's hour/minute/seconds
+    const updatedDateTime = buildDateObject(originTime);
+    const validDestinationDate = buildDateObject(destinationDate); // prevents from a null destinationDate
+    updatedDateTime.setFullYear(validDestinationDate.getFullYear());
+    updatedDateTime.setMonth(validDestinationDate.getMonth());
+    updatedDateTime.setDate(validDestinationDate.getDate());
+    return updatedDateTime;
+  };
+
+  const updatePartialDateTime = (value, updateStart = true, updateEnd = true) => {
+    const updatedDateTime = buildDateObject(value);
+    /*
+    console.log('----updatePartialDateTime ', updateStart, updateEnd);
+    console.log('typeof value:', typeof value);
+    console.log('value:', value);
+    console.log('type:', type);
+    console.log('updatedDateTime:', updatedDateTime);
+    */
     switch (type) {
       case 'datetime-local':
-        updateStart && form && fieldnameStart && form.change(fieldnameStart, valueDate);
-        updateEnd && form && fieldnameStart && form.change(fieldnameEnd, valueDate);
+        // Update date and time
+        updateStart && onChangeStart(updatedDateTime);
+        updateEnd && onChangeEnd(updatedDateTime);
         break;
       case 'date':
         // Keep the time, set the date
-        // value is like "2020-05-22"
-        const alreadySetTime = currentFromDateTime();
-        const updatedDate = valueDate;
-        console.log('Keep the time, set the date :', alreadySetTime);
-        alreadySetTime.setFullYear(updatedDate.getFullYear());
-        alreadySetTime.setMonth(updatedDate.getMonth());
-        alreadySetTime.setDate(updatedDate.getDate());
-        console.log('Updated :', alreadySetTime);
-        updateStart && form && fieldnameStart && form.change(fieldnameStart, alreadySetTime);
-        updateEnd && form && fieldnameStart && form.change(fieldnameEnd, alreadySetTime);
+        updateStart && onChangeStart(updateDateOnly(valueStart, updatedDateTime));
+        updateEnd && onChangeEnd(updateDateOnly(valueEnd, updatedDateTime));
         break;
       case 'time':
         // Keep the date, set the time
-        // value is like "08:00"
-        const alreadySetDate = currentFromDateTime();
-        const updatedTime = valueDate;
-        console.log('Keep the date, set the time :', alreadySetDate);
-        alreadySetDate.setHours(updatedTime.getHours());
-        alreadySetDate.setMinutes(updatedTime.getMinutes());
-        alreadySetDate.setSeconds(updatedTime.getSeconds());
-        console.log('Updated :', alreadySetDate);
-        updateStart && form && fieldnameStart && form.change(fieldnameStart, alreadySetDate);
-        updateEnd && form && fieldnameStart && form.change(fieldnameEnd, alreadySetDate);
+        updateStart && onChangeStart(updateDateOnly(updatedDateTime, initialStart || valueStart));
+        updateEnd && onChangeEnd(updateDateOnly(updatedDateTime, initialEnd || valueEnd));
         break;
       default:
-        console.log('default log');
+        throw new Error('unknown type');
     }
   };
 
@@ -148,5 +166,22 @@ const DateTimeSelector = ({
 };
 
 DateTimeSelector.type = { time: 'time', datetime: 'datetime-local', date: 'date' };
+
+DateTimeSelector.propTypes = {
+  fieldnameStart: PropTypes.string.isRequired,
+  fieldnameEnd: PropTypes.string.isRequired,
+  choices: PropTypes.array.isRequired,
+  initialChoice: PropTypes.number,
+  type: PropTypes.string,
+  initialStart: PropTypes.object,
+  initialEnd: PropTypes.object,
+};
+
+DateTimeSelector.defaultProps = {
+  initialChoice: 0,
+  type: 'date',
+  initialStart: null,
+  initialEnd: null,
+};
 
 export default DateTimeSelector;
