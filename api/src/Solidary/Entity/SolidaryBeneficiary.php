@@ -69,6 +69,7 @@ class SolidaryBeneficiary
 {
     const DEFAULT_ID = 999999999999;
     const TYPE = "beneficiary";
+    const AUTHORIZED_FILTERS = ['familyName','givenName','email'];
 
     /**
      * @var int The id of this solidary user.

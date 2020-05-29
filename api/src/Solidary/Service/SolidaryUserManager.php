@@ -384,13 +384,8 @@ class SolidaryUserManager
     {
         $beneficiaries = [];
 
-        $candidatValide = null;
-        if (!is_null($filters) && isset($filters['candidatValide'])) {
-            $candidatValide = $filters['candidatValide'];
-        }
-
         // First, we get all user with Beneficiary types of SolidaryUser
-        $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryBeneficiary::TYPE, $candidatValide);
+        $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryBeneficiary::TYPE, $filters);
         foreach ($users as $user) {
             // Maybe To do : If it's too slow, we can use the User instead of the Id. But we need to rewrite the ItemDataProvider
             $beneficiaries[] = $this->getSolidaryBeneficiary($user->getSolidaryUser()->getId());
