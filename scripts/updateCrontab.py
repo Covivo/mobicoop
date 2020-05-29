@@ -55,19 +55,22 @@ for line in file_lines:
     if line[0] == '#':
         continue
     
-    command = line.split("$2",1)[1].strip() 
-    print(command)
     line = line.replace("$1", php_path)
     line = line.replace("$2", console_path)
-    print(line)
+    
+    schedule = line.split(php_path,1)[0].strip() 
+    command = line.split(schedule,1)[1].strip() 
 
     # search if job already exists
     iter = my_cron.find_command(command)
     found = False
     for item in iter:
         found = True
+        break
 
     if not found:
-        cron_job = CronTab(tab=line)
+        job  = my_cron.new(command=command)
+        job.setall(schedule)
         my_cron.write()
+        print(line+ " was added to crontab")
 

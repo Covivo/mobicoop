@@ -1,2 +1,8 @@
+# CRON JOBS 
+# All the jobs here are installed using a python script (/scripts/updateCrontab.py)
+# Parameters used : 
+# $1 => the php binary path
+# $2 => the symfony api console path
+
 # each 5 minutes : link addresses and directions to territories
 */5 * * * *    $1 $2 app:geography:territory-link-batch
