@@ -1,7 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { SelectInput, TextInput, BooleanInput, FileInput, FileField } from 'react-admin';
-
-// import {LinearProgress, Box, Toolbar, Paper, Radio, FormControlLabel, RadioGroup, Stepper, Step, StepLabel, Button} from '@material-ui/core'
 
 const SolidaryProofField = ({ proof, ...rest }) => {
   if (proof.checkbox) {
@@ -15,6 +14,7 @@ const SolidaryProofField = ({ proof, ...rest }) => {
     const selectboxIds = proof.acceptedValues
       .split(';')
       .map((v, i) => ({ id: v, name: selectboxLabels[i] }));
+
     return <SelectInput label={proof.label} source={proof.id} choices={selectboxIds} {...rest} />;
   }
   if (proof.file) {
@@ -26,6 +26,10 @@ const SolidaryProofField = ({ proof, ...rest }) => {
   }
 
   return null;
+};
+
+SolidaryProofField.propTypes = {
+  proof: PropTypes.object.isRequired,
 };
 
 export default SolidaryProofField;

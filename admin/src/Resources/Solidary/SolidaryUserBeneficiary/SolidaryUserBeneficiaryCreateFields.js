@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { DateInput } from 'react-admin-date-inputs';
 import frLocale from 'date-fns/locale/fr';
 import {
@@ -11,7 +12,7 @@ import {
   useDataProvider,
   useNotify,
 } from 'react-admin';
-
+import { useField } from 'react-final-form';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, CircularProgress } from '@material-ui/core';
 
@@ -28,36 +29,46 @@ const useStyles = makeStyles({
   },
 });
 
-const SolidaryUserBeneficiaryCreateFields = (props) => {
+const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
   const classes = useStyles();
   const translate = useTranslate();
   const instance = process.env.REACT_APP_INSTANCE_NAME;
   const [loading, setLoading] = useState(false);
   // Pre-fill user data
+  const {
+    input: { value: userId },
+  } = useField('user_id');
   const dataProvider = useDataProvider();
   const notify = useNotify();
+  const prefillUserData = useCallback(
+    (id) => {
+      if (id) {
+        setLoading(true);
+        dataProvider
+          .getOne('users', { id })
+          .then((result) => {
+            if (result.data.email) {
+              form.change('email', result.data.email);
+              form.change('familyName', result.data.familyName);
+              form.change('givenName', result.data.givenName);
+              form.change('gender', result.data.gender);
+              form.change('birthDate', result.data.birthDate);
+              form.change('telephone', result.data.telephone);
+              form.change('newsSubscription', result.data.newsSubscription);
+            }
+          })
+          .catch((error) => notify(error.message, 'warning'))
+          .finally(() => setLoading(false));
+      }
+    },
+    [dataProvider, notify, form]
+  );
   useEffect(() => {
-    if (props.user) {
-      setLoading(true);
-      dataProvider
-        .getOne('users', { id: props.user })
-        .then((result) => {
-          console.log('Results : ', result.data);
-          if (result.data.email) {
-            props.form.change('email', result.data.email);
-            props.form.change('familyName', result.data.familyName);
-            props.form.change('givenName', result.data.givenName);
-            props.form.change('gender', result.data.gender);
-            props.form.change('birthDate', result.data.birthDate);
-            props.form.change('telephone', result.data.telephone);
-            props.form.change('newsSubscription', result.data.newsSubscription);
-          }
-        })
-        .catch((error) => notify(error.message, 'warning'))
-        .finally(() => setLoading(false));
+    if (userId) {
+      console.log('--- useEffect : ', userId);
+      prefillUserData(userId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.user]);
+  }, [userId]);
 
   const required = (message = translate('custom.alert.fieldMandatory')) => (value) =>
     value ? undefined : message;
@@ -93,7 +104,7 @@ const SolidaryUserBeneficiaryCreateFields = (props) => {
       {loading && (
         <Box className={classes.loadingHeader}>
           <CircularProgress />
-          <p>Recherche de l'utilisateur...</p>
+          <p>Recherche de l&lsquo;utilisateur...</p>
         </Box>
       )}
 
@@ -168,6 +179,10 @@ const SolidaryUserBeneficiaryCreateFields = (props) => {
       />
     </Box>
   );
+};
+
+SolidaryUserBeneficiaryCreateFields.propTypes = {
+  form: PropTypes.object.isRequired,
 };
 
 export default SolidaryUserBeneficiaryCreateFields;

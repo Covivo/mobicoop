@@ -34,6 +34,7 @@ const GeocompleteInput = (props) => {
   const { classes } = props;
 
   const form = useForm();
+  const fieldName = props.source || 'address';
 
   const [input, setInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -64,35 +65,33 @@ const GeocompleteInput = (props) => {
       {({ dispatch, ...rest }) => (
         <div className={classes.root}>
           <Downshift
-            onInputValueChange={(inputValue, stateAndHelpers) =>
-              setInput(inputValue ? inputValue.trim() : '')
-            }
+            onInputValueChange={(inputValue) => setInput(inputValue ? inputValue.trim() : '')}
             onSelect={(selectedItem, stateAndHelpers) => {
               const address = suggestions.find((element) => element.displayLabel === selectedItem);
               if (address) {
-                form.change('address', null);
+                form.change(fieldName, null);
                 form.change(
-                  'address.streetAddress',
+                  `${fieldName}.streetAddress`,
                   address.streetAddress ? address.streetAddress : null
                 );
-                form.change('address.postalCode', address.postalCode);
-                form.change('address.addressLocality', address.addressLocality);
-                form.change('address.addressCountry', address.addressCountry);
-                form.change('address.latitude', address.latitude);
-                form.change('address.longitude', address.longitude);
-                form.change('address.elevation', address.elevation);
-                form.change('address.name', address.name);
-                form.change('address.houseNumber', address.houseNumber);
-                form.change('address.street', address.street);
-                form.change('address.subLocality', address.subLocality);
-                form.change('address.localAdmin', address.localAdmin);
-                form.change('address.county', address.county);
-                form.change('address.macroCounty', address.macroCounty);
-                form.change('address.region', address.region);
-                form.change('address.macroRegion', address.macroRegion);
-                form.change('address.countryCode', address.countryCode);
-                form.change('address.home', address.home);
-                form.change('address.venue', address.venue);
+                form.change(`${fieldName}.postalCode`, address.postalCode);
+                form.change(`${fieldName}.addressLocality`, address.addressLocality);
+                form.change(`${fieldName}.addressCountry`, address.addressCountry);
+                form.change(`${fieldName}.latitude`, address.latitude);
+                form.change(`${fieldName}.longitude`, address.longitude);
+                form.change(`${fieldName}.elevation`, address.elevation);
+                form.change(`${fieldName}.name`, address.name);
+                form.change(`${fieldName}.houseNumber`, address.houseNumber);
+                form.change(`${fieldName}.street`, address.street);
+                form.change(`${fieldName}.subLocality`, address.subLocality);
+                form.change(`${fieldName}.localAdmin`, address.localAdmin);
+                form.change(`${fieldName}.county`, address.county);
+                form.change(`${fieldName}.macroCounty`, address.macroCounty);
+                form.change(`${fieldName}.region`, address.region);
+                form.change(`${fieldName}.macroRegion`, address.macroRegion);
+                form.change(`${fieldName}.countryCode`, address.countryCode);
+                form.change(`${fieldName}.home`, address.home);
+                form.change(`${fieldName}.venue`, address.venue);
               }
             }}
           >
@@ -110,7 +109,7 @@ const GeocompleteInput = (props) => {
                       placeholder: 'Entrer une adresse',
                     }),
                   }}
-                  fullWidth={true}
+                  fullWidth
                 />
 
                 {isOpen ? (
@@ -143,6 +142,14 @@ const GeocompleteInput = (props) => {
 
 GeocompleteInput.propTypes = {
   classes: PropTypes.object.isRequired,
+  source: PropTypes.string.isRequired,
+  label: PropTypes.string,
+  validate: PropTypes.func,
+};
+
+GeocompleteInput.defaultProps = {
+  label: '',
+  validate: () => '',
 };
 
 const styles = (theme) => ({
@@ -170,7 +177,7 @@ const styles = (theme) => ({
     height: theme.spacing(2),
   },
   input: {
-    //width: '50%',   // Change this to style the autocomplete component
+    // width: '50%',   // Change this to style the autocomplete component
     flexGrow: 1,
   },
 });

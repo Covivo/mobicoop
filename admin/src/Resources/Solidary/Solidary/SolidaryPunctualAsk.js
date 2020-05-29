@@ -1,4 +1,5 @@
 import React from 'react';
+import { useField } from 'react-final-form';
 import { DateTimeInput } from 'react-admin';
 import { makeStyles } from '@material-ui/core/styles';
 import DateTimeSelector from './DateTimeSelector';
@@ -14,9 +15,9 @@ const fromDateChoices = [
 
 const fromTimeChoices = [
   { id: 0, label: 'A une heure fixe', offsetHour: 0, offsetDays: 0 },
-  { id: 1, label: 'Entre 8h et 13h', offsetHour: 5, offsetDays: 0, fromHour: 8 },
-  { id: 2, label: 'Entre 13h et 18h', offsetHour: 5, offsetDays: 0, fromHour: 13 },
-  { id: 3, label: 'Entre 18h et 21h', offsetHour: 3, offsetDays: 0, fromHour: 18 },
+  { id: 1, label: 'Entre 8h et 13h', offsetHour: 8, offsetDays: 0, margin: 5 * 3600 },
+  { id: 2, label: 'Entre 13h et 18h', offsetHour: 13, offsetDays: 0, margin: 5 * 3600 },
+  { id: 3, label: 'Entre 18h et 21h', offsetHour: 18, offsetDays: 0, margin: 3 * 3600 },
 ];
 
 const toTimeChoices = [
@@ -28,11 +29,17 @@ const toTimeChoices = [
 ];
 
 const useStyles = makeStyles({
-  invisible: { display: 'block' },
+  invisible: { display: 'none' },
 });
 
-const SolidaryPunctualAsk = ({ form }) => {
+const SolidaryPunctualAsk = () => {
   const classes = useStyles();
+  const {
+    input: { value: outwardDatetime },
+  } = useField('outwardDatetime');
+  const {
+    input: { value: outwardDeadlineDatetime },
+  } = useField('outwardDeadlineDatetime');
 
   return (
     <>
@@ -51,10 +58,9 @@ const SolidaryPunctualAsk = ({ form }) => {
 
       <SolidaryQuestion question="A quelle date souhaitez-vous partir ?">
         <DateTimeSelector
-          form={form}
           type="date"
-          fieldnameStart="fromStartDate"
-          fieldnameEnd="fromEndDate"
+          fieldnameStart="outwardDatetime"
+          fieldnameEnd="outwardDeadlineDatetime"
           choices={fromDateChoices}
           initialChoice={0}
         />
@@ -62,10 +68,9 @@ const SolidaryPunctualAsk = ({ form }) => {
 
       <SolidaryQuestion question="A quelle heure souhaitez-vous partir ?">
         <DateTimeSelector
-          form={form}
           type="time"
-          fieldnameStart="fromStartDate"
-          fieldnameEnd="fromEndDate"
+          fieldnameStart="outwardDatetime"
+          fieldnameEnd="outwardDeadlineDatetime"
           choices={fromTimeChoices}
           initialChoice={0}
         />
@@ -73,12 +78,13 @@ const SolidaryPunctualAsk = ({ form }) => {
 
       <SolidaryQuestion question="Quand souhaitez-vous revenir ?">
         <DateTimeSelector
-          form={form}
           type="datetime-local"
-          fieldnameStart="toStartDatetime"
-          fieldnameEnd="toEndDatetime"
+          fieldnameStart="returnDatetime"
+          fieldnameEnd="returnDeadlineDatetime"
           choices={toTimeChoices}
           initialChoice={0}
+          initialStart={outwardDatetime}
+          initialEnd={outwardDeadlineDatetime}
         />
       </SolidaryQuestion>
 
@@ -90,3 +96,22 @@ const SolidaryPunctualAsk = ({ form }) => {
 };
 
 export default SolidaryPunctualAsk;
+
+/*
+un demandeur souhaite partir "dans la semaine", "entre 8h et 13h" et revenir "Deux heures plus tard"  :
+
+"outwardDatetime": "2020-05-29T08:00:00+00:00",
+"outwardDeadlineDatetime": "2020-06-05T08:00:00+00:00",
+"returnDatetime": "2020-05-29T10:00:00+00:00",
+"returnDeadlineDatetime": "2020-06-05T10:00:00+00:00", 
+"margin":"18000" // s'applique à l'aller et au retour 5h * 3600s
+
+Pour un régulier
+
+"outwardDatetime": "2020-05-29T08:00:00+00:00",       -> début
+"outwardDeadlineDatetime": "2020-06-05T08:00:00+00:00",-> fin
+days: []
+"returnDatetime": "2020-05-29T10:00:00+00:00",  --> heure du retour
+"returnDeadlineDatetime": "2020-06-05T10:00:00+00:00", 
+
+*/
