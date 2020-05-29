@@ -434,6 +434,7 @@ class Structure
      * @var ArrayCollection|null The solidary records for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\StructureProof", mappedBy="structure", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readSolidary"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */

@@ -206,7 +206,7 @@ class StructureProof
      * @var ArrayCollection|null The proofs using this structure proof.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="structureProof", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      * @MaxDepth(1)
      */
     private $proofs;
