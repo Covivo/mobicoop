@@ -29,6 +29,7 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Geography\Entity\Address;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -69,6 +70,7 @@ class SolidaryVolunteer
 {
     const DEFAULT_ID = 999999999999;
     const TYPE = "volunteer";
+    const AUTHORIZED_FILTERS = ['familyName','givenName','email'];
 
     /**
      * @var int The id of this solidary user.
