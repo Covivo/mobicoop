@@ -41,7 +41,7 @@ class RelayPointController extends AbstractController
     public function relayPointList(RelayPointManager $relayPointManager)
     {
         return $this->render('@Mobicoop/relaypoint/relaypoints.html.twig', [
-            'relayPoints' => $relayPointManager->getRelayPoints(),
+            // 'relayPoints' => $relayPointManager->getRelayPoints(),
             'searchRoute' => "covoiturage/recherche",
             ]);
     }
@@ -52,7 +52,7 @@ class RelayPointController extends AbstractController
     public function getRelayPointList(RelayPointManager $relayPointManager, Request $request)
     {
         if ($request->isMethod('POST')) {
-            return new JsonResponse(['relayPoints' => $relayPointManager->getRelayPoints()]);
+            return new JsonResponse($relayPointManager->getRelayPoints());
         }
     }
 }

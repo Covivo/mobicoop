@@ -193,6 +193,20 @@ class RelayPoint implements ResourceInterface, \JsonSerializable
      */
     private $images;
 
+    /**
+     * Undocumented variable
+     *
+     * @var string|null
+     */
+    private $lat;
+
+    /**
+     * Undocumented variable
+     *
+     * @var string|null
+     */
+    private $lon;
+
     public function __construct($id=null)
     {
         if ($id) {
@@ -477,6 +491,26 @@ class RelayPoint implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getLat(): ?string
+    {
+        return $this->address->getLatitude();
+    }
+    
+    public function setLat(?string $lat)
+    {
+        $this->lat = $lat;
+    }
+
+    public function getLon(): ?string
+    {
+        return $this->address->getLongitude();
+    }
+    
+    public function setLon(?string $lon)
+    {
+        $this->lon = $lon;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -496,12 +530,11 @@ class RelayPoint implements ResourceInterface, \JsonSerializable
             'suggested'         => $this->isSuggested(),
             'permalink'         => $this->getPermalink(),
             'images'            => $this->getImages(),
-            'address'           => $this->getAddress(),
-            'user'              => $this->getUser(),
-            'community'         => $this->getCommunity(),
-            'structure'         => $this->getStructure(),
+            // 'address'           => $this->getAddress(),
             'relayPointTypes'   => $this->getRelayPointTypes(),
-            'images'            => $this->getImages()
+            'images'            => $this->getImages(),
+            'lat'               => $this->getLat(),
+            'lon'               => $this->getLon()
         ];
     }
 }

@@ -77,16 +77,6 @@ export default {
     return {
       search: '',
       relayPointsToMap: null,
-      headers: [
-        {
-          text: 'Id',
-          align: 'left',
-          sortable: false,
-          value: 'id',
-        },
-        { text: 'Nom', value: 'familyName' },
-        { text: 'Prenom', value: 'givenName' },
-      ],
       pointsToMap:[],
       directionWay:[]
     }
@@ -100,7 +90,9 @@ export default {
         .post('/points-relais/getRelayPointList')
         .then(res => {
           this.relayPointsToMap = res.data;
+          this.showRelayPoints();
         });
+        
     },
     publish() {
       let lParams = {
@@ -113,11 +105,13 @@ export default {
       };
       this.post(`${this.$t("buttons.publish.route")}`, lParams);
     },
-    showCommunityProposals () {
+    showRelayPoints () {
       this.pointsToMap.length = 0;
       // add the community address to display on the map
-      if (this.community.address) {
-        this.pointsToMap.push(this.buildPoint(this.community.address.latitude,this.community.address.longitude,this.community.name));
+      if (this.relayPointsToMap.length > 0) {
+        this.relayPointsToMap.forEach(relayPoint => {
+          this.pointsToMap.push(this.buildPoint(relayPoint.lat,relayPoint.lon,relayPoint.name));
+        });
       }
       this.$refs.mmap.redrawMap();
     },

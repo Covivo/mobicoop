@@ -306,6 +306,7 @@ class Address implements \JsonSerializable
      *
      * @ORM\OneToOne(targetEntity="App\RelayPoint\Entity\RelayPoint", mappedBy="address")
      * @Groups({"read","pt"})
+     * @MaxDepth(1)
      */
     private $relayPoint;
 

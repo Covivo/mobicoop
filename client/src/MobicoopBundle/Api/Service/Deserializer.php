@@ -735,8 +735,6 @@ class Deserializer
     private function deserializeRelayPoint(array $data): ?RelayPoint
     {
         $relayPoint = new RelayPoint();
-        var_dump($data);
-        die;
         $relayPoint = $this->autoSet($relayPoint, $data);
         if (isset($data["@id"])) {
             $relayPoint->setIri($data["@id"]);

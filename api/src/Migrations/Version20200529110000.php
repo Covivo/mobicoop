@@ -12,7 +12,7 @@ final class Version20200529110000 extends AbstractMigration
 {
     public function up(Schema $schema) : void
     {
-        // get the list of remay points is accessible for all
+        // get the list of relay points is accessible for all
         $this->addSql('UPDATE auth_item_child set parent_id=\'5\', child_id=\'89\' WHERE parent_id=\'90\' AND child_id=\'89\'');
     }
 
