@@ -377,10 +377,11 @@ class SolidaryUserManager
 
     /**
      * Get all the SolidaryBeneficiaries
-     * @var array $filters The filters
+     * @var array $filters optionnal filters
+     * @param bool $validatedCandidate only the validated candidates or refused candidates (true, false)
      * @return array
      */
-    public function getSolidaryBeneficiaries(array $filters=null): array
+    public function getSolidaryBeneficiaries(array $filters=null, bool $validatedCandidate=null): array
     {
         $beneficiaries = [];
 
@@ -388,7 +389,22 @@ class SolidaryUserManager
         $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryBeneficiary::TYPE, $filters);
         foreach ($users as $user) {
             // Maybe To do : If it's too slow, we can use the User instead of the Id. But we need to rewrite the ItemDataProvider
-            $beneficiaries[] = $this->getSolidaryBeneficiary($user->getSolidaryUser()->getId());
+            $beneficiarie = $this->getSolidaryBeneficiary($user->getSolidaryUser()->getId());
+
+            // Special filter : validatedCandidate
+            if (!is_null($validatedCandidate)) {
+                // We need to also test if isValidatedCandidate() return null to ignore the pending acceptations.
+                if (
+                    ($validatedCandidate && $beneficiarie->isValidatedCandidate() && $beneficiarie->isValidatedCandidate()!==null) ||
+                    (!$validatedCandidate && !$beneficiarie->isValidatedCandidate() && $beneficiarie->isValidatedCandidate()!==null)
+                ) {
+                    $beneficiaries[] = $beneficiarie;
+                }
+
+                continue;
+            }
+            
+            $beneficiaries[] = $beneficiarie;
         }
 
 
@@ -398,17 +414,34 @@ class SolidaryUserManager
     /**
      * Get all the SolidaryVolunteers
      * @param array $filters optionnal filters
+     * @param bool $validatedCandidate only the validated candidates or refused candidates (true, false)
      * @return array
      */
-    public function getSolidaryVolunteers(array $filters=null): array
+    public function getSolidaryVolunteers(array $filters=null, bool $validatedCandidate=null): array
     {
         $volunteers = [];
 
         // First, we get all user with Beneficiary types of SolidaryUser
         $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryVolunteer::TYPE, $filters);
         foreach ($users as $user) {
+
             // Maybe To do : If it's too slow, we can use the User instead of the Id. But we need to rewrite the ItemDataProvider
-            $volunteers[] = $this->getSolidaryVolunteer($user->getSolidaryUser()->getId());
+            $volunteer = $this->getSolidaryVolunteer($user->getSolidaryUser()->getId());
+
+            // Special filter : validatedCandidate
+            if (!is_null($validatedCandidate)) {
+                // We need to also test if isValidatedCandidate() return null to ignore the pending acceptations.
+                if (
+                    ($validatedCandidate && $volunteer->isValidatedCandidate() && $volunteer->isValidatedCandidate()!==null) ||
+                    (!$validatedCandidate && !$volunteer->isValidatedCandidate() && $volunteer->isValidatedCandidate()!==null)
+                ) {
+                    $volunteers[] = $volunteer;
+                }
+
+                continue;
+            }
+            
+            $volunteers[] = $volunteer;
         }
 
 

@@ -69,7 +69,8 @@ class SolidaryVolunteer
 {
     const DEFAULT_ID = 999999999999;
     const TYPE = "volunteer";
-    const AUTHORIZED_FILTERS = ['familyName','givenName','email'];
+    const AUTHORIZED_GENERIC_FILTERS = ['familyName','givenName','email'];
+    const VALIDATED_CANDIDATE_FILTER = 'validatedCandidate';
 
     /**
      * @var int The id of this solidary user.

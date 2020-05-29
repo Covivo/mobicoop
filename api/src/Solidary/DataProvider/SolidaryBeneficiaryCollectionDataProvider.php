@@ -51,15 +51,18 @@ final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataP
     {
         // We check and sanitize the filters
         $filters = null;
+        $validatedCandidate = null;
         if (isset($this->context['filters'])) {
             $filters = [];
             foreach ($this->context['filters'] as $key => $value) {
-                if (in_array($key, SolidaryBeneficiary::AUTHORIZED_FILTERS)) {
+                if (in_array($key, SolidaryBeneficiary::AUTHORIZED_GENERIC_FILTERS)) {
                     $filters[$key] = $value;
+                } elseif ($key == SolidaryBeneficiary::VALIDATED_CANDIDATE_FILTER) {
+                    $validatedCandidate = ($value=="true") ? $validatedCandidate = true : $validatedCandidate = false;
                 }
             }
         }
 
-        return $this->solidaryUserManager->getSolidaryBeneficiaries($filters);
+        return $this->solidaryUserManager->getSolidaryBeneficiaries($filters, $validatedCandidate);
     }
 }
