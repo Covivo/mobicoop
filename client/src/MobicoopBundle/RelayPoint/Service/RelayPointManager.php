@@ -74,8 +74,11 @@ class RelayPointManager
     public function getRelayPoints(bool $official = true, ?array $bbox=null)
     {
         if (!is_array($bbox)) {
+            var_dump($this->bbox_max_lat);
             list($this->bbox_min_lon, $this->bbox_min_lat, $this->bbox_max_lon, $this->bbox_max_lat) = $bbox;
+            var_dump($this->bbox_max_lat);
         }
+        
         $params = [
             'official' => $official,
             'address.latitude[between]' => $this->bbox_min_lat . ".." . $this->bbox_max_lat,

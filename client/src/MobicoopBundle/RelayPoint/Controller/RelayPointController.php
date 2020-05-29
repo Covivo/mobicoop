@@ -40,7 +40,10 @@ class RelayPointController extends AbstractController
      */
     public function relayPointList(RelayPointManager $relayPointManager)
     {
-        return $this->render('@Mobicoop/relaypoint/relaypoints.html.twig', ['relayPoints' => $relayPointManager->getRelayPoints()]);
+        return $this->render('@Mobicoop/relaypoint/relaypoints.html.twig', [
+            'relayPoints' => $relayPointManager->getRelayPoints(),
+            'searchRoute' => "covoiturage/recherche",
+            ]);
     }
 
     /**
