@@ -739,9 +739,9 @@ class Deserializer
         if (isset($data["@id"])) {
             $relayPoint->setIri($data["@id"]);
         }
-        if (isset($data["user"])) {
-            $relayPoint->setUser($this->deserializeUser($data["user"]));
-        }
+        // if (isset($data["user"])) {
+        //     $relayPoint->setUser($this->deserializeUser($data["user"]));
+        // }
         if (isset($data["address"])) {
             $relayPoint->setAddress($this->deserializeAddress($data['address']));
         }
@@ -750,12 +750,12 @@ class Deserializer
                 $relayPoint->addImage($this->deserializeImage($image));
             }
         }
-        if (isset($data["community"])) {
-            $relayPoint->setCommunity($this->deserializeCommunity($data["community"]));
-        }
-        if (isset($data["structure"])) {
-            $relayPoint->setStructure($this->deserializeStructure($data["structure"]));
-        }
+        // if (isset($data["community"])) {
+        //     $relayPoint->setCommunity($this->deserializeCommunity($data["community"]));
+        // }
+        // if (isset($data["structure"])) {
+        //     $relayPoint->setStructure($this->deserializeStructure($data["structure"]));
+        // }
         if (isset($data["relayPointTypes"])) {
             foreach ($data["relayPointTypes"] as $relayPointType) {
                 $relayPoint->addRelayPointType($this->deserializeRelayPointType($relayPointType));

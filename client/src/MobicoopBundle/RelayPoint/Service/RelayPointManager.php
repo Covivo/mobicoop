@@ -36,6 +36,11 @@ class RelayPointManager
     private $bbox_min_lat;
     private $bbox_max_lon;
     private $bbox_max_lat;
+
+    const DEFAULT_MIN_LON = -180;
+    const DEFAULT_MIN_LAT = -90;
+    const DEFAULT_MAX_LON = 180;
+    const DEFAULT_MAX_LAT = 90;
     
     /**
      * Constructor.
@@ -46,7 +51,17 @@ class RelayPointManager
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(RelayPoint::class);
-        list($this->bbox_min_lon, $this->bbox_min_lat, $this->bbox_max_lon, $this->bbox_max_lat) = $bbox;
+        if (count($bbox)<4) {
+            $this->bbox_min_lon = self::DEFAULT_MIN_LON;
+            $this->bbox_min_lat = self::DEFAULT_MIN_LAT;
+            $this->bbox_max_lon = self::DEFAULT_MAX_LON;
+            $this->bbox_max_lat = self::DEFAULT_MAX_LAT;
+        } else {
+            $this->bbox_min_lon = $bbox["min_lon"];
+            $this->bbox_min_lat = $bbox["min_lat"];
+            $this->bbox_max_lon = $bbox["max_lon"];
+            $this->bbox_max_lat = $bbox["max_lat"];
+        }
     }
     
     /**
@@ -58,7 +73,7 @@ class RelayPointManager
      */
     public function getRelayPoints(bool $official = true, ?array $bbox=null)
     {
-        if (!is_null($bbox)) {
+        if (!is_array($bbox)) {
             list($this->bbox_min_lon, $this->bbox_min_lat, $this->bbox_max_lon, $this->bbox_max_lat) = $bbox;
         }
         $params = [

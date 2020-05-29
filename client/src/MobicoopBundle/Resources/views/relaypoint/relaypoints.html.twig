@@ -1,0 +1,21 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}{% trans from 'ui' %}relaypoints.relaypoints.title{% endtrans %} - {{ app_name }}{% endblock %}
+{% block stylesheets %}
+
+{% endblock %}
+{% block main %}
+    <br/><br/>
+    <div class="layout justify-center"
+         outlined
+         tile>
+        <div class="flex xs10">
+            {{ dump(relayPoints)}}
+            <br/><br/>
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+
+{% endblock %}
