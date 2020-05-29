@@ -52,12 +52,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('subject_create',object)"
- *          },
- *          "structure_subjects"={
- *              "method"="GET",
- *              "path"="/subjects/structure",
- *              "normalization_context"={"groups"={"readSubjects"}},
- *              "security"="is_granted('proof_list',object)"
  *          }
  *      },
  *      itemOperations={
