@@ -36,6 +36,7 @@ use App\User\Entity\User;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Proposal;
+use App\Community\Entity\Community;
 
 /**
  * A notification to send for a user.
@@ -147,6 +148,15 @@ class Notified
      */
     private $proposal;
 
+      /**
+     * @var Community The community if the notified is linked to a community.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="notifieds")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $community;
+
     /**
      * @var Matching The matching if the notified is linked to a matching.
      *
@@ -257,6 +267,18 @@ class Notified
     public function setProposal(?Proposal $proposal): self
     {
         $this->proposal = $proposal;
+
+        return $this;
+    }
+
+    public function getCommunity(): ?Community
+    {
+        return $this->community;
+    }
+
+    public function setCommunity(?Community $community): self
+    {
+        $this->community = $community;
 
         return $this;
     }
