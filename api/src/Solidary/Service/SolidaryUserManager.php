@@ -283,6 +283,24 @@ class SolidaryUserManager
         $solidaryVolunteer->setGender($user->getGender());
         $solidaryVolunteer->setComment($solidaryUser->getComment());
 
+        // Home address
+        foreach ($user->getAddresses() as $address) {
+            if ($address->isHome()) {
+                $homeAddress = [];
+                $homeAddress['streetAddress'] = $address->getStreetAddress();
+                $homeAddress['addressLocality'] = $address->getAddressLocality();
+                $homeAddress['localAdmin'] = $address->getLocalAdmin();
+                $homeAddress['county'] = $address->getCounty();
+                $homeAddress['macroCounty'] = $address->getMacroCounty();
+                $homeAddress['region'] = $address->getRegion();
+                $homeAddress['macroRegion'] = $address->getMacroRegion();
+                $homeAddress['addressCountry'] = $address->getAddressCountry();
+                $homeAddress['countryCode'] = $address->getCountryCode();
+                $homeAddress['latitude'] = $address->getLatitude();
+                $homeAddress['longitude'] = $address->getLongitude();
+                $solidaryVolunteer->setHomeAddress($homeAddress);
+            }
+        }
 
         // We take the first solidaryUser structure.
         $solidaryUserStructure = $solidaryUser->getSolidaryUserStructures()[0];

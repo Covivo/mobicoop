@@ -20,7 +20,6 @@ final class Version20200515144100 extends AbstractMigration
         $this->addSql('INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template_body`, `user_active_default`, `user_editable`, `active`, `position`) VALUES (94, 70, 2, null, 1, 0, 1, 0);');
 
         $this->addSql('ALTER TABLE notified ADD community_id int(11);');
-
     }
 
     public function down(Schema $schema) : void

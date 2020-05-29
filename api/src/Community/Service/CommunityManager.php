@@ -90,7 +90,6 @@ class CommunityManager
         $this->userManager = $userManager;
         $this->adManager = $adManager;
         $this->eventDispatcher = $eventDispatcher;
-
     }
 
     /**
@@ -126,7 +125,7 @@ class CommunityManager
         if ($community->getValidationType() == Community::DOMAIN_VALIDATION &&
         ($community->getDomain() != (explode("@", $communityUser->getUser()->getEmail()))[1])) {
             $authorized = false;
-         }
+        }
 
          
         return $authorized;
@@ -334,19 +333,17 @@ class CommunityManager
      */
     public function saveCommunityUser(CommunityUser $communityUser)
     {
-            $this->entityManager->persist($communityUser);
-            $this->entityManager->flush();
+        $this->entityManager->persist($communityUser);
+        $this->entityManager->flush();
 
-            $community = $communityUser->getCommunity();
-            $user = $community->getUser();
+        $community = $communityUser->getCommunity();
+        $user = $community->getUser();
 
-            // We use event to send notifications if community has a status pending
-            if($communityUser->getStatus( )== CommunityUser::STATUS_PENDING){
-                $event = new CommunityNewMembershipRequestEvent($community, $user);
-                $this->eventDispatcher->dispatch(CommunityNewMembershipRequestEvent::NAME, $event);
-            }                    
+        // We use event to send notifications if community has a status pending
+        if ($communityUser->getStatus()== CommunityUser::STATUS_PENDING) {
+            $event = new CommunityNewMembershipRequestEvent($community, $user);
+            $this->eventDispatcher->dispatch(CommunityNewMembershipRequestEvent::NAME, $event);
+        }
         return $communityUser;
     }
 }
-
-

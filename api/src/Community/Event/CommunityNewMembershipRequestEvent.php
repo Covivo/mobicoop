@@ -39,7 +39,6 @@ class CommunityNewMembershipRequestEvent extends Event
     public function __construct(Community $community)
     {
         $this->community = $community;
- 
     }
 
     public function getCommunity()
@@ -47,4 +46,3 @@ class CommunityNewMembershipRequestEvent extends Event
         return $this->community;
     }
 }
-

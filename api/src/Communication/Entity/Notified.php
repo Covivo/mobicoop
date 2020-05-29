@@ -148,7 +148,7 @@ class Notified
      */
     private $proposal;
 
-      /**
+    /**
      * @var Community The community if the notified is linked to a community.
      *
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="notifieds")
