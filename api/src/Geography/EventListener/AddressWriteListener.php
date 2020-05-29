@@ -28,6 +28,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 
 /**
+ * /!\  DESACTIVATED ON 2020-05-29 for performance reasons /!\
+ *              REPLACED BY CRON JOB
+ *
  * Address Write Event listener, called on preFlush.
  * @author Sylvain <sylvain.briat@mobicoop.org>
  */
