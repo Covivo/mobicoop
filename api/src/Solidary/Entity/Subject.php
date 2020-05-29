@@ -235,7 +235,7 @@ class Subject
         return $this->proposals->getValues();
     }
 
-    public function addProposals(Proposal $proposal): self
+    public function addProposal(Proposal $proposal): self
     {
         if (!$this->proposals->contains($proposal)) {
             $this->proposals->add($proposal);
@@ -245,7 +245,7 @@ class Subject
         return $this;
     }
 
-    public function removeProposals(Proposal $proposal): self
+    public function removeProposal(Proposal $proposal): self
     {
         if ($this->proposals->contains($proposal)) {
             $this->proposals->removeElement($proposal);
