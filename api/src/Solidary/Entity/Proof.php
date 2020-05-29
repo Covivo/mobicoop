@@ -51,12 +51,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *          "get"={
  *             "security"="is_granted('proof_list',object)"
  *          },
- *          "structure_proofs"={
- *              "method"="GET",
- *              "path"="/proofs/structure",
- *              "normalization_context"={"groups"={"readStructureProofs"}},
- *              "security"="is_granted('proof_list',object)"
- *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('proof_create',object)"
  *          }
