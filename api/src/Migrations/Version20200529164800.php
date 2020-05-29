@@ -8,18 +8,14 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20200515144100 extends AbstractMigration
+final class Version20200529164800 extends AbstractMigration
 {
     public function up(Schema $schema) : void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('INSERT INTO `action` (`id`, `name`, `position`) VALUES (70, \'community_new_membership_request\', 0);');
-
-        $this->addSql('INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template_body`, `user_active_default`, `user_editable`, `active`, `position`) VALUES (94, 70, 2, null, 1, 0, 1, 0);');
-
-        $this->addSql('ALTER TABLE notified ADD community_id int(11);');
+        // Everyone can list the solidary structures
+        $this->addSql('UPDATE `auth_item_child` SET `parent_id` = \'5\' WHERE `auth_item_child`.`parent_id` = 195 AND `auth_item_child`.`child_id` = 194');
     }
 
     public function down(Schema $schema) : void

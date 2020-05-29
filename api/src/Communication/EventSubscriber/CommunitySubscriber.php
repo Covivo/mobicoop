@@ -26,7 +26,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
 use App\Community\Event\CommunityNewMembershipRequestEvent;
 
-
 class CommunitySubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
@@ -60,9 +59,3 @@ class CommunitySubscriber implements EventSubscriberInterface
         $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME, $communityRecipient, $event->getCommunity());
     }
 }
-
-
-
-
-
-

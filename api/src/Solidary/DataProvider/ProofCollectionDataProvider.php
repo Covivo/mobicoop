@@ -52,7 +52,7 @@ final class ProofCollectionDataProvider implements CollectionDataProviderInterfa
             $this->filters = $context['filters'];
         }
 
-        return Proof::class === $resourceClass && $operationName = "structure_proofs";
+        return Proof::class === $resourceClass;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null)

@@ -59,7 +59,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "method"="GET",
  *              "path"="/structures/geolocation",
  *              "normalization_context"={"groups"={"readSolidary"}},
- *              "security"="is_granted('structure_read',object)"
+ *              "security"="is_granted('structure_list',object)"
  *          }
  *      },
  *      itemOperations={
@@ -434,6 +434,7 @@ class Structure
      * @var ArrayCollection|null The solidary records for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\StructureProof", mappedBy="structure", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readSolidary"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */

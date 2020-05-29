@@ -30,6 +30,7 @@ use App\Solidary\Entity\SolidaryBeneficiary;
 use App\Solidary\Entity\SolidaryVolunteer;
 use App\Solidary\Exception\SolidaryException;
 use Doctrine\ORM\EntityRepository;
+use Psr\Log\LoggerInterface;
 
 class UserRepository
 {
@@ -38,9 +39,12 @@ class UserRepository
      */
     private $repository;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    private $logger;
+
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
     {
         $this->repository = $entityManager->getRepository(User::class);
+        $this->logger = $logger;
     }
 
     public function find(int $id): ?User
@@ -83,14 +87,18 @@ class UserRepository
     /**
      * Get Users with a specific type of SolidaryUser
      *
-     * @param string $type Type of SolidaryUser (Beneficiary or Volunteer)
+     * @param string $type      Type of SolidaryUser (Beneficiary or Volunteer)
+     * @param array $filters    Optionnal filters
      * @return array|null
      */
-    public function findUsersBySolidaryUserType(string $type=null): ?array
+    public function findUsersBySolidaryUserType(string $type=null, array $filters = null): ?array
     {
+        $this->logger->info("Start findUsersBySolidaryUserType");
         $query = $this->repository->createQueryBuilder('u')
         ->join('u.solidaryUser', 'su');
 
+
+        // Type
         if ($type==SolidaryBeneficiary::TYPE) {
             $query->where('su.beneficiary = true');
         } elseif ($type==SolidaryVolunteer::TYPE) {
@@ -98,6 +106,15 @@ class UserRepository
         } else {
             throw new SolidaryException(SolidaryException::TYPE_SOLIDARY_USER_UNKNOWN);
         }
+
+        // Filters
+        if (!is_null($filters)) {
+            foreach ($filters as $filter => $value) {
+                $query->andWhere("u.".$filter." like '%".$value."%'");
+            }
+        }
+        
+
 
         return $query->getQuery()->getResult();
     }
