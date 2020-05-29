@@ -620,6 +620,9 @@ class SolidaryManager
         // The User
         $ad->setUserId($userId ? $userId : $solidary->getSolidaryUser()->getUser()->getId());
 
+        // The subject
+        $ad->setSubjectId($solidary->getSubject()->getId());
+
         return $this->adManager->createAd($ad, true);
     }
 

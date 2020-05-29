@@ -3,6 +3,7 @@
 ## API
 
 * New related mobile app versioning system
+* A Proposal can now have a specific Subject
 
 # Release 1.5.0
 

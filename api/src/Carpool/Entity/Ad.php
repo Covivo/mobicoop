@@ -385,6 +385,13 @@ class Ad
     private $eventId;
 
     /**
+     * @var int|null The subject id associated with the ad.
+     *
+     * @Groups({"read","write"})
+     */
+    private $subjectId;
+    
+    /**
      * @var array|null The carpool results.
      *
      * @Groups("results")
@@ -683,6 +690,18 @@ class Ad
     public function setEventId(?int $eventId): self
     {
         $this->eventId = $eventId;
+
+        return $this;
+    }
+
+    public function getSubjectId(): ?int
+    {
+        return $this->subjectId;
+    }
+
+    public function setSubjectId(?int $subjectId): self
+    {
+        $this->subjectId = $subjectId;
 
         return $this;
     }
