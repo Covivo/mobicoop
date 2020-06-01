@@ -11,6 +11,23 @@ const token = global.localStorage.getItem('token');
 const apiUrlCreateUSer = process.env.REACT_APP_API + process.env.REACT_APP_CREATE_USER;
 const httpClient = fetchUtils.fetchJson;
 const currentUser = global.localStorage.getItem('id');
+const userRoles = [
+  '/auth_items/1',
+  '/auth_items/2',
+  '/auth_items/3',
+  '/auth_items/4',
+  '/auth_items/5',
+  '/auth_items/6',
+  '/auth_items/7',
+  '/auth_items/8',
+  '/auth_items/9',
+  '/auth_items/10',
+  '/auth_items/11',
+  '/auth_items/12',
+  '/auth_items/13',
+  '/auth_items/171',
+  '/auth_items/172',
+];
 
 const fetchHeaders = () => {
   return { Authorization: `Bearer ${global.localStorage.getItem('token')}` };
@@ -124,7 +141,9 @@ export default dataProviderAdapter({
       ).then(
         // We fill the array rolesTerritory with good format for admin
         (dataThen) => {
-          data.rolesTerritory = dataThen;
+          dataThen.forEach((element) => {
+            if (userRoles.includes(element.authItem)) data.rolesTerritory = dataThen;
+          });
           return { data };
         }
       )
