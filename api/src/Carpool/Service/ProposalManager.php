@@ -177,32 +177,32 @@ class ProposalManager
                 $proposal->getCriteria()->setStrictPunctual($this->params['defaultStrictPunctual']);
             }
             if (is_null($proposal->getCriteria()->getMarginDuration())) {
-                $proposal->getCriteria()->setMarginDuration($this->params['defaultMarginTime']);
+                $proposal->getCriteria()->setMarginDuration($this->params['defaultMarginDuration']);
             }
         } else {
             if (is_null($proposal->getCriteria()->isStrictRegular())) {
                 $proposal->getCriteria()->setStrictRegular($this->params['defaultStrictRegular']);
             }
             if (is_null($proposal->getCriteria()->getMonMarginDuration())) {
-                $proposal->getCriteria()->setMonMarginDuration($this->params['defaultMarginTime']);
+                $proposal->getCriteria()->setMonMarginDuration($this->params['defaultMarginDuration']);
             }
             if (is_null($proposal->getCriteria()->getTueMarginDuration())) {
-                $proposal->getCriteria()->setTueMarginDuration($this->params['defaultMarginTime']);
+                $proposal->getCriteria()->setTueMarginDuration($this->params['defaultMarginDuration']);
             }
             if (is_null($proposal->getCriteria()->getWedMarginDuration())) {
-                $proposal->getCriteria()->setWedMarginDuration($this->params['defaultMarginTime']);
+                $proposal->getCriteria()->setWedMarginDuration($this->params['defaultMarginDuration']);
             }
             if (is_null($proposal->getCriteria()->getThuMarginDuration())) {
-                $proposal->getCriteria()->setThuMarginDuration($this->params['defaultMarginTime']);
+                $proposal->getCriteria()->setThuMarginDuration($this->params['defaultMarginDuration']);
             }
             if (is_null($proposal->getCriteria()->getFriMarginDuration())) {
-                $proposal->getCriteria()->setFriMarginDuration($this->params['defaultMarginTime']);
+                $proposal->getCriteria()->setFriMarginDuration($this->params['defaultMarginDuration']);
             }
             if (is_null($proposal->getCriteria()->getSatMarginDuration())) {
-                $proposal->getCriteria()->setSatMarginDuration($this->params['defaultMarginTime']);
+                $proposal->getCriteria()->setSatMarginDuration($this->params['defaultMarginDuration']);
             }
             if (is_null($proposal->getCriteria()->getSunMarginDuration())) {
-                $proposal->getCriteria()->setSunMarginDuration($this->params['defaultMarginTime']);
+                $proposal->getCriteria()->setSunMarginDuration($this->params['defaultMarginDuration']);
             }
             if (is_null($proposal->getCriteria()->getToDate())) {
                 // end date is usually null, except when creating a proposal after a matching search
@@ -722,32 +722,32 @@ class ProposalManager
                         $criteria->setStrictPunctual($this->params['defaultStrictPunctual']);
                     }
                     if (is_null($criteria->getMarginDuration())) {
-                        $criteria->setMarginDuration($this->params['defaultMarginTime']);
+                        $criteria->setMarginDuration($this->params['defaultMarginDuration']);
                     }
                 } else {
                     if (is_null($criteria->isStrictRegular())) {
                         $criteria->setStrictRegular($this->params['defaultStrictRegular']);
                     }
                     if (is_null($criteria->getMonMarginDuration())) {
-                        $criteria->setMonMarginDuration($this->params['defaultMarginTime']);
+                        $criteria->setMonMarginDuration($this->params['defaultMarginDuration']);
                     }
                     if (is_null($criteria->getTueMarginDuration())) {
-                        $criteria->setTueMarginDuration($this->params['defaultMarginTime']);
+                        $criteria->setTueMarginDuration($this->params['defaultMarginDuration']);
                     }
                     if (is_null($criteria->getWedMarginDuration())) {
-                        $criteria->setWedMarginDuration($this->params['defaultMarginTime']);
+                        $criteria->setWedMarginDuration($this->params['defaultMarginDuration']);
                     }
                     if (is_null($criteria->getThuMarginDuration())) {
-                        $criteria->setThuMarginDuration($this->params['defaultMarginTime']);
+                        $criteria->setThuMarginDuration($this->params['defaultMarginDuration']);
                     }
                     if (is_null($criteria->getFriMarginDuration())) {
-                        $criteria->setFriMarginDuration($this->params['defaultMarginTime']);
+                        $criteria->setFriMarginDuration($this->params['defaultMarginDuration']);
                     }
                     if (is_null($criteria->getSatMarginDuration())) {
-                        $criteria->setSatMarginDuration($this->params['defaultMarginTime']);
+                        $criteria->setSatMarginDuration($this->params['defaultMarginDuration']);
                     }
                     if (is_null($criteria->getSunMarginDuration())) {
-                        $criteria->setSunMarginDuration($this->params['defaultMarginTime']);
+                        $criteria->setSunMarginDuration($this->params['defaultMarginDuration']);
                     }
                     if (is_null($criteria->getToDate())) {
                         // end date is usually null, except when creating a proposal after a matching search
@@ -1071,8 +1071,8 @@ class ProposalManager
     //             $update_criteria_sql .= ($criteria->isStrictPunctual() ? '1' : '0') . ",";
     //         }
     //         if (is_null($criteria->getMarginDuration())) {
-    //             $criteria->setMarginDuration($this->params['defaultMarginTime']);
-    //             $update_criteria_sql .= $this->params['defaultMarginTime'] . ",";
+    //             $criteria->setMarginDuration($this->params['defaultMarginDuration']);
+    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
     //         } else {
     //             $update_criteria_sql .= $criteria->getMarginDuration() . ",";
     //         }
@@ -1082,44 +1082,44 @@ class ProposalManager
     //             $update_criteria_sql .= ($criteria->isStrictRegular() ? '1' : '0') . ",";
     //         }
     //         if (is_null($criteria->getMonMarginDuration())) {
-    //             $criteria->setMonMarginDuration($this->params['defaultMarginTime']);
-    //             $update_criteria_sql .= $this->params['defaultMarginTime'] . ",";
+    //             $criteria->setMonMarginDuration($this->params['defaultMarginDuration']);
+    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
     //         } else {
     //             $update_criteria_sql .= $criteria->getMonMarginDuration() . ",";
     //         }
     //         if (is_null($criteria->getTueMarginDuration())) {
-    //             $criteria->setTueMarginDuration($this->params['defaultMarginTime']);
-    //             $update_criteria_sql .= $this->params['defaultMarginTime'] . ",";
+    //             $criteria->setTueMarginDuration($this->params['defaultMarginDuration']);
+    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
     //         } else {
     //             $update_criteria_sql .= $criteria->getTueMarginDuration() . ",";
     //         }
     //         if (is_null($criteria->getWedMarginDuration())) {
-    //             $criteria->setWedMarginDuration($this->params['defaultMarginTime']);
-    //             $update_criteria_sql .= $this->params['defaultMarginTime'] . ",";
+    //             $criteria->setWedMarginDuration($this->params['defaultMarginDuration']);
+    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
     //         } else {
     //             $update_criteria_sql .= $criteria->getWedMarginDuration() . ",";
     //         }
     //         if (is_null($criteria->getThuMarginDuration())) {
-    //             $criteria->setThuMarginDuration($this->params['defaultMarginTime']);
-    //             $update_criteria_sql .= $this->params['defaultMarginTime'] . ",";
+    //             $criteria->setThuMarginDuration($this->params['defaultMarginDuration']);
+    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
     //         } else {
     //             $update_criteria_sql .= $criteria->getThuMarginDuration() . ",";
     //         }
     //         if (is_null($criteria->getFriMarginDuration())) {
-    //             $criteria->setFriMarginDuration($this->params['defaultMarginTime']);
-    //             $update_criteria_sql .= $this->params['defaultMarginTime'] . ",";
+    //             $criteria->setFriMarginDuration($this->params['defaultMarginDuration']);
+    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
     //         } else {
     //             $update_criteria_sql .= $criteria->getFriMarginDuration() . ",";
     //         }
     //         if (is_null($criteria->getSatMarginDuration())) {
-    //             $criteria->setSatMarginDuration($this->params['defaultMarginTime']);
-    //             $update_criteria_sql .= $this->params['defaultMarginTime'] . ",";
+    //             $criteria->setSatMarginDuration($this->params['defaultMarginDuration']);
+    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
     //         } else {
     //             $update_criteria_sql .= $criteria->getSatMarginDuration() . ",";
     //         }
     //         if (is_null($criteria->getSunMarginDuration())) {
-    //             $criteria->setSunMarginDuration($this->params['defaultMarginTime']);
-    //             $update_criteria_sql .= $this->params['defaultMarginTime'] . ",";
+    //             $criteria->setSunMarginDuration($this->params['defaultMarginDuration']);
+    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
     //         } else {
     //             $update_criteria_sql .= $criteria->getSunMarginDuration() . ",";
     //         }

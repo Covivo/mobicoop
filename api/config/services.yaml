@@ -151,7 +151,7 @@ services:
     App\Carpool\Service\AdManager:
         arguments:
             $params:
-                defaultMarginTime: '%env(int:CARPOOL_MARGIN_TIME)%'
+                defaultMarginDuration: '%env(int:CARPOOL_MARGIN_DURATION)%'
                 defaultSeatsDriver: '%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%'
                 defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
                 carpoolProofDistance: '%env(int:CARPOOL_PROOF_DISTANCE)%'
@@ -191,7 +191,7 @@ services:
                 defaultStrictDate: '%env(bool:CARPOOL_STRICT_DATE)%'
                 defaultStrictPunctual: '%env(bool:CARPOOL_STRICT_PUNCTUAL)%'
                 defaultStrictRegular: '%env(bool:CARPOOL_STRICT_REGULAR)%'
-                defaultMarginTime: '%env(int:CARPOOL_MARGIN_TIME)%'
+                defaultMarginDuration: '%env(int:CARPOOL_MARGIN_DURATION)%'
                 defaultRegularLifeTime: '%env(int:CARPOOL_REGULAR_LIFETIME)%'
                 defaultAnyRouteAsPassenger: '%env(bool:CARPOOL_ANY_ROUTE_PASSENGER)%'
                 defaultPriceKm: '%env(float:CARPOOL_PRICE)%'
