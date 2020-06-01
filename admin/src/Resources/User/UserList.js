@@ -24,6 +24,8 @@ import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
 import isAuthorized from '../../auth/permissions';
 
+import TerritoryInput from '../../components/geolocation/TerritoryInput';
+
 const UserList = (props) => {
   const translate = useTranslate();
   const [count, setCount] = useState(0);
@@ -71,6 +73,11 @@ const UserList = (props) => {
       </TableRow>
     );
   };
+
+  const addTerritoryHistory = (e) => {
+    return null;
+  };
+
   const MyDatagridBody = (props) => <DatagridBody {...props} row={<MyDatagridRow />} />;
   const MyDatagridUser = (props) => <Datagrid {...props} body={<MyDatagridBody />} />;
 
@@ -111,6 +118,7 @@ const UserList = (props) => {
       />
       <ReferenceInput
         source="homeAddressODTerritory"
+        alwaysOn
         label={translate('custom.label.user.territory')}
         reference="territories"
         allowEmpty={false}
@@ -118,6 +126,8 @@ const UserList = (props) => {
       >
         <SelectInput optionText="name" optionValue="id" />
       </ReferenceInput>
+
+      <TerritoryInput alwaysOn setTerritory={addTerritoryHistory} />
     </Filter>
   );
 
