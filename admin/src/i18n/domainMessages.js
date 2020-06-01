@@ -193,6 +193,8 @@ const fr = {
           upperPassword: 'Au minimum 1 majuscule',
           lowerPassword: 'Au minimum 1 minuscule',
           numberPassword: 'Au minimum 1 chiffre',
+          minPassword: 'Au minimum 8 caractères',
+          phoneDisplayMandatory: 'La visibilité du numéro de téléphone est obligatoire',
         },
         phoneDisplay: {
           visibility: 'Visibilité de mon numéro de téléphone',
