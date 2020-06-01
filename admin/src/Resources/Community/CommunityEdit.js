@@ -152,7 +152,6 @@ export const CommunityEdit = (props) => {
             formClassName={classes.inlineBlock}
           />
           <ReferenceInput
-            disabled
             source="user"
             label={translate('custom.label.community.createdBy')}
             reference="users"
