@@ -322,7 +322,7 @@ class Solidary
     * @var Int|null margin time of the solidary demand
     * @Groups ({"writeSolidary"})
     */
-    private $marginTime;
+    private $marginDuration;
     
     public function __construct()
     {
@@ -761,14 +761,14 @@ class Solidary
         return $this;
     }
 
-    public function getMarginTime(): ?int
+    public function getMarginDuration(): ?int
     {
-        return $this->marginTime;
+        return $this->marginDuration;
     }
 
-    public function setMarginTime(?int $marginTime): self
+    public function setMarginDuration(?int $marginDuration): self
     {
-        $this->marginTime = $marginTime;
+        $this->marginDuration = $marginDuration;
 
         return $this;
     }

@@ -495,7 +495,7 @@ class Ad
      *
      * @Groups({"read","write"})
      */
-    private $marginTime;
+    private $marginDuration;
 
     public function __construct()
     {
@@ -1121,14 +1121,14 @@ class Ad
         return $this;
     }
 
-    public function getMarginTime(): ?int
+    public function getMarginDuration(): ?int
     {
-        return $this->marginTime;
+        return $this->marginDuration;
     }
 
-    public function setMarginTime(?int $marginTime): self
+    public function setMarginDuration(?int $marginDuration): self
     {
-        $this->marginTime = $marginTime;
+        $this->marginDuration = $marginDuration;
 
         return $this;
     }
