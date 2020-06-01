@@ -142,6 +142,7 @@ class Proof
     /**
      * @var File|null
      * @Vich\UploadableField(mapping="proof", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType")
+     * @Groups({"readProof","writeProof"})
      */
     private $file;
 

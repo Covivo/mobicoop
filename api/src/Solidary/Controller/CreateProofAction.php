@@ -58,10 +58,7 @@ final class CreateProofAction
         //echo $request->request->get('structureProof');die;
         $proof->setStructureProof($this->structureProofRepository->find(1));
         $proof->setSolidaryUserStructure($this->solidaryUserStructureRepository->find(1));
-
-        $proof->setOriginalName($request->request->get('originalName'));
-
-        $proof->setFileName("toto");
+        $proof->setFileName($request->request->get('fileName'));
         
 
         return $proof;
