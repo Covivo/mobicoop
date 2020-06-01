@@ -512,10 +512,14 @@ class AdManager
         return $address;
     }
 
+    
     /**
-     * @param $schedules
+     * Add times with margins duration to the criteria's schedules
+     *
+     * @param array $schedules
      * @param Criteria $criteria
-     * @param string $key - outwardTime or returnTime
+     * @param string $key
+     * @param int $marginDuration
      * @return Criteria
      */
     private function createTimesFromSchedule($schedules, Criteria $criteria, string $key, $marginDuration)
