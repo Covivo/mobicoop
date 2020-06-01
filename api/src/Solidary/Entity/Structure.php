@@ -410,6 +410,7 @@ class Structure
      * @var ArrayCollection|null The subjects for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Subject", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
+     * @Groups({"readSolidary"})
      * @MaxDepth(1)
      */
     private $subjects;
