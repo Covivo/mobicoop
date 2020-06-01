@@ -42,9 +42,34 @@ hydraDataProvider.getMany = (resource, params) =>
 // So that, the internal schema is initialised with "getEmptyHydraSchema" data
 hydraDataProvider.introspect();
 
-<<<<<<< HEAD
-export default dataProviderAdapter(hydraDataProvider);
-=======
+const fetchHeaders = () => {
+  return { Authorization: `Bearer ${global.localStorage.getItem('token')}` };
+};
+
+export const fetchHydra = (url, options = {}) =>
+  baseFetchHydra(url, {
+    ...options,
+    headers: new global.Headers(fetchHeaders()),
+  });
+
+const apiDocumentationParser = (entrypoint) =>
+  parseHydraDocumentation(entrypoint, { headers: new global.Headers(fetchHeaders()) }).then(
+    ({ api }) => ({ api }),
+    (result) => {
+      switch (result.status) {
+        case 401:
+          return Promise.resolve({
+            api: result.api,
+            customRoutes: [
+              {
+                props: {
+                  path: '/',
+                  render: () => <Redirect to="/login" />,
+                },
+              },
+            ],
+          });
+
         default:
           return Promise.reject(result);
       }
@@ -190,4 +215,3 @@ export default dataProviderAdapter({
     });
   },
 });
->>>>>>> 54a9a291b... 21069referentEditable
