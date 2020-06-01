@@ -61,42 +61,12 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
-    # Direction Write Listener
-    # App\Geography\EventListener\DirectionWriteListener:
-    #     tags:
-    #         -
-    #             # these are the basic options that define the entity listener
-    #             name: 'doctrine.orm.entity_listener'
-    #             event: 'preFlush'
-    #             entity: 'App\Geography\Entity\Direction'
-
-    #             # set the 'lazy' option to TRUE to only instantiate listeners when they are used
-    #             lazy: true
-
-    #             # configure a custom method name with the 'method' option
-    #             method: 'setTerritories'
-
     # Address Load Listener
     mobicoop.address.address_load_listener:
         class: App\Geography\EventListener\AddressLoadListener
         arguments: ['@App\Geography\Service\GeoTools'] # GeoTools injected for displayLabel
         tags:
             - { name: doctrine.event_listener, event: postLoad }
-
-    # Address Write Listener
-    # App\Geography\EventListener\AddressWriteListener:
-    #     tags:
-    #         -
-    #             # these are the basic options that define the entity listener
-    #             name: 'doctrine.orm.entity_listener'
-    #             event: 'preFlush'
-    #             entity: 'App\Geography\Entity\Address'
-
-    #             # set the 'lazy' option to TRUE to only instantiate listeners when they are used
-    #             lazy: true
-
-    #             # configure a custom method name with the 'method' option
-    #             method: 'setTerritories'
 
     # Community User Load Listener
     mobicoop.community_user.community_user_load_listener:
