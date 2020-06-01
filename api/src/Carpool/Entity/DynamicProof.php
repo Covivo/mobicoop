@@ -104,6 +104,17 @@ class DynamicProof
      */
     private $dynamicAskId;
 
+    /**
+     * @var string Proof live status, as a 4 digits binary ABCD number (eg : 1101) :
+     * - A => passenger pickup proof (0/1)
+     * - B => driver pickup proof (0/1)
+     * - C => passenger dropoff proof (0/1)
+     * - D => driver dropoff proof (0/1)
+     *
+     * @Groups({"readDynamic","writeDynamic","updateDynamic"})
+     */
+    private $status;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -161,6 +172,18 @@ class DynamicProof
     public function setDynamicAskId(?int $dynamicAskId): self
     {
         $this->dynamicAskId = $dynamicAskId;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }
