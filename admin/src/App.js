@@ -80,9 +80,9 @@ export default () => (
         ),
         // These resources were commented on during my refacto, why ?
         // @TODO: Talk between us about that
-        // <Resource name="addresses" {...AddressResource} />,
+        <Resource name="addresses" />,
         // <Resource name="images" />,
-        // <Resource name="territories" {...TerritoryResource} />,
+        <Resource name="territories" />,
       ].filter((x) => x)
     }
   </Admin>
