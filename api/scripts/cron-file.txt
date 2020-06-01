@@ -1,6 +1,6 @@
 # CRON JOBS 
 # All the jobs here are installed using a python script (/scripts/updateCrontab.py)
-# Parameters used : 
+# Parameters used in the python script : 
 # $1 => the php binary path
 # $2 => the symfony api console path
 

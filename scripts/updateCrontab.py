@@ -5,6 +5,7 @@ Crontab updater
 ===============
 
 This script updates the crontab with the needed jobs. It is mainly intended to launch symfony console command.
+It has to be launched by the target crontab user.
 
 Parameters
 ----------
