@@ -292,7 +292,7 @@ class TerritoryManager
             // then we insert addresses for each territory
             $this->logger->info("TerritoryManager : updateAddressesAndDirections : start treating addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             foreach ($ids as $id) {
-                $this->logger->info("TerritoryManager : updateAddressesAndDirections : treating territory : $id for addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                // $this->logger->info("TerritoryManager : updateAddressesAndDirections : treating territory : $id for addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 // we use batches of addresses
                 $forBatch = $address_ids;
                 $continue = true;
@@ -331,7 +331,7 @@ class TerritoryManager
 
         if (count($direction_ids)>0) {
             // then we insert
-            $this->logger->info("TerritoryManager : updateAddressesAndDirections : start treating directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            // $this->logger->info("TerritoryManager : updateAddressesAndDirections : start treating directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             foreach ($direction_ids as $id) {
                 $this->logger->info("TerritoryManager : updateAddressesAndDirections : treating direction : $id | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 $sql = "INSERT INTO direction_territory (direction_id,territory_id)

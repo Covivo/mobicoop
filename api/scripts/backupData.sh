@@ -7,10 +7,10 @@
 # Date and time
 DATE=$(date +"%Y%m%d%H%M%S")
 
-# Backup dir destination
+# Backup dir destination, replace by your destination directory
 BACKUP_DIR="/backup/instance"
 
-# Base api dir
+# Base api dir, replace by your instance directory
 BASE_DIR="/var/www/instance/mobicoop-platform/api/public/upload/"
 
 # Backup filename
