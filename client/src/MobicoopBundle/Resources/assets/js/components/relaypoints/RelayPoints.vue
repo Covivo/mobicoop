@@ -1,6 +1,21 @@
 <template>
   <v-container>
     <v-row
+      justify="left"
+    >
+      <v-col
+        cols="12"
+        lg="9"
+        md="10"
+        xl="6"
+        class="mt-6"
+      >
+        <h1 class="display-1 text-left font-weight-bold">
+          {{ $t('title') }}
+        </h1>
+      </v-col>
+    </v-row>
+    <v-row
       justify="center"
     >
       <v-col>
@@ -12,14 +27,34 @@
           :url-tiles="urlTiles"
           :attribution-copyright="attributionCopyright"
           :markers-draggable="false"
+          @clickOnPoint="tada"
         />
       </v-col>
     </v-row>
-    <search
-      :geo-search-url="geoSearchUrl"
-      :user="user"
-      :punctual-date-optional="punctualDateOptional"
-    />
+    <v-row
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        lg="9"
+        md="10"
+        xl="6"
+        class="mt-6"
+      >
+        <h3 class="headline text-justify font-weight-bold">
+          {{ $t('search') }}
+        </h3>
+      </v-col>
+    </v-row>
+    <v-row
+      justify="center"
+    >
+      <search
+        :geo-search-url="geoSearchUrl"
+        :user="user"
+        :punctual-date-optional="punctualDateOptional"
+      />
+    </v-row>
       
     <!--solidary-form-->
   </v-container>
@@ -28,14 +63,14 @@
 <script>
 import axios from "axios";
 import {merge} from "lodash";
-import Translations from "@translations/components/solidary/Solidary.js";
-import TranslationsClient from "@clientTranslations/components/solidary/Solidary.js";
+import Translations from "@translations/components/relayPoints/RelayPoints.json";
+import ClientTranslations from "@clientTranslations/components/relayPoints/RelayPoints.json";
 import Search from "@components/carpool/search/Search";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
 
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let TranslationsMerged = merge(Translations, ClientTranslations);
 export default {
   i18n: {
     messages: TranslationsMerged
@@ -87,7 +122,7 @@ export default {
   methods:{
     getRelayPoints() {
       axios
-        .post('/points-relais/getRelayPointList')
+        .post(this.$t("relayPointList"))
         .then(res => {
           this.relayPointsToMap = res.data;
           this.showRelayPoints();
@@ -139,6 +174,9 @@ export default {
     },
     searchMatchings(){
       console.error("searchMatchings");
+    },
+    tada(LatLng) {
+      console.error(LatLng);
     }
   }
 }

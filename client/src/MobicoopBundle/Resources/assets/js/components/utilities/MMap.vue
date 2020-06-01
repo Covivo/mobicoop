@@ -18,6 +18,7 @@
           :lat-lng="point.latLng"
           :draggable="markersDraggable"
           @update:latLng="updateLatLng"
+          @click="clickOnPoint"
         >
           <l-icon
             v-if="point.icon.url!==undefined"
@@ -163,6 +164,9 @@ export default {
     clickOnPolyline(data){
       // data contains a LatLng object.
       this.$emit("clickOnPolyline",data);
+    },
+    clickOnPoint(data){
+      this.$emit("clickOnPoint",data);
     }
   }
 };
