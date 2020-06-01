@@ -98,7 +98,7 @@
               </v-icon>
             </template>
             <span>
-              {{ infoMarginTime }}</span>
+              {{ infoMarginDuration }}</span>
           </v-tooltip>
         </v-col>
       </v-row>
@@ -211,7 +211,7 @@
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span> {{ infoMarginTime }}
+            <span> {{ infoMarginDuration }}
             </span>
           </v-tooltip>
         </v-col>
@@ -355,7 +355,7 @@
                       mdi-help-circle-outline
                     </v-icon>
                   </template>
-                  <span>{{ infoMarginTime }}
+                  <span>{{ infoMarginDuration }}
                   </span>
                 </v-tooltip>
               </v-col>
@@ -421,7 +421,7 @@
                       mdi-help-circle-outline
                     </v-icon>
                   </template>
-                  <span>{{ infoMarginTime }}
+                  <span>{{ infoMarginDuration }}
                   </span>
                 </v-tooltip>
               </v-col>
@@ -514,7 +514,7 @@ export default {
       type: String,
       default: null
     },
-    defaultMarginTime: {
+    defaultMarginDuration: {
       type: Number,
       default: null
     },
@@ -538,7 +538,7 @@ export default {
       menuReturnDate: false,
       menuReturnTime: false,
       returnTrip: !!(this.initReturnDate && this.initReturnTime),
-      marginTime: this.defaultMarginTime,
+      marginDuration: this.defaultMarginDuration,
       locale: this.$i18n.locale,
       arrayDay : ['mon','tue','wed','thu','fri','sat','sun'],
       schedules: [],
@@ -564,8 +564,8 @@ export default {
         return schedule.visible;
       });
     },
-    infoMarginTime() {
-      return this.$t("marginTooltip",{margin: this.marginTime/60})
+    infoMarginDuration() {
+      return this.$t("marginTooltip",{margin: this.marginDuration/60})
     },
     checkIfCurrentScheduleOk(){
       for (var s in this.activeSchedules){

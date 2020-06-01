@@ -596,6 +596,8 @@ class SolidaryManager
 
             $ad->setSchedule($schedule);
         }
+        // we set the margin time of the demand
+        $ad->setMarginDuration($solidary->getMarginDuration() ? $solidary->getMarginDuration() : null);
 
         // If the destination is not specified we use the origin
         if ($destination == null) {

@@ -13,7 +13,7 @@ twig:
         ageMin: '%env(USER_MIN_AGE)%'
         ageMax: '%env(USER_MAX_AGE)%'
         priceKm: '%env(CARPOOL_PRICE)%'
-        marginTime: '%env(CARPOOL_MARGIN_TIME)%'
+        marginDuration: '%env(CARPOOL_MARGIN_DURATION)%'
         searchRegular: '%env(bool:CARPOOL_SEARCH_REGULAR)%'
         searchPunctualDate: '%env(bool:CARPOOL_PUNCTUAL_DATE_OPTIONAL)%'
         adRegular: '%env(bool:CARPOOL_AD_REGULAR)%'
