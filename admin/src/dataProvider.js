@@ -10,7 +10,6 @@ const currentUser = global.localStorage.getItem('id');
 const userRoles = [
   '/auth_items/1',
   '/auth_items/2',
-  '/auth_items/3',
   '/auth_items/4',
   '/auth_items/5',
   '/auth_items/6',
