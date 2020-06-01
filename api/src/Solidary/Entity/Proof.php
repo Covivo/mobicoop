@@ -142,7 +142,6 @@ class Proof
     /**
      * @var File|null
      * @Vich\UploadableField(mapping="proof", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType")
-     * @Groups({"readProof","writeProof"})
      */
     private $file;
 
@@ -155,6 +154,12 @@ class Proof
      * @MaxDepth(1)
      */
     private $solidaryUserStructure;
+
+    /**
+     * @var int Solidary id of this proof
+     * @Groups({"writeProof"})
+     */
+    private $solidaryId;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -314,6 +319,18 @@ class Proof
     public function preventSerialization()
     {
         $this->setFile(null);
+    }
+
+    public function getSolidaryId(): ?int
+    {
+        return $this->solidaryId;
+    }
+    
+    public function setSolidaryId(int $solidaryId): self
+    {
+        $this->solidaryId = $solidaryId;
+        
+        return $this;
     }
 
     // DOCTRINE EVENTS
