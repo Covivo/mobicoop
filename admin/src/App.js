@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Login, Resource } from 'react-admin';
 import { HydraAdmin, ResourceGuesser } from '@api-platform/admin';
 import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/parseHydraDocumentation';
@@ -114,7 +114,7 @@ export default () => (
         ),
         // These resources were commented on during my refacto, why ?
         // @TODO: Talk between us about that
-        // <Resource name="addresses" {...AddressResource} />,
+        <Resource name="addresses" />,
         // <Resource name="images" />,
         // <Resource name="territories" {...TerritoryResource} />,
       ].filter((x) => x)
