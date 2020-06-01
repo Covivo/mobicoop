@@ -99,7 +99,7 @@ class Subject
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="subjects")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      * @MaxDepth(1)
      */
     private $structure;
@@ -124,7 +124,7 @@ class Subject
      * @var ArrayCollection|null The solidary records for this subject.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="subject", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      */
     private $solidaries;
 
@@ -132,7 +132,7 @@ class Subject
      * @var ArrayCollection|null The Proposals linked to this subject
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="subject")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      */
     private $proposals;
 
