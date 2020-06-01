@@ -490,6 +490,13 @@ class Ad
      */
     private $cancellationMessage;
 
+    /**
+     * @var int|null The margin of the ad
+     *
+     * @Groups({"read","write"})
+     */
+    private $marginTime;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -1111,6 +1118,18 @@ class Ad
     public function setCancellationMessage(?string $cancellationMessage): Ad
     {
         $this->cancellationMessage = $cancellationMessage;
+        return $this;
+    }
+
+    public function getMarginTime(): ?int
+    {
+        return $this->marginTime;
+    }
+
+    public function setMarginTime(?int $marginTime): self
+    {
+        $this->marginTime = $marginTime;
+
         return $this;
     }
 }

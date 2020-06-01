@@ -240,13 +240,13 @@ class AdManager
         $outwardCriteria->setBackSeats($ad->hasBackSeats());
 
         // dates and times
-
+        $marginTime = $ad->getMarginTime() ? $ad->getMarginTime() : null;
         // if the date is not set we use the current date
         $outwardCriteria->setFromDate($ad->getOutwardDate() ? $ad->getOutwardDate() : new \DateTime());
         if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
             $outwardCriteria->setToDate($ad->getOutwardLimitDate() ? $ad->getOutwardLimitDate() : null);
-            $outwardCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $outwardCriteria, 'outwardTime');
+            $outwardCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $outwardCriteria, 'outwardTime', $marginTime);
             $hasSchedule = $outwardCriteria->isMonCheck() || $outwardCriteria->isTueCheck()
                 || $outwardCriteria->isWedCheck() || $outwardCriteria->isFriCheck() || $outwardCriteria->isThuCheck()
                 || $outwardCriteria->isSatCheck() || $outwardCriteria->isSunCheck();
@@ -275,7 +275,7 @@ class AdManager
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
             // if the time is not set we use the current time for an ad post, and null for a search
             $outwardCriteria->setFromTime($ad->getOutwardTime() ? \DateTime::createFromFormat('H:i', $ad->getOutwardTime()) : (!$ad->isSearch() ? new \DateTime() : null));
-            $outwardCriteria->setMarginDuration($this->params['defaultMarginTime']);
+            $outwardCriteria->setMarginDuration($marginTime ? $marginTime : $this->params['defaultMarginTime']);
         }
 
         // waypoints
@@ -341,7 +341,7 @@ class AdManager
             if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
                 $returnCriteria->setToDate($ad->getReturnLimitDate() ? $ad->getReturnLimitDate() : null);
-                $returnCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $returnCriteria, 'returnTime');
+                $returnCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $returnCriteria, 'returnTime', $marginTime);
                 $hasSchedule = $returnCriteria->isMonCheck() || $returnCriteria->isTueCheck()
                     || $returnCriteria->isWedCheck() || $returnCriteria->isFriCheck() || $returnCriteria->isThuCheck()
                     || $returnCriteria->isSatCheck() || $returnCriteria->isSunCheck();
@@ -370,7 +370,7 @@ class AdManager
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
                 // if no return time is specified, we use the outward time to be sure the return date is not before the outward date, and null for a search
                 $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : (!$ad->isSearch() ? $outwardCriteria->getFromTime() : null));
-                $returnCriteria->setMarginDuration($this->params['defaultMarginTime']);
+                $returnCriteria->setMarginDuration($marginTime ? $marginTime : $this->params['defaultMarginTime']);
             }
 
             // waypoints
@@ -518,44 +518,44 @@ class AdManager
      * @param string $key - outwardTime or returnTime
      * @return Criteria
      */
-    public function createTimesFromSchedule($schedules, Criteria $criteria, string $key)
+    public function createTimesFromSchedule($schedules, Criteria $criteria, string $key, $marginTime = null)
     {
         foreach ($schedules as $schedule) {
             if ($schedule[$key] != '') {
                 if (isset($schedule['mon']) && $schedule['mon']) {
                     $criteria->setMonCheck(true);
                     $criteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setMonMarginDuration($this->params['defaultMarginTime']);
+                    $criteria->setMonMarginDuration($marginTime ? $marginTime : $this->params['defaultMarginTime']);
                 }
                 if (isset($schedule['tue']) && $schedule['tue']) {
                     $criteria->setTueCheck(true);
                     $criteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setTueMarginDuration($this->params['defaultMarginTime']);
+                    $criteria->setTueMarginDuration($marginTime ? $marginTime : $this->params['defaultMarginTime']);
                 }
                 if (isset($schedule['wed']) && $schedule['wed']) {
                     $criteria->setWedCheck(true);
                     $criteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setWedMarginDuration($this->params['defaultMarginTime']);
+                    $criteria->setWedMarginDuration($marginTime ? $marginTime : $this->params['defaultMarginTime']);
                 }
                 if (isset($schedule['thu']) && $schedule['thu']) {
                     $criteria->setThuCheck(true);
                     $criteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setThuMarginDuration($this->params['defaultMarginTime']);
+                    $criteria->setThuMarginDuration($marginTime ? $marginTime : $this->params['defaultMarginTime']);
                 }
                 if (isset($schedule['fri']) && $schedule['fri']) {
                     $criteria->setFriCheck(true);
                     $criteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setFriMarginDuration($this->params['defaultMarginTime']);
+                    $criteria->setFriMarginDuration($marginTime ? $marginTime : $this->params['defaultMarginTime']);
                 }
                 if (isset($schedule['sat']) && $schedule['sat']) {
                     $criteria->setSatCheck(true);
                     $criteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setSatMarginDuration($this->params['defaultMarginTime']);
+                    $criteria->setSatMarginDuration($marginTime ? $marginTime : $this->params['defaultMarginTime']);
                 }
                 if (isset($schedule['sun']) && $schedule['sun']) {
                     $criteria->setSunCheck(true);
                     $criteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setSunMarginDuration($this->params['defaultMarginTime']);
+                    $criteria->setSunMarginDuration($marginTime ? $marginTime : $this->params['defaultMarginTime']);
                 }
             }
         }
