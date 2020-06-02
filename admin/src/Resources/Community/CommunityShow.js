@@ -44,7 +44,6 @@ const UserBulkActionButtons = (props) => (
     {isAuthorized('mass_create') && <EmailComposeButton label="Email" {...props} />}
     {/* default bulk delete action */}
     <ResetButton label="Reset email" {...props} />
-    <BulkDeleteButton {...props} />
   </>
 );
 
