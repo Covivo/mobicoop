@@ -25,10 +25,7 @@ import ResetButton from '../../components/button/ResetButton';
 import isAuthorized from '../../auth/permissions';
 
 import TerritoryInput from '../../components/geolocation/TerritoryInput';
-<<<<<<< HEAD
 import { useHistory } from 'react-router-dom';
-=======
->>>>>>> 34c274c72... filter territory autocomplete on list user
 
 const UserList = (props) => {
   const translate = useTranslate();
@@ -78,14 +75,9 @@ const UserList = (props) => {
       </TableRow>
     );
   };
-<<<<<<< HEAD
-  const addTerritoryHistory = (e) => {
-    console.info(router);
-=======
 
   const addTerritoryHistory = (e) => {
->>>>>>> 34c274c72... filter territory autocomplete on list user
-    return null;
+    console.info(router);
   };
 
   const MyDatagridBody = (props) => <DatagridBody {...props} row={<MyDatagridRow />} />;
