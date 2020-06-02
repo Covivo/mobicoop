@@ -25,10 +25,12 @@ import ResetButton from '../../components/button/ResetButton';
 import isAuthorized from '../../auth/permissions';
 
 import TerritoryInput from '../../components/geolocation/TerritoryInput';
+import { useHistory } from 'react-router-dom';
 
 const UserList = (props) => {
   const translate = useTranslate();
   const [count, setCount] = useState(0);
+  const router = useHistory();
 
   const BooleanStatusField = ({ record = {}, source }) => {
     const theRecord = { ...record };
@@ -73,8 +75,8 @@ const UserList = (props) => {
       </TableRow>
     );
   };
-
   const addTerritoryHistory = (e) => {
+    console.info(router);
     return null;
   };
 
@@ -126,8 +128,7 @@ const UserList = (props) => {
       >
         <SelectInput optionText="name" optionValue="id" />
       </ReferenceInput>
-
-      <TerritoryInput alwaysOn setTerritory={addTerritoryHistory} />
+      {/* <TerritoryInput alwaysOn setTerritory={addTerritoryHistory} /> */}
     </Filter>
   );
 
