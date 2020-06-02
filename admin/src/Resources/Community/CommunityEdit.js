@@ -19,6 +19,7 @@ import {
   DeleteButton,
   useTranslate,
   useRedirect,
+  List,
 } from 'react-admin';
 
 import RichTextInput from 'ra-input-rich-text';
@@ -162,11 +163,12 @@ export const CommunityEdit = (props) => {
         </FormTab>
         <FormTab label={translate('custom.label.community.members')}>
           {!communityManager && <AddNewMemberButton />}
+
           <ReferenceArrayField
             fullWidth
             source="communityUsers"
             reference="community_users"
-            label="Tags"
+            addLabel={false}
           >
             <Datagrid>
               <UserReferenceField
