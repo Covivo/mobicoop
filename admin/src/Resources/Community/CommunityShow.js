@@ -37,13 +37,12 @@ import { addressRenderer } from '../../utils/renderers';
 import { validationChoices, statusChoices } from './communityChoices';
 import isAuthorized from '../../auth/permissions';
 import EmailComposeButton from '../../components/email/EmailComposeButton';
-import ResetButton from '../../components/button/ResetButton';
 
 const UserBulkActionButtons = (props) => (
   <>
     {isAuthorized('mass_create') && <EmailComposeButton label="Email" {...props} />}
     {/* default bulk delete action */}
-    <ResetButton label="Reset email" {...props} />
+    <BulkDeleteButton {...props} />
   </>
 );
 
