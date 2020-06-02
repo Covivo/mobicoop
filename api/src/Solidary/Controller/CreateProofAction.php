@@ -23,26 +23,33 @@
 
 namespace App\Solidary\Controller;
 
+use App\Service\FileManager;
 use App\Solidary\Entity\Proof;
+use App\Solidary\Exception\SolidaryException;
+use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\SolidaryUserStructureRepository;
 use App\Solidary\Repository\StructureProofRepository;
 use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\Request;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class CreateProofAction
 {
     use TranslatorTrait;
     private $structureProofRepository;
     private $solidaryUserStructureRepository;
-    private $logger;
+    private $solidaryRepository;
+    private $fileManager;
     
-    public function __construct(StructureProofRepository $structureProofRepository, SolidaryUserStructureRepository $solidaryUserStructureRepository, LoggerInterface $logger)
-    {
+    public function __construct(
+        StructureProofRepository $structureProofRepository,
+        SolidaryUserStructureRepository $solidaryUserStructureRepository,
+        SolidaryRepository $solidaryRepository,
+        FileManager $fileManager
+    ) {
         $this->structureProofRepository = $structureProofRepository;
         $this->solidaryUserStructureRepository = $solidaryUserStructureRepository;
-        $this->logger = $logger;
+        $this->solidaryRepository = $solidaryRepository;
+        $this->fileManager = $fileManager;
     }
     
     public function __invoke(Request $request): Proof
@@ -53,12 +60,51 @@ final class CreateProofAction
 
         $proof = new Proof();
 
-        $proof->setFile($request->files->get('file'));
+        $file = $request->files->get('file');
+        if (empty($request->files->get('file'))) {
+            throw new SolidaryException(SolidaryException::NO_FILE);
+        }
 
-        //echo $request->request->get('structureProof');die;
-        $proof->setStructureProof($this->structureProofRepository->find(1));
-        $proof->setSolidaryUserStructure($this->solidaryUserStructureRepository->find(1));
-        $proof->setFileName($request->request->get('fileName'));
+        if (empty($request->request->get('solidary'))) {
+            throw new SolidaryException(SolidaryException::NO_SOLIDARY_ID);
+        }
+        $solidaryId = $request->request->get('solidary');
+        if (strrpos($solidaryId, '/')) {
+            $solidaryId = substr($solidaryId, strrpos($solidaryId, '/') + 1);
+        }
+        $solidary = $this->solidaryRepository->find($solidaryId);
+        if (is_null($solidary)) {
+            throw new SolidaryException(SolidaryException::SOLIDARY_NOT_FOUND);
+        }
+
+        if (empty($request->request->get('structureProof'))) {
+            throw new SolidaryException(SolidaryException::NO_STRUCTURE_PROOF);
+        }
+        $structureProofId = $request->request->get('structureProof');
+        if (strrpos($structureProofId, '/')) {
+            $structureProofId = substr($structureProofId, strrpos($structureProofId, '/') + 1);
+        }
+        $structureProof = $this->structureProofRepository->find($structureProofId);
+        if (is_null($structureProof)) {
+            throw new SolidaryException(SolidaryException::STRUCTURE_PROOF_NOT_FOUND);
+        }
+        if (!$structureProof->isFile()) {
+            throw new SolidaryException(SolidaryException::STRUCTURE_PROOF_NOT_FILE);
+        }
+
+        // We check if there is already a similar proof
+      
+        $proof->setFile($file);
+
+        $proof->setStructureProof($structureProof);
+        $proof->setSolidaryUserStructure($solidary->getSolidaryUserStructure());
+        
+        if (!empty($request->request->get('fileName'))) {
+            $fileName = $this->fileManager->sanitize($request->request->get('fileName'));
+        } else {
+            $fileName = time();
+        }
+        $proof->setFileName($solidary->getId()."-".$fileName);
         
 
         return $proof;

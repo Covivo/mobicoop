@@ -79,4 +79,13 @@ class SolidaryException extends \LogicException
     // SolidaryVolunteerPlanning
     const NO_SOLIDARY_VOLUNTEER_ID = "No SolidaryVolunteerId found";
     const SOLIDARY_VOLUNTEER_ID_INVALID = "Invalid SolidaryVolunteerId";
+
+    // Proof
+    const NO_SOLIDARY_ID = "Missing Solidary";
+    const SOLIDARY_NOT_FOUND = "Solidary not found";
+    const NO_FILE = "Missing file";
+    const NO_STRUCTURE_PROOF = "Missing StructureProof";
+    const STRUCTURE_PROOF_NOT_FOUND = "StructureProof not found";
+    const STRUCTURE_PROOF_NOT_FILE = "This structure_proof is not file type";
+    const PROOF_ALREADY_EXISTS = "A proof of this StructureProof type for this Solidary already exists";
 }
