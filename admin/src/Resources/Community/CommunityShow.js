@@ -18,6 +18,8 @@ import {
   ReferenceField,
   FunctionField,
   useTranslate,
+  BulkDeleteButton,
+  List,
 } from 'react-admin';
 
 import {
@@ -33,6 +35,16 @@ import {
 import UserReferenceField from '../User/UserReferenceField';
 import { addressRenderer } from '../../utils/renderers';
 import { validationChoices, statusChoices } from './communityChoices';
+import isAuthorized from '../../auth/permissions';
+import EmailComposeButton from '../../components/email/EmailComposeButton';
+
+const UserBulkActionButtons = (props) => (
+  <>
+    {isAuthorized('mass_create') && <EmailComposeButton label="Email" {...props} />}
+    {/* default bulk delete action */}
+    <BulkDeleteButton {...props} />
+  </>
+);
 
 const Aside = ({ record }) => {
   const translate = useTranslate();
@@ -152,32 +164,45 @@ export const CommunityShow = (props) => {
         </Tab>
         <Tab label={translate('custom.label.community.membersModerator')}>
           <ReferenceArrayField source="communityUsers" reference="community_users" addLabel={false}>
-            <Datagrid>
-              <UserReferenceField
-                label={translate('custom.label.community.member')}
-                source="user"
-                reference="users"
-              />
-              <SelectField
-                source="status"
-                label={translate('custom.label.community.status')}
-                choices={statusChoices}
-              />
-              <DateField source="createdDate" label={translate('custom.label.community.joinAt')} />
-              <DateField
-                source="acceptedDate"
-                label={translate('custom.label.community.acceptedAt')}
-              />
-              <DateField
-                source="refusedDate"
-                label={translate('custom.label.community.refusedAt')}
-              />
-              {/*
+            <List
+              {...props}
+              perPage={25}
+              bulkActionButtons={<UserBulkActionButtons />}
+              actions={null}
+              sort={{ field: 'id', order: 'ASC' }}
+              title=": composition"
+              filter={{ is_published: true }}
+            >
+              <Datagrid>
+                <UserReferenceField
+                  label={translate('custom.label.community.member')}
+                  source="user"
+                  reference="users"
+                />
+                <SelectField
+                  source="status"
+                  label={translate('custom.label.community.status')}
+                  choices={statusChoices}
+                />
+                <DateField
+                  source="createdDate"
+                  label={translate('custom.label.community.joinAt')}
+                />
+                <DateField
+                  source="acceptedDate"
+                  label={translate('custom.label.community.acceptedAt')}
+                />
+                <DateField
+                  source="refusedDate"
+                  label={translate('custom.label.community.refusedAt')}
+                />
+                {/*
                             Edit and Delete button should be in an Community Edit view
                             <EditButton />
                             <DeleteButton />
                             */}
-            </Datagrid>
+              </Datagrid>
+            </List>
           </ReferenceArrayField>
           {/*  <AddNewMemberButton /> should be in an Community Edit view */}
         </Tab>
