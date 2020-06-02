@@ -37,11 +37,13 @@ import { addressRenderer } from '../../utils/renderers';
 import { validationChoices, statusChoices } from './communityChoices';
 import isAuthorized from '../../auth/permissions';
 import EmailComposeButton from '../../components/email/EmailComposeButton';
+import ResetButton from '../../components/button/ResetButton';
 
 const UserBulkActionButtons = (props) => (
   <>
     {isAuthorized('mass_create') && <EmailComposeButton label="Email" {...props} />}
     {/* default bulk delete action */}
+    <ResetButton label="Reset email" {...props} />
     <BulkDeleteButton {...props} />
   </>
 );
@@ -133,6 +135,7 @@ const CommunityTitle = ({ record }) => {
 
 export const CommunityShow = (props) => {
   const translate = useTranslate();
+  const communityId = props.id;
   return (
     <Show {...props} title={<CommunityTitle />} aside={<Aside />}>
       <TabbedShowLayout>
@@ -159,7 +162,7 @@ export const CommunityShow = (props) => {
           />
           <FunctionField
             label={translate('custom.label.community.numberMember')}
-            render={(record) => console.info(record)}
+            render={(record) => `${record.communityUsers ? record.communityUsers.length : 0}`}
           />
         </Tab>
         <Tab label={translate('custom.label.community.membersModerator')}>
@@ -170,8 +173,7 @@ export const CommunityShow = (props) => {
               bulkActionButtons={<UserBulkActionButtons />}
               actions={null}
               sort={{ field: 'id', order: 'ASC' }}
-              title=": composition"
-              filter={{ is_published: true }}
+              filter={{ is_published: true, community: communityId }}
             >
               <Datagrid>
                 <UserReferenceField
