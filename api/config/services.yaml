@@ -459,6 +459,10 @@ services:
                 avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'
 
     # Solidary
+    App\Solidary\Controller\:
+        resource: '../src/Solidary/Controller'
+        tags: ['controller.service_arguments']
+
     App\Solidary\Service\SolidaryMatcher:
         arguments:
             $params:
