@@ -25,7 +25,6 @@ namespace App\Solidary\Repository;
 use App\Action\Entity\Diary;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryUser;
-use App\Solidary\Entity\StructureProof;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
