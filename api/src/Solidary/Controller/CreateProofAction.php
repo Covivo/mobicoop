@@ -60,10 +60,6 @@ final class CreateProofAction
 
         $proof = new Proof();
 
-        $file = $request->files->get('file');
-        if (empty($request->files->get('file'))) {
-            throw new SolidaryException(SolidaryException::NO_FILE);
-        }
 
         if (empty($request->request->get('solidary'))) {
             throw new SolidaryException(SolidaryException::NO_SOLIDARY_ID);
@@ -88,24 +84,32 @@ final class CreateProofAction
         if (is_null($structureProof)) {
             throw new SolidaryException(SolidaryException::STRUCTURE_PROOF_NOT_FOUND);
         }
-        if (!$structureProof->isFile()) {
-            throw new SolidaryException(SolidaryException::STRUCTURE_PROOF_NOT_FILE);
+        if ($structureProof->isFile() && empty($request->files->get('file'))) {
+            throw new SolidaryException(SolidaryException::NO_FILE);
         }
 
-        // We check if there is already a similar proof
-      
-        $proof->setFile($file);
+        // If there is a file, we need to do a special treatment
+        $file = $request->files->get('file');
 
+
+        if (!empty($request->files->get('file'))) {
+            if(!$structureProof->isFile()){
+                throw new SolidaryException(SolidaryException::STRUCTURE_PROOF_NOT_FILE);
+            }
+            $proof->setFile($file);
+
+            if (!empty($request->request->get('fileName'))) {
+                $fileName = $this->fileManager->sanitize($request->request->get('fileName'));
+            } else {
+                $fileName = time();
+            }
+            $proof->setFileName($solidary->getId()."-".$fileName);
+        }
+  
+
+        $proof->setValue($request->request->get('value'));
         $proof->setStructureProof($structureProof);
         $proof->setSolidaryUserStructure($solidary->getSolidaryUserStructure());
-        
-        if (!empty($request->request->get('fileName'))) {
-            $fileName = $this->fileManager->sanitize($request->request->get('fileName'));
-        } else {
-            $fileName = time();
-        }
-        $proof->setFileName($solidary->getId()."-".$fileName);
-        
 
         return $proof;
     }
