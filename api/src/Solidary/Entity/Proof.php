@@ -156,12 +156,6 @@ class Proof
      */
     private $solidaryUserStructure;
 
-    // /**
-    //  * @var int Solidary id of this proof
-    //  * @Groups({"writeProof"})
-    //  */
-    // private $solidaryId;
-
     /**
      * @var \DateTimeInterface Creation date.
      *
@@ -321,18 +315,6 @@ class Proof
     {
         $this->setFile(null);
     }
-
-    // public function getSolidaryId(): ?int
-    // {
-    //     return $this->solidaryId;
-    // }
-    
-    // public function setSolidaryId(int $solidaryId): self
-    // {
-    //     $this->solidaryId = $solidaryId;
-        
-    //     return $this;
-    // }
 
     // DOCTRINE EVENTS
     
