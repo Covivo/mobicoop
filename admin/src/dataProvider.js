@@ -140,9 +140,7 @@ export default dataProviderAdapter({
       ).then(
         // We fill the array rolesTerritory with good format for admin
         (dataThen) => {
-          dataThen.forEach((element) => {
-            if (userRoles.includes(element.authItem)) data.rolesTerritory = dataThen;
-          });
+          data.rolesTerritory = dataThen.filter((element) => userRoles.includes(element.authItem));
           return { data };
         }
       )
