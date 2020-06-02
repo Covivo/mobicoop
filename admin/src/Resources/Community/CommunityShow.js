@@ -180,6 +180,7 @@ export const CommunityShow = (props) => {
                   label={translate('custom.label.community.member')}
                   source="user"
                   reference="users"
+                  sortBy="user.givenName"
                 />
                 <SelectField
                   source="status"
