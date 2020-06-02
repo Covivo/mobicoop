@@ -954,6 +954,12 @@ class DynamicManager
         $carpoolProof = $this->proofManager->createProof($ask, $dynamicProof->getLongitude(), $dynamicProof->getLatitude(), $this->params['proofType'], $dynamicProof->getUser(), $ask->getUserRelated(), $ask->getUser());
 
         $dynamicProof->setId($carpoolProof->getId());
+        $dynamicProof->setStatus(
+            ($carpoolProof->getPickUpPassengerDate() ? '1' : '0') .
+            ($carpoolProof->getPickUpDriverDate() ? '1' : '0') .
+            ($carpoolProof->getDropOffPassengerDate() ? '1' : '0') .
+            ($carpoolProof->getDropOffDriverDate() ? '1' : '0')
+        );
 
         return $dynamicProof;
     }
@@ -975,6 +981,12 @@ class DynamicManager
         try {
             $carpoolProof = $this->proofManager->updateProof($id, $dynamicProofData->getLongitude(), $dynamicProofData->getLatitude(), $dynamicProofData->getUser(), $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser(), $this->params['dynamicProofDistance']);
             $dynamicProofData->setId($carpoolProof->getId());
+            $dynamicProofData->setStatus(
+                ($carpoolProof->getPickUpPassengerDate() ? '1' : '0') .
+                ($carpoolProof->getPickUpDriverDate() ? '1' : '0') .
+                ($carpoolProof->getDropOffPassengerDate() ? '1' : '0') .
+                ($carpoolProof->getDropOffDriverDate() ? '1' : '0')
+            );
         } catch (ProofException $proofException) {
             throw new DynamicException($proofException->getMessage());
         }

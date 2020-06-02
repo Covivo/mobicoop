@@ -183,9 +183,13 @@ class ProposalRepository
         // // exclude paused proposals
         // $query->andWhere('(p.paused IS NULL or p.paused = 0)');
 
-        // DYNAMIC ADS : only drivers, for validity check (dynamic passengers can match with any driver, not only dynamic)
+        // DYNAMIC ADS
         if ($proposal->getCriteria()->isDriver() && $proposal->isDynamic() && $proposal->isActive() && !$proposal->isFinished()) {
+            // for dynamic drivers, validity check of dynamic passengers
             $query->andWhere('p.dynamic = 1 AND p.active=1 AND p.finished=0');
+        } elseif ($proposal->getCriteria()->isPassenger() && $proposal->isDynamic() && $proposal->isActive() && !$proposal->isFinished()) {
+            // for dynamic passengers, match with any driver (not only dynamic) or valid dynamic drivers
+            $query->andWhere('((p.dynamic = 0) OR (p.dynamic = 1 AND p.active=1 AND p.finished=0))');
         }
 
         // SOLIDARY
