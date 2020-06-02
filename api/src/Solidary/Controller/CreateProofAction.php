@@ -93,7 +93,7 @@ final class CreateProofAction
 
 
         if (!empty($request->files->get('file'))) {
-            if(!$structureProof->isFile()){
+            if (!$structureProof->isFile()) {
                 throw new SolidaryException(SolidaryException::STRUCTURE_PROOF_NOT_FILE);
             }
             $proof->setFile($file);
