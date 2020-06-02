@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row
-      justify="left"
+      justify="start"
     >
       <v-col
         cols="12"
@@ -15,9 +15,7 @@
         </h1>
       </v-col>
     </v-row>
-    <v-row
-      justify="center"
-    >
+    <v-row>
       <v-col>
         <m-map
           ref="mmap"
@@ -28,8 +26,8 @@
           :attribution-copyright="attributionCopyright"
           :markers-draggable="false"
           :relay-points="true"
-          @SelectedAsDestination="tada"
-          @SelectedAsOrigin="tidi"
+          @SelectedAsDestination="selectedAsDestination"
+          @SelectedAsOrigin="selectedAsOrigin"
         />
       </v-col>
     </v-row>
@@ -171,11 +169,11 @@ export default {
     searchMatchings(){
       console.error("searchMatchings");
     },
-    tada(destination) {
+    selectedAsDestination(destination) {
       console.error(destination);
       this.selectedDestination = destination;
     },
-    tidi(origin) {
+    selectedAsOrigin(origin) {
       console.error(origin);
       this.selectedOrigin = origin;
     }
