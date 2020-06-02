@@ -140,16 +140,17 @@ export default {
       // add the community address to display on the map
       if (this.relayPointsToMap.length > 0) {
         this.relayPointsToMap.forEach(relayPoint => {
-          this.pointsToMap.push(this.buildPoint(relayPoint.lat,relayPoint.lon,relayPoint.name));
+          this.pointsToMap.push(this.buildPoint(relayPoint.address.latitude,relayPoint.address.longitude,relayPoint.name,"",[],[],"",relayPoint.address));
         });
       }
       this.$refs.mmap.redrawMap();
     },
-    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[],popupDesc=""){
+    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[],popupDesc="",address){
       let point = {
         title:title,
         latLng:L.latLng(lat, lng),
         icon: {},
+        address:address
       };
 
       if(pictoUrl!==""){
@@ -170,14 +171,12 @@ export default {
     searchMatchings(){
       console.error("searchMatchings");
     },
-    tada(data) {
-      console.error('destination');
-      console.error(data.address);
+    tada(destination) {
+      console.error(destination);
       this.selectedDestination = destination;
     },
-    tidi(LatLng) {
-      console.error("origine"); 
-      console.error(LatLng.address);
+    tidi(origin) {
+      console.error(origin);
       this.selectedOrigin = origin;
     }
   }

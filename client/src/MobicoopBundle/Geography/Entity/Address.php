@@ -507,7 +507,7 @@ class Address implements ResourceInterface, \JsonSerializable
              'icon'                 => $this->getIcon(),
              'venue'                => $this->getVenue(),
              'event'                => $this->getEvent(),
-             'relayPoint'           => $this->getRelayPoint()
+            //  'relayPoint'           => $this->getRelayPoint()
          ];
     }
 }

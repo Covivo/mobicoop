@@ -18,7 +18,7 @@
           :lat-lng="point.latLng"
           :draggable="markersDraggable"
           @update:latLng="updateLatLng"
-          @click="clickOnPoint"
+          @click="clickOnPoint(point.address)"
         >
           <l-icon
             v-if="point.icon.url!==undefined"
@@ -166,7 +166,8 @@ export default {
       attribution:this.attributionCopyright,
       markers:this.points,
       dialog: false,
-      point: null
+      point: null,
+      address: null
     };
   },
   computed: {
@@ -204,23 +205,25 @@ export default {
       // data contains a LatLng object.
       this.$emit("clickOnPolyline",data);
     },
-    clickOnPoint(data){
+    clickOnPoint(point){
       if (this.relayPoints) {
         this.dialog = true;
-        this.point = data;
+        this.address = point;
       }
-      
     },
     selectRelayPointAsOrigin() {
       if (this.relayPoints) {
-        this.$emit("SelectedAsOrigin",this.point);
-        this.point= null;
+        this.$emit("SelectedAsOrigin",this.address);
+        this.address= null;
+        this.dialog= false;
       }
     },
     selectRelayPointAsDestination() {
       if (this.relayPoints) {
-        this.$emit("SelectedAsDestination",this.point);
-        this.point= null;
+        this.$emit("SelectedAsDestination",this.address);
+        this.address= null;
+        this.dialog= false;
+
       }
     }
   }
