@@ -13,6 +13,7 @@
     "jwt-decode": "^2.2.0",
     "lodash.merge": "4.6.2",
     "lodash.pick": "4.4.0",
+    "material-ui-popup-state": "^1.5.4",
     "prop-types": "15.7.2",
     "query-string": "^6.12.1",
     "ra-i18n-polyglot": "3.5.2",
@@ -55,9 +56,6 @@
   },
   "eslintConfig": {
     "extends": "react-app"
-  },
-  "resolutions": {
-    "react-dev-utils": "10.2.1"
   },
   "browserslist": {
     "production": [

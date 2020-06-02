@@ -82,6 +82,7 @@ export default () => (
         // @TODO: Talk between us about that
         <Resource name="addresses" />,
         <Resource name="images" />,
+        <Resource name="needs" />,
         // <Resource name="territories" {...TerritoryResource} />,
       ].filter((x) => x);
     }}

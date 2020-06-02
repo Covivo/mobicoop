@@ -7,7 +7,7 @@ import {
   ReferenceInput,
   AutocompleteInput,
   useGetList,
-  useCreate, 
+  useCreate,
   useNotify,
 } from 'react-admin';
 import {
@@ -44,16 +44,15 @@ const useStyles = makeStyles({
 });
 
 const SaveSolidaryAsk = ({ handleSubmitWithRedirect, ...props }) => {
-
   const form = useForm();
 
   const handleClick = useCallback(() => {
-      // Alter proofs
-      console.log("Saving :", form.getState().values);
-      console.log("handleSubmitWithRedirect:", handleSubmitWithRedirect);
-      const proofs = form.getState().values.proofs;
-      form.change('proofs', proofs && Object.keys(proofs).map(k => ({id:k, value:proofs[k]})));
-      handleSubmitWithRedirect('list');
+    // Alter proofs
+    console.log('Saving :', form.getState().values);
+    console.log('handleSubmitWithRedirect:', handleSubmitWithRedirect);
+    const proofs = form.getState().values.proofs;
+    form.change('proofs', proofs && Object.keys(proofs).map((k) => ({ id: k, value: proofs[k] })));
+    handleSubmitWithRedirect('list');
   }, [form]);
 
   // override handleSubmitWithRedirect with custom logic
@@ -90,8 +89,7 @@ const SolidaryForm = (props) => {
 
         console.log('state :', formState);
         console.log('formProps :', formProps);
-        const handleSubmitWithRedirect = p => console.log("handleSubmitWithRedirect:", p)
-        // const handleSubmitWithRedirect = formProps.handleSubmitWithRedirect
+
         return (
           // here starts the custom form layout
           <form>
@@ -121,7 +119,12 @@ const SolidaryForm = (props) => {
                 flexGrow={1}
               >
                 <SolidaryQuestion question="Cherchez le demandeur s'il existe, ou passez directement à l'étape suivante.">
-                  <ReferenceInput label="Utilisateur" fullWidth source="user_id" reference="users">
+                  <ReferenceInput
+                    label="Utilisateur"
+                    fullWidth
+                    source="already_registered_user"
+                    reference="users"
+                  >
                     <AutocompleteInput
                       allowEmpty
                       optionText={(record) => `${record.givenName} ${record.familyName}`}
@@ -136,12 +139,11 @@ const SolidaryForm = (props) => {
                 flexGrow={1}
               >
                 <SolidaryQuestion question="Le demandeur est-il éligible ?">
-                    {proofs && proofs.length && proofsLoaded ? (
-                        proofs.map((p) => <SolidaryProofField key={p.id} proof={p} />)
-                      ) : (
-                        <LinearProgress />
-                      )
-                    }
+                  {proofs && proofs.length && proofsLoaded ? (
+                    proofs.map((p) => <SolidaryProofField key={p.id} proof={p} />)
+                  ) : (
+                    <LinearProgress />
+                  )}
                 </SolidaryQuestion>
               </Box>
               <Box
