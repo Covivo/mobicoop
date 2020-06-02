@@ -27,7 +27,9 @@
           :url-tiles="urlTiles"
           :attribution-copyright="attributionCopyright"
           :markers-draggable="false"
-          @clickOnPoint="tada"
+          :relay-points="true"
+          @SelectedAsDestination="tada"
+          @SelectedAsOrigin="tidi"
         />
       </v-col>
     </v-row>
@@ -50,6 +52,8 @@
       justify="center"
     >
       <search
+        :default-origin="selectedOrigin"
+        :default-destination="selectedDestination"
         :geo-search-url="geoSearchUrl"
         :user="user"
         :punctual-date-optional="punctualDateOptional"
@@ -113,7 +117,9 @@ export default {
       search: '',
       relayPointsToMap: null,
       pointsToMap:[],
-      directionWay:[]
+      directionWay:[],
+      selectedDestination: null,
+      selectedOrigin: null
     }
   },
   mounted() {
@@ -128,17 +134,6 @@ export default {
           this.showRelayPoints();
         });
         
-    },
-    publish() {
-      let lParams = {
-        origin: null,
-        destination: null,
-        regular: this.regular,
-        date: null,
-        time: null,
-        ...this.params
-      };
-      this.post(`${this.$t("buttons.publish.route")}`, lParams);
     },
     showRelayPoints () {
       this.pointsToMap.length = 0;
@@ -175,8 +170,15 @@ export default {
     searchMatchings(){
       console.error("searchMatchings");
     },
-    tada(LatLng) {
-      console.error(LatLng);
+    tada(data) {
+      console.error('destination');
+      console.error(data.address);
+      this.selectedDestination = destination;
+    },
+    tidi(LatLng) {
+      console.error("origine"); 
+      console.error(LatLng.address);
+      this.selectedOrigin = origin;
     }
   }
 }

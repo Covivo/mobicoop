@@ -120,7 +120,7 @@ class Address implements \JsonSerializable
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read", "readUser", "readEvent"})
+     * @Groups({"read", "readUser", "readEvent", "readRelayPoint"})
      * @ApiProperty(identifier=true)
      */
     private $id;
