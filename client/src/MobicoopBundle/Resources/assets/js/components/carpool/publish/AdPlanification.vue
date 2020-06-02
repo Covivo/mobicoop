@@ -63,6 +63,7 @@
           >
             <template v-slot:activator="{ on }">
               <v-text-field
+                id="outwardTime"
                 v-model="outwardTime"
                 :label="$t('outwardTime.label')"
                 prepend-icon=""
@@ -97,7 +98,7 @@
               </v-icon>
             </template>
             <span>
-              {{ infoMarginTime }}</span>
+              {{ infoMarginDuration }}</span>
           </v-tooltip>
         </v-col>
       </v-row>
@@ -210,7 +211,7 @@
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span> {{ infoMarginTime }}
+            <span> {{ infoMarginDuration }}
             </span>
           </v-tooltip>
         </v-col>
@@ -220,10 +221,10 @@
           <p class="error--text">
             {{ $t('errorReturnTime') }}
           </p>
-        </v-col>  
-      </v-row>  
+        </v-col>
+      </v-row>
     </v-form>
-    
+
     <!-- Regular -->
     <v-form v-else>
       <!-- we have a maximum of 7 different schedules, we iterate on them -->
@@ -316,6 +317,7 @@
                       prepend-icon=""
                       readonly
                       v-on="on"
+                      @blur="change"
                     >
                       <v-icon
                         slot="prepend"
@@ -324,8 +326,8 @@
                       </v-icon>
                     </v-text-field>
                   </template>
-                  <!-- 
-                    we can't use $refs with v-for : https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-Child-Component-Instances-amp-Child-Elements 
+                  <!--
+                    we can't use $refs with v-for : https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-Child-Component-Instances-amp-Child-Elements
                     because $refs are not reactive, we have to use a custom method closeOutwardTime() which will close the menu
                     -->
                   <v-time-picker
@@ -353,7 +355,7 @@
                       mdi-help-circle-outline
                     </v-icon>
                   </template>
-                  <span>{{ infoMarginTime }}
+                  <span>{{ infoMarginDuration }}
                   </span>
                 </v-tooltip>
               </v-col>
@@ -389,8 +391,8 @@
                       </v-icon>
                     </v-text-field>
                   </template>
-                  <!-- 
-                    we can't use $refs with v-for : https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-Child-Component-Instances-amp-Child-Elements 
+                  <!--
+                    we can't use $refs with v-for : https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-Child-Component-Instances-amp-Child-Elements
                     because $refs are not reactive, we have to use a custom method close() which will close the menu
                     -->
                   <v-time-picker
@@ -419,12 +421,12 @@
                       mdi-help-circle-outline
                     </v-icon>
                   </template>
-                  <span>{{ infoMarginTime }}
+                  <span>{{ infoMarginDuration }}
                   </span>
                 </v-tooltip>
               </v-col>
             </v-row>
-            
+
             <!-- Remove schedule -->
             <v-row
               align="center"
@@ -453,7 +455,7 @@
       <!-- Add schedule -->
       <v-row
         v-if="!schedules[6].visible"
-        align="center" 
+        align="center"
         justify="center"
         dense
       >
@@ -512,7 +514,7 @@ export default {
       type: String,
       default: null
     },
-    defaultMarginTime: {
+    defaultMarginDuration: {
       type: Number,
       default: null
     },
@@ -536,7 +538,7 @@ export default {
       menuReturnDate: false,
       menuReturnTime: false,
       returnTrip: !!(this.initReturnDate && this.initReturnTime),
-      marginTime: this.defaultMarginTime,
+      marginDuration: this.defaultMarginDuration,
       locale: this.$i18n.locale,
       arrayDay : ['mon','tue','wed','thu','fri','sat','sun'],
       schedules: [],
@@ -562,8 +564,8 @@ export default {
         return schedule.visible;
       });
     },
-    infoMarginTime() {
-      return this.$t("marginTooltip",{margin: this.marginTime/60})
+    infoMarginDuration() {
+      return this.$t("marginTooltip",{margin: this.marginDuration/60})
     },
     checkIfCurrentScheduleOk(){
       for (var s in this.activeSchedules){

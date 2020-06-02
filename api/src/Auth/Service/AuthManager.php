@@ -29,6 +29,7 @@ use App\Auth\Entity\Permission;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Interfaces\AuthRuleInterface;
 use App\User\Entity\User;
+use App\User\Service\UserManager;
 use App\Auth\Exception\AuthItemNotFoundException;
 use App\Auth\Repository\AuthItemRepository;
 use App\Auth\Repository\UserAuthAssignmentRepository;
@@ -47,6 +48,9 @@ class AuthManager
     private $tokenStorage;
 
     private $user;
+    private $userManager;
+  
+     
 
     /**
      * Constructor.
@@ -54,12 +58,14 @@ class AuthManager
     public function __construct(
         AuthItemRepository $authItemRepository,
         UserAuthAssignmentRepository $userAuthAssignmentRepository,
-        TokenStorageInterface $tokenStorage
+        TokenStorageInterface $tokenStorage,
+        UserManager $userManager
     ) {
         $this->authItemRepository = $authItemRepository;
         $this->userAuthAssignmentRepository = $userAuthAssignmentRepository;
         $this->tokenStorage = $tokenStorage;
         $this->user = null;
+        $this->userManager = $userManager;
     }
 
     /**
@@ -94,6 +100,16 @@ class AuthManager
 
         // we get the requester
         $requester = $this->tokenStorage->getToken()->getUser();
+
+        if (is_string($requester)) {
+            // the requester could contain only the id under certain circumstances (eg. refresh token), we check if the user was set by another way
+            if ($this->user instanceof User) {
+                $requester = $this->user;
+            } else {
+                // we should not authorize
+                return false;
+            }
+        }
 
         // check if the item is authorized for the requester
         return $this->isAssigned($requester, $item, $params);
@@ -318,5 +334,82 @@ class AuthManager
             }
             $this->getChildrenNames($child, $type, $childrenNames, $withId);
         }
+    }
+
+    /**
+     * Get roles granted for the current user for create others user
+     *
+     * @param User  $user       The current user
+     * @return AuthItem|null
+     */
+    public function getAuthItemsGrantedForCreation(User $user)
+    {
+        //All the roles of the current user, set true for get the AuthItem, not just the name
+        $rolesUser = $this->getAuthItems(2, true);
+        //Array we return, contain the roles current user can create
+        $rolesGranted = array();
+
+        foreach ($rolesUser as $role) {
+            $rolesGranted = $this->checkRolesGrantedForRole($role, $rolesGranted);
+        }
+        return $rolesGranted;
+    }
+
+    /**
+     * Check if the role can create others roles
+     *
+     * @param Array  $authItem           One of the roles of the current user
+     * @param Array  $rolesGranted       Array who contains all the roles current user can create
+     *
+     * @return Array $rolesGranted       Return the array of roles for recursive goal
+     */
+    private function checkRolesGrantedForRole(array $authItem, array $rolesGranted)
+    {
+        //Array where we associate the granted roles for the roles who can cretae user
+        $rolesGrantedForCreation =  [
+            AuthItem::ROLE_SUPER_ADMIN => [
+                AuthItem::ROLE_SUPER_ADMIN,
+                AuthItem::ROLE_ADMIN,
+                AuthItem::ROLE_USER_REGISTERED_FULL,
+                AuthItem::ROLE_USER_REGISTERED_MINIMAL,
+                AuthItem::ROLE_MASS_MATCH,
+                AuthItem::ROLE_COMMUNITY_MANAGER,
+                AuthItem::ROLE_COMMUNITY_MANAGER_PUBLIC,
+                AuthItem::ROLE_COMMUNITY_MANAGER_PRIVATE,
+                AuthItem::ROLE_SOLIDARY_MANAGER,
+                AuthItem::ROLE_SOLIDARY_VOLUNTEER,
+                AuthItem::ROLE_SOLIDARY_BENEFICIARY,
+                AuthItem::ROLE_COMMUNICATION_MANAGER,
+                AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE,
+                AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE
+            ],
+            AuthItem::ROLE_ADMIN => [
+                AuthItem::ROLE_ADMIN,
+                AuthItem::ROLE_USER_REGISTERED_FULL,
+                AuthItem::ROLE_USER_REGISTERED_MINIMAL,
+                AuthItem::ROLE_COMMUNITY_MANAGER,
+                AuthItem::ROLE_COMMUNITY_MANAGER_PUBLIC,
+                AuthItem::ROLE_COMMUNITY_MANAGER_PRIVATE,
+                AuthItem::ROLE_SOLIDARY_MANAGER,
+                AuthItem::ROLE_SOLIDARY_VOLUNTEER,
+                AuthItem::ROLE_SOLIDARY_BENEFICIARY,
+                AuthItem::ROLE_COMMUNICATION_MANAGER,
+                AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE,
+                AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE
+            ],
+            AuthItem::ROLE_SOLIDARY_MANAGER => [
+                AuthItem::ROLE_USER_REGISTERED_FULL,
+                AuthItem::ROLE_USER_REGISTERED_MINIMAL,
+                AuthItem::ROLE_SOLIDARY_VOLUNTEER,
+                AuthItem::ROLE_SOLIDARY_BENEFICIARY,
+                AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE,
+                AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE
+            ],
+        ];
+        //If the role is in our array of Roles -> granted roles, we add the roles user can create in the result array
+        if (array_key_exists($authItem['id']->getId(), $rolesGrantedForCreation)) {
+            $rolesGranted = array_unique(array_merge($rolesGrantedForCreation[$authItem['id']->getId()], $rolesGranted));
+        }
+        return $rolesGranted;
     }
 }

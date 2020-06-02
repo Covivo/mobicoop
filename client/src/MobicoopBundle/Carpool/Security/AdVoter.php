@@ -35,10 +35,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class AdVoter extends Voter
 {
     const CREATE_AD = 'create_ad';
+    const CREATE_FIRST_AD = 'create_first_ad';
     const DELETE_AD = 'delete_ad';
     const UPDATE_AD = 'update_ad';
-    const POST = 'post';
-    const POST_DELEGATE = 'post_delegate';
     const RESULTS = 'results_ad';
 
     private $permissionManager;
@@ -60,17 +59,16 @@ class AdVoter extends Voter
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
             self::CREATE_AD,
+            self::CREATE_FIRST_AD,
             self::DELETE_AD,
             self::UPDATE_AD,
-            self::POST,
-            self::POST_DELEGATE,
             self::RESULTS
             ])) {
             return false;
         }
 
         // only vote on Ad objects inside this voter
-        if (!$subject instanceof Ad && !$subject instanceof Proposal) {
+        if (!$subject instanceof Ad) {
             return false;
         }
         return true;
@@ -78,22 +76,17 @@ class AdVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $user = $token->getUser();
-        $ad = $subject;
-
         switch ($attribute) {
             case self::CREATE_AD:
                 return $this->canCreateAd();
+            case self::CREATE_FIRST_AD:
+                return $this->canCreateFirstAd();
             case self::DELETE_AD:
-                return $this->canDeleteAd($ad);
+                return $this->canDeleteAd($subject);
             case self::UPDATE_AD:
-                return $this->canUpdateAd($ad);
-            case self::POST:
-                return $this->canPostAd($user);
-            case self::POST_DELEGATE:
-                return $this->canPostDelegateAd($user);
+                return $this->canUpdateAd($subject);
             case self::RESULTS:
-                return $this->canViewAdResults($ad, $user);
+                return $this->canViewAdResults($subject);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -105,14 +98,26 @@ class AdVoter extends Voter
         return true;
     }
 
-    private function canDeleteAd($adId)
+    private function canCreateFirstAd()
+    {
+        $user = $this->security->getUser();
+
+        // only registered users can create a first logged ad
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function canDeleteAd(Ad $ad)
     {
         $user = $this->security->getUser();
         // only registered users can delete ad
         if (!$user instanceof User) {
             return false;
         }
-        return $this->permissionManager->checkPermission('ad_delete', $user, $adId);
+        return $this->permissionManager->checkPermission('ad_delete', $user, $ad->getId());
     }
 
     private function canUpdateAd(Ad $ad)
@@ -132,26 +137,9 @@ class AdVoter extends Voter
         return $this->permissionManager->checkPermission('ad_update_self', $user, $ad->getId());
     }
 
-    private function canPostAd(User $user)
+    private function canViewAdResults(Ad $ad)
     {
-        // only registered users can post a ad
-        if (!$user instanceof User) {
-            return false;
-        }
-        return true;
-    }
-
-    private function canPostDelegateAd(User $user)
-    {
-        // only dedicated users can post a ad for another user
-        if (!$user instanceof User) {
-            return false;
-        }
-        return $this->permissionManager->checkPermission('ad_create', $user);
-    }
-
-    private function canViewAdResults(Ad $ad, User $user)
-    {
+        $user = $this->security->getUser();
         // only registered users can view ad results
         if (!$user instanceof User) {
             return false;

@@ -54,6 +54,7 @@ class Redirect
 {
     const TYPE_COMMUNITY = 0;
     const TYPE_EVENT = 1;
+    const TYPE_ARTICLE = 2;
 
     /**
      * @var int The id of this redirection.
@@ -99,7 +100,7 @@ class Redirect
     private $destinationId;
 
     /**
-     * @var \DateTimeInterface Creation date of the user import.
+     * @var \DateTimeInterface Creation date of the redirect.
      *
      * @ORM\Column(type="datetime")
      * @Groups({"read","write"})
@@ -107,7 +108,7 @@ class Redirect
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Update date of the user import.
+     * @var \DateTimeInterface Update date of the redirect.
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -197,12 +198,12 @@ class Redirect
         return $this;
     }
 
-    public function getDestinationComplement(): string
+    public function getDestinationComplement(): ?string
     {
         return $this->destinationComplement;
     }
 
-    public function setDestinationComplement(string $destinationComplement): self
+    public function setDestinationComplement(?string $destinationComplement): self
     {
         $this->destinationComplement = $destinationComplement;
 

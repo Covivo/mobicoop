@@ -61,12 +61,42 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
+    # Direction Write Listener
+    # App\Geography\EventListener\DirectionWriteListener:
+    #     tags:
+    #         -
+    #             # these are the basic options that define the entity listener
+    #             name: 'doctrine.orm.entity_listener'
+    #             event: 'preFlush'
+    #             entity: 'App\Geography\Entity\Direction'
+
+    #             # set the 'lazy' option to TRUE to only instantiate listeners when they are used
+    #             lazy: true
+
+    #             # configure a custom method name with the 'method' option
+    #             method: 'setTerritories'
+
     # Address Load Listener
     mobicoop.address.address_load_listener:
         class: App\Geography\EventListener\AddressLoadListener
         arguments: ['@App\Geography\Service\GeoTools'] # GeoTools injected for displayLabel
         tags:
             - { name: doctrine.event_listener, event: postLoad }
+
+    # Address Write Listener
+    App\Geography\EventListener\AddressWriteListener:
+        tags:
+            -
+                # these are the basic options that define the entity listener
+                name: 'doctrine.orm.entity_listener'
+                event: 'preFlush'
+                entity: 'App\Geography\Entity\Address'
+
+                # set the 'lazy' option to TRUE to only instantiate listeners when they are used
+                lazy: true
+
+                # configure a custom method name with the 'method' option
+                method: 'setTerritories'
 
     # Community User Load Listener
     mobicoop.community_user.community_user_load_listener:
@@ -121,11 +151,22 @@ services:
     App\Carpool\Service\AdManager:
         arguments:
             $params:
-                defaultMarginTime: '%env(int:CARPOOL_MARGIN_TIME)%'
+                defaultMarginDuration: '%env(int:CARPOOL_MARGIN_DURATION)%'
                 defaultSeatsDriver: '%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%'
                 defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
+                carpoolProofDistance: '%env(int:CARPOOL_PROOF_DISTANCE)%'
+                proofType: '%env(string:CARPOOL_PROOF_DYNAMIC_TYPE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
+
+    App\Carpool\Service\ProofManager:
+        arguments:
+            $provider: '%env(string:CARPOOL_PROOF_PROVIDER)%'
+            $uri: '%env(string:CARPOOL_PROOF_URI)%'
+            $token: '%env(string:CARPOOL_PROOF_TOKEN)%'
+            $proofType: '%env(string:CARPOOL_PROOF_CLASSIC_TYPE)%'
+        tags:
+            - { name: monolog.logger, channel: carpool_proof }
 
     App\Carpool\Service\DynamicManager:
         arguments:
@@ -137,8 +178,9 @@ services:
                 dynamicDestinationDistance: '%env(int:DYNAMIC_CARPOOL_DESTINATION_DISTANCE)%'
                 dynamicMaxSpeed: '%env(int:DYNAMIC_CARPOOL_MAX_SPEED)%'
                 dynamicEnableMaxSpeed: '%env(bool:DYNAMIC_CARPOOL_ENABLE_MAX_SPEED)%'
+                proofType: '%env(string:CARPOOL_PROOF_DYNAMIC_TYPE)%'
         tags:
-            - { name: monolog.logger, channel: carpool }
+            - { name: monolog.logger, channel: carpool_dynamic }
 
     App\Carpool\Service\ProposalManager:
         arguments:
@@ -149,7 +191,7 @@ services:
                 defaultStrictDate: '%env(bool:CARPOOL_STRICT_DATE)%'
                 defaultStrictPunctual: '%env(bool:CARPOOL_STRICT_PUNCTUAL)%'
                 defaultStrictRegular: '%env(bool:CARPOOL_STRICT_REGULAR)%'
-                defaultMarginTime: '%env(int:CARPOOL_MARGIN_TIME)%'
+                defaultMarginDuration: '%env(int:CARPOOL_MARGIN_DURATION)%'
                 defaultRegularLifeTime: '%env(int:CARPOOL_REGULAR_LIFETIME)%'
                 defaultAnyRouteAsPassenger: '%env(bool:CARPOOL_ANY_ROUTE_PASSENGER)%'
                 defaultPriceKm: '%env(float:CARPOOL_PRICE)%'
@@ -177,6 +219,8 @@ services:
         arguments:
             $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $emailTitleTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
+            $pushTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_PUSH_PATH)%'
+            $pushTitleTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_PUSH_PATH)%%env(resolve:NOTIFICATION_TITLE_TEMPLATE_PUSH_PATH)%'
             $smsTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_SMS_PATH)%'
             $enabled: '%env(bool:resolve:NOTIFICATION_ENABLED)%'
         tags:
@@ -190,6 +234,20 @@ services:
             $emailReplyToName: '%env(resolve:MAILER_REPLYTO_NAME)%'
             $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%'
             $emailAdditionalHeaders: '%env(resolve:MAILER_ADDITIONAL_HEADERS)%'
+            $emailSupport: '%env(resolve:MAILER_SUPPORT)%'
+        tags:
+            - { name: monolog.logger, channel: communication }
+
+    App\Communication\Service\InternalMessageManager:
+        tags:
+            - { name: monolog.logger, channel: communication }
+
+    App\Communication\Service\PushManager:
+        arguments:
+            $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_PUSH_PATH)%'
+            $pushProvider: '%env(resolve:PUSH_PROVIDER)%'
+            $apiToken: '%env(resolve:PUSH_API_TOKEN)%'
+            $senderId: '%env(resolve:PUSH_SENDER_ID)%'
         tags:
             - { name: monolog.logger, channel: communication }
 
@@ -200,10 +258,6 @@ services:
             $username: '%env(resolve:SMS_USERNAME)%'
             $password: '%env(resolve:SMS_PASSWORD)%'
             $sender: '%env(resolve:SMS_SENDER)%'
-        tags:
-            - { name: monolog.logger, channel: communication }
-
-    App\Communication\Service\InternalMessageManager:
         tags:
             - { name: monolog.logger, channel: communication }
     
@@ -266,6 +320,10 @@ services:
         arguments:
             $directory: '%env(resolve:ASYNC_GEO_TEMP)%'
 
+    App\Geography\Service\AddressManager:
+        tags:
+            - { name: monolog.logger, channel: geography }
+
     App\Geography\Service\GeoRouter:
         arguments:
             $uri: '%env(resolve:SIG_GEOROUTER_URI)%'
@@ -300,6 +358,11 @@ services:
             $defaultRelayPointResultNumber: '%env(resolve:GEOCOMPLETE_RELAY_POINTS_DEFAULT_RESULTS)%'
             $defaultEventResultNumber: '%env(resolve:GEOCOMPLETE_EVENTS_DEFAULT_RESULTS)%'
             $geoDataFixes: '%env(json:file:resolve:SIG_GEOCODER_FIXER_DATA)%'
+            $distanceOrder: '%env(bool:SIG_GEOCODER_PRIORITIZE_ORDER)%'
+
+    App\Geography\Service\TerritoryManager:
+        tags:
+            - { name: monolog.logger, channel: geography }
 
     # Image
     App\Image\Controller\:
@@ -386,9 +449,39 @@ services:
             $chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
             $music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
             $smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'
+            $fakeFirstMail: '%env(string:FAKE_FIRST_MAIL)%'
+            $fakeFirstToken: '%env(string:FAKE_FIRST_TOKEN)%'
     
     App\ExternalJourney\DataProvider\ExternalJourneyCollectionDataProvider:
         arguments:
             $params:
                 avatarSizes: '%env(string:AVATAR_SIZES)%'
                 avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'
+
+    # Solidary
+    App\Solidary\Service\SolidaryMatcher:
+        arguments:
+            $params:
+                solidaryMMinRangeTime: '%env(string:SOLIDARY_M_MIN_RANGE_TIME)%'
+                solidaryMMaxRangeTime: '%env(string:SOLIDARY_M_MAX_RANGE_TIME)%'
+                solidaryAMinRangeTime: '%env(string:SOLIDARY_A_MIN_RANGE_TIME)%'
+                solidaryAMaxRangeTime: '%env(string:SOLIDARY_A_MAX_RANGE_TIME)%'
+                solidaryEMinRangeTime: '%env(string:SOLIDARY_E_MIN_RANGE_TIME)%'
+                solidaryEMaxRangeTime: '%env(string:SOLIDARY_E_MAX_RANGE_TIME)%'
+
+    App\Solidary\Service\SolidaryContactManager:
+        arguments:
+            $notificationsEnabled: '%env(bool:resolve:NOTIFICATION_ENABLED)%'
+
+    App\Solidary\Service\SolidaryUserManager:
+        arguments:
+            $params:
+                chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
+                music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
+                smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'            
+
+    # Utility
+    App\Utility\Service\VersionManager:
+        arguments:
+            $repositoryFile: '%env(string:MOBILE_JSON_REPOSITORY)%'
+            $appId: '%env(string:MOBILE_APP_ID)%'

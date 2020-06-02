@@ -29,6 +29,9 @@ use App\Solidary\Entity\SolidaryMatching;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidaryMatchingRepository
 {
     /**
@@ -67,16 +70,34 @@ class SolidaryMatchingRepository
     }
 
     /**
-     * Find the previous solidary Matching for a solidary
+     * Find the previous solidary Matching for a solidary in Transport context
      *
      * @param Solidary $proposal
      * @return array|null
      */
-    public function findSolidaryMatchingOfSolidary(Solidary $solidary): ?array
+    public function findSolidaryMatchingTransportOfSolidary(Solidary $solidary): ?array
     {
         $query = $this->repository->createQueryBuilder('sm')
         ->join('sm.solidary', 's')
         ->where('sm.solidary = :solidary')
+        ->andWhere('sm.solidaryUser is not null')
+        ->setParameter('solidary', $solidary);
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find the previous solidary Matching for a solidary in Carpool context
+     *
+     * @param Solidary $proposal
+     * @return array|null
+     */
+    public function findSolidaryMatchingCarpoolOfSolidary(Solidary $solidary): ?array
+    {
+        $query = $this->repository->createQueryBuilder('sm')
+        ->join('sm.solidary', 's')
+        ->where('sm.solidary = :solidary')
+        ->andWhere('sm.matching is not null')
         ->setParameter('solidary', $solidary);
 
         return $query->getQuery()->getResult();
@@ -98,7 +119,7 @@ class SolidaryMatchingRepository
 
         $results = $query->getQuery()->getResult();
         if (count($results)>0) {
-            return $results[0];
+            return $results[0]->getSolidarySolution()->getSolidaryAsk();
         }
         return null;
     }

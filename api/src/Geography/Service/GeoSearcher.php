@@ -63,11 +63,12 @@ class GeoSearcher
     private $defaultRelayPointResultNumber;
     private $defaultEventResultNumber;
     private $geoDataFixes;
+    private $distanceOrder;
 
     /**
      * Constructor.
      */
-    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, IconRepository $iconRepository, string $iconPath, string $dataPath, string $defaultSigResultNumber, string $defaultNamedResultNumber, string $defaultRelayPointResultNumber, string $defaultEventResultNumber, array $geoDataFixes)
+    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, IconRepository $iconRepository, string $iconPath, string $dataPath, string $defaultSigResultNumber, string $defaultNamedResultNumber, string $defaultRelayPointResultNumber, string $defaultEventResultNumber, array $geoDataFixes, bool $distanceOrder)
     {
         $this->geocoder = $geocoder;
         $this->geoTools = $geoTools;
@@ -83,6 +84,7 @@ class GeoSearcher
         $this->defaultRelayPointResultNumber = $defaultRelayPointResultNumber;
         $this->defaultEventResultNumber = $defaultEventResultNumber;
         $this->geoDataFixes = $geoDataFixes;
+        $this->distanceOrder = $distanceOrder;
     }
 
     /**
@@ -197,6 +199,12 @@ class GeoSearcher
                 $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_VENUE)->getFileName());
             }
 
+            if (method_exists($geoResult, 'getDistance')) {
+                if (!is_null($geoResult->getDistance())) {
+                    $address->setDistance($geoResult->getDistance());
+                }
+            }
+
             // add id and fix result if handled by the provider
             if (method_exists($geoResult, 'getId')) {
                 $address = $this->fixAddress($geoResult->getId(), $address);
@@ -205,6 +213,12 @@ class GeoSearcher
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
 
             $result[] = $address;
+        }
+
+        if ($this->distanceOrder) {
+            usort($result, function ($a, $b) {
+                return $a->getDistance()>$b->getDistance();
+            });
         }
         
         // 2 - named addresses
@@ -364,6 +378,93 @@ class GeoSearcher
             return $addresses;
         }
         return false;
+    }
+
+    /**
+     * Get an address using an array. The array may contain only some informations like latitude or longitude.
+     * The other informations are retrieved from the GeoSearcher.
+     *
+     * @param array $point  The point
+     * @return Address
+     */
+    public function getAddressByPartialAddressArray(array $point)
+    {
+        $address = new Address();
+
+        // first we set the lat/lon
+        if (isset($point['latitude'])) {
+            $address->setLatitude($point['latitude']);
+        }
+        if (isset($point['longitude'])) {
+            $address->setLongitude($point['longitude']);
+        }
+
+        // then we reverse geocode, to get a full address if the other properties are not sent
+        if ($addresses = $this->reverseGeoCode($address->getLatitude(), $address->getLongitude())) {
+            if (count($addresses)>0) {
+                $address = $addresses[0];
+            }
+        }
+
+        // we set again the lat/lon to keep the original values !
+        if (isset($point['latitude'])) {
+            $address->setLatitude($point['latitude']);
+        }
+        if (isset($point['longitude'])) {
+            $address->setLongitude($point['longitude']);
+        }
+
+        // if other properties are sent we use them
+        if (isset($point['houseNumber'])) {
+            $address->setHouseNumber($point['houseNumber']);
+        }
+        if (isset($point['street'])) {
+            $address->setStreet($point['street']);
+        }
+        if (isset($point['streetAddress'])) {
+            $address->setStreetAddress($point['streetAddress']);
+        }
+        if (isset($point['postalCode'])) {
+            $address->setPostalCode($point['postalCode']);
+        }
+        if (isset($point['subLocality'])) {
+            $address->setSubLocality($point['subLocality']);
+        }
+        if (isset($point['addressLocality'])) {
+            $address->setAddressLocality($point['addressLocality']);
+        }
+        if (isset($point['localAdmin'])) {
+            $address->setLocalAdmin($point['localAdmin']);
+        }
+        if (isset($point['county'])) {
+            $address->setCounty($point['county']);
+        }
+        if (isset($point['macroCounty'])) {
+            $address->setMacroCounty($point['macroCounty']);
+        }
+        if (isset($point['region'])) {
+            $address->setRegion($point['region']);
+        }
+        if (isset($point['macroRegion'])) {
+            $address->setMacroRegion($point['macroRegion']);
+        }
+        if (isset($point['addressCountry'])) {
+            $address->setAddressCountry($point['addressCountry']);
+        }
+        if (isset($point['countryCode'])) {
+            $address->setCountryCode($point['countryCode']);
+        }
+        
+        if (isset($point['elevation'])) {
+            $address->setElevation($point['elevation']);
+        }
+        if (isset($point['name'])) {
+            $address->setName($point['name']);
+        }
+        if (isset($point['home'])) {
+            $address->setHome($point['home']);
+        }
+        return $address;
     }
 
     /**

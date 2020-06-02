@@ -61,15 +61,10 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      itemOperations={
  *          "get"={
  *             "security"="is_granted('user_read',object)"
- *          },
- *          "put"={
- *             "security"="is_granted('user_update',object)"
- *          },
- *          "delete"={
- *             "security"="is_granted('user_delete',object)"
  *          }
  *      }
  * )
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryUser
 {
@@ -349,6 +344,7 @@ class SolidaryUser
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist","remove"}, orphanRemoval=true, mappedBy="solidaryUser")
      * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $user;
 
@@ -365,6 +361,7 @@ class SolidaryUser
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
      * @Groups({"readUser","readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $needs;
 
@@ -406,13 +403,8 @@ class SolidaryUser
     {
         $this->needs = new ArrayCollection();
         $this->solidaryUserStructures = new ArrayCollection();
+        $this->solidaryMatchings = new ArrayCollection();
         $this->setMaxDistance(self::DEFAULT_MAX_DISTANCE);
-        $this->setMMinTime(Criteria::getHoursSlots()['m']['min']);
-        $this->setMMaxTime(Criteria::getHoursSlots()['m']['max']);
-        $this->setAMinTime(Criteria::getHoursSlots()['a']['min']);
-        $this->setAMaxTime(Criteria::getHoursSlots()['a']['max']);
-        $this->setEMinTime(Criteria::getHoursSlots()['e']['min']);
-        $this->setEMaxTime(Criteria::getHoursSlots()['e']['max']);
     }
     
     public function getId(): ?int
@@ -804,7 +796,7 @@ class SolidaryUser
         return $this->vehicle;
     }
 
-    public function setVehicle(bool $vehicle): self
+    public function setVehicle(?bool $vehicle): self
     {
         $this->vehicle = $vehicle;
 

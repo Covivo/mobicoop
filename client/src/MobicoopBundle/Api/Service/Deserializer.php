@@ -726,7 +726,7 @@ class Deserializer
 
         return $redirect;
     }
-    
+
     private function autoSet($object, $data)
     {
         $phpDocExtractor = new PhpDocExtractor();

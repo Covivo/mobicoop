@@ -29,9 +29,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method Structure|null find($id, $lockMode = null, $lockVersion = null)
- * @method Structure|null findOneBy(array $criteria, array $orderBy = null)
- */
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+*/
 class StructureRepository
 {
     /**
@@ -66,6 +65,11 @@ class StructureRepository
      */
     public function findByUser(User $user): ?array
     {
+
+        // @TODO: Remove this ugly hack
+        // I've added it to be able to work on the admin during API fix
+        // return $this->repository->findById(1);
+
         $query = $this->repository->createQueryBuilder('s')
         ->join('s.solidaryUserStructures', 'sus')
         ->join('sus.solidaryUser', 'su')
@@ -74,5 +78,10 @@ class StructureRepository
         ->setParameter('user', $user->getId());
 
         return $query->getQuery()->getResult();
+    }
+
+    public function findAll(): ?array
+    {
+        return $this->repository->findAll();
     }
 }

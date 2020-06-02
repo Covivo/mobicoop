@@ -20,6 +20,8 @@ home_logout:
         fr: /utilisateur/compte-supprimer
         en: /user/account-delete
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::indexLogout
+
+
 ###############
 # user routes #
 ###############
@@ -259,15 +261,6 @@ user_created_events:
         en: /user/events/created
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCreatedEvents
 
-# Get proposals with accepted asks (AJAX)
-user_get_accepted_proposals:
-    methods: [GET]
-    path:
-        fr: /user/proposals/accepted
-        en: /user/proposals/accepted
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposalsAccepted
-
-
 ##################
 # carpool routes #
 ##################
@@ -399,6 +392,7 @@ rdex_journey:
         en: /carpool/rdexJourney
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney
 
+
 ####################
 # community routes #
 ####################
@@ -461,16 +455,6 @@ community_leave:
     requirements:
         id: '\d+'
 
-# check if a user is an accepted member of a community (AJAX)
-community_user_is_member:
-    methods: [POST]
-    path:
-        fr: /community/isMember
-        en: /community/isMember
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::isMember
-    requirements:
-        id: '\d+'
-
 # get a community user (AJAX)
 community_user:
     methods: [POST]
@@ -481,14 +465,6 @@ community_user:
     requirements:
         id: '\d+'
 
-# get the last community users (AJAX)
-community_last_users:
-    path:
-        fr: /community-last-users/{id}
-        en: /community-last-users/{id}
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityLastUsers
-    requirements:
-        id: '\d+'
 
 # get community members list (AJAX)
 community_member_list:
@@ -518,16 +494,43 @@ community_user_available:
     requirements:
         userId: '\d+'
 
+# display widget
+community_widget:
+    path:
+        fr: /communaute/widget/{id}
+        en: /community/widget/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityWidget
+    requirements:
+        id: '\d+'
+
+# get widget
+community_get_widget:
+    path:
+        fr: /communaute/widget/get/{id}
+        en: /community/widget/get/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityGetWidget
+    requirements:
+        id: '\d+'        
+
 ##########################
 # editorial pages routes #
 ##########################
 
-#get an article (AJAX)
+# get an article
+article_get:
+    path:
+        fr: /article/{id}
+        en: /article/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::articleGet
+    requirements:
+        id: '\d+'
+
+# get an article (AJAX)
 article:
     path:
         fr: /article
         en: /article
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::articleGet
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::article
 
 # display project page
 project:
@@ -569,7 +572,7 @@ history:
     path:
         fr: /historique
         en: /history
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showHistroy
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showHistory
 
 # display actors page
 actors:
@@ -598,6 +601,13 @@ FAQ:
         fr: /FAQ
         en: /FAQ
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showFAQ
+
+# display cookie page
+cookies:
+    path:
+        fr: /cookies
+        en: /cookies
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCookie    
 
 # display ToolBox page
 ToolBox:
@@ -634,6 +644,15 @@ MoreAbout:
         en: /more-about
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMoreAbout
 
+# display COVID-19 page
+Covid19:
+    path:
+        fr: /covid-19
+        en: /covid-19
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCovid19
+    
+
+
 # Get the last external articles (AJAX)
 LastExternalArticles:
     methods: [POST]
@@ -641,6 +660,10 @@ LastExternalArticles:
         fr: /articles/derniers/externes
         en: /articles/last/extern
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::lastExternalArticles
+
+
+
+
 
 ####################
 # geography routes #
@@ -652,6 +675,7 @@ georouter:
         fr: /georoute
         en: /georoute
     controller: Mobicoop\Bundle\MobicoopBundle\Geography\Controller\GeoRouterController::geoRoute
+
 
 ####################
 # contact routes #
@@ -669,6 +693,7 @@ contact_send:
         fr: /contact/send
         en: /contact/send
     controller: Mobicoop\Bundle\MobicoopBundle\Communication\Controller\ContactController:sendContact
+
 
 ####################
 # solidarity routes #
@@ -688,24 +713,24 @@ solidary_ask:
     controller: Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\SolidaryController:solidaryCreate
 
 
-####################
-# community routes #
-####################
+################
+# event routes #
+################
 
-# display events
-event_list:
-    path:
-        fr: /evenements
-        en: /events
-    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventList
-
-# Get the communities (AJAX)
+# Get the events (AJAX)
 event_get_list:
     methods: [POST]
     path:
         fr: /evenements/getEventList
         en: /events/getEventList
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::getEventList
+
+# display events
+event_list:
+    path:
+        fr: /evenements/{tabDefault?}
+        en: /events/{tabDefault?}
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventList    
 
 # create event
 event_create:
@@ -714,7 +739,7 @@ event_create:
         en: /event/create
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventCreate
 
-# display one community
+# display one event
 event_show:
     path:
         fr: /evenement/{id}
@@ -723,20 +748,20 @@ event_show:
     requirements:
         id: '\d+'
 
-# display one widget
+# display widget
 event_widget:
     path:
-        fr: /evenement-widget/{id}
-        en: /event-widget/{id}
+        fr: /evenement/widget/{id}
+        en: /event/widget/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventWidget
     requirements:
         id: '\d+'
 
-# display one widget
+# get widget
 event_get_widget:
     path:
-        fr: /evenement-get-widget/{id}
-        en: /event-get-widget/{id}
+        fr: /evenement/widget/get/{id}
+        en: /event/widget/get/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventGetWidget
     requirements:
         id: '\d+'
@@ -750,9 +775,28 @@ event_report:
     requirements:
         id: '\d+'
 
+
+###############
+# misc routes #
+###############
+
 # round price
 round_price:
     path:
         fr: /prix/arrondir
         en: /price/round
     controller: Mobicoop\Bundle\MobicoopBundle\Price\Controller\PriceController::roundPrice
+
+# Get the platform widget
+get_platform_widget:
+    path:
+        fr: /widget/get
+        en: /widget/get
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::getPlatformWidget
+
+# The platform widget
+platform_widget:
+    path:
+        fr: /widget
+        en: /widget
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::platformWidget

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -28,19 +28,16 @@ use App\Carpool\Entity\DynamicProof;
 use App\Carpool\Exception\DynamicException;
 use App\Carpool\Service\DynamicManager;
 use App\User\Entity\User;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 final class DynamicProofPostDataPersister implements ContextAwareDataPersisterInterface
 {
     private $security;
-    private $request;
     private $dynamicManager;
     
-    public function __construct(Security $security, DynamicManager $dynamicManager, RequestStack $requestStack)
+    public function __construct(Security $security, DynamicManager $dynamicManager)
     {
         $this->security = $security;
-        $this->request = $requestStack->getCurrentRequest();
         $this->dynamicManager = $dynamicManager;
     }
 

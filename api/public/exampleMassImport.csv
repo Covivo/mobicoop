@@ -1,0 +1,2 @@
+givenId;givenName;familyName;email;personalAddress.houseNumber;personalAddress.street;personalAddress.postalCode;personalAddress.addressLocality;personalAddress.addressCountry;workAddress.houseNumber;workAddress.street;workAddress.postalCode;workAddress.addressLocality;workAddress.addressCountry;outwardTime;returnTime;driver;passenger
+ABC1;NC;NC;test.migrate@yopmail.com;13;rue des jardiniers     ;88000;EPINAL;France;27;Rue Philippe Séguin;88000;EPINAL;France;09:00:00;19:00:00;1;1

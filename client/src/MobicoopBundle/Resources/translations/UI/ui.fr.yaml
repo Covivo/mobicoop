@@ -34,6 +34,8 @@ communities:
         title: "Les Communautés"
     create:
         title: "Créer une communauté"
+    widget:
+        title: "Widget communauté"
 events:
     events:
         title: "Les événements"
@@ -41,3 +43,7 @@ events:
         title: "Evénement"
     create:
         title: "Créer un événement"
+    widget:
+        title: "Widget événement"
+widget:
+    title: "Widget"

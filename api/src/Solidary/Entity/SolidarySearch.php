@@ -40,22 +40,18 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={
- *          "get",
- *          "transport"={
- *              "method"="POST",
- *              "path"="/solidary_searches/transport",
- *              "normalization_context"={"groups"={"readSolidarySearch"}}
- *          },
- *          "carpool"={
- *              "method"="POST",
- *              "path"="/solidary_searches/carpool",
- *              "normalization_context"={"groups"={"readSolidarySearch"}}
+ *          "get"={
+ *             "normalization_context"={"groups"={"readSolidarySearch"}},
+ *             "security"="is_granted('solidary_update',object)"
  *          }
  *      },
  *      itemOperations={
- *          "get"
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          }
  *      }
  * )
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidarySearch
 {

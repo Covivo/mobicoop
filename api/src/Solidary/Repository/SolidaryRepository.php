@@ -24,10 +24,14 @@ namespace App\Solidary\Repository;
 
 use App\Action\Entity\Diary;
 use App\Solidary\Entity\Solidary;
+use App\Solidary\Entity\SolidaryUser;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidaryRepository
 {
     /**
@@ -97,6 +101,38 @@ class SolidaryRepository
         ->join('su.user', 'u')
         ->where('u.id = :user')
         ->setParameter('user', $user->getId());
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find the solidary solutions of a solidary
+     *
+     * @param int $solidaryId Id of the Solidary
+     * @return array|null
+     */
+    public function findSolidarySolutions(int $solidaryId): ?array
+    {
+        $query = $this->repository->createQueryBuilder('s')
+        ->join('s.solidarySolutions', 'ss')
+        ->where('s.id = :solidaryId')
+        ->setParameter('solidaryId', $solidaryId);
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find the solidaries link to a matching that include a solidaryUser
+     *
+     * @param SolidaryUser $solidaryUser
+     * @return array|null
+     */
+    public function findBySolidaryUserMatching(SolidaryUser $solidaryUser): ?array
+    {
+        $query = $this->repository->createQueryBuilder('s')
+        ->join('s.solidaryMatchings', 'sm')
+        ->where('sm.solidaryUser = :solidaryUser')
+        ->setParameter('solidaryUser', $solidaryUser);
 
         return $query->getQuery()->getResult();
     }

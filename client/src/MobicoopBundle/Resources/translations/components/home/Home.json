@@ -6,6 +6,9 @@
         "profileLink": "/utilisateur/profil/modifier/mon-profil",
         "snackbar-account-delete": "Votre compte à été supprimé avec succès.",
         "snackbar-unsubscribe-email": "Vous êtes bien désinscrit de nos liste d'emailing",
-        "myProfile": "Profil"
+        "myProfile": "Profil",
+        "urlArticle": "",
+        "altUrlArticle": "",
+        "clickHere": " "
     }
 }

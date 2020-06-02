@@ -22,6 +22,12 @@
 
 namespace App\Solidary\Exception;
 
+use App\Solidary\Entity\SolidaryBeneficiary;
+use App\Solidary\Entity\SolidaryVolunteer;
+
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidaryException extends \LogicException
 {
     const INVALID_DATA_PROVIDED = "Invalid data provided";
@@ -29,6 +35,11 @@ class SolidaryException extends \LogicException
     const BAD_SOLIDARYUSERSTRUCTURE_STATUS = "Invalid status value for this SolidaryUserStructure";
     const BAD_SOLIDARY_ACTION = "Unknown action";
     const UNKNOWN_USER = "Unknown User";
+    const NO_STRUCTURE_ID = "No structureId";
+    const NO_STRUCTURE = "No structure found";
+    const TYPE_SOLIDARY_USER_UNKNOWN = "Unknown solidaryUser type (must be '".SolidaryBeneficiary::TYPE."' or '".SolidaryVolunteer::TYPE."')";
+    const ALREADY_USER = "Already a User with this email";
+    const ALREADY_SOLIDARY_USER = "Already a SolidaryUser";
 
     // SolidarySolution
     const IS_NOT_VOLUNTEER = "The SolidaryUser is not a volunteer";
@@ -38,4 +49,34 @@ class SolidaryException extends \LogicException
     const INVALID_HOUR_SLOT = "Hour slot invalid";
     const NO_RETURN_PROPOSAL = "There is no return proposal";
     const NO_VALID_ADDRESS = "No valid address";
+    const NOT_A_DRIVER = "This User is not a driver";
+
+    // Solidary Formal Request
+    const NO_SOLIDARY_SOLUTION = "No solidarySolution found for this formal request";
+    const NO_SOLIDARY_ASK = "No SolidaryAsk for this SolidarySolution";
+    const BAD_SOLIDARY_ASK_STATUS_FOR_FORMAL = "The status of the SolidaryAsk doesn't allow a formal request";
+    const SOLIDARY_SOLUTION_MISSING = "SolidarySolution is missing";
+    const SOLIDARY_SOLUTION_ID_INVALID = "Invalid SolidarySolutionId";
+
+    // SolidarySearch
+    const SOLIDARY_MISSING = "Solidary is missing";
+    const SOLIDARY_ID_INVALID = "Invalid SolidaryId";
+    const WAY_MISSING_OR_INVALID = "Way parameter is missing or invalid (must be outward or return)";
+    const TYPE_MISSING_OR_INVALID = "Type parameter is missing or invalid (must be carpool or transport)";
+    const UNKNOWN_SOLIDARY = "There no Solidary with this id";
+
+    // SolidaryUser
+    const NO_SOLIDARY_USER = "This User is not a Solidary User";
+    const NO_SOLIDARY_BENEFICIARY = "This Solidary User is not a beneficiary";
+    const NO_SOLIDARY_VOLUNTEER = "This Solidary User is not a volunteer";
+    const ALREADY_ACCEPTED = "This SolidaryUser has already be accepted for the current structure";
+    const ALREADY_REFUSED = "This SolidaryUser has already be refused for the current structure";
+
+    // Structure Geolocation
+    const MISSING_LATITUDE = "Latitude missing";
+    const MISSING_LONGITUDE = "Longitude missing";
+
+    // SolidaryVolunteerPlanning
+    const NO_SOLIDARY_VOLUNTEER_ID = "No SolidaryVolunteerId found";
+    const SOLIDARY_VOLUNTEER_ID_INVALID = "Invalid SolidaryVolunteerId";
 }

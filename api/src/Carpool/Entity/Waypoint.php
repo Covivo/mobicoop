@@ -48,6 +48,9 @@ class Waypoint
 {
     const DEFAULT_ID = 999999999999;
 
+    const ROLE_DRIVER = 1;
+    const ROLE_PASSENGER = 2;
+
     /**
      * @var int The id of this point.
      *
@@ -117,7 +120,7 @@ class Waypoint
      * @var Address The address of the point.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="waypoint", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","results","write","threads","thread","readCommunity","readEvent"})
      * @MaxDepth(1)
@@ -268,6 +271,10 @@ class Waypoint
     public function setAddress(?Address $address): self
     {
         $this->address = $address;
+        // set the reverse side, useful for address managing
+        if ($address->getWaypoint() !== $this) {
+            $address->setWaypoint($this);
+        }
 
         return $this;
     }

@@ -27,8 +27,15 @@ use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Solidary\Entity\Solidary;
+use App\Solidary\Entity\SolidaryContact;
+use App\Solidary\Entity\SolidaryFormalRequest;
+use App\Solidary\Entity\SolidarySearch;
+use App\Solidary\Entity\SolidarySolution;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SolidaryVoter extends Voter
 {
     const SOLIDARY_CREATE = 'solidary_create';
@@ -36,6 +43,8 @@ class SolidaryVoter extends Voter
     const SOLIDARY_UPDATE = 'solidary_update';
     const SOLIDARY_DELETE = 'solidary_delete';
     const SOLIDARY_LIST = 'solidary_list';
+    const SOLIDARY_LIST_SELF = 'solidary_list_self';
+    const SOLIDARY_CONTACT = 'solidary_contact';
     
     private $authManager;
 
@@ -53,6 +62,8 @@ class SolidaryVoter extends Voter
             self::SOLIDARY_UPDATE,
             self::SOLIDARY_DELETE,
             self::SOLIDARY_LIST,
+            self::SOLIDARY_LIST_SELF,
+            self::SOLIDARY_CONTACT
             ])) {
             return false;
         }
@@ -64,7 +75,15 @@ class SolidaryVoter extends Voter
             self::SOLIDARY_UPDATE,
             self::SOLIDARY_DELETE,
             self::SOLIDARY_LIST,
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Solidary)) {
+            self::SOLIDARY_LIST_SELF,
+            self::SOLIDARY_CONTACT
+            ]) && !($subject instanceof Paginator) &&
+                !($subject instanceof Solidary) &&
+                !($subject instanceof SolidarySolution) &&
+                !($subject instanceof SolidarySearch) &&
+                !($subject instanceof SolidaryContact) &&
+                !($subject instanceof SolidaryFormalRequest)
+            ) {
             return false;
         }
         return true;
@@ -78,11 +97,16 @@ class SolidaryVoter extends Voter
             case self::SOLIDARY_READ:
                 return $this->canReadSolidary($subject);
             case self::SOLIDARY_UPDATE:
-                return $this->canUpdateSolidary($subject);
+                ($subject instanceof Solidary) ? $solidary = $subject : $solidary = $subject->getSolidary();
+                return $this->canUpdateSolidary($solidary);
             case self::SOLIDARY_DELETE:
                 return $this->canDeleteSolidary($subject);
             case self::SOLIDARY_LIST:
                 return $this->canListSolidary();
+            case self::SOLIDARY_LIST_SELF:
+                return $this->canListSolidarySelf();
+            case self::SOLIDARY_CONTACT:
+                return $this->canUpdateSolidary($subject->getSolidarySolution()->getSolidary());
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -111,5 +135,10 @@ class SolidaryVoter extends Voter
     private function canListSolidary()
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_LIST);
+    }
+
+    private function canListSolidarySelf()
+    {
+        return $this->authManager->isAuthorized(self::SOLIDARY_LIST_SELF);
     }
 }

@@ -1,7 +1,7 @@
 twig:
-    paths: 
+    paths:
         '%kernel.project_dir%/templates': Mobicoop
-        '%kernel.project_dir%/src/MobicoopBundle/Resources/views': Bundle 
+        '%kernel.project_dir%/src/MobicoopBundle/Resources/views': Bundle
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     cache: false
@@ -13,7 +13,7 @@ twig:
         ageMin: '%env(USER_MIN_AGE)%'
         ageMax: '%env(USER_MAX_AGE)%'
         priceKm: '%env(CARPOOL_PRICE)%'
-        marginTime: '%env(CARPOOL_MARGIN_TIME)%'
+        marginDuration: '%env(CARPOOL_MARGIN_DURATION)%'
         searchRegular: '%env(bool:CARPOOL_SEARCH_REGULAR)%'
         searchPunctualDate: '%env(bool:CARPOOL_PUNCTUAL_DATE_OPTIONAL)%'
         adRegular: '%env(bool:CARPOOL_AD_REGULAR)%'
@@ -34,3 +34,5 @@ twig:
         matomoUrl: '%env(resolve:MATOMO_URL)%'
         matomoSiteId: '%env(resolve:MATOMO_SITE_ID)%'
         urlMobile: '%env(resolve:URL_MOBILE)%'
+        urlAdmin: '%env(resolve:URL_ADMIN)%'
+        canAccessAdminFromCommunity: '%env(resolve:CAN_ACCESS_ADMIN_FROM_COMMUNITY)%'

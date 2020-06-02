@@ -29,6 +29,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Solidary\Entity\Proof;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class ProofVoter extends Voter
 {
     const PROOF_CREATE = 'proof_create';

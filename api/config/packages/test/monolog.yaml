@@ -5,6 +5,16 @@ monolog:
             level: debug
             path: "%kernel.logs_dir%/carpool.log"
             channels: [carpool]
+        carpool_dynamic:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/carpool_dynamic.log"
+            channels: [carpool_dynamic]
+        carpool_proof:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/carpool_proof.log"
+            channels: [carpool_proof]
         communication:
             type: stream
             level: debug
@@ -15,6 +25,11 @@ monolog:
             level: debug
             path: "%kernel.logs_dir%/community.log"
             channels: [community]
+        geography:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/geography.log"
+            channels: [geography]
         geomatcher:
             type: stream
             level: debug
@@ -37,4 +52,4 @@ monolog:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: ["!event", "!carpool", "!communication", "!community", "!geomatcher", "!georouter", "!mass", "!notification"]
+            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification"]

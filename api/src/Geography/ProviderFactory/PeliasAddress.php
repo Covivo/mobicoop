@@ -74,4 +74,20 @@ class PeliasAddress extends Address
     {
         $this->venue = $venue;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDistance()
+    {
+        return $this->distance;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDistance(?float $distance)
+    {
+        $this->distance = $distance;
+    }
 }

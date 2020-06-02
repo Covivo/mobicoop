@@ -19,7 +19,12 @@
           max-height="200"
         />
       </v-col>
-      <v-col cols="6">
+      <v-col
+        cols="6"
+        md="4"
+        lg="5"
+        xl="6"
+      >
         <v-card-title>
           <div>
             <h4>
@@ -40,8 +45,8 @@
         <v-divider />
         <v-list dense>
           <v-list-item>
-            <v-list-item-content>
-              {{ item.fullDescription }}
+            <v-list-item-content class="text-justify">
+              {{ item.description }}
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -57,6 +62,7 @@
             color="secondary"
             rounded
             :href="linkToEventShow(item)"
+            width="231px"
           >
             {{ $t('eventDetails') }}
           </v-btn>

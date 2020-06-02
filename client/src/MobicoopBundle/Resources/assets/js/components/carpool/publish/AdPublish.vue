@@ -208,7 +208,7 @@
                 :init-return-date="returnDate"
                 :init-return-time="returnTime"
                 :regular="regular"
-                :default-margin-time="defaultMarginTime"
+                :default-margin-duration="defaultMarginDuration"
                 :init-schedule="initSchedule"
                 :route="route"
                 @change="planificationChanged"
@@ -544,6 +544,21 @@
                     />
                   </v-col>
                 </v-row>
+
+                <v-row>
+                  <v-col
+                    v-if="driver"
+                  >
+                    {{ $t('stepper.driverLicense.text') }}
+                    <a
+                      class="primary--text"
+                      target="_blank"
+                      :href="$t('stepper.driverLicense.route')"
+                      @click.stop
+                    >{{ $t('stepper.driverLicense.link') }}
+                    </a>
+                  </v-col>
+                </v-row>
               </v-container>
             </v-stepper-content>
           </v-stepper-items>
@@ -704,7 +719,7 @@ export default {
       type: Number,
       default: 0.06
     },
-    defaultMarginTime: {
+    defaultMarginDuration: {
       type: Number,
       default: null
     },

@@ -56,6 +56,7 @@
         >
           <GeoComplete
             v-show="showOrigin"
+            id="from"
             :url="geoSearchUrl"
             :label="labelOrigin"
             :token="user ? user.geoToken : ''"
@@ -100,6 +101,7 @@
         >
           <GeoComplete
             v-show="showDestination"
+            id="to"
             :url="geoSearchUrl"
             :label="labelDestination"
             :token="user ? user.geoToken : ''"
@@ -126,6 +128,7 @@
         </v-col>
         <v-col
           cols="1"
+          class="ma-2"
         >
           <v-switch
             v-model="regular"
@@ -175,6 +178,7 @@
             <template v-slot:activator="{ on }">
               <v-text-field
                 v-show="regular ? false : true"
+                id="date"
                 :value="computedDateFormat"
                 clearable
                 :label="$t('outwardDate.label') + (showRequired ? ' *' : '')"

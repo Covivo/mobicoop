@@ -286,6 +286,20 @@ class Result
      */
     private $askId;
 
+    /**
+     * @var boolean|null Solidary.
+     *
+     * @Groups("results")
+     */
+    private $solidary;
+
+    /**
+     * @var boolean|null Solidary exclusive.
+     *
+     * @Groups("results")
+     */
+    private $solidaryExclusive;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -787,6 +801,30 @@ class Result
     public function setAskId(?int $askId): Result
     {
         $this->askId = $askId;
+        return $this;
+    }
+
+    public function isSolidary(): ?bool
+    {
+        return $this->solidary;
+    }
+    
+    public function setSolidary(?bool $isSolidary): self
+    {
+        $this->solidary = $isSolidary;
+        
+        return $this;
+    }
+
+    public function isSolidaryExclusive(): ?bool
+    {
+        return $this->solidaryExclusive;
+    }
+    
+    public function setSolidaryExclusive(?bool $isSolidaryExclusive): self
+    {
+        $this->solidaryExclusive = $isSolidaryExclusive;
+        
         return $this;
     }
 }

@@ -63,37 +63,37 @@
             <table  style="width:100%;">
                 <tr>
                     <td style="width:100%">
-                        {% if result.outward.monCheck %}
+                        {% if (result.outward and result.outward.monCheck) or (result.return and result.return.monCheck) %}
                             <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_MON_DARK_LOGO')}}" alt="Mon"/>
                         {% else %}
                             <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_MON_LIGHT_LOGO')}}" alt="Mon"/>
                         {% endif %}
-                        {% if result.outward.tueCheck %}
+                        {% if (result.outward and result.outward.tueCheck) or (result.return and result.return.tueCheck) %}
                             <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_TUE_DARK_LOGO')}}" alt="Tue"/>
                         {% else %}
                             <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_TUE_LIGHT_LOGO')}}" alt="Tue"/>
                         {% endif %} 
-                        {% if result.outward.wedCheck %}
+                        {% if (result.outward and result.outward.wedCheck) or (result.return and result.return.wedCheck) %}
                             <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_WED_DARK_LOGO')}}" alt="Wed"/>
                         {% else %}
                             <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_WED_LIGHT_LOGO')}}" alt="Wed"/>
                         {% endif %} 
-                        {% if result.outward.thuCheck %}
+                        {% if (result.outward and result.outward.thuCheck) or (result.return and result.return.thuCheck) %}
                             <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_THU_DARK_LOGO')}}" alt="Thu"/>
                         {% else %}
                             <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_THU_LIGHT_LOGO')}}" alt="Thu"/>
                         {% endif %} 
-                        {% if result.outward.friCheck %}
+                        {% if (result.outward and result.outward.friCheck) or (result.return and result.return.friCheck) %}
                             <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_FRI_DARK_LOGO')}}" alt="Fri"/>
                         {% else %}
                             <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_FRI_LIGHT_LOGO')}}" alt="Fri"/>
                         {% endif %} 
-                        {% if result.outward.satCheck %}
+                        {% if (result.outward and result.outward.satCheck) or (result.return and result.return.satCheck) %}
                             <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_SAT_DARK_LOGO')}}" alt="Sat"/>
                         {% else %}
                             <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_SAT_LIGHT_LOGO')}}" alt="Sat"/>
                         {% endif %} 
-                        {% if result.outward.sunCheck %}
+                        {% if (result.outward and result.outward.sunCheck) or (result.return and result.return.sunCheck) %}
                             <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_SUN_DARK_LOGO')}}" alt="Sun"/>
                         {% else %}
                             <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_SUN_LIGHT_LOGO')}}" alt="Sun"/>

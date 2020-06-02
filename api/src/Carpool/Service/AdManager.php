@@ -33,7 +33,7 @@ use App\Carpool\Entity\Waypoint;
 use App\Carpool\Event\AdMajorUpdatedEvent;
 use App\Carpool\Event\AdMinorUpdatedEvent;
 use App\Community\Exception\CommunityNotFoundException;
-use App\Community\Service\CommunityManager;
+use App\Community\Repository\CommunityRepository;
 use App\Event\Exception\EventNotFoundException;
 use App\Event\Service\EventManager;
 use App\Geography\Entity\Address;
@@ -47,6 +47,11 @@ use Psr\Log\LoggerInterface;
 use App\Rdex\Entity\RdexError;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
+use App\Auth\Service\AuthManager;
+use App\Carpool\Entity\ClassicProof;
+use App\Carpool\Exception\ProofException;
+use App\Solidary\Repository\SubjectRepository;
+use DateTime;
 
 /**
  * Ad manager service.
@@ -59,7 +64,7 @@ class AdManager
     private $entityManager;
     private $proposalManager;
     private $userManager;
-    private $communityManager;
+    private $communityRepository;
     private $eventManager;
     private $resultManager;
     private $params;
@@ -70,6 +75,9 @@ class AdManager
     private $askManager;
     private $eventDispatcher;
     private $security;
+    private $authManager;
+    private $proofManager;
+    private $subjectRepository;
 
     /**
      * Constructor.
@@ -77,12 +85,12 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityManager $communityManager, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityRepository $communityRepository, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager, ProofManager $proofManager, SubjectRepository $subjectRepository)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
         $this->userManager = $userManager;
-        $this->communityManager = $communityManager;
+        $this->communityRepository = $communityRepository;
         $this->eventManager = $eventManager;
         $this->resultManager = $resultManager;
         $this->logger = $logger;
@@ -93,6 +101,9 @@ class AdManager
         $this->askManager = $askManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->security = $security;
+        $this->authManager = $authManager;
+        $this->proofManager = $proofManager;
+        $this->subjectRepository = $subjectRepository;
     }
 
     /**
@@ -101,11 +112,11 @@ class AdManager
      * It returns the ad created, with its outward and return results.
      *
      * @param Ad $ad The ad to create
-     * @param bool $fromUpdate - When we create an Ad in update case, waypoints are Object and not Array
+     * @param bool $doPrepare - When we prepare the Proposal
      * @return Ad
      * @throws \Exception
      */
-    public function createAd(Ad $ad, bool $fromUpdate = false)
+    public function createAd(Ad $ad, bool $doPrepare = true)
     {
         $this->logger->info("AdManager : start " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -127,13 +138,21 @@ class AdManager
                 throw new UserNotFoundException('User ' . $ad->getUserId() . ' not found');
             }
         }
-        
+
         // we check if the ad is posted for another user (delegation)
         if ($ad->getPosterId()) {
             if ($poster = $this->userManager->getUser($ad->getPosterId())) {
                 $outwardProposal->setUserDelegate($poster);
             } else {
                 throw new UserNotFoundException('Poster ' . $ad->getPosterId() . ' not found');
+            }
+        }
+
+        // SOLIDARY TEMPORARY FIX
+        // if the poster is solidary manager, we assume the Ad is solidary
+        if (isset($user)) {
+            if ($this->authManager->isAuthorized('ROLE_SOLIDARY_MANAGER')) {
+                $ad->setSolidary(true);
             }
         }
 
@@ -167,7 +186,7 @@ class AdManager
         if ($ad->getCommunities()) {
             // todo : check if the user can post/search in each community
             foreach ($ad->getCommunities() as $communityId) {
-                if ($community = $this->communityManager->getCommunity($communityId)) {
+                if ($community = $this->communityRepository->findOneBy(['id'=>$communityId])) {
                     $outwardProposal->addCommunity($community);
                 } else {
                     throw new CommunityNotFoundException('Community ' . $communityId . ' not found');
@@ -183,7 +202,16 @@ class AdManager
                 throw new EventNotFoundException('Event ' . $ad->getEventId() . ' not found');
             }
         }
-        
+
+        // subject
+        if ($ad->getSubjectId()) {
+            if ($subject = $this->subjectRepository->find($ad->getSubjectId())) {
+                $outwardProposal->setSubject($subject);
+            } else {
+                throw new EventNotFoundException('Subject ' . $ad->getSubjectId() . ' not found');
+            }
+        }
+
         // criteria
 
         // driver / passenger / seats
@@ -212,13 +240,13 @@ class AdManager
         $outwardCriteria->setBackSeats($ad->hasBackSeats());
 
         // dates and times
-
+        $marginDuration = $ad->getMarginDuration() ? $ad->getMarginDuration() : $this->params['defaultMarginDuration'];
         // if the date is not set we use the current date
         $outwardCriteria->setFromDate($ad->getOutwardDate() ? $ad->getOutwardDate() : new \DateTime());
         if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
             $outwardCriteria->setToDate($ad->getOutwardLimitDate() ? $ad->getOutwardLimitDate() : null);
-            $outwardCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $outwardCriteria, 'outwardTime');
+            $outwardCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $outwardCriteria, 'outwardTime', $marginDuration);
             $hasSchedule = $outwardCriteria->isMonCheck() || $outwardCriteria->isTueCheck()
                 || $outwardCriteria->isWedCheck() || $outwardCriteria->isFriCheck() || $outwardCriteria->isThuCheck()
                 || $outwardCriteria->isSatCheck() || $outwardCriteria->isSunCheck();
@@ -228,39 +256,41 @@ class AdManager
             } elseif (!$hasSchedule) {
                 // for a search we set the schedule to every day
                 $outwardCriteria->setMonCheck(true);
-                $outwardCriteria->setMonMarginDuration($this->params['defaultMarginTime']);
+                $outwardCriteria->setMonMarginDuration($marginDuration);
                 $outwardCriteria->setTueCheck(true);
-                $outwardCriteria->setTueMarginDuration($this->params['defaultMarginTime']);
+                $outwardCriteria->setTueMarginDuration($marginDuration);
                 $outwardCriteria->setWedCheck(true);
-                $outwardCriteria->setWedMarginDuration($this->params['defaultMarginTime']);
+                $outwardCriteria->setWedMarginDuration($marginDuration);
                 $outwardCriteria->setThuCheck(true);
-                $outwardCriteria->setThuMarginDuration($this->params['defaultMarginTime']);
+                $outwardCriteria->setThuMarginDuration($marginDuration);
                 $outwardCriteria->setFriCheck(true);
-                $outwardCriteria->setFriMarginDuration($this->params['defaultMarginTime']);
+                $outwardCriteria->setFriMarginDuration($marginDuration);
                 $outwardCriteria->setSatCheck(true);
-                $outwardCriteria->setSatMarginDuration($this->params['defaultMarginTime']);
+                $outwardCriteria->setSatMarginDuration($marginDuration);
                 $outwardCriteria->setSunCheck(true);
-                $outwardCriteria->setSunMarginDuration($this->params['defaultMarginTime']);
+                $outwardCriteria->setSunMarginDuration($marginDuration);
             }
         } else {
             // punctual
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
             // if the time is not set we use the current time for an ad post, and null for a search
             $outwardCriteria->setFromTime($ad->getOutwardTime() ? \DateTime::createFromFormat('H:i', $ad->getOutwardTime()) : (!$ad->isSearch() ? new \DateTime() : null));
-            $outwardCriteria->setMarginDuration($this->params['defaultMarginTime']);
+            $outwardCriteria->setMarginDuration($marginDuration);
         }
 
         // waypoints
         foreach ($ad->getOutwardWaypoints() as $position => $point) {
             $waypoint = new Waypoint();
-            $waypoint->setAddress($this->createAddressFromPoint($point));
+            $waypoint->setAddress(($point instanceof Address) ? $point : $this->createAddressFromPoint($point));
             $waypoint->setPosition($position);
             $waypoint->setDestination($position == count($ad->getOutwardWaypoints())-1);
             $outwardProposal->addWaypoint($waypoint);
         }
 
         $outwardProposal->setCriteria($outwardCriteria);
-        $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal);
+        if ($doPrepare) {
+            $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal, true);
+        }
 
         $this->logger->info("AdManager : end creating outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -273,7 +303,7 @@ class AdManager
             // we clone the outward proposal
             $returnProposal = clone $outwardProposal;
             $returnProposal->setType(Proposal::TYPE_RETURN);
-            
+
             // we link the outward and the return
             $outwardProposal->setProposalLinked($returnProposal);
 
@@ -311,7 +341,7 @@ class AdManager
             if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
                 $returnCriteria->setToDate($ad->getReturnLimitDate() ? $ad->getReturnLimitDate() : null);
-                $returnCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $returnCriteria, 'returnTime');
+                $returnCriteria = $this->createTimesFromSchedule($ad->getSchedule(), $returnCriteria, 'returnTime', $marginDuration);
                 $hasSchedule = $returnCriteria->isMonCheck() || $returnCriteria->isTueCheck()
                     || $returnCriteria->isWedCheck() || $returnCriteria->isFriCheck() || $returnCriteria->isThuCheck()
                     || $returnCriteria->isSatCheck() || $returnCriteria->isSunCheck();
@@ -321,26 +351,26 @@ class AdManager
                 } elseif (!$hasSchedule) {
                     // for a search we set the schedule to every day
                     $returnCriteria->setMonCheck(true);
-                    $returnCriteria->setMonMarginDuration($this->params['defaultMarginTime']);
+                    $returnCriteria->setMonMarginDuration($marginDuration);
                     $returnCriteria->setTueCheck(true);
-                    $returnCriteria->setTueMarginDuration($this->params['defaultMarginTime']);
+                    $returnCriteria->setTueMarginDuration($marginDuration);
                     $returnCriteria->setWedCheck(true);
-                    $returnCriteria->setWedMarginDuration($this->params['defaultMarginTime']);
+                    $returnCriteria->setWedMarginDuration($marginDuration);
                     $returnCriteria->setThuCheck(true);
-                    $returnCriteria->setThuMarginDuration($this->params['defaultMarginTime']);
+                    $returnCriteria->setThuMarginDuration($marginDuration);
                     $returnCriteria->setFriCheck(true);
-                    $returnCriteria->setFriMarginDuration($this->params['defaultMarginTime']);
+                    $returnCriteria->setFriMarginDuration($marginDuration);
                     $returnCriteria->setSatCheck(true);
-                    $returnCriteria->setSatMarginDuration($this->params['defaultMarginTime']);
+                    $returnCriteria->setSatMarginDuration($marginDuration);
                     $returnCriteria->setSunCheck(true);
-                    $returnCriteria->setSunMarginDuration($this->params['defaultMarginTime']);
+                    $returnCriteria->setSunMarginDuration($marginDuration);
                 }
             } else {
                 // punctual
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
                 // if no return time is specified, we use the outward time to be sure the return date is not before the outward date, and null for a search
                 $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : (!$ad->isSearch() ? $outwardCriteria->getFromTime() : null));
-                $returnCriteria->setMarginDuration($this->params['defaultMarginTime']);
+                $returnCriteria->setMarginDuration($marginDuration);
             }
 
             // waypoints
@@ -350,21 +380,23 @@ class AdManager
             }
             foreach ($ad->getReturnWaypoints() as $position => $point) {
                 $waypoint = new Waypoint();
-                $waypoint->setAddress($this->createAddressFromPoint($point));
+                $waypoint->setAddress(($point instanceof Address) ? $point : $this->createAddressFromPoint($point));
                 $waypoint->setPosition($position);
                 $waypoint->setDestination($position == count($ad->getReturnWaypoints())-1);
                 $returnProposal->addWaypoint($waypoint);
             }
 
             $returnProposal->setCriteria($returnCriteria);
-            $returnProposal = $this->proposalManager->prepareProposal($returnProposal, false);
+            if ($doPrepare) {
+                $returnProposal = $this->proposalManager->prepareProposal($returnProposal, false);
+            }
             $this->entityManager->persist($returnProposal);
         }
         // we persist the proposals
         $this->logger->info("AdManager : start flush proposal " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $this->entityManager->flush();
         $this->logger->info("AdManager : end flush proposal " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        
+
         // if the ad is a round trip, we want to link the potential matching results
         if (!$ad->isOneWay()) {
             $outwardProposal = $this->proposalManager->linkRelatedMatchings($outwardProposal);
@@ -385,14 +417,14 @@ class AdManager
         }
 
         // we compute the results
-        
+
         // default order
         $ad->setFilters([
                 'order'=>[
                     'criteria'=>'date',
                     'value'=>'ASC'
                 ]
-            
+
         ]);
 
         $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -406,7 +438,7 @@ class AdManager
             )
         );
         $this->logger->info("AdManager : end set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        
+
         // we set the ad id to the outward proposal id
         $ad->setId($outwardProposal->getId());
         return $ad;
@@ -480,50 +512,54 @@ class AdManager
         return $address;
     }
 
+    
     /**
-     * @param $schedules
+     * Add times with margins duration to the criteria's schedules
+     *
+     * @param array $schedules
      * @param Criteria $criteria
-     * @param string $key - outwardTime or returnTime
+     * @param string $key
+     * @param int $marginDuration
      * @return Criteria
      */
-    public function createTimesFromSchedule($schedules, Criteria $criteria, string $key)
+    private function createTimesFromSchedule($schedules, Criteria $criteria, string $key, $marginDuration)
     {
         foreach ($schedules as $schedule) {
             if ($schedule[$key] != '') {
                 if (isset($schedule['mon']) && $schedule['mon']) {
                     $criteria->setMonCheck(true);
                     $criteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setMonMarginDuration($this->params['defaultMarginTime']);
+                    $criteria->setMonMarginDuration($marginDuration);
                 }
                 if (isset($schedule['tue']) && $schedule['tue']) {
                     $criteria->setTueCheck(true);
                     $criteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setTueMarginDuration($this->params['defaultMarginTime']);
+                    $criteria->setTueMarginDuration($marginDuration);
                 }
                 if (isset($schedule['wed']) && $schedule['wed']) {
                     $criteria->setWedCheck(true);
                     $criteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setWedMarginDuration($this->params['defaultMarginTime']);
+                    $criteria->setWedMarginDuration($marginDuration);
                 }
                 if (isset($schedule['thu']) && $schedule['thu']) {
                     $criteria->setThuCheck(true);
                     $criteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setThuMarginDuration($this->params['defaultMarginTime']);
+                    $criteria->setThuMarginDuration($marginDuration);
                 }
                 if (isset($schedule['fri']) && $schedule['fri']) {
                     $criteria->setFriCheck(true);
                     $criteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setFriMarginDuration($this->params['defaultMarginTime']);
+                    $criteria->setFriMarginDuration($marginDuration);
                 }
                 if (isset($schedule['sat']) && $schedule['sat']) {
                     $criteria->setSatCheck(true);
                     $criteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setSatMarginDuration($this->params['defaultMarginTime']);
+                    $criteria->setSatMarginDuration($marginDuration);
                 }
                 if (isset($schedule['sun']) && $schedule['sun']) {
                     $criteria->setSunCheck(true);
                     $criteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setSunMarginDuration($this->params['defaultMarginTime']);
+                    $criteria->setSunMarginDuration($marginDuration);
                 }
             }
         }
@@ -627,7 +663,7 @@ class AdManager
         $ads = [];
         $user = $this->userManager->getUser($userId);
         $proposals = $this->proposalRepository->findBy(['user'=>$user, 'private'=>false]);
-        
+
         $refIdProposals = [];
         foreach ($proposals as $proposal) {
             if (!in_array($proposal->getId(), $refIdProposals)) {
@@ -641,33 +677,6 @@ class AdManager
     }
 
 
-    /**
-     * Get all ads of a Community
-     *
-     * @param integer $communityId Id of the Community
-     * @return void
-     */
-    public function getAdsOfCommunity(int $communityId)
-    {
-        $ads = [];
-        $community = $this->communityManager->getCommunity($communityId);
-        
-        
-        $refIdProposals = [];
-        foreach ($community->getProposals() as $proposal) {
-            if (!in_array($proposal->getId(), $refIdProposals) && !$proposal->isPrivate()) {
-                // we check if the proposal is still valid if yes we retrieve the proposal
-                $LimitDate = $proposal->getCriteria()->getToDate() ? $proposal->getCriteria()->getToDate() : $proposal->getCriteria()->getFromDate();
-                if ($LimitDate >= new \DateTime()) {
-                    $ads[] = $this->makeAdForCommunityOrEvent($proposal);
-                    if (!is_null($proposal->getProposalLinked())) {
-                        $refIdProposals[$proposal->getId()] = $proposal->getProposalLinked()->getId();
-                    }
-                }
-            }
-        }
-        return $ads;
-    }
 
     /**
      * Get all ads of an Event
@@ -679,8 +688,8 @@ class AdManager
     {
         $ads = [];
         $event = $this->eventManager->getEvent($eventId);
-        
-        
+
+
         $refIdProposals = [];
         foreach ($event->getProposals() as $proposal) {
             if (!in_array($proposal->getId(), $refIdProposals) && !$proposal->isPrivate()) {
@@ -746,12 +755,12 @@ class AdManager
         $ad->setSolidary($proposal->getCriteria()->isSolidary());
         $ad->setSolidaryExclusive($proposal->getCriteria()->isSolidaryExclusive());
 
-        
+
         // set return if twoWays ad
         if ($proposal->getProposalLinked()) {
             $ad->setReturnWaypoints($proposal->getProposalLinked()->getWaypoints());
             $ad->setReturnDate($proposal->getProposalLinked()->getCriteria()->getFromDate());
-            
+
             if ($proposal->getProposalLinked()->getCriteria()->getFromTime()) {
                 $ad->setReturnTime($proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i'));
             } else {
@@ -895,7 +904,7 @@ class AdManager
      * @param Proposal $proposal Base Proposal of the Ad
      * @return Ad
      */
-    private function makeAdForCommunityOrEvent(Proposal $proposal)
+    public function makeAdForCommunityOrEvent(Proposal $proposal)
     {
         $ad = new Ad();
         $ad->setId($proposal->getId());
@@ -1022,8 +1031,6 @@ class AdManager
      */
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
-
-
         // checks for regular and punctual
         if ($oldAd->getPriceKm() !== $newAd->getPriceKm()
             || $oldAd->getFrequency() !== $newAd->getFrequency()
@@ -1295,7 +1302,7 @@ class AdManager
             $time = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
             $mintime = $time->format("H:i:s");
             $maxtime = $time->add(new \DateInterval("PT1H"))->format("H:i:s");
-        
+
             // if days is null, we are using today
             if (is_null($days)) {
                 $today = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
@@ -1362,14 +1369,14 @@ class AdManager
                     $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
                     $ad->setOutwardDate(\DateTime::createFromFormat("Y-m-d", $outward["mindate"]));
                     (isset($outward["maxdate"])) ? $ad->setOutwardLimitDate(\DateTime::createFromFormat("Y-m-d", $outward["maxdate"])) : '';
-    
+
                     $ad->setOutwardTime($schedules[0]["outwardTime"]);
                 }
             }
         } else {
             return new RdexError("apikey", RdexError::ERROR_MISSING_MANDATORY_FIELD, "Invalid outward");
         }
-        
+
         return $this->createAd($ad);
     }
 
@@ -1385,7 +1392,7 @@ class AdManager
     private function middleHour(string $heureMin, string $heureMax, string $dateMin, ?string $dateMax=null)
     {
         (is_null($dateMax)) ? $dateMax = $dateMin : '';
-        
+
         $min = \DateTime::createFromFormat('Y-m-d H:i:s', $dateMin . " " . $heureMin, new \DateTimeZone('UTC'));
         $mintime = $min->getTimestamp();
         $max = \DateTime::createFromFormat('Y-m-d H:i:s', $dateMax . " " . $heureMax, new \DateTimeZone('UTC'));
@@ -1413,7 +1420,7 @@ class AdManager
                 $outward_mindate = $outward['mindate'];
                 (!isset($outward['maxdate'])) ? $outward_maxdate = $outward_mindate : $outward['maxdate'];
                 $middleHour = $this->middleHour($outward[$day]['mintime'], $outward[$day]['maxtime'], $outward_mindate, $outward_maxdate);
-                
+
                 $previousKey = array_search($middleHour, $refTimes);
 
                 if (is_null($previousKey) || !is_numeric($previousKey)) {
@@ -1510,5 +1517,66 @@ class AdManager
         }
         // We return the ads array with only the ads with accepted asks associated
         return $ads;
+    }
+
+
+
+    /**********
+     *  PROOF *
+     **********/
+
+    
+    /**
+     * Create a proof for an ask.
+     *
+     * @param ClassicProof  $classicProof   The proof to create
+     * @return ClassicProof                 The created proof.
+     */
+    public function createCarpoolProof(ClassicProof $classicProof)
+    {
+        // search the ask
+        if (!$ask = $this->askManager->getAsk($classicProof->getAskId())) {
+            throw new AdException("Ask not found for classic proof");
+        }
+
+        // check that the ask is accepted
+        if (!($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
+            throw new AdException("Ask not accepted");
+        }
+
+        // check if a proof already exists for this day
+        if ($carpoolProof = $this->proofManager->getProofForDate($ask, new DateTime())) {
+            // the proof already exists, it's an update
+            return $this->updateCarpoolProof($carpoolProof->getId(), $classicProof);
+        }
+
+        $carpoolProof = $this->proofManager->createProof($ask, $classicProof->getLongitude(), $classicProof->getLatitude(), $this->params['proofType'], $classicProof->getUser(), $ask->getMatching()->getProposalOffer()->getUser(), $ask->getMatching()->getProposalRequest()->getUser());
+        $classicProof->setId($carpoolProof->getId());
+
+        return $classicProof;
+    }
+
+    /**
+     * Update a proof.
+     *
+     * @param integer $id                       The id of the proof to update
+     * @param ClassicProof $classicProofData    The data to update the proof
+     * @return ClassicProof The classic proof updated
+     */
+    public function updateCarpoolProof(int $id, ClassicProof $classicProofData)
+    {
+        // search the proof
+        if (!$carpoolProof = $this->proofManager->getProof($id)) {
+            throw new AdException("Classic proof not found");
+        }
+
+        try {
+            $carpoolProof = $this->proofManager->updateProof($id, $classicProofData->getLongitude(), $classicProofData->getLatitude(), $classicProofData->getUser(), $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser(), $this->params['carpoolProofDistance']);
+            $classicProofData->setId($carpoolProof->getId());
+        } catch (ProofException $proofException) {
+            throw new AdException($proofException->getMessage());
+        }
+        
+        return $classicProofData;
     }
 }

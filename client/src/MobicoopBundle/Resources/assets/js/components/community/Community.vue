@@ -34,6 +34,7 @@
             :url-alt-avatar="urlAltAvatar"
             :avatar-version="avatarVersion"
           />
+          <p>{{ user && user.isCommunityReferrer }} </p>
           <!-- community buttons and map -->
           <v-row>
             <v-col
@@ -42,7 +43,7 @@
             >
               <!-- button if domain validation -->
               <div
-                v-if="domain == false"
+                v-if="domain == false && isSecured == false"
               >
                 <v-tooltip
                   left
@@ -89,7 +90,7 @@
                   {{ $t('leaveCommunity.button') }}
                 </v-btn>
               </div>
-              <!-- button if user ask to join community but is not accepted yet -->
+              <!-- button if user asked to join community but is not accepted yet -->
               <div v-else-if="askToJoin === true">
                 <v-tooltip
                   top
@@ -124,7 +125,7 @@
                   <span>{{ $t('tooltips.validation') }}</span>
                 </v-tooltip>
               </div>
-              <!-- button is user is not a member -->
+              <!-- button if user is not a member -->
               <div
                 v-else
               >
@@ -140,6 +141,7 @@
                       v-on="on"
                     >
                       <v-btn
+                        v-if="isSecured == false"
                         color="secondary"
                         rounded
                         :loading="loading || (checkValidation && isLogged) "
@@ -153,6 +155,15 @@
                   <span>{{ $t('tooltips.connected') }}</span>
                 </v-tooltip>
               </div>
+              <v-btn
+                class="mt-3"
+
+                color="primary"
+                rounded
+                :href="$t('widget.route', {'id':community.id})"
+              >
+                {{ $t('widget.label') }}
+              </v-btn>
             </v-col>
             <!-- map -->
             <v-col
@@ -171,7 +182,19 @@
               />
             </v-col>
           </v-row>
-
+          <!-- button for acces to the admin : only for creator -->
+          <div
+            v-if="(isCreator && canAccessAdminFromCommunity !== false)"
+          >
+            <v-btn
+              color="secondary"
+              rounded
+              target="_blank"
+              :href="urlAdmin"
+            >
+              {{ $t('buttons.accessAdmin.label') }}
+            </v-btn>
+          </div>
           <!-- community members list + last 3 users -->
           <v-row
             v-if="isLogged && isAccepted && !loading"
@@ -207,13 +230,13 @@
               <v-skeleton-loader
                 class="mx-auto"
                 type="card"
-              />              
+              />
             </v-col>
             <v-col cols="3">
               <v-skeleton-loader
                 class="mx-auto"
                 type="card"
-              />              
+              />
             </v-col>
           </v-row>
         </v-col>
@@ -388,6 +411,14 @@ export default {
     userCommunityStatus: {
       type: Number,
       default:-1
+    },
+    urlAdmin: {
+      type: String,
+      default: null
+    },
+    canAccessAdminFromCommunity : {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -418,18 +449,25 @@ export default {
       checkValidation: false,
       isLogged: false,
       domain: true,
+      isSecured: this.community.isSecured,
       refreshMemberList: false,
       refreshLastUsers: false,
       params: { 'communityId' : this.community.id },
-      users:[]
+      users:[],
+      isCreator: false
     }
   },
   mounted() {
-    //this.getCommunityUser();
     if(this.userCommunityStatus>=0){
       this.isAccepted = (this.userCommunityStatus == 1 || this.userCommunityStatus == 2);
       this.askToJoin = true
     }
+
+    //If the current user = creator : we show the btton for acces to admin
+    if (this.user && (this.community.user.id == this.user.id)) {
+      this.isCreator = true;
+    }
+
 
     this.checkIfUserLogged();
     this.showCommunityProposals();
@@ -545,7 +583,7 @@ export default {
       if (this.community.address) {
         this.pointsToMap.push(this.buildPoint(this.community.address.latitude,this.community.address.longitude,this.community.name));
       }
-          
+
       // add all the waypoints of the community to display on the map
       // We draw straight lines between those points
       // if the user is already accepted or if the doesn't hide members or proposals to non members.
@@ -595,7 +633,7 @@ export default {
 
           // And now the content of a tooltip (same as popup but without the button)
           currentProposal.title = currentProposal.desc;
-                
+
           // We add the button to the popup (To Do: Button isn't functionnal. Find a good way to launch a research)
           //currentProposal.desc += "<br /><button type='button' class='v-btn v-btn--contained v-btn--rounded theme--light v-size--small secondary overline'>"+this.$t('map.findMatchings')+"</button>";
 

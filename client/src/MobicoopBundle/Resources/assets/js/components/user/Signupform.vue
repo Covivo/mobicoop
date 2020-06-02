@@ -97,26 +97,15 @@
               />
               <v-divider />
 
-              <!--STEP 3 Community-->
+              <!--STEP 3 hometown - Community - checkbox-->
               <v-stepper-step
-                v-if="communityShow"
                 :step="3"
-                editable
-                edit-icon
-              />
-              <v-divider v-if="communityShow" />
-
-
-              <!--STEP 4 hometown-->
-              <v-stepper-step
-                :step="(communityShow) ? 4 : 3"
                 editable
                 edit-icon
               />
             </v-stepper-header>
 
             <!--STEP 1 User identification-->
-        
             <v-stepper-content
               step="1"
             >
@@ -145,6 +134,7 @@
                 </v-alert>
 
                 <v-text-field
+                  id="telephone"
                   v-model="form.telephone"
                   :label="$t('models.user.phone.placeholder')+` *`"
                   required
@@ -153,6 +143,7 @@
                   @keypress="isNumber(event)"
                 />
                 <v-text-field
+                  id="password"
                   v-model="form.password"
                   :append-icon="form.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   :rules="[form.passWordRules.required,form.passWordRules.min, form.passWordRules.checkUpper,form.passWordRules.checkLower,form.passWordRules.checkNumber]"
@@ -163,6 +154,7 @@
                   @click:append="form.showPassword = !form.showPassword"
                 />
                 <v-btn
+                  id="buttonNext1"
                   ref="button"
                   rounded
                   class="my-13"
@@ -175,10 +167,7 @@
               </v-form>
             </v-stepper-content>
           
-
-
             <!--STEP 2 Name - Gender - Birthyear-->
-        
             <v-stepper-content
               step="2"
             >
@@ -190,6 +179,7 @@
                 @submit.prevent
               >
                 <v-text-field
+                  id="givenName"
                   v-model="form.givenName"
                   :rules="form.givenNameRules"
                   :label="$t('models.user.givenName.placeholder')+` *`"
@@ -197,13 +187,13 @@
                   required
                 />
                 <v-text-field
+                  id="familyName"
                   v-model="form.familyName"
                   :rules="form.familyNameRules"
                   :label="$t('models.user.familyName.placeholder')+` *`"
                   class="familyName"
                   required
                 />
-
                 <v-select
                   v-model="form.gender"
                   :items="form.genderItems"
@@ -223,6 +213,7 @@
                 >
                   <template v-slot:activator="{ on }">
                     <v-text-field
+                      id="birthday"
                       v-model="form.date"
                       :label="$t('models.user.birthYear.placeholder')+` *`"
                       readonly
@@ -255,6 +246,7 @@
                     {{ $t('ui.button.previous') }}
                   </v-btn>
                   <v-btn
+                    id="buttonNext2"
                     ref="button"
                     rounded
                     class="my-13"
@@ -267,19 +259,11 @@
                 </v-row>
               </v-form>
             </v-stepper-content>
-          
 
-            <!--STEP 3 Community-->
-        
+            <!--STEP 3 hometown - community - ckeckbox-->
             <v-stepper-content
-              v-if="communityShow"
-              step="3"
+              :step="3"
             >
-              <v-row
-                class="text-justify pb-5"
-              >
-                <community-help />
-              </v-row>
               <v-form
                 id="step3"
                 ref="form"
@@ -287,99 +271,61 @@
                 class="pb-2"
                 @submit.prevent
               >
-                <v-row
-                  align="center"
-                  justify="center"
-                  class="mt-2"
-                >
-                  <v-col
-                    cols="12"
-                  >
-                    <v-autocomplete                  
-                      v-model="selectedCommunity"
-                      :items="communities.communities"
-                      outlined
-                      chips
-                      :label="$t('communities.label')"
-                      item-text="name"
-                      item-value="id"
-                      @change="emitEvent"
-                    >
-                      <template v-slot:selection="data">
-                        <v-chip                      
-                          v-bind="data.attrs"
-                          :input-value="data.selected"
-                          close
-                          @click="data.select"
-                          @click:close="toggleSelected"
-                        >
-                          {{ data.item.name }}
-                        </v-chip>
-                      </template>
-                      <template v-slot:item="data">
-                        <template v-if="typeof data.item !== 'object'">
-                          <v-list-item-content v-text="data.item" />
-                        </template>
-                        <template v-else>
-                          <v-list-item-content>
-                            <v-list-item-title v-html="data.item.name" />
-                            <v-list-item-subtitle v-html="data.item.description" />
-                          </v-list-item-content>
-                        </template>
-                      </template>
-                    </v-autocomplete>
-                    <v-row
-                      justify="center"
-                      align="center"
-                      class="mb-40"
-                    >
-                      <v-btn
-                        ref="button"
-                        rounded
-                        class="my-13 mr-12"
-                        color="secondary"
-
-                        @click="previousStep(3)"
-                      >
-                        {{ $t('ui.button.previous') }}
-                      </v-btn>
-                      <v-btn
-                        ref="button"
-                        rounded
-                        class="my-13"
-                        color="secondary"
-                        type="submit"
-                        @click="nextStep(3)"
-                      >
-                        {{ $t('ui.button.next') }}
-                      </v-btn>
-                    </v-row>
-                  </v-col>
-                </v-row>
-              </v-form>
-            </v-stepper-content>
-          
-
-            <!--STEP 4 hometown-->
-            <v-stepper-content
-              :step="(communityShow) ? 4 : 3"
-            >
-              <v-form
-                id="step4"
-                ref="form"
-                v-model="step4"
-                class="pb-2"
-                @submit.prevent
-              >
+                <!-- hometown -->
                 <GeoComplete
                   name="homeAddress"
                   :label="$t('models.user.homeTown.placeholder')"
                   :url="geoSearchUrl"
-                  :hint="requiredHomeAddress ? $t('models.user.homeTown.required.hint') : $t('models.user.homeTown.hint')"
                   persistent-hint
                   :required="requiredHomeAddress"
                   @address-selected="selectedGeo"
                 />
+                <!-- community -->
+                <v-row
+                  v-if="communityShow"
+                  class="text-justify pb-5"
+                >
+                  <community-help
+                    :display-title-community="!displayTitleCommunity"
+                  />
+                </v-row>
+
+                <v-autocomplete
+                  v-if="communityShow"                 
+                  v-model="selectedCommunity"
+                  :items="communities.communities"
+                  outlined
+                  chips
+                  :label="$t('communities.label')"
+                  item-text="name"
+                  item-value="id"
+                  @change="emitEvent"
+                >
+                  <template v-slot:selection="data">
+                    <v-chip                      
+                      v-bind="data.attrs"
+                      :input-value="data.selected"
+                      close
+                      @click="data.select"
+                      @click:close="toggleSelected"
+                    >
+                      {{ data.item.name }}
+                    </v-chip>
+                  </template>
+                  <template v-slot:item="data">
+                    <template v-if="typeof data.item !== 'object'">
+                      <v-list-item-content v-text="data.item" />
+                    </template>
+                    <template v-else>
+                      <v-list-item-content>
+                        <v-list-item-title v-html="data.item.name" />
+                        <v-list-item-subtitle v-html="data.item.description" />
+                      </v-list-item-content>
+                    </template>
+                  </template>
+                </v-autocomplete>
+
+                <!-- checkbox -->
                 <v-checkbox
                   v-model="form.validation"
                   class="check mt-12"
@@ -400,7 +346,7 @@
                         @click.stop
                       >{{ $t('chart.link') }}
                       </a>
-                    </div>:
+                    </div>
                   </template>
                 </v-checkbox>
                 <v-row
@@ -422,7 +368,7 @@
                     rounded
                     class="mr-4 mb-100 mt-12"
                     :loading="loading"
-                    :disabled="!step4 || !step3 || !step2 || !step1 || loading || isDisable"
+                    :disabled="!step3 || !step2 || !step1 || loading || isDisable"
                     @click="validate"
                   >
                     {{ $t('ui.button.register') }}
@@ -506,8 +452,6 @@ export default {
       step1: true,
       step2: true,
       step3: true,
-      step4: true,
-      step5: true,
       menu : false,
 
       //scrolling data

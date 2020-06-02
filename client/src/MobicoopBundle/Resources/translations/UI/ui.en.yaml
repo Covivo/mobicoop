@@ -41,3 +41,5 @@ events:
         title: "Event"
     create:
         title: "Create an event"
+widget:
+    title: "Widget"        

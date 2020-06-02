@@ -40,6 +40,9 @@ use GuzzleHttp\RequestOptions;
  */
 class DataProvider
 {
+    /**
+     * @var Client $client
+     */
     private $client;
     private $resource;
     
@@ -78,7 +81,6 @@ class DataProvider
     */
     public function getItem(array $params): Response
     {
-        $clientResponse="";
         try {
             $clientResponse = $this->client->get($this->resource."?".http_build_query($params));
             return new Response($clientResponse->getStatusCode(), $clientResponse->getBody()->getContents());
@@ -135,12 +137,13 @@ class DataProvider
     }
 
     /**
-    * Get collection operation
-    *
-    * @param mixed|null    $params         An array or string of parameters
-    *
-    * @return Response The response of the operation.
-    */
+     * Get collection operation
+     *
+     * @param mixed|null $body      The body
+     * @param array|null $headers   An array of headers
+     * @param mixed|null $params    An array or string of parameters
+     * @return Response The response of the operation.
+     */
     public function postCollection($body=null, $headers=null, $params=null): Response
     {
         try {
@@ -155,8 +158,10 @@ class DataProvider
                 $options[RequestOptions::JSON]=$body;
             }
             $clientResponse = $this->client->post($this->resource, $options);
-            if ($clientResponse->getStatusCode() == 200) {
-                return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
+            switch ($clientResponse->getStatusCode()) {
+                case 200:
+                case 201:
+                    return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
             }
         } catch (TransferException $e) {
             return new Response($e->getCode());

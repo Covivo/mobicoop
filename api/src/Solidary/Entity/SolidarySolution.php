@@ -40,9 +40,21 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
- *      collectionOperations={"post"},
- *      itemOperations={"get"}
+ *      collectionOperations={
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "post"={
+ *             "security_post_denormalize"="is_granted('solidary_update',object)"
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          }
+ *      }
  * )
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidarySolution
 {
@@ -61,7 +73,6 @@ class SolidarySolution
     /**
      * @var Solidary The solidary record.
      *
-     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Solidary", inversedBy="solidarySolutions")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"readSolidary","writeSolidary"})
@@ -74,6 +85,7 @@ class SolidarySolution
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", inversedBy="solidarySolution", cascade={"persist","remove"})
      * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $solidaryMatching;
 
@@ -82,6 +94,7 @@ class SolidarySolution
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", mappedBy="solidarySolution")
      * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $solidaryAsk;
 
@@ -127,7 +140,7 @@ class SolidarySolution
     public function setSolidary(?Solidary $solidary): self
     {
         $this->solidary = $solidary;
-        
+
         return $this;
     }
 
@@ -139,7 +152,7 @@ class SolidarySolution
     public function setSolidaryMatching(?SolidaryMatching $solidaryMatching): self
     {
         $this->solidaryMatching = $solidaryMatching;
-        
+
         return $this;
     }
 
@@ -151,7 +164,7 @@ class SolidarySolution
     public function setSolidaryAsk(?SolidaryAsk $solidaryAsk): self
     {
         $this->solidaryAsk = $solidaryAsk;
-        
+
         return $this;
     }
 
@@ -159,11 +172,11 @@ class SolidarySolution
     {
         return $this->comment;
     }
-    
+
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-        
+
         return $this;
     }
 
@@ -190,6 +203,7 @@ class SolidarySolution
 
         return $this;
     }
+
 
     // DOCTRINE EVENTS
 

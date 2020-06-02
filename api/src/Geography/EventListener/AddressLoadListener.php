@@ -28,7 +28,7 @@ use App\Geography\Service\GeoTools;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
- * Address Event listener
+ * Address Load Event listener
  */
 class AddressLoadListener
 {

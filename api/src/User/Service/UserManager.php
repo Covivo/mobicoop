@@ -42,6 +42,7 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Auth\Repository\AuthItemRepository;
+use App\Carpool\Service\ProofManager;
 use App\Community\Repository\CommunityRepository;
 use App\Community\Entity\CommunityUser;
 use App\User\Event\UserRegisteredEvent;
@@ -49,9 +50,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\Community\Entity\Community;
-use App\Solidary\Event\SolidaryCreated;
-use App\Solidary\Event\SolidaryUserCreated;
-use App\Solidary\Event\SolidaryUserUpdated;
+use App\Solidary\Entity\SolidaryUser;
+use App\Solidary\Entity\Structure;
+use App\Solidary\Event\SolidaryCreatedEvent;
+use App\Solidary\Event\SolidaryUserCreatedEvent;
+use App\Solidary\Event\SolidaryUserUpdatedEvent;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\StructureRepository;
@@ -87,6 +90,7 @@ class UserManager
     private $notificationRepository;
     private $userNotificationRepository;
     private $userRepository;
+    private $proofManager;
     private $solidaryRepository;
     private $structureRepository;
     private $logger;
@@ -100,14 +104,41 @@ class UserManager
     private $music;
     private $smoke;
 
+    private $fakeFirstMail;
+    private $fakeFirstToken;
+
     /**
         * Constructor.
         *
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, ImageManager $imageManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, AuthItemRepository $authItemRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository, AskHistoryRepository $askHistoryRepository, AskRepository $askRepository, UserRepository $userRepository, $chat, $smoke, $music, CommunityUserRepository $communityUserRepository, TranslatorInterface $translator, Security $security, SolidaryRepository $solidaryRepository, StructureRepository $structureRepository)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ImageManager $imageManager,
+        LoggerInterface $logger,
+        EventDispatcherInterface $dispatcher,
+        AuthItemRepository $authItemRepository,
+        CommunityRepository $communityRepository,
+        MessageRepository $messageRepository,
+        UserPasswordEncoderInterface $encoder,
+        NotificationRepository $notificationRepository,
+        UserNotificationRepository $userNotificationRepository,
+        AskHistoryRepository $askHistoryRepository,
+        AskRepository $askRepository,
+        UserRepository $userRepository,
+        ProofManager $proofManager,
+        $chat,
+        $smoke,
+        $music,
+        CommunityUserRepository $communityUserRepository,
+        TranslatorInterface $translator,
+        Security $security,
+        SolidaryRepository $solidaryRepository,
+        StructureRepository $structureRepository,
+        string $fakeFirstMail,
+        string $fakeFirstToken
+    ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
         $this->logger = $logger;
@@ -124,11 +155,14 @@ class UserManager
         $this->notificationRepository = $notificationRepository;
         $this->userNotificationRepository = $userNotificationRepository;
         $this->userRepository = $userRepository;
+        $this->proofManager = $proofManager;
         $this->solidaryRepository = $solidaryRepository;
         $this->structureRepository = $structureRepository;
         $this->chat = $chat;
         $this->music = $music;
         $this->smoke = $smoke;
+        $this->fakeFirstMail = $fakeFirstMail;
+        $this->fakeFirstToken = $fakeFirstToken;
     }
 
     /**
@@ -185,6 +219,9 @@ class UserManager
             $userAuthAssignment = new UserAuthAssignment();
             $userAuthAssignment->setAuthItem($authItem);
             $user->addUserAuthAssignment($userAuthAssignment);
+
+            // If there is no availability time information, we get the one from the structure
+            $user->setSolidaryUser($this->setDefaultSolidaryUserAvailabilities($user->getSolidaryUser()));
         }
 
         // persist the user
@@ -196,7 +233,7 @@ class UserManager
 
         // dispatch en event
         if (is_null($user->getUserDelegate())) {
-            
+
             // registration by the user itself
             $event = new UserRegisteredEvent($user);
             $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
@@ -222,14 +259,135 @@ class UserManager
 
         // dispatch SolidaryUser event
         if (!is_null($user->getSolidaryUser())) {
-            $event = new SolidaryUserCreated($user, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryUserCreated::NAME, $event);
-            $event = new SolidaryCreated($user, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
+            $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryUserCreatedEvent::NAME, $event);
+            $event = new SolidaryCreatedEvent($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
         }
 
         // return the user
         return $user;
+    }
+
+
+    /**
+     * Set the default availabilities of a SolidaryUser
+     * If no availabilitie already given, we take the structure default
+     * For the days check, if there is no indication, we consider the user available
+     *
+     * @param SolidaryUser $solidaryUser    The SolidaryUser
+     * @param Structure $structure          The Structure (if there is no Structure, we take the admin's one)
+     * @return SolidaryUser
+     */
+    public function setDefaultSolidaryUserAvailabilities(SolidaryUser $solidaryUser, Structure $structure=null): SolidaryUser
+    {
+        $solidaryUserstructure = null;
+        if (!is_null($structure)) {
+            // A structure is given. We're looking for the solidaryUserStructure between this structure and the SolidaryUser
+            $solidaryUserstructures = $solidaryUser->getSolidaryUserStructures();
+            foreach ($solidaryUserstructures as $currentSolidaryUserstructure) {
+                if ($currentSolidaryUserstructure->getStructure()->getId() == $structure->getId()) {
+                    $solidaryUserstructure = $currentSolidaryUserstructure;
+                    break;
+                }
+            }
+        } else {
+            // No structure given. We take the admin's one
+            $structures = $this->security->getUser()->getSolidaryStructures();
+            if (!is_null($structures) || count($structures)>0) {
+                $solidaryUserstructure = $structures[0];
+            }
+        }
+
+        if (is_null($solidaryUserstructure)) {
+            throw new SolidaryException(SolidaryException::NO_STRUCTURE);
+        }
+
+        // Times
+        if ($solidaryUser->getMMinTime()=="") {
+            $solidaryUser->setMMinTime($solidaryUserstructure->getStructure()->getMMinTime());
+        }
+        if ($solidaryUser->getMMaxTime()=="") {
+            $solidaryUser->setMMaxTime($solidaryUserstructure->getStructure()->getMMaxTime());
+        }
+        if ($solidaryUser->getAMinTime()=="") {
+            $solidaryUser->setAMinTime($solidaryUserstructure->getStructure()->getAMinTime());
+        }
+        if ($solidaryUser->getAMaxTime()=="") {
+            $solidaryUser->setAMaxTime($solidaryUserstructure->getStructure()->getAMaxTime());
+        }
+        if ($solidaryUser->getEMinTime()=="") {
+            $solidaryUser->setEMinTime($solidaryUserstructure->getStructure()->getEMinTime());
+        }
+        if ($solidaryUser->getEMaxTime()=="") {
+            $solidaryUser->setEMaxTime($solidaryUserstructure->getStructure()->getEMaxTime());
+        }
+
+        // Days
+        if ($solidaryUser->hasMMon()!==false) {
+            $solidaryUser->setMMon(true);
+        }
+        if ($solidaryUser->hasAMon()!==false) {
+            $solidaryUser->setAMon(true);
+        }
+        if ($solidaryUser->hasEMon()!==false) {
+            $solidaryUser->setEMon(true);
+        }
+        if ($solidaryUser->hasMTue()!==false) {
+            $solidaryUser->setMTue(true);
+        }
+        if ($solidaryUser->hasATue()!==false) {
+            $solidaryUser->setATue(true);
+        }
+        if ($solidaryUser->hasETue()!==false) {
+            $solidaryUser->setETue(true);
+        }
+        if ($solidaryUser->hasMWed()!==false) {
+            $solidaryUser->setMWed(true);
+        }
+        if ($solidaryUser->hasAWed()!==false) {
+            $solidaryUser->setAWed(true);
+        }
+        if ($solidaryUser->hasEWed()!==false) {
+            $solidaryUser->setEWed(true);
+        }
+        if ($solidaryUser->hasMThu()!==false) {
+            $solidaryUser->setMThu(true);
+        }
+        if ($solidaryUser->hasAThu()!==false) {
+            $solidaryUser->setAThu(true);
+        }
+        if ($solidaryUser->hasEThu()!==false) {
+            $solidaryUser->setEThu(true);
+        }
+        if ($solidaryUser->hasMFri()!==false) {
+            $solidaryUser->setMFri(true);
+        }
+        if ($solidaryUser->hasAFri()!==false) {
+            $solidaryUser->setAFri(true);
+        }
+        if ($solidaryUser->hasEFri()!==false) {
+            $solidaryUser->setEFri(true);
+        }
+        if ($solidaryUser->hasMSat()!==false) {
+            $solidaryUser->setMSat(true);
+        }
+        if ($solidaryUser->hasASat()!==false) {
+            $solidaryUser->setASat(true);
+        }
+        if ($solidaryUser->hasESat()!==false) {
+            $solidaryUser->setESat(true);
+        }
+        if ($solidaryUser->hasMSun()!==false) {
+            $solidaryUser->setMSun(true);
+        }
+        if ($solidaryUser->hasASun()!==false) {
+            $solidaryUser->setASun(true);
+        }
+        if ($solidaryUser->hasESun()!==false) {
+            $solidaryUser->setESun(true);
+        }
+        return $solidaryUser;
     }
 
     /**
@@ -241,13 +399,13 @@ class UserManager
      */
     public function prepareUser(User $user, bool $encodePassword=false)
     {
-        if (count($user->getUserAuthAssignments()) == 0) {
-            // default role : user registered full
-            $authItem = $this->authItemRepository->find(AuthItem::ROLE_USER_REGISTERED_FULL);
-            $userAuthAssignment = new UserAuthAssignment();
-            $userAuthAssignment->setAuthItem($authItem);
-            $user->addUserAuthAssignment($userAuthAssignment);
-        }
+
+        // We add the default roles we set in User Entity
+        $authItem = $this->authItemRepository->find(User::ROLE_DEFAULT);
+        $userAuthAssignment = new UserAuthAssignment();
+        $userAuthAssignment->setAuthItem($authItem);
+        $user->addUserAuthAssignment($userAuthAssignment);
+
 
         if ($encodePassword) {
             $user->setClearPassword($user->getPassword());
@@ -315,9 +473,14 @@ class UserManager
             if ($user->getSolidaryUser()->isBeneficiary() && !in_array(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE, $authItems)) {
                 $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
             }
-            $userAuthAssignment = new UserAuthAssignment();
-            $userAuthAssignment->setAuthItem($authItem);
-            $user->addUserAuthAssignment($userAuthAssignment);
+            if (!empty($authItem)) {
+                $userAuthAssignment = new UserAuthAssignment();
+                $userAuthAssignment->setAuthItem($authItem);
+                $user->addUserAuthAssignment($userAuthAssignment);
+            }
+
+            // If there is no availability time information, we get the one from the structure
+            $user->setSolidaryUser($this->setDefaultSolidaryUserAvailabilities($user->getSolidaryUser()));
         }
 
         // persist the user
@@ -328,10 +491,10 @@ class UserManager
         $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
         // dispatch SolidaryUser event
         if (!is_null($user->getSolidaryUser())) {
-            $event = new SolidaryUserCreated($user, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryUserCreated::NAME, $event);
-            $event = new SolidaryCreated($user, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryCreated::NAME, $event);
+            $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryUserCreatedEvent::NAME, $event);
+            $event = new SolidaryCreatedEvent($user, $this->security->getUser());
+            $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
         }
 
         // return the user
@@ -585,6 +748,9 @@ class UserManager
         $user = $this->userRepository->findOneBy(["pwdToken"=>$data->getPwdToken()]);
         if (!is_null($user)) {
             $user->setPassword($data->getPassword());
+            // we reset tokens
+            $user->setPwdTokenDate(null);
+            $user->setPwdToken(null);
             // persist the user
             $this->entityManager->persist($user);
             $this->entityManager->flush();
@@ -616,7 +782,7 @@ class UserManager
             if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
                 // check telephone for sms
                 continue;
-            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
+            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && !$user->hasMobile()) {
                 // check apps for push
                 continue;
             }
@@ -635,7 +801,7 @@ class UserManager
             if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
                 // check telephone for sms
                 continue;
-            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
+            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && !$user->hasMobile()) {
                 // check apps for push
                 continue;
             }
@@ -677,7 +843,7 @@ class UserManager
             if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
                 // check telephone for sms
                 $userNotification->setActive(false);
-            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
+            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && !$user->hasMobile()) {
                 // check apps for push
                 $userNotification->setActive(false);
             }
@@ -795,6 +961,9 @@ class UserManager
                 $this->deleteCommunityUsers($user);
             }
         }
+        // check if the user have pending proofs, and remove the links
+        $this->proofManager->removeProofs($user);
+                    
         // We check if the user have ads.
         // If he have ads we check if a carpool is initiated if yes we send an email to the carpooler
         foreach ($user->getProposals() as $proposal) {
@@ -975,7 +1144,12 @@ class UserManager
         $datetime = new DateTime();
         $time = $datetime->getTimestamp();
         // note : we replace the '/' by an arbitrary 'a' as the token could be used in a url
-        return $this->sanitizeString(hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
+
+        if ($user->getEmail() == $this->fakeFirstMail) {
+            return $this->fakeFirstToken;
+        } else {
+            return $this->sanitizeString(hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
+        }
     }
 
     /**
@@ -998,5 +1172,22 @@ class UserManager
     {
         $seed = str_split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
         return $seed[array_rand($seed)];
+    }
+
+    /**
+     * Check if an user $user have a specific AuthItem $authItem
+     *
+     * @param User $user    The user to check
+     * @param AuthItem $AuthItem    The auth item to check
+     * @return boolean True if user have item
+     */
+    public function checkUserHaveAuthItem(User $user, AuthItem $authItem)
+    {
+        foreach ($user->getUserAuthAssignments() as $oneItem) {
+            if ($oneItem->getAuthItem() == $authItem) {
+                return true;
+            }
+        }
+        return false;
     }
 }

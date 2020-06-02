@@ -26,12 +26,11 @@ namespace App\Match\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Geography\Entity\Address;
-use App\Geography\Entity\Direction;
+use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
-use App\User\Entity\User;
 
 /**
  * A mass matching person, imported from a mass matching file.
@@ -238,9 +237,9 @@ class MassPerson
     private $updatedDate;
 
     /**
-     * @var User|null The user related if this MassPerson is from an Mass import.
+     * @var User|null The User created base on this MassPerson
      *
-     * @ORM\OneToOne(targetEntity="\App\User\Entity\User")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="massPerson")
      * @MaxDepth(1)
      * @Groups({"read"})
      */

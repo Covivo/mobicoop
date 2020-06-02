@@ -23,14 +23,14 @@
 
 namespace App\Solidary\Repository;
 
+use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\StructureProof;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method StructureProof|null find($id, $lockMode = null, $lockVersion = null)
- * @method StructureProof|null findOneBy(array $criteria, array $orderBy = null)
- */
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+*/
 class StructureProofRepository
 {
     /**
@@ -38,11 +38,8 @@ class StructureProofRepository
      */
     private $repository;
     
-    private $entityManager;
-    
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(StructureProof::class);
     }
 
@@ -55,5 +52,13 @@ class StructureProofRepository
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findStructureProofs(Structure $structure)
+    {
+        $query = $this->repository->createQueryBuilder('sp')
+        ->where('sp.structure = :structure')
+        ->setParameter('structure', $structure);
+        return $query->getQuery()->getResult();
     }
 }

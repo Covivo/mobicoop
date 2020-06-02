@@ -32,6 +32,7 @@ class Redirect implements ResourceInterface
 {
     const TYPE_COMMUNITY = 0;
     const TYPE_EVENT = 1;
+    const TYPE_ARTICLE = 2;
 
     /**
      * @var int The id of this redirection.
@@ -66,12 +67,12 @@ class Redirect implements ResourceInterface
     private $destinationId;
 
     /**
-     * @var \DateTimeInterface Creation date of the user import.
+     * @var \DateTimeInterface Creation date of the redirect.
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Update date of the user import.
+     * @var \DateTimeInterface Update date of the redirect.
      */
     private $updatedDate;
 
@@ -180,12 +181,12 @@ class Redirect implements ResourceInterface
         return $this;
     }
 
-    public function getDestinationComplement(): string
+    public function getDestinationComplement(): ?string
     {
         return $this->destinationComplement;
     }
 
-    public function setDestinationComplement(string $destinationComplement): self
+    public function setDestinationComplement(?string $destinationComplement): self
     {
         $this->destinationComplement = $destinationComplement;
 

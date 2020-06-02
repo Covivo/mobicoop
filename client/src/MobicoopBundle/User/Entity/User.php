@@ -332,16 +332,10 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $phoneValidatedDate;
 
     /**
-     * @var string|null iOS app ID.
+     * @var bool|null Mobile user.
      * @Groups({"post","put"})
      */
-    private $iosAppId;
-
-    /**
-     * @var string|null Android app ID.
-     * @Groups({"post","put"})
-     */
-    private $androidAppId;
+    private $mobile;
 
     /**
      * Language de l'utilisateur.
@@ -1004,25 +998,15 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
-    public function getIosAppId(): ?string
+    public function hasMobile(): ?bool
     {
-        return $this->iosAppId;
+        return $this->mobile ? true : false;
     }
 
-    public function setIosAppId(?string $iosAppId): self
+    public function setMobile(?bool $mobile): self
     {
-        $this->iosAppId = $iosAppId;
-        return $this;
-    }
+        $this->mobile = $mobile;
 
-    public function getAndroidAppId(): ?string
-    {
-        return $this->androidAppId;
-    }
-
-    public function setAndroidAppId(?string $androidAppId): self
-    {
-        $this->androidAppId = $androidAppId;
         return $this;
     }
 

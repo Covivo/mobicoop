@@ -29,6 +29,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Solidary\Entity\Subject;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class SubjectVoter extends Voter
 {
     const SUBJECT_CREATE = 'subject_create';

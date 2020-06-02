@@ -25,7 +25,12 @@ namespace App\User\Repository;
 
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Community\Entity\Community;
+use App\Solidary\Entity\SolidaryBeneficiary;
+use App\Solidary\Entity\SolidaryVolunteer;
+use App\Solidary\Exception\SolidaryException;
 use Doctrine\ORM\EntityRepository;
+use Psr\Log\LoggerInterface;
 
 class UserRepository
 {
@@ -33,19 +38,84 @@ class UserRepository
      * @var EntityRepository
      */
     private $repository;
-    
-    public function __construct(EntityManagerInterface $entityManager)
+
+    private $logger;
+
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
     {
         $this->repository = $entityManager->getRepository(User::class);
+        $this->logger = $logger;
     }
-    
+
     public function find(int $id): ?User
     {
         return $this->repository->find($id);
     }
 
+    /**
+     * Find All the users
+     *
+     * @return User|null
+     */
+    public function findAll(): ?array
+    {
+        return $this->repository->findAll();
+    }
+
     public function findOneBy(array $criteria): ?User
     {
-        return $this->repository->findOneBy($criteria);
+        $user = $this->repository->findOneBy($criteria);
+        return $user;
+    }
+
+    /**
+     * Get all the users in the communities given
+     *
+     * @param Community $community
+     * @return User|null
+     */
+    public function getUserBelongToMyCommunity(Community $community)
+    {
+        return $this->repository->createQueryBuilder('u')
+          ->leftJoin('u.communityUsers', 'c')
+          ->andWhere("c.community = :community")
+          ->setParameter('community', $community)
+          ->getQuery()
+          ->getResult();
+    }
+
+    /**
+     * Get Users with a specific type of SolidaryUser
+     *
+     * @param string $type      Type of SolidaryUser (Beneficiary or Volunteer)
+     * @param array $filters    Optionnal filters
+     * @return array|null
+     */
+    public function findUsersBySolidaryUserType(string $type=null, array $filters = null): ?array
+    {
+        $this->logger->info("Start findUsersBySolidaryUserType");
+        $query = $this->repository->createQueryBuilder('u')
+        ->join('u.solidaryUser', 'su');
+
+
+        // Type
+        if ($type==SolidaryBeneficiary::TYPE) {
+            $query->where('su.beneficiary = true');
+        } elseif ($type==SolidaryVolunteer::TYPE) {
+            $query->where('su.volunteer = true');
+        } else {
+            throw new SolidaryException(SolidaryException::TYPE_SOLIDARY_USER_UNKNOWN);
+        }
+
+        // Filters
+        if (!is_null($filters)) {
+            foreach ($filters as $filter => $value) {
+                $query->andWhere("u.".$filter." like '%".$value."%'");
+            }
+        }
+        
+
+
+        return $query->getQuery()->getResult();
     }
 }

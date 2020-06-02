@@ -91,7 +91,9 @@ use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
+use App\Match\Entity\MassPerson;
 use App\Solidary\Entity\SolidaryUser;
+use App\Solidary\Entity\Structure;
 use App\User\Controller\UserCanUseEmail;
 
 /**
@@ -121,6 +123,7 @@ use App\User\Controller\UserCanUseEmail;
  *          "post"={
  *              "method"="POST",
  *              "path"="/users",
+ *              "normalization_context"={"groups"={"readUser"}},
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -182,6 +185,7 @@ use App\User\Controller\UserCanUseEmail;
  *          "userRegistration"={
  *              "method"="POST",
  *              "path"="/users/register",
+ *              "normalization_context"={"groups"={"readUser"}},
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -239,6 +243,11 @@ use App\User\Controller\UserCanUseEmail;
  *              "method"="GET",
  *              "path"="/users/me",
  *              "read"="false"
+ *          },
+ *          "accessAdmin"={
+ *              "normalization_context"={"groups"={"readUser","readUserAdmin"}},
+ *              "method"="GET",
+ *              "path"="/users/accesFromAdminReact",
  *          }
  *      },
  *      itemOperations={
@@ -311,6 +320,8 @@ use App\User\Controller\UserCanUseEmail;
  *          "put"={
  *              "method"="PUT",
  *              "path"="/users/{id}",
+ *              "normalization_context"={"groups"={"readUser"}},
+ *              "denormalization_context"={"groups"={"write"}},
  *              "security"="is_granted('user_update',object)"
  *          },
  *          "delete_user"={
@@ -329,12 +340,6 @@ use App\User\Controller\UserCanUseEmail;
  *              "method"="PUT",
  *              "path"="/users/{id}/unsubscribe_user",
  *              "controller"=UserUnsubscribeFromEmail::class
- *          },
- *          "solidaries"={
- *              "method"="GET",
- *              "path"="/users/{id}/solidaries",
- *              "normalization_context"={"groups"={"readSolidary"}},
- *              "security"="is_granted('solidary_list',object)"
  *          },
  *          "structures"={
  *              "method"="GET",
@@ -396,6 +401,12 @@ class User implements UserInterface, EquatableInterface
     const PWD_SEND_TYPE_SMS = 1;     // password sent by sms if phone present
     const PWD_SEND_TYPE_EMAIL = 2;   // password sent by email
 
+    const MOBILE_APP_WEB = 1;
+    const MOBILE_APP_IOS = 2;
+    const MOBILE_APP_ANDROID = 3;
+
+    const ROLE_DEFAULT = 3;  // Role we want to add by default when user register, ID is in auth_item (ROLE_USER_REGISTERED_FULL now)
+
     /**
      * @var int The id of this user.
      *
@@ -420,7 +431,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities"})
      */
     private $givenName;
 
@@ -428,7 +439,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","communities"})
      */
     private $familyName;
 
@@ -529,7 +540,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The telephone number of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","checkPhoneToken"})
+     * @Groups({"readUser","write","checkPhoneToken","results"})
      */
     private $telephone;
 
@@ -540,17 +551,11 @@ class User implements UserInterface, EquatableInterface
     private $oldTelephone;
 
     /**
-     * @var string|null The telephone number of the user (for results).
-     * @Groups({"readUser","results"})
-     */
-    private $phone;
-
-    /**
      * @var int phone display configuration (1 = restricted (default); 2 = all).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","write", "results"})
+     * @Groups({"readUser","write","results"})
      */
     private $phoneDisplay;
 
@@ -714,20 +719,12 @@ class User implements UserInterface, EquatableInterface
     private $phoneValidatedDate;
 
     /**
-     * @var string|null iOS app ID.
+     * @var bool|null Mobile user
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readUser","write"})
      */
-    private $iosAppId;
-
-    /**
-     * @var string|null Android app ID.
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write"})
-     */
-    private $androidAppId;
+    private $mobile;
 
     /**
      * @var string User language
@@ -753,6 +750,14 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","write"})
      */
     private $cars;
+
+    /**
+     * @var ArrayCollection|null A user may have many push token ids.
+     *
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\PushToken", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readUser","write"})
+     */
+    private $pushTokens;
 
     /**
      * @var ArrayCollection|null The proposals made for this user (in general by the user itself, except when it is a "posting for").
@@ -931,7 +936,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var UserImport|null The user import data.
      *
-     * @ORM\OneToOne(targetEntity="\App\Import\Entity\UserImport", mappedBy="user")
+     * @ORM\OneToOne(targetEntity="\App\Import\Entity\UserImport", mappedBy="user", cascade={"remove"})
      * @Groups({"readUser"})
      * @MaxDepth(1)
      */
@@ -1020,6 +1025,18 @@ class User implements UserInterface, EquatableInterface
      */
     private $alreadyRegistered;
 
+    /**
+     * @var int|null Registration from mobile (web app:1, iOS:2, Android:3)
+     *
+     * @Groups({"readUser","write"})
+     */
+    private $mobileRegistration;
+
+    /**
+     * @var string|null The link used to validate the email (useful for mobile apps)
+     * @Groups({"readUser","write"})
+     */
+    private $emailValidationLink;
 
     /**
      * @var \DateTimeInterface Last user activity date
@@ -1032,21 +1049,47 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var SolidaryUser|null The SolidaryUser possibly linked to this User
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user", cascade={"persist","remove"})
-     * @Groups({"readUser","write","readSolidary","writeSolidary"})
+     * @Groups({"readUser","write","writeSolidary"})
+     * @MaxDepth(1)
      */
     private $solidaryUser;
 
     /**
      * @var array|null used to get the solidaries of a user
      * @Groups({"readSolidary"})
+     * @MaxDepth(1)
      */
     private $solidaries;
 
     /**
      * @var array|null used to get the structures of a user
      * @Groups({"userStructure"})
+     * @MaxDepth(1)
      */
     private $structures;
+
+    /**
+     * @var CommunityUser|null The communityUser link to the user, use in admin for get the record CommunityUser from the User ressource
+     * @Groups({"readUserAdmin" })
+     */
+    private $adminCommunityUser;
+
+    /**
+     * @var MassPerson|null The Mass person related to the suer if the user is imported from a Mass migration
+     *
+     * @ORM\OneToOne(targetEntity="\App\Match\Entity\MassPerson", mappedBy="user")
+     * @MaxDepth(1)
+     * @Groups({"readUser"})
+     */
+    private $massPerson;
+
+    /**
+     * @var ArrayCollection|null A user may work in multiple solidary Structures.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Structure", mappedBy="users")
+     * @MaxDepth(1)
+     */
+    private $solidaryStructures;
 
     public function __construct($status = null)
     {
@@ -1073,12 +1116,15 @@ class User implements UserInterface, EquatableInterface
         $this->deliveries = new ArrayCollection();
         $this->carpoolProofsAsDriver = new ArrayCollection();
         $this->carpoolProofsAsPassenger = new ArrayCollection();
+        $this->pushTokens = new ArrayCollection();
+        $this->solidaryStructures = new ArrayCollection();
         $this->roles = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
         $this->setStatus($status);
         $this->setAlreadyRegistered(false);
+        $this->setMobileRegistration(null);
     }
 
     public function getId(): ?int
@@ -1253,11 +1299,6 @@ class User implements UserInterface, EquatableInterface
         $this->telephone = $telephone;
 
         return $this;
-    }
-
-    public function getPhone(): ?string
-    {
-        return ($this->phoneDisplay == self::PHONE_DISPLAY_ALL ? $this->telephone : null);
     }
 
     public function getPhoneDisplay(): ?int
@@ -1461,25 +1502,15 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getIosAppId(): ?string
+    public function hasMobile(): ?bool
     {
-        return $this->iosAppId;
+        return $this->mobile ? true : false;
     }
 
-    public function setIosAppId(?string $iosAppId): self
+    public function setMobile(?bool $mobile): self
     {
-        $this->iosAppId = $iosAppId;
-        return $this;
-    }
+        $this->mobile = $mobile;
 
-    public function getAndroidAppId(): ?string
-    {
-        return $this->androidAppId;
-    }
-
-    public function setAndroidAppId(?string $androidAppId): self
-    {
-        $this->androidAppId = $androidAppId;
         return $this;
     }
 
@@ -1572,6 +1603,34 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($car->getUser() === $this) {
                 $car->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getPushTokens()
+    {
+        return $this->pushTokens->getValues();
+    }
+
+    public function addPushToken(PushToken $pushToken): self
+    {
+        if (!$this->pushTokens->contains($pushToken)) {
+            $this->pushTokens->add($pushToken);
+            $pushToken->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePushToken(PushToken $pushToken): self
+    {
+        if ($this->pushTokens->contains($pushToken)) {
+            $this->pushTokens->removeElement($pushToken);
+            // set the owning side to null (unless already changed)
+            if ($pushToken->getUser() === $this) {
+                $pushToken->setUser(null);
             }
         }
 
@@ -2405,6 +2464,32 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getMobileRegistration(): ?int
+    {
+        return $this->mobileRegistration;
+    }
+
+    public function setMobileRegistration(?int $mobileRegistration): self
+    {
+        $this->mobileRegistration = $mobileRegistration;
+        if ($this->mobileRegistration == self::MOBILE_APP_IOS || $this->mobileRegistration == self::MOBILE_APP_ANDROID) {
+            $this->setMobile(true);
+        }
+        return $this;
+    }
+
+    public function getEmailValidationLink(): ?string
+    {
+        return $this->emailValidationLink;
+    }
+
+    public function setEmailValidationLink(?string $emailValidationLink): self
+    {
+        $this->emailValidationLink = $emailValidationLink;
+
+        return $this;
+    }
+
     public function isAlreadyRegistered(): ?bool
     {
         return $this->alreadyRegistered;
@@ -2446,18 +2531,6 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getSolidaries()
-    {
-        return $this->solidaries;
-    }
-
-    public function setSolidaries(?array $solidaries): self
-    {
-        $this->solidaries = $solidaries;
-
-        return $this;
-    }
-
     public function getStructures()
     {
         return $this->structures;
@@ -2466,6 +2539,51 @@ class User implements UserInterface, EquatableInterface
     public function setStructures(?array $structures): self
     {
         $this->structures = $structures;
+
+        return $this;
+    }
+
+    public function getAdminCommunityUser()
+    {
+        return $this->adminCommunityUser;
+    }
+
+    public function setAdminCommunityUser(CommunityUser $adminCommunityUser)
+    {
+        $this->adminCommunityUser = $adminCommunityUser;
+    }
+
+    public function getMassPerson(): ?MassPerson
+    {
+        return $this->massPerson;
+    }
+
+    public function setMassPerson(?MassPerson $massPerson): self
+    {
+        $this->massPerson = $massPerson;
+
+        return $this;
+    }
+
+    public function getSolidaryStructures()
+    {
+        return $this->solidaryStructures->getValues();
+    }
+
+    public function addSolidaryStructure(Structure $structure): self
+    {
+        if (!$this->solidaryStructures->contains($structure)) {
+            $this->solidaryStructures->add($structure);
+        }
+
+        return $this;
+    }
+
+    public function removeSolidaryStructure(Structure $structure): self
+    {
+        if ($this->solidaryStructures->contains($structure)) {
+            $this->solidaryStructures->removeElement($structure);
+        }
 
         return $this;
     }

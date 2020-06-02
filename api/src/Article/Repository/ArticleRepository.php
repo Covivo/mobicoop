@@ -40,6 +40,11 @@ class ArticleRepository
         $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Article::class);
     }
+    
+    public function find(int $id): ?Article
+    {
+        return $this->repository->find($id);
+    }
 
     /**
      * Find the external articles

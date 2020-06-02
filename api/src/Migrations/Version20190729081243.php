@@ -26,8 +26,7 @@ final class Version20190729081243 extends AbstractMigration
         $this->addSql('ALTER TABLE waypoint CHANGE proposal_id proposal_id INT DEFAULT NULL, CHANGE matching_id matching_id INT DEFAULT NULL, CHANGE ask_id ask_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE message CHANGE message_id message_id INT DEFAULT NULL, CHANGE title title VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE notification CHANGE template_title template_title VARCHAR(255) DEFAULT NULL, CHANGE active active TINYINT(1) DEFAULT NULL, CHANGE active_default active_default TINYINT(1) DEFAULT NULL, CHANGE template_body template_body VARCHAR(255) DEFAULT NULL');
-        $this->addSql('ALTER TABLE notified DROP FOREIGN KEY FK_D23269D4B93F8B63');
-        $this->addSql('DROP INDEX IDX_D23269D4B93F8B63 ON notified');
+        
         $this->addSql('ALTER TABLE notified CHANGE proposal_id proposal_id INT DEFAULT NULL, CHANGE matching_id matching_id INT DEFAULT NULL, CHANGE ask_history_id ask_history_id INT DEFAULT NULL, CHANGE recipient_id recipient_id INT DEFAULT NULL, CHANGE sent_date sent_date DATETIME DEFAULT NULL, CHANGE received_date received_date DATETIME DEFAULT NULL, CHANGE read_date read_date DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE recipient CHANGE read_date read_date DATETIME DEFAULT NULL, CHANGE sent_date sent_date DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE community CHANGE members_hidden members_hidden TINYINT(1) DEFAULT NULL, CHANGE proposals_hidden proposals_hidden TINYINT(1) DEFAULT NULL');
@@ -77,8 +76,7 @@ final class Version20190729081243 extends AbstractMigration
         $this->addSql('ALTER TABLE message CHANGE message_id message_id INT DEFAULT NULL, CHANGE title title VARCHAR(255) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci');
         $this->addSql('ALTER TABLE notification CHANGE template_title template_title VARCHAR(255) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE template_body template_body VARCHAR(255) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE active active TINYINT(1) DEFAULT \'NULL\', CHANGE active_default active_default TINYINT(1) DEFAULT \'NULL\'');
         $this->addSql('ALTER TABLE notified CHANGE proposal_id proposal_id INT DEFAULT NULL, CHANGE matching_id matching_id INT DEFAULT NULL, CHANGE ask_history_id ask_history_id INT DEFAULT NULL, CHANGE recipient_id recipient_id INT DEFAULT NULL, CHANGE sent_date sent_date DATETIME DEFAULT \'NULL\', CHANGE received_date received_date DATETIME DEFAULT \'NULL\', CHANGE read_date read_date DATETIME DEFAULT \'NULL\'');
-        $this->addSql('ALTER TABLE notified ADD CONSTRAINT FK_D23269D4B93F8B63 FOREIGN KEY (ask_history_id) REFERENCES ask (id)');
-        $this->addSql('CREATE INDEX IDX_D23269D4B93F8B63 ON notified (ask_history_id)');
+        
         $this->addSql('ALTER TABLE paragraph CHANGE section_id section_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE proposal CHANGE proposal_linked_id proposal_linked_id INT DEFAULT NULL, CHANGE user_id user_id INT DEFAULT NULL, CHANGE criteria_id criteria_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE ptarrival CHANGE individual_stop_id individual_stop_id INT DEFAULT NULL, CHANGE name name VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci');

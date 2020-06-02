@@ -93,6 +93,7 @@ class ProposalRepository
      * TODO : find the matching also in existing matchings !
      * => an accepted carpool ask can be considered as a new proposal, with a new direction consisting in driver and passenger waypoints
      * => the original proposals shouldn't be used as proposals (excluded for new searches and ad posts, recomputed for existing matchings)
+     *      we should use the original and the resulting proposal and use the best match (the shortest in time)
      * => the driver seats should be reduced by the number of passengers in the new matchingProposal->criteria object
      *
      * @param Proposal $proposal        The proposal to match
@@ -338,7 +339,7 @@ class ProposalRepository
             }
             
             // bearing => we exclude the proposals if their direction is outside the authorize range (opposite bearing +/- BEARING_RANGE degrees)
-            if (self::USE_BEARING) {
+            if (self::USE_BEARING && $proposal->getCriteria()->getDirectionPassenger()->getDistance() > 0) {
                 if ($zoneDriverWhere != "") {
                     $zoneDriverWhere .= " and ";
                 }
@@ -385,7 +386,7 @@ class ProposalRepository
             }
 
             // passenger proportion
-            if (self::USE_PASSENGER_PROPORTION) {
+            if (self::USE_PASSENGER_PROPORTION && $proposal->getCriteria()->getDirectionPassenger()->getDistance() > 0) {
                 if ($zoneDriverWhere != "") {
                     $zoneDriverWhere .= " and ";
                 }

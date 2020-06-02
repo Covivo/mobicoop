@@ -1,8 +1,5 @@
 <template>
-  <v-row
-    align="center"
-    justify="center"
-  >
+  <v-row>
     <v-col
       cols="4"
       md="4"
@@ -30,25 +27,24 @@
     >
       <v-card
         flat
-        max-height="25vh"
         justify="center"
       >
         <v-card-text>
-          <h3 class="headline text-justify font-weight-bold">
+          <h3 class="headline  text-left font-weight-bold">
             {{ event.name }}
           </h3>
-          <p class="headline text-justify subtitle-1">
+          <p class="headline text-left subtitle-1">
             {{ event.address.addressLocality }}
           </p>
           <p
             v-if="displayDescription && formatedDescription!==''"
-            class="body-1 pa-3"
+            class="body-1"
             md="6"
             v-html="formatedDescription"
           />
           <p
             v-if="displayDescription && formatedFullDescription!==''"
-            class="body-2 pa-3"
+            class="body-2"
             md="6"
             v-html="formatedFullDescription"
           />

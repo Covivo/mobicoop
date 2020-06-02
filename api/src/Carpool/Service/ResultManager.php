@@ -34,6 +34,7 @@ use App\Carpool\Entity\ResultRole;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Service\FormatDataManager;
+use App\User\Entity\User;
 use DateTime;
 
 /**
@@ -469,7 +470,21 @@ class ResultManager
                 $result->setFrequencyResult($matching['request']->getProposalRequest()->getCriteria()->getFrequency());
             }
             if (is_null($result->getCarpooler())) {
-                $result->setCarpooler($matching['request']->getProposalRequest()->getUser());
+                $carpooler=$matching['request']->getProposalRequest()->getUser();
+                $result->setCarpooler($carpooler);
+                // We check if we have accepted carpool if yes we display the carpooler phone number
+                $hasAsk = false;
+                $asks = $matching['request']->getAsks();
+                foreach ($asks as $ask) {
+                    if ($ask->getStatus() == (ASK::STATUS_ACCEPTED_AS_DRIVER || ASK::STATUS_ACCEPTED_AS_PASSENGER)) {
+                        $hasAsk=true;
+                        break;
+                    }
+                }
+                // if we don't have accepted carpools AND (no user is logged OR the phone display is restricted) we pass the telephone at null
+                if (!$hasAsk && (!$matching['request']->getProposalOffer()->getUser() || $carpooler->getPhoneDisplay() == USER::PHONE_DISPLAY_RESTRICTED)) {
+                    $result->getCarpooler()->setTelephone(null);
+                }
             }
             if (is_null($result->getComment()) && !is_null($matching['request']->getProposalRequest()->getComment())) {
                 $result->setComment($matching['request']->getProposalRequest()->getComment());
@@ -477,6 +492,10 @@ class ResultManager
             if (is_null($result->getAskId()) && !empty($matching['request']->getAsks())) {
                 $result->setAskId($matching['request']->getAsks()[0]->getId());
             }
+
+            // solidary : the request can be solidary
+            $result->setSolidary($matching['request']->getProposalRequest()->getCriteria()->isSolidary());
+            $result->setSolidaryExclusive(false);
 
             // communities
             foreach ($matching['request']->getProposalRequest()->getCommunities() as $community) {
@@ -1038,7 +1057,21 @@ class ResultManager
                 $result->setFrequencyResult($matching['offer']->getProposalOffer()->getCriteria()->getFrequency());
             }
             if (is_null($result->getCarpooler())) {
-                $result->setCarpooler($matching['offer']->getProposalOffer()->getUser());
+                $carpooler=$matching['offer']->getProposalOffer()->getUser();
+                $result->setCarpooler($carpooler);
+                // We check if we have accepted carpool
+                $hasAsk = false;
+                $asks = $matching['offer']->getAsks();
+                foreach ($asks as $ask) {
+                    if ($ask->getStatus() == (ASK::STATUS_ACCEPTED_AS_DRIVER || ASK::STATUS_ACCEPTED_AS_PASSENGER)) {
+                        $hasAsk=true;
+                        break;
+                    }
+                }
+                // if we don't have accepted carpools AND (no user is logged OR the phone display is restricted) we pass the telephone at null
+                if (!$hasAsk && (!$matching['offer']->getProposalRequest()->getUser() || $carpooler->getPhoneDisplay() == USER::PHONE_DISPLAY_RESTRICTED)) {
+                    $result->getCarpooler()->setTelephone(null);
+                }
             }
             if (is_null($result->getComment()) && !is_null($matching['offer']->getProposalOffer()->getComment())) {
                 $result->setComment($matching['offer']->getProposalOffer()->getComment());
@@ -1046,6 +1079,10 @@ class ResultManager
             if (is_null($result->getAskId()) && !empty($matching['offer']->getAsks())) {
                 $result->setAskId($matching['offer']->getAsks()[0]->getId());
             }
+
+            // solidary : the offer can be solidaryExclusive
+            $result->setSolidary(false);
+            $result->setSolidaryExclusive($matching['offer']->getProposalOffer()->getCriteria()->isSolidaryExclusive());
 
             // communities
             foreach ($matching['offer']->getProposalOffer()->getCommunities() as $community) {

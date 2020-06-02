@@ -45,6 +45,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "get"
  *      }
  * )
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 
 class SolidaryResultCarpool
@@ -82,6 +83,12 @@ class SolidaryResultCarpool
      * @Groups({"readSolidarySearch"})
      */
     private $schedule;
+
+    /**
+     * @var \DateTimeInterface Journey's date from
+     * @Groups({"readSolidarySearch"})
+     */
+    private $date;
 
     /**
      * @var int The proposal frequency (1 = punctual; 2 = regular)
@@ -164,6 +171,18 @@ class SolidaryResultCarpool
     public function setSchedule(array $schedule): self
     {
         $this->schedule = $schedule;
+        
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+    
+    public function setDate(\DateTimeInterface $date): self
+    {
+        $this->date = $date;
         
         return $this;
     }

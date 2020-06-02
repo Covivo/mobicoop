@@ -75,6 +75,7 @@
           >
 
           <v-text-field
+            id="token"
             v-model="token"
             :rules="tokenRules"
             :label="$t('token')"
@@ -118,7 +119,7 @@ export default {
       default: ""
     }
   },
-  data() { 
+  data() {
     return {
       valid:true,
       token:this.urlToken,
@@ -141,7 +142,6 @@ export default {
     },
     treatErrorMessage(error) {
 
-      console.info(error)
       if (error === "Bad credentials.") {
         this.errorDisplay = this.$t("errorCredentials");
         this.loading = false;

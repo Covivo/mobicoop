@@ -23,6 +23,8 @@
 
 namespace App\Geography\Service;
 
+use App\Geography\Entity\Direction;
+use App\Geography\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -34,16 +36,18 @@ class DirectionManager
 {
     private $entityManager;
     private $geoRouter;
+    private $territoryRepository;
    
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, GeoRouter $geoRouter)
+    public function __construct(EntityManagerInterface $entityManager, GeoRouter $geoRouter, TerritoryRepository $territoryRepository)
     {
         $this->entityManager = $entityManager;
         $this->geoRouter = $geoRouter;
+        $this->territoryRepository = $territoryRepository;
     }
 
     /**
@@ -73,5 +77,61 @@ class DirectionManager
         // final flush for pending persists
         $this->entityManager->flush();
         $this->entityManager->clear();
+    }
+
+    /**
+     * Create or update territories for a direction.
+     *
+     * @param Direction $direction    The direction
+     * @param boolean $persist      Persit the address immediately
+     * @return void The direction with its territories
+     */
+    public function createDirectionTerritories(Direction $direction, bool $persist = false)
+    {
+        // first we remove all territories
+        $direction->removeTerritories();
+        // then we search the territories
+        if ($territories = $this->territoryRepository->findDirectionTerritories($direction)) {
+            foreach ($territories as $territory) {
+                $direction->addTerritory($territory);
+            }
+        }
+        if ($persist) {
+            $this->entityManager->persist($direction);
+            $this->entityManager->flush();
+        }
+        return $direction;
+    }
+
+    /**
+     * Create or update territories for a Direction, only if the direction is directly related to 'useful' entities :
+     * - proposal
+     *
+     * @param Direction $direction    The direction
+     * @param boolean $persist      Persit the address immediately
+     * @return void The direction with its territories
+     */
+    public function createDirectionTerritoriesForUsefulEntity(Direction $direction, bool $persist = false)
+    {
+        $createLink = false;
+        if (count($direction->getCriteriaDrivers())>0) {
+            foreach ($direction->getCriteriaDrivers() as $criteriaDriver) {
+                if (!is_null($criteriaDriver->getProposal())) {
+                    $createLink = true;
+                    break;
+                }
+            }
+        } elseif (count($direction->getCriteriaPassengers())>0) {
+            foreach ($direction->getCriteriaPassengers() as $criteriaPassenger) {
+                if (!is_null($criteriaPassenger->getProposal())) {
+                    $createLink = true;
+                    break;
+                }
+            }
+        }
+        if ($createLink) {
+            return $this->createDirectionTerritories($direction, $persist);
+        }
+        return $direction;
     }
 }

@@ -4,7 +4,7 @@
     class="pa-0"
   >
     <v-row>
-      <v-col cols="5">
+      <v-col cols="6">
         <regular-days-summary
           :mon-active="hasMonday"
           :tue-active="hasTuesday"

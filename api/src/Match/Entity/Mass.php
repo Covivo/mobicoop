@@ -27,6 +27,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\Community\Entity\Community;
+use App\Geography\Entity\Address;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Match\Controller\CreateMassImportAction;
@@ -52,47 +54,58 @@ use Doctrine\Common\Collections\Collection;
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read","mass"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}},
+ *          "denormalization_context"={"groups"={"write","massPost","massMigrate"}},
  *      },
  *      collectionOperations={
- *          "get",
+ *          "get"={
+ *              "security"="is_granted('mass_list',object)"
+ *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/masses",
+ *              "deserialize"=false,
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=CreateMassImportAction::class,
  *              "defaults"={"_api_receive"=false},
+ *              "security_post_denormalize"="is_granted('mass_create',object)"
  *          }
  *      },
  *      itemOperations={
  *          "get"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"mass"}},
+ *              "security"="is_granted('mass_read',object)"
  *          },
- *          "delete",
+ *          "delete"={
+ *              "security"="is_granted('mass_delete',object)"
+ *          },
  *          "analyze"={
  *              "method"="GET",
  *              "path"="/masses/{id}/analyze",
  *              "normalization_context"={"groups"={"massPost"}},
- *              "controller"=MassAnalyzeAction::class
+ *              "controller"=MassAnalyzeAction::class,
+ *              "security"="is_granted('mass_create',object)"
  *          },
  *          "reanalyze"={
  *              "method"="GET",
  *              "path"="/masses/{id}/reanalyze",
  *              "normalization_context"={"groups"={"massPost"}},
- *              "controller"=MassReAnalyzeAction::class
+ *              "controller"=MassReAnalyzeAction::class,
+ *              "security"="is_granted('mass_create',object)"
  *          },
  *          "compute"={
  *              "method"="GET",
  *              "path"="/masses/{id}/compute",
  *              "normalization_context"={"groups"={"massCompute"}},
- *              "controller"=MassComputeAction::class
+ *              "controller"=MassComputeAction::class,
+ *              "security"="is_granted('mass_create',object)"
  *          },
  *          "match"={
  *              "method"="GET",
  *              "path"="/masses/{id}/match",
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassMatchAction::class,
+ *              "security"="is_granted('mass_create',object)",
  *              "swagger_context"={
  *                  "parameters"={
  *                     {
@@ -144,6 +157,7 @@ use Doctrine\Common\Collections\Collection;
  *              "path"="/masses/{id}/rematch",
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassReMatchAction::class,
+ *              "security"="is_granted('mass_create',object)",
  *              "swagger_context"={
  *                  "parameters"={
  *                     {
@@ -194,13 +208,14 @@ use Doctrine\Common\Collections\Collection;
  *              "method"="GET",
  *              "path"="/masses/{id}/workingplaces",
  *              "normalization_context"={"groups"={"mass","massWorkingPlaces"}},
- *              "controller"=MassWorkingPlacesAction::class
+ *              "controller"=MassWorkingPlacesAction::class,
+ *              "security"="is_granted('mass_read',object)"
  *          },
-  *          "migrate"={
- *              "method"="GET",
+ *          "migrate"={
+ *              "method"="PUT",
  *              "path"="/masses/{id}/migrate",
- *              "normalization_context"={"groups"={"massMigrate"}},
- *              "controller"=MassMigrateAction::class
+ *              "security"="is_granted('mass_create',object)",
+ *              "normalization_context"={"groups"={"massMigrate"}}
  *          },
  *      }
  * )
@@ -407,12 +422,60 @@ class Mass
      */
     private $dateCheckLegit;
 
+    /**
+     * @var Community The community created after the migration of this mass users
+     *
+     * @ORM\OneToOne(targetEntity="App\Community\Entity\Community")
+     * @Groups({"mass","massMigrate"})
+     */
+    private $community;
 
     /**
      * @var array|null The migrated users
      * @Groups({"massMigrate"})
      */
     private $migratedUsers;
+
+    /**
+     * @var \DateTimeInterface Date of migration's beginning.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mass"})
+     */
+    private $migrationDate;
+
+    /**
+     * @var \DateTimeInterface Date of migration's end.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mass"})
+     */
+    private $migratedDate;
+
+    /**
+     * @var string The name of the new community that will be created if we migrate the users.
+     * All the migrated user will join this new community.
+     * @Groups({"mass","massMigrate"})
+     */
+    private $communityName;
+
+    /**
+     * @var string The short description of the community.
+     * @Groups({"mass","massMigrate"})
+     */
+    private $communityDescription;
+
+    /**
+     * @var string The full description of the community.
+     * @Groups({"mass","massMigrate"})
+     */
+    private $communityFullDescription;
+
+    /**
+     * @var Address Address of the community
+     * @Groups({"mass","massMigrate"})
+     */
+    private $communityAddress;
 
     public function __construct($id = null)
     {
@@ -630,38 +693,6 @@ class Mass
         $this->setFile(null);
     }
 
-    // DOCTRINE EVENTS
-
-    /**
-     * Creation date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoCreatedDate()
-    {
-        $this->setCreatedDate(new \Datetime());
-    }
-
-    /**
-     * Legitimacy checkbox date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoDateCheckLegit()
-    {
-        $this->setDateCheckLegit(new \Datetime());
-    }
-
-    /**
-     * Update date.
-     *
-     * @ORM\PreUpdate
-     */
-    public function setAutoUpdatedDate()
-    {
-        $this->setUpdatedDate(new \Datetime());
-    }
-
     public function getPersonsCoords(): ?array
     {
         return $this->personsCoords;
@@ -752,6 +783,18 @@ class Mass
         return $this;
     }
 
+    public function getCommunity(): ?Community
+    {
+        return $this->community;
+    }
+
+    public function setCommunity(?Community $community): self
+    {
+        $this->community = $community;
+
+        return $this;
+    }
+
     public function getMigratedUsers(): ?array
     {
         return $this->migratedUsers;
@@ -762,5 +805,91 @@ class Mass
         $this->migratedUsers = $migratedUsers;
 
         return $this;
+    }
+
+    public function getMigrationDate(): ?\DateTimeInterface
+    {
+        return $this->migrationDate;
+    }
+
+    public function setMigrationDate(?\DateTimeInterface $migrationDate): self
+    {
+        $this->migrationDate = $migrationDate;
+
+        return $this;
+    }
+
+    public function getMigratedDate(): ?\DateTimeInterface
+    {
+        return $this->migratedDate;
+    }
+
+    public function setMigratedDate(?\DateTimeInterface $migratedDate): self
+    {
+        $this->migratedDate = $migratedDate;
+
+        return $this;
+    }
+
+    public function getCommunityName(): ?string
+    {
+        return $this->communityName;
+    }
+
+    public function setCommunityName(?string $communityName)
+    {
+        $this->communityName = $communityName;
+    }
+
+    public function getCommunityDescription(): ?string
+    {
+        return $this->communityDescription;
+    }
+
+    public function setCommunityDescription(?string $communityDescription)
+    {
+        $this->communityDescription = $communityDescription;
+    }
+
+    public function getCommunityFullDescription(): ?string
+    {
+        return $this->communityFullDescription;
+    }
+
+    public function setCommunityFullDescription(?string $communityFullDescription)
+    {
+        $this->communityFullDescription = $communityFullDescription;
+    }
+
+    public function getCommunityAddress(): ?Address
+    {
+        return $this->communityAddress;
+    }
+
+    public function setCommunityAddress(?Address $communityAddress)
+    {
+        $this->communityAddress = $communityAddress;
+    }
+
+    // DOCTRINE EVENTS
+
+    /**
+     * Creation date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreatedDate()
+    {
+        $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

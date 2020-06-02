@@ -56,7 +56,7 @@ class Community implements ResourceInterface, \JsonSerializable
      * @Groups({"post","put"})
      */
     private $iri;
-    
+
     /**
      * @var string The name of the community.
      *
@@ -91,21 +91,21 @@ class Community implements ResourceInterface, \JsonSerializable
      * @Groups({"post","put"})
      */
     private $domain;
-    
+
     /**
      * @var string The short description of the community.
      *
      * @Groups({"post","put"})
      */
     private $description;
-    
+
     /**
      * @var string The full description of the community.
      *
      * @Groups({"post","put"})
      */
     private $fullDescription;
-    
+
     /**
     * @var \DateTimeInterface Creation date of the community.
     *
@@ -119,7 +119,7 @@ class Community implements ResourceInterface, \JsonSerializable
      * @Groups("post")
      */
     private $updatedDate;
-    
+
     /**
      * @var User The creator of the community.
      *
@@ -135,7 +135,7 @@ class Community implements ResourceInterface, \JsonSerializable
      * @Assert\NotBlank(groups={"create","update"})
      */
     private $address;
-    
+
     /**
      * @var Image[]|null The images of the community.
      *
@@ -176,6 +176,11 @@ class Community implements ResourceInterface, \JsonSerializable
      */
     private $member;
 
+    /**
+     * @var array|null Store the ads of the community
+     */
+    private $ads;
+
     public function __construct($id=null)
     {
         if ($id) {
@@ -187,12 +192,12 @@ class Community implements ResourceInterface, \JsonSerializable
         $this->communityUsers = new ArrayCollection();
         $this->setSecured(false);
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId($id)
     {
         $this->id = $id;
@@ -202,17 +207,17 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         return $this->iri;
     }
-    
+
     public function setIri($iri)
     {
         $this->iri = $iri;
     }
-    
+
     public function getName(): ?string
     {
         return $this->name;
     }
-    
+
     public function setName(string $name)
     {
         $this->name = $name;
@@ -222,7 +227,7 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         return $this->membersHidden;
     }
-    
+
     public function setMembersHidden(?bool $isMembersHidden): self
     {
         $this->membersHidden = boolval($isMembersHidden);
@@ -234,7 +239,7 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         return $this->proposalsHidden;
     }
-    
+
     public function setProposalsHidden(?bool $isProposalsHidden): self
     {
         $this->proposalsHidden = boolval($isProposalsHidden);
@@ -246,7 +251,7 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         return $this->validationType;
     }
-    
+
     public function setValidationType(?int $validationType)
     {
         $this->validationType = $validationType;
@@ -256,41 +261,41 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         return $this->domain;
     }
-    
+
     public function setDomain(?string $domain)
     {
         $this->domain = $domain;
     }
-    
+
     public function getDescription(): ?string
     {
         return $this->description;
     }
-    
+
     public function setDescription(string $description)
     {
         $this->description = $description;
     }
-    
+
     public function getFullDescription(): ?string
     {
         return $this->fullDescription;
     }
-    
+
     public function setFullDescription(string $fullDescription)
     {
         $this->fullDescription = $fullDescription;
     }
-    
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
     }
-    
+
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
-        
+
         return $this;
     }
 
@@ -305,16 +310,16 @@ class Community implements ResourceInterface, \JsonSerializable
 
         return $this;
     }
-    
+
     public function getUser(): ?User
     {
         return $this->user;
     }
-    
+
     public function setUser(User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -322,14 +327,14 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         return $this->address;
     }
-    
+
     public function setAddress(?Address $address): self
     {
         $this->address = $address;
-        
+
         return $this;
     }
-    
+
     /**
      *
      * @return Collection|Image[]
@@ -338,17 +343,17 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         return $this->images->getValues();
     }
-    
+
     public function addImage(Image $image): self
     {
         if (!$this->images->contains($image)) {
             $this->images[] = $image;
             $image->setCommunity($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeImage(Image $image): self
     {
         if ($this->images->contains($image)) {
@@ -358,7 +363,7 @@ class Community implements ResourceInterface, \JsonSerializable
                 $image->setCommunity(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -369,22 +374,22 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         return $this->proposals;
     }
-    
+
     public function addProposal(Proposal $proposal): self
     {
         if (!$this->proposals->contains($proposal)) {
             $this->proposals[] = $proposal;
         }
-        
+
         return $this;
     }
-    
+
     public function removeProposal(Proposal $proposal): self
     {
         if ($this->proposals->contains($proposal)) {
             $this->proposals->removeElement($proposal);
         }
-        
+
         return $this;
     }
 
@@ -396,17 +401,17 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         return $this->communityUsers;
     }
-    
+
     public function addCommunityUser(CommunityUser $communityUser): self
     {
         if (!$this->communityUsers->contains($communityUser)) {
             $this->communityUsers[] = $communityUser;
             //$communityUser->setCommunity($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeCommunityUser(CommunityUser $communityUser): self
     {
         if ($this->communityUsers->contains($communityUser)) {
@@ -416,7 +421,7 @@ class Community implements ResourceInterface, \JsonSerializable
                 $communityUser->setCommunity(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -454,10 +459,22 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         return $this->member;
     }
-    
+
     public function setMember(?bool $member): self
     {
         $this->member = boolval($member);
+
+        return $this;
+    }
+
+    public function getAds()
+    {
+        return $this->ads;
+    }
+
+    public function setAds(?array $ads): self
+    {
+        $this->ads = $ads;
 
         return $this;
     }
@@ -475,10 +492,12 @@ class Community implements ResourceInterface, \JsonSerializable
             'proposalsHidden'   => $this->isProposalsHidden(),
             'membersHidden'     => $this->isMembersHidden(),
             'address'           => $this->getAddress(),
+            'user'              => $this->getUser(),
             'isSecured'         => $this->isSecured(),
             'validationType'    => $this->getValidationType(),
             'domain'            => $this->getDomain(),
             'isMember'          => $this->isMember(),
+          'ads'                 => $this->getAds(),
         ];
     }
 }

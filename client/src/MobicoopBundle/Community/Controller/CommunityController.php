@@ -60,7 +60,7 @@ class CommunityController extends AbstractController
     {
         $this->createFromFront = $createFromFront;
     }
-    
+
     /**
      * Create a community
      */
@@ -70,21 +70,21 @@ class CommunityController extends AbstractController
         if (!$this->createFromFront) {
             return $this->redirectToRoute('home');
         }
-        
+
         $community = new Community();
         $this->denyAccessUnlessGranted('create', $community);
         $user = $userManager->getLoggedUser();
         $communityUser = new CommunityUser();
         $address = new Address();
-        
+
         if ($request->isMethod('POST')) {
             $data = $request->request;
             // Check if the community name is available (if yes continue)
-            if ($communityManager->checkNameAvailability($data->get('name'))) {
+            if (is_null($checkName = $communityManager->checkExists($data->get('name'))->getDescription())) {
 
                 // set the user as a user of the community
                 $communityUser->setUser($user);
-                
+
                 // set community address
                 $communityAddress = json_decode($data->get('address'), true);
                 $address->setAddressCountry($communityAddress['addressCountry']);
@@ -127,7 +127,7 @@ class CommunityController extends AbstractController
                         return new Response();
                     }
                     //If an error occur on upload image, the community is already create, so we delete her
-                    //$communityManager->deleteCommunity($community->getId());
+                    // $communityManager->deleteCommunity($community->getId());
                     // return error if image post didnt't work
                     return new Response(json_encode('error.image'));
                 }
@@ -163,51 +163,21 @@ class CommunityController extends AbstractController
             $user = $userManager->getLoggedUser();
             $data = json_decode($request->getContent(), true);
 
-            $perPage = (isset($data['perPage']) && !is_null($data['perPage'])) ? $data['perPage'] : null;
-            $page = (isset($data['page']) && !is_null($data['page'])) ? $data['page'] : null;
-            $search = (isset($data['search']) && !is_null($data['search'])) ? $data['search'] : [];
-
-            if ($user) {
-
-                // We get all the communities
-                $communities = $communityManager->getCommunities($user->getId(), $perPage, $page, $search);
-
-                // We get the communities of the user
-                $communityUsers = $communityManager->getAllCommunityUser($user->getId());
-                $communitiesUser = [];
-                $idCommunitiesUser = [];
-                foreach ($communityUsers as $communityUser) {
-                    $communitiesUser[] = $communityUser->getCommunity();
-                    $idCommunitiesUser[] = $communityUser->getCommunity()->getId();
-                }
-
-                // we delete those who the user is already in
-                // To Do : This code does'nt work anymore
-                // $tempCommunities = [];
-                // foreach ($communities as $key => $community) {
-                //     if (!in_array($community->getId(), $idCommunitiesUser)) {
-                //         $tempCommunities[] = $communities[$key];
-                //     }
-                // }
-                // $communities = $tempCommunities;
-            } else {
-                $communitiesUser = [];
-                $communities = $communityManager->getCommunities(null, $perPage, $page, $search);
-            }
+            $communities = $communityManager->getAllCommunities($user, $data);
 
             return new JsonResponse([
-                'communities' => $communities->getMember(),
-                'communitiesUser' => $communitiesUser,
-                'canCreate' => $this->createFromFront,
-                'communitiesView' => $communities->getView(),
-                'totalItems' => $communities->getTotalItems()
+                'communities' => $communities['communitiesMember'],
+                'communitiesView' => $communities['communitiesView'],
+                'totalItems' => $communities['communitiesTotalItems'],
+                'communitiesUser' => $communities['communitiesUser'],
+                'canCreate' => $this->createFromFront
             ]);
         } else {
             return new JsonResponse("bad method");
         }
     }
-    
-    
+
+
     /**
      * Show a community
      */
@@ -218,65 +188,14 @@ class CommunityController extends AbstractController
 
         $this->denyAccessUnlessGranted('show', $community);
 
+        // Get the waypoint from ads
+        $ways = $communityManager->formatWaypointForDetailCommunity($community);
         // retreive logged user
         $user = $userManager->getLoggedUser();
+        // get the last 3 users and formate them to be used with vue
+        $lastUsers = $communityManager->getLastUsers($community);
 
         (null !== $user) ? $communityUser = $communityManager->getCommunityUser($id, $user->getId()) : $communityUser = null;
-
-        // todo : move inside service ?
-        // get the last 3 users and formate them to be used with vue
-        $lastUsers = $communityManager->getLastUsers($id);
-        $lastUsersFormated = [];
-        foreach ($lastUsers as $key => $commUser) {
-            $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".$commUser->getUser()->getShortFamilyName();
-            $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');
-        }
-
-        // todo : move inside service ?
-        // Get the proposals and waypoints
-        $ads = $communityManager->getAds($community->getId());
-
-        $ways = [];
-        foreach ($ads as $ad) {
-            $origin = null;
-            $destination = null;
-            $isRegular = null;
-            $date = null;
-
-            if ($ad["frequency"] === Ad::FREQUENCY_REGULAR) {
-                $isRegular = true;
-            } else {
-                $date = new \DateTime($ad["outwardDate"]);
-                $date = $date->format('Y-m-d');
-            }
-            $currentAd = [
-                "frequency"=>($ad["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'punctual' : 'regular',
-                "carpoolerFirstName" => $ad["user"]["givenName"],
-                "carpoolerLastName" => $ad["user"]["shortFamilyName"],
-                "waypoints"=>[]
-            ];
-            foreach ($ad["outwardWaypoints"] as $waypoint) {
-                if ($waypoint['position'] === 0) {
-                    $origin = $waypoint["address"];
-                } elseif ($waypoint['destination']) {
-                    $destination = $waypoint["address"];
-                }
-                $currentAd["waypoints"][] = [
-                    "title"=>$waypoint["address"]["addressLocality"],
-                    "destination"=>$waypoint['destination'],
-                    "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
-                ];
-            }
-            $searchLinkParams = [
-                "origin" => json_encode($origin),
-                "destination" => json_encode($destination),
-                "regular" => $isRegular,
-                "date" => $date,
-                "cid" => $community->getId()
-            ];
-            $currentAd["searchLink"] = $this->generateUrl("carpool_search_result_get", $searchLinkParams, UrlGeneratorInterface::ABSOLUTE_URL);
-            $ways[] = $currentAd;
-        }
 
         return $this->render('@Mobicoop/community/community.html.twig', [
             'community' => $community,
@@ -285,7 +204,7 @@ class CommunityController extends AbstractController
             'searchRoute' => "covoiturage/recherche",
             'error' => (isset($error)) ? $error : false,
             'points' => $ways,
-            'lastUsers' => $lastUsersFormated,
+            'lastUsers' => $lastUsers,
             'communityUserStatus' => (isset($communityUser) && $communityUser!==null && count($communityUser)>0)?$communityUser[0]->getStatus():-1
         ]);
     }
@@ -298,7 +217,7 @@ class CommunityController extends AbstractController
         $community = $communityManager->getPublicInfos($id);
         // retreive logged user
         $user = $userManager->getLoggedUser();
-        
+
         // This should be removed when denyAccessUnlessGranted is functionnal
         if (is_null($user)) {
             return $this->redirectToRoute('user_login');
@@ -351,13 +270,8 @@ class CommunityController extends AbstractController
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
-        $communityUsersId = [];
-        foreach ($community->getCommunityUsers() as $communityUser) {
-            // get all community users ID
-            array_push($communityUsersId, $communityUser->getUser()->getId());
-        }
         //test if the user logged is not already a member of the community
-        if ($user && '' !== $user && !in_array($user->getId(), $communityUsersId)) {
+        if ($user && '' !== $user && !$community->isMember()) {
             $communityUser = new CommunityUser();
             $communityUser->setCommunity($community);
             $communityUser->setUser($user);
@@ -427,36 +341,13 @@ class CommunityController extends AbstractController
             // Maybe to discuss I think that only a user can get access to the community user associate
             $user = $userManager->getUser($data['userId']);
             $this->denyAccessUnlessGranted('update', $user);
-            
+
             return new Response(json_encode($communityManager->getCommunityUser($data['communityId'], $data['userId'], 1)));
         }
-        
+
         return new Response;
     }
 
-    /**
-     * Get last three users
-     * Ajax
-     *
-     * @param [type] $id
-     * @param CommunityManager $communityManager
-     * @param UserManager $userManager
-     * @return void
-     */
-    public function communityLastUsers(int $id, CommunityManager $communityManager)
-    {
-        $community = $communityManager->getCommunity($id);
-        $this->denyAccessUnlessGranted('show', $community);
-
-        // get the last 3 users and formate them to be used with vue
-        $lastUsers = $communityManager->getLastUsers($id);
-        $lastUsersFormated = [];
-        foreach ($lastUsers as $key => $commUser) {
-            $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".$commUser->getUser()->getShortFamilyName();
-            $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');
-        }
-        return new Response(json_encode($lastUsersFormated));
-    }
 
     /**
      * Get all users of a community
@@ -561,25 +452,36 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Check if a user is an accepted member of a community
-     * Ajax
-     *
-     * @param CommunityManager $communityManager
-     * @param Request $request
-     * @return boolean
+     * Show a community widget.
      */
-    public function isMember(CommunityManager $communityManager, Request $request)
+    public function communityWidget($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
     {
-        if ($request->isMethod('POST')) {
-            $data = json_decode($request->getContent(), true);
+        // retreive event;
+        $community = $communityManager->getCommunity($id);
 
-            // authorization control
-            $community = $communityManager->getCommunity($data['communityId']);
-            $this->denyAccessUnlessGranted('show', $community);
+        //$this->denyAccessUnlessGranted('show', $community);
 
-            return new Response(json_encode($communityManager->checkStatus($data['communityId'], $data['userId'], 1)));
-        }
+        // retreive logged user
+        $user = $userManager->getLoggedUser();
 
-        return new Response();
+        return $this->render('@Mobicoop/community/community-widget.html.twig', [
+            'community' => $community,
+            'user' => $user,
+            'searchRoute' => 'covoiturage/recherche'
+        ]);
+    }
+
+    /**
+     * Show a community widget page to get the widget code.
+     */
+    public function communityGetWidget($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
+    {
+        // retreive event;
+        $community = $communityManager->getCommunity($id);
+        
+        //$this->denyAccessUnlessGranted('show', $community);
+        return $this->render('@Mobicoop/community/community-get-widget.html.twig', [
+            'community' => $community
+        ]);
     }
 }

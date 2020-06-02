@@ -20,128 +20,188 @@ const baseUrl = Cypress.env("baseUrl");
 //Login
 Cypress.Commands.add('loginWith', (email, password) => {
 
-
-  cy.contains('Connexion').click()
-  cy.url().should('include', baseUrl + 'utilisateur/connexion')
+  cy.get('[href="/utilisateur/connexion"] > .v-btn__content')
+    .contains('Connexion').click();
+  cy.url().should('include', baseUrl + 'utilisateur/connexion');
 
   /* Email */
-  cy.get('input[id=user_login_form_username]')
-    .should('have.attr', 'placeholder', 'adresse email')
-    .type(email)
+  cy.get('#email').click()
+    .type(email);
 
   /* Password */
-  cy.get('input[id=user_login_form_password]')
-    .should('have.attr', 'placeholder', 'mot de passe')
-    .type(password)
+  cy.get('#password').click()
+    .type(password);
 
-  cy.get('button[id=user_login_form_login]').click()
+    cy.get('#formLogin > .v-btn > .v-btn__content').click();
 });
 
 //Logout
 Cypress.Commands.add('logout', (email, password) => {
   cy.get('.buttons > [href="/user/logout"]')
-    .click()
+    .click();
 });
 
 //Home
 Cypress.Commands.add('home', () => {
   cy.get('.logo')
-    .click()
-  cy.url().should('include', baseUrl)
-  cy.wait(1500)
+    .click();
+  cy.url().should('include', baseUrl);
+  cy.wait(1500);
 });
 
 //SignUp
-Cypress.Commands.add('signUp', (email, password, lastname, name, gender, birthyear, phone) => {
+Cypress.Commands.add('signUp', (email, password, lastname, name, phone) => {
 
-  cy.contains('Inscription').click()
-  cy.url().should('include', baseUrl + 'utilisateur/inscription')
+  cy.get('[href="/utilisateur/inscription"] > .v-btn__content').click();
+  cy.url().should('include', baseUrl + 'utilisateur/inscription');
   cy.wait(2500)
 
   /* Email */
-  cy.get('.email > input')
-    .should('have.attr', 'placeholder', 'Email')
-    .type(email)
+  cy.get('#email')
+    .type(email);
 
   /* PhoneNumber*/
-  cy.get('.telephone>input')
-    .should('have.attr', 'placeholder', 'Numéro de téléphone')
-    .type(phone)
+  cy.get('#telephone')
+    .type(phone);
 
   /* Password*/
-  cy.get('.password > input')
-    .should('have.attr', 'placeholder', 'Mot de passe')
-    .type(password)
+  cy.get('#password')   
+    .type(password);
 
+    
   /* Next */
-  cy.get('.wizard-btn').contains('Suivant')
-    .click()
+  cy.get('#buttonNext1')
+    .click();
 
   /* GivenName */
-  cy.get('.givenName > input')
-    .should('have.attr', 'placeholder', 'Prénom')
-    .type(lastname)
+  cy.get('#givenName')    
+    .type(lastname);
 
   /* FamilyName */
-  cy.get('.familyName > input')
-    .should('have.attr', 'placeholder', 'Nom')
-    .type(name)
-
-
-  /* Next */
-  cy.get('.wizard-btn').contains('Suivant')
-    .click()
+  cy.get('#familyName')
+    .type(name);
 
   /* Gender */
-  cy.get('.gender select')
-    .select(gender)
-    .should('have.value', gender)
+  cy.get('#step2 > .v-select > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections').click();
+  cy.contains('Monsieur').click();
 
-
-
-  /* Next */
-  cy.get('.wizard-btn').contains('Suivant')
-    .click()
-
-  /* Birthyear */
-  cy.get('.birthYear select')
-    .select(birthyear)
-    .should('have.value', birthyear)
-
+   /* Birthyear */
+   cy.get('#birthday').click({force:true});
+   cy.get('.v-date-picker-years > :nth-child(7)') .click();
+   cy.contains('juin').click();
+   cy.get(':nth-child(4) > :nth-child(4) > .v-btn > .v-btn__content').click();
 
   /* Next */
-  cy.get('.wizard-btn').contains('Suivant')
-    .click()
-
-  /* Validation condition (confirmation) */
-  cy.get('.b-checkbox > .check')
-    .click()
+  cy.get('#step2 > .row > [type="submit"] > .v-btn__content')
+    .click();
 
   /* HomeTown */
-  cy.get('.control > #homeAddress')
-    .type('metz')
-  cy.wait(2000)
-  cy.get('.media')
-    .click()
+  cy.get('#address')
+    .type('Nancy');
+  cy.get('#content')
+      .contains('Nancy').click();
+  cy.wait(2500); // error when we delete a user, if no homeadress there is no problem
+
+
+  /* Validation condition (confirmation) */
+  cy.get('.v-input--selection-controls__ripple')
+      .click();
 
   /* Subscribe */
-  cy.get('.wizard-footer-right > span > .wizard-btn')
+  cy.get('.mr-4 > .v-btn__content')
     .click()
-  cy.url().should('include', baseUrl) // should be redirected to home   
+  cy.url().should('include', baseUrl); // should be redirected to home
+  
+  /* Account validation */
+  cy.get('.v-alert__wrapper') ;
+
 });
 
-//delete
+/**delete**/
 Cypress.Commands.add('delete', () => {
-  cy.contains('Mon profil').click()
-  cy.url().should('include', baseUrl + 'utilisateur/profil')
-  cy.get(':nth-child(4) > a').contains('delete').click()
-  cy.url().should('include', baseUrl + 'utilisateur/profil/supprimer')
-  cy.get('#user_delete_form_submit')
-    .click()
-  cy.url().should('include', baseUrl)
+
+// close snackbar
+cy.get('.v-snack__content > .v-btn > .v-btn__content > .v-icon').click();
+
+cy.get('[data-v-33788174=""][type="button"] > .v-btn__content').trigger('mouseenter') 
+cy.get(':nth-child(3) > a > .v-list-item__title').should('contain', 'Profil')
+  .click();
+
+cy.url().should('include', baseUrl + 'utilisateur/profil');
+cy.get('.text-center > .button > .v-btn__content')
+  .click();
+cy.url().should('include', baseUrl + 'utilisateur/profil/modifier/mon-profil');
+cy.get('.v-card__actions > a.v-btn > .v-btn__content')
+  .click();
+cy.get('.v-snack__content')
+  .contains ('Votre compte à été supprimé avec succès.') // error because the user chooses a homeadress during signup
+
+// cy.url().should('include', baseUrl);
 });
 
+// // Add proposal
+// Cypress.Commands.add('addProposal', () => {
 
+//   /* Share a proposal PONCTUAL - DRIVER - ONE WAY homepage*/
+
+//   cy.get('.v-toolbar__content > .v-btn--contained > .v-btn__content').click()
+
+//   /* From */
+//  cy.get('#from > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > #address')
+//     .type('Nancy');
+//   cy.get('[aria-labelledby="list-item-281-0"] > .v-list > #content')
+//     .contains('Nancy').click();
+//   cy.wait(2500); 
+
+    
+
+//   /* To */
+//   cy.get('#to > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > #address')
+//     .type('Metz');
+//   cy.get('[aria-labelledby="list-item-328-0"] > .v-list > #content')
+//     .contains('Metz').click();
+//   cy.wait(2500);
+  
+//   /* Date */
+//   cy.get('#date').click({force:true});
+
+//   /* Month Year*/
+//   cy.get(':nth-child(3) > :nth-child(1) > .v-btn > .v-btn__content').click();
+
+//   /* Redirection */
+//   cy.url().should('include', baseUrl + 'covoiturage/annonce/poster');
+
+//   /* Next */
+//   cy.get('[mt-5=""] > .v-btn > .v-btn__content').click();
+  
+//   /* Departure time */
+//   cy.get('#outwardTime').click({force:true});
+//   cy.get('.v-time-picker-clock__item--active > span').trigger('mouseenter') 
+//     .first().click();
+//   cy.get('.v-time-picker-clock__item--active > span')
+//     .last().click();
+
+//   /* Next */
+//   cy.get('[mt-5=""] > .v-btn--contained > .v-btn__content').click();
+
+//   /* Next */
+//   cy.get('[mt-5=""] > .v-btn--contained > .v-btn__content').click();
+
+//   /* Next */
+//   cy.get('[mt-5=""] > .v-btn--contained > .v-btn__content').click();
+
+//   /* Next */
+//   cy.get('[mt-5=""] > .v-btn--contained > .v-btn__content').click();
+
+//   /* Next */
+//   cy.get('[mt-5=""] > .v-btn--contained > .v-btn__content').click();
+
+//   /* Publish */
+//   cy.get('[mt-5=""] > :nth-child(3) > .v-btn > .v-btn__content').click();
+
+//   /* Redirection */
+//   cy.url().should('include', baseUrl + 'utilisateur/profil/modifier/mes-annonces');
+// });
 
 
 //

@@ -33,7 +33,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use App\Carpool\Entity\WayPoint;
+use App\Carpool\Entity\Waypoint;
 use App\User\Entity\User;
 use App\Image\Entity\Icon;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
@@ -94,7 +94,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  *                     }
  *                   }
  *              }
- *          }
+ *          },
+ *          "completion"={
+ *              "method"="GET",
+ *              "path"="/addresses/completion",
+ *              "security"="is_granted('import_create',object)"
+ *          },
  *      },
  *      itemOperations={"get","put"}
  * )
@@ -295,6 +300,8 @@ class Address implements \JsonSerializable
 
     /**
      * @var RelayPoint|null The relaypoint related to the address.
+     *
+     * @ORM\OneToOne(targetEntity="App\RelayPoint\Entity\RelayPoint", mappedBy="address")
      * @Groups({"read","pt"})
      */
     private $relayPoint;
@@ -316,6 +323,13 @@ class Address implements \JsonSerializable
     private $community;
 
     /**
+     * @var Waypoint|null The waypoint of the address.
+     *
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Waypoint", mappedBy="address")
+     */
+    private $waypoint;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -332,6 +346,13 @@ class Address implements \JsonSerializable
     private $updatedDate;
 
     /**
+     * @var ArrayCollection|null The territories of this address.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
+     */
+    private $territories;
+
+    /**
      * @var string|null Icon fileName.
      *
      * @Groups({"read"})
@@ -339,11 +360,18 @@ class Address implements \JsonSerializable
     private $icon;
 
     /**
-     * @var array|null The provider of the address
+     * @var array|null The provider of the address.
      *
      * @Groups({"read"})
      */
     private $providedBy;
+
+    /**
+     * @var array|null The distance to the focus point if relevant.
+     *
+     * @Groups({"read"})
+     */
+    private $distance;
 
     public function __construct($id = null)
     {
@@ -352,12 +380,15 @@ class Address implements \JsonSerializable
             $this->id = $id;
         }
         $this->displayLabel = new ArrayCollection();
+        $this->territories = new ArrayCollection();
     }
 
     public function __clone()
     {
         // when we clone an Address we exclude the id
         $this->id = null;
+        $this->setHome(null);
+        $this->territories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -534,11 +565,11 @@ class Address implements \JsonSerializable
     {
         return $this->geoJson;
     }
-    
+
     public function setGeoJson($geoJson): self
     {
         $this->geoJson = $geoJson;
-        
+
         return $this;
     }
 
@@ -576,11 +607,11 @@ class Address implements \JsonSerializable
     {
         return $this->home;
     }
-    
+
     public function setHome(?bool $isHome): self
     {
         $this->home = $isHome;
-        
+
         return $this;
     }
 
@@ -636,6 +667,8 @@ class Address implements \JsonSerializable
     public function setIcon(?string $icon)
     {
         $this->icon = $icon;
+
+        return $this;
     }
 
     public function getProvidedBy(): ?string
@@ -646,41 +679,20 @@ class Address implements \JsonSerializable
     public function setProvidedBy(?string $providedBy)
     {
         $this->providedBy = $providedBy;
+
+        return $this;
     }
 
-    // DOCTRINE EVENTS
-    
-    /**
-     * Creation date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoCreatedDate()
+    public function getDistance(): ?float
     {
-        $this->setCreatedDate(new \Datetime());
+        return $this->distance;
     }
 
-    /**
-     * Update date.
-     *
-     * @ORM\PreUpdate
-     */
-    public function setAutoUpdatedDate()
+    public function setDistance(?float $distance)
     {
-        $this->setUpdatedDate(new \Datetime());
-    }
-    
-    /**
-     * GeoJson representation.
-     *
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
-    public function setAutoGeoJson()
-    {
-        if (!is_null($this->getLatitude()) && !is_null($this->getLongitude())) {
-            $this->setGeoJson(new Point($this->getLongitude(), $this->getLatitude()));
-        }
+        $this->distance = $distance;
+
+        return $this;
     }
 
     public function getEvent(): ?Event
@@ -707,6 +719,83 @@ class Address implements \JsonSerializable
         return $this;
     }
 
+    public function getWaypoint(): ?Waypoint
+    {
+        return $this->waypoint;
+    }
+
+    public function setWaypoint(?Waypoint $waypoint): self
+    {
+        $this->waypoint = $waypoint;
+
+        return $this;
+    }
+
+    public function getTerritories()
+    {
+        return $this->territories->getValues();
+    }
+
+    public function addTerritory(Territory $territory): self
+    {
+        if (!$this->territories->contains($territory)) {
+            $this->territories[] = $territory;
+        }
+        
+        return $this;
+    }
+    
+    public function removeTerritory(Territory $territory): self
+    {
+        if ($this->territories->contains($territory)) {
+            $this->territories->removeElement($territory);
+        }
+        return $this;
+    }
+
+    public function removeTerritories(): self
+    {
+        $this->territories->clear();
+        return $this;
+    }
+
+
+    // DOCTRINE EVENTS
+
+    /**
+     * Creation date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreatedDate()
+    {
+        $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
+    }
+
+    /**
+     * GeoJson representation.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function setAutoGeoJson()
+    {
+        if (!is_null($this->getLatitude()) && !is_null($this->getLongitude())) {
+            $this->setGeoJson(new Point($this->getLongitude(), $this->getLatitude()));
+        }
+    }
+
+    
     public function jsonSerialize()
     {
         return

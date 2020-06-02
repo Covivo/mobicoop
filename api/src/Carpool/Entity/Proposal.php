@@ -38,6 +38,7 @@ use App\Travel\Entity\TravelMode;
 use App\Community\Entity\Community;
 use App\User\Entity\User;
 use App\Communication\Entity\Notified;
+use App\Solidary\Entity\Subject;
 
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
@@ -325,7 +326,15 @@ class Proposal
      * @Groups({"read","write"})
      */
     private $external;
-        
+
+    /**
+     * @var Subject A Proposal can be linked to a specific Subject
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="proposals")
+     * @MaxDepth(1)
+     * @Groups({"read","write"})
+     */
+    private $subject;
+
     public function __construct($id=null)
     {
         $this->id = self::DEFAULT_ID;
@@ -789,6 +798,18 @@ class Proposal
     public function setExternal(?string $external): self
     {
         $this->external = $external;
+
+        return $this;
+    }
+
+    public function getSubject(): ?Subject
+    {
+        return $this->subject;
+    }
+
+    public function setSubject(?Subject $subject): self
+    {
+        $this->subject = $subject;
 
         return $this;
     }
