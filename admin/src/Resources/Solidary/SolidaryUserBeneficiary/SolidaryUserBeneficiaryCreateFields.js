@@ -37,7 +37,7 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
   // Pre-fill user data
   const {
     input: { value: userId },
-  } = useField('user_id');
+  } = useField('already_registered_user');
   const dataProvider = useDataProvider();
   const notify = useNotify();
   const prefillUserData = useCallback(

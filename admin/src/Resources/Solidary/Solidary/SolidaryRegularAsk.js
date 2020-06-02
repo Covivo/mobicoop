@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@material-ui/core/Box';
-import DateTimeSelector from './DateTimeSelector';
+import { DateTimeSelector } from './DateTimeSelector';
 import SolidaryQuestion from './SolidaryQuestion';
 import SolidaryNeeds from './SolidaryNeeds';
 import DayChipInput from './DayChipInput';
@@ -28,18 +28,41 @@ const toTimeChoices = [
   { id: 4, label: "Pas besoin qu'on me ramène", offsetHour: 0, offsetDays: 0 },
 ];
 
+/*
+Important :
+
+- Le champ destination est optionnel.
+- S’il ne s’agit que d’un aller sans retour ne pas indiquer returnDatetime et
+returnDeadlineDatetime
+
+- Ne pas indiquer outwardDeadlineDatetime et returnDeadlineDatetime s’il s’agit
+d’un jour fixe. (l’indiquer s’il s’agit d’un régulier ou
+si l’utilisateur à indiqué ‘dans la semaine’)
+
+- S’il s’agit d’un
+trajet régulier (frequency = 2) indiquer days.
+
+Attention :
+- marginDuration
+indique la marge en secondes de l’heure de départ. Si un
+utilisateur sélectionne départ entre 8h et 13h. Indiquer comme
+heure de départ dans originDatetime 10h30 et comme
+marginDuration 2h30 soit 9000 secondes. Si un utilisateur
+indique une heure précise ne pas renseigner marginDuration.
+*/
+
 const SolidaryRegularAsk = ({ form }) => {
   return (
     <>
       <SolidaryQuestion question="Quels jours devez-vous voyager ?">
         <Box>
-          <DayChipInput source="monCheck" label="L" form={form} />
-          <DayChipInput source="tueCheck" label="Ma" form={form} />
-          <DayChipInput source="wedCheck" label="Me" form={form} />
-          <DayChipInput source="thuCheck" label="J" form={form} />
-          <DayChipInput source="friCheck" label="V" form={form} />
-          <DayChipInput source="satCheck" label="S" form={form} />
-          <DayChipInput source="sunCheck" label="D" form={form} />
+          <DayChipInput source="days.mon" label="L" form={form} />
+          <DayChipInput source="days.tue" label="Ma" form={form} />
+          <DayChipInput source="days.wed" label="Me" form={form} />
+          <DayChipInput source="days.thu" label="J" form={form} />
+          <DayChipInput source="days.fri" label="V" form={form} />
+          <DayChipInput source="days.sat" label="S" form={form} />
+          <DayChipInput source="days.sun" label="D" form={form} />
         </Box>
       </SolidaryQuestion>
 
@@ -47,8 +70,9 @@ const SolidaryRegularAsk = ({ form }) => {
         <DateTimeSelector
           form={form}
           type="time"
-          fieldnameStart="fromStartDate"
-          fieldnameEnd="fromEndDate"
+          fieldnameStart="outwardDatetime"
+          fieldnameEnd="marginDuration"
+          fieldMarginDuration
           choices={fromTimeChoices}
           initialChoice={0}
         />
@@ -68,8 +92,8 @@ const SolidaryRegularAsk = ({ form }) => {
       <SolidaryQuestion question="Pendant combien de temps devez-vous faire ce trajet ?">
         <DateIntervalSelector
           type="date"
-          fieldnameStart="intervalStartDate"
-          fieldnameEnd="intervalEndDate"
+          fieldnameStart="outwardDatetime"
+          fieldnameEnd="outwardDeadlineDatetime"
           choices={intervalChoices}
           initialChoice={0}
         />
