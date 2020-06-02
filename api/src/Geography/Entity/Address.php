@@ -53,6 +53,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
+ *        "get"={
+ *              "security_post_denormalize"="is_granted('ad_list',object)"
+ *          },
  *          "search"={
  *              "method"="GET",
  *              "path"="/addresses/search",

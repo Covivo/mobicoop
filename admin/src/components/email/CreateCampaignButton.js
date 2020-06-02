@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useMutation } from 'react-admin';
 import { CircularProgress, Button } from '@material-ui/core';
 
@@ -37,14 +36,6 @@ const CreateCampaignButton = ({
       {children}
     </Button>
   );
-};
-
-CreateCampaignButton.propTypes = {
-  disabled: PropTypes.bool.isRequired,
-  enregistrementSuccess: PropTypes.func.isRequired,
-  children: PropTypes.string.isRequired,
-  campagne: PropTypes.object.isRequired,
-  oldCampaign: PropTypes.object.isRequired,
 };
 
 export default CreateCampaignButton;
