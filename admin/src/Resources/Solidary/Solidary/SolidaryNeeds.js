@@ -9,9 +9,9 @@ const SolidaryNeeds = () => {
 
   // Fake data
   const needs = [
-    { id: 1, name: "J'ai besoin d'être accompagné jusqu'à ma porte" },
-    { id: 2, name: "J'invite à prendre un café" },
-    { id: 3, name: "J'ai besoin qu'on monte mes courses" },
+    { id: '/needs/1', name: "J'ai besoin d'être accompagné jusqu'à ma porte" },
+    { id: '/needs/2', name: "J'invite à prendre un café" },
+    { id: '/needs/3', name: "J'ai besoin qu'on monte mes courses" },
   ];
 
   if (!needs.length) {

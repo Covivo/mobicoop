@@ -116,6 +116,7 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
         validate={emailRules}
         className={classes.spacedHalfwidth}
       />
+      {/*
       <TextInput
         fullWidth
         required
@@ -125,6 +126,7 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
         validate={paswwordRules}
         className={classes.spacedHalfwidth}
       />
+      */}
 
       <TextInput
         fullWidth

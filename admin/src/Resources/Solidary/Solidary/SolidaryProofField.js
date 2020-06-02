@@ -4,10 +4,10 @@ import { SelectInput, TextInput, BooleanInput, FileInput, FileField } from 'reac
 
 const SolidaryProofField = ({ proof, ...rest }) => {
   if (proof.checkbox) {
-    return <BooleanInput label={proof.label} source={proof.id} {...rest} />;
+    return <BooleanInput label={proof.label} source={`proofs.${proof.id}`} {...rest} />;
   }
   if (proof.input) {
-    return <TextInput label={proof.label} source={proof.id} {...rest} />;
+    return <TextInput label={proof.label} source={`proofs.${proof.id}`} {...rest} />;
   }
   if (proof.selectbox) {
     const selectboxLabels = proof.options.split(';');
@@ -15,11 +15,11 @@ const SolidaryProofField = ({ proof, ...rest }) => {
       .split(';')
       .map((v, i) => ({ id: v, name: selectboxLabels[i] }));
 
-    return <SelectInput label={proof.label} source={proof.id} choices={selectboxIds} {...rest} />;
+    return <SelectInput label={proof.label}source={`proofs.${proof.id}`} choices={selectboxIds} {...rest} />;
   }
   if (proof.file) {
     return (
-      <FileInput source={proof.id} label={proof.label} accept="application/pdf" {...rest}>
+      <FileInput source={`proofs.${proof.id}`} label={proof.label} accept="application/pdf" {...rest}>
         <FileField source="src" title="title" />
       </FileInput>
     );
