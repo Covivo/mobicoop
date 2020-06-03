@@ -138,7 +138,7 @@ class Solidary
      * @var SolidaryUserStructure The SolidaryUserStructure related with the solidary record.
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="solidaries", cascade={"persist","remove"})
-     * @Groups({"writeSolidary"})
+     * @Groups({"writeSolidary", "readSolidary"})
      * @MaxDepth(1)
      */
     private $solidaryUserStructure;

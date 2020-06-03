@@ -263,17 +263,16 @@ class SolidaryManager
     public function getSolidaries(Structure $structure)
     {
         $solidaries = null;
+        $fullSolidaries = [];
         $solidaryUserStructures = $structure->getSolidaryUserStructures();
         foreach ($solidaryUserStructures as $solidaryUserStructure) {
             $solidaries = $solidaryUserStructure->getSolidaries();
-        }
-        $fullSolidaries = [];
-        if (!empty($solidaries)) {
-            foreach ($solidaries as $solidary) {
-                $fullSolidaries[] = $this->getSolidary($solidary->getId());
+            if (!empty($solidaries)) {
+                foreach ($solidaries as $solidary) {
+                    $fullSolidaries[] = $this->getSolidary($solidary->getId());
+                }
             }
         }
-
         return $fullSolidaries;
     }
 
