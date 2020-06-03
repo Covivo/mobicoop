@@ -263,17 +263,16 @@ class SolidaryManager
     public function getSolidaries(Structure $structure)
     {
         $solidaries = null;
+        $fullSolidaries = [];
         $solidaryUserStructures = $structure->getSolidaryUserStructures();
         foreach ($solidaryUserStructures as $solidaryUserStructure) {
             $solidaries = $solidaryUserStructure->getSolidaries();
-        }
-        $fullSolidaries = [];
-        if (!empty($solidaries)) {
-            foreach ($solidaries as $solidary) {
-                $fullSolidaries[] = $this->getSolidary($solidary->getId());
+            if (!empty($solidaries)) {
+                foreach ($solidaries as $solidary) {
+                    $fullSolidaries[] = $this->getSolidary($solidary->getId());
+                }
             }
         }
-
         return $fullSolidaries;
     }
 
@@ -699,7 +698,13 @@ class SolidaryManager
 
         // We create the solidaryUserStructure associated to the demand
         $solidaryUserStructure = new SolidaryUserStructure();
-        $structure = $this->structureRepository->find(substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1));
+        $structure = null;
+
+        if ($solidary->getStructure()) {
+            $structure = $this->structureRepository->find(substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1));
+        } else {
+            $structure = $this->security->getUser()->getSolidaryStructures()[0];
+        }
         $solidaryUserStructure->setStructure($structure);
         $solidaryUserStructure->setSolidaryUser($solidaryUser);
 
