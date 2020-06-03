@@ -529,9 +529,9 @@ class SolidaryManager
      */
     private function createJourneyFromSolidary(Solidary $solidary, int $userId = null): Ad
     {
-        $ad = new Ad;
+        $ad = new Ad();
         // we get and set the origin and destination of the demand
-        $origin = new Address;
+        $origin = new Address();
         $destination = null;
         
         $origin->setHouseNumber($solidary->getOrigin()['houseNumber']);
@@ -646,7 +646,7 @@ class SolidaryManager
 
         // we set the home address
         if ($solidary->getHomeAddress()) {
-            $homeAddress = new Address;
+            $homeAddress = new Address();
             $homeAddress->setHouseNumber($solidary->getHomeAddress()['houseNumber']);
             $homeAddress->setStreet($solidary->getHomeAddress()['street']);
             $homeAddress->setStreetAddress($solidary->getHomeAddress()['streetAddress']);
