@@ -106,7 +106,7 @@ class Solidary
      * @var string Detail for regular ask.
      *
      * @ORM\Column(type="string", nullable=true, length=255)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary"})
      */
     private $regularDetail;
 
