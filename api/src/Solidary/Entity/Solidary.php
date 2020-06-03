@@ -106,7 +106,7 @@ class Solidary
      * @var string Detail for regular ask.
      *
      * @ORM\Column(type="string", nullable=true, length=255)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary"})
      */
     private $regularDetail;
 
@@ -138,7 +138,7 @@ class Solidary
      * @var SolidaryUserStructure The SolidaryUserStructure related with the solidary record.
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="solidaries", cascade={"persist","remove"})
-     * @Groups({"readSolidary", "writeSolidary"})
+     * @Groups({"writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidaryUserStructure;
@@ -176,7 +176,7 @@ class Solidary
      * @var ArrayCollection|null Solidary solutions.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -186,7 +186,7 @@ class Solidary
      * @var ArrayCollection|null Solidary matchings.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidaryMatchings;
@@ -235,7 +235,7 @@ class Solidary
     private $outwardDatetime;
 
     /**
-     * @var \DateTimeInterface outward deadline date and time of the solidary demand
+     * @var \DateTimeInterface|null outward deadline date and time of the solidary demand
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $outwardDeadlineDatetime;
@@ -247,7 +247,7 @@ class Solidary
     private $returnDatetime;
 
     /**
-     * @var \DateTimeInterface return deadline date and time of the solidary demand
+     * @var \DateTimeInterface|null return deadline date and time of the solidary demand
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $returnDeadlineDatetime;
@@ -598,7 +598,7 @@ class Solidary
         return $this->outwardDeadlineDatetime;
     }
 
-    public function setOutwardDeadlineDatetime(\DateTimeInterface $outwardDeadlineDatetime): self
+    public function setOutwardDeadlineDatetime(?\DateTimeInterface $outwardDeadlineDatetime): self
     {
         $this->outwardDeadlineDatetime = $outwardDeadlineDatetime;
 
@@ -622,7 +622,7 @@ class Solidary
         return $this->returnDeadlineDatetime;
     }
 
-    public function setReturnDeadlineDatetime(\DateTimeInterface $returnDeadlineDatetime): self
+    public function setReturnDeadlineDatetime(?\DateTimeInterface $returnDeadlineDatetime): self
     {
         $this->returnDeadlineDatetime = $returnDeadlineDatetime;
 
