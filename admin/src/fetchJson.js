@@ -1,5 +1,9 @@
 import { fetchUtils } from 'react-admin';
 
+const goToLogin = () => {
+  global.window.location.href = '/#/login';
+};
+
 export const fetchJson = (url, options = {}) =>
   fetchUtils
     .fetchJson(url, {
@@ -11,7 +15,7 @@ export const fetchJson = (url, options = {}) =>
     })
     .then((response) => {
       if (response.status === 401) {
-        global.window.location.href = '/#/login';
+        goToLogin();
       }
 
       return response;

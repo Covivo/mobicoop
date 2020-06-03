@@ -39,8 +39,14 @@
 // user_register
 // user_register_full
 
+export const getPermissions = () => {
+  const storagePermissions = localStorage.getItem('permission');
+  return storagePermissions ? JSON.parse(storagePermissions) : [];
+};
+
+export const createPermissionChecker = (permissions) => (action) => permissions.includes(action);
+
 export default (action) => {
-  // eslint-disable-next-line no-undef
-  const permissions = JSON.parse(localStorage.getItem('permission'));
-  return permissions && Object.values(permissions).includes(action);
+  const hasPermission = createPermissionChecker(getPermissions());
+  return hasPermission(action);
 };
