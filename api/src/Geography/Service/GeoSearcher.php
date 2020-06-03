@@ -35,6 +35,7 @@ use App\RelayPoint\Repository\RelayPointRepository;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Repository\UserRepository;
 use App\Image\Repository\IconRepository;
+use App\Geography\ProviderFactory\PeliasAddress;
 
 /**
  * The geo searcher service.
@@ -181,6 +182,10 @@ class GeoSearcher
             }
             if ($geoResult->getCountry() && $geoResult->getCountry()->getCode()) {
                 $address->setCountryCode($geoResult->getCountry()->getCode());
+            }
+            // add layer if handled by the provider
+            if (method_exists($geoResult, 'getLayer')) {
+                $address->setLayer($this->getLayer($geoResult->getLayer()));
             }
             // add venue if handled by the provider
             if (method_exists($geoResult, 'getVenue')) {
@@ -351,6 +356,10 @@ class GeoSearcher
                 if ($geoResult->getCountry() && $geoResult->getCountry()->getCode()) {
                     $address->setCountryCode($geoResult->getCountry()->getCode());
                 }
+                // add layer if handled by the provider
+                if (method_exists($geoResult, 'getLayer')) {
+                    $address->setLayer($this->getLayer($geoResult->getLayer()));
+                }
                 // add venue if handled by the provider
                 if (method_exists($geoResult, 'getVenue')) {
                     $address->setVenue($geoResult->getVenue());
@@ -454,7 +463,6 @@ class GeoSearcher
         if (isset($point['countryCode'])) {
             $address->setCountryCode($point['countryCode']);
         }
-        
         if (isset($point['elevation'])) {
             $address->setElevation($point['elevation']);
         }
@@ -486,5 +494,20 @@ class GeoSearcher
             }
         }
         return $address;
+    }
+
+    /**
+     * Get layer id by layer string
+     *
+     * @param string $layer The string layer
+     * @return int|null  The int layer or null
+     */
+    private function getLayer(string $layer): ?int
+    {
+        switch ($layer) {
+            case 'address': return Address::LAYER_ADDRESS;
+            case 'locality': return Address::LAYER_LOCALITY;
+            default: return null;
+        }
     }
 }

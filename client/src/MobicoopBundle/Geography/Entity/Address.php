@@ -49,6 +49,13 @@ class Address implements ResourceInterface, \JsonSerializable
     private $iri;
 
     /**
+     * @var int|null The layer identified for the address.
+     *
+     * @Groups({"post","put"})
+     */
+    private $layer;
+
+    /**
      * @var string|null The house number.
      *
      * @Groups({"post","put"})
@@ -232,6 +239,16 @@ class Address implements ResourceInterface, \JsonSerializable
     public function setIri($iri)
     {
         $this->iri = $iri;
+    }
+
+    public function getLayer(): ?int
+    {
+        return $this->layer;
+    }
+
+    public function setLayer($layer)
+    {
+        $this->layer = $layer;
     }
 
     public function getHouseNumber(): ?string

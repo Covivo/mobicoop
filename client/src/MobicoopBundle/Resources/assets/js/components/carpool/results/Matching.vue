@@ -212,6 +212,16 @@ export default {
       type: Number,
       default: null
     },
+    // external Id after external search
+    externalId: {
+      type: String,
+      default: null
+    },
+    // community proposal Id for a specific proposal search of a community
+    communityProposalId: {
+      type: Number,
+      default: null
+    },
     origin: {
       type: Object,
       default: null

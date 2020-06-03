@@ -477,6 +477,13 @@ class Ad
     private $external;
 
     /**
+     * @var boolean Exposed ad.
+     *
+     * @Groups({"read","write"})
+     */
+    private $exposed;
+
+    /**
      * @var array|null The asks associated to the ad
      *
      * @Groups({"read","write"})
@@ -1094,6 +1101,18 @@ class Ad
     public function setExternal(?string $external): self
     {
         $this->external = $external;
+
+        return $this;
+    }
+
+    public function isExposed(): bool
+    {
+        return $this->exposed ? true : false;
+    }
+
+    public function setExposed(?bool $exposed): self
+    {
+        $this->exposed = $exposed;
 
         return $this;
     }

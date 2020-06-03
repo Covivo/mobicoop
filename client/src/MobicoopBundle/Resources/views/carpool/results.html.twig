@@ -7,6 +7,8 @@
 {% block main %}
     <matching
         :proposal-id = "{{ proposalId is defined ? (proposalId ? proposalId : 'null') : 'null' }}"
+        :external-id = "{{ externalId is defined ? (externalId ? externalId : 'null') : 'null' }}"
+        :community-proposal-id = "{{ communityProposalId is defined ? (communityProposalId ? communityProposalId : 'null') : 'null' }}"
         :origin = "{{ origin is defined ? origin : 'null' }}"
         :destination = "{{ destination is defined ? destination : 'null' }}"
         date = "{{ date is defined ? date : '' }}"

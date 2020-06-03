@@ -162,6 +162,12 @@ class AdManager
         // If the proposal is external (i.e Rdex request...) we set it
         $outwardProposal->setExternal($ad->getExternal());
 
+        // if the proposal is exposed, we also generate an external id
+        if ($ad->isExposed()) {
+            $outwardProposal->setExposed(true);
+            $outwardProposal->setExternalId();
+        }
+
         // we check if it's a round trip
         if ($ad->isOneWay()) {
             // the ad has explicitly been set to one way
@@ -454,6 +460,9 @@ class AdManager
     {
         $address = new Address();
 
+        if (isset($point['layer'])) {
+            $address->setLayer($point['layer']);
+        }
         if (isset($point['houseNumber'])) {
             $address->setHouseNumber($point['houseNumber']);
         }
@@ -1270,6 +1279,7 @@ class AdManager
         $ad = new Ad();
         $ad->setExternal($external);
         $ad->setSearch(true); // Only a search. This Ad won't be publish.
+        $ad->setExposed(true); // But we need to access it publicly
 
         // Role
         if ($offer && $request) {

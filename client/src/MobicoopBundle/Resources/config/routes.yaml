@@ -350,8 +350,31 @@ carpool_search_result_get:
     path:
         fr: /covoiturage/recherche
         en: /carpool/search
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultGET
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultGet
 
+# search results (GET RDEX)
+carpool_search_result_rdex:
+    methods: [GET]
+    path:
+        fr: /covoiturage/rdex/{externalId}
+        en: /carpool/rdex/{externalId}
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultFromRdexLink
+
+# search results for a community proposal (GET)
+carpool_search_result_community:
+    methods: [GET]
+    path:
+        fr: /covoiturage/communaute/{communityName}/{proposalId}
+        en: /carpool/community/{communityName}/{proposalId}
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultFromCommunityProposal
+
+# search results for city to city (GET)
+carpool_search_result_city_to_city:
+    methods: [GET]
+    path:
+        fr: /covoiturage/{originLocality}/{destinationLocality}/{proposalId}
+        en: /carpool/{originLocality}/{destinationLocality}/{proposalId}
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultForCityToCity
 
 # search matching (AJAX POST)
 carpool_search_matching:
