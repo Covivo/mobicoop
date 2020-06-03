@@ -23,10 +23,13 @@ import {
 import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
 import isAuthorized from '../../auth/permissions';
+import TerritoryInput from '../../components/geolocation/TerritoryInput';
+import { useHistory } from 'react-router-dom';
 
 const UserList = (props) => {
   const translate = useTranslate();
   const [count, setCount] = useState(0);
+  const router = useHistory();
 
   const BooleanStatusField = ({ record = {}, source }) => {
     const theRecord = { ...record };
@@ -71,6 +74,10 @@ const UserList = (props) => {
       </TableRow>
     );
   };
+  const handleAddTerritoryHistory = (e) => {
+    return null;
+  };
+
   const MyDatagridBody = (props) => <DatagridBody {...props} row={<MyDatagridRow />} />;
   const MyDatagridUser = (props) => <Datagrid {...props} body={<MyDatagridBody />} />;
 
@@ -93,24 +100,13 @@ const UserList = (props) => {
   };
   const UserFilter = (props) => (
     <Filter {...props}>
-      <TextInput source="givenName" label={translate('custom.label.user.givenName')} />
       <TextInput source="familyName" label={translate('custom.label.user.familyName')} alwaysOn />
       <TextInput source="email" label={translate('custom.label.user.email')} alwaysOn />
       {/* <BooleanInput source="solidary" label={translate('custom.label.user.solidary')} allowEmpty={false} defaultValue={true} /> */}
-      <BooleanInput
-        source="solidaryCandidate "
-        label={translate('custom.label.user.candidate')}
-        allowEmpty={false}
-        defaultValue={true}
-      />
-      <BooleanInput
-        source="solidaryUser.volunteer"
-        label={translate('custom.label.user.volunteer')}
-        allowEmpty={false}
-        defaultValue={true}
-      />
+
       <ReferenceInput
         source="homeAddressODTerritory"
+        alwaysOn
         label={translate('custom.label.user.territory')}
         reference="territories"
         allowEmpty={false}
@@ -118,6 +114,7 @@ const UserList = (props) => {
       >
         <SelectInput optionText="name" optionValue="id" />
       </ReferenceInput>
+      {/* <TerritoryInput alwaysOn setTerritory={handleAddTerritoryHistory} /> */}
     </Filter>
   );
 
